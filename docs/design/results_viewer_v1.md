@@ -1,8 +1,19 @@
 # results_viewer_v1 — the dynamic results viewer ([B66], Frank's ask 2026-09-21)
 
-STATUS: v1.0 DESIGN — written by the manager before any code (Frank:
-"think about requirements and design first"). Implementation lane
-builds to this note; deviations come back here first.
+STATUS: v1.0 BUILT (lane b66viewer). v1.1 (§9, Frank's eight review notes
+2026-09-21, added across the day in three waves) IMPLEMENTED (lane
+b67viewer) — the same day, against the merged v1.0: the §9.1 root-cause
+fix (a `tools/viewer_export.py` export bug, not only a `viewer.html`
+one — see §9.1's own note), the date-first header (§9.2), coverage
+chips (§9.3), stacked multi-metric cells (§9.4), metric-aware sorting
+with a real ranking-by-ratio bug fixed along the way (§9.5),
+latest-canonical-only default selection (§9.6), the engine picker as a
+dropdown with a real event-order bug found and fixed along the way
+(§9.7), and pattern text inline/popover with a same-shaped export
+change to §9.1's (§9.8). Verified with a real headless-Chromium
+DevTools session (72 checks against the real production data, 0
+failed, 0 console errors, 0 uncaught exceptions; see the lane report).
+Not merged by the lane itself; deviations come back here first.
 
 ## 0. What it is
 
@@ -143,12 +154,27 @@ small (≈850 rows × ~200 B ≈ 400 KB total).
 
 ## 9. v1.1 amendments (Frank's review from results, 2026-09-21)
 
+STATUS: IMPLEMENTED (lane b67viewer, 2026-09-21). See viewer/CLAUDE.md's
+own "v1.1 amendments" section for the as-built detail; this section is
+kept as the ORIGINAL ask, verbatim, per the note's own convention
+("deviations come back here first").
+
 Frank's five notes, verbatim-mapped; [B67] implements:
 1. BUG: deselecting an engine must REMOVE its column; no duplicate
    columns ever; deselecting a whole family (e.g. all pcrec) removes
    the whole band. Root-cause the tree→column propagation and the
    duplication (suspect: per-pin variants rendering as extra columns
-   independent of the tree's selection keys).
+   independent of the tree's selection keys). **ROOT CAUSE FOUND one
+   layer further down than the suspect named**: `tools/viewer_export.py`'s
+   `engine_variant` label was built from only `engine_mode` +
+   `config_extra`, silently dropping the `captures` axis, so
+   `pcrec-auto` (captures=on) and `pcrec-nocaps` (captures=off) both
+   produced the SAME variant label `"auto"` — two distinct testee_ids
+   sharing one tree leaf, which a deselect (reconstructing a testee_id
+   from the leaf) could only ever find one of. Fixed by reading
+   testee_id's own config_slug segment instead (unique by construction);
+   `viewer.html`'s tree also stopped reconstructing testee_ids
+   altogether, storing the real one from each row at every leaf.
 2. The pin/git tag in headers is uninformative — show an ORDERED DATE
    instead (the column's newest measured_utc date, YYYY-MM-DD; the pin
    stays in the tooltip for provenance, never as the primary label).
@@ -168,9 +194,26 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    state), select only each engine's NEWEST identity (newest-pin
    canonical variant per family; ablation/deny-flag arms and older
    pins deselected by default, still selectable). This also retires
-   the 45-column default the v1.0 report flagged.
+   the 45-column default the v1.0 report flagged. **IMPLEMENTED**:
+   `computeDefaultTesteeIds()` — a testee is an ablation/deny-flag/
+   toolchain arm iff its `engine_variant` carries a `_<config_extra>`
+   suffix (engine-neutral, no hard-coded pcrec list); a canonical
+   variant contributes only its own newest pin. Applies on the true
+   first load and on "reset view"; MEASURED 13 columns by default vs
+   40 under "all" (both reachable, one click apart, in the dropdown).
 7. Engine selection lives in a DROPDOWN (a compact button opening the
    grouped tree as a panel) rather than an always-visible list.
+   **IMPLEMENTED**, and a REAL BUG found and fixed while wiring it: the
+   outside-click "close the dropdown" listener has to be DEFERRED
+   (`setTimeout(0)`) — closing it synchronously rebuilds `#controls-row`/
+   `#filters` and can detach a just-clicked checkbox (Sets/Regime/Form/
+   Status/a metric) BEFORE its own "change" event fires (confirmed:
+   Chromium's real event order is click → bubbles to document → input →
+   change, not change-before-bubble), and a checkbox already removed
+   from the document never fires "change" at all in Chromium — so that
+   click's effect was silently and completely lost. Fixed by deferring
+   the close to a macrotask, after the clicked control's own handler has
+   already run to completion.
 8. PATTERN TEXT in the pattern column: the exporter adds the pattern's
    canonical_text (from the record's patterns[] block; where a record
    omits it — the free_text cap — say so). Inline display after the
@@ -179,3 +222,9 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    the pattern cell. Big patterns (altwide's kB-scale alternations)
    export TRUNCATED to a stated bound (~2 KB) with an explicit
    "… truncated, full N bytes" tail in the popover — never silently.
+   **IMPLEMENTED**: `PATTERN_TEXT_MAX_BYTES = 2000`; the exporter's
+   `patterns` map is ONE entry per pattern_id, not per row (a pattern's
+   text is invariant across every row that shares it — carrying it per
+   row would have multiplied a ~2 KB string across bench/altwide's
+   corpus of rows for nothing). Click PINS the popover open (ignores
+   further hover) until the same cell, Escape, or an outside click.
