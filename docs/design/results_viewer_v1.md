@@ -171,3 +171,11 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    the 45-column default the v1.0 report flagged.
 7. Engine selection lives in a DROPDOWN (a compact button opening the
    grouped tree as a panel) rather than an always-visible list.
+8. PATTERN TEXT in the pattern column: the exporter adds the pattern's
+   canonical_text (from the record's patterns[] block; where a record
+   omits it — the free_text cap — say so). Inline display after the
+   name when SHORT (fits without wrapping the column, ~≤32 chars, in a
+   muted code face); ALWAYS available as a popover (hover/click) on
+   the pattern cell. Big patterns (altwide's kB-scale alternations)
+   export TRUNCATED to a stated bound (~2 KB) with an explicit
+   "… truncated, full N bytes" tail in the popover — never silently.
