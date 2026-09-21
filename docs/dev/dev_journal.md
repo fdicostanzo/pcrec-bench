@@ -5160,3 +5160,29 @@ ext-bench testees across six engines.
   discharged; THE GATE OF RECORD is now 5/73/0 · 423/423 · OK ·
   161/161 at c26dbb7 (check-interpret grew 156 → 161 with the five
   new sidecars).
+
+## 2026-09-20 (night) — [B60] MERGED: the pin's time-axis AFTER — 31/32 within spread, one real vm-in mover, sent as O-38
+
+- Merged 8dde570 (store 190): the four capability cells at 25b1984f
+  against cf0962e3, the KB-5 cross-pin report with the Δ column, the
+  sidecar (determinism-checked), predictions scored via the direct
+  path (P1-P4 REFUTED under strict eq-token — by construction on
+  boundary jitter, the file's own grounding predicted it; not a mover
+  signal in itself).
+- THE FINDING (O-38): wild-datetime-moment-iso8601 / search_short /
+  vm-in ×1.08 slower (6,298.94 → 6,808.08 ns, stddevs 2.78/1.77 ns,
+  ~91× the spread threshold), the same pattern unchanged on all three
+  other pcrec routes — isolated to the caller-provided frame-buffer
+  route. Reported to pcrec per I-77's own ask; not absorbed, not
+  diagnosed. A secondary ~1.24×-threshold case kept apart honestly.
+- KB-24 filed: evaluate_predictions crashes outright on
+  quantity=delta_verdict clauses (string tokens through a numeric
+  formatting helper); scratch monkeypatch used for scoring only, NOT
+  committed; two fix candidates named — a follow-up lane item.
+- Lane lifecycle honesty: b60pinconfirm stalled TWICE on background
+  waits (instances five and six of the named failure mode) and was
+  stopped; the fresh closer agent (b60close) ran every post-run step
+  foreground per DO-THEN-FINISH, including catching its own
+  subject-grain full-shape mistake against the precedent's size. The
+  doctrine (fresh agent from the committed report) worked exactly as
+  written.
