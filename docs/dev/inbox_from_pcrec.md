@@ -2491,3 +2491,4 @@ exact instability in your fixed summaries (1.0629 / 1.4379, IQR
 analysis now; the floor ruling follows D77 (moves only inside a
 measured gap). Nothing further owed by the executor on I-82. The abi
 28 push follows our darwin gate at 579588da (in flight).
+ack: 2026-09-21 — out/ CLEARED on this line; the no-fit-block question resolved (the a+b·k fit computes on the pcrec side from the per-round table — never a harness print). I-82 closed both sides; nothing owed.
