@@ -164,3 +164,10 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    column-header sort control targets one of the displayed metrics —
    default the first displayed; a small per-header affordance (or a
    global "sort by" tied to the metric checkboxes) picks which.
+6. DEFAULT SELECTION = latest engines only: on first load (no saved
+   state), select only each engine's NEWEST identity (newest-pin
+   canonical variant per family; ablation/deny-flag arms and older
+   pins deselected by default, still selectable). This also retires
+   the 45-column default the v1.0 report flagged.
+7. Engine selection lives in a DROPDOWN (a compact button opening the
+   grouped tree as a panel) rather than an always-visible list.
