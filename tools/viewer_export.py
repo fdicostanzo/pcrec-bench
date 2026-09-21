@@ -59,8 +59,15 @@ refused | unsup | wrong | gave-up | timed-out | inconclusive-*):
      `unsupported-by-declaration` -> `unsup` (report.py's own
      `did_not_compile_by_pattern`/`unsupported_by_pattern` logic, applied
      per record); `crashed`/`timed-out` at compile time pass through by
-     name. One row per (pattern, form), regime empty (mirrors [B52]'s F26
-     shape for a pattern that never reached a regime).
+     name. One row per (pattern, form) is built here with regime empty
+     (mirrors [B52]'s F26 shape for a pattern that never reached a
+     regime); `_fold_and_classify` (below, [B70] `results_viewer_v1.md`
+     10) then FOLDS it into every regime this SET's rows actually carry
+     for that (pattern, form) -- the blank-regime row survives only in
+     the true F26 case, no regime anywhere -- and, for `refused` rows,
+     attaches `refusal_reason` (one of `REFUSAL_REASON_TOKENS`,
+     `wrap-artifact` decided structurally, everything else from the
+     diagnostic text).
   3. a match SetCell that fails its own expectation
      (`SetCellReduction.expectation_failing`): `wrong` if any subject's
      answer disagreed, else `gave-up` if any subject gave up, else the
@@ -84,6 +91,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import tempfile
 from collections import defaultdict
@@ -98,6 +106,7 @@ from pcrecbench.reduce import (  # noqa: E402
     cells_from_record,
     reduce_set_cell,
 )
+from pcrecbench.record import FORM_WHOLE_SUBJECT  # noqa: E402
 
 DEFAULT_STORE = os.path.join(ROOT, "store")
 DEFAULT_OUT = os.path.join(ROOT, "viewer", "data")
@@ -126,6 +135,166 @@ _COMPILE_STATUS = {
 STATUS_SINK_ORDER = ["measured", "wrong", "refused", "unsup", "gave-up",
                       "timed-out", "crashed", "inconclusive-load",
                       "inconclusive-spread", "harness-failure", "excluded"]
+
+
+# ---------------------------------------------------- [B70] 10.2/10.3: refusals
+
+# The CLOSED refusal-reason token set, §10.2's "first cut", seeded from
+# `docs/dev/measurements/2026-09-21-capability-refusal-census.txt` (the
+# [B69] census) plus two prior, already-committed, MEASURED diagnostics
+# this project has stated elsewhere by name (cited per rule below) --
+# never invented ahead of a real diagnostic. `wrap-artifact` is NOT a
+# text rule at all: it is decided STRUCTURALLY, in `_fold_and_classify`,
+# before any diagnostic is read (see that function's docstring). `other`
+# is the honest fallback -- a diagnostic this set has not measured yet,
+# not a dumping ground for one this set HAS measured and a rule missed.
+REFUSAL_REASON_TOKENS = ("too-large", "too-complex", "syntax", "unsupported",
+                          "wrap-artifact", "other")
+
+_REFUSAL_REASON_RULES = [
+    # Seed: the census, `wild-datetime-datefinder-alternation`, all four
+    # `pcrec_25b1984f` configs (both forms): "pcrec: pattern too large:
+    # 670159 bytes of emitted code (limit 500000), which gcc cannot
+    # compile in reasonable time. ..." -- pcrec's emitted-CODE-size cap
+    # (checked ahead of `too-complex` below: both diagnostics start
+    # "pattern too large", this one alone names "bytes of emitted code").
+    ("too-large", re.compile(r"pattern too large:\s*\d+\s*bytes of emitted code")),
+    # Seed: NOT in the [B69] census (no capability@0.1 pattern hits this
+    # cap) -- from `docs/dev/outbox_to_pcrec.md` O-9 / `testees/pcrec/
+    # CLAUDE.md`'s own quoted text, bench/bounded's `cls-upto-65535`
+    # rung: "pcrec: pattern too large (NFA exceeds 131072 states) ...".
+    # A STATE/ELEMENT cap, distinct from the emitted-size cap above.
+    ("too-complex", re.compile(
+        r"NFA exceeds \d+ states|state-set elements|subset construction exceeds")),
+    # Seed: the census, `mojibake-curly-quote`, `rust_1.13.1`: "pattern is
+    # not valid UTF-8 at byte N: ..." -- a structural pattern-SOURCE
+    # encoding constraint (rust-regex takes `&str`, never `&[u8]`), not a
+    # regex-grammar parse error.
+    ("unsupported", re.compile(r"not valid UTF-8")),
+    # Seed: the census -- `balanced-parens-rec` / oniguruma ("unmatched
+    # close parenthesis"), the CASE-1 wrap patterns' own three non-
+    # structural-match diagnostics ("end pattern with unmatched
+    # parenthesis", "missing closing ) for group", "Unterminated
+    # comment.", "regex parse error:"), and `wild-*` / tre's
+    # ("Invalid character range", testees/tre/CLAUDE.md item 4). Every
+    # genuine PARSE-time rejection this census measured.
+    ("syntax", re.compile(
+        r"unmatched (close |)parenthes|missing closing \)|Unterminated comment"
+        r"|regex parse error|Invalid character range")),
+]
+
+
+def _classify_refusal_reason(diagnostic):
+    """One of `REFUSAL_REASON_TOKENS` (never `wrap-artifact`, which is
+    decided structurally, ahead of this call, in `_fold_and_classify`) --
+    `other` when no rule's diagnostic-text pattern matches. Extending
+    this list is how a FUTURE census finding grows the set; nothing here
+    is invented ahead of a diagnostic this project has actually
+    measured (see each rule's own seed comment above)."""
+    if not diagnostic:
+        return "other"
+    for token, rx in _REFUSAL_REASON_RULES:
+        if rx.search(diagnostic):
+            return token
+    return "other"
+
+
+def _fold_and_classify(rows):
+    """[B70] `docs/design/results_viewer_v1.md` 10, items 1-3: fold every
+    compile-refusal/unsup row (`regime == ""`) into the ranked rows, and
+    classify every `refused` row's mechanism.
+
+    FOLDING (item 1). A compile refusal or policy decline is
+    regime-INDEPENDENT (no artifact -- or no attempt -- exists, so no
+    regime ever timed it): report.py's own `render_matrix_tsv` reads
+    exactly this fact through `_matrix_cell`'s fallback chain (a
+    `did_not_compile_by_pattern`/`unsupported_by_pattern` entry answers
+    EVERY regime row for its pattern, never just one) -- this function is
+    the SAME rule applied to this module's own per-row shape (this module
+    works row-by-row across records, report.py query-wide over a
+    `ReportData`, so the rule is reimplemented here, not imported; the
+    module docstring's own MEMORY discipline is why -- see `tools/
+    CLAUDE.md`). For each (pattern, form) with at least one regime seen
+    ANYWHERE in this set's rows, a blank-regime refusal/unsup row is
+    replaced by one row per such regime, same testee/status/diagnostic.
+    Where NO regime exists anywhere for that (pattern, form) -- every
+    testee refused or declined it, `render_matrix_tsv`'s own F26 case
+    (`docs/design/predicate_audit_v1.md`) -- the single blank-regime row
+    is KEPT, since there is nothing to fold it into.
+
+    CLASSIFICATION (items 2-3). Every `refused` row's mechanism is
+    resolved to one of `REFUSAL_REASON_TOKENS`. `wrap-artifact` is
+    decided FIRST and STRUCTURALLY, never from diagnostic text: a
+    `whole-subject` refusal is `wrap-artifact` iff (a) the SAME testee's
+    own `plain` twin of the SAME pattern compiled (any status but
+    `refused`/`unsup`), and (b) every OTHER testee that ATTEMPTED (status
+    != `unsup`) the SAME (pattern, `whole-subject`) also refused it --
+    the [B69] census's own CASE-1-vs-CASE-2 rule (`docs/dev/lanes/
+    b69census_report.md` 4-5): "every attempting engine refused" is
+    `wrap-artifact`; a split refusal never is. This is per-(testee, row),
+    not merely per-(pattern, form): the census's own two CASE-1 patterns
+    have a THIRD refusing testee this rule correctly keeps OUT of
+    `wrap-artifact` -- `vectorscan-block-nosom`'s `plain` (unwrapped) form
+    of both patterns ALSO refuses with the identical "Unterminated
+    comment." diagnostic (census raw JSON, testee
+    `vectorscan_5.4.11_block-nosom-nocaps-simd`), which this census's own
+    §4/§5 did not call out by name -- vectorscan cannot parse either
+    pattern's trailing un-newline-terminated `(?x)` comment AT ALL, wrapped
+    or not, so its `whole-subject` refusal is not CAUSED by the harness's
+    wrapper the way the other six attempters' are: its `plain` twin never
+    compiled, condition (a) fails, and it classifies `syntax` from the
+    text rule instead -- a finding this lane's report states plainly,
+    per the brief's own "if the census table shows a mechanism your
+    rules miss, extend the rules, and say so" (the rules already handle
+    it correctly; nothing needed EXTENDING, but the divergence from the
+    census report's own per-pattern table is real and worth a reader
+    knowing). Everything else (including every `wrap-artifact`-eligible
+    row that fails the structural test) falls to `_classify_refusal_reason`.
+    """
+    regimes_by_pf = defaultdict(set)
+    for r in rows:
+        if r["regime"]:
+            regimes_by_pf[(r["pattern"], r["form"])].add(r["regime"])
+
+    attempted = defaultdict(set)      # (pattern, form) -> {testee_id}, status != unsup
+    refused_by = defaultdict(set)     # (pattern, form) -> {testee_id}, status == refused
+    plain_compiled = defaultdict(set)  # pattern -> {testee_id whose plain form is not refused/unsup}
+    for r in rows:
+        if r["status"] == "unsup":
+            continue
+        key = (r["pattern"], r["form"])
+        attempted[key].add(r["testee_id"])
+        if r["status"] == "refused":
+            refused_by[key].add(r["testee_id"])
+        elif r["form"] == "plain":
+            plain_compiled[r["pattern"]].add(r["testee_id"])
+
+    def is_wrap_artifact(row):
+        if row["form"] != FORM_WHOLE_SUBJECT:
+            return False
+        if row["testee_id"] not in plain_compiled.get(row["pattern"], ()):
+            return False
+        key = (row["pattern"], FORM_WHOLE_SUBJECT)
+        atts = attempted.get(key, set())
+        return bool(atts) and atts == refused_by.get(key, set())
+
+    out = []
+    for r in rows:
+        if r["status"] == "refused":
+            r["refusal_reason"] = ("wrap-artifact" if is_wrap_artifact(r)
+                                     else _classify_refusal_reason(r.get("diagnostic")))
+        if r["regime"] == "" and r["status"] in ("refused", "unsup"):
+            targets = regimes_by_pf.get((r["pattern"], r["form"]))
+            if not targets:
+                out.append(r)  # F26 case: no regime exists anywhere for this
+                continue        # (pattern, form) -- nothing to fold into
+            for regime in sorted(targets):
+                folded = dict(r)
+                folded["regime"] = regime
+                out.append(folded)
+            continue
+        out.append(r)
+    return out
 
 
 def utcnow_iso():
@@ -511,6 +680,7 @@ def main(argv=None):
             # MEMORY: nothing from this record's raw rows/setup survives
             # past export_rows_for_record's return -- `rec`/`rec.rows`
             # went out of scope with that call.
+        rows = _fold_and_classify(rows)  # [B70] 10 items 1-3
         subbench, version = sb.split("@", 1)
         text = render_set_file(sb, subbench, version, rows, patterns_meta, generated_utc, index_rows_n)
         out_path = os.path.join(args.out, f"{sb}.js")
