@@ -2940,3 +2940,57 @@ differences on both directions; bounded: exact identity).
   per-testee cross-pin gap table are in the file's own header; full
   verdict table and the P6/P7 derivation: `docs/dev/lanes/
   b64window_report.md`.
+
+**[B64] PART B (2026-09-21, lane b64window) RE-RENDERED ALL FIVE
+`fullroster-<pin>` groups as NEW `fullroster-25b1984f` groups** — the
+[B61] `d34c9131`-suffixed ones (four sets) and `334fd10e`/`1989c62`-mixed
+ones stand as HISTORY, unchanged, per this lane's own charter text; every
+set's full-roster matrix now reads current-pin pcrec (all four canonical
+modes pin-uniform at 25b1984f, the FIRST time that has been true for
+`email-specimen@0.2`, `loglines@0.1`, `bounded@0.3` and `altwide@0.2` —
+only `syntax@0.1` was ever pin-uniform before, at d34c9131) plus
+`rust-default`. Same ROSTER-SELECTION RULE as [B61] (the newest record
+of each of the seven canonical identities, never every distinct
+`testee_id` the store has ever recorded); no `--since`/`--until` bound
+needed (KB-5's roster convention narrows to exactly these seven ids by
+name). Rendered one query, one format, one `gnutimeout` at a time per
+this lane's own delivery discipline (`email-specimen`/`loglines`/
+`altwide` foreground, 15-90s each; `syntax`/`bounded` — the two 95- and
+43-pattern corpora — detached with a completion marker, foreground-
+polled, same as Part A's own report renders); every `.interpretation.md`
+sidecar is a FRESH file, determinism-checked (a second, independent
+`interpret --render` invocation diffs byte-identical against all five).
+
+**THE FULLROSTER MATRIX ITSELF INDEPENDENTLY CONFIRMS Part A's two
+headline findings, read a second way (F26-immune, no ranking-group
+gap):** `altwide@0.2`'s `pcrec-auto`/`pcrec-auto-nocaps` columns each
+read exactly **4** `refused` patterns (`s-2048`, `s-4096`, `w-1024`,
+`w-2048`) against `pcrec-vm`/`pcrec-vm-in`'s **11** (`ci-512`, `nar4-512`,
+`s-2048`, `s-4096`, `sfx-512`, `sh1-512`, `srt-512`, `w-1024`, `w-2048`,
+`w-512`, `wb-512`) — the same 4-vs-18-at-d34c9131 auto-route shrink
+[B63]'s O-40 finding already named, and `rust-default` refuses NOTHING
+on this set (all 33 patterns × 3 regimes ranked, matching [B59]'s own
+finding); `bounded@0.3`'s `pcrec-auto`/`pcrec-auto-nocaps` columns each
+refuse exactly `{cls-upto-65535}`, `pcrec-vm`/`pcrec-vm-in` refuse
+NOTHING, and `rust-default` refuses `{nest2-64, nest3-16}` (matching
+[B59]'s own `CompiledTooBig` finding) — independently confirming Part
+A's own bounded P7 reading (the state-cap refusal is auto-route-only) a
+second way, from the matrix's own closed-token columns rather than a
+`did_not_compile` section read.
+
+- `2026-09-21-email-specimen-0.2-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-loglines-0.1-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-bounded-0.3-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-altwide-0.2-budu-ryzen1600-fullroster-25b1984f.md`,
+  `2026-09-21-syntax-0.1-budu-ryzen1600-fullroster-25b1984f.md` — full
+  roster: `libpcre2_10.46_{interp,jit}-caps-simdna`,
+  `pcrec_25b1984f_{auto,auto-nocaps,vm,vm-in}-caps-simdna` (pin-uniform
+  on every set now), `rust_1.13.1_default-caps-simdna`. `worst_other_
+  core_busy` per file: email 10.81%, loglines 13.83%, bounded 22.68%,
+  altwide 40.71%, syntax 64.93% (all AFTER-sample provenance readings,
+  not gate verdicts — every record's own pre-flight passed,
+  `status: measured`). `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/
+  `.matrix.tsv`/`.matrix.html`/`.interpretation.md` all rendered/
+  generated as described above. Full per-set matrix reading (rust wins,
+  new refusal boundaries, any other cross-engine finding beyond the two
+  confirmations above): `docs/dev/lanes/b64window_report.md`.
