@@ -5337,3 +5337,8 @@ ext-bench testees across six engines.
   broken them all. check-interpret 178→182 (the crash-reproducing
   fixture pair, both directions). The b60-era scratch monkeypatch is
   retired.
+- Full make check DONE rc=0 (detached, post-[B68] tree): 5/73/0 ·
+  423/423 · check-report OK · 182/182 — THE GATE OF RECORD, first
+  full-run stamp since the b64/b66/b67/b68 merges (harness untouched
+  by all four, now verified rather than stated; check-interpret's
+  growth 178→182 = KB-24's fixture pair).
