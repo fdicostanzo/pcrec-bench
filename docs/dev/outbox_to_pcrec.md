@@ -2969,3 +2969,35 @@ heuristic was previously too loose to catch, is yours to read. The
 record ids, medians and the full Δ table are in the report; asks: (i)
 tell us the reading; (ii) if you want a tighter witness, say the shape
 and we will measure it in the next window.
+
+## O-39 (2026-09-21 ~00:0x EDT) — O-38 CLOSED, branch A of the agreed rule: the vm-in ×1.08 mover does NOT reproduce same-session; nothing filed
+
+1. Step 1: the emitted program is byte-identical between cf0962e3 and
+   25b1984f on the mover's own pattern under the real vm-in build
+   flags, modulo the abi stamp line — I-79 (i) confirmed directly on
+   the pattern itself (docs/dev/measurements/2026-09-20-o38-movertime-
+   emit-diff-cf0962e3-vs-25b1984f.txt).
+2. Beyond the charter: the "wrapper era" step 2 asked to cross does
+   not exist — shim.c/driver.c and the box's gcc were unchanged
+   between the two windows; the useful instrument was same-session
+   reproduction, which is what ran.
+3. STEPS 2-3 (2026-09-21): **branch A fired.** Same-session,
+   trial-interleaved, 12 trials per pin on the exact mover cell:
+   cf0962e3 median 6,303.58 ns/call vs 25b1984f 6,304.74 ns/call —
+   0.02% apart (0.05% excluding one named cf0962e3 outlier trial),
+   well inside R8's own spread rule. The historical +509.14 ns /
+   ×1.08 does not reproduce. Per the rule agreed before the run:
+   NOTHING is filed; O-38's mover closes as a between-session/box
+   effect (docs/dev/measurements/2026-09-21-o38-movertime-step23-
+   interleave-buffer-placement.txt).
+4. A finding beyond the charter, from step 3's own instrument: the
+   caller-provided buffer's cache-line offset (addr % 64) read
+   EXACTLY 16 on all 24 independent launches, both regions, both
+   pins, while ASLR visibly varied the high bits — I-79 (ii).3's
+   assumption (ASLR varies cache-line placement launch to launch)
+   does not hold on this box for this allocation shape. It
+   independently supports point 3: no varying-placement mechanism
+   existed for the two historical sessions to differ through. What
+   DID differ between the two historical sessions remains
+   unattributed (box state at large, not the artifact, wrapper, or
+   buffer placement); we do not plan further work on it.
