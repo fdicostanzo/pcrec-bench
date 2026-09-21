@@ -2420,3 +2420,52 @@ swept against the live oracle) — merged inside d34c9131..25b1984f
 is the public capability record. A one-line attribution in your b64
 report suffices; no witness sweep. I-81's out/: keep until "I-81 logs
 fetched" appears here.
+
+## I-82 (2026-09-21 ~12:4x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED: the I-81 re-run with the harness FIXED, at pcrec main `8607a83d` — [OPT-EDGE]'s ladder (a+b·k fit) + two floor runs. ~1-2 h, Linux only. **"I-81 logs fetched"** — out/ from I-81 is yours to clear.
+
+**What changed since I-81 (lane edgefix, docs/dev/lanes/edgefix_report.md,
+merged 0cf627fb):** (1) run_ladder.sh built the before/after reference-arm
+paths from a RELATIVE $OUT before its own cd — the arms were never found
+(your "COMPILE FAILED"); absolute now. (2) the floor's edge census reads
+the `[OPT-5] SCAN EDGE` comment and D112 turned comments off — the one
+census build now passes `-fcomments` (byte-neutral, D108); your
+"forward edges = 0" was the reader. (3) both scripts and both Makefile
+targets now FAIL (rc≠0) on an empty measurement, and run_floor.sh prints
+the median/IQR block per m. The pin also carries [ADMIN-0921] (four dead
+exports deleted, K62 fixed, census re-pins) — no emitted byte moved on the
+corpus (emit_sweep 0 movers; size log 0 movers, +4 rows for K62's own new
+patterns). `abi` stays 27.
+
+**Slot:** day or early evening; load1 < 0.5 at launch (the runbook's own
+refusal — it discards rounds otherwise; the m=2 question cannot take
+noise).
+
+**(a) Commands, verbatim, in order** (sanctioned writes into ~/pcrec: the
+size-log checkout, the pull, `build/`, the study's gitignored `out/`):
+
+    git -C /home/duxevents/pcrec checkout -- docs/dev/artifact_size_log.tsv
+    cd /home/duxevents/pcrec && git fetch origin && git checkout main && git pull --ff-only origin main && git rev-parse HEAD
+    # expect: 8607a83d... (if not, STOP and report the hash)
+    uptime    # load1 must read < 0.5; if not, wait, do not launch
+    make -j8 2>&1 | tail -3
+    cd /home/duxevents/pcrec/studies/scan_edge_ladder
+    timeout 1800 make refs   2>&1 | tail -5
+    timeout 900  make rungs  2>&1 | tail -20
+    timeout 3600 make ladder PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/ladder_run1.log | tail -40
+    timeout 900  make floorcells 2>&1 | tail -20
+    timeout 3600 make floor  PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/floor_run1.log | tail -40
+    uptime
+    timeout 3600 make floor  PCREC=/home/duxevents/pcrec/build/pcrec 2>&1 | tee out/floor_run2.log | tail -40
+    uptime
+
+**(b) Done-signal / what to return:** every `rung`/`m × family` line
+should now read a real non-zero edge count and NO "COMPILE FAILED" /
+"TAKES NO EDGE" / "NEVER ENTERED" line should appear; if one does, it is
+a real finding — quote it and the target's non-zero rc. Paste VERBATIM:
+the ladder's per-rung table (arms before/after/step11 + the noedge
+control, medians with per-round range, k=1..4) and BOTH floor tables
+with their new median/IQR summary blocks, plus the uptime lines. Keep
+out/ until "I-82 logs fetched" lands here. Do not diagnose (I-57).
+
+**(c) Logs:** `/home/duxevents/pcrec/studies/scan_edge_ladder/out/`
+(`ladder_run1.log`, `floor_run1.log`, `floor_run2.log`).
