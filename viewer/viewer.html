@@ -514,11 +514,24 @@ var App = (function () {
 
   // -------------------------------------------------------------- state
 
+  // v1.2 follow-up (Frank, 2026-09-21): the "" regime holds only the
+  // RESIDUE refusal rows -- whole-subject forms no engine measured, so
+  // the [B70] fold had no ranked row to absorb them into (32 rows
+  // corpus-wide; only the two wrap-artifact ones disappear on the next
+  // re-measure). Reachable via its checkbox, but OFF on a fresh load
+  // so they never read as duplicates of the ranked rows above them.
+  function defaultRegimes() {
+    if (!domain || !domain.regimes || !("" in domain.regimes)) return null;
+    var out = Object.create(null);
+    Object.keys(domain.regimes).forEach(function (rg) { if (rg !== "") out[rg] = true; });
+    return out;
+  }
+
   function defaultState() {
     return {
       testees: null,   // null = "all" (every testee_id seen)
       sets: null,       // null = "all"
-      regimes: null,    // null = "all"
+      regimes: defaultRegimes(),  // all except the "" residue rows (see above)
       forms: null,      // null = "all"
       q: "",
       showNonMeasured: true,
@@ -955,7 +968,7 @@ var App = (function () {
         state.regimes = toggleInSet(state.regimes, Object.keys(domain.regimes), rg, cb.checked);
         rerenderAll();
       });
-      var lbl = document.createElement("label"); lbl.textContent = rg || "(none / did-not-compile)";
+      var lbl = document.createElement("label"); lbl.textContent = rg || "(unranked-form refusals)";
       lbl.addEventListener("click", function () { cb.click(); });
       row.appendChild(cb); row.appendChild(lbl);
       host.appendChild(row);
