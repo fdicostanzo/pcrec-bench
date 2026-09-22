@@ -5408,3 +5408,42 @@ report readers, and catalogue 3.2's R-STATUS-14 renders it with the
 mechanism named in every affected sidecar. Read: the record's emit
 bytes both forms, both patterns; NOT re-read: the VM-route refusals
 (code-cap, both forms, no plain/whole split — outside the rule's shape).
+
+## 2026-09-22 (twenty-ninth session, part 2) — [B71] collected: 7/7, P1-P3 all confirmed, [B70] OWED discharged
+
+The window ran through the session reset exactly as designed
+(22:10:51-01:53:11 EDT, marker seen by the heartbeat cron after the
+harness memory heuristic reaped the first watcher — the known hazard,
+recovered by folding the marker check into the cron). 7/7 cells
+measured at attempt 1; store 210 → 217; the window's own sidecar regen
+30/30.
+
+Collected as commit ca504cb: the wrapfix report group (seven files,
+sidecar determinism-checked), the P1/P2 scoring probe
+(docs/dev/measurements/2026-09-22-b71-wrapfix-p1p2-scoring.{py,txt}),
+upstream U7, plan.md [B71] completed + [B70] OWED closed,
+reports/CLAUDE.md entry. The reading, in brief: P1 CONFIRMED (both
+CASE-1 patterns compile whole-subject everywhere; all seven refused
+before), P2 CONFIRMED (outcomes unchanged; emit +2 B only on the two
+already-compiling free-spacing whole-subject artifacts × 4 pcrec
+configs), P3 CONFIRMED (721/774 unchanged under the reporter's own R8
+rule vs the 2026-09-20 fullroster TSV — 93.2%, the day noise floor;
+all 53 movers on byte-unchanged plain artifacts; vectorscan's
+16-slower/3-faster ≤×1.20 drift stated, not absorbed). Bonus finding
+U7: vectorscan's plain-form refusal of the CASE-1 patterns is its own
+"Unterminated comment" parse stance — the [B70] wrap's newline
+terminates the comment, so the wrapped form now compiles while plain
+still refuses; PCRE defines end-of-pattern as a comment terminator, so
+the plain form is well-formed PCRE.
+
+Matrix-summary artifact republished in place (v2): the pin note now
+states the five d34c9131-era matrices are historical (all six
+fullroster-25b1984f groups committed), capability current and
+re-confirmed by this window. The full matrix wave-2 re-render (five
+matrix swaps + per-set prose re-derivation — several claims invert at
+25b1984f, e.g. altwide's ci-256 AUTO refusal) stays queued; the swap
+without the prose work would make the page lie.
+
+Validation: check-schema green, check-interpret 186/186 (grew by one
+with the new sidecar). The [B41] regen contract is satisfied by the
+window's own close.
