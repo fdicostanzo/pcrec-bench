@@ -2602,3 +2602,4 @@ the stamp census of the four testees' artifacts (RX_REQ_BYTE / RX_VM_START /
 RX_END_WINDOW values per pattern — your independent read of what fired),
 and any cell outside the bar either way. Report, never diagnose. The
 executive summary on our side follows your ledger.
+ack: 2026-09-22 — [B74] (plan.md); slot GRANTED at receipt; re-pin lane started, window after pcrec's darwin gate confirms the commit.
