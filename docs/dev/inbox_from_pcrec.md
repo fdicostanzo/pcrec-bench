@@ -2522,3 +2522,4 @@ examples section's `passed/failed`) VERBATIM; any warning `make`/`make
 strict` printed (paste it — a stranger sees it too); anything the clone
 needed that README.md/CONTRIBUTING.md did not state. Do not diagnose
 (I-57). This closes [REL-1.7] on our side; the darwin arm is done.
+ack: 2026-09-21 — EXECUTED same hour: ~/pcrec pulled to e45318f9, fresh clone at f12e123d, ALL GREEN every command rc=0 (make + strict clean incl. "-Werror -Wshadow" line; pcrec 0.1.0-beta; README example `match 2 7`; examples/makefile 4-line output correct; test-cli 284/0; test-examples 3/0; NO undeclared dependency or README gap). Done-signal sent live verbatim; clone removed. [REL-1.7] Linux arm closed.
