@@ -5358,3 +5358,29 @@ ext-bench testees across six engines.
 - Process: the lane disclosed one pkill -f (Chromium profile lock) —
   the BD3 rule stands, no stray processes resulted, recorded here so
   the violation is visible history, not smoothed away.
+
+## 2026-09-21 (night) — twenty-eighth session CLOSES at Frank's word ("let's reset session"); [B71] launched detached to run through the reset
+
+- I-84 executed and closed both arms same hour ([REL-1.7]: the
+  0.1.0-beta stranger build all green, 284/0 CLI cases).
+- [B71] the capability@0.1 refresh (seven attempters, one window,
+  single-variable = the [B70] wrap spelling) LAUNCHED DETACHED
+  22:10:51 EDT after its P1-P3 predictions were committed in the plan
+  row PRE-LAUNCH (18d5e42; the TSV transcription is the next
+  session's option). Log /var/tmp/b71_window.log, marker `B71 WINDOW
+  DONE`. Discharges the [B70] OWED wrap re-measure in full. The next
+  session's first work item: collect, index, report, score, refresh
+  the artifact page's stale note.
+- Session totals (2026-09-19 night → now), by plan row: [B58] the
+  abi-27 re-pin; [B59] rust's five first samples; [B60]/[B62] the
+  time-axis AFTER and the branch-A mover closure; [B61] the six-set
+  fullroster matrix wave + the summary artifact; [B63]/[B64] the
+  staleness burn-down (the 18→4 refusal-boundary finding → I-80's
+  two-rung mechanism → [B65]/O-41); [B66]/[B67] the results viewer,
+  v1.0 through all eight review notes; [B68] KB-24; [B69] the refusal
+  census; [B70] the instrument remedies + R-STATUS-14; executor items
+  I-77/I-78 (batteries), the nltriage probe, I-81/I-82 (the m=2
+  instability confirmed), I-84; outbox O-36..O-43 all sent and acked.
+  Gate of record 5/73/0 · 444/444 · OK · 185/185. Store 210.
+- Closing per §7: wake.md rewritten reset-shaped, heartbeat deleted,
+  no agents live, tree clean, master pushed.
