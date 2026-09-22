@@ -1367,6 +1367,119 @@ def check_high_byte_pattern_argv():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_rust_multiline_diagnostic():
+    """`docs/dev/lanes/b69census_report.md` 4's "gap found" (2026-09-17
+    census, not fixed there): `rust-default`'s `did-not-compile`
+    diagnostic was TRUNCATED AT THE SOURCE to
+    `"regex build failed [Syntax]: regex parse error:"`, with the actual
+    parser detail (the offending snippet, the caret, the one-line
+    summary) dropped -- not by anything in `report.py` (KB-18's fix,
+    which only ever sees what the record STORES), but by
+    `driverrun.run_driver`'s per-PHYSICAL-LINE parser
+    (`proc.stdout.splitlines()`): `regex::Error`'s own `Display` is
+    genuinely multi-line, and every physical line after the first
+    carried no recognizable `kind<TAB>...` prefix at all, so
+    `pcrecbench.adapters.parse_driver_line` silently dropped it.
+
+    Fixed at TWO points, both exercised here: `src/main.rs`'s
+    `escape_for_transport` (backslash escaped FIRST, then the two
+    line-break bytes) folds the whole multi-line message into ONE
+    physical line before it is ever written to stdout; `adapter.py`'s
+    `_unescape_driver_text` undoes it, once, right after `run_driver`
+    returns -- so `classify_refusal` and the record's own `diagnostic`
+    field both see the real, full, multi-line message, unescaped, exactly
+    as `report.py`'s KB-18 rendering already expects a `diagnostic` field
+    to look (a real embedded newline, not an escape sequence).
+
+    Three arms: (1) the WITNESS -- `(abc` (an unbalanced group) compiled
+    through the real `rust-default` adapter must carry the offending
+    snippet, the caret line AND the one-line summary, not merely the
+    truncated header; (2) the CONTROL -- an ordinary single-line
+    diagnostic (the driver's own UTF-8-validation refusal) must render
+    identically to before this fix, with no stray escape artifacts; (3) a
+    DIRECT unit test of `_unescape_driver_text`'s reversibility against a
+    hand-built escaped string carrying a real backslash immediately
+    beside a real newline -- the one case where a naive two-pass
+    unescape (undo `\\n` before undoing `\\\\`, or vice versa) could
+    mis-decode, proven correct by construction here rather than only by
+    the witness's own (backslash-free) text."""
+    print("-- rust-default: a multi-line did-not-compile diagnostic "
+          "survives whole (KB, b69census gap) --")
+    if "rust" not in _ad.discover():
+        ok("rust multi-line diagnostic: n/a (no rust adapter discovered)",
+           "skipped")
+        return
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "pcrecbench_testee_rust_selfcheck",
+        os.path.join(ROOT, "testees", "rust", "adapter.py"))
+    rust_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rust_mod)
+
+    a = _ad.discover()["rust"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-rustdiag-")
+    try:
+        a.prepare("rust-default", tmp)
+
+        # 1. the witness: a multi-line regex::Error.
+        cp = a.compile("rust-default", "kb-rust-multiline", b"(abc", {},
+                       1, tmp)
+        diag = cp.forms[_ad.FORM_PLAIN].diagnostic or ""
+        want_lines = ["regex build failed [Syntax]: regex parse error:",
+                     "(abc", "error: unclosed group"]
+        missing = [w for w in want_lines if w not in diag]
+        if missing or diag.count("\n") < 2:
+            bad("rust-default: a multi-line diagnostic survives whole",
+                "missing=%r newlines=%d diag=%r"
+                % (missing, diag.count("\n"), diag[:300]))
+        else:
+            ok("rust-default: a multi-line diagnostic survives whole",
+               "%d newline(s), all %d expected fragment(s) present"
+               % (diag.count("\n"), len(want_lines)))
+
+        # 2. the control: an ordinary single-line diagnostic is unaffected.
+        cp2 = a.compile("rust-default", "kb-rust-singleline", b"\x93bad",
+                        {}, 1, tmp)
+        diag2 = cp2.forms[_ad.FORM_PLAIN].diagnostic or ""
+        if diag2.startswith("pattern is not valid UTF-8 at byte 0") \
+                and "\\n" not in diag2 and "\n" not in diag2:
+            ok("rust-default CONTROL: an ordinary single-line diagnostic "
+               "is unaffected", diag2)
+        else:
+            bad("rust-default CONTROL: an ordinary single-line diagnostic "
+                "is unaffected", repr(diag2))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # 3. direct unit test of the unescape, including the adjacent-
+    # backslash-and-newline edge case escape_for_transport's own
+    # docstring works through by hand.
+    cases = [
+        ("regex parse error:\\n    (abc\\n    ^\\nerror: unclosed group",
+         "regex parse error:\n    (abc\n    ^\nerror: unclosed group"),
+        ("no backslashes or newlines here", "no backslashes or newlines here"),
+        ("literal backslash then n: \\\\n (not an escaped newline)",
+         "literal backslash then n: \\n (not an escaped newline)"),
+        # a REAL backslash immediately followed by a REAL newline in the
+        # ORIGINAL text escapes to three backslashes then 'n' (the
+        # doubled original backslash, then the newline's own \n escape,
+        # run together with no separator) -- the case a naive
+        # regex-substitution unescape could mis-split.
+        ("\\\\\\n", "\\\n"),
+    ]
+    failures = []
+    for escaped, want in cases:
+        got = rust_mod._unescape_driver_text(escaped)
+        if got != want:
+            failures.append("in=%r want=%r got=%r" % (escaped, want, got))
+    if failures:
+        bad("rust adapter: _unescape_driver_text reverses escape_for_transport",
+            "; ".join(failures))
+    else:
+        ok("rust adapter: _unescape_driver_text reverses escape_for_transport",
+           "%d case(s), incl. an adjacent backslash+newline" % len(cases))
+
+
 def check_run_smoke():
     """A full `run` of ONE cell into a SCRATCH store, validated. Not a
     measurement: --trials 1 --iters 1, one regime, --force-unquiet, and the
@@ -9801,6 +9914,7 @@ def main():
     check_calibration_meets_target()
     check_frame_buffer()
     check_high_byte_pattern_argv()
+    check_rust_multiline_diagnostic()
     check_run_smoke()
     check_tier_schema()
     check_store_tier_refusal()

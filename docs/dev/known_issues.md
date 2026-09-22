@@ -1196,3 +1196,38 @@ future lane: scope the live-store arm to an index-prefiltered slice, or
 move the live-store validation to a separate non-default target the
 re-pin/window rituals invoke deliberately. Until then: give check-report
 a ≥30-min gnutimeout and never kill it at 10 min expecting failure.
+
+## KB-26 (2026-09-17, flagged by `docs/dev/lanes/b69census_report.md` §4's "gap found"; FIXED 2026-09-22, lane b72smalls) — `rust-default`'s multi-line `did-not-compile` diagnostic was truncated at the driver PROTOCOL, not in the reporter
+
+The b69 capability census found `rust-default`'s diagnostic for a syntax
+refusal stubbed to `"regex build failed [Syntax]: regex parse error:"`
+with the actual parser detail (offending snippet, caret, one-line
+summary) missing — flagged as "worth a `testees/rust/CLAUDE.md`-side
+fix" but out of that lane's scope. Cause: `regex::Error`'s own `Display`
+is genuinely multi-line, and `pcrecbench.driverrun.run_driver` reads a
+driver's stdout ONE PHYSICAL LINE at a time
+(`proc.stdout.splitlines()`); every physical line after the diagnostic's
+first carried no recognizable `kind<TAB>...` prefix, so
+`pcrecbench.adapters.parse_driver_line` silently dropped it before the
+text ever reached `classify_refusal` or a record's `diagnostic` field —
+a TRANSPORT bug, not a rendering one (KB-18, which fixed the REPORTER's
+own truncation of a `diagnostic` field already IN a record, never sees
+text the driver protocol lost before a record could ever carry it).
+
+Fix, two points: `testees/rust/src/main.rs`'s `escape_for_transport`
+folds a multi-line message into ONE physical line before writing it
+(backslash escaped first, then the two line-break bytes — the same
+order KB-18's rendering-side escape uses for the opposite direction);
+`testees/rust/adapter.py`'s `_unescape_driver_text` undoes it, once,
+immediately after `run_driver` returns — scoped to this adapter's own
+driver text only, so no other engine's diagnostic is reinterpreted by
+the convention. `tools/selfcheck.py`'s `check_describe_schema_shape`'s
+neighbour, `check_rust_multiline_diagnostic` (`make check-harness`): the
+`(abc` witness carries every fragment of the real message (not the
+truncated header), an ordinary single-line diagnostic renders
+byte-identical to before the fix (the control), and
+`_unescape_driver_text` is proven reversible directly against a
+hand-built case where a real backslash sits immediately beside a real
+newline in the original text — the one shape a naive two-pass unescape
+could mis-decode. See `testees/rust/CLAUDE.md`'s "Refusals, first-class"
+section for the full account.

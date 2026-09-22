@@ -181,6 +181,32 @@ fn error_variant_name(e: &regex::Error) -> String {
         .to_string()
 }
 
+/// TRANSPORT escaping for a driver `error<TAB>TEXT` line
+/// (`pcrecbench/adapters.py`'s protocol docstring). The protocol is read
+/// ONE PHYSICAL LINE at a time (`driverrun.run_driver`'s
+/// `proc.stdout.splitlines()`), so TEXT must never contain a raw
+/// newline -- and `regex::Error`'s own `Display` genuinely does (a
+/// multi-line "regex parse error:" + offending snippet + caret + one-line
+/// summary, witnessed on `(abc`: four physical lines under one logical
+/// error). Before this helper existed, everything after the first
+/// physical line was silently dropped -- not by this driver, but by the
+/// python side's per-line parser, which has no way to know a "line" was
+/// really a continuation (`docs/dev/lanes/b69census_report.md 4`'s "gap
+/// found", closed here).
+///
+/// Escapes BACKSLASH FIRST, then the two line-break bytes, so the
+/// encoding is losslessly reversible -- the same order
+/// `testees/rust/adapter.py`'s `_unescape_driver_text` undoes on read,
+/// and the same order KB-18's RENDERING-side escape already uses for the
+/// opposite direction (`report.py`'s `_diagnostic_full`, which escapes a
+/// STORED record's real embedded newline for one-physical-line display).
+/// Scoped to this driver's own emission only: the shared protocol reader
+/// (`pcrecbench/adapters.py`'s `parse_driver_line`) is untouched, so no
+/// other engine's diagnostic text is reinterpreted by this convention.
+fn escape_for_transport(s: &str) -> String {
+    s.replace('\\', "\\\\").replace('\n', "\\n").replace('\r', "\\r")
+}
+
 fn caps_string(n_groups: usize, spans: &[(i64, i64)]) -> String {
     if n_groups == 0 || spans.is_empty() {
         return "-".to_string();
@@ -386,7 +412,8 @@ fn main() {
     let pat_bytes = match slurp(&pattern_path) {
         Ok(b) => b,
         Err(e) => {
-            emit!("error\tcannot read pattern {}: {}", pattern_path.display(), e);
+            emit!("error\t{}", escape_for_transport(&format!(
+                "cannot read pattern {}: {}", pattern_path.display(), e)));
             std::process::exit(2);
         }
     };
@@ -400,11 +427,9 @@ fn main() {
     let pat_str: &str = match std::str::from_utf8(&pat_bytes) {
         Ok(s) => s,
         Err(e) => {
-            emit!(
-                "error\tpattern is not valid UTF-8 at byte {}: {}",
-                e.valid_up_to(),
-                e
-            );
+            emit!("error\t{}", escape_for_transport(&format!(
+                "pattern is not valid UTF-8 at byte {}: {}",
+                e.valid_up_to(), e)));
             std::process::exit(3);
         }
     };
@@ -424,7 +449,8 @@ fn main() {
             }
             Err(e) => {
                 let name = error_variant_name(&e);
-                emit!("error\tregex build failed [{}]: {}", name, e);
+                emit!("error\t{}", escape_for_transport(&format!(
+                    "regex build failed [{}]: {}", name, e)));
                 std::process::exit(3);
             }
         }
@@ -449,7 +475,8 @@ fn main() {
     let subs = match load_list(&list_path) {
         Ok(v) => v,
         Err(e) => {
-            emit!("error\tcannot read subject list {}: {}", list_path.display(), e);
+            emit!("error\t{}", escape_for_transport(&format!(
+                "cannot read subject list {}: {}", list_path.display(), e)));
             std::process::exit(2);
         }
     };

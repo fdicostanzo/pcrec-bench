@@ -352,6 +352,30 @@ a closed, structural signal") is derived in `adapter.py`'s
 refusal (which carries no bracketed variant name — recognized by its own
 fixed message prefix, `"pattern is not valid UTF-8 at byte"`).
 
+**FIXED 2026-09-22 (lane b72smalls, `docs/dev/lanes/b69census_report.md`
+§4's "gap found"): `<message>` is `regex::Error`'s `Display`, which is
+genuinely MULTI-LINE for a syntax error (a "regex parse error:" header,
+the offending snippet, a caret line, and a one-line summary — four
+physical lines under one logical error, witnessed on `(abc`), and the
+driver protocol (`pcrecbench/adapters.py`) reads stdout ONE PHYSICAL
+LINE at a time — everything after the diagnostic's first physical line
+used to vanish silently (dropped by `parse_driver_line`, which saw no
+recognizable `kind<TAB>...` prefix on the continuation lines, not a
+crash and not a reported error). `src/main.rs`'s `escape_for_transport`
+now folds the whole message into ONE physical line before it is ever
+written (backslash escaped first, then the two line-break bytes);
+`adapter.py`'s `_unescape_driver_text` undoes it immediately after
+`run_driver` returns, so `classify_refusal` and the record's own
+`diagnostic` field both see the real, full, multi-line message — exactly
+the shape KB-18's reporter-side rendering already expects a `diagnostic`
+field to carry. `tools/selfcheck.py`'s `check_rust_multiline_diagnostic`
+(`make check-harness`) is the regression guard: the `(abc` witness
+carries every fragment (not just the truncated header), an ordinary
+single-line diagnostic is byte-identical to before this fix, and
+`_unescape_driver_text` is proven reversible directly, including the one
+edge case where a real backslash sits immediately beside a real newline
+in the original message.**
+
 **`giveup:<code>` never fires from this driver.** The `regex` crate
 guarantees worst-case LINEAR time in haystack length by construction (no
 catastrophic backtracking is possible) and its public match API

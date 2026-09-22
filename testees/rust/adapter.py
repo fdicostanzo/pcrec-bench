@@ -118,6 +118,60 @@ METADATA_DECL = {
     },
 }
 
+def _unescape_driver_text(s):
+    """Undo `src/main.rs`'s `escape_for_transport` on one driver `error`
+    line's TEXT (`pcrecbench/adapters.py`'s `error<TAB>TEXT` protocol
+    row, read one PHYSICAL LINE at a time by `driverrun.run_driver`).
+    `docs/dev/lanes/b69census_report.md 4`'s "gap found": `regex::Error`'s
+    `Display` is genuinely multi-line for a syntax error (a
+    "regex parse error:" header, the offending snippet, a caret, and a
+    one-line summary -- four physical lines under one logical error,
+    witnessed on `(abc`), and the driver protocol has no way to carry a
+    raw embedded newline through a line-based reader; everything after
+    the first physical line was silently dropped before this fix.
+
+    The driver now escapes a literal backslash FIRST, then the two
+    line-break bytes, before emitting (`escape_for_transport`'s own
+    docstring). A single LEFT-TO-RIGHT scan undoes it correctly even
+    when an original backslash sits directly beside an original newline
+    (verified by hand: `\\` + real LF escapes to three backslashes
+    followed by `n`, which this scan still decodes back to one backslash
+    plus one real LF) -- greedy two-character matching is safe here
+    specifically BECAUSE the driver escapes backslash before it ever
+    introduces a new one for `\n`/`\r`, so every backslash in the
+    escaped text is unambiguously the START of one of exactly three
+    two-character units.
+
+    Scoped to THIS adapter's own driver text only (`out.errors`, never
+    `out.stderr`, and never another engine's diagnostic) -- the shared
+    protocol reader (`pcrecbench/adapters.py`'s `parse_driver_line`) is
+    deliberately untouched, so no other engine's diagnostic is
+    reinterpreted by this convention."""
+    if s is None or "\\" not in s:
+        return s
+    out = []
+    i, n = 0, len(s)
+    while i < n:
+        c = s[i]
+        if c == "\\" and i + 1 < n:
+            nxt = s[i + 1]
+            if nxt == "n":
+                out.append("\n")
+                i += 2
+                continue
+            if nxt == "r":
+                out.append("\r")
+                i += 2
+                continue
+            if nxt == "\\":
+                out.append("\\")
+                i += 2
+                continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 _ERROR_LINE_RE = None  # set below, after re import guard
 
 
@@ -363,6 +417,14 @@ class Adapter(_ad.Adapter):
                "--size-limit", str(size_limit),
                "--dfa-size-limit", str(dfa_size_limit)]
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
+        # KB (docs/dev/lanes/b69census_report.md 4's "gap found"): the
+        # driver's own `error` lines are transport-escaped
+        # (`src/main.rs`'s `escape_for_transport`, since a `regex::Error`
+        # Display is genuinely multi-line) -- undo it HERE, once, before
+        # any diagnostic text is read, so every downstream consumer
+        # (`classify_refusal`, the record's `diagnostic` field) sees the
+        # real, full, multi-line message.
+        out.errors = [_unescape_driver_text(e) for e in out.errors]
 
         if out.timed_out:
             return _ad.CompileResult("timed-out", diagnostic=out.diagnostic())
