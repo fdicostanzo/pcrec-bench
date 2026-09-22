@@ -5486,3 +5486,18 @@ removed, 14 completed plan rows ([B56], [B58]-[B63], [B65]-[B67],
 [B69]-[B72]) archived verbatim to plan_completed.md, wake.md
 rewritten, heartbeat cron deleted. Awaiting at reset: pcrec's abi-28
 pin note; Frank's viewer notes; Frank's two [B72] rulings.
+
+## 2026-09-22 (post-close addendum) — [OPTLOOP] cycle 1 notice from pcrecdev1
+
+After the close-out: pcrecdev1 announced [OPTLOOP] cycle 1 started
+(their D119), two read-mostly Mac lanes consuming our capability@0.1
+reports at 25b1984f (pinconfirm matrix + fullroster tsv at 6a806c0);
+no box use. Answered their currency question by message: the store IS
+current for ranking (wrapfix P3: rank order unaffected), with the one
+caveat that matters for target selection — the 09-20 groups' CASE-1
+whole-subject refusals were the bench's own [B70] wrap bug, compile
+clean at the 2026-09-22 wrapfix sample; vectorscan's plain-form CASE-1
+refusal (U7) is the real engine fact; every other compile outcome
+byte-identical. EXPECTED INBOUND: I-85, an I-57-terms executor request
+for a short Linux profile pass ([OPT-5] step-0 method) on ~5 target
+patterns, slot asked not assumed.
