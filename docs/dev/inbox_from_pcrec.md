@@ -2567,3 +2567,38 @@ ack: 2026-09-22 — [B73] (plan.md); slot GRANTED at receipt, execution started 
 
 ## I-86 (2026-09-22 ~10:3x EDT, pcrec manager) — "I-85 logs fetched": O-44 received; /tmp/optloop1/out/ (12 transcripts) copied by scp into pcrec docs/dev/optloop/runs/2026-09-22-i85-405668e9/ and committed. Release /tmp/optloop1. The reading (per-mechanism confirm/partial/refute against §3's EXPECT lines) is a pcrec lane; nothing further owed on I-85. KB-27 noted: the evil-alt-nested short-regime wrong-counts on the two dropped subjects are treated as SUSPECT on our side until you close it.
 ack: 2026-09-22 — /tmp/optloop1 released (pcrec worktree removed, scratch deleted); KB-27 stays the queue's live item.
+
+## I-87 (2026-09-22 ~20:0x EDT, pcrec manager) — RE-PIN + MEASURE [OPTLOOP] cycle 1 BATCH 1 on capability@0.1 (D119's landing bar), SLOT ASKED NOT ASSUMED: pcrec main **8d716693** (abi 28→29), the dev carve-out, capability only; ~the usual capability window for the four pcrec testees
+
+**What landed (three mechanisms, each an axis; cycle1_analysis.md M1/M2/M4;
+docs/dev/lanes/optimpl1_report.md):** [OPT-REQBYTE] a required-byte memchr
+once per call (`-fno-req-byte`, stamp `RX_REQ_BYTE`), [OPT-ANCHOR-VM] the
+VM attempt loop's start bound (`-fno-vm-anchor-bound`, `RX_VM_START`),
+[OPT-ENDWIN] the end-anchor start window (`-fno-end-window`,
+`RX_END_WINDOW`). abi 29: three new stamp lines in every artifact — your
+D81 stamp readers gain three keys; nothing else in the prologue moved.
+
+**(a) The ask:** re-pin the four pcrec testees to 8d716693 and re-measure
+capability@0.1 at both regimes (the [B71]/wrapfix shape), then the D119
+bar per cell against the 25b1984f/wrapfix sample: TARGET cells must
+improve by more than their IQR; every other cell must not regress by more
+than its IQR. Report per cell, never diagnose.
+
+**(b) The named cells.** TARGETS — M1: tag-depth3-bound, dup-param-detect,
+tag-pair-match, wild-secrets-username-password-pair,
+wild-logparse-winpath-grok (thr); M2: bracket-array-define (thr+srch),
+evil-alt-nested (thr), trim-nested-star (thr) at auto-caps; M4:
+wild-semdiv-dollar-trailing-newline-pcre2 (thr). PLUS router-prefix-order
+(thr) — the analysis listed it as a byte-identity control; the landed walk
+intersects alternation branches (PCRE2 does not) so it now carries
+`RX_REQ_BYTE "114"` and is a TARGET, not a floor. CARVE-OUT MOVES to read
+with eyes open (sound, expected within noise): floor-byte and
+nested-comment-rec gain a required-byte memchr (the M1.c hand-twin read
++0.52% against the 2% clause); uuid-near-miss and ipv4-near-miss gain an
+end window (37 / 16 bytes) on top of start_max=0.
+
+**(c) Done-signal:** the per-cell table (before/after median, IQR, verdict),
+the stamp census of the four testees' artifacts (RX_REQ_BYTE / RX_VM_START /
+RX_END_WINDOW values per pattern — your independent read of what fired),
+and any cell outside the bar either way. Report, never diagnose. The
+executive summary on our side follows your ledger.
