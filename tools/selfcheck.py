@@ -2636,6 +2636,140 @@ def check_kb1_runtime_options():
             "runtime_options %s" % block.get("runtime_options"))
 
 
+def _testee_schema_sub():
+    """The record schema's own `setup.testee` sub-object, `$defs`
+    attached -- the SAME shape `record.build_setup` copies a `describe()`
+    block into VERBATIM (`setup["testee"] = dict(testee_block)`,
+    `pcrecbench/record.py:277`) before deriving `testee_id` onto it. Built
+    the same way KB-4's `check_v11_fields`/`check_frame_buffer` neighbours
+    already build a validator for one `$defs` sub-object (a plain dict
+    copy plus its own `$defs`, handed to `jsonschema.validate` directly --
+    no second schema-loading path)."""
+    import json as _json
+    with open(os.path.join(ROOT, "schema", "record.schema.json")) as _fh:
+        schema = _json.load(_fh)
+    sub = dict(schema["$defs"]["setup"]["properties"]["testee"])
+    sub["$defs"] = schema["$defs"]
+    return sub
+
+
+def _validate_testee_block(block, testee_sub):
+    """Mirrors `record.build_setup`'s own two steps on a `describe()`
+    block -- `tier` is lifted onto `setup`, never a testee field
+    (`harness.run_cell`), and `testee_id` is DERIVED, never present in
+    `describe()`'s own return (`record.derive_testee_id`, read off the
+    OTHER fields `describe()` did supply) -- before validating, so a
+    `testee_id`-shaped `required` failure never masks the field this
+    check is actually about. Returns `None` on success, else
+    `"<field path>: <message>"`."""
+    import jsonschema
+    b = dict(block)
+    b.pop("tier", None)
+    b["testee_id"] = _rec.derive_testee_id(b)
+    try:
+        jsonschema.validate(b, testee_sub)
+        return None
+    except jsonschema.exceptions.ValidationError as e:
+        path = ".".join(str(p) for p in e.absolute_path) or "(document)"
+        return "%s: %s" % (path, e.message)
+
+
+def check_describe_schema_shape():
+    """KB-21 (docs/dev/known_issues.md) FOLLOW-UP: the re2 adapter's
+    `describe()` block carried `runtime_options` entries as BARE STRINGS
+    (`'longest_match=true'`) instead of the schema's `named_value` shape
+    (`{"name": ..., "value": ...}`) -- caught only at `store.write()`,
+    after the `re2-longest` capability-window cell had run every trial
+    (2026-09-18: `re2-default`'s `runtime_options` was `[]`, so it never
+    exercised a non-empty entry's shape, and nothing validated a new
+    adapter's `describe()` before its first canonical write). This check
+    closes the CLASS: it validates `describe()`'s block against the
+    record schema's OWN `setup.testee` sub-schema -- the exact object
+    `build_setup` writes it into verbatim -- for one representative
+    testee of EVERY discovered adapter, in the smoke tier (no trial, no
+    store write), so the NEXT such mismatch fails `make check-harness`
+    the day the adapter is written, not in a measured window months
+    later.
+
+    Both directions: every real adapter's real `describe()` block must
+    validate clean (the positive sweep below); a REPRODUCTION of the
+    exact KB-21 shape -- the re2 adapter's own real block with
+    `runtime_options` reverted to a bare string -- must be REFUSED BY
+    NAME (the SCHEMA error naming `runtime_options`), with the corrected
+    `named_value` form (the block `describe()` actually gives today)
+    validating clean as the control."""
+    print("-- KB-21 follow-up: describe() validates against schema.testee --")
+    testee_sub = _testee_schema_sub()
+
+    # ---- positive sweep: every discovered adapter, one representative
+    # testee (the FIRST by sorted id -- for `pcrec` this is `pcrec-auto`,
+    # never `pcrec-local`, which needs $PCREC_BIN and is scratch by
+    # construction; `check_pcrec_local` owns that adapter's own describe()
+    # separately).
+    adapters = _ad.discover()
+    if not adapters:
+        bad("KB-21: describe() vs schema.testee (positive sweep)",
+            "no adapters discovered")
+    else:
+        failures, checked = [], []
+        for name, adapter in sorted(adapters.items()):
+            tids = sorted(adapter.testees())
+            if not tids:
+                continue
+            tid = tids[0]
+            tmp = tempfile.mkdtemp(prefix="pcrecbench-kb21-%s-" % name)
+            try:
+                adapter.prepare(tid, tmp)
+                block = adapter.describe(tid, tmp)
+            except Exception as e:  # noqa: BLE001
+                failures.append("%s/%s: describe() raised: %s" % (name, tid, e))
+                continue
+            finally:
+                shutil.rmtree(tmp, ignore_errors=True)
+            err = _validate_testee_block(block, testee_sub)
+            if err:
+                failures.append("%s/%s: %s" % (name, tid, err))
+            else:
+                checked.append("%s/%s" % (name, tid))
+        if failures:
+            bad("KB-21: describe() vs schema.testee (positive sweep)",
+                "; ".join(failures)[:500])
+        else:
+            ok("KB-21: describe() vs schema.testee (positive sweep)",
+               "%d adapter(s): %s" % (len(checked), ", ".join(checked)))
+
+    # ---- negative: the re2 adapter's OWN real block, `runtime_options`
+    # reverted to KB-21's exact bug shape.
+    try:
+        re2 = _ad.discover()["re2"]
+    except KeyError:
+        bad("KB-21: a bare-string runtime_options entry is refused BY NAME",
+            "no re2 adapter discovered")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-kb21-neg-")
+    try:
+        re2.prepare("re2-longest", tmp)
+        good_block = re2.describe("re2-longest", tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    bug_block = dict(good_block, runtime_options=["longest_match=true"])
+    err = _validate_testee_block(bug_block, testee_sub)
+    if err and "runtime_options" in err:
+        ok("KB-21: a bare-string runtime_options entry is refused BY NAME",
+           err[:200])
+    else:
+        bad("KB-21: a bare-string runtime_options entry is refused BY NAME",
+            "err=%r (expected a runtime_options SCHEMA refusal)" % (err,))
+
+    err = _validate_testee_block(good_block, testee_sub)
+    if err is None:
+        ok("KB-21: the fixed named_value shape validates clean (control)",
+           "runtime_options=%r" % good_block.get("runtime_options"))
+    else:
+        bad("KB-21: the fixed named_value shape validates clean (control)", err)
+
+
 # --------------------------------------- 14 the abi 4-8 mechanism stamps
 
 #: The artifacts the stamp check compiles, and what each is FOR. Every row
@@ -9678,6 +9812,7 @@ def main():
     check_rxt_export()
     check_rxt_source_load()
     check_kb1_runtime_options()
+    check_describe_schema_shape()
     check_mechanism_stamps()
     check_deny_flag_controls()
     check_opt42_preempts_collapse_policy()

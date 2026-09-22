@@ -993,6 +993,25 @@ synthetic record per config would have caught this at merge time, not
 in a window) — the same class of gap KB-12 closed for pattern/subject
 ids.
 
+**FOLLOW-UP BUILT (2026-09-22, lane b72smalls):** `tools/selfcheck.py`'s
+`check_describe_schema_shape` (`make check-harness`, wired in right
+after `check_kb1_runtime_options`). Validates `describe()`'s own block
+against `schema/record.schema.json`'s `setup.testee` sub-schema — the
+exact shape `record.build_setup` copies it into verbatim
+(`pcrecbench/record.py:277`, `setup["testee"] = dict(testee_block)`) —
+for one representative testee of EVERY discovered adapter (`onig`,
+`pcre2`, `pcrec`, `re2`, `rust`, `tre`, `vectorscan`; ~9 s total on this
+box), mirroring the two real steps `build_setup` performs first (`tier`
+lifted off, `testee_id` DERIVED via `record.derive_testee_id` rather
+than expected present, since `describe()` never carries it itself).
+Both directions: the positive sweep over all seven adapters' real
+blocks; and, on the `re2` adapter's own REAL `describe()` block (not a
+hand-typed stand-in), `runtime_options` reverted to this entry's exact
+bug shape (`["longest_match=true"]`) is refused BY NAME (`runtime_
+options.0: 'longest_match=true' is not of type 'object'`), with the
+unmodified (fixed) block validating clean as the control. Closes this
+KB entry's own follow-up.
+
 ## KB-22 (2026-09-18, FIXED same lane) — `scripts/regen_sidecars.py` recovered `report`/`index`/`predictions` from a sidecar's own stamp but not `subject_grain`, silently dropping R-BUCKET-DOMINATED's input on every regeneration
 
 Found by lane `b53regen` mid-wave, the v18 full-report regen's own
