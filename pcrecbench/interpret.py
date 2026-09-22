@@ -2063,10 +2063,76 @@ def load_predictions(path):
                 f"clean majority (predicate_audit_v1.md F13); use `max` "
                 f"(the single worst row), `identity` or `count` instead")
         row["_selector"] = parse_selector(row["selector"], where)
+        # interpret_subject_grain_v1.md §6 Q6 (i), RATIFIED (Frank,
+        # 2026-09-17: "both, under Frank's stated general posture 'fail
+        # loudly generally'"): a `compile:` quantity's selector may not
+        # name `subject_or_na` or `regime_or_na`. Closes Cause B (§1.2):
+        # the report's `compile` section carries neither dimension --
+        # `render_tsv` writes the EMPTY STRING there, never `n/a` -- so a
+        # clause like P2's (`regime_or_na=n/a` against a `compile:`
+        # quantity) can only ever match zero rows, which surfaced only as
+        # a silent `not-evaluable` an author had to re-derive by hand
+        # against a ledger (`docs/dev/ledgers/2026-09-17-capability-0.1-
+        # first-a770139e.md` §7.1) rather than at authoring time.
+        if row["quantity"] in _COMPILE_METRIC:
+            named = [k for k in ("subject_or_na", "regime_or_na")
+                    if k in row["_selector"]]
+            if named:
+                raise PredictionError(
+                    f"{where}: a compile: quantity's selector may not name "
+                    f"{named} -- the compile section carries neither "
+                    f"dimension (interpret_subject_grain_v1.md §6 Q6 (i)); "
+                    f"drop the clause, or select on `pattern`/`form`/"
+                    f"`testee` instead")
         row["_reducer"] = reducer
         row["_where"] = where
         rows.append(row)
     return rows
+
+
+def check_testee_globs(predictions, index):
+    """interpret_subject_grain_v1.md §6 Q6 (ii), RATIFIED: every
+    `testee=` glob in a selector must match AT LEAST ONE MEASURED index
+    testee for its own (subbench, version) -- closes Cause C (§1.2): P4.a's
+    `testee=pcrec_*-auto-*` matched no testee that has ever existed
+    (`pcrec_a770139e_auto-caps-simdna` carries an underscore before
+    `auto`, not a hyphen), discovered only by hand-deriving the not-
+    evaluable reason against a ledger rather than at authoring time.
+
+    VACUOUS when the (subbench, version) has NO measured index row at
+    all -- an unmeasured population is Cause C's own stated exception
+    (§1.2: "vacuous when that population is unmeasured"), and such a
+    clause still fails honestly and separately, later, as not-evaluable
+    for the ordinary reason (nothing measured yet); this check is about
+    a glob that could never match ANYTHING EVEN ONCE MEASURED, which is
+    an authoring defect, not a timing one.
+
+    Store-free (Q6's own qualifier: "neither reads the store"): reads
+    `index.rows` (`store/index.tsv`) only, never a record. `index=None`
+    (no `--index` given) makes every clause vacuous by the same rule
+    `check_stated_utc` already applies for the identical reason."""
+    if index is None:
+        return
+    measured_by_sv = defaultdict(set)
+    for ir in index.rows:
+        if ir["status"] != "measured":
+            continue
+        measured_by_sv[(ir["subbench"], ir["version"])].add(ir["testee_id"])
+    for p in predictions:
+        glob = p["_selector"].get("testee")
+        if not glob:
+            continue
+        testees = measured_by_sv.get((p["subbench"], p["version"]))
+        if not testees:
+            continue  # vacuous: nothing measured yet for this (subbench, version)
+        if not any(_glob_match(glob, t) for t in testees):
+            shown = sorted(testees)
+            raise PredictionError(
+                f"{p['_where']}: testee glob {glob!r} matches NONE of the "
+                f"{len(testees)} MEASURED testee(s) for "
+                f"{p['subbench']}@{p['version']} in {index.path} "
+                f"(interpret_subject_grain_v1.md §6 Q6 (ii)) -- "
+                f"{shown[:5]}{', ...' if len(shown) > 5 else ''}")
 
 
 def _utc_anchor(index, report):
@@ -2615,6 +2681,7 @@ def interpret(report_path, index_path, catalogue_path, predictions_path=None,
     utc_anchor = ({}, {})
     if predictions_path:
         predictions = load_predictions(predictions_path)
+        check_testee_globs(predictions, index)
         utc_anchor = (check_stated_utc(predictions, index, report)
                      if check_utc else _utc_anchor(index, report))
     ctx = Context(cat, report, index, predictions,

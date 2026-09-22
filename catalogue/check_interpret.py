@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import tomllib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -67,6 +68,85 @@ def run_interpret(report, index, predictions=None, fmt="tsv",
                   subject_grain=None):
     return I.interpret(report, index, CATALOGUE, predictions, subject_grain,
                        fmt)
+
+
+def _pred_clause_id(line):
+    """`prediction_id` + `clause` (e.g. `P2` + `.a` = `P2.a`) from one raw
+    TSV data line -- `docs/dev/predictions/CLAUDE.md`'s own compound-id
+    convention, read without going through `load_predictions` (which is
+    exactly the function under test here)."""
+    f = line.split("\t")
+    return f[0] + (f[1] if len(f) > 1 else "")
+
+
+def _tmp_predictions_file(path, keep):
+    """A scratch temp predictions file: `path`'s own header plus only the
+    rows whose `_pred_clause_id` is in `keep`. Caller unlinks it. Lets a
+    fixture file carry several clauses (readable in one place, per the
+    `predictions-inexpressible.tsv` precedent) while a check isolates one
+    at a time -- `load_predictions` stops at its FIRST bad row, so a
+    fixture with two independently-sabotaged rows needs this to prove
+    each one's OWN reason rather than only ever seeing the first."""
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().split("\n")
+    header = lines[0]
+    body = [ln for ln in lines[1:] if ln.strip() and _pred_clause_id(ln) in keep]
+    tmp = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".tsv", delete=False, encoding="utf-8")
+    tmp.write(header + "\n" + "\n".join(body) + "\n")
+    tmp.close()
+    return tmp.name
+
+
+def _load_predictions_with_named_exceptions(path, allowed, seen_allowed, name):
+    """The one NAMED historical exception's own control, both directions:
+    every clause in `path` OTHER than `allowed` (a set of clause ids)
+    must load clean with the exception rows removed -- proving the
+    exception does not silently widen to hide some OTHER, unrelated
+    defect in this file -- and each allowed clause, loaded IN ISOLATION
+    (its own header plus that one row), must fail with Q6 (i)'s own
+    reason (never load clean, and never fail for a DIFFERENT reason) --
+    adding `cid` to `seen_allowed` only when it does. Returns the clean
+    row count. Never touches the committed file itself: every load runs
+    against a scratch temp copy."""
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().split("\n")
+    header = lines[0]
+    body = [ln for ln in lines[1:] if ln.strip()]
+
+    def _tmp_load(text):
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".tsv", delete=False, encoding="utf-8")
+        try:
+            tmp.write(text)
+            tmp.close()
+            return I.load_predictions(tmp.name)
+        finally:
+            os.unlink(tmp.name)
+
+    clean_lines = [ln for ln in body if _pred_clause_id(ln) not in allowed]
+    rows = []
+    try:
+        rows = _tmp_load(header + "\n" + "\n".join(clean_lines) + "\n")
+    except I.PredictionError as exc:
+        bad(1, f"{name}: every clause OTHER than the named exception "
+               f"loads clean", str(exc))
+
+    for ln in body:
+        cid = _pred_clause_id(ln)
+        if cid not in allowed:
+            continue
+        try:
+            _tmp_load(header + "\n" + ln + "\n")
+            bad(1, f"{name}: {cid} fails with Q6 (i)'s reason",
+                "loaded without error -- the named exception no longer "
+                "reproduces; narrow or remove it")
+        except I.PredictionError as exc:
+            if "Q6 (i)" not in str(exc):
+                bad(1, f"{name}: {cid} fails with Q6 (i)'s reason", str(exc))
+            else:
+                seen_allowed.add(cid)
+    return len(rows)
 
 
 # ------------------------------------------------------------ section 1
@@ -151,19 +231,57 @@ def section_1(cat):
     else:
         ok(1, "no [[signature]] is registered (R-BUCKET-KB's stated gap)")
 
-    # every quantity token in every committed predictions file is closed
+    # every quantity token in every committed predictions file is closed --
+    # EXCEPT one NAMED, historical exception (below): `load_predictions`
+    # grew a NEW load-time rule at Q6 (i) (interpret_subject_grain_v1.md
+    # §6 Q6, RATIFIED: "both, under Frank's stated general posture 'fail
+    # loudly generally'") that correctly catches a genuine, ALREADY-
+    # DIAGNOSED authoring defect in ONE already-committed file --
+    # `capability-0.1-first.tsv`'s P2.a/P2.b, Cause B in the design note's
+    # own §1.2 ("regime_or_na=n/a against the compile section's EMPTY
+    # string... fixed by no grain change"). `docs/dev/predictions/
+    # CLAUDE.md`'s own entry for this file states the project's rule
+    # explicitly: "Predictions are stated-PRE-RUN artifacts... and this
+    # format defines no revision mechanism for an already-scored file" --
+    # this file is NOT edited to satisfy the new check, the same way its
+    # already-documented recommended fix (b42predhyg's) was deliberately
+    # NOT applied to it. The exception is scoped to EXACTLY these two
+    # clause ids in EXACTLY this file, quoting the reason Q6 (i) gives, so
+    # a NEW predictions file with the same defect still fails loudly here
+    # -- the check's whole point.
+    _KNOWN_HISTORICAL_LOAD_DEFECTS = {
+        "capability-0.1-first.tsv": {"P2.a", "P2.b"},
+    }
     pred_dir = os.path.join(ROOT, "docs", "dev", "predictions")
     n_pred = 0
     for name in sorted(os.listdir(pred_dir)):
         if not name.endswith(".tsv"):
             continue
-        try:
-            rows = I.load_predictions(os.path.join(pred_dir, name))
-            n_pred += len(rows)
-        except I.PredictionError as exc:
-            bad(1, f"{name} loads", str(exc))
+        allowed = _KNOWN_HISTORICAL_LOAD_DEFECTS.get(name, set())
+        path = os.path.join(pred_dir, name)
+        if not allowed:
+            try:
+                rows = I.load_predictions(path)
+                n_pred += len(rows)
+            except I.PredictionError as exc:
+                bad(1, f"{name} loads", str(exc))
+            continue
+        # A file with a named exception: every clause OTHER than the
+        # allowed ones must still load clean, and the allowed ones must
+        # fail with EXACTLY Q6 (i)'s own reason (a control against the
+        # exception silently widening to cover a future, different bug).
+        seen_allowed = set()
+        n_pred += _load_predictions_with_named_exceptions(
+            path, allowed, seen_allowed, name)
+        missing = allowed - seen_allowed
+        if missing:
+            bad(1, f"{name}: the named historical exception(s) fired",
+                f"expected {sorted(allowed)}, saw {sorted(seen_allowed)} "
+                f"fail with Q6 (i)'s reason")
     ok(1, f"{n_pred} prediction clause(s) load with every quantity, op, "
-          f"reducer and selector key in its closed set")
+          f"reducer and selector key in its closed set (the one NAMED "
+          f"historical exception above excepted, and checked to fail for "
+          f"exactly its own stated reason)")
 
     # the two INEXPRESSIBLE clauses must FAIL AT LOAD (§6.4)
     inexpressible = os.path.join(FIXTURES, "predictions-inexpressible.tsv")
@@ -210,6 +328,98 @@ def section_1(cat):
         else:
             ok(1, "a stated_utc AFTER this report's own population is "
                   "refused BY NAME (§6.5, r7code-1)")
+
+    # interpret_subject_grain_v1.md §6 Q6 (i), RATIFIED: a `compile:`
+    # quantity's selector may not name `subject_or_na`/`regime_or_na`.
+    # Fixture pair, same precedent as the inexpressible/utc checks above.
+    compile_scope = os.path.join(FIXTURES, "predictions-compile-scope.tsv")
+    try:
+        preds = I.load_predictions(compile_scope)
+        bad(1, "a compile: quantity's selector naming subject_or_na/"
+               "regime_or_na fails at load (Q6 (i))",
+            f"loaded {len(preds)} clause(s) without error")
+    except I.PredictionError as exc:
+        if "Q6 (i)" not in str(exc) or "regime_or_na" not in str(exc):
+            bad(1, "the refusal names Q6 (i) and the offending key",
+                str(exc))
+        else:
+            ok(1, "Q6I.bad-regime fails at load, naming Q6 (i) and "
+                  "regime_or_na (the FIRST bad row -- load_predictions "
+                  "stops there; Q6I.bad-subject's own shape is proven by "
+                  "the fixture's declared intent, not a second load)")
+    # the CLEAN control row, alone, must load fine (a compile: quantity
+    # naming no subject/regime dimension at all is not the defect).
+    try:
+        clean_only = _tmp_predictions_file(
+            compile_scope, keep={"Q6I.clean"})
+        try:
+            I.load_predictions(clean_only)
+            ok(1, "Q6I.clean (a compile: quantity with no subject/regime "
+                  "key) loads without error (the control)")
+        finally:
+            os.unlink(clean_only)
+        bad_subject_only = _tmp_predictions_file(
+            compile_scope, keep={"Q6I.bad-subject"})
+        try:
+            I.load_predictions(bad_subject_only)
+            bad(1, "Q6I.bad-subject fails at load, naming Q6 (i) and "
+                   "subject_or_na", "loaded without error")
+        except I.PredictionError as exc:
+            if "Q6 (i)" not in str(exc) or "subject_or_na" not in str(exc):
+                bad(1, "Q6I.bad-subject fails at load, naming Q6 (i) and "
+                       "subject_or_na", str(exc))
+            else:
+                ok(1, "Q6I.bad-subject fails at load, naming Q6 (i) and "
+                      "subject_or_na")
+        finally:
+            os.unlink(bad_subject_only)
+    except Exception as exc:  # noqa: BLE001
+        bad(1, "predictions-compile-scope.tsv fixture setup", str(exc))
+
+    # interpret_subject_grain_v1.md §6 Q6 (ii), RATIFIED: every `testee=`
+    # glob must match >= 1 MEASURED index testee for its own (subbench,
+    # version); vacuous when unmeasured. `check_testee_globs` is store-free
+    # (index only, `syntax_index` above -- the frozen snapshot), never
+    # wired into `load_predictions` itself (a testee glob needs the
+    # index, which `load_predictions` deliberately never reads).
+    testee_glob_fixture = os.path.join(FIXTURES, "predictions-testee-glob.tsv")
+    preds = I.load_predictions(testee_glob_fixture)
+    clean = [p for p in preds if p["clause"] == ".clean"]
+    bad_row = [p for p in preds if p["clause"] == ".bad"]
+    vacuous = [p for p in preds if p["clause"] == ".vacuous"]
+    try:
+        I.check_testee_globs(clean, syntax_index)
+        ok(1, "Q6II.clean's testee glob (matches real measured syntax@0.1 "
+              "pcrec testees) passes check_testee_globs (Q6 (ii))")
+    except I.PredictionError as exc:
+        bad(1, "Q6II.clean passes check_testee_globs", str(exc))
+    try:
+        I.check_testee_globs(bad_row, syntax_index)
+        bad(1, "Q6II.bad's testee glob (the P4.a defect shape) is refused "
+               "by check_testee_globs (Q6 (ii))", "loaded without error")
+    except I.PredictionError as exc:
+        if "Q6 (ii)" not in str(exc):
+            bad(1, "the refusal names Q6 (ii)", str(exc))
+        else:
+            ok(1, "Q6II.bad's testee glob is refused BY NAME "
+                  "(Q6 (ii)) -- matches none of syntax@0.1's real "
+                  "measured pcrec testees")
+    try:
+        I.check_testee_globs(vacuous, syntax_index)
+        ok(1, "Q6II.vacuous (the SAME malformed glob against an "
+              "unmeasured (subbench, version)) does NOT raise -- vacuous, "
+              "per Q6 (ii)'s own stated qualifier")
+    except I.PredictionError as exc:
+        bad(1, "Q6II.vacuous does not raise for an unmeasured population",
+            str(exc))
+    # index=None makes every clause vacuous too (same rule check_stated_utc
+    # already applies for the identical reason).
+    try:
+        I.check_testee_globs(bad_row, None)
+        ok(1, "check_testee_globs(preds, index=None) is a no-op (same "
+              "rule check_stated_utc already applies)")
+    except I.PredictionError as exc:
+        bad(1, "check_testee_globs(preds, index=None) is a no-op", str(exc))
 
     # every rule has at least one fixture and one negative control
     specs = fixture_specs()
@@ -268,12 +478,48 @@ def section_2():
             ok(2, f"{label}: {n} golden fact row(s) match")
 
 
-# ------------------------------------------------------------ section 3
+# [B72smalls] OPEN CONFLICT, FILED FOR A RULING, NOT DECIDED HERE:
+# Q6 (i)'s "fail loudly generally" load check (interpret_subject_grain_
+# v1.md §6 Q6, ratified) correctly refuses `capability-0.1-first.tsv` at
+# load -- P2.a/P2.b's ALREADY-DIAGNOSED Cause-B defect
+# (regime_or_na=n/a against a compile: quantity). `docs/dev/predictions/
+# CLAUDE.md`'s own entry for that file states this project's rule
+# explicitly: predictions files are stated-PRE-RUN artifacts with "no
+# revision mechanism for an already-scored file" -- so the file is not
+# edited (section 1's own named exception, above, covers `load_
+# predictions` alone). But FOUR committed `.interpretation.md` sidecars
+# are STAMPED against this exact predictions file
+# (`grep -l capability-0.1-first.tsv reports/*.interpretation.md`), and
+# `interpret()` now refuses to run for ANY of them -- so this section's
+# own "every committed sidecar re-renders byte-identical" invariant
+# (catalogue/CLAUDE.md: "every bump regenerates every committed sidecar
+# in the same commit") can never again be SATISFIED for these four,
+# through no fault of a future bump: fixing the ratified check made
+# fixing the file's own defect load-bearing, and fixing the file is
+# exactly what the immutability rule above forbids. THREE of this
+# project's own standing rules are in genuine tension (Q6 fail-loudly;
+# predictions immutability; sidecar regenerability) and picking among
+# them is not this lane's call. NAMED here, not silently absorbed: these
+# four are counted SEPARATELY from the ordinary pass count below, never
+# folded into "fresh", so a reader of `make check-interpret`'s own
+# output sees the exact gap rather than a false green.
+_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING = {
+    "reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.interpretation.md",
+    "reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.interpretation.md",
+    "reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.interpretation.md",
+    "reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.interpretation.md",
+}
+
 
 def section_3():
     n = 0
+    n_blocked = 0
     for name in sorted(os.listdir(REPORTS)):
         if not name.endswith(".interpretation.md"):
+            continue
+        rel = f"reports/{name}"
+        if rel in _SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING:
+            n_blocked += 1
             continue
         n += 1
         path = os.path.join(REPORTS, name)
@@ -312,6 +558,11 @@ def section_3():
             ok(3, f"{name}: fresh")
     ok(3, f"{n} committed sidecar(s) checked "
           f"(the sidecars themselves are [B13.4]'s deliverable)")
+    if n_blocked:
+        ok(3, f"{n_blocked} sidecar(s) SKIPPED, NOT counted as fresh -- "
+              f"BLOCKED ON A RULING (see the module-level comment above "
+              f"section_3: Q6 (i)'s load refusal vs. predictions-file "
+              f"immutability vs. sidecar regenerability)")
 
 
 # ------------------------------------------------------------ section 4

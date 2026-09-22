@@ -1,0 +1,4 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+Q6II	.clean	fixture	Q6II	2026-09-01T00:00:00Z	syntax	0.1	pattern=asr-k-uc;testee=pcrec_d34c9131_*	n_wrong	identity	eq		0		control: matches real measured syntax@0.1 pcrec testees in the frozen index
+Q6II	.bad	fixture	Q6II	2026-09-01T00:00:00Z	syntax	0.1	pattern=asr-k-uc;testee=pcrec_*-auto-*	n_wrong	identity	eq		0		sabotage: the P4.a defect shape (a hyphen before "auto", never the real underscore-separated testee_id -- matches nothing that was ever measured)
+Q6II	.vacuous	fixture	Q6II	2026-09-01T00:00:00Z	no-such-subbench	99.9	pattern=asr-k-uc;testee=pcrec_*-auto-*	n_wrong	identity	eq		0		control: the SAME malformed glob against a (subbench, version) with NO measured index row at all must NOT raise -- vacuous, per Q6 (ii)'s own stated qualifier

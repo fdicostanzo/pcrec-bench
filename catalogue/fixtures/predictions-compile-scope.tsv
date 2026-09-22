@@ -1,0 +1,4 @@
+prediction_id	clause	source	source_ref	stated_utc	subbench	version	selector	quantity	reducer	op	lo	hi	unit	note
+Q6I	.clean	fixture	Q6I	2026-09-01T00:00:00Z	syntax	0.1	pattern=asr-k-uc;testee=pcrec_*	compile:artifact_bytes	identity	gt		0		control: a compile: quantity's selector names no subject/regime dimension
+Q6I	.bad-regime	fixture	Q6I	2026-09-01T00:00:00Z	syntax	0.1	pattern=asr-k-uc;regime_or_na=n/a;testee=pcrec_*	compile:artifact_bytes	identity	gt		0		sabotage: a compile: quantity's selector names regime_or_na (Q6 (i)'s own defect shape, capability-0.1-first.tsv's P2.a/P2.b)
+Q6I	.bad-subject	fixture	Q6I	2026-09-01T00:00:00Z	syntax	0.1	pattern=asr-k-uc;subject_or_na=x;testee=pcrec_*	compile:artifact_bytes	identity	gt		0		sabotage: a compile: quantity's selector names subject_or_na
