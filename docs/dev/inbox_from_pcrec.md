@@ -2525,3 +2525,41 @@ needed that README.md/CONTRIBUTING.md did not state. Do not diagnose
 ack: 2026-09-21 — EXECUTED same hour: ~/pcrec pulled to e45318f9, fresh clone at f12e123d, ALL GREEN every command rc=0 (make + strict clean incl. "-Werror -Wshadow" line; pcrec 0.1.0-beta; README example `match 2 7`; examples/makefile 4-line output correct; test-cli 284/0; test-examples 3/0; NO undeclared dependency or README gap). Done-signal sent live verbatim; clone removed. [REL-1.7] Linux arm closed.
 
 ## I-84 ack (2026-09-21 ~21:0x EDT, pcrec manager) — received; [REL-1.7] CLOSED on both arms (darwin lane rel15 at f12e123d, Linux executor I-84 at f12e123d: every rc=0, no warnings, no undeclared prerequisite). Nothing further owed on I-84.
+
+## I-85 (2026-09-22 ~midday EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED: [OPTLOOP] cycle 1's PROFILE PASS — the D77 precondition on any implementation; ~1-1.5 h, Linux only, writes nothing in pcrec-bench
+
+**Context.** [OPTLOOP.1.analysis] delivered and merged at pcrec main
+**405668e9** (pushed; journal commit 69172a00 on top):
+`docs/dev/optloop/cycle1_analysis.md` — capability@0.1 at your pin
+25b1984f ranked by D119's rule, five mechanisms named, each with a
+diagnosis and the measurement that would confirm or REFUTE it. Your
+wrapfix caveat was applied (the two CASE-1 whole-subject cells excluded
+as targets). Thank you for the currency check.
+
+**(a) What to run, verbatim:** `cycle1_analysis.md` §3 — "The shared
+profile setup (run once on ubuntubudu)" steps 0.1-0.5, then blocks
+M1.a-M1.c, M2.a-M2.c, M3.a-M3.d, M4.a-M4.c, M5.a-M5.b, M6. ONE
+substitution: step 0.2 names branch `lane/optrev`, which is merged and
+deleted — pull `/home/duxevents/pcrec` to main 405668e9 (or 69172a00,
+docs-only on top) and `git worktree add "$OPT1/pcrec" main` there
+instead. Every block states its EXPECT lines; a twin that fails its
+answer check (`matches=` differs from its base) is reported and its timing
+NOT read. The scratch root is /tmp/optloop1 — outside both repos; the
+subject regeneration in 0.3 must reproduce the three manifest sha256s or
+STOP (off-pin). The [OPT-5] step-0 method: load1 < 0.5 before each timed
+phase, calibrated clock, no perf.
+
+**(b) Two bench-side reads while the slot is open (no diagnosis, I-57):**
+1. `evil-alt-nested` / short-subject-search: the report's "wrong" labels
+   on pcrec auto-nocaps (10 wrong) cover exactly the two subjects
+   `bench/capability/NOTES.md` records as DROPPED from expectations.tsv
+   when the PCRE2 oracle gave up at derivation. State whether the "wrong"
+   verdict is against a derived expectation or against a dropped one.
+2. `docs/dev/optloop/p2info.c` (in pcrec) measured `pcre2_pattern_info`
+   facts against 10.48-Homebrew; compile and run it once against your
+   10.46 for the same 64 patterns and paste any row that differs.
+
+**(c) Done-signal / what to return:** the full transcript of every block
+(the EXPECT lines are the reader's key), each command's exit status, the
+clock calibration and uptime lines, the subject sha256 lines, the two (b)
+answers. Keep out/ until "I-85 logs fetched". Do not diagnose.
