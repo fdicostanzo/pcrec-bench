@@ -1181,7 +1181,7 @@ non-"unchanged" token, BYTE-IDENTICAL to the table in
 `docs/dev/lanes/b60pinconfirm_report.md` §3 (the monkeypatched
 original). Full derivation: `docs/dev/lanes/b68kb24_report.md`.
 
-## KB-25 (2026-09-20, flagged by lane b61matrix, measured by the manager) — `make check-report` wall time grows with the live store: 20m02s green at store 190
+## KB-25 (2026-09-20, flagged by lane b61matrix, measured by the manager; FIXED 2026-09-22, lane b72smalls) — `make check-report` wall time grows with the live store: 20m02s green at store 190
 
 `pcrecbench/tests/test_report.py` validates against the REAL store
 (`REAL_STORE`, test_report.py:56) as well as its fixtures, so its cost
@@ -1191,11 +1191,46 @@ quiet box: **20m02s wall, rc=0, check-report: OK** at 190 records
 it (b61matrix) killed a run at 10+ min / ~3.2 GB RSS mid-flight and the
 suite is in fact green — but the growth is real and unbounded, the same
 shape as KB-16's whole-store report loads and the data-management white
-paper's consequence-shaped growth triggers. Candidate fixes for a
-future lane: scope the live-store arm to an index-prefiltered slice, or
-move the live-store validation to a separate non-default target the
-re-pin/window rituals invoke deliberately. Until then: give check-report
-a ≥30-min gnutimeout and never kill it at 10 min expecting failure.
+paper's consequence-shaped growth triggers. Candidate fixes named at the
+time: scope the live-store arm to an index-prefiltered slice, or move
+the live-store validation to a separate non-default target the
+re-pin/window rituals invoke deliberately.
+
+**FIX (2026-09-22, lane b72smalls): the first candidate — an
+index-prefiltered slice, the SAME mechanism KB-16 already proved correct
+for a real CLI query.** `_load_real_store()` (`test_report.py`'s module-
+level cache around `REAL_STORE`) used to `discover_records` (EVERY path
+in the store, any sub-bench) then `load_all` (jsonschema-validate every
+one) regardless of which sub-bench a caller needed — and every REAL_STORE
+call site in this suite filters `build_report` to
+`subbench="email-specimen"` afterwards (grep-confirmed), so the other
+sub-benches (`bounded`, `altwide`, `loglines`, `syntax`, `capability` —
+the great majority of the store) were loaded and validated for nothing.
+Fixed by reading `report.discover_index` (no jsonschema, no file open)
+and admitting only the rows `report.index_row_could_match` cannot already
+rule out for `subbench="email-specimen"` — `report.main()`'s own KB-16
+fix, reused, not reimplemented; `_load_real_store` is now cached PER
+SUBBENCH rather than once, so a future test needing a different sub-bench
+gets its own filtered load. Nothing about WHAT the suite asserts moved:
+only what it loads.
+
+**MEASURED, same box, same store (217 records; 48 of them
+email-specimen), both directions, ONLY this one file changed between
+runs:**
+
+| | wall | user | max RSS | pass/fail |
+|---|---|---|---|---|
+| BEFORE (unmodified) | **26:03.46** | 1548.70s | 7,667,420 KB | 84+7+8 passed, 0 failed |
+| AFTER (this fix) | **5:25.80** | 322.58s | 1,411,056 KB | 84+7+8 passed, 0 failed |
+
+**×4.8 faster, ×5.4 less peak RSS, identical pass/fail counts on both
+runs** — the growth this KB names is not eliminated (the fix still scans
+`email-specimen`'s own share of the store, which itself grows over time),
+but it is now bounded by ONE sub-bench's record count rather than the
+whole store's, which is what the candidate fix promised. `docs/dev/
+lanes/b72smalls_report.md` has the full before/after logs
+(`build/checkreport_BEFORE.log`-shaped captures under `/var/tmp/`, not
+committed — ephemeral measurement artifacts, not archived probes).
 
 ## KB-26 (2026-09-17, flagged by `docs/dev/lanes/b69census_report.md` §4's "gap found"; FIXED 2026-09-22, lane b72smalls) — `rust-default`'s multi-line `did-not-compile` diagnostic was truncated at the driver PROTOCOL, not in the reporter
 

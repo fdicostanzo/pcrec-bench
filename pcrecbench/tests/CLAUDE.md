@@ -183,6 +183,24 @@ which is expected and not a bug in this suite.
   `render_markdown`/`render_tsv` ever mutates a `LoadedRecord` after
   `report.load_all` returns it. Measured before/after on this box, same
   51 tests, all green both times: 274.6 s -> 47.6 s.
+
+  **KB-25 (2026-09-22, lane b72smalls), THE SECOND RUNTIME FIX: the ONE
+  load itself still grew with the WHOLE store.** `_load_real_store()`
+  above bounded the repeat-cost to once per suite run, but
+  `discover_records(REAL_STORE)` still returned (and `load_all` still
+  jsonschema-validated) every path under EVERY sub-bench regardless of
+  which one a caller actually needed -- every REAL_STORE call site in
+  this file filters `build_report` to `subbench="email-specimen"`
+  afterwards. Fixed with KB-16's own mechanism (`report.discover_index`
+  + `report.index_row_could_match`, reused rather than reimplemented):
+  `_load_real_store(subbench="email-specimen")` now prefilters BEFORE
+  `load_all` opens a file, and caches PER SUBBENCH. Measured before/after
+  on this box, same store (217 records, 48 email-specimen), same
+  84+7+8 = 99 passing tests both times, via `make check-report` (which
+  also runs `test_quick`/`test_matrix_page`/the CLI smoke): 26:03.46 ->
+  5:25.80 wall (×4.8), 7,667,420 -> 1,411,056 KB max RSS (×5.4).
+  `docs/dev/known_issues.md` KB-25 has the full table.
+
   **[B20] additions (2026-08-30, 5 new tests, 56 + 3 → 59 total; schema
   v1.4, `docs/design/gate_shape_v14.md` §6 R8)**:
   `test_status_gate_r1` gains the `inconclusive-spread` case (unranked,

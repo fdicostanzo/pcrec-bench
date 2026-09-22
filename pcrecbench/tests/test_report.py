@@ -159,17 +159,53 @@ def _load_store(store_dir, **kw):
 # sites already gets a fresh, independent `loaded` list, which is a
 # smaller thing to reason about than adding a second cache for a store
 # that was never the slow one.
-_REAL_STORE_CACHE = None
+#
+# KB-25 (docs/dev/known_issues.md), THE SECOND FIX: caching to ONE load
+# per SUITE RUN bounded the repeat-cost, but the ONE load itself still
+# grows with the WHOLE store -- `discover_records(REAL_STORE)` returns
+# every path under EVERY sub-bench, and `load_all` jsonschema-validates
+# every one of them, regardless of which sub-bench a caller actually
+# needs. Measured: 20m02s wall at store 190 (2026-09-20 23:27-23:47 EDT,
+# `build/checkreport_store190.log`); the store is 217 now and every
+# REAL_STORE call site in this file filters `build_report` to
+# `subbench="email-specimen"` (grep confirms: every `_args(store=
+# REAL_STORE, ...)` call in this suite names it) -- so the other
+# sub-benches (`bounded`, `altwide`, `loglines`, `syntax`, `capability`,
+# the great majority of the store's 217 records) were loaded and
+# validated for a query that could never have used them. Fixed the
+# SAME way `report.main()` already fixed the identical problem for a
+# real CLI query (KB-16, `report.py`'s own module docstring): `report.
+# discover_index` reads `store/index.tsv`'s own columns (no jsonschema,
+# no file open) and `report.index_row_could_match` admits only the rows
+# a `subbench` filter cannot already rule out, BEFORE `load_all` opens a
+# single file -- the same function KB-16 already proved correct (its own
+# docstring is the argument: a row it admits still needs `matches_
+# filters` on the loaded record to be SURE, a row it excludes could
+# never have passed `matches_filters` either), not a second filter
+# implementation. Cached PER SUBBENCH (not just once) so a future
+# REAL_STORE test that needs a different sub-bench gets its own
+# filtered, cached load instead of silently reusing this one's narrower
+# set or paying the unfiltered cost again.
+_REAL_STORE_CACHE = {}
 
 
-def _load_real_store():
-    """Cached `_load_store(REAL_STORE)` -- see the comment above. Returns
-    the SAME `(loaded, paths, source)` tuple (and the same `LoadedRecord`
-    objects inside it) to every caller within one process run."""
-    global _REAL_STORE_CACHE
-    if _REAL_STORE_CACHE is None:
-        _REAL_STORE_CACHE = _load_store(REAL_STORE)
-    return _REAL_STORE_CACHE
+def _load_real_store(subbench="email-specimen"):
+    """Cached, INDEX-PREFILTERED load of REAL_STORE -- see KB-25's
+    comment above. Returns the SAME `(loaded, paths, source)` shape
+    `_load_store` does (and the same `LoadedRecord` objects) to every
+    caller within one process run, for a given `subbench`. Every call
+    site in this file today passes the default -- every REAL_STORE
+    `build_report` call in this suite already filters to
+    `subbench="email-specimen"`, so this prefilter excludes nothing a
+    caller could otherwise have seen."""
+    if subbench not in _REAL_STORE_CACHE:
+        rows, _source = report.discover_index(REAL_STORE)
+        flt = _args(store=REAL_STORE, subbench=subbench)
+        paths = [r["path"] for r in rows if report.index_row_could_match(r, flt)]
+        loaded = report.load_all(paths, check_filename=True)
+        _REAL_STORE_CACHE[subbench] = (
+            loaded, paths, "store/index.tsv (KB-25 subbench-prefiltered)")
+    return _REAL_STORE_CACHE[subbench]
 
 
 def _args(**overrides):
