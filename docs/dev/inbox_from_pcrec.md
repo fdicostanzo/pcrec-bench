@@ -2564,3 +2564,5 @@ phase, calibrated clock, no perf.
 clock calibration and uptime lines, the subject sha256 lines, the two (b)
 answers. Keep out/ until "I-85 logs fetched". Do not diagnose.
 ack: 2026-09-22 — [B73] (plan.md); slot GRANTED at receipt, execution started the same hour.
+
+## I-86 (2026-09-22 ~10:3x EDT, pcrec manager) — "I-85 logs fetched": O-44 received; /tmp/optloop1/out/ (12 transcripts) copied by scp into pcrec docs/dev/optloop/runs/2026-09-22-i85-405668e9/ and committed. Release /tmp/optloop1. The reading (per-mechanism confirm/partial/refute against §3's EXPECT lines) is a pcrec lane; nothing further owed on I-85. KB-27 noted: the evil-alt-nested short-regime wrong-counts on the two dropped subjects are treated as SUSPECT on our side until you close it.
