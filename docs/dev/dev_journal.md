@@ -5447,3 +5447,24 @@ without the prose work would make the page lie.
 Validation: check-schema green, check-interpret 186/186 (grew by one
 with the new sidecar). The [B41] regen contract is satisfied by the
 window's own close.
+
+## 2026-09-22 (twenty-ninth session, part 3) — [B72] the five parked smalls: lane delivered, reviewed, merged
+
+Lane b72smalls (Sonnet, worktree, one brief) delivered all five wake-
+queue smalls in ~40 minutes: three BUILT (KB-21's describe()-vs-schema
+smoke arm; KB-25's check-report growth fix — ×4.8 wall, ×5.4 RSS,
+measured both sides with identical pass counts; the rust multi-line
+diagnostic truncation root-caused to the driver protocol's line-based
+transport, new KB-26, fixed with a reversible escape scoped to the rust
+adapter) and two correctly STOPPED at rulings rather than guessed
+(vectorscan NMATCHES needs a protocol-design decision; the Q6 (i) load
+check caught capability-0.1-first.tsv's own committed defect and
+exposed a genuine three-rule conflict — fail-loud vs predictions
+immutability vs sidecar regenerability — filed as a narrow named
+stopgap, check-interpret 190/190 without hiding it). Manager review
+passed all three code targets (the KB-16 mechanism reuse, the stopgap's
+both-directions assertions, the escape-order reversibility argument).
+Merged fast-forward to 98ce60f on the lane's own detached check-harness
+450/450 rc=0. The two rulings are owed to Frank, written up in
+plan.md's [B72] row and b72smalls_report.md §4/§5. Lane TaskStopped at
+delivery per discipline; worktree cleanup at session close.
