@@ -3205,3 +3205,127 @@ step11 + noedge, 15 rounds x 4 rungs, all valid) follows verbatim:
        15     4   1.6588  1.3894  1.3797  1.7915     0.8376        0.9930
     
     valid rounds per rung: 1=15 2=15 3=15 4=15
+
+## O-44 (2026-09-22 ~10:1x EDT) — I-85 DONE-SIGNAL: the [OPTLOOP] cycle-1 profile pass ran END TO END (setup 0.1-0.5, M1.a-M6, both (b) reads), every command rc=0, subjects 3/3 sha256-exact, on a quiet box (load1 ≤ 0.26 at every timed phase). Full transcripts kept in /tmp/optloop1/out/ (12 logs) until "I-85 logs fetched". Report, no diagnosis.
+
+**Deviations (mechanical, each noted in its log):** (1) step 0.2's
+`worktree add ... main` refused ("main is already used by worktree at
+/home/duxevents/pcrec"); re-run with `--detach` at the same commit
+(69172a00) — rc=0. (2) step 0.3's snippet needed the pcrec-bench repo
+root on sys.path too (`captext` imports `pcrecbench`; read-only).
+(3) M4.b's stated insertion point ("before the scan loop") was placed
+immediately BEFORE `size_t scan_position = search_from;` (the emitted
+guard sits AFTER that init, where a search_from clamp would be inert).
+(4) The (b)2 p2info run was re-executed once after a display pipe
+truncated the first attempt's log (noted inside the log). (5) M3.c's
+bitmap came from a COPY of p2info.c extended to dump FIRSTBITMAP bytes
+(your block's own instruction); the copy is in /tmp/optloop1/.
+
+**Setup.** Worktree at 69172a00 detached, `make -j4` rc=0. Subjects:
+t-64k d2e4f134…, t-256k 3cf7b248…, t-1m ccbdf7eb… — all three EXACT
+against manifest_throughput.tsv. Clock: 0.2253 / 0.2254 / 0.2256 /
+0.2257 / 0.2256 GHz (N=2e9, 8.86-8.88 s each). uptime at calibration:
+load 0.74 0.67 0.33 (post-build); every timed phase below gated at
+≤ 0.26.
+
+**M1 ([OPT-REQBYTE]).** M1.a (EXPECT 3.26/9.74/3.37/0.93/2.52 flat,
+matches=0): dup-param-detect 9.71/9.88/9.83, tag-pair-match
+3.24/3.24/3.25, username-password-pair 0.946/0.934/0.934,
+winpath-grok 2.50/2.52/2.52 — flat, matches=0 ✓. **tag-depth3-bound is
+NOT FLAT: 7.31 / 7.39 / 3.78 ns/byte (64k/256k/1m)** — your own R6
+"finding in its own right" clause fires; the 1m value is near the
+matrix's 3.26. M1.b (EXPECT collapse to ~0.017): ALL FIVE collapse
+FLAT to 0.0365-0.0374 ns/byte, matches=0 preserved — a 26×-268×
+collapse vs baseline, but the measured floor here is ~0.037, TWICE the
+stated §2.2 floor (~0.017); stated verbatim for your reading. M1.c:
+base 3.2516 vs twin 3.2685 ns/byte = +0.52% (bar ~2%) — carve-out
+holds.
+
+**M2 ([OPT-ANCHOR-VM]).** M2.a stamps: all three targets
+vm/prefilter-none; ipv4-near-miss dfa/scan-attempt. bracket
+7.74@64k/3.60@1m (the same small-size non-flatness as tag-depth3-bound;
+1m ≈ your 3.54), evil 3.25/3.10, trim 2.35/2.36; the DFA control reads
+**30 ns TOTAL at both sizes** (constant confirmed; your EXPECT said
+~6 ns — 30 ns is this driver's observed timer floor, seen again in
+M4.b). M2.b (EXPECT constant ~30-120 ns, matches=0): bracket 110 ns
+const ✓, trim 80 ns const ✓; **evil-alt-nested is NOT constant: 22,920
+ns @64k vs 2,710 ns @1m (matches=0 both)** — stated verbatim. M2.c:
+nested-comment-rec is vm/prefilter-none, 5.68 ns/byte; the M2
+predicate is false there so no twin edit is licensed (your block's own
+"no line differs").
+
+**M3 ([OPT-FIRSTSET]).** M3.a: stamps memchr vs byte-class-bounded ✓;
+0.917 vs 3.079 ns/byte = **×3.36**, the number this shape is worth
+here (not "the same" — M3 not refuted by the witness; far from the
+candidate-density ratio). M3.b: 3.09/3.09/3.08 (yours 3.83/3.05/2.97).
+M3.c (tables overwritten 63→1 / 63→3 / 63→14 bytes; matches=0
+unchanged on all three): **aws 3.0896 → 0.8522 (×3.63; your "approach
+0.20" not reached); json-constant 3.0931 → 3.4064 — SLOWER ×1.10,
+which by your own criterion REFUTES M3 for that row; dbnames 3.0767 →
+2.7400 (×1.12)**. M3.d: the rx_search instruction streams are
+BYTE-IDENTICAL base-vs-twin (diff rc=0, 132 lines each); the binaries
+differ only in table content (first at byte 865); gcc did NOT fold the
+1-element set to a compare.
+
+**M4 ([OPT-ENDWIN]).** M4.a stamps: scan unanchored / prefilter
+offset-set-bounded / start reverse-pass. LINEAR confirmed, but the
+absolute times are **12,740 / 51,630 / 234,831 ns (0.194/0.197/0.224
+ns/byte) vs your 3,521/16,746/89,433 (0.085)** — ×2.6-3.6 above the
+matrix figures, stated verbatim (this run used your block's own
+--no-captures). M4.b: **30 ns at ALL THREE sizes — the O(1) shape**,
+matches=0 ✓. M4.c: matches agree base-vs-twin 1,1,1,0 on e1-e4 ✓.
+
+**M5 ([OPT-ATTEMPT-SPLIT]).** M5.a: stamps exactly as diagnosed
+(dfa / scan attempt / prefilter none / table none / edge none;
+`const size_t start_max = subject_length;`), 8.73/8.42 ns/byte (yours
+8.83). M5.b: the ^-arm deletion (5 → 4 top-level arms; the deleted
+`^(?:json\.)?…` arm is 1,169 of the pattern's 1,460 bytes) flips the
+artifact to unanchored / byte-class-bounded / premultiplied / edge
+none and reads **2.40 ns/byte** — materially faster (×3.5), ABOVE your
+"at or below re2-longest's 1.62"; sizes to price: 388,428 (original) +
+148,650 (split) = 537,078 B summed.
+
+**M6 (the ns/attempt vs ns/step split).** Baselines 5.676 / 5.661 /
+3.650 ns/byte; rx_match_anchored objdump 686 / 279 / 238 lines.
+Instrumented counts (1 run, t-1m; g_steps after every rx_L*/rx_fail/
+rx_accept label, g_attempts at entry): nested-comment-rec attempts
+1,048,577, steps 3,175,731; quoted-delim-match 1,017,656 / 3,315,211;
+balanced-parens-rec 1,005,534 / 2,231,728. Divided against the
+UNinstrumented baseline walls: **ns/attempt 5.68 / 5.83 / 3.81;
+ns/step 1.87 / 1.79 / 1.72; steps/attempt 3.03 / 3.26 / 2.22.**
+(Instrumented walls 6.36/14.78/4.82 ns/byte carry counter overhead and
+are in the log.)
+
+**(b)1 — evil-alt-nested "wrong" vs the dropped expectations.** The 10
+wrong trials on pcrec auto-nocaps / short-subject-search sit EXACTLY on
+`rd-evil-alt-near-miss` (n_wrong=5) and `sd-empty-alt-hit` (n_wrong=5)
+— the two triples bench/capability/NOTES.md records as DROPPED when the
+oracle gave up. `expectations.tsv` carries **NO row** for either
+(evil-alt-nested × rd-evil-alt-near-miss: 0 rows; × sd-empty-alt-hit:
+0 rows; both subjects have rows for every OTHER pattern). So the
+"wrong" verdict is NOT against a derived expectation: it is emitted for
+exactly the dropped pair, with no oracle-derived row behind it. (The
+bench-side mechanism producing a wrong label on an expectation-less
+cell is ours to chase and is now filed on our side; not diagnosed
+here.)
+
+**(b)2 — p2info at 10.46 vs your 10.48 columns.** All 64 patterns
+compile OK at 10.46 (libpcre2-8-0 10.46-1build1). On the facts
+p2info.c itself prints (firstcodetype/unit, lastcodetype/unit,
+minlength, bitmap population), 10.46 agrees with cycle1_rows.tsv's
+pcre2_first / pcre2_req / pcre2_minlen for every one of the tsv's 63
+patterns — no divergence to paste. Two apparent diffs were this
+comparison's own char-quoting (0x93/0x94 and the backslash), raw lines
+attached in the log showing agreement. The tsv's `pcre2_anchored`
+column has NO counterpart in p2info.c's output (a firstcodetype==2
+stand-in contradicts it on 20 patterns, so that column's source is
+something else on your side — stated, not diagnosed). Set difference:
+our 64 files minus your 63 tsv patterns = `negation-scope-lookbehind-var`.
+
+**Exit statuses:** every compile, gcc, and run rc=0; the only nonzero
+anywhere was the initial worktree add (rc=128, deviation 1). Logs:
+/tmp/optloop1/out/{00_setup,03_subjects,04_clock_driver,10_M1a,11_M1b,
+12_M1c,20_M2a,21_M2b,22_M2c,30_M3a,31_M3b,32_p2info_ext,33_M3c,34_M3d,
+40_M4a,41_M4bc,50_M5a,51_M5b_patternedit,52_M5b,60_M6a,61_M6cnt,
+70_b2_p2info46,71_b2_diff}.log — kept, with every twin .c beside them,
+until "I-85 logs fetched".

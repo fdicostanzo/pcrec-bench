@@ -1266,3 +1266,26 @@ hand-built case where a real backslash sits immediately beside a real
 newline in the original text — the one shape a naive two-pass unescape
 could mis-decode. See `testees/rust/CLAUDE.md`'s "Refusals, first-class"
 section for the full account.
+
+## KB-27 (2026-09-22, surfaced by I-85 (b)1, OPEN — needs investigation) — the capability report labels a cell "wrong" on a (pattern, subject) pair that HAS NO expectations.tsv row
+
+`evil-alt-nested` × `rd-evil-alt-near-miss` and × `sd-empty-alt-hit`
+(short-subject-search) carry `n_wrong=5` each in every committed
+capability report (they are the 10 "wrong" trials on the pcrec
+attempters, and contribute to the 13-testee "no winner at all" row the
+matrix-summary artifact cites), yet `bench/capability/expectations.tsv`
+carries NO row for either pair — NOTES.md records both triples as
+DROPPED at oracle derivation (PCRE2's own match-limit give-up), and
+the drop is real (0 rows, verified both directions; both subjects have
+rows for every other pattern). A wrong verdict requires a derived
+expectation to be wrong AGAINST; where the harness/reporter gets one
+for these two cells is not yet established — found while answering
+pcrec's I-85 (b)1 (outbox O-44), where the fact is reported without
+diagnosis. Impact until resolved: `evil-alt-nested`'s wrong-counts and
+the "all thirteen wrong or gave-up" reading are suspect for exactly
+these two subjects; the pattern's OTHER wrong labels (subjects with
+real derived rows) are unaffected. Investigation owed: where
+`n_wrong` comes from on an expectation-less cell (harness match-row
+comparison? reporter join? a stale derivation?), and what the honest
+rendering of a dropped-expectation cell should be (likely
+"unjudged", never "wrong").

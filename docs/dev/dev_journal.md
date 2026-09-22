@@ -5501,3 +5501,21 @@ refusal (U7) is the real engine fact; every other compile outcome
 byte-identical. EXPECTED INBOUND: I-85, an I-57-terms executor request
 for a short Linux profile pass ([OPT-5] step-0 method) on ~5 target
 patterns, slot asked not assumed.
+
+## 2026-09-22 (~10:1x) — [B73] the I-85 profile pass executed end to end; O-44 sent; KB-27 opened
+
+The [OPTLOOP] cycle-1 profile pass ran 09:57-10:10 EDT: setup 0.1-0.5
+(worktree --detach at 69172a00 after the main-checkout refusal; subjects
+3/3 sha256-exact; clock 0.2253-0.2257 GHz ×5), all of M1.a-M6 with the
+hand-twins built per block, both (b) reads, every command rc=0, every
+timed phase at load1 ≤ 0.26. Full reading in outbox O-44 (the
+done-signal); logs and twin sources kept under /tmp/optloop1/out/ until
+"I-85 logs fetched". The pass's own most load-bearing facts: M3 is
+refuted for json-constant by the block's own criterion while aws
+confirms ×3.63; M4 is fully confirmatory; M1/M2 confirm with two
+verbatim-reported deviations (the ~0.037 floor vs the stated 0.017; the
+non-flat small-size band on tag-depth3-bound/bracket-array-define;
+evil-alt-nested's non-constant single-attempt cost). Bench-side: (b)1
+exposed that our capability reports label two expectation-LESS cells
+"wrong" (the dropped triples) — opened as KB-27, investigation owed;
+it touches the committed "no winner at all" reading. [B73] completed.
