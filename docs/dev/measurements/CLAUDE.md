@@ -578,3 +578,13 @@ Maintenance: update this file when files are added/removed or change role.
   lines matched neither known rung text (no STOP-and-flag rows). See
   `docs/dev/lanes/b65attrib_report.md` for the full per-pattern table
   and the reports/CLAUDE.md provenance correction this finding drove.
+
+- `2026-09-22-b71-wrapfix-p1p2-scoring.py` / `.txt` — the [B71]
+  capability wrapfix window's P1/P2 prediction scoring (plan.md's [B71]
+  row is the pre-registration): the script joins each of the seven
+  fresh 2026-09-22 records against that testee's newest prior record by
+  (pattern, form) compile row and prints outcome and emit-byte deltas;
+  the .txt is its verbatim output plus, in the header, the P3 timing
+  method and totals (R8 spread rule over the two committed report
+  TSVs). All three predictions CONFIRMED; the full reading is
+  reports/CLAUDE.md's [B71] entry.

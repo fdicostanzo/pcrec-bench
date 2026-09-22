@@ -1,0 +1,56 @@
+# 2026-09-22 [B71] wrapfix window P1/P2 scoring — verbatim output
+# source: docs/dev/measurements/2026-09-22-b71-wrapfix-p1p2-scoring.py, run from the repo root
+# store state: index at 217 records (the seven 2026-09-22 capability cells fresh)
+# P3 (timing) was scored separately: R8 rule (|dmedian| <= 2*max(stddev)) joining
+# reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.tsv against
+# reports/2026-09-20-capability-0.1-budu-ryzen1600-fullroster-25b1984f.tsv rank rows:
+# 721/774 unchanged, 53 movers all plain-form (max x1.32), vectorscan 16 slower/3 faster <=x1.20.
+
+== oniguruma_6.9.10_default-caps-simdna
+   fresh 2026-09-22T04:39:51Z  prior 2026-09-18T04:02:33Z (capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-r...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== pcrec_25b1984f_auto-caps-simdna
+   fresh 2026-09-22T02:11:27Z  prior 2026-09-20T22:34:10Z (capability@0.1__pcrec_25b1984f_auto-caps-simdna__budu-ryzen1...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== pcrec_25b1984f_auto-nocaps-simdna
+   fresh 2026-09-22T02:44:02Z  prior 2026-09-20T23:07:14Z (capability@0.1__pcrec_25b1984f_auto-nocaps-simdna__budu-ryze...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== pcrec_25b1984f_vm-caps-simdna
+   fresh 2026-09-22T03:13:41Z  prior 2026-09-20T23:35:51Z (capability@0.1__pcrec_25b1984f_vm-caps-simdna__budu-ryzen160...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== pcrec_25b1984f_vm-in-caps-simdna
+   fresh 2026-09-22T03:57:12Z  prior 2026-09-21T00:18:07Z (capability@0.1__pcrec_25b1984f_vm-in-caps-simdna__budu-ryzen...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== rust_1.13.1_default-caps-simdna
+   fresh 2026-09-22T05:17:52Z  prior 2026-09-19T21:34:23Z (capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1...)
+   P1 wild-codegrammar-json-number-extended: plain=compiled whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=compiled whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+== vectorscan_5.4.11_block-nosom-nocaps-simd
+   fresh 2026-09-22T05:33:00Z  prior 2026-09-19T03:55:52Z (capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__b...)
+   P1 wild-codegrammar-json-number-extended: plain=did-not-compile whole=compiled prior_whole=did-not-compile
+   P1 wild-codegrammar-json-stringcontent-escape: plain=did-not-compile whole=compiled prior_whole=did-not-compile
+   free-spacing patterns detected: ['bracket-array-define', 'codegrammar-xflag', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape']
+
+==== P1 verdict: CONFIRMED
+==== P2 outcome verdict: CONFIRMED (all outcomes unchanged)
+==== P2 emit movers:
+    ('pcrec_25b1984f_auto-caps-simdna', ('bracket-array-define', 'whole-subject'), 25071, 25073, 'ALLOWED')
+    ('pcrec_25b1984f_auto-caps-simdna', ('codegrammar-xflag', 'whole-subject'), 34193, 34195, 'ALLOWED')
+    ('pcrec_25b1984f_auto-nocaps-simdna', ('bracket-array-define', 'whole-subject'), 25072, 25074, 'ALLOWED')
+    ('pcrec_25b1984f_auto-nocaps-simdna', ('codegrammar-xflag', 'whole-subject'), 26712, 26714, 'ALLOWED')
+    ('pcrec_25b1984f_vm-caps-simdna', ('bracket-array-define', 'whole-subject'), 25069, 25071, 'ALLOWED')
+    ('pcrec_25b1984f_vm-caps-simdna', ('codegrammar-xflag', 'whole-subject'), 21669, 21671, 'ALLOWED')
+    ('pcrec_25b1984f_vm-in-caps-simdna', ('bracket-array-define', 'whole-subject'), 25069, 25071, 'ALLOWED')
+    ('pcrec_25b1984f_vm-in-caps-simdna', ('codegrammar-xflag', 'whole-subject'), 21669, 21671, 'ALLOWED')
+==== P2 emit verdict: CONFIRMED (movers confined to free-spacing whole-subject)

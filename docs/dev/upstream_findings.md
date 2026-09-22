@@ -190,3 +190,32 @@ cf0962e3.md` §7 ask 2 and `docs/dev/ledgers/2026-09-19-capability-0.1-
 ext-second-cf0962e3.md` §6); a direct read of TRE 0.9.0's
 `tre_regncompb`/byte-mode matching source, if this gap is ever chased
 past reproduction into a cause.
+
+## U7 — vectorscan 5.4.11 refuses a `(?x)` pattern whose final line is an UNTERMINATED `#` comment (`hs_compile` code -4 "Unterminated comment") where libpcre2, pcrec, oniguruma and rust-regex all accept it — and the bench's [B70] whole-subject wrap spelling, whose trailing newline terminates the comment, makes the WRAPPED form compile while the plain form still refuses (OBSERVED 2026-09-22, `bench/capability@0.1` [B71] wrapfix window)
+
+Record `capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__
+budu-ryzen1600__20260922T053300Z` (pcrec-pin checkpoint 25b1984f; no
+pcrec code involved in the cell): the two CASE-1 free-spacing patterns
+`wild-codegrammar-json-number-extended` and
+`wild-codegrammar-json-stringcontent-escape` — both `(?x)` patterns
+whose canonical text ends inside a `#` comment with no trailing
+newline — are `did-not-compile` on the PLAIN form with vectorscan's own
+diagnostic `hs_compile failed (code -4, expression 0): Unterminated
+comment.` (verbatim in the record and in
+`reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.interpretation.md`'s
+R-STATUS-4 section), while the WHOLE-SUBJECT form — the [B70]
+`(?:…)\z` wrap, which under the free-spacing requires-tag inserts a
+raw newline before its closing tokens (record_schema.md §5 ADDITIONS
+3) — COMPILES: the newline terminates the comment and hands vectorscan
+a parseable pattern. The oracle (libpcre2 10.46) and every other
+attempter on the roster (pcrec at 25b1984f, oniguruma 6.9.10,
+rust-regex 1.13.1) accept the unterminated-comment plain form; PCRE
+itself defines a `(?x)` `#` comment as ending at newline OR END OF
+PATTERN, so the plain form is well-formed PCRE and vectorscan's
+refusal is its own stricter parse. Prior samples (through 2026-09-19,
+old wrap spelling) refused BOTH forms, so the split first became
+visible at this window. Filed as an engine-behavior observation, not a
+bug report: hyperscan's PCRE-subset posture makes "stricter than PCRE"
+a documented stance, and the bench's capability machinery already
+renders the refusal as a first-class `did-not-compile` with the
+diagnostic carried.

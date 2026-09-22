@@ -3011,3 +3011,53 @@ second way, from the matrix's own closed-token columns rather than a
   generated as described above. Full per-set matrix reading (rust wins,
   new refusal boundaries, any other cross-engine finding beyond the two
   confirmations above): `docs/dev/lanes/b64window_report.md`.
+
+**[B71] reports (2026-09-22, the capability wrapfix refresh window —
+manager-collected) ADDED one file group, the [B70] wrap-spelling
+re-measure's production confirmation:**
+
+- `2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.md` — the
+  seven capability@0.1 attempters (pcrec_25b1984f_{auto,auto-nocaps,vm,
+  vm-in}-caps-simdna, oniguruma_6.9.10_default, rust_1.13.1_default,
+  vectorscan_5.4.11_block-nosom), one window 2026-09-22
+  02:11:27Z-05:33:00Z, 7/7 cells measured at attempt 1, TRIALS=5 —
+  SINGLE-VARIABLE: the [B70] wrap spelling is the only change since
+  each testee's newest sample. Query: `report --subbench capability
+  --version 0.1 --since 2026-09-22T00:00:00Z --until
+  2026-09-22T07:00:00Z` plus the seven `--testee` values — **7
+  record(s) matching this query, 7 included, 0 superseded**. Busiest
+  other core in a measured window 62.5% (R-STATUS-8's one firing).
+  `.tsv`/`.subject-grain.md`/`.subject-grain.tsv`/`.matrix.tsv`/
+  `.matrix.html`/`.interpretation.md` siblings, same query. THE
+  PRE-REGISTERED PREDICTIONS (plan.md's [B71] row, committed 18d5e42
+  BEFORE the first cell) ALL THREE CONFIRMED, scored by direct
+  record/report comparison (the TSV transcription was waived: P2/P3
+  are cross-sample comparisons R-PRED's single-report read cannot
+  express): **P1 CONFIRMED** — both CASE-1 wrapper-comment patterns
+  (`wild-codegrammar-json-number-extended`,
+  `wild-codegrammar-json-stringcontent-escape`) now compile on the
+  whole-subject form on every plain-compiling attempter (prior newest
+  samples: `did-not-compile` on all seven); vectorscan is outside P1's
+  predicate population (its PLAIN form refuses, its own `Unterminated
+  comment` parse stance — upstream_findings.md **U7**) yet its wrapped
+  form now compiles too, because the [B70] wrap's newline terminates
+  the comment. **P2 CONFIRMED** — every other (pattern, form, testee)
+  compile OUTCOME is unchanged vs that testee's newest prior sample
+  (trial-uniform within every record), and emit bytes moved ONLY on
+  `bracket-array-define` / `codegrammar-xflag` whole-subject artifacts
+  (+2 B each, all four pcrec configs) — 2 of the 4 free-spacing
+  whole-subject artifacts the prediction allowed ("MAY move"), none
+  other. **P3 CONFIRMED** — against
+  `2026-09-20-capability-0.1-budu-ryzen1600-fullroster-25b1984f.tsv`
+  (which carries all seven priors) under the reporter's own R8 rule
+  (|Δmedian| ≤ 2·max(stddev)): 721/774 common rank cells unchanged
+  (93.2%, the established day noise floor), 53 movers ALL on
+  plain-form cells whose artifacts P2 proved byte-unchanged, max
+  ×1.32, no whole-subject rank cell exists in this set (the match-
+  regime exclusion) — so no wrap-attributable timing shift anywhere.
+  One mover cluster stated, not absorbed: vectorscan reads 16 slower /
+  3 faster (≤×1.20) vs its 2026-09-19 sample on unchanged artifacts —
+  day-to-day drift, no bench or engine change can explain it and none
+  is claimed. R-STATUS-14 correctly does NOT fire on this report
+  (its own no-matching-rows sentence names the reason). This group
+  discharges the [B70] OWED re-measure line entirely.
