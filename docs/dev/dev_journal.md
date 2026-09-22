@@ -5468,3 +5468,21 @@ Merged fast-forward to 98ce60f on the lane's own detached check-harness
 450/450 rc=0. The two rulings are owed to Frank, written up in
 plan.md's [B72] row and b72smalls_report.md §4/§5. Lane TaskStopped at
 delivery per discipline; worktree cleanup at session close.
+
+## 2026-09-22 (twenty-ninth session close) — reset prep
+
+Session span 2026-09-21 ~22:1x EDT → 2026-09-22 ~09:0x EDT. The
+totals: wake-queue item 1 ruled (s-2048, no outbox line, 432d700);
+[B71] collected (7/7 measured attempt 1, store 217, P1-P3 all
+CONFIRMED, [B70] OWED discharged, upstream U7, matrix artifact pin
+note v2; ca504cb); [B72] the five parked smalls laned, reviewed,
+merged (98ce60f: KB-21 smoke arm, KB-25 ×4.8/×5.4 measured, KB-26
+transport fix; two BLOCKED-ON-RULING for Frank — vectorscan NMATCHES
+protocol shape, the Q6 (i)/immutability/regenerability conflict).
+Gate of record 5/73/0 · 450/450 · 84+7+8 (5:26) · 190/190, all run
+this session. Quiet hold ~04:00-09:00 (heartbeats only; no inbox, no
+peer traffic, no Frank messages). Close-out: lane worktree + branch
+removed, 14 completed plan rows ([B56], [B58]-[B63], [B65]-[B67],
+[B69]-[B72]) archived verbatim to plan_completed.md, wake.md
+rewritten, heartbeat cron deleted. Awaiting at reset: pcrec's abi-28
+pin note; Frank's viewer notes; Frank's two [B72] rulings.
