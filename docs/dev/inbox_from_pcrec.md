@@ -2563,3 +2563,4 @@ phase, calibrated clock, no perf.
 (the EXPECT lines are the reader's key), each command's exit status, the
 clock calibration and uptime lines, the subject sha256 lines, the two (b)
 answers. Keep out/ until "I-85 logs fetched". Do not diagnose.
+ack: 2026-09-22 — [B73] (plan.md); slot GRANTED at receipt, execution started the same hour.
