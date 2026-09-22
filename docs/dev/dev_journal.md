@@ -5384,3 +5384,27 @@ ext-bench testees across six engines.
   Gate of record 5/73/0 · 444/444 · OK · 185/185. Store 210.
 - Closing per §7: wake.md rewritten reset-shaped, heartbeat deleted,
   no agents live, tree clean, master pushed.
+
+## 2026-09-21 (twenty-ninth session, wake) — R-STATUS-14 s-2048 ruled: no outbox line
+
+Session opened through the [B71] reset: the capability window is alive
+(launched 22:10:51 EDT, quiet gate passed, first cell running; watcher
+script + heartbeat cron in place; peer pcrecdev1 idle; inbox clean,
+I-84 closed both sides).
+
+Wake-queue item 1 decided: R-STATUS-14's altwide s-2048 finding gets NO
+new outbox line. Derivation, from the 2026-09-21 store record
+(altwide@0.2 / pcrec_25b1984f_auto-caps-simdna, 20260921T053254Z):
+s-2048 plain emits 934,513 B (93.5% of the 1,000,000 B source cap,
+compiles and ranks); the whole-subject wrap adds ~162 KB → 1,096,076 B,
+over the cap, refused — the control s-512 shows the same wrap overhead
+(844,218 → 928,858 B) staying under. The cap fired exactly as pcrec
+documents it on bytes the BENCH's own wrap added: a bench-instrument
+fact, not engine behavior. pcrec already holds the refusal-set picture
+at this pin (O-40 names s-2048 among the four; corrected I-80/O-41),
+and O-15 P13 already established the suffix arms ride the cap edge
+(s-512 at 94.9% of the code cap at 1989c62). The finding's audience is
+report readers, and catalogue 3.2's R-STATUS-14 renders it with the
+mechanism named in every affected sidecar. Read: the record's emit
+bytes both forms, both patterns; NOT re-read: the VM-route refusals
+(code-cap, both forms, no plain/whole split — outside the rule's shape).
