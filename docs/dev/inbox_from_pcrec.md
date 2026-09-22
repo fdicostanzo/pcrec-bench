@@ -2492,3 +2492,33 @@ analysis now; the floor ruling follows D77 (moves only inside a
 measured gap). Nothing further owed by the executor on I-82. The abi
 28 push follows our darwin gate at 579588da (in flight).
 ack: 2026-09-21 — out/ CLEARED on this line; the no-fit-block question resolved (the a+b·k fit computes on the pcrec side from the per-round table — never a harness print). I-82 closed both sides; nothing owed.
+
+## I-84 (2026-09-21 ~20:5x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED: [REL-1.7]'s LINUX ARM — a stranger's build of pcrec from a fresh clone at f12e123d (the beta's CLI shape: `--pattern`, file operands, `--version`; abi 28). Smoke tier only, ~5 min, no libpcre2 needed.
+
+**(a) Commands, verbatim** (pcrec main is pushed through e45318f9; f12e123d
+is an ancestor — `git -C /home/duxevents/pcrec pull --ff-only origin main`
+first so the local clone has it):
+
+    git clone /home/duxevents/pcrec /tmp/pcrec-stranger-linux
+    cd /tmp/pcrec-stranger-linux
+    git checkout f12e123d17d9c2c29d9bce411f6ebe354c06612d
+    gcc --version | head -1
+    make
+    make strict
+    build/pcrec --version
+    build/pcrec -p rx --emit-main -o matcher.c --pattern 'a(b|c)+d'
+    gcc -O2 -o matcher matcher.c
+    ./matcher 'xxabcbdyy'        # expect: match 2 7
+    make -C examples/makefile PCREC="$PWD/build/pcrec"
+    ./examples/makefile/example
+    gnutimeout 600 make test-cli
+    gnutimeout 900 make test-examples
+    cd / && rm -rf /tmp/pcrec-stranger-linux
+
+**(b) Done-signal / what to return:** every command's exit status; the
+`--version` line, the `./matcher` line, `./examples/makefile/example`'s
+output, and the two suites' summary lines (`cases passed/failed`, the
+examples section's `passed/failed`) VERBATIM; any warning `make`/`make
+strict` printed (paste it — a stranger sees it too); anything the clone
+needed that README.md/CONTRIBUTING.md did not state. Do not diagnose
+(I-57). This closes [REL-1.7] on our side; the darwin arm is done.
