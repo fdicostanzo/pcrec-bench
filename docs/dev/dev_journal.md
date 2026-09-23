@@ -5587,3 +5587,24 @@ untouched, stopgap holds), check-interpret 190/190 at the union;
 check-harness 456/0 (+6: three deny controls, three stamp witnesses).
 Full union make check running tracked; the [B74] (b) capability window
 (pcrec-auto/nocaps/vm/vm-in, TRIALS=5, setsid) opens on its green.
+
+## 2026-09-23 (~03:3x EDT) — [B74] COMPLETE: window, ledger, O-45
+
+The window ran 23:19-01:52 EDT, 4/4 measured at attempt 1 (store 221,
+all agree, other-core ≤1.80%); the close-routine sidecar wave landed
+per [B41]. Cross-pin AFTER report group committed (11 testees, the
+pinconfirm roster shape; check-interpret 191/191 with the new sidecar).
+Read-only lane b74ledger extracted the D119 ledger (662 lines) from the
+eight records via pcrecbench.reduce directly; one abi typo fixed by the
+manager before O-45. THE READ: 39/41 named targets MEET the bar (the
+ReDoS set collapses 98.2-99.9% on all four configs); the two misses are
+router-prefix-order large-subject-throughput on the DFA route
+(+1.19%/+1.21%, ~10× IQR) with its VM route and all search cells
+improving; carve-outs beyond noise on 13/32 rows (nested-comment-rec
+thr +18.8-25.0% ×4; uuid/ipv4-near-miss DFA route +18.7-38.5% both
+regimes); a common ~23,088-23,190 ns large-subject-throughput floor
+entered from both directions (two formerly ~20-48 ns DFA cells RISE
+into it, both newly stamping req_byte); non-named 78 regress / 202
+improve beyond bar; stamp census 5/5 named expectations exact (end
+windows 37/16 B). O-45 sent (56f4a7e), pcrecdev1 messaged. Next: [B76]
+(I-89 B/C in the quiet slot, then A detached), then [B77] utf8 design.
