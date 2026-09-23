@@ -1,13 +1,23 @@
-# The UTF-8 encoding set — design, v0.1
+# The UTF-8 encoding set — design, v0.2
 
 **Plan row `[B77]`. Frank's charter, relayed as inbox `I-90`
 (2026-09-22 ~23:4x, pcrec manager; `docs/dev/inbox_from_pcrec.md`).**
-STATUS: **v0.1 — PROPOSED, DESIGN ONLY.** Nothing is built. No file
+STATUS: **v0.2 — PROPOSED, DESIGN ONLY.** Nothing is built. No file
 under `bench/`, `schema/`, `pcrecbench/`, `testees/` or `store/` is
 touched by this note or by the lane that wrote it. `bench/utf8/` does
 not exist and this note does not create it: the build lanes open after
 the design panel, per `capability_set_v1.md`'s own precedent (§11's lane
 plan opened only after R5).
+
+**Change log.** v0.2 (2026-09-23, lane `b77apply`) applies every ACCEPT
+of the R8 D6 critic panel's disposition table
+(`docs/dev/reviews/2026-09-23-r8-utf8-set.md`, panel of three:
+`-charter.md`, `-measurement.md`, `-semantics.md`; 18 findings —
+F-C1..C6, F-M1..M7, F-S1..S5 — all ACCEPTed in some form). Two blockers
+fixed: §7.1/§7.2's pcrec-roster identity claim (F-C1) and family (a)'s
+undeclared `\d`/`\s` UCP narrowing (F-C3, two members added, 74 → 76
+total). Each touched section below carries its own citation back to the
+finding id.
 
 **Frank's word, verbatim in substance** (I-90's own quotation): *"Build
 the utf bench. But make it somewhat complete, not 'small' — or at least
@@ -73,9 +83,9 @@ I-90's five charter clauses, verbatim in substance:
 |---|---|---|
 | (1) name, shape, roster restriction | **§2, §7, §8, §10** | `bench/utf8@0.1`, built on `patterns.rxt` exactly as `bench/capability` is; a per-engine UTF-8 surface table with the adapter change priced per engine; the oracle chain stated as a rule, not a habit |
 | (2) subjects | **§4** | five script corpora, deterministically generated from committed per-script word pools, sha256-manifested; 90 short subjects typed per family; a 64k/256k/1m mixed sweep plus a per-script 64 KB arm; the byte-histogram claim stated as the thing the set actually asserts |
-| (3) families + growth | **§5** (the six first-release families, 73 members + floor), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
-| (4) pcrec testees | **§7.2** | four `-e utf8` configs on the existing `flags` mechanism, which is how the encoding becomes part of `testee_id` rather than an invisible run-time choice; the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
-| (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note) |
+| (3) families + growth | **§5** (the six first-release families, 75 members + floor, v0.2 — F-C3 added `cls-d-ucp`/`cls-s-ucp`), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
+| (4) pcrec testees | **§7.2** | four `-e utf8` configs, `flags`-carried but requiring a FIFTH `compose_config_extra` part before the encoding actually lands in `testee_id` (F-C1, v0.2 — a stated U2 deliverable, not "configs.toml only"); the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
+| (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note); P1 scores clause 5's sharpest offset-skip pair, declared as a narrowing of I-90's plural "rows" — the rest of that population is read in the ledger (F-C6) |
 
 Two cross-cutting sections carry no single clause: **§12** (the outlier
 rule, stated before any run) and **§13** (the build plan), **§14** (the
@@ -102,8 +112,11 @@ version `0.1`.**
 `bench/syntax/NOTES.md`'s "Room for a utf family" reserves
 `bench/syntaxutf/` and describes it as the census re-read under UTF: the
 same registry seed, the same `encoding-bytes`/`encoding-utf8` tag pair,
-"the seed's rows re-read with `status`/`family` unchanged and the
-utf-only rows moving from `not-exercised` to `covered`."
+"**the** seed's rows **would be** re-read with `status`/`family`
+unchanged and the utf-only rows moving from `not-exercised` to
+`covered`" **(F-C4, v0.2: quote restored verbatim — the source is
+conditional, describing what a future `syntaxutf` build would do, not a
+completed fact)**.
 
 That is a DIFFERENT set from the one I-90 charters, and both are
 legitimate:
@@ -203,7 +216,7 @@ Read from each file's own header comment in `~/pcrec/tests/utf8/`.
 | axis | exercised by | release | note |
 |---|---|---|---|
 | 1 encoded length | (a) `cls-dot`, `cls-dot-rep`; (b) every `lit-1ch-*`; (d) `alt-mixed-width`, `qnt-dot-bounded` | **0.1** | the sharpest single witness is `cls-dot-rep` (`^.{5}$` matching a 12-byte, 5-character subject) |
-| 2 class boundary | (a), all fourteen members | **0.1** | Frank's own named example; the largest first-release family |
+| 2 class boundary | (a), all sixteen members (F-C3, v0.2: +`cls-d-ucp`/`cls-s-ucp`) | **0.1** | Frank's own named example; the largest first-release family |
 | 3 invalid UTF-8 | growth **(h)** | **0.3** | documented-behaviour table, never a ranked cell — §8.3 |
 | 4 `\p` categories | (f) `prp-L`, `prp-Lu`, `prp-N`, `prp-notL`, `prp-Zs`, `prp-L-anchored` | **0.1** | six of 37 spellings; the set measures the MECHANISM's cost, not the table's coverage — §3.3 gap 2 |
 | 5 `\p` refusals | (f) `prp-ingreek` — ONE witness | **0.1**, permanently partial | §3.3 gap 2 |
@@ -276,6 +289,35 @@ roughly 200 common words plus a punctuation/whitespace vocabulary, and
 `utf8text.py` — the shared xorshift64\* primitive in
 `bench/syntax/censustext.py`'s shape, which `bench/capability/captext.py`
 already reuses — composes them into sentences and paragraphs.
+
+**The size-fitting boundary rule (F-M1, v0.2, BLOCKER fixed).**
+`captext.py:100-118`'s trim-to-fit loop, the one built precedent for
+this generator's shape, hits its exact byte target with a raw
+byte-offset slice (`line[:remaining]`) — safe today only because its
+alphabet is ASCII. Ported naively to `cyr`/`cjk`/`mix`'s multi-byte word
+pools, that slice will, on most (corpus, size) pairs, land inside a
+multi-byte sequence and leave an ill-formed UTF-8 tail — which, per
+§8.2's rule, is not a corner case here but a subject-corrupting default:
+plain `PCRE2_UTF` (and every other UTF-8-aware engine on the roster,
+§8.3) refuses or misbehaves on such a subject, silently converting the
+entire `throughput` regime into hard refusals with no `match`
+expectations to catch the wrong outcome cleanly. **The rule:**
+`utf8text.py`'s size-fitting step trims back to the LAST COMPLETE
+CHARACTER at or before the byte budget (a decode-and-truncate walk-back:
+`try: s[:k].encode(); except UnicodeDecodeError: k -= 1`, or the
+equivalent byte-buffer form), then PADS with ASCII spaces (0x20, never a
+multi-byte filler) up to the exact target byte size — so every
+throughput subject is still EXACTLY its named size in bytes (the
+histogram table's own claim is unaffected; the pad simply shows up in
+it, visibly). `gen_subjects.py --check` and
+`gen_throughput_subjects.py --check` gain a DECODE GATE: every committed
+subject must round-trip through `bytes.decode("utf-8")` with no error
+before its manifest row is written — the same belt-and-braces discipline
+`gen_throughput_subjects.py`'s own `_redos_safety_check` already sets a
+precedent for (verify the structural argument, don't just assert it),
+with a negative-arm control (a deliberately mid-character-truncated
+fixture must FAIL the gate). This is a stated requirement of §13's U3
+lane, not an implementation detail left to it.
 
 **The limitation, stated plainly and repeated in `NOTES.md`:** these are
 our sentences made of real words. The set claims a realistic BYTE
@@ -363,9 +405,15 @@ the set whose compiled artifact should be IDENTICAL under `-e utf8` and
 
 ## 5. The six first-release families
 
-**73 members + the floor = 74 patterns.** Ids are `<family>-<slug>`;
+**75 members + the floor = 76 patterns** (v0.2, F-C3: +2 over v0.1's
+74 — `cls-d-ucp`, `cls-s-ucp`). Ids are `<family>-<slug>`;
 every member carries `tag family=`, `tag requires=` and, where it has
 one, `tag hazard=` — `bench/capability`'s own `patterns.rxt` shape.
+**(F-S2/F-S3, v0.2):** every member below carries `requires =
+utf8-encoding` (§7.5) EXCEPT the three byte-safe controls named in
+§7.3's table (the floor `~`, `ci-ascii-control`, `asr-b-ascii`) — stated
+here once rather than tagged on 73 individual rows, since the token is
+the population's default and the exceptions are the informative fact.
 
 Every family carries at least one CONTROL PAIR and at least one designed
 NEAR-MISS — a subject that shares a prefix with a hit and fails at the
@@ -376,10 +424,15 @@ repetition", `bench/syntax`'s spelling groups, CAP §3.2).
 point matters more than the glyph; a literal glyph is written where the
 byte sequence is the point. Both are UTF-8 in the file.
 
-### (a) CLASSES — `cls-*`, 14 members — Frank's own example
+### (a) CLASSES — `cls-*`, 16 members — Frank's own example
 
 The 1-byte/multi-byte boundary, negation over the encoding's universe,
-and the class-scope question. Axes 1, 2 (+ the UCP split).
+and the class-scope question. Axes 1, 2 (+ the UCP split). **(F-C3,
+v0.2, applied — was an undeclared narrowing):** I-90 clause 3(a) names
+"`\w`/`\d`/`\s` with and without UCP" by name; v0.1 gave `\w` the full
+pair but only the ASCII-scoped half of `\d`/`\s`. `cls-d-ucp` and
+`cls-s-ucp` below complete the triple, bringing family (a) to 16
+members and the set to 76.
 
 | id | pattern | axis | what it isolates |
 |---|---|---|---|
@@ -393,14 +446,18 @@ and the class-scope question. Axes 1, 2 (+ the UCP split).
 | `cls-w-ascii` | `\w+` | 2 | `\w` WITHOUT UCP under `-e utf8`: ASCII-scoped, so a Cyrillic letter is a NON-member (AX axis08's own oracle basis, verbatim). `requires = ascii-class-scope` |
 | `cls-w-ucp` | `(*UCP)\w+` | 2 | the UCP twin — `requires = unicode-class-scope`. The control pair with `cls-w-ascii`; the pair is the whole point |
 | `cls-d-ascii` | `\d{4}` | 2 | designed NEAR-MISS: against a subject of four Arabic-Indic digits (U+0660-0669), must NOT match under ASCII class scope. `requires = ascii-class-scope` |
+| `cls-d-ucp` | `(*UCP)\d{4}` | 2 | **(F-C3, v0.2)** the UCP twin and control pair with `cls-d-ascii`: the SAME four Arabic-Indic digits become a designed HIT once `\d` is Unicode-widened. `requires = unicode-class-scope` |
 | `cls-s-nbsp` | `a\sb` | 2 | designed NEAR-MISS: against `a` U+00A0 `b`, must NOT match without UCP. `requires = ascii-class-scope` |
+| `cls-s-ucp` | `(*UCP)a\sb` | 2 | **(F-C3, v0.2)** the UCP twin and control pair with `cls-s-nbsp`: `a` U+00A0 `b` becomes a designed HIT once `\s` is Unicode-widened. `requires = unicode-class-scope` |
 | `cls-posix-alpha` | `[[:alpha:]]+` | 2 | the POSIX-class spelling of the same scope question — a genuine cross-engine divergence candidate. `requires = ascii-class-scope` |
 | `cls-lead-pair` | `[α-ω]+` | 2 | **a FIRST CUSTOMER.** UD §6.3's own worked row: a TWO-lead-byte class (0xCE, 0xCF) is an excellent filter that `memchr` cannot use because `memchr` takes one byte; the bitmap-skip arm must take it |
 | `cls-neg-cjk` | `[^\x{4E00}-\x{9FFF}]+` | 2 | a negated 3-byte range, read over the `cjk` corpus where it mostly FAILS — the loglines-shaped reading of a multi-byte class |
 
-Control pairs: `cls-w-ascii`/`cls-w-ucp`; `cls-lead-pair` against
-`cls-high-range` (two leads vs many). Near-misses: `cls-d-ascii`,
-`cls-s-nbsp`, `cls-dot-rep`'s 5-byte subject.
+Control pairs: `cls-w-ascii`/`cls-w-ucp`; `cls-d-ascii`/`cls-d-ucp`;
+`cls-s-nbsp`/`cls-s-ucp` (F-C3, v0.2 — completing the triple by name);
+`cls-lead-pair` against `cls-high-range` (two leads vs many).
+Near-misses: `cls-d-ascii`, `cls-s-nbsp`, `cls-dot-rep`'s 5-byte
+subject.
 
 ### (b) LITERALS of multi-byte characters — `lit-*`, 12 members
 
@@ -432,6 +489,16 @@ The fold-set shapes. Axes 6, 7. **I-90 §5's third named first
 customer.** Non-ASCII caseless folding SHIPPED in pcrec at [M5.0] stage
 4 (AX, "THE STAGE-4 GAP IS CLOSED", 2026-09-08), so every member below
 is a live cell on pcrec, not a refusal.
+
+**(F-S4, v0.2, stated so the omission reads as a decision.)** Unlike
+family (a)/(e), no `ci-*` member below except `ci-ucp-invariance` carries
+a `(*UCP)` twin, and this is deliberate, not a gap: UCP governs class
+SCOPE (`\w`/`\d`/`\s`/POSIX widening), not fold MEMBERSHIP, which are
+orthogonal PCRE2 options (UD §4.5). `ci-ucp-invariance` exists to prove
+exactly this — it is the control that shows the fold answer is
+UNCHANGED with or without UCP — so adding a UCP twin to every other
+`ci-*` member would measure nothing new at real `search_short`/
+`throughput` cost; one witness is the finding.
 
 | id | pattern | axis | what it isolates |
 |---|---|---|---|
@@ -516,14 +583,14 @@ from pcrec — §9.
 
 | family | members | `hazard_class` |
 |---|---|---|
-| (a) `cls-*` | 14 | `none` |
+| (a) `cls-*` | 16 | `none` |
 | (b) `lit-*` | 12 | `none` |
 | (c) `ci-*` | 12 | `none` |
 | (d) `alt-*` / `qnt-*` | 12 | `none` |
 | (e) `asr-*` | 11 | `none` |
 | (f) `prp-*` | 12 | `none` |
 | floor | 1 | `none` |
-| **total** | **74** | |
+| **total** | **76** (v0.2, F-C3: was 74) | |
 
 No member is authored to exercise a backtracking hazard: this set's
 objective is the ENCODING, and a ReDoS shape would confound it.
@@ -568,22 +635,25 @@ UTF-8 — say which do and how each is told."*
 **The finding that shapes this whole section: every adapter in this
 repo is deliberately BYTE-MODE today, and each one says so in its own
 file.** That is not an oversight — it is what makes
-`bench/capability`'s family 12 (`binary-nonutf8`) measurable at all, and
-three adapters cite that family by name as the reason. So a UTF-8 set
-does not "turn on" a mode; it adds a SECOND CONFIG per engine, with the
-encoding visible in `testee_id`.
+`bench/capability`'s family 12 (`binary-nonutf8`) measurable at all.
+**(F-C2, v0.2, corrected):** one adapter (`re2`, in both `driver.cc:27`
+and `CLAUDE.md:102-103`) cites the family `binary-nonutf8` by name as
+its reason; two more (`onig`, `vectorscan`) cite the `non-utf8-subject`
+REQUIRES token the family scores against, without naming the family
+itself. So a UTF-8 set does not "turn on" a mode; it adds a SECOND
+CONFIG per engine, with the encoding visible in `testee_id`.
 
 ### 7.1 The surface table
 
 | engine | UTF-8 surface | how it is told TODAY | v1? | the adapter change, concretely |
 |---|---|---|---|---|
 | **pcre2** (`interp`, `jit`, `dfa`) | `PCRE2_UTF` (0x00080000), plus `PCRE2_UCP` where a family needs it | **nothing** — `driver.c:325` calls `p_compile(pat, patlen, 0, …)` with the options word HARD-CODED to `0` | **v1: three NEW configs** `pcre2-utf-interp` / `-jit` / `-dfa` | `driver.c`: two argv flags (`--utf`, `--ucp`) folded into the options word, and the find-all advance made character-boundary-aware (§8.4 — PCRE2 rejects a mid-character `startoffset` under `PCRE2_UTF`). `adapter.py`: two config keys → driver args → `config_extra`. `configs.toml`: three rows |
-| **pcrec** (`auto`, `nocaps`, `vm`, `vm-in`) | `-e utf8` / `--encoding=utf8` (UD §9.2 stage 2's own spelling) | `flags = ["--features", "all", …]` in `configs.toml` | **v1: four NEW configs** at `-e utf8` | `configs.toml` only: four rows whose `flags` carry `"-e", "utf8"`. Because `flags` land in `build_flags` AND in the derived `testee_id`, the encoding becomes an IDENTITY exactly the way `-bigcap` and `-noclsfold` already are — no adapter code changes |
+| **pcrec** (`auto`, `nocaps`, `vm`, `vm-in`) | `-e utf8` / `--encoding=utf8` (UD §9.2 stage 2's own spelling) | `flags = ["--features", "all", …]` in `configs.toml` | **v1: four NEW configs** at `-e utf8` | **(F-C1, v0.2, corrected)** a FIFTH `compose_config_extra()` part, `encoding_extra`, plus an `effective_encoding(flags)` recognition function mirroring `effective_denies`/`effective_caps`'s shape (`testees/pcrec/adapter.py:2154-2338`), and the one-line call-site edit adding it at `:2987-2989` — THEN four `configs.toml` rows whose `flags` carry `"-e", "utf8"`. `flags` alone lands in `build_flags` but NOT in `config_extra` (`compose_config_extra` takes four FIXED positional parts today, none of which scans `flags` for an encoding token — `DENY_FLAGS`/`CAP_KEYS` are closed tuples that do not recognize `-e`/`--encoding=`), so without the new part `pcrec-auto-utf8` and `pcrec-auto` would derive the SAME `testee_id` (record_schema.md §6.4, X5). See §7.2 |
 | **rust** (`rust-default`) | **already UTF-8-semantic.** `RegexBuilder::unicode` defaults to **true** and `regex::bytes` matches a code point against its UTF-8 ENCODING in the haystack — `testees/rust/CLAUDE.md`'s own measured section ("`non-utf8-subject`: RESOLVED — the class matches the UTF-8 ENCODING, not the raw byte, under this config's default unicode mode") | nothing to tell it | **v1, UNCHANGED** | **zero.** The finding worth stating: `rust-default`'s presence in this repo's BYTE sets is the anomaly, not its presence here |
 | **re2** (`re2-default`, `re2-longest`) | `RE2::Options::EncodingUTF8` — RE2's own DEFAULT, which this driver deliberately overrides | `driver.cc:220`: `opts.set_encoding(RE2::Options::EncodingLatin1);`, with the header comment naming family 12 as the reason | **v1: one NEW config** `re2-utf8` | `driver.cc`: one argv flag selecting the encoding; `configs.toml`: one row. The cheapest change on the roster |
 | **onig** (`onig-default`) | `ONIG_ENCODING_UTF8` | `driver.c:91`: `#define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII` — a COMPILE-TIME constant, so a second config cannot be a flag without a small change | **v1: one NEW config** `onig-utf8` | `driver.c`: make the encoding a runtime choice between two `OnigEncoding` pointers (`--encoding utf8\|ascii`); `configs.toml`: one row. **AND a re-census**: `testees/onig/CLAUDE.md` withholds `unicode-properties` under ASCII encoding — under UTF-8 it is expected to be SATISFIED, which must be witnessed per (config, token) before the declaration changes (the L5 lesson, CAP §5.3) |
 | **vectorscan** (`vectorscan-block-nosom`) | `HS_FLAG_UTF8`, plus `HS_FLAG_UCP` | `driver.c:125`: `VS_DRIVER_FLAGS` is `0`; the header (`:50-59`) states `HS_FLAG_UTF8` is NEVER set and why (byte-oriented, matching the roster's 8-bit convention, satisfying `non-utf8-subject`) | **v1, BOOLEAN GRAIN ONLY** — one new config `vectorscan-block-nosom-utf8` | `driver.c`: flags from argv; `configs.toml`: one row. Frank's Q3 ruling stands unchanged: match/no-match and compile/refusal comparisons, never a span or a count. **A warning this set inherits (§7.6):** the same header records a MEASURED A/B in which setting `HS_FLAG_UCP` BREAKS `\b` on five real corpus patterns (40/64 corpus compiles at flags 0 against 35/64 under UCP) |
-| **tre** (`tre-default`) | **no byte-mode UTF-8 path exists** — see §7.3 | `tre_regncompb`, byte-literal by construction; `driver.c:19` states the convention ("a byte ≥ 0x80 is one [character]") | **EXCLUDED from v1** — §7.3 | — |
+| **tre** (`tre-default`) | **no byte-mode UTF-8 path exists** — see §7.3 | `tre_regncompb`, byte-literal by construction; `driver.c:19` states the convention ("a byte ≥ 0x80 is one [character]") | **EXCLUDED PER-PATTERN from v1 (F-S2/F-S3, v0.2): 73/76 — §7.3.** RANKS on the 3 byte-safe controls | — |
 | **python `re`, perl** | both are UTF-8-native | not wired (CAP §8.1: compile + correctness only, and permanently `inconclusive-spread` run pinned) | not in v1, as elsewhere | — |
 
 ### 7.2 pcrec's four configs, and why the flag mechanism matters
@@ -602,27 +672,89 @@ deliberately invisible in `testee_id`. `-e utf8` must be the opposite:
 **visible**, because two records differing only in encoding must be two
 testees, not one testee measured twice.
 
+**(F-C1, v0.2, corrected).** Being IN `flags` is necessary but not
+sufficient for that visibility: `flags` land in `build_flags` (an
+argv-shaped record field) unconditionally, but `testee_id` is derived
+from `config_extra` WHOLE (record_schema.md §6.4, X5), and
+`compose_config_extra()`'s one call site
+(`testees/pcrec/adapter.py:2987-2989`) takes exactly four fixed parts —
+`cc_extra`, `cap_extra` (from `effective_caps`, matching only
+`--max-emit-bytes=`/`--max-emit-code-bytes=`), `deny_extra` (from
+`effective_denies`, matching only the closed `DENY_FLAGS` tuple) and
+`cflags_extra` (from the separate `cfg["cflags"]` key) — none of which
+scans `flags` for `-e`/`--encoding=`. So the adapter work is not
+"`configs.toml` only": it is a new `effective_encoding(flags)` function
+in the shape of `effective_denies`/`effective_caps`, returning an
+`encoding_extra` token, plus the call-site edit adding it as the
+composition's fifth part. Without that edit, `pcrec-auto-utf8` and
+`pcrec-auto` would derive the identical `testee_id` and silently
+collide in the store — exactly what `-bigcap` and `-noclsfold` avoid by
+each having their own recognition function. This is a stated deliverable
+of lane U2 (§13), with a frozen-renderer test row proving the six
+PRE-EXISTING config families (plain, `-bigcap`, `-clang`, `-noedge`,
+`-align64`, `-noisland`/`-noclsfold`) derive UNCHANGED ids and
+`config_extra` once the fifth part exists and is empty for them.
+
 Proposed ids, by the composition rule: `pcrec-auto-utf8`,
 `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8`, deriving
 `config_extra = utf8` in the record — the same escape hatch
-`pcrec-*-bigcap` ([B31]) and the `-clang` siblings ([B24]) already use.
-Twenty pinned pcrec configs after this set lands.
+`pcrec-*-bigcap` ([B31]) and the `-clang` siblings ([B24]) already use,
+once `encoding_extra` exists to carry it. Twenty pinned pcrec configs
+after this set lands.
 
-### 7.3 The TRE ruling — EXCLUDED from v1, by declaration, not by omission
+### 7.3 The TRE ruling — EXCLUDED per-pattern, by declaration, not by omission
 
-**PROPOSED RULING: `tre-default` runs NO (a)-(f) cell in `utf8@0.1`.
-The exclusion is a `requires = utf8-encoding` token the config declares
-UNSATISFIED, so every pattern is a clean `unsupported-by-declaration`
-compile row citing the token by name — a CENSUS row, never an absence.**
+**(F-S2/F-S3, v0.2, corrected from a blanket set-wide exclusion.)**
+**RULING: `tre-default` runs NO cell on 73 of this set's 76 patterns.
+The exclusion is a `requires = utf8-encoding` token those 73 patterns
+declare and the config does not satisfy, so each is a clean
+`unsupported-by-declaration` compile row citing the token by name — a
+CENSUS row, never an absence. `utf8-encoding` is a PER-PATTERN token
+(§7.5), exactly like every other REQUIRES token in this repo
+(`pcrecbench/capability.py`'s own model): it names patterns whose
+byte-mode and character-mode readings can diverge, not "every pattern
+in a UTF-8 set."**
 
-Three reasons, in order of weight:
+**The byte-mode-divergence rule.** A member carries `requires =
+utf8-encoding` if its byte-mode reading (TRE's `tre_regncompb`,
+byte-literal by construction) can diverge from its character-mode
+reading on ANY subject this set runs it over — which in practice means
+any member containing a `.`, a class, a negation, an assertion whose
+scope depends on character vs. byte boundaries, a caseless construct
+over non-ASCII content, or any literal multi-byte content. **The three
+members that do NOT carry it — the byte-safe members, where
+`tre-default` RANKS, on all subjects:**
+
+| id | pattern | why it is byte-safe |
+|---|---|---|
+| `~` (the floor) | `~` | a single ASCII-byte literal search; a byte-mode and a character-mode reading of "find this one byte" cannot diverge on any subject, at any regime |
+| `ci-ascii-control` | `(?i)abc` | a pure-ASCII caseless literal — TRE's byte-mode caseless fold over `a`-`z`/`A`-`Z` and a character-mode simple fold agree on the ASCII range by construction, and the literal contains no multi-byte content to decompose |
+| `asr-b-ascii` | `\bcat\b` | a pure-ASCII literal with a `\b` boundary — every non-ASCII byte (a UTF-8 lead or continuation byte) is a non-word BYTE under TRE exactly as its character is a non-word CHARACTER under ASCII-scoped `\b`, so the boundary reading agrees regardless of what surrounds the literal |
+
+Every OTHER member of the 76 (73 patterns) carries `requires =
+utf8-encoding` and is `unsupported-by-declaration` on `tre-default`.
+**A separate, coarser carve the REQUIRES model cannot express:** every
+member's rows against the `asc` (byte-clean ASCII) subject population
+are ALSO divergence-free, for a reason that has nothing to do with the
+pattern — a subject with zero non-ASCII bytes gives byte-mode and
+character-mode nothing to disagree about, regardless of which pattern
+runs over it. REQUIRES is a per-PATTERN grain (`patterns[].tags`), not
+per-(pattern, subject), so this `asc`-only carve-out cannot be declared
+cleanly today; it is named here as an honest gap rather than folded
+silently into the blanket exclusion, in the shape of §3.3's other
+stated gaps. A future harness change to score REQUIRES per (pattern,
+subject) is a possibility, not proposed here.
+
+Three reasons for the exclusion where it applies, in order of weight
+(unchanged from v0.1's reasoning, now scoped to the 73 patterns that
+actually need it):
 
 1. **TRE has no byte-mode UTF-8.** `tre_regncompb` is byte-literal by
    construction; `testees/tre/driver.c:19` states the convention this
    project adopted for it ("a byte ≥ 0x80 is one [character]"), and
    `testees/tre/CLAUDE.md` item (d).1 measures a related consequence
    (`\xHH` does not exist at all; `\x93` compiles as three literal
-   characters). Every (a)-(f) pattern would get a BYTE-DECOMPOSED
+   characters). Every affected pattern would get a BYTE-DECOMPOSED
    reading — which answers a *different question* from the one the set
    asks, and would sit in the same ranking column as the answers to the
    right one.
@@ -648,7 +780,8 @@ Three reasons, in order of weight:
 (§6's closing note). The two things that must be settled before it opens
 are in reason 2 — the locale dependency and the length unit — and both
 are adapter-design questions, not set questions. **§14 Q4** puts the
-ruling to the manager; the recommendation is the exclusion above.
+ruling to the manager; the recommendation is the per-pattern exclusion
+above (v0.2: not a blanket one).
 
 ### 7.4 Which engines sit OUT of which family
 
@@ -660,8 +793,8 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 
 | family | who sits out, and why | confidence |
 |---|---|---|
-| **(a)** `cls-w-ucp`, `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
-| **(a)-(f)** all | `tre-default`, via `utf8-encoding` (§7.3) | **CONFIRMED** |
+| **(a)** `cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp` (F-C3, v0.2), `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
+| **(a)-(f)** 73 of 76 | `tre-default`, via the per-pattern `utf8-encoding` token (§7.3, F-S2/F-S3 v0.2). **Excepted (`tre-default` RANKS):** the floor `~`, `ci-ascii-control`, `asr-b-ascii` — the byte-safe members | **CONFIRMED** |
 | **(f)** all `prp-*` | `tre-default` only (no `\p` construct exists at all — `testees/tre/CLAUDE.md` item 3, measured: `\p{L}` and `\p{Alpha}` both refuse with code 10). **Vectorscan does NOT sit out**: `testees/vectorscan/driver.c:50-53` records a MEASURED A/B — `\p{L}` compiles identically with and without `HS_FLAG_UCP` — so the general-category family is live there | tre: **CONFIRMED**. vectorscan: **CONFIRMED** (measured, this repo's own A/B) |
 | **(f)** `prp-greek-sc`, `prp-cyrillic`, `prp-han`, `prp-latin` | Script and Script_Extensions spellings differ by engine: RE2 documents `\p{Greek}` script support but **`scx=`/Script_Extensions is not established**; the Rust `regex` crate documents both but **not verified at crate 1.13.1 here**; `onig-utf8` is a re-census (§7.1) | **UNCONFIRMED across three engines** — one witness each |
 | **(c)** all `ci-*` | none expected to sit out — every roster engine has a caseless mode — but `ci-kelvin` / `ci-long-s` (the closure reaching outside the range) are where an engine with a PAIRWISE rather than a CLOSURE fold would diverge in ANSWER, not in capability | the divergence is the finding, not a gap |
@@ -670,10 +803,11 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 
 **Consequence, and it is the correct outcome, not a gap:** the
 `unsupported-by-declaration` share on this set will be LARGE — larger
-than on `bench/capability`, because `utf8-encoding` alone removes one
-engine entirely and the class-scope split removes a handful of patterns
-from two more. CAP §6.3's rule applies verbatim: *the reporter must
-render it as a count, not an absence.*
+than on `bench/capability`, because `utf8-encoding` alone removes
+`tre-default` from 73 of 76 patterns (v0.2: three now RANK) and the
+class-scope split removes a handful of patterns from two more engines.
+CAP §6.3's rule applies verbatim: *the reporter must render it as a
+count, not an absence.*
 
 ### 7.5 Three new REQUIRES tokens
 
@@ -682,7 +816,7 @@ The vocabulary is closed and global today
 
 | token | what a pattern needs | who does NOT satisfy it |
 |---|---|---|
-| `utf8-encoding` | the engine must interpret pattern AND subject as UTF-8 character sequences, not byte sequences | `tre-default` (§7.3); every existing BYTE-mode config of every engine |
+| `utf8-encoding` | **(F-S2/F-S3, v0.2: PER-PATTERN, not set-wide)** a pattern whose byte-mode and character-mode readings can diverge on some subject this set runs it over (any `.`/class/negation/scope-sensitive assertion/caseless-over-non-ASCII/multi-byte literal content); carried by 73 of the set's 76 members — every member except the floor `~`, `ci-ascii-control` and `asr-b-ascii` (§7.3's byte-safe table) | `tre-default` on the 73 declaring members (§7.3); every existing BYTE-mode config of every engine, on those same 73 |
 | `ascii-class-scope` | `\w` / `\d` / `\s` / POSIX classes must be ASCII-scoped under UTF-8 (PCRE2's default absent `PCRE2_UCP`) | `rust-default` (unicode mode on by default); any engine whose class scope is Unicode-by-default |
 | `unicode-class-scope` | `\w` / `\d` / `\s` must be Unicode-widened (PCRE2's `PCRE2_UCP`, Vectorscan's `HS_FLAG_UCP`) | every `pcrec-*` config (UD §4.5: no UCP axis); any engine with no widening dial |
 
@@ -754,8 +888,9 @@ dial: on one roster engine the "dial" is not a dial at all.
   `expectations.tsv`.
 - `PCRE2_UCP` is a **per-pattern DECLARED FACT**, carried as the
   `unicode-class-scope` REQUIRES token (§7.5) and as the oracle's own
-  option word for that pattern's rows. The twelve patterns affected are
-  named in §5 and the pairs are stated: `cls-w-ascii`/`cls-w-ucp`,
+  option word for that pattern's rows. The patterns affected are named
+  in §5 and the pairs are stated: `cls-w-ascii`/`cls-w-ucp`,
+  `cls-d-ascii`/`cls-d-ucp`, `cls-s-nbsp`/`cls-s-ucp` (F-C3, v0.2),
   `asr-b-cyr`/`asr-b-cyr-ucp`, `ci-e-acute`/`ci-ucp-invariance`.
 - **The oracle module does not do this today.** `pcrecbench/oracle_
   pcre2.py:47` declares `PCRE2_UTF` with the comment *"not used: this
@@ -807,6 +942,17 @@ right about:
 - RE2, Rust and Vectorscan each have their own documented posture, none
   of them established in this repo today.
 
+**(F-S5, v0.2.)** That "none established" is true for RE2/Rust/
+Vectorscan, but not for the pcrec/PCRE2 pair specifically: AX's axis03
+already treats `PCRE2_MATCH_INVALID_UTF` as a working, precedented
+differential oracle against pcrec (`~/pcrec/tests/utf8/
+axis03_invalid_utf8.rxt:9-11`, verbatim: *"the oracle for every case
+below is libpcre2 under `PCRE2_MATCH_INVALID_UTF`, never plain
+`PCRE2_UTF`"*). This does not change the six-engine table's policy
+below — see Q10's ruling — but a reader should not read this
+paragraph as implying the pcrec/PCRE2 pair starts from the same
+"nothing established" position as the other four.
+
 Ranking three different documented behaviours against one canonical
 expectation would manufacture wrong answers out of correct ones. The
 table is the honest instrument, and it is what `~/pcrec/tests/utf8`'s
@@ -857,16 +1003,34 @@ change is not deferrable to (g).
 `prp-greek` vs `prp-greek-sc` is oracled from libpcre2 10.46 like
 everything else — but AX's [M5.0] stage-5 section records that the two
 local libpcre2 builds on the pcrec author's box DISAGREED with the
-10.46 reference on three cells (U+00B7 and U+0300 under
-`\p{Greek}`/`\p{scx=Greek}`), because Unicode revised those characters'
-Script_Extensions between 14.0.0 and 16.0.0. **Consequence for this
-set:** the Unicode version behind the oracle library is a PROVENANCE
-fact that must be recorded beside the expectation, and a re-derivation
-on a different box can legitimately differ on exactly those cells. The
-subject pair for `prp-greek`/`prp-greek-sc` should therefore AVOID
-U+00B7 and U+0300 and use U+0342 (which AX names as a stable flipper),
-with the avoided pair stated in `NOTES.md` as a known version-sensitive
-region rather than silently unused.
+10.46 reference on a MINORITY of a 59-cell Script/Script_Extensions
+sweep (Homebrew 10.48/Unicode 17.0.0 agrees on 57 of 59; macOS system
+10.42/Unicode 14.0.0 agrees on 54 of 59). **(F-S1, v0.2, corrected.)**
+Read directly against the sweep's own arbitrating tool
+(`~/pcrec/tests/uprops/uprops_compare.py`'s `RECLASSIFIED`/
+`SCX_REVISED` dicts, which AX's header names as authoritative): the
+14.0.0→16.0.0 drift the disagreement above is actually about is **one
+code point, U+00B7, and one only** — the tool's own comment calls it
+"the single code point" and, because it is Latin-1, "the only script
+disagreement the byte arm sees at all." U+0300 is a DIFFERENT fact
+entirely (a 16.0.0→17.0.0 drift, one of fifteen `SCX_REVISED` members
+at that later version boundary) and is not a version-drift risk for the
+14.0.0/16.0.0 pair this note is about at all — v0.1 conflated "the code
+points that flip between the bare and `sc=` spellings within the
+16.0.0 pin" (a Script vs. Script_Extensions membership question) with
+"the code points whose Script_Extensions membership is version-
+sensitive" (U+00B7 alone), inheriting AX's own prose-header conflation
+as fact rather than checking it against the tool AX itself names.
+**Consequence for this set, unchanged:** the Unicode version behind the
+oracle library is a PROVENANCE fact that must be recorded beside the
+expectation, and a re-derivation on a different box can legitimately
+differ on U+00B7. The subject pair for `prp-greek`/`prp-greek-sc`
+should therefore AVOID U+00B7 (the confirmed version-sensitive point)
+and use U+0342 (which AX names as a stable flipper and which is, like
+U+0300, absent from both `uprops_compare.py` tiers — so neither
+mitigation choice changes), with the avoided point stated in
+`NOTES.md` as a known version-sensitive region rather than silently
+unused.
 
 ---
 
@@ -906,6 +1070,24 @@ Concretely:
 The boundary in one sentence: **the SET says what the patterns and
 subjects are; the ROSTER says under which encoding each engine reads
 them; the LEDGER says what the difference means.**
+
+**A recorded question, not a design change (F-M6, v0.2).** [B79]'s
+program-identical null-control band (per-pin emit-hash comparison over
+compile rows) applies here structurally the same way it applies to
+`bench/capability` — nothing about the `-e utf8` configs exempts them —
+but this set's own near-term power on it is weaker than a mature set's,
+for two reasons worth naming in `NOTES.md` rather than silently
+discovering later: the four `pcrec-*-utf8` testee ids have zero re-pin
+history at `0.1`'s first sample, so the null band is uncomputable until
+a SECOND measured pin; and this set's whole reason for existing is
+pcrec's ACTIVE utf8-specific optimization work (`[OPT-OFSK]`,
+`[OPT-REQPOS]` 2b), which targets precisely the code paths its patterns
+exercise, so `bench/utf8`'s early re-pins should be expected to produce
+a LOWER program-identical fraction than `capability@0.1`'s 30%
+(56/187), not a similar one — thinning the population [B79] needs
+exactly when this set is newest and most in need of a noise floor. Not
+a blocker; a first `bench/utf8` reader should not mistake "no null band
+yet" for "the band doesn't apply here."
 
 ---
 
@@ -948,26 +1130,51 @@ independent of the testee's speed.
 
 | term | arithmetic | per cell |
 |---|---|---|
-| `search_short` | 74 patterns × 6 passes (1 probe + 5 trials) × (50 ms × 90 subjects ≈ 4.5 s) | **~33 min** |
-| `throughput` | 6 passes × 74 patterns over ~1.58 MB | **~5-12 min** (the property classes and the 64-branch alternation are the slow members) |
-| pcrec compile, one form × 74 | ~1-3 s each | **~2-4 min**, compiled testees only |
+| `search_short` | 76 patterns × 6 passes (1 probe + 5 trials) × (50 ms × 90 subjects ≈ 4.5 s) | **~34 min** |
+| `throughput` | 6 passes × 76 patterns over ~1.58 MB | **~5-12 min** (the property classes and the 64-branch alternation are the slow members) |
+| pcrec compile, one form × 76 | ~1-3 s each | **~2-4 min**, compiled testees only |
 
-**Estimate: ~40 min per `pcre2-*`/`re2`/`rust`/`onig` cell, ~45 min per
-pcrec cell.** Against `CELL_CAP`'s 5,400 s default that is **~2×
-headroom** — thinner than `capability@0.1`'s (~2-2.5×) and much thinner
-than the design's original 5×, so it is stated as a risk (§15 R3) with
-its lever named: **dropping the per-script 64 KB throughput arm
-(§4.3) removes four subjects and recovers ~4 min/cell**, and reducing
-the short set from 90 to 75 recovers ~5 min. Both are one-line changes
-to a generator.
+**(F-M3, v0.2, restated against a real measured band, not analogy.)**
+The v0.1 estimate below this arithmetic (~40-45 min/cell at ~2×
+`CELL_CAP` headroom) was cross-checked against `bench/capability@0.1`'s
+own real cell times on this box the SAME NIGHT the panel ran (four
+`capability@0.1` records, `store/index.tsv`: 35m26s, 31m25s, 42m51s —
+**31-43 min per pcrec cell, measured**, not modeled). Applying this
+section's own formula to `capability`'s population (64 patterns × 75
+subjects) gives `search_short` alone ≈ 24 min, leaving only 7-19 min of
+the observed 31-43 min total for `capability`'s throughput + compile —
+i.e. `search_short` dominates the real cost exactly as the model
+assumes, and 7-19 min is the measured FLOOR for throughput + compile on
+this box. `utf8@0.1` (v0.2, 76 patterns × 90 subjects) asks for **1.425×**
+`capability`'s `search_short` load: 24 min × 1.425 ≈ **34 min**,
+matching this section's own arithmetic above. Adding the measured
+7-19 min throughput + compile floor — before any of `utf8`'s own extra
+cost (a structurally larger corpus, a 64 KB-per-script arm `capability`
+does not carry) — already gives **~41-53 min per cell**, which exceeds
+the low end of the ~40-45 min estimate outright. **Revised estimate:
+~41-53 min per cell, ~1.5-1.8× `CELL_CAP` headroom, not ~2×** — thinner
+than `capability@0.1`'s own (~2-2.5×) and much thinner than the design's
+original 5×.
 
-**Window sizing.** Twelve v1 configs (pcre2 ×3, pcrec ×4, re2, rust,
-onig, vectorscan) × ~42 min ≈ **8.5 h** — more than one night under
-BD7. **§14 Q6** proposes the first sample as **seven cells**
-(pcrec ×4 + `pcre2-utf-interp` + `pcre2-utf-jit` + `rust-default`
-≈ 5 h), with the remaining five at `@0.1`'s second window. That cut is
-chosen so the first sample carries I-90 §5's three named first
-customers in full and the widest capability contrast (rust) at once.
+Two one-line generator levers are pre-priced (§4.3): dropping the
+per-script 64 KB throughput arm removes four subjects and recovers
+~4 min/cell; cutting the short set from 90 to 75 recovers ~5 min.
+**Per F-M3's disposition, lever 1 (drop the per-script 64 KB arm) is
+PRE-COMMITTED as the DEFAULT cut for the first sample if the rehearsal
+cell (the first `utf8@0.1` cell actually timed, before the window
+proper) exceeds 50 minutes** — cheaper to under-spend the budget once
+than to have `CELL_CAP` fire mid-window and cost a full re-measure under
+`run_window.sh`'s once-only retry rule.
+
+**Window sizing (F-M3, v0.2: restated at ~47 min/cell, the revised
+band's midpoint).** Twelve v1 configs (pcre2 ×3, pcrec ×4, re2, rust,
+onig, vectorscan) × ~47 min ≈ **9.4 h** — more than one night under
+BD7, and more than the v0.1 estimate's 8.5 h. **§14 Q6** proposes the
+first sample as **seven cells** (pcrec ×4 + `pcre2-utf-interp` +
+`pcre2-utf-jit` + `rust-default` ≈ 5.5 h), with the remaining five at
+`@0.1`'s second window. That cut is chosen so the first sample carries
+I-90 §5's three named first customers in full and the widest capability
+contrast (rust) at once.
 
 ---
 
@@ -981,8 +1188,23 @@ the built set's real pattern ids. What follows is the source that
 transcription reads, in the house's fifteen-column shape (selector /
 quantity / reducer / op / bounds), with each clause written so it is
 expressible — `n_wrong`, `pass_rate`, `median_ns`, `status`,
-`compile_outcome` and the size columns, never an answer or a span
-(§6.4's limit).
+`compile:emit_bytes` and the size columns, a `section`-selected
+`set_of`/`count` for a compile-outcome census (F-M2, v0.2: corrected
+from a bare `compile_outcome`, not itself a `QUANTITIES` member), never
+an answer or a span (§6.4's limit).
+
+**(F-M2, v0.2.)** None of P1-P10 is transcription-tested yet — the
+patterns do not exist until U4 builds them — but per this project's own
+house standard (`interpreter_v1.md`'s worked predictions format was
+TESTED against `bench/syntax/NOTES.md`'s P1-P13 before it shipped), U5
+(§13) is charged with a named step: **hand-transcribe P1-P10 into the
+real fifteen-column grammar against the built patterns, at TSV-authoring
+time, BEFORE the first window** — not a stub, a real dry run through
+`interpret`'s own loader — and fix any clause that does not parse,
+folding the fix into `NOTES.md`'s predictions section. The
+immutability rule (`stated_utc` gates a mutation after the first window,
+not before) makes a post-hoc fix impossible once a cell has run — the
+[B72] lesson.
 
 - **P1 — the offset-skip ORDER PAIR (I-90 §5's first named customer).**
   `lit-offset-at-head` (`@é`) and `lit-offset-at-tail` (`é@`) differ in
@@ -991,58 +1213,81 @@ expressible — `n_wrong`, `pass_rate`, `median_ns`, `status`,
   P1.b, NOT machine-scoreable and stated as prose:** the two artifacts
   stamp DIFFERENT `RX_REQ_BYTE` values — FP §3.1 measured 0x40 for one
   ordering and 0xA9 (é's continuation byte) for the other on the shipped
-  compiler — which is the mechanism behind P1.a.
+  compiler — which is the mechanism behind P1.a. **(F-C6, v0.2, declared
+  narrowing):** I-90 clause 5 names "the offset-skip rows" (plural,
+  any pattern with a fixed-offset literal prefix); P1 scores only the
+  sharpest pair. The rest of that population (`lit-run-3`,
+  `lit-mixed-ascii`, `alt-shared-char`, and any other member with a
+  fixed-offset literal prefix) is read in the ledger under R6, not
+  formally predicted — a prediction needs a concrete witness, and P1 is
+  it.
 - **P2 — the high necessary byte (I-90 §5's second).** `lit-run-3`
-  (`日本語`, every necessary byte ≥ 0xE6) has a `throughput` ns/byte on
-  the `cjk` 64 KB subject at least **×2** `lit-mixed-ascii`'s on the same
-  subject, on `pcre2-utf-interp` and on every `pcrec-*-utf8`. The
-  mechanism: 0xE3-0xE9 leads are roughly a third of CJK text's bytes, so
-  a required-byte filter on a high byte dismisses almost nothing, where
-  the ASCII `@` in `lit-mixed-ascii` dismisses nearly everything. **This
-  is FP §3.2's inversion, restated as a measurable cell.**
+  (`日本語`, every necessary byte ≥ 0xE6) has a `throughput`
+  **`median_ns`, `reducer=ratio_to(pattern=lit-mixed-ascii)`, on the
+  SAME `cjk` 64 KB subject**, at least **×2** — **(F-M2, v0.2:
+  `ratio_to` on the same subject is what "at least ×2 [its] ns/byte on
+  the same subject" actually scores; the byte denominator cancels in
+  the ratio, so no `ns/byte` quantity is needed or exists in
+  `interpret`'s `QUANTITIES`)** — on `pcre2-utf-interp` and on every
+  `pcrec-*-utf8`. The mechanism: 0xE3-0xE9 leads are roughly a third of
+  CJK text's bytes, so a required-byte filter on a high byte dismisses
+  almost nothing, where the ASCII `@` in `lit-mixed-ascii` dismisses
+  nearly everything. **This is FP §3.2's inversion, restated as a
+  measurable cell.**
 - **P3 — the same inversion does NOT hold on the ASCII control.** On
   the `asc` 64 KB subject, `lit-run-3` and `lit-mixed-ascii` both find
-  zero matches and their ns/byte agree within ×1.5 — the control that
-  says P2 is about the histogram and not about the pattern.
+  zero matches and their `throughput` `median_ns` (same
+  `ratio_to`-on-the-same-subject reading as P2) agree within ×1.5 — the
+  control that says P2 is about the histogram and not about the
+  pattern.
 - **P4 — the fold sets (I-90 §5's third).** On every `pcrec-*-utf8`
-  config, `ci-moskva`'s `emit_bytes` exceeds `ci-ascii-control`'s by more
-  than **×1.5**; and no `ci-*` pattern's `search_short` cell carries
-  `n_wrong > 0` on any roster testee — in particular `ci-strasse` does
-  NOT match `STRASSE` and `ci-turkish-i` does NOT match U+0130/U+0131,
-  which is axis 7's simple-folding claim (UD §4.1) read as a
-  cross-engine expectation.
+  config, `ci-moskva`'s **`compile:emit_bytes`** (F-M2, v0.2: corrected
+  from the bare `emit_bytes`, which is not a `QUANTITIES` member)
+  exceeds `ci-ascii-control`'s by more than **×1.5**; and no `ci-*`
+  pattern's `search_short` cell carries `n_wrong > 0` on any roster
+  testee — in particular `ci-strasse` does NOT match `STRASSE` and
+  `ci-turkish-i` does NOT match U+0130/U+0131, which is axis 7's
+  simple-folding claim (UD §4.1) read as a cross-engine expectation.
 - **P5 — the UCP census.** Every pattern declaring
-  `unicode-class-scope` (`cls-w-ucp`, `asr-b-cyr-ucp`,
-  `ci-ucp-invariance`) carries `compile_outcome =
+  `unicode-class-scope` (`cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp` — F-C3,
+  v0.2 — `asr-b-cyr-ucp`, `ci-ucp-invariance`) carries `compile_outcome =
   unsupported-by-declaration` on all four `pcrec-*-utf8` configs (UD
   §4.5: pcrec has no UCP axis) and compiles cleanly on every `pcre2-utf-*`
-  config.
+  config. **(F-M2, v0.2)** scored via `quantity=section,
+  reducer=set_of` over the `unsupported_by_pattern` section for the
+  pcrec side and `did_not_compile`'s absence for the pcre2 side — the
+  indirect path `docs/dev/predictions/CLAUDE.md`'s own worked example
+  already uses, not a `compile_outcome` quantity (no such member exists
+  in `QUANTITIES`).
 - **P6 — encoded length.** `cls-dot-rep` (`^.{5}$`) reads `n_wrong eq 0`
   on every testee that compiles it, against a subject pair containing a
   5-character / 12-byte hit and a 5-BYTE / 3-character miss — the
   encoded-length claim as a checkable answer rather than a belief.
 - **P7 — the property size cliff.** At least one family-(f) pattern
   carries `compile_outcome = did-not-compile` on a default-cap
-  `pcrec-*-utf8` config and compiles on the raised-cap sibling. Basis:
-  AX's K53 record (twelve `\p` general-category blocks exceeded the
-  emitted-source cap under `utf8` at default axes) and UD §3.3's
-  "table-size problem". `prp-l`'s `emit_bytes` exceeds the family-(b)
-  literal median by more than **×10** on every compiled config (R5's own
-  band).
-- **P8 — the floor is free.** The floor `~`'s `throughput` ns/byte
-  agrees within the spread band between `pcrec-auto-utf8` and
-  `pcrec-auto` (byte) on the `asc` subjects — i.e. the encoding costs
-  nothing on a single-ASCII-byte pattern over ASCII text. **Scored at
-  0.2**, when (k)'s mirror arm exists; stated now because it is the
-  mirror's zero point and a prediction stated late is a prediction
-  nobody believed.
+  `pcrec-*-utf8` config and compiles on the raised-cap sibling —
+  **(F-M2, v0.2)** scored the same `section`/`set_of` way as P5, over
+  the `did_not_compile` section. Basis: AX's K53 record (twelve `\p`
+  general-category blocks exceeded the emitted-source cap under `utf8`
+  at default axes) and UD §3.3's "table-size problem". `prp-l`'s
+  **`compile:emit_bytes`** exceeds the family-(b) literal median by more
+  than **×10** on every compiled config (R5's own band).
+- **P8 — the floor is free.** The floor `~`'s `throughput` `median_ns`
+  (per-byte reading: same-length subjects, so the ratio is the per-byte
+  comparison) agrees within the spread band between `pcrec-auto-utf8`
+  and `pcrec-auto` (byte) on the `asc` subjects — i.e. the encoding
+  costs nothing on a single-ASCII-byte pattern over ASCII text.
+  **Scored at 0.2**, when (k)'s mirror arm exists; stated now because it
+  is the mirror's zero point and a prediction stated late is a
+  prediction nobody believed.
 - **P9 — rust is correct, not lucky.** `rust-default` reads
   `n_wrong eq 0` on every (a)-(f) pattern it compiles, with the
   `ascii-class-scope` patterns appearing as
-  `unsupported-by-declaration` rather than as wrong answers. Basis:
-  `testees/rust/CLAUDE.md`'s measured unicode-mode finding. **A refuted
-  P9 is a finding about this repo's byte-mode sets**, not only about
-  this one.
+  `unsupported-by-declaration` rather than as wrong answers —
+  **(F-M2, v0.2)** the `unsupported-by-declaration` half scored the same
+  `section`/`set_of` way as P5. Basis: `testees/rust/CLAUDE.md`'s
+  measured unicode-mode finding. **A refuted P9 is a finding about this
+  repo's byte-mode sets**, not only about this one.
 - **P10 — vectorscan agrees at the grain it has.** On every (a)-(f)
   pattern `vectorscan-block-nosom-utf8` compiles, its boolean
   match/no-match answer agrees with `pcre2-utf-interp`'s
@@ -1076,7 +1321,13 @@ a cell is listed under the FIRST rule it trips.
   PURE ASCII (the floor, `ci-ascii-control`, `asr-b-ascii`). Those three
   patterns should cost the same whatever corpus they run over; a
   difference is the SUBJECT's byte structure reaching a mechanism that
-  should not have noticed.
+  should not have noticed. **(F-M5, v0.2):** fires at `throughput` grain
+  — the per-script 64 KB arm gives every pattern a same-size
+  cross-corpus comparison, `asc` included. It does not apply at
+  `search_short` grain for these three patterns: §4.3 types short
+  subjects per family in that family's own single script, so there is
+  no other-script `search_short` population for the SAME pattern to
+  compare against.
 - **R4 — the script band.** Within one family, a cell's ns/byte across
   the four per-script 64 KB throughput subjects, spread by more than
   **×4**. Four is chosen against the encoded-length ratio the corpora
@@ -1117,11 +1368,11 @@ Five lanes, in dependency order. None opens before the design panel.
 
 | lane | what it builds | depends on |
 |---|---|---|
-| **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | §8.1, §8.4, §7.5 — **nothing else can start** |
-| **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled | U1's tokens |
-| **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check` | — (parallel with U1/U2) |
+| **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | **— none; U1 is the entry point** and its own acceptance check (the byte-identical re-derivation below) must pass before U4/U5 read its output **(F-C5, v0.2: reworded — the prior cell's "nothing else can start" read as contradicting U3's own "parallel with U1" row two lines down; U1 itself has no prerequisite, which is what the prose underneath already said)** |
+| **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled. **(F-C1, v0.2)** ALSO the pcrec adapter code change: a new `effective_encoding(flags)` function, its `encoding_extra` fifth part in `compose_config_extra()`, and the frozen-renderer rows proving the six pre-existing pcrec config families derive UNCHANGED ids and `config_extra` under it | U1's tokens |
+| **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check`. **(F-M1, v0.2)** the size-fitting boundary rule (§4.1: trim to the last complete character, pad with ASCII spaces to the exact byte size) and the decode-gate `--check` control (a mid-character-truncated fixture must FAIL) | — (parallel with U1/U2) |
 | **U4** | the PATTERNS: `patterns.rxt` as the source of truth with its `ext bench` roster block, `gen_patterns.py` rendering `patterns/*.rx`, the sidecar, `provenance.tsv` | U3 (for the typed short subjects), U2 (for the `ext bench` roster) |
-| **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time | U1, U3, U4 |
+| **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time. **(F-M2, v0.2)** the P1-P10 dry-run step: hand-transcribe against the built pattern ids through `interpret`'s own loader BEFORE the first window, fixing any inexpressible clause in `NOTES.md` — not deferrable to after a cell has run | U1, U3, U4 |
 
 **U1 is the one that cannot be parallelised away and the one most
 likely to surprise**: it changes shared code that six sets already
@@ -1140,16 +1391,16 @@ Each carries a recommendation and the consequence of each answer.
 
 | # | question | recommendation | mark |
 |---|---|---|---|
-| **Q1** | Does the byte-clean ASCII control corpus (`asc`) RANK, or is it provenance-only? (Frank's own flagged item) | **RANK it.** It is the encoding-cost control (R3), the mirror's zero point (P8) and the only row that answers "what does UTF-8 cost when there is nothing to encode". Consequence if provenance-only: R3 and P8 both become unscoreable and the set can describe the encoding's cost only by comparing two testees, never two subjects | DEFAULT |
+| **Q1** | Does the byte-clean ASCII control corpus (`asc`) RANK, or is it provenance-only? (Frank's own flagged item) | **RANK it — chiefly because it is a PRECONDITION, not a style choice (F-M4, v0.2):** R3 and P8 are both scoring rules, and `pcrecbench interpret` can only bound a value that exists in a ranked population, so excluding `asc` makes them unscoreable outright, not merely eyeballed. It is also the encoding-cost control and the mirror's zero point. **Practical caveat (F-M4):** at `throughput` grain `asc`'s ~64 KB is a small share (≈4%) of the blended corpus, so its inclusion moves the blended ranking number only marginally — the place it actually matters is the PER-SUBJECT row, already rendered unconditionally on this shape of cell (`pcrecbench/CLAUDE.md`'s R9 rule), so a reader should look there for `asc`'s own reading rather than expect a large swing in the blended number. Consequence if provenance-only: R3 and P8 both become unscoreable and the set can describe the encoding's cost only by comparing two testees, never two subjects | DEFAULT |
 | **Q2** | Is a hand-authored per-script WORD POOL "generated" (house rule satisfied, no provenance record owed) or "sourced" (a provenance row per pool)? | **Generated.** Commit the pools, record `fidelity = synthesized` / `source_name = authored`, and state §4.1's limitation sentence in `NOTES.md`. Consequence of "sourced": a provenance gate over five word lists with no URL to cite, which the gate cannot check | DEFAULT |
 | **Q3** | Is the REQUIRES vocabulary GLOBAL (`pcrecbench/capability.py:87`) or per-set? Adding three tokens (§7.5) touches shared code and every adapter's declaration | **Keep it global; add the three.** A capability token is a cross-engine fact. Consequence of per-set: two sets could disagree about what `lookaround` means, and the closed-vocabulary load check loses its point | DEFAULT |
-| **Q4** | The TRE ruling (§7.3): EXCLUDED from v1 by an unsatisfied `utf8-encoding` token, with `tre-wide` named as roster growth? | **Yes, as proposed.** Consequence of including `tre-default` in byte mode: a BYTE-DECOMPOSED reading sits in the same ranking column as the UTF-8 ones. Consequence of building `tre-wide` now: a second driver model, a process-locale dependency and a character-not-byte length unit, all before the set's first sample | DEFAULT |
+| **Q4** | The TRE ruling (§7.3): EXCLUDED from v1 on 73 of 76 patterns by an unsatisfied, PER-PATTERN `utf8-encoding` token (v0.2, F-S2/F-S3 — corrected from a v0.1 blanket set-wide exclusion), with `tre-wide` named as roster growth? | **Yes, as revised.** `tre-default` RANKS on the three byte-safe controls (the floor, `ci-ascii-control`, `asr-b-ascii`) — the one genuinely independent byte-mode engine on the roster, kept exactly where its reading cannot diverge from the UTF-8 ones. Consequence of the v0.1 blanket exclusion: TRE loses a comparator on precisely the rows (the `asc`-subject control population, R3's encoding band, Q1's ranked control) that most want an independent byte-mode baseline. Consequence of building `tre-wide` now: a second driver model, a process-locale dependency and a character-not-byte length unit, all before the set's first sample | DEFAULT |
 | **Q5** | `bench/syntax/NOTES.md` reserves `bench/syntaxutf/` for a UTF sibling. Does `bench/utf8/` RETIRE that reservation, or do both stand? | **Both stand.** They are different sets (§2.2) and `syntaxutf` gets cheaper once this one's machinery exists. Add one pointer sentence to the reservation. Consequence of retiring it: the registry-enumerated coverage claim for UTF-only seed rows is silently abandoned | **BLOCK** (it touches a documented commitment) |
 | **Q6** | Which cells are the FIRST sample? Twelve v1 configs ≈ 8.5 h is more than one night (§10.3) | **Seven cells**: `pcrec-*-utf8` ×4 + `pcre2-utf-interp` + `pcre2-utf-jit` + `rust-default` ≈ 5 h. It carries all three of I-90 §5's first customers and the widest capability contrast. The other five at `@0.1`'s second window | DEFAULT |
 | **Q7** | Growth ordering: 0.2 = (g)+(k), 0.3 = (h)+(i)+(j)? | **Yes.** (h)/(i)/(j) share one policy (§8.3) and one subject-generation problem; splitting them ships the policy twice | DEFAULT |
 | **Q8** | Axis 11's caller-supplied mid-character `startpos` needs a driver-protocol `--startpos` (§3.3 gap 3). Worth a protocol extension? | **No, and say so in `NOTES.md`.** It is a correctness question `~/pcrec/tests/utf8/axis11` already owns, and a protocol parameter used by one family of one set is a maintenance cost six other sets pay | DEFAULT |
 | **Q9** | Does the per-pattern oracle option word live as a parameter on the shared `oracle_pcre2.py`, or does this set get its own oracle module? | **A parameter on the shared module** — `bench/syntax/NOTES.md` predicted exactly this ("one option argument"), and a second oracle module would mean two definitions of "the oracle" in one repo. Consequence: U1 changes shared code and owes the byte-identical re-derivation check (§13) | DEFAULT |
-| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now | **BLOCK at (h)** |
+| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now. **(F-S5, v0.2, pointer for (h)'s ruling):** for the pcrec-vs-PCRE2 pair specifically, this is not a new instrument to build — `~/pcrec/tests/utf8/axis03_invalid_utf8.rxt` already runs libpcre2 under `PCRE2_MATCH_INVALID_UTF` as its own canonical differential oracle against pcrec, precedented since promotion. §8.3's "no cross-engine canonical answer" framing is true for the other five engines but should not be read as implying pcrec/PCRE2 starts from the same "nothing established" position; (h)'s ledger may cite AX's axis03 oracle as-is, without contradicting §8.2's "never `PCRE2_NO_UTF_CHECK`" rule (axis03 doesn't use it either) | **BLOCK at (h)** |
 
 ---
 
@@ -1159,8 +1410,9 @@ Each carries a recommendation and the consequence of each answer.
 |---|---|---|
 | **R1** | **U1's shared-code change breaks six existing sets.** The oracle and every driver's find-all advance are shared by `email`, `loglines`, `bounded`, `altwide`, `syntax`, `capability` | the lane's FIRST deliverable is the byte-identical re-derivation of every existing `expectations.tsv` under the changed oracle with no UTF option requested (§13), with a negative arm |
 | **R2** | **An UNCONFIRMED capability row ships as a declaration.** §7.4's remaining UNCONFIRMED row is the Script / Script_Extensions spelling support across re2, rust and onig (vectorscan's `\p` row was CONFIRMED from this repo's own measured A/B while this note was being written — §7.6, which is itself the evidence for how easily such a row goes unchecked) | U2 requires a WITNESS COMPILE per (config, token) before any declaration ships — the L5 lesson, which caught three wrong `pcrec-*` declarations in `bench/capability`'s first cut |
-| **R3** | **Cell time at ~2× `CELL_CAP` headroom** (§10.3), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Neither changes a pattern |
+| **R3** | **Cell time at ~1.5-1.8× `CELL_CAP` headroom** (§10.3, F-M3 v0.2 — restated against tonight's measured `capability@0.1` band, thinner than the v0.1 estimate's ~2×), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Lever 1 is PRE-COMMITTED as the default first-sample cut if the rehearsal cell exceeds 50 min. Neither changes a pattern |
 | **R4** | **Family (f) refuses on default-cap pcrec configs**, taking a twelfth of the set with it | this is P7, not a surprise — and it is a FINDING (AX's K53 is the same shape on the correctness side). If it happens broadly, the `-bigcap` sibling is the arm that reads it, and the refusal census is the result |
 | **R5** | **The generated corpora do not resemble real text closely enough** for the histogram claim to carry | the claim is deliberately narrow (§4.1's limitation sentence: byte histogram and character-width statistics, NOT word or sentence statistics) and the histogram is a committed, re-derived table (§4.2), so a reader can check the claim rather than trust it |
-| **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answers** (§8.5) | the affected characters (U+00B7, U+0300) are avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
+| **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answer** (§8.5, F-S1 v0.2: the confirmed version-sensitive point is U+00B7 alone, not U+00B7 and U+0300) | the affected character (U+00B7) is avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
 | **R7** | **The set is read as a pcrec milestone's acceptance test.** Its subject matter IS a pcrec milestone, which makes engine-neutral authorship harder than usual | §9's boundary, stated three ways, plus the R-BENCH-4 check that no limits file exists; and the cross-engine roster (§7.1) is six engines wide precisely so no single engine's behaviour can be mistaken for the axis |
+| **R8** | **(F-M7, v0.2, speculative.)** The v1.4 trial-agreement constants (`v1.4-group`, k=1.5, …) were calibrated over a store of byte-mode, largely ASCII/log-line-shaped timing distributions. `bench/utf8` is the first set to exercise a materially decode-bound timing profile (multi-byte decode interleaved with the scan, plus §8.4's new find-all advance) at scale, and nothing in v1.4's design assumes byte-uniform text | a first-window CHECKLIST item, not a design change: observe the `trial_agreement` block on `utf8` cells against the store's historical `inconclusive-spread` rate. A large deviation is a SCHEMA-RULING escalation (a question for whoever owns gate_shape_v14.md), never a silent recalibration of the constants |
