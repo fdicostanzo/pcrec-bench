@@ -77,7 +77,19 @@ INDEX_COLUMNS = ["path", "subbench", "version", "testee_id", "machine_id",
                  "timestamp", "status", "rows"]
 
 SECTIONS = ("record", "rank", "excluded", "not_ranked", "scratch",
-            "did_not_compile", "compile", "compile_stamp")
+            "did_not_compile", "compile", "compile_stamp",
+            # [B82] (inbox I-99/I-100/I-101, catalogue 3.5): the class-pure
+            # views' own `rank`/`baseline` rows (`report.py`'s
+            # `_tsv_ranking_pass`, emitted only when a report's roster
+            # spans both capture classes), the undeclared-testee listing,
+            # and the standing cross-class query. No rule references any
+            # of these yet -- they are recognised here so a future rule's
+            # `inputs` entry can name one without a catalogue-side
+            # `SECTIONS` edit of its own; `make check-interpret` needs no
+            # change either way (this tuple gates rule-parse-time
+            # `inputs` validation only, never `ReportTsv` load).
+            "rank_yes", "rank_no", "baseline_yes", "baseline_no",
+            "undeclared_capture_class", "query_yes_beats_nocaps")
 
 # The known-key list for §2.1's NORMATIVE known-key header split. It is
 # DERIVED from `report.py`'s own header block (see
