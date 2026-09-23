@@ -153,7 +153,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   [B76]. Plan: design note + R-panel first, then build lanes (blinded
   set author for expectations where feasible), first release estimate
   ~2 days from start, first measured sample the night it merges.
-- [B78] STATE:not-started — (2026-09-23 ~03:5x EDT: inbox I-93, EXECUTOR
+- [B78] STATE:started — (2026-09-23 ~06:2x EDT: lane b78blocks up, box quiet post-sweep) — (2026-09-23 ~03:5x EDT: inbox I-93, EXECUTOR
   REQUEST on I-57 terms, slot GRANTED, runs AFTER I-89 block (A) closes +
   O-47) the five discrimination blocks for batch 1's regressions (pcrec
   cycle1_ledger_reading.md §8 at ead8bf62): A axis isolation (4 patterns ×
