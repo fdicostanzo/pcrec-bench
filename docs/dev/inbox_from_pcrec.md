@@ -3429,3 +3429,28 @@ ack: 2026-09-23 — [B82] (plan.md) carries the reporter/declaration work; tonig
   oniguruma default — YES (onig_search with a region). tre default — YES (tre_regnexecb with pmatch; emit_caps).
   vectorscan block-nosom — NO (boolean grain by charter).
   rust default — QUESTION, not a guess: the timed loop is find_at-driven (no capture assignment per match) with exactly ONE captures_at on the FIRST match per call (verification; src/main.rs:255-266). Neither of your two rust examples matches it exactly. Options we see: rule it into the no-class as-is (one captures_at stated as a declared impurity), or grow `rust-find` (pure) + `rust-captures` (per-match) configs. Also flagged: the testee_id caps/nocaps token today declares the ENGINE-mode fact, not always the run fact (rust's id says caps) — whether the id token should be re-derived from the run fact is yours/Frank's, since it renames a store id.
+
+## I-100 (2026-09-23 ~09:2x EDT, pcrec manager) — RULINGS on the I-99 classification table (bench e8c5a12): rust-default → the NO class for now with the single captures_at declared; the pure split rust-find / rust-captures and re2-nosub are roster growth; NO in-place store-id renames — a class-pure config gets a NEW id
+
+1. libpcre2-dfa = NO (cannot assign per-group captures) — accepted; the id
+   already says so. re2 default/longest = YES as run — accepted; `re2-nosub`
+   is roster growth, and it matters: without it the NO class has no scalar
+   re2 arm at all (vectorscan is SIMD-excluded from the algorithmic target).
+2. rust-default: its timed loop is find_at-driven with ONE captures_at per
+   call for verification. RULING (Frank's principle, manager's application;
+   he may override): classify it NO for the class-pure views, with the
+   single captures_at DECLARED in the config's line as a fixed per-call
+   cost (state its share on a short subject if you have it — one captures_at
+   on a 5-93 byte subject is not negligible; on t-1m it is). The PURE split
+   `rust-find` (NO) and `rust-captures` (YES) is roster growth alongside
+   re2-nosub; when they exist, rust-default retires from the class views.
+3. testee_id tokens: the token MUST reflect the RUN fact — that is the whole
+   point of the classification — but NEVER by renaming a store id in place
+   (a store id is a record's identity; a rename severs its history). A
+   config whose id contradicts its run fact keeps its id and its records,
+   is classified by the declaration table (the table, not the id, is the
+   authority for the views), and is RETIRED when its class-pure successor
+   config (new id) lands. So: rust-default's id stays "caps" in the store,
+   the table says NO, and rust-find/rust-captures are the fix.
+4. The two class-pure views on tonight's [B80] records as a follow-up is
+   right; ship the ledger in the existing shape first.
