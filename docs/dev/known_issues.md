@@ -1459,3 +1459,20 @@ file under `reports/`. Tonight's [B74] window, which reads this exact
 group as part of its comparison population, should regenerate it
 (or run the whole-store wave if one is already due) before treating its
 `evil-alt-nested` "no winner at all" reading as current.
+
+## KB-28 (2026-09-23, found at [B82]'s merge-time regen, OPEN — fix chartered) — reporter v20's subject-grain TSV duplicates every per-subject row per class view on a mixed roster
+
+At `--grain subject` on a roster spanning both capture classes, the v20
+renderer emits the class-pure views as duplicated SECTIONS, so every
+per-subject row renders up to twice more: the two capability AFTER
+groups' `.subject-grain.tsv` files rendered at 107.08 / 106.76 MB —
+over the remote's 100 MB hard limit; the push was rejected and the two
+groups are HELD at v19 (their v20 renders exist only in the regen log's
+history, discarded). The wrapfix group (65.6 MB, 7 testees) is within
+limits and is committed at v20. The fix: at subject grain the class is
+a COLUMN (and the query a filtered view over it), never duplicated
+sections — set-grain rendering is unaffected and stays as shipped.
+After the fix: regenerate the two AFTER groups (+ sidecars) and confirm
+the sizes land near their v19 baselines (~51 MB). Found by the remote's
+own pre-receive hook, not by a test — a size gate on regenerated
+reports (warn at 50 MB pre-commit) is worth considering with the fix.
