@@ -5519,3 +5519,23 @@ evil-alt-nested's non-constant single-attempt cost). Bench-side: (b)1
 exposed that our capability reports label two expectation-LESS cells
 "wrong" (the dropped triples) — opened as KB-27, investigation owed;
 it touches the committed "no winner at all" reading. [B73] completed.
+
+## 2026-09-22 (thirtieth session start) — I-87 acked, two lanes up
+
+Woke on pcrecdev1's cross-session notice; ran the manager skill + wake
+routine. I-87 fetched (inbox commit a657f4b on origin — fetched, not
+assumed): re-pin the four pcrec testees to pcrec main 8d716693 (abi
+27→29 from our 25b1984f; three new stamp keys RX_REQ_BYTE / RX_VM_START
+/ RX_END_WINDOW) and re-measure capability@0.1 at both regimes under the
+D119 bar vs the wrapfix sample; slot GRANTED at receipt, acked as [B74]
+(commit 5b5b69f, pushed). pcrecdev1 then confirmed by message: their
+darwin gate on 8d716693 runs detached (~100 min from 19:57 EDT), their
+session resets now, and the standing instruction is PROCEED at 8d716693
+unless a re-pin request arrives before window time. Lanes: b74repin
+(sonnet, worktree — the [B58]-shape ritual: pin.sh, registries, D81
+stamp keys ×3, pin_order append, size books, full check) and b75kb27
+(sonnet, worktree — KB-27's wrong-label-without-expectation mechanism +
+honest rendering, targeted checks only while the re-pin lane owns the
+heavy slot; run now because the two tainted cells sit in tonight's
+window comparison population). Window [B74] (b) opens after the re-pin
+merges.

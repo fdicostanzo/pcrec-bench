@@ -97,3 +97,13 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   either way. Report, never diagnose. CAVEAT: pcrec's darwin gate runs on
   the same commit — confirm 8d716693 still stands with pcrecdev1 before
   the window opens.
+- [B75] STATE:started — (2026-09-22 ~20:2x EDT, the wake queue's one live
+  item, run in parallel with [B74]'s re-pin build) KB-27: the capability
+  report labels `evil-alt-nested` × {rd-evil-alt-near-miss,
+  sd-empty-alt-hit} (short-search) "wrong" (n_wrong=5 each) though
+  expectations.tsv has NO row for either (dropped at oracle derivation).
+  Lane b75kb27 (sonnet, worktree): establish the mechanism with an
+  archived probe, fix at the honest layer ("unjudged", never "wrong"),
+  targeted checks, KB-27 closed with the two-cell story stated for the
+  [B74] window's reader (those cells are in tonight's D119 comparison
+  population).
