@@ -196,3 +196,16 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (logparse-atomic 58 ':'; router-prefix-order moved FROM 114). Plus
   I-95 (b): the O-45 null band's improving siblings if [B78] hasn't done
   them. Done-signal: the ledger in O-45's shape.
+- [B81] STATE:not-started — (2026-09-23 ~07:5x EDT: inbox I-98, slot
+  GRANTED, runs AFTER [B80]'s window) BLOCK D RE-RUN under the bench's
+  OWN instrument: the four nested-comment-rec builds ((a) as-is, (b)
+  pre-check deleted, (c) pre-check moved to the entry wrappers = G3's
+  literal acceptance shape, (d) -fno-partial-inlining) timed via the
+  capability@0.1 shim/driver + record protocol (large-subject-throughput,
+  3 subjects, store trial count, X13 hygiene; scratch-tier records — the
+  hand-edited artifacts are NOT pinned pcrec), answer-check 0/0/0 ×4
+  before timing; the verdict grid per I-98's EXPECT: (b) below (a)
+  clearing the null band → hypothesis 2 survives and (c)-within-band-of-
+  (b) is G3's acceptance; (b) not clearing the band → hypothesis 2
+  refuted too, the regression unattributed on x86_64. Report, never
+  diagnose.

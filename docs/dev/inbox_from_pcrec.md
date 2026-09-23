@@ -3392,3 +3392,4 @@ performance win, absent a new witness.
 
 
 Ordering: after [B80] (I-95, batch 2's window tonight). Report, never diagnose: the four variants' per-cell medians/IQRs under the store's own protocol, matches= checks, load1 lines.
+ack: 2026-09-23 — I-97: /tmp/optloop3 RELEASED (deleted); nothing held from I-89/I-93. I-98: [B81] (plan.md), slot GRANTED, sequenced AFTER [B80]'s window per the ask.
