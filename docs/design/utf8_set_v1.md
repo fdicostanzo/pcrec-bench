@@ -83,7 +83,7 @@ I-90's five charter clauses, verbatim in substance:
 |---|---|---|
 | (1) name, shape, roster restriction | **§2, §7, §8, §10** | `bench/utf8@0.1`, built on `patterns.rxt` exactly as `bench/capability` is; a per-engine UTF-8 surface table with the adapter change priced per engine; the oracle chain stated as a rule, not a habit |
 | (2) subjects | **§4** | five script corpora, deterministically generated from committed per-script word pools, sha256-manifested; 90 short subjects typed per family; a 64k/256k/1m mixed sweep plus a per-script 64 KB arm; the byte-histogram claim stated as the thing the set actually asserts |
-| (3) families + growth | **§5** (the six first-release families, 73 members + floor), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
+| (3) families + growth | **§5** (the six first-release families, 75 members + floor, v0.2 — F-C3 added `cls-d-ucp`/`cls-s-ucp`), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
 | (4) pcrec testees | **§7.2** | four `-e utf8` configs, `flags`-carried but requiring a FIFTH `compose_config_extra` part before the encoding actually lands in `testee_id` (F-C1, v0.2 — a stated U2 deliverable, not "configs.toml only"); the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
 | (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note); P1 scores clause 5's sharpest offset-skip pair, declared as a narrowing of I-90's plural "rows" — the rest of that population is read in the ledger (F-C6) |
 
@@ -216,7 +216,7 @@ Read from each file's own header comment in `~/pcrec/tests/utf8/`.
 | axis | exercised by | release | note |
 |---|---|---|---|
 | 1 encoded length | (a) `cls-dot`, `cls-dot-rep`; (b) every `lit-1ch-*`; (d) `alt-mixed-width`, `qnt-dot-bounded` | **0.1** | the sharpest single witness is `cls-dot-rep` (`^.{5}$` matching a 12-byte, 5-character subject) |
-| 2 class boundary | (a), all fourteen members | **0.1** | Frank's own named example; the largest first-release family |
+| 2 class boundary | (a), all sixteen members (F-C3, v0.2: +`cls-d-ucp`/`cls-s-ucp`) | **0.1** | Frank's own named example; the largest first-release family |
 | 3 invalid UTF-8 | growth **(h)** | **0.3** | documented-behaviour table, never a ranked cell — §8.3 |
 | 4 `\p` categories | (f) `prp-L`, `prp-Lu`, `prp-N`, `prp-notL`, `prp-Zs`, `prp-L-anchored` | **0.1** | six of 37 spellings; the set measures the MECHANISM's cost, not the table's coverage — §3.3 gap 2 |
 | 5 `\p` refusals | (f) `prp-ingreek` — ONE witness | **0.1**, permanently partial | §3.3 gap 2 |
@@ -376,7 +376,8 @@ the set whose compiled artifact should be IDENTICAL under `-e utf8` and
 
 ## 5. The six first-release families
 
-**73 members + the floor = 74 patterns.** Ids are `<family>-<slug>`;
+**75 members + the floor = 76 patterns** (v0.2, F-C3: +2 over v0.1's
+74 — `cls-d-ucp`, `cls-s-ucp`). Ids are `<family>-<slug>`;
 every member carries `tag family=`, `tag requires=` and, where it has
 one, `tag hazard=` — `bench/capability`'s own `patterns.rxt` shape.
 
@@ -389,10 +390,15 @@ repetition", `bench/syntax`'s spelling groups, CAP §3.2).
 point matters more than the glyph; a literal glyph is written where the
 byte sequence is the point. Both are UTF-8 in the file.
 
-### (a) CLASSES — `cls-*`, 14 members — Frank's own example
+### (a) CLASSES — `cls-*`, 16 members — Frank's own example
 
 The 1-byte/multi-byte boundary, negation over the encoding's universe,
-and the class-scope question. Axes 1, 2 (+ the UCP split).
+and the class-scope question. Axes 1, 2 (+ the UCP split). **(F-C3,
+v0.2, applied — was an undeclared narrowing):** I-90 clause 3(a) names
+"`\w`/`\d`/`\s` with and without UCP" by name; v0.1 gave `\w` the full
+pair but only the ASCII-scoped half of `\d`/`\s`. `cls-d-ucp` and
+`cls-s-ucp` below complete the triple, bringing family (a) to 16
+members and the set to 76.
 
 | id | pattern | axis | what it isolates |
 |---|---|---|---|
@@ -406,14 +412,18 @@ and the class-scope question. Axes 1, 2 (+ the UCP split).
 | `cls-w-ascii` | `\w+` | 2 | `\w` WITHOUT UCP under `-e utf8`: ASCII-scoped, so a Cyrillic letter is a NON-member (AX axis08's own oracle basis, verbatim). `requires = ascii-class-scope` |
 | `cls-w-ucp` | `(*UCP)\w+` | 2 | the UCP twin — `requires = unicode-class-scope`. The control pair with `cls-w-ascii`; the pair is the whole point |
 | `cls-d-ascii` | `\d{4}` | 2 | designed NEAR-MISS: against a subject of four Arabic-Indic digits (U+0660-0669), must NOT match under ASCII class scope. `requires = ascii-class-scope` |
+| `cls-d-ucp` | `(*UCP)\d{4}` | 2 | **(F-C3, v0.2)** the UCP twin and control pair with `cls-d-ascii`: the SAME four Arabic-Indic digits become a designed HIT once `\d` is Unicode-widened. `requires = unicode-class-scope` |
 | `cls-s-nbsp` | `a\sb` | 2 | designed NEAR-MISS: against `a` U+00A0 `b`, must NOT match without UCP. `requires = ascii-class-scope` |
+| `cls-s-ucp` | `(*UCP)a\sb` | 2 | **(F-C3, v0.2)** the UCP twin and control pair with `cls-s-nbsp`: `a` U+00A0 `b` becomes a designed HIT once `\s` is Unicode-widened. `requires = unicode-class-scope` |
 | `cls-posix-alpha` | `[[:alpha:]]+` | 2 | the POSIX-class spelling of the same scope question — a genuine cross-engine divergence candidate. `requires = ascii-class-scope` |
 | `cls-lead-pair` | `[α-ω]+` | 2 | **a FIRST CUSTOMER.** UD §6.3's own worked row: a TWO-lead-byte class (0xCE, 0xCF) is an excellent filter that `memchr` cannot use because `memchr` takes one byte; the bitmap-skip arm must take it |
 | `cls-neg-cjk` | `[^\x{4E00}-\x{9FFF}]+` | 2 | a negated 3-byte range, read over the `cjk` corpus where it mostly FAILS — the loglines-shaped reading of a multi-byte class |
 
-Control pairs: `cls-w-ascii`/`cls-w-ucp`; `cls-lead-pair` against
-`cls-high-range` (two leads vs many). Near-misses: `cls-d-ascii`,
-`cls-s-nbsp`, `cls-dot-rep`'s 5-byte subject.
+Control pairs: `cls-w-ascii`/`cls-w-ucp`; `cls-d-ascii`/`cls-d-ucp`;
+`cls-s-nbsp`/`cls-s-ucp` (F-C3, v0.2 — completing the triple by name);
+`cls-lead-pair` against `cls-high-range` (two leads vs many).
+Near-misses: `cls-d-ascii`, `cls-s-nbsp`, `cls-dot-rep`'s 5-byte
+subject.
 
 ### (b) LITERALS of multi-byte characters — `lit-*`, 12 members
 
@@ -529,14 +539,14 @@ from pcrec — §9.
 
 | family | members | `hazard_class` |
 |---|---|---|
-| (a) `cls-*` | 14 | `none` |
+| (a) `cls-*` | 16 | `none` |
 | (b) `lit-*` | 12 | `none` |
 | (c) `ci-*` | 12 | `none` |
 | (d) `alt-*` / `qnt-*` | 12 | `none` |
 | (e) `asr-*` | 11 | `none` |
 | (f) `prp-*` | 12 | `none` |
 | floor | 1 | `none` |
-| **total** | **74** | |
+| **total** | **76** (v0.2, F-C3: was 74) | |
 
 No member is authored to exercise a backtracking hazard: this set's
 objective is the ENCODING, and a ReDoS shape would confound it.
@@ -700,7 +710,7 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 
 | family | who sits out, and why | confidence |
 |---|---|---|
-| **(a)** `cls-w-ucp`, `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
+| **(a)** `cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp` (F-C3, v0.2), `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
 | **(a)-(f)** all | `tre-default`, via `utf8-encoding` (§7.3) | **CONFIRMED** |
 | **(f)** all `prp-*` | `tre-default` only (no `\p` construct exists at all — `testees/tre/CLAUDE.md` item 3, measured: `\p{L}` and `\p{Alpha}` both refuse with code 10). **Vectorscan does NOT sit out**: `testees/vectorscan/driver.c:50-53` records a MEASURED A/B — `\p{L}` compiles identically with and without `HS_FLAG_UCP` — so the general-category family is live there | tre: **CONFIRMED**. vectorscan: **CONFIRMED** (measured, this repo's own A/B) |
 | **(f)** `prp-greek-sc`, `prp-cyrillic`, `prp-han`, `prp-latin` | Script and Script_Extensions spellings differ by engine: RE2 documents `\p{Greek}` script support but **`scx=`/Script_Extensions is not established**; the Rust `regex` crate documents both but **not verified at crate 1.13.1 here**; `onig-utf8` is a re-census (§7.1) | **UNCONFIRMED across three engines** — one witness each |
@@ -794,8 +804,9 @@ dial: on one roster engine the "dial" is not a dial at all.
   `expectations.tsv`.
 - `PCRE2_UCP` is a **per-pattern DECLARED FACT**, carried as the
   `unicode-class-scope` REQUIRES token (§7.5) and as the oracle's own
-  option word for that pattern's rows. The twelve patterns affected are
-  named in §5 and the pairs are stated: `cls-w-ascii`/`cls-w-ucp`,
+  option word for that pattern's rows. The patterns affected are named
+  in §5 and the pairs are stated: `cls-w-ascii`/`cls-w-ucp`,
+  `cls-d-ascii`/`cls-d-ucp`, `cls-s-nbsp`/`cls-s-ucp` (F-C3, v0.2),
   `asr-b-cyr`/`asr-b-cyr-ucp`, `ci-e-acute`/`ci-ucp-invariance`.
 - **The oracle module does not do this today.** `pcrecbench/oracle_
   pcre2.py:47` declares `PCRE2_UTF` with the comment *"not used: this
@@ -988,26 +999,51 @@ independent of the testee's speed.
 
 | term | arithmetic | per cell |
 |---|---|---|
-| `search_short` | 74 patterns × 6 passes (1 probe + 5 trials) × (50 ms × 90 subjects ≈ 4.5 s) | **~33 min** |
-| `throughput` | 6 passes × 74 patterns over ~1.58 MB | **~5-12 min** (the property classes and the 64-branch alternation are the slow members) |
-| pcrec compile, one form × 74 | ~1-3 s each | **~2-4 min**, compiled testees only |
+| `search_short` | 76 patterns × 6 passes (1 probe + 5 trials) × (50 ms × 90 subjects ≈ 4.5 s) | **~34 min** |
+| `throughput` | 6 passes × 76 patterns over ~1.58 MB | **~5-12 min** (the property classes and the 64-branch alternation are the slow members) |
+| pcrec compile, one form × 76 | ~1-3 s each | **~2-4 min**, compiled testees only |
 
-**Estimate: ~40 min per `pcre2-*`/`re2`/`rust`/`onig` cell, ~45 min per
-pcrec cell.** Against `CELL_CAP`'s 5,400 s default that is **~2×
-headroom** — thinner than `capability@0.1`'s (~2-2.5×) and much thinner
-than the design's original 5×, so it is stated as a risk (§15 R3) with
-its lever named: **dropping the per-script 64 KB throughput arm
-(§4.3) removes four subjects and recovers ~4 min/cell**, and reducing
-the short set from 90 to 75 recovers ~5 min. Both are one-line changes
-to a generator.
+**(F-M3, v0.2, restated against a real measured band, not analogy.)**
+The v0.1 estimate below this arithmetic (~40-45 min/cell at ~2×
+`CELL_CAP` headroom) was cross-checked against `bench/capability@0.1`'s
+own real cell times on this box the SAME NIGHT the panel ran (four
+`capability@0.1` records, `store/index.tsv`: 35m26s, 31m25s, 42m51s —
+**31-43 min per pcrec cell, measured**, not modeled). Applying this
+section's own formula to `capability`'s population (64 patterns × 75
+subjects) gives `search_short` alone ≈ 24 min, leaving only 7-19 min of
+the observed 31-43 min total for `capability`'s throughput + compile —
+i.e. `search_short` dominates the real cost exactly as the model
+assumes, and 7-19 min is the measured FLOOR for throughput + compile on
+this box. `utf8@0.1` (v0.2, 76 patterns × 90 subjects) asks for **1.425×**
+`capability`'s `search_short` load: 24 min × 1.425 ≈ **34 min**,
+matching this section's own arithmetic above. Adding the measured
+7-19 min throughput + compile floor — before any of `utf8`'s own extra
+cost (a structurally larger corpus, a 64 KB-per-script arm `capability`
+does not carry) — already gives **~41-53 min per cell**, which exceeds
+the low end of the ~40-45 min estimate outright. **Revised estimate:
+~41-53 min per cell, ~1.5-1.8× `CELL_CAP` headroom, not ~2×** — thinner
+than `capability@0.1`'s own (~2-2.5×) and much thinner than the design's
+original 5×.
 
-**Window sizing.** Twelve v1 configs (pcre2 ×3, pcrec ×4, re2, rust,
-onig, vectorscan) × ~42 min ≈ **8.5 h** — more than one night under
-BD7. **§14 Q6** proposes the first sample as **seven cells**
-(pcrec ×4 + `pcre2-utf-interp` + `pcre2-utf-jit` + `rust-default`
-≈ 5 h), with the remaining five at `@0.1`'s second window. That cut is
-chosen so the first sample carries I-90 §5's three named first
-customers in full and the widest capability contrast (rust) at once.
+Two one-line generator levers are pre-priced (§4.3): dropping the
+per-script 64 KB throughput arm removes four subjects and recovers
+~4 min/cell; cutting the short set from 90 to 75 recovers ~5 min.
+**Per F-M3's disposition, lever 1 (drop the per-script 64 KB arm) is
+PRE-COMMITTED as the DEFAULT cut for the first sample if the rehearsal
+cell (the first `utf8@0.1` cell actually timed, before the window
+proper) exceeds 50 minutes** — cheaper to under-spend the budget once
+than to have `CELL_CAP` fire mid-window and cost a full re-measure under
+`run_window.sh`'s once-only retry rule.
+
+**Window sizing (F-M3, v0.2: restated at ~47 min/cell, the revised
+band's midpoint).** Twelve v1 configs (pcre2 ×3, pcrec ×4, re2, rust,
+onig, vectorscan) × ~47 min ≈ **9.4 h** — more than one night under
+BD7, and more than the v0.1 estimate's 8.5 h. **§14 Q6** proposes the
+first sample as **seven cells** (pcrec ×4 + `pcre2-utf-interp` +
+`pcre2-utf-jit` + `rust-default` ≈ 5.5 h), with the remaining five at
+`@0.1`'s second window. That cut is chosen so the first sample carries
+I-90 §5's three named first customers in full and the widest capability
+contrast (rust) at once.
 
 ---
 
@@ -1206,7 +1242,7 @@ Each carries a recommendation and the consequence of each answer.
 |---|---|---|
 | **R1** | **U1's shared-code change breaks six existing sets.** The oracle and every driver's find-all advance are shared by `email`, `loglines`, `bounded`, `altwide`, `syntax`, `capability` | the lane's FIRST deliverable is the byte-identical re-derivation of every existing `expectations.tsv` under the changed oracle with no UTF option requested (§13), with a negative arm |
 | **R2** | **An UNCONFIRMED capability row ships as a declaration.** §7.4's remaining UNCONFIRMED row is the Script / Script_Extensions spelling support across re2, rust and onig (vectorscan's `\p` row was CONFIRMED from this repo's own measured A/B while this note was being written — §7.6, which is itself the evidence for how easily such a row goes unchecked) | U2 requires a WITNESS COMPILE per (config, token) before any declaration ships — the L5 lesson, which caught three wrong `pcrec-*` declarations in `bench/capability`'s first cut |
-| **R3** | **Cell time at ~2× `CELL_CAP` headroom** (§10.3), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Neither changes a pattern |
+| **R3** | **Cell time at ~1.5-1.8× `CELL_CAP` headroom** (§10.3, F-M3 v0.2 — restated against tonight's measured `capability@0.1` band, thinner than the v0.1 estimate's ~2×), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Lever 1 is PRE-COMMITTED as the default first-sample cut if the rehearsal cell exceeds 50 min. Neither changes a pattern |
 | **R4** | **Family (f) refuses on default-cap pcrec configs**, taking a twelfth of the set with it | this is P7, not a surprise — and it is a FINDING (AX's K53 is the same shape on the correctness side). If it happens broadly, the `-bigcap` sibling is the arm that reads it, and the refusal census is the result |
 | **R5** | **The generated corpora do not resemble real text closely enough** for the histogram claim to carry | the claim is deliberately narrow (§4.1's limitation sentence: byte histogram and character-width statistics, NOT word or sentence statistics) and the histogram is a committed, re-derived table (§4.2), so a reader can check the claim rather than trust it |
 | **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answers** (§8.5) | the affected characters (U+00B7, U+0300) are avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
