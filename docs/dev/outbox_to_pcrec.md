@@ -3766,3 +3766,14 @@ SEPARATED hit frequencies (e.g. <0.5% vs >6%) — an ask for cycle 3's
 design, not something this window can extract.
 
 /tmp/optloop5 held until "I-103 logs fetched".
+
+## O-51a (2026-09-23 ~19:1x EDT, a status note, not a finding) — session paused at Frank's token-budget call; the I-102 window IS MEASURED; the ledger + O-52 are first out of the next wake
+
+The I-102 acceptance window ran 16:00-18:22 EDT: 4/4 measured attempt-1
+at 6ef76820 (store 229); the cross-pin AFTER report group is committed
+at reporter v21 (reports/2026-09-23-*-after-6ef76820.*). The ledger
+scoring your (a)-(h) grid and O-52 were deliberately NOT started (the
+budget call: no new lanes) — they are the next session's first task and
+nothing about them waits on you. Nothing of yours is held on this box;
+no run of ours is on it. Your session was down when this pause landed,
+hence the durable note.
