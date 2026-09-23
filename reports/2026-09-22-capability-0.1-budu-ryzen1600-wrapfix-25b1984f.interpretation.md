@@ -1,15 +1,15 @@
 <!-- pcrecbench interpret
 report:          reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.tsv
-report_sha256:   400e8bb4416716ab521709b741de1c60a61f8dfabfab7908eb968309a5e5acb6
+report_sha256:   6553e2ca9bd8376b89e758407dc81807b3e6a77e64c8cdf2a19d02bffa4b3a08
 index:           store/index.tsv
 index_sha256:    9ad31aa99b352bb40de9e40a348ed16ce5dfca480f5fe01a11bd886c413d34f5
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.subject-grain.tsv
-subject_grain_sha256:61fd43992fb727459a0ca31983886feaebeb58236aef7a45f5cf951d814c7867
+subject_grain_sha256:067c09bf172c1a8773c14adb1ffd9f082cbe259bcd6c10555effc34e537e3b37
 catalogue:       3.5
 interpret:       v2
-reporter:        v20 (2026-09-23)
+reporter:        v21 (2026-09-23)
 query:           subbench=capability, version=0.1, since=2026-09-22T00:00:00Z, until=2026-09-22T07:00:00Z, testee=pcrec_25b1984f_auto-caps-simdna, testee=pcrec_25b1984f_auto-nocaps-simdna, testee=pcrec_25b1984f_vm-caps-simdna, testee=pcrec_25b1984f_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd
 -->
 

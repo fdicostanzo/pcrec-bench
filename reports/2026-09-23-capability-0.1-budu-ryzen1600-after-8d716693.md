@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v19 (2026-09-22)
+reporter: v21 (2026-09-23)
 
 ## Query
 
@@ -31,7 +31,6306 @@ reporter: v19 (2026-09-22)
 - tier policy (R3, schema v1.2 `tier`, absent = `pinned`): a `scratch`-tier row is excluded from ranking by default, listed as `scratch: <testee>`; `--include-scratch` ranks it instead, with a `tier` column
 - duplicate-record policy (OD-B15, amended 2026-08-25): the NEWEST MEASURED record per (subbench@version, testee_id, machine) ranks by default -- a newer record that is NOT measured does not supersede a measured one of the same testee and version (listed as "newer, not measured" instead); only when no record in the group is measured does the newest record overall stand (itself unranked per the status policy above, unless --include-unmeasured). `--all-records` shows every record as its own row, its testee id suffixed `@<timestamp>`
 
-## Ranking (per pattern x regime, SET grain: sum over the subject set; best median first)
+_[B82] (inbox I-99, Frank's ruling -- a D119 addendum): this report's roster spans BOTH capture classes, so the two views below are the HEADLINE -- "If an engine is run non-capturing on a pattern, then we can't compare that to a capturing engine run -- they are almost completely different things with different objectives." No cell in either view compares across classes; the third, MIXED table further down restates today's single-roster ranking and is never the headline._
+
+## Ranking -- CAPTURING engines only, caps vs caps (per pattern x regime, SET grain: sum over the subject set; best median first)
+
+### `balanced-parens-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 5,242,464.9 | 3.8092 | 5,234,568.6 | 5,250,875.1 | 6,103.9 | 1.000x | 1.000x | faster ×1.05 |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,251,211.8 | 3.8156 | 5,250,112.6 | 5,264,822.7 | 5,451.9 | 1.002x | 1.002x | faster ×1.04 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,257,500.7 | 3.8201 | 5,245,664.4 | 5,260,797.1 | 5,608.6 | 1.003x | 1.003x | faster ×1.05 |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,472,646.1 | 3.9765 | 5,468,169.0 | 5,479,109.6 | 3,914.9 | 1.044x | 1.044x | - |
+| 5 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 5,482,899.1 | 3.9839 | 5,480,903.4 | 5,499,722.3 | 8,550.5 | 1.046x | 1.046x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,508,887.8 | 4.0028 | 5,494,534.0 | 5,519,114.0 | 9,322.4 | 1.051x | 1.051x | - |
+
+#### `balanced-parens-rec` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,999,312.0 | 3.8140 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 4,007,856.0 | 3.8222 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 4,010,929.9 | 3.8251 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 4,169,638.8 | 3.9765 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 4,179,397.8 | 3.9858 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,190,540.3 | 3.9964 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 993,904.3 | 3.7914 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 995,358.9 | 3.7970 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 996,892.8 | 3.8028 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,042,507.0 | 3.9768 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 1,040,955.0 | 3.9709 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,044,945.0 | 3.9861 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 248,718.8 | 3.7951 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 248,475.0 | 3.7914 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 249,712.8 | 3.8103 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 260,855.4 | 3.9803 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 260,392.7 | 3.9733 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 261,732.4 | 3.9937 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,999,312.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,007,856.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,010,929.9 ns, 1,048,576 B
+
+- not ranked: `oniguruma_6.9.10_default-caps-simdna` — did-not-compile (onig_new failed (code -116): unmatched close parenthesis)
+
+### `balanced-parens-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 986.2 | 981.2 | 988.0 | 2.4 | 1.000x | 1.000x | faster ×6.73 | 75 | 13.1 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 986.8 | 982.1 | 988.7 | 2.4 | 1.001x | 1.001x | faster ×6.66 | 75 | 13.2 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,052.9 | 1,051.6 | 1,053.9 | 1.0 | 1.068x | 1.068x | faster ×6.36 | 75 | 14.0 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,567.8 | 6,544.6 | 6,634.3 | 31.6 | 6.660x | 6.660x | - | 75 | 87.6 | 18.1 | 100% |
+| 5 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 6,639.6 | 6,567.5 | 6,655.6 | 38.2 | 6.733x | 6.733x | - | 75 | 88.5 | 8.9 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,692.7 | 6,435.2 | 6,700.3 | 102.8 | 6.786x | 6.786x | - | 75 | 89.2 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-concat`, 143.6 ns, 48 B; largest Δ: `sec-github-pat`, -369.7 ns (now 10.5 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-concat`, 142.5 ns, 48 B; largest Δ: `sec-github-pat`, -369.3 ns (now 10.6 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-concat`, 144.4 ns, 48 B; largest Δ: `sec-github-pat`, -368.1 ns (now 11.5 ns), 93 B
+
+- not ranked: `oniguruma_6.9.10_default-caps-simdna` — did-not-compile (onig_new failed (code -116): unmatched close parenthesis)
+
+### `base10num-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 16.0 | 0.0000 | 16.0 | 16.0 | 0.0 | 1.000x | 1.000x | faster ×1.06 |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 16.9 | 0.0000 | 16.9 | 17.0 | 0.0 | 1.057x | 1.057x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 35.2 | 0.0000 | 35.0 | 35.2 | 0.1 | 2.196x | 2.196x | faster ×115610.56 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 40.7 | 0.0000 | 40.5 | 40.8 | 0.1 | 2.540x | 2.540x | faster ×99948.26 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.0 | 0.0001 | 96.9 | 98.3 | 0.5 | 6.055x | 6.055x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,066,746.1 | 2.9549 | 4,064,639.7 | 4,067,280.9 | 1,052.4 | 253827.979x | 253827.979x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,067,134.5 | 2.9552 | 4,065,220.7 | 4,083,106.3 | 6,728.5 | 253852.220x | 253852.220x | - |
+
+#### `base10num-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 5.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 5.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 11.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 13.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,096,170.6 | 2.9527 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,096,595.2 | 2.9531 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 5.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 5.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 11.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 13.6 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 774,588.7 | 2.9548 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 775,113.4 | 2.9568 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 5.3 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 5.7 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 11.8 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 13.6 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 194,432.7 | 2.9668 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 194,699.1 | 2.9709 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 5.3 ns, 1,048,576 B; largest Δ: `t-64k`, -0.3 ns (now 5.3 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-256k`, 11.8 ns, 262,144 B; largest Δ: `t-1m`, -3,096,583.5 ns (now 11.6 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 13.6 ns, 65,536 B; largest Δ: `t-1m`, -3,096,157.1 ns (now 13.5 ns), 1,048,576 B
+
+### `base10num-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 545.6 | 535.2 | 555.3 | 7.8 | 1.000x | 1.000x | unchanged (within spread) | 75 | 7.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 548.1 | 539.9 | 553.4 | 5.4 | 1.004x | 1.004x | - | 75 | 7.3 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 999.0 | 995.1 | 1,010.2 | 5.9 | 1.831x | 1.831x | faster ×5.71 | 75 | 13.3 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,083.5 | 1,082.3 | 1,086.4 | 1.4 | 1.986x | 1.986x | faster ×5.20 | 75 | 14.4 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,632.6 | 5,625.5 | 5,645.1 | 6.5 | 10.323x | 10.323x | - | 75 | 75.1 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,704.3 | 5,697.7 | 5,710.7 | 5.1 | 10.454x | 10.454x | - | 75 | 76.1 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,898.6 | 7,716.4 | 8,010.1 | 103.2 | 14.476x | 14.476x | - | 75 | 105.3 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 36.1 ns, 20 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `cg-number`, 25.6 ns, 10 B; largest Δ: `sec-github-pat`, -286.1 ns (now 11.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 24.6 ns, 11 B; largest Δ: `sec-github-pat`, -283.0 ns (now 12.8 ns), 93 B
+
+### `bracket-array-define` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 72.4 | 0.0001 | 72.3 | 72.6 | 0.1 | 1.000x | 1.000x | faster ×67423.33 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 73.7 | 0.0001 | 72.2 | 73.9 | 0.6 | 1.018x | 1.018x | faster ×66247.49 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 89.5 | 0.0001 | 85.0 | 90.5 | 2.0 | 1.237x | 1.237x | faster ×54503.33 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.6 | 0.0001 | 93.3 | 94.6 | 0.4 | 1.293x | 1.293x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,879,347.9 | 3.5454 | 4,878,467.3 | 4,880,391.4 | 634.5 | 67423.333x | 67423.333x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,879,964.2 | 3.5458 | 4,878,973.0 | 4,882,740.8 | 1,366.5 | 67431.850x | 67431.850x | - |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,881,399.6 | 3.5469 | 4,879,618.6 | 4,891,155.2 | 4,318.1 | 67451.684x | 67451.684x | - |
+
+#### `bracket-array-define` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 24.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 24.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 29.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,715,866.6 | 3.5437 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,715,758.4 | 3.5436 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,718,477.3 | 3.5462 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 24.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 24.6 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 30.0 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.3 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 929,647.9 | 3.5463 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 930,543.2 | 3.5497 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 929,715.6 | 3.5466 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 24.2 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 24.6 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 30.2 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 233,661.7 | 3.5654 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 233,527.9 | 3.5634 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 233,796.3 | 3.5674 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 24.2 ns, 65,536 B; largest Δ: `t-1m`, -3,715,842.5 ns (now 24.1 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 24.6 ns, 65,536 B; largest Δ: `t-1m`, -3,718,452.7 ns (now 24.5 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 30.2 ns, 65,536 B; largest Δ: `t-1m`, -3,715,729.3 ns (now 29.1 ns), 1,048,576 B
+
+### `bracket-array-define` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,884.9 | 1,883.1 | 1,888.2 | 1.8 | 1.000x | 1.000x | faster ×3.62 | 75 | 25.1 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,885.4 | 1,884.2 | 1,885.8 | 0.7 | 1.000x | 1.000x | faster ×3.62 | 75 | 25.1 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,062.8 | 2,055.2 | 2,103.5 | 17.5 | 1.094x | 1.094x | faster ×3.43 | 75 | 27.5 | 8.8 | 100% |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,928.4 | 2,910.9 | 5,510.9 | 1,031.8 | 1.554x | 1.554x | - | 75 | 39.0 | 58.6 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,825.8 | 6,811.1 | 6,831.4 | 7.9 | 3.621x | 3.621x | - | 75 | 91.0 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 6,832.2 | 6,825.9 | 6,922.6 | 38.1 | 3.625x | 3.625x | - | 75 | 91.1 | 8.9 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,083.0 | 7,063.0 | 7,086.1 | 10.2 | 3.758x | 3.758x | - | 75 | 94.4 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rec-array-define`, 85.5 ns, 11 B; largest Δ: `sec-github-pat`, -330.7 ns (now 24.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `rec-array-define`, 85.7 ns, 11 B; largest Δ: `sec-github-pat`, -330.8 ns (now 24.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `rec-array-define`, 86.1 ns, 11 B; largest Δ: `sec-github-pat`, -332.0 ns (now 26.4 ns), 93 B
+
+### `codegrammar-flat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 608,738.6 | 0.4423 | 599,396.8 | 609,770.3 | 3,848.0 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,877.6 | 0.4475 | 606,075.8 | 635,579.4 | 10,677.3 | 1.012x | 1.012x | unchanged (within spread) |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,021,147.5 | 1.4686 | 2,014,182.6 | 2,044,334.7 | 11,405.0 | 3.320x | 3.320x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,044,975.0 | 1.4859 | 2,032,697.0 | 2,056,193.8 | 7,635.4 | 3.359x | 3.359x | slower ×1.01 |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,425,853.5 | 1.7626 | 2,423,690.1 | 2,453,489.4 | 11,184.5 | 3.985x | 3.985x | faster ×1.82 |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,421,654.5 | 3.2128 | 4,413,112.3 | 4,434,208.5 | 7,951.2 | 7.264x | 7.264x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,780,403.8 | 7.1065 | 9,608,014.9 | 10,055,338.5 | 144,106.6 | 16.067x | 16.067x | - |
+
+#### `codegrammar-flat` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 466,800.5 | 0.4452 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 465,077.5 | 0.4435 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 1,540,376.4 | 1.4690 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,565,141.3 | 1.4926 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,844,518.3 | 1.7591 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,366,349.7 | 3.2104 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,455,539.7 | 7.1102 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 113,300.5 | 0.4322 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 126,788.3 | 0.4837 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 378,331.3 | 1.4432 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 383,179.3 | 1.4617 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 460,015.1 | 1.7548 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 842,223.4 | 3.2128 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,831,319.1 | 6.9859 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 27,532.0 | 0.4201 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 27,907.9 | 0.4258 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 99,159.6 | 1.5131 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 98,053.7 | 1.4962 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 121,654.9 | 1.8563 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 211,907.7 | 3.2335 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 463,764.4 | 7.0765 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 465,077.5 ns, 1,048,576 B; largest Δ: `t-256k`, +13,487.8 ns (now 126,788.3 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,565,141.3 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,844,518.3 ns, 1,048,576 B
+
+### `codegrammar-flat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 692.0 | 690.7 | 694.5 | 1.3 | 1.000x | 1.000x | faster ×1.36 | 75 | 9.2 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 828.5 | 824.1 | 829.5 | 2.0 | 1.197x | 1.197x | faster ×1.88 | 75 | 11.0 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 938.9 | 936.1 | 940.8 | 1.7 | 1.357x | 1.357x | - | 75 | 12.5 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,040.5 | 1,036.8 | 1,042.0 | 2.1 | 1.504x | 1.504x | faster ×3.62 | 75 | 13.9 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,556.2 | 1,553.2 | 1,559.1 | 2.4 | 2.249x | 2.249x | - | 75 | 20.7 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,768.2 | 3,764.0 | 3,768.9 | 1.8 | 5.445x | 5.445x | - | 75 | 50.2 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,624.6 | 5,612.9 | 5,654.0 | 15.8 | 8.128x | 8.128x | - | 75 | 75.0 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `cg-key-colon`, 45.3 ns, 7 B; largest Δ: `lp-quoted-escaped`, -25.5 ns (now 8.0 ns), 16 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 68.0 ns, 81 B; largest Δ: `sec-github-pat`, -62.6 ns (now 8.9 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 92.3 ns, 81 B; largest Δ: `sec-github-pat`, -227.7 ns (now 10.4 ns), 93 B
+
+### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,235.0 | 0.4470 | 606,037.4 | 625,158.8 | 6,825.6 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 617,657.7 | 0.4488 | 600,865.3 | 623,199.4 | 7,827.2 | 1.004x | 1.004x | - |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,010,864.6 | 1.4611 | 2,000,368.9 | 2,016,501.7 | 5,451.8 | 3.268x | 3.268x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,042,645.3 | 1.4842 | 2,037,543.4 | 2,051,764.1 | 5,888.2 | 3.320x | 3.320x | slower ×1.02 |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,421,475.5 | 1.7595 | 2,417,825.5 | 2,423,818.3 | 2,227.9 | 3.936x | 3.936x | faster ×1.82 |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,417,868.1 | 3.2101 | 4,412,434.3 | 4,430,188.4 | 6,863.7 | 7.181x | 7.181x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,673,603.1 | 7.0289 | 9,612,036.9 | 10,000,098.6 | 144,314.7 | 15.723x | 15.723x | - |
+
+#### `codegrammar-xflag` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 461,673.0 | 0.4403 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 463,013.7 | 0.4416 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 1,530,807.4 | 1.4599 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,561,263.7 | 1.4889 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,840,773.0 | 1.7555 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,361,112.8 | 3.2054 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,383,958.1 | 7.0419 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 121,909.4 | 0.4650 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 122,357.7 | 0.4668 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 380,587.1 | 1.4518 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 382,309.4 | 1.4584 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 462,664.6 | 1.7649 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 836,923.1 | 3.1926 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,833,823.2 | 6.9955 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 28,675.6 | 0.4376 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 27,942.0 | 0.4264 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 97,516.9 | 1.4880 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 97,107.7 | 1.4817 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 120,137.1 | 1.8331 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 214,606.9 | 3.2746 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 460,149.6 | 7.0213 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 461,673.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,561,263.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,840,773.0 ns, 1,048,576 B
+
+### `codegrammar-xflag` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 692.0 | 689.4 | 694.4 | 1.6 | 1.000x | 1.000x | faster ×1.36 | 75 | 9.2 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 828.2 | 824.7 | 830.8 | 2.0 | 1.197x | 1.197x | faster ×1.88 | 75 | 11.0 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 938.3 | 930.0 | 939.8 | 3.6 | 1.356x | 1.356x | - | 75 | 12.5 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,037.9 | 1,036.7 | 1,039.5 | 1.2 | 1.500x | 1.500x | faster ×3.63 | 75 | 13.8 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,557.0 | 1,555.4 | 1,560.4 | 2.0 | 2.250x | 2.250x | - | 75 | 20.8 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,768.7 | 3,768.5 | 3,771.5 | 1.1 | 5.446x | 5.446x | - | 75 | 50.2 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,631.7 | 5,615.5 | 5,686.1 | 24.1 | 8.138x | 8.138x | - | 75 | 75.1 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `cg-key-colon`, 45.2 ns, 7 B; largest Δ: `lp-quoted-escaped`, -25.4 ns (now 8.0 ns), 16 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 68.3 ns, 81 B; largest Δ: `sec-github-pat`, -62.1 ns (now 9.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 91.9 ns, 81 B; largest Δ: `sec-github-pat`, -227.9 ns (now 10.4 ns), 93 B
+
+### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,587,640.4 | 6.9665 | 9,577,984.9 | 9,599,921.8 | 7,164.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 11,109,489.0 | 8.0723 | 11,086,549.7 | 11,163,811.0 | 27,342.0 | 1.159x | 1.159x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,114,870.5 | 8.0762 | 11,104,230.9 | 11,134,959.4 | 10,973.1 | 1.159x | 1.159x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,120,790.7 | 8.0805 | 11,117,006.1 | 11,148,420.8 | 11,572.4 | 1.160x | 1.160x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 11,122,427.9 | 8.0817 | 11,115,388.3 | 19,857,936.2 | 3,490,070.5 | 1.160x | 1.160x | - |
+| 6 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 11,188,283.7 | 8.1295 | 11,172,587.3 | 11,222,224.6 | 20,844.3 | 1.167x | 1.167x | - |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,191,462.7 | 8.1318 | 11,170,924.3 | 11,256,334.3 | 31,464.5 | 1.167x | 1.167x | unchanged (within spread) |
+
+#### `currency-lookbehind-fixed` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,351,086.1 | 7.0105 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 8,464,754.9 | 8.0726 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 8,469,699.0 | 8.0773 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 8,469,671.1 | 8.0773 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 8,470,508.7 | 8.0781 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 8,511,062.8 | 8.1168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8,529,467.7 | 8.1343 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,803,856.8 | 6.8812 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,115,281.1 | 8.0692 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 2,114,241.4 | 8.0652 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 2,118,486.1 | 8.0814 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 2,118,712.9 | 8.0822 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 2,131,838.2 | 8.1323 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 2,128,230.0 | 8.1186 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 438,853.5 | 6.6964 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 528,592.2 | 8.0657 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 526,880.0 | 8.0396 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 532,053.8 | 8.1185 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 532,194.2 | 8.1206 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 535,353.4 | 8.1688 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 534,659.6 | 8.1583 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 8,469,699.0 ns, 1,048,576 B; largest Δ: `t-64k`, -5,314.1 ns (now 526,880.0 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 8,469,671.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 8,529,467.7 ns, 1,048,576 B
+
+### `currency-lookbehind-fixed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 5,125.4 | 5,112.5 | 5,160.4 | 19.6 | 1.000x | 1.000x | faster ×1.01 | 75 | 68.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 5,165.7 | 5,152.2 | 5,176.0 | 8.9 | 1.008x | 1.008x | - | 75 | 68.9 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 12,326.4 | 12,312.6 | 12,391.7 | 27.7 | 2.405x | 2.405x | faster ×1.01 | 75 | 164.4 | 8.9 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 12,391.0 | 12,366.8 | 12,403.7 | 12.2 | 2.418x | 2.418x | - | 75 | 165.2 | 18.1 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 12,581.4 | 12,556.5 | 12,735.4 | 66.0 | 2.455x | 2.455x | - | 75 | 167.8 | 17.3 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 12,582.0 | 12,523.3 | 15,338.1 | 1,105.2 | 2.455x | 2.455x | unchanged (within spread) | 75 | 167.8 | 8.8 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,455.3 | 17,320.4 | 17,470.2 | 62.9 | 3.406x | 3.406x | - | 75 | 232.7 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-syslog`, 482.9 ns, 56 B; largest Δ: `nu-high-byte`, -2.2 ns (now 13.5 ns), 2 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 768.9 ns, 93 B; largest Δ: `v-email`, -17.9 ns (now 195.5 ns), 24 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 771.7 ns, 93 B; largest Δ: `v-email`, +13.4 ns (now 214.3 ns), 24 B
+
+### `date-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 30.6 | 0.0000 | 30.5 | 31.2 | 0.2 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 30.9 | 0.0000 | 30.8 | 31.1 | 0.1 | 1.011x | 1.011x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 52.2 | 0.0000 | 50.7 | 52.6 | 0.9 | 1.705x | 1.705x | faster ×74022.73 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 60.1 | 0.0000 | 59.6 | 63.6 | 1.5 | 1.962x | 1.962x | faster ×64305.68 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 94.3 | 94.6 | 0.1 | 3.083x | 3.083x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,863,544.6 | 2.8073 | 3,861,744.3 | 3,874,043.9 | 4,537.2 | 126188.342x | 126188.342x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,865,018.4 | 2.8084 | 3,862,664.5 | 3,883,142.6 | 8,229.5 | 126236.477x | 126236.477x | - |
+
+#### `date-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 10.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 10.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 20.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,942,767.5 | 2.8064 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,941,781.7 | 2.8055 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 10.2 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 10.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 17.4 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 20.0 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 736,078.7 | 2.8079 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 736,544.1 | 2.8097 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 10.2 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 10.3 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 16.9 | 0.0003 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 20.3 | 0.0003 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 184,941.1 | 2.8220 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 185,041.7 | 2.8235 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 10.3 ns, 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 20.3 ns, 65,536 B; largest Δ: `t-1m`, -2,942,747.5 ns (now 20.0 ns), 1,048,576 B
+
+### `date-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 868.9 | 867.8 | 869.1 | 0.5 | 1.000x | 1.000x | - | 75 | 11.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 890.5 | 887.6 | 896.1 | 3.3 | 1.025x | 1.025x | slower ×1.02 | 75 | 11.9 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,717.8 | 1,702.3 | 1,732.6 | 9.7 | 1.977x | 1.977x | faster ×3.56 | 75 | 22.9 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,924.8 | 1,922.4 | 2,094.2 | 68.1 | 2.215x | 2.215x | faster ×3.27 | 75 | 25.7 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,684.7 | 5,651.2 | 5,742.5 | 39.9 | 6.543x | 6.543x | - | 75 | 75.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,109.3 | 6,093.7 | 6,132.0 | 12.4 | 7.031x | 7.031x | - | 75 | 81.5 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,300.1 | 6,290.7 | 6,315.1 | 9.3 | 7.251x | 7.251x | - | 75 | 84.0 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 61.7 ns, 20 B; largest Δ: `rd-numeric-id-hit`, +0.8 ns (now 14.8 ns), 4 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 168.0 ns, 20 B; largest Δ: `sec-github-pat`, -269.6 ns (now 16.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 171.6 ns, 20 B; largest Δ: `sec-github-pat`, -269.7 ns (now 19.8 ns), 93 B
+
+### `doubled-word` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25,415,264.8 | 18.4670 | 25,411,675.7 | 25,594,089.3 | 70,404.9 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 25,441,087.7 | 18.4857 | 25,350,591.0 | 25,462,128.8 | 39,739.5 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 25,456,808.8 | 18.4971 | 25,419,600.5 | 25,741,206.7 | 121,698.1 | 1.002x | 1.002x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 25,481,053.2 | 18.5148 | 25,418,429.3 | 25,945,580.5 | 196,450.4 | 1.003x | 1.003x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 25,572,780.9 | 18.5814 | 25,402,254.4 | 25,722,067.3 | 107,526.3 | 1.006x | 1.006x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 25,816,152.8 | 18.7582 | 25,412,656.6 | 26,379,028.0 | 350,588.4 | 1.016x | 1.016x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 79,438,113.2 | 57.7204 | 79,001,158.5 | 86,370,341.8 | 2,830,930.3 | 3.126x | 3.126x | - |
+
+#### `doubled-word` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 19,384,532.1 | 18.4865 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 19,409,408.6 | 18.5103 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 19,397,247.9 | 18.4987 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 19,448,484.2 | 18.5475 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 19,512,797.3 | 18.6089 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 19,674,277.2 | 18.7629 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 60,380,887.5 | 57.5837 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,853,952.2 | 18.5164 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,824,316.1 | 18.4033 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,866,257.7 | 18.5633 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,839,420.5 | 18.4609 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 4,858,232.5 | 18.5327 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,909,607.7 | 18.7287 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 15,207,734.2 | 58.0129 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,212,984.5 | 18.5087 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,205,288.5 | 18.3912 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,219,035.2 | 18.6010 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,208,257.5 | 18.4365 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,208,867.5 | 18.4459 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,207,539.8 | 18.4256 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,833,858.8 | 58.5000 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,384,532.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,409,408.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,397,247.9 ns, 1,048,576 B
+
+### `doubled-word` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 20,814.1 | 20,752.7 | 20,866.7 | 43.9 | 1.000x | 1.000x | - | 75 | 277.5 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 20,847.8 | 20,824.9 | 20,890.5 | 22.4 | 1.002x | 1.002x | unchanged (within spread) | 75 | 278.0 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 20,851.2 | 20,827.8 | 20,963.8 | 48.3 | 1.002x | 1.002x | unchanged (within spread) | 75 | 278.0 | 8.0 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 20,908.4 | 20,752.4 | 20,959.0 | 74.8 | 1.005x | 1.005x | - | 75 | 278.8 | 18.1 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 21,022.6 | 20,968.0 | 21,083.7 | 40.8 | 1.010x | 1.010x | unchanged (within spread) | 75 | 280.3 | 8.8 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 21,036.4 | 21,015.0 | 22,650.9 | 642.0 | 1.011x | 1.011x | - | 75 | 280.5 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 89,442.6 | 88,879.8 | 89,518.2 | 274.5 | 4.297x | 4.297x | - | 75 | 1,192.6 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 1,320.4 ns, 81 B; largest Δ: `waf-concat`, +6.1 ns (now 848.7 ns), 48 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-slack-webhook`, 1,327.1 ns, 81 B; largest Δ: `rec-comment-nested`, +6.4 ns (now 450.2 ns), 34 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sec-slack-webhook`, 1,320.3 ns, 81 B
+
+### `dup-param-detect` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,130.5 | 0.0168 | 23,115.2 | 23,146.2 | 11.1 | 1.000x | 1.000x | faster ×582.78 |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,146.9 | 0.0168 | 23,106.3 | 23,234.4 | 44.5 | 1.001x | 1.001x | faster ×582.00 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,179.2 | 0.0168 | 23,142.3 | 23,187.0 | 17.9 | 1.002x | 1.002x | faster ×579.92 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,859.6 | 1.6188 | 2,226,719.6 | 2,233,694.8 | 2,538.2 | 96.317x | 96.317x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 13,442,181.4 | 9.7672 | 13,429,549.8 | 13,470,725.1 | 14,447.4 | 581.144x | 581.144x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 13,471,556.7 | 9.7886 | 13,438,450.1 | 13,491,588.4 | 22,391.3 | 582.414x | 582.414x | - |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 13,480,044.6 | 9.7947 | 13,437,880.4 | 13,484,057.6 | 20,320.6 | 582.781x | 582.781x | - |
+
+#### `dup-param-detect` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,639.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,651.8 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,695.1 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,696,922.6 | 1.6183 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 10,259,583.4 | 9.7843 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 10,279,499.2 | 9.8033 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 10,252,136.5 | 9.7772 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,386.6 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,396.0 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,375.4 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,441.4 | 1.6191 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,557,962.0 | 9.7579 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 2,558,943.6 | 9.7616 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 2,560,483.9 | 9.7675 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,107.7 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,106.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,108.6 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,295.9 | 1.6219 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 627,510.5 | 9.5751 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 630,233.9 | 9.6166 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 631,771.6 | 9.6401 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,639.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,651.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,695.1 ns, 1,048,576 B
+
+### `dup-param-detect` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,575.9 | 1,570.2 | 1,583.8 | 4.6 | 1.000x | 1.000x | faster ×6.90 | 75 | 21.0 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,578.1 | 1,572.2 | 1,594.3 | 7.5 | 1.001x | 1.001x | faster ×6.84 | 75 | 21.0 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,640.0 | 1,637.4 | 1,642.0 | 1.7 | 1.041x | 1.041x | faster ×6.69 | 75 | 21.9 | 8.8 | 100% |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 8,860.1 | 8,827.0 | 8,885.5 | 20.8 | 5.622x | 5.622x | - | 75 | 118.1 | 58.6 | 100% |
+| 5 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 10,798.9 | 10,757.5 | 10,830.7 | 29.1 | 6.852x | 6.852x | - | 75 | 144.0 | 8.9 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 10,873.7 | 10,849.8 | 10,890.7 | 14.5 | 6.900x | 6.900x | - | 75 | 145.0 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 10,966.8 | 10,866.2 | 11,049.6 | 75.4 | 6.959x | 6.959x | - | 75 | 146.2 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-benign`, 390.1 ns, 39 B; largest Δ: `sec-slack-webhook`, -641.9 ns (now 11.1 ns), 81 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-benign`, 391.8 ns, 39 B; largest Δ: `sec-slack-webhook`, -638.9 ns (now 11.0 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-benign`, 390.2 ns, 39 B; largest Δ: `sec-slack-webhook`, -641.0 ns (now 11.8 ns), 81 B
+
+### `email-local-nodup` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 916.4 | 0.0007 | 910.8 | 920.4 | 3.1 | 1.000x | 1.000x | faster ×4215.51 |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 936.6 | 0.0007 | 935.1 | 948.7 | 5.0 | 1.022x | 1.022x | faster ×4130.45 |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 974.1 | 0.0007 | 971.4 | 985.2 | 5.2 | 1.063x | 1.063x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 980.6 | 0.0007 | 978.1 | 986.1 | 2.8 | 1.070x | 1.070x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,378.4 | 0.0010 | 1,369.3 | 1,394.1 | 8.6 | 1.504x | 1.504x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,862,999.1 | 2.8069 | 3,861,606.5 | 3,864,500.1 | 1,126.9 | 4215.514x | 4215.514x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,868,400.0 | 2.8108 | 3,863,224.7 | 3,877,286.2 | 4,750.2 | 4221.408x | 4221.408x | - |
+
+#### `email-local-nodup` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 210.6 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 214.0 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 223.5 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 232.4 | 0.0002 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 388.4 | 0.0004 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,941,878.8 | 2.8056 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,942,730.0 | 2.8064 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 431.4 | 0.0016 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 442.6 | 0.0017 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 461.4 | 0.0018 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 457.5 | 0.0017 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 555.6 | 0.0021 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 736,464.6 | 2.8094 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 737,096.6 | 2.8118 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 273.7 | 0.0042 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 282.0 | 0.0043 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 291.0 | 0.0044 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 289.7 | 0.0044 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 435.0 | 0.0066 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 184,862.8 | 2.8208 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 185,505.6 | 2.8306 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-256k`, 431.4 ns, 262,144 B; largest Δ: `t-1m`, -2,941,668.2 ns (now 210.6 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 442.6 ns, 262,144 B; largest Δ: `t-1m`, -2,942,516.0 ns (now 214.0 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-256k`, 461.4 ns, 262,144 B; largest Δ: `t-1m`, -8.9 ns (now 223.5 ns), 1,048,576 B
+
+### `email-local-nodup` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,539.4 | 10,528.9 | 10,551.6 | 7.8 | 1.000x | 1.000x | faster ×1.01 | 75 | 140.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 10,636.1 | 10,623.6 | 10,675.4 | 17.9 | 1.009x | 1.009x | - | 75 | 141.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,071.7 | 11,067.8 | 11,148.3 | 30.6 | 1.051x | 1.051x | faster ×1.44 | 75 | 147.6 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,575.6 | 11,433.7 | 11,582.8 | 57.2 | 1.098x | 1.098x | faster ×1.39 | 75 | 154.3 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 15,944.8 | 15,922.7 | 15,976.7 | 19.0 | 1.513x | 1.513x | - | 75 | 212.6 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 16,126.3 | 16,084.1 | 16,182.3 | 33.2 | 1.530x | 1.530x | - | 75 | 215.0 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 18,535.8 | 18,434.9 | 19,759.1 | 503.4 | 1.759x | 1.759x | - | 75 | 247.1 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sd-empty-alt-hit`, 929.0 ns, 61 B; largest Δ: `v-email`, -5.4 ns (now 228.5 ns), 24 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sd-empty-alt-hit`, 866.7 ns, 61 B; largest Δ: `sec-github-pat`, -287.0 ns (now 483.2 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sd-empty-alt-hit`, 885.5 ns, 61 B; largest Δ: `sec-github-pat`, -280.0 ns (now 490.3 ns), 93 B
+
+### `email-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 47.3 | 0.0000 | 46.6 | 50.6 | 1.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,106.9 | 0.0168 | 23,094.5 | 23,110.8 | 5.5 | 488.739x | 488.739x | slower ×488.74 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,134.7 | 0.0168 | 23,113.2 | 23,322.4 | 78.1 | 489.327x | 489.327x | faster ×193.68 |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,153.5 | 0.0168 | 23,112.1 | 23,176.2 | 23.4 | 489.724x | 489.724x | faster ×193.51 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,675.2 | 1.6186 | 2,225,987.2 | 2,232,628.4 | 2,381.6 | 47117.981x | 47117.981x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,480,502.2 | 3.2556 | 4,479,624.4 | 4,481,763.4 | 772.6 | 94767.951x | 94767.951x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,480,668.0 | 3.2557 | 4,477,548.2 | 4,496,453.7 | 7,099.6 | 94771.458x | 94771.458x | - |
+
+#### `email-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 16.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,608.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,641.6 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,648.6 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,695,804.9 | 1.6172 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,411,319.3 | 3.2533 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,411,899.6 | 3.2538 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 15.3 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,389.0 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,388.2 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,392.8 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,340.9 | 1.6187 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 852,580.3 | 3.2523 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 852,620.4 | 3.2525 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 15.0 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,109.6 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.8 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,482.6 | 1.6248 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 216,311.7 | 3.3007 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 216,148.0 | 3.2982 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,608.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,641.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.6 ns, 1,048,576 B
+
+### `email-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 833.2 | 830.6 | 834.8 | 1.7 | 1.000x | 1.000x | now measured (was: gave-up) | 75 | 11.1 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 895.6 | 893.1 | 897.1 | 1.3 | 1.075x | 1.075x | now measured (was: gave-up) | 75 | 11.9 | 8.8 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 905.9 | 905.7 | 910.6 | 2.0 | 1.087x | 1.087x | faster ×1.59 | 75 | 12.1 | 8.0 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,436.2 | 1,427.0 | 1,457.8 | 10.5 | 1.724x | 1.724x | - | 75 | 19.1 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,056.7 | 5,050.2 | 5,064.8 | 4.8 | 6.069x | 6.069x | - | 75 | 67.4 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-email`, 44.3 ns, 24 B; largest Δ: `rd-email-near-miss`, -6,305,157.5 ns (now 9.5 ns), 20 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-email`, 46.1 ns, 24 B; largest Δ: `rd-numeric-id-near-miss`, -6,305,793.2 ns (now 10.3 ns), 20 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-email`, 70.8 ns, 24 B; largest Δ: `sec-github-pat`, -64.9 ns (now 11.1 ns), 93 B
+
+### `evil-alt-nested` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,981.8 | 0.0087 | 11,723.7 | 12,086.3 | 128.3 | 1.000x | 1.000x | faster ×357.39 |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 12,009.9 | 0.0087 | 11,985.0 | 12,065.6 | 27.0 | 1.002x | 1.002x | faster ×356.42 |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,126.9 | 0.0088 | 11,641.9 | 12,185.3 | 213.2 | 1.012x | 1.012x | faster ×353.13 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,602.4 | 0.0128 | 17,577.2 | 17,698.4 | 47.3 | 1.469x | 1.469x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,280,622.2 | 3.1103 | 4,279,129.7 | 4,292,720.0 | 4,934.5 | 357.261x | 357.261x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,282,218.8 | 3.1115 | 4,278,908.3 | 5,075,690.9 | 317,005.8 | 357.394x | 357.394x | - |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,282,437.3 | 3.1117 | 4,280,705.2 | 4,328,933.5 | 18,447.5 | 357.412x | 357.412x | - |
+
+#### `evil-alt-nested` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,239.9 | 0.0012 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,255.7 | 0.0012 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,242.1 | 0.0012 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,905.4 | 0.0018 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,252,480.2 | 3.1018 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,252,999.2 | 3.1023 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,254,164.4 | 3.1034 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 45.1 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 47.8 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 45.6 | 0.0002 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 296.3 | 0.0011 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 813,077.5 | 3.1016 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 813,272.7 | 3.1024 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 812,956.8 | 3.1012 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 10,686.7 | 0.1631 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 10,698.2 | 0.1632 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 10,839.3 | 0.1654 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 15,418.5 | 0.2353 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 215,269.1 | 3.2847 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 215,021.7 | 3.2810 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 215,207.2 | 3.2838 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 10,686.7 ns, 65,536 B; largest Δ: `t-1m`, -3,251,759.3 ns (now 1,239.9 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 10,698.2 ns, 65,536 B; largest Δ: `t-1m`, -3,251,224.5 ns (now 1,255.7 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 10,839.3 ns, 65,536 B; largest Δ: `t-1m`, -3,252,922.3 ns (now 1,242.1 ns), 1,048,576 B
+
+### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 292,709.7 | 0.2127 | 292,611.8 | 293,376.3 | 283.9 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 292,767.6 | 0.2127 | 292,338.9 | 293,591.6 | 433.2 | 1.000x | 1.000x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,180,108.0 | 0.8575 | 1,160,497.6 | 1,180,705.0 | 9,392.2 | 4.032x | 4.032x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,854,116.9 | 2.8004 | 3,851,653.0 | 3,871,755.6 | 8,996.0 | 13.167x | 13.167x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,856,267.9 | 2.8020 | 3,849,644.3 | 3,857,700.9 | 2,863.5 | 13.174x | 13.174x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,267,973.9 | 3.1011 | 4,267,643.2 | 4,270,539.7 | 1,322.2 | 14.581x | 14.581x | slower ×1.11 |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,270,753.1 | 3.1032 | 4,266,842.1 | 4,276,876.0 | 3,961.3 | 14.590x | 14.590x | slower ×1.11 |
+
+#### `file-ext-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 228,433.5 | 0.2179 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 228,602.9 | 0.2180 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 897,464.3 | 0.8559 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,935,887.1 | 2.7999 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,936,800.4 | 2.8008 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,251,320.7 | 3.1007 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,254,076.8 | 3.1033 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 52,924.6 | 0.2019 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 52,721.9 | 0.2011 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 225,869.4 | 0.8616 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 734,513.2 | 2.8019 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 735,085.1 | 2.8041 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 813,089.0 | 3.1017 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 812,944.5 | 3.1011 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 11,444.7 | 0.1746 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 11,293.6 | 0.1723 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 56,784.4 | 0.8665 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 183,766.8 | 2.8041 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 184,040.5 | 2.8082 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 203,581.7 | 3.1064 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 203,118.2 | 3.0993 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 228,433.5 ns, 1,048,576 B; largest Δ: `t-256k`, +202.7 ns (now 52,924.6 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,251,320.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,254,076.8 ns, 1,048,576 B
+
+### `file-ext-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 745.3 | 744.6 | 746.7 | 0.7 | 1.000x | 1.000x | faster ×1.13 | 75 | 9.9 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 838.8 | 827.7 | 871.3 | 15.8 | 1.125x | 1.125x | - | 75 | 11.2 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,567.4 | 2,517.4 | 2,688.3 | 58.0 | 3.445x | 3.445x | faster ×1.84 | 75 | 34.2 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,777.3 | 2,681.9 | 2,780.5 | 37.4 | 3.726x | 3.726x | faster ×1.65 | 75 | 37.0 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,169.5 | 3,164.3 | 3,183.4 | 6.4 | 4.252x | 4.252x | - | 75 | 42.3 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,584.0 | 4,516.0 | 4,691.5 | 71.8 | 6.150x | 6.150x | - | 75 | 61.1 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,716.5 | 4,591.9 | 4,907.1 | 120.5 | 6.328x | 6.328x | - | 75 | 62.9 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sd-fileext-short`, 29.9 ns, 14 B; largest Δ: `v-ipv4`, -14.7 ns (now 7.7 ns), 11 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 285.9 ns, 81 B; largest Δ: `sec-github-pat`, -203.6 ns (now 10.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 285.0 ns, 81 B; largest Δ: `sec-github-pat`, -199.8 ns (now 11.9 ns), 93 B
+
+### `float-literal-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,791,555.1 | 1.3018 | 1,785,787.9 | 1,803,832.2 | 6,142.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,939,786.6 | 1.4095 | 1,930,409.2 | 1,951,578.3 | 7,243.7 | 1.083x | 1.083x | slower ×1.08 |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 13,354,984.6 | 9.7039 | 13,300,067.1 | 13,560,804.3 | 95,816.6 | 7.454x | 7.454x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 18,893,460.4 | 13.7282 | 18,850,216.5 | 18,997,039.6 | 49,008.1 | 10.546x | 10.546x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 19,041,147.9 | 13.8355 | 18,944,822.7 | 19,102,654.9 | 53,339.3 | 10.628x | 10.628x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 22,079,935.4 | 16.0435 | 22,033,910.2 | 22,550,312.3 | 190,699.6 | 12.324x | 12.324x | slower ×1.16 |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 22,138,490.7 | 16.0860 | 21,847,684.8 | 22,320,343.0 | 160,945.6 | 12.357x | 12.357x | slower ×1.17 |
+
+#### `float-literal-bound` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 1,372,035.4 | 1.3085 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,488,250.4 | 1.4193 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 10,239,198.2 | 9.7649 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 14,398,172.1 | 13.7312 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 14,530,915.5 | 13.8578 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 16,890,512.0 | 16.1080 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 16,922,339.8 | 16.1384 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 337,642.6 | 1.2880 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 363,737.6 | 1.3875 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 2,510,868.7 | 9.5782 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 3,595,034.7 | 13.7140 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,604,621.7 | 13.7505 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,196,067.0 | 16.0067 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,182,694.8 | 15.9557 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 82,497.9 | 1.2588 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 88,180.0 | 1.3455 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 604,563.9 | 9.2249 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 906,082.9 | 13.8257 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 905,058.7 | 13.8101 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,072,294.3 | 16.3619 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,047,382.5 | 15.9818 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,488,250.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 16,890,512.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 16,922,339.8 ns, 1,048,576 B
+
+### `float-literal-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,644.0 | 1,637.1 | 1,654.1 | 6.2 | 1.000x | 1.000x | faster ×1.51 | 75 | 21.9 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,489.5 | 2,480.1 | 2,516.0 | 13.0 | 1.514x | 1.514x | - | 75 | 33.2 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,504.7 | 5,467.8 | 5,571.6 | 37.3 | 3.348x | 3.348x | faster ×3.60 | 75 | 73.4 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,640.4 | 5,607.3 | 5,696.2 | 30.3 | 3.431x | 3.431x | faster ×3.56 | 75 | 75.2 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 19,839.7 | 19,795.5 | 19,848.1 | 20.4 | 12.068x | 12.068x | - | 75 | 264.5 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 20,087.6 | 20,051.6 | 20,255.6 | 72.3 | 12.219x | 12.219x | - | 75 | 267.8 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 20,529.8 | 20,426.3 | 20,649.5 | 80.1 | 12.488x | 12.488x | - | 75 | 273.7 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-ipv4`, 247.1 ns, 11 B; largest Δ: `v-uuid-badnibble`, -63.3 ns (now 10.0 ns), 36 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 1,144.8 ns, 81 B; largest Δ: `sec-github-pat`, -1,252.4 ns (now 10.1 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 1,187.0 ns, 81 B; largest Δ: `sec-github-pat`, -1,242.2 ns (now 11.5 ns), 93 B
+
+### `floor-byte` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,088.0 | 0.0168 | 23,074.6 | 23,197.2 | 45.1 | 1.000x | 1.000x | faster ×35.26 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,113.3 | 0.0168 | 23,104.3 | 23,158.2 | 21.7 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,134.8 | 0.0168 | 23,102.4 | 23,159.2 | 23.5 | 1.002x | 1.002x | faster ×35.20 |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 23,142.7 | 0.0168 | 23,131.2 | 23,261.4 | 49.1 | 1.002x | 1.002x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 814,079.5 | 0.5915 | 813,773.5 | 814,700.2 | 315.9 | 35.260x | 35.260x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 814,259.1 | 0.5916 | 813,657.2 | 818,702.0 | 2,161.9 | 35.268x | 35.268x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,434.9 | 1.6199 | 2,228,640.9 | 2,230,675.0 | 739.4 | 96.562x | 96.562x | - |
+
+#### `floor-byte` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,617.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,614.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,649.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 17,632.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 620,162.1 | 0.5914 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 620,290.4 | 0.5916 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,682.3 | 1.6190 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,373.8 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,393.7 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,373.5 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,398.9 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 155,015.7 | 0.5913 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 154,989.7 | 0.5912 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,832.0 | 1.6206 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,102.5 | 0.0168 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,104.7 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,105.9 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,110.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 38,939.2 | 0.5942 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 38,925.3 | 0.5940 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,380.5 | 1.6232 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,617.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,614.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,649.5 ns, 1,048,576 B
+
+### `floor-byte` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 599.0 | 598.1 | 599.4 | 0.5 | 1.000x | 1.000x | faster ×1.11 | 75 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 656.4 | 656.1 | 658.0 | 0.7 | 1.096x | 1.096x | faster ×1.98 | 75 | 8.8 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 664.1 | 660.9 | 670.4 | 3.3 | 1.109x | 1.109x | faster ×2.04 | 75 | 8.9 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 667.8 | 661.5 | 671.4 | 3.2 | 1.115x | 1.115x | - | 75 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 1,298.7 | 1,297.7 | 1,301.0 | 1.4 | 2.168x | 2.168x | - | 75 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,355.4 | 1,354.4 | 1,360.6 | 2.3 | 2.263x | 2.263x | - | 75 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,397.1 | 4,388.5 | 4,404.6 | 6.7 | 7.341x | 7.341x | - | 75 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `floor-hit`, 20.2 ns, 1 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `floor-hit`, 13.3 ns, 1 B; largest Δ: `sec-github-pat`, -63.8 ns (now 9.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `floor-hit`, 13.0 ns, 1 B; largest Δ: `sec-github-pat`, -63.9 ns (now 10.3 ns), 93 B
+
+### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 482,837.5 | 0.3508 | 482,647.4 | 485,264.5 | 981.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 483,131.8 | 0.3510 | 482,650.4 | 485,205.8 | 924.3 | 1.001x | 1.001x | - |
+| 3 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 2,034,266.9 | 1.4781 | 2,033,316.8 | 2,039,583.7 | 2,254.3 | 4.213x | 4.213x | - |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,034,863.1 | 1.4785 | 2,033,935.6 | 2,039,981.9 | 2,141.6 | 4.214x | 4.214x | - |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,035,057.3 | 1.4787 | 2,035,023.9 | 2,035,408.9 | 176.8 | 4.215x | 4.215x | unchanged (within spread) |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,035,372.3 | 1.4789 | 2,034,084.6 | 2,042,785.0 | 3,904.7 | 4.215x | 4.215x | - |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,035,691.7 | 1.4792 | 2,032,772.4 | 2,038,024.5 | 1,919.9 | 4.216x | 4.216x | unchanged (within spread) |
+
+#### `high-byte-run` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 368,003.7 | 0.3510 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 367,996.6 | 0.3509 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,549,492.0 | 1.4777 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,549,841.8 | 1.4780 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,550,066.1 | 1.4783 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 1,550,220.8 | 1.4784 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,549,727.6 | 1.4779 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 91,793.3 | 0.3502 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 91,995.9 | 0.3509 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 387,365.5 | 1.4777 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 387,571.8 | 1.4785 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 387,828.8 | 1.4794 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 387,443.5 | 1.4780 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 387,774.5 | 1.4792 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 23,081.5 | 0.3522 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 22,998.8 | 0.3509 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 97,294.2 | 1.4846 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 97,413.1 | 1.4864 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 97,205.3 | 1.4832 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 97,305.9 | 1.4848 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 97,192.4 | 1.4830 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 368,003.7 ns, 1,048,576 B; largest Δ: `t-256k`, -202.6 ns (now 91,793.3 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 1,550,066.1 ns, 1,048,576 B; largest Δ: `t-256k`, +385.3 ns (now 387,828.8 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 1,549,727.6 ns, 1,048,576 B; largest Δ: `t-256k`, +409.1 ns (now 387,774.5 ns), 262,144 B
+
+### `high-byte-run` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,095.9 | 1,093.0 | 1,099.8 | 2.6 | 1.000x | 1.000x | faster ×1.04 | 75 | 14.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,137.1 | 1,123.2 | 1,140.0 | 6.0 | 1.038x | 1.038x | - | 75 | 15.2 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,763.1 | 2,757.1 | 2,769.2 | 3.9 | 2.521x | 2.521x | unchanged (within spread) | 75 | 36.8 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 2,763.8 | 2,760.1 | 2,774.6 | 6.0 | 2.522x | 2.522x | - | 75 | 36.9 | 17.3 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,864.2 | 2,861.0 | 2,871.4 | 3.6 | 2.614x | 2.614x | unchanged (within spread) | 75 | 38.2 | 8.9 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,864.7 | 2,863.9 | 2,869.8 | 2.4 | 2.614x | 2.614x | - | 75 | 38.2 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,197.5 | 5,193.1 | 5,229.2 | 13.5 | 4.743x | 4.743x | - | 75 | 69.3 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 52.3 ns, 93 B; largest Δ: `sec-userpass`, +5.6 ns (now 25.4 ns), 33 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 148.5 ns, 93 B; largest Δ: `la-currency`, +1.9 ns (now 29.7 ns), 10 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 149.8 ns, 93 B; largest Δ: `nu-mojibake`, +2.5 ns (now 22.0 ns), 7 B
+
+### `ipv4-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 18.8 | 0.0000 | 18.7 | 18.8 | 0.0 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 24.9 | 25.1 | 0.1 | 1.328x | 1.328x | slower ×1.33 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 28.7 | 0.1 | 1.514x | 1.514x | faster ×142920.08 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.5 | 0.0000 | 34.4 | 38.0 | 1.4 | 1.836x | 1.836x | faster ×117832.10 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 370.6 | 0.0003 | 368.3 | 379.1 | 4.1 | 19.722x | 19.722x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,065,788.8 | 2.9542 | 4,065,030.9 | 4,067,127.2 | 716.6 | 216369.717x | 216369.717x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,067,060.2 | 2.9552 | 4,064,769.2 | 4,486,509.9 | 167,933.7 | 216437.379x | 216437.379x | - |
+
+#### `ipv4-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 6.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 306.3 | 0.0003 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,096,313.4 | 2.9529 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,097,980.0 | 2.9545 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 6.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 774,688.4 | 2.9552 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 774,360.2 | 2.9539 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 6.2 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 194,902.7 | 2.9740 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 194,720.0 | 2.9712 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 8.3 ns, 65,536 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 9.5 ns, 65,536 B; largest Δ: `t-1m`, -3,097,970.5 ns (now 9.5 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 11.5 ns, 262,144 B; largest Δ: `t-1m`, -3,096,301.9 ns (now 11.5 ns), 1,048,576 B
+
+### `ipv4-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 492.1 | 491.4 | 494.8 | 1.3 | 1.000x | 1.000x | - | 75 | 6.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 626.9 | 626.6 | 627.0 | 0.1 | 1.274x | 1.274x | slower ×1.27 | 75 | 8.4 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 985.9 | 983.0 | 1,001.3 | 6.8 | 2.003x | 2.003x | faster ×6.50 | 75 | 13.1 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,021.4 | 1,018.9 | 1,022.8 | 1.3 | 2.076x | 2.076x | faster ×6.26 | 75 | 13.6 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,433.4 | 3,400.8 | 3,678.6 | 105.2 | 6.977x | 6.977x | - | 75 | 45.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,392.7 | 6,373.1 | 6,430.4 | 22.0 | 12.990x | 12.990x | - | 75 | 85.2 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,407.7 | 6,340.3 | 6,408.3 | 26.3 | 13.021x | 13.021x | - | 75 | 85.4 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-ipv4`, 21.7 ns, 11 B; largest Δ: `v-ipv4-oor`, +3.4 ns (now 10.6 ns), 9 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-ipv4`, 49.0 ns, 11 B; largest Δ: `sec-github-pat`, -304.0 ns (now 9.2 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 49.3 ns, 11 B; largest Δ: `sec-github-pat`, -301.1 ns (now 10.6 ns), 93 B
+
+### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 731,121.5 | 0.5312 | 730,127.8 | 732,968.3 | 953.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 774,694.7 | 0.5629 | 774,175.2 | 775,787.7 | 596.9 | 1.060x | 1.060x | slower ×1.06 |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,958,046.4 | 2.8760 | 3,939,856.7 | 4,074,975.7 | 48,561.7 | 5.414x | 5.414x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,181,697.9 | 3.0385 | 4,181,074.2 | 4,185,179.8 | 1,641.5 | 5.720x | 5.720x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,193,358.5 | 3.0469 | 4,192,499.1 | 4,199,887.3 | 2,905.5 | 5.736x | 5.736x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,283,134.0 | 3.1122 | 4,282,951.5 | 4,293,537.8 | 4,180.8 | 5.858x | 5.858x | slower ×1.02 |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,286,675.4 | 3.1147 | 4,286,117.4 | 4,293,847.5 | 2,901.5 | 5.863x | 5.863x | slower ×1.02 |
+
+#### `keyword-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 564,296.3 | 0.5382 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 598,053.7 | 0.5703 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,021,006.3 | 2.8811 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,185,191.7 | 3.0376 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,193,477.0 | 3.0455 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,262,280.6 | 3.1112 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,265,453.6 | 3.1142 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 135,433.8 | 0.5166 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 143,469.7 | 0.5473 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 754,859.4 | 2.8796 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 797,028.4 | 3.0404 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 799,909.4 | 3.0514 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 816,561.8 | 3.1149 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 817,045.7 | 3.1168 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 31,322.1 | 0.4779 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 33,177.1 | 0.5062 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 185,081.5 | 2.8241 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 199,444.3 | 3.0433 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 200,748.6 | 3.0632 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 204,601.2 | 3.1220 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 204,633.9 | 3.1225 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 598,053.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,262,280.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,265,453.6 ns, 1,048,576 B
+
+### `keyword-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 774.5 | 772.0 | 778.0 | 2.1 | 1.000x | 1.000x | - | 75 | 10.3 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 802.3 | 800.2 | 804.6 | 1.5 | 1.036x | 1.036x | slower ×1.04 | 75 | 10.7 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,329.9 | 2,319.0 | 2,339.3 | 7.0 | 3.008x | 3.008x | faster ×2.02 | 75 | 31.1 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,401.1 | 2,362.9 | 4,199.5 | 721.9 | 3.100x | 3.100x | faster ×1.98 | 75 | 32.0 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,040.7 | 4,031.4 | 4,102.1 | 25.4 | 5.217x | 5.217x | - | 75 | 53.9 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,711.7 | 4,512.7 | 4,718.6 | 78.8 | 6.083x | 6.083x | - | 75 | 62.8 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,744.6 | 4,713.6 | 4,769.4 | 18.8 | 6.126x | 6.126x | - | 75 | 63.3 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-dbnames`, 23.9 ns, 39 B; largest Δ: `sec-userpass`, +4.0 ns (now 19.7 ns), 33 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 263.7 ns, 81 B; largest Δ: `sec-github-pat`, -257.4 ns (now 10.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 258.2 ns, 81 B; largest Δ: `sec-github-pat`, -256.3 ns (now 11.8 ns), 93 B
+
+### `logparse-atomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 30.0 | 0.0000 | 30.0 | 30.2 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 41.5 | 0.0000 | 41.5 | 41.7 | 0.1 | 1.383x | 1.383x | slower ×1.38 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 43.6 | 0.0000 | 43.5 | 43.7 | 0.0 | 1.452x | 1.452x | faster ×65512.08 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 49.2 | 0.0000 | 49.1 | 49.3 | 0.1 | 1.638x | 1.638x | faster ×57893.81 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 98.1 | 0.0001 | 97.6 | 98.2 | 0.2 | 3.268x | 3.268x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 2,847,149.6 | 2.0688 | 2,845,224.3 | 2,979,077.2 | 52,985.5 | 94855.660x | 94855.660x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,855,387.8 | 2.0748 | 2,846,412.0 | 3,650,328.9 | 319,666.8 | 95130.122x | 95130.122x | - |
+
+#### `logparse-atomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 13.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 14.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 16.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,167,361.2 | 2.0670 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,168,237.9 | 2.0678 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 9.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 13.6 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 14.2 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 16.1 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.8 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 542,210.1 | 2.0684 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 542,625.2 | 2.0700 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 10.4 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14.2 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 14.8 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 16.8 | 0.0003 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 136,210.2 | 2.0784 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 136,279.4 | 2.0795 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 14.2 ns, 65,536 B; largest Δ: `t-1m`, +3.9 ns (now 13.7 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 14.8 ns, 65,536 B; largest Δ: `t-1m`, -2,168,223.4 ns (now 14.5 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 16.8 ns, 65,536 B; largest Δ: `t-1m`, -2,167,344.9 ns (now 16.3 ns), 1,048,576 B
+
+### `logparse-atomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 836.8 | 832.2 | 844.6 | 4.9 | 1.000x | 1.000x | faster ×4.93 | 75 | 11.2 | 8.9 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 852.2 | 844.1 | 862.2 | 7.4 | 1.018x | 1.018x | - | 75 | 11.4 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 876.4 | 875.5 | 876.6 | 0.5 | 1.047x | 1.047x | slower ×1.03 | 75 | 11.7 | 8.0 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 951.0 | 950.6 | 953.7 | 1.3 | 1.136x | 1.136x | faster ×4.34 | 75 | 12.7 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,122.7 | 4,113.0 | 4,123.9 | 4.0 | 4.927x | 4.927x | - | 75 | 55.0 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,124.0 | 4,123.2 | 4,130.9 | 3.1 | 4.928x | 4.928x | - | 75 | 55.0 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,017.0 | 4,980.6 | 5,043.8 | 21.8 | 5.995x | 5.995x | - | 75 | 66.9 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-atomic-hit`, 41.6 ns, 31 B; largest Δ: `sec-github-pat`, -201.1 ns (now 10.6 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `lp-atomic-hit`, 71.3 ns, 31 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-atomic-hit`, 43.0 ns, 31 B; largest Δ: `sec-github-pat`, -200.5 ns (now 11.4 ns), 93 B
+
+### `logparse-atomic-removed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 30.3 | 0.0000 | 30.3 | 31.6 | 0.5 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 39.0 | 0.0000 | 38.9 | 39.1 | 0.1 | 1.285x | 1.285x | faster ×93945.44 |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 40.5 | 0.0000 | 40.4 | 40.5 | 0.1 | 1.334x | 1.334x | slower ×1.33 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 45.4 | 0.0000 | 45.3 | 45.6 | 0.1 | 1.498x | 1.498x | faster ×80536.56 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.7 | 0.0001 | 97.4 | 98.0 | 0.2 | 3.223x | 3.223x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,658,667.7 | 2.6584 | 3,657,339.5 | 3,667,365.9 | 3,652.8 | 120651.382x | 120651.382x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,660,145.8 | 2.6595 | 3,658,800.8 | 3,671,043.0 | 4,874.4 | 120700.124x | 120700.124x | - |
+
+#### `logparse-atomic-removed` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 13.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 13.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 14.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,786,079.1 | 2.6570 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,786,993.8 | 2.6579 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 9.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 12.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 13.3 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.3 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 697,535.5 | 2.6609 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 697,401.5 | 2.6604 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 10.7 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 13.3 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 13.8 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.4 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.7 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 174,939.8 | 2.6694 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 175,132.3 | 2.6723 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 13.3 ns, 65,536 B; largest Δ: `t-1m`, -2,786,980.8 ns (now 13.1 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 13.8 ns, 65,536 B; largest Δ: `t-256k`, +3.5 ns (now 13.3 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.4 ns, 65,536 B; largest Δ: `t-1m`, -2,786,064.3 ns (now 14.8 ns), 1,048,576 B
+
+### `logparse-atomic-removed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 809.4 | 806.9 | 815.7 | 3.1 | 1.000x | 1.000x | faster ×5.95 | 75 | 10.8 | 8.9 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 809.5 | 809.0 | 813.5 | 1.7 | 1.000x | 1.000x | - | 75 | 10.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 858.6 | 857.1 | 870.1 | 4.8 | 1.061x | 1.061x | slower ×1.06 | 75 | 11.4 | 8.0 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 892.2 | 891.4 | 895.9 | 1.6 | 1.102x | 1.102x | faster ×5.37 | 75 | 11.9 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,789.7 | 4,786.6 | 4,798.3 | 4.1 | 5.917x | 5.917x | - | 75 | 63.9 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,817.0 | 4,804.4 | 4,819.8 | 5.7 | 5.951x | 5.951x | - | 75 | 64.2 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,015.2 | 4,973.8 | 5,138.0 | 58.0 | 6.196x | 6.196x | - | 75 | 66.9 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-atomic-hit`, 40.5 ns, 31 B; largest Δ: `sec-github-pat`, -255.8 ns (now 10.5 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-atomic-hit`, 73.2 ns, 31 B; largest Δ: `v-email`, -5.6 ns (now 9.5 ns), 24 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-atomic-hit`, 42.0 ns, 31 B; largest Δ: `sec-github-pat`, -254.1 ns (now 11.8 ns), 93 B
+
+### `mojibake-curly-quote` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,114.2 | 0.0168 | 23,096.1 | 23,331.8 | 96.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 23,126.2 | 0.0168 | 23,120.6 | 23,164.1 | 18.5 | 1.001x | 1.001x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,127.5 | 0.0168 | 23,110.3 | 23,179.5 | 25.4 | 1.001x | 1.001x | faster ×35.20 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,142.9 | 0.0168 | 23,103.9 | 23,155.6 | 19.0 | 1.001x | 1.001x | faster ×35.19 |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 814,127.7 | 0.5916 | 813,850.4 | 816,957.3 | 1,137.4 | 35.222x | 35.222x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 814,492.4 | 0.5918 | 814,368.7 | 814,750.9 | 144.0 | 35.238x | 35.238x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,534.7 | 1.6193 | 2,228,320.7 | 2,233,992.4 | 2,616.0 | 96.414x | 96.414x | - |
+
+#### `mojibake-curly-quote` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,619.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 17,634.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,644.9 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,667.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 620,158.3 | 0.5914 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 620,386.1 | 0.5916 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,462.8 | 1.6188 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,385.9 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,388.0 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,382.4 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,368.9 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 154,979.5 | 0.5912 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 155,068.6 | 0.5915 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,709.1 | 1.6201 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,111.5 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,110.4 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,102.2 | 0.0168 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,106.4 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 38,951.3 | 0.5943 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 39,037.7 | 0.5957 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,530.8 | 1.6255 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,619.2 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,644.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,667.7 ns, 1,048,576 B
+
+### `mojibake-curly-quote` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 619.1 | 618.9 | 620.0 | 0.4 | 1.000x | 1.000x | faster ×1.12 | 75 | 8.3 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 669.3 | 663.4 | 671.6 | 2.8 | 1.081x | 1.081x | faster ×2.27 | 75 | 8.9 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 682.7 | 679.3 | 683.3 | 1.5 | 1.103x | 1.103x | faster ×2.22 | 75 | 9.1 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 691.1 | 690.0 | 692.7 | 0.9 | 1.116x | 1.116x | - | 75 | 9.2 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 1,515.5 | 1,511.7 | 1,519.2 | 2.7 | 2.448x | 2.448x | - | 75 | 20.2 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,522.7 | 1,521.8 | 1,523.8 | 0.7 | 2.460x | 2.460x | - | 75 | 20.3 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,428.4 | 4,425.4 | 4,431.7 | 2.6 | 7.153x | 7.153x | - | 75 | 59.0 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `nu-mojibake`, 40.7 ns, 7 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `nu-mojibake`, 19.1 ns, 7 B; largest Δ: `sec-github-pat`, -61.6 ns (now 10.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `nu-mojibake`, 17.6 ns, 7 B; largest Δ: `sec-github-pat`, -62.6 ns (now 10.0 ns), 93 B
+
+### `nested-comment-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,498,979.2 | 1.0892 | 1,498,327.4 | 1,504,367.1 | 2,254.5 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 7,798,115.1 | 5.6662 | 7,783,975.9 | 7,803,702.5 | 6,655.4 | 5.202x | 5.202x | - |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 7,799,381.6 | 5.6671 | 7,791,508.6 | 7,810,334.6 | 7,263.6 | 5.203x | 5.203x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,799,560.3 | 5.6672 | 7,793,502.0 | 7,834,353.9 | 18,166.8 | 5.203x | 5.203x | - |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 9,327,080.3 | 6.7771 | 8,024,350.5 | 9,710,236.9 | 608,916.1 | 6.222x | 6.222x | slower ×1.20 |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,350,863.1 | 6.7944 | 9,134,005.8 | 9,595,746.4 | 150,703.1 | 6.238x | 6.238x | slower ×1.20 |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,746,259.5 | 7.0817 | 9,315,730.4 | 9,776,028.5 | 175,269.2 | 6.502x | 6.502x | slower ×1.25 |
+
+#### `nested-comment-rec` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,141,586.2 | 1.0887 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 5,942,368.2 | 5.6671 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 5,945,211.6 | 5.6698 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 5,942,685.3 | 5.6674 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 7,399,981.5 | 7.0572 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,267,613.6 | 6.9309 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,422,737.9 | 7.0789 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 285,387.1 | 1.0887 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 1,484,907.5 | 5.6645 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,483,111.1 | 5.6576 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,485,042.5 | 5.6650 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,546,219.7 | 5.8984 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,676,043.0 | 6.3936 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,867,457.2 | 7.1238 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 71,727.1 | 1.0945 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 372,200.9 | 5.6793 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 371,336.8 | 5.6662 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 372,272.5 | 5.6804 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 380,869.1 | 5.8116 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 380,214.6 | 5.8016 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 462,708.9 | 7.0604 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,399,981.5 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,267,613.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,422,737.9 ns, 1,048,576 B
+
+### `nested-comment-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-in-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,228.8 | 2,216.9 | 2,322.5 | 40.0 | 1.000x | 1.000x | faster ×4.07 | 75 | 29.7 | 8.8 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,664.7 | 2,593.5 | 2,678.8 | 36.4 | 1.196x | 1.196x | faster ×3.49 | 75 | 35.5 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,704.0 | 2,639.9 | 2,819.5 | 64.9 | 1.213x | 1.213x | faster ×3.43 | 75 | 36.1 | 8.9 | 100% |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,456.3 | 4,450.2 | 4,462.2 | 4.2 | 1.999x | 1.999x | - | 75 | 59.4 | 58.6 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,066.4 | 9,050.5 | 9,080.6 | 9.8 | 4.068x | 4.068x | - | 75 | 120.9 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,282.1 | 9,270.5 | 9,326.5 | 20.9 | 4.165x | 4.165x | - | 75 | 123.8 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 9,289.8 | 9,270.4 | 9,300.2 | 10.6 | 4.168x | 4.168x | - | 75 | 123.9 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 517.1 ns, 81 B; largest Δ: `sec-github-pat`, -514.0 ns (now 11.5 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rec-comment-nested`, 675.8 ns, 34 B; largest Δ: `sec-github-pat`, -510.6 ns (now 10.6 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `rec-comment-nested`, 677.3 ns, 34 B; largest Δ: `sec-github-pat`, -510.2 ns (now 10.6 ns), 93 B
+
+### `numeric-id-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.5 | 29.5 | 0.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 27.7 | 0.0000 | 27.7 | 27.7 | 0.0 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 39.1 | 0.0000 | 39.0 | 39.1 | 0.0 | 1.415x | 1.415x | faster ×103956.44 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 45.8 | 0.0000 | 45.7 | 46.1 | 0.1 | 1.658x | 1.658x | faster ×89115.43 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 93.7 | 94.6 | 0.3 | 3.416x | 3.416x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,066,506.8 | 2.9548 | 4,064,375.1 | 4,206,374.5 | 55,036.2 | 147116.309x | 147116.309x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,082,929.6 | 2.9667 | 4,071,528.7 | 4,121,362.6 | 18,022.7 | 147710.445x | 147710.445x | - |
+
+#### `numeric-id-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 9.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 13.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,096,396.6 | 2.9530 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,110,636.4 | 2.9665 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 9.2 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 9.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 13.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.2 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 774,986.3 | 2.9563 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 775,177.8 | 2.9571 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 9.3 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 9.2 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 13.1 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.4 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 194,130.2 | 2.9622 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 198,121.0 | 3.0231 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-256k`, 9.3 ns, 262,144 B; largest Δ: `t-64k`, -0.1 ns (now 9.2 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 13.1 ns, 65,536 B; largest Δ: `t-1m`, -3,096,383.6 ns (now 13.0 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.4 ns, 65,536 B; largest Δ: `t-1m`, -3,110,621.2 ns (now 15.2 ns), 1,048,576 B
+
+### `numeric-id-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 824.6 | 811.7 | 833.5 | 7.1 | 1.000x | 1.000x | spread | faster ×1.03 | 75 | 11.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 846.0 | 834.4 | 849.8 | 5.5 | 1.026x | 1.026x | spread | - | 75 | 11.3 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,235,076.7 | 9,231,578.0 | 9,239,957.9 | 3,195.9 | 11199.425x | 11199.425x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 123,134.4 | 18.1 | 100% |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,239,556.0 | 9,233,647.1 | 9,249,927.7 | 5,461.9 | 11204.857x | 11204.857x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 123,194.1 | 17.3 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,336,678.2 | 9,313,036.4 | 9,340,154.5 | 10,985.9 | 11322.638x | 11322.638x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | slower ×1.01 | 75 | 124,489.0 | 8.8 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,348,039.8 | 9,321,695.2 | 9,351,112.7 | 11,690.4 | 11336.416x | 11336.416x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | slower ×1.01 | 75 | 124,640.5 | 8.9 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,552,668.2 | 12,545,052.4 | 12,565,660.4 | 8,446.4 | 15222.685x | 15222.685x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 167,368.9 | 58.6 | 100% |
+
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+_per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `--grain subject` renders them._
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 35.2 ns, 20 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 9,334,457.1 ns, 20 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 9,345,866.0 ns, 20 B
+
+### `phone-list-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 28.3 | 0.0000 | 28.1 | 29.3 | 0.4 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 28.6 | 0.1 | 1.005x | 1.005x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 39.1 | 0.0000 | 39.0 | 39.1 | 0.0 | 1.380x | 1.380x | faster ×98921.32 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 44.7 | 0.0000 | 44.5 | 45.1 | 0.2 | 1.578x | 1.578x | faster ×86483.32 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.2 | 0.0001 | 93.3 | 101.6 | 3.1 | 3.326x | 3.326x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,863,456.4 | 2.8072 | 3,861,847.1 | 3,875,377.9 | 4,927.8 | 136450.413x | 136450.413x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,866,151.7 | 2.8092 | 3,862,585.3 | 3,885,593.4 | 8,369.2 | 136545.609x | 136545.609x | - |
+
+#### `phone-list-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 13.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 14.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,941,709.2 | 2.8054 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,942,374.8 | 2.8061 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 9.4 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 9.5 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 13.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 14.9 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.3 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 736,126.0 | 2.8081 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 736,383.7 | 2.8091 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 9.5 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 9.5 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 13.1 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.0 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 185,320.4 | 2.8278 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 185,208.7 | 2.8261 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 9.5 ns, 65,536 B; largest Δ: `t-256k`, -0.1 ns (now 9.4 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 13.1 ns, 65,536 B; largest Δ: `t-1m`, -2,942,361.8 ns (now 13.0 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.0 ns, 65,536 B; largest Δ: `t-1m`, -2,941,694.3 ns (now 14.9 ns), 1,048,576 B
+
+### `phone-list-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 894.7 | 893.3 | 903.9 | 3.9 | 1.000x | 1.000x | spread | - | 75 | 11.9 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 909.3 | 905.3 | 913.5 | 3.0 | 1.016x | 1.016x | spread | slower ×1.02 | 75 | 12.1 | 8.0 | 100% |
+| 3 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,972,479.2 | 9,964,862.0 | 9,980,881.6 | 5,575.9 | 11145.935x | 11145.935x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 132,966.4 | 17.3 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,990,745.8 | 9,968,266.3 | 10,001,669.0 | 12,721.8 | 11166.351x | 11166.351x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 133,209.9 | 18.1 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,066,942.3 | 10,064,995.2 | 10,071,274.7 | 2,142.3 | 11251.514x | 11251.514x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | slower ×1.01 | 75 | 134,225.9 | 8.9 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,075,899.5 | 10,063,429.9 | 10,084,303.3 | 8,296.2 | 11261.525x | 11261.525x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | slower ×1.01 | 75 | 134,345.3 | 8.8 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 16,695,116.2 | 16,657,091.7 | 16,738,362.5 | 27,458.3 | 18659.621x | 18659.621x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 222,601.5 | 58.6 | 100% |
+
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+_per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `--grain subject` renders them._
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-phone-list-hit`, 45.1 ns, 7 B; largest Δ: `rd-numeric-id-hit`, +4.2 ns (now 34.2 ns), 4 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 10,064,787.4 ns, 20 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 10,073,674.6 ns, 20 B
+
+### `phone-palindrome-6` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 6,585,253.9 | 4.7849 | 6,558,512.8 | 6,869,189.0 | 117,809.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 6,586,599.6 | 4.7859 | 6,549,477.2 | 7,135,473.2 | 275,146.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,964,412.4 | 5.0604 | 6,586,534.9 | 7,433,783.1 | 376,767.6 | 1.058x | 1.058x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,039,078.0 | 5.1147 | 6,603,661.0 | 7,548,144.1 | 313,142.9 | 1.069x | 1.069x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,142,399.5 | 5.1897 | 6,847,969.2 | 7,663,429.7 | 268,797.6 | 1.085x | 1.085x | slower ×1.08 |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,467,667.0 | 5.4261 | 7,183,652.0 | 7,658,019.5 | 156,916.3 | 1.134x | 1.134x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 14,493,362.5 | 10.5310 | 14,449,045.9 | 15,799,347.2 | 526,473.4 | 2.201x | 2.201x | - |
+
+#### `phone-palindrome-6` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 5,022,974.1 | 4.7903 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 5,036,328.4 | 4.8030 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 5,389,178.3 | 5.1395 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 5,470,945.1 | 5.2175 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 5,588,506.9 | 5.3296 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 5,758,652.3 | 5.4919 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 11,112,525.9 | 10.5977 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 1,250,547.1 | 4.7705 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,242,998.4 | 4.7417 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,264,960.7 | 4.8254 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,256,384.9 | 4.7927 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,245,044.0 | 4.7495 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,393,301.1 | 5.3150 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 2,720,979.8 | 10.3797 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 309,416.2 | 4.7213 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 309,826.0 | 4.7276 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 309,478.3 | 4.7223 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 312,812.3 | 4.7731 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 309,924.0 | 4.7291 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 313,438.2 | 4.7827 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 659,856.8 | 10.0686 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,036,328.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,470,945.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,588,506.9 ns, 1,048,576 B
+
+### `phone-palindrome-6` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,031.5 | 6,901.9 | 7,295.7 | 141.8 | 1.000x | 1.000x | unchanged (within spread) | 75 | 93.8 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 7,086.3 | 6,809.9 | 7,386.7 | 210.4 | 1.008x | 1.008x | unchanged (within spread) | 75 | 94.5 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 7,405.2 | 7,172.9 | 7,725.0 | 177.8 | 1.053x | 1.053x | - | 75 | 98.7 | 18.1 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 7,445.5 | 7,071.1 | 7,688.4 | 242.8 | 1.059x | 1.059x | - | 75 | 99.3 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,659.3 | 7,406.2 | 8,034.3 | 226.2 | 1.089x | 1.089x | unchanged (within spread) | 75 | 102.1 | 8.8 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,788.2 | 7,601.4 | 7,901.0 | 96.7 | 1.108x | 1.108x | - | 75 | 103.8 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 22,881.3 | 22,736.6 | 23,046.3 | 109.2 | 3.254x | 3.254x | - | 75 | 305.1 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-slack-webhook`, 496.4 ns, 81 B; largest Δ: `cg-number`, -43.4 ns (now 71.5 ns), 10 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 551.3 ns, 81 B; largest Δ: `v-ipv4`, -54.0 ns (now 82.7 ns), 11 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 616.3 ns, 81 B; largest Δ: `dt-iso8601`, -71.3 ns (now 153.2 ns), 20 B
+
+### `pwd-strength-chain` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 221.7 | 0.0002 | 220.7 | 223.2 | 1.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 221.7 | 0.0002 | 220.4 | 222.8 | 0.8 | 1.000x | 1.000x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,637.8 | 0.0012 | 1,631.9 | 1,648.1 | 5.4 | 7.386x | 7.386x | faster ×2247.79 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,647.2 | 0.0012 | 1,645.3 | 1,663.9 | 8.1 | 7.429x | 7.429x | faster ×2234.07 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,054.8 | 0.0029 | 4,043.8 | 4,097.6 | 18.7 | 18.286x | 18.286x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,680,031.3 | 2.6739 | 3,676,830.1 | 3,692,190.6 | 5,305.4 | 16596.424x | 16596.424x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,681,397.9 | 2.6749 | 3,678,068.2 | 3,690,419.8 | 4,440.3 | 16602.587x | 16602.587x | - |
+
+#### `pwd-strength-chain` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 57.8 | 0.0001 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 57.6 | 0.0001 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 175.4 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 180.6 | 0.0002 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 577.3 | 0.0006 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,801,301.5 | 2.6715 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,802,400.1 | 2.6726 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 94.2 | 0.0004 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 95.0 | 0.0004 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 915.5 | 0.0035 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 920.8 | 0.0035 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,843.2 | 0.0070 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 701,198.1 | 2.6749 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 702,307.4 | 2.6791 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 69.4 | 0.0011 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 69.0 | 0.0011 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 544.5 | 0.0083 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 548.4 | 0.0084 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,636.4 | 0.0250 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 176,533.4 | 2.6937 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 176,527.3 | 2.6936 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 94.2 ns, 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-256k`, 915.5 ns, 262,144 B; largest Δ: `t-1m`, -2,802,224.7 ns (now 175.4 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 920.8 ns, 262,144 B; largest Δ: `t-1m`, -2,801,120.9 ns (now 180.6 ns), 1,048,576 B
+
+### `pwd-strength-chain` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,831.8 | 10,786.1 | 19,591.2 | 3,511.8 | 1.000x | 1.000x | unchanged (within spread) | 75 | 144.4 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,998.1 | 10,987.1 | 11,872.8 | 350.9 | 1.015x | 1.015x | faster ×1.34 | 75 | 146.6 | 8.8 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,106.8 | 12,079.6 | 12,444.8 | 136.9 | 1.118x | 1.118x | unchanged (within spread) | 75 | 161.4 | 8.0 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 12,382.6 | 12,349.8 | 12,721.9 | 141.5 | 1.143x | 1.143x | - | 75 | 165.1 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 14,461.9 | 14,439.9 | 14,606.8 | 62.5 | 1.335x | 1.335x | - | 75 | 192.8 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 14,719.7 | 14,714.0 | 14,780.9 | 24.7 | 1.359x | 1.359x | - | 75 | 196.3 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 36,373.3 | 36,110.2 | 36,524.2 | 183.4 | 3.358x | 3.358x | - | 75 | 485.0 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 792.5 ns, 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 793.2 ns, 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 921.4 ns, 93 B; largest Δ: `lp-winpath-reserved`, -9.5 ns (now 300.4 ns), 24 B
+
+### `quoted-delim-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,862,308.4 | 2.8064 | 3,831,481.4 | 3,875,638.2 | 17,953.9 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 10,078,110.5 | 7.3228 | 10,056,458.2 | 10,082,479.0 | 10,872.2 | 2.609x | 2.609x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,091,290.2 | 7.3324 | 9,966,173.1 | 10,106,257.7 | 53,778.2 | 2.613x | 2.613x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,107,957.4 | 7.3445 | 10,027,816.6 | 10,123,512.7 | 34,632.6 | 2.617x | 2.617x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 10,120,410.9 | 7.3536 | 10,085,434.0 | 10,130,804.3 | 16,369.8 | 2.620x | 2.620x | - |
+| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,132,095.1 | 7.3621 | 9,850,486.1 | 10,138,701.8 | 111,177.9 | 2.623x | 2.623x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 10,153,359.1 | 7.3775 | 10,111,303.3 | 10,180,988.1 | 25,543.8 | 2.629x | 2.629x | - |
+
+#### `quoted-delim-match` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,957,280.7 | 2.8203 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 7,713,180.5 | 7.3559 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,711,100.9 | 7.3539 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,702,483.1 | 7.3457 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,707,993.9 | 7.3509 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 7,723,592.0 | 7.3658 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 7,739,731.3 | 7.3812 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 719,753.1 | 2.7456 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 1,887,445.9 | 7.2000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,900,328.4 | 7.2492 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,921,604.1 | 7.3303 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,922,931.6 | 7.3354 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,922,957.7 | 7.3355 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,932,471.4 | 7.3718 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 182,077.9 | 2.7783 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 463,496.9 | 7.0724 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 466,886.7 | 7.1241 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 476,826.8 | 7.2758 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 480,213.4 | 7.3275 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 466,839.4 | 7.1234 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 481,420.1 | 7.3459 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 7,711,100.9 ns, 1,048,576 B; largest Δ: `t-256k`, -32,143.0 ns (now 1,900,328.4 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,702,483.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 7,723,592.0 ns, 1,048,576 B; largest Δ: `t-256k`, +35,511.8 ns (now 1,922,957.7 ns), 262,144 B
+
+### `quoted-delim-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,091.1 | 7,073.6 | 7,425.5 | 133.3 | 1.000x | 1.000x | - | 75 | 94.5 | 58.6 | 100% |
+| 2 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 11,328.2 | 11,266.6 | 11,425.8 | 54.9 | 1.598x | 1.598x | - | 75 | 151.0 | 18.1 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,329.5 | 10,936.3 | 11,394.6 | 169.9 | 1.598x | 1.598x | unchanged (within spread) | 75 | 151.1 | 8.9 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 11,349.6 | 11,307.7 | 11,416.7 | 36.4 | 1.601x | 1.601x | - | 75 | 151.3 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,352.7 | 11,287.2 | 11,455.5 | 63.2 | 1.601x | 1.601x | unchanged (within spread) | 75 | 151.4 | 8.0 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,518.1 | 11,478.7 | 11,545.9 | 26.1 | 1.624x | 1.624x | faster ×1.01 | 75 | 153.6 | 8.8 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 11,583.5 | 11,581.6 | 11,595.3 | 5.0 | 1.634x | 1.634x | - | 75 | 154.4 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 677.1 ns, 93 B; largest Δ: `lp-winpath`, -7.9 ns (now 168.5 ns), 22 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 677.6 ns, 93 B; largest Δ: `sec-slack-webhook`, +4.6 ns (now 595.1 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 674.7 ns, 93 B
+
+### `router-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 393,757.0 | 0.2861 | 393,634.1 | 394,677.0 | 388.2 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 398,422.8 | 0.2895 | 398,257.9 | 399,848.7 | 596.7 | 1.012x | 1.012x | slower ×1.01 |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,361,334.6 | 0.9892 | 1,358,939.9 | 1,364,817.5 | 1,944.5 | 3.457x | 3.457x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,049,652.5 | 2.9425 | 4,042,920.9 | 4,058,186.4 | 4,910.5 | 10.285x | 10.285x | faster ×1.00 |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,050,506.2 | 2.9431 | 4,047,226.3 | 4,056,860.1 | 3,274.0 | 10.287x | 10.287x | unchanged (within spread) |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,067,713.3 | 2.9556 | 4,061,103.2 | 4,069,292.5 | 3,298.7 | 10.331x | 10.331x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,068,366.3 | 2.9561 | 4,055,235.6 | 4,180,683.4 | 46,056.3 | 10.332x | 10.332x | - |
+
+#### `router-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 302,132.5 | 0.2881 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 305,867.9 | 0.2917 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,039,498.9 | 0.9913 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,088,299.4 | 2.9452 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,086,726.8 | 2.9437 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,101,795.8 | 2.9581 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,102,213.3 | 2.9585 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 74,477.9 | 0.2841 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 75,250.6 | 0.2871 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 259,361.4 | 0.9894 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 770,336.4 | 2.9386 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 770,690.0 | 2.9399 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 773,625.2 | 2.9511 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 773,319.4 | 2.9500 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 17,172.3 | 0.2620 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 17,195.4 | 0.2624 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 62,488.1 | 0.9535 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 191,743.7 | 2.9258 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 191,361.1 | 2.9199 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 192,560.1 | 2.9382 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 192,383.7 | 2.9355 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 305,867.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,088,299.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,086,726.8 ns, 1,048,576 B
+
+### `router-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 750.3 | 749.7 | 751.9 | 1.0 | 1.000x | 1.000x | faster ×1.05 | 75 | 10.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 785.1 | 779.1 | 791.7 | 4.7 | 1.046x | 1.046x | - | 75 | 10.5 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,336.7 | 2,307.4 | 2,350.0 | 14.8 | 3.114x | 3.114x | faster ×1.98 | 75 | 31.2 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,418.7 | 2,399.3 | 2,432.8 | 10.8 | 3.224x | 3.224x | faster ×1.90 | 75 | 32.2 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,811.8 | 2,803.9 | 2,836.1 | 14.3 | 3.748x | 3.748x | - | 75 | 37.5 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,594.7 | 4,499.0 | 4,638.1 | 47.2 | 6.124x | 6.124x | - | 75 | 61.3 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,616.2 | 4,336.9 | 4,693.2 | 124.7 | 6.153x | 6.153x | - | 75 | 61.5 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-slack-webhook`, 44.0 ns, 81 B; largest Δ: `rec-tag-depth3`, -18.6 ns (now 7.7 ns), 22 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 298.1 ns, 81 B; largest Δ: `sec-github-pat`, -255.7 ns (now 10.0 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 298.3 ns, 81 B; largest Δ: `sec-github-pat`, -254.6 ns (now 11.5 ns), 93 B
+
+### `tag-depth3-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-in-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,113.9 | 0.0168 | 23,099.6 | 23,328.8 | 86.8 | 1.000x | 1.000x | faster ×194.20 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,141.0 | 0.0168 | 23,119.0 | 23,187.1 | 22.4 | 1.001x | 1.001x | faster ×194.36 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,177.1 | 0.0168 | 23,151.5 | 23,236.4 | 28.4 | 1.003x | 1.003x | faster ×194.47 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,161.7 | 1.6197 | 2,228,885.5 | 2,237,374.3 | 3,263.6 | 96.443x | 96.443x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,488,622.5 | 3.2615 | 4,486,491.8 | 4,508,993.1 | 8,230.0 | 194.196x | 194.196x | - |
+| 6 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,497,628.2 | 3.2680 | 4,489,328.2 | 4,509,418.3 | 6,848.0 | 194.586x | 194.586x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,507,247.6 | 3.2750 | 4,488,540.4 | 4,522,118.2 | 13,560.9 | 195.002x | 195.002x | - |
+
+#### `tag-depth3-bound` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,614.1 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,632.6 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,669.4 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,806.1 | 1.6192 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,412,267.5 | 3.2542 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,412,122.1 | 3.2541 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,412,157.1 | 3.2541 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,378.4 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,395.8 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,402.7 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,841.9 | 1.6206 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 853,121.9 | 3.2544 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 855,731.3 | 3.2644 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 854,854.4 | 3.2610 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,111.6 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.5 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,469.9 | 1.6246 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 222,320.6 | 3.3923 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 225,043.5 | 3.4339 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 224,872.6 | 3.4313 |
+
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,614.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,632.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,669.4 ns, 1,048,576 B
+
+### `tag-depth3-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-in-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,004.7 | 1,999.1 | 2,010.9 | 3.9 | 1.000x | 1.000x | faster ×3.52 | 75 | 26.7 | 8.8 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,183.1 | 2,165.1 | 2,258.3 | 33.4 | 1.089x | 1.089x | faster ×3.36 | 75 | 29.1 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,189.8 | 2,166.7 | 2,219.3 | 17.5 | 1.092x | 1.092x | faster ×3.33 | 75 | 29.2 | 8.9 | 100% |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,577.8 | 6,537.9 | 6,582.7 | 16.5 | 3.281x | 3.281x | - | 75 | 87.7 | 58.6 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,057.8 | 6,881.3 | 7,108.1 | 94.5 | 3.521x | 3.521x | - | 75 | 94.1 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 7,294.8 | 7,116.3 | 7,300.5 | 70.8 | 3.639x | 3.639x | - | 75 | 97.3 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 7,330.5 | 6,993.7 | 7,700.2 | 224.7 | 3.657x | 3.657x | - | 75 | 97.7 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 657.4 ns, 56 B; largest Δ: `sec-github-pat`, -364.6 ns (now 11.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-syslog`, 904.1 ns, 56 B; largest Δ: `sec-github-pat`, -366.2 ns (now 11.0 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 924.2 ns, 56 B; largest Δ: `sec-github-pat`, -367.3 ns (now 10.7 ns), 93 B
+
+### `tag-pair-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,116.5 | 0.0168 | 23,103.3 | 23,145.9 | 16.6 | 1.000x | 1.000x | faster ×201.04 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,128.1 | 0.0168 | 23,094.9 | 23,204.8 | 38.5 | 1.001x | 1.001x | faster ×201.13 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,144.1 | 0.0168 | 23,094.3 | 23,153.2 | 21.1 | 1.001x | 1.001x | faster ×200.97 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,888.6 | 1.6188 | 2,226,140.9 | 2,232,832.8 | 2,309.8 | 96.376x | 96.376x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,647,427.0 | 3.3769 | 4,636,410.9 | 4,667,888.2 | 12,313.8 | 201.044x | 201.044x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,651,273.7 | 3.3797 | 4,641,930.9 | 4,653,062.5 | 3,994.7 | 201.210x | 201.210x | - |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,651,655.4 | 3.3799 | 4,649,071.6 | 4,651,924.2 | 1,057.0 | 201.226x | 201.226x | - |
+
+#### `tag-pair-match` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,632.9 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,623.0 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,637.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,306.9 | 1.6187 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,540,005.8 | 3.3760 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,541,923.6 | 3.3778 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,541,334.5 | 3.3773 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,391.4 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,383.8 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,379.6 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,328.5 | 1.6187 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 885,843.5 | 3.3792 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 887,193.9 | 3.3844 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 887,158.2 | 3.3842 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,110.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,108.0 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,112.6 | 0.0170 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,260.5 | 1.6214 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 221,772.1 | 3.3840 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 222,848.2 | 3.4004 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 222,648.8 | 3.3974 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,632.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,623.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,637.3 ns, 1,048,576 B
+
+### `tag-pair-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,371.5 | 1,368.2 | 1,384.5 | 5.7 | 1.000x | 1.000x | faster ×4.35 | 75 | 18.3 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,371.7 | 1,365.2 | 1,373.9 | 3.0 | 1.000x | 1.000x | faster ×4.39 | 75 | 18.3 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,488.8 | 1,484.3 | 1,498.6 | 4.7 | 1.086x | 1.086x | faster ×4.21 | 75 | 19.9 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,964.3 | 5,958.0 | 6,040.0 | 33.5 | 4.349x | 4.349x | - | 75 | 79.5 | 18.1 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,995.4 | 5,972.6 | 6,070.4 | 36.6 | 4.372x | 4.372x | - | 75 | 79.9 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 6,016.8 | 5,967.7 | 6,044.9 | 27.8 | 4.387x | 4.387x | - | 75 | 80.2 | 8.9 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,274.4 | 6,264.3 | 6,303.5 | 14.7 | 4.575x | 4.575x | - | 75 | 83.7 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 216.2 ns, 56 B; largest Δ: `sec-github-pat`, -320.5 ns (now 9.7 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-syslog`, 215.6 ns, 56 B; largest Δ: `sec-github-pat`, -324.4 ns (now 9.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 218.1 ns, 56 B; largest Δ: `sec-github-pat`, -324.5 ns (now 11.5 ns), 93 B
+
+### `trim-nested-star` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 47.1 | 0.0000 | 46.7 | 47.2 | 0.2 | 1.000x | 1.000x | faster ×69251.59 |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 47.1 | 0.0000 | 46.9 | 52.1 | 2.0 | 1.002x | 1.002x | faster ×69009.27 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 60.6 | 0.0000 | 60.5 | 66.3 | 2.3 | 1.288x | 1.288x | faster ×53722.92 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 735.8 | 0.0005 | 732.2 | 757.0 | 9.0 | 15.639x | 15.639x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,253,228.8 | 2.3638 | 3,251,726.5 | 3,313,982.3 | 24,434.3 | 69140.393x | 69140.393x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,254,602.8 | 2.3648 | 3,252,430.8 | 3,266,471.9 | 5,145.2 | 69169.594x | 69169.594x | - |
+| 7 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 3,258,460.6 | 2.3676 | 3,252,489.3 | 3,269,311.5 | 6,507.6 | 69251.585x | 69251.585x | - |
+
+#### `trim-nested-star` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 15.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 15.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 245.8 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,477,727.1 | 2.3629 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,476,999.7 | 2.3623 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 2,477,093.3 | 2.3623 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 15.7 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 15.7 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 244.3 | 0.0009 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 620,185.4 | 2.3658 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 620,089.5 | 2.3655 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 620,574.2 | 2.3673 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 15.7 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 15.8 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0003 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 245.6 | 0.0037 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 155,825.5 | 2.3777 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 155,933.0 | 2.3793 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 155,908.8 | 2.3790 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 15.7 ns, 65,536 B; largest Δ: `t-1m`, -2,477,077.7 ns (now 15.6 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 15.8 ns, 65,536 B; largest Δ: `t-1m`, -2,477,711.4 ns (now 15.7 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 20.2 ns, 262,144 B; largest Δ: `t-1m`, -2,476,979.6 ns (now 20.2 ns), 1,048,576 B
+
+### `trim-nested-star` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 8,959,572.2 | 8,956,901.5 | 8,962,881.2 | 2,108.3 | 1.000x | 1.000x | **dominated**: `rd-trim-near-miss` is 99.9% of this set | - | 75 | 119,461.0 | 8.9 | 100% |
+| 2 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 8,960,666.2 | 8,955,200.5 | 8,970,953.1 | 5,555.2 | 1.000x | 1.000x | **dominated**: `rd-trim-near-miss` is 99.9% of this set | - | 75 | 119,475.5 | 18.1 | 100% |
+| 3 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,013,059.6 | 9,001,706.6 | 9,026,871.5 | 8,372.1 | 1.006x | 1.006x | **dominated**: `rd-trim-near-miss` is 99.9% of this set | - | 75 | 120,174.1 | 17.3 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,185,990.8 | 10,179,326.3 | 10,196,711.7 | 6,369.3 | 1.137x | 1.137x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | slower ×1.14 | 75 | 135,813.2 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,207,123.6 | 10,194,116.6 | 10,220,669.4 | 9,316.5 | 1.139x | 1.139x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | slower ×1.14 | 75 | 136,095.0 | 8.0 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,235,290.7 | 10,195,411.0 | 10,461,897.5 | 95,537.6 | 1.142x | 1.142x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | slower ×1.14 | 75 | 136,470.5 | 8.8 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,555,980.4 | 12,530,611.8 | 12,959,519.9 | 165,417.0 | 1.401x | 1.401x | **dominated**: `rd-trim-near-miss` is 99.9% of this set | - | 75 | 167,413.1 | 58.6 | 100% |
+
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+_per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `--grain subject` renders them._
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,184,834.4 ns, 20 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,205,687.3 ns, 20 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,233,794.9 ns, 20 B
+
+### `utf8-lead-no-cont` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 481,273.2 | 0.3497 | 479,545.4 | 481,896.3 | 822.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 481,411.6 | 0.3498 | 480,940.9 | 484,153.6 | 1,169.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,035,281.9 | 1.4789 | 2,034,924.1 | 2,036,091.1 | 448.1 | 4.229x | 4.229x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,661,273.4 | 2.6603 | 3,660,268.0 | 3,661,845.9 | 632.2 | 7.607x | 7.607x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,661,486.2 | 2.6605 | 3,661,451.2 | 3,704,382.7 | 17,001.9 | 7.608x | 7.608x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,661,593.8 | 2.6605 | 3,659,477.3 | 3,671,341.4 | 4,579.0 | 7.608x | 7.608x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,664,116.9 | 2.6624 | 3,660,867.2 | 3,688,366.8 | 10,121.8 | 7.613x | 7.613x | - |
+
+#### `utf8-lead-no-cont` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 366,841.9 | 0.3498 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 366,820.0 | 0.3498 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,550,114.5 | 1.4783 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 2,788,290.8 | 2.6591 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,788,363.2 | 2.6592 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 2,789,200.6 | 2.6600 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,790,961.1 | 2.6617 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 91,154.1 | 0.3477 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 91,774.0 | 0.3501 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 387,710.7 | 1.4790 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 697,362.4 | 2.6602 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 698,257.6 | 2.6636 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 697,181.9 | 2.6595 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 697,988.2 | 2.6626 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 22,634.3 | 0.3454 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 22,969.4 | 0.3505 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 97,411.2 | 1.4864 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 174,760.9 | 2.6666 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 175,282.0 | 2.6746 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 174,916.3 | 2.6690 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 175,557.6 | 2.6788 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 366,820.0 ns, 1,048,576 B; largest Δ: `t-256k`, +619.9 ns (now 91,774.0 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 2,788,290.8 ns, 1,048,576 B; largest Δ: `t-256k`, -895.1 ns (now 697,362.4 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 2,789,200.6 ns, 1,048,576 B
+
+### `utf8-lead-no-cont` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,225.4 | 1,218.9 | 1,229.2 | 3.7 | 1.000x | 1.000x | faster ×1.02 | 75 | 16.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,250.3 | 1,245.8 | 1,258.6 | 4.4 | 1.020x | 1.020x | - | 75 | 16.7 | 8.9 | 100% |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,932.4 | 4,921.0 | 5,203.4 | 108.9 | 4.025x | 4.025x | - | 75 | 65.8 | 58.6 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,941.7 | 4,937.2 | 4,951.4 | 4.8 | 4.033x | 4.033x | unchanged (within spread) | 75 | 65.9 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,946.4 | 4,938.4 | 4,952.7 | 5.2 | 4.037x | 4.037x | - | 75 | 66.0 | 18.1 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,958.0 | 4,951.5 | 4,985.4 | 13.2 | 4.046x | 4.046x | unchanged (within spread) | 75 | 66.1 | 8.8 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,036.0 | 5,027.4 | 5,347.4 | 125.8 | 4.110x | 4.110x | - | 75 | 67.1 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 55.5 ns, 93 B; largest Δ: `br-tag-mismatch`, -1.1 ns (now 15.3 ns), 19 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 267.2 ns, 93 B; largest Δ: `lp-quoted-escaped`, -1.7 ns (now 60.9 ns), 16 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 267.4 ns, 93 B; largest Δ: `waf-concat`, -2.3 ns (now 147.7 ns), 48 B
+
+### `uuid-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 19.9 | 0.0000 | 19.9 | 20.1 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.6 | 0.0 | 1.384x | 1.384x | slower ×1.38 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 33.8 | 0.0000 | 33.7 | 35.0 | 0.5 | 1.694x | 1.694x | faster ×72424.99 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 40.5 | 0.0000 | 40.5 | 40.6 | 0.1 | 2.034x | 2.034x | faster ×68266.65 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.3 | 0.0001 | 93.0 | 117.7 | 9.8 | 4.682x | 4.682x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,444,993.8 | 1.7766 | 2,438,895.2 | 3,116,162.5 | 262,175.0 | 122677.737x | 122677.737x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 2,766,890.8 | 2.0104 | 2,439,442.4 | 3,168,940.6 | 271,091.5 | 138828.939x | 138828.939x | - |
+
+#### `uuid-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 5.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 13.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 1,857,817.6 | 1.7718 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,185,287.3 | 2.0841 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 9.2 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 10.9 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 13.0 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 464,944.6 | 1.7736 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 465,009.5 | 1.7739 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 8.0 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.9 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 12.1 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 116,699.8 | 1.7807 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 117,049.3 | 1.7860 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 9.5 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 13.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 15.6 ns, 1,048,576 B
+
+### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 562.0 | 561.5 | 566.9 | 2.0 | 1.000x | 1.000x | - | 75 | 7.5 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 667.3 | 667.0 | 677.5 | 4.1 | 1.187x | 1.187x | slower ×1.19 | 75 | 8.9 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 769.2 | 764.8 | 771.5 | 2.3 | 1.369x | 1.369x | faster ×5.79 | 75 | 10.3 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 900.7 | 897.5 | 901.0 | 1.5 | 1.603x | 1.603x | faster ×5.28 | 75 | 12.0 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,792.1 | 2,782.6 | 2,822.2 | 14.4 | 4.969x | 4.969x | - | 75 | 37.2 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,452.8 | 3,986.7 | 4,613.5 | 271.4 | 7.924x | 7.924x | - | 75 | 59.4 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,757.9 | 4,636.0 | 4,950.2 | 113.7 | 8.467x | 8.467x | - | 75 | 63.4 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 43.2 ns, 36 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-uuid-valid`, 47.3 ns, 36 B; largest Δ: `sec-github-pat`, -207.0 ns (now 9.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-uuid-valid`, 63.0 ns, 36 B; largest Δ: `sec-github-pat`, -232.3 ns (now 10.3 ns), 93 B
+
+### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 263,784.5 | 0.1917 | 263,426.9 | 264,584.2 | 393.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 349,512.7 | 0.2540 | 349,427.2 | 350,659.7 | 463.8 | 1.325x | 1.325x | slower ×1.32 |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 955,686.2 | 0.6944 | 954,424.4 | 957,966.8 | 1,245.2 | 3.623x | 3.623x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 957,768.1 | 0.6959 | 954,391.8 | 962,933.8 | 2,954.9 | 3.631x | 3.631x | - |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,093,165.0 | 0.7943 | 1,091,956.0 | 1,104,607.2 | 4,677.0 | 4.144x | 4.144x | slower ×1.14 |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,105,767.8 | 0.8035 | 1,102,784.3 | 1,109,225.2 | 2,106.5 | 4.192x | 4.192x | slower ×1.15 |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,992,314.9 | 2.9009 | 3,955,276.5 | 4,064,531.5 | 35,968.9 | 15.135x | 15.135x | - |
+
+#### `wild-codegrammar-json-array-begin` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 202,735.2 | 0.1933 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 268,762.0 | 0.2563 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 727,433.6 | 0.6937 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 729,416.1 | 0.6956 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 834,723.6 | 0.7961 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 842,357.4 | 0.8033 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,048,098.6 | 2.9069 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 48,580.9 | 0.1853 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 64,574.1 | 0.2463 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 181,110.6 | 0.6909 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 181,811.5 | 0.6936 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 206,653.2 | 0.7883 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 211,379.5 | 0.8063 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 751,354.8 | 2.8662 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 12,360.4 | 0.1886 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 16,152.3 | 0.2465 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 46,697.5 | 0.7125 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 46,023.3 | 0.7023 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 52,073.3 | 0.7946 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 52,564.0 | 0.8021 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 192,865.8 | 2.9429 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 268,762.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 834,723.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 842,357.4 ns, 1,048,576 B
+
+### `wild-codegrammar-json-array-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 624.1 | 623.8 | 625.4 | 0.6 | 1.000x | 1.000x | faster ×1.10 | 75 | 8.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 684.3 | 682.0 | 710.4 | 12.7 | 1.097x | 1.097x | - | 75 | 9.1 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 684.8 | 678.1 | 685.9 | 3.0 | 1.097x | 1.097x | faster ×1.95 | 75 | 9.1 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 685.8 | 684.6 | 686.5 | 0.7 | 1.099x | 1.099x | faster ×1.86 | 75 | 9.1 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 1,274.6 | 1,269.8 | 1,277.8 | 2.9 | 2.042x | 2.042x | - | 75 | 17.0 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,333.8 | 1,332.7 | 1,334.5 | 0.7 | 2.137x | 2.137x | - | 75 | 17.8 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,650.1 | 4,644.1 | 5,196.3 | 217.8 | 7.451x | 7.451x | - | 75 | 62.0 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `lp-syslog`, 21.7 ns, 56 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 33.0 ns, 56 B; largest Δ: `sec-github-pat`, -64.2 ns (now 10.0 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 32.0 ns, 56 B; largest Δ: `sec-github-pat`, -63.6 ns (now 9.7 ns), 93 B
+
+### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,197,409.4 | 3.0499 | 4,194,036.7 | 4,209,203.6 | 5,226.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,199,268.9 | 3.0512 | 4,197,834.9 | 4,209,812.3 | 4,469.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,710,215.6 | 3.4225 | 4,703,990.9 | 4,721,934.8 | 6,857.3 | 1.122x | 1.122x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,714,170.8 | 3.4254 | 4,699,836.2 | 4,734,014.7 | 12,746.2 | 1.123x | 1.123x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,715,051.6 | 3.4260 | 4,704,741.4 | 4,739,417.0 | 13,122.9 | 1.123x | 1.123x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,722,881.9 | 3.4317 | 4,704,439.6 | 4,756,574.4 | 17,705.5 | 1.125x | 1.125x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,564,899.2 | 4.7701 | 6,550,284.1 | 6,601,302.4 | 17,917.1 | 1.564x | 1.564x | - |
+
+#### `wild-codegrammar-json-constant` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,197,408.9 | 3.0493 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,199,183.6 | 3.0510 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,584,703.6 | 3.4186 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,593,342.4 | 3.4269 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,588,428.0 | 3.4222 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,588,882.8 | 3.4226 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 4,986,305.4 | 4.7553 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 800,746.8 | 3.0546 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 800,572.1 | 3.0539 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 896,356.2 | 3.4193 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 898,100.3 | 3.4260 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 902,832.7 | 3.4440 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 904,638.9 | 3.4509 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,257,248.7 | 4.7960 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 198,041.0 | 3.0219 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 198,441.5 | 3.0280 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 228,422.6 | 3.4855 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 228,941.8 | 3.4934 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 228,263.7 | 3.4830 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 228,816.3 | 3.4915 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 318,970.5 | 4.8671 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,199,183.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 3,584,703.6 ns, 1,048,576 B; largest Δ: `t-256k`, -8,282.7 ns (now 896,356.2 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,593,342.4 ns, 1,048,576 B
+
+### `wild-codegrammar-json-constant` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,423.8 | 2,420.7 | 2,427.5 | 2.2 | 1.000x | 1.000x | faster ×1.01 | 75 | 32.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,449.4 | 2,447.1 | 2,459.5 | 4.7 | 1.011x | 1.011x | - | 75 | 32.7 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,349.3 | 3,327.8 | 3,370.5 | 15.9 | 1.382x | 1.382x | - | 75 | 44.7 | 17.3 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,391.3 | 3,375.6 | 3,402.0 | 9.5 | 1.399x | 1.399x | slower ×1.01 | 75 | 45.2 | 8.8 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,393.4 | 3,305.1 | 3,406.9 | 36.6 | 1.400x | 1.400x | unchanged (within spread) | 75 | 45.2 | 8.9 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,422.2 | 3,348.2 | 3,439.2 | 34.5 | 1.412x | 1.412x | - | 75 | 45.6 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 13,458.7 | 13,309.2 | 13,677.5 | 134.1 | 5.553x | 5.553x | - | 75 | 179.4 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 179.4 ns, 93 B; largest Δ: `rec-array-define`, -3.0 ns (now 18.8 ns), 11 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 198.3 ns, 81 B; largest Δ: `waf-concat`, +5.6 ns (now 128.8 ns), 48 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 199.7 ns, 81 B; largest Δ: `lp-syslog`, -2.9 ns (now 137.4 ns), 56 B
+
+### `wild-codegrammar-json-number-extended` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,447,249.4 | 1.7782 | 2,443,102.1 | 2,452,858.1 | 3,336.8 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,447,555.9 | 1.7784 | 2,442,009.9 | 2,451,745.9 | 3,214.4 | 1.000x | 1.000x | - |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,931,234.3 | 7.2161 | 9,878,941.8 | 10,087,013.9 | 79,774.4 | 4.058x | 4.058x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,966,900.2 | 7.2420 | 9,938,987.3 | 10,072,355.8 | 46,052.2 | 4.073x | 4.073x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 10,082,199.6 | 7.3258 | 10,017,807.3 | 10,559,761.1 | 203,033.0 | 4.120x | 4.120x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,102,826.5 | 7.3408 | 10,061,787.4 | 10,254,390.4 | 68,631.4 | 4.128x | 4.128x | unchanged (within spread) |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,343,632.8 | 16.9617 | 23,270,124.9 | 24,111,968.0 | 321,674.8 | 9.539x | 9.539x | - |
+
+#### `wild-codegrammar-json-number-extended` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,870,858.8 | 1.7842 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 1,874,153.7 | 1.7873 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 7,602,963.4 | 7.2508 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,602,270.1 | 7.2501 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,642,969.1 | 7.2889 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,715,455.1 | 7.3580 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 17,905,951.1 | 17.0764 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 459,506.8 | 1.7529 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 456,973.9 | 1.7432 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,882,265.5 | 7.1803 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,893,836.0 | 7.2244 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,916,223.8 | 7.3098 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,909,827.9 | 7.2854 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 4,462,895.6 | 17.0246 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 114,568.2 | 1.7482 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 113,853.7 | 1.7373 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 467,652.6 | 7.1358 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 470,870.3 | 7.1849 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 474,708.3 | 7.2435 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 473,303.8 | 7.2220 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,056,250.8 | 16.1171 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,870,858.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 7,602,270.1 ns, 1,048,576 B; largest Δ: `t-256k`, +11,570.4 ns (now 1,893,836.0 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,715,455.1 ns, 1,048,576 B
+
+### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,393.3 | 1,388.6 | 1,398.0 | 3.0 | 1.000x | 1.000x | faster ×1.02 | 75 | 18.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,417.6 | 1,402.5 | 1,421.1 | 6.6 | 1.017x | 1.017x | - | 75 | 18.9 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 7,344.4 | 7,332.0 | 7,952.9 | 240.5 | 5.271x | 5.271x | - | 75 | 97.9 | 18.1 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 7,351.9 | 7,347.0 | 7,368.9 | 7.6 | 5.277x | 5.277x | unchanged (within spread) | 75 | 98.0 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,417.7 | 7,400.4 | 7,901.6 | 189.9 | 5.324x | 5.324x | unchanged (within spread) | 75 | 98.9 | 8.8 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,428.0 | 7,417.7 | 7,442.9 | 8.5 | 5.331x | 5.331x | - | 75 | 99.0 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 11,704.6 | 11,657.2 | 11,843.2 | 65.6 | 8.401x | 8.401x | - | 75 | 156.1 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 69.4 ns, 20 B; largest Δ: `sec-userpass`, +7.6 ns (now 36.5 ns), 33 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 576.4 ns, 93 B; largest Δ: `sec-slack-webhook`, +3.7 ns (now 251.5 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 578.1 ns, 93 B; largest Δ: `sec-slack-webhook`, +2.4 ns (now 252.8 ns), 81 B
+
+### `wild-codegrammar-json-object-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-in-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,112.1 | 0.0168 | 23,096.4 | 23,150.2 | 19.2 | 1.000x | 1.000x | faster ×35.20 |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 23,122.0 | 0.0168 | 23,106.8 | 23,215.1 | 38.8 | 1.000x | 1.000x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,130.2 | 0.0168 | 23,116.0 | 23,208.4 | 34.0 | 1.001x | 1.001x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,131.4 | 0.0168 | 23,084.7 | 23,150.7 | 24.6 | 1.001x | 1.001x | faster ×35.23 |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 813,573.8 | 0.5912 | 813,385.4 | 817,387.5 | 1,693.2 | 35.201x | 35.201x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 814,864.4 | 0.5921 | 814,499.6 | 824,237.2 | 3,754.5 | 35.257x | 35.257x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,339.1 | 1.6191 | 2,227,187.0 | 2,232,898.5 | 1,964.9 | 96.414x | 96.414x | - |
+
+#### `wild-codegrammar-json-object-begin` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,620.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 17,636.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,633.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,638.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 619,702.7 | 0.5910 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 620,688.9 | 0.5919 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,443.9 | 1.6188 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,378.5 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,377.8 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,386.1 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,372.1 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 155,046.4 | 0.5915 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 155,112.3 | 0.5917 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,795.7 | 1.6205 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110.9 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,107.7 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,111.2 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,106.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 38,945.8 | 0.5943 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 38,935.0 | 0.5941 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,488.6 | 1.6249 |
+
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,620.3 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 17,633.7 ns, 1,048,576 B; largest Δ: `t-256k`, +8.3 ns (now 4,386.1 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,638.7 ns, 1,048,576 B
+
+### `wild-codegrammar-json-object-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 597.9 | 597.8 | 598.8 | 0.4 | 1.000x | 1.000x | faster ×1.11 | 75 | 8.0 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 657.0 | 656.1 | 660.5 | 1.5 | 1.099x | 1.099x | faster ×2.06 | 75 | 8.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 657.4 | 656.9 | 657.9 | 0.4 | 1.100x | 1.100x | faster ×1.99 | 75 | 8.8 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 662.7 | 661.8 | 691.9 | 11.5 | 1.108x | 1.108x | - | 75 | 8.8 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 1,309.0 | 1,295.5 | 1,311.5 | 6.4 | 2.189x | 2.189x | - | 75 | 17.5 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,356.2 | 1,354.8 | 1,360.3 | 1.9 | 2.268x | 2.268x | - | 75 | 18.1 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,388.9 | 4,383.7 | 4,456.4 | 27.3 | 7.341x | 7.341x | - | 75 | 58.5 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `cg-object-begin`, 20.2 ns, 1 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `cg-object-begin`, 13.1 ns, 1 B; largest Δ: `sec-github-pat`, -64.2 ns (now 10.0 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `cg-object-begin`, 13.3 ns, 1 B; largest Δ: `sec-github-pat`, -63.9 ns (now 9.7 ns), 93 B
+
+### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,122.2 | 0.0168 | 23,113.7 | 23,177.0 | 23.3 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,127.9 | 0.0168 | 23,117.2 | 23,155.5 | 13.6 | 1.000x | 1.000x | faster ×169.35 |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 23,160.6 | 0.0168 | 23,135.6 | 23,367.1 | 85.5 | 1.002x | 1.002x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,162.8 | 0.0168 | 23,151.9 | 23,968.0 | 319.3 | 1.002x | 1.002x | faster ×169.05 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,545.0 | 1.6193 | 2,227,478.4 | 2,228,998.0 | 513.2 | 96.381x | 96.381x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,915,587.6 | 2.8451 | 3,913,653.0 | 3,931,553.7 | 6,608.5 | 169.343x | 169.343x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,916,741.8 | 2.8459 | 3,916,602.0 | 3,965,176.6 | 19,290.1 | 169.393x | 169.393x | - |
+
+#### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,623.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,643.8 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 17,667.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,660.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,923.5 | 1.6193 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,981,701.5 | 2.8436 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,982,856.7 | 2.8447 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,386.6 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,377.2 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,387.1 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,391.8 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,310.8 | 1.6186 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 746,032.4 | 2.8459 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 746,291.4 | 2.8469 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,107.5 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.9 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,112.1 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110.6 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,253.0 | 1.6213 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 187,403.6 | 2.8596 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 187,658.3 | 2.8634 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,623.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,643.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,660.4 ns, 1,048,576 B
+
+### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 674.5 | 674.0 | 674.7 | 0.2 | 1.000x | 1.000x | faster ×1.09 | 75 | 9.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 735.7 | 723.4 | 749.6 | 9.0 | 1.091x | 1.091x | - | 75 | 9.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 843.9 | 837.3 | 1,601.6 | 298.8 | 1.251x | 1.251x | faster ×6.58 | 75 | 11.3 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 952.4 | 950.5 | 952.6 | 0.8 | 1.412x | 1.412x | faster ×5.68 | 75 | 12.7 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,030.3 | 5,017.9 | 5,039.2 | 6.9 | 7.458x | 7.458x | - | 75 | 67.1 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,414.1 | 5,355.5 | 5,664.6 | 120.2 | 8.027x | 8.027x | - | 75 | 72.2 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,550.4 | 5,206.5 | 5,613.7 | 158.5 | 8.229x | 8.229x | - | 75 | 74.0 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-winpath-reserved`, 39.2 ns, 24 B; largest Δ: `lp-winpath`, +6.4 ns (now 33.2 ns), 22 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-winpath-reserved`, 85.5 ns, 24 B; largest Δ: `sec-github-pat`, -312.5 ns (now 9.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-winpath-reserved`, 85.3 ns, 24 B; largest Δ: `sec-github-pat`, -279.6 ns (now 11.5 ns), 93 B
+
+### `wild-datetime-datefinder-alternation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,130,195,568.0 | 1547.8193 | 2,128,387,168.0 | 2,150,492,762.0 | 8,257,604.0 | 1.000x | 1.000x |
+
+#### `wild-datetime-datefinder-alternation` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,621,643,077.0 | 1546.5194 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 407,805,360.0 | 1555.6540 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 102,359,990.0 | 1561.8895 |
+
+- not ranked: `pcrec_25b1984f_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670159 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_25b1984f_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_25b1984f_vm-in-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670248 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665196 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_vm-in-caps-simdna` — did-not-compile (pcrec: pattern too large: 665196 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+
+### `wild-datetime-datefinder-alternation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 766,271.8 | 763,257.0 | 775,743.1 | 4,414.0 | 1.000x | 1.000x | 75 | 10,217.0 | 58.6 | 100% |
+
+- not ranked: `pcrec_25b1984f_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670159 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_25b1984f_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_25b1984f_vm-in-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670248 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665196 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+- not ranked: `pcrec_8d716693_vm-in-caps-simdna` — did-not-compile (pcrec: pattern too large: 665196 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+
+### `wild-datetime-moment-iso8601` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 32.9 | 0.0000 | 32.8 | 33.0 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 48.7 | 0.0000 | 48.5 | 48.8 | 0.1 | 1.479x | 1.479x | slower ×1.48 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 74.3 | 0.0001 | 71.8 | 74.9 | 1.2 | 2.259x | 2.259x | faster ×57448.01 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 78.3 | 0.0001 | 77.5 | 78.8 | 0.5 | 2.378x | 2.378x | faster ×54587.57 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 985.3 | 0.0007 | 980.8 | 1,013.6 | 12.2 | 29.941x | 29.941x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,271,081.5 | 3.1034 | 4,267,281.7 | 4,296,011.4 | 11,783.6 | 129784.144x | 129784.144x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,272,179.9 | 3.1042 | 4,268,759.0 | 4,285,583.9 | 6,827.3 | 129817.520x | 129817.520x | - |
+
+#### `wild-datetime-moment-iso8601` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 10.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 25.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 299.3 | 0.0003 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,251,196.1 | 3.1006 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,253,085.8 | 3.1024 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 10.9 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 16.4 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 25.0 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 25.9 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 414.6 | 0.0016 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 813,946.6 | 3.1050 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 813,944.6 | 3.1050 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 11.0 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14.9 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 23.5 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 25.0 | 0.0004 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 270.9 | 0.0041 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 204,061.1 | 3.1137 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 204,699.9 | 3.1235 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17.3 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 25.5 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 27.3 ns, 1,048,576 B
+
+### `wild-datetime-moment-iso8601` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 844.8 | 842.4 | 845.3 | 1.2 | 1.000x | 1.000x | faster ×1.16 | 75 | 11.3 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 845.2 | 840.4 | 846.4 | 2.7 | 1.001x | 1.001x | faster ×7.48 | 75 | 11.3 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 922.2 | 921.5 | 923.3 | 0.6 | 1.092x | 1.092x | faster ×6.83 | 75 | 12.3 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 980.7 | 979.7 | 982.5 | 1.0 | 1.161x | 1.161x | - | 75 | 13.1 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,294.9 | 6,290.9 | 6,297.3 | 2.2 | 7.451x | 7.451x | - | 75 | 83.9 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,322.0 | 6,316.8 | 6,352.1 | 13.1 | 7.484x | 7.484x | - | 75 | 84.3 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 11,640.0 | 11,607.3 | 12,095.6 | 182.2 | 13.779x | 13.779x | - | 75 | 155.2 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `dt-iso8601`, 90.8 ns, 20 B; largest Δ: `rd-trim-near-miss`, -52.9 ns (now 9.4 ns), 20 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 52.9 ns, 20 B; largest Δ: `sec-github-pat`, -307.1 ns (now 10.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 54.8 ns, 20 B; largest Δ: `sec-github-pat`, -305.1 ns (now 11.8 ns), 93 B
+
+### `wild-logparse-base10num-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,033,368.0 | 2.9307 | 4,029,796.9 | 4,045,486.7 | 6,181.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,044,116.8 | 2.9385 | 4,041,247.9 | 4,058,999.8 | 6,600.4 | 1.003x | 1.003x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,284,990.2 | 16.9191 | 23,242,720.0 | 23,382,227.3 | 53,811.0 | 5.773x | 5.773x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 23,346,197.8 | 16.9636 | 23,216,402.8 | 23,489,684.5 | 91,028.0 | 5.788x | 5.788x | - |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,698,886.6 | 17.2198 | 23,655,574.5 | 23,776,745.3 | 45,398.4 | 5.876x | 5.876x | unchanged (within spread) |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 23,793,876.7 | 17.2888 | 23,643,353.1 | 24,528,511.9 | 329,784.4 | 5.899x | 5.899x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 27,136,727.1 | 19.7178 | 27,088,807.8 | 27,175,597.3 | 33,026.7 | 6.728x | 6.728x | - |
+
+#### `wild-logparse-base10num-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,093,119.7 | 2.9498 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,094,996.7 | 2.9516 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,720,065.4 | 16.8992 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 17,781,887.8 | 16.9581 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 18,031,018.9 | 17.1957 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 18,011,660.1 | 17.1773 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 20,788,943.8 | 19.8259 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 759,020.7 | 2.8954 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 763,797.6 | 2.9137 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,443,915.4 | 16.9522 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 4,438,819.6 | 16.9328 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,515,802.9 | 17.2264 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,615,310.6 | 17.6060 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 5,110,807.4 | 19.4962 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 184,709.8 | 2.8184 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 184,968.7 | 2.8224 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,124,540.2 | 17.1591 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,127,504.7 | 17.2044 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,139,180.1 | 17.3825 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,155,510.5 | 17.6317 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,234,883.9 | 18.8428 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 3,094,996.7 ns, 1,048,576 B; largest Δ: `t-256k`, +4,777.0 ns (now 763,797.6 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,720,065.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 18,031,018.9 ns, 1,048,576 B; largest Δ: `t-256k`, -99,507.7 ns (now 4,515,802.9 ns), 262,144 B
+
+### `wild-logparse-base10num-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,488.5 | 2,486.0 | 2,512.6 | 10.0 | 1.000x | 1.000x | unchanged (within spread) | 75 | 33.2 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,499.5 | 2,492.7 | 2,599.1 | 39.7 | 1.004x | 1.004x | - | 75 | 33.3 | 8.9 | 100% |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,869.7 | 15,748.6 | 15,945.0 | 64.9 | 6.377x | 6.377x | - | 75 | 211.6 | 58.6 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 18,291.5 | 18,260.6 | 18,317.9 | 21.7 | 7.350x | 7.350x | - | 75 | 243.9 | 18.1 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 18,303.7 | 18,176.8 | 18,324.8 | 56.3 | 7.355x | 7.355x | unchanged (within spread) | 75 | 244.0 | 8.9 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 18,552.5 | 18,547.9 | 18,576.0 | 10.4 | 7.455x | 7.455x | unchanged (within spread) | 75 | 247.4 | 8.8 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 18,643.3 | 18,610.8 | 20,746.4 | 843.8 | 7.492x | 7.492x | - | 75 | 248.6 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 116.6 ns, 20 B; largest Δ: `cg-number`, -1.7 ns (now 53.7 ns), 10 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 1,656.2 ns, 93 B; largest Δ: `sd-empty-alt-hit`, +4.1 ns (now 1,089.7 ns), 61 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 1,667.7 ns, 93 B; largest Δ: `sd-fileext-short`, -7.0 ns (now 293.6 ns), 14 B
+
+### `wild-logparse-base10num-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 3,987,279.3 | 2.8972 | 3,982,611.1 | 4,014,559.1 | 11,789.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 3,998,590.4 | 2.9054 | 3,993,856.7 | 4,007,767.1 | 4,697.1 | 1.003x | 1.003x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,240,692.4 | 16.8869 | 23,150,988.7 | 23,747,464.3 | 213,617.0 | 5.829x | 5.829x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,268,413.2 | 16.9070 | 23,231,101.3 | 23,333,648.6 | 37,375.0 | 5.836x | 5.836x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 23,362,962.1 | 16.9757 | 23,202,978.5 | 23,748,964.5 | 186,115.3 | 5.859x | 5.859x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 23,474,583.4 | 17.0568 | 23,335,555.9 | 32,247,834.8 | 3,501,206.8 | 5.887x | 5.887x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 25,662,944.7 | 18.6469 | 25,584,875.2 | 26,040,035.9 | 167,887.8 | 6.436x | 6.436x | - |
+
+#### `wild-logparse-base10num-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,053,117.2 | 2.9117 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,064,860.5 | 2.9229 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,722,598.8 | 16.9016 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,721,572.4 | 16.9006 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 17,847,481.5 | 17.0207 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 17,779,000.0 | 16.9554 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 19,667,372.2 | 18.7563 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 749,608.3 | 2.8595 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 751,383.2 | 2.8663 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,426,791.2 | 16.8869 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,427,646.8 | 16.8901 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 4,401,331.1 | 16.7897 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,437,611.0 | 16.9281 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 4,827,028.7 | 18.4137 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 181,902.3 | 2.7756 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 181,698.8 | 2.7725 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,110,110.1 | 16.9389 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110,670.5 | 16.9475 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,112,455.3 | 16.9747 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,176,320.2 | 17.9492 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,175,872.0 | 17.9424 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,064,860.5 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,722,598.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 17,721,572.4 ns, 1,048,576 B; largest Δ: `t-64k`, -65,649.8 ns (now 1,110,670.5 ns), 65,536 B
+
+### `wild-logparse-base10num-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,446.7 | 2,440.4 | 2,516.4 | 28.6 | 1.000x | 1.000x | unchanged (within spread) | 75 | 32.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,472.2 | 2,470.3 | 3,244.2 | 308.8 | 1.010x | 1.010x | - | 75 | 33.0 | 8.9 | 100% |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,914.6 | 15,830.8 | 16,152.9 | 113.2 | 6.505x | 6.505x | - | 75 | 212.2 | 58.6 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 17,831.5 | 17,720.2 | 18,243.9 | 183.5 | 7.288x | 7.288x | unchanged (within spread) | 75 | 237.8 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 17,951.3 | 17,785.7 | 18,218.5 | 151.3 | 7.337x | 7.337x | unchanged (within spread) | 75 | 239.4 | 8.8 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 17,986.4 | 17,797.4 | 18,144.5 | 130.4 | 7.351x | 7.351x | - | 75 | 239.8 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 18,011.5 | 17,842.3 | 27,664.4 | 3,868.9 | 7.362x | 7.362x | - | 75 | 240.2 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 116.3 ns, 20 B; largest Δ: `sec-slack-webhook`, -1.6 ns (now 86.5 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 1,598.7 ns, 93 B; largest Δ: `sec-userpass`, -17.8 ns (now 567.7 ns), 33 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 1,591.0 ns, 93 B
+
+### `wild-logparse-quotedstring-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,010,952.6 | 0.7346 | 1,009,997.1 | 1,023,087.2 | 4,932.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,013,117.8 | 0.7361 | 1,008,885.0 | 1,028,338.2 | 7,325.3 | 1.002x | 1.002x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,468,163.7 | 2.5200 | 3,438,061.5 | 3,492,510.9 | 18,643.1 | 3.431x | 3.431x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 46,631,322.0 | 33.8827 | 46,578,586.5 | 47,108,783.0 | 234,454.3 | 46.126x | 46.126x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 46,668,425.2 | 33.9097 | 46,637,763.3 | 46,841,691.3 | 93,496.0 | 46.163x | 46.163x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 46,742,508.0 | 33.9635 | 46,630,665.5 | 47,310,912.5 | 239,041.8 | 46.236x | 46.236x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 46,812,411.2 | 34.0143 | 46,636,503.5 | 52,094,082.8 | 2,128,095.9 | 46.305x | 46.305x | - |
+
+#### `wild-logparse-quotedstring-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 773,608.7 | 0.7378 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 777,386.0 | 0.7414 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,652,742.3 | 2.5299 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 35,484,566.8 | 33.8407 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 35,522,169.7 | 33.8766 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 35,566,805.0 | 33.9191 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 35,709,079.7 | 34.0548 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 188,859.3 | 0.7204 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 188,369.8 | 0.7186 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 648,880.4 | 2.4753 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 8,885,802.2 | 33.8966 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 8,892,795.5 | 33.9233 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 8,930,181.0 | 34.0659 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 8,882,754.2 | 33.8850 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 47,762.2 | 0.7288 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 47,630.4 | 0.7268 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 163,685.8 | 2.4976 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 2,233,216.2 | 34.0762 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,230,368.0 | 34.0327 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 2,237,920.2 | 34.1480 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 2,238,814.0 | 34.1616 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 773,608.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 35,484,566.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 35,566,805.0 ns, 1,048,576 B
+
+### `wild-logparse-quotedstring-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,946.3 | 1,937.4 | 1,955.5 | 5.8 | 1.000x | 1.000x | faster ×1.01 | 75 | 26.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,961.3 | 1,956.4 | 1,968.2 | 4.4 | 1.008x | 1.008x | - | 75 | 26.2 | 8.9 | 100% |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,298.3 | 6,267.4 | 6,471.0 | 73.0 | 3.236x | 3.236x | - | 75 | 84.0 | 58.6 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,973.0 | 48,881.8 | 49,024.6 | 46.3 | 25.162x | 25.162x | unchanged (within spread) | 75 | 653.0 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 48,994.8 | 48,985.8 | 49,011.5 | 10.2 | 25.173x | 25.173x | - | 75 | 653.3 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 49,149.4 | 49,111.6 | 49,195.2 | 28.9 | 25.253x | 25.253x | - | 75 | 655.3 | 17.3 | 100% |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 49,278.6 | 49,203.0 | 49,315.1 | 38.2 | 25.319x | 25.319x | slower ×1.00 | 75 | 657.0 | 8.8 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-quoted-escaped`, 152.9 ns, 16 B; largest Δ: `v-uuid-valid`, -3.5 ns (now 31.5 ns), 36 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 3,302.0 ns, 93 B; largest Δ: `sd-empty-alt-hit`, -13.5 ns (now 2,168.9 ns), 61 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 3,287.2 ns, 93 B; largest Δ: `br-quoted-delim`, +7.5 ns (now 64.0 ns), 15 B
+
+### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 930,604.7 | 0.6762 | 927,133.7 | 942,054.4 | 5,484.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 932,805.8 | 0.6778 | 930,676.3 | 946,446.4 | 5,729.0 | 1.002x | 1.002x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,265,325.1 | 2.3726 | 3,254,397.3 | 3,301,336.2 | 16,280.2 | 3.509x | 3.509x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 22,994,263.9 | 16.7078 | 22,876,074.8 | 23,268,344.8 | 143,236.1 | 24.709x | 24.709x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 23,029,113.2 | 16.7332 | 23,016,442.3 | 23,196,942.6 | 70,739.6 | 24.746x | 24.746x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,155,684.4 | 16.8251 | 22,946,428.3 | 23,238,913.2 | 103,217.1 | 24.882x | 24.882x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,180,108.5 | 16.8429 | 23,025,916.0 | 30,261,050.4 | 2,856,201.2 | 24.909x | 24.909x | unchanged (within spread) |
+
+#### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 710,906.0 | 0.6780 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 712,723.5 | 0.6797 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,495,212.5 | 2.3796 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 17,543,953.8 | 16.7312 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 17,554,799.5 | 16.7416 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,646,490.8 | 16.8290 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,671,313.0 | 16.8527 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 174,024.4 | 0.6639 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 175,784.8 | 0.6706 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 614,588.9 | 2.3445 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 4,372,022.6 | 16.6779 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,388,976.6 | 16.7426 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,398,127.7 | 16.7775 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,387,152.4 | 16.7357 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 44,001.9 | 0.6714 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 44,168.2 | 0.6740 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 154,604.0 | 2.3591 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,096,122.8 | 16.7255 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,100,453.1 | 16.7916 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,108,433.4 | 16.9134 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,105,649.7 | 16.8709 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 710,906.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,646,490.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,671,313.0 ns, 1,048,576 B
+
+### `wild-logparse-quotedstring-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,847.0 | 1,834.9 | 1,877.9 | 14.3 | 1.000x | 1.000x | spread | unchanged (within spread) | 75 | 24.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,861.0 | 1,854.6 | 1,865.8 | 3.8 | 1.008x | 1.008x | spread | - | 75 | 24.8 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 114,108.8 | 113,982.2 | 114,247.0 | 99.5 | 61.780x | 61.780x | spread | - | 75 | 1,521.5 | 18.1 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 114,302.9 | 114,003.5 | 114,383.6 | 144.1 | 61.885x | 61.885x | spread | unchanged (within spread) | 75 | 1,524.0 | 8.9 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 114,536.9 | 114,294.6 | 115,324.9 | 359.1 | 62.012x | 62.012x | spread | unchanged (within spread) | 75 | 1,527.2 | 8.8 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 114,561.3 | 114,264.4 | 114,629.5 | 153.6 | 62.025x | 62.025x | spread | - | 75 | 1,527.5 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 289,071.9 | 288,036.2 | 291,865.5 | 1,642.4 | 156.508x | 156.508x | **dominated**: `waf-sleep` is 98.0% of this set | - | 75 | 3,854.3 | 58.6 | 100% |
+
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+_per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `--grain subject` renders them._
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-quoted-escaped`, 127.1 ns, 16 B; largest Δ: `sec-userpass`, +3.4 ns (now 87.3 ns), 33 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `waf-sleep`, 89,670.9 ns, 16 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `waf-sleep`, 89,791.0 ns, 16 B
+
+### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 3,990,079.4 | 2.8992 | 3,987,701.4 | 4,001,838.4 | 5,081.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 3,990,789.0 | 2.8997 | 3,987,978.7 | 4,001,253.9 | 4,740.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 39,723,595.6 | 28.8635 | 39,600,139.1 | 40,174,359.7 | 208,532.1 | 9.956x | 9.956x | faster ×1.04 |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 39,838,937.0 | 28.9473 | 39,589,214.1 | 39,866,958.7 | 106,009.4 | 9.984x | 9.984x | faster ×1.04 |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 41,425,257.0 | 30.1000 | 41,251,343.1 | 42,074,755.1 | 283,045.8 | 10.382x | 10.382x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 41,587,687.4 | 30.2180 | 41,335,341.6 | 41,777,687.3 | 158,925.6 | 10.423x | 10.423x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 69,526,109.5 | 50.5183 | 69,436,479.0 | 69,721,555.8 | 99,145.8 | 17.425x | 17.425x | - |
+
+#### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,038,696.3 | 2.8979 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,037,828.2 | 2.8971 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 30,280,274.9 | 28.8775 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 30,387,720.3 | 28.9800 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 31,657,651.1 | 30.1911 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 31,752,531.3 | 30.2816 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 52,896,242.0 | 50.4458 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 761,359.8 | 2.9044 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 761,124.5 | 2.9035 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 7,534,766.7 | 28.7429 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 7,529,978.9 | 28.7246 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,864,027.4 | 29.9989 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 7,876,306.7 | 30.0457 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 13,312,656.5 | 50.7838 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 190,641.8 | 2.9090 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 190,768.8 | 2.9109 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,878,866.7 | 28.6692 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,875,397.6 | 28.6163 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,953,911.4 | 29.8143 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,960,612.4 | 29.9166 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,320,966.0 | 50.6739 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,037,828.2 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 30,280,274.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 30,387,720.3 ns, 1,048,576 B
+
+### `wild-logparse-syslogbase-expanded` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,781.0 | 1,774.4 | 1,802.2 | 9.5 | 1.000x | 1.000x | faster ×2.12 | 75 | 23.7 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 3,768.7 | 3,762.8 | 3,797.9 | 14.1 | 2.116x | 2.116x | - | 75 | 50.2 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 7,331.4 | 7,293.5 | 7,393.3 | 33.5 | 4.116x | 4.116x | faster ×5.46 | 75 | 97.8 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,414.2 | 7,380.8 | 7,424.3 | 16.4 | 4.163x | 4.163x | faster ×5.52 | 75 | 98.9 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,463.4 | 23,336.7 | 23,617.2 | 89.3 | 13.174x | 13.174x | - | 75 | 312.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 40,050.0 | 39,976.5 | 57,011.0 | 6,785.4 | 22.488x | 22.488x | - | 75 | 534.0 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 40,962.3 | 40,859.4 | 41,237.4 | 128.1 | 23.000x | 23.000x | - | 75 | 546.2 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-syslog`, 640.4 ns, 56 B; largest Δ: `sec-github-pat`, -170.2 ns (now 11.2 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 1,658.5 ns, 81 B; largest Δ: `waf-concat`, -1,355.6 ns (now 10.3 ns), 48 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 1,665.0 ns, 81 B; largest Δ: `waf-concat`, -1,394.7 ns (now 11.6 ns), 48 B
+
+### `wild-logparse-winpath-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,145.9 | 0.0168 | 23,136.0 | 23,170.0 | 12.2 | 1.000x | 1.000x | faster ×846.19 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,160.4 | 0.0168 | 23,123.3 | 23,190.2 | 23.0 | 1.001x | 1.001x | faster ×149.96 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,177.0 | 0.0168 | 23,147.0 | 24,605.2 | 559.1 | 1.001x | 1.001x | faster ×869.31 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,611.9 | 1.6193 | 2,227,431.4 | 2,233,948.9 | 2,342.8 | 96.285x | 96.285x | - |
+| 5 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 3,473,038.3 | 2.5235 | 3,470,255.0 | 3,480,615.8 | 3,885.3 | 150.050x | 150.050x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 19,585,971.2 | 14.2313 | 19,359,921.2 | 19,649,611.0 | 102,249.2 | 846.194x | 846.194x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 20,147,936.1 | 14.6397 | 19,724,329.6 | 20,348,383.3 | 222,571.2 | 870.474x | 870.474x | - |
+
+#### `wild-logparse-winpath-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,644.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,644.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,687.3 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,367.4 | 1.6187 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 2,649,104.5 | 2.5264 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 14,970,094.9 | 14.2766 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 15,593,253.3 | 14.8709 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,386.2 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,385.2 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,381.7 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,510.5 | 1.6194 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 659,770.4 | 2.5168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 3,734,735.5 | 14.2469 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,695,862.3 | 14.0986 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,112.2 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,110.4 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,435.3 | 1.6241 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 164,242.1 | 2.5061 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 874,956.8 | 13.3508 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 906,660.7 | 13.8345 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,644.5 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,644.3 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,687.3 ns, 1,048,576 B
+
+### `wild-logparse-winpath-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 934.4 | 928.6 | 937.2 | 3.3 | 1.000x | 1.000x | faster ×2.83 | 75 | 12.5 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,024.5 | 1,023.1 | 1,044.5 | 8.1 | 1.096x | 1.096x | faster ×22.40 | 75 | 13.7 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,107.3 | 1,103.0 | 1,111.8 | 2.9 | 1.185x | 1.185x | faster ×22.05 | 75 | 14.8 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,640.9 | 2,637.4 | 2,657.6 | 7.9 | 2.826x | 2.826x | - | 75 | 35.2 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,333.8 | 5,319.6 | 5,370.6 | 18.2 | 5.708x | 5.708x | - | 75 | 71.1 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 22,945.1 | 22,933.5 | 23,002.1 | 24.5 | 24.557x | 24.557x | - | 75 | 305.9 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 24,419.9 | 23,726.7 | 24,999.7 | 404.2 | 26.135x | 26.135x | - | 75 | 325.6 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-winpath-reserved`, 77.9 ns, 24 B; largest Δ: `sec-github-pat`, -164.5 ns (now 11.5 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-quoted-escaped`, 202.6 ns, 16 B; largest Δ: `sec-github-pat`, -3,809.2 ns (now 10.9 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-quoted-escaped`, 207.6 ns, 16 B; largest Δ: `sec-github-pat`, -3,850.9 ns (now 11.8 ns), 93 B
+
+### `wild-secrets-aws-access-key-id` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,169,998.5 | 1.5767 | 2,169,573.3 | 2,170,995.6 | 500.0 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 3,942,172.5 | 2.8644 | 3,940,005.5 | 3,943,438.7 | 1,298.4 | 1.817x | 1.817x | faster ×1.02 |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,009,771.6 | 2.9135 | 4,005,307.7 | 4,013,416.1 | 2,705.2 | 1.848x | 1.848x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,328,970.6 | 6.7785 | 9,323,065.2 | 9,404,733.9 | 30,333.4 | 4.299x | 4.299x | - |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,338,257.4 | 6.7853 | 9,331,550.6 | 9,339,050.2 | 2,796.8 | 4.303x | 4.303x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,347,854.2 | 6.7922 | 9,333,730.2 | 9,356,301.4 | 7,609.1 | 4.308x | 4.308x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,357,212.3 | 6.7990 | 9,350,613.0 | 9,544,350.4 | 73,808.7 | 4.312x | 4.312x | - |
+
+#### `wild-secrets-aws-access-key-id` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,653,129.1 | 1.5765 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,002,213.4 | 2.8631 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,052,295.9 | 2.9109 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,119,389.1 | 6.7896 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,119,560.4 | 6.7897 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,125,935.1 | 6.7958 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 7,139,327.3 | 6.8086 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 413,095.2 | 1.5758 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 751,706.3 | 2.8675 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 765,843.6 | 2.9215 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,772,424.3 | 6.7613 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,773,749.3 | 6.7663 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,780,956.3 | 6.7938 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,778,145.0 | 6.7831 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 103,946.7 | 1.5861 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 187,136.0 | 2.8555 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 190,313.9 | 2.9040 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 440,673.2 | 6.7241 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 444,517.4 | 6.7828 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 442,961.4 | 6.7591 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 443,470.4 | 6.7668 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,002,213.4 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 7,119,560.4 ns, 1,048,576 B; largest Δ: `t-64k`, +3,844.2 ns (now 444,517.4 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,125,935.1 ns, 1,048,576 B
+
+### `wild-secrets-aws-access-key-id` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,167.8 | 1,167.0 | 1,169.4 | 0.8 | 1.000x | 1.000x | faster ×2.33 | 75 | 15.6 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,936.1 | 1,929.6 | 1,944.0 | 5.6 | 1.658x | 1.658x | faster ×4.00 | 75 | 25.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,029.2 | 2,027.6 | 2,034.8 | 2.6 | 1.738x | 1.738x | faster ×3.88 | 75 | 27.1 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,723.9 | 2,718.0 | 2,726.5 | 2.9 | 2.333x | 2.333x | - | 75 | 36.3 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,511.2 | 7,473.9 | 7,562.0 | 29.5 | 6.432x | 6.432x | - | 75 | 100.1 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 7,749.8 | 7,723.6 | 7,833.4 | 38.8 | 6.636x | 6.636x | - | 75 | 103.3 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 7,864.7 | 7,851.7 | 7,962.5 | 41.0 | 6.735x | 6.735x | - | 75 | 104.9 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 178.7 ns, 93 B; largest Δ: `sec-slack-webhook`, -134.5 ns (now 10.2 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 408.4 ns, 56 B; largest Δ: `sec-slack-webhook`, -432.2 ns (now 9.7 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 404.7 ns, 56 B; largest Δ: `sec-slack-webhook`, -427.5 ns (now 11.5 ns), 81 B
+
+### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 124,571.0 | 0.0905 | 124,527.0 | 125,079.6 | 209.2 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 124,604.5 | 0.0905 | 124,470.4 | 124,625.9 | 57.1 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 414,276.2 | 0.3010 | 414,097.9 | 414,384.9 | 107.8 | 3.326x | 3.326x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,776,127.5 | 3.4704 | 4,764,302.1 | 4,788,620.1 | 8,857.8 | 38.341x | 38.341x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,228,975.3 | 3.7994 | 5,226,900.3 | 5,252,187.0 | 10,563.6 | 41.976x | 41.976x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,387,513.3 | 3.9146 | 5,387,116.4 | 5,409,112.2 | 8,842.2 | 43.249x | 43.249x | slower ×1.03 |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,857,018.1 | 4.2558 | 5,851,528.0 | 5,875,698.6 | 8,318.7 | 47.018x | 47.018x | slower ×1.23 |
+
+#### `wild-secrets-github-pat` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 102,536.1 | 0.0978 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 102,578.9 | 0.0978 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 315,199.4 | 0.3006 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,639,215.6 | 3.4706 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,985,582.7 | 3.8009 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 4,105,682.7 | 3.9155 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 4,464,613.7 | 4.2578 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 18,603.0 | 0.0710 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 18,628.5 | 0.0711 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 79,019.5 | 0.3014 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 906,911.4 | 3.4596 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 993,100.7 | 3.7884 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,027,360.2 | 3.9191 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,112,836.1 | 4.2451 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 3,435.4 | 0.0524 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 3,421.0 | 0.0522 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 19,987.7 | 0.3050 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 225,493.1 | 3.4408 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 248,989.6 | 3.7993 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 255,158.0 | 3.8934 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 279,538.0 | 4.2654 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 102,578.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,105,682.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,464,613.7 ns, 1,048,576 B
+
+### `wild-secrets-github-pat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 790.7 | 789.2 | 796.0 | 2.4 | 1.000x | 1.000x | faster ×3.98 | 75 | 10.5 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 927.7 | 927.4 | 933.1 | 2.2 | 1.173x | 1.173x | faster ×3.92 | 75 | 12.4 | 8.8 | 100% |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,054.4 | 1,048.5 | 1,059.0 | 4.1 | 1.333x | 1.333x | faster ×1.62 | 75 | 14.1 | 8.0 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,705.5 | 1,699.0 | 1,711.4 | 4.3 | 2.157x | 2.157x | - | 75 | 22.7 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,962.6 | 2,932.9 | 3,132.0 | 72.5 | 3.747x | 3.747x | - | 75 | 39.5 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,148.7 | 3,142.8 | 3,153.3 | 3.8 | 3.982x | 3.982x | - | 75 | 42.0 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,638.8 | 3,627.6 | 3,648.3 | 7.2 | 4.602x | 4.602x | - | 75 | 48.5 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-dbnames`, 103.0 ns, 39 B; largest Δ: `sec-slack-webhook`, -199.6 ns (now 9.3 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-dbnames`, 126.0 ns, 39 B; largest Δ: `sec-slack-webhook`, -202.6 ns (now 10.3 ns), 81 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 461.6 ns, 93 B
+
+### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 341,069.2 | 0.2478 | 340,899.1 | 341,496.4 | 220.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 341,850.0 | 0.2484 | 341,034.3 | 345,818.3 | 1,722.9 | 1.002x | 1.002x | unchanged (within spread) |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,249,728.7 | 0.9081 | 1,249,324.3 | 1,251,105.1 | 654.1 | 3.664x | 3.664x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,775,991.7 | 3.4703 | 4,774,315.2 | 4,799,901.9 | 9,618.1 | 14.003x | 14.003x | - |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,776,737.9 | 3.4708 | 4,774,203.3 | 4,789,473.8 | 6,964.9 | 14.005x | 14.005x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,867,333.9 | 3.5366 | 4,859,827.1 | 4,872,346.6 | 4,280.6 | 14.271x | 14.271x | slower ×1.02 |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,870,501.0 | 3.5389 | 4,864,672.5 | 4,885,345.4 | 8,617.5 | 14.280x | 14.280x | slower ×1.02 |
+
+#### `wild-secrets-slack-webhook-url` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 261,933.7 | 0.2498 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 262,045.9 | 0.2499 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 952,771.5 | 0.9086 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,638,027.3 | 3.4695 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,637,544.9 | 3.4690 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,708,742.8 | 3.5369 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,711,069.1 | 3.5392 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 64,435.7 | 0.2458 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 64,438.8 | 0.2458 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 237,785.5 | 0.9071 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 910,004.2 | 3.4714 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 909,928.4 | 3.4711 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 927,400.3 | 3.5378 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 927,171.3 | 3.5369 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 14,723.8 | 0.2247 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14,755.9 | 0.2252 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 59,081.3 | 0.9015 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 228,231.2 | 3.4825 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 229,143.3 | 3.4964 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 232,766.4 | 3.5517 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 232,245.5 | 3.5438 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 262,045.9 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,708,742.8 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,711,069.1 ns, 1,048,576 B
+
+### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,176.2 | 1,174.5 | 1,181.0 | 2.4 | 1.000x | 1.000x | faster ×1.11 | 75 | 15.7 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,307.7 | 1,304.9 | 1,309.0 | 1.4 | 1.112x | 1.112x | - | 75 | 17.4 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,397.9 | 1,396.0 | 1,939.1 | 216.7 | 1.189x | 1.189x | faster ×4.02 | 75 | 18.6 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,485.5 | 1,482.6 | 1,488.3 | 1.9 | 1.263x | 1.263x | faster ×3.86 | 75 | 19.8 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,370.0 | 3,347.5 | 3,415.9 | 23.8 | 2.865x | 2.865x | - | 75 | 44.9 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,620.4 | 5,609.1 | 5,624.0 | 6.4 | 4.779x | 4.779x | - | 75 | 74.9 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,739.3 | 5,718.7 | 5,783.2 | 23.1 | 4.880x | 4.880x | - | 75 | 76.5 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-slack-webhook`, 397.2 ns, 81 B; largest Δ: `rd-numeric-id-near-miss`, -4.1 ns (now 9.4 ns), 20 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-benign`, 162.7 ns, 39 B; largest Δ: `sec-github-pat`, -312.8 ns (now 10.7 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-benign`, 163.4 ns, 39 B; largest Δ: `sec-github-pat`, -312.6 ns (now 11.8 ns), 93 B
+
+### `wild-secrets-username-password-pair` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,101.6 | 0.0168 | 23,088.7 | 23,183.6 | 34.9 | 1.000x | 1.000x | faster ×55.61 |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,162.8 | 0.0168 | 23,138.9 | 23,312.6 | 64.8 | 1.003x | 1.003x | faster ×253.88 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,184.0 | 0.0168 | 23,155.6 | 23,222.7 | 22.1 | 1.004x | 1.004x | faster ×253.58 |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,284,785.7 | 0.9335 | 1,282,321.7 | 1,291,174.5 | 3,286.7 | 55.615x | 55.615x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,839,830.3 | 3.5167 | 4,833,993.0 | 4,841,579.2 | 2,683.4 | 209.502x | 209.502x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,879,102.3 | 4.2718 | 5,852,911.3 | 5,895,791.5 | 13,754.9 | 254.489x | 254.489x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,880,549.9 | 4.2729 | 5,877,909.2 | 5,894,656.6 | 7,416.3 | 254.552x | 254.552x | - |
+
+#### `wild-secrets-username-password-pair` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,608.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,656.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,665.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 972,598.4 | 0.9275 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,673,731.4 | 3.5035 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,474,636.2 | 4.2673 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 4,476,312.4 | 4.2689 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,384.9 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,386.0 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,403.7 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 248,984.7 | 0.9498 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 927,848.3 | 3.5395 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,121,745.4 | 4.2791 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,120,925.1 | 4.2760 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,109.7 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,110.9 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,113.2 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 63,119.5 | 0.9631 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 236,377.1 | 3.6068 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 282,144.0 | 4.3052 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 281,468.9 | 4.2949 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,608.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,656.2 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,665.5 ns, 1,048,576 B
+
+### `wild-secrets-username-password-pair` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,073.7 | 1,070.3 | 1,083.2 | 5.4 | 1.000x | 1.000x | faster ×1.74 | 75 | 14.3 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,099.4 | 1,095.0 | 1,100.0 | 1.9 | 1.024x | 1.024x | faster ×5.81 | 75 | 14.7 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,160.8 | 1,159.1 | 1,203.7 | 17.2 | 1.081x | 1.081x | faster ×5.68 | 75 | 15.5 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,863.6 | 1,862.2 | 1,869.5 | 3.1 | 1.736x | 1.736x | - | 75 | 24.8 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,388.3 | 6,321.1 | 6,458.1 | 50.1 | 5.950x | 5.950x | - | 75 | 85.2 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,591.2 | 6,481.5 | 6,650.4 | 63.3 | 6.139x | 6.139x | - | 75 | 87.9 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,009.9 | 8,990.2 | 9,116.4 | 58.0 | 8.391x | 8.391x | - | 75 | 120.1 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-userpass`, 258.5 ns, 33 B; largest Δ: `waf-concat`, -54.4 ns (now 10.6 ns), 48 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-benign`, 174.7 ns, 39 B; largest Δ: `sec-github-pat`, -326.4 ns (now 10.9 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-benign`, 174.5 ns, 39 B; largest Δ: `sec-github-pat`, -358.6 ns (now 11.8 ns), 93 B
+
+### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 410,146.0 | 0.2980 | 409,007.4 | 412,859.0 | 1,452.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 413,068.6 | 0.3001 | 412,035.2 | 413,869.4 | 601.0 | 1.007x | 1.007x | slower ×1.01 |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,340,923.6 | 0.9743 | 1,330,893.2 | 1,342,368.7 | 4,184.8 | 3.269x | 3.269x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,941,797.2 | 2.8641 | 3,930,981.7 | 3,943,708.6 | 4,834.3 | 9.611x | 9.611x | - |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,944,640.0 | 2.8662 | 3,943,953.3 | 3,977,504.5 | 13,277.4 | 9.618x | 9.618x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,945,536.2 | 2.8669 | 3,940,554.6 | 3,952,356.3 | 3,906.9 | 9.620x | 9.620x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,953,122.6 | 2.8724 | 3,951,911.3 | 3,957,778.9 | 2,108.2 | 9.638x | 9.638x | unchanged (within spread) |
+
+#### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 326,422.2 | 0.3113 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 328,869.1 | 0.3136 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,020,752.8 | 0.9735 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,002,677.8 | 2.8636 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,004,224.8 | 2.8651 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,004,794.6 | 2.8656 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,010,425.8 | 2.8710 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 70,349.1 | 0.2684 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 70,654.6 | 0.2695 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 255,999.1 | 0.9766 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 751,487.5 | 2.8667 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 751,833.1 | 2.8680 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 751,629.8 | 2.8672 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 752,665.8 | 2.8712 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 13,377.1 | 0.2041 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 13,472.2 | 0.2056 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 64,171.7 | 0.9792 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 188,267.0 | 2.8727 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 188,558.8 | 2.8772 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 188,673.2 | 2.8789 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 188,819.7 | 2.8812 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 328,869.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,004,794.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,010,425.8 ns, 1,048,576 B
+
+### `wild-semdiv-altorder-foo-foobar-rustregex` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 707.2 | 706.7 | 707.4 | 0.2 | 1.000x | 1.000x | unchanged (within spread) | 75 | 9.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 710.3 | 706.4 | 711.8 | 1.9 | 1.004x | 1.004x | - | 75 | 9.5 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,394.8 | 2,379.5 | 2,496.5 | 48.4 | 3.386x | 3.386x | faster ×1.94 | 75 | 31.9 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,538.9 | 2,468.5 | 2,612.2 | 52.3 | 3.590x | 3.590x | faster ×1.95 | 75 | 33.9 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,988.1 | 2,979.9 | 3,008.2 | 10.2 | 4.226x | 4.226x | - | 75 | 39.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,634.0 | 4,498.8 | 4,730.4 | 78.1 | 6.553x | 6.553x | - | 75 | 61.8 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,950.5 | 4,832.6 | 5,121.3 | 106.5 | 7.001x | 7.001x | - | 75 | 66.0 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-dbnames`, 19.7 ns, 39 B; largest Δ: `lp-winpath-reserved`, -6.5 ns (now 7.7 ns), 24 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 249.0 ns, 81 B; largest Δ: `sec-github-pat`, -204.3 ns (now 9.8 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 248.0 ns, 81 B; largest Δ: `sec-github-pat`, -255.2 ns (now 11.5 ns), 93 B
+
+### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 31.9 | 0.0000 | 30.0 | 33.5 | 1.2 | 1.000x | 1.000x | faster ×52346.75 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 34.0 | 0.0000 | 33.6 | 34.2 | 0.2 | 1.066x | 1.066x | faster ×3219.20 |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 35.4 | 0.0000 | 34.9 | 36.2 | 0.5 | 1.108x | 1.108x | faster ×47224.91 |
+| 4 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 151.3 | 0.0001 | 151.2 | 154.4 | 1.5 | 4.737x | 4.737x | - |
+| 5 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 109,563.9 | 0.0796 | 109,529.1 | 109,919.9 | 160.7 | 3430.292x | 3430.292x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 1,671,839.2 | 1.2148 | 1,671,388.0 | 1,676,090.2 | 1,772.2 | 52342.963x | 52342.963x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 1,671,960.2 | 1.2149 | 1,670,963.8 | 1,679,366.5 | 3,385.5 | 52346.754x | 52346.754x | - |
+
+#### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 50.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 89,409.9 | 0.0853 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,273,120.1 | 1.2141 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 1,273,803.7 | 1.2148 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 13.4 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 17.3 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.8 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 50.4 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 16,771.5 | 0.0640 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 317,955.7 | 1.2129 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 317,815.0 | 1.2124 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 8.6 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 9.8 | 0.0001 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 50.6 | 0.0008 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 3,483.6 | 0.0532 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 80,952.8 | 1.2352 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 80,714.4 | 1.2316 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-256k`, 13.4 ns, 262,144 B; largest Δ: `t-1m`, -1,273,793.8 ns (now 9.8 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-256k`, 17.3 ns, 262,144 B; largest Δ: `t-1m`, -89,401.6 ns (now 8.3 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 15.8 ns, 262,144 B; largest Δ: `t-1m`, -1,273,110.3 ns (now 9.8 ns), 1,048,576 B
+
+### `wild-semdiv-dollar-trailing-newline-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 641.0 | 640.3 | 642.4 | 0.8 | 1.000x | 1.000x | faster ×3.35 | 75 | 8.5 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 644.1 | 643.1 | 646.5 | 1.2 | 1.005x | 1.005x | faster ×1.84 | 75 | 8.6 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 681.7 | 681.3 | 683.4 | 0.7 | 1.063x | 1.063x | faster ×2.94 | 75 | 9.1 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,186.8 | 1,183.0 | 1,199.0 | 6.5 | 1.851x | 1.851x | - | 75 | 15.8 | 8.9 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 2,003.1 | 1,997.0 | 2,010.2 | 4.7 | 3.125x | 3.125x | - | 75 | 26.7 | 17.3 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 2,145.9 | 2,137.5 | 2,155.4 | 6.1 | 3.348x | 3.348x | - | 75 | 28.6 | 18.1 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,476.7 | 3,464.2 | 3,481.5 | 6.0 | 5.424x | 5.424x | - | 75 | 46.4 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `rec-parens-balanced`, 12.6 ns, 7 B; largest Δ: `sec-github-pat`, -111.5 ns (now 8.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rec-parens-unbalanced`, 19.3 ns, 5 B; largest Δ: `v-uuid-valid`, -24.6 ns (now 8.0 ns), 36 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sd-keyword-short`, 12.1 ns, 10 B; largest Δ: `sec-github-pat`, -109.4 ns (now 8.9 ns), 93 B
+
+### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 7,000,451.7 | 5.0866 | 6,979,527.8 | 7,019,620.5 | 14,802.9 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,002,348.8 | 5.0880 | 6,998,445.0 | 7,040,634.7 | 15,587.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 25,326,045.8 | 18.4021 | 25,255,334.5 | 25,362,672.5 | 39,348.0 | 3.618x | 3.618x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 25,326,087.5 | 18.4022 | 25,222,464.1 | 25,523,597.7 | 99,530.7 | 3.618x | 3.618x | - |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 25,889,851.5 | 18.8118 | 25,785,269.0 | 25,953,995.5 | 55,847.7 | 3.698x | 3.698x | unchanged (within spread) |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 25,909,063.3 | 18.8258 | 25,818,475.5 | 27,848,983.3 | 788,419.9 | 3.701x | 3.701x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 100,170,778.7 | 72.7850 | 99,345,551.0 | 100,340,716.3 | 398,471.3 | 14.309x | 14.309x | - |
+
+#### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 5,380,021.3 | 5.1308 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 5,384,971.6 | 5.1355 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 19,299,835.7 | 18.4058 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 19,331,452.4 | 18.4359 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 19,710,422.3 | 18.7973 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 19,758,697.3 | 18.8434 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 76,491,564.0 | 72.9480 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 1,303,804.0 | 4.9736 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,307,016.8 | 4.9859 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,818,358.5 | 18.3806 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 4,795,733.5 | 18.2943 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,907,047.3 | 18.7189 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,918,514.6 | 18.7626 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 18,923,778.3 | 72.1885 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 315,426.4 | 4.8130 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 314,532.3 | 4.7994 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,206,095.3 | 18.4036 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 1,202,505.2 | 18.3488 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,230,409.8 | 18.7746 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,230,642.3 | 18.7781 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 4,671,819.3 | 71.2863 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,384,971.6 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,299,835.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,710,422.3 ns, 1,048,576 B
+
+### `wild-semdiv-empty-alt-repeat-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,880.9 | 2,874.6 | 2,889.3 | 5.1 | 1.000x | 1.000x | unchanged (within spread) | 75 | 38.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,893.7 | 2,879.7 | 2,912.4 | 12.5 | 1.004x | 1.004x | - | 75 | 38.6 | 8.9 | 100% |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,243.3 | 17,104.3 | 18,397.4 | 496.6 | 5.985x | 5.985x | - | 75 | 229.9 | 58.6 | 100% |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 101,862.0 | 101,775.3 | 102,424.1 | 234.9 | 35.358x | 35.358x | - | 75 | 1,358.2 | 17.3 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 102,391.6 | 102,094.5 | 115,455.1 | 5,254.2 | 35.542x | 35.542x | unchanged (within spread) | 75 | 1,365.2 | 8.8 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 104,020.1 | 103,877.8 | 104,151.8 | 89.4 | 36.107x | 36.107x | unchanged (within spread) | 75 | 1,386.9 | 8.9 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 104,063.0 | 104,049.7 | 104,212.6 | 63.6 | 36.122x | 36.122x | - | 75 | 1,387.5 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sd-empty-alt-hit`, 930.5 ns, 61 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sd-empty-alt-miss`, 52,848.2 ns, 60 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sd-empty-alt-miss`, 53,110.2 ns, 60 B; largest Δ: `sec-github-pat`, -14.0 ns (now 26,634.4 ns), 93 B
+
+### `wild-validator-email-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 40.4 | 0.0000 | 39.5 | 41.6 | 0.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 43.9 | 0.0000 | 41.3 | 46.4 | 1.7 | 1.085x | 1.085x | slower ×1.08 |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 79.2 | 0.0001 | 77.6 | 79.6 | 0.7 | 1.958x | 1.958x | faster ×56517.81 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 85.3 | 0.0001 | 84.4 | 132.7 | 19.1 | 2.109x | 2.109x | faster ×52464.14 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,039.3 | 1.6196 | 2,226,680.9 | 2,234,241.7 | 2,533.5 | 55113.722x | 55113.722x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,474,056.9 | 3.2509 | 4,471,247.6 | 4,512,419.3 | 16,151.4 | 110622.511x | 110622.511x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,474,981.0 | 3.2516 | 4,473,066.4 | 4,493,541.8 | 9,363.3 | 110645.360x | 110645.360x | - |
+
+#### `wild-validator-email-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 15.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 15.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 29.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 31.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,696,453.4 | 1.6179 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,407,891.8 | 3.2500 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,406,222.1 | 3.2484 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 11.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 12.9 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 24.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 25.8 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,729.4 | 1.6202 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 851,829.6 | 3.2495 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 852,229.4 | 3.2510 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 13.4 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 15.2 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 26.0 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 27.8 | 0.0004 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,692.3 | 1.6280 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 214,222.8 | 3.2688 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 214,269.0 | 3.2695 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 15.7 ns, 1,048,576 B; largest Δ: `t-64k`, +1.8 ns (now 15.2 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 29.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 31.6 ns, 1,048,576 B
+
+### `wild-validator-email-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 783.4 | 783.0 | 787.2 | 1.6 | 1.000x | 1.000x | faster ×1.36 | 75 | 10.4 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 978.6 | 978.1 | 981.5 | 1.3 | 1.249x | 1.249x | faster ×6.63 | 75 | 13.0 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,029.1 | 1,028.2 | 1,034.3 | 2.3 | 1.314x | 1.314x | faster ×6.24 | 75 | 13.7 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,063.7 | 1,056.8 | 1,066.1 | 3.6 | 1.358x | 1.358x | - | 75 | 14.2 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,252.3 | 5,222.7 | 5,509.9 | 113.6 | 6.705x | 6.705x | - | 75 | 70.0 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,417.4 | 6,412.3 | 6,433.3 | 7.4 | 8.192x | 8.192x | - | 75 | 85.6 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,489.4 | 6,484.2 | 6,500.0 | 5.3 | 8.284x | 8.284x | - | 75 | 86.5 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-email`, 55.4 ns, 24 B; largest Δ: `sec-github-pat`, -63.7 ns (now 9.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-email`, 43.9 ns, 24 B; largest Δ: `sec-github-pat`, -389.8 ns (now 10.7 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-email`, 44.7 ns, 24 B; largest Δ: `sec-github-pat`, -387.1 ns (now 12.1 ns), 93 B
+
+### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.9 | 0.0000 | 28.7 | 35.8 | 2.8 | 1.000x | 1.000x | faster ×147842.10 |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 31.1 | 0.0000 | 31.1 | 31.1 | 0.0 | 1.077x | 1.077x | faster ×1.03 |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 32.1 | 0.0000 | 32.1 | 32.3 | 0.1 | 1.112x | 1.112x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.2 | 0.0000 | 34.2 | 34.3 | 0.0 | 1.186x | 1.186x | faster ×124714.28 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 368.9 | 0.0003 | 366.5 | 371.2 | 1.7 | 12.772x | 12.772x | - |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,269,920.7 | 3.1026 | 4,267,743.0 | 4,284,915.6 | 7,105.0 | 147842.102x | 147842.102x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,270,443.9 | 3.1029 | 4,267,914.7 | 4,287,920.8 | 7,736.6 | 147860.216x | 147860.216x | - |
+
+#### `wild-validator-ipv4-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 9.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 10.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 10.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 300.1 | 0.0003 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,251,341.9 | 3.1007 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,250,594.7 | 3.1000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 10.4 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 10.7 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 34.7 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 813,573.1 | 3.1035 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 813,379.6 | 3.1028 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.7 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 10.4 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 10.7 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 34.4 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 204,133.6 | 3.1148 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 204,427.8 | 3.1193 |
+
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 9.7 ns, 65,536 B; largest Δ: `t-1m`, -3,251,332.4 ns (now 9.6 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 10.4 ns, 65,536 B; largest Δ: `t-1m`, -0.4 ns (now 10.3 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 11.4 ns, 262,144 B; largest Δ: `t-1m`, -3,250,583.3 ns (now 11.4 ns), 1,048,576 B
+
+### `wild-validator-ipv4-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 870.0 | 869.3 | 894.1 | 9.6 | 1.000x | 1.000x | unchanged (within spread) | 75 | 11.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 871.9 | 871.2 | 877.8 | 2.4 | 1.002x | 1.002x | - | 75 | 11.6 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 888.6 | 887.1 | 891.7 | 1.6 | 1.021x | 1.021x | faster ×7.24 | 75 | 11.8 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,022.4 | 1,021.8 | 1,025.1 | 1.2 | 1.175x | 1.175x | faster ×6.47 | 75 | 13.6 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,588.6 | 3,582.1 | 3,591.4 | 3.9 | 4.125x | 4.125x | - | 75 | 47.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,434.6 | 6,421.1 | 6,442.5 | 7.9 | 7.396x | 7.396x | - | 75 | 85.8 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,611.2 | 6,576.0 | 6,669.0 | 32.1 | 7.599x | 7.599x | - | 75 | 88.1 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `v-ipv4`, 80.4 ns, 11 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-ipv4`, 52.9 ns, 11 B; largest Δ: `sec-github-pat`, -311.4 ns (now 9.2 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 54.2 ns, 11 B; largest Δ: `sec-github-pat`, -312.7 ns (now 10.6 ns), 93 B
+
+### `wild-validator-us-zip-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.8 | 0.0000 | 25.8 | 25.8 | 0.0 | 1.000x | 1.000x | faster ×1.18 |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 30.3 | 0.0000 | 30.3 | 30.8 | 0.2 | 1.176x | 1.176x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 31.7 | 0.0000 | 31.6 | 31.7 | 0.0 | 1.229x | 1.229x | faster ×113036.14 |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 37.6 | 0.0000 | 37.6 | 37.7 | 0.0 | 1.459x | 1.459x | faster ×94760.25 |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 93.9 | 95.1 | 0.4 | 3.662x | 3.662x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 3,564,789.3 | 2.5902 | 3,559,395.3 | 3,579,315.0 | 7,453.5 | 138268.102x | 138268.102x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 3,582,070.6 | 2.6028 | 3,564,952.4 | 3,681,949.4 | 41,788.1 | 138938.397x | 138938.397x | - |
+
+#### `wild-validator-us-zip-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 10.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 10.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 12.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,712,215.1 | 2.5866 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 2,727,108.0 | 2.6008 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 10.1 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 10.5 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 12.5 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 679,911.7 | 2.5937 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 681,713.2 | 2.6005 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 10.1 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 10.6 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 12.6 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.6 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 170,444.6 | 2.6008 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 171,449.9 | 2.6161 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 8.6 ns, 65,536 B; largest Δ: `t-256k`, -1.5 ns (now 8.6 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 10.6 ns, 65,536 B; largest Δ: `t-1m`, -2,727,097.5 ns (now 10.5 ns), 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 12.6 ns, 65,536 B; largest Δ: `t-1m`, -2,712,202.6 ns (now 12.5 ns), 1,048,576 B
+
+### `wild-validator-us-zip-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 751.8 | 750.3 | 756.0 | 2.1 | 1.000x | 1.000x | faster ×1.08 | 75 | 10.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 809.5 | 808.4 | 815.8 | 2.7 | 1.077x | 1.077x | - | 75 | 10.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 833.1 | 829.8 | 841.2 | 4.2 | 1.108x | 1.108x | faster ×5.88 | 75 | 11.1 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 971.2 | 970.0 | 1,198.2 | 90.4 | 1.292x | 1.292x | faster ×5.25 | 75 | 12.9 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,898.1 | 4,890.1 | 4,908.1 | 6.8 | 6.515x | 6.515x | - | 75 | 65.3 | 18.1 | 100% |
+| 6 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,006.0 | 4,965.1 | 5,071.9 | 38.1 | 6.659x | 6.659x | - | 75 | 66.7 | 58.6 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,103.2 | 5,095.0 | 5,121.1 | 9.5 | 6.788x | 6.788x | - | 75 | 68.0 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-us-zip-plus4`, 32.0 ns, 10 B; largest Δ: `rd-numeric-id-near-miss`, -4.8 ns (now 8.8 ns), 20 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-us-zip-plus4`, 23.0 ns, 10 B; largest Δ: `sec-github-pat`, -248.1 ns (now 10.3 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-us-zip-plus4`, 25.4 ns, 10 B; largest Δ: `sec-github-pat`, -250.5 ns (now 12.2 ns), 93 B
+
+### `wild-validator-uuid-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 82,507.2 | 0.0600 | 82,278.3 | 82,697.7 | 154.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 82,564.1 | 0.0600 | 82,156.9 | 83,073.9 | 307.1 | 1.001x | 1.001x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,418,457.0 | 1.7573 | 2,417,419.5 | 2,425,442.5 | 2,896.5 | 29.312x | 29.312x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 8,027,026.2 | 5.8325 | 8,018,567.4 | 8,038,291.9 | 6,811.2 | 97.289x | 97.289x | faster ×1.01 |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 8,032,439.7 | 5.8364 | 8,021,329.6 | 8,057,374.6 | 12,362.8 | 97.354x | 97.354x | faster ×1.01 |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 8,125,465.4 | 5.9040 | 8,109,162.3 | 8,131,521.5 | 7,635.9 | 98.482x | 98.482x | - |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 8,142,842.0 | 5.9167 | 8,114,778.8 | 8,152,341.7 | 15,254.1 | 98.693x | 98.693x | - |
+
+#### `wild-validator-uuid-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 68,688.2 | 0.0655 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 68,422.7 | 0.0653 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,842,666.8 | 1.7573 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 6,112,559.2 | 5.8294 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 6,119,705.4 | 5.8362 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 6,203,781.4 | 5.9164 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 6,197,759.3 | 5.9106 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 11,326.0 | 0.0432 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 11,627.7 | 0.0444 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 459,512.6 | 1.7529 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,528,954.3 | 5.8325 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,527,275.4 | 5.8261 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,535,501.8 | 5.8575 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,536,298.4 | 5.8605 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 2,436.9 | 0.0372 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 2,423.2 | 0.0370 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 116,225.9 | 1.7735 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 382,915.8 | 5.8428 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 383,120.4 | 5.8460 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 384,695.9 | 5.8700 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 389,329.8 | 5.9407 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 68,688.2 ns, 1,048,576 B; largest Δ: `t-256k`, -301.6 ns (now 11,326.0 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 6,112,559.2 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 6,119,705.4 ns, 1,048,576 B
+
+### `wild-validator-uuid-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 723.3 | 714.9 | 729.3 | 5.0 | 1.000x | 1.000x | - | 75 | 9.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 780.6 | 774.7 | 871.5 | 37.4 | 1.079x | 1.079x | unchanged (within spread) | 75 | 10.4 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,030.7 | 1,027.2 | 1,034.9 | 2.8 | 1.425x | 1.425x | faster ×6.58 | 75 | 13.7 | 8.8 | 100% |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,031.3 | 1,030.1 | 1,044.6 | 5.5 | 1.426x | 1.426x | faster ×6.66 | 75 | 13.8 | 8.9 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,236.6 | 4,225.8 | 4,292.9 | 29.3 | 5.857x | 5.857x | - | 75 | 56.5 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,781.7 | 6,719.4 | 6,805.4 | 37.2 | 9.376x | 9.376x | - | 75 | 90.4 | 17.3 | 100% |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,867.1 | 6,820.1 | 6,954.0 | 43.5 | 9.494x | 9.494x | - | 75 | 91.6 | 18.1 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 98.0 ns, 36 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 90.1 ns, 20 B; largest Δ: `sec-github-pat`, -731.4 ns (now 10.6 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 90.7 ns, 20 B; largest Δ: `sec-github-pat`, -738.3 ns (now 10.9 ns), 93 B
+
+### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 4,079,409.2 | 2.9641 | 4,076,639.5 | 4,099,688.2 | 10,066.2 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,081,835.7 | 2.9659 | 4,077,061.4 | 4,084,277.5 | 2,344.3 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 20,856,952.2 | 15.1548 | 20,805,797.3 | 20,955,925.9 | 55,243.3 | 5.113x | 5.113x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 20,876,695.2 | 15.1692 | 20,814,111.0 | 20,994,499.7 | 62,321.3 | 5.118x | 5.118x | - |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 20,888,683.4 | 15.1779 | 20,813,999.0 | 21,611,352.5 | 346,248.7 | 5.121x | 5.121x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 20,927,988.0 | 15.2065 | 20,861,972.2 | 21,466,725.7 | 233,221.1 | 5.130x | 5.130x | unchanged (within spread) |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 65,243,715.4 | 47.4067 | 65,161,138.8 | 65,345,329.8 | 60,460.6 | 15.993x | 15.993x | - |
+
+#### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 3,111,077.8 | 2.9670 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,111,161.8 | 2.9670 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 15,879,825.4 | 15.1442 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 15,927,286.4 | 15.1894 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 15,922,183.5 | 15.1846 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15,920,327.3 | 15.1828 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 49,718,266.8 | 47.4150 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 777,343.1 | 2.9653 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 776,494.6 | 2.9621 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,964,720.2 | 15.1242 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 3,962,722.6 | 15.1166 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 3,977,988.2 | 15.1748 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,012,353.4 | 15.3059 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 12,411,363.2 | 47.3456 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 192,434.8 | 2.9363 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 191,781.4 | 2.9264 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 989,308.1 | 15.0956 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 989,432.4 | 15.0975 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 991,023.2 | 15.1218 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 995,307.3 | 15.1872 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,117,649.4 | 47.5716 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 3,111,161.8 ns, 1,048,576 B; largest Δ: `t-256k`, -848.5 ns (now 776,494.6 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 15,922,183.5 ns, 1,048,576 B; largest Δ: `t-256k`, +15,265.5 ns (now 3,977,988.2 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 15,920,327.3 ns, 1,048,576 B; largest Δ: `t-256k`, +47,633.2 ns (now 4,012,353.4 ns), 262,144 B
+
+### `wild-waf-crs-942140-dbnames` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,691.4 | 2,679.8 | 2,698.1 | 5.9 | 1.000x | 1.000x | unchanged (within spread) | 75 | 35.9 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 2,708.9 | 2,699.1 | 2,729.4 | 10.3 | 1.007x | 1.007x | - | 75 | 36.1 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 16,350.5 | 16,325.6 | 16,408.8 | 27.9 | 6.075x | 6.075x | - | 75 | 218.0 | 18.1 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 16,414.4 | 16,379.1 | 16,679.0 | 110.6 | 6.099x | 6.099x | unchanged (within spread) | 75 | 218.9 | 8.8 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 16,454.0 | 16,298.2 | 16,837.9 | 198.3 | 6.114x | 6.114x | unchanged (within spread) | 75 | 219.4 | 8.9 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 16,527.9 | 16,458.2 | 18,060.3 | 620.9 | 6.141x | 6.141x | - | 75 | 220.4 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 44,914.8 | 44,699.6 | 45,064.0 | 135.3 | 16.688x | 16.688x | - | 75 | 598.9 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 184.7 ns, 93 B; largest Δ: `sec-slack-webhook`, -2.8 ns (now 154.7 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 897.2 ns, 56 B; largest Δ: `waf-dbnames`, -12.1 ns (now 207.9 ns), 39 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `lp-syslog`, 904.7 ns, 56 B
+
+### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,268,060.9 | 0.9214 | 1,262,542.6 | 1,272,120.7 | 3,424.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,358,357.1 | 0.9870 | 1,350,952.9 | 1,362,947.2 | 4,189.5 | 1.071x | 1.071x | slower ×1.07 |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,953,542.1 | 3.5993 | 4,918,625.3 | 5,204,082.4 | 106,725.1 | 3.906x | 3.906x | - |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 9,964,561.2 | 7.2403 | 9,923,345.8 | 9,989,856.6 | 24,795.4 | 7.858x | 7.858x | - |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,980,701.8 | 7.2521 | 9,925,440.4 | 9,988,732.3 | 23,454.9 | 7.871x | 7.871x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,990,943.4 | 7.2595 | 9,972,216.6 | 9,997,628.6 | 9,014.6 | 7.879x | 7.879x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 9,991,229.3 | 7.2597 | 9,937,780.1 | 10,011,686.1 | 25,155.4 | 7.879x | 7.879x | - |
+
+#### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 962,364.3 | 0.9178 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,029,038.7 | 0.9814 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,772,266.3 | 3.5975 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 7,591,641.1 | 7.2400 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,614,098.4 | 7.2614 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,610,253.9 | 7.2577 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,610,662.7 | 7.2581 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 241,508.7 | 0.9213 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 260,591.5 | 0.9941 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 935,619.9 | 3.5691 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 1,904,275.7 | 7.2642 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,889,260.3 | 7.2070 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,905,237.9 | 7.2679 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 1,902,396.7 | 7.2571 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 65,167.3 | 0.9944 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 68,736.6 | 1.0488 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 246,387.6 | 3.7596 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 475,852.6 | 7.2609 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 476,649.1 | 7.2731 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 476,871.1 | 7.2765 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 476,995.7 | 7.2784 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,029,038.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 7,614,098.4 ns, 1,048,576 B; largest Δ: `t-256k`, -13,136.4 ns (now 1,889,260.3 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,610,253.9 ns, 1,048,576 B
+
+### `wild-waf-crs-942160-sleep-benchmark` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 671.1 | 667.4 | 672.6 | 2.0 | 1.000x | 1.000x | faster ×1.95 | 75 | 8.9 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,236.3 | 1,224.8 | 1,239.8 | 6.0 | 1.842x | 1.842x | faster ×8.95 | 75 | 16.5 | 8.9 | 100% |
+| 3 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,311.1 | 1,292.4 | 1,329.0 | 11.8 | 1.954x | 1.954x | - | 75 | 17.5 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,316.8 | 1,314.7 | 1,326.5 | 4.1 | 1.962x | 1.962x | faster ×8.55 | 75 | 17.6 | 8.8 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 11,064.6 | 11,040.6 | 11,075.7 | 15.1 | 16.488x | 16.488x | - | 75 | 147.5 | 18.1 | 100% |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 11,254.3 | 11,247.4 | 11,279.5 | 11.6 | 16.770x | 16.770x | - | 75 | 150.1 | 17.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,521.1 | 12,435.0 | 12,650.6 | 76.4 | 18.658x | 18.658x | - | 75 | 166.9 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-concat`, 49.1 ns, 48 B; largest Δ: `sec-slack-webhook`, -57.5 ns (now 8.6 ns), 81 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-concat`, 390.5 ns, 48 B; largest Δ: `sec-github-pat`, -646.8 ns (now 10.4 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-concat`, 390.7 ns, 48 B; largest Δ: `sec-github-pat`, -646.6 ns (now 12.4 ns), 93 B
+
+### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,000,461.0 | 0.7269 | 998,958.3 | 1,004,298.0 | 1,966.5 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,001,628.0 | 0.7278 | 998,998.7 | 1,004,278.4 | 2,125.6 | 1.001x | 1.001x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,426,906.6 | 2.4900 | 3,424,244.4 | 3,456,801.1 | 12,370.6 | 3.425x | 3.425x | - |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,310,554.1 | 3.1321 | 4,306,801.5 | 4,322,129.6 | 6,241.6 | 4.309x | 4.309x | - |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,311,011.7 | 3.1324 | 4,309,549.4 | 4,326,335.1 | 6,242.3 | 4.309x | 4.309x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,311,679.5 | 3.1329 | 4,310,944.8 | 4,318,330.9 | 2,790.5 | 4.310x | 4.310x | unchanged (within spread) |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,312,914.5 | 3.1338 | 4,310,335.0 | 4,323,223.5 | 4,498.1 | 4.311x | 4.311x | - |
+
+#### `wild-waf-crs-942270-union-select` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 760,244.1 | 0.7250 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 761,054.1 | 0.7258 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,606,030.6 | 2.4853 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,281,557.8 | 3.1295 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,282,197.9 | 3.1301 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,282,649.6 | 3.1306 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,282,418.2 | 3.1304 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 192,310.3 | 0.7336 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 192,326.8 | 0.7337 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 655,035.1 | 2.4988 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 821,649.7 | 3.1343 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 822,575.0 | 3.1379 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 823,010.9 | 3.1395 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 823,006.1 | 3.1395 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 48,771.9 | 0.7442 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 48,282.4 | 0.7367 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 166,383.1 | 2.5388 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 207,066.8 | 3.1596 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 206,598.3 | 3.1524 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 207,247.8 | 3.1624 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 207,442.9 | 3.1653 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 760,244.1 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 3,282,197.9 ns, 1,048,576 B; largest Δ: `t-64k`, -844.6 ns (now 206,598.3 ns), 65,536 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 3,282,649.6 ns, 1,048,576 B; largest Δ: `t-256k`, +1,361.1 ns (now 823,010.9 ns), 262,144 B
+
+### `wild-waf-crs-942270-union-select` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,128.0 | 1,120.8 | 1,132.3 | 4.6 | 1.000x | 1.000x | faster ×1.02 | 75 | 15.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 1,151.9 | 1,142.8 | 1,158.7 | 5.8 | 1.021x | 1.021x | - | 75 | 15.4 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,226.7 | 5,222.8 | 5,233.7 | 3.8 | 4.633x | 4.633x | faster ×1.00 | 75 | 69.7 | 8.9 | 100% |
+| 4 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 5,247.4 | 5,240.6 | 5,255.2 | 5.4 | 4.652x | 4.652x | - | 75 | 70.0 | 18.1 | 100% |
+| 5 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 5,298.1 | 5,290.8 | 5,308.7 | 6.0 | 4.697x | 4.697x | - | 75 | 70.6 | 17.3 | 100% |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,315.3 | 5,305.5 | 5,353.6 | 17.5 | 4.712x | 4.712x | unchanged (within spread) | 75 | 70.9 | 8.8 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 8,720.9 | 8,702.9 | 8,807.7 | 36.7 | 7.731x | 7.731x | - | 75 | 116.3 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-union`, 75.0 ns, 43 B; largest Δ: `waf-benign`, +3.8 ns (now 27.4 ns), 39 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 278.4 ns, 93 B; largest Δ: `lp-winpath-reserved`, -3.4 ns (now 86.6 ns), 24 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 275.7 ns, 93 B; largest Δ: `la-currency`, +3.5 ns (now 63.6 ns), 10 B
+
+### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,143,930.5 | 8.8239 | 12,117,925.0 | 12,219,951.4 | 38,163.8 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 12,146,302.4 | 8.8256 | 12,104,328.1 | 12,268,470.6 | 57,853.3 | 1.000x | 1.000x | - |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,257,412.7 | 35.0643 | 48,016,261.2 | 48,555,293.0 | 181,105.0 | 3.974x | 3.974x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,309,614.7 | 35.1022 | 48,173,678.8 | 48,375,640.2 | 74,085.3 | 3.978x | 3.978x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 48,342,762.5 | 35.1263 | 47,987,543.7 | 48,557,390.5 | 205,687.6 | 3.981x | 3.981x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 48,430,775.3 | 35.1902 | 48,119,495.3 | 48,533,536.2 | 143,204.5 | 3.988x | 3.988x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 149,241,780.0 | 108.4404 | 138,342,420.5 | 152,569,384.5 | 6,372,964.6 | 12.289x | 12.289x | - |
+
+#### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9,262,818.6 | 8.8337 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 9,263,082.5 | 8.8340 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 36,819,469.0 | 35.1138 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 36,882,861.5 | 35.1742 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 36,839,353.5 | 35.1327 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 36,937,771.3 | 35.2266 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 113,880,103.5 | 108.6045 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 2,304,678.6 | 8.7917 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 2,317,259.4 | 8.8396 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9,176,769.7 | 35.0066 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 9,162,526.7 | 34.9523 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 9,200,042.8 | 35.0954 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 9,187,093.8 | 35.0460 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 28,291,947.0 | 107.9252 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 576,433.3 | 8.7957 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 577,600.5 | 8.8135 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 2,287,371.0 | 34.9025 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 2,284,348.2 | 34.8564 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 2,295,924.5 | 35.0330 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 2,298,093.5 | 35.0661 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 7,044,319.0 | 107.4878 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-1m`, 9,262,818.6 ns, 1,048,576 B; largest Δ: `t-256k`, -12,580.7 ns (now 2,304,678.6 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 36,819,469.0 ns, 1,048,576 B; largest Δ: `t-256k`, -23,273.2 ns (now 9,176,769.7 ns), 262,144 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 36,882,861.5 ns, 1,048,576 B
+
+### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 7,405.0 | 7,365.5 | 7,432.4 | 23.7 | 1.000x | 1.000x | - | 75 | 98.7 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,426.2 | 7,375.9 | 7,456.4 | 26.3 | 1.003x | 1.003x | unchanged (within spread) | 75 | 99.0 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,435.1 | 48,349.0 | 48,585.0 | 97.8 | 6.541x | 6.541x | unchanged (within spread) | 75 | 645.8 | 8.8 | 100% |
+| 4 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 48,509.9 | 48,405.1 | 48,729.2 | 127.2 | 6.551x | 6.551x | - | 75 | 646.8 | 17.3 | 100% |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 48,545.1 | 48,414.4 | 48,854.0 | 149.7 | 6.556x | 6.556x | - | 75 | 647.3 | 18.1 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,979.4 | 48,911.0 | 49,043.1 | 48.1 | 6.614x | 6.614x | slower ×1.01 | 75 | 653.1 | 8.9 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 143,493.3 | 142,250.6 | 153,891.3 | 4,382.0 | 19.378x | 19.378x | - | 75 | 1,913.2 | 58.6 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sec-slack-webhook`, 471.7 ns, 81 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 2,316.8 ns, 81 B; largest Δ: `rec-array-define`, +22.2 ns (now 750.0 ns), 11 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 2,313.2 ns, 81 B; largest Δ: `sd-empty-alt-miss`, +48.3 ns (now 1,282.3 ns), 60 B
+
+### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 23,099.9 | 0.0168 | 23,071.7 | 23,235.9 | 60.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,153.2 | 0.0168 | 23,129.8 | 23,227.4 | 33.6 | 1.002x | 1.002x | unchanged (within spread) |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,498,159.6 | 1.0886 | 1,497,937.3 | 1,499,103.4 | 467.4 | 64.856x | 64.856x | - |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,079,821.8 | 2.9644 | 4,058,605.7 | 4,086,283.6 | 9,703.2 | 176.616x | 176.616x | unchanged (within spread) |
+| 5 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,085,792.3 | 2.9688 | 4,082,663.8 | 4,087,038.9 | 1,606.3 | 176.875x | 176.875x | - |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,086,071.0 | 2.9690 | 4,082,865.3 | 4,103,257.9 | 7,232.1 | 176.887x | 176.887x | - |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,086,803.6 | 2.9695 | 4,086,036.1 | 4,103,934.3 | 6,945.3 | 176.918x | 176.918x | unchanged (within spread) |
+
+#### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 17,601.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,633.0 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,140,969.5 | 1.0881 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,108,623.3 | 2.9646 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,114,946.4 | 2.9706 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,114,430.9 | 2.9702 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,114,596.1 | 2.9703 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 4,380.5 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,383.4 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 285,456.0 | 1.0889 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 777,052.5 | 2.9642 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 778,103.3 | 2.9682 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 777,623.0 | 2.9664 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 778,416.2 | 2.9694 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 1,108.9 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,123.3 | 0.0171 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 71,616.8 | 1.0928 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 193,433.3 | 2.9516 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 193,068.7 | 2.9460 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 193,471.8 | 2.9521 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 195,330.1 | 2.9805 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,633.0 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,108,623.3 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 3,114,596.1 ns, 1,048,576 B; largest Δ: `t-64k`, +2,261.4 ns (now 195,330.1 ns), 65,536 B
+
+### `wild-waf-crs-942500-comment-obfuscation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 702.9 | 702.4 | 708.7 | 2.4 | 1.000x | 1.000x | faster ×1.04 | 75 | 9.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 733.1 | 732.2 | 743.7 | 4.4 | 1.043x | 1.043x | - | 75 | 9.8 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,515.6 | 1,514.0 | 1,519.4 | 1.9 | 2.156x | 2.156x | faster ×3.15 | 75 | 20.2 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,616.7 | 1,607.6 | 1,646.9 | 13.5 | 2.300x | 2.300x | faster ×2.96 | 75 | 21.6 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,885.6 | 3,873.1 | 3,934.2 | 21.2 | 5.528x | 5.528x | - | 75 | 51.8 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,772.0 | 4,584.1 | 4,836.8 | 89.8 | 6.789x | 6.789x | - | 75 | 63.6 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,789.6 | 4,777.1 | 4,817.4 | 14.0 | 6.814x | 6.814x | - | 75 | 63.9 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `waf-comment-obfuscation`, 71.3 ns, 18 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 291.8 ns, 81 B; largest Δ: `sec-github-pat`, -258.0 ns (now 9.7 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 291.4 ns, 81 B; largest Δ: `sec-github-pat`, -256.9 ns (now 11.5 ns), 93 B
+
+### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 20.1 | 0.0000 | 20.0 | 20.3 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.3 | 0.0001 | 92.9 | 93.9 | 0.3 | 4.644x | 4.644x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,123.6 | 0.0168 | 23,122.3 | 23,180.4 | 22.4 | 1151.134x | 1151.134x | slower ×1151.13 |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,145.5 | 0.0168 | 23,113.5 | 23,245.5 | 45.8 | 1152.224x | 1152.224x | faster ×213.04 |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,146.4 | 0.0168 | 23,126.9 | 23,177.1 | 17.3 | 1152.269x | 1152.269x | faster ×212.72 |
+| 6 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 4,923,754.4 | 3.5776 | 4,908,216.0 | 4,942,748.3 | 14,647.6 | 245113.420x | 245113.420x | - |
+| 7 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 4,930,833.3 | 3.5828 | 4,915,966.7 | 4,981,864.3 | 23,088.9 | 245465.817x | 245465.817x | - |
+
+#### `winpath-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-caps-simdna` | 6.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,639.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,659.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,653.8 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-in-caps-simdna` | 3,753,273.9 | 3.5794 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_vm-caps-simdna` | 3,763,628.7 | 3.5893 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-caps-simdna` | 6.7 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,379.6 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,381.7 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,386.9 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-in-caps-simdna` | 933,040.1 | 3.5593 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_vm-caps-simdna` | 931,911.1 | 3.5550 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-caps-simdna` | 6.7 | 0.0001 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,106.1 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,111.3 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-in-caps-simdna` | 236,529.1 | 3.6091 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_vm-caps-simdna` | 233,743.1 | 3.5666 |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,639.7 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,659.2 ns, 1,048,576 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,653.8 ns, 1,048,576 B
+
+### `winpath-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-caps-simdna` | measured | `plain` | same program | 499.9 | 499.7 | 501.0 | 0.5 | 1.000x | 1.000x | - | 75 | 6.7 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 585.3 | 583.0 | 585.7 | 1.0 | 1.171x | 1.171x | slower ×1.17 | 75 | 7.8 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 840.0 | 837.8 | 840.4 | 1.0 | 1.680x | 1.680x | faster ×7.34 | 75 | 11.2 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 905.2 | 903.9 | 906.3 | 0.8 | 1.811x | 1.811x | faster ×6.82 | 75 | 12.1 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,930.6 | 2,928.3 | 2,963.7 | 13.3 | 5.862x | 5.862x | - | 75 | 39.1 | 58.6 | 100% |
+| 6 | `pcrec_25b1984f_vm-caps-simdna` | measured | `plain` | same program | 6,162.0 | 6,159.9 | 6,183.1 | 8.7 | 12.326x | 12.326x | - | 75 | 82.2 | 18.1 | 100% |
+| 7 | `pcrec_25b1984f_vm-in-caps-simdna` | measured | `plain` | same program | 6,177.2 | 6,173.7 | 6,179.0 | 1.8 | 12.356x | 12.356x | - | 75 | 82.4 | 17.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `lp-winpath`, 34.7 ns, 22 B
+- Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-winpath`, 71.0 ns, 22 B; largest Δ: `sec-github-pat`, -337.5 ns (now 10.6 ns), 93 B
+- Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-winpath`, 73.0 ns, 22 B; largest Δ: `sec-github-pat`, -336.3 ns (now 11.5 ns), 93 B
+
+## Excluded from ranking (expectation-failing cells)
+
+| pattern | regime | form | testee | n subjects | pass-rate | gave-up | wrong | failing subjects (reason) |
+|---|---|---|---|---|---|---|---|---|
+| `email-nested-plus` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-caps-simdna` | 75 | 93% | -2:PCREC_ERR_STEPS×5 (smallest: v-uuid-badnibble, 36 B) | 0 | `sd-empty-alt-hit` (gave-up), `sd-empty-alt-miss` (gave-up), `sec-github-pat` (gave-up), `v-uuid-badnibble` (gave-up), `v-uuid-valid` (gave-up) |
+| `email-nested-plus` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 75 | 93% | -2:PCREC_ERR_STEPS×5 (smallest: v-uuid-badnibble, 36 B) | 0 | `sd-empty-alt-hit` (gave-up), `sd-empty-alt-miss` (gave-up), `sec-github-pat` (gave-up), `v-uuid-badnibble` (gave-up), `v-uuid-valid` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 75 | 97% | -17:retry×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_auto-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_vm-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_vm-in-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+
+## Ranking -- NON-CAPTURING engines only, nocaps vs nocaps (per pattern x regime, SET grain: sum over the subject set; best median first)
+
+### `balanced-parens-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 5,239,095.5 | 3.8068 | 5,232,350.1 | 5,250,390.0 | 5,840.1 | 1.000x | 1.000x | faster ×1.05 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 5,482,139.0 | 3.9834 | 5,480,380.8 | 5,499,211.1 | 7,019.8 | 1.046x | 1.046x | - |
+
+#### `balanced-parens-rec` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,996,654.9 | 3.8115 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,179,483.1 | 3.9859 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 993,754.6 | 3.7909 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,043,114.6 | 3.9792 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 247,905.7 | 3.7827 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 260,272.1 | 3.9714 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,996,654.9 ns, 1,048,576 B
+
+### `balanced-parens-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 982.3 | 980.2 | 1,022.0 | 16.0 | 1.000x | 1.000x | faster ×6.66 | 75 | 13.1 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 6,542.3 | 6,456.4 | 6,642.9 | 63.3 | 6.660x | 6.660x | - | 75 | 87.2 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-concat`, 141.9 ns, 48 B; largest Δ: `sec-github-pat`, -368.7 ns (now 11.3 ns), 93 B
+
+### `base10num-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 16.0 | 0.0000 | 16.0 | 16.1 | 0.0 | 1.000x | 1.000x | faster ×1.05 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 16.9 | 0.0000 | 16.9 | 17.0 | 0.1 | 1.053x | 1.053x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 90.9 | 0.0001 | 88.5 | 96.9 | 3.0 | 5.674x | 5.674x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 167.7 | 0.0001 | 167.6 | 190.3 | 9.0 | 10.464x | 10.464x | - |
+
+#### `base10num-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 5.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 5.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.6 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 5.4 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.6 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 56.1 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-64k`, 5.4 ns, 65,536 B; largest Δ: `t-1m`, -0.3 ns (now 5.3 ns), 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `base10num-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 546.3 | 534.7 | 550.1 | 5.3 | 1.000x | 1.000x | unchanged (within spread) | 75 | 7.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 551.3 | 547.2 | 556.6 | 3.4 | 1.009x | 1.009x | - | 75 | 7.4 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,047.1 | 2,044.4 | 2,051.7 | 2.4 | 3.747x | 3.747x | - | 75 | 27.3 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,222.9 | 2,199.6 | 2,266.7 | 22.1 | 4.069x | 4.069x | - | 75 | 29.6 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 34.8 ns, 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `bracket-array-define` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 73.0 | 0.0001 | 71.8 | 73.5 | 0.7 | 1.000x | 1.000x | faster ×66856.92 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,877,809.1 | 3.5443 | 4,876,780.5 | 4,901,432.7 | 9,474.9 | 66856.922x | 66856.922x | - |
+
+#### `bracket-array-define` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 24.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,714,751.9 | 3.5427 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 24.2 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 929,663.3 | 3.5464 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 24.1 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 233,148.7 | 3.5576 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 24.4 ns, 1,048,576 B
+
+### `bracket-array-define` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,898.2 | 1,890.4 | 1,900.0 | 4.1 | 1.000x | 1.000x | faster ×3.62 | 75 | 25.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 6,880.6 | 6,872.5 | 7,333.1 | 182.2 | 3.625x | 3.625x | - | 75 | 91.7 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rec-array-define`, 87.8 ns, 11 B; largest Δ: `sec-github-pat`, -331.0 ns (now 24.5 ns), 93 B
+
+### `codegrammar-flat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,319.8 | 0.0882 | 121,246.2 | 122,078.0 | 310.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 598,115.2 | 0.4346 | 593,023.8 | 603,042.3 | 3,326.6 | 4.930x | 4.930x | faster ×1.09 |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 654,515.9 | 0.4756 | 637,681.0 | 659,744.9 | 9,127.1 | 5.395x | 5.395x | - |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,444,112.5 | 1.7759 | 2,441,280.6 | 2,447,598.9 | 2,420.8 | 20.146x | 20.146x | - |
+
+#### `codegrammar-flat` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 92,522.2 | 0.0882 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 455,766.3 | 0.4347 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 494,449.6 | 0.4715 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,861,174.2 | 1.7750 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 23,033.6 | 0.0879 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 116,031.8 | 0.4426 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 127,464.5 | 0.4862 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 464,342.7 | 1.7713 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,769.4 | 0.0880 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 27,799.8 | 0.4242 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 29,848.7 | 0.4555 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 116,639.8 | 1.7798 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 455,766.3 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `codegrammar-flat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 639.8 | 639.5 | 641.1 | 0.6 | 1.000x | 1.000x | faster ×1.14 | 75 | 8.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 727.0 | 724.2 | 728.4 | 1.4 | 1.136x | 1.136x | - | 75 | 9.7 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,487.1 | 2,422.6 | 2,807.7 | 135.5 | 3.887x | 3.887x | - | 75 | 33.2 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,499.0 | 2,487.4 | 2,506.5 | 6.3 | 3.906x | 3.906x | - | 75 | 33.3 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `cg-key-colon`, 29.7 ns, 7 B; largest Δ: `lp-quoted-escaped`, -23.4 ns (now 7.7 ns), 16 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,342.4 | 0.0882 | 121,220.9 | 122,125.4 | 335.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 596,735.9 | 0.4336 | 586,284.5 | 603,708.5 | 6,688.2 | 4.918x | 4.918x | faster ×1.07 |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 638,026.8 | 0.4636 | 624,274.6 | 656,979.9 | 14,019.2 | 5.258x | 5.258x | - |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,442,938.1 | 1.7751 | 2,441,040.0 | 2,446,941.3 | 2,141.5 | 20.133x | 20.133x | - |
+
+#### `codegrammar-xflag` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 92,525.5 | 0.0882 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 453,304.3 | 0.4323 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 485,938.4 | 0.4634 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,860,925.2 | 1.7747 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 23,026.6 | 0.0878 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 115,018.8 | 0.4388 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 122,900.8 | 0.4688 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 464,208.7 | 1.7708 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,743.1 | 0.0876 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 27,337.5 | 0.4171 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 28,399.1 | 0.4333 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 116,573.2 | 1.7788 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 453,304.3 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `codegrammar-xflag` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 640.4 | 639.7 | 641.4 | 0.6 | 1.000x | 1.000x | faster ×1.13 | 75 | 8.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 726.1 | 724.9 | 727.9 | 1.1 | 1.134x | 1.134x | - | 75 | 9.7 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,492.7 | 2,483.2 | 2,494.9 | 4.2 | 3.893x | 3.893x | - | 75 | 33.2 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,519.1 | 2,486.3 | 2,558.1 | 24.2 | 3.934x | 3.934x | - | 75 | 33.6 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `cg-key-colon`, 29.9 ns, 7 B; largest Δ: `lp-quoted-escaped`, -23.7 ns (now 7.7 ns), 16 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 11,171,694.4 | 8.1175 | 11,165,609.0 | 11,253,599.9 | 37,085.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,175,118.7 | 8.1199 | 11,168,662.4 | 11,194,764.7 | 8,843.5 | 1.000x | 1.000x | unchanged (within spread) |
+
+#### `currency-lookbehind-fixed` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 8,507,269.5 | 8.1132 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8,514,228.4 | 8.1198 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,129,572.8 | 8.1237 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 2,128,738.7 | 8.1205 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 535,042.6 | 8.1641 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 534,285.0 | 8.1525 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 8,514,228.4 ns, 1,048,576 B
+
+### `currency-lookbehind-fixed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 5,129.7 | 5,126.8 | 5,154.4 | 11.3 | 1.000x | 1.000x | faster ×1.01 | 75 | 68.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 5,163.3 | 5,152.4 | 5,172.1 | 6.7 | 1.007x | 1.007x | - | 75 | 68.8 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-syslog`, 484.7 ns, 56 B; largest Δ: `cg-string-escape`, -1.4 ns (now 13.9 ns), 2 B
+
+### `date-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 15.6 | 0.0000 | 15.6 | 15.7 | 0.0 | 1.000x | 1.000x | faster ×1.03 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 16.0 | 0.0000 | 16.0 | 16.1 | 0.0 | 1.029x | 1.029x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 77.1 | 0.0001 | 74.4 | 78.4 | 1.4 | 4.942x | 4.942x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 167.1 | 0.0001 | 167.0 | 167.4 | 0.1 | 10.715x | 10.715x | - |
+
+#### `date-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 5.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 24.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 5.2 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.4 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 25.7 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.7 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 5.2 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.3 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0004 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.9 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-256k`, 5.2 ns, 262,144 B; largest Δ: `t-64k`, -0.2 ns (now 5.2 ns), 65,536 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `date-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 489.1 | 488.9 | 491.2 | 1.1 | 1.000x | 1.000x | - | 75 | 6.5 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 512.0 | 510.9 | 512.4 | 0.6 | 1.047x | 1.047x | slower ×1.05 | 75 | 6.8 | 8.0 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,762.4 | 1,760.8 | 1,766.6 | 2.1 | 3.603x | 3.603x | - | 75 | 23.5 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,868.7 | 1,866.7 | 1,869.6 | 1.2 | 3.820x | 3.820x | - | 75 | 24.9 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 51.2 ns, 20 B; largest Δ: `rd-phone-list-hit`, +0.6 ns (now 9.1 ns), 7 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `doubled-word` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 25,345,451.8 | 18.4162 | 25,291,167.1 | 25,465,686.8 | 62,453.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 25,413,930.7 | 18.4660 | 25,389,691.5 | 25,447,138.2 | 21,563.0 | 1.003x | 1.003x | unchanged (within spread) |
+
+#### `doubled-word` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 19,332,187.6 | 18.4366 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 19,367,072.3 | 18.4699 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,829,215.7 | 18.4220 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,835,763.1 | 18.4470 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,206,201.2 | 18.4052 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,205,398.0 | 18.3929 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 19,367,072.3 ns, 1,048,576 B
+
+### `doubled-word` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 20,841.9 | 20,769.2 | 20,862.3 | 32.2 | 1.000x | 1.000x | unchanged (within spread) | 75 | 277.9 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 20,851.0 | 20,811.0 | 20,900.5 | 30.1 | 1.000x | 1.000x | - | 75 | 278.0 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 1,322.1 ns, 81 B; largest Δ: `br-tag-mismatch`, +8.1 ns (now 320.6 ns), 19 B
+
+### `dup-param-detect` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,144.6 | 0.0168 | 23,110.7 | 23,159.8 | 17.4 | 1.000x | 1.000x | faster ×579.07 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 13,402,325.9 | 9.7383 | 13,327,524.6 | 13,482,315.2 | 50,822.8 | 579.068x | 579.068x | - |
+
+#### `dup-param-detect` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,642.1 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 10,215,067.6 | 9.7418 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,390.6 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,558,044.8 | 9.7582 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,109.4 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 630,101.1 | 9.6146 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,642.1 ns, 1,048,576 B
+
+### `dup-param-detect` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,573.8 | 1,572.1 | 1,574.9 | 1.2 | 1.000x | 1.000x | faster ×6.90 | 75 | 21.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 10,856.5 | 10,841.1 | 10,877.7 | 14.5 | 6.898x | 6.898x | - | 75 | 144.8 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-benign`, 390.8 ns, 39 B; largest Δ: `sec-slack-webhook`, -643.4 ns (now 10.6 ns), 81 B
+
+### `email-local-nodup` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 977.1 | 0.0007 | 975.1 | 980.1 | 2.0 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 977.7 | 0.0007 | 976.0 | 982.1 | 2.1 | 1.001x | 1.001x | unchanged (within spread) |
+
+#### `email-local-nodup` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 229.0 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 230.7 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 458.1 | 0.0017 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 457.4 | 0.0017 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 291.3 | 0.0044 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 290.3 | 0.0044 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-256k`, 457.4 ns, 262,144 B; largest Δ: `t-1m`, +1.8 ns (now 230.7 ns), 1,048,576 B
+
+### `email-local-nodup` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 10,539.6 | 10,522.0 | 10,584.2 | 24.3 | 1.000x | 1.000x | faster ×1.01 | 75 | 140.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 10,648.4 | 10,594.1 | 10,719.3 | 40.4 | 1.010x | 1.010x | - | 75 | 142.0 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 927.7 ns, 61 B; largest Δ: `v-us-zip`, -6.5 ns (now 85.4 ns), 5 B
+
+### `email-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 32.0 | 0.0000 | 30.7 | 34.3 | 1.3 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 107.6 | 0.0001 | 107.5 | 109.5 | 0.8 | 3.365x | 3.365x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,138.8 | 0.0168 | 23,110.9 | 23,157.9 | 16.6 | 723.527x | 723.527x | slower ×723.53 |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 31,640.1 | 0.0230 | 31,607.5 | 31,662.7 | 20.5 | 989.353x | 989.353x | - |
+
+#### `email-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 11.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 37.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,642.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,132.3 | 0.0230 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.3 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 33.1 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,395.0 | 0.0168 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,982.6 | 0.0228 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.5 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 37.7 | 0.0006 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,103.9 | 0.0168 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,525.6 | 0.0233 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,642.2 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `email-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 645.2 | 642.8 | 646.1 | 1.2 | 1.000x | 1.000x | faster ×1.51 | 75 | 8.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 976.2 | 974.0 | 1,159.5 | 73.4 | 1.513x | 1.513x | - | 75 | 13.0 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,851.7 | 1,844.9 | 1,855.1 | 4.4 | 2.870x | 2.870x | - | 75 | 24.7 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,051.1 | 4,046.1 | 4,125.2 | 30.5 | 6.279x | 6.279x | - | 75 | 54.0 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-email`, 55.7 ns, 24 B; largest Δ: `sec-github-pat`, -62.1 ns (now 8.0 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `evil-alt-nested` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.4 | 0.0000 | 24.2 | 25.5 | 0.5 | 1.000x | 1.000x | faster ×1.10 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 26.9 | 0.0000 | 26.8 | 27.6 | 0.4 | 1.103x | 1.103x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87.7 | 0.0001 | 87.4 | 89.7 | 0.9 | 3.590x | 3.590x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 169.8 | 0.0001 | 169.7 | 169.8 | 0.0 | 6.953x | 6.953x | - |
+
+#### `evil-alt-nested` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4.8 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 27.2 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 10.9 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 11.9 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 33.1 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 58.8 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-64k`, 10.9 ns, 65,536 B; largest Δ: `t-1m`, -1.1 ns (now 9.1 ns), 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 46,487.5 | 0.0338 | 46,408.2 | 46,574.3 | 54.0 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 84,752.4 | 0.0616 | 84,650.4 | 86,197.1 | 590.5 | 1.823x | 1.823x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 292,413.5 | 0.2125 | 292,121.0 | 293,064.1 | 316.6 | 6.290x | 6.290x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 292,762.7 | 0.2127 | 292,658.4 | 293,391.5 | 324.5 | 6.298x | 6.298x | unchanged (within spread) |
+
+#### `file-ext-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 35,288.1 | 0.0337 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 64,537.4 | 0.0615 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 228,417.8 | 0.2178 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 228,479.9 | 0.2179 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 8,887.5 | 0.0339 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,067.8 | 0.0613 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 52,587.1 | 0.2006 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 53,057.3 | 0.2024 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,281.5 | 0.0348 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,110.3 | 0.0627 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 11,343.1 | 0.1731 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 11,466.7 | 0.1750 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 228,479.9 ns, 1,048,576 B; largest Δ: `t-256k`, +470.1 ns (now 53,057.3 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `file-ext-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 747.3 | 745.9 | 750.0 | 1.4 | 1.000x | 1.000x | faster ×1.15 | 75 | 10.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 862.5 | 826.5 | 911.3 | 29.8 | 1.154x | 1.154x | - | 75 | 11.5 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,417.9 | 1,411.6 | 2,790.0 | 546.3 | 1.897x | 1.897x | - | 75 | 18.9 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,476.4 | 2,474.0 | 2,482.9 | 3.1 | 3.314x | 3.314x | - | 75 | 33.0 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-fileext-short`, 29.9 ns, 14 B; largest Δ: `v-ipv4`, -14.9 ns (now 7.7 ns), 11 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `float-literal-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,790,225.4 | 1.3008 | 1,784,407.8 | 1,793,670.5 | 3,739.5 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,932,614.8 | 1.4043 | 1,931,247.1 | 1,938,483.1 | 2,702.8 | 1.080x | 1.080x | slower ×1.08 |
+
+#### `float-literal-bound` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,369,750.5 | 1.3063 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 1,480,450.1 | 1.4119 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 337,819.1 | 1.2887 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 363,954.2 | 1.3884 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 82,527.6 | 1.2593 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 88,444.9 | 1.3496 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 1,480,450.1 ns, 1,048,576 B
+
+### `float-literal-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,632.6 | 1,630.3 | 1,661.6 | 12.4 | 1.000x | 1.000x | faster ×1.53 | 75 | 21.8 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,502.2 | 2,489.1 | 2,509.6 | 7.4 | 1.533x | 1.533x | - | 75 | 33.4 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-ipv4`, 245.2 ns, 11 B; largest Δ: `v-uuid-valid`, -63.5 ns (now 10.0 ns), 36 B
+
+### `floor-byte` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 23,126.4 | 0.0168 | 23,119.3 | 23,139.6 | 7.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,155.0 | 0.0168 | 23,131.2 | 23,194.0 | 20.2 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,418.6 | 0.0170 | 23,385.8 | 23,493.6 | 36.2 | 1.013x | 1.013x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 32,370.1 | 0.0235 | 32,315.0 | 32,374.4 | 22.5 | 1.400x | 1.400x | - |
+
+#### `floor-byte` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,638.6 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,660.1 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,833.6 | 0.0170 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,529.8 | 0.0234 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,379.0 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,388.1 | 0.0167 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,441.0 | 0.0169 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 6,142.4 | 0.0234 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,108.2 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,132.2 | 0.0173 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,679.6 | 0.0256 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,660.1 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `floor-byte` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 600.0 | 598.7 | 601.0 | 0.7 | 1.000x | 1.000x | faster ×1.11 | 75 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 666.2 | 660.9 | 669.0 | 2.9 | 1.110x | 1.110x | - | 75 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,225.5 | 1,224.6 | 1,235.6 | 4.2 | 2.042x | 2.042x | - | 75 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,041.3 | 2,037.4 | 2,041.9 | 1.7 | 3.402x | 3.402x | - | 75 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `floor-hit`, 20.2 ns, 1 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 64,145.5 | 0.0466 | 64,104.5 | 64,366.2 | 96.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 483,016.9 | 0.3510 | 482,812.9 | 484,495.4 | 641.9 | 7.530x | 7.530x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 483,191.5 | 0.3511 | 482,848.2 | 483,942.6 | 428.1 | 7.533x | 7.533x | unchanged (within spread) |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,443,839.4 | 1.7757 | 2,442,960.0 | 2,455,910.1 | 4,827.8 | 38.098x | 38.098x | - |
+
+#### `high-byte-run` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 48,751.7 | 0.0465 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 367,983.3 | 0.3509 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 368,060.8 | 0.3510 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,860,957.8 | 1.7747 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 12,226.6 | 0.0466 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 91,959.9 | 0.3508 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 91,935.4 | 0.3507 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 465,532.5 | 1.7759 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,161.0 | 0.0482 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 23,188.2 | 0.3538 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 23,060.5 | 0.3519 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 117,009.7 | 1.7854 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 368,060.8 ns, 1,048,576 B; largest Δ: `t-64k`, -127.7 ns (now 23,060.5 ns), 65,536 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `high-byte-run` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,113.8 | 1,110.3 | 1,121.7 | 3.9 | 1.000x | 1.000x | - | 75 | 14.9 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,116.1 | 1,114.9 | 1,117.9 | 1.0 | 1.002x | 1.002x | unchanged (within spread) | 75 | 14.9 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,687.7 | 2,682.4 | 2,698.6 | 5.3 | 2.413x | 2.413x | - | 75 | 35.8 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 52.5 ns, 93 B; largest Δ: `sec-userpass`, +6.3 ns (now 25.2 ns), 33 B
+
+### `ipv4-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 17.9 | 0.0000 | 17.9 | 18.0 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 18.7 | 0.0000 | 18.7 | 19.0 | 0.1 | 1.044x | 1.044x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.0 | 0.1 | 1.387x | 1.387x | slower ×1.33 |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.3 | 30.6 | 0.1 | 1.695x | 1.695x | - |
+
+#### `ipv4-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.2 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0002 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-64k`, 8.3 ns, 65,536 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `ipv4-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 497.0 | 493.5 | 499.2 | 2.0 | 1.000x | 1.000x | - | 75 | 6.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 627.0 | 626.4 | 628.1 | 0.6 | 1.262x | 1.262x | slower ×1.26 | 75 | 8.4 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 951.5 | 949.3 | 967.5 | 6.6 | 1.914x | 1.914x | - | 75 | 12.7 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,451.0 | 1,448.7 | 1,539.8 | 34.9 | 2.919x | 2.919x | - | 75 | 19.3 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-ipv4`, 21.6 ns, 11 B; largest Δ: `v-ipv4-oor`, +3.4 ns (now 10.6 ns), 9 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 290.0 | 0.0002 | 289.0 | 291.2 | 0.8 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 354,380.0 | 0.2575 | 354,209.8 | 356,195.2 | 743.8 | 1221.809x | 1221.809x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 731,389.9 | 0.5314 | 731,077.6 | 734,454.1 | 1,327.3 | 2521.640x | 2521.640x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 775,044.9 | 0.5632 | 774,337.1 | 777,282.6 | 1,104.0 | 2672.151x | 2672.151x | slower ×1.06 |
+
+#### `keyword-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 85.5 | 0.0001 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 271,202.1 | 0.2586 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 564,452.2 | 0.5383 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 598,134.6 | 0.5704 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 122.0 | 0.0005 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 67,001.8 | 0.2556 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 135,347.4 | 0.5163 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 143,541.5 | 0.5476 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 82.0 | 0.0013 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 16,198.2 | 0.2472 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 31,320.0 | 0.4779 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 33,247.7 | 0.5073 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 598,134.6 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `keyword-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 774.4 | 771.8 | 788.4 | 7.1 | 1.000x | 1.000x | - | 75 | 10.3 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 800.6 | 799.8 | 802.6 | 1.0 | 1.034x | 1.034x | slower ×1.03 | 75 | 10.7 | 8.0 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,612.3 | 1,608.1 | 1,629.6 | 7.5 | 2.082x | 2.082x | - | 75 | 21.5 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,673.1 | 2,671.4 | 2,690.1 | 7.0 | 3.452x | 3.452x | - | 75 | 35.6 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rec-comment-nested`, 24.0 ns, 34 B; largest Δ: `lp-syslog`, +3.8 ns (now 17.9 ns), 56 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `logparse-atomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 32.3 | 0.0000 | 29.9 | 32.8 | 1.2 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 40.3 | 0.0000 | 40.2 | 40.5 | 0.1 | 1.249x | 1.249x | slower ×1.25 |
+
+#### `logparse-atomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 13.3 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.9 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 13.3 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 10.4 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 13.6 | 0.0002 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-64k`, 13.6 ns, 65,536 B
+
+### `logparse-atomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 838.7 | 836.5 | 852.1 | 5.8 | 1.000x | 1.000x | - | 75 | 11.2 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 859.9 | 857.6 | 860.3 | 1.1 | 1.025x | 1.025x | slower ×1.03 | 75 | 11.5 | 8.0 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-atomic-hit`, 73.5 ns, 31 B; largest Δ: `v-email`, -5.0 ns (now 9.5 ns), 24 B
+
+### `logparse-atomic-removed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 18.8 | 0.0000 | 18.7 | 18.8 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 30.0 | 0.0000 | 29.9 | 30.1 | 0.1 | 1.598x | 1.598x | slower ×1.60 |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 88.2 | 0.0001 | 87.1 | 88.3 | 0.5 | 4.700x | 4.700x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 161.5 | 0.0001 | 161.4 | 161.6 | 0.1 | 8.601x | 8.601x | - |
+
+#### `logparse-atomic-removed` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 53.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 9.8 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 29.3 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 53.4 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.9 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 10.4 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 54.5 | 0.0008 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-64k`, 10.4 ns, 65,536 B; largest Δ: `t-1m`, +3.9 ns (now 9.8 ns), 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `logparse-atomic-removed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 492.6 | 492.5 | 494.5 | 0.7 | 1.000x | 1.000x | - | 75 | 6.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 660.4 | 658.8 | 669.0 | 3.7 | 1.341x | 1.341x | slower ×1.34 | 75 | 8.8 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,185.3 | 1,168.4 | 1,208.3 | 14.1 | 2.406x | 2.406x | - | 75 | 15.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,583.9 | 1,535.5 | 2,870.8 | 523.1 | 3.215x | 3.215x | - | 75 | 21.1 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-atomic-hit`, 42.7 ns, 31 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `mojibake-curly-quote` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,145.4 | 0.0168 | 23,135.4 | 23,167.7 | 13.2 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 23,146.1 | 0.0168 | 23,141.5 | 23,237.1 | 36.1 | 1.000x | 1.000x | - |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 31,617.2 | 0.0230 | 31,605.1 | 31,727.3 | 44.7 | 1.366x | 1.366x | - |
+
+#### `mojibake-curly-quote` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,642.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,661.0 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,116.3 | 0.0230 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,392.1 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,391.5 | 0.0168 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,971.0 | 0.0228 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,111.4 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,107.4 | 0.0169 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,531.0 | 0.0234 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,642.7 ns, 1,048,576 B
+
+- not ranked: `rust_1.13.1_default-caps-simdna` — did-not-compile (pattern is not valid UTF-8 at byte 0: invalid utf-8 sequence of 1 bytes from index 0)
+
+### `mojibake-curly-quote` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 619.3 | 618.3 | 621.9 | 1.3 | 1.000x | 1.000x | faster ×1.12 | 75 | 8.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 693.7 | 692.4 | 695.2 | 0.9 | 1.120x | 1.120x | - | 75 | 9.2 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,040.6 | 2,030.6 | 2,046.6 | 6.3 | 3.295x | 3.295x | - | 75 | 27.2 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `nu-mojibake`, 40.6 ns, 7 B; largest Δ: `sec-github-pat`, -5.8 ns (now 9.4 ns), 93 B
+
+- not ranked: `rust_1.13.1_default-caps-simdna` — did-not-compile (pattern is not valid UTF-8 at byte 0: invalid utf-8 sequence of 1 bytes from index 0)
+
+### `nested-comment-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 7,808,166.4 | 5.6735 | 7,803,400.8 | 7,827,125.7 | 8,273.9 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,275,952.3 | 6.7400 | 8,412,430.7 | 9,731,944.2 | 464,026.9 | 1.188x | 1.188x | slower ×1.19 |
+
+#### `nested-comment-rec` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5,948,393.6 | 5.6728 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,374,031.2 | 7.0324 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,486,515.4 | 5.6706 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,521,368.3 | 5.8036 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 371,623.6 | 5.6705 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 380,995.5 | 5.8135 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 7,374,031.2 ns, 1,048,576 B
+
+### `nested-comment-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,658.8 | 2,649.8 | 2,727.2 | 28.7 | 1.000x | 1.000x | faster ×3.50 | 75 | 35.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 9,295.3 | 9,286.5 | 9,338.2 | 18.5 | 3.496x | 3.496x | - | 75 | 123.9 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rec-comment-nested`, 681.8 ns, 34 B; largest Δ: `sec-github-pat`, -512.4 ns (now 10.9 ns), 93 B
+
+### `numeric-id-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 14.3 | 0.0000 | 14.2 | 14.4 | 0.1 | 1.000x | 1.000x | faster ×1.06 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 15.2 | 0.0000 | 15.1 | 15.3 | 0.1 | 1.059x | 1.059x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 85.3 | 0.0001 | 85.1 | 85.5 | 0.1 | 5.949x | 5.949x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.9 | 0.0001 | 166.8 | 167.1 | 0.1 | 11.636x | 11.636x | - |
+
+#### `numeric-id-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 28.9 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.6 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 30.0 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.7 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 4.8 ns, 1,048,576 B; largest Δ: `t-256k`, -0.3 ns (now 4.7 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `numeric-id-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 470.1 | 469.8 | 473.3 | 1.5 | 1.000x | 1.000x | unchanged (within spread) | 75 | 6.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 470.2 | 469.3 | 471.4 | 0.8 | 1.000x | 1.000x | - | 75 | 6.3 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,959.8 | 1,958.3 | 1,969.4 | 4.0 | 4.169x | 4.169x | - | 75 | 26.1 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,665.6 | 2,639.6 | 2,675.4 | 12.0 | 5.671x | 5.671x | - | 75 | 35.5 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 27.9 ns, 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `phone-list-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 14.3 | 0.0000 | 14.2 | 15.1 | 0.3 | 1.000x | 1.000x | faster ×1.06 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 15.1 | 0.0000 | 15.1 | 15.3 | 0.1 | 1.059x | 1.059x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87.7 | 0.0001 | 83.9 | 90.4 | 2.2 | 6.143x | 6.143x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.9 | 0.0001 | 166.8 | 169.5 | 1.0 | 11.694x | 11.694x | - |
+
+#### `phone-list-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 30.1 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.6 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.1 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 30.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-256k`, 4.8 ns, 262,144 B; largest Δ: `t-64k`, -0.3 ns (now 4.7 ns), 65,536 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `phone-list-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 477.4 | 474.8 | 478.9 | 1.3 | 1.000x | 1.000x | faster ×1.01 | 75 | 6.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 480.3 | 479.2 | 483.4 | 1.4 | 1.006x | 1.006x | - | 75 | 6.4 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,985.9 | 1,980.8 | 1,990.7 | 3.5 | 4.160x | 4.160x | - | 75 | 26.5 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,960.4 | 2,956.7 | 2,971.5 | 5.1 | 6.201x | 6.201x | - | 75 | 39.5 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 23.9 ns, 20 B; largest Δ: `rd-numeric-id-hit`, -1.0 ns (now 14.6 ns), 4 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `phone-palindrome-6` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 7,529,083.8 | 5.4707 | 7,347,358.5 | 7,757,747.4 | 159,024.0 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,534,700.2 | 5.4748 | 7,372,404.2 | 7,708,916.7 | 108,049.6 | 1.001x | 1.001x | unchanged (within spread) |
+
+#### `phone-palindrome-6` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5,911,212.8 | 5.6374 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 5,807,049.7 | 5.5380 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,329,793.4 | 5.0728 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,430,653.4 | 5.4575 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 316,014.3 | 4.8220 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 355,024.8 | 5.4172 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 5,807,049.7 ns, 1,048,576 B
+
+### `phone-palindrome-6` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,447.7 | 7,323.8 | 7,629.7 | 111.0 | 1.000x | 1.000x | unchanged (within spread) | 75 | 99.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 7,595.9 | 7,516.5 | 7,634.3 | 41.6 | 1.020x | 1.020x | - | 75 | 101.3 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 637.0 ns, 81 B; largest Δ: `v-uuid-valid`, -35.7 ns (now 346.3 ns), 36 B
+
+### `pwd-strength-chain` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 221.3 | 0.0002 | 219.1 | 221.5 | 1.1 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 222.4 | 0.0002 | 221.0 | 224.4 | 1.2 | 1.005x | 1.005x | - |
+
+#### `pwd-strength-chain` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 57.3 | 0.0001 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 57.6 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 94.5 | 0.0004 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 96.2 | 0.0004 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 68.4 | 0.0010 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 68.4 | 0.0010 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 94.5 ns, 262,144 B
+
+### `pwd-strength-chain` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12,186.5 | 12,088.3 | 12,503.9 | 180.2 | 1.000x | 1.000x | unchanged (within spread) | 75 | 162.5 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 12,384.2 | 12,340.6 | 12,761.4 | 178.2 | 1.016x | 1.016x | - | 75 | 165.1 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 920.4 ns, 93 B
+
+### `quoted-delim-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,791,937.4 | 7.1149 | 9,784,006.6 | 9,907,655.4 | 46,277.6 | 1.000x | 1.000x | faster ×1.01 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 9,931,912.1 | 7.2166 | 9,838,742.9 | 9,945,276.9 | 39,352.9 | 1.014x | 1.014x | - |
+
+#### `quoted-delim-match` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,464,175.9 | 7.1184 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 7,569,158.1 | 7.2185 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,863,416.1 | 7.1084 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,879,699.9 | 7.1705 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 465,656.4 | 7.1054 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 471,637.7 | 7.1966 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 7,464,175.9 ns, 1,048,576 B
+
+### `quoted-delim-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,272.1 | 11,162.8 | 11,280.4 | 44.0 | 1.000x | 1.000x | unchanged (within spread) | 75 | 150.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 11,296.6 | 11,131.5 | 11,417.8 | 91.8 | 1.002x | 1.002x | - | 75 | 150.6 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 660.5 ns, 93 B; largest Δ: `lp-num-neg-dec`, +17.6 ns (now 78.6 ns), 7 B
+
+### `router-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,245.7 | 0.0009 | 1,243.0 | 1,249.2 | 2.0 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 60,481.8 | 0.0439 | 60,380.8 | 60,620.4 | 81.1 | 48.553x | 48.553x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 393,998.2 | 0.2863 | 393,390.0 | 395,859.5 | 926.3 | 316.291x | 316.291x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 398,752.2 | 0.2897 | 398,343.0 | 399,028.1 | 251.3 | 320.107x | 320.107x | slower ×1.01 |
+
+#### `router-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 84.7 | 0.0001 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 46,187.0 | 0.0440 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 302,029.9 | 0.2880 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 305,830.1 | 0.2917 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 634.1 | 0.0024 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 11,503.6 | 0.0439 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 74,683.0 | 0.2849 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 75,432.0 | 0.2878 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 527.1 | 0.0080 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,726.0 | 0.0416 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,047.9 | 0.2601 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 17,324.5 | 0.2644 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 305,830.1 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `router-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 751.3 | 749.5 | 752.3 | 0.9 | 1.000x | 1.000x | faster ×1.04 | 75 | 10.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 783.4 | 772.6 | 788.8 | 6.8 | 1.043x | 1.043x | - | 75 | 10.4 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,308.9 | 1,308.3 | 1,311.8 | 1.4 | 1.742x | 1.742x | - | 75 | 17.5 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,306.1 | 2,301.2 | 2,308.4 | 2.6 | 3.069x | 3.069x | - | 75 | 30.7 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 45.1 ns, 81 B; largest Δ: `rec-tag-depth3`, -18.4 ns (now 7.7 ns), 22 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `tag-depth3-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,159.7 | 0.0168 | 23,125.3 | 23,189.0 | 22.2 | 1.000x | 1.000x | faster ×202.31 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,685,352.5 | 3.4044 | 4,678,392.6 | 4,709,871.0 | 11,062.8 | 202.306x | 202.306x | - |
+
+#### `tag-depth3-bound` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,635.0 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,567,862.1 | 3.4026 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,391.7 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 891,743.6 | 3.4017 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,114.0 | 0.0170 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 224,070.0 | 3.4190 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,635.0 ns, 1,048,576 B
+
+### `tag-depth3-bound` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,185.4 | 2,158.5 | 2,202.2 | 14.3 | 1.000x | 1.000x | faster ×3.18 | 75 | 29.1 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 6,958.2 | 6,889.3 | 7,020.3 | 43.8 | 3.184x | 3.184x | - | 75 | 92.8 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-syslog`, 921.9 ns, 56 B; largest Δ: `sec-github-pat`, -325.4 ns (now 10.6 ns), 93 B
+
+### `tag-pair-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,159.6 | 0.0168 | 23,129.6 | 23,181.4 | 17.0 | 1.000x | 1.000x | faster ×200.30 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,638,824.0 | 3.3706 | 4,634,493.6 | 4,652,236.4 | 6,209.0 | 200.298x | 200.298x | - |
+
+#### `tag-pair-match` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,667.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,533,020.6 | 3.3694 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,382.1 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 882,670.6 | 3.3671 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,106.0 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 222,724.8 | 3.3985 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,667.4 ns, 1,048,576 B
+
+### `tag-pair-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,372.9 | 1,366.3 | 1,374.9 | 3.0 | 1.000x | 1.000x | faster ×4.45 | 75 | 18.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 6,111.8 | 6,102.1 | 6,303.8 | 76.8 | 4.452x | 4.452x | - | 75 | 81.5 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-syslog`, 217.3 ns, 56 B; largest Δ: `sec-github-pat`, -325.6 ns (now 9.8 ns), 93 B
+
+### `trim-nested-star` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 14.2 | 0.0000 | 14.2 | 14.3 | 0.0 | 1.000x | 1.000x | faster ×1.07 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 15.2 | 0.0000 | 15.1 | 15.2 | 0.1 | 1.066x | 1.066x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 82.9 | 0.0001 | 79.8 | 95.8 | 5.6 | 5.823x | 5.823x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.8 | 0.0001 | 166.8 | 166.9 | 0.0 | 11.718x | 11.718x | - |
+
+#### `trim-nested-star` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 27.6 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.0 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 29.1 | 0.0004 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 4.8 ns, 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `trim-nested-star` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 423.6 | 423.0 | 429.4 | 2.4 | 1.000x | 1.000x | unchanged (within spread) | 75 | 5.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 427.4 | 426.9 | 429.3 | 0.9 | 1.009x | 1.009x | - | 75 | 5.7 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,863.0 | 1,861.8 | 1,867.5 | 2.1 | 4.398x | 4.398x | - | 75 | 24.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,989.9 | 1,988.3 | 2,009.0 | 7.7 | 4.698x | 4.698x | - | 75 | 26.5 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-trim-near-miss`, 38.2 ns, 20 B; largest Δ: `rd-trim-hit`, -1.5 ns (now 13.9 ns), 4 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `utf8-lead-no-cont` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 480,709.1 | 0.3493 | 479,349.3 | 484,011.7 | 2,027.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 481,751.8 | 0.3500 | 480,770.2 | 482,851.1 | 682.1 | 1.002x | 1.002x | unchanged (within spread) |
+
+#### `utf8-lead-no-cont` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 366,757.3 | 0.3498 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 366,661.4 | 0.3497 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 91,439.3 | 0.3488 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 91,831.8 | 0.3503 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 22,543.2 | 0.3440 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 22,985.4 | 0.3507 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 366,661.4 ns, 1,048,576 B; largest Δ: `t-64k`, +442.2 ns (now 22,985.4 ns), 65,536 B
+
+### `utf8-lead-no-cont` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,224.7 | 1,223.6 | 1,256.8 | 12.7 | 1.000x | 1.000x | faster ×1.03 | 75 | 16.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,258.6 | 1,251.3 | 1,266.5 | 5.9 | 1.028x | 1.028x | - | 75 | 16.8 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 55.1 ns, 93 B; largest Δ: `rd-numeric-id-near-miss`, -2.2 ns (now 15.3 ns), 20 B
+
+### `uuid-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.3 | 0.0000 | 18.1 | 18.5 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 19.9 | 0.0000 | 19.9 | 22.5 | 1.0 | 1.087x | 1.087x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.7 | 0.0 | 1.506x | 1.506x | slower ×1.39 |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.3 | 0.0000 | 30.2 | 30.4 | 0.1 | 1.654x | 1.654x | - |
+
+#### `uuid-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 9.2 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 8.0 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.9 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0002 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 9.5 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 565.5 | 563.7 | 566.4 | 0.9 | 1.000x | 1.000x | - | 75 | 7.5 | 8.9 | 100% |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 573.7 | 571.4 | 588.3 | 6.5 | 1.014x | 1.014x | - | 75 | 7.6 | 27.2 | 100% |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 671.6 | 663.9 | 673.4 | 3.5 | 1.187x | 1.187x | slower ×1.19 | 75 | 9.0 | 8.0 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 696.2 | 695.9 | 697.0 | 0.4 | 1.231x | 1.231x | - | 75 | 9.3 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 47.9 ns, 36 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 124.3 | 0.0001 | 123.8 | 130.7 | 2.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 263,616.4 | 0.1915 | 263,532.4 | 264,374.9 | 347.8 | 2120.612x | 2120.612x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 306,970.7 | 0.2230 | 306,464.2 | 308,042.2 | 543.7 | 2469.367x | 2469.367x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 349,566.6 | 0.2540 | 349,434.0 | 349,647.6 | 77.8 | 2812.021x | 2812.021x | slower ×1.33 |
+
+#### `wild-codegrammar-json-array-begin` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 43.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 202,588.1 | 0.1932 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 236,202.4 | 0.2253 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 268,751.6 | 0.2563 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 41.2 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 48,668.2 | 0.1857 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 56,698.9 | 0.2163 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 64,621.2 | 0.2465 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 39.2 | 0.0006 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 12,397.4 | 0.1892 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 14,049.7 | 0.2144 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 16,192.0 | 0.2471 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 268,751.6 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-array-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 624.7 | 623.8 | 625.5 | 0.6 | 1.000x | 1.000x | faster ×1.11 | 75 | 8.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 690.9 | 686.3 | 710.2 | 8.5 | 1.106x | 1.106x | - | 75 | 9.2 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,331.7 | 1,329.2 | 1,379.3 | 19.4 | 2.132x | 2.132x | - | 75 | 17.8 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,072.3 | 2,069.5 | 2,117.8 | 18.4 | 3.317x | 3.317x | - | 75 | 27.6 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-syslog`, 21.7 ns, 56 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 182,624.7 | 0.1327 | 182,331.9 | 183,474.5 | 401.1 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 280,513.8 | 0.2038 | 280,406.5 | 281,500.3 | 404.2 | 1.536x | 1.536x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,196,460.1 | 3.0492 | 4,194,829.0 | 4,209,404.5 | 5,389.3 | 22.979x | 22.979x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,198,271.2 | 3.0505 | 4,193,872.5 | 4,207,746.1 | 5,263.1 | 22.989x | 22.989x | unchanged (within spread) |
+
+#### `wild-codegrammar-json-constant` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 140,387.4 | 0.1339 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 213,610.5 | 0.2037 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,198,802.5 | 3.0506 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,198,650.3 | 3.0505 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 33,851.5 | 0.1291 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 53,442.7 | 0.2039 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 799,810.8 | 3.0510 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 800,248.9 | 3.0527 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 8,375.5 | 0.1278 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 13,453.7 | 0.2053 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 198,254.2 | 3.0251 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 198,196.8 | 3.0242 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 3,198,650.3 ns, 1,048,576 B; largest Δ: `t-256k`, +438.1 ns (now 800,248.9 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-constant` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,423.2 | 2,422.8 | 2,425.9 | 1.2 | 1.000x | 1.000x | faster ×1.01 | 75 | 32.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,450.7 | 2,445.5 | 2,453.9 | 2.8 | 1.011x | 1.011x | - | 75 | 32.7 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,008.8 | 3,001.4 | 3,016.8 | 5.1 | 1.242x | 1.242x | - | 75 | 40.1 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 3,069.1 | 3,043.7 | 3,109.9 | 22.2 | 1.267x | 1.267x | - | 75 | 40.9 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 179.5 ns, 93 B; largest Δ: `rec-array-define`, -3.3 ns (now 18.9 ns), 11 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-number-extended` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,451,638.9 | 1.7814 | 2,442,014.5 | 2,460,151.9 | 6,151.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,458,707.3 | 1.7865 | 2,448,152.9 | 2,471,229.0 | 7,452.7 | 1.003x | 1.003x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 10,598,387.1 | 7.7009 | 10,571,054.0 | 10,605,601.8 | 12,048.1 | 4.323x | 4.323x | - |
+
+#### `wild-codegrammar-json-number-extended` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 1,879,024.5 | 1.7920 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,886,988.3 | 1.7996 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 8,112,216.6 | 7.7364 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 459,368.9 | 1.7524 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 457,076.0 | 1.7436 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 1,995,749.4 | 7.6132 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 113,034.8 | 1.7248 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 114,643.0 | 1.7493 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 488,512.7 | 7.4541 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 1,879,024.5 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
+
+### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,393.8 | 1,379.8 | 1,403.1 | 7.7 | 1.000x | 1.000x | faster ×1.02 | 75 | 18.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,415.6 | 1,397.2 | 1,430.3 | 10.7 | 1.016x | 1.016x | - | 75 | 18.9 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 11,660.4 | 11,637.4 | 12,698.7 | 410.5 | 8.366x | 8.366x | - | 75 | 155.5 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 69.7 ns, 20 B; largest Δ: `sec-userpass`, +6.8 ns (now 36.2 ns), 33 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
+
+### `wild-codegrammar-json-object-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 23,134.0 | 0.0168 | 23,113.0 | 23,301.2 | 71.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,184.9 | 0.0168 | 23,125.4 | 23,206.0 | 29.8 | 1.002x | 1.002x | unchanged (within spread) |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,421.4 | 0.0170 | 23,404.0 | 23,481.3 | 28.6 | 1.012x | 1.012x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 32,318.3 | 0.0235 | 32,253.0 | 32,628.7 | 133.3 | 1.397x | 1.397x | - |
+
+#### `wild-codegrammar-json-object-begin` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,642.4 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,648.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,836.0 | 0.0170 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,508.9 | 0.0234 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,386.7 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,391.8 | 0.0168 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,446.3 | 0.0170 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 6,148.7 | 0.0235 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,106.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,108.8 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,132.2 | 0.0173 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,678.4 | 0.0256 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.3 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-object-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 598.1 | 597.9 | 598.4 | 0.2 | 1.000x | 1.000x | faster ×1.11 | 75 | 8.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 665.3 | 661.7 | 688.0 | 11.7 | 1.112x | 1.112x | - | 75 | 8.9 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,226.6 | 1,225.3 | 1,227.0 | 0.6 | 2.051x | 2.051x | - | 75 | 16.4 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,042.7 | 2,040.4 | 2,063.1 | 8.7 | 3.415x | 3.415x | - | 75 | 27.2 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `cg-object-begin`, 20.2 ns, 1 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,134.0 | 0.0168 | 23,116.8 | 23,150.4 | 11.6 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 23,169.4 | 0.0168 | 23,095.6 | 23,266.0 | 61.1 | 1.002x | 1.002x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,568.9 | 0.0171 | 23,566.0 | 23,840.4 | 106.2 | 1.019x | 1.019x | - |
+
+#### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,648.8 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,672.2 | 0.0169 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,893.4 | 0.0171 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,381.6 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,382.1 | 0.0167 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,500.2 | 0.0172 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,108.5 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,107.6 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,168.9 | 0.0178 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.8 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
+
+### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 674.9 | 673.7 | 676.7 | 1.1 | 1.000x | 1.000x | faster ×1.11 | 75 | 9.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 748.6 | 727.2 | 749.0 | 8.8 | 1.109x | 1.109x | - | 75 | 10.0 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,950.2 | 2,944.0 | 2,982.5 | 13.7 | 4.371x | 4.371x | - | 75 | 39.3 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-winpath-reserved`, 39.2 ns, 24 B; largest Δ: `lp-winpath`, +6.5 ns (now 33.2 ns), 22 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
+
+### `wild-datetime-datefinder-alternation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 664.5 | 0.0005 | 663.9 | 687.5 | 9.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 10,388,445.3 | 7.5483 | 10,366,841.3 | 10,402,414.2 | 12,749.9 | 15634.557x | 15634.557x | unchanged (within spread) |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 10,416,746.5 | 7.5689 | 10,415,260.7 | 10,467,104.4 | 20,179.2 | 15677.151x | 15677.151x | - |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 34,955,033.5 | 25.3986 | 34,875,931.0 | 35,467,619.0 | 237,386.8 | 52607.148x | 52607.148x | - |
+
+#### `wild-datetime-datefinder-alternation` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 213.4 | 0.0002 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,917,262.8 | 7.5505 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 7,936,463.0 | 7.5688 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 24,312,714.8 | 23.1864 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 217.7 | 0.0008 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,976,246.5 | 7.5388 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,982,468.7 | 7.5625 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 7,485,901.5 | 28.5564 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 233.3 | 0.0036 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 494,176.7 | 7.5405 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 496,998.9 | 7.5836 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 3,106,137.2 | 47.3959 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 7,917,262.8 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-datetime-datefinder-alternation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,949.6 | 1,937.4 | 1,953.7 | 6.4 | 1.000x | 1.000x | faster ×1.03 | 75 | 26.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,012.7 | 2,006.7 | 2,019.3 | 4.0 | 1.032x | 1.032x | - | 75 | 26.8 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,755.9 | 3,753.9 | 3,761.1 | 2.5 | 1.927x | 1.927x | - | 75 | 50.1 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87,697.4 | 87,186.0 | 88,012.9 | 318.5 | 44.982x | 44.982x | - | 75 | 1,169.3 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 120.8 ns, 61 B; largest Δ: `la-email-nodup`, -3.7 ns (now 23.8 ns), 9 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-datetime-moment-iso8601` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 19.7 | 0.0000 | 19.6 | 21.6 | 0.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 36.9 | 0.0000 | 36.8 | 37.8 | 0.4 | 1.875x | 1.875x | slower ×1.87 |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 146.8 | 0.0001 | 146.4 | 151.4 | 1.9 | 7.459x | 7.459x | - |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 300.5 | 0.0002 | 299.7 | 310.5 | 4.0 | 15.265x | 15.265x | - |
+
+#### `wild-datetime-moment-iso8601` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 13.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 49.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 40.9 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.6 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 12.5 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 48.8 | 0.0002 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 127.0 | 0.0005 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.6 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 11.1 | 0.0002 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 49.0 | 0.0007 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 133.0 | 0.0020 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 13.4 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-datetime-moment-iso8601` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 589.1 | 588.2 | 593.7 | 2.0 | 1.000x | 1.000x | - | 75 | 7.9 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 631.5 | 631.0 | 632.2 | 0.4 | 1.072x | 1.072x | slower ×1.07 | 75 | 8.4 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,618.4 | 1,617.5 | 1,623.2 | 2.1 | 2.748x | 2.748x | - | 75 | 21.6 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,056.3 | 2,037.0 | 2,063.0 | 8.8 | 3.491x | 3.491x | - | 75 | 27.4 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `dt-iso8601`, 29.9 ns, 20 B; largest Δ: `rd-trim-near-miss`, -49.3 ns (now 7.7 ns), 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-logparse-base10num-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,043,644.9 | 2.9381 | 4,041,193.0 | 4,049,177.2 | 3,090.8 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,082,283.0 | 2.9662 | 4,019,953.3 | 4,800,486.6 | 294,603.2 | 1.010x | 1.010x | - |
+
+#### `wild-logparse-base10num-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,096,785.9 | 2.9533 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,111,899.4 | 2.9677 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 761,621.7 | 2.9054 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 773,434.7 | 2.9504 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 184,711.7 | 2.8185 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 190,926.7 | 2.9133 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,096,785.9 ns, 1,048,576 B
+
+### `wild-logparse-base10num-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,494.0 | 2,482.4 | 2,521.6 | 13.0 | 1.000x | 1.000x | unchanged (within spread) | 75 | 33.3 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,506.4 | 2,486.8 | 2,526.9 | 13.4 | 1.005x | 1.005x | - | 75 | 33.4 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 118.4 ns, 20 B; largest Δ: `sd-empty-alt-hit`, +4.0 ns (now 73.2 ns), 61 B
+
+### `wild-logparse-base10num-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 3,986,220.4 | 2.8964 | 3,982,256.7 | 3,991,033.6 | 2,966.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,990,114.4 | 2.8993 | 3,984,330.5 | 3,998,969.6 | 5,152.1 | 1.001x | 1.001x | unchanged (within spread) |
+
+#### `wild-logparse-base10num-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,050,989.4 | 2.9097 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,057,542.3 | 2.9159 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 751,588.1 | 2.8671 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 750,438.0 | 2.8627 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 181,345.6 | 2.7671 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 181,478.6 | 2.7691 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,057,542.3 ns, 1,048,576 B
+
+### `wild-logparse-base10num-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,447.1 | 2,440.4 | 2,537.4 | 36.3 | 1.000x | 1.000x | unchanged (within spread) | 75 | 32.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,477.7 | 2,473.2 | 2,568.8 | 37.1 | 1.012x | 1.012x | - | 75 | 33.0 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 115.7 ns, 20 B; largest Δ: `la-currency`, -2.4 ns (now 50.0 ns), 10 B
+
+### `wild-logparse-quotedstring-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,010,265.0 | 0.7341 | 1,009,722.8 | 1,014,130.7 | 1,656.1 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,010,763.0 | 0.7344 | 1,008,373.7 | 1,013,305.5 | 1,772.3 | 1.000x | 1.000x | - |
+
+#### `wild-logparse-quotedstring-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 773,929.1 | 0.7381 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 773,071.6 | 0.7373 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 188,742.2 | 0.7200 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 188,692.9 | 0.7198 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 47,652.3 | 0.7271 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 47,648.9 | 0.7271 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 773,929.1 ns, 1,048,576 B
+
+### `wild-logparse-quotedstring-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,948.5 | 1,943.5 | 1,951.8 | 2.8 | 1.000x | 1.000x | faster ×1.01 | 75 | 26.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,962.7 | 1,955.6 | 1,968.0 | 5.1 | 1.007x | 1.007x | - | 75 | 26.2 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-quoted-escaped`, 152.7 ns, 16 B; largest Δ: `br-quoted-delim`, +10.2 ns (now 118.0 ns), 15 B
+
+### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 929,769.2 | 0.6756 | 928,128.6 | 936,047.8 | 2,746.6 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 930,525.1 | 0.6761 | 928,632.2 | 930,997.2 | 870.6 | 1.001x | 1.001x | unchanged (within spread) |
+
+#### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 711,599.1 | 0.6786 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 711,657.2 | 0.6787 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 174,186.9 | 0.6645 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 174,342.2 | 0.6651 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 43,983.2 | 0.6711 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 44,013.8 | 0.6716 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 711,657.2 ns, 1,048,576 B; largest Δ: `t-256k`, +155.3 ns (now 174,342.2 ns), 262,144 B
+
+### `wild-logparse-quotedstring-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,850.4 | 1,842.5 | 1,865.0 | 8.6 | 1.000x | 1.000x | unchanged (within spread) | 75 | 24.7 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,855.1 | 1,848.0 | 1,861.5 | 4.4 | 1.003x | 1.003x | - | 75 | 24.7 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-quoted-escaped`, 127.4 ns, 16 B; largest Δ: `sec-userpass`, +2.8 ns (now 86.3 ns), 33 B
+
+### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,989,575.1 | 2.8989 | 3,988,599.6 | 3,999,602.7 | 4,470.9 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 3,989,947.3 | 2.8991 | 3,988,061.7 | 3,997,590.8 | 3,330.8 | 1.000x | 1.000x | - |
+
+#### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,037,636.3 | 2.8969 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,037,288.5 | 2.8966 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 761,447.5 | 2.9047 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 760,771.7 | 2.9021 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 190,415.6 | 2.9055 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 191,433.9 | 2.9210 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 3,037,636.3 ns, 1,048,576 B; largest Δ: `t-64k`, -1,018.4 ns (now 190,415.6 ns), 65,536 B
+
+### `wild-logparse-syslogbase-expanded` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,591.0 | 1,587.2 | 1,640.7 | 20.5 | 1.000x | 1.000x | faster ×2.25 | 75 | 21.2 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 3,577.8 | 3,571.2 | 3,588.6 | 6.3 | 2.249x | 2.249x | - | 75 | 47.7 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-syslog`, 428.0 ns, 56 B; largest Δ: `sec-github-pat`, -170.4 ns (now 11.5 ns), 93 B
+
+### `wild-logparse-winpath-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,127.1 | 0.0168 | 23,085.2 | 23,146.0 | 22.3 | 1.000x | 1.000x | faster ×150.30 |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 3,475,924.2 | 2.5256 | 3,462,918.0 | 3,487,299.3 | 10,445.6 | 150.297x | 150.297x | - |
+
+#### `wild-logparse-winpath-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,631.9 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,651,472.4 | 2.5286 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,385.2 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 661,057.3 | 2.5217 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,107.8 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 164,545.5 | 2.5108 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,631.9 ns, 1,048,576 B
+
+### `wild-logparse-winpath-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 933.5 | 926.8 | 938.6 | 3.8 | 1.000x | 1.000x | faster ×2.83 | 75 | 12.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,645.3 | 2,635.0 | 2,665.2 | 10.2 | 2.834x | 2.834x | - | 75 | 35.3 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-winpath-reserved`, 78.8 ns, 24 B; largest Δ: `sec-github-pat`, -164.7 ns (now 11.3 ns), 93 B
+
+### `wild-secrets-aws-access-key-id` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 135,353.4 | 0.0983 | 134,881.8 | 135,641.7 | 253.3 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 292,715.6 | 0.2127 | 292,486.5 | 292,907.9 | 138.2 | 2.163x | 2.163x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,986,630.0 | 2.8967 | 3,979,507.8 | 3,987,819.4 | 3,035.0 | 29.453x | 29.453x | faster ×1.05 |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,200,484.6 | 3.0521 | 4,199,420.3 | 4,200,924.0 | 506.9 | 31.033x | 31.033x | - |
+
+#### `wild-secrets-aws-access-key-id` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 104,949.7 | 0.1001 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 223,361.1 | 0.2130 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,036,536.9 | 2.8959 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,201,028.0 | 3.0527 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 24,958.1 | 0.0952 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55,341.5 | 0.2111 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 760,042.7 | 2.8993 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 800,561.6 | 3.0539 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 5,366.2 | 0.0819 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 14,046.7 | 0.2143 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 188,675.0 | 2.8790 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 198,647.9 | 3.0311 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,036,536.9 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-aws-access-key-id` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 982.3 | 980.2 | 983.9 | 1.4 | 1.000x | 1.000x | faster ×2.51 | 75 | 13.1 | 8.0 | 100% |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,100.3 | 2,098.1 | 2,101.6 | 1.2 | 2.138x | 2.138x | - | 75 | 28.0 | 27.2 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,150.7 | 2,136.3 | 2,156.7 | 8.3 | 2.189x | 2.189x | - | 75 | 28.7 | 16.3 | 100% |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,464.9 | 2,460.4 | 2,479.6 | 6.6 | 2.509x | 2.509x | - | 75 | 32.9 | 8.9 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 176.3 ns, 93 B; largest Δ: `sec-slack-webhook`, -137.5 ns (now 8.3 ns), 81 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 46,778.6 | 0.0340 | 46,731.6 | 46,869.8 | 46.5 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,233.4 | 0.0438 | 60,099.4 | 60,316.8 | 83.6 | 1.288x | 1.288x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 124,561.7 | 0.0905 | 124,435.2 | 124,905.4 | 172.3 | 2.663x | 2.663x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 124,798.7 | 0.0907 | 124,746.2 | 124,885.7 | 54.9 | 2.668x | 2.668x | unchanged (within spread) |
+
+#### `wild-secrets-github-pat` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 35,548.9 | 0.0339 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 45,797.1 | 0.0437 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 102,520.4 | 0.0978 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 102,689.2 | 0.0979 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 8,939.3 | 0.0341 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,476.2 | 0.0438 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 18,580.9 | 0.0709 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 18,816.3 | 0.0718 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,288.4 | 0.0349 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,949.0 | 0.0450 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,438.1 | 0.0525 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 3,322.0 | 0.0507 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 102,689.2 ns, 1,048,576 B; largest Δ: `t-256k`, +235.4 ns (now 18,816.3 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-github-pat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 824.4 | 823.4 | 827.0 | 1.4 | 1.000x | 1.000x | - | 75 | 11.0 | 27.2 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.5 | 959.5 | 959.8 | 0.1 | 1.164x | 1.164x | faster ×1.43 | 75 | 12.8 | 8.0 | 100% |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,374.0 | 1,371.1 | 1,378.9 | 2.6 | 1.667x | 1.667x | - | 75 | 18.3 | 8.9 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,709.6 | 1,704.5 | 1,796.7 | 39.8 | 2.074x | 2.074x | - | 75 | 22.8 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 372.1 ns, 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 111,588.1 | 0.0811 | 111,541.9 | 111,722.4 | 68.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 338,487.8 | 0.2459 | 338,281.2 | 339,090.3 | 311.2 | 3.033x | 3.033x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 338,797.9 | 0.2462 | 338,688.6 | 339,039.4 | 135.7 | 3.036x | 3.036x | unchanged (within spread) |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 645,403.6 | 0.4690 | 645,007.8 | 648,225.5 | 1,277.8 | 5.784x | 5.784x | - |
+
+#### `wild-secrets-slack-webhook-url` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 86,290.6 | 0.0823 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 259,808.2 | 0.2478 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 260,101.6 | 0.2481 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 494,203.7 | 0.4713 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 20,510.9 | 0.0782 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 64,071.6 | 0.2444 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 64,072.5 | 0.2444 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 121,819.1 | 0.4647 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,848.7 | 0.0740 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 14,666.0 | 0.2238 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 14,644.9 | 0.2235 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 29,273.5 | 0.4467 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 260,101.6 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 693.8 | 693.5 | 695.0 | 0.5 | 1.000x | 1.000x | - | 75 | 9.3 | 27.2 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 928.0 | 927.8 | 928.4 | 0.2 | 1.338x | 1.338x | - | 75 | 12.4 | 8.9 | 100% |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.8 | 959.2 | 960.8 | 0.6 | 1.383x | 1.383x | slower ×1.03 | 75 | 12.8 | 8.0 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,657.6 | 2,655.8 | 2,662.0 | 2.1 | 3.830x | 3.830x | - | 75 | 35.4 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `sec-slack-webhook`, 327.4 ns, 81 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-username-password-pair` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,143.6 | 0.0168 | 23,136.6 | 23,186.4 | 19.3 | 1.000x | 1.000x | faster ×55.36 |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 475,300.9 | 0.3454 | 474,921.1 | 478,357.7 | 1,269.8 | 20.537x | 20.537x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 488,283.4 | 0.3548 | 487,944.0 | 488,657.0 | 245.7 | 21.098x | 21.098x | - |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,281,220.0 | 0.9309 | 1,280,425.0 | 1,286,992.6 | 2,453.9 | 55.360x | 55.360x | - |
+
+#### `wild-secrets-username-password-pair` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,654.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 377,999.5 | 0.3605 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 371,587.1 | 0.3544 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 972,132.9 | 0.9271 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,387.3 | 0.0167 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 80,972.7 | 0.3089 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 93,703.3 | 0.3574 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 245,649.3 | 0.9371 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,109.4 | 0.0169 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,404.5 | 0.2503 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 22,862.0 | 0.3488 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 64,058.3 | 0.9775 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,654.5 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-secrets-username-password-pair` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 721.4 | 721.2 | 724.2 | 1.1 | 1.000x | 1.000x | faster ×1.90 | 75 | 9.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,372.6 | 1,367.3 | 1,379.7 | 4.4 | 1.903x | 1.903x | - | 75 | 18.3 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,761.0 | 1,760.6 | 1,764.7 | 1.5 | 2.441x | 2.441x | - | 75 | 23.5 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,438.8 | 2,435.4 | 2,444.5 | 3.2 | 3.381x | 3.381x | - | 75 | 32.5 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-userpass`, 147.0 ns, 33 B; largest Δ: `waf-concat`, -52.1 ns (now 7.7 ns), 48 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 82,113.0 | 0.0597 | 81,814.0 | 82,401.7 | 190.6 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 153,217.2 | 0.1113 | 153,133.3 | 153,863.4 | 272.2 | 1.866x | 1.866x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 408,869.9 | 0.2971 | 408,065.0 | 410,037.3 | 695.2 | 4.979x | 4.979x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 413,226.8 | 0.3003 | 411,405.3 | 413,646.2 | 779.4 | 5.032x | 5.032x | slower ×1.01 |
+
+#### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 63,418.9 | 0.0605 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 116,734.9 | 0.1113 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 325,885.8 | 0.3108 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 329,128.3 | 0.3139 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 15,109.3 | 0.0576 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 29,116.4 | 0.1111 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 69,787.3 | 0.2662 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 70,417.1 | 0.2686 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 3,595.0 | 0.0549 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 7,381.2 | 0.1126 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 13,225.3 | 0.2018 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 13,492.6 | 0.2059 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 329,128.3 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-altorder-foo-foobar-rustregex` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 707.0 | 706.6 | 709.5 | 1.1 | 1.000x | 1.000x | unchanged (within spread) | 75 | 9.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 711.6 | 705.4 | 712.7 | 3.0 | 1.007x | 1.007x | - | 75 | 9.5 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,344.5 | 1,342.5 | 1,346.0 | 1.3 | 1.902x | 1.902x | - | 75 | 17.9 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,410.1 | 2,402.6 | 2,867.1 | 183.6 | 3.409x | 3.409x | - | 75 | 32.1 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-dbnames`, 19.7 ns, 39 B; largest Δ: `lp-winpath`, -6.8 ns (now 7.7 ns), 22 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 34.8 | 0.0000 | 33.1 | 35.1 | 0.7 | 1.000x | 1.000x | faster ×3153.91 |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 80.8 | 0.0001 | 78.7 | 102.6 | 9.2 | 2.323x | 2.323x | - |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 218.3 | 0.0002 | 218.2 | 218.6 | 0.1 | 6.275x | 6.275x | - |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 109,709.6 | 0.0797 | 109,434.8 | 109,822.0 | 137.5 | 3153.915x | 3153.915x | - |
+
+#### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 72.2 | 0.0001 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 89,355.3 | 0.0852 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 18.0 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 73.4 | 0.0003 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 16,824.6 | 0.0642 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 28.0 | 0.0004 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 72.7 | 0.0011 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,494.5 | 0.0533 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-256k`, 18.0 ns, 262,144 B; largest Δ: `t-1m`, -89,347.1 ns (now 8.3 ns), 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-dollar-trailing-newline-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 645.1 | 644.2 | 645.8 | 0.6 | 1.000x | 1.000x | faster ×1.84 | 75 | 8.6 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,187.1 | 1,180.3 | 1,202.9 | 7.5 | 1.840x | 1.840x | - | 75 | 15.8 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,596.2 | 1,593.6 | 1,598.5 | 1.9 | 2.474x | 2.474x | - | 75 | 21.3 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,745.4 | 2,739.2 | 2,751.9 | 4.3 | 4.256x | 4.256x | - | 75 | 36.6 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rec-parens-unbalanced`, 19.5 ns, 5 B; largest Δ: `v-uuid-valid`, -23.4 ns (now 8.0 ns), 36 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 243.2 | 0.0002 | 242.6 | 243.5 | 0.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 3,815,862.7 | 2.7726 | 3,789,922.3 | 3,872,616.8 | 28,018.4 | 15689.534x | 15689.534x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,851,419.8 | 2.7985 | 3,850,809.5 | 3,858,606.9 | 3,422.8 | 15835.733x | 15835.733x | unchanged (within spread) |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 13,155,051.0 | 9.5586 | 13,136,711.4 | 14,573,119.8 | 567,946.0 | 54089.111x | 54089.111x | - |
+
+#### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 84.6 | 0.0001 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,917,753.5 | 2.7826 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 2,956,224.8 | 2.8193 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 10,072,926.4 | 9.6063 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 78.9 | 0.0003 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 718,307.7 | 2.7401 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 720,859.9 | 2.7499 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 2,479,690.8 | 9.4593 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 79.4 | 0.0012 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 173,342.5 | 2.6450 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 176,680.7 | 2.6959 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 602,482.3 | 9.1932 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 2,956,224.8 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-semdiv-empty-alt-repeat-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,187.0 | 1,173.9 | 1,190.0 | 5.9 | 1.000x | 1.000x | faster ×1.04 | 75 | 15.8 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,232.5 | 1,229.3 | 1,236.8 | 3.0 | 1.038x | 1.038x | - | 75 | 16.4 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,884.3 | 3,879.7 | 3,893.9 | 4.9 | 3.272x | 3.272x | - | 75 | 51.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 13,205.5 | 13,150.9 | 13,262.1 | 42.0 | 11.125x | 11.125x | - | 75 | 176.1 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 85.5 ns, 61 B; largest Δ: `rec-comment-nested`, -2.0 ns (now 18.8 ns), 34 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-email-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 39.0 | 0.0000 | 36.0 | 39.6 | 1.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 43.7 | 0.0000 | 42.1 | 47.7 | 2.0 | 1.123x | 1.123x | slower ×1.12 |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 108.7 | 0.0001 | 108.0 | 144.1 | 13.9 | 2.789x | 2.789x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 195.5 | 0.0001 | 194.4 | 196.6 | 0.8 | 5.018x | 5.018x | - |
+
+#### `wild-validator-email-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 13.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 15.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 37.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 71.7 | 0.0001 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 11.8 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 13.4 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 33.5 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 60.9 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 12.2 | 0.0002 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 14.7 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 37.6 | 0.0006 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 61.9 | 0.0009 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 15.6 ns, 1,048,576 B; largest Δ: `t-64k`, +2.5 ns (now 14.7 ns), 65,536 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-email-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 783.4 | 782.2 | 785.6 | 1.1 | 1.000x | 1.000x | faster ×1.36 | 75 | 10.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,065.6 | 1,064.4 | 1,072.1 | 2.8 | 1.360x | 1.360x | - | 75 | 14.2 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,338.7 | 2,331.9 | 2,353.0 | 8.1 | 2.985x | 2.985x | - | 75 | 31.2 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,566.8 | 2,565.6 | 2,569.2 | 1.3 | 3.276x | 3.276x | - | 75 | 34.2 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-email`, 54.4 ns, 24 B; largest Δ: `sec-github-pat`, -64.1 ns (now 8.9 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.2 | 0.0000 | 18.1 | 18.4 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 18.7 | 0.0000 | 18.7 | 18.7 | 0.0 | 1.028x | 1.028x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.4 | 0.2 | 1.372x | 1.372x | slower ×1.33 |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.3 | 32.1 | 0.7 | 1.672x | 1.672x | - |
+
+#### `wild-validator-ipv4-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.2 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0000 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.2 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0002 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-64k`, 8.3 ns, 65,536 B; largest Δ: `t-256k`, +2.1 ns (now 8.3 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-ipv4-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 498.6 | 498.0 | 499.0 | 0.3 | 1.000x | 1.000x | - | 75 | 6.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 626.5 | 625.8 | 627.7 | 0.7 | 1.256x | 1.256x | slower ×1.26 | 75 | 8.4 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 949.8 | 949.6 | 954.6 | 2.0 | 1.905x | 1.905x | - | 75 | 12.7 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,258.5 | 1,252.1 | 1,489.3 | 93.4 | 2.524x | 2.524x | - | 75 | 16.8 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `v-ipv4`, 21.9 ns, 11 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-us-zip-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12.5 | 0.0000 | 12.4 | 12.5 | 0.0 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.2 | 0.0000 | 17.9 | 18.4 | 0.2 | 1.462x | 1.462x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 18.6 | 0.0000 | 17.8 | 62.1 | 17.6 | 1.495x | 1.495x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.6 | 0.0000 | 30.3 | 31.5 | 0.4 | 2.456x | 2.456x | - |
+
+#### `wild-validator-us-zip-owasp` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 4.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 5.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.1 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.8 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.2 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0001 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.0 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0002 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-64k`, 4.2 ns, 65,536 B; largest Δ: `t-256k`, -2.7 ns (now 4.1 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-us-zip-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 428.3 | 427.1 | 429.4 | 0.9 | 1.000x | 1.000x | faster ×1.13 | 75 | 5.7 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 484.6 | 484.0 | 486.4 | 0.9 | 1.131x | 1.131x | - | 75 | 6.5 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 987.3 | 983.6 | 1,037.8 | 20.6 | 2.305x | 2.305x | - | 75 | 13.2 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,661.7 | 1,660.1 | 1,665.7 | 2.0 | 3.879x | 3.879x | - | 75 | 22.2 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-us-zip-plus4`, 16.5 ns, 10 B; largest Δ: `rd-numeric-id-near-miss`, -5.0 ns (now 4.4 ns), 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-uuid-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 82,265.3 | 0.0598 | 82,094.4 | 82,713.5 | 214.9 | 1.000x | 1.000x | unchanged (within spread) |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 82,553.5 | 0.0600 | 82,185.5 | 82,775.1 | 210.3 | 1.004x | 1.004x | - |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 210,732.6 | 0.1531 | 206,641.6 | 211,670.6 | 1,769.6 | 2.562x | 2.562x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 243,311.3 | 0.1768 | 243,073.3 | 244,429.2 | 505.6 | 2.958x | 2.958x | - |
+
+#### `wild-validator-uuid-grok` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 68,421.4 | 0.0653 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 68,368.7 | 0.0652 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 164,982.4 | 0.1573 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 185,723.3 | 0.1771 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 11,402.6 | 0.0435 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 11,729.6 | 0.0447 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 37,247.9 | 0.1421 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 46,117.4 | 0.1759 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 2,429.8 | 0.0371 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,417.2 | 0.0369 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 8,493.3 | 0.1296 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,423.9 | 0.1743 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 68,421.4 ns, 1,048,576 B; largest Δ: `t-256k`, -326.9 ns (now 11,402.6 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-validator-uuid-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 716.4 | 713.8 | 722.6 | 2.9 | 1.000x | 1.000x | - | 75 | 9.6 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 788.6 | 777.4 | 872.6 | 35.7 | 1.101x | 1.101x | slower ×1.10 | 75 | 10.5 | 8.0 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,243.9 | 1,241.2 | 1,248.7 | 2.8 | 1.736x | 1.736x | - | 75 | 16.6 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,622.0 | 1,621.1 | 1,663.1 | 16.5 | 2.264x | 2.264x | - | 75 | 21.6 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 101.3 ns, 36 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 600,527.6 | 0.4363 | 600,203.3 | 602,501.2 | 846.3 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,447,677.8 | 1.7785 | 2,446,347.1 | 2,454,808.3 | 3,300.7 | 4.076x | 4.076x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,082,823.2 | 2.9666 | 4,078,021.1 | 4,088,261.5 | 3,435.5 | 6.799x | 6.799x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 4,086,165.0 | 2.9690 | 4,075,513.0 | 4,093,195.4 | 6,617.9 | 6.804x | 6.804x | - |
+
+#### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 477,850.1 | 0.4557 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,863,447.3 | 1.7771 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,113,541.0 | 2.9693 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 3,117,928.2 | 2.9735 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 101,890.8 | 0.3887 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 466,267.0 | 1.7787 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 776,433.7 | 2.9619 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 775,655.0 | 2.9589 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 20,612.3 | 0.3145 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 118,326.0 | 1.8055 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 191,789.2 | 2.9265 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 191,884.7 | 2.9279 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,113,541.0 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942140-dbnames` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,687.8 | 2,682.5 | 2,691.0 | 3.2 | 1.000x | 1.000x | faster ×1.01 | 75 | 35.8 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 2,702.1 | 2,698.1 | 2,704.2 | 2.1 | 1.005x | 1.005x | - | 75 | 36.0 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,508.7 | 3,500.3 | 3,520.2 | 7.4 | 1.305x | 1.305x | - | 75 | 46.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,414.7 | 4,409.5 | 4,482.1 | 27.4 | 1.642x | 1.642x | - | 75 | 58.9 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-github-pat`, 184.9 ns, 93 B; largest Δ: `rec-parens-balanced`, -1.3 ns (now 15.0 ns), 7 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 160,000.2 | 0.1163 | 159,822.9 | 160,520.2 | 234.0 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 388,781.2 | 0.2825 | 388,413.3 | 391,438.7 | 1,130.8 | 2.430x | 2.430x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,266,849.9 | 0.9205 | 1,263,015.1 | 1,270,424.9 | 2,426.8 | 7.918x | 7.918x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,360,803.0 | 0.9888 | 1,354,418.5 | 1,377,964.8 | 8,358.4 | 8.505x | 8.505x | slower ×1.07 |
+
+#### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 121,840.3 | 0.1162 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 296,213.3 | 0.2825 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 963,176.9 | 0.9186 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 1,033,066.7 | 0.9852 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 30,369.0 | 0.1158 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 74,336.8 | 0.2836 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 239,344.7 | 0.9130 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 258,854.3 | 0.9875 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 7,759.0 | 0.1184 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 18,598.8 | 0.2838 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 64,673.8 | 0.9868 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 69,053.4 | 1.0537 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 1,033,066.7 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942160-sleep-benchmark` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 671.5 | 668.0 | 675.0 | 2.5 | 1.000x | 1.000x | faster ×1.96 | 75 | 9.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,315.2 | 1,308.6 | 1,327.3 | 6.3 | 1.958x | 1.958x | - | 75 | 17.5 | 8.9 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,655.5 | 2,652.1 | 2,892.4 | 95.2 | 3.954x | 3.954x | - | 75 | 35.4 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 3,205.3 | 3,199.6 | 3,263.9 | 24.1 | 4.773x | 4.773x | - | 75 | 42.7 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-concat`, 47.7 ns, 48 B; largest Δ: `sec-slack-webhook`, -58.0 ns (now 9.0 ns), 81 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 86,460.7 | 0.0628 | 86,417.9 | 88,276.0 | 727.9 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 280,535.1 | 0.2038 | 280,292.1 | 281,913.4 | 587.4 | 3.245x | 3.245x | - |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 999,938.0 | 0.7266 | 994,373.0 | 1,014,362.1 | 7,045.4 | 11.565x | 11.565x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,001,016.2 | 0.7273 | 997,513.0 | 1,264,957.8 | 105,984.5 | 11.578x | 11.578x | unchanged (within spread) |
+
+#### `wild-waf-crs-942270-union-select` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 65,907.0 | 0.0629 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 213,566.4 | 0.2037 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 759,553.5 | 0.7244 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 760,007.5 | 0.7248 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,415.1 | 0.0626 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 53,413.9 | 0.2038 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 190,714.5 | 0.7275 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 191,973.5 | 0.7323 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,151.7 | 0.0634 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 13,462.0 | 0.2054 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 48,260.3 | 0.7364 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 49,035.2 | 0.7482 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 760,007.5 ns, 1,048,576 B; largest Δ: `t-256k`, +1,259.0 ns (now 191,973.5 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942270-union-select` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,125.0 | 1,119.8 | 1,130.0 | 3.2 | 1.000x | 1.000x | faster ×1.03 | 75 | 15.0 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 1,153.6 | 1,136.5 | 1,158.8 | 7.8 | 1.025x | 1.025x | - | 75 | 15.4 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,132.0 | 2,126.4 | 2,159.3 | 11.5 | 1.895x | 1.895x | - | 75 | 28.4 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,160.0 | 2,156.9 | 2,167.8 | 4.1 | 1.920x | 1.920x | - | 75 | 28.8 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-union`, 75.1 ns, 43 B; largest Δ: `waf-benign`, +4.4 ns (now 27.6 ns), 39 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 878,544.4 | 0.6384 | 877,906.5 | 884,943.3 | 2,643.8 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,456,623.7 | 1.7850 | 2,452,896.6 | 2,562,372.7 | 42,248.5 | 2.796x | 2.796x | - |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12,137,118.1 | 8.8189 | 12,105,762.1 | 12,870,368.8 | 359,951.1 | 13.815x | 13.815x | unchanged (within spread) |
+| 4 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 12,197,521.8 | 8.8628 | 12,121,998.2 | 12,278,151.6 | 60,432.4 | 13.884x | 13.884x | - |
+
+#### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 701,073.3 | 0.6686 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,868,057.5 | 1.7815 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9,263,608.7 | 8.8345 |
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295,603.7 | 8.8650 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 149,170.5 | 0.5690 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 468,069.2 | 1.7855 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 2,300,811.5 | 8.7769 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 2,324,687.1 | 8.8680 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 28,284.5 | 0.4316 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 120,065.7 | 1.8321 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 576,347.4 | 8.7944 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 577,231.0 | 8.8078 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 9,263,608.7 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 4,566.7 | 4,563.3 | 4,582.6 | 8.6 | 1.000x | 1.000x | - | 75 | 60.9 | 27.2 | 100% |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,824.8 | 4,819.1 | 4,835.3 | 6.1 | 1.057x | 1.057x | - | 75 | 64.3 | 16.3 | 100% |
+| 3 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 7,404.7 | 7,376.1 | 7,420.1 | 14.3 | 1.621x | 1.621x | - | 75 | 98.7 | 8.9 | 100% |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,412.0 | 7,362.3 | 7,456.1 | 35.4 | 1.623x | 1.623x | unchanged (within spread) | 75 | 98.8 | 8.0 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 447.9 ns, 81 B; largest Δ: `lp-syslog`, +17.5 ns (now 441.0 ns), 56 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 23,120.7 | 0.0168 | 23,093.3 | 23,145.9 | 19.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,148.5 | 0.0168 | 23,134.4 | 23,158.1 | 8.4 | 1.001x | 1.001x | unchanged (within spread) |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 41,263.1 | 0.0300 | 41,241.7 | 41,587.7 | 130.2 | 1.785x | 1.785x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,208.1 | 0.0437 | 60,168.2 | 60,455.9 | 105.8 | 2.604x | 2.604x | - |
+
+#### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 17,624.2 | 0.0168 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,639.0 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 31,358.2 | 0.0299 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 45,802.5 | 0.0437 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 4,377.4 | 0.0167 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,385.8 | 0.0167 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 7,886.0 | 0.0301 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,467.3 | 0.0437 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,123.7 | 0.0171 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,017.5 | 0.0308 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,942.7 | 0.0449 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,639.0 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `wild-waf-crs-942500-comment-obfuscation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 705.1 | 704.0 | 708.0 | 1.5 | 1.000x | 1.000x | faster ×1.05 | 75 | 9.4 | 8.0 | 100% |
+| 2 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 737.7 | 734.9 | 742.1 | 2.3 | 1.046x | 1.046x | - | 75 | 9.8 | 8.9 | 100% |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,427.9 | 2,369.3 | 2,502.9 | 42.7 | 3.444x | 3.444x | - | 75 | 32.4 | 16.3 | 100% |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,468.5 | 2,465.8 | 3,051.7 | 233.4 | 3.501x | 3.501x | - | 75 | 32.9 | 27.2 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `waf-comment-obfuscation`, 71.5 ns, 18 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 20.4 | 0.0000 | 20.2 | 20.7 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 90.3 | 0.0001 | 86.4 | 95.0 | 2.9 | 4.429x | 4.429x | - |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 156.4 | 0.0001 | 156.0 | 156.5 | 0.2 | 7.674x | 7.674x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,119.7 | 0.0168 | 23,104.2 | 23,189.4 | 30.0 | 1134.338x | 1134.338x | slower ×1134.34 |
+
+#### `winpath-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
+
+| subject | bytes | testee | median ns/call | ns/byte |
+|---|---|---|---|---|
+| `t-1m` | 1,048,576 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,631.7 | 0.0168 |
+| `t-256k` | 262,144 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.8 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 30.3 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.1 | 0.0002 |
+| `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,381.5 | 0.0167 |
+| `t-64k` | 65,536 | `pcrec_25b1984f_auto-nocaps-simdna` | 6.8 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.3 | 0.0008 |
+| `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,103.2 | 0.0168 |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,631.7 ns, 1,048,576 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+### `winpath-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
+
+- baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_25b1984f_auto-nocaps-simdna` | measured | `plain` | same program | 499.8 | 499.7 | 501.2 | 0.7 | 1.000x | 1.000x | - | 75 | 6.7 | 8.9 | 100% |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 584.7 | 583.3 | 588.0 | 1.6 | 1.170x | 1.170x | slower ×1.17 | 75 | 7.8 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,484.0 | 1,480.6 | 1,486.5 | 2.2 | 2.969x | 2.969x | - | 75 | 19.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,796.6 | 1,793.0 | 1,797.9 | 1.8 | 3.595x | 3.595x | - | 75 | 24.0 | 16.3 | 100% |
+
+- Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-winpath`, 34.7 ns, 22 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
+## Excluded from ranking (expectation-failing cells)
+
+| pattern | regime | form | testee | n subjects | pass-rate | gave-up | wrong | failing subjects (reason) |
+|---|---|---|---|---|---|---|---|---|
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_auto-nocaps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `high-byte-run` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 10 | `nu-high-byte` (wrong), `nu-lead-with-cont` (wrong) |
+
+## Ranking -- MIXED CLASSES, never compare across cells (per pattern x regime, SET grain: sum over the subject set; best median first)
 
 ### `balanced-parens-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -164,6 +6463,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-256k`, 11.8 ns, 262,144 B; largest Δ: `t-1m`, -3,096,583.5 ns (now 11.6 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 13.6 ns, 65,536 B; largest Δ: `t-1m`, -3,096,157.1 ns (now 13.5 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `base10num-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -185,6 +6486,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 34.8 ns, 20 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `cg-number`, 25.6 ns, 10 B; largest Δ: `sec-github-pat`, -286.1 ns (now 11.4 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 24.6 ns, 11 B; largest Δ: `sec-github-pat`, -283.0 ns (now 12.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `bracket-array-define` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -318,6 +6621,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,565,141.3 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,844,518.3 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `codegrammar-flat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -339,6 +6644,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `cg-key-colon`, 45.3 ns, 7 B; largest Δ: `lp-quoted-escaped`, -25.5 ns (now 8.0 ns), 16 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 68.0 ns, 81 B; largest Δ: `sec-github-pat`, -62.6 ns (now 8.9 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 92.3 ns, 81 B; largest Δ: `sec-github-pat`, -227.7 ns (now 10.4 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -400,6 +6707,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,561,263.7 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 1,840,773.0 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `codegrammar-xflag` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -421,6 +6730,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `cg-key-colon`, 45.2 ns, 7 B; largest Δ: `lp-quoted-escaped`, -25.4 ns (now 8.0 ns), 16 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 68.3 ns, 81 B; largest Δ: `sec-github-pat`, -62.1 ns (now 9.4 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 91.9 ns, 81 B; largest Δ: `sec-github-pat`, -227.9 ns (now 10.4 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -554,6 +6865,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17.4 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 20.3 ns, 65,536 B; largest Δ: `t-1m`, -2,942,747.5 ns (now 20.0 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `date-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -575,6 +6888,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 61.7 ns, 20 B; largest Δ: `rd-numeric-id-hit`, +0.8 ns (now 14.8 ns), 4 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 168.0 ns, 20 B; largest Δ: `sec-github-pat`, -269.6 ns (now 16.8 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 171.6 ns, 20 B; largest Δ: `sec-github-pat`, -269.7 ns (now 19.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `doubled-word` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -852,6 +7167,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,642.2 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.6 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `email-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -871,6 +7188,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-email`, 44.3 ns, 24 B; largest Δ: `rd-email-near-miss`, -6,305,157.5 ns (now 9.5 ns), 20 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-email`, 46.1 ns, 24 B; largest Δ: `rd-numeric-id-near-miss`, -6,305,793.2 ns (now 10.3 ns), 20 B
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-email`, 70.8 ns, 24 B; largest Δ: `sec-github-pat`, -64.9 ns (now 11.1 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `evil-alt-nested` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -932,6 +7251,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 10,698.2 ns, 65,536 B; largest Δ: `t-1m`, -3,251,224.5 ns (now 1,255.7 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 10,839.3 ns, 65,536 B; largest Δ: `t-1m`, -3,252,922.3 ns (now 1,242.1 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
@@ -992,6 +7313,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,251,320.7 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,254,076.8 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `file-ext-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -1013,6 +7336,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-fileext-short`, 29.9 ns, 14 B; largest Δ: `v-ipv4`, -14.9 ns (now 7.7 ns), 11 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 285.9 ns, 81 B; largest Δ: `sec-github-pat`, -203.6 ns (now 10.3 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 285.0 ns, 81 B; largest Δ: `sec-github-pat`, -199.8 ns (now 11.9 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `float-literal-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1146,6 +7471,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,649.5 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,660.1 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `floor-byte` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp (floor control — per-call overhead, not a ranking of engines)
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -1167,6 +7494,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `floor-hit`, 20.2 ns, 1 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `floor-hit`, 13.3 ns, 1 B; largest Δ: `sec-github-pat`, -63.8 ns (now 9.4 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `floor-hit`, 13.0 ns, 1 B; largest Δ: `sec-github-pat`, -63.9 ns (now 10.3 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1227,6 +7556,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-1m`, 368,060.8 ns, 1,048,576 B; largest Δ: `t-64k`, -127.7 ns (now 23,060.5 ns), 65,536 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 1,550,066.1 ns, 1,048,576 B; largest Δ: `t-256k`, +385.3 ns (now 387,828.8 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 1,549,727.6 ns, 1,048,576 B; largest Δ: `t-256k`, +409.1 ns (now 387,774.5 ns), 262,144 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `high-byte-run` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1309,6 +7640,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 9.5 ns, 65,536 B; largest Δ: `t-1m`, -3,097,970.5 ns (now 9.5 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 11.5 ns, 262,144 B; largest Δ: `t-1m`, -3,096,301.9 ns (now 11.5 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `ipv4-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -1330,6 +7663,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-ipv4`, 21.6 ns, 11 B; largest Δ: `v-ipv4-oor`, +3.4 ns (now 10.6 ns), 9 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-ipv4`, 49.0 ns, 11 B; largest Δ: `sec-github-pat`, -304.0 ns (now 9.2 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 49.3 ns, 11 B; largest Δ: `sec-github-pat`, -301.1 ns (now 10.6 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1391,6 +7726,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,262,280.6 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,265,453.6 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `keyword-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -1412,6 +7749,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-dbnames`, 23.9 ns, 39 B; largest Δ: `sec-userpass`, +4.0 ns (now 19.7 ns), 33 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 263.7 ns, 81 B; largest Δ: `sec-github-pat`, -257.4 ns (now 10.3 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 258.2 ns, 81 B; largest Δ: `sec-github-pat`, -256.3 ns (now 11.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `logparse-atomic` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1545,6 +7884,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 13.8 ns, 65,536 B; largest Δ: `t-256k`, +3.5 ns (now 13.3 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.4 ns, 65,536 B; largest Δ: `t-1m`, -2,786,064.3 ns (now 14.8 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `logparse-atomic-removed` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -1566,6 +7907,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-atomic-hit`, 40.5 ns, 31 B; largest Δ: `sec-github-pat`, -255.8 ns (now 10.5 ns), 93 B
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `lp-atomic-hit`, 73.2 ns, 31 B; largest Δ: `v-email`, -5.6 ns (now 9.5 ns), 24 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-atomic-hit`, 42.0 ns, 31 B; largest Δ: `sec-github-pat`, -254.1 ns (now 11.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `mojibake-curly-quote` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1780,6 +8123,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 13.1 ns, 65,536 B; largest Δ: `t-1m`, -3,096,383.6 ns (now 13.0 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.4 ns, 65,536 B; largest Δ: `t-1m`, -3,110,621.2 ns (now 15.2 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `numeric-id-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -1805,6 +8150,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 35.2 ns, 20 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 9,334,457.1 ns, 20 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 9,345,866.0 ns, 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `phone-list-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1866,6 +8213,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 13.1 ns, 65,536 B; largest Δ: `t-1m`, -2,942,361.8 ns (now 13.0 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 15.0 ns, 65,536 B; largest Δ: `t-1m`, -2,941,694.3 ns (now 14.9 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `phone-list-nested-plus` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -1891,6 +8240,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rd-phone-list-hit`, 45.1 ns, 7 B; largest Δ: `rd-numeric-id-hit`, +4.2 ns (now 34.2 ns), 4 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 10,064,787.4 ns, 20 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-numeric-id-near-miss`, 10,073,674.6 ns, 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `phone-palindrome-6` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2168,6 +8519,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,088,299.4 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,086,726.8 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `router-prefix-order` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -2189,6 +8542,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 45.1 ns, 81 B; largest Δ: `rec-tag-depth3`, -18.4 ns (now 7.7 ns), 22 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 298.1 ns, 81 B; largest Δ: `sec-github-pat`, -255.7 ns (now 10.0 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 298.3 ns, 81 B; largest Δ: `sec-github-pat`, -254.6 ns (now 11.5 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `tag-depth3-bound` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2394,6 +8749,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 15.8 ns, 65,536 B; largest Δ: `t-1m`, -2,477,711.4 ns (now 15.7 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 20.2 ns, 262,144 B; largest Δ: `t-1m`, -2,476,979.6 ns (now 20.2 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `trim-nested-star` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -2419,6 +8776,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,184,834.4 ns, 20 B
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,205,687.3 ns, 20 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `rd-trim-near-miss`, 10,233,794.9 ns, 20 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `utf8-lead-no-cont` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2552,6 +8911,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 13.4 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 15.6 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -2573,6 +8934,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 47.9 ns, 36 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-uuid-valid`, 47.3 ns, 36 B; largest Δ: `sec-github-pat`, -207.0 ns (now 9.4 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-uuid-valid`, 63.0 ns, 36 B; largest Δ: `sec-github-pat`, -232.3 ns (now 10.3 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2634,6 +8997,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 834,723.6 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 842,357.4 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-codegrammar-json-array-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -2655,6 +9020,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-syslog`, 21.7 ns, 56 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 33.0 ns, 56 B; largest Δ: `sec-github-pat`, -64.2 ns (now 10.0 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 32.0 ns, 56 B; largest Δ: `sec-github-pat`, -63.6 ns (now 9.7 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2716,6 +9083,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 3,584,703.6 ns, 1,048,576 B; largest Δ: `t-256k`, -8,282.7 ns (now 896,356.2 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,593,342.4 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-codegrammar-json-constant` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -2737,6 +9106,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 179.4 ns, 93 B; largest Δ: `rec-array-define`, -3.0 ns (now 18.8 ns), 11 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 198.3 ns, 81 B; largest Δ: `waf-concat`, +5.6 ns (now 128.8 ns), 48 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 199.7 ns, 81 B; largest Δ: `lp-syslog`, -2.9 ns (now 137.4 ns), 56 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-codegrammar-json-number-extended` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2794,6 +9165,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 7,602,270.1 ns, 1,048,576 B; largest Δ: `t-256k`, +11,570.4 ns (now 1,893,836.0 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,715,455.1 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 - not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
 ### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
@@ -2816,6 +9189,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 69.7 ns, 20 B; largest Δ: `sec-userpass`, +6.8 ns (now 36.2 ns), 33 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 576.4 ns, 93 B; largest Δ: `sec-slack-webhook`, +3.7 ns (now 251.5 ns), 81 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 578.1 ns, 93 B; largest Δ: `sec-slack-webhook`, +2.4 ns (now 252.8 ns), 81 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 - not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
@@ -2879,6 +9254,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,638.7 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.3 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-codegrammar-json-object-begin` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -2900,6 +9277,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `cg-object-begin`, 20.2 ns, 1 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `cg-object-begin`, 13.1 ns, 1 B; largest Δ: `sec-github-pat`, -64.2 ns (now 10.0 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `cg-object-begin`, 13.3 ns, 1 B; largest Δ: `sec-github-pat`, -63.9 ns (now 9.7 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2957,6 +9336,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,648.8 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,660.4 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 - not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
 ### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
@@ -2979,6 +9360,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `lp-winpath-reserved`, 39.2 ns, 24 B; largest Δ: `lp-winpath`, +6.5 ns (now 33.2 ns), 22 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-winpath-reserved`, 85.5 ns, 24 B; largest Δ: `sec-github-pat`, -312.5 ns (now 9.8 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-winpath-reserved`, 85.3 ns, 24 B; largest Δ: `sec-github-pat`, -279.6 ns (now 11.5 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 - not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
@@ -3015,6 +9398,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 7,917,262.8 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 - not ranked: `pcrec_25b1984f_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670159 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
 - not ranked: `pcrec_25b1984f_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
 - not ranked: `pcrec_25b1984f_vm-in-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
@@ -3034,6 +9419,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 766,271.8 | 763,257.0 | 775,743.1 | 4,414.0 | 393.038x | 393.038x | - | 75 | 10,217.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 120.8 ns, 61 B; largest Δ: `la-email-nodup`, -3.7 ns (now 23.8 ns), 9 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 - not ranked: `pcrec_25b1984f_auto-caps-simdna` — did-not-compile (pcrec: pattern too large: 670159 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
 - not ranked: `pcrec_25b1984f_vm-caps-simdna` — did-not-compile (pcrec: pattern too large: 665107 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
@@ -3102,6 +9489,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 25.5 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 27.3 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-datetime-moment-iso8601` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -3123,6 +9512,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `dt-iso8601`, 90.8 ns, 20 B; largest Δ: `rd-trim-near-miss`, -52.9 ns (now 9.4 ns), 20 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 52.9 ns, 20 B; largest Δ: `sec-github-pat`, -307.1 ns (now 10.8 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 54.8 ns, 20 B; largest Δ: `sec-github-pat`, -305.1 ns (now 11.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-logparse-base10num-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -3620,6 +10011,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 7,119,560.4 ns, 1,048,576 B; largest Δ: `t-64k`, +3,844.2 ns (now 444,517.4 ns), 65,536 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,125,935.1 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-secrets-aws-access-key-id` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -3641,6 +10034,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 178.7 ns, 93 B; largest Δ: `sec-slack-webhook`, -134.5 ns (now 10.2 ns), 81 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-syslog`, 408.4 ns, 56 B; largest Δ: `sec-slack-webhook`, -432.2 ns (now 9.7 ns), 81 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 404.7 ns, 56 B; largest Δ: `sec-slack-webhook`, -427.5 ns (now 11.5 ns), 81 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -3702,6 +10097,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,105,682.7 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,464,613.7 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-secrets-github-pat` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
@@ -3723,6 +10120,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-dbnames`, 126.0 ns, 39 B; largest Δ: `sec-slack-webhook`, -202.6 ns (now 10.3 ns), 81 B
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 372.1 ns, 93 B
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sec-github-pat`, 461.6 ns, 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -3784,6 +10183,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,708,742.8 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,711,069.1 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
@@ -3805,6 +10206,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-slack-webhook`, 397.2 ns, 81 B; largest Δ: `rd-numeric-id-near-miss`, -4.1 ns (now 9.4 ns), 20 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-benign`, 162.7 ns, 39 B; largest Δ: `sec-github-pat`, -312.8 ns (now 10.7 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-benign`, 163.4 ns, 39 B; largest Δ: `sec-github-pat`, -312.6 ns (now 11.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-secrets-username-password-pair` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -3866,6 +10269,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,656.2 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,665.5 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-secrets-username-password-pair` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -3887,6 +10292,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-userpass`, 258.5 ns, 33 B; largest Δ: `waf-concat`, -54.4 ns (now 10.6 ns), 48 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-benign`, 174.7 ns, 39 B; largest Δ: `sec-github-pat`, -326.4 ns (now 10.9 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-benign`, 174.5 ns, 39 B; largest Δ: `sec-github-pat`, -358.6 ns (now 11.8 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -3948,6 +10355,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,004,794.6 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,010,425.8 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -3969,6 +10378,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-dbnames`, 19.7 ns, 39 B; largest Δ: `lp-winpath-reserved`, -6.5 ns (now 7.7 ns), 24 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 249.0 ns, 81 B; largest Δ: `sec-github-pat`, -204.3 ns (now 9.8 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 248.0 ns, 81 B; largest Δ: `sec-github-pat`, -255.2 ns (now 11.5 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4030,6 +10441,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `t-256k`, 18.0 ns, 262,144 B; largest Δ: `t-1m`, -89,347.1 ns (now 8.3 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 15.8 ns, 262,144 B; largest Δ: `t-1m`, -1,273,110.3 ns (now 9.8 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-semdiv-dollar-trailing-newline-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_vm-caps-simdna (row-best fallback -- interp absent from this group)
@@ -4051,6 +10464,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `rec-parens-unbalanced`, 19.3 ns, 5 B; largest Δ: `v-uuid-valid`, -24.6 ns (now 8.0 ns), 36 B
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `rec-parens-unbalanced`, 19.5 ns, 5 B; largest Δ: `v-uuid-valid`, -23.4 ns (now 8.0 ns), 36 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sd-keyword-short`, 12.1 ns, 10 B; largest Δ: `sec-github-pat`, -109.4 ns (now 8.9 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4112,6 +10527,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,299,835.7 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,710,422.3 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4133,6 +10550,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sd-empty-alt-hit`, 930.5 ns, 61 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `sd-empty-alt-miss`, 52,848.2 ns, 60 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sd-empty-alt-miss`, 53,110.2 ns, 60 B; largest Δ: `sec-github-pat`, -14.0 ns (now 26,634.4 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-validator-email-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4194,6 +10613,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 29.0 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 31.6 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-validator-email-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -4215,6 +10636,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `v-email`, 54.4 ns, 24 B; largest Δ: `sec-github-pat`, -64.1 ns (now 8.9 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-email`, 43.9 ns, 24 B; largest Δ: `sec-github-pat`, -389.8 ns (now 10.7 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-email`, 44.7 ns, 24 B; largest Δ: `sec-github-pat`, -387.1 ns (now 12.1 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4276,6 +10699,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `t-64k`, 10.4 ns, 65,536 B; largest Δ: `t-1m`, -0.4 ns (now 10.3 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-256k`, 11.4 ns, 262,144 B; largest Δ: `t-1m`, -3,250,583.3 ns (now 11.4 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-validator-ipv4-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4297,6 +10722,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `v-ipv4`, 80.4 ns, 11 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-ipv4`, 52.9 ns, 11 B; largest Δ: `sec-github-pat`, -311.4 ns (now 9.2 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-ipv4`, 54.2 ns, 11 B; largest Δ: `sec-github-pat`, -312.7 ns (now 10.6 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-validator-us-zip-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4358,6 +10785,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-64k`, 10.6 ns, 65,536 B; largest Δ: `t-1m`, -2,727,097.5 ns (now 10.5 ns), 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-64k`, 12.6 ns, 65,536 B; largest Δ: `t-1m`, -2,712,202.6 ns (now 12.5 ns), 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-validator-us-zip-owasp` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4379,6 +10808,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `v-us-zip-plus4`, 32.0 ns, 10 B; largest Δ: `rd-numeric-id-near-miss`, -4.8 ns (now 8.8 ns), 20 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `v-us-zip-plus4`, 23.0 ns, 10 B; largest Δ: `sec-github-pat`, -248.1 ns (now 10.3 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `v-us-zip-plus4`, 25.4 ns, 10 B; largest Δ: `sec-github-pat`, -250.5 ns (now 12.2 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-validator-uuid-grok` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4440,6 +10871,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 6,112,559.2 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 6,119,705.4 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-validator-uuid-grok` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4461,6 +10894,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 101.3 ns, 36 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `dt-iso8601`, 90.1 ns, 20 B; largest Δ: `sec-github-pat`, -731.4 ns (now 10.6 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `dt-iso8601`, 90.7 ns, 20 B; largest Δ: `sec-github-pat`, -738.3 ns (now 10.9 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4522,6 +10957,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 15,922,183.5 ns, 1,048,576 B; largest Δ: `t-256k`, +15,265.5 ns (now 3,977,988.2 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 15,920,327.3 ns, 1,048,576 B; largest Δ: `t-256k`, +47,633.2 ns (now 4,012,353.4 ns), 262,144 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-waf-crs-942140-dbnames` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4543,6 +10980,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `sec-github-pat`, 184.7 ns, 93 B; largest Δ: `sec-slack-webhook`, -2.8 ns (now 154.7 ns), 81 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-syslog`, 897.2 ns, 56 B; largest Δ: `waf-dbnames`, -12.1 ns (now 207.9 ns), 39 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `lp-syslog`, 904.7 ns, 56 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4604,6 +11043,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 7,614,098.4 ns, 1,048,576 B; largest Δ: `t-256k`, -13,136.4 ns (now 1,889,260.3 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,610,253.9 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-waf-crs-942160-sleep-benchmark` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -4625,6 +11066,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now: `waf-concat`, 47.7 ns, 48 B; largest Δ: `sec-slack-webhook`, -58.0 ns (now 9.0 ns), 81 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `waf-concat`, 390.5 ns, 48 B; largest Δ: `sec-github-pat`, -646.8 ns (now 10.4 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `waf-concat`, 390.7 ns, 48 B; largest Δ: `sec-github-pat`, -646.6 ns (now 12.4 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4686,6 +11129,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 3,282,197.9 ns, 1,048,576 B; largest Δ: `t-64k`, -844.6 ns (now 206,598.3 ns), 65,536 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `t-1m`, 3,282,649.6 ns, 1,048,576 B; largest Δ: `t-256k`, +1,361.1 ns (now 823,010.9 ns), 262,144 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-waf-crs-942270-union-select` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4707,6 +11152,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now: `waf-union`, 75.0 ns, 43 B; largest Δ: `waf-benign`, +3.8 ns (now 27.4 ns), 39 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-github-pat`, 278.4 ns, 93 B; largest Δ: `lp-winpath-reserved`, -3.4 ns (now 86.6 ns), 24 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-github-pat`, 275.7 ns, 93 B; largest Δ: `la-currency`, +3.5 ns (now 63.6 ns), 10 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4768,6 +11215,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 36,819,469.0 ns, 1,048,576 B; largest Δ: `t-256k`, -23,273.2 ns (now 9,176,769.7 ns), 262,144 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 36,882,861.5 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
@@ -4789,6 +11238,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-caps-simdna` vs previous `pcrec_25b1984f_auto-caps-simdna`: worst now (also the largest Δ): `sec-slack-webhook`, 471.7 ns, 81 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 2,316.8 ns, 81 B; largest Δ: `rec-array-define`, +22.2 ns (now 750.0 ns), 11 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 2,313.2 ns, 81 B; largest Δ: `sd-empty-alt-miss`, +48.3 ns (now 1,282.3 ns), 60 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4850,6 +11301,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,108,623.3 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `t-1m`, 3,114,596.1 ns, 1,048,576 B; largest Δ: `t-64k`, +2,261.4 ns (now 195,330.1 ns), 65,536 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `wild-waf-crs-942500-comment-obfuscation` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -4871,6 +11324,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_auto-nocaps-simdna` vs previous `pcrec_25b1984f_auto-nocaps-simdna`: worst now (also the largest Δ): `waf-comment-obfuscation`, 71.5 ns, 18 B
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `sec-slack-webhook`, 291.8 ns, 81 B; largest Δ: `sec-github-pat`, -258.0 ns (now 9.7 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 291.4 ns, 81 B; largest Δ: `sec-github-pat`, -256.9 ns (now 11.5 ns), 93 B
+
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
 
 ### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -4932,6 +11387,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,659.2 ns, 1,048,576 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,653.8 ns, 1,048,576 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ### `winpath-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_25b1984f_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -4954,6 +11411,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 - Δ detail: `pcrec_8d716693_vm-caps-simdna` vs previous `pcrec_25b1984f_vm-caps-simdna`: worst now: `lp-winpath`, 71.0 ns, 22 B; largest Δ: `sec-github-pat`, -337.5 ns (now 10.6 ns), 93 B
 - Δ detail: `pcrec_8d716693_vm-in-caps-simdna` vs previous `pcrec_25b1984f_vm-in-caps-simdna`: worst now: `lp-winpath`, 73.0 ns, 22 B; largest Δ: `sec-github-pat`, -336.3 ns (now 11.5 ns), 93 B
 
+- `rust_1.13.1_default-caps-simdna` is classified `no` for the capture-class views despite its own id token: the timed loop is find_at-driven (no per-match capture assignment) with exactly ONE captures_at call on the FIRST match per timed call, for verification only -- a DECLARED fixed per-call cost, never a per-match capture assignment (src/main.rs:255-266); the config's own `captures=on` (its id says `-caps-`) names the engine's capability, not this run's behaviour (I-99 (rust-default QUESTION) / I-100 RULING (2): retires once rust-find (NO) / rust-captures (YES) land as separate configs)
+
 ## Excluded from ranking (expectation-failing cells)
 
 | pattern | regime | form | testee | n subjects | pass-rate | gave-up | wrong | failing subjects (reason) |
@@ -4972,6 +11431,363 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `evil-alt-nested` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `high-byte-run` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 10 | `nu-high-byte` (wrong), `nu-lead-with-cont` (wrong) |
+
+## Standing cross-class query (inbox I-101; Frank's own anomaly check -- a QUERY, never a ranking; every hit below is a finding on pcrec's side by definition)
+
+**350 hit(s)** -- each is a finding on pcrec's side by definition (I-101):
+
+| pattern | regime | pcrec auto-nocaps testee | auto-nocaps ns/call | competitor testee | competitor ns/call | ratio (competitor / auto-nocaps) | clears IQR / null band |
+|---|---|---|---|---|---|---|---|
+| `balanced-parens-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 5,482,139.0 | `pcrec_25b1984f_vm-caps-simdna` | 5,472,646.1 | 0.998x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 5,482,139.0 | `pcrec_8d716693_auto-caps-simdna` | 5,242,464.9 | 0.956x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 5,482,139.0 | `pcrec_8d716693_vm-caps-simdna` | 5,251,211.8 | 0.958x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 5,482,139.0 | `pcrec_8d716693_vm-in-caps-simdna` | 5,257,500.7 | 0.959x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,542.3 | `pcrec_8d716693_auto-caps-simdna` | 986.2 | 0.151x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,542.3 | `pcrec_8d716693_vm-caps-simdna` | 986.8 | 0.151x | not yet computable ([B79] not-started) |
+| `balanced-parens-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,542.3 | `pcrec_8d716693_vm-in-caps-simdna` | 1,052.9 | 0.161x | not yet computable ([B79] not-started) |
+| `base10num-near-miss` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 16.9 | `pcrec_8d716693_auto-caps-simdna` | 16.0 | 0.949x | not yet computable ([B79] not-started) |
+| `base10num-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 16.0 | `pcrec_8d716693_auto-caps-simdna` | 16.0 | 0.999x | not yet computable ([B79] not-started) |
+| `base10num-near-miss` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 551.3 | `pcrec_25b1984f_auto-caps-simdna` | 548.1 | 0.994x | not yet computable ([B79] not-started) |
+| `base10num-near-miss` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 551.3 | `pcrec_8d716693_auto-caps-simdna` | 545.6 | 0.990x | not yet computable ([B79] not-started) |
+| `base10num-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 546.3 | `pcrec_8d716693_auto-caps-simdna` | 545.6 | 0.999x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,877,809.1 | `oniguruma_6.9.10_default-caps-simdna` | 93.6 | 0.000x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,877,809.1 | `pcrec_8d716693_auto-caps-simdna` | 73.7 | 0.000x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,877,809.1 | `pcrec_8d716693_vm-caps-simdna` | 72.4 | 0.000x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,877,809.1 | `pcrec_8d716693_vm-in-caps-simdna` | 89.5 | 0.000x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 73.0 | `pcrec_8d716693_vm-caps-simdna` | 72.4 | 0.992x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `oniguruma_6.9.10_default-caps-simdna` | 2,928.4 | 0.426x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `pcrec_25b1984f_auto-caps-simdna` | 6,832.2 | 0.993x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `pcrec_25b1984f_vm-caps-simdna` | 6,825.8 | 0.992x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `pcrec_8d716693_auto-caps-simdna` | 1,884.9 | 0.274x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `pcrec_8d716693_vm-caps-simdna` | 1,885.4 | 0.274x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,880.6 | `pcrec_8d716693_vm-in-caps-simdna` | 2,062.8 | 0.300x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,898.2 | `pcrec_8d716693_auto-caps-simdna` | 1,884.9 | 0.993x | not yet computable ([B79] not-started) |
+| `bracket-array-define` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,898.2 | `pcrec_8d716693_vm-caps-simdna` | 1,885.4 | 0.993x | not yet computable ([B79] not-started) |
+| `codegrammar-flat` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 654,515.9 | `pcrec_25b1984f_auto-caps-simdna` | 608,738.6 | 0.930x | not yet computable ([B79] not-started) |
+| `codegrammar-flat` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 654,515.9 | `pcrec_8d716693_auto-caps-simdna` | 615,877.6 | 0.941x | not yet computable ([B79] not-started) |
+| `codegrammar-flat` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 727.0 | `pcrec_8d716693_auto-caps-simdna` | 692.0 | 0.952x | not yet computable ([B79] not-started) |
+| `codegrammar-xflag` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 638,026.8 | `pcrec_25b1984f_auto-caps-simdna` | 617,657.7 | 0.968x | not yet computable ([B79] not-started) |
+| `codegrammar-xflag` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 638,026.8 | `pcrec_8d716693_auto-caps-simdna` | 615,235.0 | 0.964x | not yet computable ([B79] not-started) |
+| `codegrammar-xflag` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 726.1 | `pcrec_8d716693_auto-caps-simdna` | 692.0 | 0.953x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,171,694.4 | `oniguruma_6.9.10_default-caps-simdna` | 9,587,640.4 | 0.858x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,171,694.4 | `pcrec_25b1984f_vm-caps-simdna` | 11,122,427.9 | 0.996x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,171,694.4 | `pcrec_25b1984f_vm-in-caps-simdna` | 11,109,489.0 | 0.994x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,171,694.4 | `pcrec_8d716693_vm-caps-simdna` | 11,114,870.5 | 0.995x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,171,694.4 | `pcrec_8d716693_vm-in-caps-simdna` | 11,120,790.7 | 0.995x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 11,175,118.7 | `oniguruma_6.9.10_default-caps-simdna` | 9,587,640.4 | 0.858x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 11,175,118.7 | `pcrec_25b1984f_vm-caps-simdna` | 11,122,427.9 | 0.995x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 11,175,118.7 | `pcrec_25b1984f_vm-in-caps-simdna` | 11,109,489.0 | 0.994x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 11,175,118.7 | `pcrec_8d716693_vm-caps-simdna` | 11,114,870.5 | 0.995x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 11,175,118.7 | `pcrec_8d716693_vm-in-caps-simdna` | 11,120,790.7 | 0.995x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 5,163.3 | `pcrec_8d716693_auto-caps-simdna` | 5,125.4 | 0.993x | not yet computable ([B79] not-started) |
+| `currency-lookbehind-fixed` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 5,129.7 | `pcrec_8d716693_auto-caps-simdna` | 5,125.4 | 0.999x | not yet computable ([B79] not-started) |
+| `doubled-word` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 20,851.0 | `pcrec_25b1984f_auto-caps-simdna` | 20,814.1 | 0.998x | not yet computable ([B79] not-started) |
+| `doubled-word` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 20,851.0 | `pcrec_8d716693_vm-caps-simdna` | 20,847.8 | 1.000x | not yet computable ([B79] not-started) |
+| `doubled-word` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 20,841.9 | `pcrec_25b1984f_auto-caps-simdna` | 20,814.1 | 0.999x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 13,402,325.9 | `oniguruma_6.9.10_default-caps-simdna` | 2,227,859.6 | 0.166x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 13,402,325.9 | `pcrec_8d716693_auto-caps-simdna` | 23,130.5 | 0.002x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 13,402,325.9 | `pcrec_8d716693_vm-caps-simdna` | 23,146.9 | 0.002x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 13,402,325.9 | `pcrec_8d716693_vm-in-caps-simdna` | 23,179.2 | 0.002x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,144.6 | `pcrec_8d716693_auto-caps-simdna` | 23,130.5 | 0.999x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,856.5 | `oniguruma_6.9.10_default-caps-simdna` | 8,860.1 | 0.816x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,856.5 | `pcrec_25b1984f_auto-caps-simdna` | 10,798.9 | 0.995x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,856.5 | `pcrec_8d716693_auto-caps-simdna` | 1,578.1 | 0.145x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,856.5 | `pcrec_8d716693_vm-caps-simdna` | 1,575.9 | 0.145x | not yet computable ([B79] not-started) |
+| `dup-param-detect` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,856.5 | `pcrec_8d716693_vm-in-caps-simdna` | 1,640.0 | 0.151x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 977.1 | `pcrec_8d716693_auto-caps-simdna` | 974.1 | 0.997x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 977.1 | `pcrec_8d716693_vm-caps-simdna` | 916.4 | 0.938x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 977.1 | `pcrec_8d716693_vm-in-caps-simdna` | 936.6 | 0.958x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 977.7 | `pcrec_8d716693_auto-caps-simdna` | 974.1 | 0.996x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 977.7 | `pcrec_8d716693_vm-caps-simdna` | 916.4 | 0.937x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 977.7 | `pcrec_8d716693_vm-in-caps-simdna` | 936.6 | 0.958x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,648.4 | `pcrec_25b1984f_auto-caps-simdna` | 10,636.1 | 0.999x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 10,648.4 | `pcrec_8d716693_auto-caps-simdna` | 10,539.4 | 0.990x | not yet computable ([B79] not-started) |
+| `email-local-nodup` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 10,539.6 | `pcrec_8d716693_auto-caps-simdna` | 10,539.4 | 1.000x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,138.8 | `pcrec_25b1984f_auto-caps-simdna` | 47.3 | 0.002x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,138.8 | `pcrec_8d716693_auto-caps-simdna` | 23,106.9 | 0.999x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,138.8 | `pcrec_8d716693_vm-in-caps-simdna` | 23,134.7 | 1.000x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 976.2 | `pcrec_8d716693_auto-caps-simdna` | 905.9 | 0.928x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 976.2 | `pcrec_8d716693_vm-caps-simdna` | 833.2 | 0.854x | not yet computable ([B79] not-started) |
+| `email-nested-plus` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 976.2 | `pcrec_8d716693_vm-in-caps-simdna` | 895.6 | 0.917x | not yet computable ([B79] not-started) |
+| `file-ext-order` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 292,762.7 | `pcrec_8d716693_auto-caps-simdna` | 292,709.7 | 1.000x | not yet computable ([B79] not-started) |
+| `file-ext-order` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 862.5 | `pcrec_25b1984f_auto-caps-simdna` | 838.8 | 0.973x | not yet computable ([B79] not-started) |
+| `file-ext-order` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 862.5 | `pcrec_8d716693_auto-caps-simdna` | 745.3 | 0.864x | not yet computable ([B79] not-started) |
+| `file-ext-order` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 747.3 | `pcrec_8d716693_auto-caps-simdna` | 745.3 | 0.997x | not yet computable ([B79] not-started) |
+| `float-literal-bound` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 1,932,614.8 | `pcrec_25b1984f_auto-caps-simdna` | 1,791,555.1 | 0.927x | not yet computable ([B79] not-started) |
+| `float-literal-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,502.2 | `pcrec_25b1984f_auto-caps-simdna` | 2,489.5 | 0.995x | not yet computable ([B79] not-started) |
+| `float-literal-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,502.2 | `pcrec_8d716693_auto-caps-simdna` | 1,644.0 | 0.657x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,126.4 | `pcrec_8d716693_auto-caps-simdna` | 23,113.3 | 0.999x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,126.4 | `pcrec_8d716693_vm-caps-simdna` | 23,088.0 | 0.998x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,155.0 | `pcrec_25b1984f_auto-caps-simdna` | 23,142.7 | 0.999x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,155.0 | `pcrec_8d716693_auto-caps-simdna` | 23,113.3 | 0.998x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,155.0 | `pcrec_8d716693_vm-caps-simdna` | 23,088.0 | 0.997x | not yet computable ([B79] not-started) |
+| `floor-byte` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,155.0 | `pcrec_8d716693_vm-in-caps-simdna` | 23,134.8 | 0.999x | not yet computable ([B79] not-started) |
+| `floor-byte` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 666.2 | `pcrec_8d716693_auto-caps-simdna` | 599.0 | 0.899x | not yet computable ([B79] not-started) |
+| `floor-byte` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 666.2 | `pcrec_8d716693_vm-caps-simdna` | 664.1 | 0.997x | not yet computable ([B79] not-started) |
+| `floor-byte` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 666.2 | `pcrec_8d716693_vm-in-caps-simdna` | 656.4 | 0.985x | not yet computable ([B79] not-started) |
+| `floor-byte` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 600.0 | `pcrec_8d716693_auto-caps-simdna` | 599.0 | 0.998x | not yet computable ([B79] not-started) |
+| `high-byte-run` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 483,016.9 | `pcrec_8d716693_auto-caps-simdna` | 482,837.5 | 1.000x | not yet computable ([B79] not-started) |
+| `high-byte-run` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 483,191.5 | `pcrec_25b1984f_auto-caps-simdna` | 483,131.8 | 1.000x | not yet computable ([B79] not-started) |
+| `high-byte-run` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 483,191.5 | `pcrec_8d716693_auto-caps-simdna` | 482,837.5 | 0.999x | not yet computable ([B79] not-started) |
+| `high-byte-run` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,113.8 | `pcrec_8d716693_auto-caps-simdna` | 1,095.9 | 0.984x | not yet computable ([B79] not-started) |
+| `high-byte-run` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,116.1 | `pcrec_8d716693_auto-caps-simdna` | 1,095.9 | 0.982x | not yet computable ([B79] not-started) |
+| `ipv4-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 24.9 | `pcrec_25b1984f_auto-caps-simdna` | 18.8 | 0.755x | not yet computable ([B79] not-started) |
+| `ipv4-near-miss` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 497.0 | `pcrec_25b1984f_auto-caps-simdna` | 492.1 | 0.990x | not yet computable ([B79] not-started) |
+| `ipv4-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 627.0 | `pcrec_25b1984f_auto-caps-simdna` | 492.1 | 0.785x | not yet computable ([B79] not-started) |
+| `ipv4-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 627.0 | `pcrec_8d716693_auto-caps-simdna` | 626.9 | 1.000x | not yet computable ([B79] not-started) |
+| `keyword-prefix-order` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 731,389.9 | `pcrec_25b1984f_auto-caps-simdna` | 731,121.5 | 1.000x | not yet computable ([B79] not-started) |
+| `keyword-prefix-order` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 775,044.9 | `pcrec_25b1984f_auto-caps-simdna` | 731,121.5 | 0.943x | not yet computable ([B79] not-started) |
+| `keyword-prefix-order` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 775,044.9 | `pcrec_8d716693_auto-caps-simdna` | 774,694.7 | 1.000x | not yet computable ([B79] not-started) |
+| `keyword-prefix-order` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 800.6 | `pcrec_25b1984f_auto-caps-simdna` | 774.5 | 0.967x | not yet computable ([B79] not-started) |
+| `logparse-atomic` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 32.3 | `pcrec_25b1984f_auto-caps-simdna` | 30.0 | 0.929x | not yet computable ([B79] not-started) |
+| `logparse-atomic` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 40.3 | `pcrec_25b1984f_auto-caps-simdna` | 30.0 | 0.744x | not yet computable ([B79] not-started) |
+| `logparse-atomic` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 838.7 | `pcrec_8d716693_vm-caps-simdna` | 836.8 | 0.998x | not yet computable ([B79] not-started) |
+| `logparse-atomic` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 859.9 | `pcrec_25b1984f_auto-caps-simdna` | 852.2 | 0.991x | not yet computable ([B79] not-started) |
+| `logparse-atomic` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 859.9 | `pcrec_8d716693_vm-caps-simdna` | 836.8 | 0.973x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,146.1 | `pcrec_25b1984f_auto-caps-simdna` | 23,126.2 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,146.1 | `pcrec_8d716693_auto-caps-simdna` | 23,114.2 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,146.1 | `pcrec_8d716693_vm-caps-simdna` | 23,127.5 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,146.1 | `pcrec_8d716693_vm-in-caps-simdna` | 23,142.9 | 1.000x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,145.4 | `pcrec_25b1984f_auto-caps-simdna` | 23,126.2 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,145.4 | `pcrec_8d716693_auto-caps-simdna` | 23,114.2 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,145.4 | `pcrec_8d716693_vm-caps-simdna` | 23,127.5 | 0.999x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,145.4 | `pcrec_8d716693_vm-in-caps-simdna` | 23,142.9 | 1.000x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 693.7 | `pcrec_25b1984f_auto-caps-simdna` | 691.1 | 0.996x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 693.7 | `pcrec_8d716693_auto-caps-simdna` | 619.1 | 0.892x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 693.7 | `pcrec_8d716693_vm-caps-simdna` | 669.3 | 0.965x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 693.7 | `pcrec_8d716693_vm-in-caps-simdna` | 682.7 | 0.984x | not yet computable ([B79] not-started) |
+| `mojibake-curly-quote` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 619.3 | `pcrec_8d716693_auto-caps-simdna` | 619.1 | 1.000x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,808,166.4 | `oniguruma_6.9.10_default-caps-simdna` | 1,498,979.2 | 0.192x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,808,166.4 | `pcrec_25b1984f_auto-caps-simdna` | 7,798,115.1 | 0.999x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,808,166.4 | `pcrec_25b1984f_vm-caps-simdna` | 7,799,381.6 | 0.999x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,808,166.4 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,799,560.3 | 0.999x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 9,275,952.3 | `oniguruma_6.9.10_default-caps-simdna` | 1,498,979.2 | 0.162x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 9,275,952.3 | `pcrec_25b1984f_auto-caps-simdna` | 7,798,115.1 | 0.841x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 9,275,952.3 | `pcrec_25b1984f_vm-caps-simdna` | 7,799,381.6 | 0.841x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 9,275,952.3 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,799,560.3 | 0.841x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `oniguruma_6.9.10_default-caps-simdna` | 4,456.3 | 0.479x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_25b1984f_auto-caps-simdna` | 9,289.8 | 0.999x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_25b1984f_vm-caps-simdna` | 9,282.1 | 0.999x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_25b1984f_vm-in-caps-simdna` | 9,066.4 | 0.975x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_8d716693_auto-caps-simdna` | 2,664.7 | 0.287x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_8d716693_vm-caps-simdna` | 2,704.0 | 0.291x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,295.3 | `pcrec_8d716693_vm-in-caps-simdna` | 2,228.8 | 0.240x | not yet computable ([B79] not-started) |
+| `nested-comment-rec` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 2,658.8 | `pcrec_8d716693_vm-in-caps-simdna` | 2,228.8 | 0.838x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_25b1984f_auto-caps-simdna` | 6,585,253.9 | 0.875x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_25b1984f_vm-caps-simdna` | 6,964,412.4 | 0.925x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,467,667.0 | 0.992x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_8d716693_auto-caps-simdna` | 7,142,399.5 | 0.949x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_8d716693_vm-caps-simdna` | 6,586,599.6 | 0.875x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,529,083.8 | `pcrec_8d716693_vm-in-caps-simdna` | 7,039,078.0 | 0.935x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_25b1984f_auto-caps-simdna` | 6,585,253.9 | 0.874x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_25b1984f_vm-caps-simdna` | 6,964,412.4 | 0.924x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_25b1984f_vm-in-caps-simdna` | 7,467,667.0 | 0.991x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_8d716693_auto-caps-simdna` | 7,142,399.5 | 0.948x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_8d716693_vm-caps-simdna` | 6,586,599.6 | 0.874x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 7,534,700.2 | `pcrec_8d716693_vm-in-caps-simdna` | 7,039,078.0 | 0.934x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,595.9 | `pcrec_25b1984f_auto-caps-simdna` | 7,445.5 | 0.980x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,595.9 | `pcrec_25b1984f_vm-caps-simdna` | 7,405.2 | 0.975x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,595.9 | `pcrec_8d716693_auto-caps-simdna` | 7,031.5 | 0.926x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 7,595.9 | `pcrec_8d716693_vm-caps-simdna` | 7,086.3 | 0.933x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 7,447.7 | `pcrec_25b1984f_auto-caps-simdna` | 7,445.5 | 1.000x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 7,447.7 | `pcrec_25b1984f_vm-caps-simdna` | 7,405.2 | 0.994x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 7,447.7 | `pcrec_8d716693_auto-caps-simdna` | 7,031.5 | 0.944x | not yet computable ([B79] not-started) |
+| `phone-palindrome-6` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 7,447.7 | `pcrec_8d716693_vm-caps-simdna` | 7,086.3 | 0.951x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 222.4 | `pcrec_25b1984f_auto-caps-simdna` | 221.7 | 0.997x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 222.4 | `pcrec_8d716693_auto-caps-simdna` | 221.7 | 0.997x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,384.2 | `pcrec_25b1984f_auto-caps-simdna` | 12,382.6 | 1.000x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,384.2 | `pcrec_8d716693_auto-caps-simdna` | 12,106.8 | 0.978x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,384.2 | `pcrec_8d716693_vm-caps-simdna` | 10,831.8 | 0.875x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,384.2 | `pcrec_8d716693_vm-in-caps-simdna` | 10,998.1 | 0.888x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 12,186.5 | `pcrec_8d716693_auto-caps-simdna` | 12,106.8 | 0.993x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 12,186.5 | `pcrec_8d716693_vm-caps-simdna` | 10,831.8 | 0.889x | not yet computable ([B79] not-started) |
+| `pwd-strength-chain` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 12,186.5 | `pcrec_8d716693_vm-in-caps-simdna` | 10,998.1 | 0.902x | not yet computable ([B79] not-started) |
+| `quoted-delim-match` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 9,931,912.1 | `oniguruma_6.9.10_default-caps-simdna` | 3,862,308.4 | 0.389x | not yet computable ([B79] not-started) |
+| `quoted-delim-match` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 9,791,937.4 | `oniguruma_6.9.10_default-caps-simdna` | 3,862,308.4 | 0.394x | not yet computable ([B79] not-started) |
+| `quoted-delim-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 11,296.6 | `oniguruma_6.9.10_default-caps-simdna` | 7,091.1 | 0.628x | not yet computable ([B79] not-started) |
+| `quoted-delim-match` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 11,272.1 | `oniguruma_6.9.10_default-caps-simdna` | 7,091.1 | 0.629x | not yet computable ([B79] not-started) |
+| `router-prefix-order` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 393,998.2 | `pcrec_25b1984f_auto-caps-simdna` | 393,757.0 | 0.999x | not yet computable ([B79] not-started) |
+| `router-prefix-order` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 398,752.2 | `pcrec_25b1984f_auto-caps-simdna` | 393,757.0 | 0.987x | not yet computable ([B79] not-started) |
+| `router-prefix-order` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 398,752.2 | `pcrec_8d716693_auto-caps-simdna` | 398,422.8 | 0.999x | not yet computable ([B79] not-started) |
+| `router-prefix-order` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 783.4 | `pcrec_8d716693_auto-caps-simdna` | 750.3 | 0.958x | not yet computable ([B79] not-started) |
+| `router-prefix-order` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 751.3 | `pcrec_8d716693_auto-caps-simdna` | 750.3 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `oniguruma_6.9.10_default-caps-simdna` | 2,229,161.7 | 0.476x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_25b1984f_auto-caps-simdna` | 4,497,628.2 | 0.960x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_25b1984f_vm-caps-simdna` | 4,507,247.6 | 0.962x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_25b1984f_vm-in-caps-simdna` | 4,488,622.5 | 0.958x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_8d716693_auto-caps-simdna` | 23,141.0 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_8d716693_vm-caps-simdna` | 23,177.1 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,685,352.5 | `pcrec_8d716693_vm-in-caps-simdna` | 23,113.9 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,159.7 | `pcrec_8d716693_auto-caps-simdna` | 23,141.0 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,159.7 | `pcrec_8d716693_vm-in-caps-simdna` | 23,113.9 | 0.998x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,958.2 | `oniguruma_6.9.10_default-caps-simdna` | 6,577.8 | 0.945x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,958.2 | `pcrec_8d716693_auto-caps-simdna` | 2,183.1 | 0.314x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,958.2 | `pcrec_8d716693_vm-caps-simdna` | 2,189.8 | 0.315x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,958.2 | `pcrec_8d716693_vm-in-caps-simdna` | 2,004.7 | 0.288x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 2,185.4 | `pcrec_8d716693_auto-caps-simdna` | 2,183.1 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-depth3-bound` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 2,185.4 | `pcrec_8d716693_vm-in-caps-simdna` | 2,004.7 | 0.917x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,638,824.0 | `oniguruma_6.9.10_default-caps-simdna` | 2,227,888.6 | 0.480x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,638,824.0 | `pcrec_8d716693_auto-caps-simdna` | 23,128.1 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,638,824.0 | `pcrec_8d716693_vm-caps-simdna` | 23,116.5 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,638,824.0 | `pcrec_8d716693_vm-in-caps-simdna` | 23,144.1 | 0.005x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,159.6 | `pcrec_8d716693_auto-caps-simdna` | 23,128.1 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,159.6 | `pcrec_8d716693_vm-caps-simdna` | 23,116.5 | 0.998x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,159.6 | `pcrec_8d716693_vm-in-caps-simdna` | 23,144.1 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `oniguruma_6.9.10_default-caps-simdna` | 5,995.4 | 0.981x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `pcrec_25b1984f_auto-caps-simdna` | 6,016.8 | 0.984x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `pcrec_25b1984f_vm-caps-simdna` | 5,964.3 | 0.976x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `pcrec_8d716693_auto-caps-simdna` | 1,371.7 | 0.224x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `pcrec_8d716693_vm-caps-simdna` | 1,371.5 | 0.224x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 6,111.8 | `pcrec_8d716693_vm-in-caps-simdna` | 1,488.8 | 0.244x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,372.9 | `pcrec_8d716693_auto-caps-simdna` | 1,371.7 | 0.999x | not yet computable ([B79] not-started) |
+| `tag-pair-match` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,372.9 | `pcrec_8d716693_vm-caps-simdna` | 1,371.5 | 0.999x | not yet computable ([B79] not-started) |
+| `utf8-lead-no-cont` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 481,751.8 | `pcrec_25b1984f_auto-caps-simdna` | 481,273.2 | 0.999x | not yet computable ([B79] not-started) |
+| `utf8-lead-no-cont` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 481,751.8 | `pcrec_8d716693_auto-caps-simdna` | 481,411.6 | 0.999x | not yet computable ([B79] not-started) |
+| `utf8-lead-no-cont` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,258.6 | `pcrec_25b1984f_auto-caps-simdna` | 1,250.3 | 0.993x | not yet computable ([B79] not-started) |
+| `utf8-lead-no-cont` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,258.6 | `pcrec_8d716693_auto-caps-simdna` | 1,225.4 | 0.974x | not yet computable ([B79] not-started) |
+| `uuid-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 27.6 | `pcrec_25b1984f_auto-caps-simdna` | 19.9 | 0.722x | not yet computable ([B79] not-started) |
+| `uuid-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 27.6 | `pcrec_8d716693_auto-caps-simdna` | 27.6 | 1.000x | not yet computable ([B79] not-started) |
+| `uuid-near-miss` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 565.5 | `pcrec_25b1984f_auto-caps-simdna` | 562.0 | 0.994x | not yet computable ([B79] not-started) |
+| `uuid-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 671.6 | `pcrec_25b1984f_auto-caps-simdna` | 562.0 | 0.837x | not yet computable ([B79] not-started) |
+| `uuid-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 671.6 | `pcrec_8d716693_auto-caps-simdna` | 667.3 | 0.994x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 349,566.6 | `pcrec_25b1984f_auto-caps-simdna` | 263,784.5 | 0.755x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 349,566.6 | `pcrec_8d716693_auto-caps-simdna` | 349,512.7 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 690.9 | `pcrec_25b1984f_auto-caps-simdna` | 684.3 | 0.990x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 690.9 | `pcrec_8d716693_auto-caps-simdna` | 624.1 | 0.903x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 690.9 | `pcrec_8d716693_vm-caps-simdna` | 684.8 | 0.991x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 690.9 | `pcrec_8d716693_vm-in-caps-simdna` | 685.8 | 0.993x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-array-begin` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 624.7 | `pcrec_8d716693_auto-caps-simdna` | 624.1 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-constant` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 4,198,271.2 | `pcrec_25b1984f_auto-caps-simdna` | 4,197,409.4 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-constant` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,450.7 | `pcrec_25b1984f_auto-caps-simdna` | 2,449.4 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-constant` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,450.7 | `pcrec_8d716693_auto-caps-simdna` | 2,423.8 | 0.989x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,458,707.3 | `pcrec_25b1984f_auto-caps-simdna` | 2,447,555.9 | 0.995x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,458,707.3 | `pcrec_8d716693_auto-caps-simdna` | 2,447,249.4 | 0.995x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 2,451,638.9 | `pcrec_25b1984f_auto-caps-simdna` | 2,447,555.9 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 2,451,638.9 | `pcrec_8d716693_auto-caps-simdna` | 2,447,249.4 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,415.6 | `pcrec_8d716693_auto-caps-simdna` | 1,393.3 | 0.984x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-number-extended` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,393.8 | `pcrec_8d716693_auto-caps-simdna` | 1,393.3 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,134.0 | `pcrec_25b1984f_auto-caps-simdna` | 23,122.0 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,134.0 | `pcrec_8d716693_auto-caps-simdna` | 23,130.2 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,134.0 | `pcrec_8d716693_vm-caps-simdna` | 23,131.4 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,134.0 | `pcrec_8d716693_vm-in-caps-simdna` | 23,112.1 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,184.9 | `pcrec_25b1984f_auto-caps-simdna` | 23,122.0 | 0.997x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,184.9 | `pcrec_8d716693_auto-caps-simdna` | 23,130.2 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,184.9 | `pcrec_8d716693_vm-caps-simdna` | 23,131.4 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,184.9 | `pcrec_8d716693_vm-in-caps-simdna` | 23,112.1 | 0.997x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 665.3 | `pcrec_25b1984f_auto-caps-simdna` | 662.7 | 0.996x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 665.3 | `pcrec_8d716693_auto-caps-simdna` | 597.9 | 0.899x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 665.3 | `pcrec_8d716693_vm-caps-simdna` | 657.0 | 0.988x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 665.3 | `pcrec_8d716693_vm-in-caps-simdna` | 657.4 | 0.988x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-object-begin` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 598.1 | `pcrec_8d716693_auto-caps-simdna` | 597.9 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,169.4 | `pcrec_25b1984f_auto-caps-simdna` | 23,160.6 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,169.4 | `pcrec_8d716693_auto-caps-simdna` | 23,122.2 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,169.4 | `pcrec_8d716693_vm-caps-simdna` | 23,127.9 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,169.4 | `pcrec_8d716693_vm-in-caps-simdna` | 23,162.8 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,134.0 | `pcrec_8d716693_auto-caps-simdna` | 23,122.2 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,134.0 | `pcrec_8d716693_vm-caps-simdna` | 23,127.9 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 748.6 | `pcrec_25b1984f_auto-caps-simdna` | 735.7 | 0.983x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 748.6 | `pcrec_8d716693_auto-caps-simdna` | 674.5 | 0.901x | not yet computable ([B79] not-started) |
+| `wild-codegrammar-json-stringcontent-escape` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 674.9 | `pcrec_8d716693_auto-caps-simdna` | 674.5 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-datetime-moment-iso8601` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 36.9 | `pcrec_25b1984f_auto-caps-simdna` | 32.9 | 0.892x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,082,283.0 | `pcrec_25b1984f_auto-caps-simdna` | 4,033,368.0 | 0.988x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,082,283.0 | `pcrec_8d716693_auto-caps-simdna` | 4,044,116.8 | 0.991x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 4,043,644.9 | `pcrec_25b1984f_auto-caps-simdna` | 4,033,368.0 | 0.997x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,506.4 | `pcrec_25b1984f_auto-caps-simdna` | 2,499.5 | 0.997x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,506.4 | `pcrec_8d716693_auto-caps-simdna` | 2,488.5 | 0.993x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-grok` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 2,494.0 | `pcrec_8d716693_auto-caps-simdna` | 2,488.5 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-noatomic` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 3,990,114.4 | `pcrec_25b1984f_auto-caps-simdna` | 3,987,279.3 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-noatomic` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,477.7 | `pcrec_25b1984f_auto-caps-simdna` | 2,472.2 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-noatomic` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,477.7 | `pcrec_8d716693_auto-caps-simdna` | 2,446.7 | 0.987x | not yet computable ([B79] not-started) |
+| `wild-logparse-base10num-noatomic` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 2,447.1 | `pcrec_8d716693_auto-caps-simdna` | 2,446.7 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-logparse-quotedstring-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,962.7 | `pcrec_25b1984f_auto-caps-simdna` | 1,961.3 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-logparse-quotedstring-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,962.7 | `pcrec_8d716693_auto-caps-simdna` | 1,946.3 | 0.992x | not yet computable ([B79] not-started) |
+| `wild-logparse-quotedstring-grok` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,948.5 | `pcrec_8d716693_auto-caps-simdna` | 1,946.3 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-logparse-quotedstring-noatomic` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,855.1 | `pcrec_8d716693_auto-caps-simdna` | 1,847.0 | 0.996x | not yet computable ([B79] not-started) |
+| `wild-logparse-quotedstring-noatomic` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 1,850.4 | `pcrec_8d716693_auto-caps-simdna` | 1,847.0 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-logparse-syslogbase-expanded` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,577.8 | `pcrec_8d716693_auto-caps-simdna` | 1,781.0 | 0.498x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,475,924.2 | `oniguruma_6.9.10_default-caps-simdna` | 2,228,611.9 | 0.641x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,475,924.2 | `pcrec_25b1984f_auto-caps-simdna` | 3,473,038.3 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,475,924.2 | `pcrec_8d716693_auto-caps-simdna` | 23,160.4 | 0.007x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,475,924.2 | `pcrec_8d716693_vm-caps-simdna` | 23,145.9 | 0.007x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 3,475,924.2 | `pcrec_8d716693_vm-in-caps-simdna` | 23,177.0 | 0.007x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,645.3 | `pcrec_25b1984f_auto-caps-simdna` | 2,640.9 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,645.3 | `pcrec_8d716693_auto-caps-simdna` | 934.4 | 0.353x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,645.3 | `pcrec_8d716693_vm-caps-simdna` | 1,024.5 | 0.387x | not yet computable ([B79] not-started) |
+| `wild-logparse-winpath-grok` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,645.3 | `pcrec_8d716693_vm-in-caps-simdna` | 1,107.3 | 0.419x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,200,484.6 | `oniguruma_6.9.10_default-caps-simdna` | 2,169,998.5 | 0.517x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,200,484.6 | `pcrec_25b1984f_auto-caps-simdna` | 4,009,771.6 | 0.955x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,200,484.6 | `pcrec_8d716693_auto-caps-simdna` | 3,942,172.5 | 0.939x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 3,986,630.0 | `oniguruma_6.9.10_default-caps-simdna` | 2,169,998.5 | 0.544x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 3,986,630.0 | `pcrec_8d716693_auto-caps-simdna` | 3,942,172.5 | 0.989x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,464.9 | `pcrec_8d716693_auto-caps-simdna` | 1,167.8 | 0.474x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,464.9 | `pcrec_8d716693_vm-caps-simdna` | 1,936.1 | 0.785x | not yet computable ([B79] not-started) |
+| `wild-secrets-aws-access-key-id` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,464.9 | `pcrec_8d716693_vm-in-caps-simdna` | 2,029.2 | 0.823x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 124,798.7 | `pcrec_25b1984f_auto-caps-simdna` | 124,571.0 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 124,798.7 | `pcrec_8d716693_auto-caps-simdna` | 124,604.5 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,374.0 | `pcrec_8d716693_auto-caps-simdna` | 1,054.4 | 0.767x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,374.0 | `pcrec_8d716693_vm-caps-simdna` | 790.7 | 0.575x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,374.0 | `pcrec_8d716693_vm-in-caps-simdna` | 927.7 | 0.675x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 959.5 | `pcrec_8d716693_vm-caps-simdna` | 790.7 | 0.824x | not yet computable ([B79] not-started) |
+| `wild-secrets-github-pat` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 959.5 | `pcrec_8d716693_vm-in-caps-simdna` | 927.7 | 0.967x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,281,220.0 | `pcrec_8d716693_auto-caps-simdna` | 23,101.6 | 0.018x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,281,220.0 | `pcrec_8d716693_vm-caps-simdna` | 23,162.8 | 0.018x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,281,220.0 | `pcrec_8d716693_vm-in-caps-simdna` | 23,184.0 | 0.018x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,143.6 | `pcrec_8d716693_auto-caps-simdna` | 23,101.6 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,372.6 | `pcrec_8d716693_auto-caps-simdna` | 1,073.7 | 0.782x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,372.6 | `pcrec_8d716693_vm-caps-simdna` | 1,099.4 | 0.801x | not yet computable ([B79] not-started) |
+| `wild-secrets-username-password-pair` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,372.6 | `pcrec_8d716693_vm-in-caps-simdna` | 1,160.8 | 0.846x | not yet computable ([B79] not-started) |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 413,226.8 | `pcrec_25b1984f_auto-caps-simdna` | 410,146.0 | 0.993x | not yet computable ([B79] not-started) |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 413,226.8 | `pcrec_8d716693_auto-caps-simdna` | 413,068.6 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 711.6 | `pcrec_25b1984f_auto-caps-simdna` | 710.3 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 711.6 | `pcrec_8d716693_auto-caps-simdna` | 707.2 | 0.994x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 109,709.6 | `oniguruma_6.9.10_default-caps-simdna` | 151.3 | 0.001x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 109,709.6 | `pcrec_25b1984f_auto-caps-simdna` | 109,563.9 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 109,709.6 | `pcrec_8d716693_auto-caps-simdna` | 34.0 | 0.000x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 109,709.6 | `pcrec_8d716693_vm-caps-simdna` | 31.9 | 0.000x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 109,709.6 | `pcrec_8d716693_vm-in-caps-simdna` | 35.4 | 0.000x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 34.8 | `pcrec_8d716693_auto-caps-simdna` | 34.0 | 0.978x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 34.8 | `pcrec_8d716693_vm-caps-simdna` | 31.9 | 0.918x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,187.1 | `pcrec_25b1984f_auto-caps-simdna` | 1,186.8 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,187.1 | `pcrec_8d716693_auto-caps-simdna` | 644.1 | 0.543x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,187.1 | `pcrec_8d716693_vm-caps-simdna` | 641.0 | 0.540x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,187.1 | `pcrec_8d716693_vm-in-caps-simdna` | 681.7 | 0.574x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 645.1 | `pcrec_8d716693_auto-caps-simdna` | 644.1 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 645.1 | `pcrec_8d716693_vm-caps-simdna` | 641.0 | 0.994x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 43.7 | `pcrec_25b1984f_auto-caps-simdna` | 40.4 | 0.925x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,065.6 | `pcrec_25b1984f_auto-caps-simdna` | 1,063.7 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,065.6 | `pcrec_8d716693_auto-caps-simdna` | 783.4 | 0.735x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,065.6 | `pcrec_8d716693_vm-caps-simdna` | 978.6 | 0.918x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,065.6 | `pcrec_8d716693_vm-in-caps-simdna` | 1,029.1 | 0.966x | not yet computable ([B79] not-started) |
+| `wild-validator-email-owasp` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 783.4 | `pcrec_8d716693_auto-caps-simdna` | 783.4 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-validator-uuid-grok` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 82,553.5 | `pcrec_8d716693_auto-caps-simdna` | 82,507.2 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-validator-uuid-grok` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 788.6 | `pcrec_25b1984f_auto-caps-simdna` | 723.3 | 0.917x | not yet computable ([B79] not-started) |
+| `wild-validator-uuid-grok` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 788.6 | `pcrec_8d716693_auto-caps-simdna` | 780.6 | 0.990x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942140-dbnames` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,086,165.0 | `pcrec_25b1984f_auto-caps-simdna` | 4,079,409.2 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942140-dbnames` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 4,086,165.0 | `pcrec_8d716693_auto-caps-simdna` | 4,081,835.7 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942140-dbnames` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 4,082,823.2 | `pcrec_25b1984f_auto-caps-simdna` | 4,079,409.2 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942140-dbnames` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 4,082,823.2 | `pcrec_8d716693_auto-caps-simdna` | 4,081,835.7 | 1.000x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942140-dbnames` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 2,702.1 | `pcrec_8d716693_auto-caps-simdna` | 2,691.4 | 0.996x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 1,360,803.0 | `pcrec_25b1984f_auto-caps-simdna` | 1,268,060.9 | 0.932x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 1,360,803.0 | `pcrec_8d716693_auto-caps-simdna` | 1,358,357.1 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,315.2 | `pcrec_25b1984f_auto-caps-simdna` | 1,311.1 | 0.997x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,315.2 | `pcrec_8d716693_auto-caps-simdna` | 671.1 | 0.510x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,315.2 | `pcrec_8d716693_vm-caps-simdna` | 1,236.3 | 0.940x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942160-sleep-benchmark` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 671.5 | `pcrec_8d716693_auto-caps-simdna` | 671.1 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942270-union-select` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 1,001,016.2 | `pcrec_8d716693_auto-caps-simdna` | 1,000,461.0 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942270-union-select` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,153.6 | `pcrec_25b1984f_auto-caps-simdna` | 1,151.9 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942270-union-select` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 1,153.6 | `pcrec_8d716693_auto-caps-simdna` | 1,128.0 | 0.978x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942360-concat-sqli` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,197,521.8 | `pcrec_25b1984f_auto-caps-simdna` | 12,146,302.4 | 0.996x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942360-concat-sqli` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 12,197,521.8 | `pcrec_8d716693_auto-caps-simdna` | 12,143,930.5 | 0.996x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942360-concat-sqli` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 7,412.0 | `pcrec_25b1984f_auto-caps-simdna` | 7,405.0 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942500-comment-obfuscation` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 23,120.7 | `pcrec_25b1984f_auto-caps-simdna` | 23,099.9 | 0.999x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942500-comment-obfuscation` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,148.5 | `pcrec_25b1984f_auto-caps-simdna` | 23,099.9 | 0.998x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942500-comment-obfuscation` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 737.7 | `pcrec_25b1984f_auto-caps-simdna` | 733.1 | 0.994x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942500-comment-obfuscation` | `short-subject-search` | `pcrec_25b1984f_auto-nocaps-simdna` | 737.7 | `pcrec_8d716693_auto-caps-simdna` | 702.9 | 0.953x | not yet computable ([B79] not-started) |
+| `wild-waf-crs-942500-comment-obfuscation` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 705.1 | `pcrec_8d716693_auto-caps-simdna` | 702.9 | 0.997x | not yet computable ([B79] not-started) |
+| `winpath-near-miss` | `large-subject-throughput` | `pcrec_25b1984f_auto-nocaps-simdna` | 20.4 | `pcrec_25b1984f_auto-caps-simdna` | 20.1 | 0.986x | not yet computable ([B79] not-started) |
+| `winpath-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,119.7 | `oniguruma_6.9.10_default-caps-simdna` | 93.3 | 0.004x | not yet computable ([B79] not-started) |
+| `winpath-near-miss` | `large-subject-throughput` | `pcrec_8d716693_auto-nocaps-simdna` | 23,119.7 | `pcrec_25b1984f_auto-caps-simdna` | 20.1 | 0.001x | not yet computable ([B79] not-started) |
+| `winpath-near-miss` | `short-subject-search` | `pcrec_8d716693_auto-nocaps-simdna` | 584.7 | `pcrec_25b1984f_auto-caps-simdna` | 499.9 | 0.855x | not yet computable ([B79] not-started) |
 
 ## Compile cost (by execution-model class; never pooled across classes)
 

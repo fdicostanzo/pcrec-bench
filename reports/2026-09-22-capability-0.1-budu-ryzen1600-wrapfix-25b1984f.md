@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v20 (2026-09-23)
+reporter: v21 (2026-09-23)
 
 ## Query
 
