@@ -3277,3 +3277,4 @@ any of them on reading (he rules semantics; I rule method and syntax). One
 pcrec-side fact for U2: `-e utf8` MUST reach testee_id — a utf8 testee whose
 id does not carry the encoding is indistinguishable from the byte one in the
 store; treat it as the L5 witness-compile class.
+ack: 2026-09-23 — [B77] (plan.md): Q1-Q10 recorded as ruled (Frank may override on reading); Q5's pointer sentence lands with build lane U-DOC; build lanes open on this side's schedule AFTER O-47 + [B78] as I-94 itself sequences; U2 carries the -e utf8 → testee_id requirement (r8 F-C1, already the named work item).
