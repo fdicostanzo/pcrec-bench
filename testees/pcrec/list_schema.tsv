@@ -1,29 +1,24 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# fourth archiving of this surface (first: cd371441, the W23 delivery pin
+# fifth archiving of this surface (first: cd371441, the W23 delivery pin
 # that shipped `--list-schema` itself; second: a770139e, byte-identical;
-# third: cf0962e3, +1 row for the `config tune` directive).
+# third: cf0962e3, +1 row for the `config tune` directive; fourth:
+# 8d716693, byte-identical).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-8d716693/build/pcrec --list-schema
+#     build/pcrec-b1885a83/build/pcrec --list-schema
 #
-# pcrec commit 8d716693a57370853ff9e15a0606ccf0fea5b42f (rx_info.abi 29 --
-# see list_axes.tsv's header), archived 2026-09-22 by lane b74repin
-# ([B74], inbox I-87: [OPTLOOP.1] batch 1 -- 25b1984f -> 8d716693).
+# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
+# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
 # 71 data rows across two sections (`#section schema`, `#section
-# surface`) -- BYTE-IDENTICAL to the 25b1984f copy below the header
-# (diffed line for line): [OPTLOOP.1] batch 1 added no new `.rxt`
-# grammar line, and neither did pcrec's D118 CLI reshape landing in the
-# same commit range (`--source FILE` retired for a bare positional
-# FILE.rxt operand, the literal pattern moved behind `--pattern`) --
-# D118 changes how pcrec is INVOKED on a `.rxt` file, never the file's
-# own grammar, which this table describes; the `config tune <position>`
-# row [OPT-DIAL] added at cf0962e3 is unmoved. Nothing in this project's
-# adapters or checks reads this file yet (declared for a future
-# `.rxt`-format check, per
-# docs/design/rxt_needs_v1.md); archived so the registry-surface census
-# stays complete at this pin.
+# surface`) -- BYTE-IDENTICAL to the 8d716693 copy below the header
+# (diffed line for line): [OPT-FREQPICK] and [OPT-REQPOS] tier 2b add no
+# new `.rxt` grammar line, only emitted-C machinery. Nothing in this
+# project's adapters or checks reads this file yet (declared for a
+# future `.rxt`-format check, per docs/design/rxt_needs_v1.md); archived
+# so the registry-surface census stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,
 # [DD-13b.W23.1]). One row per (scope, line-kind), walked out of

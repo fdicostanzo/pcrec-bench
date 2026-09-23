@@ -3,28 +3,20 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-8d716693/build/pcrec --list-limits
+#     build/pcrec-b1885a83/build/pcrec --list-limits
 #
-# pcrec commit 8d716693a57370853ff9e15a0606ccf0fea5b42f (rx_info.abi 29 --
-# see list_axes.tsv's header), archived 2026-09-22 by lane b74repin
-# ([B74], inbox I-87: [OPTLOOP.1] batch 1 -- 25b1984f -> 8d716693). 58
-# data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- ROW COUNT UNCHANGED; [OPTLOOP.1] batch 1 added no numeric
-# limit. FOUR ROWS reworded in their `override` column only, values and
-# row order unmoved: PCREC_MAX_AUTO_DFA_ELEMS, PCREC_MAX_VM_EMIT_CODE_
-# BYTES, PCREC_DEFAULT_WARN_EMIT_BYTES and PCREC_MAX_EMIT_BYTES all
-# move `-D` -> `flag+-D`, each with an appended `-- [LIM-OVR] 2026-09-22:`
-# note. This is NOT part of [OPTLOOP.1] -- it is [LIM-OVR] (pcrec lane
-# admin1, commit d2cd3c81, landing in the same commit range), a pure
-# REGISTRY-SURFACE wording fix: each of the four already had a real
-# per-compile CALLER LEVER (--max-auto-dfa-elems / --max-emit-code-bytes
-# / --warn-emit-bytes / --max-emit-bytes) that the OLD `-D` token denied
-# existed ("no caller lever"); `flag+-D` names the true two-lever shape
-# (a raise/set flag AND a build-time -D default) honestly. No VALUE
-# moved on any of the four. Every OTHER row is BYTE-IDENTICAL to the
-# 25b1984f copy below the header (diffed line for line). The 25b1984f
-# copy's header (git history) carries the last delta narrative (one row
-# added there, PCREC_SIZE_TERM_BAR, [REVW.4]).
+# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
+# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
+# 60 data rows / 7 columns (name, value, unit, kind, override, anchor,
+# desc) -- TWO ROWS ADDED (58 -> 60), both [OPT-REQPOS] tier 2b's own:
+# PCREC_MAX_REQ_RUN_EMIT (8 bytes, "selection knee" -- the longest
+# necessary run the emitted memcmp compares, sized where gcc lowers a
+# constant-length memcmp to one word load and one compare) and
+# PCREC_MAX_REQ_RUN_SCAN (32 bytes, "compile budget" -- how much of a
+# run the analysis tracks before truncating). Every OTHER row is
+# BYTE-IDENTICAL to the 8d716693 copy below the header (diffed line for
+# line), including the four `override` rewordings [LIM-OVR] made there.
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -101,6 +93,8 @@ PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/callgraph.c: the mini
 PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges one DFA machine may carry — src/opt/scanedge.c takes the longest chains first, src/gen/emit_dfa.c sizes its array by it; since [OPT-EDGE] STEP 1 an edge costs NO compare on the emitted loop's generic path (the shared sentinel), so this is an emitted-bytes budget awaiting a measured re-choice
 PCREC_STARTPOS_GUARD_TEXT_MAX	1024	bytes	identifier cap	none		[K50]: fixed buffer size for the caller-startpos boundary guard's rendered C expression (src/core/internal.h's pcrec_startpos_guard_text; four call sites in the two emitters). Sized by the ENCODING BACKEND's own guard text, not by the pattern — enc_utf8.c's is 46 bytes with the @-placeholders expanded, so this is K38-precedent margin over the longest a backend could plausibly spell; overflow is a loud internal error, never a truncated half-guard
 PCREC_MIN_SCAN_CHAIN	2	states	selection knee	none		[OPT-5] precondition (5): the SHORTEST bounded counted-class run src/opt/scanedge.c will collapse into a scan edge (the unbounded self-loop is admitted at any length). MEASURED 2026-09-04 against the STEP 1.1 loop -- studies/scan_edge_ladder/run_floor.sh, 3 runs x 15 rounds, edge vs -fno-scan-edge on the same pattern: at m=2, 3 and 4 the two arms are NOT separated by more than the per-round range on either family, so D77 no-gap-no-move keeps this at 2; the only resolvable separation is m=8 nullable, edge/noedge 0.9855 median [IQR 0.0243]. The edge SIZE win is unconditional and is the standing reason to admit m=2. RE-CONFIRMED 2026-09-21 on the fixed harness (I-82, D117): 0 of 16 cells separate, still keeping this at 2
+PCREC_MAX_REQ_RUN_EMIT	8	bytes	selection knee	none		[OPT-REQPOS] tier 2b: the LONGEST necessary literal run the pre-check will compare (src/opt/reqbyte.c derives the run, src/gen/emit_dfa.c sizes the emitted memcmp by it). A longer run is TRUNCATED to its lowest-frequency window of this length containing the scan byte, never split into two compares (reqpos_2b.md §2.4 item 3, Frank's ruling 2026-09-22). 8 is where gcc lowers a constant-length memcmp to ONE word load and one compare with no call out of line, measured on both this box's gcc-16 and the reference gcc-15.2 (reqpos_2b.md §3.2); above it the compare decomposes and a second mechanism's cost question opens, which is the D77 trigger for moving this
+PCREC_MAX_REQ_RUN_SCAN	32	bytes	compile budget	none		[OPT-REQPOS] tier 2b: how much of a necessary literal run the ANALYSIS tracks before truncating it (src/opt/reqbyte.c's RbRun). Bounds the walk's per-frame state on a pattern whose literal is as long as the pattern — this project has segfaulted its own compiler on a 20,000-byte literal — and every truncation is SOUND in the only direction that matters, because a prefix of a necessary contiguous run is itself a necessary contiguous run. Sized at four times PCREC_MAX_REQ_RUN_EMIT so the window choice above is EXACT for every run length the shipped corpus and the bench contain (longest measured 11, docs/dev/optloop/reqpos_census.md §1.1)
 RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
 BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number
 LA_MSG_MAX	256	bytes	identifier cap	none		src/parse/mod_lookaround.c: fixed buffer size for the §2.5/§2.7 lookaround diagnostic text

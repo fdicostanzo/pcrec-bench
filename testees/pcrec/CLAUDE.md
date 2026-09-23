@@ -526,6 +526,109 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at b1885a83 (abi 29 -> 30) — 2026-09-23, lane b80repin, inbox I-95
+
+**[OPTLOOP] cycle 2 batch 2, exactly as I-95 characterised it.** Pin
+`b1885a83` = the merge `8e4e9c6c` + the (B) re-pin + a report;
+everything after it on `origin/main` at fetch time was docs/tests-only
+(CONFIRMED: `git diff --stat b1885a83 origin/main` touches only
+`docs/dev/` files). Two optimizations land in one abi step:
+[OPT-FREQPICK] (the emitted necessary BYTE is now the argmin of pcrec's
+shipped byte-frequency prior over the necessary set, rightmost
+tiebreak — byte encoding only, no new stamp) and [OPT-REQPOS] tier 2b
+(the necessary literal RUN, 2-8 bytes, one memchr for the run's rarest
+member plus one constant-length memcmp — `RX_REQ_RUN`, deny
+`-fno-req-run` bit 31; where a run ships, `RX_REQ_BYTE` reports the
+run's own scanned member, never the plain rightmost-byte pick). `struct
+rx_info` is byte-identical field for field between abi 29 and 30
+(diffed on a plain `abc` witness): the shim floor STAYS 16 -- neither
+optimization touches a struct member.
+
+**The new stamp**, on the same "every"/no-rx_info-mirror terms as
+`req_byte`/`end_window`: `RX_REQ_RUN`, hex bytes of the run plus `@`
+plus the scanned member's index (`"6875625f7061745f@3"` for
+`wild-secrets-github-pat`'s "hub_pat_" run, scanned at its own index 3
+-- CONFIRMED byte for byte against I-95's own prediction), or `"none"`
+when no run of 2+ bytes is necessary. `pb_req_run()` mirrors
+`pb_req_byte()`'s shape in `shim.c`; `driver.c` prints it beside
+`req_byte`/`end_window` in the same "every"-scope block;
+`STAMP_SCOPE["req_run"] = ("every", 30)`; no `REGISTRY_STAMP_PAIRS`
+entry (a variable value, the `dfa_prefilter_offsets`/`req_byte` shape).
+
+**A SEPARATE finding, the same shape as [B74]'s own: [OPT-FREQPICK]
+moves `req_byte`'s VALUE on any pattern with a 2+-byte necessary run**,
+which is NOT limited to new corpus patterns -- five of this project's
+own pre-existing `STAMP_CASES` witnesses moved (`foo[0-9]+bar` /
+`^foo[0-9]+bar`: 114 ('r') -> 98 ('b'), the run "bar"@0; `^foo` /
+`\Gfoo` / `foo\z`: 111 ('o') -> 102 ('f'), the run "foo"@0) and one
+`LEDGER_STAMP_CASES` witness (`altwide/pfx3-256` under `--engine=vm`:
+120 ('x') -> 113 ('q'), the run "qux"@0 -- MEASURED +423 B over the
+pre-[B80] total, the run's memchr+memcmp loop replacing the single-byte
+guard; `vm_program_bytes` UNCHANGED at 244735, confirming the guard
+lives in the shared search prologue rather than the VM program region
+`req_byte`/`end_window` already sit outside of). Every other witness in
+this file's corpus reads `req_run "none"` and moves by exactly
+`B80_STAMP_LINE = 26` (`#define RX_REQ_RUN "none"`, flat, both
+engines) -- MEASURED on 14 witnesses spanning bounded, altwide, the
+hand-chosen kinds and every `DENY_CONTROLS` row, added ALONGSIDE
+`B74_STAMP_LINES_DFA`/`_VM` (additive, one term per re-pin, never a
+replacement).
+
+**Two new `DENY_CONTROLS` rows.** `-fno-req-byte` now denies `req_run`
+WITH it in the same flag (pcrec's own doc comment: "there is no run
+check without a byte") -- MEASURED both go to `"none"` together on
+`foo[0-9]+bar`. `-fno-req-run` (bit 31) is a FOURTH new deny flag,
+ISOLATING the run from the byte: MEASURED the run alone goes to
+`"none"` while `req_byte` stays at `"98"` -- the plain byte check still
+fires independently on the run's own scan member (the bottom-up walk's
+own argmin pick, not merely "the run's leftover").
+
+**Registries re-archived and diffed against the pin's own live
+output**: `list_axes.tsv` **87/31 -> 89/32** -- two rows, one new axis
+(`req-run`, order 1 `run` / order 2 `none`), exactly I-95's own
+description; every other row byte-identical. `list_definitions.tsv`
+**50 rows, byte-identical** -- the twelfth pin running. `list_limits.tsv`
+**58 -> 60** -- `PCREC_MAX_REQ_RUN_EMIT` (8 bytes, the longest run the
+emitted memcmp compares) and `PCREC_MAX_REQ_RUN_SCAN` (32 bytes, the
+analysis's own truncation budget), both [OPT-REQPOS] tier 2b's.
+`list_schema.tsv` **71 rows, byte-identical** -- neither optimization
+touches the `.rxt` grammar. `check_mechanism_stamps` 114/114,
+`check_deny_flag_controls` 15/15 (all four checked standalone before
+the full `make check` run). Catalogue **3.4** (`[[pin_order]]` append).
+Sixteen pinned configs, unchanged -- no new testee: this project asked
+for no separate `-noreqrun` deny axis, unlike `-noedge`/`-noisland`/
+`-noclsfold`, because [OPT-REQPOS] is not itself under acceptance
+review the way [OPT-5]/[ENG-ISL]/[FORM-CHAR] were.
+
+**The corpus census I-95 (a) asked for**, over `bench/capability`'s 64
+patterns (62 compile; two refuse for unrelated reasons --
+`negation-scope-lookbehind-var`, `wild-datetime-datefinder-alternation`):
+**14 of 62 stamp a run.** Length distribution: 8 patterns at 2 bytes,
+3 at 3 bytes, 1 at 4 bytes, 1 at 5 bytes, 1 at 8 bytes (the
+`wild-secrets-github-pat` witness, truncated from its 11-byte literal
+to the 8-byte cap). Two pairs share an identical run by construction:
+`tag-depth3-bound`/`tag-pair-match` both stamp `"</"@0`
+(`3c2f@0`), `nested-comment-rec`/`wild-waf-crs-942500-comment-obfuscation`
+both stamp `"*/"@0` (`2a2f@0`). Separately, **14 of 64 patterns move
+their `req_byte` VALUE** between 8d716693 and b1885a83 -- the union of
+"stamps a run" and "byte moved" is **18 patterns**, four in each
+non-overlapping wedge (`keyword-prefix-order`,
+`wild-secrets-github-pat`, `wild-secrets-slack-webhook-url`,
+`winpath-near-miss` stamp a run whose scan byte happens to equal the
+old rightmost pick, so `req_byte` itself does not move; `codegrammar-flat`,
+`codegrammar-xflag`, `dup-param-detect`, `wild-validator-email-owasp`
+move `req_byte` under pure [OPT-FREQPICK] with no run at all) and ten
+in both (the three named witnesses plus `file-ext-order`,
+`wild-semdiv-altorder-foo-foobar-rustregex`,
+`wild-semdiv-dollar-trailing-newline-pcre2`). **All three of I-95's
+named expectations confirmed by value**: `wild-secrets-github-pat`
+stamps `RX_REQ_RUN "6875625f7061745f@3"` (hex-decodes to "hub_pat_",
+scan index 3, scan byte 95 = `_`) with `RX_REQ_BYTE "95"`;
+`logparse-atomic` stamps `RX_REQ_BYTE "58"` (`:`) -- and additionally a
+2-byte run, `"3a20@0"` (": ", not asked for but present);
+`router-prefix-order` moves from `RX_REQ_BYTE "114"` to **`"47"`**
+(`/`), with a 5-byte run `"2f75736572@0"` ("/user"@0).
+
 ## Re-pin at 8d716693 (abi 27 -> 29) — 2026-09-22, lane b74repin, inbox I-87
 
 **Two abi steps absorbed, not one.** I-87 characterised the jump as

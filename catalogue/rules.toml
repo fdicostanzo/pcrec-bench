@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.3"
+catalogue_version = "3.4"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -150,7 +150,7 @@ engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
-          "8d716693"]
+          "8d716693", "b1885a83"]
 
 # ===================================================== class R-STATUS ==
 
