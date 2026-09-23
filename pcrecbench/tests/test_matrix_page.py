@@ -113,12 +113,16 @@ def test_empty_file_raises():
 
 
 def test_status_chip_cell_html():
-    """Each of the five closed status tokens (`report.py`'s own set)
-    renders its own fixed CSS class and a title attribute naming what
-    the token means -- never the log-scale ramp's `style="background:
-    rgb(...)"`, which is reserved for a genuine ratio."""
+    """Each of the six closed status tokens (`report.py`'s own set --
+    KB-27's `no-expectation` is the sixth, deliberately not `unjudged`,
+    which already names an unrelated count on the same report's
+    `trial_agreement` line) renders its own fixed CSS class and a title
+    attribute naming what the token means -- never the log-scale ramp's
+    `style="background: rgb(...)"`, which is reserved for a genuine
+    ratio."""
     row = {"unsup": "unsup", "refused": "refused", "wrong": "wrong",
-           "gave-up": "gave-up", "excluded": "excluded"}
+           "gave-up": "gave-up", "no-expectation": "no-expectation",
+           "excluded": "excluded"}
     for tok, (cls, _desc) in mp.STATUS_CHIPS.items():
         cell = mp._cell_html(row, tok, "40.0")
         _check(cls in cell, f"{tok} cell missing its chip class {cls!r}: {cell}")

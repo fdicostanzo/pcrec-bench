@@ -45,11 +45,53 @@ from collections import Counter
 #: `match_outcome` values meaning "the engine ANSWERED, and the answer
 #: disagreed with the expectation" -- as opposed to `gave-up` (the engine's
 #: own resource limit) and the hazard outcomes `crashed` / `timed-out`.
+#: NOTE: `did-not-match-as-expected` also covers a case that is NOT this --
+#: see `NO_EXPECTATION_DIAGNOSTIC_PREFIX` / `_is_no_expectation_row` below,
+#: which `reduce_match_cell` subtracts back out of `n_wrong`.
 WRONG_ANSWER_OUTCOMES = frozenset({
     "did-not-match-as-expected", "wrong-span-or-captures", "truncated-subject",
 })
 
 MATCHED = "matched-as-expected"
+
+#: `pcrecbench.harness.outcome_for()`'s `expectation is None` branch emits
+#: this fixed diagnostic prefix -- the ONLY place in the harness that ever
+#: writes it -- when NO expectation exists for a (pattern, subject, regime)
+#: at all: `bench/<name>/gen_expectations.py`'s shared derivation
+#: (`pcrecbench/expectations.py`) drops a triple from `expectations.tsv` on
+#: an ORACLE GIVE-UP (never folded into "no match") and lists it on stderr
+#: only, never persisted; a testee that does not ALSO give up (no resource
+#: limit tight enough to trip, or a `nocaps` config) lands here at judging
+#: time with nothing to compare its answer against. The outcome value
+#: chosen for that row, `did-not-match-as-expected`, is the SAME one a
+#: testee gets for a real answer against a real expectation it disagreed
+#: with -- which is a stronger, different finding. Counting the first as
+#: `n_wrong` reads "the engine answered and got it wrong" where the honest
+#: reading is "there is nothing to judge this against at all" (KB-27,
+#: docs/dev/known_issues.md). `_is_no_expectation_row` identifies such a
+#: row by this text (present on EVERY record that ever carries it, already
+#: committed or not written yet -- the store is append-only, so a fix here
+#: is the only way an EXISTING record's cell renders honestly); it is kept
+#: as its own literal rather than imported from `harness.py` to keep this
+#: module's import graph free of the adapters/driverrun/store machinery
+#: `harness.py` pulls in for actually RUNNING a cell (this module, like
+#: `report.py`, never runs an engine) -- `pcrecbench/tests/test_report.py`'s
+#: `test_no_expectation_diagnostic_matches_harness` cross-checks the two
+#: strings directly against `harness.outcome_for()` so they cannot drift.
+NO_EXPECTATION_DIAGNOSTIC_PREFIX = (
+    "no expectation exists for this (pattern, subject, regime)")
+
+
+def _is_no_expectation_row(row):
+    """True iff this row's `did-not-match-as-expected` outcome is NOT a
+    real judgment at all -- see `NO_EXPECTATION_DIAGNOSTIC_PREFIX` above.
+    Any OTHER `did-not-match-as-expected` row (a real expectation the
+    engine's own answer disagreed with) is untouched: its diagnostic reads
+    "expected ... observed ..." or a convention-mismatch sentence, never
+    this prefix."""
+    return (row.get("match_outcome") == "did-not-match-as-expected"
+            and str(row.get("diagnostic") or "").startswith(
+                NO_EXPECTATION_DIAGNOSTIC_PREFIX))
 
 _GIVEUP_RE = re.compile(r"giveup:(-?\d+)(?::([A-Za-z0-9_]+))?")
 
@@ -91,7 +133,7 @@ class MatchCell:
 
     __slots__ = ("n_trials", "n_timed", "median_ns", "min_ns", "max_ns",
                  "stddev_ns", "iters", "outcome_counts", "pass_rate",
-                 "n_gave_up", "n_wrong", "giveup_codes")
+                 "n_gave_up", "n_wrong", "n_no_expectation", "giveup_codes")
 
     def __init__(self, **kw):
         for k in self.__slots__:
@@ -112,6 +154,7 @@ def reduce_match_cell(rows):
                     if ns_per_call(r) is not None})
     n = len(ns)
     codes = Counter(c for c in (giveup_code(r) for r in rows) if c)
+    n_no_expectation = sum(1 for r in rows if _is_no_expectation_row(r))
     return MatchCell(
         n_trials=total, n_timed=n,
         median_ns=statistics.median(ns) if n else None,
@@ -122,7 +165,9 @@ def reduce_match_cell(rows):
         outcome_counts=dict(sorted(outcome_counts.items())),
         pass_rate=(outcome_counts.get(MATCHED, 0) / total) if total else 0.0,
         n_gave_up=outcome_counts.get("gave-up", 0),
-        n_wrong=sum(outcome_counts.get(o, 0) for o in WRONG_ANSWER_OUTCOMES),
+        n_wrong=(sum(outcome_counts.get(o, 0) for o in WRONG_ANSWER_OUTCOMES)
+                 - n_no_expectation),
+        n_no_expectation=n_no_expectation,
         giveup_codes=dict(codes),
     )
 
@@ -143,6 +188,7 @@ class SetCell:
 
     __slots__ = ("n_subjects", "n_agreeing", "pass_rate", "failing_subjects",
                  "failing_detail", "n_trials", "n_gave_up", "n_wrong",
+                 "n_no_expectation",
                  "median_ns", "min_ns", "max_ns", "stddev_ns", "giveup_codes",
                  "n_rows", "sums")
 
@@ -175,12 +221,14 @@ def reduce_set_cell(rows_by_subject):
     pass_rate = (n_agreeing / n_subjects) if n_subjects else 0.0
     n_gave_up = sum(red.n_gave_up for red in per_subject.values())
     n_wrong = sum(red.n_wrong for red in per_subject.values())
+    n_no_expectation = sum(red.n_no_expectation for red in per_subject.values())
     codes = Counter()
     for red in per_subject.values():
         codes.update(red.giveup_codes)
     n_rows = sum(len(rows) for rows in rows_by_subject.values())
     base = dict(n_subjects=n_subjects, n_agreeing=n_agreeing,
                 pass_rate=pass_rate, n_gave_up=n_gave_up, n_wrong=n_wrong,
+                n_no_expectation=n_no_expectation,
                 giveup_codes=dict(codes), n_rows=n_rows)
 
     if failing or not n_subjects:

@@ -1063,7 +1063,9 @@ the same way it narrows every other rendering). A data cell is EITHER
 `value.median_ns / row_best_ns` (six decimals; `row_best_ns` is the
 lowest `measured`, pinned-tier, expectation-passing median in THAT ROW
 -- ratios compare WITHIN A ROW ONLY, matching every other `ratio_vs_*`
-column this module renders) OR one of five CLOSED status tokens:
+column this module renders) OR one of five CLOSED status tokens (a
+SIXTH, `no-expectation`, was added below by KB-27 -- read that entry
+too):
 `unsup` (`unsupported-by-declaration`), `refused` (`did-not-compile`),
 `wrong` (excluded, `n_wrong > 0`), `gave-up` (excluded, `n_gave_up > 0`
 and no wrong answer), `excluded` (every other reason a cell is not
@@ -1187,6 +1189,86 @@ provenance comment rendered verbatim, and both a light and a dark
 theme. Tested by `pcrecbench/tests/test_matrix_page.py` (8 tests, no
 engine or store -- loaded by file path since `scripts/` carries no
 `__init__.py`). See its own module docstring and `scripts/CLAUDE.md`.
+
+KB-27 (2026-09-22, lane b75kb27, docs/dev/known_issues.md) -- THE MATRIX
+GAINS A SIXTH STATUS TOKEN, `no-expectation`. Found reading pcrec's
+I-85 (b)1: the committed `capability-0.1-*-wrapfix-25b1984f` report
+labelled `evil-alt-nested` x {`rd-evil-alt-near-miss`,
+`sd-empty-alt-hit`} "wrong" (`n_wrong=5`) on testees that never gave up,
+though `bench/capability/expectations.tsv` carries NO row for either
+pair -- both triples were DROPPED at oracle derivation (`pcrecbench/
+expectations.py`: an oracle GIVE-UP, PCRE2's own match-limit, never
+folded into "no match") and listed on stderr only, never persisted.
+`harness.outcome_for()`'s `expectation is None` branch (the ONLY place
+that fires when no expectation exists at all, for ANY reason) answers
+`did-not-match-as-expected` -- the SAME value a real disagreement gets
+-- so `reduce.py`'s `n_wrong` (which sums `WRONG_ANSWER_OUTCOMES`,
+`did-not-match-as-expected` among them) counted "there is nothing to
+judge this against" as "the engine answered and got it wrong": a
+stronger and different finding. The STORE ITSELF never fabricates a
+wrong verdict -- every record's own `match_outcome` field is exactly
+what `harness.py` wrote, `did-not-match-as-expected`, with diagnostic
+"no expectation exists for this (pattern, subject, regime) -- the
+sub-bench must state one before the cell can be judged" -- the
+mislabelling happened at REDUCTION, reading that outcome's PRESENCE
+without reading its DIAGNOSTIC.
+
+**NOT called `unjudged`, deliberately.** This module's `trial_agreement`
+block (schema v1.4, `reduce.judge_trial_agreement`, `agreement_line`)
+already renders "N unjudged" on every record's own `agreement:` line --
+a COMPLETELY DIFFERENT count (rows the SPEED-disagreement rule could not
+judge: few timed trials, an all-timed-out row, or n/a-trials) that sits
+in the SAME report, often the same table row, as this new status token
+would. The KB's own suggested name would have put two unrelated meanings
+of "unjudged" in one document a reader is already trying to reconcile
+numbers across -- `no-expectation` says what is actually true (no
+derived expectation exists for this cell) and cannot be misread as the
+trial-agreement count.
+
+Fixed in `pcrecbench.reduce` (`_is_no_expectation_row`,
+`NO_EXPECTATION_DIAGNOSTIC_PREFIX`): a `did-not-match-as-expected` row
+carrying this ONE fixed diagnostic text is identified by the text alone
+(the only branch of `outcome_for()` that ever writes it) and subtracted
+back out of `n_wrong` into a new counted field, `n_no_expectation`, on
+both `MatchCell` and `SetCell` -- applying uniformly to every record
+already in the store (append-only; this is the only way an EXISTING
+committed record's cell can ever render honestly) and every one written
+from here on, with NO schema or harness change and NO re-derivation of
+any record. `_failure_label` and `_matrix_cell` both gain a
+`no-expectation` branch (checked after `wrong`/`gave-up`, ahead of the
+`excluded` catch-all -- KB-27's two cells have real evidence of NEITHER
+a wrong answer nor a give-up, so `no-expectation` is the WEAKEST of the
+three, not a fourth flavour of `excluded`): `scripts/matrix_page.py`'s
+`STATUS_CHIPS` gains the matching `chip-no-expectation` entry so the
+HTML page renders it rather than falling through to its "unparseable
+cell" branch.
+
+**Both KB-27 cells' outcome, stated for the AFTER window reading them
+next** (`docs/dev/lanes/b75kb27_report.md` has the full account): every
+pcrec config that does NOT give up on `evil-alt-nested` x
+{`rd-evil-alt-near-miss`, `sd-empty-alt-hit`} (`pcrec-auto-nocaps` at
+every pin; `re2`/`tre`/`rust-default`'s own equivalents) now renders
+`no-expectation` in the matrix and carries `n_no_expectation` rather
+than `n_wrong` in `_failure_label`'s excluded-subjects list -- NEVER
+`wrong` again, on the SAME already-committed records. Every pcrec
+config that DOES give up on these two cells
+(`pcrec-auto`/`pcrec-vm`/`pcrec-vm-in` at every pin) is UNCHANGED:
+`gave-up` was always the correct outcome for those rows
+(`harness.outcome_for`'s give-up branch fires before the `expectation
+is None` check ever runs), so this fix touches none of them.
+
+`REPORTER_VERSION` bumps to `v19 (2026-09-22)` (a rendering change on
+any record whose cell hits this branch; every OTHER cell of every
+committed report is byte-identical but for the version line and the
+matrix docstring's token count -- see `reports/CLAUDE.md` for the
+regeneration this lane leaves OWED to the window/manager next holding
+the store, same footing as every prior version bump, KB-16). Six new
+tests across `pcrecbench/tests/test_report.py` and `test_matrix_page.py`
+(`test_no_expectation_cell_is_not_wrong`, a `_matrix_cell` precedence
+control, `test_no_expectation_diagnostic_matches_harness`'s anti-drift
+cross-check against `harness.outcome_for()` directly, plus the generic
+`STATUS_CHIPS`-driven chip test picking up the sixth token for free) --
+see `pcrecbench/tests/CLAUDE.md`.
 """
 
 from __future__ import annotations
@@ -1205,7 +1287,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v18 (2026-09-18)"
+REPORTER_VERSION = "v19 (2026-09-22)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -1574,10 +1656,20 @@ def _failure_label(red: "MatchCellReduction"):
     OD-B11, from the harness's own hazard outcomes `crashed` /
     `timed-out` (never folded into an unnamed "(other)"). More than one
     kind combines with `+` -- distinct trials of one subject cell may
-    have failed for distinct reasons."""
+    have failed for distinct reasons. `no-expectation` (KB-27,
+    `pcrecbench.reduce.n_no_expectation` -- named to avoid colliding with
+    the UNRELATED `trial_agreement` block's own "N unjudged" count that
+    can sit in the same report, `agreement_line`'s docstring) is a
+    DIFFERENT and weaker finding than `wrong`: no derived expectation
+    exists for this (pattern, subject, regime) at all, so there is
+    nothing to compare the engine's answer against -- `reduce.py`'s own
+    `n_wrong` already excludes these trials, so this label is what keeps
+    them from silently reading as the unnamed `other` catch-all instead."""
     labels = []
     if red.n_gave_up:
         labels.append("gave-up")
+    if red.n_no_expectation:
+        labels.append("no-expectation")
     if red.n_wrong:
         labels.append("wrong")
     if red.outcome_counts.get("crashed"):
@@ -4909,10 +5001,17 @@ def _matrix_best(rd: ReportData, sb, pattern_id, regime, form, roster):
 
 def _matrix_cell(rd: ReportData, sb, pattern_id, regime, form, testee_id, best_ns):
     """One matrix data cell: a `ratio_vs_best` string (six decimals) or
-    one of the five closed status tokens `unsup`/`refused`/`wrong`/
-    `gave-up`/`excluded` -- NEVER blank. `wrong` is checked ahead of
-    `gave-up` (a wrong answer is the stronger finding when a cell
-    somehow carries both)."""
+    one of the SIX closed status tokens `unsup`/`refused`/`wrong`/
+    `gave-up`/`no-expectation`/`excluded` -- NEVER blank. (Not
+    `unjudged`: that word already names an UNRELATED count on this same
+    report's `trial_agreement` line -- `agreement_line`'s docstring.)
+    Checked in order of strongest finding first: `wrong` (a real answer
+    disagreed with a real expectation) ahead of `gave-up` (the engine's
+    own resource limit) ahead of `no-expectation` (KB-27: no derived
+    expectation exists for this (pattern, subject, regime) at all --
+    `reduce.py`'s `n_wrong` already excludes these rows, so a cell whose
+    only failure is this reads `no-expectation`, never `wrong` or the
+    unnamed `excluded` catch-all) ahead of the catch-all `excluded`."""
     if regime:
         entry = rd.set_cells.get((sb, testee_id, pattern_id, regime, form))
         if entry is not None:
@@ -4922,6 +5021,8 @@ def _matrix_cell(rd: ReportData, sb, pattern_id, regime, form, testee_id, best_n
                     return "wrong"
                 if r.n_gave_up > 0:
                     return "gave-up"
+                if r.n_no_expectation > 0:
+                    return "no-expectation"
                 return "excluded"
             r2 = _matrix_rankable(rd, sb, testee_id, pattern_id, regime, form)
             if r2 is not None and best_ns:
@@ -4987,7 +5088,14 @@ def render_matrix_tsv(rd: ReportData):
         "unsup = unsupported-by-declaration (the testee's own advance "
         "capability declaration, not an engine failure); refused = "
         "did-not-compile; wrong = excluded, n_wrong > 0; gave-up = "
-        "excluded, n_gave_up > 0 and no wrong answer; excluded = every "
+        "excluded, n_gave_up > 0 and no wrong answer; no-expectation = "
+        "excluded, n_no_expectation > 0 and no wrong answer or give-up "
+        "(KB-27: no derived expectation exists for this (pattern, "
+        "subject, regime) at all -- an oracle give-up dropped it at "
+        "derivation, or nobody has authored one yet -- so there is "
+        "nothing to compare the engine's own answer against, which is "
+        "why this is checked AFTER wrong/gave-up rather than folded into "
+        "either); excluded = every "
         "other reason a cell is not timed (a non-measured status, a "
         "scratch-tier row not included, a different form's own row, or "
         "this testee never ran this pattern under this row's form at "
