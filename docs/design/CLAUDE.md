@@ -592,6 +592,77 @@ docs/dev/'s append-only records.
   (9.8). Verified with 72 real headless-Chromium DevTools checks against
   the committed production data, 0 failed.
 
+- `utf8_set_v1.md` — **[B77] THE UTF-8 ENCODING SET's design, v0.1
+  (2026-09-23, lane `b77utf8`), from Frank's charter as relayed in inbox
+  I-90. PROPOSED, DESIGN ONLY: nothing built, `bench/utf8/` does not
+  exist, and no file under `bench/`, `schema/`, `pcrecbench/`,
+  `testees/` or `store/` is touched.** Frank: *"make it somewhat
+  complete, not 'small' — or at least specify that it will grow… any
+  functionality which might be affected by encoding; classes come to
+  mind."* Fifteen sections in `capability_set_v1.md`'s shape. **§2** the
+  set identity (`bench/utf8@0.1`) and why it is NOT the `bench/syntaxutf/`
+  slot `bench/syntax/NOTES.md` reserves (that set is registry-ENUMERATED
+  and plain-bodied; this one is enumerated by ENCODING DEPENDENCE) —
+  both stand, which is Q5. **§3** the COVERAGE SPINE: pcrec's
+  `tests/utf8/axis01-12` named one line each from their own headers, then
+  an axis × where × release table, then the GAPS stated — axes 3/10 and
+  the caller half of 11 are growth; axis 5's 34-spelling refusal census
+  is permanently out (a refusal has no speed) and one witness ships; and
+  axis 11's caller-supplied mid-character `startpos` is STRUCTURALLY
+  UNREACHABLE at any release because the driver protocol has no
+  `--startpos`. **§4** subjects: five GENERATED script corpora (`lat`
+  Latin-1-Supplement-heavy, `cyr`, `cjk`, `mix` with 4-byte emoji, `asc`
+  the byte-clean control) from committed per-script word pools, a
+  committed re-derived LEAD-BYTE HISTOGRAM table (`subject_facts.tsv`)
+  that makes "a histogram unlike English" a fact rather than a claim, 90
+  typed short subjects + a 64k/256k/1m sweep and a per-script 64 KB arm,
+  with the claim narrowed in writing to byte and character-width
+  statistics and NOT prose statistics. **§5** the six first-release
+  families as 73 concrete members + the floor — (a) classes 14, (b)
+  multi-byte literals 12, (c) caseless 12, (d) alternation/quantifiers
+  12, (e) assertions 11, (f) properties 12 — each member with its axis
+  and its control twin or designed near-miss. **§6** growth (g)-(k) with
+  a version each (0.2 = find-all + the `-e byte` mirror; 0.3 = invalid
+  UTF-8, startpos, surrogates). **§7** the ROSTER: a per-engine UTF-8
+  surface table with the adapter change priced by file and line — the
+  finding being that every adapter here is deliberately BYTE-mode today
+  and each says so, so this is a SECOND CONFIG per engine and not a
+  mode; `rust-default` needs ZERO change (unicode mode defaults on, a
+  measured fact in its own CLAUDE.md), re2 and vectorscan are one flag,
+  onig's encoding is a compile-time `#define` needing a runtime choice,
+  pcrec is four `configs.toml` rows carrying `-e utf8` in `flags` so the
+  encoding lands in `testee_id`; **TRE is EXCLUDED** (no byte-mode UTF-8
+  exists — `tre_regncompb` is byte-literal; the only path is the
+  `tre_regwcomp` wide-char family, a second driver model with a
+  process-LOCALE dependency and a character-not-byte length unit), by an
+  unsatisfied `utf8-encoding` token so it reads as a census row and not
+  an absence; plus three new REQUIRES tokens and the argument for
+  `ascii-class-scope`/`unicode-class-scope` as PATTERN properties rather
+  than a per-config dial. **§8** the oracle: `PCRE2_UTF` on everything,
+  `PCRE2_UCP` as a per-pattern declared fact, `PCRE2_NO_UTF_CHECK`
+  NEVER, the (h)/(i)/(j) growth families as documented-behaviour TABLES
+  because three engines have three different documented answers — and
+  **§8.4, the sharpest harness change this set forces**: the find-all
+  advance is `s + 1` in the oracle and every driver, which lands
+  MID-CHARACTER under UTF-8 (`oracle_pcre2.py:308`'s own comment, "this
+  bench never compiles a utf8 artifact", is the line that stops being
+  true), so KB-17's rule must be re-derived per encoding before the
+  first expectation is derived. **§9** engine neutrality (no limits
+  file, `prp-ingreek`'s refusal a PCRE2/Unicode fact, the `-e byte`
+  mirror a TESTEE fact). **§10** ~40-45 min/cell at ~2× `CELL_CAP`
+  headroom with two pre-priced levers. **§11** predictions P1-P10,
+  written to be machine-scoreable, carrying I-90 §5's three named first
+  customers (the offset-skip order pair `é@`/`@é` with pcrec's own
+  measured `RX_REQ_BYTE` split, the high-necessary-byte inversion on CJK
+  text, the fold sets) — the TSV deliberately NOT committed, per the
+  immutability rule. **§12** the outlier rule R0-R8 incl. two of this
+  set's own (R3 the encoding band on pure-ASCII patterns, R4 the script
+  band). **§13** five build lanes with U1 (the shared-code harness
+  change) blocking and owing a byte-identical re-derivation of every
+  existing set's expectations. **§14** ten questions (Q1 does the ASCII
+  control RANK, Q5 the `syntaxutf` reservation — both flagged, Q5 marked
+  BLOCK); **§15** seven risks. Next: the design panel, then the lanes.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
