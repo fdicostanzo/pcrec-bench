@@ -4,10 +4,11 @@ reporter: v19 (2026-09-22)
 
 ## Query
 
-- filters: subbench=capability, version=0.1, since=2026-09-23T00:00:00Z, until=2026-09-23T18:00:00Z, testee=pcrec_8d716693_auto-caps-simdna, testee=pcrec_8d716693_auto-nocaps-simdna, testee=pcrec_8d716693_vm-caps-simdna, testee=pcrec_8d716693_vm-in-caps-simdna, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd
-- record source: store/index.tsv (8 record(s) matching this query)
-- records included: 8
+- filters: subbench=capability, version=0.1, since=2026-09-22T00:00:00Z, until=2026-09-23T18:00:00Z, testee=pcrec_8d716693_auto-caps-simdna, testee=pcrec_8d716693_auto-nocaps-simdna, testee=pcrec_8d716693_vm-caps-simdna, testee=pcrec_8d716693_vm-in-caps-simdna, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd
+- record source: store/index.tsv (11 record(s) matching this query)
+- records included: 11
 - worst other-core busy: 62.5% (`pcrec_8d716693_auto-caps-simdna` / `date-nested-plus` / `large-subject-throughput`)
+    - `capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260922T043951Z` (store/records/capability@0.1/oniguruma_6.9.10_default-caps-simdna/capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260922T043951Z.jsonl) — agreement: agree (0 of 123 groups; 0 of 4831 rows; 5 unjudged; k=1.5, 2/3; 5 trials)
     - `capability@0.1__pcrec_8d716693_auto-caps-simdna__budu-ryzen1600__20260923T031941Z` (store/records/capability@0.1/pcrec_8d716693_auto-caps-simdna/capability@0.1__pcrec_8d716693_auto-caps-simdna__budu-ryzen1600__20260923T031941Z.jsonl) — agreement: agree (0 of 124 groups; 6 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
     - `capability@0.1__pcrec_8d716693_auto-nocaps-simdna__budu-ryzen1600__20260923T035507Z` (store/records/capability@0.1/pcrec_8d716693_auto-nocaps-simdna/capability@0.1__pcrec_8d716693_auto-nocaps-simdna__budu-ryzen1600__20260923T035507Z.jsonl) — agreement: agree (0 of 126 groups; 6 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
     - `capability@0.1__pcrec_8d716693_vm-caps-simdna__budu-ryzen1600__20260923T042632Z` (store/records/capability@0.1/pcrec_8d716693_vm-caps-simdna/capability@0.1__pcrec_8d716693_vm-caps-simdna__budu-ryzen1600__20260923T042632Z.jsonl) — agreement: agree (0 of 124 groups; 4 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
@@ -16,6 +17,8 @@ reporter: v19 (2026-09-22)
     - `capability@0.1__pcrec_b1885a83_auto-nocaps-simdna__budu-ryzen1600__20260923T122232Z` (store/records/capability@0.1/pcrec_b1885a83_auto-nocaps-simdna/capability@0.1__pcrec_b1885a83_auto-nocaps-simdna__budu-ryzen1600__20260923T122232Z.jsonl) — agreement: agree (0 of 126 groups; 4 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
     - `capability@0.1__pcrec_b1885a83_vm-caps-simdna__budu-ryzen1600__20260923T125206Z` (store/records/capability@0.1/pcrec_b1885a83_vm-caps-simdna/capability@0.1__pcrec_b1885a83_vm-caps-simdna__budu-ryzen1600__20260923T125206Z.jsonl) — agreement: agree (0 of 124 groups; 2 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
     - `capability@0.1__pcrec_b1885a83_vm-in-caps-simdna__budu-ryzen1600__20260923T133317Z` (store/records/capability@0.1/pcrec_b1885a83_vm-in-caps-simdna/capability@0.1__pcrec_b1885a83_vm-in-caps-simdna__budu-ryzen1600__20260923T133317Z.jsonl) — agreement: agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
+    - `capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260922T051752Z` (store/records/capability@0.1/rust_1.13.1_default-caps-simdna/capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260922T051752Z.jsonl) — agreement: agree (0 of 82 groups; 2 of 3194 rows; 4 unjudged; k=1.5, 2/3; 5 trials)
+    - `capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260922T053300Z` (store/records/capability@0.1/vectorscan_5.4.11_block-nosom-nocaps-simd/capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260922T053300Z.jsonl) — agreement: agree (0 of 80 groups; 1 of 3118 rows; 2 unjudged; k=1.5, 2/3; 5 trials)
 - sub-bench version(s): capability@0.1
 - machine(s): budu-ryzen1600
 - schema version(s): 1.6
@@ -24,7 +27,7 @@ reporter: v19 (2026-09-22)
 - `form`: this report includes a `whole-subject` artifact beside `plain` for at least one cell (schema v1.1: a testee with no end-anchored mode compiles and times a SEPARATE artifact for match-compliance, e.g. `(?:pattern)\z`, where another testee reaches the same regime via runtime flags on its ordinary artifact) -- shown as a per-row COLUMN, not a split: both forms answer the same regime and RANK TOGETHER in one table (`form` is a key only for compile-cost rows, where a whole-subject artifact is genuinely a separate compile with its own cost); `fact` restates it as 'same program' / 'separate artifact' (R4)
 - status policy (OD-B14): a ranking row whose record `status` is not `measured` is excluded from ranking by default, listed under its table as `not ranked: <testee> -- <status> (<status_detail excerpt>)`; `--include-unmeasured` ranks it instead, with `status` shown
 - trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33): a record's five trials must agree to within k=1.5 on every group of its rows — one slow trial of five tolerated; two, or one fast, is a disagreeing row; a group disagrees at >= 2 disagreeing rows reaching a third of it (d_min=2, c=3); a record with a disagreeing group, or with fewer than five odd trials, is `inconclusive-spread` and unranked like `inconclusive-load`; the after-run load/occupancy samples are provenance (v1.4 X13), shown under --include-provenance
-- status rule: v1.4 X13 (pre-flight + trial agreement) on 8 record(s)
+- status rule: v1.4 X13 (pre-flight + trial agreement) on 11 record(s)
 - tier policy (R3, schema v1.2 `tier`, absent = `pinned`): a `scratch`-tier row is excluded from ranking by default, listed as `scratch: <testee>`; `--include-scratch` ranks it instead, with a `tier` column
 - duplicate-record policy (OD-B15, amended 2026-08-25): the NEWEST MEASURED record per (subbench@version, testee_id, machine) ranks by default -- a newer record that is NOT measured does not supersede a measured one of the same testee and version (listed as "newer, not measured" instead); only when no record in the group is measured does the newest record overall stand (itself unranked per the status policy above, unless --include-unmeasured). `--all-records` shows every record as its own row, its testee id suffixed `@<timestamp>`
 
@@ -78,6 +81,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,976,415.6 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 4,016,229.6 ns, 1,048,576 B
 
+- not ranked: `oniguruma_6.9.10_default-caps-simdna` — did-not-compile (onig_new failed (code -116): unmatched close parenthesis)
+
 ### `balanced-parens-rec` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
@@ -97,6 +102,8 @@ reporter: v19 (2026-09-22)
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `waf-concat`, 142.7 ns, 48 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `waf-concat`, 143.8 ns, 48 B; largest Δ: `waf-sleep`, +0.9 ns (now 82.2 ns), 16 B
 
+- not ranked: `oniguruma_6.9.10_default-caps-simdna` — did-not-compile (onig_new failed (code -116): unmatched close parenthesis)
+
 ### `base10num-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
@@ -110,6 +117,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 35.2 | 0.0000 | 35.0 | 35.2 | 0.1 | 2.196x | 2.196x | - |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 39.1 | 0.0000 | 39.1 | 48.1 | 3.6 | 2.442x | 2.442x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 40.7 | 0.0000 | 40.5 | 40.8 | 0.1 | 2.540x | 2.540x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 90.9 | 0.0001 | 88.5 | 96.9 | 3.0 | 5.677x | 5.677x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.0 | 0.0001 | 96.9 | 98.3 | 0.5 | 6.055x | 6.055x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 167.7 | 0.0001 | 167.6 | 190.3 | 9.0 | 10.469x | 10.469x | - |
 
 #### `base10num-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -123,6 +133,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 11.6 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 13.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 5.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 5.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 5.4 | 0.0000 |
@@ -131,6 +144,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 11.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.0 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 13.6 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 5.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 5.4 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 5.3 | 0.0001 |
@@ -139,6 +155,9 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 11.8 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.1 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 13.6 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 56.1 | 0.0009 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-256k`, 5.4 ns, 262,144 B; largest Δ: `t-64k`, -0.0 ns (now 5.3 ns), 65,536 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 5.3 ns, 65,536 B
@@ -158,6 +177,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 1,026.1 | 1,021.0 | 1,030.8 | 3.8 | 1.945x | 1.945x | slower ×1.03 | 75 | 13.7 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,083.5 | 1,082.3 | 1,086.4 | 1.4 | 2.053x | 2.053x | - | 75 | 14.4 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,083.8 | 1,080.8 | 1,096.3 | 5.8 | 2.054x | 2.054x | unchanged (within spread) | 75 | 14.5 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,047.1 | 2,044.4 | 2,051.7 | 2.4 | 3.880x | 3.880x | - | 75 | 27.3 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,222.9 | 2,199.6 | 2,266.7 | 22.1 | 4.213x | 4.213x | - | 75 | 29.6 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,898.6 | 7,716.4 | 8,010.1 | 103.2 | 14.969x | 14.969x | - | 75 | 105.3 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 37.2 ns, 20 B; largest Δ: `rd-phone-list-hit`, +1.5 ns (now 11.1 ns), 7 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 35.2 ns, 20 B; largest Δ: `lp-num-leadzero`, -0.8 ns (now 6.2 ns), 4 B
@@ -177,6 +199,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 73.7 | 0.0001 | 72.2 | 73.9 | 0.6 | 1.020x | 1.020x | - |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 89.5 | 0.0001 | 85.0 | 90.5 | 2.0 | 1.239x | 1.239x | - |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 90.0 | 0.0001 | 89.0 | 91.1 | 0.8 | 1.245x | 1.245x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.6 | 0.0001 | 93.3 | 94.6 | 0.4 | 1.295x | 1.295x | - |
 
 #### `bracket-array-define` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -190,6 +213,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 24.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 29.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 29.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 24.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 24.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 24.1 | 0.0001 |
@@ -198,6 +222,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 24.6 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 30.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 30.1 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 24.1 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 24.2 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 24.2 | 0.0004 |
@@ -206,6 +231,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 24.6 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 30.2 | 0.0005 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 30.3 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-64k`, 24.1 ns, 65,536 B; largest Δ: `t-1m`, -0.3 ns (now 24.0 ns), 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `t-64k`, 24.2 ns, 65,536 B; largest Δ: `t-256k`, -0.1 ns (now 24.0 ns), 262,144 B
@@ -225,6 +251,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,898.2 | 1,890.4 | 1,900.0 | 4.1 | 1.008x | 1.008x | - | 75 | 25.3 | 8.0 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,057.5 | 2,053.1 | 2,058.7 | 2.4 | 1.093x | 1.093x | unchanged (within spread) | 75 | 27.4 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,062.8 | 2,055.2 | 2,103.5 | 17.5 | 1.096x | 1.096x | - | 75 | 27.5 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,928.4 | 2,910.9 | 5,510.9 | 1,031.8 | 1.556x | 1.556x | - | 75 | 39.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `rec-array-define`, 84.7 ns, 11 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `rec-array-define`, 85.8 ns, 11 B
@@ -233,22 +260,26 @@ reporter: v19 (2026-09-22)
 
 ### `codegrammar-flat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 597,721.0 | 0.4343 | 593,580.5 | 602,945.3 | 3,282.4 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 598,115.2 | 0.4346 | 593,023.8 | 603,042.3 | 3,326.6 | 1.001x | 1.001x | - |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 604,113.1 | 0.4390 | 591,643.8 | 611,825.7 | 7,052.7 | 1.011x | 1.011x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,877.6 | 0.4475 | 606,075.8 | 635,579.4 | 10,677.3 | 1.030x | 1.030x | - |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,039,335.9 | 1.4818 | 2,034,465.6 | 2,046,550.2 | 4,722.0 | 3.412x | 3.412x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,044,975.0 | 1.4859 | 2,032,697.0 | 2,056,193.8 | 7,635.4 | 3.421x | 3.421x | - |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,425,153.2 | 1.7621 | 2,417,590.6 | 2,431,330.1 | 4,832.9 | 4.057x | 4.057x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,425,853.5 | 1.7626 | 2,423,690.1 | 2,453,489.4 | 11,184.5 | 4.059x | 4.059x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,319.8 | 0.0882 | 121,246.2 | 122,078.0 | 310.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 597,721.0 | 0.4343 | 593,580.5 | 602,945.3 | 3,282.4 | 4.927x | 4.927x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 598,115.2 | 0.4346 | 593,023.8 | 603,042.3 | 3,326.6 | 4.930x | 4.930x | - |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 604,113.1 | 0.4390 | 591,643.8 | 611,825.7 | 7,052.7 | 4.980x | 4.980x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,877.6 | 0.4475 | 606,075.8 | 635,579.4 | 10,677.3 | 5.076x | 5.076x | - |
+| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,039,335.9 | 1.4818 | 2,034,465.6 | 2,046,550.2 | 4,722.0 | 16.810x | 16.810x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,044,975.0 | 1.4859 | 2,032,697.0 | 2,056,193.8 | 7,635.4 | 16.856x | 16.856x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,425,153.2 | 1.7621 | 2,417,590.6 | 2,431,330.1 | 4,832.9 | 19.990x | 19.990x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,425,853.5 | 1.7626 | 2,423,690.1 | 2,453,489.4 | 11,184.5 | 19.996x | 19.996x | - |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,444,112.5 | 1.7759 | 2,441,280.6 | 2,447,598.9 | 2,420.8 | 20.146x | 20.146x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,780,403.8 | 7.1065 | 9,608,014.9 | 10,055,338.5 | 144,106.6 | 80.617x | 80.617x | - |
 
 #### `codegrammar-flat` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 92,522.2 | 0.0882 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 460,675.1 | 0.4393 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 455,766.3 | 0.4347 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 458,682.8 | 0.4374 |
@@ -257,6 +288,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,565,141.3 | 1.4926 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,841,566.8 | 1.7563 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,844,518.3 | 1.7591 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,861,174.2 | 1.7750 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,455,539.7 | 7.1102 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 23,033.6 | 0.0879 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 108,514.7 | 0.4140 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 116,031.8 | 0.4426 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 109,949.1 | 0.4194 |
@@ -265,6 +299,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 383,179.3 | 1.4617 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 458,499.4 | 1.7490 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 460,015.1 | 1.7548 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 464,342.7 | 1.7713 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,831,319.1 | 6.9859 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,769.4 | 0.0880 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 28,688.4 | 0.4378 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 27,799.8 | 0.4242 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 27,915.7 | 0.4260 |
@@ -273,6 +310,8 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 98,053.7 | 1.4962 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 119,126.8 | 1.8177 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 121,654.9 | 1.8563 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 116,639.8 | 1.7798 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 463,764.4 | 7.0765 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 460,675.1 ns, 1,048,576 B; largest Δ: `t-256k`, -18,273.7 ns (now 108,514.7 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 458,682.8 ns, 1,048,576 B; largest Δ: `t-256k`, -6,082.7 ns (now 109,949.1 ns), 262,144 B
@@ -292,6 +331,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 828.5 | 824.1 | 829.5 | 2.0 | 1.295x | 1.295x | - | 75 | 11.0 | 8.9 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 869.0 | 866.4 | 874.8 | 2.8 | 1.358x | 1.358x | faster ×1.20 | 75 | 11.6 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,040.5 | 1,036.8 | 1,042.0 | 2.1 | 1.626x | 1.626x | - | 75 | 13.9 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,487.1 | 2,422.6 | 2,807.7 | 135.5 | 3.887x | 3.887x | - | 75 | 33.2 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,499.0 | 2,487.4 | 2,506.5 | 6.3 | 3.906x | 3.906x | - | 75 | 33.3 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,624.6 | 5,612.9 | 5,654.0 | 15.8 | 8.791x | 8.791x | - | 75 | 75.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-quoted-escaped`, 34.2 ns, 16 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `cg-key-colon`, 45.0 ns, 7 B; largest Δ: `lp-quoted-escaped`, +28.4 ns (now 36.3 ns), 16 B
@@ -300,22 +342,26 @@ reporter: v19 (2026-09-22)
 
 ### `codegrammar-xflag` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 596,735.9 | 0.4336 | 586,284.5 | 603,708.5 | 6,688.2 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 603,397.7 | 0.4384 | 597,267.4 | 610,293.4 | 4,156.0 | 1.011x | 1.011x | unchanged (within spread) |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,235.0 | 0.4470 | 606,037.4 | 625,158.8 | 6,825.6 | 1.031x | 1.031x | - |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 616,971.3 | 0.4483 | 601,261.5 | 619,952.6 | 7,476.6 | 1.034x | 1.034x | slower ×1.03 |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,042,645.3 | 1.4842 | 2,037,543.4 | 2,051,764.1 | 5,888.2 | 3.423x | 3.423x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,066,668.9 | 1.5017 | 2,059,330.9 | 2,073,352.4 | 4,954.9 | 3.463x | 3.463x | slower ×1.01 |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,416,654.6 | 1.7560 | 2,414,608.3 | 4,867,174.8 | 979,456.6 | 4.050x | 4.050x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,421,475.5 | 1.7595 | 2,417,825.5 | 2,423,818.3 | 2,227.9 | 4.058x | 4.058x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 121,342.4 | 0.0882 | 121,220.9 | 122,125.4 | 335.4 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 596,735.9 | 0.4336 | 586,284.5 | 603,708.5 | 6,688.2 | 4.918x | 4.918x | - |
+| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 603,397.7 | 0.4384 | 597,267.4 | 610,293.4 | 4,156.0 | 4.973x | 4.973x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 615,235.0 | 0.4470 | 606,037.4 | 625,158.8 | 6,825.6 | 5.070x | 5.070x | - |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 616,971.3 | 0.4483 | 601,261.5 | 619,952.6 | 7,476.6 | 5.085x | 5.085x | slower ×1.03 |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,042,645.3 | 1.4842 | 2,037,543.4 | 2,051,764.1 | 5,888.2 | 16.834x | 16.834x | - |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,066,668.9 | 1.5017 | 2,059,330.9 | 2,073,352.4 | 4,954.9 | 17.032x | 17.032x | slower ×1.01 |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,416,654.6 | 1.7560 | 2,414,608.3 | 4,867,174.8 | 979,456.6 | 19.916x | 19.916x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,421,475.5 | 1.7595 | 2,417,825.5 | 2,423,818.3 | 2,227.9 | 19.956x | 19.956x | - |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,442,938.1 | 1.7751 | 2,441,040.0 | 2,446,941.3 | 2,141.5 | 20.133x | 20.133x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,673,603.1 | 7.0289 | 9,612,036.9 | 10,000,098.6 | 144,314.7 | 79.722x | 79.722x | - |
 
 #### `codegrammar-xflag` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 92,525.5 | 0.0882 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 453,304.3 | 0.4323 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 465,530.9 | 0.4440 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 461,673.0 | 0.4403 |
@@ -324,6 +370,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 1,587,565.4 | 1.5140 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,840,438.4 | 1.7552 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,840,773.0 | 1.7555 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,860,925.2 | 1.7747 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,383,958.1 | 7.0419 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 23,026.6 | 0.0878 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 115,018.8 | 0.4388 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 110,194.5 | 0.4204 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 121,909.4 | 0.4650 |
@@ -332,6 +381,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 381,493.2 | 1.4553 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 459,399.3 | 1.7525 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 462,664.6 | 1.7649 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 464,208.7 | 1.7708 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,833,823.2 | 6.9955 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,743.1 | 0.0876 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 27,337.5 | 0.4171 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 28,047.3 | 0.4280 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 28,675.6 | 0.4376 |
@@ -340,6 +392,8 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 97,761.7 | 1.4917 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 120,284.8 | 1.8354 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 120,137.1 | 1.8331 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 116,573.2 | 1.7788 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 460,149.6 | 7.0213 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 465,530.9 ns, 1,048,576 B; largest Δ: `t-256k`, -11,714.9 ns (now 110,194.5 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 477,242.9 ns, 1,048,576 B
@@ -359,6 +413,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 828.2 | 824.7 | 830.8 | 2.0 | 1.293x | 1.293x | - | 75 | 11.0 | 8.9 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 868.9 | 867.4 | 872.1 | 1.7 | 1.357x | 1.357x | faster ×1.19 | 75 | 11.6 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,037.9 | 1,036.7 | 1,039.5 | 1.2 | 1.621x | 1.621x | - | 75 | 13.8 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,492.7 | 2,483.2 | 2,494.9 | 4.2 | 3.893x | 3.893x | - | 75 | 33.2 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,519.1 | 2,486.3 | 2,558.1 | 24.2 | 3.934x | 3.934x | - | 75 | 33.6 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,631.7 | 5,615.5 | 5,686.1 | 24.1 | 8.795x | 8.795x | - | 75 | 75.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-quoted-escaped`, 34.0 ns, 16 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `cg-key-colon`, 45.2 ns, 7 B; largest Δ: `lp-quoted-escaped`, +28.7 ns (now 36.7 ns), 16 B
@@ -367,22 +424,24 @@ reporter: v19 (2026-09-22)
 
 ### `currency-lookbehind-fixed` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_vm-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 11,114,729.0 | 8.0761 | 11,108,437.7 | 11,149,919.6 | 14,961.9 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,114,870.5 | 8.0762 | 11,104,230.9 | 11,134,959.4 | 10,973.1 | 1.000x | 1.000x | - |
-| 3 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 11,119,642.4 | 8.0796 | 11,110,834.4 | 11,136,392.5 | 10,373.3 | 1.000x | 1.000x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,120,790.7 | 8.0805 | 11,117,006.1 | 11,148,420.8 | 11,572.4 | 1.001x | 1.001x | - |
-| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,175,118.7 | 8.1199 | 11,168,662.4 | 11,194,764.7 | 8,843.5 | 1.005x | 1.005x | - |
-| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,176,287.2 | 8.1208 | 11,171,245.1 | 11,183,041.0 | 4,045.7 | 1.006x | 1.006x | unchanged (within spread) |
-| 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 11,181,748.8 | 8.1248 | 11,176,402.2 | 11,209,614.4 | 12,153.3 | 1.006x | 1.006x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,191,462.7 | 8.1318 | 11,170,924.3 | 11,256,334.3 | 31,464.5 | 1.007x | 1.007x | - |
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,587,640.4 | 6.9665 | 9,577,984.9 | 9,599,921.8 | 7,164.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 11,114,729.0 | 8.0761 | 11,108,437.7 | 11,149,919.6 | 14,961.9 | 1.159x | 1.159x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,114,870.5 | 8.0762 | 11,104,230.9 | 11,134,959.4 | 10,973.1 | 1.159x | 1.159x | - |
+| 4 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 11,119,642.4 | 8.0796 | 11,110,834.4 | 11,136,392.5 | 10,373.3 | 1.160x | 1.160x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,120,790.7 | 8.0805 | 11,117,006.1 | 11,148,420.8 | 11,572.4 | 1.160x | 1.160x | - |
+| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,175,118.7 | 8.1199 | 11,168,662.4 | 11,194,764.7 | 8,843.5 | 1.166x | 1.166x | - |
+| 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,176,287.2 | 8.1208 | 11,171,245.1 | 11,183,041.0 | 4,045.7 | 1.166x | 1.166x | unchanged (within spread) |
+| 8 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 11,181,748.8 | 8.1248 | 11,176,402.2 | 11,209,614.4 | 12,153.3 | 1.166x | 1.166x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,191,462.7 | 8.1318 | 11,170,924.3 | 11,256,334.3 | 31,464.5 | 1.167x | 1.167x | - |
 
 #### `currency-lookbehind-fixed` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 7,351,086.1 | 7.0105 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 8,463,389.3 | 8.0713 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 8,469,699.0 | 8.0773 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 8,465,619.0 | 8.0734 |
@@ -391,6 +450,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 8,511,623.7 | 8.1173 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 8,509,234.3 | 8.1150 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8,529,467.7 | 8.1343 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,803,856.8 | 6.8812 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 2,117,184.4 | 8.0764 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 2,114,241.4 | 8.0652 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 2,118,633.5 | 8.0819 |
@@ -399,6 +459,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 2,128,464.1 | 8.1194 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 2,131,438.3 | 8.1308 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 2,128,230.0 | 8.1186 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 438,853.5 | 6.6964 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 532,058.6 | 8.1186 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 526,880.0 | 8.0396 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 531,668.7 | 8.1126 |
@@ -426,6 +487,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 12,384.7 | 12,272.6 | 19,379.2 | 2,809.8 | 2.416x | 2.416x | unchanged (within spread) | 75 | 165.1 | 9.1 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 12,573.8 | 12,565.6 | 12,579.1 | 4.8 | 2.453x | 2.453x | unchanged (within spread) | 75 | 167.7 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 12,582.0 | 12,523.3 | 15,338.1 | 1,105.2 | 2.455x | 2.455x | - | 75 | 167.8 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,455.3 | 17,320.4 | 17,470.2 | 62.9 | 3.406x | 3.406x | - | 75 | 232.7 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-syslog`, 483.3 ns, 56 B; largest Δ: `waf-comment-obfuscation`, +1.6 ns (now 41.8 ns), 18 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-syslog`, 484.7 ns, 56 B; largest Δ: `nu-lead-no-cont`, +1.8 ns (now 14.9 ns), 2 B
@@ -445,6 +507,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 60.1 | 0.0000 | 59.6 | 63.6 | 1.5 | 3.965x | 3.965x | - |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 60.3 | 0.0000 | 60.3 | 60.7 | 0.2 | 3.982x | 3.982x | unchanged (within spread) |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 73.7 | 0.0001 | 73.6 | 74.6 | 0.4 | 4.862x | 4.862x | slower ×1.41 |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 77.1 | 0.0001 | 74.4 | 78.4 | 1.4 | 5.085x | 5.085x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 94.3 | 94.6 | 0.1 | 6.230x | 6.230x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 167.1 | 0.0001 | 167.0 | 167.4 | 0.1 | 11.026x | 11.026x | - |
 
 #### `date-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -458,6 +523,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 20.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 24.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 24.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 5.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 5.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 9.6 | 0.0000 |
@@ -466,6 +534,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 20.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 24.5 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 25.7 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.7 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 5.0 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 5.2 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 9.7 | 0.0001 |
@@ -474,6 +545,9 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 20.3 | 0.0003 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.3 | 0.0003 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 24.6 | 0.0004 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0004 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.9 | 0.0009 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 5.1 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-64k`, 9.7 ns, 65,536 B; largest Δ: `t-256k`, -0.7 ns (now 9.6 ns), 262,144 B
@@ -491,8 +565,11 @@ reporter: v19 (2026-09-22)
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 890.5 | 887.6 | 896.1 | 3.3 | 1.895x | 1.895x | - | 75 | 11.9 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 1,717.2 | 1,708.7 | 1,725.0 | 5.2 | 3.654x | 3.654x | unchanged (within spread) | 75 | 22.9 | 9.1 | 100% |
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,717.8 | 1,702.3 | 1,732.6 | 9.7 | 3.656x | 3.656x | - | 75 | 22.9 | 8.9 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,923.7 | 1,921.4 | 1,929.7 | 2.8 | 4.094x | 4.094x | unchanged (within spread) | 75 | 25.6 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,924.8 | 1,922.4 | 2,094.2 | 68.1 | 4.096x | 4.096x | - | 75 | 25.7 | 8.8 | 100% |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,762.4 | 1,760.8 | 1,766.6 | 2.1 | 3.751x | 3.751x | - | 75 | 23.5 | 16.3 | 100% |
+| 8 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,868.7 | 1,866.7 | 1,869.6 | 1.2 | 3.977x | 3.977x | - | 75 | 24.9 | 27.2 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,923.7 | 1,921.4 | 1,929.7 | 2.8 | 4.094x | 4.094x | unchanged (within spread) | 75 | 25.6 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,924.8 | 1,922.4 | 2,094.2 | 68.1 | 4.096x | 4.096x | - | 75 | 25.7 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,684.7 | 5,651.2 | 5,742.5 | 39.9 | 12.098x | 12.098x | - | 75 | 75.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 50.6 ns, 20 B; largest Δ: `rd-phone-list-hit`, -1.0 ns (now 8.1 ns), 7 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 61.1 ns, 20 B; largest Δ: `rd-numeric-id-hit`, -1.3 ns (now 13.4 ns), 4 B
@@ -512,6 +589,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 25,464,953.9 | 18.5031 | 25,364,053.5 | 26,076,037.0 | 261,420.0 | 1.003x | 1.003x | unchanged (within spread) |
 | 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 25,510,038.1 | 18.5358 | 25,349,756.4 | 25,907,660.2 | 186,810.1 | 1.004x | 1.004x | unchanged (within spread) |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 25,734,384.1 | 18.6988 | 25,427,335.1 | 27,501,491.8 | 775,127.0 | 1.013x | 1.013x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 79,438,113.2 | 57.7204 | 79,001,158.5 | 86,370,341.8 | 2,830,930.3 | 3.128x | 3.128x | - |
 
 #### `doubled-word` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -525,6 +603,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 19,433,989.5 | 18.5337 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 19,449,258.2 | 18.5483 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 19,686,736.1 | 18.7747 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 60,380,887.5 | 57.5837 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,842,678.6 | 18.4734 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,835,763.1 | 18.4470 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,853,952.2 | 18.5164 |
@@ -533,6 +612,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,832,112.0 | 18.4330 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,827,105.3 | 18.4139 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,876,993.5 | 18.6043 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 15,207,734.2 | 58.0129 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,202,998.3 | 18.3563 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,205,398.0 | 18.3929 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,212,984.5 | 18.5087 |
@@ -541,6 +621,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,206,996.2 | 18.4173 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,208,073.5 | 18.4337 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,212,664.6 | 18.5038 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,833,858.8 | 58.5000 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 19,347,780.6 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 19,433,989.5 ns, 1,048,576 B
@@ -560,6 +641,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 20,883.4 | 20,860.4 | 20,890.1 | 10.7 | 1.003x | 1.003x | unchanged (within spread) | 75 | 278.4 | 8.0 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 21,022.6 | 20,968.0 | 21,083.7 | 40.8 | 1.010x | 1.010x | - | 75 | 280.3 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 21,168.0 | 21,137.3 | 21,279.5 | 60.8 | 1.017x | 1.017x | slower ×1.01 | 75 | 282.2 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 89,442.6 | 88,879.8 | 89,518.2 | 274.5 | 4.296x | 4.296x | - | 75 | 1,192.6 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 1,322.4 ns, 81 B; largest Δ: `v-ipv4`, +7.8 ns (now 177.8 ns), 11 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-slack-webhook`, 1,319.8 ns, 81 B; largest Δ: `waf-concat`, -7.5 ns (now 841.2 ns), 48 B
@@ -579,6 +661,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,146.9 | 0.0168 | 23,106.3 | 23,234.4 | 44.5 | 1.002x | 1.002x | - |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,179.2 | 0.0168 | 23,142.3 | 23,187.0 | 17.9 | 1.003x | 1.003x | - |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,236.3 | 0.0169 | 23,188.0 | 23,246.3 | 21.9 | 1.006x | 1.006x | slower ×1.00 |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,859.6 | 1.6188 | 2,226,719.6 | 2,233,694.8 | 2,538.2 | 96.426x | 96.426x | - |
 
 #### `dup-param-detect` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -592,6 +675,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,651.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,695.1 | 0.0169 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,717.6 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,696,922.6 | 1.6183 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,382.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,386.6 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,392.6 | 0.0168 |
@@ -600,6 +684,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,396.0 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,375.4 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,403.5 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,441.4 | 1.6191 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,109.1 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,107.7 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,111.4 | 0.0170 |
@@ -608,6 +693,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,106.3 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,108.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,110.2 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,295.9 | 1.6219 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,614.4 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,626.0 ns, 1,048,576 B
@@ -627,6 +713,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,575.9 | 1,570.2 | 1,583.8 | 4.6 | 1.361x | 1.361x | - | 75 | 21.0 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,578.1 | 1,572.2 | 1,594.3 | 7.5 | 1.362x | 1.362x | - | 75 | 21.0 | 8.0 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,640.0 | 1,637.4 | 1,642.0 | 1.7 | 1.416x | 1.416x | - | 75 | 21.9 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 8,860.1 | 8,827.0 | 8,885.5 | 20.8 | 7.650x | 7.650x | - | 75 | 118.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `waf-benign`, 389.5 ns, 39 B; largest Δ: `sec-userpass`, -303.3 ns (now 10.0 ns), 33 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `waf-benign`, 391.9 ns, 39 B; largest Δ: `sec-userpass`, -304.1 ns (now 10.0 ns), 33 B
@@ -646,6 +733,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 974.1 | 0.0007 | 971.4 | 985.2 | 5.2 | 1.063x | 1.063x | - |
 | 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 974.7 | 0.0007 | 972.0 | 975.8 | 1.5 | 1.064x | 1.064x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 977.7 | 0.0007 | 976.0 | 982.1 | 2.1 | 1.067x | 1.067x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,378.4 | 0.0010 | 1,369.3 | 1,394.1 | 8.6 | 1.504x | 1.504x | - |
 
 #### `email-local-nodup` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -659,6 +747,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 223.5 | 0.0002 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 224.8 | 0.0002 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 230.7 | 0.0002 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 388.4 | 0.0004 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 431.4 | 0.0016 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 433.8 | 0.0017 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 442.6 | 0.0017 |
@@ -667,6 +756,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 461.4 | 0.0018 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 458.5 | 0.0017 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 457.4 | 0.0017 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 555.6 | 0.0021 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 273.7 | 0.0042 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 273.7 | 0.0042 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 282.0 | 0.0043 |
@@ -675,6 +765,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 291.0 | 0.0044 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 290.2 | 0.0044 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 290.3 | 0.0044 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 435.0 | 0.0066 |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `t-256k`, 433.8 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `t-256k`, 442.4 ns, 262,144 B; largest Δ: `t-1m`, +2.8 ns (now 216.8 ns), 1,048,576 B
@@ -694,6 +785,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 11,082.5 | 11,077.7 | 11,143.7 | 25.2 | 1.052x | 1.052x | unchanged (within spread) | 75 | 147.8 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,575.6 | 11,433.7 | 11,582.8 | 57.2 | 1.099x | 1.099x | - | 75 | 154.3 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 11,594.8 | 11,465.6 | 12,449.1 | 430.2 | 1.101x | 1.101x | unchanged (within spread) | 75 | 154.6 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 18,535.8 | 18,434.9 | 19,759.1 | 503.4 | 1.759x | 1.759x | - | 75 | 247.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 926.8 ns, 61 B; largest Δ: `la-email-nodup`, -4.0 ns (now 70.7 ns), 9 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sd-empty-alt-hit`, 928.8 ns, 61 B; largest Δ: `v-uuid-badnibble`, +3.0 ns (now 280.0 ns), 36 B
@@ -702,22 +794,26 @@ reporter: v19 (2026-09-22)
 
 ### `email-nested-plus` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,106.9 | 0.0168 | 23,094.5 | 23,110.8 | 5.5 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,126.7 | 0.0168 | 23,097.0 | 23,215.2 | 43.3 | 1.001x | 1.001x | unchanged (within spread) |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,133.8 | 0.0168 | 23,099.5 | 23,163.9 | 21.7 | 1.001x | 1.001x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,134.7 | 0.0168 | 23,113.2 | 23,322.4 | 78.1 | 1.001x | 1.001x | - |
-| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,136.1 | 0.0168 | 23,122.0 | 23,206.2 | 31.2 | 1.001x | 1.001x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,138.8 | 0.0168 | 23,110.9 | 23,157.9 | 16.6 | 1.001x | 1.001x | - |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,148.1 | 0.0168 | 23,117.9 | 23,198.6 | 28.1 | 1.002x | 1.002x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,153.5 | 0.0168 | 23,112.1 | 23,176.2 | 23.4 | 1.002x | 1.002x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 107.6 | 0.0001 | 107.5 | 109.5 | 0.8 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,106.9 | 0.0168 | 23,094.5 | 23,110.8 | 5.5 | 214.709x | 214.709x | - |
+| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,126.7 | 0.0168 | 23,097.0 | 23,215.2 | 43.3 | 214.893x | 214.893x | unchanged (within spread) |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,133.8 | 0.0168 | 23,099.5 | 23,163.9 | 21.7 | 214.959x | 214.959x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,134.7 | 0.0168 | 23,113.2 | 23,322.4 | 78.1 | 214.968x | 214.968x | - |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,136.1 | 0.0168 | 23,122.0 | 23,206.2 | 31.2 | 214.980x | 214.980x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,138.8 | 0.0168 | 23,110.9 | 23,157.9 | 16.6 | 215.005x | 215.005x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,148.1 | 0.0168 | 23,117.9 | 23,198.6 | 28.1 | 215.092x | 215.092x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,153.5 | 0.0168 | 23,112.1 | 23,176.2 | 23.4 | 215.142x | 215.142x | - |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 31,640.1 | 0.0230 | 31,607.5 | 31,662.7 | 20.5 | 293.999x | 293.999x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,675.2 | 1.6186 | 2,225,987.2 | 2,232,628.4 | 2,381.6 | 20699.525x | 20699.525x | - |
 
 #### `email-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 37.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,608.4 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,626.4 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 17,631.7 | 0.0168 |
@@ -726,6 +822,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,642.2 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,658.3 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,648.6 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,132.3 | 0.0230 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,695,804.9 | 1.6172 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 33.1 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,389.0 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,380.4 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,387.3 | 0.0167 |
@@ -734,6 +833,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,395.0 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,380.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,392.8 | 0.0168 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,982.6 | 0.0228 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,340.9 | 1.6187 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 37.7 | 0.0006 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,109.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,107.5 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,102.0 | 0.0168 |
@@ -742,6 +844,8 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,103.9 | 0.0168 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,106.9 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.8 | 0.0169 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,525.6 | 0.0233 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,482.6 | 1.6248 |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,626.4 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,631.7 ns, 1,048,576 B
@@ -761,6 +865,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 896.5 | 894.3 | 905.9 | 4.2 | 1.390x | 1.390x | unchanged (within spread) | 75 | 12.0 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 905.9 | 905.7 | 910.6 | 2.0 | 1.404x | 1.404x | - | 75 | 12.1 | 8.0 | 100% |
 | 8 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 905.9 | 904.7 | 908.2 | 1.1 | 1.404x | 1.404x | unchanged (within spread) | 75 | 12.1 | 8.0 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,851.7 | 1,844.9 | 1,855.1 | 4.4 | 2.870x | 2.870x | - | 75 | 24.7 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,051.1 | 4,046.1 | 4,125.2 | 30.5 | 6.279x | 6.279x | - | 75 | 54.0 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,056.7 | 5,050.2 | 5,064.8 | 4.8 | 7.837x | 7.837x | - | 75 | 67.4 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `v-email`, 55.9 ns, 24 B; largest Δ: `rd-email-hit`, +2.1 ns (now 25.1 ns), 10 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `v-email`, 43.6 ns, 24 B; largest Δ: `sd-empty-alt-hit`, +1.7 ns (now 12.1 ns), 61 B
@@ -774,12 +881,15 @@ reporter: v19 (2026-09-22)
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.4 | 0.0000 | 24.2 | 25.5 | 0.5 | 1.000x | 1.000x | - |
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 24.6 | 25.4 | 0.3 | 1.024x | 1.024x | unchanged (within spread) |
-| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,957.9 | 0.0087 | 11,853.2 | 12,028.6 | 56.2 | 489.608x | 489.608x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,981.8 | 0.0087 | 11,723.7 | 12,086.3 | 128.3 | 490.587x | 490.587x | - |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 12,009.9 | 0.0087 | 11,985.0 | 12,065.6 | 27.0 | 491.738x | 491.738x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 12,059.2 | 0.0088 | 11,724.6 | 12,135.9 | 149.2 | 493.756x | 493.756x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,126.9 | 0.0088 | 11,641.9 | 12,185.3 | 213.2 | 496.529x | 496.529x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 12,333.5 | 0.0090 | 12,177.8 | 12,440.8 | 101.1 | 504.989x | 504.989x | slower ×1.03 |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87.7 | 0.0001 | 87.4 | 89.7 | 0.9 | 3.590x | 3.590x | - |
+| 4 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 169.8 | 0.0001 | 169.7 | 169.8 | 0.0 | 6.953x | 6.953x | - |
+| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,957.9 | 0.0087 | 11,853.2 | 12,028.6 | 56.2 | 489.608x | 489.608x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,981.8 | 0.0087 | 11,723.7 | 12,086.3 | 128.3 | 490.587x | 490.587x | - |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 12,009.9 | 0.0087 | 11,985.0 | 12,065.6 | 27.0 | 491.738x | 491.738x | - |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 12,059.2 | 0.0088 | 11,724.6 | 12,135.9 | 149.2 | 493.756x | 493.756x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,126.9 | 0.0088 | 11,641.9 | 12,185.3 | 213.2 | 496.529x | 496.529x | - |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 12,333.5 | 0.0090 | 12,177.8 | 12,440.8 | 101.1 | 504.989x | 504.989x | slower ×1.03 |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,602.4 | 0.0128 | 17,577.2 | 17,698.4 | 47.3 | 720.721x | 720.721x | - |
 
 #### `evil-alt-nested` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -787,28 +897,37 @@ reporter: v19 (2026-09-22)
 |---|---|---|---|---|
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 9.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 1,216.5 | 0.0012 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,239.9 | 0.0012 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,255.7 | 0.0012 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 1,207.9 | 0.0012 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,242.1 | 0.0012 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,276.7 | 0.0012 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,905.4 | 0.0018 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.6 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.5 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 27.2 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 44.9 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 45.1 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 47.8 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 45.4 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 45.6 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 49.1 | 0.0002 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 296.3 | 0.0011 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 10.9 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 11.0 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 33.1 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 58.8 | 0.0009 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 10,699.7 | 0.1633 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 10,686.7 | 0.1631 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 10,698.2 | 0.1632 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 10,822.7 | 0.1651 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 10,839.3 | 0.1654 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 10,900.5 | 0.1663 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 15,418.5 | 0.2353 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-64k`, 11.0 ns, 65,536 B; largest Δ: `t-1m`, +0.3 ns (now 9.4 ns), 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 10,699.7 ns, 65,536 B
@@ -817,44 +936,56 @@ reporter: v19 (2026-09-22)
 
 ### `file-ext-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_vm-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 260,208.4 | 0.1891 | 260,014.9 | 260,573.5 | 216.8 | 1.000x | 1.000x | faster ×16.41 |
-| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 260,429.8 | 0.1892 | 258,681.1 | 261,187.7 | 839.5 | 1.001x | 1.001x | faster ×1.12 |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 260,450.7 | 0.1892 | 260,305.5 | 260,949.1 | 220.4 | 1.001x | 1.001x | faster ×1.12 |
-| 4 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 260,503.8 | 0.1893 | 260,139.7 | 261,035.8 | 301.3 | 1.001x | 1.001x | faster ×16.38 |
-| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 292,709.7 | 0.2127 | 292,611.8 | 293,376.3 | 283.9 | 1.125x | 1.125x | - |
-| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 292,762.7 | 0.2127 | 292,658.4 | 293,391.5 | 324.5 | 1.125x | 1.125x | - |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,267,973.9 | 3.1011 | 4,267,643.2 | 4,270,539.7 | 1,322.2 | 16.402x | 16.402x | - |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,270,753.1 | 3.1032 | 4,266,842.1 | 4,276,876.0 | 3,961.3 | 16.413x | 16.413x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 46,487.5 | 0.0338 | 46,408.2 | 46,574.3 | 54.0 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 84,752.4 | 0.0616 | 84,650.4 | 86,197.1 | 590.5 | 1.823x | 1.823x | - |
+| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 260,208.4 | 0.1891 | 260,014.9 | 260,573.5 | 216.8 | 5.597x | 5.597x | faster ×16.41 |
+| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 260,429.8 | 0.1892 | 258,681.1 | 261,187.7 | 839.5 | 5.602x | 5.602x | faster ×1.12 |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 260,450.7 | 0.1892 | 260,305.5 | 260,949.1 | 220.4 | 5.603x | 5.603x | faster ×1.12 |
+| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 260,503.8 | 0.1893 | 260,139.7 | 261,035.8 | 301.3 | 5.604x | 5.604x | faster ×16.38 |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 292,709.7 | 0.2127 | 292,611.8 | 293,376.3 | 283.9 | 6.297x | 6.297x | - |
+| 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 292,762.7 | 0.2127 | 292,658.4 | 293,391.5 | 324.5 | 6.298x | 6.298x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,180,108.0 | 0.8575 | 1,160,497.6 | 1,180,705.0 | 9,392.2 | 25.385x | 25.385x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,267,973.9 | 3.1011 | 4,267,643.2 | 4,270,539.7 | 1,322.2 | 91.809x | 91.809x | - |
+| 11 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,270,753.1 | 3.1032 | 4,266,842.1 | 4,276,876.0 | 3,961.3 | 91.869x | 91.869x | - |
 
 #### `file-ext-order` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 35,288.1 | 0.0337 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 64,537.4 | 0.0615 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 207,336.3 | 0.1977 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 207,296.0 | 0.1977 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 207,227.7 | 0.1976 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 207,585.5 | 0.1980 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 228,433.5 | 0.2179 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 228,479.9 | 0.2179 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 897,464.3 | 0.8559 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,251,320.7 | 3.1007 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,254,076.8 | 3.1033 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 8,887.5 | 0.0339 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,067.8 | 0.0613 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 44,210.8 | 0.1687 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 44,552.2 | 0.1700 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 44,581.7 | 0.1701 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 44,259.7 | 0.1688 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 52,924.6 | 0.2019 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 53,057.3 | 0.2024 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 225,869.4 | 0.8616 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 813,089.0 | 3.1017 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 812,944.5 | 3.1011 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,281.5 | 0.0348 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,110.3 | 0.0627 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 8,579.5 | 0.1309 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 8,752.8 | 0.1336 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 8,696.7 | 0.1327 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 8,776.2 | 0.1339 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 11,444.7 | 0.1746 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 11,466.7 | 0.1750 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 56,784.4 | 0.8665 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 203,581.7 | 3.1064 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 203,118.2 | 3.0993 |
 
@@ -874,8 +1005,11 @@ reporter: v19 (2026-09-22)
 | 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 747.3 | 745.9 | 750.0 | 1.4 | 1.105x | 1.105x | - | 75 | 10.0 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 840.3 | 838.5 | 843.8 | 1.8 | 1.242x | 1.242x | faster ×3.06 | 75 | 11.2 | 9.1 | 100% |
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 953.1 | 951.7 | 956.7 | 2.1 | 1.409x | 1.409x | faster ×2.91 | 75 | 12.7 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,567.4 | 2,517.4 | 2,688.3 | 58.0 | 3.795x | 3.795x | - | 75 | 34.2 | 8.9 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,777.3 | 2,681.9 | 2,780.5 | 37.4 | 4.106x | 4.106x | - | 75 | 37.0 | 8.8 | 100% |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,417.9 | 1,411.6 | 2,790.0 | 546.3 | 2.096x | 2.096x | - | 75 | 18.9 | 16.3 | 100% |
+| 8 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,476.4 | 2,474.0 | 2,482.9 | 3.1 | 3.661x | 3.661x | - | 75 | 33.0 | 27.2 | 100% |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,567.4 | 2,517.4 | 2,688.3 | 58.0 | 3.795x | 3.795x | - | 75 | 34.2 | 8.9 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,777.3 | 2,681.9 | 2,780.5 | 37.4 | 4.106x | 4.106x | - | 75 | 37.0 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,169.5 | 3,164.3 | 3,183.4 | 6.4 | 4.686x | 4.686x | - | 75 | 42.3 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sd-fileext-short`, 29.5 ns, 14 B; largest Δ: `v-ipv4`, +10.3 ns (now 18.0 ns), 11 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sd-fileext-short`, 29.5 ns, 14 B; largest Δ: `v-ipv4-oor`, +10.3 ns (now 18.0 ns), 9 B
@@ -891,10 +1025,11 @@ reporter: v19 (2026-09-22)
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,891,118.8 | 1.3741 | 1,884,978.4 | 1,912,268.2 | 9,722.1 | 1.000x | 1.000x | faster ×1.02 |
 | 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,932,614.8 | 1.4043 | 1,931,247.1 | 1,938,483.1 | 2,702.8 | 1.022x | 1.022x | - |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,939,786.6 | 1.4095 | 1,930,409.2 | 1,951,578.3 | 7,243.7 | 1.026x | 1.026x | - |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 22,079,935.4 | 16.0435 | 22,033,910.2 | 22,550,312.3 | 190,699.6 | 11.679x | 11.679x | - |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 22,138,490.7 | 16.0860 | 21,847,684.8 | 22,320,343.0 | 160,945.6 | 11.710x | 11.710x | - |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 22,265,553.3 | 16.1784 | 21,518,845.5 | 23,056,207.5 | 616,901.5 | 11.777x | 11.777x | unchanged (within spread) |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 22,281,279.3 | 16.1898 | 21,404,677.6 | 22,690,783.8 | 452,142.2 | 11.785x | 11.785x | unchanged (within spread) |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 13,354,984.6 | 9.7039 | 13,300,067.1 | 13,560,804.3 | 95,816.6 | 7.064x | 7.064x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 22,079,935.4 | 16.0435 | 22,033,910.2 | 22,550,312.3 | 190,699.6 | 11.679x | 11.679x | - |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 22,138,490.7 | 16.0860 | 21,847,684.8 | 22,320,343.0 | 160,945.6 | 11.710x | 11.710x | - |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 22,265,553.3 | 16.1784 | 21,518,845.5 | 23,056,207.5 | 616,901.5 | 11.777x | 11.777x | unchanged (within spread) |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 22,281,279.3 | 16.1898 | 21,404,677.6 | 22,690,783.8 | 452,142.2 | 11.785x | 11.785x | unchanged (within spread) |
 
 #### `float-literal-bound` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -904,6 +1039,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,443,717.8 | 1.3768 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 1,480,450.1 | 1.4119 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,488,250.4 | 1.4193 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 10,239,198.2 | 9.7649 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 16,890,512.0 | 16.1080 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 16,922,339.8 | 16.1384 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,318,617.2 | 16.5163 |
@@ -912,6 +1048,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 361,324.6 | 1.3783 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 363,954.2 | 1.3884 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 363,737.6 | 1.3875 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 2,510,868.7 | 9.5782 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,196,067.0 | 16.0067 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,182,694.8 | 15.9557 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,279,821.0 | 16.3262 |
@@ -920,6 +1057,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 86,783.8 | 1.3242 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 88,444.9 | 1.3496 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 88,180.0 | 1.3455 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 604,563.9 | 9.2249 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,072,294.3 | 16.3619 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,047,382.5 | 15.9818 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,079,887.2 | 16.4778 |
@@ -943,6 +1081,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,504.7 | 5,467.8 | 5,571.6 | 37.3 | 3.372x | 3.372x | - | 75 | 73.4 | 8.9 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 5,633.2 | 5,566.3 | 5,812.5 | 86.1 | 3.450x | 3.450x | unchanged (within spread) | 75 | 75.1 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,640.4 | 5,607.3 | 5,696.2 | 30.3 | 3.455x | 3.455x | - | 75 | 75.2 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 20,529.8 | 20,426.3 | 20,649.5 | 80.1 | 12.575x | 12.575x | - | 75 | 273.7 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `v-ipv4`, 247.5 ns, 11 B; largest Δ: `lp-num-neg-dec`, -1.2 ns (now 59.3 ns), 7 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `v-ipv4`, 247.1 ns, 11 B; largest Δ: `la-float-bound`, +3.0 ns (now 58.5 ns), 13 B
@@ -962,6 +1101,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,134.8 | 0.0168 | 23,102.4 | 23,159.2 | 23.5 | 1.002x | 1.002x | - |
 | 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,137.8 | 0.0168 | 23,114.3 | 23,156.7 | 13.8 | 1.002x | 1.002x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,155.0 | 0.0168 | 23,131.2 | 23,194.0 | 20.2 | 1.003x | 1.003x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,418.6 | 0.0170 | 23,385.8 | 23,493.6 | 36.2 | 1.014x | 1.014x | - |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 32,370.1 | 0.0235 | 32,315.0 | 32,374.4 | 22.5 | 1.402x | 1.402x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,434.9 | 1.6199 | 2,228,640.9 | 2,230,675.0 | 739.4 | 96.562x | 96.562x | - |
 
 #### `floor-byte` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -975,6 +1117,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,649.5 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,659.4 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,660.1 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,833.6 | 0.0170 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,529.8 | 0.0234 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,682.3 | 1.6190 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,373.8 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,382.0 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,393.7 | 0.0168 |
@@ -983,6 +1128,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,373.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,372.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,388.1 | 0.0167 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,441.0 | 0.0169 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 6,142.4 | 0.0234 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,832.0 | 1.6206 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,102.5 | 0.0168 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,106.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,104.7 | 0.0169 |
@@ -991,6 +1139,9 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,105.9 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,104.4 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,132.2 | 0.0173 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,679.6 | 0.0256 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,380.5 | 1.6232 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 17,619.6 ns, 1,048,576 B; largest Δ: `t-256k`, -11.8 ns (now 4,382.0 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,623.7 ns, 1,048,576 B
@@ -1010,6 +1161,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 658.4 | 658.4 | 659.8 | 0.5 | 1.099x | 1.099x | slower ×1.00 | 75 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 664.1 | 660.9 | 670.4 | 3.3 | 1.109x | 1.109x | - | 75 | 8.9 | 100% |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 684.4 | 675.8 | 685.5 | 3.6 | 1.143x | 1.143x | slower ×1.03 | 75 | 9.1 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,225.5 | 1,224.6 | 1,235.6 | 4.2 | 2.046x | 2.046x | - | 75 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,041.3 | 2,037.4 | 2,041.9 | 1.7 | 3.409x | 3.409x | - | 75 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,397.1 | 4,388.5 | 4,404.6 | 6.7 | 7.342x | 7.342x | - | 75 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `floor-hit`, 20.2 ns, 1 B; largest Δ: `sec-github-pat`, -0.8 ns (now 8.6 ns), 93 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `floor-hit`, 20.2 ns, 1 B; largest Δ: `sec-slack-webhook`, +0.3 ns (now 9.7 ns), 81 B
@@ -1018,46 +1172,58 @@ reporter: v19 (2026-09-22)
 
 ### `high-byte-run` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 482,837.5 | 0.3508 | 482,647.4 | 485,264.5 | 981.2 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 482,873.4 | 0.3509 | 482,706.0 | 484,085.1 | 503.9 | 1.000x | 1.000x | unchanged (within spread) |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 483,090.4 | 0.3510 | 482,894.0 | 484,917.6 | 824.2 | 1.001x | 1.001x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 483,191.5 | 0.3511 | 482,848.2 | 483,942.6 | 428.1 | 1.001x | 1.001x | - |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,034,619.8 | 1.4784 | 2,034,180.3 | 2,040,721.7 | 2,506.0 | 4.214x | 4.214x | unchanged (within spread) |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,034,704.8 | 1.4784 | 2,033,685.5 | 2,039,067.2 | 1,957.8 | 4.214x | 4.214x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,035,057.3 | 1.4787 | 2,035,023.9 | 2,035,408.9 | 176.8 | 4.215x | 4.215x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,035,691.7 | 1.4792 | 2,032,772.4 | 2,038,024.5 | 1,919.9 | 4.216x | 4.216x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 64,145.5 | 0.0466 | 64,104.5 | 64,366.2 | 96.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 482,837.5 | 0.3508 | 482,647.4 | 485,264.5 | 981.2 | 7.527x | 7.527x | - |
+| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 482,873.4 | 0.3509 | 482,706.0 | 484,085.1 | 503.9 | 7.528x | 7.528x | unchanged (within spread) |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 483,090.4 | 0.3510 | 482,894.0 | 484,917.6 | 824.2 | 7.531x | 7.531x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 483,191.5 | 0.3511 | 482,848.2 | 483,942.6 | 428.1 | 7.533x | 7.533x | - |
+| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,034,619.8 | 1.4784 | 2,034,180.3 | 2,040,721.7 | 2,506.0 | 31.719x | 31.719x | unchanged (within spread) |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,034,704.8 | 1.4784 | 2,033,685.5 | 2,039,067.2 | 1,957.8 | 31.720x | 31.720x | unchanged (within spread) |
+| 8 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,034,863.1 | 1.4785 | 2,033,935.6 | 2,039,981.9 | 2,141.6 | 31.723x | 31.723x | - |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,035,057.3 | 1.4787 | 2,035,023.9 | 2,035,408.9 | 176.8 | 31.726x | 31.726x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,035,691.7 | 1.4792 | 2,032,772.4 | 2,038,024.5 | 1,919.9 | 31.736x | 31.736x | - |
+| 11 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,443,839.4 | 1.7757 | 2,442,960.0 | 2,455,910.1 | 4,827.8 | 38.098x | 38.098x | - |
 
 #### `high-byte-run` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 48,751.7 | 0.0465 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 368,003.7 | 0.3510 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 368,050.0 | 0.3510 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 368,376.9 | 0.3513 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 368,060.8 | 0.3510 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,549,890.4 | 1.4781 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 1,549,774.9 | 1.4780 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,549,841.8 | 1.4780 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 1,550,066.1 | 1.4783 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 1,549,727.6 | 1.4779 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,860,957.8 | 1.7747 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 12,226.6 | 0.0466 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 91,793.3 | 0.3502 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 91,710.4 | 0.3498 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 91,649.8 | 0.3496 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 91,935.4 | 0.3507 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 387,407.2 | 1.4778 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 387,276.2 | 1.4773 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 387,571.8 | 1.4785 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 387,828.8 | 1.4794 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 387,774.5 | 1.4792 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 465,532.5 | 1.7759 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,161.0 | 0.0482 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 23,081.5 | 0.3522 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 23,034.2 | 0.3515 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 23,001.0 | 0.3510 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 23,060.5 | 0.3519 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 97,082.8 | 1.4814 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 97,078.3 | 1.4813 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 97,413.1 | 1.4864 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 97,205.3 | 1.4832 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 97,192.4 | 1.4830 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 117,009.7 | 1.7854 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 368,050.0 ns, 1,048,576 B; largest Δ: `t-256k`, -82.9 ns (now 91,710.4 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 368,376.9 ns, 1,048,576 B
@@ -1073,10 +1239,12 @@ reporter: v19 (2026-09-22)
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,116.1 | 1,114.9 | 1,117.9 | 1.0 | 1.018x | 1.018x | - | 75 | 14.9 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,123.2 | 1,121.8 | 1,128.5 | 2.4 | 1.025x | 1.025x | slower ×1.01 | 75 | 15.0 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,134.0 | 1,127.3 | 1,138.3 | 4.3 | 1.035x | 1.035x | slower ×1.03 | 75 | 15.1 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,740.3 | 2,734.0 | 2,752.8 | 6.3 | 2.500x | 2.500x | faster ×1.01 | 75 | 36.5 | 8.8 | 100% |
-| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,763.1 | 2,757.1 | 2,769.2 | 3.9 | 2.521x | 2.521x | - | 75 | 36.8 | 8.8 | 100% |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,838.9 | 2,833.1 | 2,854.2 | 7.1 | 2.591x | 2.591x | faster ×1.01 | 75 | 37.9 | 9.1 | 100% |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,864.2 | 2,861.0 | 2,871.4 | 3.6 | 2.614x | 2.614x | - | 75 | 38.2 | 8.9 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,687.7 | 2,682.4 | 2,698.6 | 5.3 | 2.453x | 2.453x | - | 75 | 35.8 | 27.2 | 100% |
+| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,740.3 | 2,734.0 | 2,752.8 | 6.3 | 2.500x | 2.500x | faster ×1.01 | 75 | 36.5 | 8.8 | 100% |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,763.1 | 2,757.1 | 2,769.2 | 3.9 | 2.521x | 2.521x | - | 75 | 36.8 | 8.8 | 100% |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 2,838.9 | 2,833.1 | 2,854.2 | 7.1 | 2.591x | 2.591x | faster ×1.01 | 75 | 37.9 | 9.1 | 100% |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,864.2 | 2,861.0 | 2,871.4 | 3.6 | 2.614x | 2.614x | - | 75 | 38.2 | 8.9 | 100% |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,197.5 | 5,193.1 | 5,229.2 | 13.5 | 4.743x | 4.743x | - | 75 | 69.3 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 52.4 ns, 93 B; largest Δ: `sec-userpass`, -5.8 ns (now 19.4 ns), 33 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-github-pat`, 52.3 ns, 93 B; largest Δ: `sec-userpass`, -5.4 ns (now 20.0 ns), 33 B
@@ -1085,46 +1253,58 @@ reporter: v19 (2026-09-22)
 
 ### `ipv4-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 24.9 | 0.0 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.0 | 0.1 | 1.000x | 1.000x | - |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 24.9 | 0.0 | 1.001x | 1.001x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 24.9 | 25.1 | 0.1 | 1.003x | 1.003x | - |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 28.4 | 0.0000 | 28.4 | 28.5 | 0.0 | 1.143x | 1.143x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 28.7 | 0.1 | 1.144x | 1.144x | - |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 34.3 | 0.0000 | 34.3 | 34.4 | 0.0 | 1.380x | 1.380x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.5 | 0.0000 | 34.4 | 38.0 | 1.4 | 1.387x | 1.387x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 17.9 | 0.0000 | 17.9 | 18.0 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 24.9 | 0.0 | 1.387x | 1.387x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.0 | 0.1 | 1.387x | 1.387x | - |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 24.9 | 0.0 | 1.387x | 1.387x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 24.9 | 25.1 | 0.1 | 1.391x | 1.391x | - |
+| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 28.4 | 0.0000 | 28.4 | 28.5 | 0.0 | 1.585x | 1.585x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 28.7 | 0.1 | 1.586x | 1.586x | - |
+| 8 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.3 | 30.6 | 0.1 | 1.695x | 1.695x | - |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 34.3 | 0.0000 | 34.3 | 34.4 | 0.0 | 1.914x | 1.914x | unchanged (within spread) |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.5 | 0.0000 | 34.4 | 38.0 | 1.4 | 1.923x | 1.923x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 370.6 | 0.0003 | 368.3 | 379.1 | 4.1 | 20.653x | 20.653x | - |
 
 #### `ipv4-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.4 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 306.3 | 0.0003 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.4 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.1 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.5 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 11.5 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.2 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 8.3 ns, 65,536 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 8.3 ns, 262,144 B
@@ -1141,9 +1321,12 @@ reporter: v19 (2026-09-22)
 | 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 627.2 | 626.8 | 628.9 | 0.8 | 1.001x | 1.001x | unchanged (within spread) | 75 | 8.4 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 627.4 | 627.2 | 640.2 | 5.0 | 1.001x | 1.001x | unchanged (within spread) | 75 | 8.4 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 893.5 | 892.6 | 897.8 | 1.9 | 1.425x | 1.425x | faster ×1.10 | 75 | 11.9 | 9.1 | 100% |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 985.9 | 983.0 | 1,001.3 | 6.8 | 1.573x | 1.573x | - | 75 | 13.1 | 8.9 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,021.4 | 1,018.9 | 1,022.8 | 1.3 | 1.629x | 1.629x | - | 75 | 13.6 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,135.4 | 1,135.2 | 1,138.0 | 1.1 | 1.811x | 1.811x | slower ×1.11 | 75 | 15.1 | 8.8 | 100% |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 951.5 | 949.3 | 967.5 | 6.6 | 1.518x | 1.518x | - | 75 | 12.7 | 27.2 | 100% |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 985.9 | 983.0 | 1,001.3 | 6.8 | 1.573x | 1.573x | - | 75 | 13.1 | 8.9 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,021.4 | 1,018.9 | 1,022.8 | 1.3 | 1.629x | 1.629x | - | 75 | 13.6 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,135.4 | 1,135.2 | 1,138.0 | 1.1 | 1.811x | 1.811x | slower ×1.11 | 75 | 15.1 | 8.8 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,451.0 | 1,448.7 | 1,539.8 | 34.9 | 2.315x | 2.315x | - | 75 | 19.3 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,433.4 | 3,400.8 | 3,678.6 | 105.2 | 5.477x | 5.477x | - | 75 | 45.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `v-ipv4`, 22.2 ns, 11 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `v-ipv4`, 22.1 ns, 11 B
@@ -1152,42 +1335,54 @@ reporter: v19 (2026-09-22)
 
 ### `keyword-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 774,694.7 | 0.5629 | 774,175.2 | 775,787.7 | 596.9 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 775,044.9 | 0.5632 | 774,337.1 | 777,282.6 | 1,104.0 | 1.000x | 1.000x | - |
-| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,236,473.0 | 0.8984 | 1,234,839.5 | 1,238,674.6 | 1,262.9 | 1.596x | 1.596x | slower ×1.60 |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,237,361.1 | 0.8991 | 1,237,042.8 | 1,238,091.6 | 361.4 | 1.597x | 1.597x | slower ×1.60 |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,283,134.0 | 3.1122 | 4,282,951.5 | 4,293,537.8 | 4,180.8 | 5.529x | 5.529x | - |
-| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,286,675.4 | 3.1147 | 4,286,117.4 | 4,293,847.5 | 2,901.5 | 5.533x | 5.533x | - |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,625,669.0 | 3.3611 | 4,619,177.5 | 4,636,148.0 | 5,903.0 | 5.971x | 5.971x | slower ×1.08 |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,643,087.0 | 3.3737 | 4,635,614.5 | 4,646,923.1 | 4,565.5 | 5.993x | 5.993x | slower ×1.08 |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 290.0 | 0.0002 | 289.0 | 291.2 | 0.8 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 354,380.0 | 0.2575 | 354,209.8 | 356,195.2 | 743.8 | 1221.809x | 1221.809x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 774,694.7 | 0.5629 | 774,175.2 | 775,787.7 | 596.9 | 2670.943x | 2670.943x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 775,044.9 | 0.5632 | 774,337.1 | 777,282.6 | 1,104.0 | 2672.151x | 2672.151x | - |
+| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,236,473.0 | 0.8984 | 1,234,839.5 | 1,238,674.6 | 1,262.9 | 4263.033x | 4263.033x | slower ×1.60 |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,237,361.1 | 0.8991 | 1,237,042.8 | 1,238,091.6 | 361.4 | 4266.095x | 4266.095x | slower ×1.60 |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,958,046.4 | 2.8760 | 3,939,856.7 | 4,074,975.7 | 48,561.7 | 13646.301x | 13646.301x | - |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,283,134.0 | 3.1122 | 4,282,951.5 | 4,293,537.8 | 4,180.8 | 14767.117x | 14767.117x | - |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,286,675.4 | 3.1147 | 4,286,117.4 | 4,293,847.5 | 2,901.5 | 14779.327x | 14779.327x | - |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,625,669.0 | 3.3611 | 4,619,177.5 | 4,636,148.0 | 5,903.0 | 15948.088x | 15948.088x | slower ×1.08 |
+| 11 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,643,087.0 | 3.3737 | 4,635,614.5 | 4,646,923.1 | 4,565.5 | 16008.140x | 16008.140x | slower ×1.08 |
 
 #### `keyword-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 85.5 | 0.0001 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 271,202.1 | 0.2586 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 598,053.7 | 0.5703 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 598,134.6 | 0.5704 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 956,751.2 | 0.9124 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 957,888.2 | 0.9135 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,021,006.3 | 2.8811 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,262,280.6 | 3.1112 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,265,453.6 | 3.1142 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 3,524,903.6 | 3.3616 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 3,537,462.4 | 3.3736 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 122.0 | 0.0005 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 67,001.8 | 0.2556 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 143,469.7 | 0.5473 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 143,541.5 | 0.5476 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 228,219.3 | 0.8706 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 228,243.9 | 0.8707 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 754,859.4 | 2.8796 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 816,561.8 | 3.1149 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 817,045.7 | 3.1168 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 877,501.1 | 3.3474 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 882,158.5 | 3.3652 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 82.0 | 0.0013 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 16,198.2 | 0.2472 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 33,177.1 | 0.5062 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 33,247.7 | 0.5073 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 51,315.5 | 0.7830 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 51,087.6 | 0.7795 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 185,081.5 | 2.8241 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 204,601.2 | 3.1220 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 204,633.9 | 3.1225 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 217,850.1 | 3.3241 |
@@ -1209,8 +1404,11 @@ reporter: v19 (2026-09-22)
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 802.3 | 800.2 | 804.6 | 1.5 | 1.065x | 1.065x | - | 75 | 10.7 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 964.5 | 962.4 | 969.2 | 2.5 | 1.280x | 1.280x | faster ×2.42 | 75 | 12.9 | 9.1 | 100% |
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,053.8 | 1,050.4 | 1,109.9 | 22.8 | 1.399x | 1.399x | unchanged (within spread) | 75 | 14.1 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,329.9 | 2,319.0 | 2,339.3 | 7.0 | 3.093x | 3.093x | - | 75 | 31.1 | 8.9 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,401.1 | 2,362.9 | 4,199.5 | 721.9 | 3.187x | 3.187x | - | 75 | 32.0 | 8.8 | 100% |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,612.3 | 1,608.1 | 1,629.6 | 7.5 | 2.140x | 2.140x | - | 75 | 21.5 | 16.3 | 100% |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,329.9 | 2,319.0 | 2,339.3 | 7.0 | 3.093x | 3.093x | - | 75 | 31.1 | 8.9 | 100% |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,401.1 | 2,362.9 | 4,199.5 | 721.9 | 3.187x | 3.187x | - | 75 | 32.0 | 8.8 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,673.1 | 2,671.4 | 2,690.1 | 7.0 | 3.548x | 3.548x | - | 75 | 35.6 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,040.7 | 4,031.4 | 4,102.1 | 25.4 | 5.363x | 5.363x | - | 75 | 53.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rec-comment-nested`, 26.4 ns, 34 B; largest Δ: `waf-concat`, -5.3 ns (now 11.5 ns), 48 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `waf-dbnames`, 26.6 ns, 39 B; largest Δ: `waf-concat`, -5.3 ns (now 11.5 ns), 48 B
@@ -1230,6 +1428,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 49.2 | 0.0000 | 49.1 | 49.3 | 0.1 | 1.219x | 1.219x | - |
 | 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 58.9 | 0.0000 | 58.8 | 61.7 | 1.1 | 1.459x | 1.459x | slower ×1.35 |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 69.7 | 0.0001 | 69.7 | 69.8 | 0.1 | 1.729x | 1.729x | slower ×1.42 |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 98.1 | 0.0001 | 97.6 | 98.2 | 0.2 | 2.431x | 2.431x | - |
 
 #### `logparse-atomic` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1243,6 +1442,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 16.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 19.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 13.3 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 13.6 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 15.5 | 0.0001 |
@@ -1251,6 +1451,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 16.1 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 25.6 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 32.6 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.8 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 13.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14.2 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 13.9 | 0.0002 |
@@ -1259,6 +1460,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 16.8 | 0.0003 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 15.9 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 18.2 | 0.0003 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.6 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 15.5 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 15.7 ns, 262,144 B
@@ -1278,6 +1480,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 876.4 | 875.5 | 876.6 | 0.5 | 1.074x | 1.074x | - | 75 | 11.7 | 8.0 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 950.0 | 948.6 | 950.8 | 0.8 | 1.165x | 1.165x | unchanged (within spread) | 75 | 12.7 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 951.0 | 950.6 | 953.7 | 1.3 | 1.166x | 1.166x | - | 75 | 12.7 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,017.0 | 4,980.6 | 5,043.8 | 21.8 | 6.150x | 6.150x | - | 75 | 66.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-atomic-hit`, 74.3 ns, 31 B; largest Δ: `lp-syslog`, +8.9 ns (now 21.9 ns), 56 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-atomic-hit`, 71.9 ns, 31 B; largest Δ: `lp-syslog`, +9.1 ns (now 22.4 ns), 56 B
@@ -1297,6 +1500,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 45.4 | 0.0000 | 45.3 | 45.6 | 0.1 | 1.514x | 1.514x | - |
 | 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 51.2 | 0.0000 | 51.2 | 51.4 | 0.1 | 1.707x | 1.707x | slower ×1.31 |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 54.9 | 0.0000 | 54.2 | 55.1 | 0.3 | 1.830x | 1.830x | slower ×1.21 |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 88.2 | 0.0001 | 87.1 | 88.3 | 0.5 | 2.941x | 2.941x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 97.7 | 0.0001 | 97.4 | 98.0 | 0.2 | 3.258x | 3.258x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 161.5 | 0.0001 | 161.4 | 161.6 | 0.1 | 5.381x | 5.381x | - |
 
 #### `logparse-atomic-removed` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1310,6 +1516,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 14.8 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 18.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 18.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 32.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 53.5 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 9.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 12.6 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 12.6 | 0.0000 |
@@ -1318,6 +1527,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.3 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 17.4 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 19.0 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 29.3 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 32.5 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 53.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 10.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 10.5 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 13.3 | 0.0002 |
@@ -1326,6 +1538,9 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 15.7 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 17.3 | 0.0003 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 32.7 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 54.5 | 0.0008 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 12.6 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 15.5 ns, 262,144 B
@@ -1345,6 +1560,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 892.2 | 891.4 | 895.9 | 1.6 | 1.373x | 1.373x | - | 75 | 11.9 | 8.8 | 100% |
 | 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 894.5 | 879.2 | 895.3 | 7.6 | 1.376x | 1.376x | slower ×1.04 | 75 | 11.9 | 8.0 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 907.4 | 904.5 | 907.9 | 1.4 | 1.396x | 1.396x | slower ×1.02 | 75 | 12.1 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,185.3 | 1,168.4 | 1,208.3 | 14.1 | 1.824x | 1.824x | - | 75 | 15.8 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,583.9 | 1,535.5 | 2,870.8 | 523.1 | 2.437x | 2.437x | - | 75 | 21.1 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,015.2 | 4,973.8 | 5,138.0 | 58.0 | 7.717x | 7.717x | - | 75 | 66.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-atomic-hit`, 47.8 ns, 31 B; largest Δ: `lp-syslog`, +9.2 ns (now 18.9 ns), 56 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `lp-atomic-hit`, 46.2 ns, 31 B; largest Δ: `lp-syslog`, +9.8 ns (now 22.3 ns), 56 B
@@ -1364,6 +1582,8 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,142.9 | 0.0168 | 23,103.9 | 23,155.6 | 19.0 | 1.002x | 1.002x | - |
 | 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,144.1 | 0.0168 | 23,109.2 | 23,190.3 | 26.1 | 1.002x | 1.002x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,145.4 | 0.0168 | 23,135.4 | 23,167.7 | 13.2 | 1.002x | 1.002x | - |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 31,617.2 | 0.0230 | 31,605.1 | 31,727.3 | 44.7 | 1.369x | 1.369x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,534.7 | 1.6193 | 2,228,320.7 | 2,233,992.4 | 2,616.0 | 96.468x | 96.468x | - |
 
 #### `mojibake-curly-quote` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1377,6 +1597,8 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,667.7 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,651.1 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,642.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,116.3 | 0.0230 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,462.8 | 1.6188 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,373.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,385.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,381.3 | 0.0167 |
@@ -1385,6 +1607,8 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,368.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,378.3 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,392.1 | 0.0168 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,971.0 | 0.0228 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,709.1 | 1.6201 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,106.4 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,111.5 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,107.2 | 0.0169 |
@@ -1393,11 +1617,15 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,106.4 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,107.7 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,111.4 | 0.0170 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,531.0 | 0.0234 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,530.8 | 1.6255 |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,616.2 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,629.9 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `t-1m`, 17,640.2 ns, 1,048,576 B; largest Δ: `t-256k`, -7.3 ns (now 4,375.0 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,651.1 ns, 1,048,576 B
+
+- not ranked: `rust_1.13.1_default-caps-simdna` — did-not-compile (pattern is not valid UTF-8 at byte 0: invalid utf-8 sequence of 1 bytes from index 0)
 
 ### `mojibake-curly-quote` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1412,11 +1640,15 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 682.4 | 679.0 | 683.3 | 1.5 | 1.102x | 1.102x | unchanged (within spread) | 75 | 9.1 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 682.7 | 679.3 | 683.3 | 1.5 | 1.103x | 1.103x | - | 75 | 9.1 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 684.5 | 682.3 | 690.4 | 2.9 | 1.106x | 1.106x | slower ×1.02 | 75 | 9.1 | 9.1 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,040.6 | 2,030.6 | 2,046.6 | 6.3 | 3.296x | 3.296x | - | 75 | 27.2 | 27.2 | 100% |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,428.4 | 4,425.4 | 4,431.7 | 2.6 | 7.153x | 7.153x | - | 75 | 59.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `nu-mojibake`, 40.9 ns, 7 B; largest Δ: `sd-empty-alt-miss`, +0.4 ns (now 8.9 ns), 60 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `nu-mojibake`, 40.8 ns, 7 B; largest Δ: `sec-github-pat`, -0.3 ns (now 9.2 ns), 93 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `nu-mojibake`, 17.5 ns, 7 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `nu-mojibake`, 18.3 ns, 7 B
+
+- not ranked: `rust_1.13.1_default-caps-simdna` — did-not-compile (pattern is not valid UTF-8 at byte 0: invalid utf-8 sequence of 1 bytes from index 0)
 
 ### `nested-comment-rec` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -1427,10 +1659,11 @@ reporter: v19 (2026-09-22)
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,134.7 | 0.0168 | 23,109.2 | 23,203.3 | 32.7 | 1.001x | 1.001x | faster ×400.95 |
 | 3 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,149.3 | 0.0168 | 23,107.7 | 23,171.2 | 24.1 | 1.001x | 1.001x | faster ×421.02 |
 | 4 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,152.5 | 0.0168 | 23,130.1 | 23,179.0 | 18.6 | 1.001x | 1.001x | faster ×403.88 |
-| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,275,952.3 | 6.7400 | 8,412,430.7 | 9,731,944.2 | 464,026.9 | 401.236x | 401.236x | - |
-| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 9,327,080.3 | 6.7771 | 8,024,350.5 | 9,710,236.9 | 608,916.1 | 403.447x | 403.447x | - |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,350,863.1 | 6.7944 | 9,134,005.8 | 9,595,746.4 | 150,703.1 | 404.476x | 404.476x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,746,259.5 | 7.0817 | 9,315,730.4 | 9,776,028.5 | 175,269.2 | 421.579x | 421.579x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,498,979.2 | 1.0892 | 1,498,327.4 | 1,504,367.1 | 2,254.5 | 64.839x | 64.839x | - |
+| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,275,952.3 | 6.7400 | 8,412,430.7 | 9,731,944.2 | 464,026.9 | 401.236x | 401.236x | - |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 9,327,080.3 | 6.7771 | 8,024,350.5 | 9,710,236.9 | 608,916.1 | 403.447x | 403.447x | - |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,350,863.1 | 6.7944 | 9,134,005.8 | 9,595,746.4 | 150,703.1 | 404.476x | 404.476x | - |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,746,259.5 | 7.0817 | 9,315,730.4 | 9,776,028.5 | 175,269.2 | 421.579x | 421.579x | - |
 
 #### `nested-comment-rec` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1440,6 +1673,7 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 17,634.2 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,637.7 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,663.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,141,586.2 | 1.0887 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,374,031.2 | 7.0324 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 7,399,981.5 | 7.0572 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,267,613.6 | 6.9309 |
@@ -1448,6 +1682,7 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,385.6 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,379.3 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,385.2 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 285,387.1 | 1.0887 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,521,368.3 | 5.8036 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,546,219.7 | 5.8984 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,676,043.0 | 6.3936 |
@@ -1456,6 +1691,7 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,109.7 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,110.8 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,107.3 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 71,727.1 | 1.0945 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 380,995.5 | 5.8135 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 380,869.1 | 5.8116 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 380,214.6 | 5.8016 |
@@ -1479,6 +1715,7 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,658.8 | 2,649.8 | 2,727.2 | 28.7 | 2.394x | 2.394x | - | 75 | 35.5 | 8.0 | 100% |
 | 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,664.7 | 2,593.5 | 2,678.8 | 36.4 | 2.400x | 2.400x | - | 75 | 35.5 | 8.0 | 100% |
 | 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,704.0 | 2,639.9 | 2,819.5 | 64.9 | 2.435x | 2.435x | - | 75 | 36.1 | 8.9 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,456.3 | 4,450.2 | 4,462.2 | 4.2 | 4.013x | 4.013x | - | 75 | 59.4 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `rec-comment-nested`, 196.6 ns, 34 B; largest Δ: `sec-slack-webhook`, -504.7 ns (now 12.4 ns), 81 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `rec-comment-nested`, 684.2 ns, 34 B; largest Δ: `sec-slack-webhook`, -504.6 ns (now 12.8 ns), 81 B
@@ -1498,6 +1735,9 @@ reporter: v19 (2026-09-22)
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 40.1 | 0.0000 | 40.0 | 40.4 | 0.2 | 2.812x | 2.812x | slower ×1.02 |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 45.6 | 0.0000 | 45.5 | 45.8 | 0.1 | 3.204x | 3.204x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 45.8 | 0.0000 | 45.7 | 46.1 | 0.1 | 3.216x | 3.216x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 85.3 | 0.0001 | 85.1 | 85.5 | 0.1 | 5.989x | 5.989x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 93.7 | 94.6 | 0.3 | 6.629x | 6.629x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.9 | 0.0001 | 166.8 | 167.1 | 0.1 | 11.714x | 11.714x | - |
 
 #### `numeric-id-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1511,6 +1751,9 @@ reporter: v19 (2026-09-22)
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 13.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 15.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 9.3 | 0.0000 |
@@ -1519,6 +1762,9 @@ reporter: v19 (2026-09-22)
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 13.4 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 15.2 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.2 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 28.9 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.8 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 9.2 | 0.0001 |
@@ -1527,6 +1773,9 @@ reporter: v19 (2026-09-22)
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 13.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 15.3 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.4 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 30.0 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.7 | 0.0009 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-64k`, 4.8 ns, 65,536 B; largest Δ: `t-1m`, -0.1 ns (now 4.8 ns), 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 9.3 ns, 65,536 B
@@ -1542,10 +1791,13 @@ reporter: v19 (2026-09-22)
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 470.1 | 469.8 | 473.3 | 1.5 | 1.055x | 1.055x | spread | - | 75 | 6.3 | 8.0 | 100% |
 | 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 824.6 | 811.7 | 833.5 | 7.1 | 1.850x | 1.850x | spread | - | 75 | 11.0 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 847.4 | 843.9 | 861.3 | 6.4 | 1.902x | 1.902x | spread | slower ×1.03 | 75 | 11.3 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,322,920.6 | 9,316,002.6 | 10,555,289.3 | 493,714.4 | 20920.149x | 20920.149x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 124,305.6 | 8.8 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,327,091.8 | 9,325,348.8 | 9,343,327.5 | 6,747.2 | 20929.509x | 20929.509x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 124,361.2 | 9.1 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,336,678.2 | 9,313,036.4 | 9,340,154.5 | 10,985.9 | 20951.021x | 20951.021x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 124,489.0 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,348,039.8 | 9,321,695.2 | 9,351,112.7 | 11,690.4 | 20976.515x | 20976.515x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 124,640.5 | 8.9 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,959.8 | 1,958.3 | 1,969.4 | 4.0 | 4.398x | 4.398x | spread | - | 75 | 26.1 | 27.2 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,665.6 | 2,639.6 | 2,675.4 | 12.0 | 5.981x | 5.981x | spread | - | 75 | 35.5 | 16.3 | 100% |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,322,920.6 | 9,316,002.6 | 10,555,289.3 | 493,714.4 | 20920.149x | 20920.149x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 124,305.6 | 8.8 | 100% |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,327,091.8 | 9,325,348.8 | 9,343,327.5 | 6,747.2 | 20929.509x | 20929.509x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 124,361.2 | 9.1 | 100% |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,336,678.2 | 9,313,036.4 | 9,340,154.5 | 10,985.9 | 20951.021x | 20951.021x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 124,489.0 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,348,039.8 | 9,321,695.2 | 9,351,112.7 | 11,690.4 | 20976.515x | 20976.515x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 124,640.5 | 8.9 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,552,668.2 | 12,545,052.4 | 12,565,660.4 | 8,446.4 | 28167.535x | 28167.535x | **dominated**: `rd-numeric-id-near-miss` is 99.9% of this set | - | 75 | 167,368.9 | 58.6 | 100% |
 
 _**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
 
@@ -1569,6 +1821,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 40.4 | 0.0000 | 40.3 | 40.6 | 0.1 | 2.832x | 2.832x | slower ×1.03 |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 43.9 | 0.0000 | 43.8 | 44.0 | 0.1 | 3.073x | 3.073x | faster ×1.02 |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 44.7 | 0.0000 | 44.5 | 45.1 | 0.2 | 3.129x | 3.129x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87.7 | 0.0001 | 83.9 | 90.4 | 2.2 | 6.143x | 6.143x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.2 | 0.0001 | 93.3 | 101.6 | 3.1 | 6.597x | 6.597x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.9 | 0.0001 | 166.8 | 169.5 | 1.0 | 11.694x | 11.694x | - |
 
 #### `phone-list-nested-plus` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1582,6 +1837,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 13.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 14.6 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 14.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.7 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 9.2 | 0.0000 |
@@ -1590,6 +1848,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 13.5 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 14.6 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 14.9 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 30.1 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.3 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.8 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 9.2 | 0.0001 |
@@ -1598,6 +1859,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 13.5 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 14.7 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 15.0 | 0.0002 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 30.5 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0009 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-64k`, 4.8 ns, 65,536 B; largest Δ: `t-256k`, -0.1 ns (now 4.7 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 9.2 ns, 65,536 B
@@ -1613,10 +1877,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 477.4 | 474.8 | 478.9 | 1.3 | 1.050x | 1.050x | spread | - | 75 | 6.4 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 883.1 | 881.4 | 884.3 | 1.2 | 1.942x | 1.942x | spread | faster ×1.03 | 75 | 11.8 | 8.0 | 100% |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 909.3 | 905.3 | 913.5 | 3.0 | 2.000x | 2.000x | spread | - | 75 | 12.1 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,066,942.3 | 10,064,995.2 | 10,071,274.7 | 2,142.3 | 22139.392x | 22139.392x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 134,225.9 | 8.9 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,068,096.8 | 10,061,584.3 | 10,072,561.7 | 3,721.2 | 22141.931x | 22141.931x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 134,241.3 | 9.1 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,069,738.3 | 10,066,868.1 | 10,098,659.6 | 11,805.6 | 22145.541x | 22145.541x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 134,263.2 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,075,899.5 | 10,063,429.9 | 10,084,303.3 | 8,296.2 | 22159.091x | 22159.091x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 134,345.3 | 8.8 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,985.9 | 1,980.8 | 1,990.7 | 3.5 | 4.367x | 4.367x | spread | - | 75 | 26.5 | 27.2 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,960.4 | 2,956.7 | 2,971.5 | 5.1 | 6.510x | 6.510x | spread | - | 75 | 39.5 | 16.3 | 100% |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,066,942.3 | 10,064,995.2 | 10,071,274.7 | 2,142.3 | 22139.392x | 22139.392x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 134,225.9 | 8.9 | 100% |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,068,096.8 | 10,061,584.3 | 10,072,561.7 | 3,721.2 | 22141.931x | 22141.931x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 134,241.3 | 9.1 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,069,738.3 | 10,066,868.1 | 10,098,659.6 | 11,805.6 | 22145.541x | 22145.541x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 134,263.2 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,075,899.5 | 10,063,429.9 | 10,084,303.3 | 8,296.2 | 22159.091x | 22159.091x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 134,345.3 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 16,695,116.2 | 16,657,091.7 | 16,738,362.5 | 27,458.3 | 36716.186x | 36716.186x | **dominated**: `rd-numeric-id-near-miss` is 100.0% of this set | - | 75 | 222,601.5 | 58.6 | 100% |
 
 _**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
 
@@ -1640,6 +1907,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 7,366,060.2 | 5.3522 | 6,602,497.3 | 7,562,574.5 | 383,733.6 | 1.118x | 1.118x | unchanged (within spread) |
 | 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 7,491,226.8 | 5.4432 | 7,388,412.0 | 7,583,468.1 | 62,338.9 | 1.137x | 1.137x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,534,700.2 | 5.4748 | 7,372,404.2 | 7,708,916.7 | 108,049.6 | 1.144x | 1.144x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 14,493,362.5 | 10.5310 | 14,449,045.9 | 15,799,347.2 | 526,473.4 | 2.200x | 2.200x | - |
 
 #### `phone-palindrome-6` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1653,6 +1921,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 5,746,497.7 | 5.4803 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 5,775,572.6 | 5.5080 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 5,807,049.7 | 5.5380 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 11,112,525.9 | 10.5977 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,242,998.4 | 4.7417 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,256,384.9 | 4.7927 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 1,249,110.6 | 4.7650 |
@@ -1661,6 +1930,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,307,421.3 | 4.9874 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,349,792.2 | 5.1490 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,430,653.4 | 5.4575 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 2,720,979.8 | 10.3797 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 309,826.0 | 4.7276 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 312,812.3 | 4.7731 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 311,433.8 | 4.7521 |
@@ -1669,6 +1939,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 312,144.9 | 4.7630 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 315,304.2 | 4.8112 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 355,024.8 | 5.4172 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 659,856.8 | 10.0686 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,499,530.1 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,604,601.5 ns, 1,048,576 B
@@ -1688,6 +1959,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 7,495.3 | 6,822.0 | 7,616.7 | 297.3 | 1.071x | 1.071x | unchanged (within spread) | 75 | 99.9 | 8.0 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 7,603.5 | 7,517.9 | 7,920.9 | 153.8 | 1.086x | 1.086x | unchanged (within spread) | 75 | 101.4 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,659.3 | 7,406.2 | 8,034.3 | 226.2 | 1.094x | 1.094x | - | 75 | 102.1 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 22,881.3 | 22,736.6 | 23,046.3 | 109.2 | 3.269x | 3.269x | - | 75 | 305.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `sec-slack-webhook`, 519.7 ns, 81 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 637.6 ns, 81 B; largest Δ: `v-ipv4`, -52.2 ns (now 82.4 ns), 11 B
@@ -1707,6 +1979,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 1,638.2 | 0.0012 | 1,627.4 | 1,664.2 | 14.8 | 7.417x | 7.417x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,647.2 | 0.0012 | 1,645.3 | 1,663.9 | 8.1 | 7.458x | 7.458x | - |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,657.8 | 0.0012 | 1,647.0 | 1,669.4 | 7.5 | 7.506x | 7.506x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,054.8 | 0.0029 | 4,043.8 | 4,097.6 | 18.7 | 18.359x | 18.359x | - |
 
 #### `pwd-strength-chain` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1720,6 +1993,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 177.0 | 0.0002 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 180.6 | 0.0002 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 180.1 | 0.0002 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 577.3 | 0.0006 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 94.5 | 0.0004 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 94.5 | 0.0004 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 95.4 | 0.0004 |
@@ -1728,6 +2002,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 923.2 | 0.0035 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 920.8 | 0.0035 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 923.2 | 0.0035 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,843.2 | 0.0070 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 68.6 | 0.0010 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 68.4 | 0.0010 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 69.1 | 0.0011 |
@@ -1736,6 +2011,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 543.8 | 0.0083 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 548.4 | 0.0084 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 550.1 | 0.0084 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,636.4 | 0.0250 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-256k`, 94.5 ns, 262,144 B; largest Δ: `t-64k`, -0.8 ns (now 68.6 ns), 65,536 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 95.4 ns, 262,144 B
@@ -1755,6 +2031,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,106.8 | 12,079.6 | 12,444.8 | 136.9 | 1.123x | 1.123x | - | 75 | 161.4 | 8.0 | 100% |
 | 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 12,134.8 | 12,084.2 | 12,497.9 | 158.0 | 1.125x | 1.125x | unchanged (within spread) | 75 | 161.8 | 8.0 | 100% |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12,186.5 | 12,088.3 | 12,503.9 | 180.2 | 1.130x | 1.130x | - | 75 | 162.5 | 8.0 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 36,373.3 | 36,110.2 | 36,524.2 | 183.4 | 3.374x | 3.374x | - | 75 | 485.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-github-pat`, 790.2 ns, 93 B; largest Δ: `lp-syslog`, -3.2 ns (now 550.3 ns), 56 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `sec-github-pat`, 792.0 ns, 93 B; largest Δ: `la-pwd-weak`, +14.4 ns (now 154.2 ns), 10 B
@@ -1763,22 +2040,24 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `quoted-delim-match` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 9,702,831.5 | 7.0502 | 9,664,608.4 | 9,778,334.7 | 40,527.6 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,791,937.4 | 7.1149 | 9,784,006.6 | 9,907,655.4 | 46,277.6 | 1.009x | 1.009x | - |
-| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,091,290.2 | 7.3324 | 9,966,173.1 | 10,106,257.7 | 53,778.2 | 1.040x | 1.040x | - |
-| 4 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,099,830.3 | 7.3386 | 10,077,138.0 | 10,499,783.6 | 160,363.5 | 1.041x | 1.041x | unchanged (within spread) |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,107,957.4 | 7.3445 | 10,027,816.6 | 10,123,512.7 | 34,632.6 | 1.042x | 1.042x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,115,344.8 | 7.3499 | 10,044,312.6 | 10,152,933.5 | 42,423.8 | 1.043x | 1.043x | unchanged (within spread) |
-| 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 10,115,813.2 | 7.3502 | 10,031,025.8 | 10,158,110.5 | 45,564.2 | 1.043x | 1.043x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,132,095.1 | 7.3621 | 9,850,486.1 | 10,138,701.8 | 111,177.9 | 1.044x | 1.044x | - |
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,862,308.4 | 2.8064 | 3,831,481.4 | 3,875,638.2 | 17,953.9 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 9,702,831.5 | 7.0502 | 9,664,608.4 | 9,778,334.7 | 40,527.6 | 2.512x | 2.512x | unchanged (within spread) |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 9,791,937.4 | 7.1149 | 9,784,006.6 | 9,907,655.4 | 46,277.6 | 2.535x | 2.535x | - |
+| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,091,290.2 | 7.3324 | 9,966,173.1 | 10,106,257.7 | 53,778.2 | 2.613x | 2.613x | - |
+| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,099,830.3 | 7.3386 | 10,077,138.0 | 10,499,783.6 | 160,363.5 | 2.615x | 2.615x | unchanged (within spread) |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,107,957.4 | 7.3445 | 10,027,816.6 | 10,123,512.7 | 34,632.6 | 2.617x | 2.617x | - |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,115,344.8 | 7.3499 | 10,044,312.6 | 10,152,933.5 | 42,423.8 | 2.619x | 2.619x | unchanged (within spread) |
+| 8 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 10,115,813.2 | 7.3502 | 10,031,025.8 | 10,158,110.5 | 45,564.2 | 2.619x | 2.619x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,132,095.1 | 7.3621 | 9,850,486.1 | 10,138,701.8 | 111,177.9 | 2.623x | 2.623x | - |
 
 #### `quoted-delim-match` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,957,280.7 | 2.8203 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 7,449,350.9 | 7.1043 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,464,175.9 | 7.1184 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,711,100.9 | 7.3539 |
@@ -1787,6 +2066,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 7,706,774.0 | 7.3498 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 7,715,108.9 | 7.3577 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 7,723,592.0 | 7.3658 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 719,753.1 | 2.7456 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,821,282.9 | 6.9476 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,863,416.1 | 7.1084 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,900,328.4 | 7.2492 |
@@ -1795,6 +2075,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 1,910,832.6 | 7.2892 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 1,921,661.1 | 7.3306 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,922,957.7 | 7.3355 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 182,077.9 | 2.7783 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 452,407.4 | 6.9032 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 465,656.4 | 7.1054 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 466,886.7 | 7.1241 |
@@ -1811,17 +2092,18 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `quoted-delim-match` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: oniguruma_6.9.10_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 11,083.1 | 11,035.5 | 11,117.7 | 29.9 | 1.000x | 1.000x | faster ×1.02 | 75 | 147.8 | 8.0 | 100% |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,272.1 | 11,162.8 | 11,280.4 | 44.0 | 1.017x | 1.017x | - | 75 | 150.3 | 8.0 | 100% |
-| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 11,294.6 | 11,205.1 | 11,338.0 | 48.7 | 1.019x | 1.019x | unchanged (within spread) | 75 | 150.6 | 9.1 | 100% |
-| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,329.5 | 10,936.3 | 11,394.6 | 169.9 | 1.022x | 1.022x | - | 75 | 151.1 | 8.9 | 100% |
-| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,332.2 | 11,169.3 | 11,354.0 | 67.9 | 1.022x | 1.022x | unchanged (within spread) | 75 | 151.1 | 8.0 | 100% |
-| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,352.7 | 11,287.2 | 11,455.5 | 63.2 | 1.024x | 1.024x | - | 75 | 151.4 | 8.0 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,518.1 | 11,478.7 | 11,545.9 | 26.1 | 1.039x | 1.039x | - | 75 | 153.6 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 11,613.5 | 11,476.9 | 12,443.4 | 353.2 | 1.048x | 1.048x | unchanged (within spread) | 75 | 154.8 | 8.8 | 100% |
+| 1 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,091.1 | 7,073.6 | 7,425.5 | 133.3 | 1.000x | 1.000x | - | 75 | 94.5 | 58.6 | 100% |
+| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 11,083.1 | 11,035.5 | 11,117.7 | 29.9 | 1.563x | 1.563x | faster ×1.02 | 75 | 147.8 | 8.0 | 100% |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 11,272.1 | 11,162.8 | 11,280.4 | 44.0 | 1.590x | 1.590x | - | 75 | 150.3 | 8.0 | 100% |
+| 4 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 11,294.6 | 11,205.1 | 11,338.0 | 48.7 | 1.593x | 1.593x | unchanged (within spread) | 75 | 150.6 | 9.1 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 11,329.5 | 10,936.3 | 11,394.6 | 169.9 | 1.598x | 1.598x | - | 75 | 151.1 | 8.9 | 100% |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 11,332.2 | 11,169.3 | 11,354.0 | 67.9 | 1.598x | 1.598x | unchanged (within spread) | 75 | 151.1 | 8.0 | 100% |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 11,352.7 | 11,287.2 | 11,455.5 | 63.2 | 1.601x | 1.601x | - | 75 | 151.4 | 8.0 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 11,518.1 | 11,478.7 | 11,545.9 | 26.1 | 1.624x | 1.624x | - | 75 | 153.6 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 11,613.5 | 11,476.9 | 12,443.4 | 353.2 | 1.638x | 1.638x | unchanged (within spread) | 75 | 154.8 | 8.8 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 661.8 ns, 93 B; largest Δ: `v-email`, -19.7 ns (now 166.9 ns), 24 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-github-pat`, 672.7 ns, 93 B; largest Δ: `lp-winpath`, +7.0 ns (now 175.4 ns), 22 B
@@ -1830,42 +2112,54 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `router-prefix-order` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 398,422.8 | 0.2895 | 398,257.9 | 399,848.7 | 596.7 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 398,752.2 | 0.2897 | 398,343.0 | 399,028.1 | 251.3 | 1.001x | 1.001x | - |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 720,106.1 | 0.5232 | 720,051.0 | 721,472.2 | 567.3 | 1.807x | 1.807x | slower ×1.81 |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 720,485.6 | 0.5235 | 720,280.1 | 721,333.2 | 362.7 | 1.808x | 1.808x | slower ×1.81 |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,049,652.5 | 2.9425 | 4,042,920.9 | 4,058,186.4 | 4,910.5 | 10.164x | 10.164x | - |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,050,506.2 | 2.9431 | 4,047,226.3 | 4,056,860.1 | 3,274.0 | 10.166x | 10.166x | - |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,441,972.6 | 3.2276 | 4,440,323.1 | 4,450,659.6 | 4,053.5 | 11.149x | 11.149x | slower ×1.10 |
-| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,451,241.0 | 3.2343 | 4,444,786.0 | 4,466,058.5 | 7,234.7 | 11.172x | 11.172x | slower ×1.10 |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,245.7 | 0.0009 | 1,243.0 | 1,249.2 | 2.0 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 60,481.8 | 0.0439 | 60,380.8 | 60,620.4 | 81.1 | 48.553x | 48.553x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 398,422.8 | 0.2895 | 398,257.9 | 399,848.7 | 596.7 | 319.843x | 319.843x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 398,752.2 | 0.2897 | 398,343.0 | 399,028.1 | 251.3 | 320.107x | 320.107x | - |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 720,106.1 | 0.5232 | 720,051.0 | 721,472.2 | 567.3 | 578.081x | 578.081x | slower ×1.81 |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 720,485.6 | 0.5235 | 720,280.1 | 721,333.2 | 362.7 | 578.385x | 578.385x | slower ×1.81 |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,361,334.6 | 0.9892 | 1,358,939.9 | 1,364,817.5 | 1,944.5 | 1092.841x | 1092.841x | - |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,049,652.5 | 2.9425 | 4,042,920.9 | 4,058,186.4 | 4,910.5 | 3250.946x | 3250.946x | - |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,050,506.2 | 2.9431 | 4,047,226.3 | 4,056,860.1 | 3,274.0 | 3251.632x | 3251.632x | - |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,441,972.6 | 3.2276 | 4,440,323.1 | 4,450,659.6 | 4,053.5 | 3565.890x | 3565.890x | slower ×1.10 |
+| 11 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,451,241.0 | 3.2343 | 4,444,786.0 | 4,466,058.5 | 7,234.7 | 3573.330x | 3573.330x | slower ×1.10 |
 
 #### `router-prefix-order` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 84.7 | 0.0001 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 46,187.0 | 0.0440 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 305,867.9 | 0.2917 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 305,830.1 | 0.2917 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 554,935.7 | 0.5292 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 554,865.7 | 0.5292 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,039,498.9 | 0.9913 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,088,299.4 | 2.9452 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,086,726.8 | 2.9437 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 3,406,133.5 | 3.2483 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 3,412,994.5 | 3.2549 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 634.1 | 0.0024 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 11,503.6 | 0.0439 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 75,250.6 | 0.2871 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 75,432.0 | 0.2878 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 135,784.9 | 0.5180 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 136,010.6 | 0.5188 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 259,361.4 | 0.9894 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 770,336.4 | 2.9386 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 770,690.0 | 2.9399 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 843,134.7 | 3.2163 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 843,104.6 | 3.2162 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 527.1 | 0.0080 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,726.0 | 0.0416 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 17,195.4 | 0.2624 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 17,324.5 | 0.2644 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 29,458.9 | 0.4495 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 29,672.0 | 0.4528 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 62,488.1 | 0.9535 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 191,743.7 | 2.9258 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 191,361.1 | 2.9199 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 193,078.5 | 2.9461 |
@@ -1887,8 +2181,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 751.3 | 749.5 | 752.3 | 0.9 | 1.054x | 1.054x | - | 75 | 10.0 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 808.3 | 804.7 | 809.5 | 1.8 | 1.134x | 1.134x | faster ×2.89 | 75 | 10.8 | 9.1 | 100% |
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 913.8 | 913.8 | 914.7 | 0.4 | 1.282x | 1.282x | faster ×2.65 | 75 | 12.2 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,336.7 | 2,307.4 | 2,350.0 | 14.8 | 3.279x | 3.279x | - | 75 | 31.2 | 8.9 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,418.7 | 2,399.3 | 2,432.8 | 10.8 | 3.394x | 3.394x | - | 75 | 32.2 | 8.8 | 100% |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,308.9 | 1,308.3 | 1,311.8 | 1.4 | 1.837x | 1.837x | - | 75 | 17.5 | 16.3 | 100% |
+| 8 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,306.1 | 2,301.2 | 2,308.4 | 2.6 | 3.236x | 3.236x | - | 75 | 30.7 | 27.2 | 100% |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,336.7 | 2,307.4 | 2,350.0 | 14.8 | 3.279x | 3.279x | - | 75 | 31.2 | 8.9 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,418.7 | 2,399.3 | 2,432.8 | 10.8 | 3.394x | 3.394x | - | 75 | 32.2 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,811.8 | 2,803.9 | 2,836.1 | 14.3 | 3.946x | 3.946x | - | 75 | 37.5 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 35.4 ns, 81 B; largest Δ: `rec-tag-depth3`, +11.2 ns (now 18.9 ns), 22 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-slack-webhook`, 35.4 ns, 81 B; largest Δ: `rec-tag-depth3`, +11.0 ns (now 18.7 ns), 22 B
@@ -1908,6 +2205,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,141.0 | 0.0168 | 23,119.0 | 23,187.1 | 22.4 | 1.002x | 1.002x | - |
 | 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,159.7 | 0.0168 | 23,125.3 | 23,189.0 | 22.2 | 1.003x | 1.003x | - |
 | 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,177.1 | 0.0168 | 23,151.5 | 23,236.4 | 28.4 | 1.004x | 1.004x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,161.7 | 1.6197 | 2,228,885.5 | 2,237,374.3 | 3,263.6 | 96.527x | 96.527x | - |
 
 #### `tag-depth3-bound` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1921,6 +2219,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,632.6 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,635.0 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,669.4 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,806.1 | 1.6192 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,380.8 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,383.1 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,382.5 | 0.0167 |
@@ -1929,6 +2228,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,395.8 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,391.7 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,402.7 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,841.9 | 1.6206 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,108.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,106.9 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,109.3 | 0.0169 |
@@ -1937,6 +2237,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,111.6 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,114.0 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.5 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,469.9 | 1.6246 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,604.3 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 17,621.4 ns, 1,048,576 B; largest Δ: `t-256k`, -12.7 ns (now 4,383.1 ns), 262,144 B
@@ -1956,6 +2257,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,183.1 | 2,165.1 | 2,258.3 | 33.4 | 1.982x | 1.982x | - | 75 | 29.1 | 8.0 | 100% |
 | 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,185.4 | 2,158.5 | 2,202.2 | 14.3 | 1.984x | 1.984x | - | 75 | 29.1 | 8.0 | 100% |
 | 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,189.8 | 2,166.7 | 2,219.3 | 17.5 | 1.988x | 1.988x | - | 75 | 29.2 | 8.9 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,577.8 | 6,537.9 | 6,582.7 | 16.5 | 5.971x | 5.971x | - | 75 | 87.7 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `br-tag-mismatch`, 199.3 ns, 19 B; largest Δ: `lp-syslog`, -906.5 ns (now 15.4 ns), 56 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `br-tag-mismatch`, 199.6 ns, 19 B; largest Δ: `lp-syslog`, -909.1 ns (now 15.2 ns), 56 B
@@ -1975,6 +2277,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,159.6 | 0.0168 | 23,128.6 | 23,176.8 | 15.6 | 1.002x | 1.002x | unchanged (within spread) |
 | 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,168.6 | 0.0168 | 23,135.3 | 23,175.6 | 14.8 | 1.002x | 1.002x | unchanged (within spread) |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,195.4 | 0.0169 | 23,169.6 | 23,312.9 | 54.0 | 1.003x | 1.003x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,227,888.6 | 1.6188 | 2,226,140.9 | 2,232,832.8 | 2,309.8 | 96.376x | 96.376x | - |
 
 #### `tag-pair-match` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -1988,6 +2291,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,671.5 | 0.0169 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 17,663.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,679.2 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,306.9 | 1.6187 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,391.4 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,383.8 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,383.1 | 0.0167 |
@@ -1996,6 +2300,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,382.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,394.7 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,393.9 | 0.0168 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,328.5 | 1.6187 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,110.3 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,108.0 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,107.9 | 0.0169 |
@@ -2004,6 +2309,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,108.2 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,108.5 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,108.1 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,260.5 | 1.6214 |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,642.8 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,671.5 ns, 1,048,576 B
@@ -2023,6 +2329,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,371.7 | 1,365.2 | 1,373.9 | 3.0 | 1.213x | 1.213x | - | 75 | 18.3 | 8.0 | 100% |
 | 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,372.9 | 1,366.3 | 1,374.9 | 3.0 | 1.214x | 1.214x | - | 75 | 18.3 | 8.0 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,488.8 | 1,484.3 | 1,498.6 | 4.7 | 1.316x | 1.316x | - | 75 | 19.9 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,995.4 | 5,972.6 | 6,070.4 | 36.6 | 5.301x | 5.301x | - | 75 | 79.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `br-tag-mismatch`, 169.2 ns, 19 B; largest Δ: `lp-syslog`, -200.9 ns (now 15.3 ns), 56 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `br-tag-mismatch`, 169.8 ns, 19 B; largest Δ: `lp-syslog`, -200.4 ns (now 15.2 ns), 56 B
@@ -2042,6 +2349,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 47.1 | 0.0000 | 46.9 | 52.1 | 2.0 | 3.311x | 3.311x | - |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 60.6 | 0.0000 | 60.5 | 61.5 | 0.4 | 4.255x | 4.255x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 60.6 | 0.0000 | 60.5 | 66.3 | 2.3 | 4.255x | 4.255x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 82.9 | 0.0001 | 79.8 | 95.8 | 5.6 | 5.823x | 5.823x | - |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 166.8 | 0.0001 | 166.8 | 166.9 | 0.0 | 11.718x | 11.718x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 735.8 | 0.0005 | 732.2 | 757.0 | 9.0 | 51.684x | 51.684x | - |
 
 #### `trim-nested-star` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2055,6 +2365,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 15.7 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.2 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0001 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 245.8 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.8 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 15.6 | 0.0001 |
@@ -2063,6 +2376,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 15.7 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.2 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 27.6 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.5 | 0.0002 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 244.3 | 0.0009 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.7 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.7 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 15.6 | 0.0002 |
@@ -2071,6 +2387,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 15.8 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 20.2 | 0.0003 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 20.2 | 0.0003 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 29.1 | 0.0004 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55.8 | 0.0009 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 245.6 | 0.0037 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 4.8 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-64k`, 15.6 ns, 65,536 B
@@ -2084,12 +2403,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 407.0 | 403.5 | 412.6 | 3.3 | 1.000x | 1.000x | spread | faster ×1.04 | 75 | 5.4 | 8.0 | 100% |
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 423.6 | 423.0 | 429.4 | 2.4 | 1.041x | 1.041x | spread | - | 75 | 5.6 | 8.0 | 100% |
-| 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,185,990.8 | 10,179,326.3 | 10,196,711.7 | 6,369.3 | 25028.723x | 25028.723x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 135,813.2 | 8.9 | 100% |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 10,188,725.5 | 10,187,805.0 | 10,192,909.6 | 2,030.1 | 25035.443x | 25035.443x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 135,849.7 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,189,112.3 | 10,185,146.0 | 10,192,222.4 | 2,345.4 | 25036.393x | 25036.393x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 135,854.8 | 9.1 | 100% |
-| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,207,123.6 | 10,194,116.6 | 10,220,669.4 | 9,316.5 | 25080.650x | 25080.650x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 136,095.0 | 8.0 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,230,933.4 | 10,224,238.6 | 10,240,023.5 | 5,870.9 | 25139.155x | 25139.155x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 136,412.4 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,235,290.7 | 10,195,411.0 | 10,461,897.5 | 95,537.6 | 25149.861x | 25149.861x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 136,470.5 | 8.8 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,863.0 | 1,861.8 | 1,867.5 | 2.1 | 4.578x | 4.578x | spread | - | 75 | 24.8 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,989.9 | 1,988.3 | 2,009.0 | 7.7 | 4.890x | 4.890x | spread | - | 75 | 26.5 | 16.3 | 100% |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 10,185,990.8 | 10,179,326.3 | 10,196,711.7 | 6,369.3 | 25028.723x | 25028.723x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 135,813.2 | 8.9 | 100% |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 10,188,725.5 | 10,187,805.0 | 10,192,909.6 | 2,030.1 | 25035.443x | 25035.443x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 135,849.7 | 8.0 | 100% |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,189,112.3 | 10,185,146.0 | 10,192,222.4 | 2,345.4 | 25036.393x | 25036.393x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 135,854.8 | 9.1 | 100% |
+| 8 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 10,207,123.6 | 10,194,116.6 | 10,220,669.4 | 9,316.5 | 25080.650x | 25080.650x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 136,095.0 | 8.0 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,230,933.4 | 10,224,238.6 | 10,240,023.5 | 5,870.9 | 25139.155x | 25139.155x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | unchanged (within spread) | 75 | 136,412.4 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,235,290.7 | 10,195,411.0 | 10,461,897.5 | 95,537.6 | 25149.861x | 25149.861x | **dominated**: `rd-trim-near-miss` is 100.0% of this set | - | 75 | 136,470.5 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,555,980.4 | 12,530,611.8 | 12,959,519.9 | 165,417.0 | 30852.193x | 30852.193x | **dominated**: `rd-trim-near-miss` is 99.9% of this set | - | 75 | 167,413.1 | 58.6 | 100% |
 
 _**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
 
@@ -2109,10 +2431,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 481,110.7 | 0.3496 | 480,516.7 | 482,001.5 | 475.6 | 1.000x | 1.000x | unchanged (within spread) |
 | 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 481,411.6 | 0.3498 | 480,940.9 | 484,153.6 | 1,169.0 | 1.001x | 1.001x | - |
 | 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 481,751.8 | 0.3500 | 480,770.2 | 482,851.1 | 682.1 | 1.001x | 1.001x | - |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,661,273.4 | 2.6603 | 3,660,268.0 | 3,661,845.9 | 632.2 | 7.610x | 7.610x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 3,661,475.3 | 2.6605 | 3,660,281.8 | 3,664,556.2 | 1,495.1 | 7.610x | 7.610x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,661,593.8 | 2.6605 | 3,659,477.3 | 3,671,341.4 | 4,579.0 | 7.611x | 7.611x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 3,661,702.5 | 2.6606 | 3,660,809.6 | 3,698,577.1 | 14,726.9 | 7.611x | 7.611x | unchanged (within spread) |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,035,281.9 | 1.4789 | 2,034,924.1 | 2,036,091.1 | 448.1 | 4.230x | 4.230x | - |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,661,273.4 | 2.6603 | 3,660,268.0 | 3,661,845.9 | 632.2 | 7.610x | 7.610x | - |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 3,661,475.3 | 2.6605 | 3,660,281.8 | 3,664,556.2 | 1,495.1 | 7.610x | 7.610x | unchanged (within spread) |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,661,593.8 | 2.6605 | 3,659,477.3 | 3,671,341.4 | 4,579.0 | 7.611x | 7.611x | - |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 3,661,702.5 | 2.6606 | 3,660,809.6 | 3,698,577.1 | 14,726.9 | 7.611x | 7.611x | unchanged (within spread) |
 
 #### `utf8-lead-no-cont` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2122,6 +2445,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 366,644.6 | 0.3497 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 366,820.0 | 0.3498 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 366,661.4 | 0.3497 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,550,114.5 | 1.4783 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 2,788,290.8 | 2.6591 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 2,788,911.8 | 2.6597 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 2,789,200.6 | 2.6600 |
@@ -2130,6 +2454,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 91,575.0 | 0.3493 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 91,774.0 | 0.3501 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 91,831.8 | 0.3503 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 387,710.7 | 1.4790 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 697,362.4 | 2.6602 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 697,629.0 | 2.6612 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 697,181.9 | 2.6595 |
@@ -2138,6 +2463,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 22,822.6 | 0.3482 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 22,969.4 | 0.3505 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 22,985.4 | 0.3507 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 97,411.2 | 1.4864 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 174,760.9 | 2.6666 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 174,836.6 | 2.6678 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 174,916.3 | 2.6690 |
@@ -2157,10 +2483,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,225.4 | 1,218.9 | 1,229.2 | 3.7 | 1.001x | 1.001x | - | 75 | 16.3 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,237.4 | 1,234.5 | 1,250.9 | 5.8 | 1.010x | 1.010x | unchanged (within spread) | 75 | 16.5 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,243.9 | 1,232.5 | 1,248.9 | 6.7 | 1.016x | 1.016x | slower ×1.02 | 75 | 16.6 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,941.7 | 4,937.2 | 4,951.4 | 4.8 | 4.035x | 4.035x | - | 75 | 65.9 | 8.9 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,953.5 | 4,950.2 | 4,971.9 | 7.9 | 4.045x | 4.045x | unchanged (within spread) | 75 | 66.0 | 9.1 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,958.0 | 4,951.5 | 4,985.4 | 13.2 | 4.048x | 4.048x | - | 75 | 66.1 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,983.0 | 4,960.5 | 4,986.0 | 9.3 | 4.069x | 4.069x | unchanged (within spread) | 75 | 66.4 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,932.4 | 4,921.0 | 5,203.4 | 108.9 | 4.028x | 4.028x | - | 75 | 65.8 | 58.6 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,941.7 | 4,937.2 | 4,951.4 | 4.8 | 4.035x | 4.035x | - | 75 | 65.9 | 8.9 | 100% |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,953.5 | 4,950.2 | 4,971.9 | 7.9 | 4.045x | 4.045x | unchanged (within spread) | 75 | 66.0 | 9.1 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,958.0 | 4,951.5 | 4,985.4 | 13.2 | 4.048x | 4.048x | - | 75 | 66.1 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,983.0 | 4,960.5 | 4,986.0 | 9.3 | 4.069x | 4.069x | unchanged (within spread) | 75 | 66.4 | 8.8 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 55.1 ns, 93 B; largest Δ: `waf-comment-obfuscation`, +1.1 ns (now 15.8 ns), 18 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-github-pat`, 55.2 ns, 93 B; largest Δ: `waf-comment-obfuscation`, +1.0 ns (now 15.6 ns), 18 B
@@ -2169,46 +2496,58 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `uuid-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.7 | 0.0 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.6 | 0.0 | 1.000x | 1.000x | unchanged (within spread) |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.6 | 0.0 | 1.000x | 1.000x | - |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.7 | 0.0 | 1.001x | 1.001x | - |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 33.8 | 0.0000 | 33.7 | 35.0 | 0.5 | 1.225x | 1.225x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 35.2 | 0.0000 | 35.2 | 35.8 | 0.3 | 1.276x | 1.276x | slower ×1.04 |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 38.4 | 0.0000 | 38.3 | 38.6 | 0.1 | 1.393x | 1.393x | faster ×1.06 |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 40.5 | 0.0000 | 40.5 | 40.6 | 0.1 | 1.470x | 1.470x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.3 | 0.0000 | 18.1 | 18.5 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.7 | 0.0 | 1.505x | 1.505x | unchanged (within spread) |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.6 | 0.0 | 1.505x | 1.505x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.6 | 0.0 | 1.505x | 1.505x | - |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 27.6 | 0.0000 | 27.6 | 27.7 | 0.0 | 1.506x | 1.506x | - |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.3 | 0.0000 | 30.2 | 30.4 | 0.1 | 1.654x | 1.654x | - |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 33.8 | 0.0000 | 33.7 | 35.0 | 0.5 | 1.843x | 1.843x | - |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 35.2 | 0.0000 | 35.2 | 35.8 | 0.3 | 1.920x | 1.920x | slower ×1.04 |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 38.4 | 0.0000 | 38.3 | 38.6 | 0.1 | 2.097x | 2.097x | faster ×1.06 |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 40.5 | 0.0000 | 40.5 | 40.6 | 0.1 | 2.212x | 2.212x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.3 | 0.0001 | 93.0 | 117.7 | 9.8 | 5.094x | 5.094x | - |
 
 #### `uuid-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.2 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 9.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 9.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 13.4 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 14.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 15.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.0 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 9.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 9.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 9.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 9.2 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 10.9 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 11.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 12.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 13.0 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 8.9 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.9 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.9 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.9 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.5 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.3 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 12.1 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 9.5 ns, 1,048,576 B; largest Δ: `t-256k`, -0.0 ns (now 9.2 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 9.5 ns, 1,048,576 B; largest Δ: `t-256k`, -0.0 ns (now 9.2 ns), 262,144 B
@@ -2217,17 +2556,20 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `uuid-near-miss` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 667.3 | 667.0 | 677.5 | 4.1 | 1.000x | 1.000x | - | 75 | 8.9 | 8.0 | 100% |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 671.4 | 670.1 | 700.2 | 11.7 | 1.006x | 1.006x | unchanged (within spread) | 75 | 9.0 | 8.0 | 100% |
-| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 671.5 | 665.8 | 673.4 | 3.2 | 1.006x | 1.006x | unchanged (within spread) | 75 | 9.0 | 8.0 | 100% |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 671.6 | 663.9 | 673.4 | 3.5 | 1.006x | 1.006x | - | 75 | 9.0 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 769.2 | 764.8 | 771.5 | 2.3 | 1.153x | 1.153x | - | 75 | 10.3 | 8.9 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 778.4 | 775.5 | 778.6 | 1.4 | 1.167x | 1.167x | slower ×1.01 | 75 | 10.4 | 9.1 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 828.4 | 828.1 | 829.5 | 0.5 | 1.241x | 1.241x | faster ×1.09 | 75 | 11.0 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 900.7 | 897.5 | 901.0 | 1.5 | 1.350x | 1.350x | - | 75 | 12.0 | 8.8 | 100% |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 573.7 | 571.4 | 588.3 | 6.5 | 1.000x | 1.000x | - | 75 | 7.6 | 27.2 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 667.3 | 667.0 | 677.5 | 4.1 | 1.163x | 1.163x | - | 75 | 8.9 | 8.0 | 100% |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 671.4 | 670.1 | 700.2 | 11.7 | 1.170x | 1.170x | unchanged (within spread) | 75 | 9.0 | 8.0 | 100% |
+| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 671.5 | 665.8 | 673.4 | 3.2 | 1.170x | 1.170x | unchanged (within spread) | 75 | 9.0 | 8.0 | 100% |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 671.6 | 663.9 | 673.4 | 3.5 | 1.171x | 1.171x | - | 75 | 9.0 | 8.0 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 696.2 | 695.9 | 697.0 | 0.4 | 1.214x | 1.214x | - | 75 | 9.3 | 16.3 | 100% |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 769.2 | 764.8 | 771.5 | 2.3 | 1.341x | 1.341x | - | 75 | 10.3 | 8.9 | 100% |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 778.4 | 775.5 | 778.6 | 1.4 | 1.357x | 1.357x | slower ×1.01 | 75 | 10.4 | 9.1 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 828.4 | 828.1 | 829.5 | 0.5 | 1.444x | 1.444x | faster ×1.09 | 75 | 11.0 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 900.7 | 897.5 | 901.0 | 1.5 | 1.570x | 1.570x | - | 75 | 12.0 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,792.1 | 2,782.6 | 2,822.2 | 14.4 | 4.867x | 4.867x | - | 75 | 37.2 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 45.6 ns, 36 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `v-uuid-valid`, 46.9 ns, 36 B
@@ -2236,22 +2578,27 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-array-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 349,512.7 | 0.2540 | 349,427.2 | 350,659.7 | 463.8 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 349,566.6 | 0.2540 | 349,434.0 | 349,647.6 | 77.8 | 1.000x | 1.000x | - |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 349,629.1 | 0.2540 | 349,472.3 | 350,592.8 | 441.6 | 1.000x | 1.000x | unchanged (within spread) |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 349,719.5 | 0.2541 | 349,702.2 | 351,011.9 | 518.4 | 1.001x | 1.001x | unchanged (within spread) |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,093,165.0 | 0.7943 | 1,091,956.0 | 1,104,607.2 | 4,677.0 | 3.128x | 3.128x | - |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,094,794.5 | 0.7955 | 1,092,359.4 | 1,097,858.0 | 2,014.1 | 3.132x | 3.132x | faster ×1.01 |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 1,101,475.4 | 0.8003 | 1,096,680.2 | 1,104,032.0 | 2,588.9 | 3.151x | 3.151x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,105,767.8 | 0.8035 | 1,102,784.3 | 1,109,225.2 | 2,106.5 | 3.164x | 3.164x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 124.3 | 0.0001 | 123.8 | 130.7 | 2.7 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 306,970.7 | 0.2230 | 306,464.2 | 308,042.2 | 543.7 | 2469.367x | 2469.367x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 349,512.7 | 0.2540 | 349,427.2 | 350,659.7 | 463.8 | 2811.588x | 2811.588x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 349,566.6 | 0.2540 | 349,434.0 | 349,647.6 | 77.8 | 2812.021x | 2812.021x | - |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 349,629.1 | 0.2540 | 349,472.3 | 350,592.8 | 441.6 | 2812.524x | 2812.524x | unchanged (within spread) |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 349,719.5 | 0.2541 | 349,702.2 | 351,011.9 | 518.4 | 2813.251x | 2813.251x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,093,165.0 | 0.7943 | 1,091,956.0 | 1,104,607.2 | 4,677.0 | 8793.756x | 8793.756x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,094,794.5 | 0.7955 | 1,092,359.4 | 1,097,858.0 | 2,014.1 | 8806.865x | 8806.865x | faster ×1.01 |
+| 9 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 1,101,475.4 | 0.8003 | 1,096,680.2 | 1,104,032.0 | 2,588.9 | 8860.607x | 8860.607x | unchanged (within spread) |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,105,767.8 | 0.8035 | 1,102,784.3 | 1,109,225.2 | 2,106.5 | 8895.137x | 8895.137x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,992,314.9 | 2.9009 | 3,955,276.5 | 4,064,531.5 | 35,968.9 | 32115.411x | 32115.411x | - |
 
 #### `wild-codegrammar-json-array-begin` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 43.7 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 236,202.4 | 0.2253 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 268,762.0 | 0.2563 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 268,751.6 | 0.2563 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 268,967.8 | 0.2565 |
@@ -2260,6 +2607,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 834,602.0 | 0.7959 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 843,624.6 | 0.8045 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 842,357.4 | 0.8033 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,048,098.6 | 2.9069 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 41.2 | 0.0002 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 56,698.9 | 0.2163 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 64,574.1 | 0.2463 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 64,621.2 | 0.2465 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 64,651.2 | 0.2466 |
@@ -2268,6 +2618,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 206,609.9 | 0.7882 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 205,825.9 | 0.7852 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 211,379.5 | 0.8063 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 751,354.8 | 2.8662 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 39.2 | 0.0006 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 14,049.7 | 0.2144 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 16,152.3 | 0.2465 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 16,192.0 | 0.2471 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 16,096.5 | 0.2456 |
@@ -2276,6 +2629,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 52,143.8 | 0.7957 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 51,922.0 | 0.7923 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 52,564.0 | 0.8021 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 192,865.8 | 2.9429 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 268,967.8 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 268,901.9 ns, 1,048,576 B
@@ -2295,6 +2649,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 684.8 | 678.1 | 685.9 | 3.0 | 1.097x | 1.097x | - | 75 | 9.1 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 685.8 | 684.6 | 686.5 | 0.7 | 1.099x | 1.099x | - | 75 | 9.1 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 707.1 | 706.0 | 709.3 | 1.2 | 1.133x | 1.133x | slower ×1.03 | 75 | 9.4 | 9.1 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,331.7 | 1,329.2 | 1,379.3 | 19.4 | 2.134x | 2.134x | - | 75 | 17.8 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,072.3 | 2,069.5 | 2,117.8 | 18.4 | 3.321x | 3.321x | - | 75 | 27.6 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,650.1 | 4,644.1 | 5,196.3 | 217.8 | 7.451x | 7.451x | - | 75 | 62.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-syslog`, 21.8 ns, 56 B; largest Δ: `sec-github-pat`, +0.3 ns (now 9.2 ns), 93 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-syslog`, 21.7 ns, 56 B; largest Δ: `sec-github-pat`, +0.3 ns (now 9.2 ns), 93 B
@@ -2303,22 +2660,27 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-codegrammar-json-constant` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 4,196,060.3 | 3.0489 | 4,195,475.5 | 4,197,309.4 | 624.6 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 4,197,858.0 | 3.0502 | 4,195,791.1 | 4,209,149.5 | 4,928.4 | 1.000x | 1.000x | unchanged (within spread) |
-| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,198,271.2 | 3.0505 | 4,193,872.5 | 4,207,746.1 | 5,263.1 | 1.001x | 1.001x | - |
-| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,199,268.9 | 3.0512 | 4,197,834.9 | 4,209,812.3 | 4,469.2 | 1.001x | 1.001x | - |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,710,215.6 | 3.4225 | 4,703,990.9 | 4,721,934.8 | 6,857.3 | 1.123x | 1.123x | - |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,712,212.9 | 3.4239 | 4,702,245.7 | 4,740,664.1 | 12,862.7 | 1.123x | 1.123x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,714,170.8 | 3.4254 | 4,699,836.2 | 4,734,014.7 | 12,746.2 | 1.123x | 1.123x | - |
-| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,722,602.0 | 3.4315 | 4,707,450.6 | 4,732,708.1 | 8,551.4 | 1.125x | 1.125x | unchanged (within spread) |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 182,624.7 | 0.1327 | 182,331.9 | 183,474.5 | 401.1 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 280,513.8 | 0.2038 | 280,406.5 | 281,500.3 | 404.2 | 1.536x | 1.536x | - |
+| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 4,196,060.3 | 3.0489 | 4,195,475.5 | 4,197,309.4 | 624.6 | 22.976x | 22.976x | unchanged (within spread) |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 4,197,858.0 | 3.0502 | 4,195,791.1 | 4,209,149.5 | 4,928.4 | 22.986x | 22.986x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,198,271.2 | 3.0505 | 4,193,872.5 | 4,207,746.1 | 5,263.1 | 22.989x | 22.989x | - |
+| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,199,268.9 | 3.0512 | 4,197,834.9 | 4,209,812.3 | 4,469.2 | 22.994x | 22.994x | - |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,710,215.6 | 3.4225 | 4,703,990.9 | 4,721,934.8 | 6,857.3 | 25.792x | 25.792x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,712,212.9 | 3.4239 | 4,702,245.7 | 4,740,664.1 | 12,862.7 | 25.803x | 25.803x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,714,170.8 | 3.4254 | 4,699,836.2 | 4,734,014.7 | 12,746.2 | 25.813x | 25.813x | - |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,722,602.0 | 3.4315 | 4,707,450.6 | 4,732,708.1 | 8,551.4 | 25.860x | 25.860x | unchanged (within spread) |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,564,899.2 | 4.7701 | 6,550,284.1 | 6,601,302.4 | 17,917.1 | 35.947x | 35.947x | - |
 
 #### `wild-codegrammar-json-constant` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 140,387.4 | 0.1339 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 213,610.5 | 0.2037 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 3,196,928.6 | 3.0488 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 3,198,072.8 | 3.0499 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,198,650.3 | 3.0505 |
@@ -2327,6 +2689,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 3,588,211.1 | 3.4220 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,593,342.4 | 3.4269 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 3,592,794.8 | 3.4264 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 4,986,305.4 | 4.7553 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 33,851.5 | 0.1291 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 53,442.7 | 0.2039 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 800,109.9 | 3.0522 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 800,240.0 | 3.0527 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 800,248.9 | 3.0527 |
@@ -2335,6 +2700,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 895,530.5 | 3.4162 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 898,100.3 | 3.4260 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 903,696.2 | 3.4473 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 1,257,248.7 | 4.7960 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 8,375.5 | 0.1278 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 13,453.7 | 0.2053 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 198,533.4 | 3.0294 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 198,638.9 | 3.0310 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 198,196.8 | 3.0242 |
@@ -2343,6 +2711,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 229,183.2 | 3.4971 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 228,941.8 | 3.4934 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 228,254.5 | 3.4829 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 318,970.5 | 4.8671 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,196,928.6 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,198,072.8 ns, 1,048,576 B
@@ -2358,10 +2727,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,423.8 | 2,420.7 | 2,427.5 | 2.2 | 1.000x | 1.000x | - | 75 | 32.3 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 2,432.4 | 2,428.3 | 2,436.9 | 3.6 | 1.004x | 1.004x | slower ×1.00 | 75 | 32.4 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 2,437.7 | 2,436.7 | 2,446.8 | 3.7 | 1.006x | 1.006x | slower ×1.01 | 75 | 32.5 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 3,342.0 | 3,301.1 | 3,356.7 | 21.2 | 1.379x | 1.379x | faster ×1.01 | 75 | 44.6 | 8.8 | 100% |
-| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,391.3 | 3,375.6 | 3,402.0 | 9.5 | 1.399x | 1.399x | - | 75 | 45.2 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,393.4 | 3,305.1 | 3,406.9 | 36.6 | 1.400x | 1.400x | - | 75 | 45.2 | 8.9 | 100% |
-| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 3,418.6 | 3,364.8 | 3,438.5 | 26.1 | 1.411x | 1.411x | unchanged (within spread) | 75 | 45.6 | 9.1 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,008.8 | 3,001.4 | 3,016.8 | 5.1 | 1.242x | 1.242x | - | 75 | 40.1 | 27.2 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 3,069.1 | 3,043.7 | 3,109.9 | 22.2 | 1.267x | 1.267x | - | 75 | 40.9 | 16.3 | 100% |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 3,342.0 | 3,301.1 | 3,356.7 | 21.2 | 1.379x | 1.379x | faster ×1.01 | 75 | 44.6 | 8.8 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,391.3 | 3,375.6 | 3,402.0 | 9.5 | 1.399x | 1.399x | - | 75 | 45.2 | 8.8 | 100% |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,393.4 | 3,305.1 | 3,406.9 | 36.6 | 1.400x | 1.400x | - | 75 | 45.2 | 8.9 | 100% |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 3,418.6 | 3,364.8 | 3,438.5 | 26.1 | 1.411x | 1.411x | unchanged (within spread) | 75 | 45.6 | 9.1 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 13,458.7 | 13,309.2 | 13,677.5 | 134.1 | 5.554x | 5.554x | - | 75 | 179.4 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 179.0 ns, 93 B; largest Δ: `nu-high-byte`, -1.7 ns (now 8.9 ns), 2 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-github-pat`, 179.2 ns, 93 B; largest Δ: `br-quoted-delim`, +2.5 ns (now 26.5 ns), 15 B
@@ -2381,6 +2753,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 10,009,979.1 | 7.2733 | 9,953,469.9 | 10,045,243.7 | 32,739.3 | 4.090x | 4.090x | unchanged (within spread) |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 10,063,246.2 | 7.3120 | 10,041,625.2 | 10,304,227.0 | 101,902.8 | 4.112x | 4.112x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 10,102,826.5 | 7.3408 | 10,061,787.4 | 10,254,390.4 | 68,631.4 | 4.128x | 4.128x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 10,598,387.1 | 7.7009 | 10,571,054.0 | 10,605,601.8 | 12,048.1 | 4.331x | 4.331x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,343,632.8 | 16.9617 | 23,270,124.9 | 24,111,968.0 | 321,674.8 | 9.539x | 9.539x | - |
 
 #### `wild-codegrammar-json-number-extended` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2394,6 +2768,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 7,648,626.7 | 7.2943 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 7,702,171.9 | 7.3454 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,715,455.1 | 7.3580 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 8,112,216.6 | 7.7364 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 17,905,951.1 | 17.0764 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 459,506.8 | 1.7529 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 459,368.9 | 1.7524 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 471,159.6 | 1.7973 |
@@ -2402,6 +2778,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 1,892,512.5 | 7.2194 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,897,378.3 | 7.2379 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,909,827.9 | 7.2854 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 1,995,749.4 | 7.6132 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 4,462,895.6 | 17.0246 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 114,568.2 | 1.7482 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 113,034.8 | 1.7248 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 116,935.8 | 1.7843 |
@@ -2410,11 +2788,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 471,253.6 | 7.1908 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 474,442.2 | 7.2394 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 473,303.8 | 7.2220 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 488,512.7 | 7.4541 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,056,250.8 | 16.1171 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 1,880,678.1 ns, 1,048,576 B; largest Δ: `t-256k`, +11,652.8 ns (now 471,159.6 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 1,881,959.3 ns, 1,048,576 B; largest Δ: `t-256k`, +11,962.5 ns (now 471,331.5 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,648,626.7 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 7,702,171.9 ns, 1,048,576 B
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
 ### `wild-codegrammar-json-number-extended` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2429,11 +2811,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 7,351.9 | 7,347.0 | 7,368.9 | 7.6 | 5.277x | 5.277x | - | 75 | 98.0 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,417.7 | 7,400.4 | 7,901.6 | 189.9 | 5.324x | 5.324x | - | 75 | 98.9 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 7,432.8 | 7,403.0 | 7,456.1 | 21.5 | 5.335x | 5.335x | unchanged (within spread) | 75 | 99.1 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 11,660.4 | 11,637.4 | 12,698.7 | 410.5 | 8.369x | 8.369x | - | 75 | 155.5 | 16.3 | 100% |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 11,704.6 | 11,657.2 | 11,843.2 | 65.6 | 8.401x | 8.401x | - | 75 | 156.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 69.6 ns, 20 B; largest Δ: `waf-comment-obfuscation`, +10.1 ns (now 35.1 ns), 18 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 69.9 ns, 20 B; largest Δ: `waf-comment-obfuscation`, +10.0 ns (now 35.1 ns), 18 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-github-pat`, 578.8 ns, 93 B; largest Δ: `sec-slack-webhook`, -3.2 ns (now 248.2 ns), 81 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `sec-github-pat`, 581.4 ns, 93 B; largest Δ: `v-email`, +4.4 ns (now 173.1 ns), 24 B
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
 ### `wild-codegrammar-json-object-begin` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2448,6 +2834,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,136.4 | 0.0168 | 23,103.3 | 23,279.4 | 62.6 | 1.001x | 1.001x | unchanged (within spread) |
 | 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,162.2 | 0.0168 | 23,142.5 | 23,209.9 | 26.9 | 1.002x | 1.002x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,184.9 | 0.0168 | 23,125.4 | 23,206.0 | 29.8 | 1.003x | 1.003x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,421.4 | 0.0170 | 23,404.0 | 23,481.3 | 28.6 | 1.013x | 1.013x | - |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 32,318.3 | 0.0235 | 32,253.0 | 32,628.7 | 133.3 | 1.398x | 1.398x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,339.1 | 1.6191 | 2,227,187.0 | 2,232,898.5 | 1,964.9 | 96.420x | 96.420x | - |
 
 #### `wild-codegrammar-json-object-begin` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2461,6 +2850,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 17,639.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,663.9 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,648.3 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,836.0 | 0.0170 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 24,508.9 | 0.0234 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,443.9 | 1.6188 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,381.7 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,378.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,388.0 | 0.0167 |
@@ -2469,6 +2861,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,383.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,377.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,391.8 | 0.0168 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,446.3 | 0.0170 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 6,148.7 | 0.0235 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,795.7 | 1.6205 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,110.2 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110.9 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,110.1 | 0.0169 |
@@ -2477,6 +2872,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,110.5 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,101.9 | 0.0168 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,108.8 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,132.2 | 0.0173 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,678.4 | 0.0256 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,488.6 | 1.6249 |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `t-1m`, 17,621.2 ns, 1,048,576 B; largest Δ: `t-256k`, +3.1 ns (now 4,381.7 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,627.3 ns, 1,048,576 B
@@ -2496,6 +2894,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 657.0 | 656.1 | 660.5 | 1.5 | 1.099x | 1.099x | - | 75 | 8.8 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 657.4 | 656.9 | 657.9 | 0.4 | 1.100x | 1.100x | - | 75 | 8.8 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 679.7 | 676.0 | 685.5 | 3.0 | 1.137x | 1.137x | slower ×1.03 | 75 | 9.1 | 9.1 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,226.6 | 1,225.3 | 1,227.0 | 0.6 | 2.052x | 2.052x | - | 75 | 16.4 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,042.7 | 2,040.4 | 2,063.1 | 8.7 | 3.417x | 3.417x | - | 75 | 27.2 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,388.9 | 4,383.7 | 4,456.4 | 27.3 | 7.341x | 7.341x | - | 75 | 58.5 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `cg-object-begin`, 20.2 ns, 1 B; largest Δ: `sec-github-pat`, +0.3 ns (now 9.2 ns), 93 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `cg-object-begin`, 20.2 ns, 1 B; largest Δ: `sec-github-pat`, +0.3 ns (now 9.2 ns), 93 B
@@ -2515,6 +2916,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,159.3 | 0.0168 | 23,150.5 | 23,190.7 | 14.0 | 1.002x | 1.002x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,162.8 | 0.0168 | 23,151.9 | 23,968.0 | 319.3 | 1.002x | 1.002x | - |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,212.8 | 0.0169 | 23,190.1 | 23,265.0 | 28.6 | 1.004x | 1.004x | slower ×1.00 |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 23,568.9 | 0.0171 | 23,566.0 | 23,840.4 | 106.2 | 1.019x | 1.019x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,545.0 | 1.6193 | 2,227,478.4 | 2,228,998.0 | 513.2 | 96.389x | 96.389x | - |
 
 #### `wild-codegrammar-json-stringcontent-escape` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2528,6 +2931,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,669.5 | 0.0169 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,660.4 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,673.5 | 0.0169 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 17,893.4 | 0.0171 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,923.5 | 1.6193 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,386.2 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,386.6 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,377.2 | 0.0167 |
@@ -2536,6 +2941,8 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,377.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,391.8 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,432.1 | 0.0169 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 4,500.2 | 0.0172 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,310.8 | 1.6186 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,111.2 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,107.5 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,107.9 | 0.0169 |
@@ -2544,11 +2951,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,110.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,107.3 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 1,168.9 | 0.0178 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,253.0 | 1.6213 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,610.3 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,635.8 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `t-1m`, 17,669.5 ns, 1,048,576 B; largest Δ: `t-256k`, -14.3 ns (now 4,377.5 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `t-1m`, 17,673.5 ns, 1,048,576 B; largest Δ: `t-256k`, +54.9 ns (now 4,432.1 ns), 262,144 B
+
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
 
 ### `wild-codegrammar-json-stringcontent-escape` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
@@ -2563,30 +2974,46 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 868.6 | 868.1 | 869.0 | 0.4 | 1.288x | 1.288x | unchanged (within spread) | 75 | 11.6 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 952.4 | 950.5 | 952.6 | 0.8 | 1.412x | 1.412x | - | 75 | 12.7 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 952.8 | 951.3 | 955.9 | 1.7 | 1.413x | 1.413x | unchanged (within spread) | 75 | 12.7 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,950.2 | 2,944.0 | 2,982.5 | 13.7 | 4.374x | 4.374x | - | 75 | 39.3 | 16.3 | 100% |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,030.3 | 5,017.9 | 5,039.2 | 6.9 | 7.458x | 7.458x | - | 75 | 67.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-winpath-reserved`, 39.2 ns, 24 B; largest Δ: `sd-empty-alt-miss`, +0.3 ns (now 8.9 ns), 60 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-winpath-reserved`, 39.3 ns, 24 B; largest Δ: `sd-empty-alt-miss`, +0.4 ns (now 9.0 ns), 60 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `lp-winpath-reserved`, 84.6 ns, 24 B; largest Δ: `lp-atomic-hit`, -1.4 ns (now 9.7 ns), 31 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `lp-winpath-reserved`, 85.7 ns, 24 B
 
+- not ranked: `vectorscan_5.4.11_block-nosom-nocaps-simd` — did-not-compile (hs_compile failed (code -4, expression 0): Unterminated comment.)
+
 ### `wild-datetime-datefinder-alternation` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 10,388,445.3 | 7.5483 | 10,366,841.3 | 10,402,414.2 | 12,749.9 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 10,466,717.6 | 7.6052 | 10,455,251.1 | 10,549,417.9 | 34,738.4 | 1.008x | 1.008x | slower ×1.01 |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 664.5 | 0.0005 | 663.9 | 687.5 | 9.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 10,388,445.3 | 7.5483 | 10,366,841.3 | 10,402,414.2 | 12,749.9 | 15634.557x | 15634.557x | - |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 10,466,717.6 | 7.6052 | 10,455,251.1 | 10,549,417.9 | 34,738.4 | 15752.357x | 15752.357x | slower ×1.01 |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 34,955,033.5 | 25.3986 | 34,875,931.0 | 35,467,619.0 | 237,386.8 | 52607.148x | 52607.148x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,130,195,568.0 | 1547.8193 | 2,128,387,168.0 | 2,150,492,762.0 | 8,257,604.0 | 3205933.517x | 3205933.517x | - |
 
 #### `wild-datetime-datefinder-alternation` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 213.4 | 0.0002 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 7,917,262.8 | 7.5505 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 7,973,588.2 | 7.6042 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 24,312,714.8 | 23.1864 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,621,643,077.0 | 1546.5194 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 217.7 | 0.0008 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 1,976,246.5 | 7.5388 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,993,020.2 | 7.6028 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 7,485,901.5 | 28.5564 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 407,805,360.0 | 1555.6540 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 233.3 | 0.0036 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 494,176.7 | 7.5405 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 500,670.3 | 7.6396 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 3,106,137.2 | 47.3959 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 102,359,990.0 | 1561.8895 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 7,973,588.2 ns, 1,048,576 B
 
@@ -2604,6 +3031,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,949.6 | 1,937.4 | 1,953.7 | 6.4 | 1.000x | 1.000x | - | 75 | 26.0 | 8.0 | 100% |
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 2,021.2 | 2,012.8 | 2,036.7 | 8.4 | 1.037x | 1.037x | slower ×1.04 | 75 | 26.9 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,755.9 | 3,753.9 | 3,761.1 | 2.5 | 1.927x | 1.927x | - | 75 | 50.1 | 27.2 | 100% |
+| 4 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 87,697.4 | 87,186.0 | 88,012.9 | 318.5 | 44.982x | 44.982x | - | 75 | 1,169.3 | 16.3 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 766,271.8 | 763,257.0 | 775,743.1 | 4,414.0 | 393.038x | 393.038x | - | 75 | 10,217.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sd-empty-alt-hit`, 120.4 ns, 61 B; largest Δ: `la-email-nodup`, +3.4 ns (now 27.3 ns), 9 B
 
@@ -2627,6 +3057,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 74.3 | 0.0001 | 71.8 | 74.9 | 1.2 | 2.016x | 2.016x | - |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 77.3 | 0.0001 | 77.2 | 78.9 | 0.7 | 2.096x | 2.096x | unchanged (within spread) |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 78.3 | 0.0001 | 77.5 | 78.8 | 0.5 | 2.122x | 2.122x | - |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 146.8 | 0.0001 | 146.4 | 151.4 | 1.9 | 3.981x | 3.981x | - |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 300.5 | 0.0002 | 299.7 | 310.5 | 4.0 | 8.147x | 8.147x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 985.3 | 0.0007 | 980.8 | 1,013.6 | 12.2 | 26.715x | 26.715x | - |
 
 #### `wild-datetime-moment-iso8601` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2640,6 +3073,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 25.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 26.6 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 27.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 49.1 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 40.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 299.3 | 0.0003 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 12.4 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 12.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 16.4 | 0.0001 |
@@ -2648,6 +3084,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 25.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 25.7 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 25.9 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 48.8 | 0.0002 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 127.0 | 0.0005 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 414.6 | 0.0016 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 11.1 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 11.1 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14.9 | 0.0002 |
@@ -2656,6 +3095,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 23.5 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 25.0 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 25.0 | 0.0004 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 49.0 | 0.0007 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 133.0 | 0.0020 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 270.9 | 0.0041 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 13.3 ns, 1,048,576 B; largest Δ: `t-256k`, -0.1 ns (now 12.4 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `t-1m`, 17.3 ns, 1,048,576 B; largest Δ: `t-64k`, +0.1 ns (now 15.0 ns), 65,536 B
@@ -2675,6 +3117,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 847.3 | 845.3 | 851.1 | 2.0 | 1.342x | 1.342x | unchanged (within spread) | 75 | 11.3 | 8.0 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 922.2 | 921.5 | 923.3 | 0.6 | 1.460x | 1.460x | - | 75 | 12.3 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 924.9 | 922.9 | 927.7 | 2.0 | 1.465x | 1.465x | unchanged (within spread) | 75 | 12.3 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,618.4 | 1,617.5 | 1,623.2 | 2.1 | 2.563x | 2.563x | - | 75 | 21.6 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,056.3 | 2,037.0 | 2,063.0 | 8.8 | 3.256x | 3.256x | - | 75 | 27.4 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 11,640.0 | 11,607.3 | 12,095.6 | 182.2 | 18.432x | 18.432x | - | 75 | 155.2 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `dt-iso8601`, 31.0 ns, 20 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `dt-iso8601`, 52.8 ns, 20 B; largest Δ: `rd-date-hit`, -2.1 ns (now 16.5 ns), 5 B
@@ -2694,6 +3139,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,449,500.2 | 17.0386 | 23,241,339.2 | 23,531,618.2 | 97,653.3 | 5.810x | 5.810x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,698,886.6 | 17.2198 | 23,655,574.5 | 23,776,745.3 | 45,398.4 | 5.872x | 5.872x | - |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,772,281.9 | 17.2732 | 23,719,340.8 | 24,238,002.7 | 192,803.7 | 5.890x | 5.890x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 27,136,727.1 | 19.7178 | 27,088,807.8 | 27,175,597.3 | 33,026.7 | 6.724x | 6.724x | - |
 
 #### `wild-logparse-base10num-grok` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2707,6 +3153,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,822,723.2 | 16.9971 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 18,031,018.9 | 17.1957 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 18,083,278.3 | 17.2456 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 20,788,943.8 | 19.8259 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 759,454.7 | 2.8971 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 761,610.3 | 2.9053 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 761,621.7 | 2.9054 |
@@ -2715,6 +3162,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,470,760.9 | 17.0546 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,515,802.9 | 17.2264 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,531,547.4 | 17.2865 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 5,110,807.4 | 19.4962 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 183,942.8 | 2.8067 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 184,468.5 | 2.8148 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 184,711.7 | 2.8185 |
@@ -2723,6 +3171,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,127,001.8 | 17.1967 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,139,180.1 | 17.3825 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,160,423.6 | 17.7067 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,234,883.9 | 18.8428 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,091,694.1 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,092,308.2 ns, 1,048,576 B
@@ -2738,10 +3187,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 2,484.6 | 2,461.3 | 2,493.9 | 13.6 | 1.002x | 1.002x | unchanged (within spread) | 75 | 33.1 | 8.0 | 100% |
 | 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,488.5 | 2,486.0 | 2,512.6 | 10.0 | 1.004x | 1.004x | - | 75 | 33.2 | 8.0 | 100% |
 | 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,494.0 | 2,482.4 | 2,521.6 | 13.0 | 1.006x | 1.006x | - | 75 | 33.3 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 18,303.7 | 18,176.8 | 18,324.8 | 56.3 | 7.382x | 7.382x | - | 75 | 244.0 | 8.9 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 18,369.8 | 18,340.0 | 18,780.0 | 166.3 | 7.408x | 7.408x | unchanged (within spread) | 75 | 244.9 | 9.1 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 18,552.5 | 18,547.9 | 18,576.0 | 10.4 | 7.482x | 7.482x | - | 75 | 247.4 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 18,606.0 | 18,594.8 | 18,639.9 | 16.6 | 7.504x | 7.504x | slower ×1.00 | 75 | 248.1 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,869.7 | 15,748.6 | 15,945.0 | 64.9 | 6.400x | 6.400x | - | 75 | 211.6 | 58.6 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 18,303.7 | 18,176.8 | 18,324.8 | 56.3 | 7.382x | 7.382x | - | 75 | 244.0 | 8.9 | 100% |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 18,369.8 | 18,340.0 | 18,780.0 | 166.3 | 7.408x | 7.408x | unchanged (within spread) | 75 | 244.9 | 9.1 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 18,552.5 | 18,547.9 | 18,576.0 | 10.4 | 7.482x | 7.482x | - | 75 | 247.4 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 18,606.0 | 18,594.8 | 18,639.9 | 16.6 | 7.504x | 7.504x | slower ×1.00 | 75 | 248.1 | 8.8 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 117.0 ns, 20 B; largest Δ: `sd-empty-alt-hit`, +2.1 ns (now 74.1 ns), 61 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 118.3 ns, 20 B; largest Δ: `waf-concat`, -2.2 ns (now 47.7 ns), 48 B
@@ -2761,6 +3211,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,258,984.2 | 16.9002 | 23,127,896.8 | 23,781,600.2 | 234,066.5 | 5.829x | 5.829x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,268,413.2 | 16.9070 | 23,231,101.3 | 23,333,648.6 | 37,375.0 | 5.832x | 5.832x | - |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,294,564.8 | 16.9260 | 23,275,475.6 | 25,916,251.8 | 1,022,575.8 | 5.838x | 5.838x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 25,662,944.7 | 18.6469 | 25,584,875.2 | 26,040,035.9 | 167,887.8 | 6.432x | 6.432x | - |
 
 #### `wild-logparse-base10num-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2774,6 +3225,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,722,989.4 | 16.9020 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,721,572.4 | 16.9006 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,784,663.9 | 16.9608 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 19,667,372.2 | 18.7563 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 750,438.0 | 2.8627 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 751,008.5 | 2.8649 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 751,383.2 | 2.8663 |
@@ -2782,6 +3234,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,400,438.9 | 16.7863 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,427,646.8 | 16.8901 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,445,241.5 | 16.9573 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 4,827,028.7 | 18.4137 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 181,478.6 | 2.7691 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 181,459.4 | 2.7689 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 181,698.8 | 2.7725 |
@@ -2790,6 +3243,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,119,676.7 | 17.0849 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,110,670.5 | 16.9475 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,132,614.4 | 17.2823 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 1,175,872.0 | 17.9424 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,058,580.1 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,155,524.3 ns, 1,048,576 B
@@ -2805,10 +3259,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,446.7 | 2,440.4 | 2,516.4 | 28.6 | 1.002x | 1.002x | - | 75 | 32.6 | 8.0 | 100% |
 | 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,447.1 | 2,440.4 | 2,537.4 | 36.3 | 1.002x | 1.002x | - | 75 | 32.6 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 2,454.7 | 2,431.0 | 2,465.4 | 12.1 | 1.005x | 1.005x | unchanged (within spread) | 75 | 32.7 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 17,798.2 | 17,628.7 | 17,854.0 | 87.1 | 7.285x | 7.285x | unchanged (within spread) | 75 | 237.3 | 9.1 | 100% |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 17,831.5 | 17,720.2 | 18,243.9 | 183.5 | 7.299x | 7.299x | - | 75 | 237.8 | 8.9 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 17,951.3 | 17,785.7 | 18,218.5 | 151.3 | 7.348x | 7.348x | - | 75 | 239.4 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 18,072.2 | 17,810.3 | 18,149.1 | 134.5 | 7.398x | 7.398x | unchanged (within spread) | 75 | 241.0 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 15,914.6 | 15,830.8 | 16,152.9 | 113.2 | 6.514x | 6.514x | - | 75 | 212.2 | 58.6 | 100% |
+| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 17,798.2 | 17,628.7 | 17,854.0 | 87.1 | 7.285x | 7.285x | unchanged (within spread) | 75 | 237.3 | 9.1 | 100% |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 17,831.5 | 17,720.2 | 18,243.9 | 183.5 | 7.299x | 7.299x | - | 75 | 237.8 | 8.9 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 17,951.3 | 17,785.7 | 18,218.5 | 151.3 | 7.348x | 7.348x | - | 75 | 239.4 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 18,072.2 | 17,810.3 | 18,149.1 | 134.5 | 7.398x | 7.398x | unchanged (within spread) | 75 | 241.0 | 8.8 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `rd-numeric-id-near-miss`, 116.1 ns, 20 B; largest Δ: `sd-empty-alt-hit`, +2.7 ns (now 68.8 ns), 61 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rd-numeric-id-near-miss`, 117.0 ns, 20 B; largest Δ: `la-float-bound`, -1.9 ns (now 49.3 ns), 13 B
@@ -2824,10 +3279,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,010,147.7 | 0.7340 | 1,009,284.0 | 1,010,663.0 | 518.6 | 1.000x | 1.000x | unchanged (within spread) |
 | 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,010,265.0 | 0.7341 | 1,009,722.8 | 1,014,130.7 | 1,656.1 | 1.000x | 1.000x | - |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,010,952.6 | 0.7346 | 1,009,997.1 | 1,023,087.2 | 4,932.2 | 1.001x | 1.001x | - |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 46,631,322.0 | 33.8827 | 46,578,586.5 | 47,108,783.0 | 234,454.3 | 46.179x | 46.179x | - |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 46,639,651.8 | 33.8888 | 46,599,676.7 | 51,242,746.8 | 1,838,141.5 | 46.187x | 46.187x | unchanged (within spread) |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 46,723,749.5 | 33.9499 | 46,665,204.2 | 46,884,498.7 | 79,852.7 | 46.270x | 46.270x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 46,742,508.0 | 33.9635 | 46,630,665.5 | 47,310,912.5 | 239,041.8 | 46.289x | 46.289x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,468,163.7 | 2.5200 | 3,438,061.5 | 3,492,510.9 | 18,643.1 | 3.434x | 3.434x | - |
+| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 46,631,322.0 | 33.8827 | 46,578,586.5 | 47,108,783.0 | 234,454.3 | 46.179x | 46.179x | - |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 46,639,651.8 | 33.8888 | 46,599,676.7 | 51,242,746.8 | 1,838,141.5 | 46.187x | 46.187x | unchanged (within spread) |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 46,723,749.5 | 33.9499 | 46,665,204.2 | 46,884,498.7 | 79,852.7 | 46.270x | 46.270x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 46,742,508.0 | 33.9635 | 46,630,665.5 | 47,310,912.5 | 239,041.8 | 46.289x | 46.289x | - |
 
 #### `wild-logparse-quotedstring-grok` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2837,6 +3293,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 773,830.5 | 0.7380 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 773,929.1 | 0.7381 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 773,608.7 | 0.7378 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,652,742.3 | 2.5299 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 35,484,566.8 | 33.8407 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 35,519,111.3 | 33.8737 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 35,566,984.3 | 33.9193 |
@@ -2845,6 +3302,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 188,623.6 | 0.7195 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 188,742.2 | 0.7200 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 188,859.3 | 0.7204 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 648,880.4 | 2.4753 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 8,885,802.2 | 33.8966 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 8,885,323.3 | 33.8948 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 8,921,253.5 | 34.0319 |
@@ -2853,6 +3311,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 47,680.6 | 0.7275 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 47,652.3 | 0.7271 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 47,762.2 | 0.7288 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 163,685.8 | 2.4976 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 2,233,216.2 | 34.0762 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 2,235,217.2 | 34.1067 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 2,235,511.7 | 34.1112 |
@@ -2872,10 +3331,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,948.5 | 1,943.5 | 1,951.8 | 2.8 | 1.001x | 1.001x | - | 75 | 26.0 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,949.4 | 1,890.8 | 1,963.5 | 25.8 | 1.002x | 1.002x | unchanged (within spread) | 75 | 26.0 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,959.8 | 1,942.3 | 1,972.8 | 10.5 | 1.007x | 1.007x | unchanged (within spread) | 75 | 26.1 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,973.0 | 48,881.8 | 49,024.6 | 46.3 | 25.162x | 25.162x | - | 75 | 653.0 | 8.9 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 49,005.5 | 48,963.6 | 49,032.9 | 22.2 | 25.179x | 25.179x | unchanged (within spread) | 75 | 653.4 | 9.1 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 49,140.4 | 49,105.1 | 49,232.6 | 44.8 | 25.248x | 25.248x | faster ×1.00 | 75 | 655.2 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 49,278.6 | 49,203.0 | 49,315.1 | 38.2 | 25.319x | 25.319x | - | 75 | 657.0 | 8.8 | 100% |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 6,298.3 | 6,267.4 | 6,471.0 | 73.0 | 3.236x | 3.236x | - | 75 | 84.0 | 58.6 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,973.0 | 48,881.8 | 49,024.6 | 46.3 | 25.162x | 25.162x | - | 75 | 653.0 | 8.9 | 100% |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 49,005.5 | 48,963.6 | 49,032.9 | 22.2 | 25.179x | 25.179x | unchanged (within spread) | 75 | 653.4 | 9.1 | 100% |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 49,140.4 | 49,105.1 | 49,232.6 | 44.8 | 25.248x | 25.248x | faster ×1.00 | 75 | 655.2 | 8.8 | 100% |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 49,278.6 | 49,203.0 | 49,315.1 | 38.2 | 25.319x | 25.319x | - | 75 | 657.0 | 8.8 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-quoted-escaped`, 152.7 ns, 16 B; largest Δ: `br-quoted-delim`, -5.2 ns (now 112.7 ns), 15 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-quoted-escaped`, 152.3 ns, 16 B; largest Δ: `br-quoted-delim`, +4.8 ns (now 114.3 ns), 15 B
@@ -2891,10 +3351,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 930,525.1 | 0.6761 | 928,632.2 | 930,997.2 | 870.6 | 1.000x | 1.000x | - |
 | 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 930,604.7 | 0.6762 | 927,133.7 | 942,054.4 | 5,484.2 | 1.000x | 1.000x | - |
 | 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 931,257.9 | 0.6767 | 929,510.2 | 939,449.3 | 4,383.7 | 1.001x | 1.001x | unchanged (within spread) |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,032,524.8 | 16.7356 | 22,946,138.5 | 23,216,247.3 | 102,703.1 | 24.752x | 24.752x | unchanged (within spread) |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,152,754.1 | 16.8230 | 23,058,077.2 | 23,370,201.6 | 110,266.1 | 24.882x | 24.882x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,155,684.4 | 16.8251 | 22,946,428.3 | 23,238,913.2 | 103,217.1 | 24.885x | 24.885x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,180,108.5 | 16.8429 | 23,025,916.0 | 30,261,050.4 | 2,856,201.2 | 24.911x | 24.911x | - |
+| 5 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,265,325.1 | 2.3726 | 3,254,397.3 | 3,301,336.2 | 16,280.2 | 3.509x | 3.509x | - |
+| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,032,524.8 | 16.7356 | 22,946,138.5 | 23,216,247.3 | 102,703.1 | 24.752x | 24.752x | unchanged (within spread) |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,152,754.1 | 16.8230 | 23,058,077.2 | 23,370,201.6 | 110,266.1 | 24.882x | 24.882x | unchanged (within spread) |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,155,684.4 | 16.8251 | 22,946,428.3 | 23,238,913.2 | 103,217.1 | 24.885x | 24.885x | - |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,180,108.5 | 16.8429 | 23,025,916.0 | 30,261,050.4 | 2,856,201.2 | 24.911x | 24.911x | - |
 
 #### `wild-logparse-quotedstring-noatomic` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2904,6 +3365,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 711,657.2 | 0.6787 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 710,906.0 | 0.6780 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 713,097.8 | 0.6801 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,495,212.5 | 2.3796 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,521,747.6 | 16.7100 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,635,067.7 | 16.8181 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,646,490.8 | 16.8290 |
@@ -2912,6 +3374,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 174,342.2 | 0.6651 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 174,024.4 | 0.6639 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 174,247.3 | 0.6647 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 614,588.9 | 2.3445 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,395,466.3 | 16.7674 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,396,441.2 | 16.7711 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,398,127.7 | 16.7775 |
@@ -2920,6 +3383,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 44,013.8 | 0.6716 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 44,001.9 | 0.6714 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 43,937.5 | 0.6704 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 154,604.0 | 2.3591 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,103,709.2 | 16.8413 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,115,751.5 | 17.0250 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,108,433.4 | 16.9134 |
@@ -2933,16 +3397,21 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 ### `wild-logparse-quotedstring-noatomic` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
 - baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
-| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,843.8 | 1,773.7 | 1,851.9 | 28.7 | 1.000x | 1.000x | unchanged (within spread) | 75 | 24.6 | 8.0 | 100% |
-| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,847.0 | 1,834.9 | 1,877.9 | 14.3 | 1.002x | 1.002x | - | 75 | 24.6 | 8.0 | 100% |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,847.7 | 1,834.5 | 1,849.1 | 5.5 | 1.002x | 1.002x | unchanged (within spread) | 75 | 24.6 | 8.0 | 100% |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,850.4 | 1,842.5 | 1,865.0 | 8.6 | 1.004x | 1.004x | - | 75 | 24.7 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 114,188.5 | 113,957.0 | 114,663.5 | 238.6 | 61.932x | 61.932x | unchanged (within spread) | 75 | 1,522.5 | 9.1 | 100% |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 114,302.9 | 114,003.5 | 114,383.6 | 144.1 | 61.994x | 61.994x | - | 75 | 1,524.0 | 8.9 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 114,367.5 | 114,357.2 | 114,787.6 | 169.2 | 62.029x | 62.029x | unchanged (within spread) | 75 | 1,524.9 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 114,536.9 | 114,294.6 | 115,324.9 | 359.1 | 62.121x | 62.121x | - | 75 | 1,527.2 | 8.8 | 100% |
+| rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | set composition | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,843.8 | 1,773.7 | 1,851.9 | 28.7 | 1.000x | 1.000x | spread | unchanged (within spread) | 75 | 24.6 | 8.0 | 100% |
+| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,847.0 | 1,834.9 | 1,877.9 | 14.3 | 1.002x | 1.002x | spread | - | 75 | 24.6 | 8.0 | 100% |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,847.7 | 1,834.5 | 1,849.1 | 5.5 | 1.002x | 1.002x | spread | unchanged (within spread) | 75 | 24.6 | 8.0 | 100% |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,850.4 | 1,842.5 | 1,865.0 | 8.6 | 1.004x | 1.004x | spread | - | 75 | 24.7 | 8.0 | 100% |
+| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 114,188.5 | 113,957.0 | 114,663.5 | 238.6 | 61.932x | 61.932x | spread | unchanged (within spread) | 75 | 1,522.5 | 9.1 | 100% |
+| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 114,302.9 | 114,003.5 | 114,383.6 | 144.1 | 61.994x | 61.994x | spread | - | 75 | 1,524.0 | 8.9 | 100% |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 114,367.5 | 114,357.2 | 114,787.6 | 169.2 | 62.029x | 62.029x | spread | unchanged (within spread) | 75 | 1,524.9 | 8.8 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 114,536.9 | 114,294.6 | 115,324.9 | 359.1 | 62.121x | 62.121x | spread | - | 75 | 1,527.2 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 289,071.9 | 288,036.2 | 291,865.5 | 1,642.4 | 156.783x | 156.783x | **dominated**: `waf-sleep` is 98.0% of this set | - | 75 | 3,854.3 | 58.6 | 100% |
+
+_**dominated**: for the flagged testee(s), one subject is more than 90 % of the set total, so the `vs baseline` / `vs best` ratios on those rows are ratios of that ONE subject wearing the set's name. The set number is still the set's; `--grain subject` carry the other reading, and they can point the opposite way -- pcrec I-7 §1 measured a set ratio of 3.15x slower that was 7.7x slower on one subject and 144x FASTER on the other two._
+
+_per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `--grain subject` renders them._
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-quoted-escaped`, 126.5 ns, 16 B; largest Δ: `sec-userpass`, -2.8 ns (now 84.5 ns), 33 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-quoted-escaped`, 127.3 ns, 16 B; largest Δ: `br-quoted-delim`, -2.8 ns (now 85.4 ns), 15 B
@@ -2962,6 +3431,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 39,723,595.6 | 28.8635 | 39,600,139.1 | 40,174,359.7 | 208,532.1 | 9.959x | 9.959x | - |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 39,838,937.0 | 28.9473 | 39,589,214.1 | 39,866,958.7 | 106,009.4 | 9.988x | 9.988x | - |
 | 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 39,844,494.3 | 28.9514 | 39,795,568.3 | 39,915,614.6 | 45,166.3 | 9.990x | 9.990x | unchanged (within spread) |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 69,526,109.5 | 50.5183 | 69,436,479.0 | 69,721,555.8 | 99,145.8 | 17.431x | 17.431x | - |
 
 #### `wild-logparse-syslogbase-expanded` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -2975,6 +3445,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 30,280,274.9 | 28.8775 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 30,387,720.3 | 28.9800 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 30,398,606.1 | 28.9904 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 52,896,242.0 | 50.4458 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 760,859.3 | 2.9024 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 760,759.0 | 2.9021 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 761,447.5 | 2.9047 |
@@ -2983,6 +3454,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 7,534,766.7 | 28.7429 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 7,529,978.9 | 28.7246 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 7,566,404.0 | 28.8635 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 13,312,656.5 | 50.7838 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 190,303.6 | 2.9038 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 191,282.5 | 2.9187 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 190,415.6 | 2.9055 |
@@ -2991,6 +3463,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,878,866.7 | 28.6692 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,875,397.6 | 28.6163 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,879,484.1 | 28.6787 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,320,966.0 | 50.6739 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 3,037,410.9 ns, 1,048,576 B; largest Δ: `t-256k`, -588.2 ns (now 760,859.3 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,037,158.5 ns, 1,048,576 B
@@ -3010,6 +3483,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 7,356.6 | 7,326.6 | 7,421.3 | 32.5 | 4.624x | 4.624x | unchanged (within spread) | 75 | 98.1 | 9.1 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 7,391.4 | 7,376.7 | 7,427.0 | 18.2 | 4.646x | 4.646x | unchanged (within spread) | 75 | 98.6 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 7,414.2 | 7,380.8 | 7,424.3 | 16.4 | 4.660x | 4.660x | - | 75 | 98.9 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 23,463.4 | 23,336.7 | 23,617.2 | 89.3 | 14.747x | 14.747x | - | 75 | 312.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `lp-syslog`, 430.2 ns, 56 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `lp-syslog`, 639.7 ns, 56 B
@@ -3029,6 +3503,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,146.6 | 0.0168 | 23,136.2 | 23,163.1 | 9.4 | 1.001x | 1.001x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,160.4 | 0.0168 | 23,123.3 | 23,190.2 | 23.0 | 1.002x | 1.002x | - |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,177.0 | 0.0168 | 23,147.0 | 24,605.2 | 559.1 | 1.002x | 1.002x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,228,611.9 | 1.6193 | 2,227,431.4 | 2,233,948.9 | 2,342.8 | 96.382x | 96.382x | - |
 
 #### `wild-logparse-winpath-grok` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3042,6 +3517,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,639.5 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,644.3 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,687.3 | 0.0169 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,697,367.4 | 1.6187 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,381.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,385.2 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,381.1 | 0.0167 |
@@ -3050,6 +3526,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,391.9 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,385.2 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,381.7 | 0.0167 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,510.5 | 1.6194 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,111.1 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,107.8 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,109.3 | 0.0169 |
@@ -3058,6 +3535,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,111.3 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,110.4 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,109.3 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,435.3 | 1.6241 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-1m`, 17,630.9 ns, 1,048,576 B; largest Δ: `t-256k`, -3.7 ns (now 4,381.5 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,634.0 ns, 1,048,576 B
@@ -3077,6 +3555,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,024.5 | 1,023.1 | 1,044.5 | 8.1 | 1.104x | 1.104x | - | 75 | 13.7 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,107.3 | 1,103.0 | 1,111.8 | 2.9 | 1.193x | 1.193x | - | 75 | 14.8 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,121.7 | 1,118.7 | 1,140.5 | 7.9 | 1.208x | 1.208x | unchanged (within spread) | 75 | 15.0 | 8.8 | 100% |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,333.8 | 5,319.6 | 5,370.6 | 18.2 | 5.746x | 5.746x | - | 75 | 71.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-winpath-reserved`, 78.4 ns, 24 B; largest Δ: `lp-winpath`, -1.7 ns (now 76.4 ns), 22 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-winpath-reserved`, 77.5 ns, 24 B; largest Δ: `lp-atomic-nonmatch`, -0.6 ns (now 10.0 ns), 23 B
@@ -3085,22 +3564,28 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-aws-access-key-id` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 3,942,172.5 | 2.8644 | 3,940,005.5 | 3,943,438.7 | 1,298.4 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 3,943,134.6 | 2.8651 | 3,939,352.1 | 3,947,383.0 | 2,905.3 | 1.000x | 1.000x | unchanged (within spread) |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 3,982,730.0 | 2.8939 | 3,981,415.6 | 3,984,493.1 | 1,159.2 | 1.010x | 1.010x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,986,630.0 | 2.8967 | 3,979,507.8 | 3,987,819.4 | 3,035.0 | 1.011x | 1.011x | - |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,333,060.6 | 6.7815 | 9,326,659.5 | 9,353,420.0 | 9,444.5 | 2.367x | 2.367x | unchanged (within spread) |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,337,984.0 | 6.7851 | 9,300,362.4 | 9,375,615.2 | 28,033.6 | 2.369x | 2.369x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,338,257.4 | 6.7853 | 9,331,550.6 | 9,339,050.2 | 2,796.8 | 2.369x | 2.369x | - |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,347,854.2 | 6.7922 | 9,333,730.2 | 9,356,301.4 | 7,609.1 | 2.371x | 2.371x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 135,353.4 | 0.0983 | 134,881.8 | 135,641.7 | 253.3 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 292,715.6 | 0.2127 | 292,486.5 | 292,907.9 | 138.2 | 2.163x | 2.163x | - |
+| 3 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,169,998.5 | 1.5767 | 2,169,573.3 | 2,170,995.6 | 500.0 | 16.032x | 16.032x | - |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 3,942,172.5 | 2.8644 | 3,940,005.5 | 3,943,438.7 | 1,298.4 | 29.125x | 29.125x | - |
+| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 3,943,134.6 | 2.8651 | 3,939,352.1 | 3,947,383.0 | 2,905.3 | 29.132x | 29.132x | unchanged (within spread) |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 3,982,730.0 | 2.8939 | 3,981,415.6 | 3,984,493.1 | 1,159.2 | 29.425x | 29.425x | unchanged (within spread) |
+| 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,986,630.0 | 2.8967 | 3,979,507.8 | 3,987,819.4 | 3,035.0 | 29.453x | 29.453x | - |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,333,060.6 | 6.7815 | 9,326,659.5 | 9,353,420.0 | 9,444.5 | 68.953x | 68.953x | unchanged (within spread) |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,337,984.0 | 6.7851 | 9,300,362.4 | 9,375,615.2 | 28,033.6 | 68.990x | 68.990x | unchanged (within spread) |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,338,257.4 | 6.7853 | 9,331,550.6 | 9,339,050.2 | 2,796.8 | 68.992x | 68.992x | - |
+| 11 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,347,854.2 | 6.7922 | 9,333,730.2 | 9,356,301.4 | 7,609.1 | 69.063x | 69.063x | - |
 
 #### `wild-secrets-aws-access-key-id` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 104,949.7 | 0.1001 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 223,361.1 | 0.2130 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,653,129.1 | 1.5765 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,002,213.4 | 2.8631 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 3,003,990.3 | 2.8648 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 3,033,452.5 | 2.8929 |
@@ -3109,6 +3594,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 7,125,329.8 | 6.7952 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,119,560.4 | 6.7897 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,125,935.1 | 6.7958 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 24,958.1 | 0.0952 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 55,341.5 | 0.2111 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 413,095.2 | 1.5758 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 751,706.3 | 2.8675 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 751,073.5 | 2.8651 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 760,766.4 | 2.9021 |
@@ -3117,6 +3605,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,771,797.9 | 6.7589 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,773,749.3 | 6.7663 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,780,956.3 | 6.7938 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 5,366.2 | 0.0819 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 14,046.7 | 0.2143 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 103,946.7 | 1.5861 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 187,136.0 | 2.8555 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 187,030.1 | 2.8539 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 189,120.6 | 2.8858 |
@@ -3144,6 +3635,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,936.1 | 1,929.6 | 1,944.0 | 5.6 | 1.971x | 1.971x | - | 75 | 25.8 | 8.9 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 2,027.8 | 2,026.3 | 2,032.8 | 2.2 | 2.064x | 2.064x | unchanged (within spread) | 75 | 27.0 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,029.2 | 2,027.6 | 2,034.8 | 2.6 | 2.066x | 2.066x | - | 75 | 27.1 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,100.3 | 2,098.1 | 2,101.6 | 1.2 | 2.138x | 2.138x | - | 75 | 28.0 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,150.7 | 2,136.3 | 2,156.7 | 8.3 | 2.189x | 2.189x | - | 75 | 28.7 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 7,511.2 | 7,473.9 | 7,562.0 | 29.5 | 7.646x | 7.646x | - | 75 | 100.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 176.6 ns, 93 B; largest Δ: `cg-object-begin`, +0.5 ns (now 7.9 ns), 1 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-github-pat`, 178.7 ns, 93 B; largest Δ: `la-float-bound`, +1.6 ns (now 11.1 ns), 13 B
@@ -3152,44 +3646,56 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-github-pat` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 124,604.5 | 0.0905 | 124,470.4 | 124,625.9 | 57.1 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 124,798.7 | 0.0907 | 124,746.2 | 124,885.7 | 54.9 | 1.002x | 1.002x | - |
-| 3 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 125,586.1 | 0.0913 | 125,453.1 | 125,723.0 | 91.7 | 1.008x | 1.008x | faster ×46.64 |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 128,959.2 | 0.0937 | 128,732.3 | 129,203.2 | 162.1 | 1.035x | 1.035x | slower ×1.03 |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 129,145.4 | 0.0938 | 129,063.3 | 129,397.9 | 137.4 | 1.036x | 1.036x | faster ×41.72 |
-| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 129,396.6 | 0.0940 | 129,173.3 | 129,612.3 | 157.1 | 1.038x | 1.038x | slower ×1.04 |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,387,513.3 | 3.9146 | 5,387,116.4 | 5,409,112.2 | 8,842.2 | 43.237x | 43.237x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,857,018.1 | 4.2558 | 5,851,528.0 | 5,875,698.6 | 8,318.7 | 47.005x | 47.005x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 46,778.6 | 0.0340 | 46,731.6 | 46,869.8 | 46.5 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,233.4 | 0.0438 | 60,099.4 | 60,316.8 | 83.6 | 1.288x | 1.288x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 124,604.5 | 0.0905 | 124,470.4 | 124,625.9 | 57.1 | 2.664x | 2.664x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 124,798.7 | 0.0907 | 124,746.2 | 124,885.7 | 54.9 | 2.668x | 2.668x | - |
+| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 125,586.1 | 0.0913 | 125,453.1 | 125,723.0 | 91.7 | 2.685x | 2.685x | faster ×46.64 |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 128,959.2 | 0.0937 | 128,732.3 | 129,203.2 | 162.1 | 2.757x | 2.757x | slower ×1.03 |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 129,145.4 | 0.0938 | 129,063.3 | 129,397.9 | 137.4 | 2.761x | 2.761x | faster ×41.72 |
+| 8 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 129,396.6 | 0.0940 | 129,173.3 | 129,612.3 | 157.1 | 2.766x | 2.766x | slower ×1.04 |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 414,276.2 | 0.3010 | 414,097.9 | 414,384.9 | 107.8 | 8.856x | 8.856x | - |
+| 10 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,387,513.3 | 3.9146 | 5,387,116.4 | 5,409,112.2 | 8,842.2 | 115.171x | 115.171x | - |
+| 11 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,857,018.1 | 4.2558 | 5,851,528.0 | 5,875,698.6 | 8,318.7 | 125.207x | 125.207x | - |
 
 #### `wild-secrets-github-pat` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 35,548.9 | 0.0339 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 45,797.1 | 0.0437 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 102,578.9 | 0.0978 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 102,689.2 | 0.0979 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 103,302.6 | 0.0985 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 106,327.5 | 0.1014 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 106,529.1 | 0.1016 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 106,314.9 | 0.1014 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 315,199.4 | 0.3006 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 4,105,682.7 | 3.9155 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 4,464,613.7 | 4.2578 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 8,939.3 | 0.0341 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,476.2 | 0.0438 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 18,628.5 | 0.0711 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 18,816.3 | 0.0718 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 18,844.9 | 0.0719 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 19,164.8 | 0.0731 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 19,245.0 | 0.0734 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 19,524.1 | 0.0745 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 79,019.5 | 0.3014 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,027,360.2 | 3.9191 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,112,836.1 | 4.2451 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,288.4 | 0.0349 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,949.0 | 0.0450 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 3,421.0 | 0.0522 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 3,322.0 | 0.0507 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 3,433.4 | 0.0524 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 3,422.6 | 0.0522 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 3,372.2 | 0.0515 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 3,435.6 | 0.0524 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 19,987.7 | 0.3050 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 255,158.0 | 3.8934 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 279,538.0 | 4.2654 |
 
@@ -3205,12 +3711,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 685.3 | 678.4 | 688.1 | 3.8 | 1.000x | 1.000x | faster ×1.15 | 75 | 9.1 | 9.1 | 100% |
 | 2 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 790.7 | 789.2 | 796.0 | 2.4 | 1.154x | 1.154x | - | 75 | 10.5 | 8.9 | 100% |
-| 3 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 848.2 | 847.8 | 849.9 | 0.8 | 1.238x | 1.238x | faster ×1.09 | 75 | 11.3 | 8.8 | 100% |
-| 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 927.7 | 927.4 | 933.1 | 2.2 | 1.354x | 1.354x | - | 75 | 12.4 | 8.8 | 100% |
-| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 935.8 | 934.7 | 938.6 | 1.3 | 1.366x | 1.366x | faster ×1.03 | 75 | 12.5 | 8.0 | 100% |
-| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.5 | 959.5 | 959.8 | 0.1 | 1.400x | 1.400x | - | 75 | 12.8 | 8.0 | 100% |
-| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,054.4 | 1,048.5 | 1,059.0 | 4.1 | 1.539x | 1.539x | - | 75 | 14.1 | 8.0 | 100% |
-| 8 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,094.9 | 1,091.1 | 1,096.0 | 1.8 | 1.598x | 1.598x | slower ×1.04 | 75 | 14.6 | 8.0 | 100% |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 824.4 | 823.4 | 827.0 | 1.4 | 1.203x | 1.203x | - | 75 | 11.0 | 27.2 | 100% |
+| 4 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 848.2 | 847.8 | 849.9 | 0.8 | 1.238x | 1.238x | faster ×1.09 | 75 | 11.3 | 8.8 | 100% |
+| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 927.7 | 927.4 | 933.1 | 2.2 | 1.354x | 1.354x | - | 75 | 12.4 | 8.8 | 100% |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 935.8 | 934.7 | 938.6 | 1.3 | 1.366x | 1.366x | faster ×1.03 | 75 | 12.5 | 8.0 | 100% |
+| 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.5 | 959.5 | 959.8 | 0.1 | 1.400x | 1.400x | - | 75 | 12.8 | 8.0 | 100% |
+| 8 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,054.4 | 1,048.5 | 1,059.0 | 4.1 | 1.539x | 1.539x | - | 75 | 14.1 | 8.0 | 100% |
+| 9 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,094.9 | 1,091.1 | 1,096.0 | 1.8 | 1.598x | 1.598x | slower ×1.04 | 75 | 14.6 | 8.0 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,709.6 | 1,704.5 | 1,796.7 | 39.8 | 2.495x | 2.495x | - | 75 | 22.8 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,962.6 | 2,932.9 | 3,132.0 | 72.5 | 4.323x | 4.323x | - | 75 | 39.5 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-github-pat`, 102.3 ns, 93 B; largest Δ: `waf-dbnames`, -91.2 ns (now 11.8 ns), 39 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `sec-github-pat`, 114.2 ns, 93 B; largest Δ: `waf-dbnames`, -111.5 ns (now 14.5 ns), 39 B
@@ -3219,44 +3728,56 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-slack-webhook-url` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 338,797.9 | 0.2462 | 338,688.6 | 339,039.4 | 135.7 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 341,850.0 | 0.2484 | 341,034.3 | 345,818.3 | 1,722.9 | 1.009x | 1.009x | - |
-| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 347,656.3 | 0.2526 | 347,436.2 | 347,833.6 | 134.6 | 1.026x | 1.026x | slower ×1.02 |
-| 4 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 347,769.6 | 0.2527 | 347,726.2 | 348,441.7 | 271.4 | 1.026x | 1.026x | faster ×14.00 |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 348,224.3 | 0.2530 | 347,805.2 | 349,179.9 | 484.2 | 1.028x | 1.028x | faster ×13.99 |
-| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 350,425.0 | 0.2546 | 350,109.0 | 351,197.1 | 393.2 | 1.034x | 1.034x | slower ×1.03 |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,867,333.9 | 3.5366 | 4,859,827.1 | 4,872,346.6 | 4,280.6 | 14.366x | 14.366x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,870,501.0 | 3.5389 | 4,864,672.5 | 4,885,345.4 | 8,617.5 | 14.376x | 14.376x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 111,588.1 | 0.0811 | 111,541.9 | 111,722.4 | 68.7 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 338,797.9 | 0.2462 | 338,688.6 | 339,039.4 | 135.7 | 3.036x | 3.036x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 341,850.0 | 0.2484 | 341,034.3 | 345,818.3 | 1,722.9 | 3.063x | 3.063x | - |
+| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 347,656.3 | 0.2526 | 347,436.2 | 347,833.6 | 134.6 | 3.116x | 3.116x | slower ×1.02 |
+| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 347,769.6 | 0.2527 | 347,726.2 | 348,441.7 | 271.4 | 3.117x | 3.117x | faster ×14.00 |
+| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 348,224.3 | 0.2530 | 347,805.2 | 349,179.9 | 484.2 | 3.121x | 3.121x | faster ×13.99 |
+| 7 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 350,425.0 | 0.2546 | 350,109.0 | 351,197.1 | 393.2 | 3.140x | 3.140x | slower ×1.03 |
+| 8 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 645,403.6 | 0.4690 | 645,007.8 | 648,225.5 | 1,277.8 | 5.784x | 5.784x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,249,728.7 | 0.9081 | 1,249,324.3 | 1,251,105.1 | 654.1 | 11.199x | 11.199x | - |
+| 10 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,867,333.9 | 3.5366 | 4,859,827.1 | 4,872,346.6 | 4,280.6 | 43.619x | 43.619x | - |
+| 11 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,870,501.0 | 3.5389 | 4,864,672.5 | 4,885,345.4 | 8,617.5 | 43.647x | 43.647x | - |
 
 #### `wild-secrets-slack-webhook-url` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 86,290.6 | 0.0823 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 260,101.6 | 0.2481 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 262,045.9 | 0.2499 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 266,991.3 | 0.2546 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 267,021.0 | 0.2547 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 267,125.6 | 0.2548 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 269,041.2 | 0.2566 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 494,203.7 | 0.4713 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 952,771.5 | 0.9086 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,708,742.8 | 3.5369 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,711,069.1 | 3.5392 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 20,510.9 | 0.0782 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 64,072.5 | 0.2444 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 64,438.8 | 0.2458 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 65,574.6 | 0.2501 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 65,793.2 | 0.2510 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 65,799.5 | 0.2510 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 66,079.7 | 0.2521 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 121,819.1 | 0.4647 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 237,785.5 | 0.9071 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 927,400.3 | 3.5378 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 927,171.3 | 3.5369 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,848.7 | 0.0740 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 14,644.9 | 0.2235 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 14,755.9 | 0.2252 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 15,016.8 | 0.2291 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 14,988.6 | 0.2287 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 15,017.5 | 0.2291 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 15,185.9 | 0.2317 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 29,273.5 | 0.4467 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 59,081.3 | 0.9015 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 232,766.4 | 3.5517 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 232,245.5 | 3.5438 |
 
@@ -3267,17 +3788,20 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-secrets-slack-webhook-url` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_vm-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 841.0 | 836.3 | 852.3 | 5.6 | 1.000x | 1.000x | faster ×1.66 | 75 | 11.2 | 9.1 | 100% |
-| 2 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 945.2 | 944.3 | 950.1 | 2.1 | 1.124x | 1.124x | faster ×1.57 | 75 | 12.6 | 8.8 | 100% |
-| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.8 | 959.2 | 960.8 | 0.6 | 1.141x | 1.141x | - | 75 | 12.8 | 8.0 | 100% |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 960.7 | 958.2 | 963.0 | 1.8 | 1.142x | 1.142x | unchanged (within spread) | 75 | 12.8 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,176.2 | 1,174.5 | 1,181.0 | 2.4 | 1.398x | 1.398x | - | 75 | 15.7 | 8.0 | 100% |
-| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,178.2 | 1,176.2 | 1,187.1 | 3.8 | 1.401x | 1.401x | unchanged (within spread) | 75 | 15.7 | 8.0 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,397.9 | 1,396.0 | 1,939.1 | 216.7 | 1.662x | 1.662x | - | 75 | 18.6 | 8.9 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,485.5 | 1,482.6 | 1,488.3 | 1.9 | 1.766x | 1.766x | - | 75 | 19.8 | 8.8 | 100% |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 693.8 | 693.5 | 695.0 | 0.5 | 1.000x | 1.000x | - | 75 | 9.3 | 27.2 | 100% |
+| 2 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 841.0 | 836.3 | 852.3 | 5.6 | 1.212x | 1.212x | faster ×1.66 | 75 | 11.2 | 9.1 | 100% |
+| 3 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 945.2 | 944.3 | 950.1 | 2.1 | 1.362x | 1.362x | faster ×1.57 | 75 | 12.6 | 8.8 | 100% |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 959.8 | 959.2 | 960.8 | 0.6 | 1.383x | 1.383x | - | 75 | 12.8 | 8.0 | 100% |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 960.7 | 958.2 | 963.0 | 1.8 | 1.385x | 1.385x | unchanged (within spread) | 75 | 12.8 | 8.0 | 100% |
+| 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,176.2 | 1,174.5 | 1,181.0 | 2.4 | 1.695x | 1.695x | - | 75 | 15.7 | 8.0 | 100% |
+| 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,178.2 | 1,176.2 | 1,187.1 | 3.8 | 1.698x | 1.698x | unchanged (within spread) | 75 | 15.7 | 8.0 | 100% |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,397.9 | 1,396.0 | 1,939.1 | 216.7 | 2.015x | 2.015x | - | 75 | 18.6 | 8.9 | 100% |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,485.5 | 1,482.6 | 1,488.3 | 1.9 | 2.141x | 2.141x | - | 75 | 19.8 | 8.8 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,657.6 | 2,655.8 | 2,662.0 | 2.1 | 3.830x | 3.830x | - | 75 | 35.4 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,370.0 | 3,347.5 | 3,415.9 | 23.8 | 4.857x | 4.857x | - | 75 | 44.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `sec-slack-webhook`, 75.4 ns, 81 B; largest Δ: `waf-benign`, -147.1 ns (now 15.6 ns), 39 B
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now: `sec-slack-webhook`, 77.3 ns, 81 B; largest Δ: `waf-benign`, -147.1 ns (now 16.4 ns), 39 B
@@ -3297,6 +3821,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,156.9 | 0.0168 | 23,139.7 | 24,598.0 | 574.4 | 1.002x | 1.002x | unchanged (within spread) |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,162.8 | 0.0168 | 23,138.9 | 23,312.6 | 64.8 | 1.003x | 1.003x | - |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,184.0 | 0.0168 | 23,155.6 | 23,222.7 | 22.1 | 1.004x | 1.004x | - |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 475,300.9 | 0.3454 | 474,921.1 | 478,357.7 | 1,269.8 | 20.574x | 20.574x | - |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 488,283.4 | 0.3548 | 487,944.0 | 488,657.0 | 245.7 | 21.136x | 21.136x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,839,830.3 | 3.5167 | 4,833,993.0 | 4,841,579.2 | 2,683.4 | 209.502x | 209.502x | - |
 
 #### `wild-secrets-username-password-pair` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3310,6 +3837,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,631.2 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,656.2 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,665.5 | 0.0168 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 377,999.5 | 0.3605 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 371,587.1 | 0.3544 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,673,731.4 | 3.5035 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,384.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,381.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,384.9 | 0.0167 |
@@ -3318,6 +3848,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,411.5 | 0.0168 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,386.0 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,403.7 | 0.0168 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 80,972.7 | 0.3089 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 93,703.3 | 0.3574 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 927,848.3 | 3.5395 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,109.7 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,114.5 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,106.5 | 0.0169 |
@@ -3326,6 +3859,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,111.9 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,110.9 | 0.0170 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,113.2 | 0.0170 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,404.5 | 0.2503 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 22,862.0 | 0.3488 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 236,377.1 | 3.6068 |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,633.7 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,630.7 ns, 1,048,576 B
@@ -3345,6 +3881,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,099.4 | 1,095.0 | 1,100.0 | 1.9 | 1.525x | 1.525x | - | 75 | 14.7 | 8.9 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,160.8 | 1,159.1 | 1,203.7 | 17.2 | 1.610x | 1.610x | - | 75 | 15.5 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,163.9 | 1,162.9 | 1,185.5 | 8.8 | 1.614x | 1.614x | unchanged (within spread) | 75 | 15.5 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,761.0 | 1,760.6 | 1,764.7 | 1.5 | 2.442x | 2.442x | - | 75 | 23.5 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,438.8 | 2,435.4 | 2,444.5 | 3.2 | 3.382x | 3.382x | - | 75 | 32.5 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 9,009.9 | 8,990.2 | 9,116.4 | 58.0 | 12.495x | 12.495x | - | 75 | 120.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-userpass`, 147.2 ns, 33 B; largest Δ: `waf-benign`, -0.6 ns (now 28.5 ns), 39 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `sec-userpass`, 259.5 ns, 33 B
@@ -3353,44 +3892,56 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_vm-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 356,696.7 | 0.2592 | 356,467.5 | 356,827.0 | 132.1 | 1.000x | 1.000x | faster ×11.08 |
-| 2 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 356,722.4 | 0.2592 | 356,423.8 | 359,455.1 | 1,198.7 | 1.000x | 1.000x | faster ×11.06 |
-| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 358,559.8 | 0.2605 | 357,697.4 | 358,978.5 | 435.4 | 1.005x | 1.005x | faster ×1.15 |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 358,852.9 | 0.2607 | 357,586.5 | 361,173.2 | 1,191.2 | 1.006x | 1.006x | faster ×1.15 |
-| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 413,068.6 | 0.3001 | 412,035.2 | 413,869.4 | 601.0 | 1.158x | 1.158x | - |
-| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 413,226.8 | 0.3003 | 411,405.3 | 413,646.2 | 779.4 | 1.158x | 1.158x | - |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,945,536.2 | 2.8669 | 3,940,554.6 | 3,952,356.3 | 3,906.9 | 11.061x | 11.061x | - |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,953,122.6 | 2.8724 | 3,951,911.3 | 3,957,778.9 | 2,108.2 | 11.083x | 11.083x | - |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 82,113.0 | 0.0597 | 81,814.0 | 82,401.7 | 190.6 | 1.000x | 1.000x | - |
+| 2 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 153,217.2 | 0.1113 | 153,133.3 | 153,863.4 | 272.2 | 1.866x | 1.866x | - |
+| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 356,696.7 | 0.2592 | 356,467.5 | 356,827.0 | 132.1 | 4.344x | 4.344x | faster ×11.08 |
+| 4 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 356,722.4 | 0.2592 | 356,423.8 | 359,455.1 | 1,198.7 | 4.344x | 4.344x | faster ×11.06 |
+| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 358,559.8 | 0.2605 | 357,697.4 | 358,978.5 | 435.4 | 4.367x | 4.367x | faster ×1.15 |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 358,852.9 | 0.2607 | 357,586.5 | 361,173.2 | 1,191.2 | 4.370x | 4.370x | faster ×1.15 |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 413,068.6 | 0.3001 | 412,035.2 | 413,869.4 | 601.0 | 5.030x | 5.030x | - |
+| 8 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 413,226.8 | 0.3003 | 411,405.3 | 413,646.2 | 779.4 | 5.032x | 5.032x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,340,923.6 | 0.9743 | 1,330,893.2 | 1,342,368.7 | 4,184.8 | 16.330x | 16.330x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 3,945,536.2 | 2.8669 | 3,940,554.6 | 3,952,356.3 | 3,906.9 | 48.050x | 48.050x | - |
+| 11 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 3,953,122.6 | 2.8724 | 3,951,911.3 | 3,957,778.9 | 2,108.2 | 48.142x | 48.142x | - |
 
 #### `wild-semdiv-altorder-foo-foobar-rustregex` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 63,418.9 | 0.0605 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 116,734.9 | 0.1113 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 285,554.7 | 0.2723 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 285,649.7 | 0.2724 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 287,254.1 | 0.2739 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 286,861.9 | 0.2736 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 328,869.1 | 0.3136 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 329,128.3 | 0.3139 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,020,752.8 | 0.9735 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,004,794.6 | 2.8656 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,010,425.8 | 2.8710 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 15,109.3 | 0.0576 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 29,116.4 | 0.1111 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 59,989.0 | 0.2288 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 59,638.1 | 0.2275 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 59,847.8 | 0.2283 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 60,050.1 | 0.2291 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 70,654.6 | 0.2695 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 70,417.1 | 0.2686 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 255,999.1 | 0.9766 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 751,629.8 | 2.8672 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 752,665.8 | 2.8712 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 3,595.0 | 0.0549 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 7,381.2 | 0.1126 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 11,313.9 | 0.1726 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 11,388.8 | 0.1738 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 11,479.1 | 0.1752 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 11,422.5 | 0.1743 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 13,472.2 | 0.2056 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 13,492.6 | 0.2059 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 64,171.7 | 0.9792 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 188,673.2 | 2.8789 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 188,819.7 | 2.8812 |
 
@@ -3410,8 +3961,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 707.2 | 706.7 | 707.4 | 0.2 | 1.095x | 1.095x | - | 75 | 9.4 | 8.0 | 100% |
 | 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 763.5 | 758.1 | 850.7 | 35.7 | 1.182x | 1.182x | faster ×3.14 | 75 | 10.2 | 9.1 | 100% |
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 867.4 | 864.2 | 868.6 | 1.6 | 1.343x | 1.343x | faster ×2.93 | 75 | 11.6 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,394.8 | 2,379.5 | 2,496.5 | 48.4 | 3.707x | 3.707x | - | 75 | 31.9 | 8.9 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,538.9 | 2,468.5 | 2,612.2 | 52.3 | 3.930x | 3.930x | - | 75 | 33.9 | 8.8 | 100% |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,344.5 | 1,342.5 | 1,346.0 | 1.3 | 2.081x | 2.081x | - | 75 | 17.9 | 16.3 | 100% |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 2,394.8 | 2,379.5 | 2,496.5 | 48.4 | 3.707x | 3.707x | - | 75 | 31.9 | 8.9 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,410.1 | 2,402.6 | 2,867.1 | 183.6 | 3.731x | 3.731x | - | 75 | 32.1 | 27.2 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 2,538.9 | 2,468.5 | 2,612.2 | 52.3 | 3.930x | 3.930x | - | 75 | 33.9 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,988.1 | 2,979.9 | 3,008.2 | 10.2 | 4.626x | 4.626x | - | 75 | 39.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-slack-webhook`, 13.6 ns, 81 B; largest Δ: `waf-dbnames`, -7.0 ns (now 12.7 ns), 39 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 13.6 ns, 81 B; largest Δ: `waf-dbnames`, -7.2 ns (now 12.5 ns), 39 B
@@ -3431,6 +3985,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 34.0 | 0.0000 | 33.6 | 34.2 | 0.2 | 1.365x | 1.365x | - |
 | 7 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 34.8 | 0.0000 | 33.1 | 35.1 | 0.7 | 1.396x | 1.396x | - |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 35.4 | 0.0000 | 34.9 | 36.2 | 0.5 | 1.420x | 1.420x | - |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 80.8 | 0.0001 | 78.7 | 102.6 | 9.2 | 3.242x | 3.242x | - |
+| 10 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 151.3 | 0.0001 | 151.2 | 154.4 | 1.5 | 6.071x | 6.071x | - |
+| 11 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 218.3 | 0.0002 | 218.2 | 218.6 | 0.1 | 8.757x | 8.757x | - |
 
 #### `wild-semdiv-dollar-trailing-newline-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3444,6 +4001,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 9.8 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 26.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 50.3 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 72.2 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 8.9 | 0.0000 |
@@ -3452,6 +4012,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 17.3 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 18.0 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 15.8 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 26.5 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 50.4 | 0.0002 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 73.4 | 0.0003 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 8.9 | 0.0001 |
@@ -3460,6 +4023,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 9.8 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 28.0 | 0.0004 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 50.6 | 0.0008 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 72.7 | 0.0011 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-256k`, 8.3 ns, 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 8.3 ns, 262,144 B
@@ -3479,6 +4045,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 656.9 | 653.5 | 662.3 | 3.3 | 1.044x | 1.044x | slower ×1.02 | 75 | 8.8 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 681.7 | 681.3 | 683.4 | 0.7 | 1.084x | 1.084x | - | 75 | 9.1 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 706.8 | 706.8 | 708.8 | 0.8 | 1.124x | 1.124x | slower ×1.04 | 75 | 9.4 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,596.2 | 1,593.6 | 1,598.5 | 1.9 | 2.538x | 2.538x | - | 75 | 21.3 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,745.4 | 2,739.2 | 2,751.9 | 4.3 | 4.365x | 4.365x | - | 75 | 36.6 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,476.7 | 3,464.2 | 3,481.5 | 6.0 | 5.528x | 5.528x | - | 75 | 46.4 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `rec-parens-unbalanced`, 12.1 ns, 5 B; largest Δ: `waf-benign`, -9.1 ns (now 8.1 ns), 39 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `la-negation-hit`, 12.1 ns, 19 B; largest Δ: `waf-benign`, -8.3 ns (now 8.1 ns), 39 B
@@ -3487,46 +4056,58 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 3,796,290.7 | 2.7584 | 3,781,431.3 | 3,807,691.6 | 9,552.1 | 1.000x | 1.000x | faster ×1.01 |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,851,419.8 | 2.7985 | 3,850,809.5 | 3,858,606.9 | 3,422.8 | 1.015x | 1.015x | - |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,002,348.8 | 5.0880 | 6,998,445.0 | 7,040,634.7 | 15,587.2 | 1.845x | 1.845x | - |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 7,015,508.1 | 5.0975 | 6,989,960.6 | 7,038,067.9 | 15,986.5 | 1.848x | 1.848x | unchanged (within spread) |
-| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 25,326,045.8 | 18.4021 | 25,255,334.5 | 25,362,672.5 | 39,348.0 | 6.671x | 6.671x | - |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 25,496,744.1 | 18.5262 | 25,350,798.8 | 25,874,680.5 | 177,978.0 | 6.716x | 6.716x | unchanged (within spread) |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 25,880,284.8 | 18.8048 | 25,797,354.3 | 26,093,103.8 | 101,173.1 | 6.817x | 6.817x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 25,889,851.5 | 18.8118 | 25,785,269.0 | 25,953,995.5 | 55,847.7 | 6.820x | 6.820x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 243.2 | 0.0002 | 242.6 | 243.5 | 0.3 | 1.000x | 1.000x | - |
+| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 3,796,290.7 | 2.7584 | 3,781,431.3 | 3,807,691.6 | 9,552.1 | 15609.061x | 15609.061x | faster ×1.01 |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 3,851,419.8 | 2.7985 | 3,850,809.5 | 3,858,606.9 | 3,422.8 | 15835.733x | 15835.733x | - |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,002,348.8 | 5.0880 | 6,998,445.0 | 7,040,634.7 | 15,587.2 | 28791.285x | 28791.285x | - |
+| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 7,015,508.1 | 5.0975 | 6,989,960.6 | 7,038,067.9 | 15,986.5 | 28845.391x | 28845.391x | unchanged (within spread) |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 13,155,051.0 | 9.5586 | 13,136,711.4 | 14,573,119.8 | 567,946.0 | 54089.111x | 54089.111x | - |
+| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 25,326,045.8 | 18.4021 | 25,255,334.5 | 25,362,672.5 | 39,348.0 | 104132.116x | 104132.116x | - |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 25,496,744.1 | 18.5262 | 25,350,798.8 | 25,874,680.5 | 177,978.0 | 104833.969x | 104833.969x | unchanged (within spread) |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 25,880,284.8 | 18.8048 | 25,797,354.3 | 26,093,103.8 | 101,173.1 | 106410.959x | 106410.959x | unchanged (within spread) |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 25,889,851.5 | 18.8118 | 25,785,269.0 | 25,953,995.5 | 55,847.7 | 106450.294x | 106450.294x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 100,170,778.7 | 72.7850 | 99,345,551.0 | 100,340,716.3 | 398,471.3 | 411868.288x | 411868.288x | - |
 
 #### `wild-semdiv-empty-alt-repeat-pcre2` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 84.6 | 0.0001 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 2,911,919.8 | 2.7770 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 2,956,224.8 | 2.8193 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 5,384,971.6 | 5.1355 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 5,376,380.2 | 5.1273 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 10,072,926.4 | 9.6063 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 19,299,835.7 | 18.4058 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 19,432,584.0 | 18.5324 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 19,724,925.8 | 18.8112 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 19,710,422.3 | 18.7973 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 76,491,564.0 | 72.9480 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 78.9 | 0.0003 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 707,338.6 | 2.6983 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 720,859.9 | 2.7499 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 1,307,016.8 | 4.9859 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 1,315,398.3 | 5.0178 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 2,479,690.8 | 9.4593 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,818,358.5 | 18.3806 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,819,877.1 | 18.3864 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,914,191.3 | 18.7462 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,907,047.3 | 18.7189 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 18,923,778.3 | 72.1885 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 79.4 | 0.0012 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 172,762.2 | 2.6361 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 176,680.7 | 2.6959 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 314,532.3 | 4.7994 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 317,479.8 | 4.8444 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 602,482.3 | 9.1932 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 1,206,095.3 | 18.4036 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,207,821.8 | 18.4299 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,230,044.6 | 18.7690 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 1,230,409.8 | 18.7746 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 4,671,819.3 | 71.2863 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 2,911,919.8 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 5,376,380.2 ns, 1,048,576 B
@@ -3542,10 +4123,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,208.8 | 1,204.2 | 1,215.1 | 3.8 | 1.018x | 1.018x | slower ×1.02 | 75 | 16.1 | 8.0 | 100% |
 | 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,880.9 | 2,874.6 | 2,889.3 | 5.1 | 2.427x | 2.427x | - | 75 | 38.4 | 8.0 | 100% |
 | 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 3,097.3 | 3,078.2 | 3,196.0 | 43.3 | 2.609x | 2.609x | slower ×1.08 | 75 | 41.3 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 102,285.2 | 102,172.4 | 103,234.4 | 428.4 | 86.170x | 86.170x | unchanged (within spread) | 75 | 1,363.8 | 8.8 | 100% |
-| 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 102,391.6 | 102,094.5 | 115,455.1 | 5,254.2 | 86.260x | 86.260x | - | 75 | 1,365.2 | 8.8 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 104,020.1 | 103,877.8 | 104,151.8 | 89.4 | 87.632x | 87.632x | - | 75 | 1,386.9 | 8.9 | 100% |
-| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 104,067.6 | 104,047.8 | 104,410.6 | 136.2 | 87.672x | 87.672x | unchanged (within spread) | 75 | 1,387.6 | 9.1 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,884.3 | 3,879.7 | 3,893.9 | 4.9 | 3.272x | 3.272x | - | 75 | 51.8 | 27.2 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 13,205.5 | 13,150.9 | 13,262.1 | 42.0 | 11.125x | 11.125x | - | 75 | 176.1 | 16.3 | 100% |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 17,243.3 | 17,104.3 | 18,397.4 | 496.6 | 14.527x | 14.527x | - | 75 | 229.9 | 58.6 | 100% |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 102,285.2 | 102,172.4 | 103,234.4 | 428.4 | 86.170x | 86.170x | unchanged (within spread) | 75 | 1,363.8 | 8.8 | 100% |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 102,391.6 | 102,094.5 | 115,455.1 | 5,254.2 | 86.260x | 86.260x | - | 75 | 1,365.2 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 104,020.1 | 103,877.8 | 104,151.8 | 89.4 | 87.632x | 87.632x | - | 75 | 1,386.9 | 8.9 | 100% |
+| 11 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 104,067.6 | 104,047.8 | 104,410.6 | 136.2 | 87.672x | 87.672x | unchanged (within spread) | 75 | 1,387.6 | 9.1 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `sd-empty-alt-hit`, 87.0 ns, 61 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `sd-empty-alt-hit`, 952.2 ns, 61 B
@@ -3561,10 +4145,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 43.9 | 0.0000 | 41.3 | 46.4 | 1.7 | 1.003x | 1.003x | - |
 | 3 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 79.2 | 0.0001 | 77.6 | 79.6 | 0.7 | 1.810x | 1.810x | - |
 | 4 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 85.3 | 0.0001 | 84.4 | 132.7 | 19.1 | 1.950x | 1.950x | - |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,118.8 | 0.0168 | 23,087.0 | 23,173.1 | 31.6 | 528.555x | 528.555x | slower ×271.10 |
-| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,119.5 | 0.0168 | 23,103.9 | 23,175.7 | 26.0 | 528.571x | 528.571x | slower ×528.57 |
-| 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,158.8 | 0.0168 | 23,129.5 | 23,177.2 | 17.6 | 529.470x | 529.470x | slower ×527.90 |
-| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,200.5 | 0.0169 | 23,159.0 | 23,423.2 | 96.5 | 530.423x | 530.423x | slower ×293.02 |
+| 5 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 108.7 | 0.0001 | 108.0 | 144.1 | 13.9 | 2.484x | 2.484x | - |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 195.5 | 0.0001 | 194.4 | 196.6 | 0.8 | 4.469x | 4.469x | - |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,118.8 | 0.0168 | 23,087.0 | 23,173.1 | 31.6 | 528.555x | 528.555x | slower ×271.10 |
+| 8 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,119.5 | 0.0168 | 23,103.9 | 23,175.7 | 26.0 | 528.571x | 528.571x | slower ×528.57 |
+| 9 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,158.8 | 0.0168 | 23,129.5 | 23,177.2 | 17.6 | 529.470x | 529.470x | slower ×527.90 |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,200.5 | 0.0169 | 23,159.0 | 23,423.2 | 96.5 | 530.423x | 530.423x | slower ×293.02 |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,229,039.3 | 1.6196 | 2,226,680.9 | 2,234,241.7 | 2,533.5 | 50961.512x | 50961.512x | - |
 
 #### `wild-validator-email-owasp` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3574,26 +4161,35 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 15.7 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 29.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 31.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 37.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 71.7 | 0.0001 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,634.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 17,632.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,646.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,639.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,696,453.4 | 1.6179 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 13.4 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 12.9 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 24.1 | 0.0001 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 25.8 | 0.0001 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 33.5 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 60.9 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,377.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,380.0 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,385.6 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,436.2 | 0.0169 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 424,729.4 | 1.6202 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 14.7 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 15.2 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 26.0 | 0.0004 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 27.8 | 0.0004 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 37.6 | 0.0006 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 61.9 | 0.0009 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,107.6 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,108.2 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,106.4 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,107.3 | 0.0169 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 106,692.3 | 1.6280 |
 
 - Δ detail: `pcrec_b1885a83_vm-in-caps-simdna` vs previous `pcrec_8d716693_vm-in-caps-simdna`: worst now (also the largest Δ): `t-1m`, 17,634.8 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 17,632.8 ns, 1,048,576 B
@@ -3613,6 +4209,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 850.2 | 849.8 | 851.8 | 0.7 | 1.284x | 1.284x | faster ×1.21 | 75 | 11.3 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 978.6 | 978.1 | 981.5 | 1.3 | 1.478x | 1.478x | - | 75 | 13.0 | 8.9 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,029.1 | 1,028.2 | 1,034.3 | 2.3 | 1.554x | 1.554x | - | 75 | 13.7 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,338.7 | 2,331.9 | 2,353.0 | 8.1 | 3.532x | 3.532x | - | 75 | 31.2 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,566.8 | 2,565.6 | 2,569.2 | 1.3 | 3.876x | 3.876x | - | 75 | 34.2 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,252.3 | 5,222.7 | 5,509.9 | 113.6 | 7.932x | 7.932x | - | 75 | 70.0 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `v-email`, 55.5 ns, 24 B; largest Δ: `lp-atomic-nonmatch`, -43.7 ns (now 7.7 ns), 23 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `v-email`, 55.3 ns, 24 B; largest Δ: `lp-atomic-nonmatch`, -43.7 ns (now 7.7 ns), 23 B
@@ -3621,46 +4220,58 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-validator-ipv4-owasp` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.4 | 0.2 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 25.0 | 25.1 | 0.0 | 1.002x | 1.002x | unchanged (within spread) |
-| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 29.6 | 0.5 | 1.141x | 1.141x | unchanged (within spread) |
-| 4 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.9 | 0.0000 | 28.7 | 35.8 | 2.8 | 1.158x | 1.158x | - |
-| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 31.1 | 0.0000 | 31.1 | 31.1 | 0.0 | 1.246x | 1.246x | - |
-| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 31.1 | 0.0000 | 31.1 | 31.3 | 0.1 | 1.248x | 1.248x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.2 | 0.0000 | 34.2 | 34.3 | 0.0 | 1.372x | 1.372x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 34.6 | 0.0000 | 34.6 | 34.7 | 0.0 | 1.389x | 1.389x | slower ×1.01 |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.2 | 0.0000 | 18.1 | 18.4 | 0.1 | 1.000x | 1.000x | - |
+| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 24.9 | 0.0000 | 24.9 | 25.4 | 0.2 | 1.372x | 1.372x | - |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 25.0 | 0.0000 | 25.0 | 25.1 | 0.0 | 1.374x | 1.374x | unchanged (within spread) |
+| 4 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 28.5 | 0.0000 | 28.4 | 29.6 | 0.5 | 1.565x | 1.565x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 28.9 | 0.0000 | 28.7 | 35.8 | 2.8 | 1.588x | 1.588x | - |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.4 | 0.0000 | 30.3 | 32.1 | 0.7 | 1.672x | 1.672x | - |
+| 7 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 31.1 | 0.0000 | 31.1 | 31.1 | 0.0 | 1.710x | 1.710x | - |
+| 8 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 31.1 | 0.0000 | 31.1 | 31.3 | 0.1 | 1.713x | 1.713x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 34.2 | 0.0000 | 34.2 | 34.3 | 0.0 | 1.883x | 1.883x | - |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 34.6 | 0.0000 | 34.6 | 34.7 | 0.0 | 1.905x | 1.905x | slower ×1.01 |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 368.9 | 0.0003 | 366.5 | 371.2 | 1.7 | 20.283x | 20.283x | - |
 
 #### `wild-validator-ipv4-owasp` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.2 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.4 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 9.6 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 10.3 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 10.4 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 300.1 | 0.0003 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9.6 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 10.4 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 10.4 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.5 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 34.7 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 8.3 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 9.5 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 9.7 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 10.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 10.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 11.4 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 11.6 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 34.4 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 8.4 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_vm-caps-simdna` vs previous `pcrec_8d716693_vm-caps-simdna`: worst now: `t-256k`, 9.5 ns, 262,144 B; largest Δ: `t-64k`, -0.3 ns (now 9.5 ns), 65,536 B
@@ -3678,8 +4289,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 870.0 | 869.3 | 894.1 | 9.6 | 1.389x | 1.389x | - | 75 | 11.6 | 8.0 | 100% |
 | 5 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 888.6 | 887.1 | 891.7 | 1.6 | 1.418x | 1.418x | - | 75 | 11.8 | 8.9 | 100% |
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 909.0 | 903.4 | 911.2 | 2.7 | 1.451x | 1.451x | slower ×1.02 | 75 | 12.1 | 9.1 | 100% |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,022.4 | 1,021.8 | 1,025.1 | 1.2 | 1.632x | 1.632x | - | 75 | 13.6 | 8.8 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,039.4 | 1,039.2 | 1,049.5 | 4.0 | 1.659x | 1.659x | slower ×1.02 | 75 | 13.9 | 8.8 | 100% |
+| 7 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 949.8 | 949.6 | 954.6 | 2.0 | 1.516x | 1.516x | - | 75 | 12.7 | 27.2 | 100% |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,022.4 | 1,021.8 | 1,025.1 | 1.2 | 1.632x | 1.632x | - | 75 | 13.6 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,039.4 | 1,039.2 | 1,049.5 | 4.0 | 1.659x | 1.659x | slower ×1.02 | 75 | 13.9 | 8.8 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,258.5 | 1,252.1 | 1,489.3 | 93.4 | 2.009x | 2.009x | - | 75 | 16.8 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,588.6 | 3,582.1 | 3,591.4 | 3.9 | 5.728x | 5.728x | - | 75 | 47.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `v-ipv4`, 22.2 ns, 11 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `v-ipv4`, 68.8 ns, 11 B
@@ -3693,12 +4307,15 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12.5 | 0.0000 | 12.4 | 12.5 | 0.0 | 1.000x | 1.000x | - |
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 13.3 | 0.0000 | 13.3 | 13.4 | 0.0 | 1.071x | 1.071x | slower ×1.07 |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.8 | 0.0000 | 25.8 | 25.8 | 0.0 | 2.069x | 2.069x | - |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 26.7 | 0.0000 | 26.7 | 27.2 | 0.2 | 2.145x | 2.145x | slower ×1.04 |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 31.6 | 0.0000 | 31.6 | 31.7 | 0.1 | 2.535x | 2.535x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 31.7 | 0.0000 | 31.6 | 31.7 | 0.0 | 2.543x | 2.543x | - |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 37.6 | 0.0000 | 37.6 | 37.7 | 0.0 | 3.019x | 3.019x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 39.1 | 0.0000 | 39.0 | 40.0 | 0.4 | 3.135x | 3.135x | slower ×1.04 |
+| 3 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 18.2 | 0.0000 | 17.9 | 18.4 | 0.2 | 1.462x | 1.462x | - |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 25.8 | 0.0000 | 25.8 | 25.8 | 0.0 | 2.069x | 2.069x | - |
+| 5 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 26.7 | 0.0000 | 26.7 | 27.2 | 0.2 | 2.145x | 2.145x | slower ×1.04 |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 30.6 | 0.0000 | 30.3 | 31.5 | 0.4 | 2.456x | 2.456x | - |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 31.6 | 0.0000 | 31.6 | 31.7 | 0.1 | 2.535x | 2.535x | unchanged (within spread) |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 31.7 | 0.0000 | 31.6 | 31.7 | 0.0 | 2.543x | 2.543x | - |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 37.6 | 0.0000 | 37.6 | 37.7 | 0.0 | 3.019x | 3.019x | - |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 39.1 | 0.0000 | 39.0 | 40.0 | 0.4 | 3.135x | 3.135x | slower ×1.04 |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 94.4 | 0.0001 | 93.9 | 95.1 | 0.4 | 7.577x | 7.577x | - |
 
 #### `wild-validator-us-zip-owasp` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3706,28 +4323,37 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 |---|---|---|---|---|
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 4.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 6.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 8.9 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 10.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 10.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 12.5 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.4 | 0.0000 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 8.9 | 0.0000 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.1 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 10.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 10.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 12.5 | 0.0000 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.0 | 0.0000 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.4 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 4.2 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 4.5 | 0.0001 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 6.0 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 8.6 | 0.0001 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 8.9 | 0.0001 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10.2 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 10.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 10.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 12.6 | 0.0002 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 13.0 | 0.0002 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.6 | 0.0005 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `t-64k`, 4.5 ns, 65,536 B; largest Δ: `t-256k`, +0.3 ns (now 4.4 ns), 262,144 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-256k`, 8.9 ns, 262,144 B
@@ -3747,6 +4373,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 834.5 | 832.6 | 848.3 | 5.7 | 1.998x | 1.998x | unchanged (within spread) | 75 | 11.1 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 971.2 | 970.0 | 1,198.2 | 90.4 | 2.325x | 2.325x | - | 75 | 12.9 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 974.9 | 962.3 | 976.6 | 6.0 | 2.334x | 2.334x | unchanged (within spread) | 75 | 13.0 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 987.3 | 983.6 | 1,037.8 | 20.6 | 2.363x | 2.363x | - | 75 | 13.2 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,661.7 | 1,660.1 | 1,665.7 | 2.0 | 3.978x | 3.978x | - | 75 | 22.2 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 5,006.0 | 4,965.1 | 5,071.9 | 38.1 | 11.983x | 11.983x | - | 75 | 66.7 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `v-us-zip-plus4`, 16.4 ns, 10 B; largest Δ: `la-negation-miss`, -0.3 ns (now 4.1 ns), 23 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `v-us-zip-plus4`, 32.1 ns, 10 B; largest Δ: `rd-date-hit`, -1.5 ns (now 10.9 ns), 5 B
@@ -3762,10 +4391,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 82,340.4 | 0.0598 | 82,020.6 | 82,943.2 | 317.0 | 1.001x | 1.001x | unchanged (within spread) |
 | 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 82,495.1 | 0.0599 | 82,316.5 | 82,908.0 | 225.3 | 1.003x | 1.003x | unchanged (within spread) |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 82,507.2 | 0.0600 | 82,278.3 | 82,697.7 | 154.0 | 1.003x | 1.003x | - |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 8,026,843.9 | 5.8324 | 8,020,355.2 | 8,036,652.2 | 6,276.5 | 97.573x | 97.573x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 8,027,026.2 | 5.8325 | 8,018,567.4 | 8,038,291.9 | 6,811.2 | 97.575x | 97.575x | - |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 8,031,015.1 | 5.8354 | 8,024,297.2 | 8,053,161.7 | 12,526.8 | 97.623x | 97.623x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 8,032,439.7 | 5.8364 | 8,021,329.6 | 8,057,374.6 | 12,362.8 | 97.641x | 97.641x | - |
+| 5 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 210,732.6 | 0.1531 | 206,641.6 | 211,670.6 | 1,769.6 | 2.562x | 2.562x | - |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 243,311.3 | 0.1768 | 243,073.3 | 244,429.2 | 505.6 | 2.958x | 2.958x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,418,457.0 | 1.7573 | 2,417,419.5 | 2,425,442.5 | 2,896.5 | 29.398x | 29.398x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 8,026,843.9 | 5.8324 | 8,020,355.2 | 8,036,652.2 | 6,276.5 | 97.573x | 97.573x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 8,027,026.2 | 5.8325 | 8,018,567.4 | 8,038,291.9 | 6,811.2 | 97.575x | 97.575x | - |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 8,031,015.1 | 5.8354 | 8,024,297.2 | 8,053,161.7 | 12,526.8 | 97.623x | 97.623x | unchanged (within spread) |
+| 11 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 8,032,439.7 | 5.8364 | 8,021,329.6 | 8,057,374.6 | 12,362.8 | 97.641x | 97.641x | - |
 
 #### `wild-validator-uuid-grok` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -3775,6 +4407,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 68,446.2 | 0.0653 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 68,695.8 | 0.0655 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 68,688.2 | 0.0655 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 164,982.4 | 0.1573 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 185,723.3 | 0.1771 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,842,666.8 | 1.7573 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 6,111,769.9 | 5.8286 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 6,112,559.2 | 5.8294 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 6,113,619.4 | 5.8304 |
@@ -3783,6 +4418,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 11,486.3 | 0.0438 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 11,500.5 | 0.0439 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 11,326.0 | 0.0432 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 37,247.9 | 0.1421 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 46,117.4 | 0.1759 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 459,512.6 | 1.7529 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,528,980.4 | 5.8326 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,528,954.3 | 5.8325 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 1,529,696.4 | 5.8353 |
@@ -3791,6 +4429,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 2,427.8 | 0.0370 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 2,421.8 | 0.0370 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 2,436.9 | 0.0372 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 8,493.3 | 0.1296 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,423.9 | 0.1743 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 116,225.9 | 1.7735 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 383,588.8 | 5.8531 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 382,915.8 | 5.8428 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 386,454.5 | 5.8968 |
@@ -3814,6 +4455,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,030.7 | 1,027.2 | 1,034.9 | 2.8 | 1.320x | 1.320x | - | 75 | 13.7 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,031.3 | 1,030.1 | 1,044.6 | 5.5 | 1.321x | 1.321x | - | 75 | 13.8 | 8.9 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,035.4 | 1,031.7 | 1,036.9 | 2.0 | 1.326x | 1.326x | unchanged (within spread) | 75 | 13.8 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,243.9 | 1,241.2 | 1,248.7 | 2.8 | 1.593x | 1.593x | - | 75 | 16.6 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,622.0 | 1,621.1 | 1,663.1 | 16.5 | 2.078x | 2.078x | - | 75 | 21.6 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,236.6 | 4,225.8 | 4,292.9 | 29.3 | 5.427x | 5.427x | - | 75 | 56.5 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `v-uuid-badnibble`, 101.2 ns, 36 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `v-uuid-valid`, 100.7 ns, 36 B; largest Δ: `v-uuid-badnibble`, +3.1 ns (now 99.9 ns), 36 B
@@ -3822,22 +4466,27 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 4,081,303.4 | 2.9655 | 4,076,328.5 | 4,085,183.1 | 2,918.8 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,081,835.7 | 2.9659 | 4,077,061.4 | 4,084,277.5 | 2,344.3 | 1.000x | 1.000x | - |
-| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,082,823.2 | 2.9666 | 4,078,021.1 | 4,088,261.5 | 3,435.5 | 1.000x | 1.000x | - |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 4,083,418.4 | 2.9670 | 4,079,927.6 | 4,088,017.0 | 2,690.8 | 1.001x | 1.001x | unchanged (within spread) |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 20,865,627.2 | 15.1612 | 20,837,061.8 | 20,900,560.5 | 24,550.8 | 5.112x | 5.112x | unchanged (within spread) |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 20,867,510.8 | 15.1625 | 20,809,936.6 | 20,983,312.9 | 60,656.8 | 5.113x | 5.113x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 20,888,683.4 | 15.1779 | 20,813,999.0 | 21,611,352.5 | 346,248.7 | 5.118x | 5.118x | - |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 20,927,988.0 | 15.2065 | 20,861,972.2 | 21,466,725.7 | 233,221.1 | 5.128x | 5.128x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 600,527.6 | 0.4363 | 600,203.3 | 602,501.2 | 846.3 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,447,677.8 | 1.7785 | 2,446,347.1 | 2,454,808.3 | 3,300.7 | 4.076x | 4.076x | - |
+| 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 4,081,303.4 | 2.9655 | 4,076,328.5 | 4,085,183.1 | 2,918.8 | 6.796x | 6.796x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 4,081,835.7 | 2.9659 | 4,077,061.4 | 4,084,277.5 | 2,344.3 | 6.797x | 6.797x | - |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 4,082,823.2 | 2.9666 | 4,078,021.1 | 4,088,261.5 | 3,435.5 | 6.799x | 6.799x | - |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 4,083,418.4 | 2.9670 | 4,079,927.6 | 4,088,017.0 | 2,690.8 | 6.800x | 6.800x | unchanged (within spread) |
+| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 20,865,627.2 | 15.1612 | 20,837,061.8 | 20,900,560.5 | 24,550.8 | 34.745x | 34.745x | unchanged (within spread) |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 20,867,510.8 | 15.1625 | 20,809,936.6 | 20,983,312.9 | 60,656.8 | 34.749x | 34.749x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 20,888,683.4 | 15.1779 | 20,813,999.0 | 21,611,352.5 | 346,248.7 | 34.784x | 34.784x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 20,927,988.0 | 15.2065 | 20,861,972.2 | 21,466,725.7 | 233,221.1 | 34.849x | 34.849x | - |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 65,243,715.4 | 47.4067 | 65,161,138.8 | 65,345,329.8 | 60,460.6 | 108.644x | 108.644x | - |
 
 #### `wild-waf-crs-942140-dbnames` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 477,850.1 | 0.4557 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,863,447.3 | 1.7771 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 3,112,470.2 | 2.9683 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 3,111,161.8 | 2.9670 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 3,113,541.0 | 2.9693 |
@@ -3846,6 +4495,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 15,923,120.2 | 15.1855 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 15,922,183.5 | 15.1846 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 15,920,327.3 | 15.1828 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 49,718,266.8 | 47.4150 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 101,890.8 | 0.3887 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 466,267.0 | 1.7787 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 776,680.2 | 2.9628 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 776,494.6 | 2.9621 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 776,433.7 | 2.9619 |
@@ -3854,6 +4506,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 3,957,269.9 | 15.0958 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 3,977,988.2 | 15.1748 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,012,353.4 | 15.3059 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 12,411,363.2 | 47.3456 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 20,612.3 | 0.3145 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 118,326.0 | 1.8055 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 191,844.5 | 2.9273 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 191,781.4 | 2.9264 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 191,789.2 | 2.9265 |
@@ -3862,6 +4517,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 988,209.0 | 15.0789 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 991,023.2 | 15.1218 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 995,307.3 | 15.1872 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 3,117,649.4 | 47.5716 |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 3,112,470.2 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 3,114,232.3 ns, 1,048,576 B
@@ -3877,10 +4533,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 2,687.8 | 2,682.5 | 2,691.0 | 3.2 | 1.000x | 1.000x | - | 75 | 35.8 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 2,689.2 | 2,686.0 | 2,695.3 | 3.7 | 1.001x | 1.001x | unchanged (within spread) | 75 | 35.9 | 8.0 | 100% |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 2,691.4 | 2,679.8 | 2,698.1 | 5.9 | 1.002x | 1.002x | - | 75 | 35.9 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 16,414.4 | 16,379.1 | 16,679.0 | 110.6 | 6.108x | 6.108x | - | 75 | 218.9 | 8.8 | 100% |
-| 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 16,420.9 | 16,397.7 | 16,486.7 | 31.6 | 6.111x | 6.111x | unchanged (within spread) | 75 | 218.9 | 8.8 | 100% |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 16,448.3 | 16,330.4 | 16,666.8 | 112.6 | 6.121x | 6.121x | unchanged (within spread) | 75 | 219.3 | 9.1 | 100% |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 16,454.0 | 16,298.2 | 16,837.9 | 198.3 | 6.123x | 6.123x | - | 75 | 219.4 | 8.9 | 100% |
+| 5 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 3,508.7 | 3,500.3 | 3,520.2 | 7.4 | 1.306x | 1.306x | - | 75 | 46.8 | 27.2 | 100% |
+| 6 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,414.7 | 4,409.5 | 4,482.1 | 27.4 | 1.643x | 1.643x | - | 75 | 58.9 | 16.3 | 100% |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 16,414.4 | 16,379.1 | 16,679.0 | 110.6 | 6.108x | 6.108x | - | 75 | 218.9 | 8.8 | 100% |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 16,420.9 | 16,397.7 | 16,486.7 | 31.6 | 6.111x | 6.111x | unchanged (within spread) | 75 | 218.9 | 8.8 | 100% |
+| 9 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 16,448.3 | 16,330.4 | 16,666.8 | 112.6 | 6.121x | 6.121x | unchanged (within spread) | 75 | 219.3 | 9.1 | 100% |
+| 10 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 16,454.0 | 16,298.2 | 16,837.9 | 198.3 | 6.123x | 6.123x | - | 75 | 219.4 | 8.9 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 44,914.8 | 44,699.6 | 45,064.0 | 135.3 | 16.714x | 16.714x | - | 75 | 598.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-github-pat`, 184.5 ns, 93 B; largest Δ: `rd-numeric-id-near-miss`, +1.7 ns (now 41.6 ns), 20 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-github-pat`, 184.6 ns, 93 B; largest Δ: `rec-parens-balanced`, +1.2 ns (now 15.4 ns), 7 B
@@ -3889,42 +4548,54 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,358,357.1 | 0.9870 | 1,350,952.9 | 1,362,947.2 | 4,189.5 | 1.000x | 1.000x | - |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,360,463.4 | 0.9885 | 1,355,632.4 | 1,364,982.3 | 3,021.2 | 1.002x | 1.002x | unchanged (within spread) |
-| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,360,803.0 | 0.9888 | 1,354,418.5 | 1,377,964.8 | 8,358.4 | 1.002x | 1.002x | - |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,361,306.0 | 0.9891 | 1,359,882.3 | 1,367,536.1 | 2,949.1 | 1.002x | 1.002x | unchanged (within spread) |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,980,701.8 | 7.2521 | 9,925,440.4 | 9,988,732.3 | 23,454.9 | 7.348x | 7.348x | - |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,990,943.4 | 7.2595 | 9,972,216.6 | 9,997,628.6 | 9,014.6 | 7.355x | 7.355x | - |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,992,380.1 | 7.2606 | 9,950,185.4 | 9,999,776.0 | 17,735.4 | 7.356x | 7.356x | unchanged (within spread) |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,996,932.1 | 7.2639 | 9,929,080.3 | 10,004,199.6 | 27,717.1 | 7.360x | 7.360x | unchanged (within spread) |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 160,000.2 | 0.1163 | 159,822.9 | 160,520.2 | 234.0 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 388,781.2 | 0.2825 | 388,413.3 | 391,438.7 | 1,130.8 | 2.430x | 2.430x | - |
+| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,358,357.1 | 0.9870 | 1,350,952.9 | 1,362,947.2 | 4,189.5 | 8.490x | 8.490x | - |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,360,463.4 | 0.9885 | 1,355,632.4 | 1,364,982.3 | 3,021.2 | 8.503x | 8.503x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,360,803.0 | 0.9888 | 1,354,418.5 | 1,377,964.8 | 8,358.4 | 8.505x | 8.505x | - |
+| 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,361,306.0 | 0.9891 | 1,359,882.3 | 1,367,536.1 | 2,949.1 | 8.508x | 8.508x | unchanged (within spread) |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 4,953,542.1 | 3.5993 | 4,918,625.3 | 5,204,082.4 | 106,725.1 | 30.960x | 30.960x | - |
+| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 9,980,701.8 | 7.2521 | 9,925,440.4 | 9,988,732.3 | 23,454.9 | 62.379x | 62.379x | - |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 9,990,943.4 | 7.2595 | 9,972,216.6 | 9,997,628.6 | 9,014.6 | 62.443x | 62.443x | - |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 9,992,380.1 | 7.2606 | 9,950,185.4 | 9,999,776.0 | 17,735.4 | 62.452x | 62.452x | unchanged (within spread) |
+| 11 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 9,996,932.1 | 7.2639 | 9,929,080.3 | 10,004,199.6 | 27,717.1 | 62.481x | 62.481x | unchanged (within spread) |
 
 #### `wild-waf-crs-942160-sleep-benchmark` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 121,840.3 | 0.1162 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 296,213.3 | 0.2825 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 1,029,038.7 | 0.9814 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,032,349.6 | 0.9845 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 1,033,066.7 | 0.9852 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 1,031,808.7 | 0.9840 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 3,772,266.3 | 3.5975 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 7,614,098.4 | 7.2614 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 7,610,253.9 | 7.2577 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 7,610,040.6 | 7.2575 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 7,610,216.2 | 7.2577 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 30,369.0 | 0.1158 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 74,336.8 | 0.2836 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 260,591.5 | 0.9941 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 259,009.4 | 0.9880 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 258,854.3 | 0.9875 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 262,891.3 | 1.0029 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 935,619.9 | 3.5691 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 1,889,260.3 | 7.2070 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 1,905,237.9 | 7.2679 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 1,902,336.6 | 7.2568 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 1,904,201.4 | 7.2640 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 7,759.0 | 0.1184 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 18,598.8 | 0.2838 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 68,736.6 | 1.0488 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 69,034.9 | 1.0534 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 69,053.4 | 1.0537 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 69,747.6 | 1.0643 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 246,387.6 | 3.7596 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 476,649.1 | 7.2731 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 476,871.1 | 7.2765 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 480,002.9 | 7.3243 |
@@ -3948,6 +4619,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,236.3 | 1,224.8 | 1,239.8 | 6.0 | 1.851x | 1.851x | - | 75 | 16.5 | 8.9 | 100% |
 | 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,315.3 | 1,312.9 | 1,384.0 | 27.6 | 1.969x | 1.969x | unchanged (within spread) | 75 | 17.5 | 8.8 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,316.8 | 1,314.7 | 1,326.5 | 4.1 | 1.971x | 1.971x | - | 75 | 17.6 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,655.5 | 2,652.1 | 2,892.4 | 95.2 | 3.975x | 3.975x | - | 75 | 35.4 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 3,205.3 | 3,199.6 | 3,263.9 | 24.1 | 4.798x | 4.798x | - | 75 | 42.7 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 12,521.1 | 12,435.0 | 12,650.6 | 76.4 | 18.743x | 18.743x | - | 75 | 166.9 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `waf-concat`, 47.1 ns, 48 B; largest Δ: `rec-parens-balanced`, -1.1 ns (now 13.8 ns), 7 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `waf-concat`, 47.7 ns, 48 B; largest Δ: `waf-sleep`, +1.5 ns (now 45.7 ns), 16 B
@@ -3956,42 +4630,54 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942270-union-select` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 995,851.5 | 0.7236 | 994,181.2 | 1,001,884.5 | 3,291.2 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 997,448.0 | 0.7248 | 992,614.4 | 1,003,214.9 | 3,893.9 | 1.002x | 1.002x | unchanged (within spread) |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,000,461.0 | 0.7269 | 998,958.3 | 1,004,298.0 | 1,966.5 | 1.005x | 1.005x | - |
-| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,001,016.2 | 0.7273 | 997,513.0 | 1,264,957.8 | 105,984.5 | 1.005x | 1.005x | - |
-| 5 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,310,271.0 | 3.1319 | 4,307,495.2 | 4,322,522.5 | 5,215.3 | 4.328x | 4.328x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,311,011.7 | 3.1324 | 4,309,549.4 | 4,326,335.1 | 6,242.3 | 4.329x | 4.329x | - |
-| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,311,590.4 | 3.1328 | 4,310,244.2 | 4,317,213.1 | 2,680.8 | 4.330x | 4.330x | unchanged (within spread) |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,311,679.5 | 3.1329 | 4,310,944.8 | 4,318,330.9 | 2,790.5 | 4.330x | 4.330x | - |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 86,460.7 | 0.0628 | 86,417.9 | 88,276.0 | 727.9 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 280,535.1 | 0.2038 | 280,292.1 | 281,913.4 | 587.4 | 3.245x | 3.245x | - |
+| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 995,851.5 | 0.7236 | 994,181.2 | 1,001,884.5 | 3,291.2 | 11.518x | 11.518x | unchanged (within spread) |
+| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 997,448.0 | 0.7248 | 992,614.4 | 1,003,214.9 | 3,893.9 | 11.536x | 11.536x | unchanged (within spread) |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,000,461.0 | 0.7269 | 998,958.3 | 1,004,298.0 | 1,966.5 | 11.571x | 11.571x | - |
+| 6 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 1,001,016.2 | 0.7273 | 997,513.0 | 1,264,957.8 | 105,984.5 | 11.578x | 11.578x | - |
+| 7 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,426,906.6 | 2.4900 | 3,424,244.4 | 3,456,801.1 | 12,370.6 | 39.635x | 39.635x | - |
+| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 4,310,271.0 | 3.1319 | 4,307,495.2 | 4,322,522.5 | 5,215.3 | 49.852x | 49.852x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,311,011.7 | 3.1324 | 4,309,549.4 | 4,326,335.1 | 6,242.3 | 49.861x | 49.861x | - |
+| 10 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 4,311,590.4 | 3.1328 | 4,310,244.2 | 4,317,213.1 | 2,680.8 | 49.868x | 49.868x | unchanged (within spread) |
+| 11 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,311,679.5 | 3.1329 | 4,310,944.8 | 4,318,330.9 | 2,790.5 | 49.869x | 49.869x | - |
 
 #### `wild-waf-crs-942270-union-select` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 65,907.0 | 0.0629 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 213,566.4 | 0.2037 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 759,341.2 | 0.7242 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-nocaps-simdna` | 757,476.9 | 0.7224 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 760,244.1 | 0.7250 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 760,007.5 | 0.7248 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 2,606,030.6 | 2.4853 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 3,282,854.9 | 3.1308 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,282,197.9 | 3.1301 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 3,284,158.9 | 3.1320 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,282,649.6 | 3.1306 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 16,415.1 | 0.0626 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 53,413.9 | 0.2038 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 191,492.0 | 0.7305 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 191,000.4 | 0.7286 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 192,310.3 | 0.7336 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 191,973.5 | 0.7323 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 655,035.1 | 2.4988 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 822,611.7 | 3.1380 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 822,575.0 | 3.1379 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 822,129.0 | 3.1362 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 823,010.9 | 3.1395 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,151.7 | 0.0634 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 13,462.0 | 0.2054 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 47,830.8 | 0.7298 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 49,063.9 | 0.7487 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 48,771.9 | 0.7442 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 49,035.2 | 0.7482 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 166,383.1 | 2.5388 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 207,143.7 | 3.1608 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 206,598.3 | 3.1524 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 206,651.6 | 3.1533 |
@@ -4011,10 +4697,13 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 1,126.0 | 1,114.4 | 1,131.6 | 6.2 | 1.001x | 1.001x | unchanged (within spread) | 75 | 15.0 | 8.0 | 100% |
 | 3 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 1,127.0 | 1,122.5 | 1,129.4 | 2.3 | 1.002x | 1.002x | unchanged (within spread) | 75 | 15.0 | 8.0 | 100% |
 | 4 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 1,128.0 | 1,120.8 | 1,132.3 | 4.6 | 1.003x | 1.003x | - | 75 | 15.0 | 8.0 | 100% |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 5,184.8 | 5,167.2 | 5,198.3 | 10.7 | 4.609x | 4.609x | faster ×1.01 | 75 | 69.1 | 9.1 | 100% |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,226.7 | 5,222.8 | 5,233.7 | 3.8 | 4.646x | 4.646x | - | 75 | 69.7 | 8.9 | 100% |
-| 7 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 5,309.9 | 5,307.8 | 5,314.4 | 2.5 | 4.720x | 4.720x | unchanged (within spread) | 75 | 70.8 | 8.8 | 100% |
-| 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,315.3 | 5,305.5 | 5,353.6 | 17.5 | 4.725x | 4.725x | - | 75 | 70.9 | 8.8 | 100% |
+| 5 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,132.0 | 2,126.4 | 2,159.3 | 11.5 | 1.895x | 1.895x | - | 75 | 28.4 | 16.3 | 100% |
+| 6 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,160.0 | 2,156.9 | 2,167.8 | 4.1 | 1.920x | 1.920x | - | 75 | 28.8 | 27.2 | 100% |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 5,184.8 | 5,167.2 | 5,198.3 | 10.7 | 4.609x | 4.609x | faster ×1.01 | 75 | 69.1 | 9.1 | 100% |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 5,226.7 | 5,222.8 | 5,233.7 | 3.8 | 4.646x | 4.646x | - | 75 | 69.7 | 8.9 | 100% |
+| 9 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 5,309.9 | 5,307.8 | 5,314.4 | 2.5 | 4.720x | 4.720x | unchanged (within spread) | 75 | 70.8 | 8.8 | 100% |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 5,315.3 | 5,305.5 | 5,353.6 | 17.5 | 4.725x | 4.725x | - | 75 | 70.9 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 8,720.9 | 8,702.9 | 8,807.7 | 36.7 | 7.752x | 7.752x | - | 75 | 116.3 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `waf-union`, 74.9 ns, 43 B; largest Δ: `waf-benign`, -3.8 ns (now 23.6 ns), 39 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `waf-union`, 74.9 ns, 43 B; largest Δ: `waf-benign`, -4.3 ns (now 23.3 ns), 39 B
@@ -4023,22 +4712,27 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 12,109,237.8 | 8.7987 | 12,101,065.1 | 12,266,547.3 | 78,832.1 | 1.000x | 1.000x | unchanged (within spread) |
-| 2 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12,137,118.1 | 8.8189 | 12,105,762.1 | 12,870,368.8 | 359,951.1 | 1.002x | 1.002x | - |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,143,930.5 | 8.8239 | 12,117,925.0 | 12,219,951.4 | 38,163.8 | 1.003x | 1.003x | - |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 12,160,926.8 | 8.8362 | 12,107,582.9 | 12,284,689.3 | 70,951.8 | 1.004x | 1.004x | unchanged (within spread) |
-| 5 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 48,150,137.0 | 34.9863 | 48,041,563.2 | 48,361,976.5 | 117,179.9 | 3.976x | 3.976x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,257,412.7 | 35.0643 | 48,016,261.2 | 48,555,293.0 | 181,105.0 | 3.985x | 3.985x | - |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,309,614.7 | 35.1022 | 48,173,678.8 | 48,375,640.2 | 74,085.3 | 3.989x | 3.989x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 48,352,774.5 | 35.1336 | 48,068,783.0 | 48,471,375.2 | 140,613.9 | 3.993x | 3.993x | unchanged (within spread) |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 878,544.4 | 0.6384 | 877,906.5 | 884,943.3 | 2,643.8 | 1.000x | 1.000x | - |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,456,623.7 | 1.7850 | 2,452,896.6 | 2,562,372.7 | 42,248.5 | 2.796x | 2.796x | - |
+| 3 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 12,109,237.8 | 8.7987 | 12,101,065.1 | 12,266,547.3 | 78,832.1 | 13.783x | 13.783x | unchanged (within spread) |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 12,137,118.1 | 8.8189 | 12,105,762.1 | 12,870,368.8 | 359,951.1 | 13.815x | 13.815x | - |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 12,143,930.5 | 8.8239 | 12,117,925.0 | 12,219,951.4 | 38,163.8 | 13.823x | 13.823x | - |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 12,160,926.8 | 8.8362 | 12,107,582.9 | 12,284,689.3 | 70,951.8 | 13.842x | 13.842x | unchanged (within spread) |
+| 7 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 48,150,137.0 | 34.9863 | 48,041,563.2 | 48,361,976.5 | 117,179.9 | 54.807x | 54.807x | unchanged (within spread) |
+| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,257,412.7 | 35.0643 | 48,016,261.2 | 48,555,293.0 | 181,105.0 | 54.929x | 54.929x | - |
+| 9 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,309,614.7 | 35.1022 | 48,173,678.8 | 48,375,640.2 | 74,085.3 | 54.988x | 54.988x | - |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 48,352,774.5 | 35.1336 | 48,068,783.0 | 48,471,375.2 | 140,613.9 | 55.037x | 55.037x | unchanged (within spread) |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 149,241,780.0 | 108.4404 | 138,342,420.5 | 152,569,384.5 | 6,372,964.6 | 169.874x | 169.874x | - |
 
 #### `wild-waf-crs-942360-concat-sqli` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 701,073.3 | 0.6686 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 1,868,057.5 | 1.7815 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 9,236,904.0 | 8.8090 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 9,263,608.7 | 8.8345 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 9,262,818.6 | 8.8337 |
@@ -4047,6 +4741,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 36,819,469.0 | 35.1138 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 36,882,861.5 | 35.1742 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 36,857,818.7 | 35.1504 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 113,880,103.5 | 108.6045 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 149,170.5 | 0.5690 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 468,069.2 | 1.7855 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 2,301,413.1 | 8.7792 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 2,300,811.5 | 8.7769 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 2,304,678.6 | 8.7917 |
@@ -4055,6 +4752,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 9,176,769.7 | 35.0066 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 9,162,526.7 | 34.9523 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 9,146,103.0 | 34.8896 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 28,291,947.0 | 107.9252 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 28,284.5 | 0.4316 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 120,065.7 | 1.8321 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 576,171.2 | 8.7917 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 576,347.4 | 8.7944 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 576,433.3 | 8.7957 |
@@ -4063,6 +4763,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 2,287,371.0 | 34.9025 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 2,284,348.2 | 34.8564 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-in-caps-simdna` | 2,288,212.5 | 34.9154 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 7,044,319.0 | 107.4878 |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now (also the largest Δ): `t-1m`, 9,236,904.0 ns, 1,048,576 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now (also the largest Δ): `t-1m`, 9,275,826.4 ns, 1,048,576 B
@@ -4071,17 +4772,20 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `wild-waf-crs-942360-concat-sqli` / `short-subject-search` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | min | max | stddev | vs baseline | vs best | Δ vs previous version | n subjects | per-subject mean ns | floor ns | pass-rate |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,412.0 | 7,362.3 | 7,456.1 | 35.4 | 1.000x | 1.000x | - | 75 | 98.8 | 8.0 | 100% |
-| 2 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 7,423.9 | 7,366.9 | 7,448.9 | 27.1 | 1.002x | 1.002x | unchanged (within spread) | 75 | 99.0 | 8.0 | 100% |
-| 3 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,426.2 | 7,375.9 | 7,456.4 | 26.3 | 1.002x | 1.002x | - | 75 | 99.0 | 8.0 | 100% |
-| 4 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 7,445.4 | 7,366.0 | 7,465.7 | 35.4 | 1.005x | 1.005x | unchanged (within spread) | 75 | 99.3 | 8.0 | 100% |
-| 5 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,435.1 | 48,349.0 | 48,585.0 | 97.8 | 6.535x | 6.535x | - | 75 | 645.8 | 8.8 | 100% |
-| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 48,639.0 | 48,469.3 | 138,827.8 | 36,099.1 | 6.562x | 6.562x | unchanged (within spread) | 75 | 648.5 | 9.1 | 100% |
-| 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,979.4 | 48,911.0 | 49,043.1 | 48.1 | 6.608x | 6.608x | - | 75 | 653.1 | 8.9 | 100% |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 49,258.0 | 49,174.3 | 49,436.7 | 94.6 | 6.646x | 6.646x | slower ×1.02 | 75 | 656.8 | 8.8 | 100% |
+| 1 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 4,566.7 | 4,563.3 | 4,582.6 | 8.6 | 1.000x | 1.000x | - | 75 | 60.9 | 27.2 | 100% |
+| 2 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 4,824.8 | 4,819.1 | 4,835.3 | 6.1 | 1.057x | 1.057x | - | 75 | 64.3 | 16.3 | 100% |
+| 3 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 7,412.0 | 7,362.3 | 7,456.1 | 35.4 | 1.623x | 1.623x | - | 75 | 98.8 | 8.0 | 100% |
+| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 7,423.9 | 7,366.9 | 7,448.9 | 27.1 | 1.626x | 1.626x | unchanged (within spread) | 75 | 99.0 | 8.0 | 100% |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 7,426.2 | 7,375.9 | 7,456.4 | 26.3 | 1.626x | 1.626x | - | 75 | 99.0 | 8.0 | 100% |
+| 6 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 7,445.4 | 7,366.0 | 7,465.7 | 35.4 | 1.630x | 1.630x | unchanged (within spread) | 75 | 99.3 | 8.0 | 100% |
+| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 48,435.1 | 48,349.0 | 48,585.0 | 97.8 | 10.606x | 10.606x | - | 75 | 645.8 | 8.8 | 100% |
+| 8 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 48,639.0 | 48,469.3 | 138,827.8 | 36,099.1 | 10.651x | 10.651x | unchanged (within spread) | 75 | 648.5 | 9.1 | 100% |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 48,979.4 | 48,911.0 | 49,043.1 | 48.1 | 10.725x | 10.725x | - | 75 | 653.1 | 8.9 | 100% |
+| 10 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 49,258.0 | 49,174.3 | 49,436.7 | 94.6 | 10.786x | 10.786x | slower ×1.02 | 75 | 656.8 | 8.8 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 143,493.3 | 142,250.6 | 153,891.3 | 4,382.0 | 31.422x | 31.422x | - | 75 | 1,913.2 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `sec-slack-webhook`, 476.1 ns, 81 B; largest Δ: `br-tag-mismatch`, +19.0 ns (now 145.0 ns), 19 B
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `sec-slack-webhook`, 451.3 ns, 81 B; largest Δ: `waf-concat`, +20.6 ns (now 340.0 ns), 48 B
@@ -4099,8 +4803,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,148.5 | 0.0168 | 23,134.4 | 23,158.1 | 8.4 | 1.001x | 1.001x | - |
 | 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,153.2 | 0.0168 | 23,129.8 | 23,227.4 | 33.6 | 1.001x | 1.001x | - |
 | 6 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,157.2 | 0.0168 | 23,148.4 | 23,184.6 | 12.4 | 1.002x | 1.002x | unchanged (within spread) |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,079,821.8 | 2.9644 | 4,058,605.7 | 4,086,283.6 | 9,703.2 | 176.457x | 176.457x | - |
-| 8 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,086,803.6 | 2.9695 | 4,086,036.1 | 4,103,934.3 | 6,945.3 | 176.759x | 176.759x | - |
+| 7 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 41,263.1 | 0.0300 | 41,241.7 | 41,587.7 | 130.2 | 1.785x | 1.785x | - |
+| 8 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 60,208.1 | 0.0437 | 60,168.2 | 60,455.9 | 105.8 | 2.604x | 2.604x | - |
+| 9 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 1,498,159.6 | 1.0886 | 1,497,937.3 | 1,499,103.4 | 467.4 | 64.797x | 64.797x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 4,079,821.8 | 2.9644 | 4,058,605.7 | 4,086,283.6 | 9,703.2 | 176.457x | 176.457x | - |
+| 11 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 4,086,803.6 | 2.9695 | 4,086,036.1 | 4,103,934.3 | 6,945.3 | 176.759x | 176.759x | - |
 
 #### `wild-waf-crs-942500-comment-obfuscation` / `large-subject-throughput` per-subject (capability@0.1)
 
@@ -4112,6 +4819,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,639.0 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,633.0 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_auto-caps-simdna` | 17,652.7 | 0.0168 |
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 31,358.2 | 0.0299 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 45,802.5 | 0.0437 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 1,140,969.5 | 1.0881 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 3,108,623.3 | 2.9646 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 3,114,596.1 | 2.9703 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-nocaps-simdna` | 4,385.0 | 0.0167 |
@@ -4120,6 +4830,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,385.8 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,383.4 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_auto-caps-simdna` | 4,389.0 | 0.0167 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 7,886.0 | 0.0301 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 11,467.3 | 0.0437 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 285,456.0 | 1.0889 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 777,052.5 | 2.9642 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 778,416.2 | 2.9694 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-nocaps-simdna` | 1,107.3 | 0.0169 |
@@ -4128,6 +4841,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,123.7 | 0.0171 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,123.3 | 0.0171 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_auto-caps-simdna` | 1,110.1 | 0.0169 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 2,017.5 | 0.0308 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,942.7 | 0.0449 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 71,616.8 | 1.0928 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-in-caps-simdna` | 193,433.3 | 2.9516 |
 | `t-64k` | 65,536 | `pcrec_8d716693_vm-caps-simdna` | 195,330.1 | 2.9805 |
 
@@ -4149,6 +4865,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 1,032.4 | 1,028.1 | 1,033.2 | 2.1 | 1.619x | 1.619x | faster ×1.57 | 75 | 13.8 | 8.8 | 100% |
 | 7 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 1,515.6 | 1,514.0 | 1,519.4 | 1.9 | 2.377x | 2.377x | - | 75 | 20.2 | 8.9 | 100% |
 | 8 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 1,616.7 | 1,607.6 | 1,646.9 | 13.5 | 2.535x | 2.535x | - | 75 | 21.6 | 8.8 | 100% |
+| 9 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 2,427.9 | 2,369.3 | 2,502.9 | 42.7 | 3.807x | 3.807x | - | 75 | 32.4 | 16.3 | 100% |
+| 10 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 2,468.5 | 2,465.8 | 3,051.7 | 233.4 | 3.871x | 3.871x | - | 75 | 32.9 | 27.2 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 3,885.6 | 3,873.1 | 3,934.2 | 21.2 | 6.094x | 6.094x | - | 75 | 51.8 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `waf-comment-obfuscation`, 81.1 ns, 18 B; largest Δ: `rec-comment-nested`, +10.5 ns (now 46.1 ns), 34 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `waf-comment-obfuscation`, 81.0 ns, 18 B; largest Δ: `rec-comment-nested`, +11.3 ns (now 46.6 ns), 34 B
@@ -4157,22 +4876,28 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 ### `winpath-near-miss` / `large-subject-throughput` (capability@0.1) — baseline: libpcre2 engine_mode=interp
 
-- baseline: pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)
+- baseline: rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)
 | rank | testee | status | form | fact | median ns/call | ns/byte | min | max | stddev | vs baseline | vs best | Δ vs previous version |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,119.7 | 0.0168 | 23,104.2 | 23,189.4 | 30.0 | 1.000x | 1.000x | - |
-| 2 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,123.6 | 0.0168 | 23,122.3 | 23,180.4 | 22.4 | 1.000x | 1.000x | - |
-| 3 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,143.2 | 0.0168 | 23,127.5 | 23,204.6 | 26.8 | 1.001x | 1.001x | unchanged (within spread) |
-| 4 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,143.3 | 0.0168 | 23,116.4 | 23,172.0 | 20.5 | 1.001x | 1.001x | unchanged (within spread) |
-| 5 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,145.0 | 0.0168 | 23,117.2 | 23,151.0 | 14.3 | 1.001x | 1.001x | unchanged (within spread) |
-| 6 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,145.5 | 0.0168 | 23,113.5 | 23,245.5 | 45.8 | 1.001x | 1.001x | - |
-| 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,146.4 | 0.0168 | 23,126.9 | 23,177.1 | 17.3 | 1.001x | 1.001x | - |
-| 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,156.0 | 0.0168 | 23,144.7 | 23,168.6 | 8.4 | 1.002x | 1.002x | unchanged (within spread) |
+| 1 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 90.3 | 0.0001 | 86.4 | 95.0 | 2.9 | 1.000x | 1.000x | - |
+| 2 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 93.3 | 0.0001 | 92.9 | 93.9 | 0.3 | 1.034x | 1.034x | - |
+| 3 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 156.4 | 0.0001 | 156.0 | 156.5 | 0.2 | 1.733x | 1.733x | - |
+| 4 | `pcrec_8d716693_auto-nocaps-simdna` | measured | `plain` | same program | 23,119.7 | 0.0168 | 23,104.2 | 23,189.4 | 30.0 | 256.133x | 256.133x | - |
+| 5 | `pcrec_8d716693_auto-caps-simdna` | measured | `plain` | same program | 23,123.6 | 0.0168 | 23,122.3 | 23,180.4 | 22.4 | 256.176x | 256.176x | - |
+| 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 23,143.2 | 0.0168 | 23,127.5 | 23,204.6 | 26.8 | 256.393x | 256.393x | unchanged (within spread) |
+| 7 | `pcrec_b1885a83_auto-caps-simdna` | measured | `plain` | same program | 23,143.3 | 0.0168 | 23,116.4 | 23,172.0 | 20.5 | 256.394x | 256.394x | unchanged (within spread) |
+| 8 | `pcrec_b1885a83_auto-nocaps-simdna` | measured | `plain` | same program | 23,145.0 | 0.0168 | 23,117.2 | 23,151.0 | 14.3 | 256.413x | 256.413x | unchanged (within spread) |
+| 9 | `pcrec_8d716693_vm-caps-simdna` | measured | `plain` | same program | 23,145.5 | 0.0168 | 23,113.5 | 23,245.5 | 45.8 | 256.418x | 256.418x | - |
+| 10 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 23,146.4 | 0.0168 | 23,126.9 | 23,177.1 | 17.3 | 256.428x | 256.428x | - |
+| 11 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 23,156.0 | 0.0168 | 23,144.7 | 23,168.6 | 8.4 | 256.535x | 256.535x | unchanged (within spread) |
 
 #### `winpath-near-miss` / `large-subject-throughput` per-subject (capability@0.1)
 
 | subject | bytes | testee | median ns/call | ns/byte |
 |---|---|---|---|---|
+| `t-1m` | 1,048,576 | `rust_1.13.1_default-caps-simdna` | 27.4 | 0.0000 |
+| `t-1m` | 1,048,576 | `oniguruma_6.9.10_default-caps-simdna` | 31.0 | 0.0000 |
+| `t-1m` | 1,048,576 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.0 | 0.0000 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-nocaps-simdna` | 17,631.7 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_auto-caps-simdna` | 17,639.7 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-caps-simdna` | 17,646.2 | 0.0168 |
@@ -4181,6 +4906,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-caps-simdna` | 17,659.2 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_8d716693_vm-in-caps-simdna` | 17,653.8 | 0.0168 |
 | `t-1m` | 1,048,576 | `pcrec_b1885a83_vm-in-caps-simdna` | 17,667.9 | 0.0168 |
+| `t-256k` | 262,144 | `rust_1.13.1_default-caps-simdna` | 30.3 | 0.0001 |
+| `t-256k` | 262,144 | `oniguruma_6.9.10_default-caps-simdna` | 31.1 | 0.0001 |
+| `t-256k` | 262,144 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.1 | 0.0002 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-nocaps-simdna` | 4,381.5 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_auto-caps-simdna` | 4,379.6 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-caps-simdna` | 4,379.7 | 0.0167 |
@@ -4189,6 +4917,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-caps-simdna` | 4,381.7 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_8d716693_vm-in-caps-simdna` | 4,386.9 | 0.0167 |
 | `t-256k` | 262,144 | `pcrec_b1885a83_vm-in-caps-simdna` | 4,379.1 | 0.0167 |
+| `t-64k` | 65,536 | `rust_1.13.1_default-caps-simdna` | 32.5 | 0.0005 |
+| `t-64k` | 65,536 | `oniguruma_6.9.10_default-caps-simdna` | 31.2 | 0.0005 |
+| `t-64k` | 65,536 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 52.3 | 0.0008 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-nocaps-simdna` | 1,103.2 | 0.0168 |
 | `t-64k` | 65,536 | `pcrec_8d716693_auto-caps-simdna` | 1,106.1 | 0.0169 |
 | `t-64k` | 65,536 | `pcrec_b1885a83_vm-caps-simdna` | 1,110.7 | 0.0169 |
@@ -4216,6 +4947,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | 6 | `pcrec_b1885a83_vm-caps-simdna` | measured | `plain` | same program | 886.9 | 885.0 | 890.8 | 2.0 | 1.517x | 1.517x | slower ×1.06 | 75 | 11.8 | 9.1 | 100% |
 | 7 | `pcrec_8d716693_vm-in-caps-simdna` | measured | `plain` | same program | 905.2 | 903.9 | 906.3 | 0.8 | 1.548x | 1.548x | - | 75 | 12.1 | 8.8 | 100% |
 | 8 | `pcrec_b1885a83_vm-in-caps-simdna` | measured | `plain` | same program | 949.9 | 949.1 | 951.5 | 0.8 | 1.625x | 1.625x | slower ×1.05 | 75 | 12.7 | 8.8 | 100% |
+| 9 | `vectorscan_5.4.11_block-nosom-nocaps-simd` | measured | `plain` | same program | 1,484.0 | 1,480.6 | 1,486.5 | 2.2 | 2.538x | 2.538x | - | 75 | 19.8 | 27.2 | 100% |
+| 10 | `rust_1.13.1_default-caps-simdna` | measured | `plain` | same program | 1,796.6 | 1,793.0 | 1,797.9 | 1.8 | 3.073x | 3.073x | - | 75 | 24.0 | 16.3 | 100% |
+| 11 | `oniguruma_6.9.10_default-caps-simdna` | measured | `plain` | same program | 2,930.6 | 2,928.3 | 2,963.7 | 13.3 | 5.012x | 5.012x | - | 75 | 39.1 | 58.6 | 100% |
 
 - Δ detail: `pcrec_b1885a83_auto-nocaps-simdna` vs previous `pcrec_8d716693_auto-nocaps-simdna`: worst now: `lp-winpath`, 37.8 ns, 22 B; largest Δ: `lp-quoted-escaped`, +6.4 ns (now 14.8 ns), 16 B
 - Δ detail: `pcrec_b1885a83_auto-caps-simdna` vs previous `pcrec_8d716693_auto-caps-simdna`: worst now: `lp-winpath`, 37.9 ns, 22 B; largest Δ: `lp-quoted-escaped`, +6.4 ns (now 14.8 ns), 16 B
@@ -4226,6 +4960,7 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 
 | pattern | regime | form | testee | n subjects | pass-rate | gave-up | wrong | failing subjects (reason) |
 |---|---|---|---|---|---|---|---|---|
+| `evil-alt-nested` | `short-subject-search` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 75 | 97% | -17:retry×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_auto-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_auto-nocaps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_8d716693_vm-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
@@ -4234,6 +4969,9 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_b1885a83_auto-nocaps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_b1885a83_vm-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_b1885a83_vm-in-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `high-byte-run` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 10 | `nu-high-byte` (wrong), `nu-lead-with-cont` (wrong) |
 
 ## Compile cost (by execution-model class; never pooled across classes)
 
@@ -6263,4 +7001,353 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `winpath-near-miss` | `whole-subject` | `pcrec_b1885a83_vm-caps-simdna` | 209,575,084.0 | 206,896,189.0 | 212,746,631.0 | 1,988,982.9 | 5 | 31,704 | 24,482 | 24,020 | 0.009 | compiled=5 | 1,734,209.0 | 207,632,174.0 | 207,461.0 |
 | `winpath-near-miss` | `plain` | `pcrec_b1885a83_vm-in-caps-simdna` | 209,483,469.0 | 201,348,375.0 | 217,698,254.0 | 5,933,977.9 | 5 | 31,704 | 24,369 | 23,907 | 0.028 | compiled=5 | 1,730,679.0 | 207,666,929.0 | 196,461.0 |
 | `winpath-near-miss` | `whole-subject` | `pcrec_b1885a83_vm-in-caps-simdna` | 209,311,367.0 | 202,083,399.0 | 211,781,092.0 | 3,294,079.9 | 5 | 31,704 | 24,482 | 24,020 | 0.016 | compiled=5 | 1,727,599.0 | 207,193,347.0 | 175,511.0 |
+
+### `eager-jit`
+
+| pattern | form | testee | median total_ns | min | max | stddev | n costed | artifact bytes | jitter | outcomes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `balanced-parens-rec` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `balanced-parens-rec` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `base10num-near-miss` | `plain` | `rust_1.13.1_default-caps-simdna` | 116,951.0 | 100,901.0 | 567,473.0 | 177,913.3 | 5 | - | 1.521 (max is trial 1) | compiled=5 |
+| `base10num-near-miss` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 318,622.0 | 255,431.0 | 1,302,157.0 | 395,348.2 | 5 | - | 1.241 (max is trial 1) | compiled=5 |
+| `base10num-near-miss` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,601,705.0 | 1,942,811.0 | 2,693,715.0 | 273,747.9 | 5 | 5,896 | 0.105 | compiled=5 |
+| `base10num-near-miss` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,730,596.0 | 2,653,384.0 | 3,880,552.0 | 469,775.2 | 5 | 6,376 | 0.172 (max is trial 1) | compiled=5 |
+| `bracket-array-define` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `bracket-array-define` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `codegrammar-flat` | `plain` | `rust_1.13.1_default-caps-simdna` | 189,341.0 | 174,541.0 | 1,140,066.0 | 378,218.3 | 5 | - | 1.998 (max is trial 1) | compiled=5 |
+| `codegrammar-flat` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 86,161.0 | 66,821.0 | 540,223.0 | 179,424.3 | 5 | - | 2.082 (max is trial 1) | compiled=5 |
+| `codegrammar-flat` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,341,367.0 | 1,268,857.0 | 2,475,703.0 | 463,672.2 | 5 | 6,088 | 0.346 (max is trial 1) | compiled=5 |
+| `codegrammar-flat` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,689,789.0 | 1,648,729.0 | 2,804,845.0 | 450,060.8 | 5 | 3,672 | 0.266 (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `plain` | `rust_1.13.1_default-caps-simdna` | 109,320.0 | 84,270.0 | 640,944.0 | 211,272.2 | 5 | - | 1.933 (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 113,601.0 | 85,131.0 | 650,093.0 | 216,066.3 | 5 | - | 1.902 (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,157,757.0 | 1,134,946.0 | 2,098,662.0 | 376,120.8 | 5 | 6,088 | 0.325 (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,500,288.0 | 1,440,538.0 | 2,503,204.0 | 405,724.0 | 5 | 3,672 | 0.270 (max is trial 1) | compiled=5 |
+| `currency-lookbehind-fixed` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `currency-lookbehind-fixed` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `date-nested-plus` | `plain` | `rust_1.13.1_default-caps-simdna` | 24,850.0 | 19,540.0 | 239,751.0 | 86,429.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `date-nested-plus` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 26,830.0 | 22,331.0 | 224,701.0 | 78,658.8 | 5 | - | 2.932 (max is trial 1) | compiled=5 |
+| `date-nested-plus` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,099,016.0 | 1,074,746.0 | 2,083,761.0 | 391,192.5 | 5 | 5,736 | 0.356 (max is trial 1) | compiled=5 |
+| `date-nested-plus` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 467,892.0 | 451,462.0 | 969,566.0 | 199,974.1 | 5 | 6,024 | 0.427 (max is trial 1) | compiled=5 |
+| `doubled-word` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `doubled-word` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `dup-param-detect` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `dup-param-detect` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `email-local-nodup` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `email-local-nodup` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `email-nested-plus` | `plain` | `rust_1.13.1_default-caps-simdna` | 21,220.0 | 16,740.0 | 218,281.0 | 78,669.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `email-nested-plus` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 24,430.0 | 22,241.0 | 230,431.0 | 81,593.0 | 5 | - | 3.340 (max is trial 1) | compiled=5 |
+| `email-nested-plus` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 599,444.0 | 539,453.0 | 1,517,699.0 | 376,219.0 | 5 | 5,784 | 0.628 (max is trial 1) | compiled=5 |
+| `email-nested-plus` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 349,952.0 | 327,382.0 | 836,954.0 | 197,287.6 | 5 | 6,232 | 0.564 (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `plain` | `rust_1.13.1_default-caps-simdna` | 28,390.0 | 17,620.0 | 229,392.0 | 82,354.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 55,071.0 | 50,940.0 | 483,683.0 | 170,279.1 | 5 | - | 3.092 (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 602,864.0 | 577,933.0 | 1,558,099.0 | 378,850.6 | 5 | 5,704 | 0.628 (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 298,931.0 | 288,732.0 | 754,424.0 | 182,045.8 | 5 | 5,992 | 0.609 (max is trial 1) | compiled=5 |
+| `file-ext-order` | `plain` | `rust_1.13.1_default-caps-simdna` | 16,471.0 | 14,150.0 | 398,362.0 | 151,686.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `file-ext-order` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 78,881.0 | 56,200.0 | 476,992.0 | 163,751.7 | 5 | - | 2.076 (max is trial 1) | compiled=5 |
+| `file-ext-order` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 453,142.0 | 402,092.0 | 1,281,907.0 | 341,766.9 | 5 | 4,776 | 0.754 (max is trial 1) | compiled=5 |
+| `file-ext-order` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 513,023.0 | 484,483.0 | 1,314,667.0 | 322,241.3 | 5 | 2,120 | 0.628 (max is trial 1) | compiled=5 |
+| `float-literal-bound` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `float-literal-bound` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `floor-byte` | `plain` | `rust_1.13.1_default-caps-simdna` | 10,751.0 | 4,310.0 | 411,842.0 | 161,656.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `floor-byte` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 14,690.0 | 10,980.0 | 257,632.0 | 96,904.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `floor-byte` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 85,120.0 | 77,710.0 | 516,753.0 | 173,254.7 | 5 | 936 | 2.035 (max is trial 1) | compiled=5 |
+| `floor-byte` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 286,772.0 | 272,441.0 | 1,056,776.0 | 306,837.6 | 5 | 1,704 | 1.070 (max is trial 1) | compiled=5 |
+| `high-byte-run` | `plain` | `rust_1.13.1_default-caps-simdna` | 87,870.0 | 79,501.0 | 936,965.0 | 335,025.5 | 5 | - | 3.813 (max is trial 1) | compiled=5 |
+| `high-byte-run` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 62,510.0 | 46,390.0 | 525,753.0 | 185,770.8 | 5 | - | 2.972 (max is trial 1) | compiled=5 |
+| `high-byte-run` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 488,073.0 | 466,283.0 | 1,332,437.0 | 336,668.2 | 5 | 5,784 | 0.690 (max is trial 1) | compiled=5 |
+| `high-byte-run` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 447,673.0 | 431,832.0 | 1,247,647.0 | 319,748.8 | 5 | 1,832 | 0.714 (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `plain` | `rust_1.13.1_default-caps-simdna` | 583,433.0 | 473,893.0 | 1,074,366.0 | 210,207.2 | 5 | - | 0.360 (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 598,644.0 | 472,152.0 | 1,089,996.0 | 213,541.8 | 5 | - | 0.357 (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,039,206.0 | 1,016,456.0 | 1,673,419.0 | 252,953.5 | 5 | 3,464 | 0.243 (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 757,394.0 | 747,324.0 | 1,548,878.0 | 318,325.6 | 5 | 2,824 | 0.420 (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `plain` | `rust_1.13.1_default-caps-simdna` | 9,761.0 | 6,770.0 | 223,511.0 | 85,518.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 25,630.0 | 21,110.0 | 230,121.0 | 81,842.8 | 5 | - | 3.193 (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 486,752.0 | 439,843.0 | 1,280,957.0 | 321,804.7 | 5 | 4,840 | 0.661 (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 571,283.0 | 538,633.0 | 1,385,847.0 | 329,286.8 | 5 | 2,504 | 0.576 (max is trial 1) | compiled=5 |
+| `logparse-atomic` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `logparse-atomic` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `logparse-atomic-removed` | `plain` | `rust_1.13.1_default-caps-simdna` | 178,941.0 | 162,011.0 | 720,064.0 | 213,453.5 | 5 | - | 1.193 (max is trial 1) | compiled=5 |
+| `logparse-atomic-removed` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 351,172.0 | 324,992.0 | 1,348,927.0 | 396,177.5 | 5 | - | 1.128 (max is trial 1) | compiled=5 |
+| `logparse-atomic-removed` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,743,751.0 | 3,734,911.0 | 4,682,176.0 | 376,525.6 | 5 | 10,168 | 0.101 (max is trial 1) | compiled=5 |
+| `logparse-atomic-removed` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,976,852.0 | 3,429,409.0 | 10,170,436.0 | 2,744,430.5 | 5 | 9,496 | 0.690 (max is trial 1) | compiled=5 |
+| `mojibake-curly-quote` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `mojibake-curly-quote` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `mojibake-curly-quote` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 643,883.0 | 600,283.0 | 1,547,509.0 | 363,383.5 | 5 | 5,992 | 0.564 (max is trial 1) | compiled=5 |
+| `mojibake-curly-quote` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 946,185.0 | 938,515.0 | 1,951,041.0 | 398,843.0 | 5 | 3,352 | 0.422 (max is trial 1) | compiled=5 |
+| `negation-scope-lookbehind-var` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `negation-scope-lookbehind-var` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `nested-comment-rec` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `nested-comment-rec` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `numeric-id-nested-plus` | `plain` | `rust_1.13.1_default-caps-simdna` | 82,010.0 | 68,211.0 | 512,123.0 | 169,204.8 | 5 | - | 2.063 (max is trial 1) | compiled=5 |
+| `numeric-id-nested-plus` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 85,571.0 | 74,050.0 | 552,873.0 | 183,994.3 | 5 | - | 2.150 (max is trial 1) | compiled=5 |
+| `numeric-id-nested-plus` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 831,775.0 | 804,094.0 | 1,808,090.0 | 391,153.3 | 5 | 5,704 | 0.470 (max is trial 1) | compiled=5 |
+| `numeric-id-nested-plus` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 364,652.0 | 349,032.0 | 821,585.0 | 185,460.6 | 5 | 5,992 | 0.509 (max is trial 1) | compiled=5 |
+| `phone-list-nested-plus` | `plain` | `rust_1.13.1_default-caps-simdna` | 99,941.0 | 78,021.0 | 526,583.0 | 171,140.2 | 5 | - | 1.712 (max is trial 1) | compiled=5 |
+| `phone-list-nested-plus` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 230,651.0 | 190,251.0 | 1,172,336.0 | 379,685.7 | 5 | - | 1.646 (max is trial 1) | compiled=5 |
+| `phone-list-nested-plus` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 995,555.0 | 920,785.0 | 1,982,391.0 | 400,356.7 | 5 | 5,736 | 0.402 (max is trial 1) | compiled=5 |
+| `phone-list-nested-plus` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 409,542.0 | 389,663.0 | 890,635.0 | 192,579.4 | 5 | 5,992 | 0.470 (max is trial 1) | compiled=5 |
+| `phone-palindrome-6` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `phone-palindrome-6` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `pwd-strength-chain` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `pwd-strength-chain` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `quoted-delim-match` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `quoted-delim-match` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `router-prefix-order` | `plain` | `rust_1.13.1_default-caps-simdna` | 22,420.0 | 15,900.0 | 465,162.0 | 177,266.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `router-prefix-order` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 22,510.0 | 21,330.0 | 220,722.0 | 78,363.8 | 5 | - | 3.481 (max is trial 1) | compiled=5 |
+| `router-prefix-order` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 448,492.0 | 433,263.0 | 1,242,337.0 | 319,634.3 | 5 | 4,776 | 0.713 (max is trial 1) | compiled=5 |
+| `router-prefix-order` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 488,393.0 | 462,462.0 | 1,281,117.0 | 318,088.5 | 5 | 2,120 | 0.651 (max is trial 1) | compiled=5 |
+| `tag-depth3-bound` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `tag-depth3-bound` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `tag-pair-match` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `tag-pair-match` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `trim-nested-star` | `plain` | `rust_1.13.1_default-caps-simdna` | 138,211.0 | 106,140.0 | 1,061,766.0 | 369,583.2 | 5 | - | 2.674 (max is trial 1) | compiled=5 |
+| `trim-nested-star` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 137,910.0 | 107,751.0 | 1,056,606.0 | 369,913.9 | 5 | - | 2.682 (max is trial 1) | compiled=5 |
+| `trim-nested-star` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 751,744.0 | 705,894.0 | 1,724,129.0 | 394,470.3 | 5 | 5,736 | 0.525 (max is trial 1) | compiled=5 |
+| `trim-nested-star` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,528,538.0 | 1,488,108.0 | 2,599,414.0 | 430,216.7 | 5 | 2,600 | 0.281 (max is trial 1) | compiled=5 |
+| `utf8-lead-no-cont` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `utf8-lead-no-cont` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `uuid-near-miss` | `plain` | `rust_1.13.1_default-caps-simdna` | 54,360.0 | 42,290.0 | 256,322.0 | 82,678.5 | 5 | - | 1.521 (max is trial 1) | compiled=5 |
+| `uuid-near-miss` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 72,161.0 | 56,980.0 | 315,642.0 | 99,466.2 | 5 | - | 1.378 (max is trial 1) | compiled=5 |
+| `uuid-near-miss` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 496,452.0 | 491,583.0 | 943,886.0 | 177,907.4 | 5 | 2,216 | 0.358 (max is trial 1) | compiled=5 |
+| `uuid-near-miss` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,177,797.0 | 1,154,736.0 | 1,476,808.0 | 119,852.4 | 5 | 2,088 | 0.102 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `plain` | `rust_1.13.1_default-caps-simdna` | 4,030.0 | 1,600.0 | 182,501.0 | 71,804.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 11,890.0 | 8,690.0 | 215,041.0 | 80,925.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 47,340.0 | 43,070.0 | 310,071.0 | 105,168.8 | 5 | 936 | 2.222 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 353,372.0 | 329,412.0 | 1,256,017.0 | 361,128.2 | 5 | 1,704 | 1.022 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `plain` | `rust_1.13.1_default-caps-simdna` | 174,531.0 | 142,660.0 | 628,004.0 | 186,269.4 | 5 | - | 1.067 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 33,900.0 | 27,260.0 | 233,161.0 | 78,810.4 | 5 | - | 2.325 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,197,568.0 | 3,153,447.0 | 4,482,724.0 | 520,855.4 | 5 | 7,928 | 0.163 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 718,854.0 | 673,224.0 | 1,530,249.0 | 332,334.3 | 5 | 2,504 | 0.462 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-number-extended` | `plain` | `rust_1.13.1_default-caps-simdna` | 438,782.0 | 260,701.0 | 774,364.0 | 172,180.9 | 5 | - | 0.392 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-number-extended` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 174,291.0 | 151,861.0 | 653,544.0 | 191,382.9 | 5 | - | 1.098 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-number-extended` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `wild-codegrammar-json-number-extended` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,608,480.0 | 3,604,380.0 | 4,778,067.0 | 465,877.9 | 5 | 6,504 | 0.129 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `plain` | `rust_1.13.1_default-caps-simdna` | 10,700.0 | 4,250.0 | 369,152.0 | 144,627.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 14,110.0 | 10,470.0 | 242,821.0 | 91,154.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 95,971.0 | 88,571.0 | 549,213.0 | 181,698.2 | 5 | 936 | 1.893 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 126,950.0 | 121,941.0 | 580,423.0 | 180,966.0 | 5 | 1,704 | 1.425 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-stringcontent-escape` | `plain` | `rust_1.13.1_default-caps-simdna` | 143,540.0 | 114,000.0 | 523,473.0 | 157,645.0 | 5 | - | 1.098 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-stringcontent-escape` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 35,520.0 | 29,301.0 | 243,022.0 | 82,909.0 | 5 | - | 2.334 (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-stringcontent-escape` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `wild-codegrammar-json-stringcontent-escape` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 267,192.0 | 232,831.0 | 712,134.0 | 184,073.6 | 5 | 2,056 | 0.689 (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `plain` | `rust_1.13.1_default-caps-simdna` | 10,419,848.0 | 9,863,215.0 | 13,502,085.0 | 1,313,707.9 | 5 | - | 0.126 (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 10,364,068.0 | 9,786,714.0 | 13,425,294.0 | 1,313,975.4 | 5 | - | 0.127 (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,783,817,252.0 | 1,778,505,152.0 | 1,825,940,595.0 | 17,521,944.8 | 5 | 158,072 | 0.010 (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,733,371,681.0 | 1,726,046,281.0 | 1,770,429,307.0 | 16,022,676.3 | 5 | 141,928 | 0.009 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `plain` | `rust_1.13.1_default-caps-simdna` | 2,519,274.0 | 2,385,973.0 | 4,495,445.0 | 793,764.1 | 5 | - | 0.315 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 1,273,117.0 | 1,225,367.0 | 2,140,242.0 | 345,235.0 | 5 | - | 0.271 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,330,228.0 | 2,978,827.0 | 8,929,459.0 | 2,456,153.5 | 5 | 4,232 | 0.738 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,155,457.0 | 2,973,857.0 | 8,867,840.0 | 2,497,173.1 | 5 | 4,488 | 0.791 (max is trial 1) | compiled=5 |
+| `wild-logparse-base10num-grok` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-base10num-grok` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-base10num-noatomic` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-base10num-noatomic` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-quotedstring-grok` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-quotedstring-grok` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-quotedstring-noatomic` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-quotedstring-noatomic` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-syslogbase-expanded` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-syslogbase-expanded` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-winpath-grok` | `plain` | `rust_1.13.1_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-logparse-winpath-grok` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `wild-secrets-aws-access-key-id` | `plain` | `rust_1.13.1_default-caps-simdna` | 55,520.0 | 52,940.0 | 281,721.0 | 89,610.9 | 5 | - | 1.614 (max is trial 1) | compiled=5 |
+| `wild-secrets-aws-access-key-id` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 52,191.0 | 46,780.0 | 276,232.0 | 89,465.4 | 5 | - | 1.714 (max is trial 1) | compiled=5 |
+| `wild-secrets-aws-access-key-id` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,559,305.0 | 2,242,442.0 | 5,735,332.0 | 1,153,145.1 | 5 | 11,752 | 0.253 (max is trial 1) | compiled=5 |
+| `wild-secrets-aws-access-key-id` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,005,991.0 | 1,737,369.0 | 3,558,630.0 | 655,729.9 | 5 | 3,464 | 0.327 (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `plain` | `rust_1.13.1_default-caps-simdna` | 93,260.0 | 76,080.0 | 308,752.0 | 88,607.6 | 5 | - | 0.950 (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 93,131.0 | 75,170.0 | 301,651.0 | 85,434.4 | 5 | - | 0.917 (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,152,063.0 | 2,311,273.0 | 5,494,430.0 | 1,020,993.5 | 5 | 7,224 | 0.246 (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,028,523.0 | 2,090,832.0 | 5,744,422.0 | 1,195,224.3 | 5 | 2,352 | 0.297 (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `plain` | `rust_1.13.1_default-caps-simdna` | 669,433.0 | 587,454.0 | 1,220,047.0 | 236,028.8 | 5 | - | 0.353 (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 998,545.0 | 870,955.0 | 2,039,372.0 | 439,957.6 | 5 | - | 0.441 (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,440,639.0 | 2,645,184.0 | 5,062,378.0 | 793,853.5 | 5 | 3,504 | 0.231 (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 3,642,600.0 | 2,697,515.0 | 5,257,349.0 | 834,315.1 | 5 | 5,048 | 0.229 (max is trial 1) | compiled=5 |
+| `wild-secrets-username-password-pair` | `plain` | `rust_1.13.1_default-caps-simdna` | 401,053.0 | 347,012.0 | 930,995.0 | 214,795.3 | 5 | - | 0.536 (max is trial 1) | compiled=5 |
+| `wild-secrets-username-password-pair` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 461,663.0 | 391,493.0 | 1,041,346.0 | 242,741.2 | 5 | - | 0.526 (max is trial 1) | compiled=5 |
+| `wild-secrets-username-password-pair` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 26,744,138.0 | 26,459,177.0 | 39,956,152.0 | 5,330,614.1 | 5 | 129,576 | 0.199 (max is trial 1) | compiled=5 |
+| `wild-secrets-username-password-pair` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,987,098.0 | 4,931,397.0 | 12,615,860.0 | 2,967,324.1 | 5 | 10,072 | 0.595 (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `plain` | `rust_1.13.1_default-caps-simdna` | 7,530.0 | 5,850.0 | 232,401.0 | 89,470.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 34,780.0 | 25,500.0 | 276,041.0 | 97,877.2 | 5 | - | 2.814 (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 415,362.0 | 394,702.0 | 1,215,657.0 | 318,221.0 | 5 | 4,776 | 0.766 (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 488,953.0 | 459,522.0 | 1,264,947.0 | 312,739.6 | 5 | 2,120 | 0.640 (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `plain` | `rust_1.13.1_default-caps-simdna` | 31,650.0 | 25,450.0 | 430,782.0 | 158,609.9 | 5 | - | 5.011 (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 35,640.0 | 27,461.0 | 448,053.0 | 164,536.4 | 5 | - | 4.617 (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 508,223.0 | 471,353.0 | 1,343,867.0 | 337,180.5 | 5 | 5,592 | 0.663 (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 313,621.0 | 296,822.0 | 1,053,766.0 | 295,792.5 | 5 | 1,832 | 0.943 (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `plain` | `rust_1.13.1_default-caps-simdna` | 208,511.0 | 179,801.0 | 1,184,176.0 | 389,713.9 | 5 | - | 1.869 (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 201,772.0 | 164,891.0 | 1,154,886.0 | 381,874.2 | 5 | - | 1.893 (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 513,813.0 | 474,103.0 | 1,334,568.0 | 330,374.9 | 5 | 3,944 | 0.643 (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 997,416.0 | 954,666.0 | 1,942,640.0 | 383,172.5 | 5 | 6,056 | 0.384 (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `plain` | `rust_1.13.1_default-caps-simdna` | 35,701.0 | 31,730.0 | 248,091.0 | 84,062.4 | 5 | - | 2.355 (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 42,170.0 | 36,940.0 | 230,421.0 | 74,826.6 | 5 | - | 1.774 (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,046,576.0 | 973,676.0 | 2,003,641.0 | 393,529.0 | 5 | 6,104 | 0.376 (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,248,197.0 | 1,180,417.0 | 2,277,183.0 | 421,875.7 | 5 | 6,488 | 0.338 (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `plain` | `rust_1.13.1_default-caps-simdna` | 106,680.0 | 90,211.0 | 366,592.0 | 106,380.3 | 5 | - | 0.997 (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 222,701.0 | 194,911.0 | 699,084.0 | 196,319.2 | 5 | - | 0.882 (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,680,949.0 | 1,650,830.0 | 2,700,465.0 | 407,604.2 | 5 | 2,984 | 0.242 (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,596,089.0 | 1,549,868.0 | 2,625,285.0 | 415,736.7 | 5 | 2,824 | 0.260 (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `plain` | `rust_1.13.1_default-caps-simdna` | 499,283.0 | 416,482.0 | 949,125.0 | 193,057.1 | 5 | - | 0.387 (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 1,226,687.0 | 1,066,495.0 | 2,263,273.0 | 445,963.1 | 5 | - | 0.364 (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 597,263.0 | 579,803.0 | 1,455,948.0 | 338,938.6 | 5 | 2,312 | 0.567 (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 487,333.0 | 482,153.0 | 1,264,867.0 | 307,355.3 | 5 | 2,088 | 0.631 (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `plain` | `rust_1.13.1_default-caps-simdna` | 117,970.0 | 109,891.0 | 594,333.0 | 189,257.8 | 5 | - | 1.604 (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 96,370.0 | 90,330.0 | 517,623.0 | 164,666.5 | 5 | - | 1.709 (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 4,375,474.0 | 2,744,005.0 | 5,783,262.0 | 962,607.2 | 5 | 7,472 | 0.220 (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,108,546.0 | 1,088,326.0 | 2,043,591.0 | 374,585.0 | 5 | 1,896 | 0.338 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `plain` | `rust_1.13.1_default-caps-simdna` | 3,845,702.0 | 1,967,001.0 | 4,761,247.0 | 911,906.5 | 5 | - | 0.237 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 1,194,667.0 | 824,124.0 | 2,079,432.0 | 426,398.6 | 5 | - | 0.357 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 10,733,309.0 | 10,708,090.0 | 21,727,861.0 | 4,398,708.9 | 5 | 31,592 | 0.410 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5,449,130.0 | 5,409,120.0 | 14,658,071.0 | 3,604,294.5 | 5 | 19,608 | 0.661 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `plain` | `rust_1.13.1_default-caps-simdna` | 258,651.0 | 230,791.0 | 719,284.0 | 185,057.9 | 5 | - | 0.715 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 107,971.0 | 92,930.0 | 553,833.0 | 176,134.1 | 5 | - | 1.631 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,691,405.0 | 2,606,195.0 | 4,338,064.0 | 653,139.7 | 5 | 9,144 | 0.243 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 2,770,566.0 | 2,619,674.0 | 4,688,136.0 | 775,746.7 | 5 | 4,904 | 0.280 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `plain` | `rust_1.13.1_default-caps-simdna` | 345,502.0 | 160,581.0 | 724,204.0 | 204,540.7 | 5 | - | 0.592 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 97,440.0 | 80,611.0 | 611,814.0 | 202,956.0 | 5 | - | 2.083 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,880,850.0 | 1,647,169.0 | 3,149,888.0 | 558,982.8 | 5 | 11,160 | 0.297 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,967,451.0 | 1,713,530.0 | 2,827,185.0 | 401,353.7 | 5 | 4,936 | 0.204 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `plain` | `rust_1.13.1_default-caps-simdna` | 3,565,259.0 | 2,662,885.0 | 5,059,788.0 | 801,264.4 | 5 | - | 0.225 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 1,323,607.0 | 1,150,727.0 | 1,977,421.0 | 303,988.2 | 5 | - | 0.230 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 35,379,417.0 | 35,320,136.0 | 40,419,805.0 | 2,013,711.7 | 5 | 99,944 | 0.057 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 38,787,676.0 | 38,723,705.0 | 49,260,374.0 | 4,195,882.4 | 5 | 89,624 | 0.108 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `plain` | `rust_1.13.1_default-caps-simdna` | 67,970.0 | 66,451.0 | 530,143.0 | 180,076.2 | 5 | - | 2.649 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 77,270.0 | 68,920.0 | 516,042.0 | 171,750.4 | 5 | - | 2.223 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,274,507.0 | 1,086,816.0 | 2,437,884.0 | 484,484.6 | 5 | 6,136 | 0.380 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,267,107.0 | 1,228,437.0 | 2,260,972.0 | 394,181.8 | 5 | 3,496 | 0.311 (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `plain` | `rust_1.13.1_default-caps-simdna` | 76,150.0 | 64,130.0 | 503,152.0 | 168,320.1 | 5 | - | 2.210 (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `whole-subject` | `rust_1.13.1_default-caps-simdna` | 72,611.0 | 65,170.0 | 531,043.0 | 179,512.8 | 5 | - | 2.472 (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,930,131.0 | 1,831,280.0 | 3,408,859.0 | 598,413.7 | 5 | 4,152 | 0.310 (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `whole-subject` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 1,517,229.0 | 1,455,568.0 | 2,610,535.0 | 446,342.6 | 5 | 4,184 | 0.294 (max is trial 1) | compiled=5 |
+
+### `interpretive`
+
+| pattern | form | testee | median total_ns | min | max | stddev | n costed | artifact bytes | jitter | outcomes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `balanced-parens-rec` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `balanced-parens-rec` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | - | - | - | - | 0 | - |  | did-not-compile=1 |
+| `base10num-near-miss` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 7,601.0 | 6,550.0 | 14,120.0 | 2,900.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `base10num-near-miss` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 7,770.0 | 7,030.0 | 16,490.0 | 3,611.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `bracket-array-define` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 7,540.0 | 6,120.0 | 21,040.0 | 5,557.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `bracket-array-define` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 8,580.0 | 7,170.0 | 22,220.0 | 5,634.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `codegrammar-flat` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,010.0 | 4,410.0 | 10,660.0 | 2,476.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `codegrammar-flat` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 6,260.0 | 5,340.0 | 14,510.0 | 3,500.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 6,580.0 | 5,870.0 | 17,770.0 | 4,469.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `codegrammar-xflag` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 7,400.0 | 6,500.0 | 18,250.0 | 4,438.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `currency-lookbehind-fixed` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,930.0 | 4,360.0 | 13,470.0 | 3,298.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `currency-lookbehind-fixed` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 6,620.0 | 5,300.0 | 11,660.0 | 2,353.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `date-nested-plus` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,210.0 | 3,570.0 | 11,790.0 | 3,141.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `date-nested-plus` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 4,790.0 | 4,110.0 | 12,800.0 | 3,339.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `doubled-word` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,410.0 | 4,340.0 | 12,160.0 | 2,875.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `doubled-word` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 6,300.0 | 4,600.0 | 15,500.0 | 3,968.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `dup-param-detect` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 6,790.0 | 5,790.0 | 17,200.0 | 4,336.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `dup-param-detect` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 7,900.0 | 6,620.0 | 16,830.0 | 3,812.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `email-local-nodup` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 3,950.0 | 3,010.0 | 9,610.0 | 2,587.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `email-local-nodup` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 4,380.0 | 3,870.0 | 14,790.0 | 4,144.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `email-nested-plus` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,180.0 | 2,700.0 | 10,000.0 | 2,642.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `email-nested-plus` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,000.0 | 3,250.0 | 14,120.0 | 3,983.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,820.0 | 3,340.0 | 22,130.0 | 7,105.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `evil-alt-nested` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 9,160.0 | 7,430.0 | 28,650.0 | 8,145.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `file-ext-order` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 2,110.0 | 1,790.0 | 8,980.0 | 2,768.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `file-ext-order` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,950.0 | 5,320.0 | 22,160.0 | 6,506.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `float-literal-bound` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 7,800.0 | 5,980.0 | 17,441.0 | 4,213.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `float-literal-bound` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 7,010.0 | 6,320.0 | 17,770.0 | 4,322.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `floor-byte` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 760.0 | 720.0 | 7,090.0 | 2,535.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `floor-byte` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 940.0 | 860.0 | 6,440.0 | 2,186.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `high-byte-run` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,940.0 | 1,790.0 | 9,700.0 | 3,104.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `high-byte-run` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 1,790.0 | 1,550.0 | 11,030.0 | 3,696.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 22,601.0 | 19,750.0 | 40,950.0 | 7,764.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `ipv4-near-miss` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 23,411.0 | 20,020.0 | 35,000.0 | 5,413.4 | 5 | - | 0.231 (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,980.0 | 1,800.0 | 5,230.0 | 1,301.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `keyword-prefix-order` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 2,510.0 | 2,300.0 | 19,120.0 | 6,624.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `logparse-atomic` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 13,850.0 | 12,690.0 | 25,560.0 | 4,809.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `logparse-atomic` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 14,860.0 | 13,100.0 | 27,971.0 | 5,495.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `logparse-atomic-removed` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 14,940.0 | 12,570.0 | 26,110.0 | 5,013.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `logparse-atomic-removed` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 14,090.0 | 12,920.0 | 25,690.0 | 4,795.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `mojibake-curly-quote` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 2,140.0 | 1,940.0 | 6,770.0 | 1,849.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `mojibake-curly-quote` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 2,560.0 | 2,130.0 | 9,670.0 | 2,873.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `negation-scope-lookbehind-var` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | - | - | - | - | 0 | - |  | unsupported-by-declaration=1 |
+| `nested-comment-rec` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 6,841.0 | 5,790.0 | 13,970.0 | 3,121.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `nested-comment-rec` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 9,540.0 | 6,810.0 | 22,990.0 | 5,855.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `numeric-id-nested-plus` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 11,370.0 | 7,510.0 | 24,380.0 | 6,108.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `numeric-id-nested-plus` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 12,280.0 | 8,090.0 | 34,270.0 | 9,682.8 | 5 | - | timer-floor | compiled=5 |
+| `phone-list-nested-plus` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 12,870.0 | 11,330.0 | 33,360.0 | 8,530.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `phone-list-nested-plus` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 22,560.0 | 12,240.0 | 42,130.0 | 11,583.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `phone-palindrome-6` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 6,590.0 | 5,540.0 | 14,870.0 | 3,453.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `phone-palindrome-6` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 6,850.0 | 5,420.0 | 15,830.0 | 3,795.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `pwd-strength-chain` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 9,981.0 | 8,430.0 | 20,400.0 | 4,457.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `pwd-strength-chain` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,660.0 | 8,780.0 | 21,121.0 | 4,482.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `quoted-delim-match` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,760.0 | 3,980.0 | 13,950.0 | 3,750.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `quoted-delim-match` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,640.0 | 4,620.0 | 17,420.0 | 4,793.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `router-prefix-order` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 2,040.0 | 1,790.0 | 5,370.0 | 1,346.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `router-prefix-order` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 2,720.0 | 2,380.0 | 7,640.0 | 2,000.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `tag-depth3-bound` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 14,990.0 | 13,630.0 | 31,310.0 | 6,638.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `tag-depth3-bound` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 17,060.0 | 14,250.0 | 34,210.0 | 7,250.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `tag-pair-match` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 10,420.0 | 9,300.0 | 23,730.0 | 5,414.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `tag-pair-match` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 12,340.0 | 10,290.0 | 23,381.0 | 4,744.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `trim-nested-star` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 8,610.0 | 6,980.0 | 24,130.0 | 6,368.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `trim-nested-star` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,581.0 | 7,960.0 | 27,500.0 | 7,100.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `utf8-lead-no-cont` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,590.0 | 1,390.0 | 12,800.0 | 4,435.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `utf8-lead-no-cont` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 2,570.0 | 2,050.0 | 11,230.0 | 3,543.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `uuid-near-miss` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 9,650.0 | 7,670.0 | 16,670.0 | 3,212.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `uuid-near-miss` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,200.0 | 8,160.0 | 17,830.0 | 3,468.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 650.0 | 590.0 | 5,071.0 | 1,773.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-array-begin` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 1,050.0 | 930.0 | 6,840.0 | 2,317.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,180.0 | 2,670.0 | 12,590.0 | 3,643.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-constant` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 3,870.0 | 2,920.0 | 9,691.0 | 2,478.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-number-extended` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 15,480.0 | 13,570.0 | 28,130.0 | 5,434.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-number-extended` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 15,940.0 | 13,400.0 | 26,090.0 | 4,574.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 590.0 | 520.0 | 5,090.0 | 1,803.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-object-begin` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 980.0 | 900.0 | 6,480.0 | 2,194.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-stringcontent-escape` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 6,380.0 | 4,810.0 | 14,650.0 | 3,610.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-codegrammar-json-stringcontent-escape` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 6,960.0 | 5,130.0 | 17,000.0 | 4,357.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,146,657.0 | 1,097,806.0 | 1,372,708.0 | 99,595.8 | 5 | - | 0.087 (max is trial 1) | compiled=5 |
+| `wild-datetime-datefinder-alternation` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 1,156,267.0 | 1,089,766.0 | 1,375,907.0 | 105,071.9 | 5 | - | 0.091 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 51,620.0 | 49,411.0 | 72,320.0 | 8,447.6 | 5 | - | 0.164 (max is trial 1) | compiled=5 |
+| `wild-datetime-moment-iso8601` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 52,321.0 | 50,420.0 | 88,131.0 | 14,269.7 | 5 | - | 0.273 (max is trial 1) | compiled=5 |
+| `wild-logparse-base10num-grok` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 9,130.0 | 7,110.0 | 20,460.0 | 4,925.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-base10num-grok` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,090.0 | 7,940.0 | 42,360.0 | 12,871.9 | 5 | - | timer-floor | compiled=5 |
+| `wild-logparse-base10num-noatomic` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 7,030.0 | 5,900.0 | 19,640.0 | 5,152.8 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-base10num-noatomic` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 9,300.0 | 6,960.0 | 17,070.0 | 3,638.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-quotedstring-grok` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 17,570.0 | 14,130.0 | 35,140.0 | 7,760.5 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-quotedstring-grok` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 18,140.0 | 15,170.0 | 33,881.0 | 6,937.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-quotedstring-noatomic` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 15,650.0 | 12,870.0 | 32,271.0 | 7,129.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-quotedstring-noatomic` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 16,150.0 | 13,570.0 | 34,260.0 | 7,686.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-syslogbase-expanded` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 347,322.0 | 329,062.0 | 433,773.0 | 37,689.3 | 5 | - | 0.109 (max is trial 1) | compiled=5 |
+| `wild-logparse-syslogbase-expanded` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 358,312.0 | 331,042.0 | 436,452.0 | 36,440.0 | 5 | - | 0.102 (max is trial 1) | compiled=5 |
+| `wild-logparse-winpath-grok` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,100.0 | 4,420.0 | 14,410.0 | 3,777.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-logparse-winpath-grok` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,710.0 | 4,810.0 | 14,480.0 | 3,677.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-secrets-aws-access-key-id` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 9,950.0 | 8,300.0 | 33,280.0 | 9,525.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-secrets-aws-access-key-id` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,720.0 | 8,890.0 | 22,100.0 | 4,840.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,090.0 | 2,890.0 | 12,280.0 | 3,458.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-secrets-github-pat` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,130.0 | 3,411.0 | 9,660.0 | 2,224.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 23,850.0 | 21,010.0 | 37,750.0 | 6,072.0 | 5 | - | 0.255 (max is trial 1) | compiled=5 |
+| `wild-secrets-slack-webhook-url` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 26,560.0 | 21,910.0 | 42,480.0 | 8,196.2 | 5 | - | 0.309 | compiled=5 |
+| `wild-secrets-username-password-pair` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 27,310.0 | 23,440.0 | 43,711.0 | 7,307.5 | 5 | - | 0.268 (max is trial 1) | compiled=5 |
+| `wild-secrets-username-password-pair` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 29,010.0 | 25,781.0 | 43,090.0 | 6,209.2 | 5 | - | 0.214 (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,910.0 | 1,640.0 | 9,000.0 | 2,860.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 2,520.0 | 2,190.0 | 10,060.0 | 3,017.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 1,230.0 | 1,060.0 | 7,711.0 | 2,599.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-dollar-trailing-newline-pcre2` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 1,330.0 | 1,140.0 | 8,170.0 | 2,732.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 4,210.0 | 3,390.0 | 17,440.0 | 5,300.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-semdiv-empty-alt-repeat-pcre2` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 4,220.0 | 3,170.0 | 10,850.0 | 2,815.6 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 10,520.0 | 7,670.0 | 23,260.0 | 5,665.7 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-email-owasp` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,820.0 | 8,300.0 | 23,571.0 | 5,607.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 31,990.0 | 23,850.0 | 43,391.0 | 7,457.3 | 5 | - | 0.233 (max is trial 1) | compiled=5 |
+| `wild-validator-ipv4-owasp` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 25,560.0 | 25,050.0 | 46,251.0 | 8,127.3 | 5 | - | 0.318 (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,400.0 | 3,920.0 | 15,910.0 | 4,461.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-us-zip-owasp` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,550.0 | 4,960.0 | 11,470.0 | 2,607.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,460.0 | 3,720.0 | 10,950.0 | 2,634.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-validator-uuid-grok` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 4,800.0 | 4,210.0 | 12,680.0 | 3,241.4 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 127,301.0 | 116,311.0 | 162,191.0 | 17,088.2 | 5 | - | 0.134 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942140-dbnames` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 124,641.0 | 117,591.0 | 171,191.0 | 19,676.3 | 5 | - | 0.158 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 15,860.0 | 13,690.0 | 29,600.0 | 5,866.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942160-sleep-benchmark` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 17,250.0 | 14,700.0 | 31,251.0 | 6,151.9 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 9,400.0 | 8,060.0 | 15,850.0 | 2,830.0 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942270-union-select` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 10,271.0 | 8,590.0 | 19,670.0 | 4,079.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 552,533.0 | 520,792.0 | 687,564.0 | 59,732.0 | 5 | - | 0.108 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942360-concat-sqli` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 543,523.0 | 509,322.0 | 690,034.0 | 64,481.5 | 5 | - | 0.119 (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 8,520.0 | 6,670.0 | 17,410.0 | 3,873.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `wild-waf-crs-942500-comment-obfuscation` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 20,350.0 | 15,890.0 | 55,650.0 | 14,889.2 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5,120.0 | 4,250.0 | 10,400.0 | 2,449.3 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
+| `winpath-near-miss` | `whole-subject` | `oniguruma_6.9.10_default-caps-simdna` | 5,710.0 | 4,710.0 | 12,000.0 | 2,847.1 | 5 | - | timer-floor (max is trial 1) | compiled=5 |
 
