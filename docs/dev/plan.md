@@ -208,27 +208,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   auto-nocaps', with ratio, IQR + null-band clearance, competitor,
   count; a query, never a ranking; every hit a finding by definition.
 - [B83] STATE:completed — (2026-09-23 ~14:2x EDT: lane b83runform, merged 7a65815, O-51 sent — router: run form IS the whole cost ((b)≡(c) ×4); keyword: positive (b)−(c) both sessions but the IQR-crossing verdict noise-sensitive (a decision-rule-robustness finding); inline hand-twin loses to memchr-run on all six measured configs; the crossover solve ill-conditioned at 0.36 pp frequency separation — a cycle-3 design ask; one ruling round-trip on keyword (d)'s offset; /tmp/optloop5 held until "I-103 logs fetched") —
-- [B84] STATE:started — (2026-09-23 ~14:3x EDT: lane b84repin up; window slot ~22:0x EDT as acked) — (2026-09-23 ~13:2x EDT: inbox I-102, slot
-  NAMED — build after [B83], WINDOW TONIGHT ~22:0x EDT) THE ADMISSION
-  FIX'S ACCEPTANCE: re-pin to pcrec main **6ef76820 (abi 30→31,
-  [OPT-PRECHECK-ADMIT])** — ONE new unconditional stamp REQ_WHY (closed
-  four tokens: none/emitted/one-attempt/dominated; EMISSION, read beside
-  REQ_BYTE/REQ_RUN's ANALYSIS — two questions, never one stamp split);
-  compiler built at 6ef76820 regardless of main's tip (a docs/tests
-  re-pin commit follows; src/cli/lib diff empty). The usual ritual, then
-  capability ×4 both regimes, BEFORE = b1885a83 (O-49's AFTER). The
-  ledger's grid: ACCEPTANCE (a)-(e) (email-owasp thr ×4 EXPECT full
-  recovery to 43.7-85.3 ns with REQ_WHY one-attempt and NO memchr in the
-  region; winpath/email-nested-plus back off the floor; json-array-begin
-  dominated one-pass; uuid/ipv4 DFA recovered; the 29 G2 + 4 G1 cells
-  improve-or-flat), NO-MOVE (f)/(g) (nested-comment-rec ×4 and
-  github-pat forced-VM stay put, REQ_WHY emitted), NEGATIVE (h)
-  (router/keyword thr NO CHANGE — a recovery would be the surprise), and
-  the REQ_WHY census over our 62 patterns as the FOURTH independent
-  derivation (their corpus: 1,100/2,814 = 294 one-attempt + 806
-  dominated; their capability read: none 79/27, emitted 67/27,
-  one-attempt 27/9, dominated 14/7). Views + I-101 query render per
-  [B82] once merged.
+- [B84] STATE:started — (2026-09-23 ~19:0x EDT: (a) MERGED 82bf2f7-tip — abi 31 absorbed, registries byte-identical below headers, ten stamp predictions exact, census digit-exact, catalogue 3.6 + wave, 458/0 · 193/193; (b) WINDOW DONE 16:00-18:22 EDT 4/4 attempt-1 (store 229, 38ceba2) and the cross-pin AFTER group committed e98aee5 at v21 (8 records — the comparators sit outside the since-bracket; widen to 2026-09-22T00:00Z and regenerate IF the ledger wants them). OWED TO THE NEXT SESSION (Frank's budget call, no new lanes): the LEDGER (I-102's (a)-(h) grid + REQ_WHY census vs the four derivations; BEFORE = b1885a83; the O-45/O-49 shape) and O-52) —
 - [B85] STATE:completed — (2026-09-23 ~16:1x EDT: lane b85kb28 merged + the three groups regenerated at v21 (AFTER groups 58.5/58.2 MB, wrapfix subject-grain DOWN to 34.9 MB) — KB-28 CLOSED; the lane also fixed interpret's ReportTsv header refusal (would have crashed on the 19th column) and a threshold-binding bug its own test caught; owed onward unchanged: class-aware interpreter rules ride [B79])
 - [B86] STATE:not-started — (2026-09-23 ~15:2x EDT: inbox I-105, slot
   GRANTED, runs after [B84]'s window — tomorrow's quiet slot) THE
