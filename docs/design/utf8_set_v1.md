@@ -290,6 +290,35 @@ roughly 200 common words plus a punctuation/whitespace vocabulary, and
 `bench/syntax/censustext.py`'s shape, which `bench/capability/captext.py`
 already reuses — composes them into sentences and paragraphs.
 
+**The size-fitting boundary rule (F-M1, v0.2, BLOCKER fixed).**
+`captext.py:100-118`'s trim-to-fit loop, the one built precedent for
+this generator's shape, hits its exact byte target with a raw
+byte-offset slice (`line[:remaining]`) — safe today only because its
+alphabet is ASCII. Ported naively to `cyr`/`cjk`/`mix`'s multi-byte word
+pools, that slice will, on most (corpus, size) pairs, land inside a
+multi-byte sequence and leave an ill-formed UTF-8 tail — which, per
+§8.2's rule, is not a corner case here but a subject-corrupting default:
+plain `PCRE2_UTF` (and every other UTF-8-aware engine on the roster,
+§8.3) refuses or misbehaves on such a subject, silently converting the
+entire `throughput` regime into hard refusals with no `match`
+expectations to catch the wrong outcome cleanly. **The rule:**
+`utf8text.py`'s size-fitting step trims back to the LAST COMPLETE
+CHARACTER at or before the byte budget (a decode-and-truncate walk-back:
+`try: s[:k].encode(); except UnicodeDecodeError: k -= 1`, or the
+equivalent byte-buffer form), then PADS with ASCII spaces (0x20, never a
+multi-byte filler) up to the exact target byte size — so every
+throughput subject is still EXACTLY its named size in bytes (the
+histogram table's own claim is unaffected; the pad simply shows up in
+it, visibly). `gen_subjects.py --check` and
+`gen_throughput_subjects.py --check` gain a DECODE GATE: every committed
+subject must round-trip through `bytes.decode("utf-8")` with no error
+before its manifest row is written — the same belt-and-braces discipline
+`gen_throughput_subjects.py`'s own `_redos_safety_check` already sets a
+precedent for (verify the structural argument, don't just assert it),
+with a negative-arm control (a deliberately mid-character-truncated
+fixture must FAIL the gate). This is a stated requirement of §13's U3
+lane, not an implementation detail left to it.
+
 **The limitation, stated plainly and repeated in `NOTES.md`:** these are
 our sentences made of real words. The set claims a realistic BYTE
 HISTOGRAM and realistic character-width statistics — which is what every
@@ -1202,7 +1231,7 @@ Five lanes, in dependency order. None opens before the design panel.
 |---|---|---|
 | **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | **— none; U1 is the entry point** and its own acceptance check (the byte-identical re-derivation below) must pass before U4/U5 read its output **(F-C5, v0.2: reworded — the prior cell's "nothing else can start" read as contradicting U3's own "parallel with U1" row two lines down; U1 itself has no prerequisite, which is what the prose underneath already said)** |
 | **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled. **(F-C1, v0.2)** ALSO the pcrec adapter code change: a new `effective_encoding(flags)` function, its `encoding_extra` fifth part in `compose_config_extra()`, and the frozen-renderer rows proving the six pre-existing pcrec config families derive UNCHANGED ids and `config_extra` under it | U1's tokens |
-| **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check` | — (parallel with U1/U2) |
+| **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check`. **(F-M1, v0.2)** the size-fitting boundary rule (§4.1: trim to the last complete character, pad with ASCII spaces to the exact byte size) and the decode-gate `--check` control (a mid-character-truncated fixture must FAIL) | — (parallel with U1/U2) |
 | **U4** | the PATTERNS: `patterns.rxt` as the source of truth with its `ext bench` roster block, `gen_patterns.py` rendering `patterns/*.rx`, the sidecar, `provenance.tsv` | U3 (for the typed short subjects), U2 (for the `ext bench` roster) |
 | **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time | U1, U3, U4 |
 
