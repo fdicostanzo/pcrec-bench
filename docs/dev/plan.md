@@ -228,3 +228,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (rust-default retires from the views when the pure split lands);
   store ids NEVER renamed — the declaration table is the views'
   authority. Table FROZEN; build may start after the [B80] ledger.
+  PLUS (I-101, Frank's nuance): a THIRD table, the standing CROSS-CLASS
+  QUERY — every cell where any YES-class config's median beats pcrec
+  auto-nocaps', with ratio, IQR + null-band clearance, competitor,
+  count; a query, never a ranking; every hit a finding by definition.

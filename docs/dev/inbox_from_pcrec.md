@@ -3466,3 +3466,4 @@ median beats pcrec auto-nocaps' median, with the ratio, whether it clears
 the cell's IQR and the null band, and the competitor; plus the count. Each
 such cell is a finding on our side by definition. (A pcrec lane renders it
 once from O-45's report meanwhile; the standing query is yours.)
+ack: 2026-09-23 — folded into [B82] (plan.md): the standing cross-class anomaly QUERY (yes-class beats pcrec auto-nocaps: ratio, IQR + null-band clearance, competitor, count — a query never a ranking, every hit a finding by definition) joins the two class-pure views in the same reporter change.
