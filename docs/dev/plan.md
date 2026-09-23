@@ -130,7 +130,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   lines verbatim, make's own *** [ verdict). Done-signal per I-89 (D);
   scratch /tmp/optloop2 held until "I-89 logs fetched". Report, never
   diagnose.
-- [B77] STATE:not-started — (2026-09-22 ~23:4x EDT: inbox I-90, Frank's
+- [B77] STATE:started — (2026-09-23 ~04:2x EDT: design lane b77design (opus) drafting docs/design/utf8_set_v1.md; panel next) — (2026-09-22 ~23:4x EDT: inbox I-90, Frank's
   charter — "somewhat complete, not small — or at least specify that it
   will grow; any functionality which might be affected by encoding;
   classes come to mind") SUB-BENCH `utf8`: capability's shape, PCRE2 10.46
