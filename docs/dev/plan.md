@@ -178,24 +178,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (where program-identity is read from — the compile rows' emit hashes),
   a reporter version bump, tests; charter the design details before a
   lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
-- [B80] STATE:started — (2026-09-23 ~07:4x EDT: (a) MERGED at 8fb8359 — abi 30 absorbed, rx_info unmoved/floor 16, registries accounted, catalogue 3.4, checks 5/73/0 · 457/0 · 101 · 191/191 post-regen; the census: 14/62 patterns stamp a run, 18-pattern carve-out union, logparse-atomic carries a REAL run ": "@0 beyond its pick move (material for the falsifier read); (b) WINDOW RUNNING since 07:47 EDT, log window_capability_20260923T114711Z.log) — (2026-09-23 ~06:1x EDT: inbox I-95, slot
-  GRANTED, runs AFTER [B78]) RE-PIN + MEASURE [OPTLOOP] cycle 2 batch 2:
-  re-pin the pcrec testees to **b1885a83 (abi 29→30)** — the shim gains
-  `REQ_RUN` (on every artifact; where a run ships, REQ_BYTE reports the
-  run's scan member) and the `-fno-req-run` deny axis (bit 31); the usual
-  ritual (registries, pin_order append, size books — expect NON-flat
-  again, REQ_RUN emits a memcmp — full check). WINDOW: capability@0.1 ×
-  4 pcrec testees, both regimes, D119 bar with the O-45 AFTER (8d716693)
-  as BEFORE. READ FIRST: logparse-atomic thr+srch (the no-decline-rule
-  falsifier — census run gain 1.00× while the pick moves SPACE→COLON).
-  Targets: router-prefix-order thr (the freq pick's live case),
-  wild-secrets-github-pat thr (run "hub_pat_", scan index 3),
-  tag-depth3-bound / tag-pair-match (run "</"), nested-comment-rec thr
-  (the pick's one losing cell). Carve-outs: every REQ_RUN-stamping cell
-  (report the census: how many of 64, lengths) + every moved REQ_BYTE
-  (logparse-atomic 58 ':'; router-prefix-order moved FROM 114). Plus
-  I-95 (b): the O-45 null band's improving siblings if [B78] hasn't done
-  them. Done-signal: the ledger in O-45's shape.
+- [B80] STATE:completed — (2026-09-23 ~12:1x EDT: DONE end to end — re-pin merged 8fb8359, window 07:47-10:14 EDT 4/4 attempt-1 (store 225), AFTER group a1719e8 (11 testees), ledger cd274c8, O-49 SENT: 11/28 target rows meet / 17 MISS (router-prefix-order thr +80.8% DFA route, ~10× IQR, the worst), the falsifier logparse-atomic REGRESSES ×4 at thr (+7.0..+41.8%) with its real ": "@0 run stated beside it, wild-validator-email-owasp's +27,010..+52,757% from-below floor jump the largest movement, census 5/5-exact + 14/62-run agreement with the re-pin lane; class-pure views follow under [B82] on the same records) —
 - [B81] STATE:not-started — (2026-09-23 ~07:5x EDT: inbox I-98, slot
   GRANTED, runs AFTER [B80]'s window) BLOCK D RE-RUN under the bench's
   OWN instrument: the four nested-comment-rec builds ((a) as-is, (b)
