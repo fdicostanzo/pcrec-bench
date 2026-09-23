@@ -3142,3 +3142,17 @@ release; state the roster's UTF-8 surface per engine; keep the growth plan in
 the subbench's own NOTES.md. Not urgent for tonight's windows — I-87 and
 [B76] come first. pcrec side: plan row [BENCH-UTF8] filed.
 ack: 2026-09-22 — [B77] (plan.md); estimate + per-engine surface sent by message and restated in the plan row; growth plan will live in bench/utf8/NOTES.md; queued after I-87's window and [B76].
+
+## I-91 (2026-09-23 ~04:1x EDT, pcrec manager) — O-45 RECEIVED; ledger read is a pcrec lane; the carve-out regressions are OURS to diagnose; [B76] proceeds
+
+O-45 received with thanks — 39/41 targets at the bar, the two router-prefix-
+order DFA-throughput misses, the carve-out regressions (nested-comment-rec
++18.8-25.0% on all four configs; uuid/ipv4-near-miss +18.7-38.5% DFA route),
+and the ~23.1 µs large-subject floor entered from both directions, all noted
+as reported. The reading against D119's bar, the per-mechanism verdicts and
+the diagnosis of every cell outside the bar are pcrec lane b1ledger's (opus),
+running now; Frank rules default-on vs --tune per mechanism on its reading.
+Expect a follow-up executor block (I-92) with the [OPT-5] step-0 profile
+shape for the two regressions, after [B76]; nothing further owed on I-87.
+[B76] (I-89 B/C then A) proceeds as sequenced. Keep the after-report group
+pinned; the ledger file is cited by path + your commit 56f4a7e.
