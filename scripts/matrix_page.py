@@ -51,19 +51,26 @@ import sys
 
 FIXED_COLS = ["subbench", "pattern", "regime_or_na", "form", "best_testee", "best_ns"]
 
-# The five CLOSED status tokens `render_matrix_tsv` ever prints in place
-# of a ratio (its own module-docstring [B52] section) -- one fixed chip
-# colour per token, deliberately NOT on the log-scale ramp: a status
-# token is a FACT about why nothing was timed, not a magnitude to shade
-# by. `checked in this order` in `report.py`'s docstring is a compile
-# rule for `_matrix_cell`, not a display rule here -- this dict is keyed
-# by the rendered string, order irrelevant.
+# The SIX CLOSED status tokens `render_matrix_tsv` ever prints in place
+# of a ratio (its own module-docstring [B52] section, plus KB-27's
+# `no-expectation` addition -- NOT called `unjudged`: that word already
+# names an unrelated count on the SAME report's `trial_agreement` line,
+# `pcrecbench.reduce.agreement_line`) -- one fixed chip colour per
+# token, deliberately NOT on the log-scale ramp: a status token is a
+# FACT about why nothing was timed, not a magnitude to shade by.
+# `checked in this order` in `report.py`'s docstring is a compile rule
+# for `_matrix_cell`, not a display rule here -- this dict is keyed by
+# the rendered string, order irrelevant.
 STATUS_CHIPS = {
     "unsup": ("chip-unsup", "unsupported-by-declaration (the testee's own "
               "advance capability declaration, not an engine failure)"),
     "refused": ("chip-refused", "did-not-compile"),
     "wrong": ("chip-wrong", "excluded: n_wrong > 0 (a wrong answer)"),
     "gave-up": ("chip-gaveup", "excluded: n_gave_up > 0, no wrong answer"),
+    "no-expectation": ("chip-no-expectation", "excluded: n_no_expectation > 0, "
+                        "no wrong answer or give-up (KB-27: no derived "
+                        "expectation exists for this (pattern, subject, "
+                        "regime) at all)"),
     "excluded": ("chip-excluded", "excluded for any other reason (a "
                  "non-measured status, a scratch-tier row not included, "
                  "a different form's own row, or this testee never ran "
@@ -213,6 +220,7 @@ td.cell {{ text-align: right; }}
 .chip-refused  {{ background: #7c3aed; color: #fff; text-align: center; }}
 .chip-wrong    {{ background: #b91c1c; color: #fff; text-align: center; }}
 .chip-gaveup   {{ background: #d97706; color: #fff; text-align: center; }}
+.chip-no-expectation {{ background: #0891b2; color: #fff; text-align: center; }}
 .chip-excluded {{ background: #4b5563; color: #fff; text-align: center; }}
 footer {{ margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }}
 </style>
