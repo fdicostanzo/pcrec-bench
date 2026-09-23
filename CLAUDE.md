@@ -431,6 +431,46 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **6ef76820, abi 31** (re-pinned from b1885a83, 2026-09-23, lane
+  b84repin, inbox I-102: the [OPT-PRECHECK-ADMIT] merge — one new
+  stamp, `RX_REQ_WHY`, unconditional on every artifact of both engines,
+  a closed four-token set (`none`/`emitted`/`one-attempt`/`dominated`)
+  naming the EMISSION of the req_byte/req_run pre-check beside their own
+  ANALYSIS; `struct rx_info` byte-identical, shim floor stays 16;
+  deliberately NOT an axis (no flag, no bit — pcrec's own tuning.md
+  §2.29), confirmed structurally: all four registry surfaces
+  byte-identical. All four tokens confirmed by value on hand-chosen
+  witnesses (incl. a new `\[` "dominated DFA (G1 identity)" kind — one
+  `memchr(…, 91, …)`, not two) and on I-102's own four named
+  acceptance-cell patterns from `bench/capability`
+  (`wild-validator-email-owasp`/`winpath-near-miss`/`email-nested-plus`/
+  `uuid-near-miss`/`ipv4-near-miss` = one-attempt,
+  `wild-codegrammar-json-array-begin` = dominated,
+  `nested-comment-rec`/`wild-secrets-github-pat`/`router-prefix-order`/
+  `keyword-prefix-order` = emitted, unchanged — all exactly as
+  predicted). The REQ_WHY census over `bench/capability`'s 62 compiling
+  patterns across the three distinct compiled artifacts (auto-caps,
+  auto-nocaps, vm-caps — vm-in-caps is compile-identical to vm-caps)
+  reproduces the reading's own cited figures EXACTLY: `none` 79/27,
+  `emitted` 67/27, `one-attempt` 27/9, `dominated` 14/7 (187
+  artifact-configs, 5 refusals) — the fourth independent derivation.
+  Registries: all four surfaces (`list_axes`/`list_definitions`/
+  `list_limits`/`list_schema.tsv`) BYTE-IDENTICAL below their source
+  headers — structural proof of "not an axis". Size books: a MIXED
+  movement (the fix removes pre-checks on `one-attempt`/`dominated`
+  artifacts; adds one stamp line everywhere), a new `B84_STAMP_LINE_*`
+  constant family (NONE=26, EMITTED=29, DOMINATED=31, ONE_ATTEMPT=33
+  bytes — the line's own length varies with the token), MEASURED
+  per-witness rather than assumed flat (five STAMP_CASES + twelve
+  LEDGER_STAMP_CASES + three DENY_CONTROLS rows moved, two of the
+  ledger rows `emitted` rather than `none`). `check_mechanism_stamps`
+  115/115, `check_deny_flag_controls` 15/15, `check_cc_axis` +
+  `check_cap_axis` + `check_noedge_axis` 41/41, `check_emit_size_port` +
+  `check_cflags_axis` + `check_opt42_preempts_collapse_policy` 19/19.
+  Catalogue 3.6 (`[[pin_order]]` append). Sixteen pinned configs,
+  unchanged — no new deny testee (the fix ships with no CLI flag and no
+  axis bit at all, so no acceptance review is open on it the way
+  [OPT-5]/[ENG-ISL]/[FORM-CHAR] each had one). Before it,
   **b1885a83, abi 30** (re-pinned from 8d716693, 2026-09-23, lane
   b80repin, inbox I-95: [OPTLOOP] cycle 2 batch 2 — [OPT-FREQPICK] (the
   emitted necessary byte is now pcrec's own byte-frequency-prior

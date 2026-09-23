@@ -526,6 +526,135 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at 6ef76820 (abi 30 -> 31) — 2026-09-23, lane b84repin, inbox I-102
+
+**[OPT-PRECHECK-ADMIT], exactly as I-102 characterised it.** Pin
+`6ef76820` = the merge `Merge branch 'lane/admitimpl'`, against `b1885a83`
+(abi 30) as BEFORE (`b1885a83` was O-49's own AFTER, so this asks whether
+the fix recovers what O-49 measured, not a fresh baseline). CONFIRMED:
+`git diff --stat 6ef76820 origin/main -- src cli lib` is empty -- the
+`repin3` docs/tests-only commit that follows on `main` (the recursion-
+identity (B) pin, same shape as `repin2`'s abi-30 row) touches only
+`docs/dev/` and one test script, so the compiler built here is `6ef76820`
+regardless of where `main`'s tip sat at fetch time.
+
+**`struct rx_info` is byte-identical field for field** between `b1885a83`
+and `6ef76820` (diffed on a plain `abc` witness): the shim floor STAYS 16.
+Neither of admitimpl's two rules (`req_route_one_attempt`,
+`req_byte_dominated_by`) touches a struct member -- the fix is an
+emit-time PREDICATE with four readers (whether to emit the pre-check's
+text, what to say in the new stamp, and `pcrec_emit_prologue`'s
+`#include <string.h>` decision), not a new field.
+
+**The new stamp**, on the same "every"/no-rx_info-mirror terms as
+`req_byte`/`end_window`/`req_run`: `<PREFIX>_REQ_WHY`, a CLOSED
+four-token set -- `none` (holds IFF `req_byte` itself reads `"none"` --
+pcrec's own cross-check: "found nothing" and "never ran" are one state
+under `-fno-req-byte`), `emitted` (the ordinary case), `one-attempt`
+(declined on a fully-anchored, single-attempt machine -- the DFA's own
+`dfa_interior_dead` or the VM's `start_anchor != none`: with nothing
+between attempts to skip, the whole-window pre-check would only ever
+confirm what the single attempt is about to prove anyway), `dominated`
+(declined because a candidate-start scan already running ahead of the
+DFA route scans the SAME byte no more densely -- identity first, then
+[OPT-FREQPICK]'s byte-frequency-prior comparison under plain-byte
+encoding -- the ONE-BYTE form only: a necessary RUN is never dominated by
+a plain byte scan, since the run dismisses strictly more). `pb_req_why()`
+mirrors `pb_req_run()`'s shape in `shim.c`; `driver.c` prints it beside
+`req_byte`/`end_window`/`req_run` in the same "every"-scope block;
+`STAMP_SCOPE["req_why"] = ("every", 31)`; **NOT an axis** -- no flag, no
+bit (pcrec's own `docs/spec/tuning.md` §2.29: "the admission as its own
+subsection, explicitly NOT an axis") -- confirmed by the registry
+diff below, and `_check_agreement`'s new rule 12 asserts the `none` iff
+against `req_byte` on every artifact.
+
+**All four tokens confirmed BY VALUE** on hand-chosen witnesses (`STAMP_
+CASES`): `foo[0-9]+bar` (pure DFA, unanchored, the pre-check's byte 'b'
+!= the DFA prefilter's own scan byte 'f') = `emitted`; `^foo[0-9]+bar`
+(the anchored attempt DFA, `dfa_interior_dead`) = `one-attempt`;
+`a(b|c)+d` under `auto` (VM hybrid) and under `--engine=vm` (non-hybrid
+VM) = `emitted` both; `[^\x00-\xff]` (provably-empty) = `none` (the
+`req_byte "none"` cross-check); and a NEW kind, `\[` (a single-byte
+literal whose candidate-start scan and pre-check would scan the
+IDENTICAL byte 91 -- G1's identity case, admitimpl's own §0 F2: "today
+G1 fires only under identity") = `dominated`, MEASURED as exactly one
+`memchr(…, 91, …)` in the emitted C, not two.
+
+**I-102's own four named acceptance cells confirmed BY VALUE**, from
+`bench/capability`'s own pattern texts: `wild-validator-email-owasp`
+(one-attempt, anchored on `^`, byte '@' = 64), `winpath-near-miss` /
+`email-nested-plus` (one-attempt), `wild-codegrammar-json-array-begin`
+(`\[` again -- dominated, one pass not two),
+`uuid-near-miss` / `ipv4-near-miss` (one-attempt -- the batch-1
+recovery I-102 (d) named), `nested-comment-rec` (emitted, byte `*` = 42,
+run `*/`@0 both KEPT -- exactly the no-move control's own description),
+`wild-secrets-github-pat` (emitted, both `auto` and forced `--engine=vm`
+-- the no-move control (g)), `router-prefix-order` / `keyword-prefix-order`
+(emitted, unchanged -- the negative controls (h): no recovery here, as
+predicted, since the fix's one-byte scoping does not reach the run-form
+dominance defect I-103 measures separately).
+
+**THE REQ_WHY CENSUS (I-102's own ask), the FOURTH independent
+derivation.** Over `bench/capability`'s 62 compiling patterns (2 refuse:
+`negation-scope-lookbehind-var` on all three configs,
+`wild-datetime-datefinder-alternation` on two of three -- it compiles
+under `auto-nocaps`), counted by ARTIFACT-CONFIG across the THREE
+distinct compiled artifacts (`auto-caps` = `pcrec-auto`, `auto-nocaps` =
+`pcrec-nocaps`, `vm-caps` = `pcrec-vm` -- `vm-in-caps` is compile-
+identical to `vm-caps`, same argv, so it is not double-counted, the same
+convention the reading's own figures use): **`none` 79/27, `emitted`
+67/27, `one-attempt` 27/9, `dominated` 14/7 -- 187 artifact-configs, 5
+refusals -- EXACT AGREEMENT** with the reading's own cited figures and
+with `admitimpl_report.md`'s own corpus-wide census shape (its `--features
+all` axis: 294 one-attempt + 806 dominated of 1,100 movers, 0 refused).
+Ten patterns move between auto and forced-VM readings (`codegrammar-flat`/
+`-xflag`, `floor-byte`, `mojibake-curly-quote`, and the four
+`wild-codegrammar-json-*` members, all `dominated` under `auto` and
+`emitted` under forced `--engine=vm` -- G1's dominance test is read
+against the DFA route's OWN candidate-start scan, so a forced-VM artifact
+with no DFA scan at all has nothing to be dominated BY).
+
+**Registries re-archived and diffed against the pin's own live output:
+ALL FOUR BYTE-IDENTICAL below their source headers** -- `list_axes.tsv`
+89/32 rows unchanged (no new axis, confirming the "not an axis" claim
+structurally rather than by assertion), `list_definitions.tsv` 50 rows
+(the thirteenth pin running), `list_limits.tsv` 60 rows, `list_schema.tsv`
+71 rows. Nothing unexplained.
+
+**Size books: a MIXED movement, exactly as the brief predicted** -- the
+fix REMOVES emitted pre-checks on `one-attempt`/`dominated` artifacts
+(a real code shrink, not measured here since no committed record moves
+across this re-pin) and ADDS one `#define <PREFIX>_REQ_WHY "<token>"`
+stamp line on EVERY artifact, whose OWN byte cost depends on the token's
+length: MEASURED directly (`#define RX_REQ_WHY "<token>"\n`) as `none`
++26 B (coincidentally the SAME length as `B80_STAMP_LINE`'s own "none"
+case -- `RX_REQ_RUN` and `RX_REQ_WHY` are the same length), `emitted`
++29 B, `dominated` +31 B, `one-attempt` +33 B -- a new
+`B84_STAMP_LINE_*` constant family, added alongside the existing flat
+terms (never in place of them) on every `emit_bytes`/`emit_code_bytes`
+assertion this pin's build moved: five `STAMP_CASES` witnesses, three
+`bounded` and nine `altwide` `LEDGER_STAMP_CASES` rows (two of which,
+`altwide pfx3-256` and `altwide floor`, are `emitted` rather than `none`
+-- MEASURED against the pin's own binary in every case, never guessed
+from the size delta alone, though the two agreed everywhere cross-
+checked), and all three affected `DENY_CONTROLS` rows (`dfa_scan_edge`,
+`dfa_start`, `vm_alt_islands` -- `none` on both arms of each).
+
+**No new deny testee.** [OPT-PRECHECK-ADMIT] ships with no CLI flag and
+no axis bit at all (confirmed by the byte-identical registry diff above),
+so there is nothing to build a `-noreqwhy`-shaped deny axis against --
+the same reasoning [B80] gave for [OPT-REQPOS] not getting one: no
+acceptance review is open on this fix the way [OPT-5]/[ENG-ISL]/
+[FORM-CHAR] each had one.
+
+**Verified green standalone before the full `make check` run**:
+`check_mechanism_stamps` 115/0, `check_deny_flag_controls` 15/0,
+`check_cc_axis` + `check_cap_axis` + `check_noedge_axis` 41/0,
+`check_emit_size_port` + `check_cflags_axis` +
+`check_opt42_preempts_collapse_policy` 19/0. Catalogue **3.6**
+(`[[pin_order]]` append, changelog comment included in the same commit).
+Sixteen pinned configs, unchanged.
+
 ## Re-pin at b1885a83 (abi 29 -> 30) — 2026-09-23, lane b80repin, inbox I-95
 
 **[OPTLOOP] cycle 2 batch 2, exactly as I-95 characterised it.** Pin
