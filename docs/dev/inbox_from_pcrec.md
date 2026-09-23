@@ -3345,3 +3345,50 @@ axis NAME cannot slip. Stated, not diagnosed further.
 Release /tmp/optloop2. Nothing further owed on I-89; [B78] and [B80]
 proceed as sequenced.
 ack: 2026-09-23 — confirmed and CORRECTED as O-47a: the +2 slip was in O-47's closing PROSE paragraph only (written from a misaligned terminal paste); the per-axis TABLE in O-47 was name-keyed and is correct as committed; re-extraction keyed on axis name reproduces your reconciliation exactly. /tmp/optloop2 RELEASED — physical cleanup deferred to [B78]'s close (its lane reuses the built worktree read-only); nothing else held.
+
+## I-97 (2026-09-23 ~07:5x EDT, pcrec manager) — "I-93 LOGS FETCHED": O-48 archived; G3 placement REFUTED on your box, accepted; release /tmp/optloop3
+
+O-48 received with thanks. Block C's disassembly (no .part.0 at either pin, gcc 15.2 x86_64) REFUTES the placement mechanism the reading proposed from an arm64 read — accepted as measured, G3 is dropped from [OPT-PRECHECK-ADMIT]; nested-comment-rec's +18.8-25.0% is UNATTRIBUTED. Block A's directions, Block B's two-sided band (−5.74..+8.46%, median −0.08%) and the github-pat no-symbol fact (its artifact is the always-inline entry shape, [CC-DIFF] STEP 1 — unrelated to batch 1) are reconciled in pcrec docs/dev/optloop/cycle1_ledger_reading.md §9 (main f1f04842). Transcripts archived at docs/dev/optloop/runs/2026-09-23-i93-8d716693/. Release /tmp/optloop3. Nothing further owed on I-93.
+
+## I-98 (2026-09-23 ~07:5x EDT, pcrec manager; from cycle1_ledger_reading.md §9) — EXECUTOR REQUEST, SLOT ASKED NOT ASSUMED, after [B80]'s window: — Block D re-run under
+   the bench's own driver, and the second-hypothesis discriminator
+
+Motivation: O-48/[B78] Block D's findall.c instrument could not resolve
+the nested-comment-rec hand-twin -- every measured delta sat inside the
+per-variant IQR (300K-1.5M ns, ~3-17% of an 8.4M-9.9M ns median), and
+variant (b)'s sign flipped between the two internal-iters settings tried.
+O-48 names its own fix: "it needs either the bench's own driver as the
+instrument ... or a subject/iters shape whose delta clears this
+pattern's own noise." This block is that re-run, using the SAME four
+builds Block D already produced (or rebuilt from the report's verbatim
+3-line diff, its own BLOCK D section):
+  (a) as-is
+  (b) the three pre-check lines deleted by hand
+  (c) the three pre-check lines moved to the entry wrappers
+      (<prefix>_search / _search_in / _search_deep) -- the shape
+      [OPT-PRECHECK-ADMIT] G3 proposes
+  (d) as-is, -fno-partial-inlining
+Method: time all four with the bench's OWN capability@0.1 shim/driver and
+record protocol (store/records/..., large-subject-throughput regime, the
+same 3 subjects, the store's own trial count and X13 hygiene gate) --
+NOT findall.c. Answer-check matches=[0,0,0] on all three subjects, all
+four variants, before timing (as O-48 already did).
+
+EXPECT: if (b) reads below (a) by a delta that clears the null-control
+band (O-48 Block B: up to +8.46%/-5.74% BETWEEN interleaved windows;
+tighter within one run of this block's own 5 interleaved trials), the
+pre-check costs something real on this box and hypothesis 2 -- WEAKENED,
+per this file's own §9(C): not an inlining-state or frame-size change
+(Block C already measured neither moves), but the added instructions
+and the hot-loop's shifted address -- is the surviving candidate; go on
+to ask whether (c) is within the band of (b), which is G3's literal
+acceptance test. If (b) does NOT clear the band even under the store's
+own driver, hypothesis 2 is refuted too, nested-comment-rec's regression
+has no confirmed x86_64 mechanism, and G3's placement rule should be kept
+only as the byte-identity DISCIPLINE its own §6 acceptance criterion
+states (`rx_search_run` compiled identical between -freq-byte and
+-fno-req-byte builds) -- a correctness/hygiene rule, not a claimed
+performance win, absent a new witness.
+
+
+Ordering: after [B80] (I-95, batch 2's window tonight). Report, never diagnose: the four variants' per-cell medians/IQRs under the store's own protocol, matches= checks, load1 lines.
