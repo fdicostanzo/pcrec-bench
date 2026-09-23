@@ -7,16 +7,17 @@ cycle 2 batch 2 pin ([OPT-FREQPICK] + [OPT-REQPOS] tier 2b: a new
 re-measurement window is explicitly the MANAGER's job (I-95 (a)), out of
 scope here.
 
-**Branch**: `lane/b80repin`, `worktrees/b80repin`, three commits so far
-(`2f71611` the adapter/shim/driver/registry/catalogue/selfcheck change,
-`de00f33` the CLAUDE.md updates, this report next). **DELIVERED**: the
-targeted checks (`check_mechanism_stamps` 114/114, `check_deny_flag_
-controls` 15/15, all four registry checks, `check_abi_floor_refusal`
-9/9, `check_emit_size_port`/`check_noedge_axis`/`check_cflags_axis`/
-`check_cap_axis` all green except two pre-existing environment-setup
-failures unrelated to this change, fixed by generating the gitignored
-subject trees) run standalone before the full `make check`; the full
-run is OWED below.
+**Branch**: `lane/b80repin`, `worktrees/b80repin`, five commits (`2f71611`
+the adapter/shim/driver/registry/catalogue/selfcheck change, `de00f33`
+the CLAUDE.md updates, `2fe3b9b` the report's first cut, this commit
+folding in the delivered `make check` numbers). **DELIVERED**: full
+`make check` run to completion (`check-schema` 5/73/0, `check-harness`
+457/0, `check-report` OK, `check-interpret` 163/28 — the 28 all
+pre-existing sidecar-staleness, classified below); `make`'s own exit is
+2, entirely attributable to those 28. The first launch (tracked
+`run_in_background`) was REAPED mid-`check-harness` by the box's memory
+heuristic — caught by team-lead, relaunched per the boilerplate's
+`setsid` detachment shape, polled with bounded foreground checks.
 
 ## Charter-vs-committed checklist
 
@@ -179,29 +180,48 @@ run is OWED below.
    `docs/dev/plan.md`'s `[B80]` row and the STATUS narrative are the
    manager's, per the brief.
 
-10. **Full `make check` — OWED.** Launched detached (`setsid`-style via
-    `run_in_background`, `gnutimeout 2400`), log at
-    `/tmp/claude-1001/.../scratchpad/b80/make_check.log` (session
-    scratchpad, per the box rules). Gate of record going in (per
-    `docs/dev/dev_journal.md`'s last entry before this lane, [B74]
-    COMPLETE): `check-schema` 5/73/0, `check-harness` 456/0,
-    `check-report` OK (84+7+8 = 99 pytest-style), `check-interpret`
-    191/191. **NUMBERS OWED** — a follow-up (this session, once the
-    background job's `DONE rc=` line lands, checked in the foreground
-    per the boilerplate's fallback-probe rule) fills in the delivered
-    counts here and confirms `make`'s own exit code, classifying any
-    `check-interpret` section-3 sidecar-staleness failures the SAME way
-    `b58repin`/`b74repin`'s reports did (a MINOR catalogue bump's
-    sidecar regeneration is the MANAGER's merge-time step, not this
-    lane's).
+10. **Full `make check` — THE DELIVERED NUMBERS.** First launch (tracked
+    `run_in_background`) was REAPED mid-`check-harness` by the box's
+    memory heuristic (the SAME signature that hit the [B74] union gate:
+    a tracked background job is reapable, only true `setsid` detachment
+    survives — team-lead caught it from the log's `Terminated` line and
+    the absent process). Relaunched exactly per the boilerplate's
+    detached shape (`setsid bash -c '/usr/bin/gnutimeout 2400 make
+    check > .../make_check2.log 2>&1; echo rc=$? > .../make_check2.done'
+    < /dev/null & disown`), polled with bounded foreground `until`-loops
+    (never a wait on a notification — this job is disowned and sends
+    none). Completed `rc=2` at 07:42 EDT:
+
+    | check | result | vs. gate of record (5/73/0 · 456/0 · 84+7+8 · 191/191) |
+    |---|---|---|
+    | `check-schema` | 5 example(s) accepted, 73 sabotage(s) rejected, 0 WRONG | **matches** |
+    | `check-harness` | **457 passed, 0 FAILED** | **+1** — exactly the one new `DENY_CONTROLS` row (`req_run: -fno-req-run` isolation); every existing PASS line held, nothing FAILED anywhere in the section |
+    | pytest-style suites (inside `check-report`) | 86 + 7 + 8 = **101** | **+2** over the recorded 99 — unrelated drift from other lanes' work landed on master since [B74]'s gate was recorded ([B76]/[B77]/[B78]); this lane touched no `report.py`/`reduce.py` |
+    | `check-report` | OK | **matches** |
+    | `check-interpret` | **163 passed, 28 FAILED** (191 total) | **+1 total, +1 FAILED** over 191/191 — see below |
+
+    `make`'s own exit is **2**, solely from the 28 `check-interpret`
+    failures — every one section 3 ("sidecar freshness"), and the set
+    is the SAME 27 sidecars `b58repin`'s/`b74repin`'s reports already
+    classified (a `catalogue_version` MINOR bump's own sidecar
+    regeneration is a MANAGER merge-time step, per those reports'
+    precedent and this lane's own brief) **plus exactly one more**:
+    `2026-09-23-capability-0.1-budu-ryzen1600-after-8d716693.
+    interpretation.md` — [B74]'s own cross-pin AFTER window's sidecar,
+    committed since the last regen, now also stale under the SAME
+    unregenerated gap. No sidecar failed that this lane's own change
+    (the `req-run` axis, the catalogue 3.3 → 3.4 append) newly broke;
+    the count grew by exactly the number of sidecars committed since
+    the gap opened, not by anything this re-pin introduced. Section
+    totals: 1: 21, 2: 8, 3: 2, 4: 127, 5: 4, 6: 1 — 163 + 28 = 191,
+    the SAME total as the gate of record: no check added, removed or
+    silently dropped by this bump.
 
 ## Not done / OWED
 
-- **OWED-1**: the full `make check` run's four counts and `make`'s own
-  exit code (item 10 above). The targeted checks this lane's own
-  changes touch are ALL GREEN, run standalone (item 6/7's numbers, plus
-  all four registry checks and `check_abi_floor_refusal` 9/9) — the
-  full run is confirmatory, not exploratory.
+- **OWED-1 — RESOLVED.** The full `make check` run's four counts are in
+  item 10 above; `make`'s exit code is 2, entirely attributable to the
+  28 named, classified sidecar-staleness failures.
 - **OWED-2** (same precedent as `b58repin`/`b74repin`'s OWED-2, same
   shape): sidecar regeneration for the catalogue 3.3 → 3.4 bump — a
   MINOR/additive `[[pin_order]]`-append bump, per the manager's
@@ -246,6 +266,17 @@ run is OWED below.
   easy case, and this one was NOT that case for the pre-existing
   `req_byte` population, exactly as [B74]'s own precedent warned this
   cycle's REQBYTE-adjacent work would keep doing.
-- **This lane is COMPLETE except OWED-1/OWED-2** (both explicitly
-  scoped to the manager's own step, per precedent). No further work is
+- **The tracked-background reap, for the process record**: the first
+  `make check` launch (harness `run_in_background: true`) was killed
+  mid-`check-harness` by the box's memory heuristic — the SAME
+  signature `docs/dev/lanes/BOILERPLATE.md` already names for the [B74]
+  union gate. Caught by team-lead from the log's `Terminated` line and
+  the absent process (no notification arrived, consistent with the
+  heuristic kill rather than a clean exit). Relaunched exactly per the
+  boilerplate's `setsid`-detachment shape and polled with bounded
+  foreground `until`-loops; completed clean. Nothing about this lane's
+  own work caused the reap — it is a box-memory-pressure hazard any
+  `make check`-length job on this box can hit under `run_in_background`.
+- **This lane is COMPLETE except OWED-2** (explicitly scoped to the
+  manager's own merge-time step, per precedent). No further work is
   planned unless review surfaces something new.
