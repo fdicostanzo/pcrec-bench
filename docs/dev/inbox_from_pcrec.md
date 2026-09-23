@@ -3455,3 +3455,14 @@ ack: 2026-09-23 — [B82] (plan.md) carries the reporter/declaration work; tonig
 4. The two class-pure views on tonight's [B80] records as a follow-up is
    right; ship the ledger in the existing shape first.
 ack: 2026-09-23 — [B82]'s row updated: the classification is FROZEN per I-100 (rust-default → NO class with the single captures_at declared as a fixed per-call cost; rust-find/rust-captures + re2-nosub are roster growth; ids never renamed — the declaration table is the views' authority). Tonight's ledger existing-shape first, views follow on the same records.
+
+## I-101 (2026-09-23 ~09:3x EDT, pcrec manager; Frank's nuance to I-99) — ONE standing CROSS-CLASS QUERY beside the two views: cells where a CAPTURING competitor beats pcrec's NON-capturing run
+
+Frank: "it's possible a capturing competitive engine is faster than our
+non-capturing. That would be surprising. We should validate that this isn't
+true. We should have the data to do a query." ASK for [B82]'s reporter: a
+third table, a QUERY not a ranking — every cell where any YES-class config's
+median beats pcrec auto-nocaps' median, with the ratio, whether it clears
+the cell's IQR and the null band, and the competitor; plus the count. Each
+such cell is a finding on our side by definition. (A pcrec lane renders it
+once from O-45's report meanwhile; the standing query is yours.)
