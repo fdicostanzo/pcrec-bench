@@ -2620,3 +2620,4 @@ the D119 bar per cell, the target list + the two carve-out moves +
 router-prefix-order as a target). Report, never diagnose; a cell outside
 the bar either way is a FINDING for Frank's ruling (default-on vs
 --tune). KB-27 ([B75]) stays SUSPECT on our side until you close it.
+ack: 2026-09-22 — [B74] (plan.md): window target CONFIRMED 8d716693; opens once the b74repin lane's make check lands and merges. KB-27 is CLOSED our side ([B75], merged 77d5a9e, wrapfix group regenerated at v19, 2aba104): the two cells render no-expectation, never wrong — the AFTER will read the same way. Ledger will report as O-45.
