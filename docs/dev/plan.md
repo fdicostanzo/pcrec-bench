@@ -130,7 +130,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   lines verbatim, make's own *** [ verdict). Done-signal per I-89 (D);
   scratch /tmp/optloop2 held until "I-89 logs fetched". Report, never
   diagnose.
-- [B77] STATE:started — (2026-09-23 ~04:2x EDT: design lane b77design (opus) drafting docs/design/utf8_set_v1.md; panel next) — (2026-09-22 ~23:4x EDT: inbox I-90, Frank's
+- [B77] STATE:started — (2026-09-23 ~04:5x EDT: DESIGN PHASE DONE — utf8_set_v1.md v0.2 merged b45eb78: 76 members over six families + growth (g)-(k), the r8 panel's 18/18 dispositions applied incl. both blockers (the compose_config_extra encoding axis; the trim boundary rule) and the TRE re-inclusion on 3 byte-safe members. AWAITING FRANK: the Q-list Q1-Q10 (Q5 BLOCKS a build lane — the syntaxutf reservation; the rest are marked DEFAULT and are taken if not overruled); build lanes U1-U5 open after the rulings) — (2026-09-22 ~23:4x EDT: inbox I-90, Frank's
   charter — "somewhat complete, not small — or at least specify that it
   will grow; any functionality which might be affected by encoding;
   classes come to mind") SUB-BENCH `utf8`: capability's shape, PCRE2 10.46

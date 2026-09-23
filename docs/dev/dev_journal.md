@@ -5608,3 +5608,22 @@ into it, both newly stamping req_byte); non-named 78 regress / 202
 improve beyond bar; stamp census 5/5 named expectations exact (end
 windows 37/16 B). O-45 sent (56f4a7e), pcrecdev1 messaged. Next: [B76]
 (I-89 B/C in the quiet slot, then A detached), then [B77] utf8 design.
+
+## 2026-09-23 (~04:5x EDT) — [B77] design cycle closed: v0.2, r8 panel
+
+The utf8 design ran charter → draft → panel → apply in one night: lane
+b77design (opus) drafted v0.1 (1,166 lines, 74 members, the axis
+coverage spine from pcrec tests/utf8, the roster's per-engine surface
+with every claim cited); the r8 panel (three sonnet critics, disjoint
+lenses) returned 18 findings — 2 REAL blockers the build would have
+paid for later (compose_config_extra's closed tables never put -e utf8
+into testee_id, silently colliding configs; the captext-shaped trim
+slices mid-character and would have turned throughput into silent
+oracle refusals), the \d/\s UCP twins I-90 named but the draft dropped,
+a wrong evidence citation (§8.5 U+0300), and the panel-driven TRE
+reversal (per-pattern utf8-encoding token; TRE ranks on the 3 byte-safe
+members). Consolidation 18/18 by-id (b5b4e37), apply lane b77apply
+took the note to v0.2 (b45eb78, 76 members, all ids grep-confirmed).
+Q1-Q10 await Frank (only Q5 BLOCKS). Meanwhile: I-89 block (A) still
+running clean (~24,343/24,343 per axis, zero mismatches so far); O-47
+follows its close, then [B78]'s five discrimination blocks.
