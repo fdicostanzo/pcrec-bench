@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.2"
+catalogue_version = "3.3"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,12 @@ catalogue_version = "3.2"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.3 (2026-09-22, lane b74repin, [B74]/inbox I-87): MINOR, a
+# `[[pin_order]]` append only -- `8d716693` (abi 29, [OPTLOOP.1] batch 1:
+# OPT-ANCHOR-VM, OPT-ENDWIN, OPT-REQBYTE as new axes) joins after
+# `25b1984f`. No rule predicate/threshold/inputs/slots moved; no golden
+# fact re-derives.
 #
 # 3.2 (2026-09-21, [B70], Frank's ruling on the [B69] census's
 # `wild-codegrammar-json-number-extended` finding): MINOR, a new rule --
@@ -143,7 +149,8 @@ catalogue_version = "3.2"
 engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
-          "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f"]
+          "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
+          "8d716693"]
 
 # ===================================================== class R-STATUS ==
 

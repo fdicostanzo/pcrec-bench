@@ -55,7 +55,8 @@
  * altcls_factored / fast_frames /
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
- * vm_prefilter_lang / vm_prefilter_lang_why` is printed only when the artifact
+ * vm_prefilter_lang / vm_prefilter_lang_why / req_byte / end_window /
+ * vm_start` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
  * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
  * two facts that ARE readable from an absence are the spec's own iffs and
@@ -93,7 +94,11 @@
  * [FORM-CHAR] STEP 1, built 2026-09-06) adds ONE more on the same terms,
  * `info vm_cls_folds`, VM-only beside
  * `vm_alt_islands`: no rx_info mirror, printed behind its own presence
- * check, `0` a value; no member added, the floor still 16.
+ * check, `0` a value; no member added, the floor still 16. [OPTLOOP.1]
+ * batch 1 (pin 8d716693, abi 29) adds THREE more on the same terms:
+ * `info req_byte` / `info end_window` (both "every" scope, both engines)
+ * and `info vm_start` (VM-route only, absent on a DFA artifact) -- no
+ * rx_info mirror, struct rx_info byte-identical to abi 27, floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -144,6 +149,9 @@ static const char *(*pb_info_name)(void);
 static int       (*pb_info_nentries)(void);
 static const char *(*pb_dfa_start)(void);
 static const char *(*pb_info_search_form)(void);
+static const char *(*pb_req_byte)(void);
+static const char *(*pb_end_window)(void);
+static const char *(*pb_vm_start)(void);
 static int       (*pb_has_vm_frameless)(void);
 static int       (*pb_vm_frameless)(void);
 static int       (*pb_has_altcls)(void);
@@ -369,6 +377,7 @@ int main(int argc, char **argv) {
     SYM(pb_dfa_match); SYM(pb_info_match_form);
     SYM(pb_info_name); SYM(pb_info_nentries);
     SYM(pb_dfa_start); SYM(pb_info_search_form);
+    SYM(pb_req_byte); SYM(pb_end_window); SYM(pb_vm_start);
     SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
     SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
     SYM(pb_has_dfa_uniform_folds); SYM(pb_dfa_uniform_folds);
@@ -440,6 +449,19 @@ int main(int argc, char **argv) {
     }
     const char *es = pb_engine_stamp();
     if (es) printf("info\tengine_stamp\t%s\n", es);
+
+    /* [OPTLOOP.1] batch 1, abi 29 (pcrec lane/optimpl1, 6ab2464e): two new
+     * MACRO lines, no rx_info mirror, on EVERY artifact, both engines --
+     * `RX_REQ_BYTE` ([OPT-REQBYTE], a decimal byte value or "none") and
+     * `RX_END_WINDOW` ([OPT-ENDWIN], a decimal byte count or "none"). The
+     * third new stamp, `RX_VM_START` ([OPT-ANCHOR-VM]), is VM-route-only
+     * and printed below beside the other VM-scoped stamps. */
+    {
+        const char *rb = pb_req_byte();
+        const char *ew = pb_end_window();
+        if (rb) printf("info\treq_byte\t%s\n", rb);
+        if (ew) printf("info\tend_window\t%s\n", ew);
+    }
 
     /* The abi-6 RUNTIME MIRRORS (match_api.md 6). `prefilter` is documented
      * never to be NULL; it is printed unconditionally so the adapter can
@@ -566,6 +588,16 @@ int main(int argc, char **argv) {
         const char *lwhy = pb_vm_prefilter_lang_why();
         if (lang) printf("info\tvm_prefilter_lang\t%s\n", lang);
         if (lwhy) printf("info\tvm_prefilter_lang_why\t%s\n", lwhy);
+    }
+
+    /* [OPT-ANCHOR-VM], abi 29 ([OPTLOOP.1] batch 1): the VM attempt loop's
+     * start bound, on the VM route only -- absent on a DFA artifact (no
+     * attempt loop to bound). "anchored" / "gstart" / "unanchored", no
+     * rx_info mirror. Direct NULL check on the macro, the same shape as
+     * `dfa_start` above rather than a separate has-flag. */
+    {
+        const char *vs = pb_vm_start();
+        if (vs) printf("info\tvm_start\t%s\n", vs);
     }
 
     /* The two-tier default entry's capacities ([OPT-1], abi 5): VM-only,

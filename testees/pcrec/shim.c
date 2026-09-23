@@ -614,6 +614,58 @@ const char *pb_dfa_match(void) {
 #endif
 }
 
+/* [OPTLOOP.1] batch 1, abi 29 (pcrec lane/optimpl1, 6ab2464e; [B74]).
+ * THREE new stamp lines, none with an rx_info mirror -- struct rx_info is
+ * byte-identical to abi 27 (diffed field for field at the re-pin), so the
+ * shim floor stays 16. */
+
+/* [OPT-REQBYTE]: the RIGHTMOST literal byte every match of the pattern
+ * must contain (a bottom-up AST walk: concatenation unions, alternation
+ * intersects, a min-0 quantifier contributes nothing, a one-byte class is
+ * a singleton, a backreference/call/assertion is empty), as a decimal
+ * string -- one memchr over [search_from, subject_length) then answers
+ * NOMATCH for the whole call, the same role as PCRE2's own LASTCODEUNIT.
+ * On EVERY artifact, both engines; "none" when no byte is necessary on
+ * every path, or under -fno-req-byte. */
+const char *pb_req_byte(void) {
+#ifdef RX_REQ_BYTE
+    return RX_REQ_BYTE;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [OPT-ENDWIN]: per artifact, both engines. When every alternative ends in
+ * $/\Z/\z outside multiline AND the pattern's maximum width is finite, a
+ * match can only BEGIN in the subject's last maxw+eps bytes (eps is 1 for
+ * $/\Z's final-newline allowance, 0 for \z), and both search entries raise
+ * search_from there; the stamp carries that bound as a decimal string.
+ * "none" when the pattern is not end-anchored, its width is unbounded, it
+ * contains \G, the encoding has non-boundary positions, or the deny flag. */
+const char *pb_end_window(void) {
+#ifdef RX_END_WINDOW
+    return RX_END_WINDOW;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [OPT-ANCHOR-VM]: per artifact on the VM route ONLY -- absent on a DFA
+ * artifact, which has no VM attempt loop to bound. "anchored" when every
+ * alternative of the whole pattern begins with ^ (outside multiline) or
+ * \A, so only offset 0 can start a match and the attempt loop stops after
+ * one pass; "gstart" when every alternative begins with \G, so only the
+ * caller's own search_from can start a match; "unanchored" the fallback --
+ * nothing was proved about where a match begins, or the deny flag; the
+ * loop runs to subject_length as it always has. */
+const char *pb_vm_start(void) {
+#ifdef RX_VM_START
+    return RX_VM_START;
+#else
+    return (const char *)0;
+#endif
+}
+
 /* ------------------------------ the size term ([ART-SIZE], abi 11) */
 
 /* The VM counter rung's unroll factor and WHY it is what it is: "default"

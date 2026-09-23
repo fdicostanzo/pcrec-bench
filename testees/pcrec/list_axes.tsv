@@ -2,28 +2,30 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-25b1984f/build/pcrec --list-axes
+#     build/pcrec-8d716693/build/pcrec --list-axes
 #
-# pcrec commit 25b1984f5f4a491471a91fe1b09cbcd60a42980f (rx_info.abi 27,
-# read off a plain `abc` witness at this build), archived 2026-09-20 by
-# lane b58repin ([B58], inbox I-77 (1): the [EMIT-VERB]/D112 pin --
-# emitted comments OFF by default -- cf0962e3 -> 25b1984f). 80 data rows
-# / 28 axes / 12 columns -- the FOURTH registry surface (pcrec
+# pcrec commit 8d716693a57370853ff9e15a0606ccf0fea5b42f (rx_info.abi 29,
+# read off a plain `abc` witness at this build), archived 2026-09-22 by
+# lane b74repin ([B74], inbox I-87: [OPTLOOP.1] batch 1 -- OPT-ANCHOR-VM,
+# OPT-ENDWIN, OPT-REQBYTE as axes -- 25b1984f -> 8d716693). 87 data rows
+# / 31 axes / 12 columns -- the FOURTH registry surface (pcrec
 # docs/spec/registry.md 6, [CHK-2]).
 #
-# TWO ROWS ADDED vs the cf0962e3 copy (78/27 -> 80/28): a new axis
-# `comments`, order 1 `essential-only` (stamp PCREC_NO_COMMENTS, deny
-# bit 26, cli -fno-comments -- THE DEFAULT) and order 2 `full` (force
-# PCREC_FORCE_COMMENTS, force bit 27, cli -fcomments), exactly I-77 (1)'s
-# own description of [EMIT-VERB]/D112: emitted comments are OFF by
-# default, `-fcomments` restores the full set, `-fno-comments` is the
-# explicit default spelling, both ordinary axes.def rows (D111: axes.def
-# is now the ONE source `--list-axes` reads). Every OTHER row is
-# BYTE-IDENTICAL to the cf0962e3 copy below the header (diffed line for
-# line, pcrec's own comments included) EXCEPT one PROSE-ONLY edit inside
-# pcrec's own header block: "src/parse/axes_dump.c" -> "src/dump/
-# axes_dump.c" (the [REVW.3] item 1 dump-tier file move, a path
-# reference in pcrec's own comment text, not a machine-read column).
+# SEVEN ROWS ADDED vs the 25b1984f copy (80/28 -> 87/31), THREE NEW AXES,
+# exactly I-87's own description: `vm-anchor-bound` (order 1 `anchored`,
+# order 2 `gstart`, order 3 `unanchored` fallback -- stamp RX_VM_START,
+# deny PCREC_NO_VM_ANCHOR_BOUND bit 28, cli -fno-vm-anchor-bound -- the
+# VM attempt loop's proven start bound, VM route only); `end-window`
+# (order 1 `window` -- stamp RX_END_WINDOW, deny PCREC_NO_END_WINDOW bit
+# 29, cli -fno-end-window -- the end-anchor start window, every artifact,
+# both engines; order 2 `none` fallback); `req-byte` (order 1 `byte` --
+# stamp RX_REQ_BYTE, deny PCREC_NO_REQ_BYTE bit 30, cli -fno-req-byte --
+# the required-byte memchr, every artifact, both engines; order 2 `none`
+# fallback). Every OTHER row is BYTE-IDENTICAL to the 25b1984f copy below
+# the header (diffed line for line, pcrec's own comments included) --
+# confirmed by lane b74repin (`struct rx_info` also byte-identical field
+# for field between the two pins: the shim floor STAYS 16, none of the
+# three new stamps has an rx_info mirror).
 #
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
@@ -110,6 +112,13 @@ alt-island	1	island	predicate	RX_VM_ALT_ISLANDS		PCREC_NO_ALT_ISLAND	23			-fno-a
 alt-island	2	denied	predicate	RX_VM_ALT_ISLANDS							always (fallback) — vm_alt's serial resume chain, one frame per untried branch
 cls-fold	1	fold	predicate	RX_VM_CLS_FOLDS		PCREC_NO_CLS_FOLD	24			-fno-cls-fold	per VM pool class: the set is exactly an ASCII fold pair (two members differing only in bit 0x20, both letters — what D23's parse-time caseless folding produces), so the test is one or-mask-and-compare and the 32-byte bitmap is not emitted
 cls-fold	2	denied	predicate	RX_VM_CLS_FOLDS							always (fallback) — the class keeps its singleton/range/bitmap shape
+vm-anchor-bound	1	anchored	predicate	RX_VM_START	anchored	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative of the whole pattern begins with ^ (outside multiline) or \A, so only offset 0 can start a match and the attempt loop stops after one pass
+vm-anchor-bound	2	gstart	predicate	RX_VM_START	gstart	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative begins with \G, so only the caller's own search_from can start a match and the attempt loop stops after one pass
+vm-anchor-bound	3	unanchored	predicate	RX_VM_START	unanchored						always (fallback) — nothing was proved about where a match begins, or the deny flag; the loop runs to subject_length as it always has
+end-window	1	window	predicate	RX_END_WINDOW		PCREC_NO_END_WINDOW	29			-fno-end-window	per artifact, both engines: every alternative ends in $/\Z/\z outside multiline AND pcrec_cwmax is finite, so a match can only BEGIN in the last maxw+eps bytes and both search entries raise search_from to there (eps is 1 for $/\Z's final-newline allowance, 0 for \z); the stamp carries the bound
+end-window	2	none	predicate	RX_END_WINDOW	none						always (fallback) — the pattern is not end-anchored, its width is unbounded, it contains \G (which reads the parameter the clamp would move), the encoding has non-boundary positions, or the deny flag
+req-byte	1	byte	predicate	RX_REQ_BYTE		PCREC_NO_REQ_BYTE	30			-fno-req-byte	per artifact, both engines: every match of the pattern must contain some literal byte (a bottom-up AST walk — concatenation unions, alternation intersects, a min-0 quantifier contributes nothing, a one-byte class is a singleton, a backreference/call/assertion is empty), so ONE memchr over [search_from, subject_length) answers NOMATCH for the whole call; the stamp carries the byte, the RIGHTMOST member like PCRE2's own LASTCODEUNIT
+req-byte	2	none	predicate	RX_REQ_BYTE	none						always (fallback) — no byte is necessary on every path (an alternation with no common literal, a caselessly folded literal, a nullable quantifier), or the deny flag
 startpos-guard	1	guarded	predicate	RX_STARTPOS_GUARD	guarded	PCREC_NO_STARTPOS_GUARD	25			-fno-startpos-guard	per artifact: this encoding has positions that are not character boundaries (PcrecEnc.start_cls), so the entries refuse a mid-character caller startpos with PCREC_ERR_STARTPOS — libpcre2's own PCRE2_UTF behaviour (BADUTFOFFSET)
 startpos-guard	2	permissive	predicate	RX_STARTPOS_GUARD	permissive						always (fallback) — the artifact answers at whatever position the caller named (utf8_design.md §2.6.1.1's ruled semantics), and on a byte artifact this row is the ONLY one reachable: every position is a boundary there and neither setting emits a guard
 comments	1	essential-only	predicate			PCREC_NO_COMMENTS	26			-fno-comments	THE DEFAULT (D112): the artifact keeps only its ESSENTIAL comments — the generated-by/pattern-echo provenance line and the emitted rx_ctx/rx_matchfn/rx_info ABI block docs/spec/match_api.md names as the embedder's contract — and drops the rest; -fno-comments states it explicitly and overrides a config/target row that asked for the full set
