@@ -208,7 +208,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   auto-nocaps', with ratio, IQR + null-band clearance, competitor,
   count; a query, never a ranking; every hit a finding by definition.
 - [B83] STATE:completed — (2026-09-23 ~14:2x EDT: lane b83runform, merged 7a65815, O-51 sent — router: run form IS the whole cost ((b)≡(c) ×4); keyword: positive (b)−(c) both sessions but the IQR-crossing verdict noise-sensitive (a decision-rule-robustness finding); inline hand-twin loses to memchr-run on all six measured configs; the crossover solve ill-conditioned at 0.36 pp frequency separation — a cycle-3 design ask; one ruling round-trip on keyword (d)'s offset; /tmp/optloop5 held until "I-103 logs fetched") —
-- [B84] STATE:not-started — (2026-09-23 ~13:2x EDT: inbox I-102, slot
+- [B84] STATE:started — (2026-09-23 ~14:3x EDT: lane b84repin up; window slot ~22:0x EDT as acked) — (2026-09-23 ~13:2x EDT: inbox I-102, slot
   NAMED — build after [B83], WINDOW TONIGHT ~22:0x EDT) THE ADMISSION
   FIX'S ACCEPTANCE: re-pin to pcrec main **6ef76820 (abi 30→31,
   [OPT-PRECHECK-ADMIT])** — ONE new unconditional stamp REQ_WHY (closed
@@ -229,3 +229,9 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   dominated; their capability read: none 79/27, emitted 67/27,
   one-attempt 27/9, dominated 14/7). Views + I-101 query render per
   [B82] once merged.
+- [B85] STATE:started — (2026-09-23 ~14:3x EDT: lane b85kb28 up) KB-28:
+  the v20 subject-grain renderer's class-section duplication (107 MB
+  mixed-roster TSVs, push-rejected) — the class becomes a COLUMN at
+  subject grain (set grain unchanged), a pre-commit size warn considered
+  with it; after the fix regenerate the two held AFTER groups + sidecars
+  and confirm sizes near the v19 ~51 MB baselines.
