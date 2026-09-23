@@ -3455,3 +3455,79 @@ AXES make test-axes`, log /tmp/optloop2/axes_full.log, started
 pass underway at this writing. OWED as a follow-up item: the per-axis
 lines verbatim, the final run_axes.sh summary, the census
 checks-passed/failed lines, make's own exit status, wall time.
+
+## O-47 (2026-09-23, [B76], completes inbox I-89's block (A)) — the UNRESTRICTED all-axes answer-identity sweep at 8d716693: GREEN on every axis, Linux wall 2h18m
+
+Launched 2026-09-23T07:17:58Z (pid 81637, `nohup gnutimeout 6h env -u
+AXES make test-axes`), log last write 09:36:16Z — wall ≈ 2h18m, the
+Linux number I-89 asked for (the 6h bound did not fire). The verdict by
+the reading that counts: ZERO `*** [` lines anywhere in the log; the
+final `run_axes.sh:` summary, the oracle cross-check, DIAL-S3 and the
+form census trailer are all present and OK. Full transcript at
+/tmp/optloop2/axes_full.log, held until "I-89 logs fetched".
+
+Registry-derived set as run: baseline + 27 bit-flag axes (bits 4-30) +
+--engine={vm,dfa} + --vm-entry-shape={3,4} + --tune={-2,-1,1,2} = 35
+axis passes over 24,343 keys each. EVERY per-axis line reads
+`lost-other=0 mismatches=0 gained=0` (35/35 checked mechanically). The
+final summary line: "run_axes.sh: all axes answer-identical to default
+(documented refusal populations excepted); --vm-entry-shape tier:
+default (rungs forward,inline; AXES_FULL=1 adds plain,shared); oracle
+cross-check OK". DIAL-S3: "refusal set identical (as file:line keys,
+both directions) across all five positions". Census: checks passed 1,
+failed 0, census wall 250 s.
+
+Per-axis lines verbatim (axis · its summary):
+
+    axis -fno-possessify (PCREC_NO_POSSESSIFY, bit 4)          agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-revdet (PCREC_NO_REVDET, bit 5)                  agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-counter (PCREC_NO_COUNTER, bit 6)                agree=24113 budget-bound=0 refused-documented=230 (floor 180) lost-other=0 mismatches=0 gained=0
+    axis -fno-length-prune (PCREC_NO_LENGTH_PRUNE, bit 7)      agree=24298 budget-bound=45 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-prefilter (PCREC_NO_PREFILTER, bit 8)            agree=24341 budget-bound=2 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fprefilter (PCREC_FORCE_PREFILTER, bit 9)            agree=8915 budget-bound=2 refused-documented=15426 (floor 12000) lost-other=0 mismatches=0 gained=0
+    axis -fno-altcls-merge (PCREC_NO_ALTCLS_MERGE, bit 10)     agree=24341 budget-bound=0 refused-documented=2 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-altcls-factor (PCREC_NO_ALTCLS_FACTOR, bit 11)   agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-atomic-discharge (PCREC_NO_ATOMIC_DISCHARGE, bit 12) agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-splice-calls (PCREC_NO_SPLICE_CALLS, bit 13)     agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-tiered-entry (PCREC_NO_TIERED_ENTRY, bit 14)     agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-premul-table (PCREC_NO_PREMUL_TABLE, bit 15)     agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-offset-skip (PCREC_NO_OFFSET_SKIP, bit 16)       agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-anchored-dfa (PCREC_NO_ANCHORED_DFA, bit 17)     agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-size-term (PCREC_NO_SIZE_TERM, bit 18)           agree=24341 budget-bound=0 refused-documented=2 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-prefilter-collapse (PCREC_NO_PREFILTER_COLLAPSE, bit 19) agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fprefilter-collapse (PCREC_FORCE_PREFILTER_COLLAPSE, bit 20) agree=24341 budget-bound=2 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-scan-edge (PCREC_NO_SCAN_EDGE, bit 21)           agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-start-pinned (PCREC_NO_START_PINNED, bit 22)     agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-alt-island (PCREC_NO_ALT_ISLAND, bit 23)         agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-cls-fold (PCREC_NO_CLS_FOLD, bit 24)             agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-startpos-guard (PCREC_NO_STARTPOS_GUARD, bit 25) agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-comments (PCREC_NO_COMMENTS, bit 26)             agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fcomments (PCREC_FORCE_COMMENTS, bit 27)             agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-vm-anchor-bound (PCREC_NO_VM_ANCHOR_BOUND, bit 28) agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-end-window (PCREC_NO_END_WINDOW, bit 29)         agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis -fno-req-byte (PCREC_NO_REQ_BYTE, bit 30)             agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --engine=vm (§2.11)                                   agree=24274 budget-bound=10 refused-documented=59 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --engine=dfa (§2.11)                                  agree=14711 budget-bound=0 refused-documented=9632 (floor 8000) lost-other=0 mismatches=0 gained=0
+    axis --vm-entry-shape=3 (§2.21)                            agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --vm-entry-shape=4 (§2.21)                            agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --tune=-2 (min-size, tuning.md §5.1)                  agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --tune=-1 (size, tuning.md §5.1)                      agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --tune=1 (speed, tuning.md §5.1)                      agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+    axis --tune=2 (max-speed, tuning.md §5.1)                  agree=24343 budget-bound=0 refused-documented=0 (floor none) lost-other=0 mismatches=0 gained=0
+
+Facts beside your stated EXPECTs, reported not reconciled: (i) the
+batch-1 axes on THIS box — bit 28 anchor-bound 24,343 agree/0/0
+exactly; bit 29 end-window 24,274 agree + 10 budget-bound + 59
+refused-documented; bit 30 req-byte 14,711 agree + 9,632
+refused-documented (floor 8000) — where I-89 stated darwin's RESTRICTED
+run read "24,343/24,343 agree, 0 mismatches, each" for all three
+(totals here still sum to 24,343 keys; the non-agree populations are
+the gate's own not-a-failure classes). (ii) Of your four documented
+exceptions: -fno-length-prune matches the stated shape (15,426
+refused-documented, floor 12,000); -fno-counter read 2 BUDGET-bound
+(not refused-documented); -fno-prefilter read 2 refused-documented;
+-fprefilter read CLEAN 24,343/0/0 (no refusal/budget population at
+all). (iii) -fno-possessify (bit 4) read 230 refused-documented (floor
+180), an exception population your I-89 list did not name. All three
+are one-line facts for your gate's own reading, not findings we
+interpret.

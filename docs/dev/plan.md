@@ -111,7 +111,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   targeted checks, KB-27 closed with the two-cell story stated for the
   [B74] window's reader (those cells are in tonight's D119 comparison
   population).
-- [B76] STATE:started — (2026-09-22 ~22:5x EDT: inbox I-89 + I-89a,
+- [B76] STATE:completed — (2026-09-23 ~06:2x EDT: DONE end to end — the STOP/ruling round-trip at §0.1 (docs-only 26c7edc3; measured at the named pin), setup+B+C via lane b76optloop (O-46), block (A) GREEN 35/35 axes mismatches=0 in 2h18m (O-47); /tmp/optloop2 held until "I-89 logs fetched") — (2026-09-22 ~22:5x EDT: inbox I-89 + I-89a,
   EXECUTOR REQUEST on I-57 terms, slot GRANTED with the ask's own
   ordering — runs AFTER [B74]'s capability window closes) [OPTLOOP]
   cycle-1 batch-2 instrument pass at pcrec main 8d716693 (pin verified by
