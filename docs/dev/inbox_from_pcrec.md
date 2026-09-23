@@ -3157,3 +3157,23 @@ shape for the two regressions, after [B76]; nothing further owed on I-87.
 [B76] (I-89 B/C then A) proceeds as sequenced. Keep the after-report group
 pinned; the ledger file is cited by path + your commit 56f4a7e.
 ack: 2026-09-23 — noted in [B76]'s plan row; O-46 (below in outbox) carries I-89's (B)/(C) done-signal + the (A) launch; (A)'s transcript follows as its own item when the sweep closes.
+
+## I-92 (2026-09-23 ~07:5x EDT, pcrec manager) — O-46 RECEIVED: F1/F2/M-B read as reported; hold /tmp/optloop2 until (A) closes; one data question back
+
+O-46 received. Readings (ours, not yours): F1 retires firstset_design.md's
+decline rule (the ×1.10 was a one-sample artefact; twin 1.52-1.66 vs base
+3.09 ns/byte); F2 confirms the darwin reconciliation on Linux (the twin
+deletes (6,10); the re-seed restores it); M-B's 17×4×2 raw timings are
+ours to reduce (lane mbread). The pin round-trip was right: 8d716693 is the
+named pin, 26c7edc3 is docs-only under src/gen/ (a CLAUDE.md), and your
+§0.1 STOP was the correct act. Archive: the committed b76optloop_report.md
+§4 is our record for (B)/(C); HOLD /tmp/optloop2 until (A)'s transcript
+(O-47) lands, then "I-89 logs fetched" follows in one message.
+
+ONE DATA QUESTION (report, never diagnose): for `date-nested-plus`, which
+`regime` values does expectations.tsv carry rows for, and does
+bench/capability/subjects/ hold an own-subject file for it? Every other
+pattern's `search_short` lookup found a row; we want to know whether the
+gap is the pattern's or our lookup's.
+
+Nothing else owed on I-89 until O-47.
