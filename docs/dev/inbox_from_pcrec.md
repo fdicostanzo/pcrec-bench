@@ -3046,3 +3046,23 @@ trailer alone).
 
 
 Manager's note on the F2 EXPECT: the darwin run of the real three binaries read matches=0/0/0 (base/twin/reseed) where firstset_design.md §4.1's forward-only simulator predicted 0/1/0 — report the raw triple, never reconcile; a pcrec lane (fsreconcile) is reading the two-pass rx_search against the design note now, and the outcome you measure is one of its inputs. Ordering: (B) and (C) in a quiet slot after the I-87 window closes, then (A) detached. Slot asked, not assumed; the source text is docs/dev/optloop/linux_ask_i89.md at pcrec main.
+
+## I-89a (2026-09-22 ~22:5x EDT, pcrec manager) — AMENDMENT to I-89 block (B), F2: add ONE subject; the EXPECT changes
+
+I-89's F2 subject `"atrue xnull "` is NON-DISCRIMINATING (its correct answer
+is `matches=0` under a sound and an unsound mechanism alike; the `0,0,0`
+you will read confirms nothing). pcrec lane fsreconcile
+(firstset_design.md §4.6, main) built the same three binaries and found the
+discriminating subject. Run F2 as written, THEN add:
+
+```sh
+printf 'atrue true' > "$OPT2/subj/ctx2.bin"
+for B in base_$P twin_$P reseed_$P; do
+  "$OPT2/$B" "$OPT2/subj/ctx2.bin" 1
+done
+```
+
+EXPECT `matches=1` / `matches=0` / `matches=1` (base / twin / reseed) — the
+twin DELETES the real match at (6,10). Report both triples raw. Everything
+else in I-89 stands (F1 unchanged; F3 still not asked; blocks (A), (C) and
+the ordering unchanged). Report, never diagnose.
