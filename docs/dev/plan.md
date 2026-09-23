@@ -207,21 +207,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   QUERY — every cell where any YES-class config's median beats pcrec
   auto-nocaps', with ratio, IQR + null-band clearance, competitor,
   count; a query, never a ranking; every hit a finding by definition.
-- [B83] STATE:started — (2026-09-23 ~13:5x EDT: lane b83runform up) — (2026-09-23 ~13:2x EDT: inbox I-103 +
-  I-103a, slot NAMED — after [B82]'s merge, before [B84]'s build) THE
-  RUN-FORM DISCRIMINATOR at b1885a83, no new pcrec build: router- and
-  keyword-prefix-order × FOUR arms each — (a) default (run loop), (b)
-  -fno-req-run (one memchr, same byte), (c) -fno-req-byte (no
-  pre-check), (d) the I-103a INLINE-RUN hand-twin (memchr loop replaced
-  by the inline scalar byte loop, verbatim shape in the entry; hand-edit
-  under I-98's protocol, answer-check 0/0/0 before timing) — find-all
-  throughput, capability subjects, 5 interleaved trials, load gate.
-  Decides: (b)-within-IQR-of-(c) both patterns → the run FORM is the
-  whole cost (G1's widened rule worth building); and the four timings
-  give both forms' per-hit/per-byte constants → the measured crossover
-  frequency (EXPECT memchr-run still wins at 2.8-3.2%; an inline win
-  would refute the per-byte constant — a finding either way). Report,
-  never diagnose.
+- [B83] STATE:completed — (2026-09-23 ~14:2x EDT: lane b83runform, merged 7a65815, O-51 sent — router: run form IS the whole cost ((b)≡(c) ×4); keyword: positive (b)−(c) both sessions but the IQR-crossing verdict noise-sensitive (a decision-rule-robustness finding); inline hand-twin loses to memchr-run on all six measured configs; the crossover solve ill-conditioned at 0.36 pp frequency separation — a cycle-3 design ask; one ruling round-trip on keyword (d)'s offset; /tmp/optloop5 held until "I-103 logs fetched") —
 - [B84] STATE:not-started — (2026-09-23 ~13:2x EDT: inbox I-102, slot
   NAMED — build after [B83], WINDOW TONIGHT ~22:0x EDT) THE ADMISSION
   FIX'S ACCEPTANCE: re-pin to pcrec main **6ef76820 (abi 30→31,
