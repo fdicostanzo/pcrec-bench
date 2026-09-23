@@ -524,8 +524,26 @@ def check_subject_timeout():
             return
 
         hang = os.path.join(tmp, "hang.bin")
+        # [B74] (abi 29, [OPT-REQBYTE]): `(a+)+b` now stamps `RX_REQ_BYTE
+        # "98"` ('b') -- every match must contain a 'b' on every path, so
+        # the emitted entry does one memchr over the WHOLE search window
+        # before running the VM at all, and a plain 40-`a` subject (no
+        # 'b' anywhere) is dismissed in that memchr, `nomatch`, without
+        # ever reaching the catastrophic-backtracking VM this control
+        # exists to exercise -- MEASURED directly (`hangwit.c`'s own
+        # guard: "if (... || !memchr(subject + search_from, 98, ...))
+        # return 0;"). A leading 'b' the match can never actually use
+        # satisfies the memchr (it only asks whether the byte appears
+        # ANYWHERE in the window, never where) while leaving the
+        # TRAILING run of 40 `a`s with no 'b' to complete it -- an
+        # unanchored search still finds no completion at position 0 (the
+        # 'b' itself, `(a+)` needs an 'a' first) and explores the SAME
+        # exponential split of the a-run starting at position 1 that
+        # hung before this pin, restoring the control without sharing
+        # any source with [OPT-REQBYTE] itself (a subject byte, not a
+        # flag or a stamp read).
         with open(hang, "wb") as f:
-            f.write(b"a" * 40)
+            f.write(b"b" + b"a" * 40)
         fine = os.path.join(tmp, "fine.bin")
         with open(fine, "wb") as f:
             f.write(b"ab")
@@ -534,7 +552,7 @@ def check_subject_timeout():
             def __init__(self, sid, path, length):
                 self.subject_id, self.path, self.length = sid, path, length
 
-        subjects = [S("s-hang", hang, 40), S("s-fine", fine, 2)]
+        subjects = [S("s-hang", hang, 41), S("s-fine", fine, 2)]
         handle = {"driver": os.path.join(tmp, "pcrec_driver"), "lib": so,
                   "subject_timeout": 3}
         rows_by_trial, _i, _n = adapter.measure(handle, "search_short",
