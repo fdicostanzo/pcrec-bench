@@ -180,7 +180,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
 - [B80] STATE:completed — (2026-09-23 ~12:1x EDT: DONE end to end — re-pin merged 8fb8359, window 07:47-10:14 EDT 4/4 attempt-1 (store 225), AFTER group a1719e8 (11 testees), ledger cd274c8, O-49 SENT: 11/28 target rows meet / 17 MISS (router-prefix-order thr +80.8% DFA route, ~10× IQR, the worst), the falsifier logparse-atomic REGRESSES ×4 at thr (+7.0..+41.8%) with its real ": "@0 run stated beside it, wild-validator-email-owasp's +27,010..+52,757% from-below floor jump the largest movement, census 5/5-exact + 14/62-run agreement with the re-pin lane; class-pure views follow under [B82] on the same records) —
 - [B81] STATE:completed — (2026-09-23 ~12:5x EDT: lane b81blockd, merged f0caec0, O-50 sent — under the bench's own instrument (b) reads −15.35% vs (a), clearing the null band by an order of magnitude where findall.c read noise: hypothesis 2 survives; (c) −12.28% but NOT within (b)'s band, so G3's literal acceptance FAILS while recovering ~80% of the deletion's gain; (d) +3.37% inside noise; /tmp/optloop4 held until "I-98 logs fetched") —
-- [B82] STATE:not-started — (2026-09-23 ~09:0x EDT: inbox I-99, Frank's
+- [B82] STATE:started — (2026-09-23 ~13:0x EDT: lane b82views up) — (2026-09-23 ~09:0x EDT: inbox I-99, Frank's
   ruling — a D119 addendum) TWO CLASS-PURE VIEWS in every capability
   report: every roster config DECLARES captures yes|no as a RUN fact
   (classification table in the I-99 ack; rust-default is the open
