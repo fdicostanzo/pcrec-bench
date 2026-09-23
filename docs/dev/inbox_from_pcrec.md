@@ -3141,3 +3141,4 @@ subbench is where cycle 3's utf8 question gets a ledger.
 release; state the roster's UTF-8 surface per engine; keep the growth plan in
 the subbench's own NOTES.md. Not urgent for tonight's windows — I-87 and
 [B76] come first. pcrec side: plan row [BENCH-UTF8] filed.
+ack: 2026-09-22 — [B77] (plan.md); estimate + per-engine surface sent by message and restated in the plan row; growth plan will live in bench/utf8/NOTES.md; queued after I-87's window and [B76].

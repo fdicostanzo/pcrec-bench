@@ -130,3 +130,26 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   lines verbatim, make's own *** [ verdict). Done-signal per I-89 (D);
   scratch /tmp/optloop2 held until "I-89 logs fetched". Report, never
   diagnose.
+- [B77] STATE:not-started — (2026-09-22 ~23:4x EDT: inbox I-90, Frank's
+  charter — "somewhat complete, not small — or at least specify that it
+  will grow; any functionality which might be affected by encoding;
+  classes come to mind") SUB-BENCH `utf8`: capability's shape, PCRE2 10.46
+  + PCRE2_UTF oracle, regimes throughput + search_short, subjects in five
+  scripts (Latin-1-Supp prose, Cyrillic, CJK, mixed/emoji, ASCII control)
+  at 64k/256k/1m with sha256 manifests + per-family short subjects,
+  provenance stated; first release ships families (a)-(f) (boundary/
+  negated/mixed classes + dot + \w\d\s ±UCP; multi-byte literals/runs/
+  4-byte; caseless non-ASCII fold sets incl. final-sigma; multi-byte
+  alternation/quantifiers; assertions \b/lookbehind/^$ multiline; \p
+  properties per script); NOTES.md names the growth stages (g)-(k)
+  (find-all, invalid UTF-8, start-inside-a-character, surrogates/
+  overlong, the -e byte mirror arm) with a version per stage — pcrec's
+  tests/utf8 axis01-12 as the correctness map, this set measures SPEED
+  on the same axes. Roster restricted to UTF-8 speakers (surface stated
+  in the I-90 ack; onig needs an ONIG_ENCODING_UTF8 config, tre likely
+  byte-mirror-only or excluded — verify at design). pcrec testees ×4
+  compiled -e utf8; first customers: offset-skip rows, high-byte
+  required-byte rows, the (c) fold sets. ORDER: after [B74] (b) and
+  [B76]. Plan: design note + R-panel first, then build lanes (blinded
+  set author for expectations where feasible), first release estimate
+  ~2 days from start, first measured sample the night it merges.
