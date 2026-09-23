@@ -5699,3 +5699,30 @@ class column at subject grain, the held groups regenerated at 58 MB),
 [B83]/O-51, [B82] merged, [B86] chartered off I-105. The [B84] (b)
 window opens now (ahead of the named ~22:0x slot — the box is quiet and
 nothing else is scheduled), BEFORE = b1885a83.
+
+## 2026-09-23 (~18:5x EDT) — DEFENSIVE JOURNAL at Frank's budget call (96% weekly fill)
+
+Frank: no new lanes, finish what's running, journal defensively. State
+at this instant: the [B84] (b) WINDOW IS DONE AND COMMITTED (store 229,
+4/4 measured attempt-1 at 6ef76820, records pushed 38ceba2); the ONLY
+running effort is the cross-pin AFTER report generation (detached,
+marker build/genb84.done; script in the session scratchpad as genb84.sh
+— query: capability 0.1, since 2026-09-23T00:00Z until 2026-09-24T06:00Z,
+the four b1885a83 + four 6ef76820 pcrec testees + onig/rust/vectorscan,
+output reports/2026-09-23-capability-0.1-budu-ryzen1600-after-6ef76820.*
+at reporter v21 with sidecar + determinism check). When its marker
+lands: commit the group, check-interpret must read 193 (the new sidecar
+joins), push. NOT STARTED, deliberately (the budget call): the [B84]
+LEDGER (O-45/O-49's shape — I-102's acceptance (a)-(e) / no-move
+(f)-(g) / negative (h) grid, the REQ_WHY census as the fourth
+derivation, IQRs from the records via pcrecbench.reduce; BEFORE =
+b1885a83 = O-49's AFTER) and O-52. Everything a fresh session needs is
+in: inbox I-102 (the grid + EXPECTs), docs/dev/lanes/b84repin_report.md
+(the census + stamp facts), the two ledgers of 2026-09-23 (the shape),
+and this entry. Also queued, cleared, NOT started: [B86] (I-105's
+three-point crossover, plan row has the full spec), [B79] (null band,
+I-104 spec in row), the [B77] utf8 U-lanes (I-94 rulings in row), the
+class-aware interpreter rules ([B82]'s owed), Frank's matrix
+flat-column ruling ([B82]'s owed). All lanes TaskStopped; no scratch
+held anywhere (optloop2/3/4/5 all released/deleted); the day's
+outboxes: O-45..O-51 sent, all acked fetched by pcrec.
