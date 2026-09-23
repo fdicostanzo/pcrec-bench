@@ -179,7 +179,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   a reporter version bump, tests; charter the design details before a
   lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
 - [B80] STATE:completed — (2026-09-23 ~12:1x EDT: DONE end to end — re-pin merged 8fb8359, window 07:47-10:14 EDT 4/4 attempt-1 (store 225), AFTER group a1719e8 (11 testees), ledger cd274c8, O-49 SENT: 11/28 target rows meet / 17 MISS (router-prefix-order thr +80.8% DFA route, ~10× IQR, the worst), the falsifier logparse-atomic REGRESSES ×4 at thr (+7.0..+41.8%) with its real ": "@0 run stated beside it, wild-validator-email-owasp's +27,010..+52,757% from-below floor jump the largest movement, census 5/5-exact + 14/62-run agreement with the re-pin lane; class-pure views follow under [B82] on the same records) —
-- [B81] STATE:not-started — (2026-09-23 ~07:5x EDT: inbox I-98, slot
+- [B81] STATE:started — (2026-09-23 ~12:2x EDT: lane b81blockd up) — (2026-09-23 ~07:5x EDT: inbox I-98, slot
   GRANTED, runs AFTER [B80]'s window) BLOCK D RE-RUN under the bench's
   OWN instrument: the four nested-comment-rec builds ((a) as-is, (b)
   pre-check deleted, (c) pre-check moved to the entry wrappers = G3's
