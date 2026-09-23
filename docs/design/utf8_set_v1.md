@@ -490,6 +490,16 @@ customer.** Non-ASCII caseless folding SHIPPED in pcrec at [M5.0] stage
 4 (AX, "THE STAGE-4 GAP IS CLOSED", 2026-09-08), so every member below
 is a live cell on pcrec, not a refusal.
 
+**(F-S4, v0.2, stated so the omission reads as a decision.)** Unlike
+family (a)/(e), no `ci-*` member below except `ci-ucp-invariance` carries
+a `(*UCP)` twin, and this is deliberate, not a gap: UCP governs class
+SCOPE (`\w`/`\d`/`\s`/POSIX widening), not fold MEMBERSHIP, which are
+orthogonal PCRE2 options (UD §4.5). `ci-ucp-invariance` exists to prove
+exactly this — it is the control that shows the fold answer is
+UNCHANGED with or without UCP — so adding a UCP twin to every other
+`ci-*` member would measure nothing new at real `search_short`/
+`throughput` cost; one witness is the finding.
+
 | id | pattern | axis | what it isolates |
 |---|---|---|---|
 | `ci-e-acute` | `(?i)é` | 6 | the simplest non-ASCII fold pair (U+00E9 / U+00C9), both 2 bytes |
@@ -931,6 +941,17 @@ right about:
   `utf8` encoding — no validation pass, no error return."*
 - RE2, Rust and Vectorscan each have their own documented posture, none
   of them established in this repo today.
+
+**(F-S5, v0.2.)** That "none established" is true for RE2/Rust/
+Vectorscan, but not for the pcrec/PCRE2 pair specifically: AX's axis03
+already treats `PCRE2_MATCH_INVALID_UTF` as a working, precedented
+differential oracle against pcrec (`~/pcrec/tests/utf8/
+axis03_invalid_utf8.rxt:9-11`, verbatim: *"the oracle for every case
+below is libpcre2 under `PCRE2_MATCH_INVALID_UTF`, never plain
+`PCRE2_UTF`"*). This does not change the six-engine table's policy
+below — see Q10's ruling — but a reader should not read this
+paragraph as implying the pcrec/PCRE2 pair starts from the same
+"nothing established" position as the other four.
 
 Ranking three different documented behaviours against one canonical
 expectation would manufacture wrong answers out of correct ones. The
@@ -1379,7 +1400,7 @@ Each carries a recommendation and the consequence of each answer.
 | **Q7** | Growth ordering: 0.2 = (g)+(k), 0.3 = (h)+(i)+(j)? | **Yes.** (h)/(i)/(j) share one policy (§8.3) and one subject-generation problem; splitting them ships the policy twice | DEFAULT |
 | **Q8** | Axis 11's caller-supplied mid-character `startpos` needs a driver-protocol `--startpos` (§3.3 gap 3). Worth a protocol extension? | **No, and say so in `NOTES.md`.** It is a correctness question `~/pcrec/tests/utf8/axis11` already owns, and a protocol parameter used by one family of one set is a maintenance cost six other sets pay | DEFAULT |
 | **Q9** | Does the per-pattern oracle option word live as a parameter on the shared `oracle_pcre2.py`, or does this set get its own oracle module? | **A parameter on the shared module** — `bench/syntax/NOTES.md` predicted exactly this ("one option argument"), and a second oracle module would mean two definitions of "the oracle" in one repo. Consequence: U1 changes shared code and owes the byte-identical re-derivation check (§13) | DEFAULT |
-| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now | **BLOCK at (h)** |
+| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now. **(F-S5, v0.2, pointer for (h)'s ruling):** for the pcrec-vs-PCRE2 pair specifically, this is not a new instrument to build — `~/pcrec/tests/utf8/axis03_invalid_utf8.rxt` already runs libpcre2 under `PCRE2_MATCH_INVALID_UTF` as its own canonical differential oracle against pcrec, precedented since promotion. §8.3's "no cross-engine canonical answer" framing is true for the other five engines but should not be read as implying pcrec/PCRE2 starts from the same "nothing established" position; (h)'s ledger may cite AX's axis03 oracle as-is, without contradicting §8.2's "never `PCRE2_NO_UTF_CHECK`" rule (axis03 doesn't use it either) | **BLOCK at (h)** |
 
 ---
 
