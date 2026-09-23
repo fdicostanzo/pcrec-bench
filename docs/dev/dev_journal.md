@@ -5643,3 +5643,21 @@ extraction that builds the table — never from a second, positional
 rendering; a paste alignment is not a data structure. /tmp/optloop2
 released (cleanup deferred to [B78]'s close — its lane reads the built
 worktree).
+
+## 2026-09-23 (~07:4x EDT) — [B80] (a) merged, window launched
+
+The abi-30 re-pin merged (8fb8359 tip): REQ_RUN read on every artifact,
+-fno-req-run bit-32 deny row, FREQPICK's req_byte movement verified on
+five house witnesses (+ the pfx3-256 size witness, +423 B individually
+measured), registries/limits accounted, no orthogonal break. The lane's
+first detached make check was REAPED (the standing hazard; relaunched
+setsid, clean: 5/73/0 · 457/0 · 101 · 163/28-transitional →
+191/191 after the 28-sidecar regen at catalogue 3.4). Landing-bar fix
+at merge: the 3.4 changelog comment. One tree hygiene note: pin.sh's
+registry re-archive touched the MAIN tree's list_axes.tsv from the
+lane's worktree (content identical to the lane's commit — discarded
+safely; watch for it at the next re-pin). The census that seeds
+tonight's ledger: 14/62 run-stamping patterns, union 18; the falsifier
+pattern logparse-atomic now carries a REAL 2-byte run beyond its pick
+move. Window (b) launched 07:47 EDT, four cells at b1885a83, O-45's
+AFTER as the BEFORE.
