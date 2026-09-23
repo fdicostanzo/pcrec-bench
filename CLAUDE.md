@@ -431,6 +431,39 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **b1885a83, abi 30** (re-pinned from 8d716693, 2026-09-23, lane
+  b80repin, inbox I-95: [OPTLOOP] cycle 2 batch 2 — [OPT-FREQPICK] (the
+  emitted necessary byte is now pcrec's own byte-frequency-prior
+  ARGMIN over the necessary set, byte encoding only, no new stamp) +
+  [OPT-REQPOS] tier 2b (the necessary literal RUN, 2-8 bytes, one
+  memchr + one constant-length memcmp; `RX_REQ_RUN`, deny
+  `-fno-req-run` bit 31 — where a run ships, `RX_REQ_BYTE` reports the
+  run's own scanned member); `struct rx_info` byte-identical, shim
+  floor stays 16. [OPT-FREQPICK] moves `req_byte`'s VALUE wherever a
+  2+-byte run exists — MEASURED on five pre-existing STAMP_CASES
+  witnesses (`foo[0-9]+bar`/`^foo[0-9]+bar` 114→98, `^foo`/`\Gfoo`/
+  `foo\z` 111→102) and one LEDGER witness (`altwide pfx3-256`
+  forced-VM: 120→113, +423 B individually measured, `vm_program_bytes`
+  unchanged); every other witness moves by the flat
+  `B80_STAMP_LINE = 26` (`RX_REQ_RUN "none"`, both engines). Registries:
+  `list_axes.tsv` 87/31→89/32 (`req-run`, one new axis, order 1 `run` /
+  order 2 `none`); `list_limits.tsv` 58→60 (`PCREC_MAX_REQ_RUN_EMIT` 8,
+  `PCREC_MAX_REQ_RUN_SCAN` 32); `list_definitions.tsv`/`list_schema.tsv`
+  byte-identical. `check_mechanism_stamps` 114/114,
+  `check_deny_flag_controls` 15/15 (two new rows: `-fno-req-byte` denies
+  the run WITH the byte; `-fno-req-run` isolates the run alone).
+  Corpus census over `bench/capability`'s 64 patterns (I-95's ask): 14/62
+  compiled patterns stamp a run (length distribution 2×8, 3×3, 4×1,
+  5×1, 8×1); 14/64 move `req_byte`; the union is 18 patterns. All three
+  of I-95's named expectations confirmed by value:
+  `wild-secrets-github-pat` stamps `RX_REQ_RUN "6875625f7061745f@3"`
+  ("hub_pat_", scan index 3, `RX_REQ_BYTE "95"`); `logparse-atomic`
+  stamps `RX_REQ_BYTE "58"` (`:`, plus an unasked-for 2-byte run ": ");
+  `router-prefix-order` moves `RX_REQ_BYTE` 114→47 (`/`, a 5-byte
+  "/user" run). Catalogue 3.4 (`[[pin_order]]` append). Sixteen pinned
+  configs, unchanged — no new deny testee (no acceptance review is
+  open on [OPT-REQPOS] the way [OPT-5]/[ENG-ISL]/[FORM-CHAR] had one).
+  Before it,
   **8d716693, abi 29** (re-pinned from 25b1984f, 2026-09-22, lane
   b74repin, inbox I-87: [OPTLOOP.1] batch 1 -- two abi steps absorbed,
   not the one ask characterised: 27->28 was pcrec's own REL-1.4 version
