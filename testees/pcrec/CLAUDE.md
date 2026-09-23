@@ -526,6 +526,105 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at 8d716693 (abi 27 -> 29) — 2026-09-22, lane b74repin, inbox I-87
+
+**Two abi steps absorbed, not one.** I-87 characterised the jump as
+abi 28→29 ([OPTLOOP.1] batch 1); pcrec main also crossed 27→28
+UNANNOUNCED in the same 300+-commit range (pcrec's own REL-1.4:
+`PCREC_VERSION` / `--version`, an abi stamp with no new `rx_info` field
+this shim reads). `struct rx_info` is byte-identical field for field
+between 25b1984f and 8d716693 (diffed on a plain `abc` witness): the
+shim floor STAYS 16.
+
+**A MAJOR finding orthogonal to I-87's own ask: pcrec's whole REL-1
+release milestone landed in the same range (D115/D116/D118,
+`v0.1.0-beta` tagged), and D118 RESHAPED THE CLI.** Positional operands
+are now INPUT FILES; the literal pattern moves behind `--pattern`;
+`--source FILE` is retired for a bare `FILE.rxt` operand (`docs/dev/
+decisions.md` D118, pcrec `docs/spec/cli.md`). The OLD shape this
+adapter's phase-1 compile call used —
+`pcrec -p rx <flags> -o art.c -- 'PATTERN'` — is REFUSED outright by the
+new CLI ("pcrec: PATTERN: not an existing file; a literal pattern is
+given with --pattern"), because a bare positional after `--` is now a
+FILE operand candidate, never a pattern. Six more direct pcrec
+invocations in `tools/selfcheck.py` used the same old shape. **Fixed**:
+every one of the seven call sites now spells `["-o", art, "--pattern",
+pattern]` — `--pattern` takes the very next argv token unconditionally
+(no `--` separator needed, confirmed on a pattern beginning with `-`
+and on a raw high-byte value via a `bytes` argv element, the I-72
+convention, unaffected). `--list-source` was ALREADY file-operand
+shaped (`[binary, "--list-source", rxt_path]`) and needed no change.
+This bench had prior warning (inbox I-84 acked the beta's `--pattern`/
+file-operand/`--version` CLI shape on 2026-09-21) but had not yet
+absorbed it into the adapter or `selfcheck.py`; this re-pin is where it
+first had to.
+
+**The three new stamps** ([OPT-ANCHOR-VM]/[OPT-ENDWIN]/[OPT-REQBYTE],
+pcrec lane/optimpl1, merge 6ab2464e): `RX_REQ_BYTE` (the RIGHTMOST
+literal byte every match must contain, as a decimal string, or `"none"`
+— a bottom-up AST walk, PCRE2's own LASTCODEUNIT role) and
+`RX_END_WINDOW` (when every alternative ends in `$`/`\Z`/`\z` outside
+multiline AND the pattern's width is finite, the byte count beyond which
+the tail cannot start a match, or `"none"`) are on EVERY artifact, both
+engines (`req_byte`/`end_window`, scope `"every"`); `RX_VM_START`
+(`anchored` / `gstart` / `unanchored`) is on the VM route ONLY —absent
+on a DFA artifact (`vm_start`, scope `"vm"`). None has an `rx_info`
+mirror. `RX_VM_START`'s three candidates are all enumerable
+(`REGISTRY_STAMP_PAIRS`); `req_byte`/`end_window` carry a variable
+value and are declared like `dfa_prefilter_offsets` instead. MEASURED
+by value: `foo[0-9]+bar` → req_byte `"114"` (`r`), `a(b|c)+d` → `"100"`
+(`d`), `foo|bar` / a 256-word alternation → `"none"` (no byte common to
+every path); `^foo` under `--engine=vm` → vm_start `"anchored"`; `\Gfoo`
+→ `"gstart"`; `foo\z` → end_window `"3"`. Each deny flag
+(`-fno-req-byte` / `-fno-end-window` / `-fno-vm-anchor-bound`, bits
+30/29/28) flips its stamp to the fallback, smoke-checked in
+`check_deny_flag_controls`.
+
+**A SEPARATE finding: unlike every prior stamp-only re-pin, two of the
+three axes emit REAL CODE when they fire, not merely a `#define`
+line.** MEASURED directly (`pfx3-256` forced-VM, diffed byte for byte
+against its 25b1984f artifact): a non-`"none"` `req_byte` adds one
+`#include <string.h>` line AND a memchr guard block ahead of the search
+entry —
+
+    /* [OPT-REQBYTE] every match of this pattern contains the byte
+     * 120, so a window without it holds no match at all. */
+    if (subject_length <= search_from ||
+        !memchr(subject + search_from, 120, subject_length - search_from))
+        return 0;
+
+— and a non-`"none"` `end_window` likewise clamps `search_from` with
+real code (the `cls-upto-32768` whole-subject witness: `end_window
+"32768"` costs +217 B, far more than the three stamp lines' own ~30 B).
+Consequently the per-artifact size-book addition at this pin is **NOT a
+flat constant** the way every prior re-pin's was: `B74_STAMP_LINES_DFA`
+(56 B: the two "every"-scope lines at their `"none"` length) and
+`B74_STAMP_LINES_VM` (89 B: the same two plus `RX_VM_START`'s line)
+cover the non-firing population; a witness whose OWN required byte or
+end window fires carries a larger, individually MEASURED total instead
+(`tools/selfcheck.py`'s own comment at each such row states which and
+why — never derived from a formula). Twenty existing `emit_bytes`/
+`emit_code_bytes` assertions across `STAMP_CASES`, `LEDGER_STAMP_CASES`
+and `DENY_CONTROLS` moved and were re-measured and corrected; three
+existing `DENY_CONTROLS` rows (`dfa_scan_edge`, `dfa_start`,
+`vm_alt_islands`) needed the DFA/VM flat term added on both arms.
+
+**Registries re-archived and diffed against the pin's own live
+output**: `list_axes.tsv` **80/28 → 87/31** — seven rows, three new
+axes, exactly I-87's own description (`vm-anchor-bound` 3 candidates,
+`end-window` 2, `req-byte` 2); every other row byte-identical.
+`list_definitions.tsv` and `list_schema.tsv` **byte-identical** — D118
+changes how pcrec is INVOKED on a `.rxt` file, never the file's own
+grammar, which is what `list_schema.tsv` describes. `list_limits.tsv`
+**58 rows unchanged**, four rows reworded in their `override` column
+only (`-D` → `flag+-D`, naming the true two-lever shape honestly) — a
+CO-LANDING, unrelated change, `[LIM-OVR]` (pcrec lane admin1, commit
+d2cd3c81), not [OPTLOOP.1]'s own; same shape as `[REVW.4]`'s +1 row at
+the 25b1984f re-pin. `check_mechanism_stamps` (114/114) and
+`check_deny_flag_controls` (14/14) verified green standalone before the
+full `make check` run. Catalogue **3.3** (`[[pin_order]]` append).
+Sixteen pinned configs, unchanged.
+
 ## `shim.c` includes the artifact's `.c`, and that is load-bearing
 
 `driver.c` must not re-declare `struct rx_info` or the `<prefix>_*`

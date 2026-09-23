@@ -431,6 +431,32 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **8d716693, abi 29** (re-pinned from 25b1984f, 2026-09-22, lane
+  b74repin, inbox I-87: [OPTLOOP.1] batch 1 -- two abi steps absorbed,
+  not the one ask characterised: 27->28 was pcrec's own REL-1.4 version
+  stamp, unannounced; 28->29 is OPT-ANCHOR-VM/OPT-ENDWIN/OPT-REQBYTE as
+  three new axes, RX_VM_START/RX_END_WINDOW/RX_REQ_BYTE, none with an
+  rx_info mirror -- struct rx_info byte-identical, shim floor stays 16.
+  A MAJOR finding beyond I-87's own ask: pcrec's whole REL-1 release
+  milestone (D115/D116/D118, v0.1.0-beta) landed in the same commit
+  range, and D118 reshaped the CLI -- positional operands are now INPUT
+  FILES, the literal pattern moves behind --pattern, --source FILE is
+  retired -- which broke this adapter's phase-1 compile call and six
+  direct pcrec invocations in tools/selfcheck.py (the old `-o FILE --
+  'PATTERN'` shape is refused outright); fixed at every call site
+  (--pattern takes the next argv token directly, no -- needed).
+  Registries: list_axes.tsv 80/28->87/31 (the three new axes, seven
+  rows, exactly I-87's own description), list_definitions.tsv/
+  list_schema.tsv byte-identical (D118 changes CLI invocation, never
+  the .rxt grammar), list_limits.tsv 58 rows unchanged (four reworded
+  in `override` only -- a co-landing, unrelated LIM-OVR fix, not
+  [OPTLOOP.1]'s own); a SEPARATE finding -- [OPT-REQBYTE]/[OPT-ENDWIN]
+  emit REAL CODE (a memchr guard + #include, a search_from clamp) where
+  they fire, so the size-book addition is NOT a flat per-artifact
+  constant for the first time: B74_STAMP_LINES_DFA (56 B) / _VM (89 B)
+  cover the non-firing population, twenty other emit_bytes/
+  emit_code_bytes assertions individually re-measured; catalogue 3.3.
+  Before it,
   **25b1984f, abi 27** (re-pinned from cf0962e3, 2026-09-20, lane
   b58repin, inbox I-77 (1): the [EMIT-VERB]/D112 pin — emitted comments
   OFF by default, `-fcomments`/`-fno-comments` two new ordinary
