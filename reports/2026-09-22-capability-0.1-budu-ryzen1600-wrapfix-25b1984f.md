@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v18 (2026-09-18)
+reporter: v19 (2026-09-22)
 
 ## Query
 
@@ -3092,11 +3092,11 @@ _per-subject rows: 75 subjects — too many to enumerate here (the cap is 24); `
 | `email-nested-plus` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 75 | 93% | -2:PCREC_ERR_STEPS×5 (smallest: v-uuid-badnibble, 36 B) | 0 | `sd-empty-alt-hit` (gave-up), `sd-empty-alt-miss` (gave-up), `sec-github-pat` (gave-up), `v-uuid-badnibble` (gave-up), `v-uuid-valid` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 75 | 97% | -17:retry×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
-| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 75 | 97% | 0 | 10 | `rd-evil-alt-near-miss` (wrong), `sd-empty-alt-hit` (wrong) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
 | `evil-alt-nested` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 75 | 97% | -2:PCREC_ERR_STEPS×2 (smallest: rd-evil-alt-near-miss, 18 B) | 0 | `rd-evil-alt-near-miss` (gave-up), `sd-empty-alt-hit` (gave-up) |
-| `evil-alt-nested` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 10 | `rd-evil-alt-near-miss` (wrong), `sd-empty-alt-hit` (wrong) |
-| `evil-alt-nested` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 75 | 97% | 0 | 10 | `rd-evil-alt-near-miss` (wrong), `sd-empty-alt-hit` (wrong) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
+| `evil-alt-nested` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 75 | 97% | 0 | 0 | `rd-evil-alt-near-miss` (no-expectation), `sd-empty-alt-hit` (no-expectation) |
 | `high-byte-run` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 75 | 97% | 0 | 10 | `nu-high-byte` (wrong), `nu-lead-with-cont` (wrong) |
 
 ## Compile cost (by execution-model class; never pooled across classes)

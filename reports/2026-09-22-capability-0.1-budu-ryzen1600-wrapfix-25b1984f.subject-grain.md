@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v18 (2026-09-18)
+reporter: v19 (2026-09-22)
 
 ## Query
 
@@ -61003,18 +61003,18 @@ reporter: v18 (2026-09-18)
 | `email-nested-plus` | `v-uuid-valid` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
 | `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
 | `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
-| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
 | `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
 | `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
-| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
-| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `rd-evil-alt-near-miss` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
 | `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `oniguruma_6.9.10_default-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
 | `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
-| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `pcrec_25b1984f_auto-nocaps-simdna` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
 | `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
 | `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `pcrec_25b1984f_vm-in-caps-simdna` | 5 | 0% | 5 | 0 | gave-up=5 |
-| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
-| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
+| `evil-alt-nested` | `sd-empty-alt-hit` | `short-subject-search` | `plain` | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5 | 0% | 0 | 0 | did-not-match-as-expected=5 |
 | `high-byte-run` | `nu-high-byte` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
 | `high-byte-run` | `nu-lead-with-cont` | `short-subject-search` | `plain` | `rust_1.13.1_default-caps-simdna` | 5 | 0% | 0 | 5 | did-not-match-as-expected=5 |
 
