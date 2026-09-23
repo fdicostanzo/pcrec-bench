@@ -3714,3 +3714,54 @@ window at night. SLOT ASKED NOT ASSUMED — sequence it wherever it lands
 after [B82]/I-103/I-103a's queue; name the slot in your ack rather than
 assuming next-available.
 ack: 2026-09-23 — [B84] (plan.md); SLOT NAMED: the re-pin lane builds this afternoon after [B83]'s timed block closes ([B74]/[B80] ritual, abi 31, REQ_WHY read as EMISSION beside REQ_BYTE/REQ_RUN's ANALYSIS, compiler built at 6ef76820 regardless of main's tip); the WINDOW opens TONIGHT ~22:0x EDT, capability ×4 both regimes, BEFORE = b1885a83; the ledger carries the acceptance/no-move/negative-control grid + the REQ_WHY census as the fourth independent derivation; rendered in the class-pure views + I-101 query if [B82] merges by window close (expected).
+## I-105 (2026-09-23 ~15:1x EDT, pcrec manager) — "I-103 LOGS FETCHED": O-51 archived; release /tmp/optloop5; the reading's established/not lines; THE CYCLE-3 ASK
+
+O-51 (docs/dev/lanes/b83runform_report.md, 495 lines) is archived at pcrec
+docs/dev/optloop/runs/2026-09-23-o51-i103/ as O-51.md + I-103.md +
+I-103a.md + b83runform_report.md, own README.md. Release /tmp/optloop5.
+
+Read against `docs/dev/optloop/cycle2_i103_reading.md` and the
+`[OPT-REQPOS]` three-arm form rule on `plan.md`:
+
+**ESTABLISHED.** (i) memchr-run beats the scalar inline loop at both
+2.8% and 3.2% scan-byte frequency, every configuration measured -- the
+common-tier inline mechanism correctly does not fire below the rule's
+~8% crossover. (ii) Router's pre-check cost is entirely the run form --
+`(b)-(c) ~ 0` on all four configs, matching I-103's own EXPECT exactly
+and settling by direct measurement the dominance-rule worked example
+`cycle2_batch2_reading.md` §6's candidate rule needs.
+
+**NOT ESTABLISHED.** (i) Keyword's IQR-crossing verdict -- `(b)-(c)`
+stays positive and same-order across two independent sessions
+(39.5k-48.3k ns) while the IQR bar itself flips (one session's own IQR
+widened 40x between runs); needs I-104's null-control band before the
+decision rule can be read without depending on which session ran.
+(ii) The crossover constant -- two points 0.36 percentage points apart
+cannot solve the two-parameter system; both mechanisms' fitted byte
+terms go unphysically negative, shown and stopped per the ruling's own
+instruction, not forced.
+
+**THE CYCLE-3 ASK**, designed not built. Counted every run-carrying
+capability pattern's own scan-byte hit frequency (14 of 64 patterns, via
+`b2ledger/stampdiff.json`'s fix-side `RX_REQ_RUN` against the
+regenerated `bench/capability/throughput/{t-64k,t-256k,t-1m}.bin`,
+sha256-matched to O-51's own cited hashes): widest real spread is
+`wild-semdiv-dollar-trailing-newline-pcre2` at 0.4773% (clears <0.5%) to
+`keyword-prefix-order` at 3.2067% -- **no candidate in your capability
+set clears 6%**. Verified the byte-pick mechanism (argmin over the run's
+own bytes' `pcrec_byte_freq_ppm`) against all 14 real cases from the
+shipped table: 14/14 exact, including two non-trivial ties. Used it to
+design a synthetic witness: a necessary run built only from `e`/space
+bytes forces `'e'` as the pick (the table's two highest-ppm entries),
+and `'e'` already occurs in your EXISTING throughput subjects at
+8.5212% -- no new subject text needed, only a new pattern (e.g. a
+nested-comment-rec-shaped delimiter pair using `"e "`/`" e"` in place of
+`"*/"`). ASK: the same I-103a block (default / `-fno-req-run` /
+`-fno-req-byte` / offset-corrected inline hand-twin) on
+`wild-semdiv-dollar-trailing-newline-pcre2` (0.4773%, no new build)
+paired against EITHER `keyword-prefix-order` (3.2067%, already built,
+reuses O-51's own arms) as the best real spread available, OR the
+proposed synthetic `e`/space-run witness once you build and verify it
+compiles with the expected stamps (`RX_REQ_BYTE 101`) -- your call which
+pair to run; either answers the crossover-conditioning question I-103a's
+own §10 left open. SLOT ASKED NOT ASSUMED; after [B84]'s I-102 window.
