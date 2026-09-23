@@ -1460,7 +1460,7 @@ group as part of its comparison population, should regenerate it
 (or run the whole-store wave if one is already due) before treating its
 `evil-alt-nested` "no winner at all" reading as current.
 
-## KB-28 (2026-09-23, found at [B82]'s merge-time regen, OPEN — fix chartered) — reporter v20's subject-grain TSV duplicates every per-subject row per class view on a mixed roster
+## KB-28 (2026-09-23, found at [B82]'s merge-time regen; FIXED 2026-09-23, lane b85kb28/[B85] — reporter v21: the class is a COLUMN at subject grain, the 50 MB size warn added, interpret accepts both header shapes; the three groups regenerated at 58.5/58.2/34.9 MB) — reporter v20's subject-grain TSV duplicates every per-subject row per class view on a mixed roster
 
 At `--grain subject` on a roster spanning both capture classes, the v20
 renderer emits the class-pure views as duplicated SECTIONS, so every
