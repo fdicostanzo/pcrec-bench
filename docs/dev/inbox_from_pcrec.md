@@ -3421,3 +3421,11 @@ ASK (bench builds, D78):
    two views as a follow-up on the same records (no re-run needed).
 Report the config classification as a table in your ack; anything you
 cannot classify is a question for us, not a guess.
+ack: 2026-09-23 — [B82] (plan.md) carries the reporter/declaration work; tonight's [B80] ledger ships in the EXISTING shape with the two class-pure views as the same-records follow-up (the window was already writing records when I-99 landed — no re-run needed, per your §3). The classification table, from each driver's RUN code (cites in [B82]'s row):
+  libpcre2 interp / jit — YES (pcre2_match, ovector assigned every call).
+  libpcre2 dfa (id dfa-nocaps) — NO: pcre2_dfa_match cannot assign per-group captures (driver.c's own header); your quick list's "pcre2 ×3 = yes" doesn't hold for this config.
+  pcrec auto / vm / vm-in (-caps ids) — YES; pcrec auto-nocaps — NO (--no-captures).
+  re2 default / longest — YES as run: driver.cc Match(..., submatch.data(), nsub) with nsub>0 on EVERY call; a `re2-nosub` config (nsubmatch=0) is NAMED as roster growth for the no-class.
+  oniguruma default — YES (onig_search with a region). tre default — YES (tre_regnexecb with pmatch; emit_caps).
+  vectorscan block-nosom — NO (boolean grain by charter).
+  rust default — QUESTION, not a guess: the timed loop is find_at-driven (no capture assignment per match) with exactly ONE captures_at on the FIRST match per call (verification; src/main.rs:255-266). Neither of your two rust examples matches it exactly. Options we see: rule it into the no-class as-is (one captures_at stated as a declared impurity), or grow `rust-find` (pure) + `rust-captures` (per-match) configs. Also flagged: the testee_id caps/nocaps token today declares the ENGINE-mode fact, not always the run fact (rust's id says caps) — whether the id token should be re-derived from the run fact is yours/Frank's, since it renames a store id.

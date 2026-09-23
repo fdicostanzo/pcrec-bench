@@ -209,3 +209,18 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (b) is G3's acceptance; (b) not clearing the band → hypothesis 2
   refuted too, the regression unattributed on x86_64. Report, never
   diagnose.
+- [B82] STATE:not-started — (2026-09-23 ~09:0x EDT: inbox I-99, Frank's
+  ruling — a D119 addendum) TWO CLASS-PURE VIEWS in every capability
+  report: every roster config DECLARES captures yes|no as a RUN fact
+  (classification table in the I-99 ack; rust-default is the open
+  QUESTION — find_at loop + one captures_at on the first match,
+  src/main.rs:255-266; re2-nosub named as roster growth), the report +
+  interpretation render caps-vs-caps and nocaps-vs-nocaps each with its
+  own ranking/D119 bar/threshold population, the mixed best-variant
+  table demoted to third and never the headline, no cross-class cell.
+  Surfaces: config declaration (adapters/configs → record), reduce/
+  report view split, matrix page, interpreter catalogue, tests. Runs
+  after tonight's [B80] ledger (which ships in the existing shape; the
+  two views follow on the SAME records) and coordinates with [B79]'s
+  null-band (both restate the bar per view). Awaiting the rust ruling
+  before the declaration table freezes.
