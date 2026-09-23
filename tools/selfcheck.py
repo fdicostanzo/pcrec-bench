@@ -508,7 +508,8 @@ def check_subject_timeout():
         pcrec = adapter.pin_binary()
         art = os.path.join(tmp, "artifact.c")
         proc = run([pcrec, "-p", "rx", "--engine=vm", "--fno-step-budget",
-                    "--backtrack-frames=100000", "-o", art, "--", "(a+)+b"],
+                    "--backtrack-frames=100000", "-o", art,
+                    "--pattern", "(a+)+b"],
                    timeout=300)
         if proc.returncode != 0:
             bad("subject-timeout control", "pcrec: %s" % proc.stderr.strip()[:200])
@@ -523,8 +524,26 @@ def check_subject_timeout():
             return
 
         hang = os.path.join(tmp, "hang.bin")
+        # [B74] (abi 29, [OPT-REQBYTE]): `(a+)+b` now stamps `RX_REQ_BYTE
+        # "98"` ('b') -- every match must contain a 'b' on every path, so
+        # the emitted entry does one memchr over the WHOLE search window
+        # before running the VM at all, and a plain 40-`a` subject (no
+        # 'b' anywhere) is dismissed in that memchr, `nomatch`, without
+        # ever reaching the catastrophic-backtracking VM this control
+        # exists to exercise -- MEASURED directly (`hangwit.c`'s own
+        # guard: "if (... || !memchr(subject + search_from, 98, ...))
+        # return 0;"). A leading 'b' the match can never actually use
+        # satisfies the memchr (it only asks whether the byte appears
+        # ANYWHERE in the window, never where) while leaving the
+        # TRAILING run of 40 `a`s with no 'b' to complete it -- an
+        # unanchored search still finds no completion at position 0 (the
+        # 'b' itself, `(a+)` needs an 'a' first) and explores the SAME
+        # exponential split of the a-run starting at position 1 that
+        # hung before this pin, restoring the control without sharing
+        # any source with [OPT-REQBYTE] itself (a subject byte, not a
+        # flag or a stamp read).
         with open(hang, "wb") as f:
-            f.write(b"a" * 40)
+            f.write(b"b" + b"a" * 40)
         fine = os.path.join(tmp, "fine.bin")
         with open(fine, "wb") as f:
             f.write(b"ab")
@@ -533,7 +552,7 @@ def check_subject_timeout():
             def __init__(self, sid, path, length):
                 self.subject_id, self.path, self.length = sid, path, length
 
-        subjects = [S("s-hang", hang, 40), S("s-fine", fine, 2)]
+        subjects = [S("s-hang", hang, 41), S("s-fine", fine, 2)]
         handle = {"driver": os.path.join(tmp, "pcrec_driver"), "lib": so,
                   "subject_timeout": 3}
         rows_by_trial, _i, _n = adapter.measure(handle, "search_short",
@@ -3005,6 +3024,34 @@ B42_PORTFIX_SEMI_PER_MACHINE = 2
 # simpler than the previous re-pin's two-term decomposition.
 B45_RX_TUNE_STAMP_LINE = 27
 
+# [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1) BREAKS THE FLAT-CONSTANT
+# PATTERN THE FOUR TERMS ABOVE FOLLOW, and this is itself the finding worth
+# recording here rather than papering over: `RX_REQ_BYTE` / `RX_END_WINDOW`
+# / `RX_VM_START` are NAME-VALUED macros whose STRING LENGTH varies by
+# witness ("none" is 4 characters, a decimal byte value is 1-3, a window
+# width is 1+ digits), so the three new `#define` lines are not one
+# constant number of bytes -- and [OPT-REQBYTE] is a REAL OPTIMIZATION, not
+# an informational stamp: where a pattern's required byte is not "none",
+# pcrec emits an ACTUAL memchr GUARD BLOCK (plus one `#include <string.h>`
+# line) ahead of the search entry (MEASURED: `pfx3-256` forced-VM gains
+# five source lines -- the comment, the `if`, the `memchr` call and its two
+# braces -- diffed byte for byte against the 25b1984f artifact). So the
+# per-artifact addition at this pin is not `B74_STAMP_LINES_*` alone on a
+# REQBYTE-firing witness; it is that PLUS the guard block, which this file
+# does not attempt to derive as a formula (unlike the flat terms above) --
+# each witness below carries its own MEASURED total.
+#
+# The two terms below cover the NON-firing shape (`req_byte "none"`, the
+# ordinary case for a pattern with no single required byte on every path,
+# e.g. an alternation with no common literal): two stamp lines on a DFA
+# artifact (`req_byte` + `end_window`, both "every" scope), a third
+# (`vm_start`) on a VM artifact (the "vm" scope). MEASURED on every
+# witness below that reads `req_byte "none"`; a witness whose OWN required
+# byte is stamped (memchr fires) carries a larger, individually-measured
+# total instead -- see its own comment.
+B74_STAMP_LINES_DFA = 56    # `#define RX_REQ_BYTE "none"` + `RX_END_WINDOW "none"`
+B74_STAMP_LINES_VM = 89     # the two above + `#define RX_VM_START "<token>"`
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -3057,7 +3104,10 @@ STAMP_CASES = (
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37] (abi 17): a reverse-pass DFA with a varying cell in every
       # table -- folds 0, the value most of the corpus reads.
-      "dfa_uniform_folds": 0, **_CAPS_DFA}),
+      "dfa_uniform_folds": 0,
+      # [B74] (abi 29, [OPTLOOP.1] batch 1): "every" scope, both engines --
+      # `bar`'s rightmost byte, 'r' = 114; not end-anchored, so "none".
+      "req_byte": "114", "end_window": "none", **_CAPS_DFA}),
     # [B26] / pcrec abi 14 ([OPT-4.2]) -- THE EIGHTH ROUTE TOKEN, BY VALUE,
     # AND ITS CONTROL. `(?=...)` forces the VM and leaves the artifact
     # HYBRID-ELIGIBLE, so the prefilter decision is actually reached; the
@@ -3136,7 +3186,13 @@ STAMP_CASES = (
       # capturing group writes storage.
       "dfa_uniform_folds": 0, "vm_alt_islands": 0,
       "vm_entry_shape": "inline", "vm_program_bytes": 1175,
-      "vm_prefilter_lang_why": "no counted repeat", **_CAPS_VM}),
+      "vm_prefilter_lang_why": "no counted repeat",
+      # [B74] (abi 29): "every" scope's req_byte/end_window plus "vm"
+      # scope's vm_start -- MEASURED present on this hybrid (the route is
+      # vm regardless of `forced`): 'd' = 100, not end-anchored, no proof
+      # of where a match begins.
+      "req_byte": "100", "end_window": "none", "vm_start": "unanchored",
+      **_CAPS_VM}),
     ("VM, no DFA scan", "pcrec-vm", b"a(b|c)+d",
      # [B34]: NO `dfa_start` here (no DFA scan to have a search form) but
      # `vm_frameless` IS present -- the two abi-16 stamps have different
@@ -3153,6 +3209,10 @@ STAMP_CASES = (
       # engine does not change (only whether a prefilter sits in front).
       "vm_alt_islands": 0, "vm_entry_shape": "inline",
       "vm_program_bytes": 1175,
+      # [B74] (abi 29): forcing --engine=vm does not change req_byte/
+      # end_window/vm_start -- MEASURED IDENTICAL to the `auto` row above
+      # on the SAME pattern text, the same reason altcls is identical.
+      "req_byte": "100", "end_window": "none", "vm_start": "unanchored",
       **_CAPS_VM}),
     ("provably-empty DFA", "pcrec-auto", b"[^\\x00-\\xff]",
      # [B34]: an `empty` scan is one of the registry predicate's own
@@ -3166,7 +3226,10 @@ STAMP_CASES = (
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: an `empty` scan has neither table -- 0 BY MECHANISM
       # (match_api.md 6.3: "0 on _DFA_SCAN attempt and empty").
-      "dfa_uniform_folds": 0, **_CAPS_DFA}),
+      "dfa_uniform_folds": 0,
+      # [B74] (abi 29): an unmatchable class has no required byte either --
+      # "none" by the same vacuous-language reasoning, not a refusal.
+      "req_byte": "none", "end_window": "none", **_CAPS_DFA}),
     # [B18]: the `attempt` scan (an anchored pattern) is the other
     # `search-filter` population I-16 names, and the other `dfa_table none`.
     # [B25]: an `attempt` scan's states are code labels with a computed-
@@ -3182,7 +3245,35 @@ STAMP_CASES = (
       "dfa_match": "search-filter", "engine_sel": "selected",
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: the other no-table scan, the same 0 by mechanism.
-      "dfa_uniform_folds": 0, **_CAPS_DFA}),
+      "dfa_uniform_folds": 0,
+      # [B74] (abi 29): `bar`'s rightmost byte again ('r' = 114); the `^`
+      # anchor is a START condition, not an end one, so end_window "none".
+      "req_byte": "114", "end_window": "none", **_CAPS_DFA}),
+    # ------ [B74] / pcrec abi 29 ([OPTLOOP.1] batch 1) -- THE THREE NEW
+    # STAMPS' OWN VALUE-BEARING WITNESSES. Every case above stamps
+    # `vm_start` (where present) at "unanchored" and `end_window` at
+    # "none" -- MEASURED via pcrec's own CLI at the pin, not asserted from
+    # source -- so without these rows two of `vm_start`'s three values and
+    # `end_window`'s only non-"none" value would go unwitnessed. All
+    # forced VM (the axis is VM-route-only), so the DFA route is out of
+    # the picture.
+    ("VM route, anchored start ([OPT-ANCHOR-VM])", "pcrec-vm", b"^foo",
+     # `^foo` at options=0: every alternative (there is one) begins with
+     # `^` outside multiline, so only offset 0 can start a match.
+     {"engine": "vm", "vm_start": "anchored",
+      "req_byte": "111", "end_window": "none"}),
+    ("VM route, \\G-anchored start ([OPT-ANCHOR-VM] gstart)",
+     "pcrec-vm", b"\\Gfoo",
+     # every alternative begins with `\G`, so only the caller's own
+     # search_from can start a match.
+     {"engine": "vm", "vm_start": "gstart",
+      "req_byte": "111", "end_window": "none"}),
+    ("VM route, end-anchored window ([OPT-ENDWIN])", "pcrec-vm", b"foo\\z",
+     # `foo` is a fixed-width 3-byte body ending in `\z`: a match can only
+     # BEGIN in the subject's last 3 bytes. `vm_start` stays "unanchored"
+     # -- nothing was proved about the START, only the end.
+     {"engine": "vm", "vm_start": "unanchored",
+      "req_byte": "111", "end_window": "3"}),
     # [B19]: a VM hybrid with a counted repeat that nothing collapses --
     # the `exact` language's OTHER why value, and the pattern the force
     # control below moves to `count-collapsed` / `forced`.
@@ -3265,8 +3356,11 @@ STAMP_CASES = (
       "scan_edges": 1,
       # [B42]: two scan-edge machines (forward + anchored; pinned, so no
       # reverse one) -- 161 flat + 2*2 (each machine's two labels) = 165.
+      # [B74]: DFA route, req_byte "none" (a class run has no single
+      # required byte), end_window "none" -- the two flat stamp lines.
       "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 2 * B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
+                    + 2 * B42_PORTFIX_SEMI_PER_MACHINE
+                    + B74_STAMP_LINES_DFA, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
     # class, the same ladder, the fallback candidate. Without this row the
@@ -3308,7 +3402,10 @@ STAMP_CASES = (
       # alternation, so the fold count reads 0.
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine at all -- flat 161.
-      "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: `foo|bar` has no byte common to both alternatives, so
+      # req_byte "none" -- the VM-scope flat stamp lines only.
+      "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
       **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
@@ -3330,7 +3427,10 @@ STAMP_CASES = (
       "vm_entry_shape": "forward", "vm_program_bytes": 634,
       "vm_cls_folds": 3,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
+      # [B74]: `(?i)abc` has no byte required on every path (each letter is
+      # caselessly folded), so req_byte "none" -- the VM flat stamp lines.
+      "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -3341,7 +3441,13 @@ STAMP_CASES = (
      {"engine": "vm", "engine_sel": "forced",
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
+      # [B74]: `x[ac]y`'s surrounding literals ARE required on every path
+      # -- the rightmost, 'y' = 121 -- so [OPT-REQBYTE] fires: THREE stamp
+      # lines (not the flat B74_STAMP_LINES_VM) PLUS a real memchr guard
+      # block and one `#include <string.h>` line, MEASURED as +242 B over
+      # the pre-[B74] total (not derived; see the constant's own note).
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + 242, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -3352,7 +3458,10 @@ STAMP_CASES = (
       "vm_cls_folds": 0,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161. MEASURED:
       # the two controls are still the same size (one bitmap each).
-      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE, **_CAPS_VM}),
+      # [B74]: `x[@\x60]y`'s surrounding literals are required the same way
+      # as its sibling above -- rightmost 'y' = 121, the same +242 B.
+      "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + 242, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -3572,8 +3681,12 @@ LEDGER_STAMP_CASES = (
       "vm_program_bytes": 653,
       "vm_cls_folds": 0,   # [B39] MEASURED: `[a-z]` is a RANGE, not a pair
       # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
-      "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: the PLAIN form is not end-anchored (end_window "none") and
+      # has no required byte (req_byte "none") -- the VM flat stamp lines.
+      "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
+      "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -3621,10 +3734,13 @@ LEDGER_STAMP_CASES = (
       "warned_emit_bytes": None,
       # [B42]: `search-filter` + pinned = exactly ONE scan-edge machine
       # (the forward search; no anchored, no reverse) -- 161 flat + 2*1.
+      # [B74]: DFA route, req_byte "none" (the run has no single required
+      # byte), end_window "none" (a bounded but not end-anchored run) --
+      # the two flat stamp lines.
       "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B42_PORTFIX_SEMI_PER_MACHINE,
+                    + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA,
       "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B42_PORTFIX_SEMI_PER_MACHINE, **_CAPS_DFA}),
+                    + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -3656,8 +3772,16 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 756,
       # [B42]: declined-nullable VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
-      "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,  # +4: the N1 _WHY prose
+      # [B74]: the WHOLE-SUBJECT form (`(?:...)\z`) IS end-anchored with a
+      # finite width -- `end_window "32768"` (5 digits, not "none"'s 4) --
+      # and req_byte stays "none"; MEASURED +217 B over the pre-[B74]
+      # total (not the flat B74_STAMP_LINES_VM: [OPT-ENDWIN] emits a real
+      # search_from clamp when the window is a value, the same shape
+      # [OPT-REQBYTE]'s memchr guard takes when ITS stamp is a value).
+      "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + 217,
+      "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE  # +4: the N1 _WHY prose
+                    + 217,
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -3767,14 +3891,17 @@ LEDGER_STAMP_CASES = (
      "altwide", "w-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 11,
       "dfa_uniform_folds": 0,
+      # [B74]: DFA route, req_byte/end_window both "none" -- the flat pair.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B42_PORTFIX_SEMI_PER_MACHINE}),
+                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA}),
     ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
      "pcrec-auto", "altwide", "srt-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57,
       "dfa_uniform_folds": 0,
+      # [B74]: same as w-256 -- the two DFA artifacts stay byte-identical
+      # but for the ALTCLS line, unmoved by this pin.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B42_PORTFIX_SEMI_PER_MACHINE}),
+                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA}),
     # ------ [B37] / pcrec abi 18 ([ENG-ISL] STEP 1) -- THE ORDER PAIR ON
     # THE VM ROUTE, where the x8.87 (256) / x20.1 (512) branch-ORDER
     # effect of the 2026-09-03 ledger LIVED. Inbox I-43's prediction for
@@ -3797,7 +3924,10 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 305686,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: no byte common to all 256 words -- req_byte "none" -- the
+      # VM flat stamp lines.
+      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
       "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
@@ -3826,7 +3956,10 @@ LEDGER_STAMP_CASES = (
       "vm_entry_shape": "plain", "vm_program_bytes": 351053,
       "vm_cls_folds": 26,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
+      # [B74]: no byte common to all 256 caselessly-folded words -- req_byte
+      # "none" -- the VM flat stamp lines.
+      "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -3842,7 +3975,10 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 305686,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: req_byte "none" (identical to w-256's, subset construction
+      # canonicalises regardless of source order) -- the VM flat lines.
+      "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
       "altcls_merges": 0, "altcls_factored": 57}),
     # The prefix-3 and suffix arms island too (the shared literal is
     # factored OUT by [OPT-ALTCLS] stage 2 first, and the island asks
@@ -3856,14 +3992,23 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 244735,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
+      # [B74]: the shared `qux` prefix IS required on every path -- the
+      # rightmost byte of it, 'x' = 120 -- so [OPT-REQBYTE] fires: MEASURED
+      # +242 B over the pre-[B74] total (the memchr guard + #include, the
+      # same shape as `x[ac]y`'s control above).
+      "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + 242}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
      {"engine": "vm", "engine_sel": "forced", "vm_frameless": 1,
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 199152,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
+      # [B74]: no byte common to every branch (the shared piece is a
+      # SUFFIX, and req_byte's walk is bottom-up over the whole pattern) --
+      # req_byte "none" -- the VM flat stamp lines.
+      "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM}),
     # THE VM REFUSAL WALL MOVED: `w-384`'s forced-VM form REFUSED at
     # 288d505 (508,607 B of emitted code > the 500,000 code cap) and
     # COMPILES at this pin as an island at 427,824 B -- I-43's "the wall
@@ -3877,7 +4022,10 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       "vm_program_bytes": 456975,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: the same generation-order word list as w-256, no common
+      # byte -- req_byte "none" -- the VM flat stamp lines.
+      "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM,
       "altcls_merges": 0, "altcls_factored": 17}),
     # ... and the floor: a single literal byte, no alternation, so
     # islands 0 -- the VM route's zero control -- and `forward` at 236
@@ -3888,7 +4036,13 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 236,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
+      # [B74]: a single literal byte is trivially required on every path --
+      # req_byte "35" (`#`) -- so [OPT-REQBYTE] fires: MEASURED +240 B over
+      # the pre-[B74] total (the memchr guard + #include; 2 B less than the
+      # `x[ac]y`/pfx3-256 witnesses' +242 because "35" is one byte shorter
+      # than "120"/"121" in both the stamp line and the memchr call site).
+      "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + 240,
       "altcls_merges": 0, "altcls_factored": 0}),
     # `sh1-64`: every one of its 64 branches starts with the byte `k` --
     # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
@@ -3927,8 +4081,9 @@ LEDGER_STAMP_CASES = (
       "dfa_uniform_folds": 4,
       # [B42]: TWO scan-edge machines (forward + anchored, pinned so no
       # reverse) -- 161 + 2*2 = 165.
+      # [B74]: DFA route, req_byte/end_window both "none" -- the flat pair.
       "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE}),
+                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA}),
     # `dig-upto-16` forced VM: the [B33] (3) .text witness -- a
     # frameless program with no capture write, so the abi-17
     # always_inline (now the abi-22 `forward` rung) is what the cell
@@ -3940,7 +4095,10 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 0, "vm_entry_shape": "forward",
       "vm_program_bytes": 646,
       # [B42]: non-hybrid VM, no DFA scan machine -- flat 161.
-      "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE}),
+      # [B74]: a digit run has no single required byte -- req_byte "none"
+      # -- the VM flat stamp lines.
+      "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                    + B74_STAMP_LINES_VM}),
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
@@ -3952,7 +4110,9 @@ LEDGER_STAMP_CASES = (
       # pattern's scan carries NO scan_edge label at all -- only
       # `_scan_views:` moves on each, +1 B x 3 = +3 (MEASURED directly:
       # `\d{1,16}` has no dfa_scan_edge on any machine) -- 161 + 3 = 164.
-      "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3}),
+      # [B74]: DFA route, req_byte/end_window both "none" -- the flat pair.
+      "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3
+                    + B74_STAMP_LINES_DFA}),
 )
 
 
@@ -4952,7 +5112,7 @@ def check_mechanism_stamps():
                 os.makedirs(d, exist_ok=True)
                 c = os.path.join(d, "artifact.c")
                 pr = run([adapter.pin_binary(), "-p", "rx", "--features", "all",
-                          "--engine=vm"] + extra + ["-o", c, "--",
+                          "--engine=vm"] + extra + ["-o", c, "--pattern",
                           _bench_pattern("altwide", name).decode("latin-1")],
                          timeout=120)
                 if pr.returncode != 0:
@@ -5069,7 +5229,7 @@ def check_mechanism_stamps():
         os.makedirs(d384, exist_ok=True)
         pr384 = run([adapter.pin_binary(), "-p", "rx", "--features", "all",
                      "--engine=vm", "-fno-alt-island",
-                     "-o", os.path.join(d384, "artifact.c"), "--",
+                     "-o", os.path.join(d384, "artifact.c"), "--pattern",
                      _bench_pattern("altwide", "w-384").decode("latin-1")],
                     timeout=120)
         auto1024_ref = (cr1024.outcome == "did-not-compile"
@@ -5179,7 +5339,7 @@ def check_mechanism_stamps():
                 os.makedirs(d, exist_ok=True)
                 c = os.path.join(d, "artifact.c")
                 pr = run([adapter.pin_binary(), "-p", "rx", "--features", "all",
-                          "--engine=vm"] + extra + ["-o", c, "--",
+                          "--engine=vm"] + extra + ["-o", c, "--pattern",
                           pat.decode("latin-1")], timeout=300)
                 if pr.returncode != 0:
                     deny_problems.append("%s %s arm refused: %s"
@@ -5327,10 +5487,14 @@ DENY_CONTROLS = (
       # [B42]: default arm has ONE scan-edge machine (search-filter, no
       # anchored, pinned -> no reverse) -- 161 + 2*1 = 163. Denied arm has
       # NO scan-edge machinery at all (the axis itself is off) -- flat 161.
+      # [B74]: DFA route both arms, req_byte/end_window both "none" --
+      # the two flat stamp lines on each.
       "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B42_PORTFIX_SEMI_PER_MACHINE,
-                     252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE),
-      "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE)}, "deny"),
+                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA,
+                     252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                     + B74_STAMP_LINES_DFA),
+      "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                            + B74_STAMP_LINES_DFA)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -5369,10 +5533,12 @@ DENY_CONTROLS = (
       # no reverse) -- 161 + 2*2 = 165. Denied (reverse-pass) arm has
       # THREE (forward + reverse + anchored, all real edges) -- 161 + 2*3
       # = 167.
+      # [B74]: DFA route both arms, req_byte/end_window both "none" --
+      # the two flat stamp lines on each.
       "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE,
+                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + 3 * B42_PORTFIX_SEMI_PER_MACHINE),
+                     + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -5400,8 +5566,12 @@ DENY_CONTROLS = (
       "vm_program_bytes": (1532, 1233),
       # [B42]: non-hybrid VM either arm, no DFA scan machine -- flat 161
       # on both the island and the chain.
-      "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE,
-                     18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE)}, "deny"),
+      # [B74]: VM route both arms, req_byte "none" (`foo|bar` has no
+      # common byte, island or chain) -- the VM flat stamp lines on each.
+      "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                     + B74_STAMP_LINES_VM,
+                     18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
+                     + B74_STAMP_LINES_VM)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -5467,6 +5637,21 @@ DENY_CONTROLS = (
     # control. `check_opt42_preempts_collapse_policy` below records the new
     # behaviour by value in its place, with the search that found no
     # reachable witness for the retired value.
+
+    # [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1): the three new
+    # deny flags, one row each, the stamp value flip only -- smoke evidence
+    # per the brief, not the byte-precision size-book rows above (no new
+    # machine is restored by any of the three; each denies a SELECTION
+    # fact, not a transform).
+    ("req_byte: -fno-req-byte denies the required-byte memchr",
+     "req-byte", ("literal", b"foo[0-9]+bar"), "",
+     {"req_byte": ("114", "none")}, "deny"),
+    ("end_window: -fno-end-window denies the end-anchor start window",
+     "end-window", ("literal", b"foo\\z"), "--engine=vm",
+     {"end_window": ("3", "none")}, "deny"),
+    ("vm_start: -fno-vm-anchor-bound denies the VM start bound",
+     "vm-anchor-bound", ("literal", b"^foo"), "--engine=vm",
+     {"vm_start": ("anchored", "unanchored")}, "deny"),
 )
 
 
@@ -7638,7 +7823,7 @@ def check_emit_size_port():
                 art = os.path.join(d, "artifact.c")
                 argv = [pcrec, "-p", "rx", "--features", "all",
                         "--warn-emit-bytes=1"] + extra.split() + \
-                       ["-o", art, "--", text.decode("latin-1")]
+                       ["-o", art, "--pattern", text.decode("latin-1")]
                 proc = run(argv, timeout=120)
                 if proc.returncode != 0:
                     bad("emit-size port: %s / %s" % (label, form),
@@ -7743,8 +7928,8 @@ def check_abi_floor_refusal():
     try:
         pcrec = adapter.pin_binary()
         art = os.path.join(tmp, "artifact.c")
-        proc = run([pcrec, "-p", "rx", "--features", "all", "-o", art, "--",
-                    "foo[0-9]+bar"], timeout=120)
+        proc = run([pcrec, "-p", "rx", "--features", "all", "-o", art,
+                    "--pattern", "foo[0-9]+bar"], timeout=120)
         if proc.returncode != 0:
             bad("abi-floor refusal", "pcrec did not emit: %s" % proc.stderr)
             return

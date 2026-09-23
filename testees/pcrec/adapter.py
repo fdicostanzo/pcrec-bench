@@ -800,6 +800,66 @@ METADATA_DECL = {
                        "DEPENDING on them rather than altering them -- so "
                        "this axis is a COST and SIZE fact only",
     },
+    # [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1): three new stamps,
+    # none with an rx_info mirror (struct rx_info byte-identical to abi 27
+    # -- the shim floor stays 16). `req_byte` and `end_window` are on
+    # EVERY artifact, both engines; `vm_start` is the VM route's own axis.
+    "req_byte": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_REQ_BYTE ([OPT-REQBYTE], pcrec abi 29+), read "
+                  "through pb_req_byte(); scope \"every\" (every artifact, "
+                  "both engines); no rx_info mirror",
+        "description": "the RIGHTMOST literal byte every match of the "
+                       "pattern must contain, as a decimal string (a "
+                       "bottom-up AST walk: concatenation unions, "
+                       "alternation intersects, a min-0 quantifier "
+                       "contributes nothing, a one-byte class is a "
+                       "singleton, a backreference/call/assertion is "
+                       "empty) -- one memchr over [search_from, "
+                       "subject_length) then answers NOMATCH for the whole "
+                       "call, the same role as PCRE2's own LASTCODEUNIT. "
+                       "\"none\" when no byte is necessary on every path "
+                       "(an alternation with no common literal, a "
+                       "caselessly folded literal, a nullable quantifier), "
+                       "or under -fno-req-byte",
+    },
+    "end_window": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_END_WINDOW ([OPT-ENDWIN], pcrec abi 29+), read "
+                  "through pb_end_window(); scope \"every\" (every "
+                  "artifact, both engines); no rx_info mirror",
+        "description": "when every alternative ends in $/\\Z/\\z outside "
+                       "multiline AND the pattern's maximum width is "
+                       "finite, the byte count (a decimal string) beyond "
+                       "which the subject's tail cannot start a match -- "
+                       "both search entries raise search_from to "
+                       "subject_length minus this bound (eps folded in: 1 "
+                       "for $/\\Z's final-newline allowance, 0 for \\z). "
+                       "\"none\" when the pattern is not end-anchored, its "
+                       "width is unbounded, it contains \\G, the encoding "
+                       "has non-boundary positions, or under "
+                       "-fno-end-window",
+    },
+    "vm_start": {
+        "type": "enum", "scope": "pattern",
+        "values": ["anchored", "gstart", "unanchored"],
+        "source": "<PREFIX>_VM_START ([OPT-ANCHOR-VM], pcrec abi 29+), read "
+                  "through pb_vm_start(); scope \"vm\" (the VM route only "
+                  "-- absent on a DFA artifact, which has no VM attempt "
+                  "loop to bound); no rx_info mirror; the value set is "
+                  "CHECKED against `pcrec --list-axes` (axis "
+                  "`vm-anchor-bound`)",
+        "description": "the VM attempt loop's proven start bound: "
+                       "`anchored` (every alternative begins with ^ "
+                       "outside multiline or \\A, so only offset 0 can "
+                       "start a match and the loop stops after one pass), "
+                       "`gstart` (every alternative begins with \\G, so "
+                       "only the caller's own search_from can start a "
+                       "match and the loop stops after one pass), or "
+                       "`unanchored` (the fallback: nothing was proved "
+                       "about where a match begins, or the deny flag -- "
+                       "the loop runs to subject_length as it always has)",
+    },
     # [B37] (pin 334fd10e, abi 17, [CC-DIFF] STEP 1): a COUNT on
     # RX_DFA_TABLE's own scope -- the scan family's iff a fourth time. A
     # family-(b) activity fact under a family-(a) scope, which is why it
@@ -1471,7 +1531,10 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              "dfa_prefilter_offsets", "dfa_scan_edge", "dfa_start",
              "dfa_match", "unroll_k_why", "artifact_name",
              "engine_sel", "vm_prefilter_lang", "vm_prefilter_lang_why",
-             "vm_entry_shape")
+             "vm_entry_shape",
+             # [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1): three new
+             # stamps, none with an rx_info mirror.
+             "req_byte", "end_window", "vm_start")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1538,6 +1601,15 @@ STAMP_SCOPE = {
     # artifact (a `pcrec-local` binary at the previous pin) records it as
     # "not stamped" without tripping this table.
     "vm_cls_folds":          ("vm",       23),
+    # [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1): `req_byte` /
+    # `end_window` are "every" like `engine` / `max_emit_bytes` above --
+    # MEASURED present on a plain DFA `abc` witness as well as on every
+    # forced-VM one. `vm_start` is "vm" like `unroll_k` / `fast_frames` --
+    # MEASURED absent on a plain DFA artifact, present under
+    # `--engine=vm`.
+    "req_byte":              ("every",    29),
+    "end_window":            ("every",    29),
+    "vm_start":              ("vm",       29),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -1627,6 +1699,13 @@ REGISTRY_STAMP_PAIRS = {
     # in both directions over the whole declared set -- and the order-1
     # row is also where DENY_FLAGS reads `-fno-start-pinned`'s spelling.
     "RX_DFA_START": "dfa_start",
+    # [B74] (pin 8d716693, abi 29, [OPT-ANCHOR-VM]): the `vm-anchor-bound`
+    # axis's three rows ALL carry a stamp_value ("anchored" / "gstart" /
+    # "unanchored"), a genuinely closed set -- unlike `req_byte` /
+    # `end_window`, whose registry rows carry a variable value (the byte
+    # or the window width) on their order-1 candidate and are therefore
+    # NOT here, the same shape as `dfa_prefilter_offsets`.
+    "RX_VM_START": "vm_start",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -2995,7 +3074,7 @@ class Adapter(_ad.Adapter):
             # witnesses (the capability first sample's F4, O-31).
             argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG]
                     + list(cfg.get("flags", []))
-                    + ["-o", art_c, "--"] + [bytes(pattern)])
+                    + ["-o", art_c, "--pattern"] + [bytes(pattern)])
             t0 = time.monotonic()
             proc = subprocess.run(argv, capture_output=True, env=C_ENV,
                                   timeout=600)
