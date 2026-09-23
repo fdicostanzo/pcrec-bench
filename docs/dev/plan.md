@@ -178,3 +178,21 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (where program-identity is read from — the compile rows' emit hashes),
   a reporter version bump, tests; charter the design details before a
   lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
+- [B80] STATE:not-started — (2026-09-23 ~06:1x EDT: inbox I-95, slot
+  GRANTED, runs AFTER [B78]) RE-PIN + MEASURE [OPTLOOP] cycle 2 batch 2:
+  re-pin the pcrec testees to **b1885a83 (abi 29→30)** — the shim gains
+  `REQ_RUN` (on every artifact; where a run ships, REQ_BYTE reports the
+  run's scan member) and the `-fno-req-run` deny axis (bit 31); the usual
+  ritual (registries, pin_order append, size books — expect NON-flat
+  again, REQ_RUN emits a memcmp — full check). WINDOW: capability@0.1 ×
+  4 pcrec testees, both regimes, D119 bar with the O-45 AFTER (8d716693)
+  as BEFORE. READ FIRST: logparse-atomic thr+srch (the no-decline-rule
+  falsifier — census run gain 1.00× while the pick moves SPACE→COLON).
+  Targets: router-prefix-order thr (the freq pick's live case),
+  wild-secrets-github-pat thr (run "hub_pat_", scan index 3),
+  tag-depth3-bound / tag-pair-match (run "</"), nested-comment-rec thr
+  (the pick's one losing cell). Carve-outs: every REQ_RUN-stamping cell
+  (report the census: how many of 64, lengths) + every moved REQ_BYTE
+  (logparse-atomic 58 ':'; router-prefix-order moved FROM 114). Plus
+  I-95 (b): the O-45 null band's improving siblings if [B78] hasn't done
+  them. Done-signal: the ledger in O-45's shape.
