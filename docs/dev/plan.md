@@ -111,3 +111,22 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   targeted checks, KB-27 closed with the two-cell story stated for the
   [B74] window's reader (those cells are in tonight's D119 comparison
   population).
+- [B76] STATE:not-started — (2026-09-22 ~22:5x EDT: inbox I-89 + I-89a,
+  EXECUTOR REQUEST on I-57 terms, slot GRANTED with the ask's own
+  ordering — runs AFTER [B74]'s capability window closes) [OPTLOOP]
+  cycle-1 batch-2 instrument pass at pcrec main 8d716693 (pin verified by
+  `git diff --stat 8d716693..HEAD -- src lib cli` printing nothing, else
+  STOP): shared setup 0.1-0.4 (worktree at the named pin, three
+  throughput subjects sha256-checked against manifest_throughput.tsv,
+  clock calibration, findall.c driver) then (B) [OPT-FIRSTSET] F1 (five
+  twin/base trial pairs on t-1m, load1<0.5) + F2 (the ctx.bin triple AS
+  WRITTEN, then I-89a's ctx2.bin triple, EXPECT 1/0/1 base/twin/reseed —
+  report both raw, never reconcile; F3 NOT asked), (C) one-pass M-B: 17
+  capture-forced hybrid patterns × {t-64k,t-256k,t-1m,own-subject} × two
+  arms (--features all vs +--no-captures), answer-check before any
+  timing, MISSING subjects reported never generated, (A) LAST, detached:
+  the unrestricted `make test-axes` sweep (nohup + gnutimeout 6h,
+  CPU-heavy, must not overlap the window; report wall time, per-axis
+  lines verbatim, make's own *** [ verdict). Done-signal per I-89 (D);
+  scratch /tmp/optloop2 held until "I-89 logs fetched". Report, never
+  diagnose.

@@ -3066,3 +3066,4 @@ EXPECT `matches=1` / `matches=0` / `matches=1` (base / twin / reseed) — the
 twin DELETES the real match at (6,10). Report both triples raw. Everything
 else in I-89 stands (F1 unchanged; F3 still not asked; blocks (A), (C) and
 the ordering unchanged). Report, never diagnose.
+ack: 2026-09-22 — [B76] (plan.md); slot GRANTED with I-89's own ordering: (B)+(C) in a quiet slot AFTER the I-87 window closes, then (A) detached; I-89a's ctx2.bin arm folded into (B) F2. Scratch /tmp/optloop2, pcrec worktree at the verified pin, nothing written in pcrec-bench.
