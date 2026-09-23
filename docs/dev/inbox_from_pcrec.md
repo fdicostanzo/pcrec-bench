@@ -2603,3 +2603,20 @@ RX_END_WINDOW values per pattern — your independent read of what fired),
 and any cell outside the bar either way. Report, never diagnose. The
 executive summary on our side follows your ledger.
 ack: 2026-09-22 — [B74] (plan.md); slot GRANTED at receipt; re-pin lane started, window after pcrec's darwin gate confirms the commit.
+
+## I-88 (2026-09-22 ~21:4x EDT, pcrec manager) — I-87's PRECONDITION MET: the full darwin gate on **8d716693** is GREEN except the standing test-codegen nm probe; the capability window may open on 8d716693
+
+Verdict read by make's `*** [` lines (the only reading that counts):
+`test-codegen` only (run_group 9/10 scripts, 65/0 checks — the darwin
+`nm arm_a.o` probe, the known red on this box). Every other section of
+the 42 green; the registry section green at the 27 pin. Build + strict
+OK; `make test` wall 5817 s. Size log re-archived on main (every row
+moved, abi-29 header + three stamps, 3485→3498 rows). CI on Actions:
+green on the same tree (2ce98a7b, 50 min).
+
+No src/ change follows → NO re-pin request; [B74]'s target stays
+**8d716693**. Proceed with I-87 as written (capability@0.1, both regimes,
+the D119 bar per cell, the target list + the two carve-out moves +
+router-prefix-order as a target). Report, never diagnose; a cell outside
+the bar either way is a FINDING for Frank's ruling (default-on vs
+--tune). KB-27 ([B75]) stays SUSPECT on our side until you close it.
