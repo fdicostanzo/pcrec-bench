@@ -582,7 +582,7 @@ encoding visible in `testee_id`.
 | **rust** (`rust-default`) | **already UTF-8-semantic.** `RegexBuilder::unicode` defaults to **true** and `regex::bytes` matches a code point against its UTF-8 ENCODING in the haystack — `testees/rust/CLAUDE.md`'s own measured section ("`non-utf8-subject`: RESOLVED — the class matches the UTF-8 ENCODING, not the raw byte, under this config's default unicode mode") | nothing to tell it | **v1, UNCHANGED** | **zero.** The finding worth stating: `rust-default`'s presence in this repo's BYTE sets is the anomaly, not its presence here |
 | **re2** (`re2-default`, `re2-longest`) | `RE2::Options::EncodingUTF8` — RE2's own DEFAULT, which this driver deliberately overrides | `driver.cc:220`: `opts.set_encoding(RE2::Options::EncodingLatin1);`, with the header comment naming family 12 as the reason | **v1: one NEW config** `re2-utf8` | `driver.cc`: one argv flag selecting the encoding; `configs.toml`: one row. The cheapest change on the roster |
 | **onig** (`onig-default`) | `ONIG_ENCODING_UTF8` | `driver.c:91`: `#define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII` — a COMPILE-TIME constant, so a second config cannot be a flag without a small change | **v1: one NEW config** `onig-utf8` | `driver.c`: make the encoding a runtime choice between two `OnigEncoding` pointers (`--encoding utf8\|ascii`); `configs.toml`: one row. **AND a re-census**: `testees/onig/CLAUDE.md` withholds `unicode-properties` under ASCII encoding — under UTF-8 it is expected to be SATISFIED, which must be witnessed per (config, token) before the declaration changes (the L5 lesson, CAP §5.3) |
-| **vectorscan** (`vectorscan-block-nosom`) | `HS_FLAG_UTF8`, plus `HS_FLAG_UCP` | `driver.c:50-59`: `VS_DRIVER_FLAGS` is `0`; the header states `HS_FLAG_UTF8` is NEVER set and why | **v1, BOOLEAN GRAIN ONLY** — one new config `vectorscan-block-nosom-utf8` | `driver.c`: flags from argv; `configs.toml`: one row. Frank's Q3 ruling stands unchanged: match/no-match and compile/refusal comparisons, never a span or a count |
+| **vectorscan** (`vectorscan-block-nosom`) | `HS_FLAG_UTF8`, plus `HS_FLAG_UCP` | `driver.c:125`: `VS_DRIVER_FLAGS` is `0`; the header (`:50-59`) states `HS_FLAG_UTF8` is NEVER set and why (byte-oriented, matching the roster's 8-bit convention, satisfying `non-utf8-subject`) | **v1, BOOLEAN GRAIN ONLY** — one new config `vectorscan-block-nosom-utf8` | `driver.c`: flags from argv; `configs.toml`: one row. Frank's Q3 ruling stands unchanged: match/no-match and compile/refusal comparisons, never a span or a count. **A warning this set inherits (§7.6):** the same header records a MEASURED A/B in which setting `HS_FLAG_UCP` BREAKS `\b` on five real corpus patterns (40/64 corpus compiles at flags 0 against 35/64 under UCP) |
 | **tre** (`tre-default`) | **no byte-mode UTF-8 path exists** — see §7.3 | `tre_regncompb`, byte-literal by construction; `driver.c:19` states the convention ("a byte ≥ 0x80 is one [character]") | **EXCLUDED from v1** — §7.3 | — |
 | **python `re`, perl** | both are UTF-8-native | not wired (CAP §8.1: compile + correctness only, and permanently `inconclusive-spread` run pinned) | not in v1, as elsewhere | — |
 
@@ -662,7 +662,7 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 |---|---|---|
 | **(a)** `cls-w-ucp`, `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
 | **(a)-(f)** all | `tre-default`, via `utf8-encoding` (§7.3) | **CONFIRMED** |
-| **(f)** all `prp-*` | `tre-default` (no `\p` construct exists at all — `testees/tre/CLAUDE.md` item 3, measured: `\p{L}` and `\p{Alpha}` both refuse with code 10); **vectorscan** — whether Hyperscan/Vectorscan accepts `\p{...}` at all is **not established by any note in this repo**, and `HS_FLAG_UCP`'s existence is not evidence that `\p` parses | tre: **CONFIRMED**. vectorscan: **UNCONFIRMED** — witness compile required |
+| **(f)** all `prp-*` | `tre-default` only (no `\p` construct exists at all — `testees/tre/CLAUDE.md` item 3, measured: `\p{L}` and `\p{Alpha}` both refuse with code 10). **Vectorscan does NOT sit out**: `testees/vectorscan/driver.c:50-53` records a MEASURED A/B — `\p{L}` compiles identically with and without `HS_FLAG_UCP` — so the general-category family is live there | tre: **CONFIRMED**. vectorscan: **CONFIRMED** (measured, this repo's own A/B) |
 | **(f)** `prp-greek-sc`, `prp-cyrillic`, `prp-han`, `prp-latin` | Script and Script_Extensions spellings differ by engine: RE2 documents `\p{Greek}` script support but **`scx=`/Script_Extensions is not established**; the Rust `regex` crate documents both but **not verified at crate 1.13.1 here**; `onig-utf8` is a re-census (§7.1) | **UNCONFIRMED across three engines** — one witness each |
 | **(c)** all `ci-*` | none expected to sit out — every roster engine has a caseless mode — but `ci-kelvin` / `ci-long-s` (the closure reaching outside the range) are where an engine with a PAIRWISE rather than a CLOSURE fold would diverge in ANSWER, not in capability | the divergence is the finding, not a gap |
 | **(e)** `asr-lb-*` | `re2`, `rust`, `vectorscan` refuse all lookaround (CAP §5.1, three sources fetched); `tre` excluded | **CONFIRMED** |
@@ -703,6 +703,38 @@ adapter's declaration. **§14 Q3**; recommendation: keep the vocabulary
 global and add the three — a capability token is a cross-engine fact,
 and making the vocabulary per-set would let two sets disagree about what
 `lookaround` means.
+
+### 7.6 Vectorscan's UCP flag breaks `\b` — a measured warning this set inherits
+
+`testees/vectorscan/driver.c:50-53` carries a MEASURED A/B that bears
+directly on family (e) and on the `unicode-class-scope` token, and it is
+recorded here rather than rediscovered by the U2 lane:
+
+> `VS_DRIVER_FLAGS` is 0 — `HS_FLAG_UCP` is NEVER set, on the MEASURED
+> A/B in CLAUDE.md: `\p{L}` compiles identically with or without it,
+> while setting it BREAKS `\b` on five real corpus patterns (40/64
+> corpus compiles at 0 vs 35/64 under UCP).
+
+Two consequences:
+
+1. **`unicode-class-scope` is NOT satisfiable by simply setting
+   `HS_FLAG_UCP` on a vectorscan config.** A flag that widens class
+   scope and simultaneously makes five `\b`-bearing patterns refuse is
+   not the same dial `PCRE2_UCP` is. The `vectorscan-block-nosom-utf8`
+   config proposed in §7.1 therefore declares `ascii-class-scope`
+   SATISFIED and `unicode-class-scope` UNSATISFIED, with the A/B above
+   as its `declaration_ref` — and `asr-b-cyr-ucp` becomes a
+   `pcre2-utf-*`-only row.
+2. **A second vectorscan config carrying `HS_FLAG_UTF8|HS_FLAG_UCP` is
+   named, not built.** If it is ever wanted, its acceptance is the same
+   A/B re-run over THIS set's patterns, and its expected shape is a
+   larger refusal census on family (e), not a wider capability. That is
+   roster growth (§6's closing note), and it should not be smuggled into
+   the first config on the theory that "UCP is what UTF-8 sets use".
+
+This is also the sharpest available argument for §7.5's decision to make
+class scope a PATTERN property with two tokens rather than a per-config
+dial: on one roster engine the "dial" is not a dial at all.
 
 ---
 
@@ -1126,7 +1158,7 @@ Each carries a recommendation and the consequence of each answer.
 | # | risk | mitigation |
 |---|---|---|
 | **R1** | **U1's shared-code change breaks six existing sets.** The oracle and every driver's find-all advance are shared by `email`, `loglines`, `bounded`, `altwide`, `syntax`, `capability` | the lane's FIRST deliverable is the byte-identical re-derivation of every existing `expectations.tsv` under the changed oracle with no UTF option requested (§13), with a negative arm |
-| **R2** | **An UNCONFIRMED capability row ships as a declaration.** §7.4 has four UNCONFIRMED rows across vectorscan, re2, rust and onig | U2 requires a WITNESS COMPILE per (config, token) before any declaration ships — the L5 lesson, which caught three wrong `pcrec-*` declarations in `bench/capability`'s first cut |
+| **R2** | **An UNCONFIRMED capability row ships as a declaration.** §7.4's remaining UNCONFIRMED row is the Script / Script_Extensions spelling support across re2, rust and onig (vectorscan's `\p` row was CONFIRMED from this repo's own measured A/B while this note was being written — §7.6, which is itself the evidence for how easily such a row goes unchecked) | U2 requires a WITNESS COMPILE per (config, token) before any declaration ships — the L5 lesson, which caught three wrong `pcrec-*` declarations in `bench/capability`'s first cut |
 | **R3** | **Cell time at ~2× `CELL_CAP` headroom** (§10.3), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Neither changes a pattern |
 | **R4** | **Family (f) refuses on default-cap pcrec configs**, taking a twelfth of the set with it | this is P7, not a surprise — and it is a FINDING (AX's K53 is the same shape on the correctness side). If it happens broadly, the `-bigcap` sibling is the arm that reads it, and the refusal census is the result |
 | **R5** | **The generated corpora do not resemble real text closely enough** for the histogram claim to carry | the claim is deliberately narrow (§4.1's limitation sentence: byte histogram and character-width statistics, NOT word or sentence statistics) and the histogram is a committed, re-derived table (§4.2), so a reader can check the claim rather than trust it |
