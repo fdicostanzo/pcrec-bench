@@ -5679,3 +5679,23 @@ flat columns' cross-class mixing (disclosed, not silently fixed);
 class-aware interpreter rules; the whole-store v20 wave rides later
 closes. Next: [B83]'s timed block once the regen closes, then [B84]'s
 re-pin build, the window ~22:0x.
+
+## 2026-09-23 (~16:4x EDT) — [B84] (a) merged; the day's sixth lane wave
+
+b84repin delivered the abi-31 absorb at the highest bar yet: registries
+byte-identical below headers (proving I-102's no-axis claim
+structurally), all ten named stamp predictions by value, the census
+digit-exact with pcrec's three derivations, size books token-length-
+dependent (a new shape, +26..+33 B by token), catalogue 3.6 with its
+changelog in-commit (the [B80] gap closed), and the [B80] pin.sh
+main-tree hazard checked both sides (did not recur). Merged (82bf2f7
+tip), sidecar wave at 3.6, 192/192. MY OWN LESSON (BD3, journaled
+honestly): the lane lost two full make-check cycles (~70 min) to an
+inconclusive-load flake traced LIVE to MY concurrent v21 report regen
+pinning a core — "one heavy suite at a time" binds the manager's own
+detached renders too; schedule regens away from any lane's check window
+from now on. Earlier today: [B85]/KB-28 fixed and closed (v21, the
+class column at subject grain, the held groups regenerated at 58 MB),
+[B83]/O-51, [B82] merged, [B86] chartered off I-105. The [B84] (b)
+window opens now (ahead of the named ~22:0x slot — the box is quiet and
+nothing else is scheduled), BEFORE = b1885a83.
