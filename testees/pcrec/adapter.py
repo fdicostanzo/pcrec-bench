@@ -895,6 +895,45 @@ METADATA_DECL = {
                        "-fno-req-run or -fno-req-byte (no run check "
                        "without a byte)",
     },
+    # [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT], inbox I-102): a
+    # FIFTH stamp on the same "every"/no-rx_info-mirror terms as req_byte/
+    # end_window/req_run above -- NOT a further analysis but a question
+    # about the SAME analysis's two siblings: whether the derived
+    # req_byte/req_run check was actually EMITTED into the artifact, and
+    # why not when it was not. Deliberately NOT an axis (no flag, no bit;
+    # pcrec docs/spec/tuning.md 2.29) -- list_axes.tsv gains no row for it,
+    # confirmed byte-identical against the pin at re-pin time.
+    "req_why": {
+        "type": "enum", "scope": "pattern",
+        "values": ["none", "emitted", "one-attempt", "dominated"],
+        "source": "<PREFIX>_REQ_WHY ([OPT-PRECHECK-ADMIT], pcrec abi 31+), "
+                  "read through pb_req_why(); scope \"every\" (every "
+                  "artifact, both engines, same as req_byte/end_window/"
+                  "req_run); no rx_info mirror; not an axis -- no "
+                  "list_axes.tsv row, no deny flag",
+        "description": "why the req_byte/req_run analysis's derived "
+                       "check does or does not appear in the artifact. "
+                       "\"none\" HOLDS IFF req_byte itself reads \"none\" "
+                       "(the pair's own cross-check: no byte was derived "
+                       "on every path, or under -fno-req-byte, so "
+                       "\"found nothing\" and \"never ran\" are one "
+                       "state). \"emitted\" -- the check fired as "
+                       "written, the ordinary case. \"one-attempt\" -- "
+                       "declined on a fully-anchored machine (the DFA's "
+                       "own dfa_interior_dead or the VM's start_anchor != "
+                       "none): with nothing between attempts to skip, "
+                       "the whole-window pre-check would only ever "
+                       "confirm what the single attempt is about to "
+                       "prove anyway. \"dominated\" -- declined because a "
+                       "candidate-start scan already running ahead of "
+                       "the DFA route scans the SAME byte no more "
+                       "densely than the pre-check would (identity "
+                       "first, then a byte-frequency-prior comparison "
+                       "under plain-byte encoding): the ONE-BYTE form "
+                       "only -- a necessary RUN is never dominated by a "
+                       "plain byte scan, since the run dismisses "
+                       "strictly more than the byte alone",
+    },
     # [B37] (pin 334fd10e, abi 17, [CC-DIFF] STEP 1): a COUNT on
     # RX_DFA_TABLE's own scope -- the scan family's iff a fourth time. A
     # family-(b) activity fact under a family-(a) scope, which is why it
@@ -1572,7 +1611,11 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              "req_byte", "end_window", "vm_start",
              # [B80] (pin b1885a83, abi 30, [OPTLOOP] cycle 2 batch 2): a
              # fourth, same terms.
-             "req_run")
+             "req_run",
+             # [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT]): a fifth,
+             # same terms -- a closed enum this time, unlike its three
+             # variable-valued siblings.
+             "req_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1653,6 +1696,11 @@ STAMP_SCOPE = {
     # beside it -- MEASURED present on a plain DFA `abc` witness as well
     # as on every forced-VM one.
     "req_run":               ("every",    30),
+    # [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT]): "every" like its
+    # three siblings above -- MEASURED present on a plain DFA `abc`
+    # witness, a forced-VM one, an anchored one-attempt VM one, and a
+    # dominated DFA one; the closed four-token set holds on all four.
+    "req_why":               ("every",    31),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -3401,6 +3449,18 @@ class Adapter(_ad.Adapter):
             with no mirror and no neighbour to imply, checked by scope
             here (`vm` since 23) and by value there.
 
+        [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT]) added one more:
+
+        12. `req_why` is `"none"` IFF `req_byte` itself reads `"none"` --
+            pcrec's own cross-check between the pair (tuning.md 2.29):
+            "found nothing" (no byte necessary on any path) and "never
+            ran" (the analysis skipped, e.g. under -fno-req-byte) are one
+            state here, so a stamp that told them apart would be a second,
+            undeclared claim. `one-attempt` and `dominated` carry no
+            further neighbour to imply -- they are readable only against
+            req_byte/req_run's own value, which this rule already covers,
+            and by name in tools/selfcheck.py's by-value witnesses.
+
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
         against a value, and the scope table applies from each stamp's own
@@ -3666,6 +3726,26 @@ class Adapter(_ad.Adapter):
                     "carries <PREFIX>_VM_PREFILTER_LANG %r -- match_api.md "
                     "6.3's iff runs both ways: no prefilter, no language "
                     "pair." % (sel, lang))
+
+        # 12. ([B84], abi 31, [OPT-PRECHECK-ADMIT]) `req_why` "none" IFF
+        #     `req_byte` itself reads "none" -- the pair's own cross-check
+        #     (pcrec's own doc comment: "none" holds iff REQ_BYTE is
+        #     "none", which is the pair's cross-check"; "found nothing"
+        #     and "never ran" are one state under -fno-req-byte).
+        rw = meta.get("req_why")
+        rb_val = meta.get("req_byte")
+        if rw is not None and rb_val is not None:
+            if rw == "none" and rb_val != "none":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_REQ_WHY \"none\" but "
+                    "<PREFIX>_REQ_BYTE %r -- pcrec's own contract says "
+                    "\"none\" holds iff REQ_BYTE reads \"none\"."
+                    % (rb_val,))
+            if rw != "none" and rb_val == "none":
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_REQ_BYTE \"none\" but "
+                    "<PREFIX>_REQ_WHY %r (not \"none\") -- pcrec's own "
+                    "contract says the two must agree." % (rw,))
 
         # 10. ([B26], abi 15 / [DD-13b.W1.2]) the two new FIELDS carry
         #     their own contracts instead of a macro control, and both

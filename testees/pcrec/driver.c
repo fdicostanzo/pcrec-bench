@@ -56,7 +56,7 @@
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
  * vm_prefilter_lang / vm_prefilter_lang_why / req_byte / end_window /
- * vm_start / req_run` is printed only when the artifact
+ * vm_start / req_run / req_why` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
  * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
  * two facts that ARE readable from an absence are the spec's own iffs and
@@ -102,7 +102,13 @@
  * [OPTLOOP] cycle 2 batch 2 (pin b1885a83, abi 30, [OPT-REQPOS] tier 2b,
  * [B80]) adds ONE more, `info req_run` -- "every" scope like `req_byte`
  * and `end_window`, printed beside them; no rx_info mirror, struct
- * rx_info byte-identical to abi 29, floor still 16.
+ * rx_info byte-identical to abi 29, floor still 16. [OPT-PRECHECK-ADMIT]
+ * (pin 6ef76820, abi 31, [B84]) adds ONE more, `info req_why` -- "every"
+ * scope like its three siblings, a CLOSED four-token set
+ * (none/emitted/one-attempt/dominated) naming the EMISSION decision
+ * where req_byte/req_run name the ANALYSIS; no rx_info mirror, struct
+ * rx_info byte-identical to abi 30, floor still 16; NOT an axis (no
+ * flag, no bit).
  */
 
 #define _GNU_SOURCE
@@ -157,6 +163,7 @@ static const char *(*pb_req_byte)(void);
 static const char *(*pb_end_window)(void);
 static const char *(*pb_vm_start)(void);
 static const char *(*pb_req_run)(void);
+static const char *(*pb_req_why)(void);
 static int       (*pb_has_vm_frameless)(void);
 static int       (*pb_vm_frameless)(void);
 static int       (*pb_has_altcls)(void);
@@ -383,6 +390,7 @@ int main(int argc, char **argv) {
     SYM(pb_info_name); SYM(pb_info_nentries);
     SYM(pb_dfa_start); SYM(pb_info_search_form);
     SYM(pb_req_byte); SYM(pb_end_window); SYM(pb_vm_start); SYM(pb_req_run);
+    SYM(pb_req_why);
     SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
     SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
     SYM(pb_has_dfa_uniform_folds); SYM(pb_dfa_uniform_folds);
@@ -472,6 +480,17 @@ int main(int argc, char **argv) {
         if (rb) printf("info\treq_byte\t%s\n", rb);
         if (ew) printf("info\tend_window\t%s\n", ew);
         if (rr) printf("info\treq_run\t%s\n", rr);
+    }
+
+    /* [OPT-PRECHECK-ADMIT], abi 31 ([B84], pcrec lane/admitimpl, merge
+     * 6ef76820): a FIFTH new MACRO line, same "every"/no-rx_info-mirror
+     * terms as req_byte/end_window/req_run above -- RX_REQ_WHY, a closed
+     * four-token set (none/emitted/one-attempt/dominated) naming whether
+     * the req_byte/req_run analysis's derived check was actually EMITTED
+     * into the artifact. Printed beside its two analysis siblings. */
+    {
+        const char *rw = pb_req_why();
+        if (rw) printf("info\treq_why\t%s\n", rw);
     }
 
     /* The abi-6 RUNTIME MIRRORS (match_api.md 6). `prefilter` is documented

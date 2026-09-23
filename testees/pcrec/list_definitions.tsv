@@ -3,17 +3,19 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-b1885a83/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-6ef76820/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
-# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
-# 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
-# definition, applies -- one row per construct DEFINED in terms of
-# another. BYTE-IDENTICAL to the 8d716693 copy below the header (diffed
-# line for line): [OPT-FREQPICK] and [OPT-REQPOS] tier 2b define no new
-# SYNTAX construct -- no definition changed, none added, none removed at
-# this pin -- the twelfth pin running.
+# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
+# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
+# 6ef76820). 50 data rows / 7 columns: kind, selector, syntax, order,
+# predicate, definition, applies -- one row per construct DEFINED in
+# terms of another. BYTE-IDENTICAL to the b1885a83 copy below the header
+# (diffed line for line): [OPT-PRECHECK-ADMIT] defines no new SYNTAX
+# construct -- it is an emit-time predicate over the existing
+# req_byte/req_run analysis, not a grammar change -- so no definition
+# changed, none added, none removed at this pin -- the thirteenth pin
+# running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
