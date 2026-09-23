@@ -400,6 +400,28 @@ generically, so the new `no-expectation` chip's CSS class and title are
 already covered by the existing loop once `scripts/matrix_page.py`'s
 `STATUS_CHIPS` dict gains the entry. No `test_quick.py` change.
 
+**[B82] additions (2026-09-23, lane b82views; reporter v20)**: 3 new
+tests in `test_report.py` (89 total) — `test_capture_class_declaration_
+table` (a pure unit test of the new `pcrecbench/capture_class.py`
+module: every real roster row, rust-default's I-100 override with its
+`is_override`/`how_told` check, an unknown engine and an unparseable id
+both UNDECLARED), `test_b82_capture_class_views_and_query` (a
+MIXED-ROSTER fixture spanning YES/NO/UNDECLARED asserting both
+class-pure views' memberships, the undeclared testee excluded from both
+and listed on its own, rust-default's declaration rendering visibly in
+the view it ranks in, the mixed table unchanged in membership, the
+standing cross-class query firing on a constructed yes-beats-nocaps
+pattern and NOT on its control, and markdown/TSV hit counts agreeing
+exactly) and `test_b82_single_class_roster_unchanged` (the CONTROL: no
+new heading text on a roster that does not span both classes, the query
+section still rendering with an honest `0 hits`). `test_matrix_page.py`
+gains 4 (12 total): `test_parse_capture_class`, `test_class_pure_row_
+rebases_within_class` (the re-derivation arithmetic directly — a lone
+NO-class member re-bases 2.000x -> 1.000x), `test_matrix_class_pure_
+split_renders_two_tables`, `test_matrix_single_class_roster_unchanged`.
+See `docs/dev/lanes/b82views_report.md` for the full charter-vs-
+committed checklist and what is OWED to the manager's merge.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then
