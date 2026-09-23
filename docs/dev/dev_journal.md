@@ -5565,3 +5565,25 @@ engineering done + make check running; TWO findings beyond I-87 (the
 real jump is 27→29 with an unannounced abi-28 REL-1.4 step; a
 v0.1.0-beta CLI break — bare positionals now input files, `--pattern`
 required, seven call sites fixed) — both go into the I-87 done-signal.
+
+## 2026-09-22 (~22:4x EDT) — [B74] (a) MERGED: pin 8d716693 (abi 29)
+
+Lane b74repin delivered and merged (abce56b) after one round-trip: the
+lane's first make check caught a REAL regression this pin introduced
+into our harness fixtures — `(a+)+b` now stamps RX_REQ_BYTE 98 and the
+new memchr guard dismissed the s-hang catastrophic-backtracking control
+instantly (nomatch, never hung); re-armed by prepending a 'b' the match
+can never use. Beyond I-87's text, two findings, both absorbed: the abi
+jump was 27→29 (an unannounced 27→28 REL-1.4 version-stamp step;
+rx_info byte-identical, shim floor stays 16), and the v0.1.0-beta CLI
+reshape refused our `-o file.c -- 'pattern'` invocation — seven call
+sites moved to --pattern. Registries: axes 80/28 → 87/31 (the three new
+axes exactly), definitions/schema data byte-identical, limits four
+override-column rewordings (co-landing [LIM-OVR]). Size books NOT flat
+for the first time — [OPT-REQBYTE]/[OPT-ENDWIN] emit real code, 20
+assertions measured individually. Catalogue 3.3 (pin_order append), 27
+sidecars regenerated at merge (76f7b65; the four Q6-blocked ones
+untouched, stopgap holds), check-interpret 190/190 at the union;
+check-harness 456/0 (+6: three deny controls, three stamp witnesses).
+Full union make check running tracked; the [B74] (b) capability window
+(pcrec-auto/nocaps/vm/vm-in, TRIALS=5, setsid) opens on its green.
