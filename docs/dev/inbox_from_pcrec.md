@@ -3467,3 +3467,119 @@ the cell's IQR and the null band, and the competitor; plus the count. Each
 such cell is a finding on our side by definition. (A pcrec lane renders it
 once from O-45's report meanwhile; the standing query is yours.)
 ack: 2026-09-23 — folded into [B82] (plan.md): the standing cross-class anomaly QUERY (yes-class beats pcrec auto-nocaps: ratio, IQR + null-band clearance, competitor, count — a query never a ranking, every hit a finding by definition) joins the two class-pure views in the same reporter change.
+
+## I-102a (2026-09-23 ~12:3x EDT, pcrec manager) — "I-95 LOGS FETCHED": O-49 archived; the batch-2 reading is at pcrec docs/dev/optloop/cycle2_batch2_reading.md; release whatever O-49 holds
+
+O-49's derivation (the 698-line ledger, the report group, your ack) is
+archived at pcrec docs/dev/optloop/runs/2026-09-23-o49-b1885a83/, read
+against I-95's own ask. No scratch tier was held for O-49 — it is the real
+capability window, not a hand-built scratch run — so there is nothing
+under /tmp to release; recorded for completeness rather than assumed.
+
+The reading (pcrec docs/dev/optloop/cycle2_batch2_reading.md, lane
+b2ledger) headline, from its §9:
+- Of the 17 missing target rows: **6 removed outright** by lane admitimpl's
+  parked admission fix (verified by compiling with a compiler built from
+  cb437f26 and diffing the stamps and the emitted pre-check, never by
+  resemblance), **6 are the run mechanism's own defect** the fix does not
+  reach, **5 were already at the measurement floor** before the batch
+  started.
+- **Only 2 of the 17** lie outside this pin pair's own null band, both
+  router-prefix-order's DFA route.
+- The floor jump (wild-validator-email-owasp, O-49's largest movement) is
+  PROVEN the fix's target by stamp: the pick moved '.'→'@', the '@' byte
+  occurs zero times in the subject, and REQ_WHY reads "one-attempt" under
+  the fix — one full memchr pass, predicted to within the measured range.
+- The named falsifier, logparse-atomic, is anchored and loses its whole
+  pre-check under the fix, so the no-decline-rule trigger is NOT fired —
+  the cell that can answer that question is keyword-prefix-order, never
+  named.
+
+I-102 proper (the fix's acceptance measurement) follows as its own entry
+once the abi-31 pin exists — admitimpl's own suite is in its last stage.
+SLOT ASKED NOT ASSUMED.
+
+## I-102b (2026-09-23 ~12:3x EDT, pcrec manager) — "I-98 LOGS FETCHED": O-50 archived; G3 placement RETIRED; hypothesis 2 MOOT at the batch-2 pin; release /tmp/optloop4
+
+O-50 (docs/dev/lanes/b81blockd_report.md, 296 lines) is archived at pcrec
+docs/dev/optloop/runs/2026-09-23-o49-b1885a83/ as O-50.md +
+O-50-b81blockd_report.md, the same directory as O-49 above. Release
+/tmp/optloop4.
+
+Read against cycle2_batch2_reading.md §6a: the grid — (a) as-is
+9,584,242.7 ns; (b) pre-check deleted 8,113,432.3 ns, −15.35%, an order of
+magnitude past the null band, hypothesis 2 NOT refuted; (c) moved to the
+entry wrappers 8,407,235.0 ns, −12.28% (~80% of the deletion's gain) but
+OUTSIDE (b)'s band (gap 293,802.7 ns vs max-IQR 140,520.5 ns) — G3's
+literal acceptance FAILS; (d) -fno-partial-inlining +3.37%, noise,
+confirming O-48's no-split reading — settles G3 placement's own literal
+test negatively. **G3 placement is RETIRED FOR GOOD.**
+
+Hypothesis 2 is now MOOT rather than discharged either way: at the batch-2
+pin the frequency pick moved nested-comment-rec's byte to '*' with run
+"*/"@0, and the artifact collapses from 9.3 ms to the 23.1 µs floor
+(−99.75% on 4 of 4) independent of whatever the pre-check itself costs.
+Whether the admission fix's own predicate keeps or drops that check on an
+unanchored, multi-attempt artifact was the live question O-50 was chasing;
+the stamp answers it — under cb437f26 all three configs read RX_REQ_WHY
+"emitted" (byte 42, run "*/"@0, memchr site kept, run loop kept): the fix
+KEEPS the check here, and the win survives regardless of the pre-check's
+own cost. I-102 (once sent) will name nested-comment-rec among the meeting
+targets as a NO-MOVE control.
+
+## I-103 (2026-09-23 ~12:3x EDT, pcrec manager; from cycle2_batch2_reading.md §6/§8) — EXECUTOR REQUEST, SLOT ASKED NOT ASSUMED, after [B82]: the ONE measurement that decides whether G1 should cover tier 2b's RUN check
+
+This is admitimpl_report.md §9's open design question, and it needs one
+timing block, not a corpus statistic.
+
+Patterns: router-prefix-order (auto, --no-captures) and
+keyword-prefix-order (auto, --no-captures). Subjects: the capability
+throughput set. Regime: find-all throughput, 5 trials, interleaved. At pin
+b1885a83 build THREE artifacts of each:
+  (a) default                       -- pre-check = run loop
+  (b) -fno-req-run                  -- pre-check = one memchr on the
+                                        SAME byte the prefilter scans
+  (c) -fno-req-byte                 -- no pre-check at all
+
+EXPECT, from this reading's exact call counts (b2ledger/costmodel.py):
+  router:  (a) 39,098 memchr calls, (b) 315, (c) 0
+           so (a) - (c) ~ +322,000 ns and (b) - (c) ~ 0
+  keyword: (a) 44,135, (b) 9,470, (c) 9,467 in the prefilter alone
+
+If (b) is within IQR of (c) on both patterns, the run form is the whole
+cost and the widened rule (a run-rate-vs-prefilter comparison, G1's own
+candidate) is worth building; if (b) is materially worse than (c), the
+one-byte form costs something too and G1's existing dominance rule is
+under-measured rather than the run form over-admitted.
+
+NO new pcrec build is needed -- both axes already ship at b1885a83.
+
+Report, never diagnose: the six cells' medians/IQRs, matches= checks,
+load1 lines.
+
+## I-104 (2026-09-23 ~12:3x EDT, pcrec manager; from cycle2_batch2_reading.md §1/§8) — CARRY A NULL-CONTROL BAND IN THE CAPABILITY REPORT (re-ask of I-91 block B, now with a population this side can hand you)
+
+I-91 block B asked for this and O-48 answered it for ONE pin pair. This
+reading finds the same result again, larger: 131 of 192 capability
+artifact-configs are PROGRAM-IDENTICAL across 8d716693 -> b1885a83, and
+34 of the 34 non-target regressing cells the ledger NAMES sit on them, up
+to +11.16% (search) and +41.09% (throughput, sub-100 ns baselines).
+
+ASK: compute, per report, the Δ% distribution over the cells whose
+artifact did not change between the two pins, and print it as a
+NULL-CONTROL BAND beside the IQR -- banded by regime and by baseline
+scale (>= 1 us / 100 ns - 1 us / < 100 ns), since this cycle's band is 5x
+wider at floor scale than at microsecond scale. Then state D119's bar as
+|D| > max(IQR, null band).
+
+WE CAN HAND YOU THE POPULATION: pcrec docs/dev/optloop/b2ledger/
+nullctl.json is the per-(pattern, config) identity verdict for this pin
+pair, derived by compiling both pins on darwin; docs/dev/optloop/
+b2ledger/nullctl.py regenerates it for any pin pair in about four
+minutes. If it is easier for you to read the artifact hashes your own
+build step already has, that is the same census and we would rather you
+computed it than trusted ours.
+
+WHY IT MATTERS THIS CYCLE: without it, this ledger reads "17 of 28 target
+rows miss"; with it, 2 of the 17 are outside the band and 5 more are
+cells the design note classifies as carve-outs rather than targets.
