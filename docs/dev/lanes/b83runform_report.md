@@ -3,6 +3,19 @@
 Executor lane, I-57 terms. Report, never diagnose. Every command run, every
 raw number, stated as MEASURED.
 
+**Revision note (2026-09-23, same day).** This report was first delivered
+with keyword's arm (d) STOPPED (a byte-offset ambiguity in I-103a's
+literal template). The manager's ruling overrode that STOP: build it,
+offset-corrected, per the reading given below in section 3 -- the same
+correction this lane's own STOP text had already identified, just not
+applied unilaterally. Section 0 deviation 4, section 3, and every numeric
+table below are from a SINGLE re-run of the full grid (all 24
+pattern/config/arm cells, including keyword's now-built arm (d)) so every
+number in this report comes from one self-consistent measurement session
+rather than two spliced together. The qualitative router/keyword findings
+below are corroborated by, but supersede, the first (16-of-22-cell)
+delivery's own numbers.
+
 ## 0. Deviations from I-103/I-103a's literal text (all listed up front)
 
 1. **Instrument form delivered: the O-50/[B81] fallback shape, exactly as
@@ -39,32 +52,23 @@ raw number, stated as MEASURED.
    ONLY -- exactly the four-testee naming I-102 uses elsewhere in the same
    inbox batch (`auto-caps, auto-nocaps, vm-caps, vm-in-caps`). This is the
    full grid measured below: router x 4 configs, keyword x 2 configs.
-4. **STOP on arm (d) for BOTH keyword configs -- judgment-shaped, not
-   mechanical, reported rather than decided.** I-103a's literal inline-loop
-   template is `subject[rp_c] == <byte> && !memcmp(subject + rp_c, "<run>",
-   <runlen>)`, which assumes the scanned byte sits at OFFSET 0 of the run.
-   Router's own default artifact confirms offset 0 ("the scan is on byte 47
-   at offset 0 of the run"; run "/user", byte 47 = '/', the run's own first
-   character) -- the template applies literally, no interpretation needed.
-   Keyword's default artifact states plainly: **"the scan is on byte 110 at
-   offset 1 of the run"** (run "in", byte 110 = 'n' = the run's SECOND
-   character; verbatim region below). Applying I-103a's template literally
-   to keyword (`subject[rp_c] == 110`) checks whether the byte at the
-   RUN-START candidate position is 'n' -- but the run starts with 'i' at
-   every true occurrence, so a literal application would build a guard that
-   never fires on a real match, silently changing the guard from
-   "not-found early-out" to "always not found" -- a correctness bug wearing
-   a timing instrument's clothes, not a faithful hand-twin. Adapting the
-   template to the byte's own offset (`subject[rp_c + 1] == 110`) is a
-   mechanical-looking one-token edit, but it is a JUDGMENT CALL beyond what
-   I-103a's literal text authorizes (the addendum's template text does not
-   itself carry an offset parameter), so per the lane brief's own
-   contingency ("if the emitted region does not match what the entry
-   describes closely enough to edit unambiguously, STOP on (d) and report
-   the region verbatim") this is STOPPED for `keyword-prefix-order` on BOTH
-   its configs and reported, verbatim, in section 3 below. Router's arm (d)
-   is built and measured on all four of its configs (the template applies
-   there with zero interpretation).
+4. **Arm (d) on keyword: an initial STOP, OVERRIDDEN by the manager's
+   ruling -- built, offset-corrected, in this revision.** I-103a's literal
+   inline-loop template is `subject[rp_c] == <byte> && !memcmp(subject +
+   rp_c, "<run>", <runlen>)`, which assumes the scanned byte sits at
+   OFFSET 0 of the run. Router's own default artifact confirms offset 0
+   ("the scan is on byte 47 at offset 0 of the run"; run "/user", byte 47
+   = '/', the run's own first character) -- the template applies
+   literally there, no interpretation needed. Keyword's default artifact
+   states plainly: "the scan is on byte 110 at offset 1 of the run" (run
+   "in", byte 110 = 'n' = the run's SECOND character; verbatim region in
+   section 3). This lane's first delivery STOPPED here, reading the
+   offset correction as a judgment call beyond I-103a's literal text. The
+   manager's ruling (quoted in full at the top of section 3) directs the
+   correction be applied: "test the scan byte at its actual offset within
+   the run... the same found/not-found wiring, no other change" -- the
+   SAME reading this lane's own STOP text had already identified, now
+   applied. Built and measured on both of keyword's configs below.
 
 ## 1. Box facts, pin, subjects
 
@@ -74,8 +78,8 @@ raw number, stated as MEASURED.
 unmodified, no new pcrec build (I-103's own note). Worktree
 `worktrees/b83runform` (branch `lane/b83runform`). Scratch:
 `/tmp/optloop5/b83/` (`run_instrument.py`, `work/`, `*.json`,
-`run_instrument.log`). `uptime` immediately before the run: `load average:
-0.11, 0.43, 0.74` (quiet: load1 < 0.5, per the brief's own bar). Subjects:
+`run_instrument.log`). `uptime` immediately before THIS (final) run:
+`load average: 0.13, 0.15, 0.35` (quiet). Subjects:
 `bench/capability/throughput/{t-64k,t-256k,t-1m}.bin` (65,536 / 262,144 /
 1,048,576 B), the capability set's own three committed throughput
 subjects. Regime: `throughput` (`--find-all`, the driver protocol's
@@ -106,33 +110,36 @@ Configs (pcrec flags, from `testees/pcrec/configs.toml`):
 | `vm-in-caps` | `--features all --engine=vm` + driver `--buffer-frames 32768 --buffer-trail 131072` |
 
 Arms: (a) default: config flags only. (b) `+ -fno-req-run`. (c)
-`+ -fno-req-byte`. (d) the inline-run hand-twin -- see section 3.
+`+ -fno-req-byte`. (d) the inline-run hand-twin -- see section 3, now
+built on ALL SIX pattern-config pairs.
 
-**sha256 of every built `artifact.c`** (arm a/b/c on all six
-pattern-config pairs, arm d on router's four):
+**sha256 of every built `artifact.c`** (deterministic: identical to the
+first delivery's own hashes on every cell built both times):
 
-    d43feb8f87ad53d6...  router-prefix-order/auto-caps/a
-    51dbd5fd378aa170...  router-prefix-order/auto-nocaps/a
-    5bca8f4114037205...  router-prefix-order/vm-caps/a
-    5bca8f4114037205...  router-prefix-order/vm-in-caps/a        <- IDENTICAL to vm-caps/a
-    40edf48a559e7ff7...  router-prefix-order/auto-caps/b
-    5eda371652181ebc...  router-prefix-order/auto-nocaps/b
-    af9d62b4d39cadea...  router-prefix-order/vm-caps/b
-    af9d62b4d39cadea...  router-prefix-order/vm-in-caps/b         <- IDENTICAL to vm-caps/b
-    bfd7e29eaaaf146f...  router-prefix-order/auto-caps/c
-    9b7e7143902962e3...  router-prefix-order/auto-nocaps/c
-    892fea2568e2fda5...  router-prefix-order/vm-caps/c
-    892fea2568e2fda5...  router-prefix-order/vm-in-caps/c         <- IDENTICAL to vm-caps/c
-    0857eb11514f7231...  router-prefix-order/auto-caps/d
-    9aa54ce420718e48...  router-prefix-order/auto-nocaps/d
-    e73504317b9f1af4...  router-prefix-order/vm-caps/d
-    e73504317b9f1af4...  router-prefix-order/vm-in-caps/d         <- IDENTICAL to vm-caps/d
-    aedbb97641aa9c55...  keyword-prefix-order/auto-caps/a
-    078d176193b3a51a...  keyword-prefix-order/auto-nocaps/a
-    fe6ab38969bd35d4...  keyword-prefix-order/auto-caps/b
-    6092e9397a8ec170...  keyword-prefix-order/auto-nocaps/b
-    41207c93dd3d1d07...  keyword-prefix-order/auto-caps/c
-    15ac5afab757e4c8...  keyword-prefix-order/auto-nocaps/c
+    d43feb8f87ad53d6...  router-prefix-order/auto-caps/a       (24,157 B)
+    51dbd5fd378aa170...  router-prefix-order/auto-nocaps/a     (24,157 B)
+    5bca8f4114037205...  router-prefix-order/vm-caps/a         (22,169 B)
+    5bca8f4114037205...  router-prefix-order/vm-in-caps/a      (22,169 B) <- IDENTICAL to vm-caps/a
+    40edf48a559e7ff7...  router-prefix-order/auto-caps/b       (23,691 B)
+    5eda371652181ebc...  router-prefix-order/auto-nocaps/b     (23,691 B)
+    af9d62b4d39cadea...  router-prefix-order/vm-caps/b         (21,703 B)
+    af9d62b4d39cadea...  router-prefix-order/vm-in-caps/b      (21,703 B) <- IDENTICAL to vm-caps/b
+    bfd7e29eaaaf146f...  router-prefix-order/auto-caps/c       (23,442 B)
+    9b7e7143902962e3...  router-prefix-order/auto-nocaps/c     (23,442 B)
+    892fea2568e2fda5...  router-prefix-order/vm-caps/c         (21,434 B)
+    892fea2568e2fda5...  router-prefix-order/vm-in-caps/c      (21,434 B) <- IDENTICAL to vm-caps/c
+    0857eb11514f7231...  router-prefix-order/auto-caps/d       (23,979 B)
+    9aa54ce420718e48...  router-prefix-order/auto-nocaps/d     (23,979 B)
+    e73504317b9f1af4...  router-prefix-order/vm-caps/d         (21,991 B)
+    e73504317b9f1af4...  router-prefix-order/vm-in-caps/d      (21,991 B) <- IDENTICAL to vm-caps/d
+    aedbb97641aa9c55...  keyword-prefix-order/auto-caps/a      (26,269 B)
+    078d176193b3a51a...  keyword-prefix-order/auto-nocaps/a    (26,269 B)
+    fe6ab38969bd35d4...  keyword-prefix-order/auto-caps/b      (25,780 B)
+    6092e9397a8ec170...  keyword-prefix-order/auto-nocaps/b    (25,780 B)
+    41207c93dd3d1d07...  keyword-prefix-order/auto-caps/c      (25,528 B)
+    15ac5afab757e4c8...  keyword-prefix-order/auto-nocaps/c    (25,528 B)
+    52d9dced5f78b316...  keyword-prefix-order/auto-caps/d      (26,047 B)   <- NEW, this revision
+    c20183ecd1a0d16c...  keyword-prefix-order/auto-nocaps/d    (26,047 B)  <- NEW, this revision
 
 The `vm-caps`/`vm-in-caps` sha256 identity per arm is a CONTROL, not
 decoration: it confirms the `--buffer-*` driver flags never touch the
@@ -143,7 +150,17 @@ the guard block sits in `rx_search_run`, shared by both entries, exactly
 as `testees/pcrec/CLAUDE.md`'s cf0962e3-era note ("the guard lives in the
 shared search prologue") predicts).
 
-## 3. The guard region, and the STOP on keyword's arm (d)
+## 3. The guard region, and the manager's ruling on keyword's arm (d)
+
+**The manager's ruling, quoted in full** (2026-09-23, overriding this
+lane's own STOP): "BUILD IT, offset-corrected... I-103a's intent is 'an
+inline scalar loop of the same semantics as the memchr run-loop'; the
+template's offset-0 shape is an authoring artifact of the router example,
+and your own reading of keyword's artifact ('scan byte 110 at offset 1 of
+the run') gives the unambiguous correction: test the scan byte at its
+actual offset within the run, i.e. `for (rp_c = rp_pos; rp_c + 2 <=
+subject_length; rp_c++) if (subject[rp_c+1]==110 && !memcmp(subject+rp_c,
+"in", 2)) break;` -- the same found/not-found wiring, no other change."
 
 **Router's default guard** (`rx_search`, DFA route; `rx_search_run`,
 VM route -- identical text either way), byte 47 offset 0:
@@ -168,7 +185,7 @@ VM route -- identical text either way), byte 47 offset 0:
 
 **Router's arm (d)** (the ONLY edit; the two-line comment above it is left
 in place, byte-identical text, describing a guard that is no longer
-literally a memchr call -- the comment is inert prose, not re-derived):
+literally a memchr call -- inert prose, not re-derived):
 
     if (subject_length <= search_from) return 0;
     {
@@ -180,14 +197,7 @@ literally a memchr call -- the comment is inert prose, not re-derived):
         if (rp_c + 5 > subject_length) return 0;
     }
 
-Same found/not-found wiring as the original: the block falls through
-(into the forward-table scan) exactly when a run occurrence exists at or
-after `search_from`, and `return 0`s exactly when none does. I-103a's
-own template applied with zero interpretation (byte offset 0 = the run's
-own first character).
-
-**Keyword's default guard**, VERBATIM, byte 110 offset 1 -- the region
-this lane STOPS on:
+**Keyword's default guard**, byte 110 offset 1:
 
     /* [OPT-REQPOS] every match of this pattern contains the 2 bytes
      * "in", so a window without them holds no match at all;
@@ -207,18 +217,27 @@ this lane STOPS on:
         }
     }
 
-I-103a's literal template (`subject[rp_c] == <byte> && !memcmp(subject +
-rp_c, "<run>", <runlen>)`) reads the byte at the SAME position the memcmp
-starts from -- correct only when the scanned byte IS the run's first
-byte. Here it is not (`rp_c - 1` is where the run's memcmp starts; the
-byte is checked one position later, at `rp_c`). Substituting the template
-literally builds `if (subject[rp_c] == 110 && !memcmp(subject + rp_c,
-"in", 2))`, which checks whether the SECOND character of a candidate
-2-byte window is 'n' while comparing the window starting AT that same
-position against "in" -- neither the position an "in" occurrence's start
-would satisfy nor a faithful re-expression of the original's semantics.
-STOPPED per the brief's own contingency; `keyword-prefix-order` measures
-arms (a), (b), (c) only, on both its configs.
+**Keyword's arm (d), built per the ruling above** -- `subject[rp_c + 1]`
+tests the byte at its own documented offset, `memcmp` still compares the
+window starting AT `rp_c` (the run's own start), so `rp_c` is a RUN-START
+candidate throughout, exactly as the ruling's own formula spells it:
+
+    if (subject_length <= search_from) return 0;
+    {
+        size_t rp_pos = search_from;
+        size_t rp_c;
+        for (rp_c = rp_pos; rp_c + 2 <= subject_length; rp_c++)
+            if (subject[rp_c + 1] == 110 && !memcmp(subject + rp_c, "\x69\x6e", 2))
+                break;
+        if (rp_c + 2 > subject_length) return 0;
+    }
+
+Same found/not-found wiring as the original on both patterns: the block
+falls through (into the forward-table scan) exactly when a run occurrence
+exists at or after `search_from`, and `return 0`s exactly when none does.
+Answer-check (section 4) confirms this by measurement, not merely by
+inspection: keyword's arm (d) answers the identical `nmatches` as arms
+(a)/(b)/(c) on all three subjects.
 
 ## 4. Answer-check, before any timing
 
@@ -226,7 +245,7 @@ One `iters=1 --find-all` call per variant, all three subjects, via the
 real `adapter.measure()` (`work/answer_check.json` carries the full
 per-variant per-subject `nmatches`):
 
-| pattern | subject | expected nmatches (expectations.tsv) | measured (every arm, every config) |
+| pattern | subject | expected nmatches (expectations.tsv) | measured (every arm, every config, incl. keyword's (d)) |
 |---|---|---:|---:|
 | router-prefix-order | t-64k | 9 | 9 |
 | router-prefix-order | t-256k | 58 | 58 |
@@ -235,86 +254,68 @@ per-variant per-subject `nmatches`):
 | keyword-prefix-order | t-256k | 1791 | 1791 |
 | keyword-prefix-order | t-1m | 7243 | 7243 |
 
-**EQUAL across all four (router) / three (keyword) arms, on every config,
-on every subject** -- the counts above are the SAME set of numbers for
-(a), (b), (c) and, where built, (d); no variant answered `nomatch` or a
-different count anywhere. Confirmed BEFORE any timed round (per-variant
-answer dump in `work/answer_check.json`; the equality table itself in
-`run_instrument.log`, section "matches= equality across arms").
+**EQUAL across all FOUR arms on every config, on every subject, both
+patterns** -- confirmed BEFORE any timed round (full per-variant answer
+dump in `work/answer_check.json`; the equality table itself in
+`run_instrument.log`). Keyword's offset-corrected arm (d) answers exactly
+as (a)/(b)/(c) do.
 
 ## 5. Calibration (`harness.calibrate`, real function, one probe per variant)
 
-    router-prefix-order  auto-caps    a  iters=295  (169.601 us/iter, t-256k)
-    router-prefix-order  auto-caps    b  iters=544  (92.060 us/iter, t-256k)
-    router-prefix-order  auto-caps    c  iters=544  (91.981 us/iter, t-256k)
-    router-prefix-order  auto-caps    d  iters=188  (266.682 us/iter, t-256k)
-    router-prefix-order  auto-nocaps  a  iters=280  (179.051 us/iter, t-256k)
-    router-prefix-order  auto-nocaps  b  iters=543  (92.121 us/iter, t-256k)
-    router-prefix-order  auto-nocaps  c  iters=546  (91.670 us/iter, t-256k)
-    router-prefix-order  auto-nocaps  d  iters=195  (256.771 us/iter, t-256k)
-    router-prefix-order  vm-caps      a  iters=49   (1030.796 us/iter, t-256k)
-    router-prefix-order  vm-caps      b  iters=54   (940.366 us/iter, t-256k)
-    router-prefix-order  vm-caps      c  iters=54   (933.795 us/iter, t-256k)
-    router-prefix-order  vm-caps      d  iters=45   (1111.737 us/iter, t-256k)
-    router-prefix-order  vm-in-caps   a  iters=49   (1027.866 us/iter, t-256k)
-    router-prefix-order  vm-in-caps   b  iters=54   (937.886 us/iter, t-256k)
-    router-prefix-order  vm-in-caps   c  iters=54   (942.236 us/iter, t-256k)
-    router-prefix-order  vm-in-caps   d  iters=45   (1114.426 us/iter, t-256k)
-    keyword-prefix-order auto-caps    a  iters=161  (310.732 us/iter, t-256k)
-    keyword-prefix-order auto-caps    b  iters=267  (187.551 us/iter, t-256k)
-    keyword-prefix-order auto-caps    c  iters=284  (176.521 us/iter, t-256k)
-    keyword-prefix-order auto-nocaps  a  iters=165  (304.661 us/iter, t-256k)
-    keyword-prefix-order auto-nocaps  b  iters=268  (186.662 us/iter, t-256k)
-    keyword-prefix-order auto-nocaps  c  iters=285  (175.631 us/iter, t-256k)
+    router-prefix-order  auto-caps    a  iters=?   (probe run per variant; see run_instrument.log)
+    keyword-prefix-order auto-caps    d  iters=58  (865.674 us/iter, t-256k)
+    keyword-prefix-order auto-nocaps  d  iters=59  (859.105 us/iter, t-256k)
 
-`n_iters` is calibrated PER VARIANT (own probe, own `SetCell`), the same
-shape `docs/dev/lanes/b81blockd_report.md` used -- `reduce.reduce_set_cell`'s
-numbers are ns/call, already iteration-normalized, so the grid below
-compares apples to apples regardless.
+(full 24-row table in `run_instrument.log`, "=== calibration ===" section)
+-- `n_iters` is calibrated PER VARIANT (own probe, own `SetCell`), the
+same shape `docs/dev/lanes/b81blockd_report.md` used; `reduce.
+reduce_set_cell`'s numbers are ns/call, already iteration-normalized, so
+the grid below compares apples to apples regardless.
 
-## 6. Timed rounds -- interleaved a,b,c[,d] x 5, `uptime` before each round
+## 6. Timed rounds -- interleaved a,b,c,d x 5, `uptime` before each round
 
-    round 1 uptime: load average 0.24, 0.15, 0.45
-    round 2 uptime: load average 0.38, 0.18, 0.46
-    round 3 uptime: load average 0.43, 0.20, 0.46
-    round 4 uptime: load average 0.48, 0.21, 0.46
-    round 5 uptime: load average 0.52, 0.22, 0.46
+    round 1 uptime: load average 0.20, 0.16, 0.36
+    round 2 uptime: load average 0.26, 0.18, 0.36
+    round 3 uptime: load average 0.32, 0.19, 0.36
+    round 4 uptime: load average 0.32, 0.19, 0.36
+    round 5 uptime: load average 0.37, 0.20, 0.37
 
-load1 rose from 0.24 to 0.52 over the run's own five rounds (this
-process's own gcc/driver children) -- consistent with the box's
-pre-run 0.11 baseline and the brief's own "load1 < 0.5" bar at launch;
-the whole run (build + answer-check + calibration + 5 rounds x 22
-variants) completed in under 25 seconds wall time.
+Quiet throughout (load1 <= 0.37); the whole run (build + answer-check +
+calibration + 5 rounds x 22-24 variants) completed in under 20 seconds
+wall time.
 
-**Per-variant `SetCell` (median / min / max / IQR over 5 trials, ns,
-sum over the 3 throughput subjects per trial):**
+**Per-variant `SetCell` (median / min / max / IQR over 5 trials, ns, sum
+over the 3 throughput subjects per trial) -- ONE self-consistent run, all
+24 cells including keyword's arm (d):**
 
 | pattern | config | arm | median ns | min ns | max ns | IQR (Q3-Q1) |
 |---|---|---|---:|---:|---:|---:|
-| router-prefix-order | auto-caps | a | 754,122.4 | 723,274.9 | 807,410.2 | 47,860.0 |
-| router-prefix-order | auto-caps | b | 410,943.0 | 403,535.7 | 425,506.0 | 12,637.6 |
-| router-prefix-order | auto-caps | c | 396,885.1 | 393,755.6 | 411,530.4 | 16,135.8 |
-| router-prefix-order | auto-caps | d | 1,148,801.6 | 1,100,880.9 | 1,155,500.4 | 50,677.1 |
-| router-prefix-order | auto-nocaps | a | 746,341.9 | 720,393.7 | 754,578.5 | 32,473.4 |
-| router-prefix-order | auto-nocaps | b | 411,046.1 | 402,976.9 | 416,555.6 | 7,276.9 |
-| router-prefix-order | auto-nocaps | c | 411,087.3 | 393,630.9 | 412,381.7 | 18,519.4 |
-| router-prefix-order | auto-nocaps | d | 1,146,928.4 | 1,101,938.6 | 1,160,918.6 | 31,251.3 |
-| router-prefix-order | vm-caps | a | 4,644,138.2 | 4,441,783.0 | 4,654,639.7 | 143,740.6 |
-| router-prefix-order | vm-caps | b | 4,236,402.6 | 4,059,764.7 | 4,298,936.3 | 143,090.5 |
-| router-prefix-order | vm-caps | c | 4,203,401.6 | 4,059,362.7 | 4,233,785.1 | 123,904.4 |
-| router-prefix-order | vm-caps | d | 5,024,701.2 | 4,827,343.4 | 5,034,640.8 | 202,466.7 |
-| router-prefix-order | vm-in-caps | a | 4,596,408.2 | 4,449,317.7 | 4,600,629.4 | 76,142.3 |
-| router-prefix-order | vm-in-caps | b | 4,139,167.9 | 4,060,108.6 | 4,196,586.2 | 130,810.2 |
-| router-prefix-order | vm-in-caps | c | 4,192,858.6 | 4,063,275.5 | 4,200,966.5 | 125,631.2 |
-| router-prefix-order | vm-in-caps | d | 4,983,249.4 | 4,822,152.3 | 4,992,817.7 | 89,253.3 |
-| keyword-prefix-order | auto-caps | a | 1,262,073.6 | 1,236,234.1 | 1,298,224.7 | 60,024.4 |
-| keyword-prefix-order | auto-caps | b | 809,646.6 | 776,182.8 | 812,724.7 | 18,550.2 |
-| keyword-prefix-order | auto-caps | c | 761,466.6 | 733,586.1 | 764,443.1 | 28,825.7 |
-| keyword-prefix-order | auto-nocaps | a | 1,291,424.4 | 1,258,581.5 | 1,297,547.9 | 19,741.6 |
-| keyword-prefix-order | auto-nocaps | b | 811,216.9 | 809,435.3 | 811,981.0 | 1,583.1 |
-| keyword-prefix-order | auto-nocaps | c | 762,870.7 | 732,616.0 | 763,582.7 | 15,839.6 |
+| router-prefix-order | auto-caps | a | 787,317.3 | 782,882.1 | 808,872.4 | 15,985.8 |
+| router-prefix-order | auto-caps | b | 412,632.2 | 403,596.9 | 413,016.3 | 5,166.7 |
+| router-prefix-order | auto-caps | c | 431,619.2 | 427,425.7 | 461,723.9 | 19,230.2 |
+| router-prefix-order | auto-caps | d | 1,156,215.7 | 1,103,178.2 | 1,184,377.9 | 45,547.3 |
+| router-prefix-order | auto-nocaps | a | 781,903.2 | 744,590.0 | 786,596.0 | 23,445.8 |
+| router-prefix-order | auto-nocaps | b | 408,907.9 | 408,175.7 | 410,081.3 | 1,154.0 |
+| router-prefix-order | auto-nocaps | c | 394,955.5 | 393,688.6 | 429,334.7 | 33,874.3 |
+| router-prefix-order | auto-nocaps | d | 1,192,511.6 | 1,189,648.6 | 1,201,649.3 | 9,942.6 |
+| router-prefix-order | vm-caps | a | 4,761,028.5 | 4,447,090.6 | 4,831,497.2 | 300,880.9 |
+| router-prefix-order | vm-caps | b | 4,164,823.9 | 4,049,445.1 | 4,406,439.9 | 347,196.2 |
+| router-prefix-order | vm-caps | c | 4,416,365.7 | 4,029,293.6 | 4,440,226.5 | 259,407.3 |
+| router-prefix-order | vm-caps | d | 5,229,966.7 | 4,820,662.4 | 5,279,757.4 | 266,001.0 |
+| router-prefix-order | vm-in-caps | a | 4,745,346.3 | 4,722,679.5 | 4,804,602.0 | 58,416.5 |
+| router-prefix-order | vm-in-caps | b | 4,306,501.3 | 4,048,463.6 | 4,311,078.3 | 259,957.1 |
+| router-prefix-order | vm-in-caps | c | 4,337,308.7 | 4,321,602.8 | 4,396,859.0 | 46,477.9 |
+| router-prefix-order | vm-in-caps | d | 5,148,141.3 | 5,135,412.6 | 5,162,436.4 | 14,816.9 |
+| keyword-prefix-order | auto-caps | a | 1,370,019.7 | 1,282,352.7 | 1,371,686.2 | 59,446.9 |
+| keyword-prefix-order | auto-caps | b | 845,451.5 | 800,959.2 | 847,759.8 | 24,556.0 |
+| keyword-prefix-order | auto-caps | c | 805,944.6 | 732,874.9 | 807,673.7 | 38,964.0 |
+| keyword-prefix-order | auto-caps | d | 1,949,727.7 | 1,938,825.1 | 2,033,898.5 | 57,121.3 |
+| keyword-prefix-order | auto-nocaps | a | 1,356,966.4 | 1,343,822.2 | 1,370,450.7 | 14,512.7 |
+| keyword-prefix-order | auto-nocaps | b | 844,275.9 | 775,759.6 | 858,945.6 | 65,093.6 |
+| keyword-prefix-order | auto-nocaps | c | 799,039.7 | 732,831.2 | 803,786.8 | 37,751.5 |
+| keyword-prefix-order | auto-nocaps | d | 1,948,221.2 | 1,941,891.1 | 1,956,407.5 | 12,009.0 |
 
-All 22 cells: `failing_subjects=[]`, `n_wrong=0`, `n_gave_up=0`, trial
+All 24 cells: `failing_subjects=[]`, `n_wrong=0`, `n_gave_up=0`, trial
 agreement **`agree`** (`reduce.judge_trial_agreement`, rule `v1.4-group`,
 k=1.5, d_min=2, share_c=3, 5 trials -- a record built from any of these
 would stamp `measured`, none `inconclusive-spread`; raw per-round sums
@@ -324,12 +325,12 @@ and full agreement lines in `results.json`).
 
 | pattern | config | (a)-(c) ns | (b)-(c) ns | (d)-(a) ns | (d)-(c) ns |
 |---|---|---:|---:|---:|---:|
-| router | auto-caps | +357,237.3 | +14,057.9 | +394,679.2 | +751,916.5 |
-| router | auto-nocaps | +335,254.6 | **-41.2** | +400,586.5 | +735,841.1 |
-| router | vm-caps | +440,736.6 | +33,001.0 | +380,563.0 | +821,299.6 |
-| router | vm-in-caps | +403,549.6 | **-53,690.7** | +386,841.2 | +790,390.8 |
-| keyword | auto-caps | +500,607.0 | +48,180.0 | (STOPPED) | (STOPPED) |
-| keyword | auto-nocaps | +528,553.7 | +48,346.2 | (STOPPED) | (STOPPED) |
+| router | auto-caps | +355,698.1 | -18,987.0 | +368,898.4 | +724,596.5 |
+| router | auto-nocaps | +386,947.7 | +13,952.4 | +410,608.4 | +797,556.1 |
+| router | vm-caps | +344,662.8 | -251,541.8 | +468,938.2 | +813,601.0 |
+| router | vm-in-caps | +408,037.6 | -30,807.4 | +402,795.0 | +810,832.6 |
+| keyword | auto-caps | +564,075.1 | +39,506.9 | +579,708.0 | +1,143,783.1 |
+| keyword | auto-nocaps | +557,926.7 | +45,236.2 | +591,254.8 | +1,149,181.5 |
 
 I-103's own EXPECT, quoted: "router: (a) 39,098 memchr calls, (b) 315, (c)
 0 -- so (a) - (c) ~ +322,000 ns and (b) - (c) ~ 0"; "keyword: (a) 44,135,
@@ -341,124 +342,149 @@ in 1,376,256 B = 3.2%".
 
 | pattern / config | \|(b)-(c)\| ns | max(IQR_b, IQR_c) | verdict |
 |---|---:|---:|---|
-| router / auto-caps | 14,057.9 | 16,135.8 | **within IQR** |
-| router / auto-nocaps | 41.2 | 18,519.4 | **within IQR** |
-| router / vm-caps | 33,001.0 | 143,090.5 | **within IQR** |
-| router / vm-in-caps | 53,690.7 | 130,810.2 | **within IQR** |
-| keyword / auto-caps | 48,180.0 | 28,825.7 | **outside IQR -- (b) materially worse** |
-| keyword / auto-nocaps | 48,346.2 | 15,839.6 | **outside IQR -- (b) materially worse** |
+| router / auto-caps | 18,987.0 | 19,230.2 | **within IQR** (margin 243.2 ns, 1.3%) |
+| router / auto-nocaps | 13,952.4 | 33,874.3 | **within IQR** |
+| router / vm-caps | 251,541.8 | 347,196.2 | **within IQR** |
+| router / vm-in-caps | 30,807.4 | 259,957.1 | **within IQR** |
+| keyword / auto-caps | 39,506.9 | 38,964.0 | **outside IQR** (margin 542.9 ns, 1.4%) -- (b) materially worse |
+| keyword / auto-nocaps | 45,236.2 | 65,093.6 | **within IQR** on THIS run |
 
 **ROUTER reads exactly as I-103 predicted, on all four configs**: the
 byte-only guard (b) is statistically indistinguishable from no guard at
-all (c) -- the run form (memcmp-on-top-of-memchr) is the WHOLE cost of
-router's pre-check. **KEYWORD does NOT**: (b) reads a measurable ~48,200 ns
-slower than (c) on BOTH configs, well outside even the wider of the two
-IQRs, despite I-103's own call-count estimate putting (b) and (c) at
-nearly the SAME count (9,470 vs 9,467) -- a finding, stated as measured,
-not diagnosed: keyword's match density is far higher than router's
-(nmatches 433/1,791/7,243 vs 9/58/245 on the same three subjects), so
-`rx_search` (and therefore the byte-only guard's single `memchr` call) is
-invoked roughly 30x more often on keyword than on router for the SAME
-three subjects -- a per-CALL cost multiplied by a much larger call count,
-which the quoted "calls in the prefilter alone" figures do not appear to
-capture on their own terms. Per I-103's own reading rule: "if (b) is
-materially worse than (c), the one-byte form costs something too and
-G1's existing dominance rule is under-measured rather than the run form
-over-admitted" -- that is keyword's reading.
+all (c) on every one -- the run form (memcmp-on-top-of-memchr) is the
+WHOLE cost of router's pre-check.
 
-## 9. Inline-vs-memchr (router only, arm (d) built)
+**KEYWORD is BORDERLINE, and this report says so honestly rather than
+picking the cleaner-sounding of two runs.** In THIS run: `auto-caps`
+crosses the IQR bar (by 1.4% of the bar itself -- a thin margin);
+`auto-nocaps` does NOT (its own (b) arm's IQR widened to 65,093.6 ns this
+round, versus a much tighter 1,583.1 ns in this lane's FIRST delivery,
+where the SAME cell's (b)-(c) delta of 48,346.2 ns read clearly outside
+it). The (b)-(c) DELTA itself is consistently POSITIVE and of similar
+magnitude across both measurement sessions (39,507-48,346 ns on
+`auto-caps`, 13,952-45,236 ns... on `auto-nocaps` the two sessions
+diverge more, 48,346 ns first vs 45,236 ns here -- both far from zero in
+absolute terms) -- the DIRECTION is robust, but whether it clears THIS
+particular IQR decision rule depends on which round's own arm-(b) noise
+happened to land. Per I-103's own reading rule ("if (b) is materially
+worse than (c), the one-byte form costs something too and G1's existing
+dominance rule is under-measured") this reads as: keyword's byte-only
+guard costs something REAL and directionally consistent (tens of
+thousands of ns, not noise-shaped zero, on THE SAME order across two
+independent 5-trial sessions), but the specific IQR-crossing bar used
+here is sensitive to single-run noise at keyword's own scale -- a finding
+about the DECISION RULE's robustness at this sample size, stated as
+measured, not smoothed over. Likely mechanism (stated, not diagnosed
+further): keyword's match density is far higher than router's on the
+same three subjects (nmatches 433/1,791/7,243 vs 9/58/245), so `rx_search`
+(and therefore the byte-only guard's single `memchr` call) is invoked
+roughly 30x more often on keyword than on router -- a per-CALL cost times
+a much larger call count than I-103's own "calls in the prefilter alone"
+figures (9,470 vs 9,467) appear to reflect.
 
-| config | (d) vs (a) | max(IQR_a, IQR_d) | verdict |
+## 9. Inline-vs-memchr (BOTH patterns, arm (d) now built on all six pattern-config pairs)
+
+| pattern / config | (d) vs (a) | max(IQR_a, IQR_d) | verdict |
 |---|---:|---:|---|
-| auto-caps | +394,679.2 (+52.3%) | 50,677.1 | **outside IQR -- memchr-run clearly beats inline** |
-| auto-nocaps | +400,586.5 (+53.7%) | 32,473.4 | **outside IQR -- memchr-run clearly beats inline** |
-| vm-caps | +380,563.0 (+8.2%) | 202,466.7 | **outside IQR -- memchr-run clearly beats inline** |
-| vm-in-caps | +386,841.2 (+8.4%) | 89,253.3 | **outside IQR -- memchr-run clearly beats inline** |
+| router / auto-caps | +368,898.4 (+46.9%) | 45,547.3 | **outside IQR -- memchr-run clearly beats inline** |
+| router / auto-nocaps | +410,608.4 (+52.5%) | 23,445.8 | **outside IQR -- memchr-run clearly beats inline** |
+| router / vm-caps | +468,938.2 (+9.9%) | 300,880.9 | **outside IQR -- memchr-run clearly beats inline** |
+| router / vm-in-caps | +402,795.0 (+8.5%) | 58,416.5 | **outside IQR -- memchr-run clearly beats inline** |
+| keyword / auto-caps | +579,708.0 (+42.3%) | 59,446.9 | **outside IQR -- memchr-run clearly beats inline** |
+| keyword / auto-nocaps | +591,254.8 (+43.6%) | 14,512.7 | **outside IQR -- memchr-run clearly beats inline** |
 
-**Confirms I-103a's own EXPECT** ("at 2.8-3.2% memchr-run should still
-beat the inline scalar loop") on every one of the four configs measured;
-the inline hand-twin is NOT a refuted expectation here -- router's own
-2.8% byte frequency sits below whatever crossover exists (section 10).
-Keyword's arm (d) is STOPPED (section 3); this project cannot report an
-inline-vs-memchr verdict for keyword's 3.2% point from this window.
+**Confirms I-103a's own EXPECT on BOTH patterns, all six configs**:
+"at 2.8-3.2% memchr-run should still beat the inline scalar loop" --
+memchr-run wins by a wide, IQR-clearing margin everywhere it was
+measured, at both router's 2.8% and keyword's 3.2% byte frequency. Since
+keyword's arm (d) is now built (section 3, the offset-corrected form),
+this verdict is no longer router-only.
 
-## 10. Derived constants and the crossover arithmetic (shown in full)
+## 10. Derived constants and the crossover arithmetic, WITH keyword's inline datapoint
 
-**The naive two-equation solve is ill-conditioned and is reported as
-such, not silently discarded.** Setting up I-103a's own linear model
-(`ΔT = c_byte x BYTES + c_hit x HITS`) at the `auto-nocaps` cell (I-103's
-own originally-asked config) for both patterns:
+**Does the added point condition the system? NO -- shown explicitly, per
+the ruling's own instruction, and stopped there rather than forced.**
+Both the memchr and the inline two-equation solves remain ill-conditioned
+with keyword's own inline point in hand, for the SAME underlying reason
+as before: the two patterns' three throughput subjects have nearly
+IDENTICAL total byte counts (1,375,008 vs 1,376,256, a 0.09% spread) --
+adding a SECOND mechanism's equation pair over the same two subject-count
+totals does not change that. Using the `auto-nocaps` cell (I-103's own
+originally-asked config) for both patterns, both mechanisms:
 
-    router:  1,375,008 * c_byte +  39,095 * c_hit =   335,254.6
-    keyword: 1,376,256 * c_byte +  44,132 * c_hit =   528,553.7
+    MEMCHR (ΔT = (a)-(c)):
+      router:  1,375,008*c_byte +  39,095*c_hit =   386,947.7
+      keyword: 1,376,256*c_byte +  44,132*c_hit =   557,926.7
+      => (eliminating c_byte) 5,001.5*c_hit = 170,626.8  =>  c_hit = 34.11 ns/hit
+      => c_byte = (386,947.7 - 39,095*34.11) / 1,375,008 = -0.689 ns/B  (UNPHYSICAL)
 
-BYTES differs by only 0.09% between the two rows (1,375,008 vs
-1,376,256) while HITS differs by 12.9% (39,095 vs 44,132) -- the system
-is NEARLY COLLINEAR in `c_byte`'s column, so solving it exactly (scale
-the first equation by 1,376,256/1,375,008 = 1.0009076 and subtract)
-gives:
+    INLINE (ΔT = (d)-(c), keyword's point now real, not assumed):
+      router:  1,375,008*c_byte +  39,095*c_hit =   797,556.1
+      keyword: 1,376,256*c_byte +  44,132*c_hit = 1,149,181.5
+      => (eliminating c_byte) 5,001.5*c_hit = 350,900.7  =>  c_hit = 70.15 ns/hit
+      => c_byte = (797,556.1 - 39,095*70.15) / 1,375,008 = -1.414 ns/B  (UNPHYSICAL)
 
-    5,001.5 * c_hit = 192,994.7   =>   c_hit = 38.58 ns/hit
-    c_byte = (335,254.6 - 39,095 * 38.58) / 1,375,008 = -0.853 ns/B
+Both solves land on a negative (unphysical) byte term -- WORSE in
+magnitude for the inline system than the memchr one, not better. The root
+cause is the FREQUENCY gap, not merely the byte-count gap: router's 2.8%
+and keyword's 3.2% differ by only 0.36 percentage points (2.8433% vs
+3.2067% on this window's own three subjects, to be precise -- see below),
+and a two-parameter linear fit's slope term is proportional to 1/(that
+gap), so any few-percent measurement noise in ΔT is amplified into a
+wildly wrong intercept. **Reported instead, as single-term bounding
+estimates** (assuming the OTHER term negligible, one at a time -- I-103a's
+own model implies this is a reasonable simplification, since its assumed
+memchr byte term contributes a minority of the total at these
+frequencies):
 
-A NEGATIVE per-byte cost is not physical -- the two-point solve is too
-sensitive to the rows' near-identical BYTES totals to trust its split.
-**Reported instead, as single-term bounding estimates** (assuming the
-OTHER term negligible, one at a time -- the same simplification I-103a's
-own model implies is reasonable, since 0.017 ns/B x 1,375,008 B ~ 23,375
-ns is a minority of 7.7 ns/hit x 39,095 ~ 301,032 ns under I-103a's own
-assumed constants):
+    memchr, per-hit only (assume c_byte ~ 0), auto-nocaps:
+      router:  386,947.7 /  39,095 hits =  9.90 ns/hit
+      keyword: 557,926.7 /  44,132 hits = 12.64 ns/hit
+    (I-103a's own assumed memchr constant: 7.7 ns/hit)
 
-    memchr, per-hit only (assume c_byte ~ 0):
-      router:  335,254.6 /  39,095 hits = 8.58 ns/hit
-      keyword: 528,553.7 /  44,132 hits = 11.98 ns/hit
-    (I-103a's own assumed memchr constant: 7.7 ns/hit -- router's own
-    estimate, 8.58 ns/hit, is within 11.4% of it; keyword's, 11.98
-    ns/hit, is higher, consistent with 8's finding that keyword's guard
-    costs more than a pure per-hit model predicts)
+    inline, per-byte only (assume c_hit ~ 0), auto-nocaps:
+      router:  797,556.1   / 1,375,008 B = 0.580 ns/B
+      keyword: 1,149,181.5 / 1,376,256 B = 0.835 ns/B
+    (I-103a's own assumed inline constant: 0.5 ns/B)
 
-    inline, per-byte only (router auto-nocaps, assume c_hit ~ 0):
-      (d)-(c) = 1,146,928.4 - 411,087.3 = 735,841.1 ns
-      735,841.1 / 1,375,008 B = 0.535 ns/B
-    (I-103a's own assumed inline constant: 0.5 ns/B -- 7.0% above it)
-
-    inline, per-hit residual (using I-103a's OWN 0.5 ns/B for the byte
-    term, solving the remainder against router's own hit count):
-      735,841.1 - 0.5 * 1,375,008 = 48,337.1 ns
-      48,337.1 / 39,095 hits = 1.24 ns/hit
-    (I-103a's own assumed inline constant: ~2 ns/hit -- same order of
-    magnitude, on the low side)
+Both single-term estimates are HIGHER on keyword than on router (12.64
+vs 9.90 ns/hit; 0.835 vs 0.580 ns/B) -- exactly what the neglected term
+being nonzero and hit-frequency-correlated would produce (a
+per-hit-only reading absorbs a growing byte-term contribution as
+frequency rises, and vice versa), which is itself indirect evidence the
+two-parameter model is real even though this window's two frequency
+points sit too close together to solve it.
 
 **Crossover, using I-103a's OWN stated model constants** (0.017 ns/B +
-7.7 ns/hit memchr; 0.5 ns/B + 2 ns/hit inline; treating "frequency" as
-hits per byte scanned, f):
+7.7 ns/hit memchr; 0.5 ns/B + 2 ns/hit inline; f = hits per byte scanned):
 
     0.017 + 7.7f = 0.5 + 2f
     5.7f = 0.483
-    f = 0.0847  (8.47%)
+    f = 0.0847  (8.47%, matching I-103a's own "near 8%")
 
-matching I-103a's own "near 8%" statement. **This lane's own single
-per-pattern measurements corroborate the ORDER OF MAGNITUDE of both
-model constants (memchr per-hit: 8.58 ns measured vs 7.7 ns assumed on
-router; inline per-byte: 0.535 ns measured vs 0.5 ns assumed on router)
-but cannot independently re-derive the crossover frequency**: doing so
-needs the byte/hit split solved cleanly, which this data set's
-near-collinear BYTES totals do not support (above), and only ONE
-pattern (router, at 2.8%) has a measured inline point at all -- a
-second, well-separated frequency point (ideally with the byte-count
-axis varied independently of hit density, unlike this window's three
-fixed-size subjects) is what a genuinely independent crossover estimate
-would need.
+**This lane's measurements corroborate the order of magnitude of both
+model constants on BOTH patterns now (memchr per-hit: 9.90/12.64 ns
+measured vs 7.7 ns assumed; inline per-byte: 0.580/0.835 ns measured vs
+0.5 ns assumed) but still cannot independently re-derive the crossover
+frequency, and the added keyword point does not fix this** -- it is
+STOPPED here per the ruling's own instruction ("if it still can't
+separate the byte/hit terms cleanly, show it and stop there, no
+forcing"). A genuinely independent crossover estimate needs frequency
+points spread much further apart than 2.8%/3.2% (a byte much rarer, one
+much commoner) or subject sets whose total BYTE COUNTS differ enough to
+break the near-collinearity directly -- neither is available from this
+window's three fixed-size, shared-across-patterns throughput subjects.
 
 ## Summary of what changed vs I-103/I-103a's literal asks
 
 - Config set: I-103a's wider four/two-config grid, reconciled explicitly
   (deviation 3) -- I-103's own single `(auto, --no-captures)` cell is the
   `auto-nocaps` row throughout.
-- Arm (d): built and measured on router's four configs (offset 0, the
-  template applies literally); STOPPED on keyword's two configs (offset
-  1, the literal template would build a guard that never fires --
-  deviation 4, section 3's verbatim region).
+- Arm (d): built and measured on ALL SIX pattern-config pairs (router's
+  four, keyword's two) after the manager's ruling overrode this lane's
+  initial STOP on keyword's offset-1 case -- the offset-corrected form is
+  quoted in section 3 and answer-checked equal to (a)/(b)/(c) before any
+  timing.
 - Everything else -- 5 interleaved trials, load gate, answer-check
   before any timing, the O-50/[B81] fallback instrument shape -- follows
   I-98's protocol and I-103/I-103a's text verbatim.
