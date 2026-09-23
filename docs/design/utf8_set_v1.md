@@ -1,13 +1,23 @@
-# The UTF-8 encoding set — design, v0.1
+# The UTF-8 encoding set — design, v0.2
 
 **Plan row `[B77]`. Frank's charter, relayed as inbox `I-90`
 (2026-09-22 ~23:4x, pcrec manager; `docs/dev/inbox_from_pcrec.md`).**
-STATUS: **v0.1 — PROPOSED, DESIGN ONLY.** Nothing is built. No file
+STATUS: **v0.2 — PROPOSED, DESIGN ONLY.** Nothing is built. No file
 under `bench/`, `schema/`, `pcrecbench/`, `testees/` or `store/` is
 touched by this note or by the lane that wrote it. `bench/utf8/` does
 not exist and this note does not create it: the build lanes open after
 the design panel, per `capability_set_v1.md`'s own precedent (§11's lane
 plan opened only after R5).
+
+**Change log.** v0.2 (2026-09-23, lane `b77apply`) applies every ACCEPT
+of the R8 D6 critic panel's disposition table
+(`docs/dev/reviews/2026-09-23-r8-utf8-set.md`, panel of three:
+`-charter.md`, `-measurement.md`, `-semantics.md`; 18 findings —
+F-C1..C6, F-M1..M7, F-S1..S5 — all ACCEPTed in some form). Two blockers
+fixed: §7.1/§7.2's pcrec-roster identity claim (F-C1) and family (a)'s
+undeclared `\d`/`\s` UCP narrowing (F-C3, two members added, 74 → 76
+total). Each touched section below carries its own citation back to the
+finding id.
 
 **Frank's word, verbatim in substance** (I-90's own quotation): *"Build
 the utf bench. But make it somewhat complete, not 'small' — or at least
@@ -75,7 +85,7 @@ I-90's five charter clauses, verbatim in substance:
 | (2) subjects | **§4** | five script corpora, deterministically generated from committed per-script word pools, sha256-manifested; 90 short subjects typed per family; a 64k/256k/1m mixed sweep plus a per-script 64 KB arm; the byte-histogram claim stated as the thing the set actually asserts |
 | (3) families + growth | **§5** (the six first-release families, 73 members + floor), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
 | (4) pcrec testees | **§7.2** | four `-e utf8` configs on the existing `flags` mechanism, which is how the encoding becomes part of `testee_id` rather than an invisible run-time choice; the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
-| (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note) |
+| (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note); P1 scores clause 5's sharpest offset-skip pair, declared as a narrowing of I-90's plural "rows" — the rest of that population is read in the ledger (F-C6) |
 
 Two cross-cutting sections carry no single clause: **§12** (the outlier
 rule, stated before any run) and **§13** (the build plan), **§14** (the
@@ -102,8 +112,11 @@ version `0.1`.**
 `bench/syntax/NOTES.md`'s "Room for a utf family" reserves
 `bench/syntaxutf/` and describes it as the census re-read under UTF: the
 same registry seed, the same `encoding-bytes`/`encoding-utf8` tag pair,
-"the seed's rows re-read with `status`/`family` unchanged and the
-utf-only rows moving from `not-exercised` to `covered`."
+"**the** seed's rows **would be** re-read with `status`/`family`
+unchanged and the utf-only rows moving from `not-exercised` to
+`covered`" **(F-C4, v0.2: quote restored verbatim — the source is
+conditional, describing what a future `syntaxutf` build would do, not a
+completed fact)**.
 
 That is a DIFFERENT set from the one I-90 charters, and both are
 legitimate:
@@ -568,10 +581,13 @@ UTF-8 — say which do and how each is told."*
 **The finding that shapes this whole section: every adapter in this
 repo is deliberately BYTE-MODE today, and each one says so in its own
 file.** That is not an oversight — it is what makes
-`bench/capability`'s family 12 (`binary-nonutf8`) measurable at all, and
-three adapters cite that family by name as the reason. So a UTF-8 set
-does not "turn on" a mode; it adds a SECOND CONFIG per engine, with the
-encoding visible in `testee_id`.
+`bench/capability`'s family 12 (`binary-nonutf8`) measurable at all.
+**(F-C2, v0.2, corrected):** one adapter (`re2`, in both `driver.cc:27`
+and `CLAUDE.md:102-103`) cites the family `binary-nonutf8` by name as
+its reason; two more (`onig`, `vectorscan`) cite the `non-utf8-subject`
+REQUIRES token the family scores against, without naming the family
+itself. So a UTF-8 set does not "turn on" a mode; it adds a SECOND
+CONFIG per engine, with the encoding visible in `testee_id`.
 
 ### 7.1 The surface table
 
@@ -991,7 +1007,14 @@ expressible — `n_wrong`, `pass_rate`, `median_ns`, `status`,
   P1.b, NOT machine-scoreable and stated as prose:** the two artifacts
   stamp DIFFERENT `RX_REQ_BYTE` values — FP §3.1 measured 0x40 for one
   ordering and 0xA9 (é's continuation byte) for the other on the shipped
-  compiler — which is the mechanism behind P1.a.
+  compiler — which is the mechanism behind P1.a. **(F-C6, v0.2, declared
+  narrowing):** I-90 clause 5 names "the offset-skip rows" (plural,
+  any pattern with a fixed-offset literal prefix); P1 scores only the
+  sharpest pair. The rest of that population (`lit-run-3`,
+  `lit-mixed-ascii`, `alt-shared-char`, and any other member with a
+  fixed-offset literal prefix) is read in the ledger under R6, not
+  formally predicted — a prediction needs a concrete witness, and P1 is
+  it.
 - **P2 — the high necessary byte (I-90 §5's second).** `lit-run-3`
   (`日本語`, every necessary byte ≥ 0xE6) has a `throughput` ns/byte on
   the `cjk` 64 KB subject at least **×2** `lit-mixed-ascii`'s on the same
@@ -1117,7 +1140,7 @@ Five lanes, in dependency order. None opens before the design panel.
 
 | lane | what it builds | depends on |
 |---|---|---|
-| **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | §8.1, §8.4, §7.5 — **nothing else can start** |
+| **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | **— none; U1 is the entry point** and its own acceptance check (the byte-identical re-derivation below) must pass before U4/U5 read its output **(F-C5, v0.2: reworded — the prior cell's "nothing else can start" read as contradicting U3's own "parallel with U1" row two lines down; U1 itself has no prerequisite, which is what the prose underneath already said)** |
 | **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled | U1's tokens |
 | **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check` | — (parallel with U1/U2) |
 | **U4** | the PATTERNS: `patterns.rxt` as the source of truth with its `ext bench` roster block, `gen_patterns.py` rendering `patterns/*.rx`, the sidecar, `provenance.tsv` | U3 (for the typed short subjects), U2 (for the `ext bench` roster) |
