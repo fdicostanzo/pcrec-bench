@@ -5661,3 +5661,21 @@ tonight's ledger: 14/62 run-stamping patterns, union 18; the falsifier
 pattern logparse-atomic now carries a REAL 2-byte run beyond its pick
 move. Window (b) launched 07:47 EDT, four cells at b1885a83, O-45's
 AFTER as the BEFORE.
+
+## 2026-09-23 (~13:1x EDT) — [B82] merged: the class-pure reporter
+
+Lane b82views delivered in ~4 h: capture_class.py as the report-time
+authority (keyed on the pin-independent config identity, never the id
+verbatim; fail-loud undeclared; rust-default the single I-100 override
+with its captures_at declared), reporter v20 with the two class-pure
+headline views + the demoted mixed table + Frank's standing cross-class
+query — which FIRED 23 real hits on a loglines roster during the lane's
+own validation (libpcre2-jit 0.273× pcrec auto-nocaps on
+level-context/throughput among them; Frank's "that would be surprising"
+has data now). Single-class rosters proven byte-identical. Sidecar wave
+at catalogue 3.5 done (192/192); the three capability groups
+regenerating at v20 detached. Owed onward: Frank's ruling on the matrix
+flat columns' cross-class mixing (disclosed, not silently fixed);
+class-aware interpreter rules; the whole-store v20 wave rides later
+closes. Next: [B83]'s timed block once the regen closes, then [B84]'s
+re-pin build, the window ~22:0x.
