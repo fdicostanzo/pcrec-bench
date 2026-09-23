@@ -97,7 +97,11 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   either way. Report, never diagnose. CAVEAT: pcrec's darwin gate runs on
   the same commit — confirm 8d716693 still stands with pcrecdev1 before
   the window opens.
-- [B75] STATE:started — (2026-09-22 ~20:2x EDT, the wake queue's one live
+- [B75] STATE:completed — (2026-09-22 ~21:0x EDT: lane b75kb27 delivered,
+  reviewed, merged 77d5a9e; the wrapfix report group regenerated at v19 and
+  pushed 2aba104; KB-27 CLOSED. Owed, small: an interpreter catalogue rule
+  reading n_no_expectation — today's sidecar lines list the subjects with
+  '0 wrong / 0 give-up' and no stated reason.) — (2026-09-22 ~20:2x EDT, the wake queue's one live
   item, run in parallel with [B74]'s re-pin build) KB-27: the capability
   report labels `evil-alt-nested` × {rd-evil-alt-near-miss,
   sd-empty-alt-hit} (short-search) "wrong" (n_wrong=5 each) though

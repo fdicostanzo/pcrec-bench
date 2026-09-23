@@ -5539,3 +5539,29 @@ honest rendering, targeted checks only while the re-pin lane owns the
 heavy slot; run now because the two tainted cells sit in tonight's
 window comparison population). Window [B74] (b) opens after the re-pin
 merges.
+
+## 2026-09-22 (thirtieth session, evening) — [B75]/KB-27 closed same-day
+
+Lane b75kb27 delivered ~2 h after spawn: the mechanism is
+harness.outcome_for()'s expectation-is-None branch emitting the SAME
+match_outcome a real disagreement gets (did-not-match-as-expected), and
+reduce.py counting the value without its diagnostic — the store never
+fabricated a verdict; the defect was reduction-layer only. Fix merged
+(77d5a9e): n_no_expectation on MatchCell/SetCell subtracted out of
+n_wrong keyed on the harness's one fixed diagnostic (anti-drift test
+pins the literal), reporter v19 with a sixth closed status token
+no-expectation (deliberately NOT "unjudged" — that word already names
+the trial-agreement count in the same report), matrix chip, 101
+reporter tests. Manager ran the owed regen (the 7-record wrapfix
+group): n_wrong 10→0 / no-expectation on exactly the three
+never-gave-up testees' two cells, high-byte-run's real wrongs
+untouched (the control), matrix.html re-rendered, sidecar regenerated
+via regen_sidecars.py (the four capability-0.1-first sidecar FAILs =
+the known [B72] Q6 (i) blocked-on-ruling conflict, pre-existing,
+untouched), check-interpret 190/190, pushed 2aba104. Tonight's [B74]
+window now reads an honest BEFORE on evil-alt-nested. Owed small: a
+catalogue rule reading n_no_expectation. Meanwhile b74repin reports
+engineering done + make check running; TWO findings beyond I-87 (the
+real jump is 27→29 with an unannounced abi-28 REL-1.4 step; a
+v0.1.0-beta CLI break — bare positionals now input files, `--pattern`
+required, seven call sites fixed) — both go into the I-87 done-signal.
