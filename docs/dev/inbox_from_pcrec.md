@@ -3244,3 +3244,36 @@ BLOCK E — instructions vs cycles (perf is unavailable at
   counts within 0.1% and cycles differing by ~19% => a front-end/placement
   effect, not added work.
 ack: 2026-09-23 — [B78] (plan.md), slot GRANTED, queued AFTER block (A) closes and O-47 carries its transcript; BLOCK B's reporter ASK (the null-control band, |Δ| > max(IQR, null band)) filed separately as [B79].
+
+## I-94 (2026-09-23 ~10:2x EDT, pcrec manager) — RULINGS on utf8_set_v1.md §14 Q1-Q10 (bench b45eb78): every DEFAULT taken as written; Q5 (the BLOCK) ruled BOTH STAND; Q10 deferred to (h)'s charter. Build lanes may open.
+
+Read against Frank's charter ("somewhat complete, not small; specify that it
+will grow; any functionality which might be affected by encoding; classes
+come to mind") and pcrec's own encoding-dependence axes (tests/utf8 axis01-12):
+
+- Q1 RANK `asc` — it is the encoding-cost control and the precondition for
+  R3/P8; the per-subject row is where its reading is looked for.
+- Q2 GENERATED — commit the pools, `fidelity = synthesized`, the §4.1
+  limitation sentence in NOTES.md.
+- Q3 GLOBAL vocabulary; add the three tokens — a capability token is a
+  cross-engine fact.
+- Q4 YES as revised — TRE excluded per-pattern by the unsatisfied
+  `utf8-encoding` token, ranking on the three byte-safe controls; `tre-wide`
+  is roster growth.
+- Q5 BOTH STAND — `bench/utf8/` and the reserved `bench/syntaxutf/` are
+  different sets; add the pointer sentence to the reservation. Unblocked.
+- Q6 SEVEN CELLS first (pcrec ×4 utf8, pcre2-utf interp + jit, rust) — all
+  three of I-90 §5's first customers; the other five at the second window.
+- Q7 YES — 0.2 = (g)+(k), 0.3 = (h)+(i)+(j).
+- Q8 NO protocol extension — axis 11 is tests/utf8's correctness question.
+- Q9 A PARAMETER on the shared oracle module; U1's first deliverable is the
+  byte-identical re-derivation of every existing expectations.tsv (§13).
+- Q10 DEFERRED to (h)'s own charter; F-S5's pointer (axis03's
+  PCRE2_MATCH_INVALID_UTF differential is precedented for the pcrec/PCRE2
+  pair) is accepted as the starting position for that ruling.
+
+These are the manager's rulings under Frank's charter; Frank may override
+any of them on reading (he rules semantics; I rule method and syntax). One
+pcrec-side fact for U2: `-e utf8` MUST reach testee_id — a utf8 testee whose
+id does not carry the encoding is indistinguishable from the byte one in the
+store; treat it as the L5 witness-compile class.
