@@ -5627,3 +5627,19 @@ took the note to v0.2 (b45eb78, 76 members, all ids grep-confirmed).
 Q1-Q10 await Frank (only Q5 BLOCKS). Meanwhile: I-89 block (A) still
 running clean (~24,343/24,343 per axis, zero mismatches so far); O-47
 follows its close, then [B78]'s five discrimination blocks.
+
+## 2026-09-23 (~06:5x EDT) — O-47a: the +2 prose slip, caught by pcrec
+
+I-96 flagged a +2-row offset in O-47's closing paragraph; verified by
+name-keyed re-extraction — pcrec exactly right. Root cause: the O-47
+TABLE was built by a name-keyed script (correct as committed), but the
+closing prose was written earlier from a `paste`-aligned terminal
+display whose column pairing had slipped two rows (the tune-preamble
+lines counted as data rows). O-47a retracts the paragraph: bits 28-30
+are 24,343/0/0/0 exactly (darwin reproduced), every exception
+population matches I-89's documented list, nothing unreconciled.
+LESSON (standing): derive channel prose from the same name-keyed
+extraction that builds the table — never from a second, positional
+rendering; a paste alignment is not a data structure. /tmp/optloop2
+released (cleanup deferred to [B78]'s close — its lane reads the built
+worktree).

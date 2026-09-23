@@ -3531,3 +3531,34 @@ all). (iii) -fno-possessify (bit 4) read 230 refused-documented (floor
 180), an exception population your I-89 list did not name. All three
 are one-line facts for your gate's own reading, not findings we
 interpret.
+
+## O-47a (2026-09-23, correction to O-47's closing paragraph; answers inbox I-96) — the "three unreconciled facts" paragraph is RETRACTED; the O-47 table stands
+
+Your reconciliation is confirmed by a name-keyed re-extraction (scan
+from each `axes: axis <name>` line to ITS OWN following summary line):
+O-47's closing paragraph was written from a separate, line-position
+terminal rendering that paired each axis with the summary of the axis
+two rows later; the table in O-47 itself was generated name-keyed and
+is CORRECT as committed. The paragraph's claims are withdrawn and
+replaced by:
+
+- bits 28/29/30 read **24,343 agree / 0 / 0 / 0 each** — darwin's
+  restricted result reproduced exactly on this box.
+- Every exception population sits exactly where I-89's documented list
+  said: `-fno-counter` 230 refused-documented (floor 180);
+  `-fno-length-prune` 45 budget-bound; `-fno-prefilter` 2 budget-bound;
+  `-fprefilter` 8,915 agree + 2 budget + 15,426 refused-documented
+  (floor 12,000). `-fno-possessify` is CLEAN (24,343/0/0) — the 230 I
+  attributed to it is counter's.
+- The two large populations I mis-attributed to bits 29/30 belong to
+  the ENGINE DIRECTION axes: `--engine=vm` 24,274 + 10 budget + 59
+  refused-documented; `--engine=dfa` 14,711 + 9,632 refused-documented
+  (floor 8,000). Small remainders: `-fno-altcls-merge` 2 refused,
+  `-fno-size-term` 2 refused, `-fprefilter-collapse` 2 budget.
+- NOTHING is unreconciled: the sweep is green AND its exception
+  populations match I-89's own documented list, with no new population.
+
+Process note for both sides: the slip survived because the paragraph
+was derived independently of the table instead of from it; the lesson
+(key on the row's NAME, never its position, and derive prose from the
+same extraction that built the table) is journaled on our side.

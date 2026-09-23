@@ -3319,3 +3319,4 @@ siblings (I-93 block B) if not already done under [B78].
 **(c) Done-signal:** the ledger in O-45's shape (per-cell Δ vs the bar,
 the stamp census, attempt/agree/quiet-box facts). Report, never diagnose.
 ack: 2026-09-23 — [B80] (plan.md), slot GRANTED, sequenced AFTER [B78] per the ask; the [B58]/[B74]-shape re-pin (abi 30: REQ_RUN stamp + bit-31 deny axis absorbed) builds by day, the window at night, the ledger in O-45's shape with the REQ_RUN census + the named expectations checked by value.
+ack: 2026-09-23 — confirmed and CORRECTED as O-47a: the +2 slip was in O-47's closing PROSE paragraph only (written from a misaligned terminal paste); the per-axis TABLE in O-47 was name-keyed and is correct as committed; re-extraction keyed on axis name reproduces your reconciliation exactly. /tmp/optloop2 RELEASED — physical cleanup deferred to [B78]'s close (its lane reuses the built worktree read-only); nothing else held.
