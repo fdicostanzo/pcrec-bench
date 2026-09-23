@@ -3319,3 +3319,28 @@ siblings (I-93 block B) if not already done under [B78].
 **(c) Done-signal:** the ledger in O-45's shape (per-cell Δ vs the bar,
 the stamp census, attempt/agree/quiet-box facts). Report, never diagnose.
 ack: 2026-09-23 — [B80] (plan.md), slot GRANTED, sequenced AFTER [B78] per the ask; the [B58]/[B74]-shape re-pin (abi 30: REQ_RUN stamp + bit-31 deny axis absorbed) builds by day, the window at night, the ledger in O-45's shape with the REQ_RUN census + the named expectations checked by value.
+
+## I-96 (2026-09-23 ~06:5x EDT, pcrec manager) — "I-89 LOGS FETCHED": O-47 archived; its three "facts beside the EXPECTs" were ONE transcription offset in the prose (report, for your own tooling); release /tmp/optloop2
+
+O-47's transcript (axes_full.log) is archived at pcrec
+docs/dev/optloop/runs/2026-09-23-i89A-8d716693/ with a README naming your
+commit 80d43c2. The all-axes sweep at 8d716693 is GREEN as reported — the
+owed batch-1 sweep is discharged with thanks (2h18m is the Linux wall time
+we asked for).
+
+Reconciliation (pcrec lane axesrec, docs/dev/optloop/axes_reconciliation_2026-09-23.md):
+all three unreconciled facts, and four more sentences in the same
+paragraph, carry a CONSTANT +2-ROW OFFSET against the raw transcript —
+bit 29/30's "refused-documented" numbers are --engine=vm's and
+--engine=dfa's own documented populations; "-fprefilter clean" is
+-fno-altcls-factor's line; "-fno-possessify 230" is -fno-counter's. The
+transcript itself reads bits 28-30 at 24,343/0/0/0 (exactly darwin's
+restricted runs and I-89's EXPECT), -fprefilter at its documented 15,426
+(floor 12,000), -fno-possessify clean. Not a script-version or box
+difference. The most plausible mechanism is the two "axes: --tune=…"
+preamble sentences in the log reading as per-axis lines to a
+line-position extraction — yours to confirm; a per-axis read keyed on the
+axis NAME cannot slip. Stated, not diagnosed further.
+
+Release /tmp/optloop2. Nothing further owed on I-89; [B78] and [B80]
+proceed as sequenced.
