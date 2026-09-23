@@ -72,6 +72,20 @@ REPORT_COLUMNS = [
     "pass_rate", "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict",
 ]
 
+# [B85] (KB-28, docs/dev/known_issues.md): `render_tsv`'s header appends
+# ONE 19th column, `capture_class`, ONLY when a mixed-capture-class
+# roster is rendered at subject grain (`report.py`'s own
+# `show_capture_class_column`) -- the fix for the three-pass duplication
+# that drove two committed `.subject-grain.tsv` files past the remote's
+# 100 MB push limit. `ReportTsv` recognises this SHAPE so a real report
+# carrying it still LOADS (a subject-grain report/slice over a mixed
+# roster is exactly the population this fix touches); no rule reads
+# `capture_class` yet -- a rule that wants to is a catalogue change
+# (declaring `.capture_class` in its own `inputs`, §3.2.2) this fix
+# deliberately leaves OWED, per the manager's own steer at merge
+# (docs/dev/lanes/b85kb28_report.md). `catalogue_version` is UNCHANGED.
+REPORT_COLUMNS_WITH_CAPTURE_CLASS = REPORT_COLUMNS + ["capture_class"]
+
 # `store/index.tsv`'s eight columns (its own line 1).
 INDEX_COLUMNS = ["path", "subbench", "version", "testee_id", "machine_id",
                  "timestamp", "status", "rows"]
@@ -246,18 +260,26 @@ class ReportTsv:
             raise InterpretError(f"{path}: no header comment line")
         self.header = split_header(lines[0], known_keys)
         cols = lines[1].split("\t")
-        if cols != REPORT_COLUMNS:
+        # [B85] (KB-28): a mixed-roster subject-grain report/slice carries
+        # ONE extra column, `capture_class` -- see
+        # `REPORT_COLUMNS_WITH_CAPTURE_CLASS`'s own comment. Either exact
+        # shape loads; anything else is still refused BY NAME.
+        if cols == REPORT_COLUMNS_WITH_CAPTURE_CLASS:
+            columns = REPORT_COLUMNS_WITH_CAPTURE_CLASS
+        elif cols == REPORT_COLUMNS:
+            columns = REPORT_COLUMNS
+        else:
             raise InterpretError(f"{path}: unexpected column list {cols}")
         self.rows = []
         for ln in lines[2:]:
             if not ln:
                 continue
             f = ln.split("\t")
-            if len(f) != len(REPORT_COLUMNS):
+            if len(f) != len(columns):
                 raise InterpretError(
                     f"{path}: row with {len(f)} fields, expected "
-                    f"{len(REPORT_COLUMNS)}: {ln[:80]!r}")
-            self.rows.append(dict(zip(REPORT_COLUMNS, f)))
+                    f"{len(columns)}: {ln[:80]!r}")
+            self.rows.append(dict(zip(columns, f)))
         self.by_section = defaultdict(list)
         for r in self.rows:
             self.by_section[r["section"]].append(r)

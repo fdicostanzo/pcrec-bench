@@ -1228,3 +1228,39 @@ silently dropping a sidecar's `--subject-grain` input on every
 regeneration since [B47] shipped it, invisible until this wave was the
 first to run the script against one of the two subject-grain-stamped
 sidecars -- fixed in the same lane, `scripts/CLAUDE.md` updated.
+
+(Reporter waves between this entry and the one below -- [B13.2]'s
+interpreter preconditions, KB-18's full diagnostic, [B47]'s
+subject-grain slice, [B52]'s matrix report surface, KB-27's
+no-expectation label and [B82]'s capture-class views -- are documented
+in `report.py`'s own module docstring, `reports/CLAUDE.md` and
+`pcrecbench/tests/CLAUDE.md`, not backfilled here; this file's own
+"## The reporter, [Bn]" sections resume below with the most recent one.)
+
+## The reporter, [B85] (2026-09-23) -- KB-28: subject grain never duplicates (v21)
+
+`docs/dev/known_issues.md` KB-28: [B82]'s three-pass dispatch
+(`rank_yes`/`rank_no`/the demoted mixed `rank`), fine at SET grain, drove
+two capability AFTER groups' `.subject-grain.tsv` files to 107 MB at
+SUBJECT grain -- over the remote's 100 MB push limit, the push rejected,
+those two groups held at v19. Fix: at subject grain a mixed roster gets
+ONE ranking pass (never three), with a `capture class` column
+(`pcrecbench.capture_class.classify_testee(t).bucket`) on the single
+table instead of a filtered roster; SET grain is completely untouched
+(proven byte-identical, modulo the version line, against a real
+committed render -- `reports/2026-09-22-capability-0.1-budu-ryzen1600-
+wrapfix-25b1984f.md`/`.tsv`, regenerated from its own committed query
+and diffed). `render_tsv`'s header carries the new `capture_class`
+column ONLY when a mixed roster is rendered at subject grain (every
+other case's header is the unchanged 18 columns); every row in the
+function goes through one `_emit_row(cols, class_val="")` helper so the
+column count always matches. The standing cross-class query (I-101) is
+UNCHANGED -- it was never one of the tripled sections. A new
+`_warn_if_large` prints a stderr WARNING (never a failure) when a
+rendered report exceeds 50 MB, called on every format `main()` renders.
+`REPORTER_VERSION` bumps to `v21 (2026-09-23)`; regeneration of the two
+held capability AFTER groups (and the wrapfix group's own
+`.subject-grain.*` siblings) is OWED to the manager at merge. Full
+detail, including the exact `diff` proof and every call site touched,
+is in `report.py`'s own `[B85]` module-docstring section and
+`docs/dev/lanes/b85kb28_report.md`.

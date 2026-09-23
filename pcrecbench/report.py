@@ -1343,6 +1343,86 @@ schema, the harness, an adapter or any store id.
   the manager's merge step regenerates the capability groups so O-49's
   records get their views, per the brief. `make check-harness` is
   UNTOUCHED (nothing here reaches an adapter, a driver or the harness).
+
+## The reporter, [B85] (2026-09-23) -- KB-28: subject grain never duplicates (v21)
+
+docs/dev/known_issues.md KB-28, found at [B82]'s own merge-time
+regeneration: at `--grain subject` on a roster spanning both capture
+classes, [B82]'s three-pass dispatch (`rank_yes`/`rank_no`/the demoted
+mixed `rank`) rendered the SAME per-subject rows up to three times --
+fine at SET grain (a handful of rows per group) but a real-size hazard
+at subject grain (one row per subject), driving the two capability
+AFTER groups' `.subject-grain.tsv` files to 107.08 / 106.76 MB, over the
+remote's 100 MB push limit. The push was rejected and those two groups
+are held at v19 until this fix's regeneration runs.
+
+- **THE FIX IS SCOPED TO GRAIN, NOT TO [B82]'s CLASSIFICATION.** SET
+  grain (`_dispatch_ranking_views`'s other branch, `render_tsv`'s
+  `spans_both and grain != "subject"` guard) is COMPLETELY UNTOUCHED --
+  the three-pass shape still fires there exactly as `v20` renders it,
+  proven byte-identical (modulo the version-stamp line) against a real
+  committed render: `reports/2026-09-22-capability-0.1-budu-ryzen1600-
+  wrapfix-25b1984f.md`/`.tsv`, regenerated from the file's own committed
+  query and `diff`'d -- the ONLY difference in either file is the
+  `reporter: v20` -> `v21` line.
+- **AT SUBJECT GRAIN, a mixed roster gets ONE pass, not three.**
+  `_dispatch_ranking_views` (markdown) and `render_tsv`'s own dispatch
+  block both check `grain == "subject"` before doing anything
+  class-filtered: at subject grain they call the SAME single unfiltered
+  pass a single-class roster already got before [B82] existed, but with
+  a new `capture class` column (`show_capture_class` /
+  `show_capture_class_column`) added to the one table instead of a
+  filtered roster. A single-class roster's rendering is UNCHANGED at
+  either grain (`show_capture_class`/`show_capture_class_column` is
+  `False` whenever `spans_both` is `False`, which is the only case this
+  fix can reach for a single-class roster) -- no real single-class
+  subject-grain report exists in this repo to diff against (checked:
+  every committed roster that reaches subject grain includes a
+  `-nocaps-`/vectorscan/rust-default arm alongside a `-caps-` one, so
+  every one of them spans both classes), so the byte-identity claim
+  for that case rests on the synthetic CONTROL test below, the same
+  footing [B82]'s own `test_b82_single_class_roster_unchanged` used for
+  the analogous set-grain case.
+- **THE COLUMN, MECHANICALLY.** Markdown: `_render_ranking_pass` gains
+  a `show_capture_class` flag; when set, the ranking table's header
+  gains `capture class` right after `status`, and each row's cell is
+  `capture_class.classify_testee(t).bucket` (`yes`/`no`/`undeclared`) --
+  the SAME per-testee fact the class-pure SET-grain views express via
+  roster membership instead. TSV: `render_tsv` computes
+  `show_capture_class_column = spans_both and grain == "subject"` ONCE,
+  before the header line is built, and appends `capture_class` to the
+  18-column header ONLY then; every row in the function is emitted
+  through one `_emit_row(cols, class_val="")` helper so the column count
+  always matches the header regardless of which branch fired -- the
+  `rank` section's six per-testee metric rows are the only call site
+  that ever passes a real `class_val`, every other row (the `record`
+  line, `baseline`, `excluded`/`not_ranked`/`scratch`, `giveup_smallest`,
+  `did_not_compile`, `undeclared_capture_class`, the standing query's
+  rows, `compile`/`compile_stamp`) gets `""`.
+- **THE STANDING CROSS-CLASS QUERY (I-101) IS UNCHANGED.** It was never
+  one of the tripled sections -- `_cross_class_query_hits` always
+  produced one row per hit, computed once regardless of grain -- so it
+  is neither made a filtered view over the new column nor restricted to
+  set grain; it keeps running at whichever grain the report requests,
+  exactly as `v20` already does.
+- **A SIZE WARNING, requested by KB-28's own closing sentence.**
+  `_warn_if_large(rendered, label)` (threshold defaults to
+  `_LARGE_REPORT_WARN_BYTES`, read at call time so a test can
+  monkeypatch it) prints one line to stderr when a rendered report's
+  UTF-8 byte size
+  exceeds 50 MB -- comfortably under the 100 MB wall this KB hit, early
+  enough to catch it before a `>` redirect writes the file a commit will
+  try to push. `main()` calls it on every rendered format (markdown,
+  TSV, matrix TSV, the subject-grain slice) right before writing to
+  stdout; it is a WARNING only -- `main()`'s return code and the
+  rendered output are both unaffected whether it fires or not.
+- `REPORTER_VERSION` bumps to `v21 (2026-09-23)` (the subject-grain
+  rendering of a mixed roster changes shape). Regeneration of the two
+  HELD capability AFTER groups (and the wrapfix group's own
+  `.subject-grain.*` siblings, which rendered at v20 within the size
+  limit but still carry the tripled shape) is OWED to the manager at
+  merge, per the standing precedent (`reports/CLAUDE.md`) -- not run by
+  this lane.
 """
 
 from __future__ import annotations
@@ -1361,7 +1441,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v20 (2026-09-23)"
+REPORTER_VERSION = "v21 (2026-09-23)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -3975,6 +4055,34 @@ def _dispatch_ranking_views(rd, grain, out, render_pass):
     if not spans_both:
         render_pass(f"## Ranking {tail}")
         return
+    if grain == "subject":
+        # [B85] (KB-28, docs/dev/known_issues.md): at SUBJECT grain a
+        # mixed roster does NOT get the three-section treatment below --
+        # rendering the two class-pure views PLUS the mixed view as
+        # three full passes over the same per-subject rows drove two
+        # committed capability AFTER groups' `.subject-grain.tsv` files
+        # to 107 MB, over the remote's 100 MB push limit. One table, one
+        # pass, a `capture class` column instead of a filtered roster --
+        # SET grain (this function's other branch, above) is completely
+        # untouched and still renders the two class-pure headline views.
+        out.append(
+            "_[B85] (KB-28, a D119/[B82] follow-up): this report's "
+            "roster spans BOTH capture classes, but at SUBJECT grain the "
+            "class-pure views are NOT rendered as separate sections -- "
+            "three passes over the same per-subject rows is a real-size "
+            "hazard (107 MB on the AFTER groups this fix responded to). "
+            "The single table below carries a `capture class` column "
+            "instead (`yes`/`no`/`undeclared`, from "
+            "`pcrecbench.capture_class`); a `--grain set` render of the "
+            "same query still gets the two class-pure headline views._\n")
+        render_pass(f"## Ranking {tail}", show_capture_class=True)
+        if undeclared:
+            out.append("### Undeclared capture class (I-99: never guessed)\n")
+            for t in sorted(undeclared):
+                out.append(f"- `{t}`: `pcrecbench.capture_class` has no declared "
+                            "row for its (engine, mode, captures-token) identity")
+            out.append("")
+        return
     out.append(
         "_[B82] (inbox I-99, Frank's ruling -- a D119 addendum): this "
         "report's roster spans BOTH capture classes, so the two views "
@@ -4252,7 +4360,7 @@ def render_markdown(rd: ReportData):
         out.append("_No cells matched this query._\n")
         return "\n".join(out) + "\n"
 
-    def _render_ranking_pass(heading, testee_filter=None):
+    def _render_ranking_pass(heading, testee_filter=None, show_capture_class=False):
         """[B82]: one pass of the [B9]/[B12]/[B14]/[B16] ranking
         renderer over `_ranking_groups(rd, grain)`, filtered to
         `testee_filter`'s roster (`None` is every prior rendering's
@@ -4261,6 +4369,16 @@ def render_markdown(rd: ReportData):
         passes (I-99's two class-pure views plus the demoted mixed
         table) share one implementation rather than three copies
         that could drift.
+
+        `show_capture_class` ([B85], KB-28, docs/dev/known_issues.md):
+        at SUBJECT grain a mixed roster gets ONE pass (this table),
+        never three -- `_dispatch_ranking_views` passes this flag
+        instead, and this function adds a `capture class` column
+        (`pcrecbench.capture_class.classify_testee(t).bucket`) to the
+        ranking table rather than filtering the roster. `False` (the
+        default) renders byte-identical to before this flag existed --
+        every SET-grain call and every single-class-roster call at any
+        grain never sets it.
         """
         grain = rd.grain
         out.append(heading + "\n")
@@ -4440,6 +4558,8 @@ def render_markdown(rd: ReportData):
                         variant_by_testee[t] = v
 
                 header = ["rank", "testee", "status"]
+                if show_capture_class:
+                    header.append("capture class")
                 if rd.show_form:
                     header += ["form", "fact"]
                 if variant_by_testee:
@@ -4486,6 +4606,8 @@ def render_markdown(rd: ReportData):
                     ratio_baseline = r.median_ns / ref_ns if ref_ns else float("nan")
                     ratio_best = r.median_ns / best_ns if best_ns else float("nan")
                     row = [str(i), f"`{t}`", _status_cell(rd, sb, t, status)]
+                    if show_capture_class:
+                        row.append(capture_class.classify_testee(t).bucket)
                     if rd.show_form:
                         row += [f"`{form}`", _form_fact(form)]
                     if variant_by_testee:
@@ -5033,7 +5155,42 @@ def _floor_pattern_header_value(rd: ReportData):
 
 def render_tsv(rd: ReportData):
     grain = rd.grain
+    # [B85] (KB-28, docs/dev/known_issues.md): computed up front (before
+    # the header is written) so the header itself can carry the one new
+    # column CONDITIONALLY -- see `show_capture_class_column` below. Same
+    # classification `_dispatch_ranking_views`/`render_markdown` use;
+    # `_ranking_groups(rd, grain)` is cheap to call twice (it already was,
+    # before this change -- `_class_membership`'s own call here and the
+    # `groups = _ranking_groups(...)` a few lines down were already two
+    # separate calls).
+    buckets, undeclared = _class_membership(rd, grain)
+    spans_both = bool(buckets[capture_class.YES]) and bool(buckets[capture_class.NO])
+    # At SET grain this is ALWAYS False (untouched by this fix -- the
+    # three-section `rank_yes`/`rank_no`/`rank` shape below still fires
+    # there exactly as `v20` renders it). At SUBJECT grain with a
+    # single-class roster it is also False (the pre-[B82] one-`rank`-
+    # pass shape, byte-identical to `v20`). It is True only for the one
+    # shape `v20` got wrong: a mixed roster at subject grain -- where
+    # `v20` rendered THREE full passes over the same per-subject rows
+    # (107 MB on the capability AFTER groups, over the remote's 100 MB
+    # push limit) and this fix renders ONE, with a `capture_class`
+    # column carrying what the filtered sections used to carry via
+    # roster membership.
+    show_capture_class_column = spans_both and grain == "subject"
+
     lines = []
+
+    def _emit_row(cols, class_val=""):
+        """Every TSV row in this function goes through here so the
+        column count always matches the header: when
+        `show_capture_class_column` is False (every SET-grain render,
+        every single-class-roster render, i.e. every case this fix must
+        leave byte-identical) it is a bare passthrough. `class_val` is
+        supplied only by the one call site that has a real per-testee
+        answer (the `rank` metric rows); every other row gets `""`."""
+        if show_capture_class_column:
+            cols = list(cols) + [class_val]
+        lines.append("\t".join(cols))
     lines.append("# " + "; ".join(
         [f"reporter: {REPORTER_VERSION}",
          f"filters: {', '.join(rd.query_desc) or '(none)'}",
@@ -5064,6 +5221,11 @@ def render_tsv(rd: ReportData):
     header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
               "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
               "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
+    if show_capture_class_column:
+        # [B85] (KB-28): the ONLY case that ever appends this -- see
+        # `show_capture_class_column`'s own comment above. Every other
+        # render's header is exactly the 18 columns above, byte for byte.
+        header = header + ["capture_class"]
     lines.append("\t".join(header))
 
     # [B20] R4 in TSV: one `record` row per included record -- the
@@ -5073,10 +5235,10 @@ def render_tsv(rd: ReportData):
         l_fail, o_fail = rd.after_by_record.get(rid, (None, None))
         after = " / ".join(x for x in (f"load1 {l_fail:.2f}" if l_fail is not None else "",
                                        f"occ {o_fail:.2f}%" if o_fail is not None else "") if x)
-        lines.append("\t".join(["record", "", "", "", "", "", rid, "", "", "", "agreement",
-                                 _agreement_display(rd.agreement_by_record.get(rid),
-                                                    rd.schema_version_by_record.get(rid, "?")),
-                                 "", "", "", "", "", ("after: " + after) if after else ""]))
+        _emit_row(["record", "", "", "", "", "", rid, "", "", "", "agreement",
+                   _agreement_display(rd.agreement_by_record.get(rid),
+                                      rd.schema_version_by_record.get(rid, "?")),
+                   "", "", "", "", "", ("after: " + after) if after else ""])
 
     groups = _ranking_groups(rd, grain)
 
@@ -5134,10 +5296,10 @@ def render_tsv(rd: ReportData):
                 # group), `gave_up_summary`'s free-text slot carries the
                 # human sentence `render_markdown`'s bullet also prints, so
                 # the two renderings can never disagree.
-                lines.append("\t".join([
+                _emit_row([
                     baseline_section, pattern_id, subject_id, regime, "", "", ref_t or "",
                     "", "", "", "baseline_identity", "interp" if ref_is_interp else "row-best-fallback",
-                    "", "", "", "", _baseline_identity_note(ref_t, ref_is_interp), ""]))
+                    "", "", "", "", _baseline_identity_note(ref_t, ref_is_interp), ""])
             for i, (t, form, r, status, tier) in enumerate(rankable, start=1):
                 ratio_b = (r.median_ns / ref_ns) if ref_ns else float("nan")
                 ratio_best = (r.median_ns / best_ns) if best_ns else float("nan")
@@ -5147,14 +5309,21 @@ def render_tsv(rd: ReportData):
                 if grain == "set":
                     info = _cross_pin_info(rd, sb, pattern_id, regime, t, form, r)
                     delta_verdict = info["verdict"] if info else ""
+                # [B85] (KB-28): the ONE real value `_emit_row` ever gets
+                # for `class_val` -- `show_capture_class_column` gates
+                # both this call's `class_val` AND whether it lands in
+                # the row at all, so this is a no-op computation on every
+                # SET-grain or single-class call.
+                class_val = (capture_class.classify_testee(t).bucket
+                             if show_capture_class_column else "")
                 for metric, val in (("median_ns", r.median_ns), ("min_ns", r.min_ns),
                                      ("max_ns", r.max_ns), ("stddev_ns", r.stddev_ns),
                                      ("ratio_vs_baseline", ratio_b), ("ratio_vs_best", ratio_best)):
-                    lines.append("\t".join([rank_section, pattern_id, subject_id, regime, form, fact, t,
-                                             status, tier, str(i), metric,
-                                             f"{val:.6f}" if val is not None else "",
-                                             str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
-                                             "", delta_verdict]))
+                    _emit_row([rank_section, pattern_id, subject_id, regime, form, fact, t,
+                               status, tier, str(i), metric,
+                               f"{val:.6f}" if val is not None else "",
+                               str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
+                               "", delta_verdict], class_val=class_val)
             if not emit_extras:
                 continue
             for t, form, r, section, status, tier in others:
@@ -5162,10 +5331,10 @@ def render_tsv(rd: ReportData):
                 fact = _form_fact(form)
                 has_detail = grain == "set" and hasattr(r, "failing_detail")
                 gs = _gave_up_cell_summary(r.failing_detail, rd.subject_bytes) if has_detail else ""
-                lines.append("\t".join([section, pattern_id, subject_id, regime, form, fact, t,
-                                         status, tier, "", "pass_rate", f"{r.pass_rate:.4f}",
-                                         str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
-                                         gs, ""]))
+                _emit_row([section, pattern_id, subject_id, regime, form, fact, t,
+                           status, tier, "", "pass_rate", f"{r.pass_rate:.4f}",
+                           str(n), f"{pr:.4f}", str(r.n_gave_up), str(r.n_wrong),
+                           gs, ""])
                 # [B13.2] P-2: one extra `excluded` row per DISTINCT give-up
                 # code, immediately after the base row, in the same
                 # sorted-code order `_gave_up_cell_summary` rendered `gs`
@@ -5179,9 +5348,9 @@ def render_tsv(rd: ReportData):
                 if section == "excluded" and has_detail:
                     for code, sid, byts, n_code in _gave_up_cell_detail(r.failing_detail, rd.subject_bytes):
                         n_str = str(byts) if byts is not None else ""
-                        lines.append("\t".join(["excluded", pattern_id, sid, regime, form, fact, t,
-                                                 status, tier, "", "giveup_smallest", code, n_str,
-                                                 "", str(n_code), "", "", ""]))
+                        _emit_row(["excluded", pattern_id, sid, regime, form, fact, t,
+                                   status, tier, "", "giveup_smallest", code, n_str,
+                                   "", str(n_code), "", "", ""])
 
             # [B12] R10: a did-not-compile testee is absent from `entries`
             # entirely (see render_markdown's own comment) -- one row per
@@ -5191,28 +5360,38 @@ def render_tsv(rd: ReportData):
             for t, diag in sorted(rd.did_not_compile_by_pattern.get((sb, pattern_id), {}).items()):
                 if t in entry_testees:
                     continue
-                lines.append("\t".join(["did_not_compile", pattern_id, subject_id, regime, "", "", t,
-                                         "did-not-compile", "", "", "", "", "", "", "", "", diag, ""]))
+                _emit_row(["did_not_compile", pattern_id, subject_id, regime, "", "", t,
+                           "did-not-compile", "", "", "", "", "", "", "", "", diag, ""])
 
     # [B82] (inbox I-99/I-100): the SAME dispatch `render_markdown` uses
     # -- one unfiltered `rank` pass (today's shape, byte for byte) when
     # this report's roster does not span both capture classes; the two
     # class-pure passes (`rank_yes`/`rank_no`, `baseline_yes`/
     # `baseline_no`) PLUS the unfiltered `rank` pass, in that order,
-    # when it does. `emit_extras=False` on the two class-pure passes: the
-    # `excluded`/`not_ranked`/`scratch`/`did_not_compile` rows are not
-    # duplicated per class.
-    buckets, undeclared = _class_membership(rd, grain)
-    if bool(buckets[capture_class.YES]) and bool(buckets[capture_class.NO]):
-        _tsv_ranking_pass("rank_yes", testee_filter=lambda t: t in buckets[capture_class.YES],
-                           emit_extras=False)
-        _tsv_ranking_pass("rank_no", testee_filter=lambda t: t in buckets[capture_class.NO],
-                           emit_extras=False)
+    # when it does (SET grain -- `buckets`/`spans_both` were already
+    # computed at the top of this function, before the header, so they
+    # are read here rather than recomputed). `emit_extras=False` on the
+    # two class-pure passes: the `excluded`/`not_ranked`/`scratch`/
+    # `did_not_compile` rows are not duplicated per class.
+    #
+    # [B85] (KB-28): at SUBJECT grain this is NEVER three passes, mixed
+    # roster or not -- `rank_yes`/`rank_no` are skipped outright and the
+    # one `_tsv_ranking_pass("rank", ...)` call below carries the
+    # `capture_class` column instead (`show_capture_class_column`, set
+    # at the top of this function). The `undeclared_capture_class` rows
+    # are cheap (one row per undeclared testee, not per subject) and are
+    # kept at both grains.
+    if spans_both:
+        if grain != "subject":
+            _tsv_ranking_pass("rank_yes", testee_filter=lambda t: t in buckets[capture_class.YES],
+                               emit_extras=False)
+            _tsv_ranking_pass("rank_no", testee_filter=lambda t: t in buckets[capture_class.NO],
+                               emit_extras=False)
         for t in sorted(undeclared):
-            lines.append("\t".join(["undeclared_capture_class", "", "", "", "", "", t,
-                                     "", "", "", "reason",
-                                     "no declared row for its (engine, mode, "
-                                     "captures-token) identity", "", "", "", "", "", ""]))
+            _emit_row(["undeclared_capture_class", "", "", "", "", "", t,
+                       "", "", "", "reason",
+                       "no declared row for its (engine, mode, "
+                       "captures-token) identity", "", "", "", "", "", ""])
     _tsv_ranking_pass("rank", emit_extras=True)
 
     # [B82] (inbox I-101): the standing cross-class query, TSV rows --
@@ -5220,42 +5399,47 @@ def render_tsv(rd: ReportData):
     # renders, so the two formats can never disagree about which cells
     # fire it. Always emits a `hit_count` row, even at zero, so absence
     # of a hit is a stated fact rather than a silent omission.
+    # [B85]: this query is UNCHANGED by this fix -- it was never one of
+    # the tripled sections (one row per hit, computed once regardless of
+    # grain, exactly as `v20` already does), so it is neither made a
+    # filtered view over the new column nor restricted to set grain; see
+    # this lane's report for why.
     query_hits = _cross_class_query_hits(rd, grain)
-    lines.append("\t".join(["query_yes_beats_nocaps", "", "", "", "", "", "",
-                             "", "", "", "hit_count", str(len(query_hits)),
-                             "", "", "", "", "", ""]))
+    _emit_row(["query_yes_beats_nocaps", "", "", "", "", "", "",
+               "", "", "", "hit_count", str(len(query_hits)),
+               "", "", "", "", "", ""])
     for pattern_id, regime, nc_t, nc_ns, y_t, y_ns, ratio in query_hits:
-        lines.append("\t".join([
+        _emit_row([
             "query_yes_beats_nocaps", pattern_id, "", regime, "", "", nc_t,
             "", "", "", "beaten_by", y_t, "", "", "", "",
             f"competitor_ns={y_ns:.6f}; nocaps_ns={nc_ns:.6f}; ratio={ratio:.6f}; "
-            f"null_band_clearance={_NULL_BAND_NOT_COMPUTABLE}", ""]))
+            f"null_band_clearance={_NULL_BAND_NOT_COMPUTABLE}", ""])
 
     stamp_testees_emitted = set()
     for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):
         metric = "derived_first_match_row_minus_steady_state_ns" if r.derived else "median_total_ns"
         fact = _form_fact(form)
-        lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
-                                 "", metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
-                                 str(r.n_trials), "", "", "", "", ""]))
+        _emit_row(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                   "", metric, f"{r.median_ns:.6f}" if r.median_ns is not None else "",
+                   str(r.n_trials), "", "", "", "", ""])
         # [B14] R5: the jitter VALUE (a ratio, or 'timer-floor'), not a
         # boolean flag.
         jf = _jitter_flag(r.median_ns, r.stddev_ns, r.min_ns)
         if jf:
-            lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
-                                     "", "jitter", jf, "", "", "", "", "", ""]))
+            _emit_row(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                       "", "jitter", jf, "", "", "", "", "", ""])
         # [B14] R7: artifact_bytes, once per (pattern, testee, form) row --
         # the same grain the compile-cost table's own column carries.
         if r.artifact_bytes is not None:
-            lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
-                                     "", "artifact_bytes", str(r.artifact_bytes),
-                                     "", "", "", "", "", ""]))
+            _emit_row(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                       "", "artifact_bytes", str(r.artifact_bytes),
+                       "", "", "", "", "", ""])
         # [B19]: the three size facts at the same grain, when carried.
         for name in ("emit_bytes", "emit_code_bytes", "warned_emit_bytes"):
             val = (r.sample_engine_metadata or {}).get(name)
             if val is not None:
-                lines.append("\t".join(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
-                                         "", name, str(val), "", "", "", "", "", ""]))
+                _emit_row(["compile", pattern_id, "", "", form, fact, testee_id, "", "",
+                           "", name, str(val), "", "", "", "", "", ""])
         # [B14] R8: the mechanism-stamp LEGEND facts, once per testee
         # (declared-consistent across pattern/form -- same basis as the
         # markdown legend) rather than a fresh set of columns.
@@ -5281,8 +5465,8 @@ def render_tsv(rd: ReportData):
                                            "vm_prefilter_lang_why")
                   if stamps[k] != "-"],
             ):
-                lines.append("\t".join(["compile_stamp", "", "", "", "", "", testee_id,
-                                         "", "", "", name, str(val), "", "", "", "", "", ""]))
+                _emit_row(["compile_stamp", "", "", "", "", "", testee_id,
+                           "", "", "", name, str(val), "", "", "", "", "", ""])
 
     return "\n".join(lines) + "\n"
 
@@ -5560,6 +5744,43 @@ def render_tsv_subject_grain_slice(rd: ReportData):
 
 # --------------------------------------------------------------------- CLI
 
+# [B85] (KB-28, docs/dev/known_issues.md): the size gate the KB's own
+# closing sentence recommended -- found by the remote's pre-receive hook,
+# not by a test, when reporter v20's subject-grain duplication drove two
+# committed `.subject-grain.tsv` files to 107 MB, over the remote's
+# 100 MB hard push limit. 50 MB is comfortably under that wall while
+# still giving a WARNING before a `>` redirect writes a file a commit
+# will try to push -- never a failure: `main()`'s return code is
+# unaffected either way, and the report is written in full regardless.
+_LARGE_REPORT_WARN_BYTES = 50 * 1024 * 1024
+
+
+def _warn_if_large(rendered, label, threshold=None, out=None):
+    """Print a WARNING to `out` (default `sys.stderr`) when `rendered`'s
+    UTF-8 byte size exceeds `threshold` (default
+    `_LARGE_REPORT_WARN_BYTES`, read at CALL time -- not baked in as a
+    default-argument value at def time, so a test (or a future caller)
+    can monkeypatch the module constant and have `main()`'s own
+    unparameterised calls honour it); a bare pass-through otherwise.
+    Returns whether it fired (for testing) -- callers in `main()` ignore
+    the return value. `threshold`/`out` are parameters, not hard-coded
+    globals, so a test can exercise the firing case without building a
+    real 50 MB string or touching real stderr."""
+    if threshold is None:
+        threshold = _LARGE_REPORT_WARN_BYTES
+    if out is None:
+        out = sys.stderr
+    size = len(rendered.encode("utf-8"))
+    fired = size > threshold
+    if fired:
+        print(f"pcrecbench report: WARNING: the rendered {label} is "
+              f"{size:,} bytes, over the {threshold:,}-byte gate -- if "
+              f"this is written to a file under version control, check "
+              f"it against the remote's push size limit before "
+              f"committing (KB-28, docs/dev/known_issues.md)", file=out)
+    return fired
+
+
 def build_argparser():
     ap = argparse.ArgumentParser(prog="pcrecbench report",
                                   description="Query the record store and "
@@ -5720,13 +5941,18 @@ def main(argv=None):
         return 1
 
     if args.subject_grain_slice:
-        sys.stdout.write(render_tsv_subject_grain_slice(rd))
+        rendered = render_tsv_subject_grain_slice(rd)
+        _warn_if_large(rendered, "subject-grain TSV slice")
     elif args.format == "matrix":
-        sys.stdout.write(render_matrix_tsv(rd))
+        rendered = render_matrix_tsv(rd)
+        _warn_if_large(rendered, "matrix TSV")
     elif args.format == "tsv":
-        sys.stdout.write(render_tsv(rd))
+        rendered = render_tsv(rd)
+        _warn_if_large(rendered, "TSV report")
     else:
-        sys.stdout.write(render_markdown(rd))
+        rendered = render_markdown(rd)
+        _warn_if_large(rendered, "markdown report")
+    sys.stdout.write(rendered)
     return 0
 
 

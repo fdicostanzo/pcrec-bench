@@ -422,6 +422,36 @@ split_renders_two_tables`, `test_matrix_single_class_roster_unchanged`.
 See `docs/dev/lanes/b82views_report.md` for the full charter-vs-
 committed checklist and what is OWED to the manager's merge.
 
+**[B85] additions (2026-09-23, lane b85kb28; KB-28, reporter v21)**: 4
+new tests in `test_report.py` (89 → 93) —
+`test_kb28_subject_grain_single_table_with_class_column` (the [B82]
+mixed-roster fixture at `--grain subject`: no `CAPTURING`/`NON-
+CAPTURING`/`MIXED CLASSES` heading, exactly ONE ranking section, a
+`capture class` column read out of the rendered table with the correct
+bucket per testee, the TSV mirroring it with a 19th `capture_class`
+header column and no `rank_yes`/`rank_no` sections, plus a generic
+ragged-row check every TSV line matches the header's field count),
+`test_kb28_set_grain_unaffected` (the CONTROL: the IDENTICAL fixture at
+the default `set` grain still renders [B82]'s three headings and the
+unchanged 18-column TSV header), `test_kb28_single_class_subject_grain_
+unchanged` (a single-class roster at subject grain renders no `capture
+class` text and the unchanged 18-column header — the byte-identity proof
+for the case no real committed single-class subject-grain report exists
+to diff against), and `test_kb28_large_report_warns_but_never_fails`
+(`_warn_if_large` unit-tested directly with an explicit small
+`threshold`, plus an end-to-end `report.main()` call with
+`_LARGE_REPORT_WARN_BYTES` monkeypatched to 0 — this integration test is
+what caught a real bug: the function's first cut read `threshold` as a
+literal default-argument value, evaluated once at def time, so `main()`'s
+own unparameterised calls would never have honoured a monkeypatch;
+fixed by resolving the module constant INSIDE the function body). See
+`docs/dev/lanes/b85kb28_report.md` for the full checklist, the SET-grain
+byte-identity proof against a real committed v20 report, and the
+`pcrecbench/interpret.py` `ReportTsv` parsing fix this lane's own check
+of the `[B47]`-era subject-grain slice found necessary (a mixed-roster
+subject-grain report's new 19-column header would otherwise have been
+refused outright by `pcrecbench interpret`).
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then

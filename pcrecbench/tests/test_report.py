@@ -1920,7 +1920,12 @@ def test_reporter_version_pin():
     spans both classes -- a single-class roster's rendering is unchanged
     -- and the new, UNCONDITIONAL "## Standing cross-class query" section
     on EVERY report, a single-class roster still getting the header and
-    an honest "0 hits" sentence) took it to v20.
+    an honest "0 hits" sentence) took it to v20; [B85] (KB-28,
+    docs/dev/known_issues.md: at SUBJECT grain a mixed roster no longer
+    renders [B82]'s three passes over the same per-subject rows --
+    fine at set grain, but 107 MB over the remote's 100 MB push limit at
+    subject grain -- collapsing to ONE pass with a `capture class` column
+    instead; SET grain is completely unchanged) took it to v21.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1931,20 +1936,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v20 (2026-09-23)",
-           f"expected REPORTER_VERSION == 'v20 (2026-09-23)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v21 (2026-09-23)",
+           f"expected REPORTER_VERSION == 'v21 (2026-09-23)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v20 (2026-09-23)" in md, f"expected the v20 header line:\n{md[:200]}")
+    _check("reporter: v21 (2026-09-23)" in md, f"expected the v21 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v20 (2026-09-23)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v21 (2026-09-23)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v20 (2026-09-23)" in matrix,
+    _check("reporter: v21 (2026-09-23)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4702,6 +4707,210 @@ def test_b82_single_class_roster_unchanged():
     _check("_0 hits:" in md, "no pcrec auto-nocaps testee is in this roster at all -- 0 hits")
 
 
+def _mixed_roster_kb28_fixture():
+    """The same five testee identities [B82]'s own
+    `test_b82_capture_class_views_and_query` builds (YES: `pcrec-auto`,
+    `libpcre2-jit`; NO: `pcrec-auto-nocaps`, `rust-default` via I-100's
+    override; UNDECLARED: `mystery`), one pattern, one subject -- KB-28
+    is about the RANKING DISPATCH shape, not the query, so this fixture
+    is deliberately smaller than [B82]'s own two-pattern one."""
+    yes_pcrec = "pcrec_fake123_auto-caps-simdna"
+    no_pcrec = "pcrec_fake123_auto-nocaps-simdna"
+    yes_libpcre2 = "libpcre2_10.46_jit-caps-simdna"
+    no_rust = "rust_1.13.1_default-caps-simdna"
+    undeclared = "mystery_9.9_thing-caps-simdna"
+    medians = {yes_pcrec: 50, no_pcrec: 100, yes_libpcre2: 80,
+               no_rust: 120, undeclared: 60}
+    loaded = []
+    for tid, ns in medians.items():
+        rows = [_mini_row("p1", "s1", "search", t, t, ns) for t in (1, 2, 3)]
+        loaded.append(_mk_loaded(f"{tid}.jsonl", _mini_setup(tid, sb_id="rb85"), rows))
+    expected = {yes_pcrec: "yes", yes_libpcre2: "yes", no_pcrec: "no",
+                no_rust: "no", undeclared: "undeclared"}
+    return loaded, expected
+
+
+def _tsv_rows_have_uniform_width(tsv):
+    """Every data line (everything after the `#`-comment line) must
+    split into exactly as many tab-separated fields as the header --
+    the general robustness check for [B85]'s `_emit_row` helper: a
+    ragged row would misalign every downstream TSV consumer
+    (`pcrecbench.interpret.ReportTsv` reads by header-relative
+    position)."""
+    lines = [ln for ln in tsv.splitlines() if ln]
+    header_width = len(lines[1].split("\t"))
+    for ln in lines[2:]:
+        if len(ln.split("\t")) != header_width:
+            return False, ln
+    return True, None
+
+
+def test_kb28_subject_grain_single_table_with_class_column():
+    """[B85] (KB-28, docs/dev/known_issues.md). Before this fix, a mixed
+    roster at `--grain subject` rendered its per-subject rows in THREE
+    passes (`rank_yes`/`rank_no`/the demoted mixed `rank`) -- exactly the
+    shape that drove two committed capability AFTER groups'
+    `.subject-grain.tsv` files to 107 MB, over the remote's 100 MB push
+    limit. After it: ONE ranking section, no 'CAPTURING'/'NON-CAPTURING'/
+    'MIXED CLASSES' heading anywhere, a `capture class` column on the
+    single table instead of a filtered roster."""
+    loaded, expected = _mixed_roster_kb28_fixture()
+    rd, err = report.build_report(
+        loaded, _args(store="x", include_synthetic=True, grain="subject"))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+
+    for token in ("CAPTURING engines only", "NON-CAPTURING engines only",
+                  "MIXED CLASSES, never compare across cells"):
+        _check(token not in md,
+               f"subject grain must never render the class-pure/mixed "
+               f"SECTIONS -- that duplication is exactly KB-28:\n{md[:2000]}")
+    _check(md.count("## Ranking (per pattern x subject x regime") == 1,
+           f"exactly ONE ranking section at subject grain, never one "
+           f"per class:\n{md}")
+    _check("capture class" in md, f"expected the new column:\n{md[:1500]}")
+
+    header_line = next(ln for ln in md.splitlines()
+                        if ln.startswith("| rank | testee | status |"))
+    header_cells = [c.strip() for c in header_line.strip("|").split("|")]
+    class_idx = header_cells.index("capture class")
+    width = len(header_cells)
+    rows_by_testee = {}
+    for ln in md.splitlines():
+        if not ln.startswith("| ") or "`" not in ln:
+            continue
+        cells = [c.strip() for c in ln.strip("|").split("|")]
+        if len(cells) != width:
+            continue
+        rows_by_testee[cells[1].strip("`")] = cells[class_idx]
+    for tid, bucket in expected.items():
+        _check(rows_by_testee.get(tid) == bucket,
+               f"{tid} expected capture class {bucket!r}, got "
+               f"{rows_by_testee.get(tid)!r} in:\n{md}")
+
+    # The undeclared listing may still print (it is cheap -- one bullet
+    # per undeclared testee, never a duplicated per-subject section) but
+    # must appear exactly once.
+    _check(md.count("### Undeclared capture class") == 1, md)
+
+    # THE TSV MUST NEVER DISAGREE with the markdown reading.
+    tsv = report.render_tsv(rd)
+    ok, bad_line = _tsv_rows_have_uniform_width(tsv)
+    _check(ok, f"a ragged TSV row (column count mismatch): {bad_line!r}")
+    header = tsv.splitlines()[1].split("\t")
+    _check(header[-1] == "capture_class",
+           f"the header must gain exactly one trailing column here: {header}")
+    sections = {ln.split("\t", 1)[0] for ln in tsv.splitlines()[2:] if ln}
+    _check("rank_yes" not in sections and "rank_no" not in sections,
+           f"no class-pure SECTION at subject grain: {sorted(sections)}")
+    _check("rank" in sections, sorted(sections))
+    _check("undeclared_capture_class" in sections, sorted(sections))
+    rank_rows = [ln.split("\t") for ln in tsv.splitlines() if ln.startswith("rank\t")]
+    _check(rank_rows, "expected at least one `rank` row")
+    tsv_class_by_testee = {r[6]: r[-1] for r in rank_rows}
+    for tid, bucket in expected.items():
+        _check(tsv_class_by_testee.get(tid) == bucket,
+               f"TSV: {tid} expected {bucket!r}, got "
+               f"{tsv_class_by_testee.get(tid)!r}")
+
+
+def test_kb28_set_grain_unaffected():
+    """CONTROL for the fix above, using the IDENTICAL mixed-roster
+    fixture: at the DEFAULT grain (`set`), [B82]'s original three-pass
+    shape must fire exactly as `v20` renders it -- the three headings
+    present, the TSV header carrying NO `capture_class` column at all.
+    This is the same fixture as the subject-grain test above with only
+    `grain` changed, so a regression that leaked the new column into
+    `render_tsv`'s SET-grain path (or vice versa) would be caught here,
+    not just by inspection of `show_capture_class_column`'s guard."""
+    loaded, _expected = _mixed_roster_kb28_fixture()
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    for heading in ("## Ranking -- CAPTURING engines only, caps vs caps",
+                    "## Ranking -- NON-CAPTURING engines only, nocaps vs nocaps",
+                    "## Ranking -- MIXED CLASSES, never compare across cells"):
+        _check(heading in md, f"SET grain must keep [B82]'s three headings:\n{md[:1500]}")
+
+    tsv = report.render_tsv(rd)
+    header = tsv.splitlines()[1].split("\t")
+    _check(len(header) == 18 and header[-1] == "delta_verdict",
+           f"SET grain's header must be the unchanged 18 columns: {header}")
+    sections = {ln.split("\t", 1)[0] for ln in tsv.splitlines()[2:] if ln}
+    _check("rank_yes" in sections and "rank_no" in sections,
+           f"SET grain must keep the class-pure TSV sections: {sorted(sections)}")
+    ok, bad_line = _tsv_rows_have_uniform_width(tsv)
+    _check(ok, f"a ragged TSV row: {bad_line!r}")
+
+
+def test_kb28_single_class_subject_grain_unchanged():
+    """CONTROL: a single-class roster at `--grain subject` renders
+    exactly as it did before this fix (and before [B82]) -- no `capture
+    class` column, no class headings, the plain 18-column TSV header.
+    No REAL single-class subject-grain report exists in this repository
+    to diff against (checked directly: every committed roster that
+    reaches subject grain includes a `-nocaps-`/vectorscan/rust-default
+    arm alongside a `-caps-` one, so every one spans both classes) -- this
+    synthetic control is the byte-identity proof for that case, on the
+    same footing [B82]'s own `test_b82_single_class_roster_unchanged`
+    used for the analogous SET-grain case."""
+    setup_a = _mini_setup("libpcre2_10.46_interp-caps-simdna")
+    setup_b = _mini_setup("libpcre2_10.46_jit-caps-simdna")
+    rows_a = [_mini_row("p1", "s1", "search", t, t, 100) for t in (1, 2, 3)]
+    rows_b = [_mini_row("p1", "s1", "search", t, t, 50) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("a.jsonl", setup_a, rows_a), _mk_loaded("b.jsonl", setup_b, rows_b)]
+    rd, err = report.build_report(
+        loaded, _args(store="x", include_synthetic=True, grain="subject"))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("## Ranking (per pattern x subject x regime" in md, md[:500])
+    for token in ("CAPTURING engines only", "NON-CAPTURING engines only",
+                  "MIXED CLASSES", "Undeclared capture class", "capture class"):
+        _check(token not in md, f"a single-class roster must not render {token!r}:\n{md[:2000]}")
+
+    tsv = report.render_tsv(rd)
+    header = tsv.splitlines()[1].split("\t")
+    _check(len(header) == 18 and header[-1] == "delta_verdict",
+           f"a single-class roster's header must be unchanged: {header}")
+    ok, bad_line = _tsv_rows_have_uniform_width(tsv)
+    _check(ok, f"a ragged TSV row: {bad_line!r}")
+
+
+def test_kb28_large_report_warns_but_never_fails():
+    """The size gate KB-28's own closing sentence asked for:
+    `_warn_if_large` prints ONE stderr line when a rendered report's
+    UTF-8 byte size exceeds its threshold, and prints NOTHING when it
+    does not -- `threshold`/`out` are parameters precisely so this test
+    never has to build a real 50 MB string or touch real stderr."""
+    buf = io.StringIO()
+    fired = report._warn_if_large("x" * 100, "test report", threshold=50, out=buf)
+    _check(fired is True, "must report that it fired")
+    text = buf.getvalue()
+    _check("WARNING" in text and "test report" in text and "100" in text,
+           f"the warning must name the label and the actual size:\n{text!r}")
+
+    buf2 = io.StringIO()
+    fired2 = report._warn_if_large("x" * 10, "test report", threshold=50, out=buf2)
+    _check(fired2 is False, "must not fire under the threshold")
+    _check(buf2.getvalue() == "", "no output at all when under the threshold")
+
+    # End to end: `report.main()` must still exit 0 and write the FULL
+    # report to stdout when the gate fires -- a WARNING, never a failure.
+    real_threshold = report._LARGE_REPORT_WARN_BYTES
+    report._LARGE_REPORT_WARN_BYTES = 0
+    try:
+        out_buf, err_buf = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out_buf), contextlib.redirect_stderr(err_buf):
+            rc = report.main(["--store", STORE,
+                              "--include-synthetic", "--format", "tsv"])
+    finally:
+        report._LARGE_REPORT_WARN_BYTES = real_threshold
+    _check(rc == 0, f"a size warning must never change main()'s exit code: {rc}")
+    _check("WARNING" in err_buf.getvalue(), err_buf.getvalue())
+    _check("reporter: " in out_buf.getvalue() and len(out_buf.getvalue()) > 0,
+           "the report must still be written to stdout in full")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -4806,6 +5015,11 @@ TESTS = [
     test_capture_class_declaration_table,
     test_b82_capture_class_views_and_query,
     test_b82_single_class_roster_unchanged,
+    # [B85] KB-28: subject grain never duplicates
+    test_kb28_subject_grain_single_table_with_class_column,
+    test_kb28_set_grain_unaffected,
+    test_kb28_single_class_subject_grain_unchanged,
+    test_kb28_large_report_warns_but_never_fails,
 ]
 
 
