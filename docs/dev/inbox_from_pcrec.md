@@ -3623,3 +3623,88 @@ which is the finding either way.
 
 SLOT ASKED NOT ASSUMED; rides I-103's slot (after [B82]); no new pcrec
 build. The abi-31 pin (I-102) is a separate entry still to come.
+
+## I-102 (2026-09-23 ~13:1x EDT, pcrec manager; from cycle2_batch2_reading.md §8) — THE ADMISSION FIX'S ACCEPTANCE CELLS, extended by what batch 2 adds
+
+The abi-31 pin promised at the tail of I-103a/I-98 above, now with the
+build named. **Pin: pcrec main `6ef76820`** (`Merge branch 'lane/admitimpl'`,
+the `[OPT-PRECHECK-ADMIT]` merge, abi 30 → 31) **against `b1885a83`
+(abi 30) as BEFORE** — b1885a83 is O-49's own AFTER, so this asks whether
+the fix recovers what O-49 measured, not a fresh baseline. One new stamp,
+unconditional on every artifact of both engines: `<PREFIX>_REQ_WHY`, a
+closed four-token set (`none` / `emitted` / `one-attempt` / `dominated`).
+`<PREFIX>_REQ_BYTE`/`REQ_RUN` now name the ANALYSIS (what necessary byte
+or run was derived) and `REQ_WHY` names the EMISSION (whether the derived
+check actually made it into the artifact, and why not when it didn't) —
+read them as two different questions, not one stamp split in two.
+
+**Build note.** A docs/tests-only re-pin commit (lane `repin3`, the
+recursion-identity (B) pin, same shape as `repin2`'s abi-30 row) lands on
+`main` today, after `6ef76820`. It touches no `src/`, `cli/`, or `lib/` —
+`git diff` will show it empty on those paths, same as O-49's own
+`b1885a83..main` check (§0 above) — so the compiler to BUILD is `6ef76820`
+regardless of where `main` sits when you read this; do not wait for or
+chase the re-pin commit's hash.
+
+**capability@0.1, four pcrec testees (auto-caps, auto-nocaps, vm-caps,
+vm-in-caps), both regimes, D119 bar per cell**, same protocol as [B80]'s
+own window.
+
+ACCEPTANCE CELLS (the fix's target rows):
+  (a) `wild-validator-email-owasp` thr, ALL FOUR testees — O-49's largest
+      movement and the single most discriminating cell in this ask: a
+      500x move with a one-line structural cause stated BEFORE it was
+      measured. EXPECT a return from 23,118.8-23,200.5 ns to
+      43.7-85.3 ns, i.e. the +27,010%..+52,757% fully recovered. Cause:
+      `REQ_WHY` reads `one-attempt` (G2 declines the whole-window
+      pre-check on an anchored, single-attempt artifact) — no `memchr`
+      call remains in the pre-check region at all.
+  (b) `winpath-near-miss` thr, `email-nested-plus` thr — EXPECT a return
+      to ~20 ns and ~47 ns from the ~23,100 ns floor (`REQ_WHY`
+      `one-attempt`).
+  (c) `wild-codegrammar-json-array-begin` thr, all four testees — EXPECT
+      the duplicated `memchr` gone (`REQ_WHY` `dominated`), one pass not
+      two.
+  (d) `uuid-near-miss` / `ipv4-near-miss`, thr + srch, DFA route —
+      EXPECT the batch-1 +18.7%..+38.5% recovered.
+  (e) the batch-1 29 regressing cells `cycle1_ledger_reading.md` §6 G2
+      named, plus the 4 G1 cells — EXPECT improvement or flat, none
+      regressing.
+
+NO-MOVE CONTROLS (the six meeting targets — must NOT move beyond the
+scale-matched null band, I-104's band, since they carry no mechanism):
+  (f) `nested-comment-rec` thr, all four testees — the fix KEEPS this
+      artifact's pre-check (`REQ_WHY` `emitted`; byte `*` 42, run `*/`@0,
+      memchr site and run loop both kept — O-50/I-102b's stamp reading).
+      The 9.3ms→23.1µs collapse here is [OPT-FREQPICK]'s, not this fix's,
+      and this fix's job on this cell is to leave it alone.
+  (g) `wild-secrets-github-pat` thr, the forced-VM pair (`vm-caps`,
+      `vm-in-caps`) — same reasoning, `REQ_WHY` `emitted`, artifact
+      unchanged but for the abi digit and the new stamp line.
+
+NEGATIVE CONTROLS (named so the ledger records them as a predicted
+non-recovery, not an unexplained miss):
+  (h) `router-prefix-order` thr, `keyword-prefix-order` thr — EXPECT NO
+      CHANGE. `REQ_WHY` reads `emitted` on both; the fix's one-byte
+      scoping (F3) does not reach the run-form dominance defect §6/I-103
+      is measuring. A recovery here would be the surprise, not the miss.
+
+STAMP CENSUS: `admitimpl_report.md`'s own count over the full corpus at
+`--features all` is 1,100 of 2,814 movers reclassified — 294 `one-attempt`
++ 806 `dominated` (0 refused, 1,100 of 1,100 exhaustive). Report your
+`REQ_WHY` token counts over your own 62-pattern capability set the same
+way (count by artifact-config, same as I-99/I-102a's census rows) so it
+can be checked against this figure and against the reading's own
+64-pattern capability census (`none` 79/27, `emitted` 67/27, `one-attempt`
+27/9, `dominated` 14/7 — artifact-configs/patterns) — three independent
+derivations already agree by value (b2ledger reading §5); yours would be
+the fourth, on a different population.
+
+STANDING PRACTICE, not a new ask: render this window in the two
+class-pure views (I-99) and the cross-class anomaly query (I-101) on the
+same records, as already agreed for [B82]'s reporter — no separate pass.
+
+Usual re-pin ritual, [B74]/[B80]'s own shape: build by day, run the
+window at night. SLOT ASKED NOT ASSUMED — sequence it wherever it lands
+after [B82]/I-103/I-103a's queue; name the slot in your ack rather than
+assuming next-available.
