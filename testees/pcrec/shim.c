@@ -685,6 +685,32 @@ const char *pb_req_run(void) {
 #endif
 }
 
+/* [OPT-PRECHECK-ADMIT], abi 31 ([B84], pcrec lane/admitimpl, merge
+ * 6ef76820). Per artifact, both engines: WHY the derived req_byte/req_run
+ * pre-check was or was not actually EMITTED into the artifact -- a
+ * different question from req_byte/req_run's own ANALYSIS (what byte or
+ * run was derived), read beside them rather than folded into either
+ * (pcrec's own doc comment: "REQ_BYTE/REQ_RUN name the analysis, REQ_WHY
+ * names the emission"). A closed four-token set: "emitted" (the check
+ * fired as written), "none" (no byte was necessary on every path, or
+ * under -fno-req-byte -- iff req_byte reads "none"), "one-attempt" (the
+ * whole-window pre-check is declined on a fully-anchored machine: nothing
+ * between attempts to skip, so the check would only ever confirm what the
+ * single attempt is about to prove anyway), "dominated" (the pre-check's
+ * byte is no rarer than a candidate-start scan already running ahead of
+ * it on the SAME byte, so the pre-check would dismiss no window the
+ * existing scan would not dismiss at least as soon -- the ONE-BYTE form
+ * only; a necessary RUN is never dominated by a plain byte scan, since it
+ * dismisses strictly more). No rx_info mirror; not an axis (no flag, no
+ * bit -- pcrec docs/spec/tuning.md 2.29). */
+const char *pb_req_why(void) {
+#ifdef RX_REQ_WHY
+    return RX_REQ_WHY;
+#else
+    return (const char *)0;
+#endif
+}
+
 /* ------------------------------ the size term ([ART-SIZE], abi 11) */
 
 /* The VM counter rung's unroll factor and WHY it is what it is: "default"

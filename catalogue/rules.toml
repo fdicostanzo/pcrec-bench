@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.5"
+catalogue_version = "3.6"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,13 @@ catalogue_version = "3.5"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.6 (2026-09-23, lane b84repin, [B84]/inbox I-102): MINOR, a
+# `[[pin_order]]` append only -- `6ef76820` (abi 31, [OPT-PRECHECK-ADMIT]:
+# the RX_REQ_WHY stamp, a closed four-token set none/emitted/one-attempt/
+# dominated naming the EMISSION of the req_byte/req_run pre-check) joins
+# after `b1885a83`. No rule predicate/threshold/inputs/slots moved; no
+# golden fact re-derives.
 #
 # 3.5 (2026-09-23, lane b82views, [B82]/inbox I-99/I-100/I-101): MINOR,
 # known-section awareness only -- `pcrecbench/interpret.py`'s `SECTIONS`
@@ -171,7 +178,7 @@ engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
-          "8d716693", "b1885a83"]
+          "8d716693", "b1885a83", "6ef76820"]
 
 # ===================================================== class R-STATUS ==
 

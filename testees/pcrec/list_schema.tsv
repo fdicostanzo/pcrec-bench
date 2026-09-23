@@ -1,24 +1,25 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# fifth archiving of this surface (first: cd371441, the W23 delivery pin
+# sixth archiving of this surface (first: cd371441, the W23 delivery pin
 # that shipped `--list-schema` itself; second: a770139e, byte-identical;
 # third: cf0962e3, +1 row for the `config tune` directive; fourth:
-# 8d716693, byte-identical).
+# 8d716693, byte-identical; fifth: b1885a83, byte-identical).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-b1885a83/build/pcrec --list-schema
+#     build/pcrec-6ef76820/build/pcrec --list-schema
 #
-# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
-# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
-# 71 data rows across two sections (`#section schema`, `#section
-# surface`) -- BYTE-IDENTICAL to the 8d716693 copy below the header
-# (diffed line for line): [OPT-FREQPICK] and [OPT-REQPOS] tier 2b add no
-# new `.rxt` grammar line, only emitted-C machinery. Nothing in this
-# project's adapters or checks reads this file yet (declared for a
-# future `.rxt`-format check, per docs/design/rxt_needs_v1.md); archived
-# so the registry-surface census stays complete at this pin.
+# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
+# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
+# 6ef76820). 71 data rows across two sections (`#section schema`,
+# `#section surface`) -- BYTE-IDENTICAL to the b1885a83 copy below the
+# header (diffed line for line): [OPT-PRECHECK-ADMIT] adds no new `.rxt`
+# grammar line, only emitted-C machinery (an emit-time predicate, one
+# stamp). Nothing in this project's adapters or checks reads this file
+# yet (declared for a future `.rxt`-format check, per
+# docs/design/rxt_needs_v1.md); archived so the registry-surface census
+# stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,
 # [DD-13b.W23.1]). One row per (scope, line-kind), walked out of

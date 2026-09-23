@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "b1885a83"
+pin = "6ef76820"
 
 [testees.pcrec-auto]
 engine_mode = "auto"

@@ -3,20 +3,16 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-b1885a83/build/pcrec --list-limits
+#     build/pcrec-6ef76820/build/pcrec --list-limits
 #
-# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
-# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
-# 60 data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- TWO ROWS ADDED (58 -> 60), both [OPT-REQPOS] tier 2b's own:
-# PCREC_MAX_REQ_RUN_EMIT (8 bytes, "selection knee" -- the longest
-# necessary run the emitted memcmp compares, sized where gcc lowers a
-# constant-length memcmp to one word load and one compare) and
-# PCREC_MAX_REQ_RUN_SCAN (32 bytes, "compile budget" -- how much of a
-# run the analysis tracks before truncating). Every OTHER row is
-# BYTE-IDENTICAL to the 8d716693 copy below the header (diffed line for
-# line), including the four `override` rewordings [LIM-OVR] made there.
+# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
+# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
+# 6ef76820). 60 data rows / 7 columns (name, value, unit, kind, override,
+# anchor, desc) -- BYTE-IDENTICAL to the b1885a83 copy below the header
+# (diffed line for line): [OPT-PRECHECK-ADMIT] adds no numeric limit --
+# `req_admit`'s two rules (the one-attempt route test, the byte-frequency
+# dominance comparison) read existing fields and existing limits only.
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
