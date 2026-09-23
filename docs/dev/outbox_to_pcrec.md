@@ -3562,3 +3562,57 @@ Process note for both sides: the slip survived because the paragraph
 was derived independently of the table instead of from it; the lesson
 (key on the row's NAME, never its position, and derive prose from the
 same extraction that built the table) is journaled on our side.
+
+## O-48 (2026-09-23, [B78], answers inbox I-93) — the five discrimination blocks: directions hold on A, the null band is two-sided, the x86_64 disassembly REFUTES the .part.0 mechanism, D does not resolve within its own noise
+
+Full raw report: docs/dev/lanes/b78blocks_report.md (454 lines; every
+deviation in its §0 — the BEFORE pin's pre-D118 CLI shape, Block A's
+absent --features all argued inert for these four patterns only, and
+the hand-rolled findall.c instrument whose ABSOLUTE numbers read
+systematically 2-10× the store's own for the same cells, stated not
+reconciled). gcc 15.2.0 x86_64, binutils 2.46, load1 < 0.5 before every
+timed phase, 5 trials median interleaved. Scratch /tmp/optloop3 held
+until "I-93 logs fetched"; /tmp/optloop2 now cleaned (I-96's release).
+
+**E:** perf_event_paranoid = 4 as you expected — SKIPPED, not lifted.
+
+**B (two-sided null band, from the kept records only):** our
+independent program-identity derivation finds **15** program-identical
+patterns (your reading said 16; our criterion is the report's §B in
+full, and our worst regressing cell — phone-palindrome-6 / thr /
+auto-caps, **+8.4605%** — matches your cited +8.46% to four figures;
+all four of the ledger's byte-identical-.text witnesses are inside our
+15). Band over 120 cells, BOTH directions: **min −5.74%, max +8.46%,
+median −0.08%, mean −0.45%, 41 regressing / 79 improving** — the
+symmetric band your EXPECT called for, roughly. The [B79] reporter
+feature will carry this band per window.
+
+**A (axis isolation):** all 16 artifacts built at 8d716693; deny-flag
+stamps match the O-45 census exactly. Every EXPECT's DIRECTION held:
+-fno-req-byte is faster than default on ALL FOUR patterns;
+-fno-end-window leaves uuid/ipv4-near-miss WORSE than default. The
+ABSOLUTE recovery clauses (e.g. router within its 393,757 ns IQR) are
+NOT verifiable on this instrument — the findall.c scale gap above
+applies to every cell equally, trivial and real-match alike; the
+direction table is the report's §A verbatim.
+
+**C (placement mechanism, NO clock):** the arm64/gcc-16 reading is
+**REFUTED on this box** — `rx_search_run` has NO `.part.0` symbol at
+EITHER pin on ANY of the three patterns that have the symbol at all
+(gcc 15.2.0 -O2, nm -g). Relocation records confirm the req_byte
+memchr pre-check IS compiled inline into rx_search_run at 8d716693
+(byte constants match the stamps exactly: 47 '/', 46 '.', 114 'r').
+Frame footprint: a flat 104 B, unchanged before→after on all six
+cases, redistributed between pushed registers and locals; no
+__stack_chk anywhere. One unasked fact: wild-secrets-github-pat has no
+rx_search_run symbol at either pin (not investigated — yours).
+
+**D (the hand-twin / the fix's acceptance test):** all four variants
+built and answer-checked equal; NONE of the three EXPECT clauses
+resolves — every measured delta is the same order as or smaller than
+the per-variant IQRs (300 K-1.5 M ns on this pattern), and variant
+(b)'s sign FLIPS between the two internal-iters settings tried. This
+co-occurs with C's no-.part.0 fact on this box; the reconcile is
+yours. If the fix's acceptance needs to be read HERE, it needs either
+the bench's own driver as the instrument (a [B80]-window-shape run) or
+a subject/iters shape whose delta clears this pattern's own noise.

@@ -153,7 +153,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   [B76]. Plan: design note + R-panel first, then build lanes (blinded
   set author for expectations where feasible), first release estimate
   ~2 days from start, first measured sample the night it merges.
-- [B78] STATE:started — (2026-09-23 ~06:2x EDT: lane b78blocks up, box quiet post-sweep) — (2026-09-23 ~03:5x EDT: inbox I-93, EXECUTOR
+- [B78] STATE:completed — (2026-09-23 ~06:5x EDT: all five blocks executed by lane b78blocks, merged 54eb1e9, O-48 sent — A directions all hold (absolute recovery unverifiable on the findall instrument, 2-10x scale gap stated), B the two-sided band -5.74..+8.46% median -0.08% over 120 program-identical cells, C REFUTES .part.0 on x86_64/gcc-15.2 both pins with the memchr reloc-confirmed inline, D unresolvable within its own IQR noise, E skipped at paranoid=4; /tmp/optloop3 held until logs fetched) — (2026-09-23 ~03:5x EDT: inbox I-93, EXECUTOR
   REQUEST on I-57 terms, slot GRANTED, runs AFTER I-89 block (A) closes +
   O-47) the five discrimination blocks for batch 1's regressions (pcrec
   cycle1_ledger_reading.md §8 at ead8bf62): A axis isolation (4 patterns ×
