@@ -592,11 +592,46 @@ docs/dev/'s append-only records.
   (9.8). Verified with 72 real headless-Chromium DevTools checks against
   the committed production data, 0 failed.
 
-- `utf8_set_v1.md` — **[B77] THE UTF-8 ENCODING SET's design, v0.1
-  (2026-09-23, lane `b77utf8`), from Frank's charter as relayed in inbox
-  I-90. PROPOSED, DESIGN ONLY: nothing built, `bench/utf8/` does not
-  exist, and no file under `bench/`, `schema/`, `pcrecbench/`,
-  `testees/` or `store/` is touched.** Frank: *"make it somewhat
+- `utf8_set_v1.md` — **[B77] THE UTF-8 ENCODING SET's design, REVISED to
+  v0.2 (2026-09-23, lane `b77apply`): applies every ACCEPT of the R8 D6
+  critic panel** (`../dev/reviews/2026-09-23-r8-utf8-set.md`, three
+  lenses — charter/repo-consistency, measurement validity, engine
+  semantics — 18 findings, F-C1..C6/F-M1..M7/F-S1..S5, all applied).
+  DESIGN ONLY, unchanged: nothing built, `bench/utf8/` does not exist.
+  Two blockers fixed: F-C1 — §7.1/§7.2's "configs.toml only" pcrec-roster
+  claim was wrong (`compose_config_extra()` needs a FIFTH part,
+  `encoding_extra`, or the four new `-e utf8` configs collide on
+  `testee_id` with their byte-mode siblings; now a stated U2 deliverable);
+  F-C3 — family (a) delivered `\w` with/without UCP but only the
+  ASCII-scoped half of `\d`/`\s`, though I-90 names the triple by name;
+  added `cls-d-ucp`/`cls-s-ucp`, 74 → **76** total members (16/12/12/12/
+  11/12 + floor). Two majors reshape §7.3: F-S2/F-S3 turn the blanket
+  `utf8-encoding` set-wide TRE exclusion into a PER-PATTERN one — TRE
+  now RANKS on three byte-safe controls (the floor, `ci-ascii-control`,
+  `asr-b-ascii`), excluded on the other 73. F-M1 (BLOCKER) adds §4's
+  UTF-8 boundary rule for the throughput generator (trim to the last
+  complete character, ASCII-space pad to the exact byte size, a decode
+  gate in `--check`) — without it the byte-offset trim inherited from
+  `captext.py`'s ASCII shape would silently corrupt the whole
+  `throughput` regime into refusals. F-M2 rewords P1-P10 to
+  `interpret`'s real closed vocabulary (`ratio_to` on the same subject,
+  not a nonexistent `ns/byte`; `compile:emit_bytes`; a `section`-selected
+  census, not a bare `compile_outcome`) and adds a pre-window dry-run
+  step. F-M3 restates §10.3's cell-time estimate against tonight's real
+  `capability@0.1` band (31-43 min measured, not modeled): revised to
+  ~41-53 min/cell, ~1.5-1.8× `CELL_CAP` headroom (was ~2×), with lever 1
+  pre-committed as the default cut if the rehearsal cell exceeds 50 min.
+  F-S1 corrects §8.5's Script_Extensions drift claim to the one code
+  point (U+00B7) the arbitrating tool actually names, dropping a
+  conflated U+0300. The rest (F-C2/C4/C5/C6, F-M4/M5/M6/M7, F-S4/S5) are
+  citation/wording fixes and stated notes, each marked `(F-xx, v0.2)`
+  in place. By-id completeness: 18/18 grep-verified.
+
+  **v0.1** (2026-09-23, lane `b77utf8`), from Frank's charter as relayed
+  in inbox I-90, was the pre-panel draft: **PROPOSED, DESIGN ONLY**,
+  nothing built, `bench/utf8/` does not exist, and no file under
+  `bench/`, `schema/`, `pcrecbench/`, `testees/` or `store/` is touched.
+  Frank: *"make it somewhat
   complete, not 'small' — or at least specify that it will grow… any
   functionality which might be affected by encoding; classes come to
   mind."* Fifteen sections in `capability_set_v1.md`'s shape. **§2** the
