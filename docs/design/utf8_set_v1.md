@@ -987,6 +987,24 @@ The boundary in one sentence: **the SET says what the patterns and
 subjects are; the ROSTER says under which encoding each engine reads
 them; the LEDGER says what the difference means.**
 
+**A recorded question, not a design change (F-M6, v0.2).** [B79]'s
+program-identical null-control band (per-pin emit-hash comparison over
+compile rows) applies here structurally the same way it applies to
+`bench/capability` — nothing about the `-e utf8` configs exempts them —
+but this set's own near-term power on it is weaker than a mature set's,
+for two reasons worth naming in `NOTES.md` rather than silently
+discovering later: the four `pcrec-*-utf8` testee ids have zero re-pin
+history at `0.1`'s first sample, so the null band is uncomputable until
+a SECOND measured pin; and this set's whole reason for existing is
+pcrec's ACTIVE utf8-specific optimization work (`[OPT-OFSK]`,
+`[OPT-REQPOS]` 2b), which targets precisely the code paths its patterns
+exercise, so `bench/utf8`'s early re-pins should be expected to produce
+a LOWER program-identical fraction than `capability@0.1`'s 30%
+(56/187), not a similar one — thinning the population [B79] needs
+exactly when this set is newest and most in need of a noise floor. Not
+a blocker; a first `bench/utf8` reader should not mistake "no null band
+yet" for "the band doesn't apply here."
+
 ---
 
 ## 10. Regimes, metrics, and the cell-time arithmetic
@@ -1219,7 +1237,13 @@ a cell is listed under the FIRST rule it trips.
   PURE ASCII (the floor, `ci-ascii-control`, `asr-b-ascii`). Those three
   patterns should cost the same whatever corpus they run over; a
   difference is the SUBJECT's byte structure reaching a mechanism that
-  should not have noticed.
+  should not have noticed. **(F-M5, v0.2):** fires at `throughput` grain
+  — the per-script 64 KB arm gives every pattern a same-size
+  cross-corpus comparison, `asc` included. It does not apply at
+  `search_short` grain for these three patterns: §4.3 types short
+  subjects per family in that family's own single script, so there is
+  no other-script `search_short` population for the SAME pattern to
+  compare against.
 - **R4 — the script band.** Within one family, a cell's ns/byte across
   the four per-script 64 KB throughput subjects, spread by more than
   **×4**. Four is chosen against the encoded-length ratio the corpora
@@ -1283,7 +1307,7 @@ Each carries a recommendation and the consequence of each answer.
 
 | # | question | recommendation | mark |
 |---|---|---|---|
-| **Q1** | Does the byte-clean ASCII control corpus (`asc`) RANK, or is it provenance-only? (Frank's own flagged item) | **RANK it.** It is the encoding-cost control (R3), the mirror's zero point (P8) and the only row that answers "what does UTF-8 cost when there is nothing to encode". Consequence if provenance-only: R3 and P8 both become unscoreable and the set can describe the encoding's cost only by comparing two testees, never two subjects | DEFAULT |
+| **Q1** | Does the byte-clean ASCII control corpus (`asc`) RANK, or is it provenance-only? (Frank's own flagged item) | **RANK it — chiefly because it is a PRECONDITION, not a style choice (F-M4, v0.2):** R3 and P8 are both scoring rules, and `pcrecbench interpret` can only bound a value that exists in a ranked population, so excluding `asc` makes them unscoreable outright, not merely eyeballed. It is also the encoding-cost control and the mirror's zero point. **Practical caveat (F-M4):** at `throughput` grain `asc`'s ~64 KB is a small share (≈4%) of the blended corpus, so its inclusion moves the blended ranking number only marginally — the place it actually matters is the PER-SUBJECT row, already rendered unconditionally on this shape of cell (`pcrecbench/CLAUDE.md`'s R9 rule), so a reader should look there for `asc`'s own reading rather than expect a large swing in the blended number. Consequence if provenance-only: R3 and P8 both become unscoreable and the set can describe the encoding's cost only by comparing two testees, never two subjects | DEFAULT |
 | **Q2** | Is a hand-authored per-script WORD POOL "generated" (house rule satisfied, no provenance record owed) or "sourced" (a provenance row per pool)? | **Generated.** Commit the pools, record `fidelity = synthesized` / `source_name = authored`, and state §4.1's limitation sentence in `NOTES.md`. Consequence of "sourced": a provenance gate over five word lists with no URL to cite, which the gate cannot check | DEFAULT |
 | **Q3** | Is the REQUIRES vocabulary GLOBAL (`pcrecbench/capability.py:87`) or per-set? Adding three tokens (§7.5) touches shared code and every adapter's declaration | **Keep it global; add the three.** A capability token is a cross-engine fact. Consequence of per-set: two sets could disagree about what `lookaround` means, and the closed-vocabulary load check loses its point | DEFAULT |
 | **Q4** | The TRE ruling (§7.3): EXCLUDED from v1 by an unsatisfied `utf8-encoding` token, with `tre-wide` named as roster growth? | **Yes, as proposed.** Consequence of including `tre-default` in byte mode: a BYTE-DECOMPOSED reading sits in the same ranking column as the UTF-8 ones. Consequence of building `tre-wide` now: a second driver model, a process-locale dependency and a character-not-byte length unit, all before the set's first sample | DEFAULT |
@@ -1307,3 +1331,4 @@ Each carries a recommendation and the consequence of each answer.
 | **R5** | **The generated corpora do not resemble real text closely enough** for the histogram claim to carry | the claim is deliberately narrow (§4.1's limitation sentence: byte histogram and character-width statistics, NOT word or sentence statistics) and the histogram is a committed, re-derived table (§4.2), so a reader can check the claim rather than trust it |
 | **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answers** (§8.5) | the affected characters (U+00B7, U+0300) are avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
 | **R7** | **The set is read as a pcrec milestone's acceptance test.** Its subject matter IS a pcrec milestone, which makes engine-neutral authorship harder than usual | §9's boundary, stated three ways, plus the R-BENCH-4 check that no limits file exists; and the cross-engine roster (§7.1) is six engines wide precisely so no single engine's behaviour can be mistaken for the axis |
+| **R8** | **(F-M7, v0.2, speculative.)** The v1.4 trial-agreement constants (`v1.4-group`, k=1.5, …) were calibrated over a store of byte-mode, largely ASCII/log-line-shaped timing distributions. `bench/utf8` is the first set to exercise a materially decode-bound timing profile (multi-byte decode interleaved with the scan, plus §8.4's new find-all advance) at scale, and nothing in v1.4's design assumes byte-uniform text | a first-window CHECKLIST item, not a design change: observe the `trial_agreement` block on `utf8` cells against the store's historical `inconclusive-spread` rate. A large deviation is a SCHEMA-RULING escalation (a question for whoever owns gate_shape_v14.md), never a silent recalibration of the constants |
