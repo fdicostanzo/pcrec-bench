@@ -207,7 +207,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   QUERY — every cell where any YES-class config's median beats pcrec
   auto-nocaps', with ratio, IQR + null-band clearance, competitor,
   count; a query, never a ranking; every hit a finding by definition.
-- [B83] STATE:not-started — (2026-09-23 ~13:2x EDT: inbox I-103 +
+- [B83] STATE:started — (2026-09-23 ~13:5x EDT: lane b83runform up) — (2026-09-23 ~13:2x EDT: inbox I-103 +
   I-103a, slot NAMED — after [B82]'s merge, before [B84]'s build) THE
   RUN-FORM DISCRIMINATOR at b1885a83, no new pcrec build: router- and
   keyword-prefix-order × FOUR arms each — (a) default (run loop), (b)
