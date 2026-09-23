@@ -409,6 +409,11 @@ the set whose compiled artifact should be IDENTICAL under `-e utf8` and
 74 — `cls-d-ucp`, `cls-s-ucp`). Ids are `<family>-<slug>`;
 every member carries `tag family=`, `tag requires=` and, where it has
 one, `tag hazard=` — `bench/capability`'s own `patterns.rxt` shape.
+**(F-S2/F-S3, v0.2):** every member below carries `requires =
+utf8-encoding` (§7.5) EXCEPT the three byte-safe controls named in
+§7.3's table (the floor `~`, `ci-ascii-control`, `asr-b-ascii`) — stated
+here once rather than tagged on 73 individual rows, since the token is
+the population's default and the exceptions are the informative fact.
 
 Every family carries at least one CONTROL PAIR and at least one designed
 NEAR-MISS — a subject that shares a prefix with a hit and fails at the
@@ -638,7 +643,7 @@ CONFIG per engine, with the encoding visible in `testee_id`.
 | **re2** (`re2-default`, `re2-longest`) | `RE2::Options::EncodingUTF8` — RE2's own DEFAULT, which this driver deliberately overrides | `driver.cc:220`: `opts.set_encoding(RE2::Options::EncodingLatin1);`, with the header comment naming family 12 as the reason | **v1: one NEW config** `re2-utf8` | `driver.cc`: one argv flag selecting the encoding; `configs.toml`: one row. The cheapest change on the roster |
 | **onig** (`onig-default`) | `ONIG_ENCODING_UTF8` | `driver.c:91`: `#define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII` — a COMPILE-TIME constant, so a second config cannot be a flag without a small change | **v1: one NEW config** `onig-utf8` | `driver.c`: make the encoding a runtime choice between two `OnigEncoding` pointers (`--encoding utf8\|ascii`); `configs.toml`: one row. **AND a re-census**: `testees/onig/CLAUDE.md` withholds `unicode-properties` under ASCII encoding — under UTF-8 it is expected to be SATISFIED, which must be witnessed per (config, token) before the declaration changes (the L5 lesson, CAP §5.3) |
 | **vectorscan** (`vectorscan-block-nosom`) | `HS_FLAG_UTF8`, plus `HS_FLAG_UCP` | `driver.c:125`: `VS_DRIVER_FLAGS` is `0`; the header (`:50-59`) states `HS_FLAG_UTF8` is NEVER set and why (byte-oriented, matching the roster's 8-bit convention, satisfying `non-utf8-subject`) | **v1, BOOLEAN GRAIN ONLY** — one new config `vectorscan-block-nosom-utf8` | `driver.c`: flags from argv; `configs.toml`: one row. Frank's Q3 ruling stands unchanged: match/no-match and compile/refusal comparisons, never a span or a count. **A warning this set inherits (§7.6):** the same header records a MEASURED A/B in which setting `HS_FLAG_UCP` BREAKS `\b` on five real corpus patterns (40/64 corpus compiles at flags 0 against 35/64 under UCP) |
-| **tre** (`tre-default`) | **no byte-mode UTF-8 path exists** — see §7.3 | `tre_regncompb`, byte-literal by construction; `driver.c:19` states the convention ("a byte ≥ 0x80 is one [character]") | **EXCLUDED from v1** — §7.3 | — |
+| **tre** (`tre-default`) | **no byte-mode UTF-8 path exists** — see §7.3 | `tre_regncompb`, byte-literal by construction; `driver.c:19` states the convention ("a byte ≥ 0x80 is one [character]") | **EXCLUDED PER-PATTERN from v1 (F-S2/F-S3, v0.2): 73/76 — §7.3.** RANKS on the 3 byte-safe controls | — |
 | **python `re`, perl** | both are UTF-8-native | not wired (CAP §8.1: compile + correctness only, and permanently `inconclusive-spread` run pinned) | not in v1, as elsewhere | — |
 
 ### 7.2 pcrec's four configs, and why the flag mechanism matters
@@ -687,21 +692,59 @@ Proposed ids, by the composition rule: `pcrec-auto-utf8`,
 once `encoding_extra` exists to carry it. Twenty pinned pcrec configs
 after this set lands.
 
-### 7.3 The TRE ruling — EXCLUDED from v1, by declaration, not by omission
+### 7.3 The TRE ruling — EXCLUDED per-pattern, by declaration, not by omission
 
-**PROPOSED RULING: `tre-default` runs NO (a)-(f) cell in `utf8@0.1`.
-The exclusion is a `requires = utf8-encoding` token the config declares
-UNSATISFIED, so every pattern is a clean `unsupported-by-declaration`
-compile row citing the token by name — a CENSUS row, never an absence.**
+**(F-S2/F-S3, v0.2, corrected from a blanket set-wide exclusion.)**
+**RULING: `tre-default` runs NO cell on 73 of this set's 76 patterns.
+The exclusion is a `requires = utf8-encoding` token those 73 patterns
+declare and the config does not satisfy, so each is a clean
+`unsupported-by-declaration` compile row citing the token by name — a
+CENSUS row, never an absence. `utf8-encoding` is a PER-PATTERN token
+(§7.5), exactly like every other REQUIRES token in this repo
+(`pcrecbench/capability.py`'s own model): it names patterns whose
+byte-mode and character-mode readings can diverge, not "every pattern
+in a UTF-8 set."**
 
-Three reasons, in order of weight:
+**The byte-mode-divergence rule.** A member carries `requires =
+utf8-encoding` if its byte-mode reading (TRE's `tre_regncompb`,
+byte-literal by construction) can diverge from its character-mode
+reading on ANY subject this set runs it over — which in practice means
+any member containing a `.`, a class, a negation, an assertion whose
+scope depends on character vs. byte boundaries, a caseless construct
+over non-ASCII content, or any literal multi-byte content. **The three
+members that do NOT carry it — the byte-safe members, where
+`tre-default` RANKS, on all subjects:**
+
+| id | pattern | why it is byte-safe |
+|---|---|---|
+| `~` (the floor) | `~` | a single ASCII-byte literal search; a byte-mode and a character-mode reading of "find this one byte" cannot diverge on any subject, at any regime |
+| `ci-ascii-control` | `(?i)abc` | a pure-ASCII caseless literal — TRE's byte-mode caseless fold over `a`-`z`/`A`-`Z` and a character-mode simple fold agree on the ASCII range by construction, and the literal contains no multi-byte content to decompose |
+| `asr-b-ascii` | `\bcat\b` | a pure-ASCII literal with a `\b` boundary — every non-ASCII byte (a UTF-8 lead or continuation byte) is a non-word BYTE under TRE exactly as its character is a non-word CHARACTER under ASCII-scoped `\b`, so the boundary reading agrees regardless of what surrounds the literal |
+
+Every OTHER member of the 76 (73 patterns) carries `requires =
+utf8-encoding` and is `unsupported-by-declaration` on `tre-default`.
+**A separate, coarser carve the REQUIRES model cannot express:** every
+member's rows against the `asc` (byte-clean ASCII) subject population
+are ALSO divergence-free, for a reason that has nothing to do with the
+pattern — a subject with zero non-ASCII bytes gives byte-mode and
+character-mode nothing to disagree about, regardless of which pattern
+runs over it. REQUIRES is a per-PATTERN grain (`patterns[].tags`), not
+per-(pattern, subject), so this `asc`-only carve-out cannot be declared
+cleanly today; it is named here as an honest gap rather than folded
+silently into the blanket exclusion, in the shape of §3.3's other
+stated gaps. A future harness change to score REQUIRES per (pattern,
+subject) is a possibility, not proposed here.
+
+Three reasons for the exclusion where it applies, in order of weight
+(unchanged from v0.1's reasoning, now scoped to the 73 patterns that
+actually need it):
 
 1. **TRE has no byte-mode UTF-8.** `tre_regncompb` is byte-literal by
    construction; `testees/tre/driver.c:19` states the convention this
    project adopted for it ("a byte ≥ 0x80 is one [character]"), and
    `testees/tre/CLAUDE.md` item (d).1 measures a related consequence
    (`\xHH` does not exist at all; `\x93` compiles as three literal
-   characters). Every (a)-(f) pattern would get a BYTE-DECOMPOSED
+   characters). Every affected pattern would get a BYTE-DECOMPOSED
    reading — which answers a *different question* from the one the set
    asks, and would sit in the same ranking column as the answers to the
    right one.
@@ -727,7 +770,8 @@ Three reasons, in order of weight:
 (§6's closing note). The two things that must be settled before it opens
 are in reason 2 — the locale dependency and the length unit — and both
 are adapter-design questions, not set questions. **§14 Q4** puts the
-ruling to the manager; the recommendation is the exclusion above.
+ruling to the manager; the recommendation is the per-pattern exclusion
+above (v0.2: not a blanket one).
 
 ### 7.4 Which engines sit OUT of which family
 
@@ -740,7 +784,7 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 | family | who sits out, and why | confidence |
 |---|---|---|
 | **(a)** `cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp` (F-C3, v0.2), `cls-w-ascii`, `cls-d-ascii`, `cls-s-nbsp`, `cls-posix-alpha` | the class-SCOPE split (§7.5) — `pcrec-*` has NO UCP axis (UD §4.5) so every `unicode-class-scope` pattern is unsupported there; `rust-default`'s `\w` is Unicode-aware by default so every `ascii-class-scope` pattern is unsupported there | pcrec: **CONFIRMED** (UD §4.5). rust: **CONFIRMED** (`testees/rust/CLAUDE.md`, unicode mode default true) |
-| **(a)-(f)** all | `tre-default`, via `utf8-encoding` (§7.3) | **CONFIRMED** |
+| **(a)-(f)** 73 of 76 | `tre-default`, via the per-pattern `utf8-encoding` token (§7.3, F-S2/F-S3 v0.2). **Excepted (`tre-default` RANKS):** the floor `~`, `ci-ascii-control`, `asr-b-ascii` — the byte-safe members | **CONFIRMED** |
 | **(f)** all `prp-*` | `tre-default` only (no `\p` construct exists at all — `testees/tre/CLAUDE.md` item 3, measured: `\p{L}` and `\p{Alpha}` both refuse with code 10). **Vectorscan does NOT sit out**: `testees/vectorscan/driver.c:50-53` records a MEASURED A/B — `\p{L}` compiles identically with and without `HS_FLAG_UCP` — so the general-category family is live there | tre: **CONFIRMED**. vectorscan: **CONFIRMED** (measured, this repo's own A/B) |
 | **(f)** `prp-greek-sc`, `prp-cyrillic`, `prp-han`, `prp-latin` | Script and Script_Extensions spellings differ by engine: RE2 documents `\p{Greek}` script support but **`scx=`/Script_Extensions is not established**; the Rust `regex` crate documents both but **not verified at crate 1.13.1 here**; `onig-utf8` is a re-census (§7.1) | **UNCONFIRMED across three engines** — one witness each |
 | **(c)** all `ci-*` | none expected to sit out — every roster engine has a caseless mode — but `ci-kelvin` / `ci-long-s` (the closure reaching outside the range) are where an engine with a PAIRWISE rather than a CLOSURE fold would diverge in ANSWER, not in capability | the divergence is the finding, not a gap |
@@ -749,10 +793,11 @@ cut (`bench/capability/NOTES.md`, "L5's re-verification").
 
 **Consequence, and it is the correct outcome, not a gap:** the
 `unsupported-by-declaration` share on this set will be LARGE — larger
-than on `bench/capability`, because `utf8-encoding` alone removes one
-engine entirely and the class-scope split removes a handful of patterns
-from two more. CAP §6.3's rule applies verbatim: *the reporter must
-render it as a count, not an absence.*
+than on `bench/capability`, because `utf8-encoding` alone removes
+`tre-default` from 73 of 76 patterns (v0.2: three now RANK) and the
+class-scope split removes a handful of patterns from two more engines.
+CAP §6.3's rule applies verbatim: *the reporter must render it as a
+count, not an absence.*
 
 ### 7.5 Three new REQUIRES tokens
 
@@ -761,7 +806,7 @@ The vocabulary is closed and global today
 
 | token | what a pattern needs | who does NOT satisfy it |
 |---|---|---|
-| `utf8-encoding` | the engine must interpret pattern AND subject as UTF-8 character sequences, not byte sequences | `tre-default` (§7.3); every existing BYTE-mode config of every engine |
+| `utf8-encoding` | **(F-S2/F-S3, v0.2: PER-PATTERN, not set-wide)** a pattern whose byte-mode and character-mode readings can diverge on some subject this set runs it over (any `.`/class/negation/scope-sensitive assertion/caseless-over-non-ASCII/multi-byte literal content); carried by 73 of the set's 76 members — every member except the floor `~`, `ci-ascii-control` and `asr-b-ascii` (§7.3's byte-safe table) | `tre-default` on the 73 declaring members (§7.3); every existing BYTE-mode config of every engine, on those same 73 |
 | `ascii-class-scope` | `\w` / `\d` / `\s` / POSIX classes must be ASCII-scoped under UTF-8 (PCRE2's default absent `PCRE2_UCP`) | `rust-default` (unicode mode on by default); any engine whose class scope is Unicode-by-default |
 | `unicode-class-scope` | `\w` / `\d` / `\s` must be Unicode-widened (PCRE2's `PCRE2_UCP`, Vectorscan's `HS_FLAG_UCP`) | every `pcrec-*` config (UD §4.5: no UCP axis); any engine with no widening dial |
 
@@ -1328,7 +1373,7 @@ Each carries a recommendation and the consequence of each answer.
 | **Q1** | Does the byte-clean ASCII control corpus (`asc`) RANK, or is it provenance-only? (Frank's own flagged item) | **RANK it — chiefly because it is a PRECONDITION, not a style choice (F-M4, v0.2):** R3 and P8 are both scoring rules, and `pcrecbench interpret` can only bound a value that exists in a ranked population, so excluding `asc` makes them unscoreable outright, not merely eyeballed. It is also the encoding-cost control and the mirror's zero point. **Practical caveat (F-M4):** at `throughput` grain `asc`'s ~64 KB is a small share (≈4%) of the blended corpus, so its inclusion moves the blended ranking number only marginally — the place it actually matters is the PER-SUBJECT row, already rendered unconditionally on this shape of cell (`pcrecbench/CLAUDE.md`'s R9 rule), so a reader should look there for `asc`'s own reading rather than expect a large swing in the blended number. Consequence if provenance-only: R3 and P8 both become unscoreable and the set can describe the encoding's cost only by comparing two testees, never two subjects | DEFAULT |
 | **Q2** | Is a hand-authored per-script WORD POOL "generated" (house rule satisfied, no provenance record owed) or "sourced" (a provenance row per pool)? | **Generated.** Commit the pools, record `fidelity = synthesized` / `source_name = authored`, and state §4.1's limitation sentence in `NOTES.md`. Consequence of "sourced": a provenance gate over five word lists with no URL to cite, which the gate cannot check | DEFAULT |
 | **Q3** | Is the REQUIRES vocabulary GLOBAL (`pcrecbench/capability.py:87`) or per-set? Adding three tokens (§7.5) touches shared code and every adapter's declaration | **Keep it global; add the three.** A capability token is a cross-engine fact. Consequence of per-set: two sets could disagree about what `lookaround` means, and the closed-vocabulary load check loses its point | DEFAULT |
-| **Q4** | The TRE ruling (§7.3): EXCLUDED from v1 by an unsatisfied `utf8-encoding` token, with `tre-wide` named as roster growth? | **Yes, as proposed.** Consequence of including `tre-default` in byte mode: a BYTE-DECOMPOSED reading sits in the same ranking column as the UTF-8 ones. Consequence of building `tre-wide` now: a second driver model, a process-locale dependency and a character-not-byte length unit, all before the set's first sample | DEFAULT |
+| **Q4** | The TRE ruling (§7.3): EXCLUDED from v1 on 73 of 76 patterns by an unsatisfied, PER-PATTERN `utf8-encoding` token (v0.2, F-S2/F-S3 — corrected from a v0.1 blanket set-wide exclusion), with `tre-wide` named as roster growth? | **Yes, as revised.** `tre-default` RANKS on the three byte-safe controls (the floor, `ci-ascii-control`, `asr-b-ascii`) — the one genuinely independent byte-mode engine on the roster, kept exactly where its reading cannot diverge from the UTF-8 ones. Consequence of the v0.1 blanket exclusion: TRE loses a comparator on precisely the rows (the `asc`-subject control population, R3's encoding band, Q1's ranked control) that most want an independent byte-mode baseline. Consequence of building `tre-wide` now: a second driver model, a process-locale dependency and a character-not-byte length unit, all before the set's first sample | DEFAULT |
 | **Q5** | `bench/syntax/NOTES.md` reserves `bench/syntaxutf/` for a UTF sibling. Does `bench/utf8/` RETIRE that reservation, or do both stand? | **Both stand.** They are different sets (§2.2) and `syntaxutf` gets cheaper once this one's machinery exists. Add one pointer sentence to the reservation. Consequence of retiring it: the registry-enumerated coverage claim for UTF-only seed rows is silently abandoned | **BLOCK** (it touches a documented commitment) |
 | **Q6** | Which cells are the FIRST sample? Twelve v1 configs ≈ 8.5 h is more than one night (§10.3) | **Seven cells**: `pcrec-*-utf8` ×4 + `pcre2-utf-interp` + `pcre2-utf-jit` + `rust-default` ≈ 5 h. It carries all three of I-90 §5's first customers and the widest capability contrast. The other five at `@0.1`'s second window | DEFAULT |
 | **Q7** | Growth ordering: 0.2 = (g)+(k), 0.3 = (h)+(i)+(j)? | **Yes.** (h)/(i)/(j) share one policy (§8.3) and one subject-generation problem; splitting them ships the policy twice | DEFAULT |
