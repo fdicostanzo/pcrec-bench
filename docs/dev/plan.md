@@ -235,3 +235,16 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   subject grain (set grain unchanged), a pre-commit size warn considered
   with it; after the fix regenerate the two held AFTER groups + sidecars
   and confirm sizes near the v19 ~51 MB baselines.
+- [B86] STATE:not-started — (2026-09-23 ~15:2x EDT: inbox I-105, slot
+  GRANTED, runs after [B84]'s window — tomorrow's quiet slot) THE
+  CROSSOVER PAIR, three points: the I-103a four-arm block (default /
+  -fno-req-run / -fno-req-byte / offset-corrected inline hand-twin) on
+  (i) wild-semdiv-dollar-trailing-newline-pcre2 (0.4773% scan-byte
+  frequency), (ii) keyword-prefix-order (3.2067%, arms rebuild from
+  O-51's recipe), (iii) the I-105 synthetic e/space-run witness as a
+  SCRATCH PROBE (never enters the set; stamp-verified RX_REQ_BYTE 101;
+  'e' at 8.5212% in the existing throughput subjects) — 0.48/3.21/8.52%
+  BRACKETS the predicted ~8% crossover. Same instrument as O-51; the
+  two-parameter solve re-attempted on the well-conditioned spread;
+  keyword's IQR-flip finding re-read against [B79]'s null band when that
+  lands. Report, never diagnose.
