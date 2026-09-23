@@ -603,6 +603,105 @@ def test_set_grain_excludes_whole_set_when_any_subject_fails():
            f"separately, not just list ids: {excluded_section!r}")
 
 
+def test_no_expectation_cell_is_not_wrong():
+    """KB-27 (docs/dev/known_issues.md): a `did-not-match-as-expected` row
+    caused by NO EXPECTATION EXISTING AT ALL (`harness.outcome_for()`'s
+    `expectation is None` branch -- the fixed diagnostic text below is
+    the ONLY place that ever writes it) must reduce to `n_no_expectation`,
+    NOT `n_wrong` -- and `_failure_label` must call it `no-expectation`
+    (deliberately NOT `unjudged`, which already names an UNRELATED count
+    on this same report's `trial_agreement` line -- see
+    `test_trial_agreement_legend_and_na_v13`'s own "0 unjudged" assertions
+    below, a different rule entirely), never `wrong`. The CONTROL is
+    right beside it: a `did-not-match-as-expected`
+    row with a REAL disagreement diagnostic (the shape `outcome_for`'s
+    `row.matched != expectation.matched` branch actually writes) reduces
+    to `n_wrong`, exactly as `test_set_grain_excludes_whole_set_when_any_
+    subject_fails`'s `s-word-1` already proves end to end -- this test
+    additionally proves the TWO diagnostics are told apart by TEXT, not
+    merely by the ambient fixture they happen to sit in."""
+    no_exp_rows = [
+        {"kind": "match", "pattern_id": "p1", "subject_id": "s1",
+         "regime": "short-subject-search", "trial": t, "seq": t,
+         "match_outcome": "did-not-match-as-expected",
+         "diagnostic": "no expectation exists for this (pattern, subject, "
+                        "regime) -- the sub-bench must state one before "
+                        "the cell can be judged"}
+        for t in (1, 2, 3, 4, 5)
+    ]
+    red = report.reduce_match_cell(no_exp_rows)
+    _check(red.n_wrong == 0, f"expected n_wrong == 0 (nothing to compare "
+           f"against), got {red.n_wrong}")
+    _check(red.n_no_expectation == 5,
+           f"expected n_no_expectation == 5 (all 5 trials), got "
+           f"{red.n_no_expectation}")
+    _check(red.outcome_counts.get("did-not-match-as-expected") == 5,
+           f"the RAW outcome_counts must still show the real value -- "
+           f"only the n_wrong/n_no_expectation TALLY changes: "
+           f"{red.outcome_counts}")
+    _check(report._failure_label(red) == "no-expectation",
+           f"expected 'no-expectation', got {report._failure_label(red)!r}")
+
+    # CONTROL: a REAL disagreement carries a DIFFERENT diagnostic and
+    # must still reduce to n_wrong, exactly as before this fix.
+    real_wrong_rows = [
+        {"kind": "match", "pattern_id": "p1", "subject_id": "s1",
+         "regime": "short-subject-search", "trial": t, "seq": t,
+         "match_outcome": "did-not-match-as-expected",
+         "diagnostic": "expected match, observed nomatch"}
+        for t in (1, 2, 3, 4, 5)
+    ]
+    red_control = report.reduce_match_cell(real_wrong_rows)
+    _check(red_control.n_wrong == 5,
+           f"CONTROL: a real disagreement must still count as n_wrong, "
+           f"got {red_control.n_wrong}")
+    _check(red_control.n_no_expectation == 0,
+           f"CONTROL: a real disagreement must not be mistaken for a "
+           f"missing expectation, got {red_control.n_no_expectation}")
+    _check(report._failure_label(red_control) == "wrong",
+           f"CONTROL: expected 'wrong', got {report._failure_label(red_control)!r}")
+
+
+def test_no_expectation_diagnostic_matches_harness():
+    """Anti-drift cross-check (KB-27): `pcrecbench.reduce.
+    NO_EXPECTATION_DIAGNOSTIC_PREFIX` is a literal duplicated from
+    `pcrecbench.harness.outcome_for()`'s own `expectation is None` branch
+    rather than imported from it (`reduce.py`'s own docstring explains
+    why -- keeping this module's import graph free of the adapters/
+    driverrun/store machinery `harness.py` pulls in for actually RUNNING
+    a cell). This test is what keeps the two from silently drifting
+    apart: it calls `outcome_for` DIRECTLY with `expectation=None` and
+    asserts the real diagnostic it returns starts with the literal this
+    module reads it back out with."""
+    from pcrecbench import reduce
+    from pcrecbench.harness import outcome_for
+
+    class _Row:
+        answer = "match"
+        detail = None
+        is_giveup = False
+        matched = False
+        start = None
+        end = None
+        consumed = None
+        nmatches = None
+
+    outcome, _observed, diagnostic = outcome_for(
+        _Row(), expectation=None, regime="short-subject-search", subject=None)
+    _check(outcome == "did-not-match-as-expected",
+           f"expected did-not-match-as-expected, got {outcome!r}")
+    _check(diagnostic.startswith(reduce.NO_EXPECTATION_DIAGNOSTIC_PREFIX),
+           f"harness.outcome_for()'s real diagnostic {diagnostic!r} must "
+           f"start with reduce.py's own literal "
+           f"{reduce.NO_EXPECTATION_DIAGNOSTIC_PREFIX!r} -- if this fails "
+           f"the two modules have drifted apart and KB-27's fix has gone "
+           f"blind on every future record.")
+    _check(reduce._is_no_expectation_row(
+        {"match_outcome": outcome, "diagnostic": diagnostic}),
+           "the real harness diagnostic must be recognised by "
+           "_is_no_expectation_row")
+
+
 def test_unsupported_by_declaration_outcome():
     loaded, _paths, _source = _load_store(STORE)
     args = _args(store=STORE, include_synthetic=True)
@@ -1805,7 +1904,17 @@ def test_reporter_version_pin():
     replaced by `_diagnostic_full` -- a did-not-compile row's diagnostic is
     carried in FULL instead of truncated to its first line, which renders
     differently on any report that already prints a multi-line one, two
-    committed capability@0.1 files) took it to v17.
+    committed capability@0.1 files) took it to v17; [B52] (the matrix
+    report surface: the unconditional `- baseline: ` bullet/row on every
+    rankable group of every existing report, item 3's own fix) took it
+    to v18; KB-27 (docs/dev/known_issues.md, lane b75kb27: a
+    `did-not-match-as-expected` row caused by NO expectation existing at
+    all now reduces to `n_no_expectation` rather than `n_wrong`, and
+    `_failure_label`/`_matrix_cell` gain a sixth status token,
+    `no-expectation` (deliberately not `unjudged`, which already names an
+    unrelated count on the `trial_agreement` line) -- rendering
+    differently on any report whose cell hits this branch) took it to
+    v19.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1816,20 +1925,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v18 (2026-09-18)",
-           f"expected REPORTER_VERSION == 'v18 (2026-09-18)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v19 (2026-09-22)",
+           f"expected REPORTER_VERSION == 'v19 (2026-09-22)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v18 (2026-09-18)" in md, f"expected the v18 header line:\n{md[:200]}")
+    _check("reporter: v19 (2026-09-22)" in md, f"expected the v19 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v18 (2026-09-18)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v19 (2026-09-22)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v18 (2026-09-18)" in matrix,
+    _check("reporter: v19 (2026-09-22)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4144,13 +4253,18 @@ def test_matrix_all_refused_pattern_f26():
 
 
 def test_matrix_status_tokens():
-    """One row exercising all four EXCLUDED-population tokens at once,
+    """One row exercising all five EXCLUDED-population tokens at once,
     beside `unsup`/`refused` (covered by `test_matrix_all_refused_
     pattern_f26`) -- `wrong` (a wrong-answer subject), `gave-up` (a
-    give-up subject, no wrong answer), and `excluded` (a `not-measured`
-    status row -- the catch-all "other" bucket). Same `p1` pattern
-    across FOUR testees, one per token, plus a fifth testee `engine-m`
-    ranking normally so the row's `best_ns`/`best_testee` are real."""
+    give-up subject, no wrong answer), `no-expectation` (KB-27: no
+    derived expectation exists at all -- distinct from `wrong` even
+    though both START from a `did-not-match-as-expected` row; the token
+    is deliberately not `unjudged`, which already names an unrelated
+    count on the `trial_agreement` line), and `excluded` (a
+    `not-measured` status row -- the catch-all "other" bucket). Same
+    `p1` pattern across FIVE testees, one per token, plus a sixth testee
+    `engine-m` ranking normally so the row's `best_ns`/`best_testee` are
+    real."""
     setup_wrong = _mini_setup("engine-wrong_1.0.0_cfg-caps-simdna")
     row_wrong = dict(_mini_row("p1", "s1", "short-subject-search", 1, 1, 50))
     row_wrong["match_outcome"] = "wrong-span-or-captures"
@@ -4162,6 +4276,19 @@ def test_matrix_status_tokens():
     row_gaveup["diagnostic"] = "giveup: -3:PCREC_ERR_FRAMES -- FIXTURE"
     loaded_gaveup = [_mk_loaded("gaveup.jsonl", setup_gaveup, [row_gaveup])]
 
+    # KB-27: `harness.outcome_for()`'s OWN fixed diagnostic on its
+    # `expectation is None` branch -- reduce.py's `_is_no_expectation_row`
+    # identifies this row by that exact text, never by `match_outcome`
+    # alone (which is `did-not-match-as-expected`, the SAME value a real
+    # wrong answer carries).
+    setup_noexp = _mini_setup("engine-no-expectation_1.0.0_cfg-caps-simdna")
+    row_noexp = dict(_mini_row("p1", "s1", "short-subject-search", 1, 1, 50))
+    row_noexp["match_outcome"] = "did-not-match-as-expected"
+    row_noexp["diagnostic"] = (
+        "no expectation exists for this (pattern, subject, regime) -- "
+        "the sub-bench must state one before the cell can be judged")
+    loaded_noexp = [_mk_loaded("noexp.jsonl", setup_noexp, [row_noexp])]
+
     setup_notmeas = _mini_setup("engine-notmeas_1.0.0_cfg-caps-simdna",
                                 status="inconclusive-load", status_detail="box busy -- FIXTURE")
     rows_notmeas = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
@@ -4171,8 +4298,9 @@ def test_matrix_status_tokens():
     rows_m = [_mini_row("p1", "s1", "short-subject-search", t, 10 + t, 40) for t in (1, 2, 3)]
     loaded_m = [_mk_loaded("m.jsonl", setup_m, rows_m)]
 
-    rd, err = report.build_report(loaded_wrong + loaded_gaveup + loaded_notmeas + loaded_m,
-                                  _args(store="x", include_synthetic=True))
+    rd, err = report.build_report(
+        loaded_wrong + loaded_gaveup + loaded_noexp + loaded_notmeas + loaded_m,
+        _args(store="x", include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     matrix = report.render_matrix_tsv(rd)
     rows = _matrix_rows_by_key(matrix)
@@ -4181,6 +4309,7 @@ def test_matrix_status_tokens():
     cells = rows[key]["cells"]
     _check(cells["engine-wrong_1.0.0_cfg-caps-simdna"] == "wrong", cells)
     _check(cells["engine-gaveup_1.0.0_cfg-caps-simdna"] == "gave-up", cells)
+    _check(cells["engine-no-expectation_1.0.0_cfg-caps-simdna"] == "no-expectation", cells)
     _check(cells["engine-notmeas_1.0.0_cfg-caps-simdna"] == "excluded", cells)
     _check(cells["engine-m_1.0.0_cfg-caps-simdna"] == "1.000000",
            f"the only rankable testee must be the row's own 1.00x: {cells}")
@@ -4192,7 +4321,10 @@ def test_matrix_no_empty_cells():
     `REAL_STORE`-independent mixed fixture built by the two tests above
     PLUS `test_did_not_compile_ranking_line_r10`'s own shape reused here
     -- every (row, testee) cell in a rendered matrix is EITHER a
-    parseable float OR one of the five closed tokens, never `""`. This
+    parseable float OR one of the SIX closed tokens (KB-27's
+    `no-expectation` is the sixth; this fixture does not construct one --
+    see `test_no_expectation_cell_is_not_wrong` for that token's own
+    dedicated test), never `""`. This
     is the property `_matrix_cell`'s fallback chain exists to guarantee;
     this test is what makes that a checked fact rather than an assertion
     in a docstring."""
@@ -4224,7 +4356,8 @@ def test_matrix_no_empty_cells():
     matrix = report.render_matrix_tsv(rd)
     rows = _matrix_rows_by_key(matrix)
     _check(len(rows) >= 2, f"expected at least the p1 F26 row and p2's rank row: {sorted(rows)}")
-    _FLOAT_OR_TOKEN = {"unsup", "refused", "wrong", "gave-up", "excluded"}
+    _FLOAT_OR_TOKEN = {"unsup", "refused", "wrong", "gave-up", "no-expectation",
+                       "excluded"}
     for rowkey, data in rows.items():
         for testee_id, cell in data["cells"].items():
             _check(cell != "", f"empty cell at row {rowkey}, testee {testee_id}")
@@ -4378,6 +4511,8 @@ TESTS = [
     test_compile_cost_still_keyed_by_form,
     test_set_grain_sums_per_subject_ns_per_call,
     test_set_grain_excludes_whole_set_when_any_subject_fails,
+    test_no_expectation_cell_is_not_wrong,
+    test_no_expectation_diagnostic_matches_harness,
     test_unsupported_by_declaration_outcome,
     test_lazy_jit_derivation_uses_lowest_seq_not_trial_one,
     test_where_filter_dotted_path,

@@ -370,6 +370,36 @@ own shape), not `show_form`'s report-wide flag. `REPORTER_VERSION` is
 UNCHANGED (no committed report renders differently); see `report.py`'s
 own `[B42] CB2` module-docstring section.
 
+**KB-27 additions (2026-09-22, lane b75kb27; reporter v19)**: 2 new
+tests in `test_report.py` (86 total) --
+`test_no_expectation_cell_is_not_wrong` (a `did-not-match-as-
+expected` row carrying `harness.outcome_for()`'s own fixed "no
+expectation exists for this (pattern, subject, regime)" diagnostic
+reduces to `n_no_expectation`, never `n_wrong`, and `_failure_label`
+calls it `no-expectation`; the CONTROL right beside it is the SAME
+`match_outcome` with a REAL disagreement diagnostic, which must still
+reduce to `n_wrong` and label `wrong`, exactly as before this fix) and
+`test_no_expectation_diagnostic_matches_harness` (an anti-drift
+cross-check: calls `harness.outcome_for()` directly with
+`expectation=None` and asserts the REAL diagnostic it returns starts
+with `reduce.py`'s own duplicated literal, `NO_EXPECTATION_DIAGNOSTIC_
+PREFIX` -- the two are two copies by necessity, `reduce.py`'s own
+docstring explains why, so this is what keeps them from silently
+drifting apart). `test_matrix_status_tokens` gains a SIXTH testee,
+`engine-no-expectation`, exercising the new status token in the same
+one-testee-per-token fixture the other five already use. The token is
+`no-expectation`, deliberately NOT `unjudged` -- that word already names
+an unrelated count on the SAME report's `trial_agreement` line
+(`reduce.judge_trial_agreement`/`agreement_line`), and reusing it here
+would have put two unrelated meanings of "unjudged" in one document.
+`test_matrix_no_empty_cells`'s `_FLOAT_OR_TOKEN` constant and
+`test_reporter_version_pin`'s history/assertions move to v19.
+`test_status_chip_cell_html` (`test_matrix_page.py`) needed only its
+`row` dict widened by one entry -- it iterates `mp.STATUS_CHIPS.items()`
+generically, so the new `no-expectation` chip's CSS class and title are
+already covered by the existing loop once `scripts/matrix_page.py`'s
+`STATUS_CHIPS` dict gains the entry. No `test_quick.py` change.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then
