@@ -8,7 +8,7 @@ cell must not regress by more than its IQR.** Numbers only; the manager's
 interpretation and the outbox item (O-45) are not this lane's to write.
 
 **BEFORE** = `reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.tsv`
-(the [B71]/wrapfix second sample, pcrec pin **25b1984f**, abi 28) and its
+(the [B71]/wrapfix second sample, pcrec pin **25b1984f**, abi 27) and its
 four `pcrec_25b1984f_*` records timestamped 2026-09-22T02:11-04:39Z.
 **AFTER** = `reports/2026-09-23-capability-0.1-budu-ryzen1600-after-8d716693.tsv`
 (pcrec pin **8d716693**, abi 29) and its four `pcrec_8d716693_*` records
@@ -449,7 +449,7 @@ every testee and carries no stamps):
 | `end_window` | 25 / 127 rows, identically on all 4 testees | 102 / 127 |
 | `vm_start` | 124/127 (`vm-caps`), 124/127 (`vm-in-caps`), 76/127 (`auto-caps`), 42/127 (`auto-nocaps`) | the complement, all DFA-route |
 
-BEFORE (25b1984f, abi 28) compile rows carry **none of the three keys
+BEFORE (25b1984f, abi 27) compile rows carry **none of the three keys
 at all** — confirmed by direct key listing on two BEFORE compile rows;
 the cross-pin comparison in §1/§2 is therefore unconfounded by any
 change to an EXISTING field.

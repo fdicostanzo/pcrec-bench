@@ -3329,3 +3329,76 @@ anywhere was the initial worktree add (rc=128, deviation 1). Logs:
 40_M4a,41_M4bc,50_M5a,51_M5b_patternedit,52_M5b,60_M6a,61_M6cnt,
 70_b2_p2info46,71_b2_diff}.log — kept, with every twin .c beside them,
 until "I-85 logs fetched".
+
+## O-45 (2026-09-23, [B74], answers inbox I-87/I-88) — [OPTLOOP] cycle 1 BATCH 1's capability AFTER at 8d716693: the D119 read, the stamp census, the cells outside the bar
+
+The full derivation is the ledger,
+`docs/dev/ledgers/2026-09-23-optloop1-batch1-after-8d716693.md` (662
+lines: the per-cell D119 table §1, out-of-bar cells §2, the stamp census
+§3, ranked findings §4); the report group is
+`reports/2026-09-23-capability-0.1-budu-ryzen1600-after-8d716693.*`
+(cross-pin, 11 testees). Window 2026-09-23 03:19-05:52Z, 4/4 cells
+measured at attempt 1 under the quiet gate, X13 `agree` with zero
+disagreeing groups on all eight records (both sides), max other-core
+busy 6.06% BEFORE / 1.80% AFTER. Store 221. Convention below:
+Δ% = (after−before)/before; positive = slower.
+
+**(1) The D119 verdict: 39 of 41 named-target cells MEET the bar.** The
+named ReDoS/pathological throughput targets collapse 98.2-99.9% on ALL
+FOUR pcrec configs (from 1.28-20.1 M ns to 23.1-89.5 k ns; bracket-
+array-define to 72-90 ns); trim-nested-star at its named auto-caps scope
+-99.9986%. The 2 misses are one pattern: **router-prefix-order,
+large-subject-throughput, DFA route only** — auto-caps +1.19% /
+auto-nocaps +1.21%, each ~10× its (tight, 175-1,400 ns) before-IQR,
+while the same pattern's vm/vm-in throughput and all four configs'
+short-search IMPROVE (-0.44% to -49.4%). Its stamp is confirmed
+RX_REQ_BYTE "114" (your (b) reclassification was right that it moves;
+on the DFA route at throughput it moves the wrong way). Per I-88 this
+is a FINDING for Frank's default-on vs --tune ruling; reported, not
+diagnosed.
+
+**(2) The carve-outs are NOT all within noise (I-87 (b)'s "expected
+within noise" framing does not hold on 13 of 32 rows).**
+nested-comment-rec: search improves 71-75% on every config, but
+THROUGHPUT REGRESSES +18.8-25.0% on all four configs. uuid-near-miss /
+ipv4-near-miss: forced-VM improves 81-100%, but the DFA route regresses
++18.7-38.5% at BOTH regimes. floor-byte stays within its band. Ledger
+§1.2 has every row.
+
+**(3) A common ~23,088-23,190 ns floor on large-subject-throughput,
+entered from both directions** (ledger §4.2): eight of the nine named-
+target rows land in exactly this band from millions of ns above — and
+two previously near-zero DFA-route cells RISE into it: winpath-near-miss
+20.1/20.4 ns → 23,107/23,124 ns and email-nested-plus 32.0/47.3 ns →
+23,107/23,139 ns (their forced-VM route moves the opposite way, millions
+→ tens of ns). Both now stamp a required byte. Stated as measured;
+yours to read.
+
+**(4) Beyond the named set** (before-IQR reading, ledger §2): 78
+non-named cells regress beyond bar (a 64-cell "everyday" subset at
++0.04-34.1%, correlated with a new req_byte or vm_start=anchored stamp
+— the correlation is stated in §2.1's table, not interpreted) and 202
+improve beyond bar. 12 rows MISSING on one or both sides (did-not-
+compile / refusals, unchanged populations; §2.4).
+
+**(5) The stamp census** (I-87 (c); ledger §3): all five named
+expectations CONFIRMED exactly — router-prefix-order RX_REQ_BYTE "114";
+floor-byte and nested-comment-rec gained a required byte; uuid-near-miss
+and ipv4-near-miss gained end windows of exactly 37 and 16 bytes. The
+full 64-pattern per-config census (req_byte / end_window / vm_start) is
+§3.2. rx_info was byte-identical across the pin; shim floor stays 16.
+Bench-side note: KB-27 was closed before this window (the evil-alt-
+nested × {rd-evil-alt-near-miss, sd-empty-alt-hit} short-search cells
+render no-expectation on both sides; on THIS pattern's throughput cells
+both named subjects read genuine gave-up on all trials, both pins).
+
+**(6) Re-pin facts your side may want** (also in
+docs/dev/lanes/b74repin_report.md): the abi jump was 27→29 for us (an
+unannounced 27→28 REL-1.4 version-stamp step sat between the pins), and
+v0.1.0-beta's CLI reshape (bare positionals become input files) refused
+our `-o file.c -- 'pattern'` invocation — seven bench call sites moved
+to --pattern. Also: your [OPT-REQBYTE] is strong enough that it
+instantly dismissed our catastrophic-backtracking harness fixture
+((a+)+b over 40 a's, no b) — we re-armed the control; stated because it
+is a measured example of the memchr converting a hang into a ~O(n)
+dismissal.
