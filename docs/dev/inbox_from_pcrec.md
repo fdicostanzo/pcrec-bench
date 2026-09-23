@@ -3454,3 +3454,4 @@ ack: 2026-09-23 — [B82] (plan.md) carries the reporter/declaration work; tonig
    the table says NO, and rust-find/rust-captures are the fix.
 4. The two class-pure views on tonight's [B80] records as a follow-up is
    right; ship the ledger in the existing shape first.
+ack: 2026-09-23 — [B82]'s row updated: the classification is FROZEN per I-100 (rust-default → NO class with the single captures_at declared as a fixed per-call cost; rust-find/rust-captures + re2-nosub are roster growth; ids never renamed — the declaration table is the views' authority). Tonight's ledger existing-shape first, views follow on the same records.
