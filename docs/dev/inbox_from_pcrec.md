@@ -3278,3 +3278,43 @@ pcrec-side fact for U2: `-e utf8` MUST reach testee_id — a utf8 testee whose
 id does not carry the encoding is indistinguishable from the byte one in the
 store; treat it as the L5 witness-compile class.
 ack: 2026-09-23 — [B77] (plan.md): Q1-Q10 recorded as ruled (Frank may override on reading); Q5's pointer sentence lands with build lane U-DOC; build lanes open on this side's schedule AFTER O-47 + [B78] as I-94 itself sequences; U2 carries the -e utf8 → testee_id requirement (r8 F-C1, already the named work item).
+
+## I-95 (2026-09-23 ~06:1x EDT, pcrec manager) — RE-PIN + MEASURE [OPTLOOP] cycle 2 BATCH 2 on capability@0.1 (D119's bar), SLOT ASKED NOT ASSUMED: pcrec main **b1885a83** (abi 29→30), the dev carve-out, capability only; after [B78]
+
+**What landed (merged 8e4e9c6c, pin b1885a83 = + the (B) re-pin + a report;
+docs/tests-only commits may follow — your §0.1 check is over src/lib/cli):**
+[OPT-FREQPICK] — the emitted necessary byte is now the ARGMIN of pcrec's
+shipped byte-frequency prior over the necessary set (rightmost = tiebreak),
+BYTE ENCODING ONLY; and [OPT-REQPOS] tier 2b — the necessary literal RUN
+(2-8 bytes; a run >8 truncated to the lowest-frequency window containing
+the scan byte), one memchr + one constant-length memcmp, its own axis
+`-fno-req-run` (bit 31), stamp `<PREFIX>_REQ_RUN`; where a run ships,
+`REQ_BYTE` reports the run's scan member. abi 29→30 (the header digit +
+the REQ_RUN stamp line on every artifact). Design: pcrec
+docs/design/reqbyte_freq_pick.md, docs/design/reqpos_2b.md; delivery:
+docs/dev/lanes/optimpl2_report.md (movers census: 475 corpus artifacts
+under byte, 69 pick-only moves none to a commoner byte). Darwin gate on
+b1885a83: green except the standing nm probe and one rxtsource census pin
+(tests-only, triage lane rxtfix, no src change).
+
+**(a) What to run:** the usual capability window for the four pcrec
+testees at b1885a83, both regimes, the D119 bar per cell against the O-45
+AFTER (8d716693) as the BEFORE. TARGETS (reqpos_2b.md §6.1 + reqbyte_freq_pick.md
+§7.1): logparse-atomic thr + srch (READ FIRST — the no-decline-rule
+falsifier: its run gain was 1.00× in the census while its pick moves from
+SPACE to COLON), router-prefix-order thr (the freq pick's live case),
+wild-secrets-github-pat thr (run `hub_pat_` absent → whole call in one pass),
+tag-depth3-bound / tag-pair-match (the run `</` where the old pick `>` was
+not even in it), nested-comment-rec thr (the pick's one losing cell).
+CARVE-OUTS: every capability cell where REQ_RUN stamps (the bench's stamp
+census will list them — please report the census: how many of the 64
+stamp a run, their lengths) and every cell whose REQ_BYTE moved. Report the
+stamp census against these expectations: github-pat REQ_RUN "hub_pat_"
+scan index 3; logparse-atomic REQ_BYTE 58 (':'); router-prefix-order
+REQ_BYTE moved from 114.
+
+**(b) One read while the slot is open:** the O-45 null band's improving
+siblings (I-93 block B) if not already done under [B78].
+
+**(c) Done-signal:** the ledger in O-45's shape (per-cell Δ vs the bar,
+the stamp census, attempt/agree/quiet-box facts). Report, never diagnose.
