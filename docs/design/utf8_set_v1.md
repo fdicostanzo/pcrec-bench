@@ -937,16 +937,34 @@ change is not deferrable to (g).
 `prp-greek` vs `prp-greek-sc` is oracled from libpcre2 10.46 like
 everything else — but AX's [M5.0] stage-5 section records that the two
 local libpcre2 builds on the pcrec author's box DISAGREED with the
-10.46 reference on three cells (U+00B7 and U+0300 under
-`\p{Greek}`/`\p{scx=Greek}`), because Unicode revised those characters'
-Script_Extensions between 14.0.0 and 16.0.0. **Consequence for this
-set:** the Unicode version behind the oracle library is a PROVENANCE
-fact that must be recorded beside the expectation, and a re-derivation
-on a different box can legitimately differ on exactly those cells. The
-subject pair for `prp-greek`/`prp-greek-sc` should therefore AVOID
-U+00B7 and U+0300 and use U+0342 (which AX names as a stable flipper),
-with the avoided pair stated in `NOTES.md` as a known version-sensitive
-region rather than silently unused.
+10.46 reference on a MINORITY of a 59-cell Script/Script_Extensions
+sweep (Homebrew 10.48/Unicode 17.0.0 agrees on 57 of 59; macOS system
+10.42/Unicode 14.0.0 agrees on 54 of 59). **(F-S1, v0.2, corrected.)**
+Read directly against the sweep's own arbitrating tool
+(`~/pcrec/tests/uprops/uprops_compare.py`'s `RECLASSIFIED`/
+`SCX_REVISED` dicts, which AX's header names as authoritative): the
+14.0.0→16.0.0 drift the disagreement above is actually about is **one
+code point, U+00B7, and one only** — the tool's own comment calls it
+"the single code point" and, because it is Latin-1, "the only script
+disagreement the byte arm sees at all." U+0300 is a DIFFERENT fact
+entirely (a 16.0.0→17.0.0 drift, one of fifteen `SCX_REVISED` members
+at that later version boundary) and is not a version-drift risk for the
+14.0.0/16.0.0 pair this note is about at all — v0.1 conflated "the code
+points that flip between the bare and `sc=` spellings within the
+16.0.0 pin" (a Script vs. Script_Extensions membership question) with
+"the code points whose Script_Extensions membership is version-
+sensitive" (U+00B7 alone), inheriting AX's own prose-header conflation
+as fact rather than checking it against the tool AX itself names.
+**Consequence for this set, unchanged:** the Unicode version behind the
+oracle library is a PROVENANCE fact that must be recorded beside the
+expectation, and a re-derivation on a different box can legitimately
+differ on U+00B7. The subject pair for `prp-greek`/`prp-greek-sc`
+should therefore AVOID U+00B7 (the confirmed version-sensitive point)
+and use U+0342 (which AX names as a stable flipper and which is, like
+U+0300, absent from both `uprops_compare.py` tiers — so neither
+mitigation choice changes), with the avoided point stated in
+`NOTES.md` as a known version-sensitive region rather than silently
+unused.
 
 ---
 
@@ -1329,6 +1347,6 @@ Each carries a recommendation and the consequence of each answer.
 | **R3** | **Cell time at ~1.5-1.8× `CELL_CAP` headroom** (§10.3, F-M3 v0.2 — restated against tonight's measured `capability@0.1` band, thinner than the v0.1 estimate's ~2×), thinner than any existing set | two one-line levers named and pre-priced: drop the per-script 64 KB throughput arm (~4 min) or cut the short set 90 → 75 (~5 min). Lever 1 is PRE-COMMITTED as the default first-sample cut if the rehearsal cell exceeds 50 min. Neither changes a pattern |
 | **R4** | **Family (f) refuses on default-cap pcrec configs**, taking a twelfth of the set with it | this is P7, not a surprise — and it is a FINDING (AX's K53 is the same shape on the correctness side). If it happens broadly, the `-bigcap` sibling is the arm that reads it, and the refusal census is the result |
 | **R5** | **The generated corpora do not resemble real text closely enough** for the histogram claim to carry | the claim is deliberately narrow (§4.1's limitation sentence: byte histogram and character-width statistics, NOT word or sentence statistics) and the histogram is a committed, re-derived table (§4.2), so a reader can check the claim rather than trust it |
-| **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answers** (§8.5) | the affected characters (U+00B7, U+0300) are avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
+| **R6** | **The Unicode version behind the oracle library shifts the Script_Extensions answer** (§8.5, F-S1 v0.2: the confirmed version-sensitive point is U+00B7 alone, not U+00B7 and U+0300) | the affected character (U+00B7) is avoided in the subject pair; the Unicode version is recorded as provenance; `NOTES.md` names the region as version-sensitive |
 | **R7** | **The set is read as a pcrec milestone's acceptance test.** Its subject matter IS a pcrec milestone, which makes engine-neutral authorship harder than usual | §9's boundary, stated three ways, plus the R-BENCH-4 check that no limits file exists; and the cross-engine roster (§7.1) is six engines wide precisely so no single engine's behaviour can be mistaken for the axis |
 | **R8** | **(F-M7, v0.2, speculative.)** The v1.4 trial-agreement constants (`v1.4-group`, k=1.5, …) were calibrated over a store of byte-mode, largely ASCII/log-line-shaped timing distributions. `bench/utf8` is the first set to exercise a materially decode-bound timing profile (multi-byte decode interleaved with the scan, plus §8.4's new find-all advance) at scale, and nothing in v1.4's design assumes byte-uniform text | a first-window CHECKLIST item, not a design change: observe the `trial_agreement` block on `utf8` cells against the store's historical `inconclusive-spread` rate. A large deviation is a SCHEMA-RULING escalation (a question for whoever owns gate_shape_v14.md), never a silent recalibration of the constants |
