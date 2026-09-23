@@ -178,7 +178,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   (where program-identity is read from — the compile rows' emit hashes),
   a reporter version bump, tests; charter the design details before a
   lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
-- [B80] STATE:not-started — (2026-09-23 ~06:1x EDT: inbox I-95, slot
+- [B80] STATE:started — (2026-09-23 ~07:0x EDT: lane b80repin up) — (2026-09-23 ~06:1x EDT: inbox I-95, slot
   GRANTED, runs AFTER [B78]) RE-PIN + MEASURE [OPTLOOP] cycle 2 batch 2:
   re-pin the pcrec testees to **b1885a83 (abi 29→30)** — the shim gains
   `REQ_RUN` (on every artifact; where a run ships, REQ_BYTE reports the
