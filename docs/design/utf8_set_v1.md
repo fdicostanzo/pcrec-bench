@@ -1086,8 +1086,23 @@ the built set's real pattern ids. What follows is the source that
 transcription reads, in the house's fifteen-column shape (selector /
 quantity / reducer / op / bounds), with each clause written so it is
 expressible — `n_wrong`, `pass_rate`, `median_ns`, `status`,
-`compile_outcome` and the size columns, never an answer or a span
-(§6.4's limit).
+`compile:emit_bytes` and the size columns, a `section`-selected
+`set_of`/`count` for a compile-outcome census (F-M2, v0.2: corrected
+from a bare `compile_outcome`, not itself a `QUANTITIES` member), never
+an answer or a span (§6.4's limit).
+
+**(F-M2, v0.2.)** None of P1-P10 is transcription-tested yet — the
+patterns do not exist until U4 builds them — but per this project's own
+house standard (`interpreter_v1.md`'s worked predictions format was
+TESTED against `bench/syntax/NOTES.md`'s P1-P13 before it shipped), U5
+(§13) is charged with a named step: **hand-transcribe P1-P10 into the
+real fifteen-column grammar against the built patterns, at TSV-authoring
+time, BEFORE the first window** — not a stub, a real dry run through
+`interpret`'s own loader — and fix any clause that does not parse,
+folding the fix into `NOTES.md`'s predictions section. The
+immutability rule (`stated_utc` gates a mutation after the first window,
+not before) makes a post-hoc fix impossible once a cell has run — the
+[B72] lesson.
 
 - **P1 — the offset-skip ORDER PAIR (I-90 §5's first named customer).**
   `lit-offset-at-head` (`@é`) and `lit-offset-at-tail` (`é@`) differ in
@@ -1105,56 +1120,72 @@ expressible — `n_wrong`, `pass_rate`, `median_ns`, `status`,
   formally predicted — a prediction needs a concrete witness, and P1 is
   it.
 - **P2 — the high necessary byte (I-90 §5's second).** `lit-run-3`
-  (`日本語`, every necessary byte ≥ 0xE6) has a `throughput` ns/byte on
-  the `cjk` 64 KB subject at least **×2** `lit-mixed-ascii`'s on the same
-  subject, on `pcre2-utf-interp` and on every `pcrec-*-utf8`. The
-  mechanism: 0xE3-0xE9 leads are roughly a third of CJK text's bytes, so
-  a required-byte filter on a high byte dismisses almost nothing, where
-  the ASCII `@` in `lit-mixed-ascii` dismisses nearly everything. **This
-  is FP §3.2's inversion, restated as a measurable cell.**
+  (`日本語`, every necessary byte ≥ 0xE6) has a `throughput`
+  **`median_ns`, `reducer=ratio_to(pattern=lit-mixed-ascii)`, on the
+  SAME `cjk` 64 KB subject**, at least **×2** — **(F-M2, v0.2:
+  `ratio_to` on the same subject is what "at least ×2 [its] ns/byte on
+  the same subject" actually scores; the byte denominator cancels in
+  the ratio, so no `ns/byte` quantity is needed or exists in
+  `interpret`'s `QUANTITIES`)** — on `pcre2-utf-interp` and on every
+  `pcrec-*-utf8`. The mechanism: 0xE3-0xE9 leads are roughly a third of
+  CJK text's bytes, so a required-byte filter on a high byte dismisses
+  almost nothing, where the ASCII `@` in `lit-mixed-ascii` dismisses
+  nearly everything. **This is FP §3.2's inversion, restated as a
+  measurable cell.**
 - **P3 — the same inversion does NOT hold on the ASCII control.** On
   the `asc` 64 KB subject, `lit-run-3` and `lit-mixed-ascii` both find
-  zero matches and their ns/byte agree within ×1.5 — the control that
-  says P2 is about the histogram and not about the pattern.
+  zero matches and their `throughput` `median_ns` (same
+  `ratio_to`-on-the-same-subject reading as P2) agree within ×1.5 — the
+  control that says P2 is about the histogram and not about the
+  pattern.
 - **P4 — the fold sets (I-90 §5's third).** On every `pcrec-*-utf8`
-  config, `ci-moskva`'s `emit_bytes` exceeds `ci-ascii-control`'s by more
-  than **×1.5**; and no `ci-*` pattern's `search_short` cell carries
-  `n_wrong > 0` on any roster testee — in particular `ci-strasse` does
-  NOT match `STRASSE` and `ci-turkish-i` does NOT match U+0130/U+0131,
-  which is axis 7's simple-folding claim (UD §4.1) read as a
-  cross-engine expectation.
+  config, `ci-moskva`'s **`compile:emit_bytes`** (F-M2, v0.2: corrected
+  from the bare `emit_bytes`, which is not a `QUANTITIES` member)
+  exceeds `ci-ascii-control`'s by more than **×1.5**; and no `ci-*`
+  pattern's `search_short` cell carries `n_wrong > 0` on any roster
+  testee — in particular `ci-strasse` does NOT match `STRASSE` and
+  `ci-turkish-i` does NOT match U+0130/U+0131, which is axis 7's
+  simple-folding claim (UD §4.1) read as a cross-engine expectation.
 - **P5 — the UCP census.** Every pattern declaring
-  `unicode-class-scope` (`cls-w-ucp`, `asr-b-cyr-ucp`,
-  `ci-ucp-invariance`) carries `compile_outcome =
+  `unicode-class-scope` (`cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp` — F-C3,
+  v0.2 — `asr-b-cyr-ucp`, `ci-ucp-invariance`) carries `compile_outcome =
   unsupported-by-declaration` on all four `pcrec-*-utf8` configs (UD
   §4.5: pcrec has no UCP axis) and compiles cleanly on every `pcre2-utf-*`
-  config.
+  config. **(F-M2, v0.2)** scored via `quantity=section,
+  reducer=set_of` over the `unsupported_by_pattern` section for the
+  pcrec side and `did_not_compile`'s absence for the pcre2 side — the
+  indirect path `docs/dev/predictions/CLAUDE.md`'s own worked example
+  already uses, not a `compile_outcome` quantity (no such member exists
+  in `QUANTITIES`).
 - **P6 — encoded length.** `cls-dot-rep` (`^.{5}$`) reads `n_wrong eq 0`
   on every testee that compiles it, against a subject pair containing a
   5-character / 12-byte hit and a 5-BYTE / 3-character miss — the
   encoded-length claim as a checkable answer rather than a belief.
 - **P7 — the property size cliff.** At least one family-(f) pattern
   carries `compile_outcome = did-not-compile` on a default-cap
-  `pcrec-*-utf8` config and compiles on the raised-cap sibling. Basis:
-  AX's K53 record (twelve `\p` general-category blocks exceeded the
-  emitted-source cap under `utf8` at default axes) and UD §3.3's
-  "table-size problem". `prp-l`'s `emit_bytes` exceeds the family-(b)
-  literal median by more than **×10** on every compiled config (R5's own
-  band).
-- **P8 — the floor is free.** The floor `~`'s `throughput` ns/byte
-  agrees within the spread band between `pcrec-auto-utf8` and
-  `pcrec-auto` (byte) on the `asc` subjects — i.e. the encoding costs
-  nothing on a single-ASCII-byte pattern over ASCII text. **Scored at
-  0.2**, when (k)'s mirror arm exists; stated now because it is the
-  mirror's zero point and a prediction stated late is a prediction
-  nobody believed.
+  `pcrec-*-utf8` config and compiles on the raised-cap sibling —
+  **(F-M2, v0.2)** scored the same `section`/`set_of` way as P5, over
+  the `did_not_compile` section. Basis: AX's K53 record (twelve `\p`
+  general-category blocks exceeded the emitted-source cap under `utf8`
+  at default axes) and UD §3.3's "table-size problem". `prp-l`'s
+  **`compile:emit_bytes`** exceeds the family-(b) literal median by more
+  than **×10** on every compiled config (R5's own band).
+- **P8 — the floor is free.** The floor `~`'s `throughput` `median_ns`
+  (per-byte reading: same-length subjects, so the ratio is the per-byte
+  comparison) agrees within the spread band between `pcrec-auto-utf8`
+  and `pcrec-auto` (byte) on the `asc` subjects — i.e. the encoding
+  costs nothing on a single-ASCII-byte pattern over ASCII text.
+  **Scored at 0.2**, when (k)'s mirror arm exists; stated now because it
+  is the mirror's zero point and a prediction stated late is a
+  prediction nobody believed.
 - **P9 — rust is correct, not lucky.** `rust-default` reads
   `n_wrong eq 0` on every (a)-(f) pattern it compiles, with the
   `ascii-class-scope` patterns appearing as
-  `unsupported-by-declaration` rather than as wrong answers. Basis:
-  `testees/rust/CLAUDE.md`'s measured unicode-mode finding. **A refuted
-  P9 is a finding about this repo's byte-mode sets**, not only about
-  this one.
+  `unsupported-by-declaration` rather than as wrong answers —
+  **(F-M2, v0.2)** the `unsupported-by-declaration` half scored the same
+  `section`/`set_of` way as P5. Basis: `testees/rust/CLAUDE.md`'s
+  measured unicode-mode finding. **A refuted P9 is a finding about this
+  repo's byte-mode sets**, not only about this one.
 - **P10 — vectorscan agrees at the grain it has.** On every (a)-(f)
   pattern `vectorscan-block-nosom-utf8` compiles, its boolean
   match/no-match answer agrees with `pcre2-utf-interp`'s
@@ -1233,7 +1264,7 @@ Five lanes, in dependency order. None opens before the design panel.
 | **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled. **(F-C1, v0.2)** ALSO the pcrec adapter code change: a new `effective_encoding(flags)` function, its `encoding_extra` fifth part in `compose_config_extra()`, and the frozen-renderer rows proving the six pre-existing pcrec config families derive UNCHANGED ids and `config_extra` under it | U1's tokens |
 | **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check`. **(F-M1, v0.2)** the size-fitting boundary rule (§4.1: trim to the last complete character, pad with ASCII spaces to the exact byte size) and the decode-gate `--check` control (a mid-character-truncated fixture must FAIL) | — (parallel with U1/U2) |
 | **U4** | the PATTERNS: `patterns.rxt` as the source of truth with its `ext bench` roster block, `gen_patterns.py` rendering `patterns/*.rx`, the sidecar, `provenance.tsv` | U3 (for the typed short subjects), U2 (for the `ext bench` roster) |
-| **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time | U1, U3, U4 |
+| **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time. **(F-M2, v0.2)** the P1-P10 dry-run step: hand-transcribe against the built pattern ids through `interpret`'s own loader BEFORE the first window, fixing any inexpressible clause in `NOTES.md` — not deferrable to after a cell has run | U1, U3, U4 |
 
 **U1 is the one that cannot be parallelised away and the one most
 likely to surprise**: it changes shared code that six sets already
