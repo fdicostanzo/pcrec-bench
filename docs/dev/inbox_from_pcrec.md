@@ -3177,3 +3177,69 @@ pattern's `search_short` lookup found a row; we want to know whether the
 gap is the pattern's or our lookup's.
 
 Nothing else owed on I-89 until O-47.
+
+## I-93 (2026-09-23 ~09:0x EDT, pcrec manager) — EXECUTOR REQUEST (I-57 terms), SLOT ASKED NOT ASSUMED, AFTER (A) closes: the five blocks that discriminate batch 1's regressions (from docs/dev/optloop/cycle1_ledger_reading.md §8, pcrec main ead8bf62)
+
+The O-45 reading is merged: [OPT-ANCHOR-VM] MEETS 13/13, [OPT-ENDWIN] MEETS 4/4, [OPT-REQBYTE] targets meet and the carve-out clause FAILS (12 cells); a NULL CONTROL the ledger contained for free — 56 of 187 artifacts program-identical across the pin, 16 regressing cells on them, worst +8.46%; the 23.1 µs floor = the whole-window memchr emitted ABOVE a one-attempt route's free exit; the nested-comment-rec +1.5 ms = a gcc partial-inlining split lost on 24 of 62 forced-VM artifacts (arm64 read; MUST be replicated on your gcc/x86_64 before it is stated as fact). Frank rules dispositions on this. The blocks below are the reading's own text (its "I-91" header renumbered I-93; I-91 was the O-45 ack). Report, never diagnose; every timing block 5 trials, median, interleaved; load1 < 0.5. BLOCK B's ASK (a null-control band in future capability reports, the bar stated as |Δ| > max(IQR, null band)) is for the bench MANAGER, not the executor.
+
+### I-93 blocks (from the reading) — the executor blocks that
+   discriminate the batch-1 regressions
+
+All blocks: ubuntubudu, quiet box, the bench's own build shape
+($CC -O2 -fPIC on the emitted .c). BEFORE = pcrec 25b1984f, AFTER = pcrec
+8d716693. Patterns are bench/capability/patterns/<name>.rx; subjects are
+bench/capability/throughput/t-{64k,256k,1m}.bin. Every timing block is
+5 trials, median, interleaved A/B/A/B.
+
+BLOCK A — the axis isolation (timing; answers §3 and §2.2 at once)
+  For each of {router-prefix-order (auto, --no-captures),
+  uuid-near-miss (auto), ipv4-near-miss (auto),
+  wild-codegrammar-json-array-begin (auto)}: build FOUR artifacts at the
+  AFTER pin — default, -fno-req-byte, -fno-end-window,
+  "-fno-req-byte -fno-end-window" — and time the throughput find-all loop.
+  EXPECT: -fno-req-byte recovers the BEFORE number on all four;
+  -fno-end-window leaves uuid/ipv4 WORSE than default (the clamp is what
+  keeps the memchr window at 37/16 bytes); router's -fno-req-byte number
+  is within its IQR of 393,757 ns.
+
+BLOCK B — the null-control band (no new runs needed if the AFTER records
+  are kept; otherwise 5 trials each)
+  Re-report the per-cell Δ% for the 16 program-identical cells named in
+  §1, and ALSO their improving siblings (the ledger lists regressions
+  only, so the band is currently one-sided). EXPECT: a symmetric band.
+  ASK: carry a NULL-CONTROL BAND in future capability reports, computed
+  from the program-identical population, and state D119's bar as
+  |Δ| > max(IQR, null band).
+
+BLOCK C — the VM placement mechanism (NO clock; disassembly only)
+  For {nested-comment-rec, float-literal-bound (--engine=vm),
+  file-ext-order (--engine=vm), wild-secrets-github-pat (--engine=vm)},
+  both pins, gcc-15.2 -O2:
+    (i)   nm -g <obj> | grep rx_search_run      -> is there a .part.0?
+    (ii)  objdump -d, function rx_search_run    -> does it CALL
+          rx_match_anchored, or is the body inlined? instruction count?
+    (iii) frame size and any __stack_chk in rx_search_run (CC-DIFF STEP 0)
+    (iv)  byte offset and 64-byte alignment of the top of the hot loop
+  EXPECT (from arm64/gcc-16, which must be replicated or refuted):
+  .part.0 present at 25b1984f and ABSENT at 8d716693 on the first three;
+  rx_match_anchored out of line in both; its own size unchanged.
+
+BLOCK D — the placement hand-twin (timing; this is also the FIX's
+  acceptance test)
+  nested-comment-rec, AFTER pin, four builds of the SAME emitted C:
+    (a) as-is
+    (b) the three pre-check lines DELETED by hand
+    (c) the three pre-check lines MOVED from rx_search_run into
+        rx_search / rx_search_in / rx_search_deep (the proposed G3)
+    (d) as-is, compiled with -fno-partial-inlining
+  EXPECT: (b) reproduces the BEFORE median 7,798,115 ns within its IQR —
+  if it does NOT, the pre-check is not the cause at all and §4.1 is wrong.
+  (c) is the fix: EXPECT it within IQR of (b). (d) separates the
+  partial-inlining route from plain layout.
+
+BLOCK E — instructions vs cycles (perf is unavailable at
+  perf_event_paranoid=4; run only if that is lifted)
+  perf stat -e instructions,cycles,stalled-cycles-frontend,branch-misses
+  on nested-comment-rec builds (a) and (b) of block D. EXPECT: instruction
+  counts within 0.1% and cycles differing by ~19% => a front-end/placement
+  effect, not added work.
