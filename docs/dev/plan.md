@@ -222,5 +222,9 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   report view split, matrix page, interpreter catalogue, tests. Runs
   after tonight's [B80] ledger (which ships in the existing shape; the
   two views follow on the SAME records) and coordinates with [B79]'s
-  null-band (both restate the bar per view). Awaiting the rust ruling
-  before the declaration table freezes.
+  null-band (both restate the bar per view). RULED (I-100; Frank may override):
+  rust-default → NO class, its single captures_at DECLARED a fixed
+  per-call cost; rust-find/rust-captures + re2-nosub = roster growth
+  (rust-default retires from the views when the pure split lands);
+  store ids NEVER renamed — the declaration table is the views'
+  authority. Table FROZEN; build may start after the [B80] ledger.
