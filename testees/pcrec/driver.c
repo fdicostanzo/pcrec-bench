@@ -56,7 +56,7 @@
  * fast_trail / unroll_k /
  * unroll_k_why / max_emit_code_bytes / max_emit_bytes / engine_sel /
  * vm_prefilter_lang / vm_prefilter_lang_why / req_byte / end_window /
- * vm_start` is printed only when the artifact
+ * vm_start / req_run` is printed only when the artifact
  * stamps it, and a consumer of these lines reads a MISSING line as "not
  * stamped" and nothing else -- never as "DFA", never as "not a hybrid". The
  * two facts that ARE readable from an absence are the spec's own iffs and
@@ -99,6 +99,10 @@
  * `info req_byte` / `info end_window` (both "every" scope, both engines)
  * and `info vm_start` (VM-route only, absent on a DFA artifact) -- no
  * rx_info mirror, struct rx_info byte-identical to abi 27, floor still 16.
+ * [OPTLOOP] cycle 2 batch 2 (pin b1885a83, abi 30, [OPT-REQPOS] tier 2b,
+ * [B80]) adds ONE more, `info req_run` -- "every" scope like `req_byte`
+ * and `end_window`, printed beside them; no rx_info mirror, struct
+ * rx_info byte-identical to abi 29, floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -152,6 +156,7 @@ static const char *(*pb_info_search_form)(void);
 static const char *(*pb_req_byte)(void);
 static const char *(*pb_end_window)(void);
 static const char *(*pb_vm_start)(void);
+static const char *(*pb_req_run)(void);
 static int       (*pb_has_vm_frameless)(void);
 static int       (*pb_vm_frameless)(void);
 static int       (*pb_has_altcls)(void);
@@ -377,7 +382,7 @@ int main(int argc, char **argv) {
     SYM(pb_dfa_match); SYM(pb_info_match_form);
     SYM(pb_info_name); SYM(pb_info_nentries);
     SYM(pb_dfa_start); SYM(pb_info_search_form);
-    SYM(pb_req_byte); SYM(pb_end_window); SYM(pb_vm_start);
+    SYM(pb_req_byte); SYM(pb_end_window); SYM(pb_vm_start); SYM(pb_req_run);
     SYM(pb_has_vm_frameless); SYM(pb_vm_frameless);
     SYM(pb_has_altcls); SYM(pb_altcls_merges); SYM(pb_altcls_factored);
     SYM(pb_has_dfa_uniform_folds); SYM(pb_dfa_uniform_folds);
@@ -455,12 +460,18 @@ int main(int argc, char **argv) {
      * `RX_REQ_BYTE` ([OPT-REQBYTE], a decimal byte value or "none") and
      * `RX_END_WINDOW` ([OPT-ENDWIN], a decimal byte count or "none"). The
      * third new stamp, `RX_VM_START` ([OPT-ANCHOR-VM]), is VM-route-only
-     * and printed below beside the other VM-scoped stamps. */
+     * and printed below beside the other VM-scoped stamps. [OPTLOOP]
+     * cycle 2 batch 2, abi 30 ([B80]): a FOURTH, `RX_REQ_RUN`
+     * ([OPT-REQPOS] tier 2b, lowercase hex bytes plus "@" plus the
+     * scanned index, or "none"), same scope as `req_byte`/`end_window`,
+     * printed beside them. */
     {
         const char *rb = pb_req_byte();
         const char *ew = pb_end_window();
+        const char *rr = pb_req_run();
         if (rb) printf("info\treq_byte\t%s\n", rb);
         if (ew) printf("info\tend_window\t%s\n", ew);
+        if (rr) printf("info\treq_run\t%s\n", rr);
     }
 
     /* The abi-6 RUNTIME MIRRORS (match_api.md 6). `prefilter` is documented

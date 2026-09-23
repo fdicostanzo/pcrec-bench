@@ -2,30 +2,29 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-8d716693/build/pcrec --list-axes
+#     build/pcrec-b1885a83/build/pcrec --list-axes
 #
-# pcrec commit 8d716693a57370853ff9e15a0606ccf0fea5b42f (rx_info.abi 29,
-# read off a plain `abc` witness at this build), archived 2026-09-22 by
-# lane b74repin ([B74], inbox I-87: [OPTLOOP.1] batch 1 -- OPT-ANCHOR-VM,
-# OPT-ENDWIN, OPT-REQBYTE as axes -- 25b1984f -> 8d716693). 87 data rows
-# / 31 axes / 12 columns -- the FOURTH registry surface (pcrec
+# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30,
+# read off a plain `abc` witness at this build), archived 2026-09-23 by
+# lane b80repin ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 --
+# [OPT-FREQPICK] + [OPT-REQPOS] tier 2b -- 8d716693 -> b1885a83). 89 data
+# rows / 32 axes / 12 columns -- the FOURTH registry surface (pcrec
 # docs/spec/registry.md 6, [CHK-2]).
 #
-# SEVEN ROWS ADDED vs the 25b1984f copy (80/28 -> 87/31), THREE NEW AXES,
-# exactly I-87's own description: `vm-anchor-bound` (order 1 `anchored`,
-# order 2 `gstart`, order 3 `unanchored` fallback -- stamp RX_VM_START,
-# deny PCREC_NO_VM_ANCHOR_BOUND bit 28, cli -fno-vm-anchor-bound -- the
-# VM attempt loop's proven start bound, VM route only); `end-window`
-# (order 1 `window` -- stamp RX_END_WINDOW, deny PCREC_NO_END_WINDOW bit
-# 29, cli -fno-end-window -- the end-anchor start window, every artifact,
-# both engines; order 2 `none` fallback); `req-byte` (order 1 `byte` --
-# stamp RX_REQ_BYTE, deny PCREC_NO_REQ_BYTE bit 30, cli -fno-req-byte --
-# the required-byte memchr, every artifact, both engines; order 2 `none`
-# fallback). Every OTHER row is BYTE-IDENTICAL to the 25b1984f copy below
-# the header (diffed line for line, pcrec's own comments included) --
-# confirmed by lane b74repin (`struct rx_info` also byte-identical field
-# for field between the two pins: the shim floor STAYS 16, none of the
-# three new stamps has an rx_info mirror).
+# TWO ROWS ADDED vs the 8d716693 copy (87/31 -> 89/32), ONE NEW AXIS,
+# exactly I-95's own description: `req-run` (order 1 `run` -- stamp
+# RX_REQ_RUN, deny PCREC_NO_REQ_RUN bit 31, cli -fno-req-run -- the
+# necessary-literal-run memchr+memcmp, every artifact, both engines;
+# order 2 `none` fallback). [OPT-FREQPICK] (the emitted necessary BYTE is
+# now the argmin of pcrec's byte-frequency prior over the necessary set,
+# rightmost tiebreak) changes WHICH VALUE `req-byte`'s order-1 row can
+# take on a given pattern but adds no row and no column -- it is a byte-
+# encoding-only selection change over an axis this registry already
+# enumerates. Every other row is BYTE-IDENTICAL to the 8d716693 copy
+# below the header (diffed line for line, pcrec's own comments included)
+# -- confirmed by lane b80repin (`struct rx_info` also byte-identical
+# field for field between the two pins: the shim floor STAYS 16, the new
+# stamp has no rx_info mirror).
 #
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
@@ -119,6 +118,8 @@ end-window	1	window	predicate	RX_END_WINDOW		PCREC_NO_END_WINDOW	29			-fno-end-w
 end-window	2	none	predicate	RX_END_WINDOW	none						always (fallback) — the pattern is not end-anchored, its width is unbounded, it contains \G (which reads the parameter the clamp would move), the encoding has non-boundary positions, or the deny flag
 req-byte	1	byte	predicate	RX_REQ_BYTE		PCREC_NO_REQ_BYTE	30			-fno-req-byte	per artifact, both engines: every match of the pattern must contain some literal byte (a bottom-up AST walk — concatenation unions, alternation intersects, a min-0 quantifier contributes nothing, a one-byte class is a singleton, a backreference/call/assertion is empty), so ONE memchr over [search_from, subject_length) answers NOMATCH for the whole call; the stamp carries the byte, the RIGHTMOST member like PCRE2's own LASTCODEUNIT
 req-byte	2	none	predicate	RX_REQ_BYTE	none						always (fallback) — no byte is necessary on every path (an alternation with no common literal, a caselessly folded literal, a nullable quantifier), or the deny flag
+req-run	1	run	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN	31			-fno-req-run	per artifact, both engines: every match of the pattern must contain a RUN of two or more contiguous literal bytes (the same bottom-up walk as req-byte with a second accumulator — a concatenation joins the left factor's guaranteed suffix to the right factor's guaranteed prefix, an alternation keeps only its branches' common prefix and suffix, nothing is joined across a repeat's iterations), so one memchr for the run's rarest member plus one constant-length memcmp per hit answers NOMATCH for the whole call where the byte alone could not; the stamp carries the run's bytes in lowercase hex and the scanned member's index
+req-run	2	none	predicate	RX_REQ_RUN	none						always (fallback) — no run of two or more bytes is necessary (a single literal between non-literals, a caselessly folded literal, an alternation with no common affix), or either this axis's deny flag or -fno-req-byte's
 startpos-guard	1	guarded	predicate	RX_STARTPOS_GUARD	guarded	PCREC_NO_STARTPOS_GUARD	25			-fno-startpos-guard	per artifact: this encoding has positions that are not character boundaries (PcrecEnc.start_cls), so the entries refuse a mid-character caller startpos with PCREC_ERR_STARTPOS — libpcre2's own PCRE2_UTF behaviour (BADUTFOFFSET)
 startpos-guard	2	permissive	predicate	RX_STARTPOS_GUARD	permissive						always (fallback) — the artifact answers at whatever position the caller named (utf8_design.md §2.6.1.1's ruled semantics), and on a byte artifact this row is the ONLY one reachable: every position is a boundary there and neither setting emits a guard
 comments	1	essential-only	predicate			PCREC_NO_COMMENTS	26			-fno-comments	THE DEFAULT (D112): the artifact keeps only its ESSENTIAL comments — the generated-by/pattern-echo provenance line and the emitted rx_ctx/rx_matchfn/rx_info ABI block docs/spec/match_api.md names as the embedder's contract — and drops the rest; -fno-comments states it explicitly and overrides a config/target row that asked for the full set

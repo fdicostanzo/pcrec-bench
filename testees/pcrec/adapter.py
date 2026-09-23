@@ -860,6 +860,41 @@ METADATA_DECL = {
                        "about where a match begins, or the deny flag -- "
                        "the loop runs to subject_length as it always has)",
     },
+    # [B80] (pin b1885a83, abi 30, [OPTLOOP] cycle 2 batch 2, [OPT-REQPOS]
+    # tier 2b): a FOURTH stamp on the same "every"/no-rx_info-mirror terms
+    # as req_byte/end_window above -- the necessary literal RUN, one
+    # word-grain generalisation of req_byte's single byte. Where a run
+    # ships, req_byte itself reports the run's own scanned member (its
+    # emitted memchr moves to the run's rarest byte; the one-byte check
+    # is subsumed, never emitted alongside it).
+    "req_run": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_REQ_RUN ([OPT-REQPOS] tier 2b, pcrec abi 30+), "
+                  "read through pb_req_run(); scope \"every\" (every "
+                  "artifact, both engines, same as req_byte/end_window); "
+                  "no rx_info mirror",
+        "description": "the NECESSARY LITERAL RUN of two or more "
+                       "contiguous bytes every match of the pattern must "
+                       "contain (the same bottom-up walk as req_byte with "
+                       "a second accumulator: a concatenation joins the "
+                       "left factor's guaranteed suffix to the right "
+                       "factor's guaranteed prefix, an alternation keeps "
+                       "only the branches' common prefix and suffix, "
+                       "nothing joins across a repeat's iterations), as "
+                       "LOWERCASE HEX bytes plus \"@\" plus the scanned "
+                       "member's index -- one memchr for the run's "
+                       "rarest member plus one constant-length memcmp per "
+                       "hit answers NOMATCH for the whole call where the "
+                       "byte alone could not. Truncated to the lowest-"
+                       "frequency window of at most 8 bytes containing "
+                       "the scan byte on a longer run (PCREC_MAX_REQ_RUN_"
+                       "EMIT). \"none\" when no run of two or more bytes "
+                       "is necessary (a single literal between non-"
+                       "literals, a caselessly folded literal, an "
+                       "alternation with no common affix), or under "
+                       "-fno-req-run or -fno-req-byte (no run check "
+                       "without a byte)",
+    },
     # [B37] (pin 334fd10e, abi 17, [CC-DIFF] STEP 1): a COUNT on
     # RX_DFA_TABLE's own scope -- the scan family's iff a fourth time. A
     # family-(b) activity fact under a family-(a) scope, which is why it
@@ -1534,7 +1569,10 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              "vm_entry_shape",
              # [B74] (pin 8d716693, abi 29, [OPTLOOP.1] batch 1): three new
              # stamps, none with an rx_info mirror.
-             "req_byte", "end_window", "vm_start")
+             "req_byte", "end_window", "vm_start",
+             # [B80] (pin b1885a83, abi 30, [OPTLOOP] cycle 2 batch 2): a
+             # fourth, same terms.
+             "req_run")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1610,6 +1648,11 @@ STAMP_SCOPE = {
     "req_byte":              ("every",    29),
     "end_window":            ("every",    29),
     "vm_start":              ("vm",       29),
+    # [B80] (pin b1885a83, abi 30, [OPTLOOP] cycle 2 batch 2,
+    # [OPT-REQPOS] tier 2b): "every" like `req_byte` / `end_window`
+    # beside it -- MEASURED present on a plain DFA `abc` witness as well
+    # as on every forced-VM one.
+    "req_run":               ("every",    30),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,

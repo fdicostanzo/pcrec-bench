@@ -666,6 +666,25 @@ const char *pb_vm_start(void) {
 #endif
 }
 
+/* [OPT-REQPOS] tier 2b, abi 30 ([B80], pcrec lane/optimpl2, merge
+ * 8e4e9c6c). Per artifact, both engines: the NECESSARY LITERAL RUN of two
+ * or more contiguous bytes every match must contain (the same bottom-up
+ * walk as req_byte with a second accumulator), where one exists -- the
+ * value is the run's bytes in LOWERCASE HEX plus "@" plus the scanned
+ * member's index (e.g. "6875625f7061745f@3" for "hub_pat_" scanned at
+ * its '_' -- pb_req_byte's own byte is exactly this run's byte at that
+ * index, so the two stamps are checkable against each other). "none"
+ * when no run of two or more bytes is necessary, or under -fno-req-run
+ * (which also falls out of -fno-req-byte: no run check without a byte).
+ * No rx_info mirror. */
+const char *pb_req_run(void) {
+#ifdef RX_REQ_RUN
+    return RX_REQ_RUN;
+#else
+    return (const char *)0;
+#endif
+}
+
 /* ------------------------------ the size term ([ART-SIZE], abi 11) */
 
 /* The VM counter rung's unroll factor and WHY it is what it is: "default"

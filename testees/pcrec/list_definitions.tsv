@@ -3,19 +3,17 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-8d716693/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-b1885a83/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 8d716693a57370853ff9e15a0606ccf0fea5b42f (rx_info.abi 29 --
-# see list_axes.tsv's header), archived 2026-09-22 by lane b74repin
-# ([B74], inbox I-87: [OPTLOOP.1] batch 1 -- 25b1984f -> 8d716693).
+# pcrec commit b1885a83dea907d9f942bb0fc19760af3d463b2c (rx_info.abi 30 --
+# see list_axes.tsv's header), archived 2026-09-23 by lane b80repin
+# ([B80], inbox I-95: [OPTLOOP] cycle 2 batch 2 -- 8d716693 -> b1885a83).
 # 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
 # definition, applies -- one row per construct DEFINED in terms of
-# another. BYTE-IDENTICAL to the 25b1984f copy below the header (diffed
-# line for line): [OPTLOOP.1] batch 1 (three new AXES, not new syntax)
-# and the co-landing [LIM-OVR] change (a --list-limits override-column
-# wording fix, see list_limits.tsv's header) defined no new construct
-# here -- no definition changed, none added, none removed at this pin --
-# the eleventh pin running.
+# another. BYTE-IDENTICAL to the 8d716693 copy below the header (diffed
+# line for line): [OPT-FREQPICK] and [OPT-REQPOS] tier 2b define no new
+# SYNTAX construct -- no definition changed, none added, none removed at
+# this pin -- the twelfth pin running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
