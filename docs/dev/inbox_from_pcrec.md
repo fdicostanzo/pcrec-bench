@@ -3243,3 +3243,4 @@ BLOCK E — instructions vs cycles (perf is unavailable at
   on nested-comment-rec builds (a) and (b) of block D. EXPECT: instruction
   counts within 0.1% and cycles differing by ~19% => a front-end/placement
   effect, not added work.
+ack: 2026-09-23 — [B78] (plan.md), slot GRANTED, queued AFTER block (A) closes and O-47 carries its transcript; BLOCK B's reporter ASK (the null-control band, |Δ| > max(IQR, null band)) filed separately as [B79].

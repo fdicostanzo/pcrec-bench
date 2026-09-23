@@ -153,3 +153,28 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   [B76]. Plan: design note + R-panel first, then build lanes (blinded
   set author for expectations where feasible), first release estimate
   ~2 days from start, first measured sample the night it merges.
+- [B78] STATE:not-started — (2026-09-23 ~03:5x EDT: inbox I-93, EXECUTOR
+  REQUEST on I-57 terms, slot GRANTED, runs AFTER I-89 block (A) closes +
+  O-47) the five discrimination blocks for batch 1's regressions (pcrec
+  cycle1_ledger_reading.md §8 at ead8bf62): A axis isolation (4 patterns ×
+  {default, -fno-req-byte, -fno-end-window, both} at 8d716693, throughput
+  find-all, 5 trials median interleaved, load1<0.5); B the null-control
+  band re-report (the 16 program-identical regressing cells + their
+  improving siblings, from the KEPT after-records — no new runs); C the VM
+  placement mechanism, DISASSEMBLY ONLY, both pins (nm .part.0 presence on
+  rx_search_run, objdump call-vs-inline + instruction count, frame size /
+  __stack_chk, hot-loop 64-byte alignment — the arm64 gcc-16 reading MUST
+  be replicated or refuted on our gcc/x86_64 before stated as fact); D the
+  nested-comment-rec placement hand-twin (4 builds of the same emitted C:
+  as-is / pre-check lines deleted / moved per G3 / -fno-partial-inlining —
+  (b) reproducing BEFORE 7,798,115 ns within IQR is the §4.1 gate, (c) is
+  the fix's acceptance); E perf stat ONLY if perf_event_paranoid < 4
+  (check, expect skip). Report, never diagnose.
+- [B79] STATE:not-started — (2026-09-23, from I-93 BLOCK B's ASK, for the
+  bench manager) THE NULL-CONTROL BAND in capability reports: compute a
+  per-window band from the PROGRAM-IDENTICAL artifact population (both
+  directions, symmetric), carry it in the report header/cells, and state
+  the D119 bar as |Δ| > max(IQR, null band). Needs: reduce/report design
+  (where program-identity is read from — the compile rows' emit hashes),
+  a reporter version bump, tests; charter the design details before a
+  lane. Runs after [B78]; not before Frank sees the b1ledger dispositions.
