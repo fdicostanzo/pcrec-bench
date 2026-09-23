@@ -229,12 +229,7 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   dominated; their capability read: none 79/27, emitted 67/27,
   one-attempt 27/9, dominated 14/7). Views + I-101 query render per
   [B82] once merged.
-- [B85] STATE:started — (2026-09-23 ~14:3x EDT: lane b85kb28 up) KB-28:
-  the v20 subject-grain renderer's class-section duplication (107 MB
-  mixed-roster TSVs, push-rejected) — the class becomes a COLUMN at
-  subject grain (set grain unchanged), a pre-commit size warn considered
-  with it; after the fix regenerate the two held AFTER groups + sidecars
-  and confirm sizes near the v19 ~51 MB baselines.
+- [B85] STATE:completed — (2026-09-23 ~16:1x EDT: lane b85kb28 merged + the three groups regenerated at v21 (AFTER groups 58.5/58.2 MB, wrapfix subject-grain DOWN to 34.9 MB) — KB-28 CLOSED; the lane also fixed interpret's ReportTsv header refusal (would have crashed on the 19th column) and a threshold-binding bug its own test caught; owed onward unchanged: class-aware interpreter rules ride [B79])
 - [B86] STATE:not-started — (2026-09-23 ~15:2x EDT: inbox I-105, slot
   GRANTED, runs after [B84]'s window — tomorrow's quiet slot) THE
   CROSSOVER PAIR, three points: the I-103a four-arm block (default /
