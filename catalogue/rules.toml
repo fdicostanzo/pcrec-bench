@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.4"
+catalogue_version = "3.5"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,21 @@ catalogue_version = "3.4"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.5 (2026-09-23, lane b82views, [B82]/inbox I-99/I-100/I-101): MINOR,
+# known-section awareness only -- `pcrecbench/interpret.py`'s `SECTIONS`
+# tuple gains six names (`rank_yes`, `rank_no`, `baseline_yes`,
+# `baseline_no`, `undeclared_capture_class`, `query_yes_beats_nocaps`)
+# for the reporter's two new capture-class-pure views and the standing
+# cross-class query (`pcrecbench/report.py`'s `_tsv_ranking_pass`/
+# `_cross_class_query_hits`). NO rule references any of them yet: zero
+# existing rule's predicate/threshold/inputs/slots moved, and no golden
+# fact re-derives -- this bump is the SAME shape as 3.3/3.4's
+# `[[pin_order]]`-append precedent, recorded so a future rule reading
+# one of the six names does not also need a catalogue-side `SECTIONS`
+# edit. Interpretation RULES over the new data (a class-aware D119
+# verdict, a standing-query firing rule) are OWED to a follow-up lane --
+# see docs/dev/lanes/b82views_report.md.
 #
 # 3.4 (2026-09-23, lane b80repin, [B80]/inbox I-95): MINOR, a
 # `[[pin_order]]` append only -- `b1885a83` (abi 30, [OPTLOOP.2] batch 2:

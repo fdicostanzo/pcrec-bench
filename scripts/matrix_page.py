@@ -10,6 +10,19 @@ testee id, the `.matrix.tsv`'s own provenance comment rendered verbatim,
 and both a light and a dark theme (`prefers-color-scheme`, no toggle
 needed).
 
+[B82] (inbox I-99/I-100, 2026-09-23): when the file's roster spans BOTH
+capture classes (`# capture_class: yes=...; no=...; undeclared=...`, a
+provenance line `pcrecbench.report.render_matrix_tsv` emits), this page
+renders TWO class-pure matrices -- caps vs caps, nocaps vs nocaps --
+each with its OWN `best_testee`/`best_ns` RE-DERIVED from this file's
+own numbers (`class_pure_row`: `absolute_ns(t) = ratio(t) x row's global
+best_ns`, then a new class-local ratio), never a second reduction over
+the store. A single-class roster (or a `.matrix.tsv` from before this
+lane) renders the ORIGINAL single table, byte for byte. An `undeclared`
+testee (I-99's fail-loud rule) is excluded from both tables and named in
+its own note. This page never imports `pcrecbench` -- the classification
+is read from the file's own provenance line, by regex, not re-derived.
+
 THIS IS THE COMMITTED VISUAL REFERENCE Frank's ruling names (docs/dev/
 dev_journal.md, 2026-09-18 close, [B52] charter item 4): the ad hoc page
 built for the reset-session reading of the capability window is what
@@ -47,9 +60,20 @@ import csv
 import html
 import math
 import os
+import re
 import sys
 
 FIXED_COLS = ["subbench", "pattern", "regime_or_na", "form", "best_testee", "best_ns"]
+
+# [B82] (inbox I-99/I-100): `pcrecbench.report.render_matrix_tsv` emits a
+# `capture_class: yes=<t1,t2,...>; no=<t3,...>; undeclared=<t4,...>`
+# clause inside one of its provenance lines. Parsed here BY REGEX rather
+# than imported from `pcrecbench.capture_class` -- this script is
+# deliberately DEPENDENCY-FREE and standalone (its own module docstring),
+# and the classification is already a committed FACT in the file this
+# script's whole contract is to read, never re-derive.
+_CAPTURE_CLASS_RE = re.compile(
+    r"capture_class: yes=([^;]*); no=([^;]*); undeclared=([^;]*)")
 
 # The SIX CLOSED status tokens `render_matrix_tsv` ever prints in place
 # of a ratio (its own module-docstring [B52] section, plus KB-27's
@@ -126,6 +150,58 @@ def parse_matrix_tsv(path):
     if header is None:
         raise MatrixParseError(f"{path}: no header row found (file empty or all-comment)")
     return provenance_lines, header, rows
+
+
+def parse_capture_class(provenance_lines):
+    """[B82]: `(yes, no, undeclared)`, each a list of testee ids (empty
+    if the file predates this lane, or names none) -- the FIRST
+    provenance line matching `_CAPTURE_CLASS_RE`, since
+    `render_matrix_tsv` emits exactly one."""
+    for line in provenance_lines:
+        m = _CAPTURE_CLASS_RE.search(line)
+        if m:
+            yes = [t for t in m.group(1).split(",") if t]
+            no = [t for t in m.group(2).split(",") if t]
+            undeclared = [t for t in m.group(3).split(",") if t]
+            return yes, no, undeclared
+    return [], [], []
+
+
+def class_pure_row(row, class_testees):
+    """[B82] (inbox I-99): recompute ONE row's `best_testee`/`best_ns`
+    and every `class_testees` cell's ratio WITHIN THE CLASS, from the
+    row's OWN numbers alone -- `absolute_ns(t) = ratio(t) x row's global
+    best_ns`, then `class_ratio(t) = absolute_ns(t) / class_best_ns`.
+    This is a re-derivation from data already in the file, never a
+    second reduction over the store: the class-pure page and the
+    reporter's own `rank_yes`/`rank_no` TSV sections can therefore never
+    disagree by a rounding choice this script made on its own. A
+    STATUS-TOKEN cell (no ratio at all) is copied through unchanged and
+    is never a `best`-of candidate, the same rule `_matrix_best`/
+    `_matrix_cell` apply upstream. Returns a NEW row dict; the input is
+    never mutated."""
+    best_ns_global = row.get("best_ns") or ""
+    absolute = {}
+    for t in class_testees:
+        raw = row.get(t, "")
+        if raw in STATUS_CHIPS or not best_ns_global:
+            continue
+        try:
+            absolute[t] = float(raw) * float(best_ns_global)
+        except ValueError:
+            continue
+    new_row = dict(row)
+    if not absolute:
+        new_row["best_testee"] = ""
+        new_row["best_ns"] = ""
+        return new_row
+    class_best_t = min(absolute, key=absolute.get)
+    class_best_ns = absolute[class_best_t]
+    for t, ns in absolute.items():
+        new_row[t] = f"{ns / class_best_ns:.6f}" if class_best_ns else ""
+    new_row["best_testee"] = class_best_t
+    new_row["best_ns"] = f"{class_best_ns:.1f}"
+    return new_row
 
 
 def _ratio_color(ratio):
@@ -222,6 +298,8 @@ td.cell {{ text-align: right; }}
 .chip-gaveup   {{ background: #d97706; color: #fff; text-align: center; }}
 .chip-no-expectation {{ background: #0891b2; color: #fff; text-align: center; }}
 .chip-excluded {{ background: #4b5563; color: #fff; text-align: center; }}
+h2 {{ font-size: 1rem; margin: 1.25rem 0 0.5rem; }}
+p.viewnote {{ font-size: 12.5px; margin: 0 0 0.75rem; max-width: 70ch; }}
 footer {{ margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }}
 </style>
 </head>
@@ -233,30 +311,17 @@ footer {{ margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }}
   <span><span class="swatch" style="background:rgb(220,38,38)"></span>&ge;10<sup>{log_max}</sup>x (far behind)</span>
   {status_legend}
 </div>
-<div class="tablewrap">
-<table>
-<thead><tr>{head_row}</tr></thead>
-<tbody>
-{body_rows}
-</tbody>
-</table>
-</div>
+{tables}
 <footer>Generated by scripts/matrix_page.py from {source} -- dependency-free, regenerate on demand.</footer>
 </body>
 </html>
 """
 
 
-def render_html(provenance_lines, header, rows, source_path):
-    testees = header[len(FIXED_COLS):]
-    title = f"Capability ratio matrix -- {os.path.basename(source_path)}"
-    provenance = html.escape("\n".join(provenance_lines) or "(no provenance header found)")
-    status_legend = "".join(
-        f'<span><span class="swatch {cls}" style="width:1.1em;height:1.1em;'
-        f'display:inline-flex;align-items:center;justify-content:center;'
-        f'color:#fff;font-size:9px;border-radius:3px">{html.escape(tok)}</span> '
-        f'{html.escape(desc)}</span>'
-        for tok, (cls, desc) in STATUS_CHIPS.items())
+def _table_html(rows, testees):
+    """One `<table>...</table>` (sticky header/rowhead as before) over
+    `rows`, restricted to `testees`' columns. Shared by the single-matrix
+    render and each of the [B82] class-pure splits."""
     head_cells = ["<th>subbench</th>", "<th>pattern</th>", "<th>regime</th>", "<th>form</th>",
                   "<th>best_testee</th>", "<th>best_ns</th>"]
     head_cells += [f"<th>{html.escape(t)}</th>" for t in testees]
@@ -273,10 +338,62 @@ def render_html(provenance_lines, header, rows, source_path):
         ]
         cells += [_cell_html(row, t, best_ns) for t in testees]
         body_rows.append("<tr>" + "".join(cells) + "</tr>")
+    return (f'<table>\n<thead><tr>{"".join(head_cells)}</tr></thead>\n'
+            f'<tbody>\n{chr(10).join(body_rows)}\n</tbody>\n</table>')
+
+
+def render_html(provenance_lines, header, rows, source_path):
+    testees = header[len(FIXED_COLS):]
+    title = f"Capability ratio matrix -- {os.path.basename(source_path)}"
+    provenance = html.escape("\n".join(provenance_lines) or "(no provenance header found)")
+    status_legend = "".join(
+        f'<span><span class="swatch {cls}" style="width:1.1em;height:1.1em;'
+        f'display:inline-flex;align-items:center;justify-content:center;'
+        f'color:#fff;font-size:9px;border-radius:3px">{html.escape(tok)}</span> '
+        f'{html.escape(desc)}</span>'
+        for tok, (cls, desc) in STATUS_CHIPS.items())
+
+    # [B82] (inbox I-99/I-100): TWO MATRICES when the file's roster spans
+    # both capture classes, ONE (today's shape, byte for byte) otherwise
+    # -- "compare capturing vs capturing and non-capturing vs
+    # non-capturing... never a cross-class cell." An `undeclared` testee
+    # (I-99's fail-loud rule) is excluded from BOTH tables and named in
+    # its own note rather than guessed into either.
+    yes_t, no_t, undeclared_t = parse_capture_class(provenance_lines)
+    yes_t = [t for t in yes_t if t in testees]
+    no_t = [t for t in no_t if t in testees]
+    undeclared_t = [t for t in undeclared_t if t in testees]
+    spans_both = bool(yes_t) and bool(no_t)
+
+    if spans_both:
+        yes_rows = [class_pure_row(r, yes_t) for r in rows]
+        no_rows = [class_pure_row(r, no_t) for r in rows]
+        tables_html = (
+            '<p class="viewnote"><strong>Two class-pure matrices below '
+            "(inbox I-99/I-100): a capturing config's ratio is never "
+            "compared against a non-capturing config's -- each table's "
+            "own best_testee/best_ns is recomputed WITHIN its class from "
+            "this file's own ratio x best_ns (never a second reduction "
+            "over the store). See the provenance's own \"capture_class "
+            'disclosure\" note for what this file\'s FLAT columns above '
+            "(unused here) would have mixed.</strong></p>\n"
+            '<h2>Capturing engines only (caps vs caps)</h2>\n'
+            '<div class="tablewrap">' + _table_html(yes_rows, yes_t) + '</div>\n'
+            '<h2>Non-capturing engines only (nocaps vs nocaps)</h2>\n'
+            '<div class="tablewrap">' + _table_html(no_rows, no_t) + '</div>')
+        if undeclared_t:
+            tables_html += (
+                '\n<p class="viewnote">Undeclared capture class (I-99: '
+                "never guessed -- excluded from both tables above): "
+                + ", ".join(f"<code>{html.escape(t)}</code>" for t in undeclared_t)
+                + "</p>")
+    else:
+        tables_html = '<div class="tablewrap">' + _table_html(rows, testees) + '</div>'
+
     return PAGE_TEMPLATE.format(
         title=html.escape(title), provenance=provenance, log_max=LOG_MAX,
-        status_legend=status_legend, head_row="".join(head_cells),
-        body_rows="\n".join(body_rows), source=html.escape(source_path))
+        status_legend=status_legend, tables=tables_html,
+        source=html.escape(source_path))
 
 
 def main(argv=None):

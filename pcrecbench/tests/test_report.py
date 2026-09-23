@@ -1914,7 +1914,13 @@ def test_reporter_version_pin():
     `no-expectation` (deliberately not `unjudged`, which already names an
     unrelated count on the `trial_agreement` line) -- rendering
     differently on any report whose cell hits this branch) took it to
-    v19.
+    v19; [B82] (2026-09-23, inbox I-99/I-100/I-101: the two capture-class-
+    pure ranking views plus the demoted mixed table, rendered instead of
+    the single unconditional ranking section whenever a report's roster
+    spans both classes -- a single-class roster's rendering is unchanged
+    -- and the new, UNCONDITIONAL "## Standing cross-class query" section
+    on EVERY report, a single-class roster still getting the header and
+    an honest "0 hits" sentence) took it to v20.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1925,20 +1931,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v19 (2026-09-22)",
-           f"expected REPORTER_VERSION == 'v19 (2026-09-22)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v20 (2026-09-23)",
+           f"expected REPORTER_VERSION == 'v20 (2026-09-23)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v19 (2026-09-22)" in md, f"expected the v19 header line:\n{md[:200]}")
+    _check("reporter: v20 (2026-09-23)" in md, f"expected the v20 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v19 (2026-09-22)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v20 (2026-09-23)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v19 (2026-09-22)" in matrix,
+    _check("reporter: v20 (2026-09-23)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -3169,6 +3175,13 @@ _V9_ALLOWED_ADDED = (
     # baseline-identity bullet is UNCONDITIONAL on every rankable group,
     # same footing as the line above.
     "- baseline: ",
+    # [B82] (inbox I-101): the standing cross-class query is a NEW,
+    # UNCONDITIONAL section on every report (a single-class roster still
+    # gets the header and an honest "0 hits" sentence -- it never
+    # disappears silently), same footing as the two lines above.
+    "## Standing cross-class query (inbox I-101",
+    "_0 hits: no included YES-class config's median beats any pcrec "
+    "`auto-nocaps` row's median in this report's roster._",
 )
 
 
@@ -3188,6 +3201,15 @@ def _classify_v9_diff(golden_text, new_text):
             continue
         removed, added = old_lines[i1:i2], new_lines[j1:j2]
         for line in added:
+            # [B82]: a bare ADDED blank line is never, by itself, a hidden
+            # number -- it is the ordinary "heading, then a blank line"
+            # markdown convention every "## " section in this file already
+            # uses, and a brand-new section (unlike an existing one, whose
+            # blank line is "equal" against the golden and never reaches
+            # here) introduces one the golden text has no line to match.
+            # A real number change is NEVER expressed as only a blank line.
+            if line == "":
+                continue
             # the CURRENT version line, whatever it is (the classifier is
             # not re-edited at every bump -- [B22]).
             if line.startswith("reporter: v"):
@@ -4501,6 +4523,185 @@ def test_baseline_identity_row_best_fallback():
     _check(row["value"] == "row-best-fallback", f"expected value=row-best-fallback: {row}")
 
 
+# --------------------------------------------------------------- [B82]
+# THE CAPTURE-CLASS VIEWS (inbox I-99/I-100) and THE STANDING
+# CROSS-CLASS QUERY (inbox I-101).
+
+def test_capture_class_declaration_table():
+    """`pcrecbench.capture_class` directly, no report/store involved --
+    the same pure-unit-test posture `_parse_testee_config` gets. Every
+    real roster shape from the I-99 ack's own classification table:
+    libpcre2 interp/jit YES, libpcre2-dfa and vectorscan NO (the engine
+    genuinely cannot / does not assign captures), every pcrec config's
+    OWN `captures` token trusted as-is (`auto`-caps YES, `auto`-nocaps
+    NO, sharing one `engine_mode`), and rust-default's I-100 OVERRIDE:
+    NO despite its id's own `-caps-` token, `is_override` true, and its
+    declaration's `how_told` names the single `captures_at` call. An
+    unknown engine name is UNDECLARED (I-99's fail-loud rule), never
+    guessed from its own `-caps-`/`-nocaps-` token."""
+    from pcrecbench import capture_class as cc
+    cases = [
+        ("libpcre2_10.46_interp-caps-simdna", cc.YES),
+        ("libpcre2_10.46_jit-caps-simdna", cc.YES),
+        ("libpcre2_10.46_dfa-nocaps-simdna", cc.NO),
+        ("vectorscan_5.4.11_block-nosom-nocaps-simd", cc.NO),
+        ("re2_11.0.0_default-caps-simdna", cc.YES),
+        ("oniguruma_6.9.10_default-caps-simdna", cc.YES),
+        ("tre_0.9.0_default-caps-simdna", cc.YES),
+        ("pcrec_b1885a83_auto-caps-simdna", cc.YES),
+        ("pcrec_b1885a83_auto-nocaps-simdna", cc.NO),
+        ("pcrec_b1885a83_vm-caps-simdna", cc.YES),
+        ("rust_1.13.1_default-caps-simdna", cc.NO),
+    ]
+    for tid, expect in cases:
+        got = cc.classify_testee(tid).bucket
+        _check(got == expect, f"{tid}: expected {expect}, got {got}")
+    _check(cc.classify_testee("mystery_9.9_thing-caps-simdna").bucket == cc.UNDECLARED,
+           "an unknown engine name must be UNDECLARED, never guessed from its id token")
+    _check(cc.classify_testee("not-a-valid-testee-id").bucket == cc.UNDECLARED,
+           "an unparseable testee_id must be UNDECLARED")
+    _check(not cc.is_override("pcrec_b1885a83_auto-caps-simdna"),
+           "a config whose id agrees with the table is NOT an override")
+    _check(cc.is_override("rust_1.13.1_default-caps-simdna"),
+           "rust-default's id says -caps- but the table declares NO -- an override")
+    decl = cc.classify_testee("rust_1.13.1_default-caps-simdna").declaration
+    _check("captures_at" in decl.how_told and "src/main.rs:255-266" in decl.how_told,
+           f"rust-default's declaration must name its one captures_at call: {decl.how_told}")
+
+
+def test_b82_capture_class_views_and_query():
+    """[B82] (inbox I-99/I-100/I-101) end to end. A roster spanning YES
+    (`pcrec-auto`, `libpcre2-jit`), NO (`pcrec-auto-nocaps`, AND
+    `rust-default` via I-100's override despite its id's own `-caps-`
+    token) and UNDECLARED (`mystery`, an engine this project's roster
+    does not have) renders the two class-pure headline views ahead of
+    the demoted mixed table, lists the undeclared testee under its own
+    heading rather than guessing it into either view, and fires the
+    standing cross-class query on the ONE pattern where a YES config's
+    median genuinely beats `auto-nocaps`'s -- never on the CONTROL
+    pattern where it does not."""
+    yes_pcrec = "pcrec_fake123_auto-caps-simdna"
+    no_pcrec = "pcrec_fake123_auto-nocaps-simdna"
+    yes_libpcre2 = "libpcre2_10.46_jit-caps-simdna"
+    no_rust = "rust_1.13.1_default-caps-simdna"
+    undeclared = "mystery_9.9_thing-caps-simdna"
+
+    medians_p1 = {yes_pcrec: 50, no_pcrec: 100, yes_libpcre2: 80,
+                  no_rust: 120, undeclared: 60}
+    # CONTROL pattern: the YES config is SLOWER than auto-nocaps here --
+    # the query must not fire on it.
+    medians_p2 = {yes_pcrec: 300, no_pcrec: 100}
+
+    # ONE record per testee (a real harness run's own shape: a single
+    # record covers every pattern it measured) -- NOT one record per
+    # (testee, pattern): two SEPARATE records sharing one testee_id,
+    # machine and timestamp would collide as R2/OD-B15's duplicate-
+    # record dedup group and one would supersede the other, silently
+    # dropping a pattern's own rows from this fixture.
+    all_testees = set(medians_p1) | set(medians_p2)
+    loaded = []
+    for tid in all_testees:
+        rows = []
+        if tid in medians_p1:
+            rows += [_mini_row("p1", "s1", "search", t, t, medians_p1[tid]) for t in (1, 2, 3)]
+        if tid in medians_p2:
+            rows += [_mini_row("p2", "s1", "search", t, t, medians_p2[tid]) for t in (1, 2, 3)]
+        loaded.append(_mk_loaded(f"{tid}.jsonl", _mini_setup(tid, sb_id="rb82"), rows))
+
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+
+    _check("## Ranking -- CAPTURING engines only, caps vs caps" in md, md[:1500])
+    _check("## Ranking -- NON-CAPTURING engines only, nocaps vs nocaps" in md, md[:1500])
+    _check("## Ranking -- MIXED CLASSES, never compare across cells" in md, md[:1500])
+    i_yes = md.index("CAPTURING engines only")
+    i_no = md.index("NON-CAPTURING engines only")
+    i_mixed = md.index("MIXED CLASSES, never compare across cells")
+    _check(i_yes < i_no < i_mixed,
+           "the two class-pure views must precede the demoted mixed table")
+
+    yes_section = md[i_yes:i_no]
+    no_section = md[i_no:md.index("### Undeclared capture class")]
+    undeclared_section = md[md.index("### Undeclared capture class"):i_mixed]
+    mixed_section = md[i_mixed:md.index("## Standing cross-class query")]
+
+    _check(f"`{yes_pcrec}`" in yes_section and f"`{yes_libpcre2}`" in yes_section,
+           f"both YES testees must rank in the caps-vs-caps view:\n{yes_section}")
+    _check(f"`{no_pcrec}`" not in yes_section and f"`{no_rust}`" not in yes_section,
+           "no NO-class testee may appear in the caps-vs-caps view")
+    _check(f"`{no_pcrec}`" in no_section and f"`{no_rust}`" in no_section,
+           f"both NO testees (rust-default's I-100 override included) must rank "
+           f"in the nocaps-vs-nocaps view:\n{no_section}")
+    _check(f"`{yes_pcrec}`" not in no_section and f"`{yes_libpcre2}`" not in no_section,
+           "no YES-class testee may appear in the nocaps-vs-nocaps view")
+    _check(f"is classified `no` for the capture-class views despite its own id "
+           f"token" in no_section and no_rust in no_section,
+           f"rust-default's declaration must render visibly in the view it "
+           f"appears in (design constraint (1)):\n{no_section}")
+
+    _check(f"`{undeclared}`" in undeclared_section, undeclared_section)
+    _check(f"`{undeclared}`" not in yes_section and f"`{undeclared}`" not in no_section,
+           "an undeclared testee must never be guessed into either class-pure view")
+
+    for tid in (yes_pcrec, no_pcrec, yes_libpcre2, no_rust, undeclared):
+        _check(f"`{tid}`" in mixed_section,
+               f"the mixed table must still list every testee ({tid}):\n{mixed_section}")
+
+    _check("## Standing cross-class query" in md, md)
+    query_section = md[md.index("## Standing cross-class query"):]
+    p1_hit_lines = [ln for ln in query_section.splitlines() if "`p1`" in ln]
+    p2_hit_lines = [ln for ln in query_section.splitlines() if "`p2`" in ln]
+    _check(p1_hit_lines, f"expected at least one p1 hit row:\n{query_section}")
+    _check(not p2_hit_lines,
+           f"the CONTROL pattern p2 must NEVER fire (its YES config does not "
+           f"beat auto-nocaps there):\n{p2_hit_lines}")
+    _check(f"`{no_pcrec}`" in query_section,
+           "the query names pcrec auto-nocaps as the beaten testee")
+    _check("not yet computable ([B79] not-started)" in query_section,
+           "the IQR/null-band column must state honestly that it awaits [B79], "
+           "never fabricate a clearance verdict")
+
+    # THE TSV MUST NEVER DISAGREE: the same three passes as new section
+    # values, the SAME query hit count.
+    tsv = report.render_tsv(rd)
+    tsv_sections = [ln.split("\t", 1)[0] for ln in tsv.splitlines()[2:] if ln]
+    _check("rank_yes" in tsv_sections and "rank_no" in tsv_sections, sorted(set(tsv_sections)))
+    _check(any(ln.split("\t")[0] == "undeclared_capture_class" and undeclared in ln
+               for ln in tsv.splitlines()),
+           "the TSV must carry an undeclared_capture_class row for `mystery`")
+    hit_count_rows = [ln for ln in tsv.splitlines()
+                      if ln.startswith("query_yes_beats_nocaps\t") and "\thit_count\t" in ln]
+    _check(len(hit_count_rows) == 1, hit_count_rows)
+    md_hit_count = int(query_section.split("**", 2)[1].split(" ")[0])
+    tsv_hit_count = int(hit_count_rows[0].split("\t")[11])
+    _check(md_hit_count == tsv_hit_count,
+           f"markdown and TSV must report the SAME hit count: "
+           f"{md_hit_count} vs {tsv_hit_count}")
+
+
+def test_b82_single_class_roster_unchanged():
+    """CONTROL: a roster that does not span both classes renders EXACTLY
+    as it did before [B82] -- one unfiltered ranking section, no
+    'CAPTURING'/'NON-CAPTURING'/'MIXED CLASSES' headings, no undeclared
+    listing -- and the standing cross-class query still renders (it is
+    UNCONDITIONAL) but reports 0 hits honestly rather than disappearing."""
+    setup_a = _mini_setup("libpcre2_10.46_interp-caps-simdna")
+    setup_b = _mini_setup("libpcre2_10.46_jit-caps-simdna")
+    rows_a = [_mini_row("p1", "s1", "search", t, t, 100) for t in (1, 2, 3)]
+    rows_b = [_mini_row("p1", "s1", "search", t, t, 50) for t in (1, 2, 3)]
+    loaded = [_mk_loaded("a.jsonl", setup_a, rows_a), _mk_loaded("b.jsonl", setup_b, rows_b)]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    md = report.render_markdown(rd)
+    _check("## Ranking (per pattern x regime" in md, md[:500])
+    for token in ("CAPTURING engines only", "NON-CAPTURING engines only",
+                  "MIXED CLASSES", "Undeclared capture class"):
+        _check(token not in md, f"a single-class roster must not render {token!r}:\n{md[:2000]}")
+    _check("## Standing cross-class query" in md, "the query section is UNCONDITIONAL")
+    _check("_0 hits:" in md, "no pcrec auto-nocaps testee is in this roster at all -- 0 hits")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -4602,6 +4803,9 @@ TESTS = [
     # [B52] the baseline-identity fact (O-33 addendum, charter item 3)
     test_baseline_identity_interp_present,
     test_baseline_identity_row_best_fallback,
+    test_capture_class_declaration_table,
+    test_b82_capture_class_views_and_query,
+    test_b82_single_class_roster_unchanged,
 ]
 
 

@@ -204,6 +204,110 @@ def test_main_writes_default_output_path():
         os.unlink(path)
 
 
+# [B82] (inbox I-99/I-100): a MIXED-ROSTER fixture -- `engine-a`/
+# `engine-c` declared YES, `engine-b` declared NO, `engine-d` declared
+# for NEITHER (I-99's fail-loud "undeclared" case). `engine-a` is this
+# row's GLOBAL best (ratio 1.000000); `engine-b` is the ONLY no-class
+# testee, so its class-pure ratio must re-base to 1.000000 even though
+# its GLOBAL ratio is 2.000000 -- the arithmetic signal that proves the
+# split actually recomputes rather than merely filtering columns.
+SAMPLE_TSV_MIXED = (
+    "# reporter: v20 (2026-09-23); surface: matrix; filters: (none); "
+    "source: test; records: 4; testees: engine-a,engine-b,engine-c,engine-d; "
+    "capture_class: yes=engine-a,engine-c; no=engine-b; undeclared=engine-d\n"
+    "# matrix: a data cell is testee median_ns / this ROW's best -- ratios "
+    "compare WITHIN A ROW ONLY.\n"
+    "# capture_class disclosure (inbox I-99): cross-class numbers above.\n"
+    "subbench\tpattern\tregime_or_na\tform\tbest_testee\tbest_ns\t"
+    "engine-a\tengine-b\tengine-c\tengine-d\n"
+    "rb-mini@1.0\tp1\tshort-subject-search\tplain\tengine-a\t100.0\t"
+    "1.000000\t2.000000\t4.000000\t3.000000\n"
+)
+
+
+def test_parse_capture_class():
+    """`parse_capture_class` reads the ONE provenance line, splitting
+    each of the three groups on commas; a file with no such line (every
+    fixture/committed matrix TSV before this lane) returns three empty
+    lists -- the fallback-to-single-table control."""
+    _, header, rows = mp.parse_matrix_tsv(_write_tmp(SAMPLE_TSV_MIXED))
+    provenance, _h, _r = mp.parse_matrix_tsv(_write_tmp(SAMPLE_TSV_MIXED))
+    yes, no, undeclared = mp.parse_capture_class(provenance)
+    _check(yes == ["engine-a", "engine-c"], yes)
+    _check(no == ["engine-b"], no)
+    _check(undeclared == ["engine-d"], undeclared)
+    old_provenance, _h2, _r2 = mp.parse_matrix_tsv(_write_tmp(SAMPLE_TSV))
+    _check(mp.parse_capture_class(old_provenance) == ([], [], []),
+           "a file with no capture_class line must parse to three empty lists")
+
+
+def test_class_pure_row_rebases_within_class():
+    """`class_pure_row`'s own arithmetic, directly: `engine-b` is the
+    lone member of the NO class in `SAMPLE_TSV_MIXED`'s one row, so its
+    class-pure ratio re-bases to 1.000000 (its own class's best) even
+    though its GLOBAL ratio (unused here) was 2.000000 against
+    `engine-a`. `engine-a`/`engine-c`'s YES-class ratios are UNCHANGED
+    (1.000000/4.000000) because the global best (`engine-a`) already sat
+    inside their own class -- both directions of the rebasing are
+    exercised in one fixture."""
+    _, _header, rows = mp.parse_matrix_tsv(_write_tmp(SAMPLE_TSV_MIXED))
+    row = rows[0]
+    yes_row = mp.class_pure_row(row, ["engine-a", "engine-c"])
+    _check(yes_row["best_testee"] == "engine-a", yes_row)
+    _check(yes_row["engine-a"] == "1.000000" and yes_row["engine-c"] == "4.000000", yes_row)
+    no_row = mp.class_pure_row(row, ["engine-b"])
+    _check(no_row["best_testee"] == "engine-b", no_row)
+    _check(no_row["engine-b"] == "1.000000",
+           f"the lone NO-class member must re-base to 1.000000, got {no_row}")
+    _check(no_row["best_ns"] == "200.0",
+           f"class-pure best_ns is engine-b's OWN absolute ns (2.0 x 100.0), got {no_row}")
+
+
+def test_matrix_class_pure_split_renders_two_tables():
+    """[B82] (inbox I-99/I-100) end to end: a roster spanning both
+    classes renders TWO `<table>` elements under their own `<h2>`
+    headings, `engine-d` (undeclared) is absent from BOTH testee column
+    sets and named in its own note, and the NO-class table's lone
+    `engine-b` cell reads the re-based `1.000000x`, never the global
+    `2.000000x`."""
+    path = _write_tmp(SAMPLE_TSV_MIXED)
+    try:
+        provenance, header, rows = mp.parse_matrix_tsv(path)
+        page = mp.render_html(provenance, header, rows, path)
+        _check(page.count("<table>") == 2, f"expected two tables: {page.count('<table>')}")
+        _check("Capturing engines only" in page and "Non-capturing engines only" in page, page)
+        _check("engine-d" not in page.split("Undeclared capture class")[0]
+               or "Undeclared capture class" in page,
+               "engine-d must not appear inside either <table>")
+        _check("<th>engine-d</th>" not in page, "engine-d must not be a column header anywhere")
+        _check("Undeclared capture class" in page and "engine-d" in page,
+               "engine-d must be named in its own note")
+        _check("1.000000x" in page or "1.000x" in page,
+               "the re-based engine-b cell must render 1.000x, not 2.000x")
+        no_table = page.split("Non-capturing engines only")[1]
+        _check("2.000x" not in no_table.split("</table>")[0],
+               f"the NO-class table must never show engine-b's stale global ratio:\n{no_table[:400]}")
+    finally:
+        os.unlink(path)
+
+
+def test_matrix_single_class_roster_unchanged():
+    """CONTROL: a roster that does NOT span both classes (this file's
+    original `SAMPLE_TSV`, which carries no `capture_class` line at all)
+    renders the ORIGINAL single table -- exactly `test_render_html_end_
+    to_end`'s own shape, re-asserted here so the [B82] dispatch's
+    `else` branch has its own named test rather than riding on an older
+    ruling's test by coincidence."""
+    path = _write_tmp(SAMPLE_TSV)
+    try:
+        provenance, header, rows = mp.parse_matrix_tsv(path)
+        page = mp.render_html(provenance, header, rows, path)
+        _check(page.count("<table>") == 1, f"expected exactly one table: {page.count('<table>')}")
+        _check("Capturing engines only" not in page, "no class split on a single-class roster")
+    finally:
+        os.unlink(path)
+
+
 TESTS = [
     test_parse_matrix_tsv_roundtrip,
     test_malformed_header_raises,
@@ -212,6 +316,10 @@ TESTS = [
     test_ratio_cell_html_and_tooltip,
     test_ratio_color_ramp_endpoints_and_clamp,
     test_render_html_end_to_end,
+    test_parse_capture_class,
+    test_class_pure_row_rebases_within_class,
+    test_matrix_class_pure_split_renders_two_tables,
+    test_matrix_single_class_roster_unchanged,
     test_main_writes_default_output_path,
 ]
 
