@@ -6,11 +6,15 @@ batch-1 pin (`OPT-ANCHOR-VM`, `OPT-ENDWIN`, `OPT-REQBYTE` as three new
 axes). [B74] (b), the capability re-measurement window, is explicitly
 OUT OF SCOPE for this lane per the brief.
 
-**Branch**: `lane/b74repin`, `worktrees/b74repin`, three commits so far
+**Branch**: `lane/b74repin`, `worktrees/b74repin`, five commits
 (`6132618` the adapter/shim/driver/selfcheck/registry/catalogue change,
-`f3bf61d` the CLAUDE.md updates, this report next); `make check` launched
-tracked in the background as the ritual's last step, per every prior
-re-pin lane's own practice.
+`f3bf61d` the CLAUDE.md updates, `da84364` this report's first cut,
+`95c69c4` the subject-timeout control fix item 13 found, this report's
+final cut next). **DELIVERED**: `make check` run to completion twice
+(item 12/14) — `check-schema` 5/73/0, `check-harness` 456/0,
+`check-report` OK, `check-interpret` 163/27 (all 27 the expected
+sidecar-staleness class, named and classified in item 14); `make`'s own
+exit is 2, entirely attributable to those 27.
 
 ## Predictions, stated before the build (boilerplate discipline)
 
@@ -239,60 +243,146 @@ see finding 3, "the size books are not flat this time."
     `docs/dev/plan.md`'s `[B74]` row and the STATUS narrative are the
     manager's, per the brief.
 
-12. **Full `make check` at the new pin.** **OWED — running, tracked in
-    the background.** Box load at launch: `uptime` 0.80, 1.16, 0.99
-    (20:37 EDT) — noticeably higher than a typical quiet-box re-pin
-    launch (e.g. b58repin's 0.09/0.21/1.22), but `make check` is the
-    smoke suite (`--trials 1 --iters 1`, correctness not timing), so
-    this is not a BD3 violation; the elevated load is noted per the
-    box-facts discipline. Launched via the harness's own
-    `run_in_background` (tracked, notifies on completion):
+12. **Full `make check` at the new pin — RUN TWICE; the second run is
+    the delivered one.**
 
-        cd /home/duxevents/pcrec-bench/worktrees/b74repin
-        gnutimeout 3600 make check > build/b74repin_check.log 2>&1
-        echo "DONE rc=$?" >> build/b74repin_check.log
+    **First run** (launched 20:37 EDT, box load 0.80/1.16/0.99 —
+    elevated vs. a typical quiet-box re-pin launch, e.g. b58repin's
+    0.09/0.21/1.22, but `make check` is the smoke suite,
+    `--trials 1 --iters 1`, correctness not timing, so not a BD3
+    violation) completed `DONE rc=2` at 20:53: `check-harness` **455
+    passed, 1 FAILED**. The one failure —
 
-    **Marker/log**: `worktrees/b74repin/build/b74repin_check.log`
-    (gitignored). Not yet complete at the time of this report; the
-    completion line is `DONE rc=<N>` appended to that file.
+        FAIL  subject-timeout control  s-hang did not time out: nomatch
 
-    **Pre-validated standalone before launching the full run** (so the
-    full run's own risk is confined to the sections not exercised
-    individually): `check_mechanism_stamps` **114/114**,
-    `check_deny_flag_controls` **14/14**, `check_list_axes_registry`,
-    `check_list_definitions_registry`, `check_list_limits_registry`,
-    `check_cc_axis`, `check_cap_axis`, `check_noedge_axis`,
-    `check_cflags_axis`, `check_opt42_preempts_collapse_policy` — all
-    green once the gitignored subject trees were regenerated
-    (`gen_subjects.py`/`gen_throughput_subjects.py` for email and
-    loglines; the five subject-tree failures seen on a first standalone
-    pass were an artifact of running individual check functions outside
-    `make check`'s own subject-generation step, not a pin issue).
+    — is a REAL regression this lane's own re-pin caused, in a
+    pre-existing check `check_subject_timeout` never touched by items
+    1-11 above. See item 13.
 
-    **The gate of record before this lane**: `check-schema` 5/73/0,
-    `check-harness` 450/450, `check-report` OK, `check-interpret`
-    190/190 (`5/73/0 · 450/450 · 84+7+8 · 190/190`, per the brief).
-    `check-harness`'s own count is EXPECTED TO MOVE upward here — this
-    lane added 3 new `DENY_CONTROLS` rows and widened `STAMP_CASES`/
-    `LEDGER_STAMP_CASES` with 3 new witness cases beyond the pre-existing
-    ones' new pairs (which do not add PASS lines, only assert more per
-    line) — the exact new count is OWED with the run.
+    **FINDING 4 — the abi-29 re-pin silently defeated the subject-timeout
+    control.** `check_subject_timeout` (`tools/selfcheck.py`) compiles
+    `(a+)+b` (`--engine=vm --fno-step-budget --backtrack-frames=100000`,
+    NO step budget by design) and feeds it a 40-`a` subject with no
+    trailing `b`, which must exhaust the per-subject `SIGALRM` at 3 s and
+    come back `timed-out` BY NAME — the one place this project's whole
+    per-subject-timeout ALARM PATH (the signal, the `siglongjmp`, the
+    attribution to the right subject, the driver continuing to the next
+    one) is exercised at all. MEASURED directly (`hangwit.c`, the exact
+    compile the check performs): at 8d716693 `(a+)+b` now stamps
+    `RX_REQ_BYTE "98"` ('b') — every match must contain a 'b' on every
+    path — so the emitted entry runs
+
+        if (subject_length <= search_from ||
+            !memchr(subject + search_from, 98, subject_length - search_from))
+            return 0;
+
+    ahead of the VM, and the 40-`a` fixture (no 'b' anywhere) is dismissed
+    as an instant `nomatch` before the catastrophic-backtracking VM this
+    control exists to exercise ever runs. Neither `RX_END_WINDOW`
+    (`"none"`) nor `RX_VM_START` (`"unanchored"`) is implicated — verified
+    by reading `hangwit.c`'s full stamp block, not merely the one that
+    fired.
+
+13. **Fix, same lane, before delivery — commit `95c69c4`.** The fixture's
+    subject changes from `b"a" * 40` to **`b"b" + b"a" * 40`** (41 bytes,
+    `S("s-hang", hang, 41)`). The guard only asks whether the required
+    byte appears ANYWHERE in `[search_from, subject_length)`, never
+    where, so a leading `'b'` the match can never actually use satisfies
+    it; the unanchored search still finds no completion starting at
+    offset 0 (a literal `'b'`, but `(a+)` needs an `'a'` first) and then
+    explores the SAME exponential split of the trailing 40-`a` run
+    starting at offset 1 that hung before this pin — the control is
+    restored without sharing any source with `[OPT-REQBYTE]` itself (a
+    subject BYTE, never a flag or a stamp read, matching the file's own
+    "no failing case proves nothing" / independent-control discipline).
+    `s-fine` (`"ab"`) already contains a `'b'` and was never affected.
+    Verified standalone (`check_subject_timeout` alone): `s-hang ->
+    timed-out, by name`; `s-fine` answered right after it. Re-verified
+    `check_mechanism_stamps` (114/114) and `check_deny_flag_controls`
+    (14/14) unmoved by the fixture edit.
+
+14. **Second `make check` run — THE DELIVERED NUMBERS.** Relaunched
+    22:xx EDT (box load 0.60/0.40/0.18 at launch, quieter than the
+    first), polled by a bounded foreground `until grep -q "DONE rc="`
+    loop rather than waited on a background-task notification (the
+    first run's own notification arrived only once the manager had
+    already read the log directly — a stall this project's boilerplate
+    already names as a known mode). Completed `DONE rc=2`:
+
+    | check | result | vs. gate of record (5/73/0 · 450/450 · 84+7+8 · 190/190) |
+    |---|---|---|
+    | `check-schema` | 5 example(s) accepted, 73 sabotage(s) rejected, 0 WRONG | **matches** |
+    | `check-harness` | **456 passed, 0 FAILED** | **+6** — exactly the 3 new `DENY_CONTROLS` rows (req_byte/end_window/vm_start deny flags) + the 3 new `STAMP_CASES` witnesses (VM-route anchored/gstart start, the end-window numeric-value witness); no other line moved |
+    | pytest-style suites (report/matrix/etc., inside `check-report`) | 84 + 7 + 8 = **99** | **matches**, unmoved (this lane never touched `report.py`/`reduce.py`) |
+    | `check-report` | OK | **matches** |
+    | `check-interpret` | **163 passed, 27 FAILED** (190 total, unchanged) | see below |
+
+    `make`'s own exit is **2**, solely from the 27 `check-interpret`
+    failures — every one section 3 ("sidecar freshness"), every one
+    reading `re-renders byte-identical` as its printed assertion name
+    (the label states the check's claim, not its outcome, exactly as
+    b58repin's report already explained for this class):
+
+        2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-692c2e8.interpretation.md
+        2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.interpretation.md
+        2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.interpretation.md
+        2026-09-19-capability-0.1-budu-ryzen1600-rust-first-cf0962e3.interpretation.md
+        2026-09-20-altwide-0.2-budu-ryzen1600-fullroster-d34c9131.interpretation.md
+        2026-09-20-altwide-0.2-budu-ryzen1600-rust-first-25b1984f.interpretation.md
+        2026-09-20-bounded-0.3-budu-ryzen1600-fullroster-d34c9131.interpretation.md
+        2026-09-20-bounded-0.3-budu-ryzen1600-rust-first-25b1984f.interpretation.md
+        2026-09-20-capability-0.1-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-20-capability-0.1-budu-ryzen1600-pinconfirm-25b1984f.interpretation.md
+        2026-09-20-email-specimen-0.2-budu-ryzen1600-fullroster-d34c9131.interpretation.md
+        2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.interpretation.md
+        2026-09-20-loglines-0.1-budu-ryzen1600-fullroster-d34c9131.interpretation.md
+        2026-09-20-loglines-0.1-budu-ryzen1600-rust-first-25b1984f.interpretation.md
+        2026-09-20-syntax-0.1-budu-ryzen1600-fullroster-d34c9131.interpretation.md
+        2026-09-20-syntax-0.1-budu-ryzen1600-rust-first-25b1984f.interpretation.md
+        2026-09-21-altwide-0.2-budu-ryzen1600-after-25b1984f.interpretation.md
+        2026-09-21-altwide-0.2-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-21-bounded-0.3-budu-ryzen1600-after-25b1984f.interpretation.md
+        2026-09-21-bounded-0.3-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-21-email-specimen-0.2-budu-ryzen1600-after-25b1984f.interpretation.md
+        2026-09-21-email-specimen-0.2-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-21-loglines-0.1-budu-ryzen1600-after-25b1984f.interpretation.md
+        2026-09-21-loglines-0.1-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-21-syntax-0.1-budu-ryzen1600-after-25b1984f.interpretation.md
+        2026-09-21-syntax-0.1-budu-ryzen1600-fullroster-25b1984f.interpretation.md
+        2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.interpretation.md
+
+    **This is the SAME class b58repin's report classified at the
+    25b1984f re-pin** (`docs/dev/lanes/b58repin_report.md` lines
+    ~212-272): `catalogue_version`'s `[[pin_order]]`-append rule
+    (3.2 → **3.3**, this lane's item 10) is MINOR/additive by the
+    catalogue's own versioning clause, but "every bump regenerates every
+    committed sidecar in the same commit" is a MANAGER'S merge-time step
+    per the manager's explicit, standing instruction on this lane (never
+    the re-pin lane's own) — the 27 failures are that gap surfacing
+    exactly as expected, not a defect this lane introduced. Confirmed
+    (per the manager's own read): the four `capability-0.1-*-first-*`
+    sidecars `check_interpret.py`'s `_SIDECARS_BLOCKED_ON_CAPABILITY_
+    FIRST_RULING` names (the pre-existing, unrelated [B72] stopgap for
+    the `capability-0.1-first.tsv` predictions-file defect) are NOT in
+    this lane's 27 — that stopgap holds unchanged at the bumped
+    catalogue version, exactly as it must. `check-interpret section 1`
+    21, `section 2` 8, `section 3` 2 (down from the pre-lane count —
+    every OTHER sidecar moved to section 3's failing side, none to a
+    different section), `section 4` 127, `section 5` 4, `section 6` 1 —
+    163 + 27 = 190, the SAME total as the gate of record: no check was
+    added, removed or silently dropped by this bump.
 
 ## Not done / OWED
 
-- **OWED-1**: the full `make check` run's four counts (`check-schema`,
-  `check-harness`, `check-report`, `check-interpret`), the exact new
-  `check-harness` total (expected `450 + 3` = 453 at minimum, from the
-  three new `DENY_CONTROLS` rows; possibly higher if `check_mechanism_
-  stamps`'s per-line counting differs), and confirmation of `make`'s
-  exit code. Log: `worktrees/b74repin/build/b74repin_check.log`,
-  completion line `DONE rc=<N>`.
-- **OWED-2** (same precedent as b58repin's OWED-2): sidecar
-  regeneration for the catalogue 3.2 → 3.3 bump — MINOR/additive, so
-  `check-interpret` section 3 is expected to report the same class of
-  staleness this bump's own rule states, and per the manager's standing
-  instruction sidecar regeneration is the manager's step at merge, not
-  this lane's.
+- **OWED-1 — RESOLVED.** The full `make check` run's four counts are
+  in item 14 above; `make`'s exit code is 2, entirely attributable to
+  the 27 named, classified sidecar-staleness failures.
+- **OWED-2** (same precedent as b58repin's OWED-2, and the SAME shape):
+  sidecar regeneration for the catalogue 3.2 → 3.3 bump — the 27 files
+  named in item 14, MINOR/additive per the catalogue's own rule, and per
+  the manager's explicit instruction on this lane this lane does NOT
+  regenerate them — that runs at the manager's merge, exactly as
+  b58repin's OWED-2 did not either.
 - No `store/` record needed re-deriving — this lane touches no `store/`
   record; the re-pin itself never runs a measurement window.
 - `docs/dev/plan.md`'s `[B74]` row and the STATUS narrative are
@@ -332,6 +422,24 @@ see finding 3, "the size books are not flat this time."
   explicitly named as carrying `RX_REQ_BYTE "114"` — confirmed by this
   lane: `router-prefix-order` under `pcrec-auto` reads `req_byte 114`
   directly, per item 8's method applied to that corpus pattern).
+- **A FOURTH finding, caught by `make check` itself rather than by this
+  lane's own review**: [OPT-REQBYTE] silently defeated a pre-existing
+  harness control (`check_subject_timeout`, items 12-13) — the one
+  place this project's per-subject `SIGALRM`/`siglongjmp`/attribution
+  path is exercised at all. The mechanism (a required-byte memchr guard
+  ahead of the VM) is exactly the same shape that will make some
+  cross-pin cells in [B74] (b)'s own window answer `nomatch` FASTER for
+  a reason that has nothing to do with the VM getting faster — a reader
+  of that window should expect a `req_byte`-bearing pattern's `nomatch`
+  subjects to show large wins from the guard alone, separate from
+  whatever the VM-side axes move. Worth a line to pcrec too: a
+  required-byte optimization that turns a catastrophic-backtracking
+  witness into an instant rejection is the INTENDED behaviour for a real
+  subject, but it is exactly the shape that silently retires a
+  test-suite's own hang-detection fixture elsewhere — the same class of
+  risk [OPT-5]'s scan edge and [ENG-ISL]'s island posed to this
+  project's own stamp constants, now posed to a CONTROL instead of a
+  size-book number.
 - The `list_limits.tsv` four-row rewording (item 5) and the D118 CLI
   break (finding 2) are both worth a line in whatever goes back through
   the inbox ack — the registry delta is new-but-explained (like
@@ -341,7 +449,9 @@ see finding 3, "the size books are not flat this time."
   consumer outside their own test suite depends on the old `-- 'PATTERN'`
   shape (now migrated, but a documentation note in pcrec's own D118
   entry about downstream consumers might save the next one this trip).
-- Once `make check`'s OWED numbers land (this session, background job in
-  progress), a follow-up message will report them; no further work is
-  planned on this lane beyond that unless the numbers surface something
-  new.
+- **This lane is COMPLETE.** Both charter-vs-committed checklist items
+  are DONE or explicitly OWED-and-explained (OWED-2, the sidecar
+  regeneration, per the manager's own standing instruction that this is
+  a merge-time step); no further work is planned unless review surfaces
+  something new. `[B74] (b)` — the capability re-measurement window — is
+  the manager's next step.
