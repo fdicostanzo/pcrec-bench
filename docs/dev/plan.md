@@ -203,3 +203,39 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   QUERY — every cell where any YES-class config's median beats pcrec
   auto-nocaps', with ratio, IQR + null-band clearance, competitor,
   count; a query, never a ranking; every hit a finding by definition.
+- [B83] STATE:not-started — (2026-09-23 ~13:2x EDT: inbox I-103 +
+  I-103a, slot NAMED — after [B82]'s merge, before [B84]'s build) THE
+  RUN-FORM DISCRIMINATOR at b1885a83, no new pcrec build: router- and
+  keyword-prefix-order × FOUR arms each — (a) default (run loop), (b)
+  -fno-req-run (one memchr, same byte), (c) -fno-req-byte (no
+  pre-check), (d) the I-103a INLINE-RUN hand-twin (memchr loop replaced
+  by the inline scalar byte loop, verbatim shape in the entry; hand-edit
+  under I-98's protocol, answer-check 0/0/0 before timing) — find-all
+  throughput, capability subjects, 5 interleaved trials, load gate.
+  Decides: (b)-within-IQR-of-(c) both patterns → the run FORM is the
+  whole cost (G1's widened rule worth building); and the four timings
+  give both forms' per-hit/per-byte constants → the measured crossover
+  frequency (EXPECT memchr-run still wins at 2.8-3.2%; an inline win
+  would refute the per-byte constant — a finding either way). Report,
+  never diagnose.
+- [B84] STATE:not-started — (2026-09-23 ~13:2x EDT: inbox I-102, slot
+  NAMED — build after [B83], WINDOW TONIGHT ~22:0x EDT) THE ADMISSION
+  FIX'S ACCEPTANCE: re-pin to pcrec main **6ef76820 (abi 30→31,
+  [OPT-PRECHECK-ADMIT])** — ONE new unconditional stamp REQ_WHY (closed
+  four tokens: none/emitted/one-attempt/dominated; EMISSION, read beside
+  REQ_BYTE/REQ_RUN's ANALYSIS — two questions, never one stamp split);
+  compiler built at 6ef76820 regardless of main's tip (a docs/tests
+  re-pin commit follows; src/cli/lib diff empty). The usual ritual, then
+  capability ×4 both regimes, BEFORE = b1885a83 (O-49's AFTER). The
+  ledger's grid: ACCEPTANCE (a)-(e) (email-owasp thr ×4 EXPECT full
+  recovery to 43.7-85.3 ns with REQ_WHY one-attempt and NO memchr in the
+  region; winpath/email-nested-plus back off the floor; json-array-begin
+  dominated one-pass; uuid/ipv4 DFA recovered; the 29 G2 + 4 G1 cells
+  improve-or-flat), NO-MOVE (f)/(g) (nested-comment-rec ×4 and
+  github-pat forced-VM stay put, REQ_WHY emitted), NEGATIVE (h)
+  (router/keyword thr NO CHANGE — a recovery would be the surprise), and
+  the REQ_WHY census over our 62 patterns as the FOURTH independent
+  derivation (their corpus: 1,100/2,814 = 294 one-attempt + 806
+  dominated; their capability read: none 79/27, emitted 67/27,
+  one-attempt 27/9, dominated 14/7). Views + I-101 query render per
+  [B82] once merged.

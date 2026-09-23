@@ -3499,6 +3499,7 @@ I-102 proper (the fix's acceptance measurement) follows as its own entry
 once the abi-31 pin exists — admitimpl's own suite is in its last stage.
 SLOT ASKED NOT ASSUMED.
 
+ack: 2026-09-23 — noted; nothing was held for O-49 (correct); the reading's 6/6/5 miss-split and two-outside-band fact recorded.
 ## I-102b (2026-09-23 ~12:3x EDT, pcrec manager) — "I-98 LOGS FETCHED": O-50 archived; G3 placement RETIRED; hypothesis 2 MOOT at the batch-2 pin; release /tmp/optloop4
 
 O-50 (docs/dev/lanes/b81blockd_report.md, 296 lines) is archived at pcrec
@@ -3527,6 +3528,7 @@ KEEPS the check here, and the win survives regardless of the pre-check's
 own cost. I-102 (once sent) will name nested-comment-rec among the meeting
 targets as a NO-MOVE control.
 
+ack: 2026-09-23 — /tmp/optloop4 RELEASED (deleted); G3-retired and hypothesis-2-moot noted; nothing further held from I-98.
 ## I-103 (2026-09-23 ~12:3x EDT, pcrec manager; from cycle2_batch2_reading.md §6/§8) — EXECUTOR REQUEST, SLOT ASKED NOT ASSUMED, after [B82]: the ONE measurement that decides whether G1 should cover tier 2b's RUN check
 
 This is admitimpl_report.md §9's open design question, and it needs one
@@ -3557,6 +3559,7 @@ NO new pcrec build is needed -- both axes already ship at b1885a83.
 Report, never diagnose: the six cells' medians/IQRs, matches= checks,
 load1 lines.
 
+ack: 2026-09-23 — [B83] (plan.md) together with I-103a; slot NAMED: after [B82]'s merge this afternoon, before the I-102 re-pin build (a short quiet timed block).
 ## I-104 (2026-09-23 ~12:3x EDT, pcrec manager; from cycle2_batch2_reading.md §1/§8) — CARRY A NULL-CONTROL BAND IN THE CAPABILITY REPORT (re-ask of I-91 block B, now with a population this side can hand you)
 
 I-91 block B asked for this and O-48 answered it for ONE pin pair. This
@@ -3584,6 +3587,7 @@ WHY IT MATTERS THIS CYCLE: without it, this ledger reads "17 of 28 target
 rows miss"; with it, 2 of the 17 are outside the band and 5 more are
 cells the design note classifies as carve-outs rather than targets.
 
+ack: 2026-09-23 — [B79]'s row UPDATED with I-104's spec (banded by regime + baseline scale; |Δ| > max(IQR, null band); identity computed from OUR OWN build hashes per your stated preference, your nullctl.json as the cross-check); builds with/after [B82]'s reporter merge.
 ## I-103a (2026-09-23 ~13:0x EDT, pcrec manager; Frank's ruling 2026-09-23 ~12:5x) — ADDENDUM to I-103: add the INLINE-LOOP hand-twin to the same block; the three-arm run-check form rule is cycle 3's row
 
 **Ruling.** The run-check's FORM is a COMPILE-TIME decision keyed on the
@@ -3624,6 +3628,7 @@ which is the finding either way.
 SLOT ASKED NOT ASSUMED; rides I-103's slot (after [B82]); no new pcrec
 build. The abi-31 pin (I-102) is a separate entry still to come.
 
+ack: 2026-09-23 — folded into [B83]: the inline-run hand-twin as the fourth arm per pattern, I-98's protocol (hand-edit, answer-check 0/0/0 before timing, interleaved rounds, load gate).
 ## I-102 (2026-09-23 ~13:1x EDT, pcrec manager; from cycle2_batch2_reading.md §8) — THE ADMISSION FIX'S ACCEPTANCE CELLS, extended by what batch 2 adds
 
 The abi-31 pin promised at the tail of I-103a/I-98 above, now with the
@@ -3708,3 +3713,4 @@ Usual re-pin ritual, [B74]/[B80]'s own shape: build by day, run the
 window at night. SLOT ASKED NOT ASSUMED — sequence it wherever it lands
 after [B82]/I-103/I-103a's queue; name the slot in your ack rather than
 assuming next-available.
+ack: 2026-09-23 — [B84] (plan.md); SLOT NAMED: the re-pin lane builds this afternoon after [B83]'s timed block closes ([B74]/[B80] ritual, abi 31, REQ_WHY read as EMISSION beside REQ_BYTE/REQ_RUN's ANALYSIS, compiler built at 6ef76820 regardless of main's tip); the WINDOW opens TONIGHT ~22:0x EDT, capability ×4 both regimes, BEFORE = b1885a83; the ledger carries the acceptance/no-move/negative-control grid + the REQ_WHY census as the fourth independent derivation; rendered in the class-pure views + I-101 query if [B82] merges by window close (expected).
