@@ -1,0 +1,241 @@
+KB-27 no-expectation probe (docs/dev/known_issues.md KB-27, lane b75kb27)
+==========================================================================
+
+WHAT: for `evil-alt-nested` x {`rd-evil-alt-near-miss`, `sd-empty-alt-hit`}
+(regime `short-subject-search`) -- the two (pattern, subject) pairs
+`bench/capability/expectations.tsv` carries NO row for (the oracle GAVE
+UP deriving one, `bench/capability/NOTES.md`) -- reads EVERY testee's
+newest `capability@0.1` record's rows for these two cells directly out of
+`store/records/capability@0.1/*/*.jsonl`, prints the RAW `match_outcome`
+and `diagnostic`, and runs the SAME rows through the OLD (pre-KB-27)
+`n_wrong` formula and the fixed `pcrecbench.reduce.reduce_match_cell`
+side by side. Compile-only in spirit: no engine run, no timing, a pure
+read of already-committed records.
+
+SCRIPT: docs/dev/measurements/probe_kb27_no_expectation.py (committed
+beside this file). Run: `python3 docs/dev/measurements/probe_kb27_no_expectation.py`
+from the repo root.
+
+SOURCE:
+  bench commit (this repo):     5b5b69f35596ccd8e3dac067f46fec031bbeb6e4
+                                 (lane b75kb27 branched from here; the fix
+                                 itself -- pcrecbench/reduce.py,
+                                 pcrecbench/report.py -- is UNCOMMITTED on
+                                 lane/b75kb27 at the time of this run)
+  reduce.py last real change:   7ff7be69340a6c399c1bc4e32e5e9421c63d3506
+                                 (2026-08-30, pre-KB-27; this run reads
+                                 the WORKING TREE's fixed reduce.py, not
+                                 that commit)
+  store read:                   store/records/capability@0.1/ (21 testee
+                                 directories, newest record per testee)
+  machine:                      ubuntubudu (budu-ryzen1600)
+  load1/5/15 at run time:       0.94 / 1.29 / 1.01 (read-only, no
+                                 quiet-gate needed -- this probe never
+                                 runs an engine)
+  command:                      python3 docs/dev/measurements/probe_kb27_no_expectation.py
+  run timestamp (UTC):          2026-09-23T00:36:00Z
+
+VERBATIM OUTPUT:
+--------------------------------------------------------------------------
+KB-27 probe: evil-alt-nested x ('rd-evil-alt-near-miss', 'sd-empty-alt-hit') (regime=short-subject-search)
+store root: store/records/capability@0.1
+
+==============================================================================
+subject: rd-evil-alt-near-miss
+==============================================================================
+  libpcre2_10.46_dfa-nocaps-simdna              n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  libpcre2_10.46_interp-caps-simdna             n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-47:match limit exceeded'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  libpcre2_10.46_jit-caps-simdna                n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-47:match limit exceeded'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  oniguruma_6.9.10_default-caps-simdna          n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-17:retry-limit-in-match over'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_auto-caps-simdna               n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_25b1984f_vm-caps-simdna                 n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_vm-in-caps-simdna              n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_a770139e_auto-caps-simdna               n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_a770139e_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_a770139e_vm-caps-simdna                 n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_a770139e_vm-in-caps-simdna              n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_cf0962e3_auto-caps-simdna               n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_cf0962e3_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_cf0962e3_vm-caps-simdna                 n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_cf0962e3_vm-in-caps-simdna              n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  re2_11.0.0_default-caps-simdna                n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  re2_11.0.0_longest-caps-simdna                n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  rust_1.13.1_default-caps-simdna               n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  tre_0.9.0_default-caps-simdna                 n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  vectorscan_5.4.11_block-nosom-nocaps-simd     n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+
+==============================================================================
+subject: sd-empty-alt-hit
+==============================================================================
+  libpcre2_10.46_dfa-nocaps-simdna              n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  libpcre2_10.46_interp-caps-simdna             n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-47:match limit exceeded'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  libpcre2_10.46_jit-caps-simdna                n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-47:match limit exceeded'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  oniguruma_6.9.10_default-caps-simdna          n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-17:retry-limit-in-match over'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_auto-caps-simdna               n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_25b1984f_vm-caps-simdna                 n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_25b1984f_vm-in-caps-simdna              n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_a770139e_auto-caps-simdna               n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_a770139e_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_a770139e_vm-caps-simdna                 n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_a770139e_vm-in-caps-simdna              n=5 outcome=['timed-out']
+      diagnostic (trial 1): 'the per-subject alarm fired'
+      OLD: n_wrong=0  token=excluded
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=0  token=excluded
+  pcrec_cf0962e3_auto-caps-simdna               n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_cf0962e3_auto-nocaps-simdna             n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  pcrec_cf0962e3_vm-caps-simdna                 n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  pcrec_cf0962e3_vm-in-caps-simdna              n=5 outcome=['gave-up']
+      diagnostic (trial 1): 'the engine gave up rather than answering: giveup:-2:PCREC_ERR_STEPS'
+      OLD: n_wrong=0  token=gave-up
+      NEW: n_wrong=0  n_gave_up=5  n_no_expectation=0  token=gave-up
+  re2_11.0.0_default-caps-simdna                n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  re2_11.0.0_longest-caps-simdna                n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  rust_1.13.1_default-caps-simdna               n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  tre_0.9.0_default-caps-simdna                 n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+  vectorscan_5.4.11_block-nosom-nocaps-simd     n=5 outcome=['did-not-match-as-expected']
+      diagnostic (trial 1): 'no expectation exists for this (pattern, subject, regime) -- the sub-bench must state one before the cell can be judged'
+      OLD: n_wrong=5  token=wrong
+      NEW: n_wrong=0  n_gave_up=0  n_no_expectation=5  token=no-expectation
+--------------------------------------------------------------------------
+
+SUMMARY (derived from the verbatim block above; numbers only):
+
+Both cells split the 21-testee roster into THREE groups, identically:
+
+  - 9 testees GAVE UP (libpcre2-interp, libpcre2-jit, oniguruma,
+    pcrec_{25b1984f,cf0962e3}_{auto,vm,vm-in}): `gave-up` in BOTH the
+    OLD and NEW reduction -- unaffected, `outcome_for()`'s give-up
+    branch runs before the `expectation is None` one.
+  - 3 testees (pcrec_a770139e_{auto,vm,vm-in}) read `timed-out` in BOTH
+    readings -- unaffected, a per-subject alarm firing on this
+    adversarial pattern is a fact independent of this fix.
+  - 9 testees (libpcre2-dfa, pcrec_{25b1984f,a770139e,cf0962e3}_auto-
+    nocaps, re2-default, re2-longest, rust-default, tre-default,
+    vectorscan) carry the "no expectation exists" diagnostic on a
+    `did-not-match-as-expected` row: OLD n_wrong=5 / token=wrong on
+    EVERY one of them, NEW n_wrong=0 / n_no_expectation=5 /
+    token=no-expectation on the SAME rows, both cells, 18 (testee,
+    cell) pairs total fixed.
+
+No testee's raw `match_outcome`/`diagnostic` differs from what is
+already committed in `store/` -- this probe only re-runs the REDUCTION
+over unchanged rows.

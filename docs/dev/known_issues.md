@@ -1267,7 +1267,7 @@ newline in the original text — the one shape a naive two-pass unescape
 could mis-decode. See `testees/rust/CLAUDE.md`'s "Refusals, first-class"
 section for the full account.
 
-## KB-27 (2026-09-22, surfaced by I-85 (b)1, OPEN — needs investigation) — the capability report labels a cell "wrong" on a (pattern, subject) pair that HAS NO expectations.tsv row
+## KB-27 (2026-09-22, surfaced by I-85 (b)1; FIXED 2026-09-22, lane b75kb27) — the capability report labels a cell "wrong" on a (pattern, subject) pair that HAS NO expectations.tsv row
 
 `evil-alt-nested` × `rd-evil-alt-near-miss` and × `sd-empty-alt-hit`
 (short-subject-search) carry `n_wrong=5` each in every committed
@@ -1289,3 +1289,173 @@ real derived rows) are unaffected. Investigation owed: where
 comparison? reporter join? a stale derivation?), and what the honest
 rendering of a dropped-expectation cell should be (likely
 "unjudged", never "wrong").
+
+**MECHANISM, established.** Neither the store nor the harness fabricates
+a wrong verdict: every affected record's own `match_outcome` field is
+exactly what `harness.py`'s `outcome_for()` wrote, and it is
+`did-not-match-as-expected` — grepped directly out of the committed
+`store/records/capability@0.1/*/*.jsonl` files for both (pattern,
+subject) pairs, both directions, on every testee. `outcome_for()`'s
+`expectation is None` branch (`pcrecbench/harness.py`, the ONLY place
+that ever fires when no expectation exists for a (pattern, subject,
+regime) triple AT ALL, for whatever reason) answers
+`did-not-match-as-expected` with diagnostic "no expectation exists for
+this (pattern, subject, regime) -- the sub-bench must state one before
+the cell can be judged" — the SAME `match_outcome` VALUE a testee gets
+when it answers and genuinely disagrees with a real expectation. The
+testee-level split is exactly what the harness's own branch order
+predicts: on both (pattern, subject) pairs, every pcrec config that
+ACTUALLY GIVES UP (`pcrec-auto`, `pcrec-vm`, `pcrec-vm-in` at every pin)
+correctly reads `gave-up` — `is_giveup` is checked before `expectation is
+None` in `outcome_for()`, so a give-up is unaffected by the missing row —
+while `pcrec-auto-nocaps` (no resource limit tight enough to trip) and
+the non-pcrec attempters that ran to completion (`re2`, `tre`,
+`rust-default`) read `did-not-match-as-expected` with the "no
+expectation exists" diagnostic, verified directly against their own
+store records. `reduce.py`'s `WRONG_ANSWER_OUTCOMES` set (which
+`n_wrong` sums) includes `did-not-match-as-expected` — correctly, for
+the case it was written for (a real disagreement) — so it also, and
+wrongly, counted the missing-expectation case as a wrong answer. The
+mislabelling is at REDUCTION: reading a `match_outcome` value's
+PRESENCE without reading its DIAGNOSTIC, which is the only place the
+two cases are told apart. `bench/capability/gen_expectations.py` uses
+the SHARED derivation (`pcrecbench/expectations.py`): `derive()`
+enumerates the FULL (pattern × subject × declared regime) cross product
+and only ever skips a row on an oracle `Pcre2Error` (a give-up), listed
+on `giveups` and printed to stderr but never persisted to any file — so
+for this set, a missing `expectations.tsv` row for a declared
+(pattern, regime) always means an oracle give-up, never an authoring
+gap.
+
+**FIX, at the reduction layer (`pcrecbench/reduce.py`), not the
+harness or the schema.** `harness.outcome_for()`'s choice to answer
+`did-not-match-as-expected` when no expectation exists at all is left
+alone: it is a deliberate forcing function ("the sub-bench must state
+one before the cell can be judged" — a set that is missing an
+expectation for a reason OTHER than a documented oracle give-up should
+still be loud), and `match_outcome` is a closed schema enum
+(`schema/record.schema.json`) that a lane should not grow for a
+reduction-layer fix reachable without one. Since the store is
+append-only, a record-side fix could only ever apply going forward
+anyway — the two tainted (pattern, subject) cells are ALREADY committed
+with `match_outcome: did-not-match-as-expected`, and the only way they
+can ever render honestly is a reducer that reads them correctly, which
+also fixes every future record for free.
+
+`reduce.py` gains `NO_EXPECTATION_DIAGNOSTIC_PREFIX` (the literal text
+of `outcome_for()`'s one fixed diagnostic, duplicated rather than
+imported — see the module's own comment on why: importing `harness.py`
+would pull the adapters/driverrun/store machinery for actually RUNNING
+a cell into `reduce.py`'s import graph, which today is as light as
+`report.py`'s own "never runs an engine" posture) and
+`_is_no_expectation_row(row)`. `reduce_match_cell`/`reduce_set_cell`
+now compute `n_no_expectation` (rows/trials matching that predicate) and
+subtract it back out of `n_wrong` — `outcome_counts` (the RAW tally,
+rendered verbatim in the excluded-cells table's `outcomes` column) is
+untouched, so a reader can still see the real `did-not-match-as-expected`
+count; only the WRONG/NOT-WRONG tally changes. `_failure_label` and the
+`--format matrix` surface's `_matrix_cell` (`pcrecbench/report.py`) both
+gain a SIXTH closed status token for this case.
+
+**The token is `no-expectation`, deliberately NOT `unjudged`** (this
+KB's own original suggestion, before this fix): `pcrecbench.reduce`
+already renders "N unjudged" on every record's `agreement:` line — the
+UNRELATED `trial_agreement` block's own count of rows the SPEED-
+disagreement rule (schema v1.4, rule `v1.4-group`) could not judge (few
+timed trials, an all-timed-out row, or `n/a-trials`). That count and
+this new status token would sit in the SAME committed report, often the
+same table, under the same word — a genuine reader-confusion risk this
+lane's own review caught before merging, not something Frank or a
+downstream reader flagged after the fact. `no-expectation` says exactly
+what is true and cannot be misread as the trial-agreement count.
+`scripts/matrix_page.py`'s `STATUS_CHIPS` gains the matching
+`chip-no-expectation` entry (an unhandled sixth token would otherwise
+render as an "unparseable cell" in the HTML page).
+
+**Both cells, EVERY testee in the whole store, read directly** (not
+inference: `docs/dev/measurements/probe_kb27_no_expectation.py`, archived
+alongside `2026-09-22-kb27-no-expectation-probe.txt`, reads every
+`capability@0.1` record's newest testee row for these two (pattern,
+subject) pairs and runs both the OLD and the fixed reduction over the
+SAME rows). On EACH of the two cells, the 21-testee roster splits into
+three groups, unchanged by anything this fix touches except the middle
+one: nine testees genuinely GAVE UP (`libpcre2-interp`, `libpcre2-jit`,
+`oniguruma`, and `pcrec_<pin>_auto`/`vm`/`vm-in` at pins `25b1984f` and
+`cf0962e3`) and read `gave-up` in both the OLD and NEW reduction
+(`outcome_for()`'s give-up branch runs before the `expectation is None`
+one, so a real give-up was never affected); three testees
+(`pcrec_a770139e_auto`/`vm`/`vm-in`) read `timed-out` on this
+adversarial pattern in both readings (the per-subject alarm fired --
+correctly excluded either way, an unrelated fact this probe surfaces
+honestly rather than glossing over); and NINE testees carry the
+`did-not-match-as-expected` / "no expectation exists" row this KB is
+about -- `libpcre2-dfa`, `pcrec_25b1984f_auto-nocaps`,
+`pcrec_a770139e_auto-nocaps`, `pcrec_cf0962e3_auto-nocaps`,
+`re2-default`, `re2-longest`, `rust-default`, `tre-default`,
+`vectorscan` -- every one of which reads `wrong`/`n_wrong=5` under the
+OLD formula and `no-expectation`/`n_no_expectation=5` under the fixed
+one, on the IDENTICAL already-committed rows, no re-measurement needed.
+NO FILE UNDER `reports/` reflects this yet (see the regeneration note
+immediately below, which this fix's own lane did NOT run) -- the
+committed `2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.*`
+files still show the PRE-FIX `n_wrong=5`/`wrong` rendering today, and
+will until someone runs the regeneration.
+
+**Tests.** `pcrecbench/tests/test_report.py` gains
+`test_no_expectation_cell_is_not_wrong` (a `did-not-match-as-expected`
+row carrying the fixed "no expectation exists..." diagnostic reduces to
+`n_no_expectation`, never `n_wrong`, and labels `no-expectation`; the
+CONTROL beside it is the SAME `match_outcome` with a REAL disagreement
+diagnostic, which must still reduce to `n_wrong` and label `wrong`, as
+before this fix) and `test_no_expectation_diagnostic_matches_harness`
+(an anti-drift cross-check: calls `harness.outcome_for()` directly with
+`expectation=None` and asserts its real diagnostic starts with
+`reduce.py`'s duplicated literal — the guard against the two copies
+silently drifting apart). `test_matrix_status_tokens` gains a sixth
+testee exercising the new token in the existing one-testee-per-token
+fixture; `test_matrix_no_empty_cells`'s closed-token set and
+`test_reporter_version_pin`'s history/assertions move to
+`REPORTER_VERSION` `v19 (2026-09-22)`. `test_status_chip_cell_html`
+(`test_matrix_page.py`) needed only its fixture `row` dict widened by
+one entry, since it iterates `STATUS_CHIPS.items()` generically.
+Targeted checks run: `make check-report` (`test_report.py`,
+`test_quick.py`, `test_matrix_page.py`, the fixture-validator pass and
+the CLI/matrix smoke), `make check-interpret`, `make check-schema` —
+numbers in `docs/dev/lanes/b75kb27_report.md`. `make check-harness` was
+NOT run (a re-pin lane held the box's heavy-suite slot at the time).
+
+**Regeneration: OWED, following this project's own precedent, NOT run
+from this lane.** Every reporter-version-bumping fix before this one
+(KB-18, [B52], and the rest of `reports/CLAUDE.md`'s own history) is
+committed with the regeneration of `reports/` left to a SEPARATE, LATER
+lane or the window/manager next holding the store (KB-16's ~750 s /
+3.6 GB whole-store cost is the stated reason, but the rule held even
+for additive changes that touched nothing near that cost) — this lane
+follows the same rule rather than making its own exception, so a reader
+comparing lanes never has to ask "why did this one regenerate and that
+one not". The ONE group this fix actually changes the rendering of is
+cheap to reproduce on demand — its own committed header names the exact
+query, 7 records, not the whole store:
+
+    python3 -m pcrecbench report --store store --subbench capability --version 0.1 \
+        --since 2026-09-22T00:00:00Z --until 2026-09-22T07:00:00Z \
+        --testee pcrec_25b1984f_auto-caps-simdna --testee pcrec_25b1984f_auto-nocaps-simdna \
+        --testee pcrec_25b1984f_vm-caps-simdna --testee pcrec_25b1984f_vm-in-caps-simdna \
+        --testee oniguruma_6.9.10_default-caps-simdna --testee rust_1.13.1_default-caps-simdna \
+        --testee vectorscan_5.4.11_block-nosom-nocaps-simd \
+        --format {md,tsv,matrix} > reports/2026-09-22-capability-0.1-budu-ryzen1600-wrapfix-25b1984f.{md,tsv,matrix.tsv}
+    # + --grain subject for the .subject-grain.md sibling, + --grain subject --format tsv
+    # --subject-grain-slice for .subject-grain.tsv, + scripts/matrix_page.py for .matrix.html,
+    # + the /pcrec-bench-interpret skill for .interpretation.md (all exact commands recoverable
+    # from each committed file's own header/stamp)
+
+UNTIL that runs, a reader of the COMMITTED
+`2026-09-22-capability-0.1-*-wrapfix-25b1984f` files still sees the
+PRE-FIX rendering: `evil-alt-nested` × {`rd-evil-alt-near-miss`,
+`sd-empty-alt-hit`} on `pcrec_25b1984f_auto-nocaps-simdna` still reads
+`n_wrong=5`/`wrong` there today, exactly as this KB describes above —
+the fix is real and tested, but it has not yet been applied to any
+file under `reports/`. Tonight's [B74] window, which reads this exact
+group as part of its comparison population, should regenerate it
+(or run the whole-store wave if one is already due) before treating its
+`evil-alt-nested` "no winner at all" reading as current.

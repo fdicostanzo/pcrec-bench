@@ -588,3 +588,22 @@ Maintenance: update this file when files are added/removed or change role.
   method and totals (R8 spread rule over the two committed report
   TSVs). All three predictions CONFIRMED; the full reading is
   reports/CLAUDE.md's [B71] entry.
+
+- `probe_kb27_no_expectation.py` / `2026-09-22-kb27-no-expectation-probe.txt`
+  — (KB-27, docs/dev/known_issues.md, lane b75kb27) a READ of pinned
+  records only (no compile, no run, no timing) over
+  `store/records/capability@0.1/*/*.jsonl` for the two (pattern,
+  subject) pairs the KB is about (`evil-alt-nested` x
+  `rd-evil-alt-near-miss` / `sd-empty-alt-hit`, `short-subject-search`):
+  prints every testee's newest record's RAW `match_outcome`/`diagnostic`
+  for the pair, then runs the SAME rows through the OLD (pre-fix)
+  `n_wrong` formula (reproduced literally, not imported, so the probe
+  keeps demonstrating the contrast even after `reduce.py` changes again)
+  and the current `pcrecbench.reduce.reduce_match_cell` side by side.
+  The archive splits the 21-testee roster into three groups, unchanged
+  by the fix except the third: 9 genuine give-ups and 3 `timed-out`
+  reads (both unaffected either way), and 9 testees whose
+  `did-not-match-as-expected` "no expectation exists" row moves from
+  `n_wrong=5`/`wrong` to `n_no_expectation=5`/`no-expectation` on the
+  IDENTICAL already-committed rows -- confirming no record's own raw
+  fields ever changed, only the reduction reading them.
