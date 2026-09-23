@@ -220,35 +220,49 @@ support is OWED to a future lane, exactly as the brief anticipated.
   (section 3 in particular, sidecar freshness, is clean — this lane
   bumps neither `INTERPRET_VERSION` nor `catalogue_version`, so no
   sidecar goes stale).
-- `python3 -m pcrecbench.tests.test_report`: **OWED — see below** (was
-  running in the background at report time; the run before the worktree
-  move showed 92 passed / 1 failed, the failure being the
-  since-fixed `_warn_if_large` late-binding bug, confirmed fixed by a
-  direct re-run of that one test; the FULL re-run inside the worktree
-  was launched and its number is filled in once it lands — see the
-  handback message for the actual count).
+- `python3 -m pcrecbench.tests.test_report`: **93 passed, 0 failed**
+  (confirmed from inside the worktree, after the `_warn_if_large`
+  late-binding fix below — the pre-worktree, pre-fix run had shown 92
+  passed / 1 failed, the one failure being that exact bug).
 - `python3 -m pcrecbench.tests.test_quick`: **7 passed, 0 failed** —
   unaffected, confirmed in the worktree.
 - `python3 -m pcrecbench.tests.test_matrix_page`: **12 passed, 0
   failed** — unaffected, confirmed in the worktree.
 - `make check-harness`: NOT RUN (out of scope; see checklist item 7).
 
-## 5. Predicted / measured size for the two HELD capability AFTER groups
+## 5. Measured size for the two HELD capability AFTER groups
 
-Computed directly against the real store rather than estimated: see the
-handback message for the exact byte counts of
-`reports/2026-09-23-capability-0.1-budu-ryzen1600-after-8d716693` and
-`...-after-b1885a83` regenerated under this fix from their own committed
-v19 query (`--until 2026-09-23T07:00:00Z`, the 11-testee roster). The
-v19 baseline (currently committed, pre-[B82] shape) is 53,607,968 /
-53,590,319 bytes; this fix's own shape adds one `capture class`/
-`capture_class` field per row (real value only on `rank` rows — 299,784
-of them in the 8d716693 group) plus the new, previously-absent
-`## Standing cross-class query` section (unconditional since [B82]) —
-both small relative to the base file, nowhere near the 107 MB the
-UNFIXED v20 shape would have produced (roughly 2x the v19 baseline, not
-3x, since regenerating from v19's own query also gains everything [B82]
-added independently of this fix).
+MEASURED directly, not estimated: each group's own committed query
+(`--until 2026-09-23T07:00:00Z` for `after-8d716693`, `--until
+2026-09-23T18:00:00Z` for `after-b1885a83`, both from their own
+committed file headers, 11-testee roster) re-run under this fix's code
+at `--grain subject --format tsv`:
+
+| group | v19 baseline (committed today) | this fix's v21 render | ratio |
+|---|---|---|---|
+| `after-8d716693` | 53,607,968 B | **58,545,100 B** | ×1.092 |
+| `after-b1885a83` | 53,590,319 B | **58,220,106 B** | ×1.087 |
+
+Both land at ~58 MB — comfortably under the remote's 100 MB hard push
+limit, nowhere near the ~107 MB the UNFIXED v20 shape produced (the size
+this KB was filed over). The growth over the v19 baseline (~9%) is
+[B82]'s own additions running for the first time on these two groups
+(the `capture class` column this fix adds, plus the previously-absent
+`## Standing cross-class query` section [B82] made unconditional) — NOT
+a residual duplication; there is no `rank_yes`/`rank_no` row in either
+regenerated file (checked directly). Both runs also demonstrate the new
+`_warn_if_large` gate FIRING for real, on real data, exactly as
+designed — a WARNING to stderr, `rc=0` either time:
+
+    pcrecbench report: WARNING: the rendered TSV report is 58,545,100 bytes,
+    over the 52,428,800-byte gate -- if this is written to a file under
+    version control, check it against the remote's push size limit before
+    committing (KB-28, docs/dev/known_issues.md)
+
+Wall time for each 11-testee subject-grain render: ~2m14s (this box,
+KB-16/KB-25's index-prefilter optimization already applied — the cost is
+dominated by validating the 11 records' own JSON, not this fix's
+rendering).
 
 ## Owed to the manager at merge
 
