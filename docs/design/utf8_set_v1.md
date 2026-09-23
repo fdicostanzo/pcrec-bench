@@ -84,7 +84,7 @@ I-90's five charter clauses, verbatim in substance:
 | (1) name, shape, roster restriction | **§2, §7, §8, §10** | `bench/utf8@0.1`, built on `patterns.rxt` exactly as `bench/capability` is; a per-engine UTF-8 surface table with the adapter change priced per engine; the oracle chain stated as a rule, not a habit |
 | (2) subjects | **§4** | five script corpora, deterministically generated from committed per-script word pools, sha256-manifested; 90 short subjects typed per family; a 64k/256k/1m mixed sweep plus a per-script 64 KB arm; the byte-histogram claim stated as the thing the set actually asserts |
 | (3) families + growth | **§5** (the six first-release families, 73 members + floor), **§6** (growth (g)-(k), a version each), **§3** (the twelve-axis coverage spine, with its gaps named) |
-| (4) pcrec testees | **§7.2** | four `-e utf8` configs on the existing `flags` mechanism, which is how the encoding becomes part of `testee_id` rather than an invisible run-time choice; the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
+| (4) pcrec testees | **§7.2** | four `-e utf8` configs, `flags`-carried but requiring a FIFTH `compose_config_extra` part before the encoding actually lands in `testee_id` (F-C1, v0.2 — a stated U2 deliverable, not "configs.toml only"); the `-e byte` mirror scoped to growth (k) and kept a TESTEE fact, never a set fact (§9) |
 | (5) first customers | **§11** | ten predictions, P1-P10, each written so `pcrecbench interpret` can score it; the TSV is NOT committed here (§11's own immutability note); P1 scores clause 5's sharpest offset-skip pair, declared as a narrowing of I-90's plural "rows" — the rest of that population is read in the ledger (F-C6) |
 
 Two cross-cutting sections carry no single clause: **§12** (the outlier
@@ -594,7 +594,7 @@ CONFIG per engine, with the encoding visible in `testee_id`.
 | engine | UTF-8 surface | how it is told TODAY | v1? | the adapter change, concretely |
 |---|---|---|---|---|
 | **pcre2** (`interp`, `jit`, `dfa`) | `PCRE2_UTF` (0x00080000), plus `PCRE2_UCP` where a family needs it | **nothing** — `driver.c:325` calls `p_compile(pat, patlen, 0, …)` with the options word HARD-CODED to `0` | **v1: three NEW configs** `pcre2-utf-interp` / `-jit` / `-dfa` | `driver.c`: two argv flags (`--utf`, `--ucp`) folded into the options word, and the find-all advance made character-boundary-aware (§8.4 — PCRE2 rejects a mid-character `startoffset` under `PCRE2_UTF`). `adapter.py`: two config keys → driver args → `config_extra`. `configs.toml`: three rows |
-| **pcrec** (`auto`, `nocaps`, `vm`, `vm-in`) | `-e utf8` / `--encoding=utf8` (UD §9.2 stage 2's own spelling) | `flags = ["--features", "all", …]` in `configs.toml` | **v1: four NEW configs** at `-e utf8` | `configs.toml` only: four rows whose `flags` carry `"-e", "utf8"`. Because `flags` land in `build_flags` AND in the derived `testee_id`, the encoding becomes an IDENTITY exactly the way `-bigcap` and `-noclsfold` already are — no adapter code changes |
+| **pcrec** (`auto`, `nocaps`, `vm`, `vm-in`) | `-e utf8` / `--encoding=utf8` (UD §9.2 stage 2's own spelling) | `flags = ["--features", "all", …]` in `configs.toml` | **v1: four NEW configs** at `-e utf8` | **(F-C1, v0.2, corrected)** a FIFTH `compose_config_extra()` part, `encoding_extra`, plus an `effective_encoding(flags)` recognition function mirroring `effective_denies`/`effective_caps`'s shape (`testees/pcrec/adapter.py:2154-2338`), and the one-line call-site edit adding it at `:2987-2989` — THEN four `configs.toml` rows whose `flags` carry `"-e", "utf8"`. `flags` alone lands in `build_flags` but NOT in `config_extra` (`compose_config_extra` takes four FIXED positional parts today, none of which scans `flags` for an encoding token — `DENY_FLAGS`/`CAP_KEYS` are closed tuples that do not recognize `-e`/`--encoding=`), so without the new part `pcrec-auto-utf8` and `pcrec-auto` would derive the SAME `testee_id` (record_schema.md §6.4, X5). See §7.2 |
 | **rust** (`rust-default`) | **already UTF-8-semantic.** `RegexBuilder::unicode` defaults to **true** and `regex::bytes` matches a code point against its UTF-8 ENCODING in the haystack — `testees/rust/CLAUDE.md`'s own measured section ("`non-utf8-subject`: RESOLVED — the class matches the UTF-8 ENCODING, not the raw byte, under this config's default unicode mode") | nothing to tell it | **v1, UNCHANGED** | **zero.** The finding worth stating: `rust-default`'s presence in this repo's BYTE sets is the anomaly, not its presence here |
 | **re2** (`re2-default`, `re2-longest`) | `RE2::Options::EncodingUTF8` — RE2's own DEFAULT, which this driver deliberately overrides | `driver.cc:220`: `opts.set_encoding(RE2::Options::EncodingLatin1);`, with the header comment naming family 12 as the reason | **v1: one NEW config** `re2-utf8` | `driver.cc`: one argv flag selecting the encoding; `configs.toml`: one row. The cheapest change on the roster |
 | **onig** (`onig-default`) | `ONIG_ENCODING_UTF8` | `driver.c:91`: `#define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII` — a COMPILE-TIME constant, so a second config cannot be a flag without a small change | **v1: one NEW config** `onig-utf8` | `driver.c`: make the encoding a runtime choice between two `OnigEncoding` pointers (`--encoding utf8\|ascii`); `configs.toml`: one row. **AND a re-census**: `testees/onig/CLAUDE.md` withholds `unicode-properties` under ASCII encoding — under UTF-8 it is expected to be SATISFIED, which must be witnessed per (config, token) before the declaration changes (the L5 lesson, CAP §5.3) |
@@ -618,11 +618,35 @@ deliberately invisible in `testee_id`. `-e utf8` must be the opposite:
 **visible**, because two records differing only in encoding must be two
 testees, not one testee measured twice.
 
+**(F-C1, v0.2, corrected).** Being IN `flags` is necessary but not
+sufficient for that visibility: `flags` land in `build_flags` (an
+argv-shaped record field) unconditionally, but `testee_id` is derived
+from `config_extra` WHOLE (record_schema.md §6.4, X5), and
+`compose_config_extra()`'s one call site
+(`testees/pcrec/adapter.py:2987-2989`) takes exactly four fixed parts —
+`cc_extra`, `cap_extra` (from `effective_caps`, matching only
+`--max-emit-bytes=`/`--max-emit-code-bytes=`), `deny_extra` (from
+`effective_denies`, matching only the closed `DENY_FLAGS` tuple) and
+`cflags_extra` (from the separate `cfg["cflags"]` key) — none of which
+scans `flags` for `-e`/`--encoding=`. So the adapter work is not
+"`configs.toml` only": it is a new `effective_encoding(flags)` function
+in the shape of `effective_denies`/`effective_caps`, returning an
+`encoding_extra` token, plus the call-site edit adding it as the
+composition's fifth part. Without that edit, `pcrec-auto-utf8` and
+`pcrec-auto` would derive the identical `testee_id` and silently
+collide in the store — exactly what `-bigcap` and `-noclsfold` avoid by
+each having their own recognition function. This is a stated deliverable
+of lane U2 (§13), with a frozen-renderer test row proving the six
+PRE-EXISTING config families (plain, `-bigcap`, `-clang`, `-noedge`,
+`-align64`, `-noisland`/`-noclsfold`) derive UNCHANGED ids and
+`config_extra` once the fifth part exists and is empty for them.
+
 Proposed ids, by the composition rule: `pcrec-auto-utf8`,
 `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8`, deriving
 `config_extra = utf8` in the record — the same escape hatch
-`pcrec-*-bigcap` ([B31]) and the `-clang` siblings ([B24]) already use.
-Twenty pinned pcrec configs after this set lands.
+`pcrec-*-bigcap` ([B31]) and the `-clang` siblings ([B24]) already use,
+once `encoding_extra` exists to carry it. Twenty pinned pcrec configs
+after this set lands.
 
 ### 7.3 The TRE ruling — EXCLUDED from v1, by declaration, not by omission
 
@@ -1141,7 +1165,7 @@ Five lanes, in dependency order. None opens before the design panel.
 | lane | what it builds | depends on |
 |---|---|---|
 | **U1** | the HARNESS half: `oracle_pcre2.py`'s per-pattern option word, the character-boundary find-all advance in the oracle and in every driver, the `make check-harness` arm with its NEGATIVE case (a byte-stepping advance must fail), and the three REQUIRES tokens in `pcrecbench/capability.py` | **— none; U1 is the entry point** and its own acceptance check (the byte-identical re-derivation below) must pass before U4/U5 read its output **(F-C5, v0.2: reworded — the prior cell's "nothing else can start" read as contradicting U3's own "parallel with U1" row two lines down; U1 itself has no prerequisite, which is what the prose underneath already said)** |
-| **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled | U1's tokens |
+| **U2** | the ROSTER half: the new configs per engine (§7.1), each with a WITNESS COMPILE per (config, token) before its declaration ships, and the UNCONFIRMED rows of §7.4 settled. **(F-C1, v0.2)** ALSO the pcrec adapter code change: a new `effective_encoding(flags)` function, its `encoding_extra` fifth part in `compose_config_extra()`, and the frozen-renderer rows proving the six pre-existing pcrec config families derive UNCHANGED ids and `config_extra` under it | U1's tokens |
 | **U3** | the SUBJECTS: the five word pools, `utf8text.py`, `gen_subjects.py`, `gen_throughput_subjects.py`, the two manifests and `subject_facts.tsv` with its `--check` | — (parallel with U1/U2) |
 | **U4** | the PATTERNS: `patterns.rxt` as the source of truth with its `ext bench` roster block, `gen_patterns.py` rendering `patterns/*.rx`, the sidecar, `provenance.tsv` | U3 (for the typed short subjects), U2 (for the `ext bench` roster) |
 | **U5** | the EXPECTATIONS and the set's `NOTES.md`: `gen_expectations.py` over the UTF-aware oracle, the outlier rule and growth plan transcribed from §6/§12, the predictions TSV transcribed at first-run time | U1, U3, U4 |
