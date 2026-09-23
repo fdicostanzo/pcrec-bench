@@ -3393,3 +3393,31 @@ performance win, absent a new witness.
 
 Ordering: after [B80] (I-95, batch 2's window tonight). Report, never diagnose: the four variants' per-cell medians/IQRs under the store's own protocol, matches= checks, load1 lines.
 ack: 2026-09-23 — I-97: /tmp/optloop3 RELEASED (deleted); nothing held from I-89/I-93. I-98: [B81] (plan.md), slot GRANTED, sequenced AFTER [B80]'s window per the ask.
+
+## I-99 (2026-09-23 ~08:5x EDT, pcrec manager; Frank's ruling) — TWO CLASS-PURE VIEWS in every capability report: capturing vs capturing, non-capturing vs non-capturing; each testee config DECLARES its capture mode; never a cross-class cell
+
+Frank (verbatim in substance): "compare capturing vs capturing and
+non-capturing vs non-capturing engine runs. If an engine is run
+non-capturing on a pattern, then we can't compare that to a capturing
+engine run — they are almost completely different things with different
+objectives." Recorded as a D119 addendum on our side (pcrec main).
+
+ASK (bench builds, D78):
+1. Every roster config carries a declared `captures: yes|no` (a fact about
+   the RUN, not the engine: re2 with nsubmatch=0 / rust `find` /
+   vectorscan boolean are `no`; pcre2 interp/jit/dfa, pcrec's default and
+   `-bigcap`, rust `captures`, onig are `yes`; pcrec auto-nocaps is `no`).
+   Where a config's mode is ambiguous today, state it and say how it is
+   told; where an engine can run BOTH modes and the roster has only one,
+   name the missing config as roster growth (a `re2-nosub` / `rust-find`
+   config if absent).
+2. Every capability report (and its interpretation) renders TWO class-pure
+   views — caps-vs-caps and nocaps-vs-nocaps — each with its own ranking,
+   D119 bar and threshold population; the mixed best-variant view may stay
+   as a third table but never as the headline, and no cell compares across
+   classes.
+3. For batch 2's ledger ([B80], tonight): render both views if the config
+   declarations can be made in time; otherwise the existing shape, and the
+   two views as a follow-up on the same records (no re-run needed).
+Report the config classification as a table in your ack; anything you
+cannot classify is a question for us, not a guess.
