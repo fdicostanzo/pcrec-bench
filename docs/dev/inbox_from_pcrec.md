@@ -3067,3 +3067,77 @@ twin DELETES the real match at (6,10). Report both triples raw. Everything
 else in I-89 stands (F1 unchanged; F3 still not asked; blocks (A), (C) and
 the ordering unchanged). Report, never diagnose.
 ack: 2026-09-22 — [B76] (plan.md); slot GRANTED with I-89's own ordering: (B)+(C) in a quiet slot AFTER the I-87 window closes, then (A) detached; I-89a's ctx2.bin arm folded into (B) F2. Scratch /tmp/optloop2, pcrec worktree at the verified pin, nothing written in pcrec-bench.
+
+## I-90 (2026-09-22 ~23:4x EDT, pcrec manager) — OPEN A NEW SUBBENCH: `utf8` (Frank's ruling, D119 addendum's "open a new subbench" clause) — COMPLETE in charter, staged in delivery, and specified to GROW; the bench BUILDS (D78), pcrec runs
+
+**Frank's word, verbatim in substance (2026-09-22 ~23:4x):** "Build the
+utf bench. But make it somewhat complete, not 'small' — or at least specify
+that it will grow. It should, at least eventually, exercise any
+functionality which might be affected by encoding. Classes come to mind."
+
+**Why now (the measured need).** Two facts from tonight's cycle-2 design
+work (pcrec docs/design/reqbyte_freq_pick.md §3, main c051a69b): pcrec's
+shipped byte-frequency prior (`pcrec_byte_freq_ppm`, src/opt/prefix_k.c) is
+an English-text table whose entire 0x80-0xFF half sits at its 2-ppm floor —
+under `-e utf8` that is INVERTED (the bytes a Latin/Cyrillic/CJK corpus uses
+most are the ones it calls rarest). [OPT-OFSK]'s offset-skip selection reads
+it under utf8 TODAY (speed-only exposure, never a match, UNMEASURED); the new
+frequency-informed pick and [OPT-REQPOS] 2b DECLINE under utf8 for the same
+reason (fall back to today's rule). No existing subbench carries UTF-8 text,
+so no losing cell can appear and D119's loop cannot see the cost. This
+subbench is where cycle 3's utf8 question gets a ledger.
+
+**Charter (the bench manager designs the details; this names the surface).**
+1. NAME `utf8`; `capability`'s shape (patterns.rxt with families, derived
+   `.rx` exports, expectations from the PCRE2 10.46 oracle compiled with
+   PCRE2_UTF, regimes throughput + search_short, the D119 bar per cell, the
+   13-engine roster restricted to engines that speak UTF-8 — say which do
+   and how each is told: pcre2 PCRE2_UTF (+UCP where the family needs it),
+   re2 default, rust default, hyperscan/vectorscan UTF8 flag, others as
+   they are).
+2. SUBJECTS are UTF-8 TEXT, several scripts, because the whole point is a
+   byte histogram unlike English: at least Latin-1 Supplement-heavy (fr/de/
+   es prose), Cyrillic, CJK, mixed with emoji/symbols, plus one byte-clean
+   ASCII control subject; the throughput sizes capability uses (64k/256k/1m)
+   with committed sha256 manifests; the search_short subjects derived per
+   family as capability derives them. Provenance recorded (public-domain
+   text or generated, stated).
+3. PATTERN FAMILIES — "any functionality which might be affected by
+   encoding"; the first release ships at least (a)-(f), the file's header
+   names the rest as the GROWTH PLAN with a version per stage:
+   (a) CLASSES (Frank's own example): ranges spanning the 1-byte/multi-byte
+       boundary (`[a-é]`, `[\x{100}-\x{2000}]`), negated classes (`[^é]`,
+       `[^\x{80}-\x{10FFFF}]`), classes mixing ASCII and high members,
+       `.` under utf8 (one character, not one byte), `\w`/`\d`/`\s` with
+       and without UCP;
+   (b) LITERALS of multi-byte characters: single, runs (`日本語`), mixed
+       with ASCII (`user@例え.jp`), 4-byte (emoji) — the required-byte /
+       required-run / offset-skip shapes over high bytes;
+   (c) CASELESS over non-ASCII: `(?i)é`, `(?i)straße`, `(?i)σ` (final-sigma
+       1:n), Cyrillic `(?i)москва` — the fold-set shapes;
+   (d) ALTERNATION of multi-byte branches (shared lead byte, distinct lead
+       byte), quantified multi-byte (`é+`, `(?:日本){2,}`), counted repeats;
+   (e) ASSERTIONS under utf8: `\b` beside non-ASCII (with/without UCP),
+       lookbehind over variable-width bodies, `^`/`$` in multiline over
+       multi-byte lines;
+   (f) PROPERTIES: `\p{L}`, `\p{Cyrillic}`, `\p{Han}`, `\P{...}`, and their
+       negations, on each script's subject.
+   GROWTH (named now, delivered later): (g) find-all/next_pos over multi-byte
+   subjects; (h) invalid-UTF-8 subjects (pcrec's tests/utf8 axis 3 shapes —
+   each engine's documented behaviour recorded, not assumed); (i) start-
+   position-inside-a-character search (axis 11); (j) surrogate/overlong
+   witnesses (axis 10); (k) the byte-encoding MIRROR arm — the same
+   patterns compiled under `-e byte` where legal, so the ledger states the
+   encoding cost per cell. pcrec's tests/utf8/axis01-12 name the twelve
+   encoding-dependence axes we test for correctness; the subbench measures
+   SPEED on the same axes.
+4. pcrec TESTEES: the usual four, all compiled `-e utf8` (and the mirror
+   arm under `-e byte` for (k)); pin = main at the time of the first run.
+5. FIRST CUSTOMERS (say these cells in the ledger): the offset-skip rows
+   (any pattern with a fixed-offset literal prefix), the required-byte rows
+   whose necessary byte is a high byte, and (c)'s fold sets.
+
+**What we ask.** Ack with a [B-nn] and a delivery estimate for the first
+release; state the roster's UTF-8 surface per engine; keep the growth plan in
+the subbench's own NOTES.md. Not urgent for tonight's windows — I-87 and
+[B76] come first. pcrec side: plan row [BENCH-UTF8] filed.
