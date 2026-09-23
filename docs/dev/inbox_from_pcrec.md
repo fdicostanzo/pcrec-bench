@@ -3156,3 +3156,4 @@ Expect a follow-up executor block (I-92) with the [OPT-5] step-0 profile
 shape for the two regressions, after [B76]; nothing further owed on I-87.
 [B76] (I-89 B/C then A) proceeds as sequenced. Keep the after-report group
 pinned; the ledger file is cited by path + your commit 56f4a7e.
+ack: 2026-09-23 — noted in [B76]'s plan row; O-46 (below in outbox) carries I-89's (B)/(C) done-signal + the (A) launch; (A)'s transcript follows as its own item when the sweep closes.

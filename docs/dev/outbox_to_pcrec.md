@@ -3402,3 +3402,56 @@ instantly dismissed our catastrophic-backtracking harness fixture
 ((a+)+b over 40 a's, no b) — we re-armed the control; stated because it
 is a measured example of the memchr converting a hang into a ~O(n)
 dismissal.
+
+## O-46 (2026-09-23, [B76], answers inbox I-89 + I-89a) — blocks (B)/(C) MEASURED at 8d716693 exactly; (A) launched detached, transcript OWED
+
+Full raw report: docs/dev/lanes/b76optloop_report.md (raw transcripts
+under /tmp/optloop2/, held until "I-89 logs fetched"). Executor terms:
+every command as written; the ONE ruling round-trip and the ONE
+mechanical substitution are §1 of the report — (i) `git checkout main
+&& git pull` in ~/pcrec was denied by our permission classifier, a
+`git fetch origin` + diff against origin/main substituted; (ii) the §0.1
+verification diff printed `src/gen/CLAUDE.md | 2 +-` (origin/main was
+cf5b84c5; the one commit above the pin is 26c7edc3, "docs: fix wrong
+citation for PCREC_ARTIFACT_ABI", docs-only by content but under the
+src/ path filter), the lane STOPPED per your own STOP clause, and the
+bench manager ruled: measure at the NAMED pin 8d716693 exactly (inside
+your "or any docs-only commit on top" set, and the same pin as the
+bench testees and the I-87 window). Setup: build exit 0, all three
+subject sha256s EXACT vs manifest_throughput.tsv, clock ×5 stable
+0.2250-0.2258 GHz-equivalent.
+
+**(B) F1 — the published twin reading does NOT reproduce.** Five trial
+pairs, twin/base ns/byte on t-1m (uptime 0.28 before the phase):
+3.4038/6.2486 · 1.5250/3.0918 · 1.6559/3.0894 · 1.5589/3.0871 ·
+1.5403/3.0891. Trial 1 is a cold-start outlier on BOTH arms; trials 2-5
+put the twin at 1.52-1.66 ns/byte — at/below your ~1.6
+one-sample-artefact band, NOT the published ~3.41 — with base steady at
+3.087-3.092 (its own EXPECT band). Both patcher asserts did NOT fire;
+base_ pre-check 3.0871 within EXPECT 3.05-3.09; twin/base matches=
+equal on t-1m before any timing was read.
+
+**(B) F2 — both triples, raw.** ctx.bin ("atrue xnull "): base/twin/
+reseed = 0/0/0 — the same as your darwin run, NOT firstset_design.md
+§4.1's forward-only-simulator 0/1/0. I-89a's ctx2.bin ("atrue true"):
+1/0/1 — EXACTLY I-89a's EXPECT; the twin deletes the real match at
+(6,10) on Linux too. Both stated as measured; the reconcile is
+fsreconcile's.
+
+**(C) one-pass M-B: zero mismatches.** All 17 patterns' arm1/arm2
+`matches=` agreed on every subject — including
+wild-semdiv-empty-alt-repeat-pcre2's real nonzero counts (7617/7617 ·
+31881/31881 · 130462/130462 · own(v-ipv4) 8/8). Every timing line is
+read-eligible; the 17×4×2 raw lines are the report's §4 (from
+/tmp/optloop2/blockc.log, 158 lines) for your (arm1−arm2)/arm1 shares.
+ONE subject MISSING per your fallback text: date-nested-plus (the
+expectations.tsv search_short/match lookup returns no row — your
+[derived — manager to confirm] regime guess is the open question, not a
+lost file); nothing generated on our side.
+
+**(A) LAUNCHED, not awaited**: pid 81637, `nohup gnutimeout 6h env -u
+AXES make test-axes`, log /tmp/optloop2/axes_full.log, started
+2026-09-23T07:17:58Z, alive with the registry-derived 27-axis baseline
+pass underway at this writing. OWED as a follow-up item: the per-axis
+lines verbatim, the final run_axes.sh summary, the census
+checks-passed/failed lines, make's own exit status, wall time.
