@@ -487,6 +487,21 @@ appears paired with the OTHER pin's `auto-nocaps` anywhere in the
 rendered query section. `test_reporter_version_pin`'s docstring and
 pinned assertions move to v23.
 
+**[B88] addition (2026-09-25, lane b90repin; BD13, reporter v23
+unchanged)**: 1 new test in `test_report.py` (97 -> 98) --
+`test_b88_null_band_reads_program_sha256_first`: [B79]'s hand-computed
+fixture with one plain compile row per pattern carrying
+`engine_metadata.program_sha256` (equal on both sides for an
+`identical` cell, different for a `changed` one). (1) NO census: the
+band is built from the field alone and its strata equal [B79]'s census
+band exactly (10 null at >=1us, +-6.00%; 3 insufficient; 0 empty), with
+the `identity from the records` line and the TSV `identity_field` row;
+(2) a census that DISAGREES on `n0`: the field decides (still null) and
+the disagreement is named; (3) CONTROL: the field on ONE side only ->
+the census fallback, the band section and every `d119`/`null_band` row
+byte-identical to [B79]'s pure-census render. Plus the pure
+`nullband.field_identity` / `cell_identity` arms.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then

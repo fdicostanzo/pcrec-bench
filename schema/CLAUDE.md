@@ -21,7 +21,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.6), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.7), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -40,8 +40,13 @@ they and the note disagree.
   rule X34 (a `boolean`-grain testee's match rows never carry a non-null
   `observed.span`) — executes lane `l6bvs`'s finding that
   `harness.outcome_for` scored every genuine match from such a testee
-  `wrong-span-or-captures` with a schema-illegal `[None, None]` span.
-  Every 1.1 through 1.5 record still validates, and the older examples
+  `wrong-span-or-captures` with a schema-illegal `[None, None]` span;
+  v1.7 ([B88], BD13, lane `b90repin`, 2026-09-25) added the
+  `engine_metadata` declaration TYPE `sha256` (64 lowercase hex digits,
+  checked under X15 in `validate.py`, `_SHA256_HEX`) -- the type of
+  pcrec's `program_sha256`, the normalized program-identity hash the
+  null-control band reads.
+  Every 1.1 through 1.6 record still validates, and the older examples
   are left stamped at their own versions to prove it.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line

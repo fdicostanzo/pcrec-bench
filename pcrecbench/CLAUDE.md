@@ -16,7 +16,7 @@ the record's shape is `docs/design/record_schema.md`.
 | `driverrun.py` | build/run/parse a driver; the resume-after-driver-death rule |
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |
 | `capture_class.py` | [B82] (2026-09-23, inbox I-99/I-100/I-101): THE CAPTURE-CLASS DECLARATION TABLE `report.py` reads to render the two class-pure ranking views and the standing cross-class query -- `classify_testee(testee_id)` returns `yes`/`no`/`undeclared` from a table keyed on the pin-independent `(engine_name, engine_mode, caps_token)` identity every testee_id already encodes, never the id verbatim (a re-pin never goes stale) and never a schema/harness/adapter change. FROZEN by I-100: every real config's own `-caps-`/`-nocaps-` token is trusted as the run fact EXCEPT `rust-default` (`is_override` true), whose config declares `captures=on` but whose timed loop makes exactly one verification `captures_at` call -- declared here as a fixed per-call cost, citing `src/main.rs:255-266`. An id this table has no row for is `undeclared`, NEVER guessed (I-99's fail-loud rule) |
-| `nullband.py` | [B79] THE NULL-CONTROL BAND's arithmetic (`docs/design/null_band_v1.md`): `scale_bin` (`>=1us`/`100ns-1us`/`<100ns`), `type7_quantile`/`iqr`, `delta_pct`, `Stratum` (the symmetric worst-null-cell half-width, `ok`/`insufficient`/`empty` against `N_MIN = 10`), `build_strata`, `d119_verdict` (|Δ%| > max(IQR%, band), `(IQR only: band n=K < 10)` when the stratum is unusable). Pure; `report.py` gathers the cells and renders |
+| `nullband.py` | [B79] THE NULL-CONTROL BAND's arithmetic (`docs/design/null_band_v1.md`): `scale_bin` (`>=1us`/`100ns-1us`/`<100ns`), `type7_quantile`/`iqr`, `delta_pct`, `Stratum` (the symmetric worst-null-cell half-width, `ok`/`insufficient`/`empty` against `N_MIN = 10`), `build_strata`, `d119_verdict` (|Δ%| > max(IQR%, band), `(IQR only: band n=K < 10)` when the stratum is unusable); since [B88] (BD13) the IDENTITY is FIELD-FIRST: `field_identity` reads both compile rows' `engine_metadata.program_sha256` (schema v1.7), `cell_identity` falls back to the census verdict and flags a field/census DISAGREEMENT by name (the field wins). Pure; `report.py` gathers the cells and renders |
 | `reduce.py` | the SET-GRAIN reduction `quick` prints and the reporter ranks (R5, [B10]): `reduce_set_cell`, `reduce_match_cell`, `cells_from_record`, `giveup_code`; pinned by a hand-computed fixture in `tools/selfcheck.py`. Since [B20] also THE ONE derivation of the v1.4 `trial_agreement` block (`judge_trial_agreement`, gate_shape_v14.md §3.5) and its shared rendering (`agreement_line`) — the harness stamps with it, `quick` prints it, the reporter renders it, and `schema/validate.py` carries a deliberate SECOND implementation X32 compares it against. Since KB-27 (2026-09-22, docs/dev/known_issues.md): `MatchCell`/`SetCell` also carry `n_no_expectation`, subtracted back out of `n_wrong` — a `did-not-match-as-expected` row caused by NO expectation existing at all (`harness.outcome_for()`'s `expectation is None` branch; an oracle give-up dropped at derivation, or nobody has authored one yet) is identified by that branch's OWN fixed diagnostic text (`NO_EXPECTATION_DIAGNOSTIC_PREFIX`, `_is_no_expectation_row`) rather than counted as a wrong answer |
 | `store.py` | the store path rule, never-clobber, validate-before-write, the index; the TIERS: `.canonical` marks the canonical store, which refuses a `tier: scratch` record on write and on index; `scratch_store()` is `$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` |
 | `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) — since BD7 (2026-08-30) the occupancy sample is `mpstat -P ALL 1 5` judged on its `Average:` block (`judge_mpstat`, pure; `split_mpstat`); `OCCUPANCY_SECONDS`. Since [B20] (schema v1.4) `judge_mpstat` also writes the TARGET core's tri-state `target_busy_pct`, `gate()` is the whole PRE-FLIGHT (load1, the non-target average, the target's own reading, the missing-row refusal — the `quiet` CLI judges through it too), `preflight_ok`/`after_notes` replace `occupancy_ok` (the after samples are PROVENANCE), and `cpu_times`/`timeline_item` read the per-group `/proc/stat` timeline |
@@ -1321,3 +1321,27 @@ one). `R-STATUS-15` and `R-DELTA-5` need NO catalogue change: both read
 the reporter's own rows verbatim, with no pairing logic of their own to
 fix (catalogue stays at 3.7). See `docs/dev/lanes/b87query_report.md`
 for the full checklist and the before/after hit counts per group.
+
+## The reporter, [B88] (2026-09-25) -- the null band reads `program_sha256` FIRST (v23, unchanged)
+
+Lane `b90repin` (BD13, riding the ce658cb7 re-pin). Every pcrec compile
+row now carries `engine_metadata.program_sha256` (record schema v1.7,
+`tools/program_identity.py`'s v2 normalization). `_build_null_band_model`
+asks, per cross-pin cell, `nullband.field_identity(old_meta, new_meta)`
+(the two compile cells' `sample_engine_metadata`, `_compile_meta`) FIRST
+and falls back to the `reports/identity/` census verdict; where both
+exist they are cross-checked and a disagreement is NAMED (the field wins
+-- the record's own statement). A pair with NO census now gets a band
+when its records carry the field (`_PairBand.has_identity`); the header
+adds one `identity from the records` line (markdown) and one
+`identity_field` `null_band` row (TSV) ONLY when a cell used the field --
+so every existing report (no record in `store/` carries the field)
+renders byte-identical, and `REPORTER_VERSION` stays `v23`. The first
+report to print the new lines is the ce658cb7 acceptance window's
+cross-pin group; its BEFORE side (6ef76820) predates the field, so that
+pair still reads the census (the manager writes it with `tools/
+program_identity.py --old 6ef76820 --new ce658cb7`, v2 by default). The
+first pair carrying the field on BOTH sides is the next re-pin's.
+`test_b88_null_band_reads_program_sha256_first` (field-only band = the
+census-built band exactly; a disagreeing census named, the field
+winning; the one-sided CONTROL byte-identical to [B79]'s render).
