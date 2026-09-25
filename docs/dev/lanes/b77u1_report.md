@@ -79,3 +79,12 @@ the configs/roster (U2), patterns (U4), expectations/NOTES (U5), ~/pcrec.
 - Full `make check`: see the handback (run after main's go; the log is
   `/var/tmp/b77u1-makecheck/make_check.log`, completion line
   `DONE rc=<n>`).
+
+
+---
+
+**VALIDATION — the full `make check` (manager-launched at the lane's
+request, 2026-09-25 14:33 EDT, worktree at 50e30d8, log
+/var/tmp/b77u1-makecheck/make_check.log): `DONE rc=0`** — check-harness
+482 passed / 0 FAILED (458 + this lane's 24), check-report 97+7+12
+OK, check-interpret 199/0.
