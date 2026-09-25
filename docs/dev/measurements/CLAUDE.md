@@ -607,3 +607,20 @@ Maintenance: update this file when files are added/removed or change role.
   `n_wrong=5`/`wrong` to `n_no_expectation=5`/`no-expectation` on the
   IDENTICAL already-committed rows -- confirming no record's own raw
   fields ever changed, only the reduction reading them.
+
+- `probe_b77u1_rederive.py` / `2026-09-25-b77u1-byte-identical-rederivation.txt`
+  — ([B77] lane U1, `docs/design/utf8_set_v1.md` 13 + 15 R1) THE U1
+  ACCEPTANCE PROOF: every existing `bench/*/expectations.tsv` (email,
+  loglines, bounded, altwide, syntax, capability) re-derived through
+  each set's OWN `gen_expectations.py` under the CHANGED oracle (the
+  per-pattern option word + the character-boundary find-all advance)
+  and compared byte for byte with the committed file. P0 measures "no
+  UTF option requested" per set (every pattern's word is 0, every
+  sidecar `encoding = byte`); N1 shows the comparator can fail (a
+  one-byte-mutated copy compares unequal); N2 shows the derivation
+  READS the word (a sabotaged word, PCRE2_ANCHORED, moves every set --
+  PCRE2_CASELESS was tried first and left loglines identical, so it is
+  recorded as unusable, not used). `--utf` adds the informational I1
+  arm (PCRE2_UTF forced per set). Oracle-only: no engine, no timing,
+  no store. The archive is the script's verbatim stdout under a source
+  header naming the sha256 of the four changed files it ran against.

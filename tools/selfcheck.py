@@ -9375,6 +9375,386 @@ def check_kb17_find_all_advance():
         return
 
 
+# ------------------------- 46b [B77] U1: the UTF-8 find-all advance
+
+def check_utf8_find_all_advance():
+    """[B77] U1 (docs/design/utf8_set_v1.md 8.4, 13, 15 R1): the ORACLE
+    OPTION WORD and the CHARACTER-BOUNDARY find-all advance, in the oracle
+    AND in every driver, with the NEGATIVE case the charter names: a
+    BYTE-STEPPING advance under UTF must FAIL.
+
+    The witness subject is `a`, U+00E9, U+65E5, U+1F600, `b` -- one
+    character of each UTF-8 width (1+2+3+4+1 = 11 bytes, 5 characters).
+    The witness pattern is `x*`, which matches EMPTY at every position it
+    is tried, so its find-all count IS the number of positions the advance
+    visits: 12 under the byte rule (every byte offset 0..11), 6 under the
+    character rule (the six boundaries 0, 1, 3, 6, 10, 11).
+
+      1. the option word: 0 for every pattern of every committed set (the
+         byte-identity precondition, measured per set -- see
+         docs/dev/measurements/2026-09-25-b77u1-byte-identical-
+         rederivation.txt for the full re-derivation); PCRE2_UTF from a set
+         declaring `[expectations] encoding = "utf8"`, PCRE2_UCP from a
+         pattern declaring `requires-unicode-class-scope`; an unknown
+         encoding value refused BY NAME.
+      2. the oracle: byte word -> 12, UTF word -> 6 (the character rule);
+         NEGATIVE: the byte-stepping advance reproduced INLINE (never by
+         calling production code) under the UTF word must raise
+         PCRE2_ERROR_BADUTFOFFSET (-36) -- a FAIL, never a count.
+      3. every driver, one testee per engine, through the REAL adapter
+         `measure()` path: WITH the handle's `utf8_advance` (-> `--utf8`)
+         the count must equal the UTF oracle's 6; WITHOUT it (the
+         byte-stepping advance) a byte-mode engine must give 12 -- i.e.
+         the byte-stepping driver FAILS against the UTF oracle, which is
+         the disagreement this arm exists to catch. A `grain: boolean`
+         driver (no find-all loop at all) must accept the flag and still
+         answer. An engine that is already UTF-8-semantic (rust-default)
+         is checked on the `--utf8` arm only; its byte-stepping count is
+         printed, not asserted (its engine may itself refuse a
+         mid-character empty match).
+      4. the pcre2 driver in ITS OWN UTF mode (`--utf`, PCRE2_UTF -- the
+         driver's half of the oracle word): with `--utf8` -> 6, the
+         oracle's answer; WITHOUT it the byte-stepping advance must FAIL
+         -- its first mid-character call is PCRE2_ERROR_BADUTFOFFSET, which
+         ends the find-all loop early (count 2), never the oracle's 6.
+      5. the HARNESS wiring end to end: a synthetic `encoding = "utf8"` set
+         (built in a temp dir, expectation derived by the real
+         `expectations.derive` -> nmatches 6) run through the REAL
+         `harness.run_cell` on pcre2-interp (scratch tier, synthetic,
+         store under build/): `matched-as-expected`. NEGATIVE: the same
+         cell with `expectations.utf8_advance` sabotaged to False (no
+         `--utf8` reaches the driver) must NOT be matched-as-expected --
+         the set's own expectation catches the byte-stepping driver."""
+    print("-- [B77] U1: the oracle option word + the UTF-8 find-all advance --")
+    from pcrecbench import oracle_pcre2 as _o
+    from pcrecbench import expectations as _expm
+    from pcrecbench.subbench import load as _load_sb
+
+    subject = "aé日\U0001F600b".encode("utf-8")
+    assert len(subject) == 11
+    WANT_BYTE, WANT_UTF = 12, 6
+
+    # ---- 1. the option word
+    words = {}
+    for name, path in subbench_dirs():
+        try:
+            sb = _load_sb(path)
+        except Exception as e:                            # noqa: BLE001
+            bad("option word: %s loads" % name, str(e)[:200])
+            continue
+        words[name] = (sb.encoding,
+                       sorted({_expm.oracle_option_word(sb, p)
+                               for p in sb.patterns}))
+    byte_sets = [n for n, (enc, w) in words.items() if enc == "byte"]
+    if byte_sets and all(words[n][1] == [0] for n in byte_sets):
+        ok("option word: 0 on every pattern of every byte set",
+           "%d set(s): %s" % (len(byte_sets), ", ".join(byte_sets)))
+    else:
+        bad("option word: 0 on every pattern of every byte set", repr(words))
+
+    class _SB:
+        encoding = "utf8"
+
+    class _P:
+        name, tags = "w", []
+
+    class _PU:
+        name, tags = "w-ucp", ["requires-unicode-class-scope"]
+
+    class _SBB:
+        encoding = "byte"
+
+    got = (_expm.oracle_option_word(_SB, _P), _expm.oracle_option_word(_SB, _PU),
+           _expm.oracle_option_word(_SBB, _P), _expm.utf8_advance(_SB, _P),
+           _expm.utf8_advance(_SBB, _PU))
+    want = (_o.PCRE2_UTF, _o.PCRE2_UTF | _o.PCRE2_UCP, 0, True, False)
+    if got == want:
+        ok("option word: utf8 set -> UTF; +unicode-class-scope -> UTF|UCP",
+           "byte set -> 0; the advance follows UTF alone")
+    else:
+        bad("option word: utf8 set / unicode-class-scope", "got %r want %r"
+            % (got, want))
+
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b77u1-")
+    try:
+        for f in ("subbench.toml", "manifest.tsv", "manifest_throughput.tsv"):
+            shutil.copy(os.path.join(BENCH, f), tmp)
+        side = os.path.join(tmp, "subbench.toml")
+        with open(side, encoding="utf-8") as fh:
+            txt = fh.read()
+        with open(side, "w", encoding="utf-8") as fh:
+            fh.write(txt.replace("[expectations]\n",
+                                 "[expectations]\nencoding = \"latin1\"\n", 1))
+        try:
+            Subbench(tmp)
+            bad("encoding = \"latin1\" is refused by name", "it loaded")
+        except SubbenchError as e:
+            if "latin1" in str(e) and "encoding" in str(e):
+                ok("encoding = \"latin1\" is refused by name", str(e)[-80:])
+            else:
+                bad("encoding = \"latin1\" is refused by name", str(e))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 2. the oracle
+    rx_b = _o.compile(b"x*")
+    rx_u = _o.compile(b"x*", _o.option_word(utf=True))
+    fb, fu = rx_b.find_all(subject), rx_u.find_all(subject)
+    if fb == ((0, 0), WANT_BYTE) and fu == ((0, 0), WANT_UTF):
+        ok("oracle: x* byte word -> %d, UTF word -> %d" % (WANT_BYTE, WANT_UTF),
+           "the character-boundary advance is active only under PCRE2_UTF")
+    else:
+        bad("oracle: x* byte/UTF counts", "byte %r utf %r" % (fb, fu))
+
+    def byte_stepping_count(rx, subj):
+        """The byte-stepping advance, reproduced INLINE -- the rule the
+        charter says must fail under UTF, never production code."""
+        pos, count = 0, 0
+        while pos <= len(subj):
+            got = _o._search_raw(rx, subj, pos, 0)
+            if got is None:
+                break
+            (s, e), _g = got
+            count += 1
+            pos = e if e > s else s + 1
+        return count
+
+    try:
+        n = byte_stepping_count(rx_u, subject)
+        bad("NEGATIVE oracle: byte-stepping under UTF FAILS",
+            "it returned a count (%d) instead of failing" % n)
+    except _o.Pcre2Error as e:
+        if str(_o.PCRE2_ERROR_BADUTFOFFSET) in str(e):
+            ok("NEGATIVE oracle: byte-stepping under UTF FAILS", str(e))
+        else:
+            bad("NEGATIVE oracle: byte-stepping under UTF FAILS",
+                "wrong error: %s" % e)
+    # the same inline rule under the BYTE word is the byte count (the
+    # reproduction is the real byte rule, not a strawman)
+    if byte_stepping_count(rx_b, subject) == WANT_BYTE:
+        ok("oracle control: the inline byte-stepping rule == the byte word's "
+           "count (%d)" % WANT_BYTE)
+    else:
+        bad("oracle control: inline byte-stepping rule", "count moved")
+
+    # ---- 3. every driver, through the adapters
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b77u1-drv-")
+    try:
+        subj = os.path.join(tmp, "s.bin")
+        with open(subj, "wb") as f:
+            f.write(subject)
+
+        class S:
+            subject_id, path, length = "s-utf8", subj, len(subject)
+
+        for engine, adapter in sorted(_ad.discover().items()):
+            tid = sorted(adapter.testees())[0]
+            try:
+                adapter.prepare(tid, tmp)
+                grain = adapter.describe(tid, tmp).get("grain", "full")
+                # a boolean-grain engine (vectorscan) refuses an empty-
+                # matching pattern outright and has no find-all loop: it
+                # gets a non-empty witness, and only the "flag accepted,
+                # still answers" question
+                cr = adapter.compile(tid, "utf8adv",
+                                     b"b" if grain == "boolean" else b"x*",
+                                     {}, 1, tmp).get(_ad.FORM_PLAIN)
+            except Exception as e:                        # noqa: BLE001
+                bad("%s: --utf8 advance" % engine, "prepare/compile: %s" % e)
+                continue
+            if cr.outcome != "compiled":
+                bad("%s: --utf8 advance" % engine,
+                    "x* did not compile: %s" % cr.diagnostic)
+                continue
+            res = {}
+            for arm in ("byte", "utf8"):
+                h = dict(cr.handle)
+                if arm == "utf8":
+                    h["utf8_advance"] = True
+                rows_by_trial, _i, _n = adapter.measure(
+                    h, "throughput", [S()], 1, 1, timeout=120)
+                rows = rows_by_trial[0] if rows_by_trial else []
+                res[arm] = rows[0] if len(rows) == 1 else None
+            rb, ru = res["byte"], res["utf8"]
+            if rb is None or ru is None:
+                bad("%s: --utf8 advance" % engine, "no row: %r" % res)
+                continue
+            if grain == "boolean":
+                if ru.matched and ru.nmatches is None and rb.matched:
+                    ok("%s (%s): --utf8 accepted, inert at boolean grain"
+                       % (engine, tid), "NMATCHES '-' both arms")
+                else:
+                    bad("%s: --utf8 at boolean grain" % engine,
+                        "byte %r/%r utf8 %r/%r" % (rb.answer, rb.nmatches,
+                                                    ru.answer, ru.nmatches))
+                continue
+            if not (ru.matched and ru.nmatches == WANT_UTF
+                    and (ru.start, ru.end) == (0, 0)):
+                bad("%s (%s): --utf8 advance == the UTF oracle (%d)"
+                    % (engine, tid, WANT_UTF),
+                    "got %s n=%r span=%r" % (ru.answer, ru.nmatches,
+                                            (ru.start, ru.end)))
+                continue
+            ok("%s (%s): --utf8 advance == the UTF oracle (%d)"
+               % (engine, tid, WANT_UTF))
+            if tid.startswith("rust"):
+                ok("%s: byte-stepping count (informational)" % engine,
+                   "%r -- a UTF-8-semantic engine; not asserted" % rb.nmatches)
+            elif rb.nmatches == WANT_BYTE:
+                ok("NEGATIVE %s: byte-stepping FAILS vs the UTF oracle" % engine,
+                   "count %d != %d (the advance visited every byte)"
+                   % (rb.nmatches, WANT_UTF))
+            else:
+                bad("NEGATIVE %s: byte-stepping count" % engine,
+                    "got %s n=%r, want %d" % (rb.answer, rb.nmatches, WANT_BYTE))
+
+        # ---- 4. the pcre2 driver in its own UTF mode
+        pc = _ad.discover().get("pcre2")
+        if pc is None:
+            bad("pcre2 --utf: adapter", "not discovered")
+            return
+        drv = pc.prepare_driver(tmp)
+        pat = os.path.join(tmp, "x.rx")
+        with open(pat, "wb") as f:
+            f.write(b"x*")
+        lst = os.path.join(tmp, "l.tsv")
+        with open(lst, "w", encoding="utf-8") as f:
+            f.write("s-utf8\t%s\n" % subj)
+        arms = {}
+        for arm, extra in (("utf8", ["--utf8"]), ("byte", [])):
+            proc = run([drv, "--pattern", pat, "--list", lst, "--mode",
+                        "search", "--iters", "1", "--find-all", "--utf"]
+                       + extra, timeout=60)
+            lines = [l for l in proc.stdout.splitlines()
+                     if l.startswith("subject\t")]
+            arms[arm] = (lines[0].split("\t") if len(lines) == 1 else None,
+                         proc.stdout)
+        u = arms["utf8"][0]
+        if u and u[2] == "match" and u[9] == str(WANT_UTF) and \
+                "info\tutf\ton" in arms["utf8"][1]:
+            ok("pcre2 --utf --utf8: find-all == the UTF oracle (%d)" % WANT_UTF,
+               "PCRE2_UTF in the driver's own option word")
+        else:
+            bad("pcre2 --utf --utf8", repr(arms["utf8"]))
+        # The byte-stepping arm's FIRST mid-character call returns -36;
+        # the find-all loop ends there (a negative rc after the first
+        # match ends the loop -- every driver's pre-existing shape), so
+        # the row reports the count reached so far: 1, never the oracle's
+        # 6. Either that truncated count or a refusal row is a FAIL
+        # against the oracle; the oracle's own answer would be the bug.
+        b = arms["byte"][0]
+        if b is None or not b[2] == "match" or b[9] != str(WANT_UTF):
+            ok("NEGATIVE pcre2 --utf WITHOUT --utf8: byte-stepping FAILS",
+               "row %r (answer %s, n=%s) != the oracle's %d" % (
+                   None if b is None else b[1], None if b is None else b[2],
+                   None if b is None else b[9], WANT_UTF))
+        else:
+            bad("NEGATIVE pcre2 --utf WITHOUT --utf8: byte-stepping FAILS",
+                "the byte-stepping arm reproduced the oracle: %r" % (b,))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 5. THE HARNESS WIRING, end to end: a synthetic utf8 set run
+    # through the REAL `harness.run_cell` (scratch tier, synthetic, into a
+    # scratch store under build/), whose expectation was derived by the REAL
+    # `expectations.derive` under the set's UTF word. The oracle says 6; the
+    # harness must hand the driver `--utf8` and the record must read
+    # `matched-as-expected`. NEGATIVE: the SAME cell with the harness's one
+    # fact sabotaged (`expectations.utf8_advance` -> False, so no `--utf8`
+    # reaches the driver: the byte-stepping advance) must read a WRONG
+    # answer -- the set's own expectation catches the byte-stepping driver.
+    _check_utf8_advance_through_harness(subject)
+
+
+def _check_utf8_advance_through_harness(subject):
+    import hashlib as _hl
+    from pcrecbench import expectations as _expm
+    from pcrecbench import harness as _hm
+    from pcrecbench import subbench as _sbm
+
+    root = tempfile.mkdtemp(prefix="pcrecbench-b77u1-set-")
+    store_dir = os.path.join(ROOT, "build", "selfcheck-b77u1-store")
+    shutil.rmtree(store_dir, ignore_errors=True)
+    real_find = _sbm.find
+    real_adv = _expm.utf8_advance
+    try:
+        os.makedirs(os.path.join(root, "patterns"))
+        os.makedirs(os.path.join(root, "throughput"))
+        with open(os.path.join(root, "patterns", "empty-run.rx"), "wb") as f:
+            f.write(b"x*")
+        with open(os.path.join(root, "throughput", "t-mixed.bin"), "wb") as f:
+            f.write(subject)
+        with open(os.path.join(root, "manifest.tsv"), "w") as f:
+            f.write("id\tlen\tsha256\tdescription\n")
+        with open(os.path.join(root, "manifest_throughput.tsv"), "w") as f:
+            f.write("id\tlen\tsha256\tdescription\n")
+            f.write("t-mixed\t%d\t%s\tone character of each UTF-8 width\n"
+                    % (len(subject), _hl.sha256(subject).hexdigest()))
+        with open(os.path.join(root, "subbench.toml"), "w") as f:
+            f.write(
+                'id = "u1probe"\nversion = "0.1"\nobjective_kind = "feature"\n'
+                'objective = "[B77] U1 selfcheck: the UTF-8 find-all advance '
+                'through the harness (synthetic, never a store input)"\n'
+                'regimes = ["throughput"]\n\n'
+                '[[patterns]]\nname = "empty-run"\n'
+                'file = "patterns/empty-run.rx"\nfeature_tier = "base"\n'
+                'hazard_class = "none"\nsize_class = "small"\n'
+                'convention = "perl-leftmost-first"\ntags = []\n'
+                'role = "member"\n\n'
+                '[subjects]\nmanifest = "manifest.tsv"\n'
+                'throughput_manifest = "manifest_throughput.tsv"\n\n'
+                '[expectations]\nfile = "expectations.tsv"\n'
+                'default_method = "libpcre2-differential"\n'
+                'encoding = "utf8"\n')
+        sb = Subbench(root)
+        rows, giveups, _v = _expm.derive(sb)
+        with open(os.path.join(root, "expectations.tsv"), "w") as f:
+            f.write(_expm.HEADER + "\n"
+                    + "\n".join("\t".join(r) for r in rows) + "\n")
+        if len(rows) == 1 and rows[0][6] == "6" and not giveups:
+            ok("harness: a utf8 set's derived expectation is the UTF count",
+               "empty-run / t-mixed / throughput -> nmatches 6")
+        else:
+            bad("harness: utf8 set expectation", "%r %r" % (rows, giveups))
+            return
+
+        _sbm.find = lambda name, bench_root=None: (
+            Subbench(root) if name == "u1probe" else real_find(name, bench_root))
+
+        def one(label):
+            res = _hm.run_cell(
+                "u1probe", "pcre2-interp", regimes=["throughput"], trials=1,
+                iters=1, force_unquiet=True, store_root=store_dir,
+                machine_id="selfcheck-box", synthetic=True,
+                tier="scratch", note="make check b77u1 -- NOT a measurement")
+            m = [r for r in res.rows if r.get("kind") == "match"]
+            return [(r.get("match_outcome"), (r.get("diagnostic") or "")[:60])
+                    for r in m]
+
+        got = one("utf8")
+        if got and all(o == "matched-as-expected" for o, _n in got):
+            ok("harness: run_cell hands the driver --utf8 (matched-as-expected)",
+               repr(got))
+        else:
+            bad("harness: run_cell hands the driver --utf8", repr(got))
+
+        _expm.utf8_advance = lambda _sb, _p: False
+        got = one("sabotaged")
+        if got and all(o != "matched-as-expected" for o, _n in got):
+            ok("NEGATIVE harness: without --utf8 the byte-stepping driver is "
+               "caught by the expectation", repr(got))
+        else:
+            bad("NEGATIVE harness: byte-stepping through run_cell", repr(got))
+    except Exception as e:                                # noqa: BLE001
+        bad("harness: the synthetic utf8 cell", "%s: %s"
+            % (type(e).__name__, str(e)[:300]))
+    finally:
+        _sbm.find = real_find
+        _expm.utf8_advance = real_adv
+        shutil.rmtree(root, ignore_errors=True)
+        shutil.rmtree(store_dir, ignore_errors=True)
+
+
 # --------------------------------------------- 47 the capability policy
 
 def check_capability_policy():
@@ -10327,6 +10707,7 @@ def main():
     check_exit_code_4()
     check_timeline_provenance()
     check_kb17_find_all_advance()
+    check_utf8_find_all_advance()
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()

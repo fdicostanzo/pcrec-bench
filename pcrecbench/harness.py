@@ -65,6 +65,7 @@ import time
 from . import adapters as _ad
 from . import capability as _cap
 from . import driverrun, env, quiet, record, store
+from . import expectations as _expect
 from .subbench import REGIME_TO_ENUM, REGIME_MODE
 from . import HARNESS_VERSION
 
@@ -891,6 +892,14 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             handle = dict(cr.handle)
             handle["pin"] = quiet.taskset_prefix(pinning)
             handle["subject_timeout"] = subject_timeout
+            # [B77] U1 (docs/design/utf8_set_v1.md 8.4): the character-
+            # boundary find-all advance is keyed on the SAME fact that puts
+            # PCRE2_UTF in this pattern's oracle option word
+            # (`expectations.utf8_advance`), so the oracle and the driver can
+            # never be told two different things. Set ONLY when true: a byte
+            # set's handle -- and so every adapter's argv -- is unchanged.
+            if _expect.utf8_advance(sb, p):
+                handle["utf8_advance"] = True
             if iters is None:
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
             else:

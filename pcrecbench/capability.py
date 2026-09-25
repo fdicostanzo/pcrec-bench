@@ -76,7 +76,12 @@ import os
 from . import rxt_source as _rxt
 
 # docs/design/capability_set_v1.md 5.1 (16 tags) + 6.2's addition
-# (`true-end-anchor`, a 17th) -- the CLOSED vocabulary. Kept here, not
+# (`true-end-anchor`, a 17th) + docs/design/utf8_set_v1.md 7.5's three
+# ([B77] U1, Q3 ruled GLOBAL by inbox I-94: `utf8-encoding`,
+# `ascii-class-scope`, `unicode-class-scope` -- 20 tokens) -- the CLOSED
+# vocabulary. `unicode-class-scope` is ALSO the one token the ORACLE reads:
+# it puts PCRE2_UCP in that pattern's option word
+# (`pcrecbench.expectations.oracle_option_word`). Kept here, not
 # re-derived from any one set's own `.rxt vocabulary requires ...` line,
 # because the policy is harness-wide: a future second capability-shaped
 # set validates against the SAME closed list, not its own copy.
@@ -85,6 +90,14 @@ REQUIRES_VOCAB = frozenset({
     "atomic-group", "recursion", "conditionals", "k-reset", "control-verbs",
     "unicode-properties", "named-groups", "free-spacing", "callouts",
     "span-reporting", "non-utf8-subject", "captures", "true-end-anchor",
+    # [B77] U1, utf8_set_v1.md 7.5 -- PER-PATTERN, like every token above:
+    #   utf8-encoding        the pattern's byte-mode and character-mode
+    #                        readings can diverge on a subject its set runs
+    #                        it over (unsatisfied by every BYTE-mode config)
+    #   ascii-class-scope    \w \d \s / POSIX classes must be ASCII-scoped
+    #                        under UTF-8 (PCRE2's default absent PCRE2_UCP)
+    #   unicode-class-scope  \w \d \s must be Unicode-widened (PCRE2_UCP)
+    "utf8-encoding", "ascii-class-scope", "unicode-class-scope",
 })
 
 _REQUIRES_PREFIX = "requires-"

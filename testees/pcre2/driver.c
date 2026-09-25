@@ -98,6 +98,12 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
 #define PCRE2_ENDANCHORED     0x20000000u
 #define PCRE2_JIT_COMPLETE    0x00000001u
 #define PCRE2_CONFIG_VERSION  11u
+/* [B77] U1 (docs/design/utf8_set_v1.md 8): the two compile-time option bits
+ * the utf8 set's oracle word can carry, the same values
+ * pcrecbench/oracle_pcre2.py measured on this box's 10.46 (UTF alone leaves
+ * `\w` ASCII-scoped over e-acute; UTF|UCP widens it). */
+#define PCRE2_UTF             0x00080000u
+#define PCRE2_UCP             0x00020000u
 
 /* [verified] 2026-09-16 ([B42] L6a): this box now HAS libpcre2-dev (a side
  * finding of docs/dev/research/2026-09-12-b42-engine-landscape.md (3),
@@ -144,6 +150,17 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
 #define PCRE2_INFO_JITSIZE     10u
 
 /* --------------------------------------------------------------- helpers */
+
+/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
+ * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
+ * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
+ * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
+ * that range or at n. Without --utf8 the advance stays start + 1. */
+static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
+    size_t p = pos + 1;
+    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
+    return p;
+}
 
 static double now(void) {
     struct timespec ts;
@@ -257,7 +274,9 @@ int main(int argc, char **argv) {
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long compile_trials = 1;
     volatile int find_all = 0;
+    volatile int utf8_adv = 0;
     int jit = 0, dfa = 0;
+    uint32_t copts = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -271,6 +290,13 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--jit"))                       jit = 1;
         else if (!strcmp(a, "--dfa"))                       dfa = 1;
+        /* [B77] U1: --utf8 is the PROTOCOL flag (pcrecbench/adapters.py):
+         * the find-all advance steps to the next CHARACTER boundary. --utf /
+         * --ucp are this ENGINE's compile options (PCRE2_UTF / PCRE2_UCP),
+         * the driver's half of the oracle's per-pattern option word. */
+        else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
+        else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (dfa && jit) die("--dfa and --jit together: pcre2_dfa_match has no JIT "
@@ -311,6 +337,11 @@ int main(int argc, char **argv) {
     printf("info\tversion\t%s\n", ver);
     printf("info\tjit\t%s\n", jit ? "on" : "off");
     printf("info\tdfa\t%s\n", dfa ? "on" : "off");
+    /* the utf/ucp/advance facts are printed ONLY when set, so a byte-mode
+     * run's `info` stream is exactly what it was before [B77] (an info
+     * NAME the adapter does not declare is a validator error). */
+    if (copts & PCRE2_UTF) printf("info\tutf\ton\n");
+    if (copts & PCRE2_UCP) printf("info\tucp\ton\n");
 
     size_t patlen = 0;
     unsigned char *pat = slurp(pattern_path, &patlen);
@@ -322,7 +353,7 @@ int main(int argc, char **argv) {
         int errcode = 0;
         size_t erroff = 0;
         double t0 = now();
-        void *c = p_compile(pat, patlen, 0, &errcode, &erroff, NULL);
+        void *c = p_compile(pat, patlen, copts, &errcode, &erroff, NULL);
         double t1 = now();
         if (!c) {
             unsigned char msg[256];
@@ -439,10 +470,15 @@ int main(int argc, char **argv) {
                          * scan position -- an empty match can be found AHEAD
                          * of pos, and advancing pos itself re-finds the same
                          * empty match next call (KB-17). Byte encoding: the
-                         * S3.1.1 `next_pos` residual is start+1. */
+                         * S3.1.1 `next_pos` residual is start+1; under
+                         * --utf8 ([B77] U1) it is the next CHARACTER
+                         * boundary -- a mid-character start offset under
+                         * PCRE2_UTF is PCRE2_ERROR_BADUTFOFFSET. */
                         size_t start = ov[0];
                         size_t end = ov[1];
-                        pos = (end > start) ? end : start + 1;
+                        pos = (end > start) ? end
+                            : utf8_adv ? utf8_next_start(s->buf, s->len, start)
+                                       : start + 1;
                         if (pos > s->len) break;
                     }
                     nmatch = count;

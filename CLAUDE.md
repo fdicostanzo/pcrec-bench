@@ -795,6 +795,10 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # 384<w<=512: w-384 compiles as an island, w-512 and
                         # the denied w-384 refuse), iso-ts 8/4 edges through
                         # the abi-19/21 dispatch, registries 74/25 · 50 · 55
+                        # and ([B77] U1) the oracle option word + the UTF-8
+                        # find-all advance in the oracle, every driver and
+                        # the harness, each with its byte-stepping NEGATIVE
+                        # (check_utf8_find_all_advance)
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
     make check-interpret # 132 checks in six sections (~28 s; [B13.3]): the
                         # catalogue/code correspondence and every load-time
