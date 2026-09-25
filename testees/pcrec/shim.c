@@ -300,6 +300,19 @@
  * so the sentinel is a belt under that brace, never a code that reaches a
  * record. The descriptor (`rx_buffers`) is built HERE, so driver.c still
  * declares no pcrec type.
+ *
+ * CALLER VARIABLES ([VAR], abi 32, pcrec docs/spec/vars.md). abi 32 appended
+ * `vars` / `nvars` to `rx_ctx` (and to `rx_info`, the variable-NAME table).
+ * The two `rx_ctx` builders below set them to NULL / 0 whenever the
+ * artifact's header defines `PCREC_ERR_UNSET_VAR` (the same abi-32 event, in
+ * the shared PCREC_RX_ABI_H block), so the stack struct never carries an
+ * indeterminate pointer. No bench artifact is var-bearing (no bench pattern
+ * contains the byte pair `${`, checked by tools/selfcheck.py's
+ * check_vars_surface), and a var-free artifact never reads ctx->vars
+ * (measured at ce658cb7); a var-bearing artifact would not even link here,
+ * because its `<prefix>_search` gains a trailing `vars, nvars` pair -- a
+ * loud failure, never a silent one. The shim reads neither `rx_info`
+ * member, so the floor does not move ([B90]).
  */
 
 #include <stddef.h>
@@ -1144,6 +1157,10 @@ long long pb_match_caps(const unsigned char *s, size_t n, size_t pos,
     ctx.ncap = 0;
     ctx.caps = (const ptrdiff_t (*)[2])0;
     ctx.user = (void *)0;
+#ifdef PCREC_ERR_UNSET_VAR
+    ctx.vars = (const rx_var *)0;   /* abi 32 ([VAR]): no caller variables */
+    ctx.nvars = 0;
+#endif
     return (long long)PB_MATCH_CAPS(&ctx, caps);
 }
 
@@ -1247,6 +1264,10 @@ long long pb_match_caps_in(const unsigned char *s, size_t n, size_t pos,
     ctx.ncap = 0;
     ctx.caps = (const ptrdiff_t (*)[2])0;
     ctx.user = (void *)0;
+#ifdef PCREC_ERR_UNSET_VAR
+    ctx.vars = (const rx_var *)0;   /* abi 32 ([VAR]): no caller variables */
+    ctx.nvars = 0;
+#endif
     if (!frames && !trail)
         return (long long)PB_MATCH_CAPS_IN(&ctx, caps, (const PB_BUFFERS *)0);
     buf.frames = frames; buf.nframes = nframes;

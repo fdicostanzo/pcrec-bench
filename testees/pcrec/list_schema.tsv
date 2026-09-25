@@ -1,25 +1,30 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# sixth archiving of this surface (first: cd371441, the W23 delivery pin
+# eighth archiving of this surface (first: cd371441, the W23 delivery pin
 # that shipped `--list-schema` itself; second: a770139e, byte-identical;
 # third: cf0962e3, +1 row for the `config tune` directive; fourth:
-# 8d716693, byte-identical; fifth: b1885a83, byte-identical).
+# 8d716693, byte-identical; fifth: b1885a83, byte-identical; sixth:
+# 6ef76820, byte-identical; this one: +2 rows).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-6ef76820/build/pcrec --list-schema
+#     build/pcrec-ce658cb7/build/pcrec --list-schema
 #
-# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
-# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
-# 6ef76820). 71 data rows across two sections (`#section schema`,
-# `#section surface`) -- BYTE-IDENTICAL to the b1885a83 copy below the
-# header (diffed line for line): [OPT-PRECHECK-ADMIT] adds no new `.rxt`
-# grammar line, only emitted-C machinery (an emit-time predicate, one
-# stamp). Nothing in this project's adapters or checks reads this file
-# yet (declared for a future `.rxt`-format check, per
-# docs/design/rxt_needs_v1.md); archived so the registry-surface census
-# stays complete at this pin.
+# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33 --
+# see list_axes.tsv's header), archived 2026-09-25 by
+# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
+# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
+# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
+# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
+# 73 data rows across two sections (`#section schema`, `#section
+# surface`) -- 71 -> 73 against the 6ef76820 copy: TWO rows INSERTED,
+# `block var` (qualified-line) and `block var-unset` (token), [VAR]'s
+# `.rxt` production (pcrec 41e9aa38, "[VAR] M10 (1/2): the .rxt
+# production"), and pcrec's own trailing `# schema-rows:` count 67 -> 69
+# with them; nothing else moved. Nothing in this project's adapters or
+# checks reads this file yet (declared for a future `.rxt`-format check,
+# per docs/design/rxt_needs_v1.md); archived so the registry-surface
+# census stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,
 # [DD-13b.W23.1]). One row per (scope, line-kind), walked out of
@@ -93,6 +98,8 @@ block	ns	case	false	none	repeat		format	none	1
 block	g	case	false	none	repeat		format	pcrec	1
 block	gp	case	false	none	repeat		format	pcrec	1
 block	gu	case	false	none	repeat		format	pcrec	1
+block	var	qualified-line	false	none	repeat		format	all-readers	1
+block	var-unset	token	false	none	repeat		format	all-readers	1
 block	tag	list	false	none	repeat	closed per-key	format	pcrec	23
 block	mc	case	false	none	repeat		format	none	23
 block	under	qualified-line	false	none	repeat	closed convention;unique-by under-key	format	pcrec	23
@@ -135,6 +142,6 @@ subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never r
 pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
 config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
 ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
-# schema-rows: 67
+# schema-rows: 69
 # wave-built: 23
 # wave-reserved: 999

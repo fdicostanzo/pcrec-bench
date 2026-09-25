@@ -3,19 +3,19 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-6ef76820/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-ce658cb7/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
-# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
-# 6ef76820). 50 data rows / 7 columns: kind, selector, syntax, order,
-# predicate, definition, applies -- one row per construct DEFINED in
-# terms of another. BYTE-IDENTICAL to the b1885a83 copy below the header
-# (diffed line for line): [OPT-PRECHECK-ADMIT] defines no new SYNTAX
-# construct -- it is an emit-time predicate over the existing
-# req_byte/req_run analysis, not a grammar change -- so no definition
-# changed, none added, none removed at this pin -- the thirteenth pin
-# running.
+# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33 --
+# see list_axes.tsv's header), archived 2026-09-25 by
+# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
+# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
+# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
+# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
+# 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
+# definition, applies -- BYTE-IDENTICAL to the 6ef76820 copy below the
+# header (diffed line for line): `${name}` is a caller-supplied value,
+# not a construct DEFINED in terms of another, and K64 is emit-side --
+# the fourteenth pin running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active

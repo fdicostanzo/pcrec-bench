@@ -3096,6 +3096,27 @@ B84_STAMP_LINE_EMITTED = 29       # `#define RX_REQ_WHY "emitted"`
 B84_STAMP_LINE_DOMINATED = 31     # `#define RX_REQ_WHY "dominated"`
 B84_STAMP_LINE_ONE_ATTEMPT = 33   # `#define RX_REQ_WHY "one-attempt"`
 
+# [B90] (pin ce658cb7, TWO abi steps: 31 -> 32 [VAR], 32 -> 33 K64 fix A).
+# abi 32 is pcrec's caller-variable module ([VAR], `${name}`, D121): EVERY
+# artifact of both engines gains, in the shared PCREC_RX_ABI_H block of the
+# .h, the `rx_var` typedef, two appended `rx_ctx` members (`vars`, `nvars`),
+# `#define PCREC_ERR_UNSET_VAR (-8)` and two appended `struct rx_info`
+# members; in the .c, the two `rx_info` initializer lines (`.vars = NULL,`
+# `.nvars = 0,`) and -- under this adapter's `--features all` -- the
+# `,vars` suffix on `PCREC_FEATURE_MODULES`. MEASURED at +1001 B on the
+# comment-excluded port (`emit_bytes`/`emit_code_bytes`, .c + .h), every
+# one of the 30 size expectations below that carries a B84 term, and
+# INDEPENDENT of `-fcomments` (the lines are code lines whose trailing
+# comments the port counts as code; the same number with and without the
+# flag on four witnesses, both pins): .c +39 (34 initializer + 5 `,vars`),
+# .h +962. pcrec's own ritual number is +34 at DEFAULT features on the .c
+# alone (commit 68422ba1) -- the same event through a different measure.
+# abi 33 (K64 fix A) adds no line anywhere; it moves the pre-check of
+# framed, unguarded, anchored forced-VM one-attempt artifacts only (the
+# B90 K64 witnesses below carry their own MEASURED totals), and none of the
+# pre-existing witnesses in this file is in that population.
+B90_VAR_ABI_BLOCK = 1001
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -3468,7 +3489,7 @@ STAMP_CASES = (
       "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE
                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_DFA}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
     # class, the same ladder, the fallback candidate. Without this row the
@@ -3515,7 +3536,7 @@ STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE,
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
@@ -3542,7 +3563,7 @@ STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_VM}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -3567,7 +3588,7 @@ STAMP_CASES = (
       # not one-attempt -- MEASURED req_why "emitted".
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -3584,7 +3605,7 @@ STAMP_CASES = (
       # [B84]: same as its sibling -- MEASURED req_why "emitted".
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -3808,9 +3829,9 @@ LEDGER_STAMP_CASES = (
       # has no required byte (req_byte "none") -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -3864,10 +3885,10 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE,
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_DFA}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -3909,9 +3930,9 @@ LEDGER_STAMP_CASES = (
       # req_run both stay "none", the flat +26.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE  # +4: the N1 _WHY prose
-                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -4025,7 +4046,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
      "pcrec-auto", "altwide", "srt-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57,
@@ -4035,7 +4056,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ------ [B37] / pcrec abi 18 ([ENG-ISL] STEP 1) -- THE ORDER PAIR ON
     # THE VM ROUTE, where the x8.87 (256) / x20.1 (512) branch-ORDER
     # effect of the 2026-09-03 ledger LIVED. Inbox I-43's prediction for
@@ -4062,7 +4083,7 @@ LEDGER_STAMP_CASES = (
       # VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
@@ -4095,7 +4116,7 @@ LEDGER_STAMP_CASES = (
       # "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -4115,7 +4136,7 @@ LEDGER_STAMP_CASES = (
       # canonicalises regardless of source order) -- the VM flat lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 57}),
     # The prefix-3 and suffix arms island too (the shared literal is
     # factored OUT by [OPT-ALTCLS] stage 2 first, and the island asks
@@ -4148,7 +4169,7 @@ LEDGER_STAMP_CASES = (
       # island trie, not a byte/offset-set prefilter), and the machine is
       # not one-attempt -- MEASURED req_why "emitted".
       "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 242 + 423 + B84_STAMP_LINE_EMITTED,
+                    + 242 + 423 + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK,
       "req_byte": "113", "req_run": "717578@0"}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
@@ -4161,7 +4182,7 @@ LEDGER_STAMP_CASES = (
       # req_byte "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # THE VM REFUSAL WALL MOVED: `w-384`'s forced-VM form REFUSED at
     # 288d505 (508,607 B of emitted code > the 500,000 code cap) and
     # COMPILES at this pin as an island at 427,824 B -- I-43's "the wall
@@ -4179,7 +4200,7 @@ LEDGER_STAMP_CASES = (
       # byte -- req_byte "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 17}),
     # ... and the floor: a single literal byte, no alternation, so
     # islands 0 -- the VM route's zero control -- and `forward` at 236
@@ -4201,7 +4222,7 @@ LEDGER_STAMP_CASES = (
       # candidate-start scan ahead of it (this forced-VM artifact carries
       # none), and the machine is not one-attempt -- MEASURED "emitted".
       "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 240 + B80_STAMP_LINE + B84_STAMP_LINE_EMITTED,
+                    + 240 + B80_STAMP_LINE + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 0}),
     # `sh1-64`: every one of its 64 branches starts with the byte `k` --
     # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
@@ -4244,7 +4265,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # `dig-upto-16` forced VM: the [B33] (3) .text witness -- a
     # frameless program with no capture write, so the abi-17
     # always_inline (now the abi-22 `forward` rung) is what the cell
@@ -4260,7 +4281,7 @@ LEDGER_STAMP_CASES = (
       # -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
@@ -4275,7 +4296,7 @@ LEDGER_STAMP_CASES = (
       # [B74]: DFA route, req_byte/end_window both "none" -- the flat pair.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3
-                    + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
 )
 
 
@@ -5656,12 +5677,12 @@ DENY_CONTROLS = (
       # own binary.
       "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE),
+                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                            + B84_STAMP_LINE_NONE)}, "deny"),
+                            + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -5706,10 +5727,10 @@ DENY_CONTROLS = (
       # own binary.
       "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -5742,9 +5763,9 @@ DENY_CONTROLS = (
       # [B84]: req_why "none" on BOTH arms -- MEASURED against the pin's
       # own binary.
       "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE)}, "deny"),
+                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
