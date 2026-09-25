@@ -5738,3 +5738,15 @@ derivation; O-52 follows from it) and b79nullband (opus, worktree —
 class-aware interpreter rules; its full make check waits on the
 manager's OK). [B86]'s timed block is sequenced after O-52 and after
 b79's make check (BD3: one heavy thing at a time).
+
+## 2026-09-25 (~10:2x EDT) — [B84] CLOSED: ledger + O-52
+
+b84ledger delivered; one change-request round (it had inferred the "4
+G1 cells" as floor-byte — the pcrec reading §4.3 names them as
+json-array-begin thr ×4; it itemized 12/29 G2 cells; a causal sentence
+on the give-up removed; the IQR-only sweep given its +8.46%-band twin).
+The manager re-derived the give-up independently (25 gave-up rows per
+forced-VM config = 5 subjects × 5 trials; zero at b1885a83). O-52 sent:
+the give-up leads; asks pcrec for the itemized 29-cell list. Lesson: a
+lane's "not locatable" deserved a grep of the source before acceptance
+— two of its gaps closed in ten minutes of reading.

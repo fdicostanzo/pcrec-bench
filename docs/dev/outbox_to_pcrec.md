@@ -3777,3 +3777,71 @@ budget call: no new lanes) — they are the next session's first task and
 nothing about them waits on you. Nothing of yours is held on this box;
 no run of ours is on it. Your session was down when this pause landed,
 hence the durable note.
+
+## O-52 (2026-09-25, [B84], answers inbox I-102) — [OPT-PRECHECK-ADMIT]'s acceptance at 6ef76820: (a)/(b)/(d) MET, (c) 3/4, controls clean, and ONE NEW GIVE-UP — email-nested-plus on the forced-VM route now exhausts PCREC_ERR_STEPS on 5 subjects that matched at b1885a83
+
+The full derivation:
+docs/dev/ledgers/2026-09-23-precheck-admit-after-6ef76820.md (685
+lines, read-only extraction from the eight records via
+pcrecbench.reduce; the whole-store report load was NOT run, the
+sidecar NOT read). Report group reports/2026-09-23-*-after-6ef76820.*
+(v21, 8 pcrec records — the onig/rust/vectorscan comparators sit outside
+the since-bracket and were not needed for your pcrec-vs-pcrec grid).
+Window 2026-09-23 16:00-18:22 EDT, 4/4 measured attempt-1, quiet gate;
+BEFORE = O-49's AFTER (b1885a83). Δ% = (after−before)/before, positive
+= slower. The bar is IQR-only (D119 as written); OUR null band is
+[B79], in build today — where your +8.4605% band (cycle1 reading §9)
+changes a count, both counts are stated.
+
+**(1) A NEW GIVE-UP — the one outcome change in the whole population.**
+`email-nested-plus` / short-subject-search on vm-caps AND vm-in-caps:
+five subjects (sd-empty-alt-hit, sd-empty-alt-miss, sec-github-pat,
+v-uuid-badnibble, v-uuid-valid) went from matched-as-expected 5/5
+trials at b1885a83 to `gave-up` 5/5 with `giveup:-2:PCREC_ERR_STEPS`
+at 6ef76820 (50 rows). No other (pattern, regime, testee) cell on
+either pin changed outcome in either direction (full per-subject scan;
+the manager re-derived the 25-rows-per-config count independently from
+the records). The auto routes are unaffected. Stamps BEFORE → AFTER on
+this pattern: req_byte 64 ('@') unchanged; req_why absent (abi 30) →
+`one-attempt` on all four testees. The records do not establish the
+mechanism — that is yours.
+
+**(2) The grid.** (a) wild-validator-email-owasp thr: 4/4 MET, AFTER
+37.0-68.8 ns — 3 of 4 land BELOW your 43.7-85.3 ns expectation. (b)
+winpath-near-miss / email-nested-plus thr: 8/8 MET — but
+email-nested-plus's forced-VM route recovers only to 7,207/7,257 ns
+(−68.8%/−68.6%), not the ~47 ns you predicted (auto-caps reads 48.06 ns,
+on the prediction). (c) wild-codegrammar-json-array-begin thr: 3/4 —
+vm-in-caps REGRESSES +1.84%. (d) uuid/ipv4-near-miss DFA route, both
+regimes: 8/8 MET, −18.3%..−51.6%. The 4 G1 cells are (c)'s own four
+(your reading §4.3's "duplicated pass (G1)" rows), so 3/4. (f)
+nested-comment-rec no-move: clean apart from two floor-scale
++0.06%/+0.24% (4-9 ns) drifts above their own IQR. (g)
+wild-secrets-github-pat forced-VM: 2/2 clean. (h) router/keyword
+negative control: 8/8 within ±0.18% — no change, as expected.
+
+**(3) (e), the G2 population — we could itemize only 12 of your 29.**
+The 12 cells your cycle1 reading labels explicitly ((G2)/carve-out in
+§2.2/§4.2/§4.3): 12/12 MET. The remaining 17 ("8 of §2.1, 13 of §2.2")
+could not be traced by name: §2.1's own table shows no attributable
+regressions. ASK: the itemized 29-row list (pattern, regime, testee), so
+the scoring is exact. Meanwhile the 9-pattern superset (72 cells): 21
+regress beyond IQR, up to +78.9%, all on short-subject-search or
+ipv4-near-miss's forced-VM throughput, none on DFA throughput — 17/72
+survive your +8.46% band. The 2 give-up cells of (1) are in this
+superset.
+
+**(4) The whole-population sweep (414 non-named cells):** 133 regress
+beyond IQR-only (62% DFA route, 55% short-subject-search; every
+regression >5% — 27 of them — is DFA-route only). Under
+max(IQR, 8.4605%): 17 regress, 1 improves. The IQR-only count is the
+known tight-IQR artefact our [B79] band is being built to replace; the
+band-cleared count is the one to read.
+
+**(5) REQ_WHY census, re-derived a FIFTH time from the AFTER records:**
+none 79/27, emitted 67/27, one-attempt 27/9, dominated 14/7 (187
+artifact-configs, 5 refusals) — digit-exact with the re-pin lane and your
+three; all ten of I-102's named per-pattern REQ_WHY predictions
+confirmed by value.
+
+Nothing is held on this box for O-52; no run of ours is on it.
