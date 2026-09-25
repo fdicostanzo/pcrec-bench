@@ -7771,6 +7771,375 @@ def check_cflags_axis():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+#: THE ENGINE-ENCODING AXIS ([B77] U2; docs/design/utf8_set_v1.md 7.1/7.2,
+#: F-C1 -- a MUST per inbox I-94). The utf8 set's roster adds a SECOND,
+#: character-mode config per engine; the encoding is an IDENTITY, so it
+#: must land in the derived testee_id or a `-utf8` sibling would collide
+#: with its byte sibling in the store (record_schema.md 6.4, X5). pcrec
+#: reads it off its own `flags` (`-e utf8`) through `effective_encoding`,
+#: the FIFTH `compose_config_extra` part; pcre2/re2/onig/vectorscan read an
+#: `encoding` config key through `pcrecbench.adapters.config_encoding`.
+#: Five arms:
+#:
+#:   1. NOTHING MOVED FOR THE OLD CONFIGS (F-C1's own MUST), three ways:
+#:      (a) every pre-existing config of EVERY engine derives the id SHAPE
+#:          and `config_extra` in the FROZEN table below (taken at the
+#:          pre-U2 tree, 6ef76820) -- the six pre-existing pcrec families
+#:          (plain, -bigcap, -clang, -noedge, -align64, -noisland/
+#:          -noclsfold) and the `-in` pair included;
+#:      (b) every pcrec config's `config_extra` equals a FROZEN COPY of the
+#:          pre-U2 four-part composition over its own four parts -- the
+#:          renderer, not only its current output;
+#:      (c) every COMMITTED record whose id a pre-existing config derives
+#:          re-derives byte-identically, `build_flags` and
+#:          `runtime_options` included -- the arm a renderer change would
+#:          actually damage (non-vacuous: fails when nothing matches).
+#:   2. THE NEW CONFIGS' SHAPE: each is its byte sibling's id plus `_utf8`,
+#:      carries `config_extra = utf8`, names the encoding in `build_flags`
+#:      and `runtime_options`, and its describe() block validates against
+#:      the schema's own `setup.testee` (the KB-21 class, on the new shape).
+#:   3. THE RECOGNITION RULES: `effective_encoding` over every spelling
+#:      pcrec takes (`-e X`, `--encoding=X`, `--encoding X`), `byte` =
+#:      no token, an unknown value / two disagreeing spellings / a
+#:      trailing `-e` REFUSED BY NAME; `config_encoding` likewise; the
+#:      fifth part composes LAST behind cc + a denial; and
+#:      `$PCREC_LOCAL_FLAGS="-e utf8"` reaches `pcrec-local`'s id.
+#:   4. THE CONTROL, on a REAL compile per engine family: `^.$` over `é`
+#:      (two bytes, one character) -- every UTF-8 config answers the UTF
+#:      oracle's `match [0,2)`, its byte sibling the byte oracle's
+#:      `nomatch`. The answer is read at MEASURE time, so for the
+#:      recompiling drivers it also proves the encoding rides the measure
+#:      argv, not only the compile one.
+#:   5. `pcrecbench testees` lists all ten new configs.
+_B77U2_NEW = {
+    # new config -> its byte sibling
+    "pcre2-utf-interp": "pcre2-interp", "pcre2-utf-jit": "pcre2-jit",
+    "pcre2-utf-dfa": "pcre2-dfa", "pcrec-auto-utf8": "pcrec-auto",
+    "pcrec-nocaps-utf8": "pcrec-nocaps", "pcrec-vm-utf8": "pcrec-vm",
+    "pcrec-vm-in-utf8": "pcrec-vm-in", "re2-utf8": "re2-default",
+    "onig-utf8": "onig-default",
+    "vectorscan-block-nosom-utf8": "vectorscan-block-nosom",
+}
+
+#: FROZEN at the pre-U2 tree (master eafb654, pin 6ef76820, 2026-09-25):
+#: config -> (the derived id with its `<engine>_<version>_` prefix
+#: stripped, config_extra). The prefix is left out so a re-pin or a distro
+#: version bump does not break the arm; what U2 could damage is the part
+#: after it.
+_PRE_B77U2_IDS = {
+    "pcre2-interp": ("interp-caps-simdna", None),
+    "pcre2-jit": ("jit-caps-simdna", None),
+    "pcre2-dfa": ("dfa-nocaps-simdna", None),
+    "onig-default": ("default-caps-simdna", None),
+    "re2-default": ("default-caps-simdna", None),
+    "re2-longest": ("longest-caps-simdna", None),
+    "rust-default": ("default-caps-simdna", None),
+    "tre-default": ("default-caps-simdna", None),
+    "vectorscan-block-nosom": ("block-nosom-nocaps-simd", None),
+    "pcrec-auto": ("auto-caps-simdna", None),
+    "pcrec-nocaps": ("auto-nocaps-simdna", None),
+    "pcrec-vm": ("vm-caps-simdna", None),
+    "pcrec-auto-in": ("auto-in-caps-simdna", None),
+    "pcrec-vm-in": ("vm-in-caps-simdna", None),
+    "pcrec-local": ("auto-caps-simdna", None),
+    "pcrec-auto-clang": ("auto-caps-simdna_cc-clang", "cc-clang"),
+    "pcrec-nocaps-clang": ("auto-nocaps-simdna_cc-clang", "cc-clang"),
+    "pcrec-vm-clang": ("vm-caps-simdna_cc-clang", "cc-clang"),
+    "pcrec-auto-bigcap": ("auto-caps-simdna_emitcap-8388608-codecap-8388608",
+                          "emitcap-8388608-codecap-8388608"),
+    "pcrec-vm-bigcap": ("vm-caps-simdna_emitcap-8388608-codecap-8388608",
+                        "emitcap-8388608-codecap-8388608"),
+    "pcrec-auto-noedge": ("auto-caps-simdna_noedge", "noedge"),
+    "pcrec-auto-align64": ("auto-caps-simdna_cf-align-functions-64",
+                           "cf-align-functions-64"),
+    "pcrec-auto-noisland": ("auto-caps-simdna_noisland", "noisland"),
+    "pcrec-auto-noclsfold": ("auto-caps-simdna_noclsfold", "noclsfold"),
+    "pcrec-vm-noclsfold": ("vm-caps-simdna_noclsfold", "noclsfold"),
+}
+
+
+def _pre_b77u2_compose(*parts):
+    """A FROZEN COPY of `compose_config_extra` as it stood before [B77] U2
+    -- four parts (cc, caps, denials, cflags), `-`-joined, None when
+    empty. Kept here so arm 1(b) checks the pre-U2 RENDERER, not only the
+    ids it happened to produce once."""
+    assert len(parts) == 4
+    return "-".join(p for p in parts if p) or None
+
+
+def check_encoding_axis():
+    """THE ENGINE-ENCODING AXIS ([B77] U2). The five arms and what each is
+    built to catch are documented above _B77U2_NEW."""
+    print("-- the engine-encoding axis: -e utf8 / encoding = utf8 "
+          "([B77] U2, utf8_set_v1.md 7.1/7.2, F-C1) --")
+    import glob as _glob
+    import json as _json
+    adapters = _ad.discover()
+    by_tid = {}
+    for eng in adapters.values():
+        for tid in eng.testees():
+            by_tid[tid] = eng
+    mod = _pcrec_adapter_module()
+    pcrec = adapters.get("pcrec")
+    if pcrec is None:
+        bad("encoding axis", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-enc-")
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = pcrec.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    blocks = {}
+    try:
+        for tid in list(_PRE_B77U2_IDS) + list(_B77U2_NEW):
+            by_tid[tid].prepare(tid, tmp)
+            blocks[tid] = by_tid[tid].describe(tid, tmp)
+
+        # ---- 1a. the frozen table ---------------------------------------
+        offenders, missing = [], sorted(
+            t for t in _PRE_B77U2_IDS if t not in by_tid)
+        for tid, (shape, extra) in sorted(_PRE_B77U2_IDS.items()):
+            if tid not in blocks:
+                continue
+            got = _rec.derive_testee_id(blocks[tid]).split("_", 2)[2]
+            gx = blocks[tid].get("config_extra")
+            if (got, gx) != (shape, extra):
+                offenders.append("%s: (%r, %r), frozen (%r, %r)"
+                                 % (tid, got, gx, shape, extra))
+        title = ("encoding axis: all %d pre-existing configs (every engine; "
+                 "the six pcrec families + the -in pair + local) derive the "
+                 "FROZEN id shape and config_extra" % len(_PRE_B77U2_IDS))
+        if offenders or missing:
+            bad(title, ("; ".join(offenders) + (" missing: %s" % missing
+                                                if missing else ""))[:700])
+        else:
+            ok(title, "%d/%d unchanged (e.g. pcrec-auto-noclsfold -> %s)"
+               % (len(_PRE_B77U2_IDS), len(_PRE_B77U2_IDS),
+                  _PRE_B77U2_IDS["pcrec-auto-noclsfold"][0]))
+
+        # ---- 1b. the frozen pre-U2 composition renderer -------------------
+        offenders, n = [], 0
+        for tid in sorted(pcrec.testees()):
+            cfg = pcrec.config(tid)
+            parts = (cfg.get("cc_extra"), cfg.get("cap_extra"),
+                     cfg.get("deny_extra"), cfg.get("cflags_extra"))
+            frozen = _pre_b77u2_compose(*parts)
+            if tid not in blocks:
+                blocks[tid] = pcrec.describe(tid, tmp)
+            live = blocks[tid].get("config_extra")
+            n += 1
+            if tid in _B77U2_NEW:
+                want = mod.compose_config_extra(frozen, "utf8")
+                if cfg.get("encoding_extra") != "utf8" or live != want:
+                    offenders.append("%s: encoding_extra %r, config_extra %r "
+                                     "(want %r)" % (tid, cfg.get("encoding_extra"),
+                                                    live, want))
+            elif cfg.get("encoding_extra") is not None or live != frozen:
+                offenders.append("%s: encoding_extra %r, config_extra %r but "
+                                 "the frozen four-part renderer gives %r"
+                                 % (tid, cfg.get("encoding_extra"), live, frozen))
+        title = ("encoding axis: every pcrec config's config_extra = the FROZEN "
+                 "pre-U2 four-part composition (+ `utf8` LAST on the four new)")
+        if offenders:
+            bad(title, "; ".join(offenders)[:700])
+        else:
+            ok(title, "%d pcrec configs: the fifth part is empty on every "
+               "pre-existing one, `utf8` on the four -e utf8 ones" % n)
+
+        # ---- 1c. every COMMITTED record still names its testee ------------
+        committed = {}
+        for p in _glob.glob(os.path.join(ROOT, "store", "records", "*", "*",
+                                         "*.jsonl")):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    t = _json.loads(f.readline())["testee"]
+            except (OSError, ValueError, KeyError):
+                continue
+            committed.setdefault(t["testee_id"], t)
+        matched, drift = {}, []
+        for tid in sorted(_PRE_B77U2_IDS):
+            if tid == "pcrec-local" or tid not in blocks:
+                continue
+            block = blocks[tid]
+            if block["engine_name"] == "pcrec":
+                rec, _pin, block = _committed_at_any_pin(committed, block)
+            else:
+                rec = committed.get(_rec.derive_testee_id(block))
+            if rec is None:
+                continue
+            for field in ("build_flags", "runtime_options", "config_extra"):
+                if rec.get(field) != block.get(field):
+                    drift.append("%s: committed %s %r, describe() now %r"
+                                 % (tid, field, str(rec.get(field))[:90],
+                                    str(block.get(field))[:90]))
+            matched.setdefault(block["engine_name"], []).append(tid)
+        title = ("encoding axis: every COMMITTED record a pre-existing config "
+                 "derives re-derives byte-identically (build_flags, "
+                 "runtime_options, config_extra)")
+        if drift:
+            bad(title, "; ".join(drift)[:700])
+        elif not matched:
+            bad(title, "no committed record matched any pre-existing config "
+                       "-- the arm is VACUOUS, which is a failure")
+        else:
+            ok(title, "; ".join("%s %d" % (e, len(v))
+                                for e, v in sorted(matched.items())))
+
+        # ---- 2. the new configs' shape ----------------------------------
+        testee_sub = _testee_schema_sub()
+        probs = []
+        for tid, sib in sorted(_B77U2_NEW.items()):
+            b, sb = blocks[tid], blocks[sib]
+            if _rec.derive_testee_id(b) != _rec.derive_testee_id(sb) + "_utf8":
+                probs.append("%s: id %r is not %r + _utf8"
+                             % (tid, _rec.derive_testee_id(b),
+                                _rec.derive_testee_id(sb)))
+            if b.get("config_extra") != "utf8":
+                probs.append("%s: config_extra %r" % (tid, b.get("config_extra")))
+            if b["engine_name"] == "pcrec":
+                if "-e utf8" not in b["build_flags"]:
+                    probs.append("%s: build_flags does not carry -e utf8" % tid)
+                if {"name": "-e", "value": "utf8"} not in b["runtime_options"]:
+                    probs.append("%s: runtime_options lacks -e utf8" % tid)
+            else:
+                if "ENGINE ENCODING utf8" not in b["build_flags"]:
+                    probs.append("%s: build_flags names no encoding" % tid)
+                if {"name": "encoding", "value": "utf8"} not in b["runtime_options"]:
+                    probs.append("%s: runtime_options lacks encoding" % tid)
+                if "ENGINE ENCODING" in sb["build_flags"]:
+                    probs.append("%s: the BYTE sibling's build_flags gained an "
+                                 "encoding clause" % sib)
+            err = _validate_testee_block(b, testee_sub)
+            if err:
+                probs.append("%s: schema.testee: %s" % (tid, err))
+        title = ("encoding axis: the ten UTF-8 configs are their byte siblings "
+                 "plus `_utf8`, named in build_flags/runtime_options, "
+                 "schema-valid")
+        if probs:
+            bad(title, "; ".join(probs)[:700])
+        else:
+            ok(title, "e.g. %s -> %s"
+               % ("pcrec-vm-in-utf8",
+                  _rec.derive_testee_id(blocks["pcrec-vm-in-utf8"])))
+
+        # ---- 3. the recognition rules ------------------------------------
+        eff = mod.effective_encoding
+        probs = []
+        for flags, want in ((["-e", "utf8"], ("utf8", "utf8")),
+                            (["--encoding=utf8"], ("utf8", "utf8")),
+                            (["--encoding", "utf8"], ("utf8", "utf8")),
+                            (["-e", "byte"], ("byte", None)),
+                            (["--features", "all"], ("byte", None)),
+                            (["-e", "utf8", "--encoding=utf8"], ("utf8", "utf8"))):
+            got = eff("t", flags)
+            if got != want:
+                probs.append("%r -> %r, want %r" % (flags, got, want))
+        for flags, needle in ((["-e", "latin1"], "latin1"),
+                              (["-e", "utf8", "--encoding=byte"], "more than one"),
+                              (["--features", "all", "-e"], "last flag")):
+            try:
+                eff("t", flags)
+                probs.append("%r was ACCEPTED" % (flags,))
+            except _ad.AdapterError as e:
+                if needle not in str(e):
+                    probs.append("%r refused without naming %r: %s"
+                                 % (flags, needle, str(e)[:120]))
+        try:
+            _ad.config_encoding("t", {"encoding": "latin1"})
+            probs.append("config_encoding accepted encoding = latin1")
+        except _ad.AdapterError as e:
+            if "latin1" not in str(e):
+                probs.append("config_encoding refusal names no value")
+        if _ad.config_encoding("t", {}) != ("byte", None):
+            probs.append("config_encoding({}) is not ('byte', None)")
+        _enc, cfgx = eff("t", ["-fno-scan-edge", "-e", "utf8"])
+        comp = mod.compose_config_extra("cc-clang", None, "noedge", None, cfgx)
+        if comp != "cc-clang-noedge-utf8":
+            probs.append("composition cc+deny+encoding gives %r" % comp)
+        os.environ["PCREC_LOCAL_FLAGS"] = "-e utf8"
+        lid = _rec.derive_testee_id(pcrec.describe("pcrec-local", tmp))
+        os.environ.pop("PCREC_LOCAL_FLAGS", None)
+        if not lid.endswith("_auto-caps-simdna_utf8"):
+            probs.append("pcrec-local under PCREC_LOCAL_FLAGS='-e utf8' "
+                         "derives %r" % lid)
+        title = ("encoding axis: effective_encoding / config_encoding recognise "
+                 "every spelling, refuse the bad ones BY NAME, compose LAST, "
+                 "reach pcrec-local")
+        if probs:
+            bad(title, "; ".join(probs)[:700])
+        else:
+            ok(title, "6 accepted spellings, 3 refusals + config_encoding's, "
+               "cc-clang-noedge-utf8, pcrec-local -> ..._utf8")
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+    # ---- 4. THE CONTROL: ^.$ over `é`, UTF-8 config vs byte sibling -------
+    from pcrecbench import oracle_pcre2 as _o
+    pat, text = b"^.$", "é".encode("utf-8")
+    want_utf = _o.compile(pat, _o.option_word(utf=True)).search(text)
+    want_byte = _o.compile(pat).search(text)
+    pairs = (("pcre2-utf-interp", "pcre2-interp"),
+             ("pcrec-auto-utf8", "pcrec-auto"), ("pcrec-vm-utf8", "pcrec-vm"),
+             ("re2-utf8", "re2-default"), ("onig-utf8", "onig-default"),
+             ("vectorscan-block-nosom-utf8", "vectorscan-block-nosom"))
+    try:
+        p = os.path.join(tmp, "enc-e-acute.bin")
+        with open(p, "wb") as f:
+            f.write(text)
+        subj = [_CCSubject(0, p, len(text))]
+        probs, seen = [], []
+        os.environ["PCREC_BIN"] = pcrec.pin_binary()
+        for new, sib in pairs:
+            got = {}
+            for tid in (new, sib):
+                eng = by_tid[tid]
+                cp = eng.compile(tid, "enc-%s" % tid, pat, {}, 1, tmp)
+                cr = cp.get(_ad.FORM_PLAIN)
+                if cr.outcome != "compiled":
+                    got[tid] = ("did-not-compile", None, None)
+                    continue
+                rows, _i, _n = eng.measure(dict(cr.handle), "search_short",
+                                           subj, 1, 1, timeout=180)
+                r = rows[0][0]
+                got[tid] = (r.answer, r.start, r.end)
+            a_new, a_sib = got[new], got[sib]
+            new_ok = (a_new[0] == "match"
+                      and (a_new[1] in (None, "-")
+                           or (int(a_new[1]), int(a_new[2])) == want_utf[0]))
+            sib_ok = a_sib[0] == "nomatch" and want_byte is None
+            if not (new_ok and sib_ok):
+                probs.append("%s %r / %s %r" % (new, a_new, sib, a_sib))
+            seen.append("%s match / %s nomatch" % (new, sib))
+        title = ("encoding axis: THE CONTROL -- ^.$ over `é` (C3 A9): every "
+                 "UTF-8 config answers the UTF oracle's match [0,2), its byte "
+                 "sibling the byte oracle's nomatch")
+        if want_utf is None or want_utf[0] != (0, 2) or want_byte is not None:
+            bad(title, "the oracle itself disagrees with the premise: utf %r, "
+                       "byte %r" % (want_utf, want_byte))
+        elif probs:
+            bad(title, "; ".join(probs)[:700])
+        else:
+            ok(title, "%d engine families: %s" % (len(pairs), "; ".join(seen)))
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 5. the CLI lists them -------------------------------------------
+    proc = run([sys.executable, "-m", "pcrecbench", "testees"], cwd=ROOT,
+               timeout=300)
+    listed = [t for t in _B77U2_NEW
+              if re.search(r"(?m)^\s*%s\s" % re.escape(t), proc.stdout or "")]
+    if proc.returncode == 0 and len(listed) == len(_B77U2_NEW):
+        ok("encoding axis: `pcrecbench testees` lists the ten UTF-8 configs",
+           ", ".join(sorted(listed)))
+    else:
+        bad("encoding axis: `pcrecbench testees` lists the ten UTF-8 configs",
+            "listed %d/%d (exit %d)" % (len(listed), len(_B77U2_NEW),
+                                        proc.returncode))
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -10688,6 +11057,7 @@ def main():
     check_cap_axis()
     check_noedge_axis()
     check_cflags_axis()
+    check_encoding_axis()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
