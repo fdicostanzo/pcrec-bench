@@ -134,6 +134,42 @@ pcrec's own `nullctl.json`, recorded in the file) and `b1885a83__6ef76820`.
 A future cross-pin report group needs its pair's census committed
 BEFORE it is rendered, or it renders without a band.
 
+**[B87] (2026-09-25, lane b87query) regenerated the three
+2026-09-23-capability-0.1-budu-ryzen1600-after-{8d716693,b1885a83,
+6ef76820} groups** (21 files: `.md`/`.tsv`/`.subject-grain.md`/
+`.subject-grain.tsv`/`.matrix.tsv`/`.matrix.html`/`.interpretation.md`
+per group -- the only three cross-pin capability reports in this
+directory) against reporter `v23 (2026-09-25)`: the standing I-101 query
+(`_cross_class_query_hits`, the `## Standing cross-class query` section /
+`query_yes_beats_nocaps` TSV rows) now pairs a pcrec YES-class config
+against pcrec `auto-nocaps` AT THE SAME PIN ONLY -- a cross-pin
+pcrec-caps-vs-pcrec-nocaps pair is a pin delta (R8's/[B79]'s own
+territory), never a class anomaly. Diff-proved with GNU `diff` (not
+`difflib.SequenceMatcher` -- see the b53regen incident above; these
+groups' `.subject-grain.tsv` siblings are 47-59 MB) against each
+group's prior commit: every changed line is either the version-line
+replace or a `query_yes_beats_nocaps` row, and every REMOVED row was
+independently re-parsed and confirmed cross-pin by its two testee ids'
+pin segments. Hit counts: `after-8d716693` 350 -> 171 (179 removed),
+`after-b1885a83` 343 -> 175 (168 removed), `after-6ef76820` 357 -> 171
+(186 removed). `.subject-grain.{md,tsv}` for these three groups are the
+PLAIN `--grain subject --format {md,tsv}` rendering, NOT the
+`--subject-grain-slice` reduction (confirmed from the committed files'
+own section composition before regenerating -- they carry `compile`/
+`compile_stamp` rows and all six `rank` metrics per row, which the
+slice explicitly drops). Each `.interpretation.md` sidecar was
+regenerated with an explicit `--subject-grain <name>.subject-grain.tsv`
+(recovered from the ORIGINAL sidecar's own stamp -- the
+`/pcrec-bench-interpret` skill's documented command omits this flag,
+which would have silently dropped R-BUCKET-DOMINATED's firing;
+R-BUCKET-DOMINATED's own firing count confirmed UNCHANGED before/after
+on all three). `catalogue_version` stays 3.7 -- R-STATUS-15/R-DELTA-5
+read the reporter's own rows verbatim, no rule change needed; the two
+`report_e`-derived fixtures (`R-STATUS-15__query-hit`/
+`R-DELTA-5__regress-outside-band`, `catalogue/fixtures/fixtures.toml`)
+were regenerated in content only (`gen.py`). Full detail:
+`docs/dev/lanes/b87query_report.md`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its

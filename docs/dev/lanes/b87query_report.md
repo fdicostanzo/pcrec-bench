@@ -65,12 +65,34 @@ line (proved in §2).
 
 ## 2. Single-pin byte identity
 
-`reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.md`/
-`.tsv` (a committed single-pin capability report, no `--testee` pair
-spanning two pcrec pins) re-rendered from its own committed query and
-diffed line-for-line against the committed file: the ONLY difference in
-either file is the `reporter: v22` -> `v23` line. [Numbers/exact diff
-line counts recorded once run — see the commit this report ships with.]
+No report file in `reports/` is CURRENTLY stamped `v22` except the two
+`after-6ef76820` siblings this lane itself regenerates (§4) — [B79]
+(the null-band lane) only ever regenerated the three 2026-09-23
+capability groups, so every other committed report is still at an
+OLDER reporter version, and re-rendering one of those against v23 would
+mix in every intervening ruling's own diff (KB-27, [B82], [B85], [B79]
+itself — several of which add real content even on a single-pin query,
+e.g. [B79]'s own I-101 clearance computation) alongside this lane's,
+which would not isolate the claim.
+
+Instead: `pcrecbench/report.py` AS OF THE COMMIT IMMEDIATELY BEFORE
+THIS LANE (`6084993`, the v22 baseline — `git show
+6084993:pcrecbench/report.py`, loaded as a standalone module via
+`importlib`, its `HERE`/`REPO_ROOT`/`SCHEMA_DIR` repointed at the real
+repo tree so it can still reach `schema/validate.py`) and the CURRENT
+`pcrecbench/report.py` (v23) were both used to render the SAME
+single-pin query — `reports/2026-09-22-capability-0.1-budu-ryzen1600-
+wrapfix-25b1984f.md`'s own committed `- filters:` line (7 records, one
+pcrec pin, `25b1984f`) — from the live store, and the two renderings
+diffed directly against each other (never against the older committed
+file, which carries [B79]'s own earlier diff too). Both `.md` and
+`.tsv`: **the ONLY differing line in either format is the `reporter:
+v22` -> `v23` line** — zero other bytes move. This is the correct,
+isolated proof of the claim in §1 ("a single-pin report's query section
+is untouched by construction"): with only one pin in the roster,
+`_query_pin_pair_ok` returns `True` for every pcrec-vs-pcrec pair
+regardless of the fix, so the hit SET this query's own code computes is
+identical before and after.
 
 ## 3. R-STATUS-15 / R-DELTA-5: no catalogue change
 
@@ -138,9 +160,9 @@ zero exceptions on every group, both grains, both formats.
 
 | group | pin pair | hit_count before (v22) | hit_count after (v23) | removed (cross-pin) rows |
 |---|---|---|---|---|
-| after-8d716693 | 25b1984f -> 8d716693 | 350 | GROUP2_AFTER | GROUP2_REMOVED |
+| after-8d716693 | 25b1984f -> 8d716693 | 350 | 171 | 179 |
 | after-b1885a83 | 8d716693 -> b1885a83 | 343 | 175 | 168 |
-| after-6ef76820 | b1885a83 -> 6ef76820 | 357 | GROUP3_AFTER | GROUP3_REMOVED |
+| after-6ef76820 | b1885a83 -> 6ef76820 | 357 | 171 | 186 |
 
 `.matrix.html` siblings regenerated via `scripts/matrix_page.py` from
 each group's fresh `.matrix.tsv` (the matrix format carries no
@@ -168,22 +190,27 @@ untouched.
 
 ## 5. Validation run, numbers
 
-- `python3 -m pcrecbench.tests.test_report`: **97 passed, 0 failed**
-  (96 + the new `test_b87_query_pairs_pcrec_same_pin_only`; run inside
-  the worktree via a tracked background job, ~5 min — `REAL_STORE` at
-  `subbench="email-specimen"` dominates the runtime, unaffected by this
-  fix).
-- `python3 -m pcrecbench.tests.test_quick`: **7 passed, 0 failed**.
-- `python3 -m pcrecbench.tests.test_matrix_page`: **12 passed, 0
-  failed**.
-- `python3 catalogue/check_interpret.py` (`make check-interpret`):
-  **199 passed, 0 FAILED** (sections 21/8/32/133/4/1) — run AFTER the
-  fixture regen (§3) and the three-group regen (§4), so section 3
-  (sidecar freshness) and the fixture-derivation check both exercise the
-  fix's own output.
+- `make check-report` (== `test_report` + `test_quick` +
+  `test_matrix_page` + the fixture-validation smoke + the CLI smoke,
+  run via the Makefile target verbatim, tracked background job,
+  ~6.5 min): **`check-report: OK`** — `test_report` 97 passed / 0
+  failed (96 + the new `test_b87_query_pairs_pcrec_same_pin_only`;
+  `REAL_STORE` at `subbench="email-specimen"` dominates the runtime,
+  unaffected by this fix), `test_quick` 7/0, `test_matrix_page` 12/0,
+  every fixture independently accepted by `schema/validate.py`, every
+  CLI smoke invocation (both formats, both grains, `--format matrix`
+  refused at `--grain subject`) clean.
+- `make check-interpret` (`LC_ALL=C python3 catalogue/check_interpret.py`,
+  run verbatim): **199 passed, 0 FAILED** (sections 21/8/32/133/4/1) —
+  run AFTER the fixture regen (§3) and the three-group regen (§4), so
+  section 3 (sidecar freshness) and the fixture-derivation check both
+  exercise the fix's own output.
 - `python3 catalogue/acceptance_10.py`: **25 of 25 PASS** — unaffected
   by construction (none of Reports A/B/C/D is a capability@0.1 cross-pin
   render).
+- Checklist item 2c (single-pin byte identity), CONFIRMED empirically:
+  see §2 — the v22-vs-v23 code diff on a real single-pin query's
+  rendering is EXACTLY the version line, both formats, zero other bytes.
 - `make check` (full suite, incl. `check-schema`/`check-harness`): NOT
   RUN — out of scope per the brief (nothing here reaches an adapter, a
   driver, `harness.py`, `subbench.py`, a bench generator or the schema);
