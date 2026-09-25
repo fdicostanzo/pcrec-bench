@@ -1476,3 +1476,20 @@ After the fix: regenerate the two AFTER groups (+ sidecars) and confirm
 the sizes land near their v19 baselines (~51 MB). Found by the remote's
 own pre-receive hook, not by a test — a size gate on regenerated
 reports (warn at 50 MB pre-commit) is worth considering with the fix.
+
+## KB-29 (2026-09-25, found by lane b77u1/[B77] U1; OPEN) — a find-all error after the first match silently truncates the count in every driver
+
+In every driver's find-all loop, a negative return from the engine AFTER
+at least one match simply ends the loop, so an engine that gives up (or
+errors) mid-subject reports a SHORT match count instead of `gave-up`.
+Pre-existing behaviour, not introduced by U1 (U1 only changed how the
+loop advances). Consequence: a mid-subject give-up can read as
+`wrong-span-or-captures` / a count mismatch rather than as a give-up by
+name — the wrong outcome class, and one the scoreboard excludes for the
+wrong reason. Not yet measured how many committed records it touches
+(a give-up on the FIRST call is classified correctly, which covers every
+give-up seen so far, e.g. K64's PCREC_ERR_STEPS rows). Fix shape: the
+loop propagates a mid-loop negative return as the call's give-up with
+its code, each driver + a check-harness arm (a synthetic engine error on
+the second call must read `gave-up`). Owner: unassigned; natural rider
+for the next harness lane.
