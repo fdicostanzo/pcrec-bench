@@ -1925,7 +1925,11 @@ def test_reporter_version_pin():
     renders [B82]'s three passes over the same per-subject rows --
     fine at set grain, but 107 MB over the remote's 100 MB push limit at
     subject grain -- collapsing to ONE pass with a `capture class` column
-    instead; SET grain is completely unchanged) took it to v21.
+    instead; SET grain is completely unchanged) took it to v21. [B79]
+    (the null-control band, inbox I-93 block B / I-104: a band section,
+    a `D119 bar` column and per-view restatement on every CROSS-PIN
+    report, `null_band`/`d119`/`d119_view` TSV rows, the I-101 query's
+    clearance column computed) took it to v22.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1936,20 +1940,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v21 (2026-09-23)",
-           f"expected REPORTER_VERSION == 'v21 (2026-09-23)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v22 (2026-09-25)",
+           f"expected REPORTER_VERSION == 'v22 (2026-09-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v21 (2026-09-23)" in md, f"expected the v21 header line:\n{md[:200]}")
+    _check("reporter: v22 (2026-09-25)" in md, f"expected the v22 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v21 (2026-09-23)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v22 (2026-09-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v21 (2026-09-23)" in matrix,
+    _check("reporter: v22 (2026-09-25)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4663,9 +4667,17 @@ def test_b82_capture_class_views_and_query():
            f"beat auto-nocaps there):\n{p2_hit_lines}")
     _check(f"`{no_pcrec}`" in query_section,
            "the query names pcrec auto-nocaps as the beaten testee")
-    _check("not yet computable ([B79] not-started)" in query_section,
-           "the IQR/null-band column must state honestly that it awaits [B79], "
-           "never fabricate a clearance verdict")
+    # [B79] (v22): the clearance column is COMPUTED now -- the IQR from
+    # the cells' own per-trial set sums (constant trials here: IQR 0, so
+    # the p1 lead clears it), and the band stated ABSENT by name on a
+    # single-pin report (no program-identical population exists).
+    _check("not yet computable" not in query_section,
+           "v22 computes the clearance; the [B79]-not-started text is retired")
+    p1_row = p1_hit_lines[0]
+    _check("clears IQR only" in p1_row and "IQR 0.00% (clears)" in p1_row
+           and "no null band (no cross-pin pair in this report)" in p1_row,
+           f"the single-pin clearance must read IQR-only with the band's "
+           f"absence named:\n{p1_row}")
 
     # THE TSV MUST NEVER DISAGREE: the same three passes as new section
     # values, the SAME query hit count.
@@ -4911,6 +4923,182 @@ def test_kb28_large_report_warns_but_never_fails():
            "the report must still be written to stdout in full")
 
 
+# ------------------------------------------------ [B79] the null-control band
+#
+# docs/design/null_band_v1.md. A HAND-COMPUTED fixture: two pins of one
+# pcrec config (`old1` -> `new2`), one subject per pattern, five trials,
+# and a census file declaring which (config, pattern, form) artifacts are
+# program-identical. Every expected number below is worked out by hand in
+# the comment beside it.
+
+_B79_OLD = "pcrec_old1_auto-caps-simdna"
+_B79_NEW = "pcrec_new2_auto-caps-simdna"
+_B79_SB = "rb79"
+
+# pattern -> (before trial medians x5, after trial medians x5, identity)
+_B79_CELLS = {
+    # (search, >=1us): TEN identical cells, before 1000 flat, after
+    # 1000*(1+d/100) flat, d = -3,-2,-1,0,1,2,3,4,5,-6 -> band = max|d| = 6.
+    **{f"n{i}": ([1000.0] * 5, [1000.0 * (1 + d / 100.0)] * 5, "identical")
+       for i, d in enumerate((-3, -2, -1, 0, 1, 2, 3, 4, 5, -6))},
+    # (search, 100ns-1us): THREE identical cells -> INSUFFICIENT (n=3 < 10).
+    "m0": ([500.0] * 5, [505.0] * 5, "identical"),     # +1.00%
+    "m1": ([500.0] * 5, [490.0] * 5, "identical"),     # -2.00%
+    "m2": ([500.0] * 5, [502.5] * 5, "identical"),     # +0.50%
+    # (search, <100ns): NO identical cell -> EMPTY (n=0).
+    # CHANGED cells, each hand-scored:
+    # +10% at >=1us, IQR 0 -> bar = band 6.00 -> REGRESS (band).
+    "c_big": ([2000.0] * 5, [2200.0] * 5, "changed"),
+    # before 900/950/1000/1100/1200: median 1000, Type-7 Q1 950, Q3 1100,
+    # IQR 150 -> 15.00%; after 1100 (+10%) -> bar = max(15, 6) = 15 (IQR)
+    # -> WITHIN.
+    "c_iqr": ([900.0, 950.0, 1000.0, 1100.0, 1200.0], [1100.0] * 5, "changed"),
+    # -8% at >=1us, IQR 0 -> bar 6.00 (band) -> IMPROVE.
+    "c_imp": ([1000.0] * 5, [920.0] * 5, "changed"),
+    # +20% at 100ns-1us: stratum insufficient -> REGRESS (IQR only: band n=3 < 10).
+    "c_mid": ([500.0] * 5, [600.0] * 5, "changed"),
+    # -20% at <100ns: stratum empty -> IMPROVE (IQR only: band n=0 < 10).
+    "c_tiny": ([50.0] * 5, [40.0] * 5, "changed"),
+}
+
+
+def _b79_loaded(with_old=True):
+    loaded = []
+    sides = ([(_B79_OLD, 0, "2026-09-20T10:00:00Z")] if with_old else []) + \
+        [(_B79_NEW, 1, "2026-09-21T10:00:00Z")]
+    for tid, side, ts in sides:
+        rows = []
+        seq = 0
+        for pat, cell in sorted(_B79_CELLS.items()):
+            for trial, ns in enumerate(cell[side], start=1):
+                seq += 1
+                rows.append(_mini_row(pat, "s1", "search", trial, seq, ns))
+        loaded.append(_mk_loaded(f"{tid}.jsonl",
+                                 _mini_setup(tid, sb_id=_B79_SB, timestamp=ts), rows))
+    return loaded
+
+
+def _b79_census_file(tmpdir, omit=()):
+    path = os.path.join(tmpdir, "census.tsv")
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write("# program_identity v1; hand-written test census\n")
+        fh.write("config\tpattern_id\tform\tverdict\told_sha256\tnew_sha256\t"
+                 "ignored_one_sided_macros\n")
+        for pat, cell in sorted(_B79_CELLS.items()):
+            if pat in omit:
+                continue
+            fh.write(f"auto-caps-simdna\t{pat}\tplain\t{cell[2]}\t-\t-\t-\n")
+    return path
+
+
+def _b79_render(census_path, with_old=True):
+    saved = report.census_path_for
+    report.census_path_for = lambda sb, engine, old, new: census_path
+    try:
+        rd, err = report.build_report(_b79_loaded(with_old),
+                                      _args(store="x", include_synthetic=True))
+        _check(err is None, f"unexpected refusal: {err}")
+        return rd, report.render_markdown(rd), report.render_tsv(rd)
+    finally:
+        report.census_path_for = saved
+
+
+def test_b79_null_band_hand_computed():
+    """[B79]: the band, the strata (ok / INSUFFICIENT / EMPTY), the five
+    verdict shapes and the TSV rows, against the hand-worked fixture."""
+    import tempfile
+    from pcrecbench import nullband as nb
+    # the arithmetic itself, independent of the reporter
+    _check(abs(nb.iqr([900, 950, 1000, 1100, 1200]) - 150.0) < 1e-9,
+           "Type-7 IQR of 900/950/1000/1100/1200 is 150")
+    _check(nb.scale_bin(1000.0) == ">=1us" and nb.scale_bin(999.9) == "100ns-1us"
+           and nb.scale_bin(100.0) == "100ns-1us" and nb.scale_bin(99.9) == "<100ns",
+           "the three scale bins' boundaries")
+    with tempfile.TemporaryDirectory() as tmp:
+        rd, md, tsv = _b79_render(_b79_census_file(tmp))
+    # --- the header section
+    _check("## Null-control band (D119 bar" in md, md[:3000])
+    band_rows = {ln.split("|")[2].strip(): ln for ln in md.splitlines()
+                 if ln.startswith("| `search` |")}
+    _check("| 10 | -6.00% | +0.50% | +5.00% | ±6.00% | ok |" in band_rows["`>=1us`"],
+           band_rows)
+    _check("insufficient (n=3 < 10)" in band_rows["`100ns-1us`"]
+           and "| n/a |" in band_rows["`100ns-1us`"], band_rows)
+    _check("| 0 | - | - | - | n/a | empty (n=0) |" in band_rows["`<100ns`"], band_rows)
+    _check("18 cross-pin set cell(s) measured on both sides; 13 program-identical"
+           in md, "cells line")
+    # --- the per-cell D119 column
+    def cell(pat):
+        sec = md[md.index(f"### `{pat}` / `search`"):]
+        sec = sec[:sec.index("\n\n", sec.index("|---"))]
+        return [ln for ln in sec.splitlines() if ln.startswith("|") and _B79_NEW in ln][0]
+    _check("+10.00% vs bar 6.00% (band) → **regress**" in cell("c_big"), cell("c_big"))
+    _check("+10.00% vs bar 15.00% (IQR) → **within**" in cell("c_iqr"), cell("c_iqr"))
+    _check("-8.00% vs bar 6.00% (band) → **improve**" in cell("c_imp"), cell("c_imp"))
+    _check("+20.00% vs bar 0.00% (IQR-only) → **regress (IQR only: band n=3 < 10)**"
+           in cell("c_mid"), cell("c_mid"))
+    _check("-20.00% vs bar 0.00% (IQR-only) → **improve (IQR only: band n=0 < 10)**"
+           in cell("c_tiny"), cell("c_tiny"))
+    _check("+5.00% (null control: program identical)" in cell("n8"), cell("n8"))
+    _check("This view's own threshold population: 18 cross-pin cell(s): 2 improve, "
+           "2 regress, 1 within the bar, 13 null-control" in md
+           and "2 of the verdicts are IQR-only" in md, "per-view restatement")
+    # --- the TSV
+    lines = tsv.splitlines()
+    _check("; null_band: pcrec old1 -> new2: census " in lines[0]
+           and "13 null of 18 cells, strata ok=1 insufficient=1 empty=1" in lines[0],
+           lines[0][-300:])
+    d119 = {ln.split("\t")[1]: ln.split("\t") for ln in lines if ln.startswith("d119\t")}
+    _check(len(d119) == 18, f"one d119 row per cross-pin cell: {len(d119)}")
+    _check(d119["c_big"][11] == "regress" and "bar_source=band" in d119["c_big"][16],
+           d119["c_big"])
+    _check(d119["c_mid"][11] == "regress" and "bar_source=IQR-only" in d119["c_mid"][16]
+           and "band_pct=;" in d119["c_mid"][16], d119["c_mid"])
+    _check(d119["n0"][11] == "null-control" and "identity=identical" in d119["n0"][16],
+           d119["n0"])
+    views = [ln.split("\t") for ln in lines if ln.startswith("d119_view\t")]
+    _check(len(views) == 1 and views[0][10] == "all"
+           and views[0][11] == "improve=2; regress=2; within=1; null-control=13; iqr_only=2",
+           views)
+    nb_rows = [ln.split("\t") for ln in lines if ln.startswith("null_band\t")]
+    ge1 = [r for r in nb_rows if r[2] == ">=1us"][0]
+    _check(ge1[10] == "band_pct" and ge1[11] == "6.000000" and ge1[12] == "10"
+           and "status=ok" in ge1[16], ge1)
+    lt = [r for r in nb_rows if r[2] == "<100ns"][0]
+    _check(lt[11] == "" and lt[12] == "0" and "status=empty" in lt[16], lt)
+    # column count never drifts
+    width = len(lines[1].split("\t"))
+    _check(all(len(ln.split("\t")) == width for ln in lines[1:] if ln), "ragged TSV")
+
+
+def test_b79_no_census_is_stated_never_silent():
+    """[B79] CONTROL 1: a cross-pin pair whose census file does not exist
+    renders the band section with a NO NULL BAND sentence naming the
+    expected path, NO `D119 bar` column and NO d119 rows -- never a silent
+    fallback to an IQR-only verdict."""
+    rd, md, tsv = _b79_render("/nonexistent/census.tsv")
+    _check("_NO NULL BAND for this pair: no identity census at" in md, md[:3000])
+    _check("| D119 bar |" not in md and "D119 bar in this view" not in md,
+           "no D119 column without a census")
+    _check("Δ vs previous version" in md, "R8's column still renders")
+    _check("null_band: pcrec old1 -> new2: NO census" in tsv.splitlines()[0],
+           tsv.splitlines()[0][-200:])
+    _check(not any(ln.startswith("d119") for ln in tsv.splitlines()), "no d119 rows")
+
+
+def test_b79_single_pin_report_renders_no_band():
+    """[B79] CONTROL 2: a report with NO cross-pin pair (only the new pin)
+    carries no band section, no D119 column, no `null_band` header key and
+    no band rows -- the v21 shape but for the version line."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        rd, md, tsv = _b79_render(_b79_census_file(tmp), with_old=False)
+    _check("Null-control band" not in md and "D119 bar" not in md, md[:2000])
+    _check("null_band:" not in tsv.splitlines()[0], tsv.splitlines()[0])
+    _check(not any(ln.split("\t")[0] in ("null_band", "d119", "d119_view")
+                   for ln in tsv.splitlines()[2:]), "no band rows")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -5020,6 +5208,10 @@ TESTS = [
     test_kb28_set_grain_unaffected,
     test_kb28_single_class_subject_grain_unchanged,
     test_kb28_large_report_warns_but_never_fails,
+    # [B79] the null-control band
+    test_b79_null_band_hand_computed,
+    test_b79_no_census_is_stated_never_silent,
+    test_b79_single_pin_report_renders_no_band,
 ]
 
 
