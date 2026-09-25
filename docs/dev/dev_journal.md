@@ -5796,3 +5796,29 @@ AskUserQuestion UI — it blocks the cron and expires the cache (memory);
 Lessons: read lane TABLES not prose before any outbox sentence (two
 catches today: the G1 inference, the semdiv "ALSO wins"); grep a
 source before accepting a lane's "not locatable".
+
+## 2026-09-25 (thirty-second session, Opus 5.5) — [B89] run, [B77] U2+U4 merged, [B90] re-pin ce658cb7 + [B88], the I-108 window opened
+
+- Wake: I-107 new → [B89]; lane b89waf (sonnet) ran the WAF attribution timing
+  block at f37e5c23 (detached worktree /tmp/optloop-waf, removed after). U1/U2/U3
+  confirmed, L1 87.4%/77.0%, L2 not staged (no committed json-constant twin), L4
+  −3.61%. O-55 sent.
+- [B77] U2 (lane b77u2, opus) merged after a manager-launched make check (harness
+  489/0): ten utf8 configs, pcrec effective_encoding (fifth config_extra part),
+  check_encoding_axis, witness census, §7.4 settled. KB-30 filed (vectorscan measure
+  free-spacing).
+- I-108 arrived (K64 fixed at ce658cb7, abi 33) → [B90]; lane b90repin (opus) with
+  [B88] riding. Findings: abi 32 = [VAR] unannounced (+1001 B/artifact); P3 false
+  on six backref patterns (rx_span_match); program_identity v2 (normalize_one)
+  because v1 reads all-changed at this pair; schema landed as v1.7 (v1.6 taken);
+  catalogue 3.8. O-56 sent.
+- [B77] U4 (lane b77u4, sonnet) merged (harness 499/0 on its own tree). U5 sizing:
+  dense-pattern oracle derivation runs hours through per-match ctypes; U5 needs a
+  C find-all against libpcre2 or capped dense subjects, and a guard for
+  prp-ingreek's designed compile refusal.
+- Merged master: 30 sidecars regenerated (the four capability-0.1-first still refuse,
+  [B72] Q6 (i)); make check rc=0 — harness 519/0 · report 98+7+12 · interpret 199/0.
+- WINDOW opened 17:51 EDT: capability@0.1 × {pcrec-vm, vm-in, auto, nocaps} at
+  ce658cb7, log build/windows/window_capability_20260925T215135Z.log, watcher on the
+  completion line. Next: census (program_identity v2, 6ef76820→ce658cb7), the
+  cross-pin report, the ledger against I-108's four predictions. U5 after the window.
