@@ -1929,7 +1929,14 @@ def test_reporter_version_pin():
     (the null-control band, inbox I-93 block B / I-104: a band section,
     a `D119 bar` column and per-view restatement on every CROSS-PIN
     report, `null_band`/`d119`/`d119_view` TSV rows, the I-101 query's
-    clearance column computed) took it to v22.
+    clearance column computed) took it to v22. [B87] (the manager's
+    ruling on the standing cross-class query's own pairing,
+    docs/dev/lanes/b79nullband_report.md 0 finding 5: a pcrec YES-class
+    row is compared against pcrec `auto-nocaps` AT THE SAME PIN ONLY,
+    `_query_pin_pair_ok` -- a cross-pin pcrec-caps-vs-pcrec-nocaps pair
+    is a pin delta, R8's/[B79]'s own territory, never a class anomaly; a
+    non-pcrec competitor is unchanged, still compared against every
+    pcrec pin's `auto-nocaps` row present in the group) took it to v23.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1940,20 +1947,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v22 (2026-09-25)",
-           f"expected REPORTER_VERSION == 'v22 (2026-09-25)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v23 (2026-09-25)",
+           f"expected REPORTER_VERSION == 'v23 (2026-09-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v22 (2026-09-25)" in md, f"expected the v22 header line:\n{md[:200]}")
+    _check("reporter: v23 (2026-09-25)" in md, f"expected the v23 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v22 (2026-09-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v23 (2026-09-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v22 (2026-09-25)" in matrix,
+    _check("reporter: v23 (2026-09-25)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4697,6 +4704,83 @@ def test_b82_capture_class_views_and_query():
            f"{md_hit_count} vs {tsv_hit_count}")
 
 
+def test_b87_query_pairs_pcrec_same_pin_only():
+    """[B87] (the manager's ruling on I-101's own pairing,
+    docs/dev/lanes/b79nullband_report.md 0 finding 5): a cross-pin pcrec
+    caps/nocaps pair must NOT hit; a same-pin pcrec pair still hits; a
+    non-pcrec competitor still hits against EACH pin's `auto-nocaps`
+    row, separately, each hit labelled by its own (pin-carrying) `nc_t`.
+
+    Two pcrec pins (`pinA`, `pinB`), each with its own `auto-caps` /
+    `auto-nocaps` pair, plus one non-pcrec YES competitor
+    (`libpcre2-jit`) -- one pattern, one group, so all four rows sit in
+    the SAME ranking group `_cross_class_query_hits` walks:
+
+        pinA_caps=40   pinA_nocaps=100   pinB_caps=45   pinB_nocaps=110
+        competitor=60
+
+    Under the OLD (pre-[B87]) pairing every YES row below every nocaps
+    row's median would hit: pinA_caps<pinA_nocaps (same-pin, keep),
+    pinA_caps<pinB_nocaps (CROSS-PIN, must now be dropped),
+    pinB_caps<pinA_nocaps (CROSS-PIN, must now be dropped),
+    pinB_caps<pinB_nocaps (same-pin, keep), competitor<pinA_nocaps
+    (non-pcrec, keep), competitor<pinB_nocaps (non-pcrec, keep) -- 6
+    hits. Under the fix: 4."""
+    pinA_caps = "pcrec_pinA_auto-caps-simdna"
+    pinA_nocaps = "pcrec_pinA_auto-nocaps-simdna"
+    pinB_caps = "pcrec_pinB_auto-caps-simdna"
+    pinB_nocaps = "pcrec_pinB_auto-nocaps-simdna"
+    competitor = "libpcre2_10.46_jit-caps-simdna"
+    medians = {pinA_caps: 40, pinA_nocaps: 100, pinB_caps: 45,
+               pinB_nocaps: 110, competitor: 60}
+    loaded = [
+        _mk_loaded(f"{tid}.jsonl", _mini_setup(tid, sb_id="rb87"),
+                   [_mini_row("xpin", "s1", "search", t, t, ns) for t in (1, 2, 3)])
+        for tid, ns in medians.items()
+    ]
+    rd, err = report.build_report(loaded, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    hits = report._cross_class_query_hits(rd, "set")
+    _check(len(hits) == 4, f"expected 4 hits (2 same-pin pcrec + 2 competitor), got {len(hits)}:\n{hits}")
+    pairs = {(nc_t, y_t) for _pat, _reg, nc_t, _nc_ns, y_t, _y_ns, _ratio, _clr in hits}
+    _check((pinA_nocaps, pinA_caps) in pairs, pairs)
+    _check((pinB_nocaps, pinB_caps) in pairs, pairs)
+    _check((pinA_nocaps, competitor) in pairs, pairs)
+    _check((pinB_nocaps, competitor) in pairs, pairs)
+    _check((pinB_nocaps, pinA_caps) not in pairs,
+           f"cross-pin pcrec pair (pinB nocaps vs pinA caps) must NOT hit: {pairs}")
+    _check((pinA_nocaps, pinB_caps) not in pairs,
+           f"cross-pin pcrec pair (pinA nocaps vs pinB caps) must NOT hit: {pairs}")
+
+    # Markdown and TSV must agree with the direct call above.
+    md = report.render_markdown(rd)
+    query_section = md[md.index("## Standing cross-class query"):]
+    md_hit_count = int(query_section.split("**", 2)[1].split(" ")[0])
+    _check(md_hit_count == 4, f"markdown must also report 4 hits:\n{query_section}")
+    _check(f"`{pinA_nocaps}`" in query_section and f"`{pinA_caps}`" in query_section,
+           "the same-pin pinA pair must render")
+    _check(f"`{pinB_nocaps}`" in query_section and f"`{pinB_caps}`" in query_section,
+           "the same-pin pinB pair must render")
+    # every row naming pinA_caps as the competitor must ALSO name pinA_nocaps
+    # (never pinB_nocaps) as the beaten testee, and symmetrically for pinB --
+    # a per-line check that the pairing itself, not just the count, is right.
+    for ln in query_section.splitlines():
+        if not ln.startswith("|") or "pattern" in ln or "---" in ln:
+            continue
+        if f"`{pinA_caps}`" in ln:
+            _check(f"`{pinA_nocaps}`" in ln and f"`{pinB_nocaps}`" not in ln,
+                   f"pinA_caps must only ever be paired with pinA_nocaps:\n{ln}")
+        if f"`{pinB_caps}`" in ln:
+            _check(f"`{pinB_nocaps}`" in ln and f"`{pinA_nocaps}`" not in ln,
+                   f"pinB_caps must only ever be paired with pinB_nocaps:\n{ln}")
+
+    tsv = report.render_tsv(rd)
+    hit_count_rows = [ln for ln in tsv.splitlines()
+                      if ln.startswith("query_yes_beats_nocaps\t") and "\thit_count\t" in ln]
+    _check(len(hit_count_rows) == 1 and hit_count_rows[0].split("\t")[11] == "4",
+           hit_count_rows)
+
+
 def test_b82_single_class_roster_unchanged():
     """CONTROL: a roster that does not span both classes renders EXACTLY
     as it did before [B82] -- one unfiltered ranking section, no
@@ -5202,6 +5286,7 @@ TESTS = [
     test_baseline_identity_row_best_fallback,
     test_capture_class_declaration_table,
     test_b82_capture_class_views_and_query,
+    test_b87_query_pairs_pcrec_same_pin_only,
     test_b82_single_class_roster_unchanged,
     # [B85] KB-28: subject grain never duplicates
     test_kb28_subject_grain_single_table_with_class_column,

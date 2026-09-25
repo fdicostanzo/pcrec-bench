@@ -26,9 +26,12 @@ report_c = "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv"
 # `level-context` ranks under `vm-caps-simdna` and did-not-compile under
 # `auto-caps-simdna` -- one config token apart, at large-subject-throughput.
 report_d = "reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv"
-# [B79] (catalogue 3.7): the first reporter-v22 CROSS-PIN render, the real
-# witness for R-DELTA-5 (`d119` rows) and R-STATUS-15 (the I-101 query
-# with its computed clearance): capability@0.1, 8d716693 -> b1885a83.
+# [B79] (catalogue 3.7): the first CROSS-PIN render carrying `d119` rows
+# and a computed I-101 clearance -- the real witness for R-DELTA-5 and
+# R-STATUS-15: capability@0.1, 8d716693 -> b1885a83. Regenerated at
+# reporter v23 by [B87] (the same-pin pairing fix on the I-101 query;
+# the `d119`/null-band rows this fixture's R-DELTA-5 half reads are
+# UNTOUCHED by that fix -- only `query_yes_beats_nocaps` rows moved).
 report_e = "reports/2026-09-23-capability-0.1-budu-ryzen1600-after-b1885a83.tsv"
 index    = "catalogue/golden/index@2026-09-09.tsv"
 predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
@@ -270,10 +273,13 @@ select = { pattern = ["orig", "factored"] }
 mutate = { column = "section", value = "did_not_compile", all = false, where = { section = "rank", pattern = "orig", form = "whole-subject", testee = "pcrec_692c2e8_auto-caps-simdna" } }
 expect_not = ["R-STATUS-14"]
 
-# [B79] R-STATUS-15, THE STANDING CROSS-CLASS QUERY FIRES: `codegrammar-flat`
-# (report_e) carries two real I-101 hits at large-subject-throughput (pcrec
-# b1885a83 auto-caps beating both pins' auto-nocaps). The CONTROL is the
-# SAME slice with ONE declared mutation: both hit rows' `gave_up_summary`
+# [B79]/[B87] R-STATUS-15, THE STANDING CROSS-CLASS QUERY FIRES:
+# `codegrammar-flat` (report_e) carries ONE real I-101 hit at
+# large-subject-throughput (pcrec b1885a83 auto-caps beating b1885a83's
+# OWN auto-nocaps, same pin). [B87]'s same-pin fix removed a second hit
+# this pattern used to carry (8d716693 auto-nocaps vs b1885a83 auto-caps
+# -- a cross-pin pair, no longer a query hit). The CONTROL is the
+# SAME slice with ONE declared mutation: the hit row's `gave_up_summary`
 # rewritten to a recorded ratio of exactly 1.000000 (the competitor NOT
 # strictly faster -- the query's own definition of a non-hit, which the
 # rule's predicate restates); the report-wide `hit_count` row stays, so

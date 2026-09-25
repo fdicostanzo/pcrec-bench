@@ -139,6 +139,15 @@ scored against a band it belongs to.
   is one of `CLEARS max(IQR, band)`, `within max(IQR, band)`,
   `clears IQR only`, `within IQR` or `no verdict`, followed by the
   numbers. On a single-pin report the band is stated absent by name.
+  **[B87] (2026-09-25, the manager's ruling on this design's own OWED
+  item, `docs/dev/lanes/b79nullband_report.md` 0 finding 5):** the
+  QUERY ITSELF (`_cross_class_query_hits`, [B82]/I-101 -- upstream of
+  the band/IQR clearance this bullet describes) now pairs a pcrec
+  YES-class row against pcrec `auto-nocaps` AT THE SAME PIN ONLY; a
+  cross-pin pcrec-caps-vs-pcrec-nocaps pair is a pin delta (this band's
+  own territory, not a class anomaly) and no longer produces a hit at
+  all. A non-pcrec competitor is unaffected. See `pcrecbench/report.py`'s
+  `[B87]` module-docstring section and `docs/dev/lanes/b87query_report.md`.
 
 ## 6. Interpreter (catalogue 3.7)
 
