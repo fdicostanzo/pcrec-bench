@@ -1,0 +1,488 @@
+# reporter: v22 (2026-09-25); filters: subbench=capability, version=0.1, since=2026-09-22T00:00:00Z, until=2026-09-23T18:00:00Z, testee=pcrec_8d716693_auto-caps-simdna, testee=pcrec_8d716693_auto-nocaps-simdna, testee=pcrec_8d716693_vm-caps-simdna, testee=pcrec_8d716693_vm-in-caps-simdna, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (11 record(s) matching this query); records: 11; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 11; mixed_x13: False; include_provenance: False; worst_other_core_busy: 62.5% (pcrec_8d716693_auto-caps-simdna / date-nested-plus / large-subject-throughput); floor_pattern: floor-byte; null_band: pcrec 8d716693 -> b1885a83: census reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv, 346 null of 494 cells, strata ok=4 insufficient=1 empty=1, n_min=10
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260922T043951Z				agreement	agree (0 of 123 groups; 0 of 4831 rows; 5 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-caps-simdna__budu-ryzen1600__20260923T031941Z				agreement	agree (0 of 124 groups; 6 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-nocaps-simdna__budu-ryzen1600__20260923T035507Z				agreement	agree (0 of 126 groups; 6 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-caps-simdna__budu-ryzen1600__20260923T042632Z				agreement	agree (0 of 124 groups; 4 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-in-caps-simdna__budu-ryzen1600__20260923T050923Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-caps-simdna__budu-ryzen1600__20260923T114747Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-nocaps-simdna__budu-ryzen1600__20260923T122232Z				agreement	agree (0 of 126 groups; 4 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-caps-simdna__budu-ryzen1600__20260923T125206Z				agreement	agree (0 of 124 groups; 2 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-in-caps-simdna__budu-ryzen1600__20260923T133317Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260922T051752Z				agreement	agree (0 of 82 groups; 2 of 3194 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260922T053300Z				agreement	agree (0 of 80 groups; 1 of 3118 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+baseline_yes	codegrammar-flat	(set)	large-subject-throughput			pcrec_b1885a83_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	median_ns	597721.049676	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	min_ns	593580.533477	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	max_ns	602945.265659	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	stddev_ns	3282.418011	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	median_ns	615877.560606	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	min_ns	606075.781385	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	max_ns	635579.400433	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	stddev_ns	10677.286625	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.030376	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.030376	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	median_ns	2039335.932331	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	min_ns	2034465.616541	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	max_ns	2046550.187970	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	stddev_ns	4722.024650	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_baseline	3.411852	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_best	3.411852	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	median_ns	2044974.968254	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	min_ns	2032696.968254	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	max_ns	2056193.769841	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	stddev_ns	7635.389936	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_baseline	3.421287	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_best	3.421287	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	median_ns	2425153.250000	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	min_ns	2417590.620370	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	max_ns	2431330.129630	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	stddev_ns	4832.876925	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_baseline	4.057333	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_best	4.057333	3	1.0000	0	0		unchanged (within spread)
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	median_ns	2425853.472727	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	min_ns	2423690.100000	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	max_ns	2453489.354545	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	stddev_ns	11184.533812	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	4.058504	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	4.058504	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	median_ns	9780403.750000	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	min_ns	9608014.928571	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	max_ns	10055338.500000	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	stddev_ns	144106.632938	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	16.362823	3	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_best	16.362823	3	1.0000	0	0		
+baseline_yes	codegrammar-flat	(set)	short-subject-search			pcrec_8d716693_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	median_ns	691.994684	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	min_ns	690.692604	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	max_ns	694.461943	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	stddev_ns	1.277751	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	median_ns	713.857395	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	min_ns	709.859784	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	max_ns	714.459781	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	stddev_ns	1.695513	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.031594	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.031594	75	1.0000	0	0		slower ×1.03
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	median_ns	719.297781	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	min_ns	714.444293	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	max_ns	726.983640	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	stddev_ns	4.257272	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_baseline	1.039456	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_best	1.039456	75	1.0000	0	0		faster ×1.15
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	median_ns	828.456010	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	min_ns	824.098610	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	max_ns	829.547595	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	stddev_ns	1.963292	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_baseline	1.197200	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_best	1.197200	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	median_ns	869.037138	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	min_ns	866.375929	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	max_ns	874.788897	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	stddev_ns	2.785294	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_baseline	1.255844	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_best	1.255844	75	1.0000	0	0		faster ×1.20
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	median_ns	1040.457418	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	min_ns	1036.807245	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	max_ns	1042.023607	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	stddev_ns	2.110652	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.503563	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	1.503563	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	median_ns	5624.577151	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	min_ns	5612.858190	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	max_ns	5653.963593	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	stddev_ns	15.800044	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	8.128064	75	1.0000	0	0		
+rank_yes	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_best	8.128064	75	1.0000	0	0		
+baseline_no	codegrammar-flat	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	121319.835234	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	121246.151653	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	122078.026226	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	stddev_ns	310.101857	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	median_ns	598115.248394	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	min_ns	593023.826552	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	max_ns	603042.256959	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	stddev_ns	3326.567112	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	4.930070	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	4.930070	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	median_ns	604113.079060	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	min_ns	591643.846154	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	max_ns	611825.685897	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	stddev_ns	7052.734341	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	ratio_vs_baseline	4.979508	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	3	ratio_vs_best	4.979508	3	1.0000	0	0		unchanged (within spread)
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	median_ns	2444112.490385	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	min_ns	2441280.644231	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	max_ns	2447598.875000	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	stddev_ns	2420.750279	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	ratio_vs_baseline	20.146025	3	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	4	ratio_vs_best	20.146025	3	1.0000	0	0		
+baseline_no	codegrammar-flat	(set)	short-subject-search			pcrec_8d716693_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	median_ns	639.816291	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	min_ns	639.480909	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	max_ns	641.103373	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.565643	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	median_ns	670.901562	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	min_ns	669.759871	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	max_ns	671.901069	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.715793	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.048585	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.048585	75	1.0000	0	0		slower ×1.05
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	median_ns	2487.110956	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	min_ns	2422.600433	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	max_ns	2807.727971	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	stddev_ns	135.455840	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_baseline	3.887227	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_best	3.887227	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	median_ns	2498.989307	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	min_ns	2487.399555	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	max_ns	2506.476685	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	stddev_ns	6.329146	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_baseline	3.905792	75	1.0000	0	0		
+rank_no	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_best	3.905792	75	1.0000	0	0		
+baseline	codegrammar-flat	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	121319.835234	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	121246.151653	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	122078.026226	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	stddev_ns	310.101857	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	median_ns	597721.049676	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	min_ns	593580.533477	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	max_ns	602945.265659	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	stddev_ns	3282.418011	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	4.926820	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_best	4.926820	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	median_ns	598115.248394	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	min_ns	593023.826552	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	max_ns	603042.256959	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	stddev_ns	3326.567112	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	ratio_vs_baseline	4.930070	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	ratio_vs_best	4.930070	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	median_ns	604113.079060	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	min_ns	591643.846154	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	max_ns	611825.685897	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	stddev_ns	7052.734341	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	ratio_vs_baseline	4.979508	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	ratio_vs_best	4.979508	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	median_ns	615877.560606	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	min_ns	606075.781385	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	max_ns	635579.400433	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	stddev_ns	10677.286625	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	ratio_vs_baseline	5.076479	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	5	ratio_vs_best	5.076479	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	median_ns	2039335.932331	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	min_ns	2034465.616541	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	max_ns	2046550.187970	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	stddev_ns	4722.024650	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	16.809584	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	ratio_vs_best	16.809584	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	median_ns	2044974.968254	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	min_ns	2032696.968254	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	max_ns	2056193.769841	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	stddev_ns	7635.389936	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	ratio_vs_baseline	16.856065	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	7	ratio_vs_best	16.856065	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	median_ns	2425153.250000	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	min_ns	2417590.620370	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	max_ns	2431330.129630	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	stddev_ns	4832.876925	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	ratio_vs_baseline	19.989751	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	8	ratio_vs_best	19.989751	3	1.0000	0	0		unchanged (within spread)
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	median_ns	2425853.472727	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	min_ns	2423690.100000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	max_ns	2453489.354545	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	stddev_ns	11184.533812	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	ratio_vs_baseline	19.995522	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	9	ratio_vs_best	19.995522	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	median_ns	2444112.490385	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	min_ns	2441280.644231	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	max_ns	2447598.875000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	stddev_ns	2420.750279	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	ratio_vs_baseline	20.146025	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	10	ratio_vs_best	20.146025	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	median_ns	9780403.750000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	min_ns	9608014.928571	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	max_ns	10055338.500000	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	stddev_ns	144106.632938	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_baseline	80.616692	3	1.0000	0	0		
+rank	codegrammar-flat	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_best	80.616692	3	1.0000	0	0		
+baseline	codegrammar-flat	(set)	short-subject-search			pcrec_8d716693_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_8d716693_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	median_ns	639.816291	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	min_ns	639.480909	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	max_ns	641.103373	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.565643	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	median_ns	670.901562	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	min_ns	669.759871	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	max_ns	671.901069	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.715793	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.048585	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.048585	75	1.0000	0	0		slower ×1.05
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	median_ns	691.994684	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	min_ns	690.692604	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	max_ns	694.461943	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	stddev_ns	1.277751	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	ratio_vs_baseline	1.081552	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	ratio_vs_best	1.081552	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	median_ns	713.857395	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	min_ns	709.859784	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	max_ns	714.459781	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	stddev_ns	1.695513	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	ratio_vs_baseline	1.115722	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	4	ratio_vs_best	1.115722	75	1.0000	0	0		slower ×1.03
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	median_ns	719.297781	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	min_ns	714.444293	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	max_ns	726.983640	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	stddev_ns	4.257272	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	ratio_vs_baseline	1.124225	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	ratio_vs_best	1.124225	75	1.0000	0	0		faster ×1.15
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	median_ns	828.456010	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	min_ns	824.098610	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	max_ns	829.547595	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	stddev_ns	1.963292	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.294834	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	ratio_vs_best	1.294834	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	median_ns	869.037138	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	min_ns	866.375929	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	max_ns	874.788897	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	stddev_ns	2.785294	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	ratio_vs_baseline	1.358260	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	ratio_vs_best	1.358260	75	1.0000	0	0		faster ×1.20
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	median_ns	1040.457418	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	min_ns	1036.807245	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	max_ns	1042.023607	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	stddev_ns	2.110652	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	ratio_vs_baseline	1.626182	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	ratio_vs_best	1.626182	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	median_ns	2487.110956	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	min_ns	2422.600433	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	max_ns	2807.727971	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	stddev_ns	135.455840	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	ratio_vs_baseline	3.887227	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	ratio_vs_best	3.887227	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	median_ns	2498.989307	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	min_ns	2487.399555	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	max_ns	2506.476685	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	stddev_ns	6.329146	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	ratio_vs_baseline	3.905792	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	10	ratio_vs_best	3.905792	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	median_ns	5624.577151	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	min_ns	5612.858190	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	max_ns	5653.963593	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	stddev_ns	15.800044	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_baseline	8.790925	75	1.0000	0	0		
+rank	codegrammar-flat	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_best	8.790925	75	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	343						
+query_yes_beats_nocaps	codegrammar-flat		large-subject-throughput			pcrec_8d716693_auto-nocaps-simdna				beaten_by	pcrec_b1885a83_auto-caps-simdna					competitor_ns=598115.248394; nocaps_ns=598115.248394; ratio=1.000000; null_band_clearance=within max(IQR, band): gap 0.00%	
+query_yes_beats_nocaps	codegrammar-flat		large-subject-throughput			pcrec_b1885a83_auto-nocaps-simdna				beaten_by	pcrec_b1885a83_auto-caps-simdna					competitor_ns=598115.248394; nocaps_ns=598115.248394; ratio=1.000000; null_band_clearance=within max(IQR, band): gap 0.00%	
+null_band						pcrec 8d716693 -> b1885a83				census	reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv	346				sha256=e55112ca19d0aae489e012e5629b96229f1b890e276f63196515db4792d51fca; changed=148; identical=349; refused-both=15; cells=494	
+null_band		>=1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	8.773076	124				status=ok; min_pct=-2.534433; median_pct=-0.010969; max_pct=8.773076; n_min=10	
+null_band		100ns-1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct		6				status=insufficient; min_pct=-0.393016; median_pct=-0.041078; max_pct=0.384078; n_min=10	
+null_band		<100ns	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	41.093125	45				status=ok; min_pct=-6.503308; median_pct=-0.047225; max_pct=41.093125; n_min=10	
+null_band		>=1us	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct	11.155379	108				status=ok; min_pct=-2.253841; median_pct=-0.026518; max_pct=11.155379; n_min=10	
+null_band		100ns-1us	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct	9.366969	63				status=ok; min_pct=-9.366969; median_pct=0.043240; max_pct=3.450015; n_min=10	
+null_band		<100ns	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+d119	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned		verdict	within					delta_pct=-2.948072; iqr_pct=2.490271; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_auto-caps-simdna; before_ns=615877.560606; after_ns=597721.049676	unchanged (within spread)
+d119	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned		verdict	within					delta_pct=3.159376; iqr_pct=0.106607; band_pct=9.366969; bar_pct=9.366969; bar_source=band; stratum=short-subject-search/100ns-1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_auto-caps-simdna; before_ns=691.994684; after_ns=713.857395	slower ×1.03
+d119	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned		verdict	within					delta_pct=1.002788; iqr_pct=0.453705; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=no; previous=pcrec_8d716693_auto-nocaps-simdna; before_ns=598115.248394; after_ns=604113.079060	unchanged (within spread)
+d119	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned		verdict	within					delta_pct=4.858468; iqr_pct=0.029428; band_pct=9.366969; bar_pct=9.366969; bar_source=band; stratum=short-subject-search/100ns-1us; identity=changed; capture_class=no; previous=pcrec_8d716693_auto-nocaps-simdna; before_ns=639.816291; after_ns=670.901562	slower ×1.05
+d119	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned		verdict	within					delta_pct=-0.275751; iqr_pct=0.266978; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-caps-simdna; before_ns=2044974.968254; after_ns=2039335.932331	unchanged (within spread)
+d119	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned		verdict	improve					delta_pct=-13.176104; iqr_pct=0.100760; band_pct=9.366969; bar_pct=9.366969; bar_source=band; stratum=short-subject-search/100ns-1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-caps-simdna; before_ns=828.456010; after_ns=719.297781	faster ×1.15
+d119	codegrammar-flat	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned		verdict	within					delta_pct=-0.028865; iqr_pct=0.126682; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-in-caps-simdna; before_ns=2425853.472727; after_ns=2425153.250000	unchanged (within spread)
+d119	codegrammar-flat	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned		verdict	improve					delta_pct=-16.475473; iqr_pct=0.382737; band_pct=11.155379; bar_pct=11.155379; bar_source=band; stratum=short-subject-search/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-in-caps-simdna; before_ns=1040.457418; after_ns=869.037138	faster ×1.20
+d119_view										yes	improve=47; regress=9; within=54; null-control=259; iqr_only=0						
+d119_view										no	improve=9; regress=4; within=25; null-control=87; iqr_only=0						
+d119_view										mixed	improve=56; regress=13; within=79; null-control=346; iqr_only=0						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				engine	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				entry	plain entry						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				prefilter	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				vm_rungs	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				buffers	n/s						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				frame	n/s						
+compile	codegrammar-flat			plain	same program	oniguruma_6.9.10_default-caps-simdna				median_total_ns	5010.000000	5					
+compile	codegrammar-flat			plain	same program	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile	codegrammar-flat			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				median_total_ns	6260.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine_sel	selected						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-caps-simdna				median_total_ns	351768845.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-caps-simdna				jitter	0.009						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-caps-simdna				artifact_bytes	31920						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_bytes	34364						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	25765						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				median_total_ns	359245185.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				jitter	0.011						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				artifact_bytes	31968						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_bytes	34085						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	26573						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine_sel	selected						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	176374188.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-nocaps-simdna				jitter	0.022						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	27944						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	28372						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	15422						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	167812989.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				jitter	0.023						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	27992						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	26622						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	16071						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine_sel	forced						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-caps-simdna				median_total_ns	319516590.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-caps-simdna				jitter	0.010						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-caps-simdna				artifact_bytes	27360						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_bytes	21470						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	21008						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				median_total_ns	326076846.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				jitter	0.019						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				artifact_bytes	27360						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_bytes	21581						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	21119						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine_sel	forced						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	319610070.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-in-caps-simdna				jitter	0.005						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	27360						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	21470						
+compile	codegrammar-flat			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	21008						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	326520730.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				jitter	0.009						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	27360						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	21581						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	21119						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine_sel	selected						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-caps-simdna				median_total_ns	352274102.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-caps-simdna				jitter	0.017						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	31952						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_bytes	34390						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	25791						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				median_total_ns	359330901.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				jitter	0.007						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	32000						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_bytes	34111						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	26599						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine_sel	selected						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	178515991.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.029						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	27976						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	28398						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	15448						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	167677935.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.030						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	28032						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	26648						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	16097						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine_sel	forced						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-caps-simdna				median_total_ns	320062472.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-caps-simdna				jitter	0.009						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	27400						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_bytes	21496						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	21034						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				median_total_ns	327500980.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				jitter	0.009						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	27400						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_bytes	21607						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	21145						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine_sel	forced						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	319582328.000000	5					
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.014						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	27400						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	21496						
+compile	codegrammar-flat			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	21034						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	326983099.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.006						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	27400						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	21607						
+compile	codegrammar-flat			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	21145						
+compile_stamp						rust_1.13.1_default-caps-simdna				engine	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				entry	plain entry						
+compile_stamp						rust_1.13.1_default-caps-simdna				prefilter	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				vm_rungs	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				buffers	n/s						
+compile_stamp						rust_1.13.1_default-caps-simdna				frame	n/s						
+compile	codegrammar-flat			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	189341.000000	5					
+compile	codegrammar-flat			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.998						
+compile	codegrammar-flat			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	86161.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	2.082						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				engine	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				entry	plain entry						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				prefilter	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				vm_rungs	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				buffers	n/s						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				frame	n/s						
+compile	codegrammar-flat			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	1341367.000000	5					
+compile	codegrammar-flat			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.346						
+compile	codegrammar-flat			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	6088						
+compile	codegrammar-flat			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	1689789.000000	5					
+compile	codegrammar-flat			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.266						
+compile	codegrammar-flat			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	3672						

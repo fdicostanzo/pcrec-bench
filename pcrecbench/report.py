@@ -1423,6 +1423,55 @@ are held at v19 until this fix's regeneration runs.
   limit but still carry the tripled shape) is OWED to the manager at
   merge, per the standing precedent (`reports/CLAUDE.md`) -- not run by
   this lane.
+
+[B79] THE NULL-CONTROL BAND (2026-09-25, lane b79nullband; v22)
+----------------------------------------------------------------
+Inbox I-93 block B and I-104 (pcrec's ask), [B82] (ii) (the class-aware
+interpreter rules), docs/design/null_band_v1.md (the design of record).
+
+- **Scope: CROSS-PIN reports only.** The pairs are EXACTLY R8's
+  (`_previous_pin_testee`, extracted from `_cross_pin_info` so one rule
+  pairs both the `Δ vs previous version` column and the band). A report
+  with no cross-pin pair renders NOTHING new (no section, no column, no
+  header key, no rows) -- its only v21 -> v22 differences are the version
+  line and the I-101 query's clearance cells (below).
+- **Identity is OUR OWN census**, `reports/identity/<sb@ver>/<engine>_
+  <old>__<new>.tsv`, written by `tools/program_identity.py` (both pins
+  re-emitted with the pinned binaries under each config's RECORDED flags;
+  `.c` + `.h` compared after dropping only the generated-by line, the
+  `.abi` integer and one-sided `#define` stamps). The records themselves
+  carry no program hash -- a finding, and the reason the census is a
+  file beside the reports rather than a record field. A pair with no
+  census renders `NO NULL BAND for this pair` naming the expected path,
+  and no D119 verdict: never a silent IQR-only fallback.
+- **The band** (`pcrecbench.nullband`): per (regime, baseline scale) of
+  the BEFORE median (`>=1us` / `100ns-1us` / `<100ns`), the largest
+  |Δ%| over the stratum's program-identical, both-sides-measured set
+  cells -- symmetric. A stratum with fewer than `nullband.N_MIN` (10)
+  cells is `insufficient` (or `empty`) BY NAME and its band is unused.
+- **The bar**, per cross-pin cell: |Δ%| > max(IQR%, band), IQR% the
+  BEFORE side's Type-7 IQR over its per-trial set sums (`SetCell.sums`)
+  as a share of the before median. A program-identical cell is rendered
+  `null control`, never scored against a band it is part of. An
+  insufficient stratum's verdicts carry `(IQR only: band n=K < 10)`.
+- **Surfaces.** Markdown: a `## Null-control band` section after the
+  Query section; a `D119 bar` column beside `Δ vs previous version`;
+  every ranking view (each class-pure view and the mixed one) restates
+  the bar with ITS OWN counts. TSV: a conditional LAST header key
+  `null_band:` (after `floor_pattern`, so no existing key moves),
+  `null_band` rows (census + one `band_pct` row per stratum), one `d119`
+  row per cross-pin cell (value = the base verdict token, the
+  arithmetic in `gave_up_summary`, R8's verdict in `delta_verdict`) and
+  `d119_view` count rows (yes / no / mixed, or all).
+- **The I-101 query's clearance column is COMPUTED** (`_query_clearance`):
+  gap% = (nocaps - competitor)/nocaps against the wider of the two cells'
+  IQRs and the nocaps cell's own stratum band from its pin pair; on a
+  single-pin report the band is stated absent by name ("no null band (no
+  cross-pin pair in this report)"). [B82]'s claim that the per-trial
+  values were not held was wrong for SET cells (`SetCell.sums` has always
+  carried them); at subject grain the IQR is stated `n/a`.
+- **Subject grain carries no band** (the section says so in one
+  sentence): the D119 bar is a set-grain statement, as R8 is.
 """
 
 from __future__ import annotations
@@ -1441,7 +1490,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v21 (2026-09-23)"
+REPORTER_VERSION = "v22 (2026-09-25)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -3111,13 +3160,12 @@ def _giveup_engines_for(rd: "ReportData", sb, testee_id, pattern_id, form):
     return engines
 
 
-def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
-    """[B9] R8: if `testee_id` has an older same-(engine, config) sibling
-    present in this report (a "previous pin"), return
-    {'verdict': str, 'worst_note': str|None}; else `None`. SET grain
-    only -- the brief: 'from the per-subject data; set grain only'."""
-    if rd.grain != "set":
-        return None
+def _previous_pin_testee(rd: "ReportData", sb, testee_id):
+    """[B9] R8's "previous pin" search, extracted by [B79] so the null
+    band pairs EXACTLY the testees R8's `Δ vs previous version` column
+    pairs (one rule, two consumers): the NEWEST older-timestamped record
+    in this report of the same (engine, config) at a DIFFERENT
+    version_slug, or None."""
     parsed = _parse_testee_config(testee_id)
     if not parsed:
         return None
@@ -3143,7 +3191,19 @@ def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, r
     if not older:
         return None
     older.sort(key=lambda pair: ts_key(pair[0]))
-    prev_tid = older[-1][1]
+    return older[-1][1]
+
+
+def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
+    """[B9] R8: if `testee_id` has an older same-(engine, config) sibling
+    present in this report (a "previous pin"), return
+    {'verdict': str, 'worst_note': str|None}; else `None`. SET grain
+    only -- the brief: 'from the per-subject data; set grain only'."""
+    if rd.grain != "set":
+        return None
+    prev_tid = _previous_pin_testee(rd, sb, testee_id)
+    if prev_tid is None:
+        return None
 
     prev_cell = rd.set_cells.get((sb, prev_tid, pattern_id, regime, form))
     if prev_cell is None:
@@ -3232,6 +3292,343 @@ def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, r
                 f"Δ detail: `{testee_id}` vs previous `{prev_tid}`: "
                 f"worst now (also the largest Δ): `{sid_w}`, {_fmt_ns(ns_w)} ns, {b_w} B")
     return {"verdict": verdict, "worst_note": worst_note}
+
+
+# ---------------------------------------------------- [B79] the null band
+#
+# docs/design/null_band_v1.md; inbox I-93 block B, I-104. The arithmetic
+# lives in `pcrecbench.nullband`; this block gathers the cells R8 already
+# pairs (`_previous_pin_testee`), joins them to the pair's PROGRAM-IDENTITY
+# census (`tools/program_identity.py` -> `reports/identity/...`), and
+# builds one model per report that the markdown and TSV renderers (and the
+# I-101 query's clearance column) all read -- one derivation, three
+# consumers, so they can never disagree about a band or a verdict.
+
+from pcrecbench import nullband as _nb  # noqa: E402
+
+NULL_CONTROL = "null-control"
+
+
+class _CensusFile:
+    __slots__ = ("path", "relpath", "sha256", "verdicts", "counts")
+
+    def __init__(self, path):
+        import hashlib
+        self.path = path
+        self.relpath = os.path.relpath(path, REPO_ROOT)
+        with open(path, "rb") as fh:
+            raw = fh.read()
+        self.sha256 = hashlib.sha256(raw).hexdigest()
+        self.verdicts = {}
+        self.counts = {}
+        cols = None
+        for ln in raw.decode("utf-8").split("\n"):
+            if not ln or ln.startswith("#"):
+                continue
+            f = ln.split("\t")
+            if cols is None:
+                cols = f
+                continue
+            row = dict(zip(cols, f))
+            self.verdicts[(row["config"], row["pattern_id"], row["form"])] = row["verdict"]
+            self.counts[row["verdict"]] = self.counts.get(row["verdict"], 0) + 1
+
+
+def census_path_for(sb, engine, old_ver, new_ver):
+    """The ONE lookup path (tools/program_identity.py `census_path`'s own
+    shape): `reports/identity/<subbench@version>/<engine>_<old>__<new>.tsv`,
+    `sb` being the report's `subbench@version` key."""
+    return os.path.join(REPO_ROOT, "reports", "identity", sb,
+                        f"{engine}_{old_ver}__{new_ver}.tsv")
+
+
+class _PairBand:
+    __slots__ = ("sb", "engine", "old_ver", "new_ver", "census", "census_expected",
+                 "strata", "n_null", "n_cells")
+
+    def label(self):
+        return f"{self.engine} {self.old_ver} -> {self.new_ver}"
+
+
+class _CellD119:
+    __slots__ = ("pair", "prev_tid", "before", "after", "delta", "iqr_pct",
+                 "identity", "stratum", "verdict", "bar", "source")
+
+
+class _NullBandModel:
+    __slots__ = ("pairs", "cells", "grain", "pair_of_testee")
+
+
+def _set_sums(red):
+    return list(getattr(red, "sums", None) or [])
+
+
+_NULL_BAND_CACHE = {}
+
+
+def _null_band_model(rd: "ReportData"):
+    """-> the report's `_NullBandModel` (cached per ReportData), or None
+    for a report with no cross-pin pair at all -- that report renders
+    NOTHING new in its header or ranking tables."""
+    key = id(rd)
+    hit = _NULL_BAND_CACHE.get(key)
+    if hit is not None and hit[0] is rd:
+        return hit[1]
+    model = _build_null_band_model(rd)
+    _NULL_BAND_CACHE.clear()          # one report at a time; never grows
+    _NULL_BAND_CACHE[key] = (rd, model)
+    return model
+
+
+def _build_null_band_model(rd):
+    pair_members = defaultdict(list)   # (sb, engine, old, new) -> [(old_tid, new_tid)]
+    for (sb, tid) in sorted(rd.record_ts_by_testee):
+        prev = _previous_pin_testee(rd, sb, tid)
+        if prev is None:
+            continue
+        e_new, v_new, _c = _parse_testee_config(tid)
+        v_old = _parse_testee_config(prev)[1]
+        pair_members[(sb, e_new, v_old, v_new)].append((prev, tid))
+    if not pair_members:
+        return None
+    model = _NullBandModel()
+    model.grain = rd.grain
+    model.pairs = []
+    model.cells = {}
+    model.pair_of_testee = {}
+    for key in sorted(pair_members):
+        sb, engine, v_old, v_new = key
+        pb = _PairBand()
+        pb.sb, pb.engine, pb.old_ver, pb.new_ver = key
+        cpath = census_path_for(sb, engine, v_old, v_new)
+        pb.census_expected = os.path.relpath(cpath, REPO_ROOT)
+        pb.census = _CensusFile(cpath) if os.path.exists(cpath) else None
+        pb.strata = {}
+        pb.n_null = pb.n_cells = 0
+        model.pairs.append(pb)
+        for prev, tid in pair_members[key]:
+            model.pair_of_testee[(sb, prev)] = pb
+            model.pair_of_testee[(sb, tid)] = pb
+        if pb.census is None or rd.grain != "set":
+            continue
+        eligible = []
+        regimes = set()
+        for prev, tid in pair_members[key]:
+            if (_status_lookup(rd, sb, prev)[0] != "measured"
+                    or _status_lookup(rd, sb, tid)[0] != "measured"
+                    or _tier_lookup(rd, sb, prev) == "scratch"
+                    or _tier_lookup(rd, sb, tid) == "scratch"):
+                continue
+            slug = _parse_testee_config(tid)[2]
+            for (sb2, t2, pattern_id, regime, form), (_x, red) in sorted(rd.set_cells.items()):
+                if sb2 != sb or t2 != tid:
+                    continue
+                prev_cell = rd.set_cells.get((sb, prev, pattern_id, regime, form))
+                if prev_cell is None:
+                    continue
+                pred = prev_cell[1]
+                if (red.expectation_failing or pred.expectation_failing
+                        or red.median_ns is None or not pred.median_ns):
+                    continue
+                regimes.add(regime)
+                identity = pb.census.verdicts.get((slug, pattern_id, form), "absent")
+                eligible.append((prev, tid, pattern_id, regime, form, pred, red, identity))
+        null_cells = [(regime, pred.median_ns, _nb.delta_pct(pred.median_ns, red.median_ns))
+                      for (_p, _t, _pat, regime, _f, pred, red, identity) in eligible
+                      if identity == "identical"]
+        pb.strata = _nb.build_strata(null_cells, sorted(regimes))
+        pb.n_null = len(null_cells)
+        pb.n_cells = len(eligible)
+        for (prev, tid, pattern_id, regime, form, pred, red, identity) in eligible:
+            c = _CellD119()
+            c.pair = pb
+            c.prev_tid = prev
+            c.before, c.after = pred.median_ns, red.median_ns
+            c.delta = _nb.delta_pct(c.before, c.after)
+            i = _nb.iqr(_set_sums(pred))
+            c.iqr_pct = (i / c.before * 100.0) if i is not None else 0.0
+            c.identity = identity
+            c.stratum = pb.strata.get((regime, _nb.scale_bin(c.before)))
+            if identity == "identical":
+                c.verdict, c.bar, c.source = NULL_CONTROL, None, NULL_CONTROL
+            else:
+                c.verdict, c.bar, c.source = _nb.d119_verdict(c.delta, c.iqr_pct, c.stratum)
+            model.cells[(sb, tid, pattern_id, regime, form)] = c
+    return model
+
+
+def _d119_cell_text(c):
+    """The markdown per-cell rendering of a `_CellD119`."""
+    if c.verdict == NULL_CONTROL:
+        return f"{c.delta:+.2f}% (null control: program identical)"
+    return f"{c.delta:+.2f}% vs bar {c.bar:.2f}% ({c.source}) → **{c.verdict}**"
+
+
+def _d119_base_token(verdict):
+    return verdict.split(" (", 1)[0]
+
+
+def _d119_counts(model, testee_filter=None):
+    """{token: n} over the model's cells whose NEW testee passes the
+    filter; `iqr_only` counts the IQR-only verdicts (also counted under
+    their base token)."""
+    counts = {"improve": 0, "regress": 0, "within": 0, NULL_CONTROL: 0, "iqr_only": 0}
+    for (_sb, tid, _p, _r, _f), c in model.cells.items():
+        if testee_filter is not None and not testee_filter(tid):
+            continue
+        counts[_d119_base_token(c.verdict)] += 1
+        if c.source == "IQR-only":
+            counts["iqr_only"] += 1
+    return counts
+
+
+def _d119_counts_text(counts):
+    n = sum(v for k, v in counts.items() if k != "iqr_only")
+    return (f"{n} cross-pin cell(s): {counts['improve']} improve, "
+            f"{counts['regress']} regress, {counts['within']} within the bar, "
+            f"{counts[NULL_CONTROL]} null-control (program identical -- the "
+            f"band's own population); {counts['iqr_only']} of the verdicts "
+            f"are IQR-only (their stratum's band is not usable)")
+
+
+def _d119_counts_tsv(counts):
+    return "; ".join(f"{k}={counts[k]}" for k in
+                     ("improve", "regress", "within", NULL_CONTROL, "iqr_only"))
+
+
+_D119_BAR_SENTENCE = (
+    "D119 bar (inbox I-93 block B / I-104): a cross-pin cell moved iff "
+    "|Δ%| > max(IQR%, null band) -- Δ% = (after - before) / before; "
+    "IQR% = the BEFORE side's Type-7 IQR of its per-trial set sums over "
+    "the before median; null band = the largest |Δ%| any "
+    "PROGRAM-IDENTICAL cell of the same (regime, baseline scale) stratum "
+    "reached across the same pin pair (symmetric); a stratum with fewer "
+    f"than {_nb.N_MIN} program-identical cells has NO usable band and "
+    "its verdicts say `IQR only` by name")
+
+
+def _null_band_header_lines(model):
+    """The markdown header section (list of lines)."""
+    out = ["## Null-control band (D119 bar; [B79], inbox I-93 block B / I-104)\n"]
+    if model.grain != "set":
+        out.append("_Computed at SET grain only (the D119 bar is a set-grain "
+                   "statement, as R8's `Δ vs previous version` is); this "
+                   "subject-grain render carries no band -- render the same "
+                   "query at `--grain set`._\n")
+        return out
+    out.append(f"- {_D119_BAR_SENTENCE}.")
+    out.append("- baseline scale: the BEFORE (older pin) set-grain median -- "
+               "`>=1us` / `100ns-1us` / `<100ns`; strata are per REGIME "
+               "(I-104).")
+    out.append(f"- sufficiency: a stratum needs >= {_nb.N_MIN} program-identical "
+               "cells -- the band is a sample maximum, and one more null "
+               f"cell exceeds the maximum of n with chance 1/(n+1) (<= "
+               f"{100.0 / (_nb.N_MIN + 1):.1f}% at n = {_nb.N_MIN}).")
+    out.append("- identity: OUR OWN census (`tools/program_identity.py`: "
+               "both pins re-emitted with the pinned binaries under each "
+               "config's recorded flags, `.c` + `.h` compared after "
+               "dropping ONLY the generated-by line, the `.abi` integer and "
+               "one-sided `#define` stamps); the records carry no program "
+               "hash of their own.")
+    out.append("")
+    for pb in model.pairs:
+        out.append(f"### `{pb.label()}` ({pb.sb})\n")
+        if pb.census is None:
+            out.append(f"_NO NULL BAND for this pair: no identity census at "
+                       f"`{pb.census_expected}` (`tools/program_identity.py "
+                       f"--old {pb.old_ver} --new {pb.new_ver}` writes it). "
+                       f"No D119 verdict is rendered for this pair's cells; "
+                       f"R8's `Δ vs previous version` stands alone._\n")
+            continue
+        counts = ", ".join(f"{k} {v}" for k, v in sorted(pb.census.counts.items()))
+        out.append(f"- census: `{pb.census.relpath}` (sha256 "
+                   f"`{pb.census.sha256}`): {counts} (artifact rows: every "
+                   f"config x pattern x form)")
+        out.append(f"- cells: {pb.n_cells} cross-pin set cell(s) measured on "
+                   f"both sides; {pb.n_null} program-identical (the null "
+                   f"population)")
+        out.append("")
+        header = ["regime", "baseline scale", "n null cells", "min Δ%",
+                  "median Δ%", "max Δ%", "band (±)", "status"]
+        out.append("| " + " | ".join(header) + " |")
+        out.append("|" + "|".join(["---"] * len(header)) + "|")
+        for (regime, scale) in sorted(pb.strata, key=lambda k: (k[0], _nb.SCALE_BINS.index(k[1]))):
+            st = pb.strata[(regime, scale)]
+            fmt = (lambda v: f"{v:+.2f}%" if v is not None else "-")
+            out.append("| " + " | ".join([
+                f"`{regime}`", f"`{scale}`", str(st.n), fmt(st.lo), fmt(st.median),
+                fmt(st.hi),
+                f"±{st.half_width:.2f}%" if st.usable else "n/a",
+                st.status_text()]) + " |")
+        out.append("")
+    return out
+
+
+def _null_band_tsv_header_value(model):
+    if model.grain != "set":
+        return "set grain only (not computed at subject grain)"
+    parts = []
+    for pb in model.pairs:
+        if pb.census is None:
+            parts.append(f"{pb.label()}: NO census ({pb.census_expected})")
+            continue
+        st = list(pb.strata.values())
+        parts.append(
+            f"{pb.label()}: census {pb.census.relpath}, {pb.n_null} null of "
+            f"{pb.n_cells} cells, strata ok={sum(s.status == 'ok' for s in st)} "
+            f"insufficient={sum(s.status == 'insufficient' for s in st)} "
+            f"empty={sum(s.status == 'empty' for s in st)}, n_min={_nb.N_MIN}")
+    return " | ".join(parts)
+
+
+def _query_clearance(rd, grain, sb, regime, nc_t, nc_red, y_red):
+    """[B79] the I-101 query's clearance cell: does the competitor's lead
+    clear max(IQR, null band)? gap% = (nocaps - competitor) / nocaps;
+    IQR% = the wider of the two cells' own Type-7 IQRs over the nocaps
+    median; band = the null band of the nocaps cell's own (regime, scale)
+    stratum, from the pin pair its testee belongs to. -> (text, tsv)."""
+    nc = nc_red.median_ns
+    gap = (nc - y_red.median_ns) / nc * 100.0 if nc else 0.0
+    iqr_pct = None
+    if grain == "set":
+        vals = [v for v in (_nb.iqr(_set_sums(nc_red)), _nb.iqr(_set_sums(y_red)))
+                if v is not None]
+        if vals and nc:
+            iqr_pct = max(vals) / nc * 100.0
+    iqr_txt = (f"IQR {iqr_pct:.2f}% ({'clears' if gap > iqr_pct else 'within'})"
+               if iqr_pct is not None else
+               ("IQR n/a at subject grain" if grain != "set" else "IQR n/a"))
+    model = _null_band_model(rd)
+    band_pct = None
+    if model is None:
+        band_txt = "no null band (no cross-pin pair in this report)"
+    elif grain != "set":
+        band_txt = "no null band (set grain only)"
+    else:
+        pb = model.pair_of_testee.get((sb, nc_t))
+        if pb is None:
+            band_txt = f"no null band (`{nc_t}` is in no cross-pin pair)"
+        elif pb.census is None:
+            band_txt = f"no null band (no identity census for {pb.label()})"
+        else:
+            st = pb.strata.get((regime, _nb.scale_bin(nc)))
+            if st is None or not st.usable:
+                n = st.n if st is not None else 0
+                band_txt = (f"band n/a ({pb.label()}, {regime} / "
+                            f"{_nb.scale_bin(nc)}: n={n} < {_nb.N_MIN})")
+            else:
+                band_pct = st.half_width
+                band_txt = (f"band ±{band_pct:.2f}% ({pb.label()}, {regime} / "
+                            f"{st.scale}, n={st.n}; "
+                            f"{'clears' if gap > band_pct else 'within'})")
+    if iqr_pct is None:
+        overall = "no verdict"
+    elif band_pct is None:
+        overall = "clears IQR only" if gap > iqr_pct else "within IQR"
+    else:
+        overall = ("CLEARS max(IQR, band)" if gap > max(iqr_pct, band_pct)
+                   else "within max(IQR, band)")
+    return f"{overall}: gap {gap:.2f}%; {iqr_txt}; {band_txt}"
 
 
 def _floor_note_line():
@@ -4120,19 +4517,14 @@ def _cross_class_query_hits(rd, grain):
     report) is a finding on pcrec's side BY DEFINITION.
 
     Returns a list of `(pattern_id, regime, nocaps_testee, nocaps_ns,
-    competitor_testee, competitor_ns, ratio)` tuples, `ratio =
+    competitor_testee, competitor_ns, ratio, clearance)` tuples, `ratio =
     competitor_ns / nocaps_ns` (< 1 means the competitor is faster).
 
-    THE IQR / NULL-BAND CLEARANCE I-101 ASKS FOR IS NOT YET COMPUTABLE
-    (docs/dev's "Context around the numbers" convention: state what was
-    read AND what was not). [B79], the null-control-band design
-    (docs/dev/plan.md), is NOT-STARTED, and the reduction objects this
-    reporter already holds (`SetCellReduction`/`MatchCellReduction`)
-    carry median/min/max/stddev over TRIALS, never the raw per-trial
-    values a Type-7 IQR needs (the D119 ledgers compute theirs from the
-    RECORDS directly, in a read-only lane, outside this module) -- so
-    neither renderer below computes or fabricates a clearance verdict;
-    both state plainly that it awaits [B79]."""
+    `clearance` ([B79], v22): `_query_clearance`'s sentence -- does the
+    competitor's lead clear max(IQR, null band)? (The [B82] docstring
+    said the per-trial values a Type-7 IQR needs were not held; a
+    `SetCellReduction` has always kept them, as `.sums` -- at SET grain.
+    At subject grain the IQR is stated `n/a`, never fabricated.)"""
     groups = _ranking_groups(rd, grain)
     hits = []
     for gkey in sorted(groups):
@@ -4165,11 +4557,10 @@ def _cross_class_query_hits(rd, grain):
                 if y_r.median_ns < nc_r.median_ns:
                     hits.append((pattern_id, regime, nc_t, nc_r.median_ns,
                                  y_t, y_r.median_ns,
-                                 y_r.median_ns / nc_r.median_ns))
+                                 y_r.median_ns / nc_r.median_ns,
+                                 _query_clearance(rd, grain, sb, regime,
+                                                  nc_t, nc_r, y_r)))
     return hits
-
-
-_NULL_BAND_NOT_COMPUTABLE = "not yet computable ([B79] not-started)"
 
 
 def _render_cross_class_query(rd, grain, out):
@@ -4193,11 +4584,11 @@ def _render_cross_class_query(rd, grain, out):
               "clears IQR / null band"]
     out.append("| " + " | ".join(header) + " |")
     out.append("|" + "|".join(["---"] * len(header)) + "|")
-    for pattern_id, regime, nc_t, nc_ns, y_t, y_ns, ratio in hits:
+    for pattern_id, regime, nc_t, nc_ns, y_t, y_ns, ratio, clearance in hits:
         out.append("| " + " | ".join([
             f"`{pattern_id}`", f"`{regime}`", f"`{nc_t}`", _fmt_ns(nc_ns),
             f"`{y_t}`", _fmt_ns(y_ns), f"{ratio:.3f}x",
-            _NULL_BAND_NOT_COMPUTABLE]) + " |")
+            clearance]) + " |")
     out.append("")
 
 
@@ -4356,6 +4747,12 @@ def render_markdown(rd: ReportData):
                 + (" [ACTIVE]" if rd.all_records else ""))
     out.append("")
 
+    # [B79]: the null-control band section -- ONLY when this report has a
+    # cross-pin pair (R8's own pairing); a single-pin report gets nothing.
+    nb_model = _null_band_model(rd)
+    if nb_model is not None:
+        out.extend(_null_band_header_lines(nb_model))
+
     if not rd.match_cells and not rd.compile_cells:
         out.append("_No cells matched this query._\n")
         return "\n".join(out) + "\n"
@@ -4382,6 +4779,15 @@ def render_markdown(rd: ReportData):
         """
         grain = rd.grain
         out.append(heading + "\n")
+        # [B79]: every ranking view (each class-pure view with its OWN
+        # threshold population, and the mixed/unsplit one) restates the
+        # D119 bar and counts its own cross-pin cells against it.
+        if nb_model is not None and nb_model.cells:
+            out.append(f"_D119 bar in this view: |Δ%| > max(IQR%, null band), "
+                       f"the `D119 bar` column (definition, strata and bands in "
+                       f"the null-control section above). This view's own "
+                       f"threshold population: "
+                       f"{_d119_counts_text(_d119_counts(nb_model, testee_filter))}._\n")
         groups = _ranking_groups(rd, grain)
         excluded_cells = []
         not_ranked_rows = []  # (gkey, t, form, r, status, status_detail)
@@ -4586,6 +4992,16 @@ def render_markdown(rd: ReportData):
                             delta_by_testee[t] = info
                 if delta_by_testee:
                     header.append("Δ vs previous version")
+                # [B79]: the per-cell D119 verdict, beside R8's Δ, only
+                # where the null-band model has a verdict for a row here.
+                d119_by_testee = {}
+                if nb_model is not None and nb_model.cells:
+                    for t, form, r in rankable:
+                        c = nb_model.cells.get((sb, t, pattern_id, regime, form))
+                        if c is not None:
+                            d119_by_testee[t] = c
+                if d119_by_testee:
+                    header.append("D119 bar")
                 if near_floor:
                     header += ["n subjects", "per-subject mean ns"]
                     if show_floor_column:
@@ -4628,6 +5044,9 @@ def render_markdown(rd: ReportData):
                         row.append(info["verdict"] if info else "-")
                         if info and info.get("worst_note"):
                             worst_notes.append(info["worst_note"])
+                    if d119_by_testee:
+                        c = d119_by_testee.get(t)
+                        row.append(_d119_cell_text(c) if c else "-")
                     # [B82] (inbox I-99/I-100, design constraint (1)): a
                     # testee whose OWN `-caps-`/`-nocaps-` id token
                     # disagrees with the capture-class table's decision
@@ -5177,6 +5596,10 @@ def render_tsv(rd: ReportData):
     # column carrying what the filtered sections used to carry via
     # roster membership.
     show_capture_class_column = spans_both and grain == "subject"
+    # [B79]: the null-band model (None on a report with no cross-pin
+    # pair -- whose TSV is then byte-identical to v21 but for the version
+    # and the I-101 query's clearance cells).
+    nb_model = _null_band_model(rd)
 
     lines = []
 
@@ -5217,7 +5640,11 @@ def render_tsv(rd: ReportData):
             if rd.worst_other_core is not None else "n/a"),
          # [B13.2] P-1: MUST stay the LAST key -- no existing key's
          # position moves.
-         f"floor_pattern: {_floor_pattern_header_value(rd)}"]))
+         f"floor_pattern: {_floor_pattern_header_value(rd)}"]
+        # [B79]: CONDITIONAL, after floor_pattern so no existing key moves;
+        # present iff this report has a cross-pin pair.
+        + ([f"null_band: {_null_band_tsv_header_value(nb_model)}"]
+           if nb_model is not None else [])))
     header = ["section", "pattern", "subject_or_na", "regime_or_na", "form", "fact",
               "testee", "status", "tier", "rank_or_na", "metric", "value", "n", "pass_rate",
               "n_gave_up", "n_wrong", "gave_up_summary", "delta_verdict"]
@@ -5408,12 +5835,68 @@ def render_tsv(rd: ReportData):
     _emit_row(["query_yes_beats_nocaps", "", "", "", "", "", "",
                "", "", "", "hit_count", str(len(query_hits)),
                "", "", "", "", "", ""])
-    for pattern_id, regime, nc_t, nc_ns, y_t, y_ns, ratio in query_hits:
+    for pattern_id, regime, nc_t, nc_ns, y_t, y_ns, ratio, clearance in query_hits:
         _emit_row([
             "query_yes_beats_nocaps", pattern_id, "", regime, "", "", nc_t,
             "", "", "", "beaten_by", y_t, "", "", "", "",
             f"competitor_ns={y_ns:.6f}; nocaps_ns={nc_ns:.6f}; ratio={ratio:.6f}; "
-            f"null_band_clearance={_NULL_BAND_NOT_COMPUTABLE}", ""])
+            f"null_band_clearance={clearance}", ""])
+
+    # [B79]: the null-control band -- per-(pair, regime, scale) `null_band`
+    # rows, per-cell `d119` rows (value = the base verdict token;
+    # `gave_up_summary` carries the arithmetic; `delta_verdict` R8's own
+    # verdict beside it), and per-view `d119_view` counts restating the
+    # bar in each class-pure view's own population.
+    if nb_model is not None:
+        for pb in nb_model.pairs:
+            label = pb.label()
+            if pb.census is None or grain != "set":
+                _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
+                           "census", "absent" if pb.census is None else "set-grain-only",
+                           "", "", "", "",
+                           f"expected={pb.census_expected}", ""])
+                continue
+            counts = "; ".join(f"{k}={v}" for k, v in sorted(pb.census.counts.items()))
+            _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
+                       "census", pb.census.relpath, str(pb.n_null), "", "", "",
+                       f"sha256={pb.census.sha256}; {counts}; cells={pb.n_cells}", ""])
+            for (regime, scale) in sorted(pb.strata, key=lambda k: (k[0], _nb.SCALE_BINS.index(k[1]))):
+                st = pb.strata[(regime, scale)]
+                fmt = (lambda v: f"{v:.6f}" if v is not None else "")
+                _emit_row(["null_band", "", scale, regime, "", "", label, "", "", "",
+                           "band_pct", f"{st.half_width:.6f}" if st.usable else "",
+                           str(st.n), "", "", "",
+                           f"status={st.status}; min_pct={fmt(st.lo)}; "
+                           f"median_pct={fmt(st.median)}; max_pct={fmt(st.hi)}; "
+                           f"n_min={_nb.N_MIN}", ""])
+        for (sb, tid, pattern_id, regime, form), c in sorted(nb_model.cells.items()):
+            status, _d, _rid = _status_lookup(rd, sb, tid)
+            info = _cross_pin_info(rd, sb, pattern_id, regime, tid, form,
+                                   rd.set_cells[(sb, tid, pattern_id, regime, form)][1])
+            bar = f"{c.bar:.6f}" if c.bar is not None else ""
+            band = (f"{c.stratum.half_width:.6f}"
+                    if c.stratum is not None and c.stratum.usable else "")
+            _emit_row([
+                "d119", pattern_id, "(set)", regime, form, _form_fact(form), tid,
+                status, _tier_lookup(rd, sb, tid), "", "verdict",
+                _d119_base_token(c.verdict), "", "", "", "",
+                f"delta_pct={c.delta:.6f}; iqr_pct={c.iqr_pct:.6f}; "
+                f"band_pct={band}; bar_pct={bar}; bar_source={c.source}; "
+                f"stratum={regime}/{_nb.scale_bin(c.before)}; identity={c.identity}; "
+                f"capture_class={capture_class.classify_testee(tid).bucket}; "
+                f"previous={c.prev_tid}; before_ns={c.before:.6f}; after_ns={c.after:.6f}",
+                info["verdict"] if info else ""])
+        if nb_model.cells:
+            if spans_both and grain != "subject":
+                views = [("yes", lambda t: t in buckets[capture_class.YES]),
+                         ("no", lambda t: t in buckets[capture_class.NO]),
+                         ("mixed", None)]
+            else:
+                views = [("all", None)]
+            for name, flt in views:
+                _emit_row(["d119_view", "", "", "", "", "", "", "", "", "",
+                           name, _d119_counts_tsv(_d119_counts(nb_model, flt)),
+                           "", "", "", "", "", ""])
 
     stamp_testees_emitted = set()
     for (sb, testee_id, pattern_id, form), (t, r) in sorted(rd.compile_cells.items()):

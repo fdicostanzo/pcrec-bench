@@ -26,6 +26,10 @@ report_c = "reports/2026-09-07-syntax-0.1-budu-ryzen1600-first-d34c9131.tsv"
 # `level-context` ranks under `vm-caps-simdna` and did-not-compile under
 # `auto-caps-simdna` -- one config token apart, at large-subject-throughput.
 report_d = "reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.tsv"
+# [B79] (catalogue 3.7): the first reporter-v22 CROSS-PIN render, the real
+# witness for R-DELTA-5 (`d119` rows) and R-STATUS-15 (the I-101 query
+# with its computed clearance): capability@0.1, 8d716693 -> b1885a83.
+report_e = "reports/2026-09-23-capability-0.1-budu-ryzen1600-after-b1885a83.tsv"
 index    = "catalogue/golden/index@2026-09-09.tsv"
 predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
 
@@ -265,6 +269,28 @@ report = "a"
 select = { pattern = ["orig", "factored"] }
 mutate = { column = "section", value = "did_not_compile", all = false, where = { section = "rank", pattern = "orig", form = "whole-subject", testee = "pcrec_692c2e8_auto-caps-simdna" } }
 expect_not = ["R-STATUS-14"]
+
+# [B79] R-STATUS-15, THE STANDING CROSS-CLASS QUERY FIRES: `codegrammar-flat`
+# (report_e) carries two real I-101 hits at large-subject-throughput (pcrec
+# b1885a83 auto-caps beating both pins' auto-nocaps). The CONTROL is the
+# SAME slice with ONE declared mutation: both hit rows' `gave_up_summary`
+# rewritten to a recorded ratio of exactly 1.000000 (the competitor NOT
+# strictly faster -- the query's own definition of a non-hit, which the
+# rule's predicate restates); the report-wide `hit_count` row stays, so
+# the rule is evaluable on both.
+[[fixture]]
+name   = "R-STATUS-15__query-hit"
+report = "e"
+select = { pattern = "codegrammar-flat" }
+expect = ["R-STATUS-15"]
+
+[[fixture]]
+name   = "R-STATUS-15__control-no-hit"
+base   = "R-STATUS-15__query-hit"
+report = "e"
+select = { pattern = "codegrammar-flat" }
+mutate = { column = "gave_up_summary", value = "competitor_ns=598115.248394; nocaps_ns=598115.248394; ratio=1.000000; null_band_clearance=within max(IQR, band): gap 0.00%", all = true, where = { section = "query_yes_beats_nocaps", metric = "beaten_by" } }
+expect_not = ["R-STATUS-15"]
 
 # ----------------------------------------------------------- R-DELTA --
 
@@ -642,3 +668,23 @@ expect_token = { "R-BUCKET-KB" = "no-registered-signatures" }
 name      = "CLEAN__all-measured"
 synthetic = true
 expect    = []
+
+# [B79] R-DELTA-5, THE CLASS-AWARE D119 VERDICT: `router-prefix-order` /
+# large-subject-throughput (report_e) regresses past the pair's own
+# >=1us throughput band on all four pcrec configs (DFA route +80.8%, VM
+# route +9.9%/+9.7% against a 8.77% band). The CONTROL flips every one of
+# those `d119` rows' verdict token to `within` (one declared mutation,
+# `all = true`) -- the rule reads the token and must then be silent.
+[[fixture]]
+name   = "R-DELTA-5__regress-outside-band"
+report = "e"
+select = { pattern = "router-prefix-order", regime_or_na = "large-subject-throughput" }
+expect = ["R-DELTA-5"]
+
+[[fixture]]
+name   = "R-DELTA-5__control-within-bar"
+base   = "R-DELTA-5__regress-outside-band"
+report = "e"
+select = { pattern = "router-prefix-order", regime_or_na = "large-subject-throughput" }
+mutate = { column = "value", value = "within", all = true, where = { section = "d119", pattern = "router-prefix-order" } }
+expect_not = ["R-DELTA-5"]

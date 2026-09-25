@@ -103,7 +103,13 @@ SECTIONS = ("record", "rank", "excluded", "not_ranked", "scratch",
             # change either way (this tuple gates rule-parse-time
             # `inputs` validation only, never `ReportTsv` load).
             "rank_yes", "rank_no", "baseline_yes", "baseline_no",
-            "undeclared_capture_class", "query_yes_beats_nocaps")
+            "undeclared_capture_class", "query_yes_beats_nocaps",
+            # [B79] (catalogue 3.7, reporter v22): the null-control band's
+            # own rows -- `null_band` (census + per-stratum band),
+            # `d119` (one per cross-pin cell; R-DELTA-5 reads it) and
+            # `d119_view` (per-view counts). Emitted only on a report
+            # with a cross-pin pair.
+            "null_band", "d119", "d119_view")
 
 # The known-key list for §2.1's NORMATIVE known-key header split. It is
 # DERIVED from `report.py`'s own header block (see
@@ -118,7 +124,15 @@ HEADER_KEYS = [
     "include_unmeasured", "include_scratch", "all_records", "x13_rules",
     "mixed_x13", "include_provenance", "worst_other_core_busy",
     "floor_pattern",
+    # [B79] (reporter v22): CONDITIONAL -- present only on a report with
+    # a cross-pin pair; after floor_pattern so no existing key moves.
+    "null_band",
 ]
+
+# [B79]: the header keys a report MAY omit -- emitted only when the
+# report's own content calls for them (`null_band`: a cross-pin pair).
+# Every other HEADER_KEYS entry is unconditional.
+CONDITIONAL_HEADER_KEYS = ("null_band",)
 
 DID_NOT_FIRE_TOKENS = ("no-matching-rows", "input-absent", "grain",
                        "reporter-version", "no-registered-signatures",
@@ -934,6 +948,98 @@ def r_status_14(view, ctx):
 
 
 # ---- R-DELTA ---------------------------------------------------------
+
+def _kv_fields(text):
+    """`k=v; k=v` (report.py's `gave_up_summary` free-text slot on the
+    [B79] `d119` rows and the [B82] query rows) -> dict. A `d119` row's
+    values never contain `; `; the query row's LAST field
+    (`null_band_clearance=`) does, and `r_status_15` reads it whole."""
+    out = {}
+    for part in (text or "").split("; "):
+        k, sep, v = part.partition("=")
+        if sep:
+            out[k.strip()] = v
+    return out
+
+
+def r_status_15(view, ctx):
+    """[B79]/[B82] (ii): THE STANDING CROSS-CLASS QUERY FIRES (inbox
+    I-101) -- every `query_yes_beats_nocaps` hit row, a finding on
+    pcrec's side BY DEFINITION, with the reporter's own clearance
+    sentence (`report.py` `_query_clearance`: max(IQR, null band))
+    carried verbatim, never re-derived. A report whose TSV has no
+    `hit_count` row predates the query ([B82], reporter v20) and reads
+    `input-absent`; `hit_count = 0` reads `no-matching-rows`."""
+    counts = view.rows("query_yes_beats_nocaps", metric="hit_count")
+    if not counts:
+        return "input-absent"
+    out = []
+    for r in view.rows("query_yes_beats_nocaps", metric="beaten_by"):
+        kv = _kv_fields(r["gave_up_summary"])
+        try:
+            ratio = float(kv.get("ratio", ""))
+        except ValueError:
+            continue
+        # the query's own definition (`_cross_class_query_hits`): the
+        # competitor's median is STRICTLY below auto-nocaps'. A row whose
+        # recorded ratio says otherwise is not a hit.
+        if not 0 < ratio < 1:
+            continue
+        # the clearance sentence is the row's LAST field and itself
+        # carries `; ` (gap; IQR; band) -- read it whole, never via the
+        # `; `-split `kv`.
+        clearance = r["gave_up_summary"].partition("null_band_clearance=")[2]
+        verdict = clearance.split(":", 1)[0].strip() if clearance else "(none)"
+        speedup = 1.0 / ratio
+        out.append(fire({"pattern": r["pattern"], "regime": r["regime_or_na"],
+                         "testee": r["testee"], "competitor": r["value"],
+                         "speedup": fmt_ratio(speedup),
+                         "clearance_verdict": verdict,
+                         "clearance": clearance or "(not stated)"},
+                        nums={"speedup": speedup},
+                        pattern=r["pattern"], regime=r["regime_or_na"],
+                        testee=r["testee"]))
+    return out
+
+
+def r_delta_5(view, ctx):
+    """[B79]/[B82] (ii): THE CLASS-AWARE D119 VERDICT. Every `d119` row
+    whose verdict is `improve` or `regress` -- a cross-pin cell that moved
+    by more than max(IQR, null band) (`report.py`'s
+    `_build_null_band_model` computed it; this rule reads the token and
+    never re-derives the bar). `capture_class` is the reporter's own
+    classification of the cell's testee, carried in the row, and the
+    rule AGGREGATES by it -- a capturing and a non-capturing cell are
+    never counted in one bullet (I-99). A report with no `null_band`
+    header key has no cross-pin pair, or predates v22: `input-absent`."""
+    if not view.header("null_band"):
+        return "input-absent"
+    out = []
+    for r in view.rows("d119", metric="verdict"):
+        direction = r["value"]
+        if direction not in ("improve", "regress"):
+            continue
+        kv = _kv_fields(r["gave_up_summary"])
+        try:
+            delta = float(kv.get("delta_pct", ""))
+            bar = float(kv.get("bar_pct", ""))
+        except ValueError:
+            continue
+        out.append(fire({"pattern": r["pattern"], "regime": r["regime_or_na"],
+                         "form": r["form"], "testee": r["testee"],
+                         "capture_class": kv.get("capture_class", "undeclared"),
+                         "direction": direction,
+                         "delta_pct": f"{delta:+.2f}%",
+                         "delta_abs": f"{abs(delta):.2f}",
+                         "bar_pct": f"{bar:.2f}%",
+                         "bar_source": kv.get("bar_source", ""),
+                         "stratum": kv.get("stratum", ""),
+                         "verdict_r8": r["delta_verdict"] or "-"},
+                        nums={"delta_abs": abs(delta)},
+                        pattern=r["pattern"], regime=r["regime_or_na"],
+                        form=r["form"], testee=r["testee"]))
+    return out
+
 
 def _delta_rows(view):
     """The (pattern, regime, form, testee) median_ns rank rows that carry

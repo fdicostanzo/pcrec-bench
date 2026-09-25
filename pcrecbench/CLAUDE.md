@@ -16,6 +16,7 @@ the record's shape is `docs/design/record_schema.md`.
 | `driverrun.py` | build/run/parse a driver; the resume-after-driver-death rule |
 | `record.py` | builds the record dict; every derived id comes FROM `schema/validate.py`'s own functions |
 | `capture_class.py` | [B82] (2026-09-23, inbox I-99/I-100/I-101): THE CAPTURE-CLASS DECLARATION TABLE `report.py` reads to render the two class-pure ranking views and the standing cross-class query -- `classify_testee(testee_id)` returns `yes`/`no`/`undeclared` from a table keyed on the pin-independent `(engine_name, engine_mode, caps_token)` identity every testee_id already encodes, never the id verbatim (a re-pin never goes stale) and never a schema/harness/adapter change. FROZEN by I-100: every real config's own `-caps-`/`-nocaps-` token is trusted as the run fact EXCEPT `rust-default` (`is_override` true), whose config declares `captures=on` but whose timed loop makes exactly one verification `captures_at` call -- declared here as a fixed per-call cost, citing `src/main.rs:255-266`. An id this table has no row for is `undeclared`, NEVER guessed (I-99's fail-loud rule) |
+| `nullband.py` | [B79] THE NULL-CONTROL BAND's arithmetic (`docs/design/null_band_v1.md`): `scale_bin` (`>=1us`/`100ns-1us`/`<100ns`), `type7_quantile`/`iqr`, `delta_pct`, `Stratum` (the symmetric worst-null-cell half-width, `ok`/`insufficient`/`empty` against `N_MIN = 10`), `build_strata`, `d119_verdict` (|Δ%| > max(IQR%, band), `(IQR only: band n=K < 10)` when the stratum is unusable). Pure; `report.py` gathers the cells and renders |
 | `reduce.py` | the SET-GRAIN reduction `quick` prints and the reporter ranks (R5, [B10]): `reduce_set_cell`, `reduce_match_cell`, `cells_from_record`, `giveup_code`; pinned by a hand-computed fixture in `tools/selfcheck.py`. Since [B20] also THE ONE derivation of the v1.4 `trial_agreement` block (`judge_trial_agreement`, gate_shape_v14.md §3.5) and its shared rendering (`agreement_line`) — the harness stamps with it, `quick` prints it, the reporter renders it, and `schema/validate.py` carries a deliberate SECOND implementation X32 compares it against. Since KB-27 (2026-09-22, docs/dev/known_issues.md): `MatchCell`/`SetCell` also carry `n_no_expectation`, subtracted back out of `n_wrong` — a `did-not-match-as-expected` row caused by NO expectation existing at all (`harness.outcome_for()`'s `expectation is None` branch; an oracle give-up dropped at derivation, or nobody has authored one yet) is identified by that branch's OWN fixed diagnostic text (`NO_EXPECTATION_DIAGNOSTIC_PREFIX`, `_is_no_expectation_row`) rather than counted as a wrong answer |
 | `store.py` | the store path rule, never-clobber, validate-before-write, the index; the TIERS: `.canonical` marks the canonical store, which refuses a `tier: scratch` record on write and on index; `scratch_store()` is `$PCRECBENCH_SCRATCH_STORE` or `build/scratch-store/` |
 | `quiet.py` | the quiet-box instrument and its two thresholds (`docs/design/quiet_baseline.md`) — since BD7 (2026-08-30) the occupancy sample is `mpstat -P ALL 1 5` judged on its `Average:` block (`judge_mpstat`, pure; `split_mpstat`); `OCCUPANCY_SECONDS`. Since [B20] (schema v1.4) `judge_mpstat` also writes the TARGET core's tri-state `target_busy_pct`, `gate()` is the whole PRE-FLIGHT (load1, the non-target average, the target's own reading, the missing-row refusal — the `quiet` CLI judges through it too), `preflight_ok`/`after_notes` replace `occupancy_ok` (the after samples are PROVENANCE), and `cpu_times`/`timeline_item` read the per-group `/proc/stat` timeline |
@@ -1264,3 +1265,33 @@ held capability AFTER groups (and the wrapfix group's own
 detail, including the exact `diff` proof and every call site touched,
 is in `report.py`'s own `[B85]` module-docstring section and
 `docs/dev/lanes/b85kb28_report.md`.
+## The reporter, [B79] (2026-09-25) -- THE NULL-CONTROL BAND (v22)
+
+Lane `b79nullband`; inbox I-93 block B, I-104 (the banded spec), [B82]
+(ii); the design of record is `docs/design/null_band_v1.md`. On every
+CROSS-PIN report (R8's own pairs, `_previous_pin_testee`, extracted from
+`_cross_pin_info` so the band and the `Δ vs previous version` column pair
+the same testees), at SET grain:
+
+- a `## Null-control band` section after the Query section: per pair,
+  the identity census (`reports/identity/...`, written by
+  `tools/program_identity.py` -- the records carry no program hash) and
+  the strata table (regime x baseline scale of the BEFORE median; n,
+  min/median/max Δ%, the symmetric band = the worst null cell, and
+  `ok` / `insufficient (n=K < 10)` / `empty (n=0)` by name);
+- a `D119 bar` column beside `Δ vs previous version`
+  (`+80.83% vs bar 8.77% (band) → regress`; `(null control: program
+  identical)` on the band's own population; `(IQR only: band n=K < 10)`
+  where the stratum is unusable) and a per-view restatement line with
+  each class-pure view's OWN counts;
+- TSV: a conditional last header key `null_band:`, `null_band` /
+  `d119` / `d119_view` rows;
+- the I-101 query's clearance column COMPUTED (`_query_clearance`) --
+  on every report, cross-pin or not ([B82]'s "not held" claim was wrong
+  for set cells: `SetCell.sums` carries the per-trial sums).
+
+A report with no cross-pin pair renders nothing else new; a pair with no
+census says `NO NULL BAND` naming the path (never a silent IQR-only
+fallback). `pcrecbench/tests/test_report.py` gained three tests (a
+hand-computed fixture with ok/insufficient/empty strata and all five
+verdict shapes; the no-census and single-pin controls): 96 total.
