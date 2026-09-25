@@ -72,6 +72,16 @@ from the manager, a fresh turn after any gap), check every marker you
 are tracking before doing anything else — the notification firing is
 not proof you acted on it last time.
 
+**LONG RUNS AT THE END OF A LANE — THE MANAGER LAUNCHES THEM (Frank,
+2026-09-25; session_discipline.md §2's amendment wins over anything
+above).** If your last item is a run longer than ~4 minutes (a full
+`make check`, a regen wave, a window), do NOT launch it yourself: commit,
+put in your hand-back the exact command, the working directory, the log
+path and the `.done` marker, mark its numbers OWED, and END. The manager
+launches it and tracks it. Only if you still have further independent
+work may you launch a long run yourself and keep working — then end
+normally with the marker named OWED; never idle or monitor it.
+
 ## Process rules
 - COMMIT INCREMENTALLY (WIP commits) — commit age is your liveness signal.
 - Records: pinned tier (canonical store) vs scratch (`quick`, pcrec-local)

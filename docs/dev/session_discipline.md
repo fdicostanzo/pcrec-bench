@@ -54,6 +54,23 @@ This refines `docs/dev/lanes/BOILERPLATE.md`'s existing lifecycle section
 completion): the new rule is that the lane does not wait around for that
 completion at all once the report-with-OWED-numbers is committed.
 
+**AMENDMENT (Frank, 2026-09-25) — who launches a detached run, and how it
+is tracked.** (1) Every detached run is TRACKED: whoever launches it also
+starts a harness-tracked watcher (`run_in_background: true`, an
+until-loop on the run's `.done` marker, bounded, zero model calls) so its
+completion arrives as a notification — never a disowned job nobody is
+waiting on. (2) A lane whose LAST item is a long run does NOT launch it:
+its hand-back names the exact command, working directory, log path and
+marker, and the MANAGER launches it on that request (the lane has
+already ended; the manager owns the watcher and the follow-up). (3) A
+lane that still has further INDEPENDENT work may launch its own long run
+and keep working, but it never idles or monitors: when its other work is
+done it commits, reports the marker OWED, and ends — the manager adopts
+the watcher. (4) Lanes never sit idle waiting, never poll beyond the
+≤4-minute rule. (Occasion: lane b77u1's own `setsid … & disown` launch
+of `make check` was refused by the auto-mode permission classifier;
+the manager launching on the lane's request is the sanctioned route.)
+
 ## 3. Closure is the MANAGER'S act
 
 At delivery acceptance, the manager stops the agent explicitly
