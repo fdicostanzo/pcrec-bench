@@ -20,3 +20,19 @@ engine_mode = "longest"
 longest = true
 max_mem = 8388608
 description = "RE2 with RE2::Options::set_longest_match(true) -- POSIX leftmost-longest selection, the second convention reading capability_set_v1.md's family 11 (semantics-divergence) needs; max_mem unchanged at 8 MiB"
+
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1): the ONE UTF-8 config. RE2's
+# own default encoding, EncodingUTF8, which every other config here
+# deliberately overrides to Latin-1 (driver.cc's ENCODING header) -- the
+# cheapest change on the roster: one driver flag (`--encoding utf8`), one
+# row. Otherwise `re2-default` exactly (leftmost-first-like, 8 MiB max_mem).
+# The token joins `config_extra`: the derived id is `re2-default`'s plus
+# `_utf8`. Witnessed per (config, REQUIRES token) BEFORE this declaration
+# shipped: docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt.
+
+[testees.re2-utf8]
+engine_mode = "default"
+longest = false
+max_mem = 8388608
+encoding = "utf8"
+description = "RE2 at library defaults INCLUDING its own default encoding (RE2::Options::EncodingUTF8) -- re2-default's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1): leftmost-first-LIKE selection, max_mem 8 MiB; \\w/\\d/\\s stay ASCII-scoped (RE2 has no Unicode-widening dial)"

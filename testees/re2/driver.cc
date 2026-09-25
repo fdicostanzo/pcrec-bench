@@ -17,8 +17,9 @@
 // adapter.py), never through pcrecbench/driverrun.py's generic
 // build_driver() helper, which assumes a C compiler.
 //
-// ENCODING: every RE2 object this driver builds uses
-// RE2::Options::EncodingLatin1 -- BYTE mode, not RE2's UTF-8 default. This
+// ENCODING: every RE2 object this driver builds -- UNLESS `--encoding
+// utf8` is passed ([B77] U2, the `re2-utf8` config only; utf8_set_v1.md
+// 7.1) -- uses RE2::Options::EncodingLatin1 -- BYTE mode, not RE2's UTF-8 default. This
 // matches the project's byte-level convention every other adapter already
 // uses (pcre2's driver compiles with no PCRE2_UTF option; pcrec's own byte
 // engine is its default route) and is a real capability consequence, not
@@ -189,6 +190,7 @@ int main(int argc, char **argv) {
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   // [B77] U1: --utf8, the protocol flag
     int longest = 0;
+    int enc_utf8 = 0;            // [B77] U2: --encoding utf8 (the ENGINE's)
     int64_t max_mem = RE2::Options::kDefaultMaxMem;
 
     for (int i = 1; i < argc; i++) {
@@ -203,6 +205,12 @@ int main(int argc, char **argv) {
         else if (!std::strcmp(a, "--find-all")) find_all = 1;
         else if (!std::strcmp(a, "--utf8")) utf8_adv = 1;
         else if (!std::strcmp(a, "--longest")) longest = 1;
+        else if (!std::strcmp(a, "--encoding") && i + 1 < argc) {
+            const char *e = argv[++i];
+            if (!std::strcmp(e, "utf8")) enc_utf8 = 1;
+            else if (!std::strcmp(e, "latin1")) enc_utf8 = 0;
+            else { std::printf("error\tunknown encoding %s\n", e); return 2; }
+        }
         else if (!std::strcmp(a, "--max-mem") && i + 1 < argc) max_mem = std::strtoll(argv[++i], NULL, 10);
         else { std::printf("error\tunknown argument %s\n", a); return 2; }
     }
@@ -222,6 +230,9 @@ int main(int argc, char **argv) {
     // fact of its own to add.
     std::printf("info\tlongest_match\t%s\n", longest ? "on" : "off");
     std::printf("info\tmax_mem\t%lld\n", (long long)max_mem);
+    // [B77] U2: printed ONLY under --encoding utf8, so a byte config's
+    // driver output is unchanged line for line.
+    if (enc_utf8) std::printf("info\tencoding\tutf8\n");
 
     std::string pat;
     if (!slurp(pattern_path, &pat)) {
@@ -230,7 +241,11 @@ int main(int argc, char **argv) {
     }
 
     RE2::Options opts;
-    opts.set_encoding(RE2::Options::EncodingLatin1);
+    // [B77] U2 (utf8_set_v1.md 7.1): `--encoding utf8` restores RE2's OWN
+    // default, EncodingUTF8, for the `re2-utf8` config; every other config
+    // stays Latin-1 (the header's ENCODING paragraph, unchanged).
+    opts.set_encoding(enc_utf8 ? RE2::Options::EncodingUTF8
+                               : RE2::Options::EncodingLatin1);
     opts.set_longest_match(longest != 0);
     opts.set_max_mem(max_mem);
     opts.set_log_errors(false);  // errors read structurally, never parsed from stderr

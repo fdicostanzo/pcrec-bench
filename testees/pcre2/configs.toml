@@ -28,3 +28,34 @@ engine_mode = "dfa"
 dfa = true
 captures = "off"
 description = "libpcre2 8-bit via pcre2_dfa_match -- a THIRD execution model on the SAME compiled pattern (no separate compile step, no JIT): an NFA-simulation breadth-first scan that reports no per-group captures and returns the LONGEST match at its leftmost start point, not necessarily the first alternative tried ([B42] L6a, capability_set_v1.md 8/5.6, man pcre2matching)"
+
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1): the three UTF-8 siblings. Each
+# is its byte sibling above plus `encoding = "utf8"` -- PCRE2_UTF in the
+# pcre2_compile_8 options word (driver `--utf`), never PCRE2_UCP (a pattern
+# that wants Unicode-widened classes spells `(*UCP)` in its own text, the
+# utf8 set's convention, utf8_set_v1.md 5(a)/7.5), never PCRE2_NO_UTF_CHECK
+# (8.2). The token joins `config_extra`, so `pcre2-utf-jit` derives
+# `libpcre2_<v>_jit-caps-simdna_utf8`, never its byte sibling's id. Witnessed
+# per (config, REQUIRES token) BEFORE this declaration shipped (the L5
+# lesson): docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt.
+
+[testees.pcre2-utf-interp]
+engine_mode = "interp"
+jit = false
+captures = "on"
+encoding = "utf8"
+description = "libpcre2 8-bit in UTF mode (PCRE2_UTF), the interpreter -- pcre2-interp's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1); class scope by the pattern's own (*UCP), never a config dial"
+
+[testees.pcre2-utf-jit]
+engine_mode = "jit"
+jit = true
+captures = "on"
+encoding = "utf8"
+description = "libpcre2 8-bit in UTF mode (PCRE2_UTF) with pcre2_jit_compile(PCRE2_JIT_COMPLETE) -- pcre2-jit's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1)"
+
+[testees.pcre2-utf-dfa]
+engine_mode = "dfa"
+dfa = true
+captures = "off"
+encoding = "utf8"
+description = "libpcre2 8-bit in UTF mode (PCRE2_UTF) via pcre2_dfa_match -- pcre2-dfa's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1); the same longest-at-leftmost-start semantics as pcre2-dfa"

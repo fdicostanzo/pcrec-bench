@@ -16,7 +16,9 @@
  * `\K`, possessive quantifiers, atomic groups, if-else conditionals, `\g`
  * subexp calls, `\p{...}`). `ONIG_SYNTAX_PERL_NT` does not exist in 6.9.10.
  *
- * ENCODING: ONIG_ENCODING_ASCII -- single-byte, `is_valid_mbc_string`
+ * ENCODING: ONIG_ENCODING_ASCII (UNLESS `--encoding utf8` -- [B77] U2, the
+ * `onig-utf8` config only: ONIG_ENCODING_UTF8, chosen at runtime) --
+ * single-byte, `is_valid_mbc_string`
  * unconditionally true (src/ascii.c: `onigenc_always_true_is_valid_mbc_
  * string`), so a byte >= 0x80 is a valid one-byte "character" like PCRE2's
  * default 8-bit non-UTF mode, never a decode error. testees/onig/CLAUDE.md
@@ -88,6 +90,9 @@
 #include <unistd.h>
 
 #define ONIG_DRIVER_SYNTAX  ONIG_SYNTAX_PERL_NG
+/* [B77] U2 (utf8_set_v1.md 7.1): the DEFAULT encoding. `--encoding utf8`
+ * selects ONIG_ENCODING_UTF8 at RUNTIME instead -- the `onig-utf8` config
+ * only; every other config passes nothing and gets exactly this. */
 #define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII
 
 /* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
@@ -204,6 +209,8 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   /* [B77] U1: --utf8, the protocol flag */
+    OnigEncoding enc = ONIG_DRIVER_ENCODING;   /* [B77] U2: --encoding */
+    const char *enc_name = "ASCII";
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -217,6 +224,12 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--skip") && i + 1 < argc)      skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--encoding") && i + 1 < argc) {
+            const char *e = argv[++i];
+            if (!strcmp(e, "utf8"))       { enc = ONIG_ENCODING_UTF8;  enc_name = "UTF8"; }
+            else if (!strcmp(e, "ascii")) { enc = ONIG_ENCODING_ASCII; enc_name = "ASCII"; }
+            else { printf("error\tunknown encoding %s\n", e); return 2; }
+        }
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (!pattern_path) die("--pattern is required");
@@ -241,7 +254,7 @@ int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IOLBF, 0);
 
     OnigEncoding use_encs[1];
-    use_encs[0] = ONIG_DRIVER_ENCODING;
+    use_encs[0] = enc;
     onig_initialize(use_encs, 1);
 
     {
@@ -250,7 +263,7 @@ int main(int argc, char **argv) {
         printf("info\tversion\t%s\n", verbuf);
     }
     printf("info\tsyntax\tPERL_NG\n");
-    printf("info\tencoding\tASCII\n");
+    printf("info\tencoding\t%s\n", enc_name);
     printf("info\tform\t%s\n", form);
 
     size_t patlen = 0;
@@ -264,7 +277,7 @@ int main(int argc, char **argv) {
         regex_t *r = NULL;
         double t0 = now();
         int rc = onig_new(&r, pat, pat + patlen, ONIG_OPTION_DEFAULT,
-                          ONIG_DRIVER_ENCODING, ONIG_DRIVER_SYNTAX, &einfo);
+                          enc, ONIG_DRIVER_SYNTAX, &einfo);
         double t1 = now();
         if (rc != ONIG_NORMAL) {
             unsigned char msg[ONIG_MAX_ERROR_MESSAGE_LEN];

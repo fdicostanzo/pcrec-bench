@@ -122,6 +122,10 @@
 #include <time.h>
 #include <unistd.h>
 
+/* The DEFAULT hs_compile flags word. [B77] U2 (utf8_set_v1.md 7.1/7.6):
+ * `--encoding utf8` ORs in HS_FLAG_UTF8 -- the `vectorscan-block-nosom-
+ * utf8` config only -- and NEVER HS_FLAG_UCP (the measured A/B below: UCP
+ * breaks `\b`; a UCP config is named, not built, 7.6 (2)). */
 #define VS_DRIVER_FLAGS  0
 
 static double now(void) {
@@ -239,6 +243,7 @@ int main(int argc, char **argv) {
      * selects HS_FLAG_UTF8 -- the engine's encoding is a config's choice
      * (utf8_set_v1.md 7.1, lane U2), not the protocol's. */
     volatile int utf8_adv = 0;
+    unsigned int hs_flags = VS_DRIVER_FLAGS;   /* [B77] U2: --encoding */
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -253,6 +258,12 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--free-spacing"))               free_spacing = 1;
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--encoding") && i + 1 < argc) {
+            const char *e = argv[++i];
+            if (!strcmp(e, "utf8"))       hs_flags = VS_DRIVER_FLAGS | HS_FLAG_UTF8;
+            else if (!strcmp(e, "byte"))  hs_flags = VS_DRIVER_FLAGS;
+            else { printf("error\tunknown encoding %s\n", e); return 2; }
+        }
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     (void)find_all;  /* accepted for protocol compliance; see header */
@@ -271,6 +282,9 @@ int main(int argc, char **argv) {
 
     printf("info\tversion\t%s\n", hs_version());
     printf("info\tform\t%s\n", form);
+    /* [B77] U2: printed ONLY under --encoding utf8, so a byte config's
+     * driver output is unchanged line for line. */
+    if (hs_flags & HS_FLAG_UTF8) printf("info\tencoding\tutf8\n");
 
     size_t patlen = 0;
     unsigned char *pat = slurp(pattern_path, &patlen);
@@ -317,7 +331,7 @@ int main(int argc, char **argv) {
         hs_database_t *d = NULL;
         hs_compile_error_t *err = NULL;
         double t0 = now();
-        hs_error_t rc = hs_compile(expr, VS_DRIVER_FLAGS, HS_MODE_BLOCK,
+        hs_error_t rc = hs_compile(expr, hs_flags, HS_MODE_BLOCK,
                                    NULL, &d, &err);
         double t1 = now();
         if (rc != HS_SUCCESS) {
@@ -342,7 +356,7 @@ int main(int argc, char **argv) {
     {
         hs_expr_info_t *info = NULL;
         hs_compile_error_t *err = NULL;
-        if (hs_expression_info(expr, VS_DRIVER_FLAGS, &info, &err) == HS_SUCCESS
+        if (hs_expression_info(expr, hs_flags, &info, &err) == HS_SUCCESS
             && info) {
             printf("info\tmin_width\t%u\n", info->min_width);
             printf("info\tmax_width\t%u\n", info->max_width);

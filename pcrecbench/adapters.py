@@ -123,6 +123,37 @@ class AdapterError(Exception):
     pass
 
 
+#: [B77] U2 (docs/design/utf8_set_v1.md 7.1): the ENGINE ENCODINGS a config
+#: may declare with its `encoding` key. `byte` is every pre-[B77] config's
+#: (implicit) value -- each adapter's own driver is byte-mode by design and
+#: says so in its header -- and `utf8` is the character-mode sibling the
+#: utf8 set's roster adds. This is the ENGINE's encoding, a testee
+#: IDENTITY; it is NOT the driver protocol's `--utf8` flag, which moves only
+#: the find-all advance and is keyed on the SET's oracle word
+#: (`pcrecbench.expectations.utf8_advance`, U1) -- two facts, two names.
+CONFIG_ENCODINGS = ("byte", "utf8")
+
+
+def config_encoding(testee_id, cfg):
+    """-> (encoding, config_extra_token_or_None) for a non-pcrec config's
+    `encoding` key ([B77] U2). ABSENT or `byte` -> ("byte", None): the
+    pre-[B77] testee byte for byte (no `config_extra`, the same derived
+    testee_id -- `check_encoding_axis` proves it). `utf8` -> ("utf8",
+    "utf8"): the token joins `config_extra`, so a utf8 sibling can never
+    derive its byte sibling's testee_id (record_schema.md 6.4, X5) and
+    land on top of it in the store. Anything else is refused BY NAME at
+    config-read time, before anything is built or measured. (pcrec reads
+    its encoding off its own `flags` -- `-e utf8` is pcrec's own argv --
+    through `testees/pcrec/adapter.py`'s `effective_encoding`, which
+    returns the same token.)"""
+    enc = cfg.get("encoding", "byte")
+    if enc not in CONFIG_ENCODINGS:
+        raise AdapterError(
+            "%s: encoding = %r is not one of %s (utf8_set_v1.md 7.1)"
+            % (testee_id, enc, ", ".join(CONFIG_ENCODINGS)))
+    return enc, ("utf8" if enc == "utf8" else None)
+
+
 def sha256_file(path):
     """The sha256 of a file's bytes -- a scratch record's `testee.binary`
     identity (record_schema.md 6.8, X29)."""

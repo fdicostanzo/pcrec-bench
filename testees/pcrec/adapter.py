@@ -2429,6 +2429,76 @@ def effective_denies(flags):
     return ("-".join(w for _f, w in parts) if parts else None), parts
 
 
+# ---------------------------------------------------------------------------
+# THE ENGINE-ENCODING AXIS -- `-e utf8` ([B77] U2; docs/design/
+# utf8_set_v1.md 7.1/7.2, F-C1, a MUST per inbox I-94).
+#
+# pcrec's `-e ENCODING` / `--encoding=ENCODING` ("subject encoding for THIS
+# pattern: byte (default) or utf8, both compile", the pin's own --help) is
+# spelled in the config's own `flags` list -- the ONE list that feeds
+# pcrec's argv, `build_flags` and `runtime_options` -- and NOT in a hidden
+# protocol token (the `-fcomments` shape, deliberately invisible in the
+# testee_id): two records differing only in encoding are TWO testees. But
+# being in `flags` is necessary, not sufficient: the testee_id is derived
+# from `config_extra` whole (record_schema.md 6.4, X5), and until this axis
+# no part of `compose_config_extra` scanned `flags` for an encoding --
+# `DENY_FLAGS` and `CAP_KEYS` are closed tuples that do not know `-e` --
+# so `pcrec-auto-utf8` and `pcrec-auto` would have derived the SAME id and
+# silently collided in the store. This function is that recognition, in
+# the shape of `effective_denies`/`effective_caps`; its token is
+# `compose_config_extra`'s FIFTH part (chartering order: after [B35]).
+#
+# ABSENT, or an explicit `byte` (pcrec's own default, the same artifact),
+# is today's behaviour byte for byte: no token, the same derived id
+# (`check_encoding_axis` arm 1, against a frozen table of every
+# pre-existing config's id shape AND every committed record). `utf8` joins
+# `config_extra` as `utf8`. Any other value, or two spellings that
+# DISAGREE, is refused BY NAME at config-read time -- an id that names an
+# encoding the compile did not run under is worse than no record.
+#
+#: pcrec's encodings (the pin's --help), -> the config_extra token.
+ENCODING_TOKENS = {"byte": None, "utf8": "utf8"}
+
+
+def effective_encoding(testee_id, flags):
+    """-> (encoding, config_extra_or_None) for the encoding a config's
+    EFFECTIVE flag list selects ([B77] U2). Recognises `-e X`,
+    `--encoding=X` and `--encoding X`; ("byte", None) when none is present.
+    `flags` is the effective list, so a `$PCREC_LOCAL_FLAGS="-e utf8"`
+    reaches the derived id down the same path a config's own flag does."""
+    seen = []
+    i, n = 0, len(flags)
+    while i < n:
+        f = flags[i]
+        if f in ("-e", "--encoding"):
+            if i + 1 >= n:
+                raise _ad.AdapterError(
+                    "%s: %s is the last flag -- pcrec's %s takes an "
+                    "encoding (%s)" % (testee_id, f, f,
+                                       ", ".join(ENCODING_TOKENS)))
+            seen.append((f, flags[i + 1]))
+            i += 2
+            continue
+        if f.startswith("--encoding="):
+            seen.append((f, f.split("=", 1)[1]))
+        i += 1
+    for spelled, value in seen:
+        if value not in ENCODING_TOKENS:
+            raise _ad.AdapterError(
+                "%s: %s %r is not an encoding pcrec takes at this pin (%s; "
+                "utf8_set_v1.md 7.2)" % (testee_id, spelled, value,
+                                         ", ".join(ENCODING_TOKENS)))
+    values = {v for _s, v in seen}
+    if len(values) > 1:
+        raise _ad.AdapterError(
+            "%s: the effective flags select more than one encoding (%s). The "
+            "encoding is an IDENTITY -- it names the artifact in the derived "
+            "testee_id -- so the spellings may repeat but never disagree."
+            % (testee_id, ", ".join("%s %s" % sv for sv in seen)))
+    enc = values.pop() if values else "byte"
+    return enc, ENCODING_TOKENS[enc]
+
+
 def cap_values(cfg):
     """-> [(flag, limit_name, value)] for the caps an EFFECTIVE config
     raises, in CAP_KEYS order; empty where it raises neither. Read back off
@@ -2540,7 +2610,8 @@ def compose_config_extra(*parts):
     """`testee.config_extra` from the axis tokens a config carries, in a
     FIXED order: the axes in the order they were chartered ([B24] `cc`,
     then [B31] the emitted-size caps, then [B32] the denied generation
-    axes, then [B35] the compilee flags), joined by `-`.
+    axes, then [B35] the compilee flags, then [B77] U2 the engine
+    encoding), joined by `-`.
 
     Chartering order is the rule because it makes the slug APPEND-ONLY: a
     testee that already had a token keeps it where it was when a later axis
@@ -2842,6 +2913,11 @@ class Adapter(_ad.Adapter):
         # exactly like every other testee, from its own configs.toml
         # entry, with no `$PCREC_LOCAL_FLAGS` equivalent.
         cfg["cflags"], cfg["cflags_extra"] = effective_cflags(testee_id, cfg)
+        # [B77] U2: the ENGINE ENCODING, derived from the effective flags
+        # (so `$PCREC_LOCAL_FLAGS="-e utf8"` reaches the id too) -- the
+        # FIFTH `compose_config_extra` part (F-C1).
+        cfg["encoding"], cfg["encoding_extra"] = effective_encoding(
+            testee_id, cfg["flags"])
         return cfg
 
     def local_binary(self, testee_id):
@@ -3077,7 +3153,8 @@ class Adapter(_ad.Adapter):
         # whole slug.
         extra = compose_config_extra(cc_extra, cfg.get("cap_extra"),
                                      cfg.get("deny_extra"),
-                                     cfg.get("cflags_extra"))
+                                     cfg.get("cflags_extra"),
+                                     cfg.get("encoding_extra"))
         if extra:
             block["config_extra"] = extra
         if local:

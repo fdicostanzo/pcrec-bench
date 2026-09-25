@@ -22,3 +22,18 @@
 engine_mode = "default"
 captures = "on"
 description = "Oniguruma 6.9.10 (system libonig, direct-linked): ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_ASCII, onig_new/onig_search (search regime, unanchored) and onig_new/onig_match on a `(?:pattern)\\z`-wrapped SECOND artifact (match regime, anchored+end-anchored) -- an interpretive backtracking engine with no separate compile/JIT split ([B7]/L6b, capability_set_v1.md 8/11.1). See testees/onig/CLAUDE.md for the syntax/encoding choice and every known divergence from PCRE semantics this lane found."
+
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1): the ONE UTF-8 config.
+# `onig-default` with ONIG_ENCODING_UTF8 chosen at RUNTIME (driver
+# `--encoding utf8`; the driver's encoding was a compile-time constant
+# before U2). The token joins `config_extra`: the derived id is
+# `onig-default`'s plus `_utf8`. Its capability declaration is a RE-CENSUS
+# (onig-default withholds `unicode-properties` BECAUSE of the ASCII
+# encoding), witnessed per (config, REQUIRES token) BEFORE it shipped:
+# docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt.
+
+[testees.onig-utf8]
+engine_mode = "default"
+captures = "on"
+encoding = "utf8"
+description = "Oniguruma (system libonig, direct-linked): ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_UTF8 -- onig-default's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1), same two artifacts per pattern (plain + the (?:pattern)\\z whole-subject wrap). See testees/onig/CLAUDE.md's UTF-8 section for its re-censused capability declaration."

@@ -548,3 +548,43 @@ engine_mode = "vm"
 captures = "on"
 flags = ["--features", "all", "--engine=vm", "-fno-cls-fold"]
 description = "pcrec --engine=vm with the [FORM-CHAR] ASCII-FOLD CLASS TEST DENIED (-fno-cls-fold, bit 24): the forced-VM route is the only one the fold reaches (tuning.md 2.22: VM route only), so THIS pair against pcrec-vm is the fold's measured BEFORE/AFTER on altwide's ci-256 ([B39], pcrec I-49)"
+
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1/7.2, F-C1 -- a MUST per inbox
+# I-94): the usual four, all compiled `-e utf8` (I-90 clause 4). The
+# encoding rides in `flags` -- VISIBLE, never a hidden protocol token like
+# `-fcomments` -- and the adapter's `effective_encoding` recognises it and
+# puts `utf8` in `config_extra` as `compose_config_extra`'s FIFTH part
+# (after cc, the caps, the denials and cflags), so `pcrec-auto-utf8`
+# derives `pcrec-auto`'s id plus `_utf8` and the two can never collide in
+# the store. Every pre-existing config carries no `-e` and derives exactly
+# the id it had (`check_encoding_axis` arm 1, against a frozen table and
+# every committed record). pcrec has NO UCP axis (UD 4.5): these configs
+# declare `ascii-class-scope` SATISFIED and `unicode-class-scope` NOT --
+# witnessed per (config, REQUIRES token) BEFORE the declaration shipped:
+# docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt.
+
+[testees.pcrec-auto-utf8]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-e", "utf8"]
+description = "pcrec defaults compiled -e utf8 (UD 9.2 stage 2): pcrec-auto's character-mode sibling ([B77] U2, utf8_set_v1.md 7.2) -- same pin, same flags, the ENCODING the one variable moved"
+
+[testees.pcrec-nocaps-utf8]
+engine_mode = "auto"
+captures = "off"
+flags = ["--features", "all", "--no-captures", "-e", "utf8"]
+description = "pcrec --no-captures compiled -e utf8: pcrec-nocaps's character-mode sibling ([B77] U2, utf8_set_v1.md 7.2)"
+
+[testees.pcrec-vm-utf8]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-e", "utf8"]
+description = "pcrec --engine=vm compiled -e utf8: pcrec-vm's character-mode sibling ([B77] U2, utf8_set_v1.md 7.2)"
+
+[testees.pcrec-vm-in-utf8]
+engine_mode = "vm-in"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-e", "utf8"]
+buffer_frames = 32768
+buffer_trail = 131072
+description = "pcrec --engine=vm with the caller-provided frame buffer (32768 resume frames / 131072 trail entries, pcrec-vm-in's capacities) compiled -e utf8: pcrec-vm-in's character-mode sibling ([B77] U2, utf8_set_v1.md 7.2)"

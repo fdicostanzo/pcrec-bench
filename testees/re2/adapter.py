@@ -162,6 +162,7 @@ class Adapter(_ad.Adapter):
 
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
+        enc, enc_extra = _ad.config_encoding(testee_id, cfg)
         modver, pkgver = _probe_version()
         build_note = ("RE2 has no runtime version API (confirmed absent, "
                       "re2.h read in full); engine_version is pkg-config's "
@@ -170,7 +171,16 @@ class Adapter(_ad.Adapter):
                       "upstream snapshot date, its de facto release "
                       "identifier) rides here for full provenance."
                       % (pkgver or "version unavailable"))
-        return {
+        if enc == "utf8":
+            # [B77] U2: named in build_flags ONLY for the utf8 config, so
+            # every Latin-1 config's build_flags is byte-identical to its
+            # pre-[B77] rendering.
+            build_note += ("; ENGINE ENCODING utf8 ([B77] U2, utf8_set_v1.md "
+                           "7.1): RE2::Options::EncodingUTF8 -- RE2's own "
+                           "default, which every other config of this "
+                           "adapter overrides to EncodingLatin1 (driver "
+                           "--encoding utf8)")
+        block = {
             "engine_name": "re2",
             "engine_version": modver,
             "engine_commit": None,
@@ -189,8 +199,10 @@ class Adapter(_ad.Adapter):
             # record was refused at store.write -- 'longest_match=true'
             # is not of type 'object'. pcre2/pcrec emit [] here, so no
             # prior testee ever exercised a non-empty entry's shape).
-            "runtime_options": ([{"name": "longest_match", "value": True}]
-                                if cfg.get("longest") else []),
+            "runtime_options": (([{"name": "longest_match", "value": True}]
+                                 if cfg.get("longest") else [])
+                                + ([{"name": "encoding", "value": "utf8"}]
+                                   if enc == "utf8" else [])),
             "compile_cost_definition": (
                 "eager-jit-adjacent (capability_set_v1.md 7.1/7.2): the "
                 "explicit RE2(pattern, options) CONSTRUCTOR call, timed "
@@ -209,6 +221,11 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        # [B77] U2: the ENGINE encoding is an identity -- `re2-utf8` derives
+        # `re2-default`'s id plus `_utf8`; absent on every Latin-1 config.
+        if enc_extra:
+            block["config_extra"] = enc_extra
+        return block
 
     def binary_identity(self, testee_id, workdir=None):
         """`testee.binary` for a scratch-tier record (X29): the installed
@@ -305,6 +322,9 @@ class Adapter(_ad.Adapter):
             argv.append("--longest")
         max_mem = cfg.get("max_mem", DEFAULT_MAX_MEM)
         argv += ["--max-mem", str(max_mem)]
+        utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
+        if utf:
+            argv += ["--encoding", "utf8"]      # [B77] U2
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         def one(res):
@@ -343,7 +363,7 @@ class Adapter(_ad.Adapter):
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile,
                   "longest": bool(cfg.get("longest")),
-                  "max_mem": max_mem}
+                  "max_mem": max_mem, "utf": utf}
         return one(_ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -358,6 +378,10 @@ class Adapter(_ad.Adapter):
                 "--max-mem", str(handle["max_mem"])]
         if handle["longest"]:
             argv.append("--longest")
+        if handle.get("utf"):
+            # [B77] U2: the measure-time driver rebuilds the RE2 object, so
+            # the ENGINE encoding rides here too -- never a Latin-1 stand-in.
+            argv += ["--encoding", "utf8"]
         if regime == "throughput":
             argv.append("--find-all")
         if handle.get("utf8_advance"):

@@ -122,6 +122,16 @@ GAVE_UP_CODES = {
 GAVE_UP_CODES_DFA = (set(GAVE_UP_CODES) - {-46}) | {-43, -39, -42, -40}
 
 
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1): the build_flags clause a
+# `encoding = "utf8"` config appends -- and ONLY such a config, so every byte
+# config's build_flags is byte-identical to its pre-[B77] rendering.
+UTF_BUILD_NOTE = ("; ENGINE ENCODING utf8 ([B77] U2): pcre2_compile_8 "
+                  "options word carries PCRE2_UTF (driver --utf), never "
+                  "PCRE2_UCP (a pattern that wants Unicode-widened classes "
+                  "spells (*UCP) itself), never PCRE2_NO_UTF_CHECK "
+                  "(utf8_set_v1.md 8.2)")
+
+
 class Adapter(_ad.Adapter):
     name = "pcre2"
 
@@ -143,6 +153,7 @@ class Adapter(_ad.Adapter):
 
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
+        enc, enc_extra = _ad.config_encoding(testee_id, cfg)
         raw = self.probe_version(workdir or os.getcwd())
         version = raw.split()[0]
         jit = bool(cfg.get("jit"))
@@ -151,7 +162,7 @@ class Adapter(_ad.Adapter):
         decl = dict(METADATA_DECL)
         if not jit:
             del decl["jit_size_bytes"]
-        return {
+        block = {
             "engine_name": "libpcre2",
             "engine_version": version,
             "engine_commit": None,
@@ -179,8 +190,10 @@ class Adapter(_ad.Adapter):
             "engine_mode": cfg["engine_mode"],
             "simd": "n-a",
             "build_flags": "distribution libpcre2-8.so.0 (%s), loaded with "
-                           "dlopen; driver built with $CC -O2 -std=gnu11" % raw,
-            "runtime_options": [],
+                           "dlopen; driver built with $CC -O2 -std=gnu11" % raw
+                           + (UTF_BUILD_NOTE if enc == "utf8" else ""),
+            "runtime_options": ([{"name": "encoding", "value": "utf8"}]
+                                if enc == "utf8" else []),
             "compile_cost_definition": (
                 "eager JIT (requirements 3): the explicit compile calls, timed "
                 "in-driver -- pcre2_compile_8 (`compile`) then "
@@ -202,6 +215,12 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": decl,
         }
+        # [B77] U2: the ENGINE encoding is an identity (utf8_set_v1.md
+        # 7.1) -- a `pcre2-utf-*` config derives its byte sibling's id plus
+        # `_utf8`. ABSENT on every byte config, so their ids are unchanged.
+        if enc_extra:
+            block["config_extra"] = enc_extra
+        return block
 
     def binary_identity(self, testee_id, workdir=None):
         """`testee.binary` for a scratch-tier record (schema v1.2, X29): the
@@ -271,6 +290,16 @@ class Adapter(_ad.Adapter):
             argv.append("--jit")
         if cfg.get("dfa"):
             argv.append("--dfa")
+        utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
+        if utf:
+            # [B77] U2: PCRE2_UTF in pcre2_compile_8's options word (the
+            # driver's `--utf`, built by U1). NEVER `--ucp`: the class-
+            # scope split is a PATTERN property (utf8_set_v1.md 7.5) and
+            # the utf8 set spells the widening in the pattern text itself,
+            # `(*UCP)`, which PCRE2 reads inline -- so one config answers
+            # both `ascii-class-scope` and `unicode-class-scope` members,
+            # each by its own spelling, exactly as the oracle's word does.
+            argv.append("--utf")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         def one(res):
@@ -306,6 +335,7 @@ class Adapter(_ad.Adapter):
         handle = {"driver": drv, "pattern_file": patfile,
                   "jit": bool(cfg.get("jit")),
                   "dfa": bool(cfg.get("dfa")),
+                  "utf": utf,
                   "giveup_codes": set(GAVE_UP_CODES_DFA if cfg.get("dfa")
                                       else GAVE_UP_CODES)}
         return one(_ad.CompileResult(
@@ -323,6 +353,11 @@ class Adapter(_ad.Adapter):
             argv.append("--jit")
         if handle.get("dfa"):
             argv.append("--dfa")
+        if handle.get("utf"):
+            # [B77] U2: the measure-time driver recompiles the pattern, so
+            # the ENGINE encoding rides here too -- the same artifact the
+            # compile row timed, never a byte-mode stand-in for it.
+            argv.append("--utf")
         if regime == "throughput":
             argv.append("--find-all")
         if handle.get("utf8_advance"):

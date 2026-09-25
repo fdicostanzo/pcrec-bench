@@ -24,3 +24,19 @@
 [testees.vectorscan-block-nosom]
 engine_mode = "block-nosom"
 description = "Vectorscan (Hyperscan-ABI-compatible fork) 5.4.11, block mode (HS_MODE_BLOCK), NO HS_FLAG_SOM_LEFTMOST -- BOOLEAN GRAIN ONLY (capability_set_v1.md 5.6 option (B), Frank's Q3 ruling): match/no-match and compile/refusal comparisons, never a match span or a non-overlapping match count. See testees/vectorscan/CLAUDE.md before reading a report row for this testee."
+
+# [B77] U2 (docs/design/utf8_set_v1.md 7.1/7.6): the ONE UTF-8 config,
+# BOOLEAN GRAIN ONLY exactly as its byte sibling (Frank's Q3 ruling stands:
+# match/no-match and compile/refusal comparisons, never a span or a count).
+# hs_compile flags HS_FLAG_UTF8 (driver `--encoding utf8`) and NEVER
+# HS_FLAG_UCP -- 7.6: UCP BREAKS `\b` on five real corpus patterns (the
+# measured A/B in CLAUDE.md), so this config declares `ascii-class-scope`
+# SATISFIED and `unicode-class-scope` NOT; a `...-utf8-ucp` sibling is named,
+# not built (7.6 (2)). The token joins `config_extra`. Witnessed per (config,
+# REQUIRES token) BEFORE this declaration shipped:
+# docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt.
+
+[testees.vectorscan-block-nosom-utf8]
+engine_mode = "block-nosom"
+encoding = "utf8"
+description = "Vectorscan 5.4.11, block mode, NO SOM, hs_compile flags HS_FLAG_UTF8 (never HS_FLAG_UCP) -- vectorscan-block-nosom's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1/7.6), BOOLEAN GRAIN ONLY. See testees/vectorscan/CLAUDE.md's UTF-8 section before reading a report row for this testee."

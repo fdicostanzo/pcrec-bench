@@ -138,9 +138,10 @@ class Adapter(_ad.Adapter):
 
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
+        enc, enc_extra = _ad.config_encoding(testee_id, cfg)
         raw = self.probe_version(workdir or os.getcwd())
         version = raw.split()[0]
-        return {
+        block = {
             "engine_name": "vectorscan",
             "engine_version": version,
             "engine_commit": None,
@@ -169,8 +170,18 @@ class Adapter(_ad.Adapter):
                            "HS_FLAG_UCP/HS_FLAG_UTF8/HS_FLAG_SOM_LEFTMOST "
                            "never set (testees/vectorscan/CLAUDE.md "
                            "states the measured A/B and its "
-                           "consequences)" % raw,
-            "runtime_options": [],
+                           "consequences)" % raw
+                           # [B77] U2: named ONLY for the utf8 config, so
+                           # the byte config's build_flags is unchanged.
+                           + ("; ENGINE ENCODING utf8 ([B77] U2, "
+                              "utf8_set_v1.md 7.1/7.6): hs_compile flags "
+                              "HS_FLAG_UTF8 (driver --encoding utf8) in "
+                              "place of the 0 above -- HS_FLAG_UCP still "
+                              "never set, so \\w/\\d/\\s stay "
+                              "ASCII-scoped"
+                              if enc == "utf8" else ""),
+            "runtime_options": ([{"name": "encoding", "value": "utf8"}]
+                                if enc == "utf8" else []),
             "compile_cost_definition": (
                 "eager, monolithic compile (requirements 3; docs/dev/"
                 "research/2026-09-12-b42-engine-landscape.md's own "
@@ -186,6 +197,11 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        # [B77] U2: the ENGINE encoding is an identity -- the utf8 config
+        # derives `vectorscan-block-nosom`'s id plus `_utf8`.
+        if enc_extra:
+            block["config_extra"] = enc_extra
+        return block
 
     def binary_identity(self, testee_id, workdir=None):
         """`testee.binary` for a scratch-tier record (schema v1.2, X29):
@@ -280,6 +296,9 @@ class Adapter(_ad.Adapter):
                 "--compile-trials", str(trials)]
         if free_spacing:
             argv.append("--free-spacing")
+        utf = _ad.config_encoding(testee_id, self.config(testee_id))[0] == "utf8"
+        if utf:
+            argv += ["--encoding", "utf8"]      # [B77] U2
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         if out.timed_out:
@@ -304,7 +323,7 @@ class Adapter(_ad.Adapter):
             if name in out.info:
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
-                  "giveup_codes": set(GAVE_UP_CODES)}
+                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -317,6 +336,10 @@ class Adapter(_ad.Adapter):
         argv = [handle["driver"], "--pattern", handle["pattern_file"],
                 "--form", handle["form"], "--mode", REGIME_MODE[regime],
                 "--iters", str(iters)]
+        if handle.get("utf"):
+            # [B77] U2: the measure-time driver recompiles, so the ENGINE
+            # encoding rides here too -- never a byte-mode stand-in.
+            argv += ["--encoding", "utf8"]
         if regime == "throughput":
             argv.append("--find-all")
         if handle.get("utf8_advance"):

@@ -139,8 +139,9 @@ class Adapter(_ad.Adapter):
 
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
+        enc, enc_extra = _ad.config_encoding(testee_id, cfg)
         version = self.probe_version(workdir or os.getcwd())
-        return {
+        block = {
             "engine_name": "oniguruma",
             "engine_version": version,
             "engine_commit": None,
@@ -164,8 +165,16 @@ class Adapter(_ad.Adapter):
                            "(-lonig); driver built with $CC -O2 -std=gnu11; "
                            "ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_ASCII "
                            "(testees/onig/CLAUDE.md states the choice and "
-                           "its consequences)" % version,
-            "runtime_options": [],
+                           "its consequences)" % version
+                           # [B77] U2: named ONLY for the utf8 config, so
+                           # onig-default's build_flags is byte-identical.
+                           + ("; ENGINE ENCODING utf8 ([B77] U2, "
+                              "utf8_set_v1.md 7.1): ONIG_ENCODING_UTF8 "
+                              "selected at runtime (driver --encoding utf8) "
+                              "in place of the ASCII default above"
+                              if enc == "utf8" else ""),
+            "runtime_options": ([{"name": "encoding", "value": "utf8"}]
+                                if enc == "utf8" else []),
             "compile_cost_definition": (
                 "interpreter (requirements 3): the one call, timed "
                 "in-driver -- onig_new. No separate JIT step exists "
@@ -175,6 +184,11 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        # [B77] U2: the ENGINE encoding is an identity -- `onig-utf8`
+        # derives `onig-default`'s id plus `_utf8`; absent on onig-default.
+        if enc_extra:
+            block["config_extra"] = enc_extra
+        return block
 
     def binary_identity(self, testee_id, workdir=None):
         """`testee.binary` for a scratch-tier record (schema v1.2, X29):
@@ -256,6 +270,9 @@ class Adapter(_ad.Adapter):
             f.write(pattern)
         argv = [drv, "--pattern", patfile, "--form", form,
                 "--compile-trials", str(trials)]
+        utf = _ad.config_encoding(testee_id, self.config(testee_id))[0] == "utf8"
+        if utf:
+            argv += ["--encoding", "utf8"]      # [B77] U2
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         if out.timed_out:
@@ -280,7 +297,7 @@ class Adapter(_ad.Adapter):
         # `harness.classify_giveup` needs no engine knowledge -- the same
         # contract testees/pcre2/adapter.py's `giveup_codes` uses.
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
-                  "giveup_codes": set(GAVE_UP_CODES)}
+                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle)
@@ -292,6 +309,10 @@ class Adapter(_ad.Adapter):
         argv = [handle["driver"], "--pattern", handle["pattern_file"],
                 "--form", handle["form"], "--mode", REGIME_MODE[regime],
                 "--iters", str(iters)]
+        if handle.get("utf"):
+            # [B77] U2: the measure-time driver recompiles, so the ENGINE
+            # encoding rides here too -- never an ASCII stand-in.
+            argv += ["--encoding", "utf8"]
         if regime == "throughput":
             argv.append("--find-all")
         if handle.get("utf8_advance"):
