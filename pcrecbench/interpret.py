@@ -129,6 +129,11 @@ HEADER_KEYS = [
     "null_band",
 ]
 
+# [B79]: the header keys a report MAY omit -- emitted only when the
+# report's own content calls for them (`null_band`: a cross-pin pair).
+# Every other HEADER_KEYS entry is unconditional.
+CONDITIONAL_HEADER_KEYS = ("null_band",)
+
 DID_NOT_FIRE_TOKENS = ("no-matching-rows", "input-absent", "grain",
                        "reporter-version", "no-registered-signatures",
                        "retired")

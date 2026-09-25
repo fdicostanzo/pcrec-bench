@@ -452,6 +452,25 @@ of the `[B47]`-era subject-grain slice found necessary (a mixed-roster
 subject-grain report's new 19-column header would otherwise have been
 refused outright by `pcrecbench interpret`).
 
+**[B79] additions (2026-09-25, lane b79nullband; the null-control band,
+reporter v22)**: 3 new tests in `test_report.py` (93 → 96) —
+`test_b79_null_band_hand_computed` (two pins of one config, a
+hand-written census, every number worked in the fixture's own comments:
+ten program-identical cells at >=1us giving a ±6.00% band, three at
+100ns-1us (INSUFFICIENT, n=3 < 10), none at <100ns (EMPTY), and the five
+verdict shapes -- regress past the band, within a WIDER IQR (Type-7 IQR
+150 of 900/950/1000/1100/1200 = 15%), improve past the band, and the two
+IQR-only verdicts naming their stratum's n -- plus the per-view counts,
+the conditional `null_band:` header key, the `null_band`/`d119`/
+`d119_view` TSV rows and a ragged-row check),
+`test_b79_no_census_is_stated_never_silent` (CONTROL: a cross-pin pair
+with no census renders `NO NULL BAND` naming the path, no D119 column,
+no d119 rows) and `test_b79_single_pin_report_renders_no_band` (CONTROL:
+no cross-pin pair, nothing new rendered). `test_b82_capture_class_views_
+and_query`'s I-101 assertion now checks the COMPUTED clearance (`clears
+IQR only` / `IQR 0.00% (clears)` / `no null band (no cross-pin pair in
+this report)`) in place of the retired "[B79] not-started" text.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then

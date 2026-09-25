@@ -118,6 +118,22 @@ No committed report's TIMING NUMBERS moved — this wave changes only the
 reporter's own rendering surface (the version stamp and the new
 baseline fact), never a record, a query result, or a ranking.
 
+## `identity/` — the program-identity censuses ([B79], 2026-09-25)
+
+`identity/<subbench@version>/<engine>_<old>__<new>.tsv`: one per
+cross-pin pair a committed report renders, written by
+`tools/program_identity.py` (deterministic; `--check` re-derives it) and
+READ by `pcrecbench report` at exactly that path to find the pair's
+program-identical artifacts -- the null-control population of the
+report's `## Null-control band` section and its `D119 bar` column
+(`docs/design/null_band_v1.md`). An INPUT the reporter reads, not a
+render: never hand-edited, and a cross-pin report whose pair has no
+file here says `NO NULL BAND` by name. Committed today: capability@0.1
+`25b1984f__8d716693`, `8d716693__b1885a83` (192/192 agreement with
+pcrec's own `nullctl.json`, recorded in the file) and `b1885a83__6ef76820`.
+A future cross-pin report group needs its pair's census committed
+BEFORE it is rendered, or it renders without a band.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its

@@ -39,6 +39,17 @@ docs/dev/'s append-only records.
   RECORD, and the file is named for it. Implemented by `../../schema/`
   and gated by `make check-schema`.
 
+- `null_band_v1.md` — **[B79] IMPLEMENTED 2026-09-25 (reporter v22,
+  catalogue 3.7)**: the null-control band and D119's bar as the
+  reporter states it on every cross-pin report -- identity from our
+  own census (`tools/program_identity.py`; the records carry no
+  program hash, a finding with a proposed fix), strata by regime x
+  baseline scale, the symmetric worst-null-cell half-width, the
+  `N_MIN = 10` sufficiency rule, the bar |Δ%| > max(IQR%, band), the
+  surfaces (section, `D119 bar` column, per-view restatement, TSV
+  rows, the I-101 clearance column) and the two interpreter rules.
+  Before it no design note specified the bar at all.
+
 - `harness_notes.md` — **[B3]/[B4]'s list of where the BUILD differs from
   `harness_contract.md`, and why**: the two regime spellings, the two
   testee-id spaces, the sidecar's second generator/manifest pair, the

@@ -159,11 +159,11 @@ def section_1(cat):
     ok(1, f"catalogue {cat['catalogue_version']} loads with "
           f"{len(cat['rule'])} rules and every load-time check green")
 
-    if len(cat["rule"]) != 33:
-        bad(1, "the catalogue carries 33 rules",
+    if len(cat["rule"]) != 35:
+        bad(1, "the catalogue carries 35 rules",
             f"found {len(cat['rule'])}")
     else:
-        ok(1, "33 rules in 7 classes")
+        ok(1, "35 rules in 7 classes")
     classes = {r["class"] for r in cat["rule"]}
     if classes != {"status", "delta", "rank", "arm", "floor", "pred",
                    "bucket"}:
@@ -192,10 +192,13 @@ def section_1(cat):
         with open(path, encoding="utf-8") as fh:
             head = fh.readline()
         parsed = I.split_header(head, derived)
-        if set(parsed) != set(derived):
+        # [B79]: a CONDITIONAL key (`null_band`, present only on a
+        # cross-pin v22+ render) may be absent; every other key may not.
+        required = set(derived) - set(I.CONDITIONAL_HEADER_KEYS)
+        if not required <= set(parsed) or not set(parsed) <= set(derived):
             bad(1, f"{os.path.basename(report_rel)}: header parses to every "
-                   f"known key", str(sorted(set(derived) - set(parsed))))
-        elif "; " in parsed.get("x13_rules", "") and len(parsed) != len(derived):
+                   f"known key", str(sorted(required - set(parsed))))
+        elif "; " in parsed.get("x13_rules", "") and not required <= set(parsed):
             bad(1, "a two-clause x13_rules value does not shift later keys")
     ok(1, "every acceptance report's header parses to the full key set")
 
@@ -709,22 +712,22 @@ def section_4(cat):
               f"compound `selection changed (vm → dfa); now measured (was: "
               f"gave-up)` verdict")
 
-    # the NULL CONTROL: all 33 rules quiet on the synthetic clean report
+    # the NULL CONTROL: all 35 rules quiet on the synthetic clean report
     clean = facts_by_name.get("CLEAN__all-measured")
     if clean is None:
         bad(4, "the null control runs")
     else:
         fired = {rid for rid, seqs in _fired(clean).items() if seqs}
         if fired:
-            bad(4, "Report D (the null control): all 33 rules report fired=0",
+            bad(4, "Report D (the null control): all 35 rules report fired=0",
                 f"{sorted(fired)} fired")
         else:
             n = len(_tokens(clean))
-            if n != 33:
-                bad(4, "Report D names all 33 rules", f"named {n}")
+            if n != 35:
+                bad(4, "Report D names all 35 rules", f"named {n}")
             else:
-                ok(4, "Report D (the null control): all 33 rules report "
-                      "fired=0, and all 33 are named")
+                ok(4, "Report D (the null control): all 35 rules report "
+                      "fired=0, and all 35 are named")
 
 
 _FILE_COLUMNS = {"report.tsv": I.REPORT_COLUMNS,
