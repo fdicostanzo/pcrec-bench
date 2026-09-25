@@ -28,14 +28,9 @@ the capability survey set, with no `subbench.toml`/generator/manifest of
 its own yet. See `bench/capability/CLAUDE.md`. L3 builds the runnable set
 from it and earns a row here when it does.
 
-`utf8/` ([B77], lane b77u3, 2026-09-25) is ALSO NOT in the table above and
-NOT enumerated by `make check-harness`'s generic gates, for the same
-reason: only its SUBJECTS are built (five word pools, `utf8text.py`, the
-two subject generators + manifests, `subject_facts.tsv` -- the UTF-8
-lead-byte histogram, a new per-set facts table). No `subbench.toml`
-exists yet. See `bench/utf8/CLAUDE.md`; the design is
-`docs/design/utf8_set_v1.md`. U4 builds `patterns.rxt` and the sidecar
-and earns this set a row here when it does.
+| `utf8/` | THE UTF-8 ENCODING SET ([B77], inbox I-90; U3 2026-09-25, U4 2026-09-25): seventy-five patterns (+ the floor) in six encoding-dependence families -- `cls` (16, the 1-byte/multi-byte class boundary, Frank's own named example), `lit` (12, multi-byte literals, the required-byte/offset-skip shapes -- FP 3.1's live witness pair `é@`/`@é`), `ci` (12, caseless folding over non-ASCII, incl. the fold-closure-reaches-outside-the-range case), `alt-qnt` (12, alternation/quantifiers over multi-byte units, incl. `alt-cyr-64`, a 64-branch bridge rung to `bench/altwide`), `asr` (11, `\b`/`\B` class-scope dependence, lookbehind over variable byte widths, true-end anchors), `prp` (12, `\p`/`\P` general categories and scripts, incl. the Script-vs-Script_Extensions spelling pair and `prp-ingreek`, a REFUSAL witness with no subject by design) -- over five GENERATED script corpora (Latin-1-Supplement-heavy, Cyrillic, CJK, a mixed corpus with emoji, and a byte-clean ASCII control) whose lead-byte histogram is a committed, re-derived fact (`subject_facts.tsv`). BUILT ON pcrec's `.rxt` format (`patterns.rxt`) in `bench/capability`'s own shape, with a twelve-config `ext bench` roster (the UTF-8-capable subset of the [B7] roster) TRANSCRIBED from a witness census, never re-guessed. `expectations.tsv` is a STUB today (the floor pattern only, 98 rows) -- the real 76-pattern derivation and `NOTES.md` are U5's own scope; see `bench/utf8/CLAUDE.md` and `docs/dev/lanes/b77u4_report.md`. Declares `search_short` + `throughput` only (no `match`), `short_search_max_bytes = 512`, `[expectations] encoding = "utf8"` (the set-wide `PCRE2_UTF` oracle flag, [B77] U1) |
+
+The design is `docs/design/utf8_set_v1.md`.
 
 `subjects/` and `throughput/` are GENERATED and gitignored; the
 generators and their sha256 manifests are committed, and `make check`

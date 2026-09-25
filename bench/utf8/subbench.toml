@@ -1,0 +1,842 @@
+# The UTF-8 encoding set's SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- the pattern SOURCE
+# lives in patterns.rxt ([B77] U4, docs/design/utf8_set_v1.md 13's U4 row),
+# which sits beside this file with NO `rxt_source =` key: the harness's
+# LOADED pattern source is THIS FILE's own array of pattern tables
+# (DERIVED from gen_patterns.py's table -- `gen_patterns.py --sidecar`
+# prints it, `--check` compares it against patterns.rxt/patterns/*.rx
+# entry for entry), while patterns.rxt's `ext bench` block is read
+# separately, by `pcrecbench.capability`'s SIDECAR/SHIM path
+# (`rxt_source.load_aux_rows()`, triggered by the file's mere presence
+# beside this sidecar -- no key needed). See bench/utf8/gen_patterns.py's
+# own docstring for why this split was chosen over bench/capability's
+# later `rxt_source =` switch.
+
+id = "utf8"
+version = "0.1"
+objective_kind = "feature"
+objective = """\
+A UTF-8 ENCODING contrast across the twelve UTF-8-capable roster \
+configs ([B77], inbox I-90; Frank: "any functionality which might be \
+affected by encoding -- classes come to mind"): the twelve \
+encoding-dependence axes pcrec's own tests/utf8/axis01-12 test for \
+CORRECTNESS, measured here for SPEED, over five generated script \
+corpora (Latin-1-Supplement-heavy, Cyrillic, CJK, a mixed corpus with \
+emoji, and a byte-clean ASCII control) whose lead-byte histogram is a \
+committed, re-derived fact rather than a claim. BUILT ON pcrec's \
+`.rxt` format as this set's pattern source of truth, in \
+bench/capability's own shape. See docs/design/utf8_set_v1.md and \
+bench/utf8/NOTES.md (owed, U5)."""
+description = """\
+Seventy-five patterns (75 members + the floor) across six \
+encoding-dependence families -- cls (16, classes and the 1-byte/ \
+multi-byte boundary), lit (12, multi-byte literals and the \
+required-byte/offset-skip shapes), ci (12, caseless folding over \
+non-ASCII), alt-qnt (12, alternation and quantifiers over multi-byte \
+units, incl. alt-cyr-64, a 64-branch bridge rung to bench/altwide), \
+asr (11, assertions -- \\b/\\B class-scope dependence, lookbehind \
+over variable byte widths, true-end anchors), prp (12, \\p/\\P \
+general categories, scripts, the Script vs Script_Extensions \
+spelling pair, and the prp-ingreek REFUSAL witness, which carries NO \
+subject by design) -- plus the floor `~`. Every pattern carries a \
+native `.rxt` `provenance` sub-block (source=authored, \
+fidelity=synthesized -- a correctness/encoding census, not a \
+wild-provenance set) and a `tag family=/hazard=/requires=` \
+classification against a six-token subset of pcrecbench.capability's \
+closed REQUIRES vocabulary (utf8-encoding, ascii-class-scope, \
+unicode-class-scope, lookaround, true-end-anchor, \
+unicode-properties). The `ext bench` roster/capability matrix for \
+the twelve UTF-8-capable configs is TRANSCRIBED from lane b77u2's own \
+witness census (docs/dev/measurements/ \
+2026-09-25-b77u2-utf8-witness-census.txt), never re-guessed. See \
+docs/dev/lanes/b77u4_report.md for the charter-vs-committed checklist \
+and two corrections this lane made on its own evidence (tre-default's \
+true-end-anchor withheld here against bench/capability's own stale \
+declaration; asr-b-midchar tagged ascii-class-scope per b77u2's \
+finding 4)."""
+
+# `search_short` + `throughput` ONLY, per utf8_set_v1.md 10.1: NOT `match`
+# -- the lexical whole-subject wrapper is applied per adapter with THREE
+# different spellings (pcrec's \z, TRE's ^(?:...)$, rust's \A(?:...)\z),
+# exactly the kind of lexical edit whose interaction with an ENCODING
+# nobody has checked (bench/capability 3.5's own reason, restated).
+regimes = ["search_short", "throughput"]
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# utf8_set_v1.md 10.1: matches bench/capability's own precedent.
+short_search_max_bytes = 512
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+# [B77] U1 (docs/design/utf8_set_v1.md 8.1): the SET's own encoding --
+# PCRE2_UTF goes in the oracle's option word for EVERY pattern alike (no
+# per-subject/per-regime variation); PCRE2_UCP is a per-PATTERN fact,
+# carried by the `unicode-class-scope` REQUIRES token (pcrecbench/
+# subbench.py's `SET_ENCODINGS`).
+encoding = "utf8"
+
+[[patterns]]
+name = "cls-boundary-range"
+file = "patterns/cls-boundary-range.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-high-range"
+file = "patterns/cls-high-range.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-neg-single"
+file = "patterns/cls-neg-single.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-neg-allhigh"
+file = "patterns/cls-neg-allhigh.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-mixed"
+file = "patterns/cls-mixed.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-dot"
+file = "patterns/cls-dot.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-dot-rep"
+file = "patterns/cls-dot-rep.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-w-ascii"
+file = "patterns/cls-w-ascii.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-w-ucp"
+file = "patterns/cls-w-ucp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-d-ascii"
+file = "patterns/cls-d-ascii.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-d-ucp"
+file = "patterns/cls-d-ucp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-s-nbsp"
+file = "patterns/cls-s-nbsp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-s-ucp"
+file = "patterns/cls-s-ucp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-posix-alpha"
+file = "patterns/cls-posix-alpha.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "cls-lead-pair"
+file = "patterns/cls-lead-pair.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "cls-neg-cjk"
+file = "patterns/cls-neg-cjk.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-cls", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-1ch-2b"
+file = "patterns/lit-1ch-2b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-1ch-3b"
+file = "patterns/lit-1ch-3b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-1ch-4b"
+file = "patterns/lit-1ch-4b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-run-3"
+file = "patterns/lit-run-3.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-mixed-ascii"
+file = "patterns/lit-mixed-ascii.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-cyr-run"
+file = "patterns/lit-cyr-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-offset-at-tail"
+file = "patterns/lit-offset-at-tail.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-offset-at-head"
+file = "patterns/lit-offset-at-head.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-nearmiss-run"
+file = "patterns/lit-nearmiss-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-anchored-run"
+file = "patterns/lit-anchored-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-nfc-pair"
+file = "patterns/lit-nfc-pair.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "lit-sharp-s"
+file = "patterns/lit-sharp-s.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-lit", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-e-acute"
+file = "patterns/ci-e-acute.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-moskva"
+file = "patterns/ci-moskva.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-greek-run"
+file = "patterns/ci-greek-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-kelvin"
+file = "patterns/ci-kelvin.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-long-s"
+file = "patterns/ci-long-s.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-class-range"
+file = "patterns/ci-class-range.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-neg-fold"
+file = "patterns/ci-neg-fold.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-strasse"
+file = "patterns/ci-strasse.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-sigma"
+file = "patterns/ci-sigma.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-turkish-i"
+file = "patterns/ci-turkish-i.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "ci-ascii-control"
+file = "patterns/ci-ascii-control.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "ci-ucp-invariance"
+file = "patterns/ci-ucp-invariance.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-ci", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "alt-shared-char"
+file = "patterns/alt-shared-char.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "alt-shared-lead"
+file = "patterns/alt-shared-lead.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "alt-distinct-lead"
+file = "patterns/alt-distinct-lead.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "alt-mixed-width"
+file = "patterns/alt-mixed-width.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "alt-cyr-64"
+file = "patterns/alt-cyr-64.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "alt-nearmiss"
+file = "patterns/alt-nearmiss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-plus-2b"
+file = "patterns/qnt-plus-2b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-lazy-2b"
+file = "patterns/qnt-lazy-2b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-counted-3b"
+file = "patterns/qnt-counted-3b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-bounded-4b"
+file = "patterns/qnt-bounded-4b.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-dot-bounded"
+file = "patterns/qnt-dot-bounded.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "qnt-class-run"
+file = "patterns/qnt-class-run.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-alt-qnt", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "asr-b-ascii"
+file = "patterns/asr-b-ascii.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "asr-b-cyr"
+file = "patterns/asr-b-cyr.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "asr-b-cyr-ucp"
+file = "patterns/asr-b-cyr-ucp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "asr-b-midchar"
+file = "patterns/asr-b-midchar.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-ascii-class-scope"]
+role = "member"
+
+[[patterns]]
+name = "asr-lb-fixed"
+file = "patterns/asr-lb-fixed.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "asr-lb-varwidth"
+file = "patterns/asr-lb-varwidth.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "asr-lb-neg"
+file = "patterns/asr-lb-neg.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "asr-lb-class"
+file = "patterns/asr-lb-class.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-lookaround"]
+role = "member"
+
+[[patterns]]
+name = "asr-caret-ml"
+file = "patterns/asr-caret-ml.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "asr-dollar-ml"
+file = "patterns/asr-dollar-ml.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding"]
+role = "member"
+
+[[patterns]]
+name = "asr-a-z"
+file = "patterns/asr-a-z.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-asr", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-true-end-anchor"]
+role = "member"
+
+[[patterns]]
+name = "prp-l"
+file = "patterns/prp-l.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-lu"
+file = "patterns/prp-lu.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-n"
+file = "patterns/prp-n.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-notl"
+file = "patterns/prp-notl.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-zs"
+file = "patterns/prp-zs.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-l-anchored"
+file = "patterns/prp-l-anchored.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-cyrillic"
+file = "patterns/prp-cyrillic.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-han"
+file = "patterns/prp-han.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-latin"
+file = "patterns/prp-latin.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-greek"
+file = "patterns/prp-greek.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-greek-sc"
+file = "patterns/prp-greek-sc.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "prp-ingreek"
+file = "patterns/prp-ingreek.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-prp", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-utf8-encoding", "requires-unicode-properties"]
+role = "member"
+
+[[patterns]]
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-floor", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "floor"
+

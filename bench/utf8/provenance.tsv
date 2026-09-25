@@ -1,0 +1,77 @@
+pattern_id	family	provenance_source	source_url	source_ref	license	retrieved	fidelity	adaptation	attribution
+cls-boundary-range	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-boundary-range -- a range SPANNING the 1-byte/multi-byte boundary	
+cls-high-range	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-high-range -- a wholly-multi-byte range crossing the 2-byte/3-byte width boundary at U+0800	
+cls-neg-single	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-neg-single -- negation of ONE non-ASCII character; complement within [0, 0x10FFFF]	
+cls-neg-allhigh	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-neg-allhigh -- the negation whose complement is exactly ASCII	
+cls-mixed	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-mixed -- ASCII + Latin-1 Supplement + Cyrillic in one class	
+cls-dot	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-dot -- '.' is ONE CHARACTER, not one byte	
+cls-dot-rep	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-dot-rep -- the sharpest encoded-length witness	
+cls-w-ascii	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-w-ascii -- \w WITHOUT UCP: ASCII-scoped	
+cls-w-ucp	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-w-ucp -- the UCP twin of cls-w-ascii	
+cls-d-ascii	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-d-ascii -- designed NEAR-MISS against four Arabic-Indic digits	
+cls-d-ucp	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-d-ucp -- the UCP twin of cls-d-ascii: the SAME digits become a HIT	
+cls-s-nbsp	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-s-nbsp -- designed NEAR-MISS against a U+00A0 b	
+cls-s-ucp	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-s-ucp -- the UCP twin of cls-s-nbsp: the SAME subject becomes a HIT	
+cls-posix-alpha	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-posix-alpha -- the POSIX-class spelling of the same scope question	
+cls-lead-pair	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-lead-pair -- a TWO-lead-byte class (0xCE, 0xCF); memchr cannot filter it	
+cls-neg-cjk	cls	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(cls): cls-neg-cjk -- a negated 3-byte range, mostly FAILING over the cjk corpus	
+lit-1ch-2b	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-1ch-2b -- one 2-byte character (C3 A9)	
+lit-1ch-3b	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-1ch-3b -- one 3-byte character (E6 97 A5)	
+lit-1ch-4b	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-1ch-4b -- one 4-byte character (F0 9F 98 80)	
+lit-run-3	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-run-3 -- a 9-byte run of 3-byte characters; every necessary byte is HIGH	
+lit-mixed-ascii	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-mixed-ascii -- mixed widths with an ASCII @ and . available as the necessary byte -- the CONTROL for lit-run-3	
+lit-cyr-run	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-cyr-run -- a 12-byte run whose every lead byte is 0xD0 or 0xD1	
+lit-offset-at-tail	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-offset-at-tail -- THE FIRST CUSTOMER: FP 3.1's live offset-skip witness	
+lit-offset-at-head	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-offset-at-head -- its ORDER PAIR: the same three bytes, the other order	
+lit-nearmiss-run	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-nearmiss-run -- the designed NEAR-MISS reading of lit-run-3 (against a subject sharing six of nine bytes)	
+lit-anchored-run	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-anchored-run -- the anchored reading of lit-run-3	
+lit-nfc-pair	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-nfc-pair -- a designed MISS against a DECOMPOSED subject (no normalization claim)	
+lit-sharp-s	lit	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(lit): lit-sharp-s -- the German 2-byte ß in an otherwise ASCII literal	
+ci-e-acute	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-e-acute -- the simplest non-ASCII fold pair (U+00E9 / U+00C9)	
+ci-moskva	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-moskva -- a six-character Cyrillic fold set	
+ci-greek-run	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-greek-run -- a Greek fold set in a different lead-byte group	
+ci-kelvin	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-kelvin -- the closure reaching OUTSIDE the range: k/K plus U+212A KELVIN SIGN	
+ci-long-s	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-long-s -- the same shape with U+017F LATIN SMALL LETTER LONG S	
+ci-class-range	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-class-range -- fold over a RANGE, pulling in partners outside it	
+ci-neg-fold	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-neg-fold -- FOLD BEFORE NEGATE: the closure applies before the complement	
+ci-strasse	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-strasse -- designed NEAR-MISS: must NOT match STRASSE (simple folding only)	
+ci-sigma	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-sigma -- σ/Σ/ς fold together under simple folding	
+ci-turkish-i	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-turkish-i -- designed NEAR-MISS: must NOT match U+0130 or U+0131	
+ci-ascii-control	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-ascii-control -- the CONTROL: a pure-ASCII fold, byte-safe for TRE	
+ci-ucp-invariance	ci	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(ci): ci-ucp-invariance -- the control that says the fold is NOT UCP-gated	
+alt-shared-char	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-shared-char -- three branches sharing the whole first CHARACTER	
+alt-shared-lead	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-shared-lead -- three branches sharing only the LEAD BYTE (0xCE)	
+alt-distinct-lead	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-distinct-lead -- three branches, three lead-byte groups	
+alt-mixed-width	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-mixed-width -- one branch per encoded length: 1/2/3/4 bytes	
+alt-cyr-64	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-cyr-64 -- the BRIDGE rung to bench/altwide@0.2's own width curve -- ONE rung, not a ladder	
+alt-nearmiss	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): alt-nearmiss -- designed NEAR-MISS against a subject sharing six of nine bytes on both branches	
+qnt-plus-2b	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-plus-2b -- a quantified 2-byte character; BYTE-DECOMPOSED under byte mode	
+qnt-lazy-2b	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-lazy-2b -- the lazy twin of qnt-plus-2b	
+qnt-counted-3b	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-counted-3b -- a counted repeat of a two-character (6-byte) group	
+qnt-bounded-4b	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-bounded-4b -- a counted repeat of a 4-byte character: 8 to 16 bytes	
+qnt-dot-bounded	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-dot-bounded -- a counted repeat of '.' -- characters, not bytes	
+qnt-class-run	alt-qnt	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(alt-qnt): qnt-class-run -- a counted repeat over a multi-byte CLASS	
+asr-b-ascii	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-b-ascii -- the pure-ASCII CONTROL, byte-safe for TRE	
+asr-b-cyr	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-b-cyr -- designed NEAR-MISS: without UCP a Cyrillic letter is NOT a word character	
+asr-b-cyr-ucp	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-b-cyr-ucp -- the UCP twin and control pair of asr-b-cyr	
+asr-b-midchar	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-b-midchar -- the only reachable half of axis 11 (K50's own witness shape)	
+asr-lb-fixed	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-lb-fixed -- fixed CHARACTER width 1, BYTE width 2	
+asr-lb-varwidth	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-lb-varwidth -- branches of differing BYTE width at identical CHARACTER width	
+asr-lb-neg	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-lb-neg -- negative lookbehind over a 3-byte body	
+asr-lb-class	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-lb-class -- a lookbehind over a multi-byte CLASS	
+asr-caret-ml	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-caret-ml -- multiline ^ over lines beginning with a 3-byte character	
+asr-dollar-ml	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-dollar-ml -- multiline $ at the end of a multi-byte line	
+asr-a-z	asr	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(asr): asr-a-z -- true-end anchor over a multi-byte subject	
+prp-l	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-l -- the general category every \p user reaches for first	
+prp-lu	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-lu -- 47 lead bytes -- a usable bitmap filter	
+prp-n	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-n -- numbers incl. non-ASCII digits; the positive twin of cls-d-ascii	
+prp-notl	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-notl -- the negated category: complement over the whole universe	
+prp-zs	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-zs -- space separators incl. U+00A0/U+3000; positive twin of cls-s-nbsp	
+prp-l-anchored	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-l-anchored -- a counted property class: four CHARACTERS of unknown byte width	
+prp-cyrillic	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-cyrillic -- a script with two lead bytes -- the strongest script filter	
+prp-han	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-han -- a script with a wide 3-byte lead spread	
+prp-latin	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-latin -- a script spanning the 1-byte/multi-byte boundary	
+prp-greek	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-greek -- the SPELLING PAIR half one: Script | Script_Extensions	
+prp-greek-sc	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-greek-sc -- half two: Script alone	
+prp-ingreek	prp	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(prp): prp-ingreek -- the REFUSAL WITNESS: PCRE2 10.46 refuses block names with error 147; no InGreek property exists	
+floor	floor	authored			n-a	2026-09-25	synthesized	utf8_set_v1.md 5(floor): floor -- the floor pattern -- byte-safe for TRE, the one member whose compiled pcrec artifact should be identical under -e utf8 and -e byte	

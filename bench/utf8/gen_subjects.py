@@ -13,20 +13,20 @@ table folds its floor witness INTO its stated "75"; this generator states
 both numbers explicitly in its own printout and in CLAUDE.md/NOTES.md
 rather than silently picking one convention).
 
-WHAT THIS LANE (U3) DOES NOT KNOW YET. `bench/utf8/patterns.rxt` does not
-exist -- U4 builds it, after this lane, from the SAME family tables in
-`docs/design/utf8_set_v1.md` 5. Every subject below is typed against that
-design note's own pattern TEXT (not against a `.rx` file, which does not
-exist), so a subject's actual match/no-match answer is left to
-`gen_expectations.py` (U5) once the real patterns are built -- exactly
+WHAT THIS LANE (U3) DID NOT KNOW YET, AT AUTHORING TIME. `bench/utf8/
+patterns.rxt` did not exist when this file was first written -- U4 built
+it afterward, from the SAME family tables in `docs/design/utf8_set_v1.md`
+5. Every subject below is typed against that design note's own pattern
+TEXT, so a subject's actual match/no-match answer is left to
+`gen_expectations.py` (U5) once the full oracle derivation runs -- exactly
 `bench/capability/gen_subjects.py`'s own discipline ("this module only
 states the INTENT each subject was typed for"). Two subjects
-(`alt-cyr64-hit`, `alt-cyr64-miss`) additionally COORDINATE with U4: they
-assume the 64-branch Cyrillic alternation (`alt-cyr-64`, utf8_set_v1.md
-5(d)) is built from common words including "дом" ("house")
-and excluding a rare compound -- stated in each subject's own description
-so U4's author can either honor the assumption or correct these two
-subjects when the real pattern lands.
+(`alt-cyr64-hit`, `alt-cyr64-miss`) assumed facts about the 64-branch
+Cyrillic alternation (`alt-cyr-64`, utf8_set_v1.md 5(d)) that U4 has since
+CONFIRMED against the real pattern and the real oracle (see each
+subject's own description below and `docs/dev/lanes/b77u4_report.md`):
+"дом" ("house") is one of the 64 branches and hits; "квинтэссенция" is
+absent from the word pool entirely and misses.
 
 Every subject is authored as a Python `str` (never a raw byte literal --
 typing exotic UTF-8 byte sequences by hand invites exactly the silent
@@ -226,12 +226,15 @@ SUBJECTS = (
      "(alt-mixed-width): the 4-byte branch", "\U0001f600"),
     ("alt-cyr64-hit", "field/hit alt-cyr-64 (the 64-branch Cyrillic "
      "alternation, utf8_set_v1.md 5(d)): a common word "
-     "('дом', house) -- U4 COORDINATION: assumes the "
-     "64-word list includes this word; correct this subject if it "
-     "does not", "дом"),
+     "('дом', house) -- U4 CONFIRMED (bench/utf8/gen_patterns.py's "
+     "_alt_cyr_64_words(), the last 64 of pool_cyr.tsv's 175 rows): "
+     "'дом' IS one of the 64 branches, and the real oracle answers "
+     "match[0,6) under PCRE2_UTF", "дом"),
     ("alt-cyr64-miss", "field/miss alt-cyr-64: an uncommon compound "
-     "word unlikely to be among the 64 chosen branches -- U4 "
-     "COORDINATION, same caveat as alt-cyr64-hit",
+     "word not among the 64 chosen branches -- U4 CONFIRMED: "
+     "'квинтэссенция' is absent from pool_cyr.tsv entirely (no "
+     "selection could include it), and the real oracle answers "
+     "nomatch under PCRE2_UTF",
      "квинтэссенц"
      "ия"),
     ("qnt-plus-lazy-hit", "field/hit `é+` (qnt-plus-2b) AND "
@@ -264,7 +267,7 @@ SUBJECTS = (
      "(asr-b-ascii): the SAME bounded word beside multi-byte "
      "neighbours, confirming \\b's ASCII scope is unaffected by "
      "adjacent non-ASCII content", "café cat"),
-    ("asr-B-midchar-hit", "field/hit `\\B` (asr-B-midchar): two "
+    ("asr-b-midchar-hit", "field/hit `\\B` (asr-b-midchar): two "
      "adjacent ASCII word characters -- \\B fires at the ENGINE-"
      "invented non-boundary position between them", "xy"),
     ("asr-lb-fixed-hit", "field/hit `(?<=é)x` (asr-lb-fixed) AND "

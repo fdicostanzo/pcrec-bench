@@ -63,7 +63,7 @@ asr-b-ascii-hit	search_short	11	11	11	0	0	0	0	1.0000	0.0000	n/a	1.0000
 asr-b-ascii-miss	search_short	11	11	11	0	0	0	0	1.0000	0.0000	n/a	1.0000
 asr-b-cyr-pair	search_short	12	6	0	6	0	0	6	0.0000	1.0000	0xd0	2.0000
 asr-b-ascii-adjacent-multibyte	search_short	9	8	7	1	0	0	1	0.7778	0.2222	0xc3	1.1250
-asr-B-midchar-hit	search_short	2	2	2	0	0	0	0	1.0000	0.0000	n/a	1.0000
+asr-b-midchar-hit	search_short	2	2	2	0	0	0	0	1.0000	0.0000	n/a	1.0000
 asr-lb-fixed-hit	search_short	3	2	1	1	0	0	1	0.3333	0.6667	0xc3	1.5000
 asr-lb-fixed-miss	search_short	3	2	1	1	0	0	1	0.3333	0.6667	0xc3	1.5000
 asr-lb-varwidth-a-hit	search_short	2	2	2	0	0	0	0	1.0000	0.0000	n/a	1.0000

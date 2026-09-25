@@ -1,0 +1,917 @@
+description |
+  bench/utf8@0.1 -- the UTF-8 encoding set ([B77],
+  inbox I-90). Seventy-five patterns in six
+  encoding-dependence families plus the floor, BUILT ON
+  this format as its pattern source of truth. See
+  docs/design/utf8_set_v1.md and bench/utf8/NOTES.md.
+
+oracle pcre2
+vocabulary family cls lit ci alt-qnt asr prp floor
+vocabulary hazard none
+vocabulary requires utf8-encoding ascii-class-scope unicode-class-scope lookaround true-end-anchor unicode-properties
+tag set=utf8, version=0.1
+ext bench
+  roster pcre2-utf-interp pcre2-utf-jit pcre2-utf-dfa pcrec-auto-utf8 pcrec-nocaps-utf8 pcrec-vm-utf8 pcrec-vm-in-utf8 re2-utf8 onig-utf8 vectorscan-block-nosom-utf8 rust-default tre-default
+  capabilities pcre2-utf-interp
+    utf8-encoding
+    ascii-class-scope
+    unicode-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcre2-utf-jit
+    utf8-encoding
+    ascii-class-scope
+    unicode-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcre2-utf-dfa
+    utf8-encoding
+    ascii-class-scope
+    unicode-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-auto-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-nocaps-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-vm-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-vm-in-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities re2-utf8
+    utf8-encoding
+    ascii-class-scope
+    true-end-anchor
+    unicode-properties
+  capabilities onig-utf8
+    utf8-encoding
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities vectorscan-block-nosom-utf8
+    utf8-encoding
+    ascii-class-scope
+    unicode-class-scope
+    true-end-anchor
+    unicode-properties
+  capabilities rust-default
+    utf8-encoding
+    true-end-anchor
+    unicode-properties
+  capabilities tre-default
+    ascii-class-scope
+
+pattern-esc "[a-\xc3\xa9]+"
+name cls-boundary-range
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-boundary-range -- a range SPANNING the 1-byte/multi-byte boundary
+
+pattern [\x{100}-\x{2000}]+
+name cls-high-range
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-high-range -- a wholly-multi-byte range crossing the 2-byte/3-byte width boundary at U+0800
+
+pattern-esc "[^\xc3\xa9]"
+name cls-neg-single
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-neg-single -- negation of ONE non-ASCII character; complement within [0, 0x10FFFF]
+
+pattern [^\x{80}-\x{10FFFF}]+
+name cls-neg-allhigh
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-neg-allhigh -- the negation whose complement is exactly ASCII
+
+pattern-esc "[a-z\xc3\xa9\\x{430}-\\x{44F}]+"
+name cls-mixed
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-mixed -- ASCII + Latin-1 Supplement + Cyrillic in one class
+
+pattern .
+name cls-dot
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-dot -- '.' is ONE CHARACTER, not one byte
+
+pattern ^.{5}$
+name cls-dot-rep
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-dot-rep -- the sharpest encoded-length witness
+
+pattern \w+
+name cls-w-ascii
+tag family=cls, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-w-ascii -- \w WITHOUT UCP: ASCII-scoped
+
+pattern (*UCP)\w+
+name cls-w-ucp
+tag family=cls, hazard=none, requires=utf8-encoding, requires=unicode-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-w-ucp -- the UCP twin of cls-w-ascii
+
+pattern \d{4}
+name cls-d-ascii
+tag family=cls, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-d-ascii -- designed NEAR-MISS against four Arabic-Indic digits
+
+pattern (*UCP)\d{4}
+name cls-d-ucp
+tag family=cls, hazard=none, requires=utf8-encoding, requires=unicode-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-d-ucp -- the UCP twin of cls-d-ascii: the SAME digits become a HIT
+
+pattern a\sb
+name cls-s-nbsp
+tag family=cls, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-s-nbsp -- designed NEAR-MISS against a U+00A0 b
+
+pattern (*UCP)a\sb
+name cls-s-ucp
+tag family=cls, hazard=none, requires=utf8-encoding, requires=unicode-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-s-ucp -- the UCP twin of cls-s-nbsp: the SAME subject becomes a HIT
+
+pattern [[:alpha:]]+
+name cls-posix-alpha
+tag family=cls, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-posix-alpha -- the POSIX-class spelling of the same scope question
+
+pattern-esc "[\xce\xb1-\xcf\x89]+"
+name cls-lead-pair
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-lead-pair -- a TWO-lead-byte class (0xCE, 0xCF); memchr cannot filter it
+
+pattern [^\x{4E00}-\x{9FFF}]+
+name cls-neg-cjk
+tag family=cls, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(cls): cls-neg-cjk -- a negated 3-byte range, mostly FAILING over the cjk corpus
+
+pattern-esc "\xc3\xa9"
+name lit-1ch-2b
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-1ch-2b -- one 2-byte character (C3 A9)
+
+pattern-esc "\xe6\x97\xa5"
+name lit-1ch-3b
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-1ch-3b -- one 3-byte character (E6 97 A5)
+
+pattern-esc "\xf0\x9f\x98\x80"
+name lit-1ch-4b
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-1ch-4b -- one 4-byte character (F0 9F 98 80)
+
+pattern-esc "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"
+name lit-run-3
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-run-3 -- a 9-byte run of 3-byte characters; every necessary byte is HIGH
+
+pattern-esc "user@\xe4\xbe\x8b\xe3\x81\x88.jp"
+name lit-mixed-ascii
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-mixed-ascii -- mixed widths with an ASCII @ and . available as the necessary byte -- the CONTROL for lit-run-3
+
+pattern-esc "\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0"
+name lit-cyr-run
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-cyr-run -- a 12-byte run whose every lead byte is 0xD0 or 0xD1
+
+pattern-esc "\xc3\xa9@"
+name lit-offset-at-tail
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-offset-at-tail -- THE FIRST CUSTOMER: FP 3.1's live offset-skip witness
+
+pattern-esc "@\xc3\xa9"
+name lit-offset-at-head
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-offset-at-head -- its ORDER PAIR: the same three bytes, the other order
+
+pattern-esc "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"
+name lit-nearmiss-run
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-nearmiss-run -- the designed NEAR-MISS reading of lit-run-3 (against a subject sharing six of nine bytes)
+
+pattern-esc "^\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e$"
+name lit-anchored-run
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-anchored-run -- the anchored reading of lit-run-3
+
+pattern-esc "caf\xc3\xa9"
+name lit-nfc-pair
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-nfc-pair -- a designed MISS against a DECOMPOSED subject (no normalization claim)
+
+pattern-esc "Stra\xc3\x9fe"
+name lit-sharp-s
+tag family=lit, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(lit): lit-sharp-s -- the German 2-byte ß in an otherwise ASCII literal
+
+pattern-esc "(?i)\xc3\xa9"
+name ci-e-acute
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-e-acute -- the simplest non-ASCII fold pair (U+00E9 / U+00C9)
+
+pattern-esc "(?i)\xd0\xbc\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0"
+name ci-moskva
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-moskva -- a six-character Cyrillic fold set
+
+pattern-esc "(?i)\xce\xb1\xce\xb2\xce\xb3"
+name ci-greek-run
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-greek-run -- a Greek fold set in a different lead-byte group
+
+pattern (?i)k
+name ci-kelvin
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-kelvin -- the closure reaching OUTSIDE the range: k/K plus U+212A KELVIN SIGN
+
+pattern (?i)s
+name ci-long-s
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-long-s -- the same shape with U+017F LATIN SMALL LETTER LONG S
+
+pattern (?i)[a-z]+
+name ci-class-range
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-class-range -- fold over a RANGE, pulling in partners outside it
+
+pattern-esc "(?i)[^\xc3\xa9]"
+name ci-neg-fold
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-neg-fold -- FOLD BEFORE NEGATE: the closure applies before the complement
+
+pattern-esc "(?i)stra\xc3\x9fe"
+name ci-strasse
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-strasse -- designed NEAR-MISS: must NOT match STRASSE (simple folding only)
+
+pattern-esc "(?i)\xcf\x83"
+name ci-sigma
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-sigma -- σ/Σ/ς fold together under simple folding
+
+pattern (?i)i
+name ci-turkish-i
+tag family=ci, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-turkish-i -- designed NEAR-MISS: must NOT match U+0130 or U+0131
+
+pattern (?i)abc
+name ci-ascii-control
+tag family=ci, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-ascii-control -- the CONTROL: a pure-ASCII fold, byte-safe for TRE
+
+pattern-esc "(*UCP)(?i)\xc3\xa9"
+name ci-ucp-invariance
+tag family=ci, hazard=none, requires=utf8-encoding, requires=unicode-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(ci): ci-ucp-invariance -- the control that says the fold is NOT UCP-gated
+
+pattern-esc "\xe6\x97\xa5\xe6\x9c\xac|\xe6\x97\xa5\xe6\x9b\x9c|\xe6\x97\xa5\xe4\xbb\x98"
+name alt-shared-char
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-shared-char -- three branches sharing the whole first CHARACTER
+
+pattern-esc "\xce\xb1|\xce\xb2|\xce\xb3"
+name alt-shared-lead
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-shared-lead -- three branches sharing only the LEAD BYTE (0xCE)
+
+pattern-esc "\xe6\x97\xa5\xe6\x9c\xac|\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0|caf\xc3\xa9"
+name alt-distinct-lead
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-distinct-lead -- three branches, three lead-byte groups
+
+pattern-esc "a|\xc3\xa9|\xe6\x97\xa5|\xf0\x9f\x98\x80"
+name alt-mixed-width
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-mixed-width -- one branch per encoded length: 1/2/3/4 bytes
+
+pattern-esc "\xd0\xbd\xd0\xb0\xd0\xb4|\xd0\xb1\xd0\xbe\xd0\xbb\xd1\x8c\xd1\x88\xd0\xb5|\xd1\x87\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb7|\xd1\x8d\xd1\x82\xd0\xb8|\xd0\xbd\xd0\xb0\xd1\x81|\xd0\xbf\xd1\x80\xd0\xbe|\xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe|\xd0\xbd\xd0\xb8\xd1\x85|\xd0\xba\xd0\xb0\xd0\xba\xd0\xb0\xd1\x8f|\xd0\xbc\xd0\xbd\xd0\xbe\xd0\xb3\xd0\xbe|\xd1\x80\xd0\xb0\xd0\xb7\xd0\xb2\xd0\xb5|\xd1\x82\xd1\x80\xd0\xb8|\xd1\x8d\xd1\x82\xd1\x83|\xd0\xbc\xd0\xbe\xd1\x8f|\xd0\xb2\xd0\xbf\xd1\x80\xd0\xbe\xd1\x87\xd0\xb5\xd0\xbc|\xd1\x85\xd0\xbe\xd1\x80\xd0\xbe\xd1\x88\xd0\xbe|\xd1\x81\xd0\xb2\xd0\xbe\xd1\x8e|\xd1\x8d\xd1\x82\xd0\xbe\xd0\xb9|\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb4|\xd0\xb8\xd0\xbd\xd0\xbe\xd0\xb3\xd0\xb4\xd0\xb0|\xd0\xbb\xd1\x83\xd1\x87\xd1\x88\xd0\xb5|\xd1\x87\xd1\x83\xd1\x82\xd1\x8c|\xd1\x82\xd0\xbe\xd0\xbc|\xd0\xbd\xd0\xb5\xd0\xbb\xd1\x8c\xd0\xb7\xd1\x8f|\xd1\x82\xd0\xb0\xd0\xba\xd0\xbe\xd0\xb9|\xd0\xb8\xd0\xbc|\xd0\xb1\xd0\xbe\xd0\xbb\xd0\xb5\xd0\xb5|\xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xb4\xd0\xb0|\xd0\xba\xd0\xbe\xd0\xbd\xd0\xb5\xd1\x87\xd0\xbd\xd0\xbe|\xd0\xb2\xd1\x81\xd1\x8e|\xd0\xbc\xd0\xb5\xd0\xb6\xd0\xb4\xd1\x83|\xd0\xb4\xd0\xbe\xd0\xbc|\xd0\xb3\xd0\xbe\xd1\x80\xd0\xbe\xd0\xb4|\xd0\xb4\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb2\xd0\xbd\xd1\x8f|\xd0\xb4\xd1\x80\xd1\x83\xd0\xb3|\xd1\x80\xd0\xb0\xd0\xb1\xd0\xbe\xd1\x82\xd0\xb0|\xd0\xb4\xd0\xb5\xd0\xbb\xd0\xbe|\xd1\x81\xd0\xbb\xd0\xbe\xd0\xb2\xd0\xbe|\xd0\xb6\xd0\xb8\xd0\xb7\xd0\xbd\xd1\x8c|\xd0\xb2\xd1\x80\xd0\xb5\xd0\xbc\xd1\x8f|\xd1\x80\xd1\x83\xd0\xba\xd0\xb0|\xd0\xb3\xd0\xbb\xd0\xb0\xd0\xb7|\xd0\xb3\xd0\xbe\xd0\xbb\xd0\xbe\xd0\xb2\xd0\xb0|\xd0\xb2\xd0\xbe\xd0\xb4\xd0\xb0|\xd0\xb7\xd0\xb5\xd0\xbc\xd0\xbb\xd1\x8f|\xd1\x81\xd0\xbe\xd0\xbb\xd0\xbd\xd1\x86\xd0\xb5|\xd1\x81\xd0\xb2\xd0\xb5\xd1\x82|\xd0\xb4\xd0\xb2\xd0\xb5\xd1\x80\xd1\x8c|\xd0\xbe\xd0\xba\xd0\xbd\xd0\xbe|\xd1\x81\xd1\x82\xd0\xbe\xd0\xbb|\xd0\xba\xd0\xbd\xd0\xb8\xd0\xb3\xd0\xb0|\xd0\xbf\xd0\xb8\xd1\x81\xd1\x8c\xd0\xbc\xd0\xbe|\xd0\xb2\xd0\xbe\xd0\xb9\xd0\xbd\xd0\xb0|\xd0\xbc\xd0\xb8\xd1\x80|\xd0\xbb\xd1\x8e\xd0\xb1\xd0\xbe\xd0\xb2\xd1\x8c|\xd1\x81\xd1\x87\xd0\xb0\xd1\x81\xd1\x82\xd1\x8c\xd0\xb5|\xd0\xbc\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0|\xd1\x80\xd0\xbe\xd1\x81\xd1\x81\xd0\xb8\xd1\x8f|\xd0\xb4\xd0\xb5\xd0\xbd\xd1\x8c|\xd0\xbd\xd0\xbe\xd1\x87\xd1\x8c|\xd1\x83\xd1\x82\xd1\x80\xd0\xbe|\xd0\xb2\xd0\xb5\xd1\x87\xd0\xb5\xd1\x80|\xd0\xbd\xd0\xb5\xd0\xb4\xd0\xb5\xd0\xbb\xd1\x8f|\xd0\xbc\xd0\xb5\xd1\x81\xd1\x8f\xd1\x86"
+name alt-cyr-64
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-cyr-64 -- the BRIDGE rung to bench/altwide@0.2's own width curve -- ONE rung, not a ladder
+
+pattern-esc "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e|\xe6\x97\xa5\xe6\x9c\xac\xe5\x9b\xbd"
+name alt-nearmiss
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): alt-nearmiss -- designed NEAR-MISS against a subject sharing six of nine bytes on both branches
+
+pattern-esc "\xc3\xa9+"
+name qnt-plus-2b
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-plus-2b -- a quantified 2-byte character; BYTE-DECOMPOSED under byte mode
+
+pattern-esc "\xc3\xa9+?"
+name qnt-lazy-2b
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-lazy-2b -- the lazy twin of qnt-plus-2b
+
+pattern-esc "(?:\xe6\x97\xa5\xe6\x9c\xac){2,}"
+name qnt-counted-3b
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-counted-3b -- a counted repeat of a two-character (6-byte) group
+
+pattern-esc "\xf0\x9f\x98\x80{2,4}"
+name qnt-bounded-4b
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-bounded-4b -- a counted repeat of a 4-byte character: 8 to 16 bytes
+
+pattern .{3,8}
+name qnt-dot-bounded
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-dot-bounded -- a counted repeat of '.' -- characters, not bytes
+
+pattern [\x{400}-\x{4FF}]{4,16}
+name qnt-class-run
+tag family=alt-qnt, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(alt-qnt): qnt-class-run -- a counted repeat over a multi-byte CLASS
+
+pattern \bcat\b
+name asr-b-ascii
+tag family=asr, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-b-ascii -- the pure-ASCII CONTROL, byte-safe for TRE
+
+pattern-esc "\\b\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0\\b"
+name asr-b-cyr
+tag family=asr, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-b-cyr -- designed NEAR-MISS: without UCP a Cyrillic letter is NOT a word character
+
+pattern-esc "(*UCP)\\b\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0\\b"
+name asr-b-cyr-ucp
+tag family=asr, hazard=none, requires=utf8-encoding, requires=unicode-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-b-cyr-ucp -- the UCP twin and control pair of asr-b-cyr
+
+pattern \B
+name asr-b-midchar
+tag family=asr, hazard=none, requires=utf8-encoding, requires=ascii-class-scope
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-b-midchar -- the only reachable half of axis 11 (K50's own witness shape)
+
+pattern-esc "(?<=\xc3\xa9)x"
+name asr-lb-fixed
+tag family=asr, hazard=none, requires=utf8-encoding, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-lb-fixed -- fixed CHARACTER width 1, BYTE width 2
+
+pattern-esc "(?<=a|\xc3\xa9)x"
+name asr-lb-varwidth
+tag family=asr, hazard=none, requires=utf8-encoding, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-lb-varwidth -- branches of differing BYTE width at identical CHARACTER width
+
+pattern-esc "(?<!\xe6\x97\xa5)\xe6\x9c\xac"
+name asr-lb-neg
+tag family=asr, hazard=none, requires=utf8-encoding, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-lb-neg -- negative lookbehind over a 3-byte body
+
+pattern (?<=[\x{400}-\x{4FF}])\s
+name asr-lb-class
+tag family=asr, hazard=none, requires=utf8-encoding, requires=lookaround
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-lb-class -- a lookbehind over a multi-byte CLASS
+
+pattern-esc "(?m)^\xe6\x97\xa5"
+name asr-caret-ml
+tag family=asr, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-caret-ml -- multiline ^ over lines beginning with a 3-byte character
+
+pattern-esc "(?m)\xe8\xaa\x9e$"
+name asr-dollar-ml
+tag family=asr, hazard=none, requires=utf8-encoding
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-dollar-ml -- multiline $ at the end of a multi-byte line
+
+pattern-esc "\\A\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e\\z"
+name asr-a-z
+tag family=asr, hazard=none, requires=utf8-encoding, requires=true-end-anchor
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(asr): asr-a-z -- true-end anchor over a multi-byte subject
+
+pattern \p{L}+
+name prp-l
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-l -- the general category every \p user reaches for first
+
+pattern \p{Lu}
+name prp-lu
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-lu -- 47 lead bytes -- a usable bitmap filter
+
+pattern \p{N}+
+name prp-n
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-n -- numbers incl. non-ASCII digits; the positive twin of cls-d-ascii
+
+pattern \P{L}+
+name prp-notl
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-notl -- the negated category: complement over the whole universe
+
+pattern \p{Zs}
+name prp-zs
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-zs -- space separators incl. U+00A0/U+3000; positive twin of cls-s-nbsp
+
+pattern ^\p{L}{4}$
+name prp-l-anchored
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-l-anchored -- a counted property class: four CHARACTERS of unknown byte width
+
+pattern \p{Cyrillic}+
+name prp-cyrillic
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-cyrillic -- a script with two lead bytes -- the strongest script filter
+
+pattern \p{Han}+
+name prp-han
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-han -- a script with a wide 3-byte lead spread
+
+pattern \p{Latin}+
+name prp-latin
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-latin -- a script spanning the 1-byte/multi-byte boundary
+
+pattern \p{Greek}
+name prp-greek
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-greek -- the SPELLING PAIR half one: Script | Script_Extensions
+
+pattern \p{sc=Greek}
+name prp-greek-sc
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-greek-sc -- half two: Script alone
+
+pattern \p{InGreek}
+name prp-ingreek
+tag family=prp, hazard=none, requires=utf8-encoding, requires=unicode-properties
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(prp): prp-ingreek -- the REFUSAL WITNESS: PCRE2 10.46 refuses block names with error 147; no InGreek property exists
+
+pattern ~
+name floor
+tag family=floor, hazard=none
+provenance
+  source authored
+  retrieved 2026-09-25
+  license n-a
+  fidelity synthesized
+  adaptation |
+    utf8_set_v1.md 5(floor): floor -- the floor pattern -- byte-safe for TRE, the one member whose compiled pcrec artifact should be identical under -e utf8 and -e byte
