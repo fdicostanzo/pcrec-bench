@@ -3929,3 +3929,50 @@ improve/regress/within/null-control) 26/18/24/299 and 15/5/14/91. A known
 defect in the I-101 query's pairing (it can pair across pins) is being
 fixed today as [B87]; its hits in the three 2026-09-23 reports should
 not be read until that lands.
+
+## O-55 (2026-09-25, [B89], answers inbox I-107) — the WAF attribution timing block at f37e5c23: U1/U2/U3 CONFIRMED by I-107's own criteria; L1 fractions 87.4% / 77.0%; L2 not staged; L4 3.61%
+
+Executor run (BD10: numbers verbatim, no diagnosis). Full report with every
+line verbatim: docs/dev/lanes/b89waf_report.md (merged). Raw logs:
+/tmp/optloop-waf/ (step2_timing_output.log etc., kept; the ~/pcrec worktree was removed).
+
+- Setup: pcrec f37e5c23, detached worktree, gcc 15.2.0, make -j4 clean. The three
+  subject sha256s match cycle1_analysis.md §0.3's EXPECT lines. The clock.c
+  calibration read 0.2254-0.2258 "GHz" ×5 (that is the loop's
+  iterations per second, printed as-is). One substitution: the default
+  BENCH_ROOT in mk_inputs.py is a darwin path, so the lane passed
+  /home/duxevents/pcrec-bench as its documented second argument. The output
+  matched waf/CLAUDE.md's 5→4 arms, 1460→291 bytes.
+- Step 0 stamps as waf_attribution.md states. Step 1: every check.sh line was
+  SAME, zero DIFF. match.bin counts dbnames 7 / split 10 / union 9 (all four
+  ci twins) / sleep 6, exactly as expected.
+- Step 2: load1 was 0.35 at launch and 0.40 at the end (the lane waited out
+  0.58/0.57 first). All 39 rows returned matches=0 and no give-up.
+
+ns/B at t-1m (best of 5):
+
+| artifact | ns/B | | artifact | ns/B |
+|---|---|---|---|---|
+| dbnames base | 3.0869 | | union-select base | 0.7178 |
+| dbnames_plain | 1.8140 | | union_plain | 1.8428 |
+| split base | 2.3995 | | ci_unionu | 0.4701 |
+| split_plain | 1.8072 | | ci_fromf | 0.3441 |
+| sleep base | 0.9317 | | ci_fromm | 0.2348 |
+| sleep_plain | 1.7766 | | ci_selectc | 0.4389 |
+| sleepnrb | 0.8981 | | | |
+
+- U1: CONFIRMED on both stated tests. All four twins are below base 0.7178,
+  and the order fromm < fromf < selectc < unionu follows the hit counts.
+  Separately, as a fact and not one of I-107's tests: only fromm is below
+  re2's 0.319. fromf, selectc and unionu measured 0.34-0.47, against the
+  predicted 0.17/0.19/0.27. That is the "uniform upward shift with the order
+  intact" case your text anticipates.
+- U2: CONFIRMED (1.8428 > 0.7178). U3: CONFIRMED (1.7766 > 0.9317).
+- L1: dbnames_plain closes 87.4% of the gap between base and re2 1.63;
+  split_plain closes 77.0%.
+- L2: NOT STAGED. §7 F1 needs the M3.c json-constant hand-twin. That twin is
+  described only in prose, and there is no committed file for it at
+  f37e5c23, so the lane did not build one. If you want it, commit the
+  twin (or a generator for it).
+- L4: sleepnrb 0.8981 vs base 0.9317 = −3.61%, which is above your 1% line.
+  Recorded, not chased.
