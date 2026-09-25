@@ -418,7 +418,14 @@ bindings) live here, vendored or system, pinned either way.
   and P1-P13 stated in NOTES.md before any run, a utf sibling set left
   room for. `make check`'s generic gates enumerate `bench/*/` rather than naming a
   set. See their CLAUDE.mds.
-- `testees/<name>/` — the ADAPTERS: `pcre2/` (interp, jit) and `pcrec/`
+- `testees/<name>/` — the ADAPTERS (since [B77] U2, 2026-09-25, every
+  UTF-8-capable engine also carries a CHARACTER-mode sibling whose
+  testee_id is its byte sibling's plus `_utf8`: `pcre2-utf-interp`/
+  `-jit`/`-dfa`, `pcrec-{auto,nocaps,vm,vm-in}-utf8` (`-e utf8`, the FIFTH
+  `compose_config_extra` part), `re2-utf8`, `onig-utf8`,
+  `vectorscan-block-nosom-utf8` — twenty pinned pcrec configs; the
+  declarations rest on docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt):
+  `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
   the two `-bigcap` siblings — both emitted-size caps raised to 8 MiB via
   pcrec's raise-only flags, an identity in the testee_id ([B31]) — and
@@ -799,6 +806,12 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # find-all advance in the oracle, every driver and
                         # the harness, each with its byte-stepping NEGATIVE
                         # (check_utf8_find_all_advance)
+                        # and ([B77] U2) the engine-encoding axis: all 25
+                        # pre-existing configs derive a FROZEN id shape +
+                        # config_extra, the pre-U2 four-part compose frozen,
+                        # every committed record re-derived, the ten -utf8
+                        # configs' shape, and ^.$ over `é` per engine family
+                        # (check_encoding_axis)
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
     make check-interpret # 132 checks in six sections (~28 s; [B13.3]): the
                         # catalogue/code correspondence and every load-time

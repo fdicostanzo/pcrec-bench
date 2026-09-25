@@ -2359,9 +2359,11 @@ reads Script_Extensions, as PCRE2); `\p{InGreek}` refuses by name.
 emitted-CODE cap (563,569 / 1,117,090 B) — a SIZE refusal, not a missing
 capability: utf8_set_v1.md §15 R4 / P7's finding, which the set must see
 as first-class `did-not-compile` rows (the probe's size rule), never as a
-declared absence. `-e utf8 --no-captures` `\P{L}+` takes ~41 s to EMIT
-(one DFA, 487,011 B, over the advisory `--warn-emit-bytes`) — a compile
-cost the first window pays. Declarations: 14/20 (`auto`, `vm`, `vm-in`),
+declared absence. Under `auto` AND `nocaps`, `-e utf8` `\P{L}+` takes
+41.1 s to EMIT (one DFA, 487,011 B, over the advisory
+`--warn-emit-bytes`) and its `(?:…)\z` form 62.0 s (501,987 B) — one
+timed run each, not a measurement, but a compile cost every trial of the
+first window pays (`\p{L}`: 0.2 s, 767,323 B, also warns). Declarations: 14/20 (`auto`, `vm`, `vm-in`),
 13/20 (`nocaps`, no `captures`); `non-utf8-subject` NOT by rule (a UTF-8
 config's subject contract is valid UTF-8; the utf8 set runs none).
 
