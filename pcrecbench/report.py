@@ -1423,6 +1423,55 @@ are held at v19 until this fix's regeneration runs.
   limit but still carry the tripled shape) is OWED to the manager at
   merge, per the standing precedent (`reports/CLAUDE.md`) -- not run by
   this lane.
+
+[B79] THE NULL-CONTROL BAND (2026-09-25, lane b79nullband; v22)
+----------------------------------------------------------------
+Inbox I-93 block B and I-104 (pcrec's ask), [B82] (ii) (the class-aware
+interpreter rules), docs/design/null_band_v1.md (the design of record).
+
+- **Scope: CROSS-PIN reports only.** The pairs are EXACTLY R8's
+  (`_previous_pin_testee`, extracted from `_cross_pin_info` so one rule
+  pairs both the `Δ vs previous version` column and the band). A report
+  with no cross-pin pair renders NOTHING new (no section, no column, no
+  header key, no rows) -- its only v21 -> v22 differences are the version
+  line and the I-101 query's clearance cells (below).
+- **Identity is OUR OWN census**, `reports/identity/<sb@ver>/<engine>_
+  <old>__<new>.tsv`, written by `tools/program_identity.py` (both pins
+  re-emitted with the pinned binaries under each config's RECORDED flags;
+  `.c` + `.h` compared after dropping only the generated-by line, the
+  `.abi` integer and one-sided `#define` stamps). The records themselves
+  carry no program hash -- a finding, and the reason the census is a
+  file beside the reports rather than a record field. A pair with no
+  census renders `NO NULL BAND for this pair` naming the expected path,
+  and no D119 verdict: never a silent IQR-only fallback.
+- **The band** (`pcrecbench.nullband`): per (regime, baseline scale) of
+  the BEFORE median (`>=1us` / `100ns-1us` / `<100ns`), the largest
+  |Δ%| over the stratum's program-identical, both-sides-measured set
+  cells -- symmetric. A stratum with fewer than `nullband.N_MIN` (10)
+  cells is `insufficient` (or `empty`) BY NAME and its band is unused.
+- **The bar**, per cross-pin cell: |Δ%| > max(IQR%, band), IQR% the
+  BEFORE side's Type-7 IQR over its per-trial set sums (`SetCell.sums`)
+  as a share of the before median. A program-identical cell is rendered
+  `null control`, never scored against a band it is part of. An
+  insufficient stratum's verdicts carry `(IQR only: band n=K < 10)`.
+- **Surfaces.** Markdown: a `## Null-control band` section after the
+  Query section; a `D119 bar` column beside `Δ vs previous version`;
+  every ranking view (each class-pure view and the mixed one) restates
+  the bar with ITS OWN counts. TSV: a conditional LAST header key
+  `null_band:` (after `floor_pattern`, so no existing key moves),
+  `null_band` rows (census + one `band_pct` row per stratum), one `d119`
+  row per cross-pin cell (value = the base verdict token, the
+  arithmetic in `gave_up_summary`, R8's verdict in `delta_verdict`) and
+  `d119_view` count rows (yes / no / mixed, or all).
+- **The I-101 query's clearance column is COMPUTED** (`_query_clearance`):
+  gap% = (nocaps - competitor)/nocaps against the wider of the two cells'
+  IQRs and the nocaps cell's own stratum band from its pin pair; on a
+  single-pin report the band is stated absent by name ("no null band (no
+  cross-pin pair in this report)"). [B82]'s claim that the per-trial
+  values were not held was wrong for SET cells (`SetCell.sums` has always
+  carried them); at subject grain the IQR is stated `n/a`.
+- **Subject grain carries no band** (the section says so in one
+  sentence): the D119 bar is a set-grain statement, as R8 is.
 """
 
 from __future__ import annotations

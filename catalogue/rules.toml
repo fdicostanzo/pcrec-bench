@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.6"
+catalogue_version = "3.7"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,21 @@ catalogue_version = "3.6"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.7 (2026-09-25, lane b79nullband, [B79] + [B82] (ii); inbox I-93
+# block B, I-99/I-101, I-104): MINOR, two rules ADDED over reporter
+# v22's new data, zero existing rule's predicate/threshold/inputs/slots
+# moved -- R-DELTA-5 (THE CLASS-AWARE D119 VERDICT: a cross-pin cell
+# outside max(IQR, null band), read from the reporter's own `d119` rows
+# and aggregated by capture class so no bullet pools a capturing and a
+# non-capturing cell) and R-STATUS-15 (THE STANDING CROSS-CLASS QUERY
+# FIRES: every I-101 hit, with the reporter's own clearance sentence).
+# `pcrecbench/interpret.py` gains the `null_band`/`d119`/`d119_view`
+# SECTIONS and the conditional `null_band` HEADER_KEYS entry. The
+# golden facts gain the two rules' did-not-fire rows on the four
+# acceptance reports (both read `input-absent`: none of them is a v22
+# cross-pin render) -- additive, per the precedent of R-ARM-2 (3.0) and
+# R-STATUS-14 (3.2).
 #
 # 3.6 (2026-09-23, lane b84repin, [B84]/inbox I-102): MINOR, a
 # `[[pin_order]]` append only -- `6ef76820` (abi 31, [OPT-PRECHECK-ADMIT]:
@@ -772,6 +787,58 @@ the catalogue's own fixture, `R-STATUS-14__unanimous-refusal-plain-twin`
 gap carries it for real.
 """
 
+[[rule]]
+id            = "R-STATUS-15"
+title         = "the standing cross-class query fires (a capturing competitor beats pcrec auto-nocaps)"
+class         = "status"
+since         = "3.7"
+grain         = ["set", "subject"]
+aggregate     = ["regime", "competitor", "clearance_verdict"]
+inputs        = [
+  "report:query_yes_beats_nocaps?metric=hit_count.{value}",
+  "report:query_yes_beats_nocaps?metric=beaten_by.{pattern,regime_or_na,testee,value,gave_up_summary}",
+]
+predicate     = """
+A `query_yes_beats_nocaps` row whose `metric` is `beaten_by` -- one per
+cell where a YES-class (capturing) config's median beats a pcrec
+`auto-nocaps` row's median in the same report (inbox I-101, Frank: "it's
+possible a capturing competitive engine is faster than our
+non-capturing. That would be surprising. We should validate that this
+isn't true."). Every hit is a finding on pcrec's side BY DEFINITION; the
+rule does not decide whether it is noise -- it carries the reporter's
+own clearance sentence (max(IQR, null band), [B79]) beside it and
+aggregates by that sentence's verdict, so a reader sees the cleared
+hits apart from the within-noise ones.
+"""
+threshold     = "none of this rule's own -- an EXISTENCE rule over the reporter's own query rows"
+threshold_src = """
+The query is `report.py` `_cross_class_query_hits` (a YES-class median
+strictly below an auto-nocaps median in one ranking group; the class is
+`pcrecbench.capture_class`'s declaration table). The clearance verdict
+is `report.py` `_query_clearance`'s leading phrase (`CLEARS max(IQR,
+band)` / `within max(IQR, band)` / `clears IQR only` / `within IQR` /
+`no verdict`), copied verbatim from the row's `null_band_clearance=`
+field -- never re-derived here, so the sidecar and the report cannot
+disagree about whether a hit cleared the bar. A TSV with no `hit_count`
+row predates the query (reporter < v20) and reads `input-absent`.
+"""
+slots         = ["pattern", "regime", "testee", "competitor", "speedup", "clearance_verdict", "clearance"]
+arith         = [
+  "speedup: 1 / the row's own `ratio=` field (competitor ns / auto-nocaps ns), so the extremal is the LARGEST lead",
+  "clearance_verdict: the `null_band_clearance=` field's text before its first `:`",
+]
+extremal      = "speedup"
+template      = "{pattern} / {regime}: `{competitor}` (a CAPTURING config) beats pcrec `{testee}` (non-capturing) ×{speedup} -- {clearance_verdict} ({clearance})."
+no_fire       = "no capturing config's median beats any pcrec auto-nocaps median in this report"
+links         = ["docs/dev/inbox_from_pcrec.md", "docs/design/null_band_v1.md"]
+example       = """
+reports/2026-09-23-capability-0.1-budu-ryzen1600-after-b1885a83.tsv
+(reporter v22): the query fires on the capability roster's
+oniguruma/pcrec-caps cells that beat `auto-nocaps`, each with its
+clearance against the pair's own null band -- see that report's
+sidecar for the live count.
+"""
+
 # ====================================================== class R-DELTA ==
 
 [[rule]]
@@ -924,6 +991,58 @@ this rule reports `input-absent` on all three acceptance reports. On
 reports/2026-09-06-bounded-0.3-budu-ryzen1600-after-d34c9131.tsv
 R-DELTA-1 alone fires 202 times, which is what firing this rule with no
 predictions file would degenerate to.
+"""
+
+[[rule]]
+id            = "R-DELTA-5"
+title         = "class-aware D119 verdict: a cross-pin cell outside max(IQR, null band)"
+class         = "delta"
+since         = "3.7"
+grain         = ["set"]
+aggregate     = ["capture_class", "regime", "direction"]
+inputs        = [
+  "report:header.{null_band}",
+  "report:d119?metric=verdict.{pattern,regime_or_na,form,testee,value,gave_up_summary,delta_verdict}",
+]
+predicate     = """
+A `d119` row (reporter v22, [B79]) whose `value` is `improve` or
+`regress`: a cross-pin cell whose |Δ%| exceeds max(IQR%, null band) --
+D119's bar as inbox I-93 block B / I-104 restate it. `null-control`
+rows (the program-identical population the band is computed FROM) and
+`within` rows never fire. An `(IQR only ...)` verdict fires with
+`bar_source = IQR-only` stated in its slot: its stratum had too few
+program-identical cells for a band, and the sentence says so rather
+than hiding it.
+"""
+threshold     = "none of this rule's own -- reads the reporter's `d119` verdict token"
+threshold_src = """
+report.py `_build_null_band_model` + `pcrecbench/nullband.py`
+`d119_verdict`: band = the largest |Δ%| over the (regime, baseline
+scale) stratum's program-identical cells (census
+`reports/identity/...`, `tools/program_identity.py`), usable at
+n >= `nullband.N_MIN` (10); IQR% = the BEFORE side's Type-7 IQR of its
+per-trial set sums over the before median; bar = max(IQR%, band). This
+rule computes no number: every slot is copied from the row. CLASS-AWARE
+(I-99): `capture_class` is the reporter's own classification of the
+row's testee (`capture_class=` in the row) and is the FIRST aggregate
+key, so a capturing and a non-capturing cell never share a bullet.
+"""
+slots         = ["pattern", "regime", "form", "testee", "capture_class", "direction", "delta_pct", "delta_abs", "bar_pct", "bar_source", "stratum", "verdict_r8"]
+arith         = [
+  "delta_abs: |delta_pct|, the extremal -- the largest movement past the bar in each (class, regime, direction) group",
+]
+extremal      = "delta_abs"
+template      = "{pattern} / {regime} / {form} / `{testee}` ({capture_class} class): Δ {delta_pct} against the D119 bar {bar_pct} ({bar_source}; stratum {stratum}) -- **{direction}**. R8 reads: {verdict_r8}."
+no_fire       = "no cross-pin cell in this report moved by more than max(IQR, null band)"
+links         = ["docs/design/null_band_v1.md"]
+example       = """
+reports/2026-09-23-capability-0.1-budu-ryzen1600-after-b1885a83.tsv
+(reporter v22): `router-prefix-order` / `large-subject-throughput` /
+`pcrec_b1885a83_auto-caps-simdna` (yes class): Δ +80.83% against the
+bar 8.77% (band; stratum large-subject-throughput/>=1us) -- regress,
+the cell pcrec's own cycle2 reading §1 found OUTSIDE its null band
+(9.2x); its forced-VM sibling (+9.89% vs 8.77%) regresses by the
+narrowest margin.
 """
 
 # ======================================================= class R-RANK ==
