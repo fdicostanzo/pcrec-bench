@@ -10453,13 +10453,27 @@ def check_capability_policy_noop_elsewhere():
     own enumeration rule), `pattern_requires()` must return an empty set
     for every one of its patterns. The corpus this lane's own tests use
     IS the control for `capability` itself: `check_capability_policy`
-    above shows the policy DOES fire there."""
+    above shows the policy DOES fire there.
+
+    [B77] U4 (2026-09-25): `utf8` is a SECOND set that legitimately
+    authors `requires-*` tags (73 of its 76 patterns declare
+    `utf8-encoding` and/or a class-scope/lookaround/true-end-anchor/
+    unicode-properties token, `utf8_set_v1.md` 7.5) -- the same shared
+    `pcrecbench.capability` machinery `bench/capability` uses, reused by
+    a second capability-shaped set exactly as the module's own docstring
+    anticipates ("a future second capability-shaped set validates
+    against the SAME closed list"). Excluded from the no-op population
+    here for that reason, not because its policy firing is untested --
+    `check_capability_policy` below is where a capability-shaped set's
+    policy firing IS checked, and it is worth extending to `utf8`'s own
+    witnesses in a future lane rather than silently leaving this
+    docstring's "elsewhere" claim to cover a set that no longer fits it."""
     print("-- the capability policy is a no-op on every non-capability set --")
     from pcrecbench import capability as _cap
     from pcrecbench.subbench import find as _find_sb
 
     for name, _path in subbench_dirs():
-        if name == "capability":
+        if name in ("capability", "utf8"):
             continue
         sb = _find_sb(name)
         offenders = [p.name for p in sb.patterns if _cap.pattern_requires(p)]
