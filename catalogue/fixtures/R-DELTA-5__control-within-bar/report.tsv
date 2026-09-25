@@ -1,0 +1,346 @@
+# reporter: v22 (2026-09-25); filters: subbench=capability, version=0.1, since=2026-09-22T00:00:00Z, until=2026-09-23T18:00:00Z, testee=pcrec_8d716693_auto-caps-simdna, testee=pcrec_8d716693_auto-nocaps-simdna, testee=pcrec_8d716693_vm-caps-simdna, testee=pcrec_8d716693_vm-in-caps-simdna, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (11 record(s) matching this query); records: 11; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 11; mixed_x13: False; include_provenance: False; worst_other_core_busy: 62.5% (pcrec_8d716693_auto-caps-simdna / date-nested-plus / large-subject-throughput); floor_pattern: floor-byte; null_band: pcrec 8d716693 -> b1885a83: census reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv, 346 null of 494 cells, strata ok=4 insufficient=1 empty=1, n_min=10
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260922T043951Z				agreement	agree (0 of 123 groups; 0 of 4831 rows; 5 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-caps-simdna__budu-ryzen1600__20260923T031941Z				agreement	agree (0 of 124 groups; 6 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-nocaps-simdna__budu-ryzen1600__20260923T035507Z				agreement	agree (0 of 126 groups; 6 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-caps-simdna__budu-ryzen1600__20260923T042632Z				agreement	agree (0 of 124 groups; 4 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-in-caps-simdna__budu-ryzen1600__20260923T050923Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-caps-simdna__budu-ryzen1600__20260923T114747Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-nocaps-simdna__budu-ryzen1600__20260923T122232Z				agreement	agree (0 of 126 groups; 4 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-caps-simdna__budu-ryzen1600__20260923T125206Z				agreement	agree (0 of 124 groups; 2 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-in-caps-simdna__budu-ryzen1600__20260923T133317Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260922T051752Z				agreement	agree (0 of 82 groups; 2 of 3194 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260922T053300Z				agreement	agree (0 of 80 groups; 1 of 3118 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+baseline_yes	router-prefix-order	(set)	large-subject-throughput			pcrec_8d716693_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_8d716693_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	median_ns	398422.848062	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	min_ns	398257.854264	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	max_ns	399848.700775	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	stddev_ns	596.650227	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	median_ns	720485.587744	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	min_ns	720280.125348	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	max_ns	721333.167131	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	stddev_ns	362.733376	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.808344	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.808344	3	1.0000	0	0		slower ×1.81
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	median_ns	1361334.565445	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	min_ns	1358939.942408	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	max_ns	1364817.455497	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	stddev_ns	1944.525047	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	ratio_vs_baseline	3.416808	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	3	ratio_vs_best	3.416808	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	median_ns	4049652.492308	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	min_ns	4042920.907692	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	max_ns	4058186.384615	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	stddev_ns	4910.490841	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	ratio_vs_baseline	10.164207	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	10.164207	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	median_ns	4050506.171875	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	min_ns	4047226.312500	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	max_ns	4056860.109375	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	stddev_ns	3274.026230	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	ratio_vs_baseline	10.166350	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	ratio_vs_best	10.166350	3	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	median_ns	4441972.610169	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	min_ns	4440323.118644	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	max_ns	4450659.610169	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	stddev_ns	4053.529840	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	11.148890	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	11.148890	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	median_ns	4451241.000000	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	min_ns	4444785.965517	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	max_ns	4466058.500000	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	stddev_ns	7234.667101	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	ratio_vs_baseline	11.172153	3	1.0000	0	0		slower ×1.10
+rank_yes	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	7	ratio_vs_best	11.172153	3	1.0000	0	0		slower ×1.10
+baseline_no	router-prefix-order	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1245.684147	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1242.954263	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1249.211879	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	stddev_ns	1.993871	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	median_ns	60481.829957	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	min_ns	60380.810927	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	max_ns	60620.444138	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	stddev_ns	81.120927	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	48.553102	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	ratio_vs_best	48.553102	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	median_ns	398752.230769	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	min_ns	398342.952308	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	max_ns	399028.138462	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	stddev_ns	251.325560	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	ratio_vs_baseline	320.107012	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	3	ratio_vs_best	320.107012	3	1.0000	0	0		
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	median_ns	720106.081232	3	1.0000	0	0		slower ×1.81
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	min_ns	720051.039216	3	1.0000	0	0		slower ×1.81
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	max_ns	721472.249300	3	1.0000	0	0		slower ×1.81
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	stddev_ns	567.266007	3	1.0000	0	0		slower ×1.81
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	ratio_vs_baseline	578.080794	3	1.0000	0	0		slower ×1.81
+rank_no	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	4	ratio_vs_best	578.080794	3	1.0000	0	0		slower ×1.81
+baseline	router-prefix-order	(set)	large-subject-throughput			vectorscan_5.4.11_block-nosom-nocaps-simd				baseline_identity	row-best-fallback					vectorscan_5.4.11_block-nosom-nocaps-simd (row-best fallback -- interp absent from this group)	
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	median_ns	1245.684147	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	min_ns	1242.954263	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	max_ns	1249.211879	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	stddev_ns	1.993871	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	median_ns	60481.829957	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	min_ns	60380.810927	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	max_ns	60620.444138	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	stddev_ns	81.120927	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	ratio_vs_baseline	48.553102	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	2	ratio_vs_best	48.553102	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	median_ns	398422.848062	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	min_ns	398257.854264	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	max_ns	399848.700775	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	stddev_ns	596.650227	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	ratio_vs_baseline	319.842593	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	3	ratio_vs_best	319.842593	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	median_ns	398752.230769	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	min_ns	398342.952308	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	max_ns	399028.138462	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	stddev_ns	251.325560	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	ratio_vs_baseline	320.107012	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	4	ratio_vs_best	320.107012	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	median_ns	720106.081232	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	min_ns	720051.039216	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	max_ns	721472.249300	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	stddev_ns	567.266007	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	ratio_vs_baseline	578.080794	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	5	ratio_vs_best	578.080794	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	median_ns	720485.587744	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	min_ns	720280.125348	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	max_ns	721333.167131	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	stddev_ns	362.733376	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	ratio_vs_baseline	578.385452	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	6	ratio_vs_best	578.385452	3	1.0000	0	0		slower ×1.81
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	median_ns	1361334.565445	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	min_ns	1358939.942408	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	max_ns	1364817.455497	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	stddev_ns	1944.525047	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	1092.840885	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_best	1092.840885	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	median_ns	4049652.492308	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	min_ns	4042920.907692	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	max_ns	4058186.384615	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	stddev_ns	4910.490841	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	ratio_vs_baseline	3250.946480	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	8	ratio_vs_best	3250.946480	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	median_ns	4050506.171875	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	min_ns	4047226.312500	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	max_ns	4056860.109375	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	stddev_ns	3274.026230	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	ratio_vs_baseline	3251.631790	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	9	ratio_vs_best	3251.631790	3	1.0000	0	0		
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	median_ns	4441972.610169	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	min_ns	4440323.118644	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	max_ns	4450659.610169	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	stddev_ns	4053.529840	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	ratio_vs_baseline	3565.889974	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	10	ratio_vs_best	3565.889974	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	median_ns	4451241.000000	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	min_ns	4444785.965517	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	max_ns	4466058.500000	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	stddev_ns	7234.667101	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	ratio_vs_baseline	3573.330375	3	1.0000	0	0		slower ×1.10
+rank	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	11	ratio_vs_best	3573.330375	3	1.0000	0	0		slower ×1.10
+query_yes_beats_nocaps										hit_count	343						
+query_yes_beats_nocaps	router-prefix-order		large-subject-throughput			pcrec_8d716693_auto-nocaps-simdna				beaten_by	pcrec_8d716693_auto-caps-simdna					competitor_ns=398422.848062; nocaps_ns=398752.230769; ratio=0.999174; null_band_clearance=within max(IQR, band): gap 0.08%; IQR 0.10% (within); band ±8.77% (pcrec 8d716693 -> b1885a83, large-subject-throughput / >=1us, n=124; within)	
+query_yes_beats_nocaps	router-prefix-order		large-subject-throughput			pcrec_b1885a83_auto-nocaps-simdna				beaten_by	pcrec_8d716693_auto-caps-simdna					competitor_ns=398422.848062; nocaps_ns=720106.081232; ratio=0.553284; null_band_clearance=CLEARS max(IQR, band): gap 44.67%; IQR 0.11% (clears); band ±8.77% (pcrec 8d716693 -> b1885a83, large-subject-throughput / >=1us, n=124; clears)	
+null_band						pcrec 8d716693 -> b1885a83				census	reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv	346				sha256=e55112ca19d0aae489e012e5629b96229f1b890e276f63196515db4792d51fca; changed=148; identical=349; refused-both=15; cells=494	
+null_band		>=1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	8.773076	124				status=ok; min_pct=-2.534433; median_pct=-0.010969; max_pct=8.773076; n_min=10	
+null_band		100ns-1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct		6				status=insufficient; min_pct=-0.393016; median_pct=-0.041078; max_pct=0.384078; n_min=10	
+null_band		<100ns	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	41.093125	45				status=ok; min_pct=-6.503308; median_pct=-0.047225; max_pct=41.093125; n_min=10	
+d119	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned		verdict	within					delta_pct=80.834405; iqr_pct=0.043875; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_auto-caps-simdna; before_ns=398422.848062; after_ns=720485.587744	slower ×1.81
+d119	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned		verdict	within					delta_pct=80.589856; iqr_pct=0.099113; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=no; previous=pcrec_8d716693_auto-nocaps-simdna; before_ns=398752.230769; after_ns=720106.081232	slower ×1.81
+d119	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned		verdict	within					delta_pct=9.893451; iqr_pct=0.077885; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-caps-simdna; before_ns=4050506.171875; after_ns=4451241.000000	slower ×1.10
+d119	router-prefix-order	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned		verdict	within					delta_pct=9.687748; iqr_pct=0.065214; band_pct=8.773076; bar_pct=8.773076; bar_source=band; stratum=large-subject-throughput/>=1us; identity=changed; capture_class=yes; previous=pcrec_8d716693_vm-in-caps-simdna; before_ns=4049652.492308; after_ns=4441972.610169	slower ×1.10
+d119_view										yes	improve=47; regress=9; within=54; null-control=259; iqr_only=0						
+d119_view										no	improve=9; regress=4; within=25; null-control=87; iqr_only=0						
+d119_view										mixed	improve=56; regress=13; within=79; null-control=346; iqr_only=0						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				engine	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				entry	plain entry						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				prefilter	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				vm_rungs	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				buffers	n/s						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				frame	n/s						
+compile	router-prefix-order			plain	same program	oniguruma_6.9.10_default-caps-simdna				median_total_ns	2040.000000	5					
+compile	router-prefix-order			plain	same program	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile	router-prefix-order			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				median_total_ns	2720.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine_sel	selected						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-caps-simdna				median_total_ns	155980804.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-caps-simdna				jitter	0.038						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-caps-simdna				artifact_bytes	27720						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_bytes	19478						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	13498						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				median_total_ns	165916326.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				jitter	0.032						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				artifact_bytes	27864						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_bytes	22234						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	15627						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine_sel	selected						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	148548916.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-nocaps-simdna				jitter	0.033						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	27720						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	19478						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	13498						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	159133887.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				jitter	0.027						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	27864						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	22234						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	15627						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine_sel	forced						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-caps-simdna				median_total_ns	176339931.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-caps-simdna				jitter	0.033						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-caps-simdna				artifact_bytes	23264						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_bytes	19392						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	19392						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				median_total_ns	176146729.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				jitter	0.017						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				artifact_bytes	23264						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_bytes	19617						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	19617						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine_sel	forced						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	165903920.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-in-caps-simdna				jitter	0.043						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	23264						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	19392						
+compile	router-prefix-order			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	19392						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	178717154.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				jitter	0.040						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	23264						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	19617						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	19617						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine_sel	selected						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-caps-simdna				median_total_ns	160051002.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-caps-simdna				jitter	0.036						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	27760						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_bytes	19905						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	13925						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				median_total_ns	169791345.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				jitter	0.021						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	27896						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_bytes	22661						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	16054						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine_sel	selected						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	154232555.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.022						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	27760						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	19905						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	13925						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	162668628.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.027						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	27896						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	22661						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	16054						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine_sel	forced						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-caps-simdna				median_total_ns	169425985.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-caps-simdna				jitter	0.033						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	23296						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_bytes	19819						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	19819						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				median_total_ns	178573624.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				jitter	0.040						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	23296						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_bytes	20044						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	20044						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine_sel	forced						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	175880405.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.025						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	23296						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	19819						
+compile	router-prefix-order			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	19819						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	177842097.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.018						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	23296						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	20044						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	20044						
+compile_stamp						rust_1.13.1_default-caps-simdna				engine	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				entry	plain entry						
+compile_stamp						rust_1.13.1_default-caps-simdna				prefilter	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				vm_rungs	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				buffers	n/s						
+compile_stamp						rust_1.13.1_default-caps-simdna				frame	n/s						
+compile	router-prefix-order			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	22420.000000	5					
+compile	router-prefix-order			plain	same program	rust_1.13.1_default-caps-simdna				jitter	timer-floor						
+compile	router-prefix-order			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	22510.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	3.481						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				engine	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				entry	plain entry						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				prefilter	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				vm_rungs	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				buffers	n/s						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				frame	n/s						
+compile	router-prefix-order			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	448492.000000	5					
+compile	router-prefix-order			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.713						
+compile	router-prefix-order			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	4776						
+compile	router-prefix-order			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	488393.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.651						
+compile	router-prefix-order			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	2120						

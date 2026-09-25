@@ -1,0 +1,486 @@
+# reporter: v22 (2026-09-25); filters: subbench=capability, version=0.1, since=2026-09-22T00:00:00Z, until=2026-09-23T18:00:00Z, testee=pcrec_8d716693_auto-caps-simdna, testee=pcrec_8d716693_auto-nocaps-simdna, testee=pcrec_8d716693_vm-caps-simdna, testee=pcrec_8d716693_vm-in-caps-simdna, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (11 record(s) matching this query); records: 11; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 11; mixed_x13: False; include_provenance: False; worst_other_core_busy: 62.5% (pcrec_8d716693_auto-caps-simdna / date-nested-plus / large-subject-throughput); floor_pattern: floor-byte; null_band: pcrec 8d716693 -> b1885a83: census reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv, 346 null of 494 cells, strata ok=4 insufficient=1 empty=1, n_min=10
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						capability@0.1__oniguruma_6.9.10_default-caps-simdna__budu-ryzen1600__20260922T043951Z				agreement	agree (0 of 123 groups; 0 of 4831 rows; 5 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-caps-simdna__budu-ryzen1600__20260923T031941Z				agreement	agree (0 of 124 groups; 6 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_auto-nocaps-simdna__budu-ryzen1600__20260923T035507Z				agreement	agree (0 of 126 groups; 6 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-caps-simdna__budu-ryzen1600__20260923T042632Z				agreement	agree (0 of 124 groups; 4 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_8d716693_vm-in-caps-simdna__budu-ryzen1600__20260923T050923Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-caps-simdna__budu-ryzen1600__20260923T114747Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_auto-nocaps-simdna__budu-ryzen1600__20260923T122232Z				agreement	agree (0 of 126 groups; 4 of 4912 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-caps-simdna__budu-ryzen1600__20260923T125206Z				agreement	agree (0 of 124 groups; 2 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__pcrec_b1885a83_vm-in-caps-simdna__budu-ryzen1600__20260923T133317Z				agreement	agree (0 of 124 groups; 7 of 4834 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260922T051752Z				agreement	agree (0 of 82 groups; 2 of 3194 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
+record						capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__budu-ryzen1600__20260922T053300Z				agreement	agree (0 of 80 groups; 1 of 3118 rows; 2 unjudged; k=1.5, 2/3; 5 trials)						
+baseline_yes	date-nested-plus	(set)	large-subject-throughput			pcrec_b1885a83_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	median_ns	28.935760	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	min_ns	28.900720	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	max_ns	29.032902	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	stddev_ns	0.046383	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		faster ×1.07
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	median_ns	30.948432	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	min_ns	30.825420	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	max_ns	31.084704	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	stddev_ns	0.097877	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.069557	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.069557	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	median_ns	52.213937	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	min_ns	50.659788	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	max_ns	52.607143	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	stddev_ns	0.856649	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	ratio_vs_baseline	1.804478	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	3	ratio_vs_best	1.804478	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	median_ns	60.080924	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	min_ns	59.595514	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	max_ns	63.640848	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	stddev_ns	1.471001	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	ratio_vs_baseline	2.076355	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	2.076355	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	median_ns	60.331765	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	min_ns	60.301045	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	max_ns	60.719334	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	stddev_ns	0.155706	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_baseline	2.085024	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_best	2.085024	3	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	median_ns	73.670275	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	min_ns	73.623411	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	max_ns	74.580552	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	stddev_ns	0.368188	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.545994	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	6	ratio_vs_best	2.545994	3	1.0000	0	0		slower ×1.41
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	median_ns	94.395904	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	min_ns	94.343752	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	max_ns	94.647135	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	stddev_ns	0.107543	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	3.262258	3	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_best	3.262258	3	1.0000	0	0		
+baseline_yes	date-nested-plus	(set)	short-subject-search			pcrec_b1885a83_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	median_ns	843.288057	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	min_ns	842.355343	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	max_ns	851.092093	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	stddev_ns	3.243904	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		faster ×1.06
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	median_ns	890.539563	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	min_ns	887.602332	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	max_ns	896.064103	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	stddev_ns	3.342519	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.056032	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.056032	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	median_ns	1717.215042	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	min_ns	1708.704265	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	max_ns	1725.002521	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	stddev_ns	5.212960	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_baseline	2.036333	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	3	ratio_vs_best	2.036333	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	median_ns	1717.849834	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	min_ns	1702.316922	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	max_ns	1732.589320	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	stddev_ns	9.666889	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_baseline	2.037085	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	4	ratio_vs_best	2.037085	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	median_ns	1923.725491	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	min_ns	1921.368082	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	max_ns	1929.698672	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	stddev_ns	2.815920	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_baseline	2.281220	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	5	ratio_vs_best	2.281220	75	1.0000	0	0		unchanged (within spread)
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	median_ns	1924.842501	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	min_ns	1922.428486	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	max_ns	2094.214945	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	stddev_ns	68.077783	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	2.282544	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	2.282544	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	median_ns	5684.701211	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	min_ns	5651.182379	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	max_ns	5742.475545	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	stddev_ns	39.857437	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	6.741114	75	1.0000	0	0		
+rank_yes	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	7	ratio_vs_best	6.741114	75	1.0000	0	0		
+baseline_no	date-nested-plus	(set)	large-subject-throughput			pcrec_b1885a83_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	median_ns	15.152862	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	min_ns	15.108072	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	max_ns	15.172831	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.021491	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		faster ×1.03
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	median_ns	15.592668	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	min_ns	15.568078	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	max_ns	15.656769	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.030157	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.029025	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.029025	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	median_ns	77.052516	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	min_ns	74.441354	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	max_ns	78.375663	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	stddev_ns	1.378967	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_baseline	5.085014	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_best	5.085014	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	median_ns	167.068738	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	min_ns	167.028948	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	max_ns	167.369428	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	stddev_ns	0.126008	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_baseline	11.025557	3	1.0000	0	0		
+rank_no	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_best	11.025557	3	1.0000	0	0		
+baseline_no	date-nested-plus	(set)	short-subject-search			pcrec_b1885a83_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	median_ns	469.891889	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	min_ns	467.100350	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	max_ns	470.719197	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	stddev_ns	1.293570	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		faster ×1.09
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	median_ns	512.005820	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	min_ns	510.881180	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	max_ns	512.429710	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.553928	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.089625	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.089625	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	median_ns	1762.380452	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	min_ns	1760.785255	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	max_ns	1766.566336	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	stddev_ns	2.132668	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_baseline	3.750608	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	3	ratio_vs_best	3.750608	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	median_ns	1868.680386	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	min_ns	1866.745229	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	max_ns	1869.599884	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	stddev_ns	1.199095	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_baseline	3.976830	75	1.0000	0	0		
+rank_no	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	4	ratio_vs_best	3.976830	75	1.0000	0	0		
+baseline	date-nested-plus	(set)	large-subject-throughput			pcrec_b1885a83_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	median_ns	15.152862	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	min_ns	15.108072	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	max_ns	15.172831	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.021491	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		faster ×1.03
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	median_ns	15.592668	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	min_ns	15.568078	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	max_ns	15.656769	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.030157	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.029025	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.029025	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	median_ns	28.935760	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	min_ns	28.900720	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	max_ns	29.032902	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	stddev_ns	0.046383	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	ratio_vs_baseline	1.909590	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	ratio_vs_best	1.909590	3	1.0000	0	0		faster ×1.07
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	median_ns	30.948432	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	min_ns	30.825420	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	max_ns	31.084704	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	stddev_ns	0.097877	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	ratio_vs_baseline	2.042415	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	ratio_vs_best	2.042415	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	median_ns	52.213937	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	min_ns	50.659788	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	max_ns	52.607143	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	stddev_ns	0.856649	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	ratio_vs_baseline	3.445814	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	5	ratio_vs_best	3.445814	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	median_ns	60.080924	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	min_ns	59.595514	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	max_ns	63.640848	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	stddev_ns	1.471001	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.964989	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	6	ratio_vs_best	3.964989	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	median_ns	60.331765	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	min_ns	60.301045	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	max_ns	60.719334	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	stddev_ns	0.155706	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	ratio_vs_baseline	3.981543	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	7	ratio_vs_best	3.981543	3	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	median_ns	73.670275	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	min_ns	73.623411	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	max_ns	74.580552	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	stddev_ns	0.368188	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	ratio_vs_baseline	4.861806	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	8	ratio_vs_best	4.861806	3	1.0000	0	0		slower ×1.41
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	median_ns	77.052516	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	min_ns	74.441354	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	max_ns	78.375663	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	stddev_ns	1.378967	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	ratio_vs_baseline	5.085014	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	9	ratio_vs_best	5.085014	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	median_ns	94.395904	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	min_ns	94.343752	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	max_ns	94.647135	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	stddev_ns	0.107543	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	ratio_vs_baseline	6.229576	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	10	ratio_vs_best	6.229576	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	median_ns	167.068738	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	min_ns	167.028948	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	max_ns	167.369428	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	stddev_ns	0.126008	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	ratio_vs_baseline	11.025557	3	1.0000	0	0		
+rank	date-nested-plus	(set)	large-subject-throughput	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	11	ratio_vs_best	11.025557	3	1.0000	0	0		
+baseline	date-nested-plus	(set)	short-subject-search			pcrec_b1885a83_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_b1885a83_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	median_ns	469.891889	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	min_ns	467.100350	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	max_ns	470.719197	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	stddev_ns	1.293570	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		faster ×1.09
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	median_ns	512.005820	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	min_ns	510.881180	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	max_ns	512.429710	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.553928	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.089625	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.089625	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	median_ns	843.288057	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	min_ns	842.355343	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	max_ns	851.092093	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	stddev_ns	3.243904	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	ratio_vs_baseline	1.794643	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned	3	ratio_vs_best	1.794643	75	1.0000	0	0		faster ×1.06
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	median_ns	890.539563	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	min_ns	887.602332	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	max_ns	896.064103	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	stddev_ns	3.342519	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	ratio_vs_baseline	1.895201	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_auto-caps-simdna	measured	pinned	4	ratio_vs_best	1.895201	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	median_ns	1717.215042	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	min_ns	1708.704265	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	max_ns	1725.002521	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	stddev_ns	5.212960	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	ratio_vs_baseline	3.654490	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned	5	ratio_vs_best	3.654490	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	median_ns	1717.849834	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	min_ns	1702.316922	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	max_ns	1732.589320	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	stddev_ns	9.666889	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	ratio_vs_baseline	3.655841	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-caps-simdna	measured	pinned	6	ratio_vs_best	3.655841	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	median_ns	1762.380452	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	min_ns	1760.785255	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	max_ns	1766.566336	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	stddev_ns	2.132668	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	ratio_vs_baseline	3.750608	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	7	ratio_vs_best	3.750608	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	median_ns	1868.680386	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	min_ns	1866.745229	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	max_ns	1869.599884	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	stddev_ns	1.199095	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	ratio_vs_baseline	3.976830	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd	measured	pinned	8	ratio_vs_best	3.976830	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	median_ns	1923.725491	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	min_ns	1921.368082	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	max_ns	1929.698672	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	stddev_ns	2.815920	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	ratio_vs_baseline	4.093975	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned	9	ratio_vs_best	4.093975	75	1.0000	0	0		unchanged (within spread)
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	median_ns	1924.842501	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	min_ns	1922.428486	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	max_ns	2094.214945	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	stddev_ns	68.077783	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	ratio_vs_baseline	4.096352	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_8d716693_vm-in-caps-simdna	measured	pinned	10	ratio_vs_best	4.096352	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	median_ns	5684.701211	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	min_ns	5651.182379	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	max_ns	5742.475545	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	stddev_ns	39.857437	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_baseline	12.097892	75	1.0000	0	0		
+rank	date-nested-plus	(set)	short-subject-search	plain	same program	oniguruma_6.9.10_default-caps-simdna	measured	pinned	11	ratio_vs_best	12.097892	75	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	343						
+null_band						pcrec 8d716693 -> b1885a83				census	reports/identity/capability@0.1/pcrec_8d716693__b1885a83.tsv	346				sha256=e55112ca19d0aae489e012e5629b96229f1b890e276f63196515db4792d51fca; changed=148; identical=349; refused-both=15; cells=494	
+null_band		>=1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	8.773076	124				status=ok; min_pct=-2.534433; median_pct=-0.010969; max_pct=8.773076; n_min=10	
+null_band		100ns-1us	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct		6				status=insufficient; min_pct=-0.393016; median_pct=-0.041078; max_pct=0.384078; n_min=10	
+null_band		<100ns	large-subject-throughput			pcrec 8d716693 -> b1885a83				band_pct	41.093125	45				status=ok; min_pct=-6.503308; median_pct=-0.047225; max_pct=41.093125; n_min=10	
+null_band		>=1us	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct	11.155379	108				status=ok; min_pct=-2.253841; median_pct=-0.026518; max_pct=11.155379; n_min=10	
+null_band		100ns-1us	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct	9.366969	63				status=ok; min_pct=-9.366969; median_pct=0.043240; max_pct=3.450015; n_min=10	
+null_band		<100ns	short-subject-search			pcrec 8d716693 -> b1885a83				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+d119	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-6.503308; iqr_pct=0.520506; band_pct=41.093125; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/<100ns; identity=identical; capture_class=yes; previous=pcrec_8d716693_auto-caps-simdna; before_ns=30.948432; after_ns=28.935760	faster ×1.07
+d119	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-5.305941; iqr_pct=0.643846; band_pct=9.366969; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_8d716693_auto-caps-simdna; before_ns=890.539563; after_ns=843.288057	faster ×1.06
+d119	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned		verdict	null-control					delta_pct=-2.820595; iqr_pct=0.093499; band_pct=41.093125; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/<100ns; identity=identical; capture_class=no; previous=pcrec_8d716693_auto-nocaps-simdna; before_ns=15.592668; after_ns=15.152862	faster ×1.03
+d119	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_auto-nocaps-simdna	measured	pinned		verdict	null-control					delta_pct=-8.225284; iqr_pct=0.092361; band_pct=9.366969; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=no; previous=pcrec_8d716693_auto-nocaps-simdna; before_ns=512.005820; after_ns=469.891889	faster ×1.09
+d119	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned		verdict	null-control					delta_pct=41.093125; iqr_pct=3.255975; band_pct=41.093125; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/<100ns; identity=identical; capture_class=yes; previous=pcrec_8d716693_vm-caps-simdna; before_ns=52.213937; after_ns=73.670275	slower ×1.41
+d119	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.036953; iqr_pct=0.231071; band_pct=11.155379; bar_pct=; bar_source=null-control; stratum=short-subject-search/>=1us; identity=identical; capture_class=yes; previous=pcrec_8d716693_vm-caps-simdna; before_ns=1717.849834; after_ns=1717.215042	unchanged (within spread)
+d119	date-nested-plus	(set)	large-subject-throughput	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.417505; iqr_pct=0.711551; band_pct=41.093125; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/<100ns; identity=identical; capture_class=yes; previous=pcrec_8d716693_vm-in-caps-simdna; before_ns=60.080924; after_ns=60.331765	unchanged (within spread)
+d119	date-nested-plus	(set)	short-subject-search	plain	same program	pcrec_b1885a83_vm-in-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.058031; iqr_pct=0.097440; band_pct=11.155379; bar_pct=; bar_source=null-control; stratum=short-subject-search/>=1us; identity=identical; capture_class=yes; previous=pcrec_8d716693_vm-in-caps-simdna; before_ns=1924.842501; after_ns=1923.725491	unchanged (within spread)
+d119_view										yes	improve=47; regress=9; within=54; null-control=259; iqr_only=0						
+d119_view										no	improve=9; regress=4; within=25; null-control=87; iqr_only=0						
+d119_view										mixed	improve=56; regress=13; within=79; null-control=346; iqr_only=0						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				engine	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				entry	plain entry						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				prefilter	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				vm_rungs	-						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				buffers	n/s						
+compile_stamp						oniguruma_6.9.10_default-caps-simdna				frame	n/s						
+compile	date-nested-plus			plain	same program	oniguruma_6.9.10_default-caps-simdna				median_total_ns	4210.000000	5					
+compile	date-nested-plus			plain	same program	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile	date-nested-plus			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				median_total_ns	4790.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	oniguruma_6.9.10_default-caps-simdna				jitter	timer-floor						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-caps-simdna				engine_sel	selected						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-caps-simdna				median_total_ns	251777294.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-caps-simdna				jitter	0.018						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-caps-simdna				artifact_bytes	31800						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_bytes	32386						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	30360						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				median_total_ns	257805005.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				jitter	0.015						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				artifact_bytes	31800						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_bytes	32314						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-caps-simdna				emit_code_bytes	30288						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_auto-nocaps-simdna				engine_sel	selected						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	134730937.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-nocaps-simdna				jitter	0.034						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	23288						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	13250						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	11455						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				median_total_ns	137259290.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				jitter	0.049						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				artifact_bytes	23288						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_bytes	13073						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_auto-nocaps-simdna				emit_code_bytes	11278						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-caps-simdna				engine_sel	forced						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-caps-simdna				median_total_ns	244573502.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-caps-simdna				jitter	0.002						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-caps-simdna				artifact_bytes	27528						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_bytes	27958						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	27727						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				median_total_ns	245387516.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				jitter	0.003						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				artifact_bytes	27528						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_bytes	28071						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-caps-simdna				emit_code_bytes	27840						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_8d716693_vm-in-caps-simdna				engine_sel	forced						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	245169785.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-in-caps-simdna				jitter	0.008						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	27528						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	27958						
+compile	date-nested-plus			plain	same program	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	27727						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				median_total_ns	244979525.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				jitter	0.012						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				artifact_bytes	27528						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_bytes	28071						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_8d716693_vm-in-caps-simdna				emit_code_bytes	27840						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-caps-simdna				engine_sel	selected						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-caps-simdna				median_total_ns	259473565.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-caps-simdna				jitter	0.014						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	31840						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_bytes	32412						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	30386						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				median_total_ns	257124311.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				jitter	0.025						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				artifact_bytes	31840						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_bytes	32340						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-caps-simdna				emit_code_bytes	30314						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_auto-nocaps-simdna				engine_sel	selected						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	140265144.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.045						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	23328						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	13276						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	11481						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				median_total_ns	142056042.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				jitter	0.041						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				artifact_bytes	23328						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_bytes	13099						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_auto-nocaps-simdna				emit_code_bytes	11304						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				buffers	2048/3072 (stamped default)						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-caps-simdna				engine_sel	forced						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-caps-simdna				median_total_ns	242894408.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-caps-simdna				jitter	0.013						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	27560						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_bytes	27984						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	27753						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				median_total_ns	241412801.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				jitter	0.019						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				artifact_bytes	27560						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_bytes	28097						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-caps-simdna				emit_code_bytes	27866						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine	vm						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				entry	_in						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				prefilter	none						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				vm_rungs	PCREC_VM_RUNG_FRAMES_UNBOUNDED						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				buffers	32768/131072 (caller-provided)						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				frame	40						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_b1885a83_vm-in-caps-simdna				engine_sel	forced						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	238657418.000000	5					
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.019						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	27560						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	27984						
+compile	date-nested-plus			plain	same program	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	27753						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				median_total_ns	244924821.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				jitter	0.007						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				artifact_bytes	27560						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_bytes	28097						
+compile	date-nested-plus			whole-subject	separate artifact	pcrec_b1885a83_vm-in-caps-simdna				emit_code_bytes	27866						
+compile_stamp						rust_1.13.1_default-caps-simdna				engine	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				entry	plain entry						
+compile_stamp						rust_1.13.1_default-caps-simdna				prefilter	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				vm_rungs	-						
+compile_stamp						rust_1.13.1_default-caps-simdna				buffers	n/s						
+compile_stamp						rust_1.13.1_default-caps-simdna				frame	n/s						
+compile	date-nested-plus			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	24850.000000	5					
+compile	date-nested-plus			plain	same program	rust_1.13.1_default-caps-simdna				jitter	timer-floor						
+compile	date-nested-plus			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	26830.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	2.932						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				engine	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				entry	plain entry						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				prefilter	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				vm_rungs	-						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				buffers	n/s						
+compile_stamp						vectorscan_5.4.11_block-nosom-nocaps-simd				frame	n/s						
+compile	date-nested-plus			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	1099016.000000	5					
+compile	date-nested-plus			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.356						
+compile	date-nested-plus			plain	same program	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	5736						
+compile	date-nested-plus			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				median_total_ns	467892.000000	5					
+compile	date-nested-plus			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				jitter	0.427						
+compile	date-nested-plus			whole-subject	separate artifact	vectorscan_5.4.11_block-nosom-nocaps-simd				artifact_bytes	6024						

@@ -951,8 +951,9 @@ def r_status_14(view, ctx):
 
 def _kv_fields(text):
     """`k=v; k=v` (report.py's `gave_up_summary` free-text slot on the
-    [B79] `d119` rows and the [B82] query rows) -> dict. A value may
-    itself contain `, ` or `: ` but never `; ` (report.py builds none)."""
+    [B79] `d119` rows and the [B82] query rows) -> dict. A `d119` row's
+    values never contain `; `; the query row's LAST field
+    (`null_band_clearance=`) does, and `r_status_15` reads it whole."""
     out = {}
     for part in (text or "").split("; "):
         k, sep, v = part.partition("=")
@@ -981,7 +982,10 @@ def r_status_15(view, ctx):
             continue
         if ratio <= 0:
             continue
-        clearance = kv.get("null_band_clearance", "")
+        # the clearance sentence is the row's LAST field and itself
+        # carries `; ` (gap; IQR; band) -- read it whole, never via the
+        # `; `-split `kv`.
+        clearance = r["gave_up_summary"].partition("null_band_clearance=")[2]
         verdict = clearance.split(":", 1)[0].strip() if clearance else "(none)"
         speedup = 1.0 / ratio
         out.append(fire({"pattern": r["pattern"], "regime": r["regime_or_na"],
