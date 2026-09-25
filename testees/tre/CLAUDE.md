@@ -382,3 +382,25 @@ checklist (§8 item 2) names the pass-rate split itself (0% throughput
 vs 48% search on the identical pattern) as worth re-checking for
 reproducibility — a possible one-off box artifact — the next time
 `tre-default` measures this set, before treating it as settled.
+
+## `--utf8`: the character-boundary find-all advance ([B77] U1)
+
+The driver protocol's `--utf8` flag (`pcrecbench/adapters.py`'s header;
+`docs/design/utf8_set_v1.md` 8.4) switches the find-all EMPTY-MATCH
+advance from `start + 1` to the next CHARACTER boundary -- pcrec
+match_api.md S3.1.1's normative utf8 rule: from `start + 1`, skip every
+byte in 0x80-0xBF, stop at the first byte outside that range or at the
+subject's end (`utf8_next_start` in the driver, the same rule as
+`oracle_pcre2.next_start`). `adapter.py` passes it iff the harness set
+the handle's `utf8_advance`, which it does iff the pattern's ORACLE
+OPTION WORD carries PCRE2_UTF (a set declaring `[expectations] encoding
+= "utf8"`) -- so on every byte set the argv and the advance are exactly
+what they were. Checked by `make check-harness`'s
+`check_utf8_find_all_advance` (`x*` over a 1/2/3/4-byte-character
+subject: 6 positions with `--utf8`, the UTF oracle's count; 12 without).
+
+The flag moves the advance only (the absolute start is `pos + rm_so`,
+since `pmatch[]` is slice-relative); TRE itself stays byte-literal and is
+excluded per-pattern from the utf8 set by `utf8-encoding` (`utf8_set_v1.md`
+7.3) -- it ranks there only on three byte-safe members that never match
+empty.

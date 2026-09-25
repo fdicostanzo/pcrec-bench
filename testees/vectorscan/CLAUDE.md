@@ -443,3 +443,24 @@ CONFIRMED (this lane's own smoke, `docs/dev/lanes/l6bvs_report.md`):
 `foo|bar` under `--form whole-subject`: subject `foo` → `match`; subject
 `xfoo` → `nomatch` (the `^` anchor rejects the leading garbage a bare
 `(?:foo|bar)\z` would not).
+
+## `--utf8`: the character-boundary find-all advance ([B77] U1)
+
+The driver protocol's `--utf8` flag (`pcrecbench/adapters.py`'s header;
+`docs/design/utf8_set_v1.md` 8.4) switches the find-all EMPTY-MATCH
+advance from `start + 1` to the next CHARACTER boundary -- pcrec
+match_api.md S3.1.1's normative utf8 rule: from `start + 1`, skip every
+byte in 0x80-0xBF, stop at the first byte outside that range or at the
+subject's end (`utf8_next_start` in the driver, the same rule as
+`oracle_pcre2.next_start`). `adapter.py` passes it iff the harness set
+the handle's `utf8_advance`, which it does iff the pattern's ORACLE
+OPTION WORD carries PCRE2_UTF (a set declaring `[expectations] encoding
+= "utf8"`) -- so on every byte set the argv and the advance are exactly
+what they were. Checked by `make check-harness`'s
+`check_utf8_find_all_advance` (the boolean-grain arm: the flag accepted, the
+answer unchanged).
+
+Here the flag is ACCEPTED and INERT: this driver has no find-all loop at
+boolean grain (`NMATCHES` is always `-`, above), so there is no advance for
+it to move. It never sets HS_FLAG_UTF8 -- that is a config's choice
+(`vectorscan-block-nosom-utf8`, lane U2).

@@ -232,6 +232,13 @@ int main(int argc, char **argv) {
      * it for `plain`). See the whole-subject expr build below for what
      * it changes. */
     volatile int free_spacing = 0;
+    /* [B77] U1: --utf8, the protocol's character-boundary find-all advance.
+     * ACCEPTED and INERT here, for the reason `--find-all` itself is (the
+     * header's MATCHING paragraph): this driver has no find-all loop at
+     * boolean grain, so there is no advance for the flag to move. It never
+     * selects HS_FLAG_UTF8 -- the engine's encoding is a config's choice
+     * (utf8_set_v1.md 7.1, lane U2), not the protocol's. */
+    volatile int utf8_adv = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -245,9 +252,11 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--skip") && i + 1 < argc)      skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--free-spacing"))               free_spacing = 1;
+        else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     (void)find_all;  /* accepted for protocol compliance; see header */
+    (void)utf8_adv;  /* likewise ([B77] U1): no find-all loop, no advance */
     if (!pattern_path) die("--pattern is required");
     if (iters < 1) iters = 1;
     int whole_subject = !strcmp(form, "whole-subject");

@@ -2297,3 +2297,25 @@ on far more heavily, are CODE, not comments, and are untouched by
 Catalogue **3.1** (`[[pin_order]]` append: `25b1984f`, MINOR — no
 rule predicate/threshold/inputs/slots moved). Sixteen pinned configs,
 unchanged.
+
+## `--utf8`: the character-boundary find-all advance ([B77] U1)
+
+The driver protocol's `--utf8` flag (`pcrecbench/adapters.py`'s header;
+`docs/design/utf8_set_v1.md` 8.4) switches the find-all EMPTY-MATCH
+advance from `start + 1` to the next CHARACTER boundary -- pcrec
+match_api.md S3.1.1's normative utf8 rule: from `start + 1`, skip every
+byte in 0x80-0xBF, stop at the first byte outside that range or at the
+subject's end (`utf8_next_start` in the driver, the same rule as
+`oracle_pcre2.next_start`). `adapter.py` passes it iff the harness set
+the handle's `utf8_advance`, which it does iff the pattern's ORACLE
+OPTION WORD carries PCRE2_UTF (a set declaring `[expectations] encoding
+= "utf8"`) -- so on every byte set the argv and the advance are exactly
+what they were. Checked by `make check-harness`'s
+`check_utf8_find_all_advance` (`x*` over a 1/2/3/4-byte-character
+subject: 6 positions with `--utf8`, the UTF oracle's count; 12 without).
+
+The flag moves the advance only; the artifact's encoding is its `-e`
+at compile time (`-e utf8` configs are lane U2's, `utf8_set_v1.md` 7.2).
+The rule coded in `driver.c` is the one a `-e utf8` artifact's own
+`<prefix>_next_pos` implements; it is coded once per driver rather than
+called, so every engine steps by the same code shape.

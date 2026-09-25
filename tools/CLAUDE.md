@@ -2,7 +2,7 @@
 
 | file | role |
 |---|---|
-| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`; [B38]: `check_rxt_export`) |
+| `selfcheck.py` | `make check-harness`: the [B3] half of the self-check suite (KB-12, [B36]: also the id-preflight gate, `check_id_preflight`; [B38]: `check_rxt_export`; [B77] U1: `check_utf8_find_all_advance`) |
 | `export_rxt.py` | [B38] THE .rxt SET EXPORTER (pcrec [DD-13b.W1.3]): `python3 tools/export_rxt.py <bench-dir> [-o out.rxt] [--verify [PCREC_BIN]]` writes a `.rxt` SOURCE file (no `m`/`n`/`ms`/`ns` cases — pure `target =` / `pattern` / `name` blocks) from one `bench/<name>/`'s sidecar, in sidecar order, so pcrec's own harnesses can pull our patterns in via `--source`. `--verify` round-trips the freshly-built export against `PCREC_BIN --list-source` (default: the pinned binary, never built if missing) — `decode_rxt_escape` undoes `--list-source`'s own TSV-safety escaping (`\t \n \r \\ \xNN`) before comparing against `Subbench.pattern_bytes()`. `selfcheck.py` adds `tools/` (its own directory) to `sys.path` and imports it directly as `export_rxt` -- no package `__init__.py` needed, same as this directory's other scripts. Its own module docstring is the authority on inbox I-43's rules and on WHY the exporter never escapes a pattern line itself (rule 6: `docs/spec/rxt_format.md` — a `pattern` line is rest-of-line VERBATIM with no escaping at all; escaping only the DUMP needs decoding). Engine-neutral (R-BENCH-4): the sidecar stays the source of truth, this is a derived, regeneratable view; the five committed `.rxt` files live under `bench/<name>/export/` (each bench's own CLAUDE.md documents its own). |
 | `program_identity.py` | [B79] THE PROGRAM-IDENTITY CENSUS for a cross-pin pair (`docs/design/null_band_v1.md` §2): `python3 tools/program_identity.py --subbench capability --version 0.1 --old <pin> --new <pin> [--cross-check nullctl.json] [--check]` re-emits every pattern x form at BOTH pins with the pinned binaries (`pin.sh --path`, never builds) under each config's flags READ FROM THE RECORD (`testee.build_flags`, equal across the pin or refused), pattern bytes checked against the record's `canonical_sha256`, and compares `.c`+`.h` after dropping ONLY the generated-by line, the `.abi` integer and one-sided `#define` stamps. Writes `reports/identity/<sb@ver>/<engine>_<old>__<new>.tsv` (deterministic; `--check` re-derives and diffs) -- the file `pcrecbench report` reads to find the program-identical (null-control) population of a cross-pin report. Compile-only (~1,500 emits, a few minutes, one core): announce it on a shared box. Exists because the records carry NO program hash (a finding; the schema/adapter fix is OWED as a ruling). |
 | `archive_inbox.py` | `make archive-inbox` (BD11): relocates fully-acked, aged-out entries from `docs/dev/inbox_from_pcrec.md` to `docs/dev/inbox_from_pcrec_archive.md`, byte-for-byte, never touching an unacked item. Not part of `make check` — a manual maintenance step. |
@@ -533,3 +533,29 @@ UNCORRUPTED: a genuinely argv-mangled spelling would instead be valid
 UTF-8 and compile), with the corrupted-spelling control compiling but
 not matching, the same distinguishability check every other arm here
 carries.
+
+[B77] lane U1 (2026-09-25, `docs/design/utf8_set_v1.md` 8.4 / 13):
+`check_utf8_find_all_advance` -- the oracle OPTION WORD and the
+CHARACTER-BOUNDARY find-all advance, with the charter's NEGATIVE case
+(a byte-stepping advance must FAIL), in five parts over one witness
+(`x*` over `a`, U+00E9, U+65E5, U+1F600, `b`: 11 bytes, 5 characters --
+12 positions by byte, 6 by character): (1) the word is 0 on every
+pattern of every committed byte set, UTF from `encoding = "utf8"`,
+UCP from `requires-unicode-class-scope`, an unknown `encoding` refused
+by name; (2) the oracle gives 12/6, and the byte-stepping rule
+reproduced INLINE under the UTF word raises PCRE2_ERROR_BADUTFOFFSET
+(-36); (3) EVERY driver through its adapter's real `measure()`: with
+the handle's `utf8_advance` (-> `--utf8`) 6, without it 12 on every
+byte engine (rust-default's byte-stepping count is printed, not
+asserted -- measured 12 too); vectorscan (boolean grain) accepts the
+flag inertly on a non-empty witness; (4) the pcre2 driver in its OWN
+UTF mode (`--utf`): 6 with `--utf8`, the loop cut short by -36
+without; (5) THE HARNESS WIRING: a synthetic `encoding = "utf8"` set in
+a temp dir, its expectation derived by the real `expectations.derive`
+(6), run through the real `harness.run_cell` on pcre2-interp ->
+`matched-as-expected`; with `expectations.utf8_advance` sabotaged to
+False the same cell reads `wrong-span-or-captures` ("expected 6 ...
+observed 12"). 24 checks, ~1-2 min (builds every driver). The
+byte-identical re-derivation of every set (U1's acceptance) is the
+archived probe `docs/dev/measurements/probe_b77u1_rederive.py`; the
+generic `check_expectations` gate keeps re-proving it on every run.

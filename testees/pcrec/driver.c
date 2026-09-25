@@ -330,12 +330,24 @@ static void emit_caps(const ptrdiff_t (*caps)[2], int ncaps,
     if (!out[0]) { out[0] = '-'; out[1] = 0; }
 }
 
+/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
+ * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
+ * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
+ * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
+ * that range or at n. Without --utf8 the advance stays start + 1. */
+static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
+    size_t p = pos + 1;
+    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
+    return p;
+}
+
 int main(int argc, char **argv) {
     const char *lib_path = NULL, *list_path = NULL, *mode = "search";
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long trial = 1;
     long long buffer_frames = -1, buffer_trail = -1;
     volatile int find_all = 0;
+    volatile int utf8_adv = 0;   /* [B77] U1: --utf8, the protocol flag */
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -347,6 +359,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--subject-timeout") && i + 1 < argc) subject_timeout = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--skip") && i + 1 < argc)           skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                       find_all = 1;
+        else if (!strcmp(a, "--utf8"))                           utf8_adv = 1;
         else if (!strcmp(a, "--buffer-frames") && i + 1 < argc)  buffer_frames = strtoll(argv[++i], NULL, 10);
         else if (!strcmp(a, "--buffer-trail") && i + 1 < argc)   buffer_trail = strtoll(argv[++i], NULL, 10);
         else { printf("error\tunknown argument %s\n", a); return 2; }
@@ -792,11 +805,16 @@ int main(int argc, char **argv) {
                          * AHEAD of pos, and advancing pos itself re-finds the
                          * same empty match next call (KB-17). Byte encoding:
                          * S3.1.1's `<prefix>_next_pos` residual is start+1
-                         * (every position is a character boundary); every
-                         * pcrec testee on this bench compiles for `byte`. */
+                         * (every position is a character boundary). Under
+                         * --utf8 ([B77] U1) the next CHARACTER boundary --
+                         * the rule a `-e utf8` artifact's own
+                         * `<prefix>_next_pos` implements (S3.1.1), coded
+                         * here once for every engine rather than called. */
                         size_t start = (size_t)caps[0][0];
                         size_t end = (size_t)caps[0][1];
-                        pos = (end > start) ? end : start + 1;
+                        pos = (end > start) ? end
+                            : utf8_adv ? utf8_next_start(s->buf, s->len, start)
+                                       : start + 1;
                         if (pos > s->len) break;
                     }
                     nmatch = count;

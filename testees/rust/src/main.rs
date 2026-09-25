@@ -232,7 +232,20 @@ struct SubjectResult {
     elapsed: f64,
 }
 
-fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool) -> SubjectResult {
+/// [B77] U1: the find-all EMPTY-MATCH advance under `--utf8` -- pcrec
+/// match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
+/// pcrecbench/oracle_pcre2.py's `next_start()` and every other driver apply:
+/// from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte
+/// outside that range or at n. Without `--utf8` the advance stays start + 1.
+fn utf8_next_start(buf: &[u8], pos: usize) -> usize {
+    let mut p = pos + 1;
+    while p < buf.len() && (buf[p] & 0xC0) == 0x80 {
+        p += 1;
+    }
+    p
+}
+
+fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: bool) -> SubjectResult {
     let ncap = re.captures_len().saturating_sub(1); // group 0 excluded, RE2/onig convention
     let mut matched = false;
     let mut start: i64 = -1;
@@ -269,7 +282,14 @@ fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool) -> SubjectRes
                 // by reference, KB-17, testees/pcre2/driver.c's own
                 // comment): off the match's own reported START, never off
                 // the scan position.
-                pos = if me > ms { me } else { ms + 1 };
+                // Under --utf8 ([B77] U1): the next CHARACTER boundary.
+                pos = if me > ms {
+                    me
+                } else if utf8_adv {
+                    utf8_next_start(buf, ms)
+                } else {
+                    ms + 1
+                };
             }
             nmatches = count;
             matched = count > 0;
@@ -315,6 +335,7 @@ struct Args {
     subject_timeout: u64,
     skip: usize,
     find_all: bool,
+    utf8_adv: bool,
     size_limit: usize,
     dfa_size_limit: usize,
 }
@@ -331,6 +352,7 @@ fn parse_args() -> Args {
         subject_timeout: 0,
         skip: 0,
         find_all: false,
+        utf8_adv: false,
         size_limit: DEFAULT_SIZE_LIMIT,
         dfa_size_limit: DEFAULT_DFA_SIZE_LIMIT,
     };
@@ -356,6 +378,7 @@ fn parse_args() -> Args {
             "--subject-timeout" => a.subject_timeout = next!().parse().unwrap_or(0),
             "--skip" => a.skip = next!().parse().unwrap_or(0),
             "--find-all" => a.find_all = true,
+            "--utf8" => a.utf8_adv = true,
             "--size-limit" => a.size_limit = next!().parse().unwrap_or(DEFAULT_SIZE_LIMIT),
             "--dfa-size-limit" => {
                 a.dfa_size_limit = next!().parse().unwrap_or(DEFAULT_DFA_SIZE_LIMIT)
@@ -496,9 +519,10 @@ fn main() {
             let buf = s.buf;
             let iters = iters;
             let find_all = args.find_all;
+            let utf8_adv = args.utf8_adv;
             let (tx, rx) = mpsc::channel();
             thread::spawn(move || {
-                let r = run_subject(&re2, &buf, iters, find_all);
+                let r = run_subject(&re2, &buf, iters, find_all, utf8_adv);
                 let _ = tx.send(r); // Err is fine: the receiver may be gone (timed out)
             });
             match rx.recv_timeout(Duration::from_secs(args.subject_timeout)) {
@@ -517,7 +541,7 @@ fn main() {
                 Err(mpsc::RecvTimeoutError::Disconnected) => None,
             }
         } else {
-            Some(run_subject(&re, &s.buf, iters, args.find_all))
+            Some(run_subject(&re, &s.buf, iters, args.find_all, args.utf8_adv))
         };
 
         let r = match result {

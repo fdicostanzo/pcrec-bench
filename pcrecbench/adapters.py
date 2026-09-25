@@ -31,6 +31,26 @@ INVOCATION
                                    match found ahead of it. This is the
                                    throughput regime's operation, and the
                                    count is what its expectation states.
+           [--utf8]                ([B77] U1, docs/design/utf8_set_v1.md
+                                   8.4) the find-all EMPTY-MATCH advance
+                                   becomes the next CHARACTER boundary:
+                                   pcrec match_api.md S3.1.1's NORMATIVE
+                                   utf8 rule -- from start + 1, skip every
+                                   byte in 0x80-0xBF, stop at the first byte
+                                   outside that range or at the subject's
+                                   end. Passed by the adapter iff the
+                                   harness set the handle's `utf8_advance`,
+                                   which it does iff the pattern's ORACLE
+                                   OPTION WORD carries PCRE2_UTF
+                                   (`pcrecbench.expectations.utf8_advance`)
+                                   -- one fact, so the oracle and every
+                                   driver step alike. It moves the ADVANCE
+                                   only, never the engine's own encoding
+                                   (a config's choice); inert without
+                                   --find-all, and inert in a driver with
+                                   no find-all loop (vectorscan, boolean
+                                   grain). Absent, every driver is
+                                   byte-for-byte what it was.
            [--compile-trials T]    compile T times, timing every phase; T-1
                                    of them are thrown away except for their
                                    timings (default 1)

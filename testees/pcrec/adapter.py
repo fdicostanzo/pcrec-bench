@@ -3819,6 +3819,11 @@ class Adapter(_ad.Adapter):
                 "--mode", REGIME_MODE[regime], "--iters", str(iters)]
         if regime == "throughput":
             argv.append("--find-all")
+        if handle.get("utf8_advance"):
+            # [B77] U1: the character-boundary find-all advance (the
+            # driver protocol, pcrecbench/adapters.py), set by the harness
+            # from the SAME fact as the oracle word's PCRE2_UTF.
+            argv.append("--utf8")
         argv += list(handle.get("buffer_args") or [])
         return per_trial(argv, subjects, trials, timeout=timeout,
                          pin=handle.get("pin"),

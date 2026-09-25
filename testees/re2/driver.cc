@@ -67,6 +67,17 @@ using absl::string_view;
 
 // ------------------------------------------------------------- clock/io
 
+/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
+ * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
+ * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
+ * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
+ * that range or at n. Without --utf8 the advance stays start + 1. */
+static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
+    size_t p = pos + 1;
+    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
+    return p;
+}
+
 static double now(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -176,6 +187,7 @@ int main(int argc, char **argv) {
     volatile long iters = 1, subject_timeout = 0, skip = 0;
     long compile_trials = 1;
     volatile int find_all = 0;
+    volatile int utf8_adv = 0;   // [B77] U1: --utf8, the protocol flag
     int longest = 0;
     int64_t max_mem = RE2::Options::kDefaultMaxMem;
 
@@ -189,6 +201,7 @@ int main(int argc, char **argv) {
         else if (!std::strcmp(a, "--subject-timeout") && i + 1 < argc) subject_timeout = std::strtol(argv[++i], NULL, 10);
         else if (!std::strcmp(a, "--skip") && i + 1 < argc) skip = std::strtol(argv[++i], NULL, 10);
         else if (!std::strcmp(a, "--find-all")) find_all = 1;
+        else if (!std::strcmp(a, "--utf8")) utf8_adv = 1;
         else if (!std::strcmp(a, "--longest")) longest = 1;
         else if (!std::strcmp(a, "--max-mem") && i + 1 < argc) max_mem = std::strtoll(argv[++i], NULL, 10);
         else { std::printf("error\tunknown argument %s\n", a); return 2; }
@@ -306,7 +319,13 @@ int main(int argc, char **argv) {
                         // (adopted by reference, KB-17, testees/pcre2/
                         // driver.c's own comment): off the match's own
                         // reported START, never off the scan position.
-                        pos = (end > start) ? end : start + 1;
+                        // Under --utf8 ([B77] U1): the next CHARACTER
+                        // boundary, not start + 1.
+                        pos = (end > start) ? end
+                            : utf8_adv ? utf8_next_start(
+                                  reinterpret_cast<const unsigned char *>(text.data()),
+                                  text.size(), start)
+                                       : start + 1;
                     }
                     nmatch = count;
                     matched_final = (count > 0);
