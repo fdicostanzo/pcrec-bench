@@ -48,6 +48,21 @@ FIVE SECTIONS:
      engine may refuse the subject, which is exactly what
      `non-utf8-subject` names).
 
+  F. THE SET'S OWN SPELLINGS (informational): `\\x{...}`, the four
+     lookbehind members, multiline `^`/`$`, `\\A...\\z`, `\\B`, counted
+     repeats of 4-byte and `.` units -- per-pattern refusals U4/U5 should
+     know before the first window, NOT capability verdicts.
+
+TWO RULES the verdicts follow, both stated where they are applied:
+  * a pcrec SIZE refusal ("pattern too large", the emitted-size cap) is
+    NOT a missing capability -- it is R4/P7's finding and must reach the
+    set as a first-class did-not-compile row (onig's `recursion`
+    precedent), so it does not unset the token;
+  * `non-utf8-subject` is NOT, BY RULE, on every UTF-8 config: the
+    subject contract is valid UTF-8 (PCRE2 refuses invalid input;
+    Vectorscan/Oniguruma document it as undefined), whatever one witness
+    happens to answer.
+
 Then THE DECLARATIONS: one row per (new or unchanged config, token), the
 verdict and the witness it rests on -- what bench/utf8's `ext bench`
 matrix (lane U4) transcribes.
@@ -108,8 +123,30 @@ NEW_TOKEN_WITNESSES = {
         ("s-ucp", r"(*UCP)a\sb", ["a b", "ab"]),
     ],
 }
-# informational: each engine's NATIVE \w scope, no (*UCP) spelling
-NATIVE_SCOPE = [("native-w", r"\w+", ["Москва"])]
+# informational: each engine's NATIVE \w scope, no (*UCP) spelling; and
+# the set's own `asr-b-cyr-ucp` shape, because utf8_set_v1.md 7.6 records
+# that Vectorscan's UCP BREAKS `\b` (a flag-level A/B on bench/capability)
+NATIVE_SCOPE = [("native-w", r"\w+", ["Москва"]),
+                ("b-ucp", r"(*UCP)\bМосква\b", ["в Москва.", "Москвах"])]
+
+# informational: the SET'S OWN spellings that are neither a token witness
+# nor a property (families (a)/(e) of utf8_set_v1.md 5), so U4 can tag
+# and U5 can predict the per-pattern refusals before the first window
+SET_SPELLINGS = [
+    ("x-brace-range", r"[\x{100}-\x{2000}]+", ["āĀ", "abc"]),
+    ("lb-fixed-2byte", r"(?<=é)x", ["éx", "ex"]),
+    ("lb-varbyte-samechar", r"(?<=a|é)x", ["éx", "ax", "bx"]),
+    ("lb-neg-3byte", r"(?<!日)本", ["日本", "本"]),
+    ("lb-class", r"(?<=[\x{400}-\x{4FF}])\s", ["ж ", "a "]),
+    ("caret-ml", r"(?m)^日", ["a\n日", "a日"]),
+    ("dollar-ml", r"(?m)語$", ["語\nb", "語b"]),
+    ("A-z", r"\A日本語\z", ["日本語", "日本語x"]),
+    ("B-midchar", r"\B", ["é"]),
+    ("emoji-bounded", r"😀{2,4}", ["😀😀", "😀"]),
+    ("dot-bounded", r".{3,8}", ["日本語", "ab"]),
+]
+
+SIZE_REFUSAL = "pattern too large"   # pcrec's emitted-size cap wording
 
 PROPS_WITNESSES = [
     ("L", r"\p{L}", ["é", "1"]),
@@ -282,7 +319,17 @@ def main():
         for label, pat, subs in PROPS_WITNESSES:
             subjects = [U(s) for s in subs]
             out, diag, rows = run_one(adapters, tid, tmp, "p-" + label, pat, subjects)
-            if out != "compiled":
+            if out != "compiled" and SIZE_REFUSAL in diag:
+                # A SIZE refusal is not a missing capability: the construct
+                # is supported and the artifact exceeds pcrec's emitted-size
+                # cap (utf8_set_v1.md 15 R4 / P7 -- a FINDING, which the
+                # set must SEE as a first-class did-not-compile row, never
+                # hide behind an unsatisfied token). Precedent: onig-
+                # default's `recursion`, testees/onig/CLAUDE.md.
+                ev.append("%s SIZE-REFUSED" % label)
+                print("%s\t%s\t%s\t%s (size cap, not a capability): %s"
+                      % (tid, label, pat, out, diag.replace("\n", " | ")[:120]))
+            elif out != "compiled":
                 tok_ok = False
                 ev.append("%s %s" % (label, out))
                 print("%s\t%s\t%s\t%s: %s" % (tid, label, pat, out,
@@ -356,10 +403,34 @@ def main():
                                   [b"\xffa\xff"])
         r = rows[0] if rows else None
         print("%s\ta over \\xffa\\xff\t%s\t%s" % (tid, out, r if r else diag))
-        nu_ok = bool(r and r[0] == "match" and (r[1] in (None, "-")
-                                                  or (int(r[1]), int(r[2])) == (1, 2)))
+        # NOT, BY RULE, on every UTF-8 config, whatever the witness says:
+        # the config's subject contract IS valid UTF-8 (PCRE2 refuses
+        # invalid input outright, -23 above; HS_FLAG_UTF8 and
+        # ONIG_ENCODING_UTF8 document invalid input as UNDEFINED, so a
+        # `match` here is not a capability anyone promised), and the utf8
+        # set runs no invalid subject at all (growth (h), Q10). The
+        # witness row is recorded as information, never as the verdict.
         verdict[(tid, "non-utf8-subject")] = (
-            nu_ok, "a over \\xffa\\xff -> %s" % (r[0] if r else out))
+            False, "by rule (a UTF-8 config's subject contract is valid "
+                   "UTF-8); witness: a over \\xffa\\xff -> %s"
+                   % (r[0] if r else out))
+
+    print()
+    print("=== F. the set's own spellings (informational, for U4/U5) ===")
+    for label, pat, subs in SET_SPELLINGS:
+        exps = " ".join(oracle_answer(pat, U(s))[0] for s in subs)
+        print("%s\t%s\t(oracle: %s)" % (label, pat, exps))
+    for tid in NEW + UNCHANGED:
+        for label, pat, subs in SET_SPELLINGS:
+            subjects = [U(s) for s in subs]
+            out, diag, rows = run_one(adapters, tid, tmp, "f-" + label, pat, subjects)
+            if out != "compiled":
+                print("%s\t%s\t%s: %s" % (tid, label, out,
+                                          diag.replace("\n", " | ")[:140]))
+            else:
+                good, line = judge(rows, subjects, pat)
+                print("%s\t%s\tcompiled\t%s%s" % (tid, label, line,
+                                                  "" if good else "  <- DIVERGES"))
 
     print()
     print("=== THE DECLARATIONS (what bench/utf8's ext bench matrix transcribes) ===")
