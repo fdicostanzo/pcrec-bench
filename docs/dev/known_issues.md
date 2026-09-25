@@ -1494,3 +1494,14 @@ loop propagates a mid-loop negative return as the call's give-up with
 its code, each driver + a check-harness arm (a synthetic engine error on
 the second call must read `gave-up`). Owner: unassigned; natural rider
 for the next harness lane.
+
+## KB-30 (2026-09-25, found by lane b77u2/[B77] U2; OPEN) — vectorscan's measure() does not pass `--free-spacing`, so an `(?x)` pattern ending in a comment is wrapped differently at measure time than at compile time
+
+Found while writing the UTF-8 encoding into the vectorscan measure argv
+(docs/dev/lanes/b77u2_report.md, findings). The compile path passes
+`--free-spacing` for an `(?x)` pattern; `measure()` does not, so the
+measure-time wrapper is not the one that was compiled when the pattern ends
+in a `#` comment. PRE-EXISTING (not introduced by U2); not fixed. Owner: a
+rider for the next harness lane (with KB-29). A fix needs a control: an `(?x)`
+pattern with a trailing comment, answer and span agreeing between the compile
+path and the measure path.
