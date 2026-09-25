@@ -26,7 +26,13 @@ exactly. Run every command below from the **repository root**.
        python3 -m pcrecbench interpret reports/<name>.tsv \
            --index store/index.tsv \
            [--predictions docs/dev/predictions/<slug>.tsv] \
+           [--subject-grain reports/<name>.subject-grain.tsv] \
            --render --out reports/<name>.interpretation.md
+
+   Pass `--subject-grain` whenever `reports/<name>.subject-grain.tsv`
+   exists (or when the sidecar being regenerated was stamped with it —
+   read its stamp): R-BUCKET-DOMINATED reads it, and omitting it
+   silently drops that rule's firings ([B87], 2026-09-25).
 
 4. Re-run the same command **without `--out`** (to stdout) and
    byte-compare it against the file just written — the determinism
