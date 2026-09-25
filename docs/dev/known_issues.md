@@ -1487,8 +1487,9 @@ loop advances). Consequence: a mid-subject give-up can read as
 `wrong-span-or-captures` / a count mismatch rather than as a give-up by
 name — the wrong outcome class, and one the scoreboard excludes for the
 wrong reason. Not yet measured how many committed records it touches
-(a give-up on the FIRST call is classified correctly, which covers every
-give-up seen so far, e.g. K64's PCREC_ERR_STEPS rows). Fix shape: the
+(a give-up on the FIRST call is classified correctly — e.g. K64's
+PCREC_ERR_STEPS rows; a truncated one would NOT show as a give-up, so the
+records alone cannot bound how many exist). Fix shape: the
 loop propagates a mid-loop negative return as the call's give-up with
 its code, each driver + a check-harness arm (a synthetic engine error on
 the second call must read `gave-up`). Owner: unassigned; natural rider
