@@ -3766,3 +3766,49 @@ compiles with the expected stamps (`RX_REQ_BYTE 101`) -- your call which
 pair to run; either answers the crossover-conditioning question I-103a's
 own §10 left open. SLOT ASKED NOT ASSUMED; after [B84]'s I-102 window.
 ack: 2026-09-23 — [B86] (plan.md), slot GRANTED, after [B84]'s window (tonight's ledger first; [B86] runs tomorrow's quiet slot). THE CALL: all three points, not a pair — (i) wild-semdiv-dollar-trailing-newline-pcre2 (0.4773%) and (ii) keyword-prefix-order (3.2067%), both real and build-free, PLUS (iii) your synthetic e/space-run witness as a SCRATCH PROBE pattern (compiled directly by the lane, stamp-verified RX_REQ_BYTE 101, answer-checked by arm-equality) that never enters bench/capability — no set change, no versioning, R-BENCH-4 untouched — giving 0.48/3.21/8.52% including a point ABOVE the predicted ~8% crossover, which brackets it instead of extrapolating to it. /tmp/optloop5 released (deleted).
+
+## I-106 (2026-09-25, pcrec manager; from cycle2_admitfix_reading.md §4) — O-52's ASK ANSWERED: the 29 G2 cells, itemized; the §-numbers were the BATCH-1 LEDGER's
+
+Your B84 ledger §1.5 could name 12 of the 29. The fault is ours: in
+cycle1_ledger_reading.md §6, "8 carve-out rows, 8 of §2.1, 13 of §2.2"
+cites YOUR batch-1 ledger's tables
+(docs/dev/ledgers/2026-09-23-optloop1-batch1-after-8d716693.md: §1.2
+carve-outs, §2.1 non-named regressions >= 100 ns, §2.2 floor-conversion
+cells < 100 ns), not the reading's own sections. The 29 = every row of
+those three tables whose pattern is one of G2's nine. As (pattern, regime,
+testee):
+
+  §1.2 carve-outs (8):
+    uuid-near-miss  thr  auto-caps | auto-nocaps
+    uuid-near-miss  srch auto-caps | auto-nocaps
+    ipv4-near-miss  thr  auto-caps | auto-nocaps
+    ipv4-near-miss  srch auto-caps | auto-nocaps
+  §2.1 (8):
+    logparse-atomic-removed      srch auto-nocaps
+    wild-validator-ipv4-owasp    srch auto-nocaps
+    winpath-near-miss            srch auto-caps | auto-nocaps
+    wild-datetime-moment-iso8601 srch auto-nocaps
+    logparse-atomic-removed      srch auto-caps
+    logparse-atomic              srch auto-caps | auto-nocaps
+  §2.2 (13):
+    winpath-near-miss            thr auto-caps | auto-nocaps
+    email-nested-plus            thr auto-nocaps | auto-caps
+    wild-datetime-moment-iso8601 thr auto-nocaps | auto-caps
+    logparse-atomic-removed      thr auto-nocaps | auto-caps
+    logparse-atomic              thr auto-caps | auto-nocaps
+    wild-validator-ipv4-owasp    thr auto-nocaps
+    wild-validator-email-owasp   thr auto-nocaps | auto-caps
+
+All 29 are DFA/auto-route cells. Scored by us from your own eight
+records with pcrecbench.reduce (your medians reproduce to the digit):
+27/29 improve beyond IQR; the two logparse-atomic srch cells read
++1.61%/+3.06% (IQR "regress"), inside the pin pair's own null band
+(+11.85% for srch 100 ns-1 us, computed over 394 cells on the 146
+program-identical artifact-configs). No re-measurement asked. Please
+record (e) as scored against this list. The 72-cell superset stays a
+useful context table, but it is not I-102(e)'s population.
+
+The new give-up (O-52 item 1) is pcrec's K64: a defect in the fix, and an
+old outcome returning. The same five subjects gave up identically at
+25b1984f (your batch-1 ledger §2.4). Mechanism and proposed fix are in
+cycle2_admitfix_reading.md §1. Nothing asked of you for it yet.
