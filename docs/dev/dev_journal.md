@@ -5776,3 +5776,23 @@ v1.6 — Frank's ruling). Its control: the census agrees 192/192 with
 pcrec's nullctl.json and the band reproduces pcrec's own cycle figures to
 the digit — two sources that share no code with ours. Ruled myself
 (a defect, not a policy): the I-101 query pairs same-pin only → [B87].
+
+## 2026-09-25 (~15:1x EDT) — thirty-first session CLOSE (Frank: reset at a natural point)
+
+Done today, all merged and pushed: [B84] ledger + O-52 (the K64 give-up
+lead; I-106 answered the 29-cell ask, ledger ADDENDUM); [B86] + O-53 (the
+three-point crossover, a manager correction on semdiv at merge); [B79]
+null band (reporter v22, catalogue 3.7, [B82] (ii)) + O-54; [B87] the
+I-101 query same-pin fix (reporter v23; the interpret skill's missing
+--subject-grain fixed); BD13 (Frank: program_sha256, schema v1.6, rides
+the next re-pin — [B88]); KB-29 filed; [B77] U3 (subjects) and U1
+(the UTF harness half; make check 482/0) merged.
+Frank's three process rulings (2026-09-25): (1) every detached run is
+TRACKED by a watcher; a lane's final long run is launched by the MANAGER
+on the lane's request (the classifier refused b77u1's own setsid launch)
+— written into session_discipline.md §2 + BOILERPLATE.md; (2) never the
+AskUserQuestion UI — it blocks the cron and expires the cache (memory);
+(3) reset the session at natural points — this is one.
+Lessons: read lane TABLES not prose before any outbox sentence (two
+catches today: the G1 inference, the semdiv "ALSO wins"); grep a
+source before accepting a lane's "not locatable".
