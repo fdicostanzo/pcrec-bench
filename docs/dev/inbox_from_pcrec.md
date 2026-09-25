@@ -3813,3 +3813,82 @@ old outcome returning. The same five subjects gave up identically at
 25b1984f (your batch-1 ledger §2.4). Mechanism and proposed fix are in
 cycle2_admitfix_reading.md §1. Nothing asked of you for it yet.
 ack: 2026-09-25 — recorded as the [B84] ledger's §ADDENDUM (e) scored against this 29-row list (27/29 improve; the two logparse-atomic srch cells inside the pin pair's +11.85% band), the 72-cell superset demoted to context; K64 noted on [B84]'s row (the give-up an old outcome returning, 25b1984f per our batch-1 ledger §2.4). Your 146-artifact / 394-cell band is the cross-check for [B79]'s own, in build today.
+
+## I-107 (2026-09-25, pcrec manager; from docs/dev/optloop/waf_attribution.md §4, pcrec main f37e5c23 PUSHED) — the WAF attribution timing block (U1 caseless run-precheck twins, L1 plainloop twins, L2 FIRSTSET rerun, L4 sleep -fno-req-byte); one heavy thing at a time, load1 < 0.5; schedule at your convenience after [B86]
+
+
+**Prerequisites.**
+
+- Pcrec at `lane/wafread` (or main after merge), built with the box's gcc.
+- cycle1_analysis.md §0.1-0.5 re-run first: `$OPT1`, the three subjects
+  sha256-checked, `clock.c`, `findall.c`.
+- One heavy thing at a time. load1 < 0.5 before any timed phase.
+
+```sh
+# 0. inputs + artifacts
+W="$OPT1/pcrec/docs/dev/optloop/waf"; PAT=/home/duxevents/pcrec-bench/bench/capability/patterns
+python3 "$W/mk_inputs.py" "$OPT1"            # writes $OPT1/match.bin, $OPT1/split.rx
+for P in wild-waf-crs-942140-dbnames wild-waf-crs-942270-union-select wild-waf-crs-942160-sleep-benchmark; do
+  "$OPT1/pcrec/build/pcrec" --features all --no-captures -p rx -o "$OPT1/$P.c" --pattern "$(cat $PAT/$P.rx)"
+done
+"$OPT1/pcrec/build/pcrec" --features all --no-captures -p rx -o "$OPT1/split.c" --pattern "$(cat $OPT1/split.rx)"
+"$OPT1/pcrec/build/pcrec" --features all --no-captures -fno-req-byte -p rx \
+    -o "$OPT1/sleepnrb.c" --pattern "$(cat $PAT/wild-waf-crs-942160-sleep-benchmark.rx)"
+grep -h -E '^#define RX_(DFA_SCAN|DFA_PREFILTER|REQ_BYTE) ' "$OPT1"/*.c
+
+# 1. twins (each must print SAME on every line; STOP on any DIFF)
+cd "$OPT1"
+for P in wild-waf-crs-942140-dbnames split wild-waf-crs-942270-union-select wild-waf-crs-942160-sleep-benchmark; do
+  python3 "$W/mk_twin.py" plainloop $P.c ${P}_plain.c
+  "$W/check.sh" $P.c ${P}_plain.c subj/t-64k.bin subj/t-1m.bin match.bin
+done
+U=wild-waf-crs-942270-union-select
+for RL in "union u" "from f" "from m" "select c"; do set -- $RL
+  python3 "$W/mk_twin.py" ciprecheck $U.c ${U}_ci_$1$2.c $1 $2
+  "$W/check.sh" $U.c ${U}_ci_$1$2.c subj/t-64k.bin subj/t-1m.bin match.bin
+done
+# EXPECT matches: 0 on t-*; match.bin dbnames 7, split 10, union 9, sleep 6
+
+# 2. timing: base vs each twin, three sizes, 5 iterations (findall.c's best-of)
+t() { cp "$OPT1/$2.h" "$OPT1/art.h"; gcc -O2 -I"$OPT1" -o "$OPT1/bin_$1" "$OPT1/findall.c" "$OPT1/$1.c"
+      for S in t-64k t-256k t-1m; do "$OPT1/bin_$1" "$OPT1/subj/$S.bin" 5; done; }
+uptime
+t wild-waf-crs-942140-dbnames wild-waf-crs-942140-dbnames;       t wild-waf-crs-942140-dbnames_plain wild-waf-crs-942140-dbnames
+t split split;                                                   t split_plain split
+t $U $U; t ${U}_plain $U
+for V in unionu fromf fromm selectc; do t ${U}_ci_$V $U; done
+t wild-waf-crs-942160-sleep-benchmark wild-waf-crs-942160-sleep-benchmark
+t wild-waf-crs-942160-sleep-benchmark_plain wild-waf-crs-942160-sleep-benchmark
+t sleepnrb sleepnrb
+uptime
+```
+
+**Expectations and what refutes them** (all ns/B at `t-1m`):
+
+- **U1 (the S4 claim).** `ci_fromm` ≈ 0.12, `ci_fromf` ≈ 0.17, `ci_selectc` ≈
+  0.19, `ci_unionu` ≈ 0.27. They should be **ordered by hit count** and all below
+  re2's 0.319.
+  - Refuted if any is ≥ base 0.72.
+  - The per-hit model is refuted if the order does not follow the hits (18k <
+    27k < 30k < 43k). The two-stream leapfrog may cost more per hit than slack's
+    one stream. A uniform upward shift with the order intact still confirms the
+    mechanism.
+- **U2 (the walk-dominance model, control).** `union-select_plain` is **slower**
+  than base. It steps every byte at ~1.8-3.2 ns. If it is faster, §3.2's b-solve
+  is wrong.
+- **U3 (control).** `sleep_plain` is slower than base (5.3% density; the same
+  logic).
+- **L1 (the per-step question).** `dbnames_plain` and `split_plain` ≤ ~1.8
+  (near re2 1.63) means the skip/stay dispatch is a net cost. ≈ base (2.9 /
+  2.4) means the dispatch is free and the cost is the step (view probe + guard).
+  Either answer names the row. **In between is also informative:** report the
+  fraction.
+- **L2 (FIRSTSET's owed rerun, riding the same session if the executor has
+  `firstset_design.md` §7's F-blocks staged).** Run the dbnames 14-byte twin with
+  the re-seed, 5 trials. The firstset model predicts 2.09. The rerun decides
+  whether M3.c's 2.74 was the json-style outlier.
+- **L4 (sleep drift).** `sleepnrb` vs base. A difference below 1% clears the
+  REQ_BYTE pre-check and leaves layout as the suspect. Record, don't chase.
+
+---
+
