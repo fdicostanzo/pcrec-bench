@@ -3,16 +3,20 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-6ef76820/build/pcrec --list-limits
+#     build/pcrec-ce658cb7/build/pcrec --list-limits
 #
-# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31 --
-# see list_axes.tsv's header), archived 2026-09-23 by lane b84repin
-# ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge, b1885a83 ->
-# 6ef76820). 60 data rows / 7 columns (name, value, unit, kind, override,
-# anchor, desc) -- BYTE-IDENTICAL to the b1885a83 copy below the header
-# (diffed line for line): [OPT-PRECHECK-ADMIT] adds no numeric limit --
-# `req_admit`'s two rules (the one-attempt route test, the byte-frequency
-# dominance comparison) read existing fields and existing limits only.
+# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33 --
+# see list_axes.tsv's header), archived 2026-09-25 by
+# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
+# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
+# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
+# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
+# 62 data rows / 7 columns (name, value, unit, kind, override, anchor,
+# desc) -- 60 -> 62 against the 6ef76820 copy, TWO rows APPENDED to the
+# identifier-cap / compile-budget block and nothing else moved (diffed
+# line for line): PCREC_MAX_VAR_NAME_LEN 64 (identifier cap) and
+# PCREC_MAX_VAR_NEST_DEPTH 8 (compile budget), both [VAR]'s own (abi 32,
+# pcrec docs/spec/limits.md 3.6). K64 (abi 33) adds no limit.
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -90,6 +94,8 @@ PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges o
 PCREC_STARTPOS_GUARD_TEXT_MAX	1024	bytes	identifier cap	none		[K50]: fixed buffer size for the caller-startpos boundary guard's rendered C expression (src/core/internal.h's pcrec_startpos_guard_text; four call sites in the two emitters). Sized by the ENCODING BACKEND's own guard text, not by the pattern — enc_utf8.c's is 46 bytes with the @-placeholders expanded, so this is K38-precedent margin over the longest a backend could plausibly spell; overflow is a loud internal error, never a truncated half-guard
 PCREC_MIN_SCAN_CHAIN	2	states	selection knee	none		[OPT-5] precondition (5): the SHORTEST bounded counted-class run src/opt/scanedge.c will collapse into a scan edge (the unbounded self-loop is admitted at any length). MEASURED 2026-09-04 against the STEP 1.1 loop -- studies/scan_edge_ladder/run_floor.sh, 3 runs x 15 rounds, edge vs -fno-scan-edge on the same pattern: at m=2, 3 and 4 the two arms are NOT separated by more than the per-round range on either family, so D77 no-gap-no-move keeps this at 2; the only resolvable separation is m=8 nullable, edge/noedge 0.9855 median [IQR 0.0243]. The edge SIZE win is unconditional and is the standing reason to admit m=2. RE-CONFIRMED 2026-09-21 on the fixed harness (I-82, D117): 0 of 16 cells separate, still keeping this at 2
 PCREC_MAX_REQ_RUN_EMIT	8	bytes	selection knee	none		[OPT-REQPOS] tier 2b: the LONGEST necessary literal run the pre-check will compare (src/opt/reqbyte.c derives the run, src/gen/emit_dfa.c sizes the emitted memcmp by it). A longer run is TRUNCATED to its lowest-frequency window of this length containing the scan byte, never split into two compares (reqpos_2b.md §2.4 item 3, Frank's ruling 2026-09-22). 8 is where gcc lowers a constant-length memcmp to ONE word load and one compare with no call out of line, measured on both this box's gcc-16 and the reference gcc-15.2 (reqpos_2b.md §3.2); above it the compare decomposes and a second mechanism's cost question opens, which is the D77 trigger for moving this
+PCREC_MAX_VAR_NAME_LEN	64	bytes	identifier cap	none	3.6	[VAR]: the longest selector `${name}` may carry. A name is emitted into the artifact as part of an identifier (the internal <PREFIX>_VAR_<NAME> index macro) and into rx_info's names table, so it is bounded for the same reason -p is (PCREC_MAX_PREFIX_LEN); 64 is well above any name a caller would write and well under PCREC_MAX_EMIT_NAME_LEN's own margin
+PCREC_MAX_VAR_NEST_DEPTH	8	levels	compile budget	none	3.6	[VAR]: how deep a `${name:-word}` operator's WORD may nest further `${...}` expansions. variables_common.md §1.7: nesting is permitted in the word position only and the bound is COMPILE-time, so an over-deep template is a compile error and no run-time recursion is introduced in either consumer. 8 is a fallback-chain depth no real caller approaches; the parser recurses once per level, so this also bounds that recursion
 PCREC_MAX_REQ_RUN_SCAN	32	bytes	compile budget	none		[OPT-REQPOS] tier 2b: how much of a necessary literal run the ANALYSIS tracks before truncating it (src/opt/reqbyte.c's RbRun). Bounds the walk's per-frame state on a pattern whose literal is as long as the pattern — this project has segfaulted its own compiler on a 20,000-byte literal — and every truncation is SOUND in the only direction that matters, because a prefix of a necessary contiguous run is itself a necessary contiguous run. Sized at four times PCREC_MAX_REQ_RUN_EMIT so the window choice above is EXACT for every run length the shipped corpus and the bench contain (longest measured 11, docs/dev/optloop/reqpos_census.md §1.1)
 RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
 BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number

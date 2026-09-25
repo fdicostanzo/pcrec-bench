@@ -42,6 +42,46 @@ import math
 
 N_MIN = 10
 
+# ------------------------------------------------ the IDENTITY, field first
+#
+# [B88] (BD13, record schema v1.7): a pcrec compile row carries
+# `engine_metadata.program_sha256` -- the census tool's OWN v2
+# normalization (tools/program_identity.py `normalize_one`), so two rows of
+# one config are PROGRAM-IDENTICAL iff the two values are equal. The band
+# reads that FIRST; the `reports/identity/` census is the FALLBACK for a
+# pair whose records predate the field (every pair before ce658cb7). Where
+# a cell has BOTH, they are cross-checked and a disagreement is reported by
+# name, never silently resolved (the census wins no tie: the FIELD is the
+# record's own statement, the census a re-emit of it).
+
+IDENTITY_FIELD = "program_sha256"
+SOURCE_FIELD = "field"
+SOURCE_CENSUS = "census"
+
+
+def field_identity(old_meta, new_meta):
+    """-> "identical" / "changed" when BOTH compile rows' engine_metadata
+    carry `program_sha256`, else None (the caller falls back)."""
+    a = (old_meta or {}).get(IDENTITY_FIELD)
+    b = (new_meta or {}).get(IDENTITY_FIELD)
+    if not a or not b:
+        return None
+    return "identical" if a == b else "changed"
+
+
+def cell_identity(field_verdict, census_verdict):
+    """-> (identity, source, disagreement). Field first; the census verdict
+    (or None when there is no census / no row) is the fallback; with both
+    present, `disagreement` is True iff they name different verdicts (a
+    census `refused-*` row never meets a field verdict: a refused compile
+    has no program to hash)."""
+    if field_verdict is not None:
+        dis = census_verdict is not None and census_verdict != field_verdict
+        return field_verdict, SOURCE_FIELD, dis
+    if census_verdict is not None:
+        return census_verdict, SOURCE_CENSUS, False
+    return "absent", None, False
+
 SCALE_BINS = (">=1us", "100ns-1us", "<100ns")
 
 

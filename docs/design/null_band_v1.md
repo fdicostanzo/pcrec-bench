@@ -73,6 +73,40 @@ adapter could stamp a `program_sha256` into each compile row's
 census would then become a cross-check instead of the source, and
 future pairs would need no re-emission.
 
+**RULED (BD13) and BUILT ([B88], lane b90repin, 2026-09-25) -- with one
+change to the proposal above, forced by the data.** The field cannot use
+the three rules above: rule 3 is PAIR-RELATIVE (which `#define`s are
+one-sided depends on the other pin), and a compile row is one artifact.
+So `tools/program_identity.py` gained normalization **v2**
+(`normalize_one`), one artifact at a time: C comments removed and blank
+runs collapsed (so `-fcomments` cannot move it -- the adapter emits WITH
+it, the census WITHOUT); the shared `PCREC_RX_ABI_H` declaration block
+dropped (pcrec emits it identically into every artifact of a pin); the
+`rx_info` reflection initializer dropped when nothing reads it (rule 2
+is a member of it); the artifact's own `#include` canonicalised; and
+every `#define` that NO other emitted line references dropped (subsumes
+rule 3: a one-sided stamp is unreferenced; a macro the program reads --
+`RX_NCAPS`, `RX_RESUME_FRAMES`, the slot indices -- stays verbatim).
+The record field `engine_metadata.program_sha256` (record schema v1.7,
+declaration type `sha256`) is `program_sha256_of_files()` of that
+module, imported; a v2 census file's sha columns are the same values.
+The band reads the FIELD first, the census as the fallback, and names
+any disagreement where a cell has both (`pcrecbench/nullband.py`).
+
+The data that forced v2, measured at [B90]: at 6ef76820 → ce658cb7 abi
+32 ([VAR]) grew the ABI block and the `rx_info` initializer of EVERY
+artifact, so the v1 rules read all 373 compiled capability rows
+`changed` -- an EMPTY band. v2 reads 325 identical / 48 changed (the 12
+K64 fix-A rows and 36 backreference rows whose `rx_bref_match` became
+`rx_span_match`). On the three committed v1 pairs v2 agrees with v1 on
+1,144 of 1,152 rows; the 8 others are one pattern whose
+`RX_VM_PREFILTER_LANG_WHY` prose ("size cap retry, exact N > cap")
+echoed the pin's own new stamp line in its byte count with the program
+identical -- v1's "a moved stamp value is always a changed program"
+sentence above is FALSE for that one prose stamp, and v2 does not rely
+on it. The v1 files stay re-derivable (`--check` reads the version off
+the file's first line); v2 is the default for a new pair.
+
 ## 3. The band
 
 - **Population:** per cross-pin PAIR (the testees R8's `Δ vs previous

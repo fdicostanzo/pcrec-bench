@@ -23,7 +23,28 @@ each config's OWN pcrec flags (read from the RECORD's `testee.build_flags`,
 never retyped), and compares the normalized `.c` + `.h`. Carrying a
 normalized program hash in the compile row itself would make this tool a
 cross-check rather than the source -- OWED as a schema/adapter ruling
-(docs/dev/lanes/b79nullband_report.md).
+(docs/dev/lanes/b79nullband_report.md). RULED (BD13) and BUILT ([B88],
+lane b90repin, record schema v1.7): every pcrec compile row from pin
+ce658cb7 on carries `engine_metadata.program_sha256`, computed by THIS
+module's `normalize_one` (normalization v2, below); the null band reads
+the field first and this census only for a pair whose records predate
+it. A v2 census file's sha columns ARE program_sha256 values, so the
+first pair carrying both is a direct cross-check.
+
+TWO NORMALIZATIONS. v1 (the three [B79] files, kept re-derivable under
+`--check`, which reads the version off the committed file's first line)
+is PAIR-RELATIVE; v2 (the default for a new file) is one artifact at a
+time and is the only one a record can carry. MEASURED at [B90] over the
+three committed capability@0.1 pairs (3 configs x 64 x 2 forms, 1,152
+rows): v2's verdict equals v1's on 1,144; the 8 others are ONE pattern
+(`wild-logparse-syslogbase-expanded` under both auto configs, both forms,
+two pairs) where v1 read `changed` only because a size-cap-retry prose
+stamp (`RX_VM_PREFILTER_LANG_WHY "size cap retry, exact 1463264 >
+1000000"`) echoed the pin's own new stamp line in its byte count, the
+emitted program being identical -- v2 reads `identical`, correctly. At
+6ef76820 -> ce658cb7, v1 reads EVERY artifact `changed` (abi 32 grew the
+shared ABI block and the rx_info initializer of all of them), v2 reads
+the program: see docs/dev/lanes/b90repin_report.md.
 
 NORMALIZATION (the ONLY lines ignored -- pcrec's own nullctl.py rule,
 generalised from its one named stamp to any ONE-SIDED stamp):
@@ -81,7 +102,8 @@ from pcrecbench import subbench as _sb  # noqa: E402
 from pcrecbench import record as _rec  # noqa: E402
 
 PIN_SH = os.path.join(REPO_ROOT, "testees", "pcrec", "pin.sh")
-CENSUS_VERSION = "program_identity v1"
+CENSUS_VERSION = "program_identity v1"      # the v1 files' first line
+CENSUS_VERSION_V2 = "program_identity v2"   # [B88]: the v2 normalization
 C_ENV = dict(os.environ, LC_ALL="C", LANG="C")
 
 FORMS = ("plain", "whole-subject")
@@ -125,6 +147,174 @@ def normalize_pair(old_text, new_text):
 
 def sha(text):
     return hashlib.sha256(text.encode("utf-8", "surrogateescape")).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# NORMALIZATION v2 -- ONE ARTIFACT AT A TIME ([B88]/[B90], BD13)
+#
+# v1 above is PAIR-RELATIVE (its rule 3 needs both sides to know which
+# `#define` is one-sided), so it cannot produce a hash a single compile row
+# could carry. v2 is the pair-free generalisation of the SAME idea -- ignore
+# what the program never reads, compare the rest verbatim -- and it is the
+# ONE function behind both the record field `engine_metadata.program_sha256`
+# (testees/pcrec/adapter.py imports `program_sha256_of_files`) and the v2
+# census (`--normalization v2`, the default for a new pair file): two
+# artifacts are PROGRAM-IDENTICAL under v2 iff their v2 hashes are equal,
+# so a record-pair verdict and a census verdict are the same computation.
+#
+# THE RULES (applied to `.c` + SEP + `.h`, the text `emit()` returns):
+#   1. C COMMENTS are removed (string and char literals respected) and every
+#      run of blanks outside a literal collapses to one space; lines are
+#      stripped and blank lines dropped. This subsumes v1's rule 1 (the
+#      generated-by line IS a comment) and makes the hash independent of
+#      `-fcomments` (the adapter emits WITH it, the census WITHOUT;
+#      check_program_sha256 proves the two agree).
+#   2. The shared ABI DECLARATION block, `#ifndef PCREC_RX_ABI_H` .. its
+#      matching `#endif`, is dropped: pcrec emits it IDENTICALLY into every
+#      artifact of a pin (types, error codes, rx_info's layout), so it can
+#      never tell one pattern's program from another's -- it can only make
+#      a WHOLE pin pair read "changed", which is exactly what abi 32's
+#      `rx_var` / `rx_ctx.vars` additions did to v1 (every artifact
+#      6ef76820 -> ce658cb7 differs in this block and nowhere else). Like
+#      the shim, it is a PIN covariate and lands inside the null band.
+#   3. The `rx_info` reflection initializer (`const struct rx_info <name> =
+#      { ... };`) is dropped IFF no other line names `<name>` except its
+#      `extern` declaration: the emitted program never reads it (v1 rule 2,
+#      the `.abi` integer, is a member of it; so are abi 32's `.vars` /
+#      `.nvars`).
+#   4. The artifact's own `#include "<basename>.h"` is canonicalised (the
+#      census and the adapter write to different basenames).
+#   5. A `#define NAME ...` (continuations included) is dropped IFF NAME
+#      appears as a token NOWHERE ELSE in the text left by rules 1-4: an
+#      UNREFERENCED macro is an annotation the program cannot read (every
+#      `RX_*` mechanism stamp, PCREC_FEATURE_*). A macro the program DOES
+#      read (RX_NCAPS, RX_RESUME_FRAMES, RX_BUFFER_ALIGN, the slot indices)
+#      is compared verbatim. This subsumes v1's rule 3 (a one-sided stamp is
+#      unreferenced) and goes one step further: a BOTH-sided stamp whose
+#      value moved with no code change reads identical under v2 -- by
+#      construction a stamp that names emitted code moves WITH that code,
+#      and the code is compared verbatim.
+# Everything else is compared byte for byte. MEASURED at [B90]: v2's
+# verdict equals v1's on every row of the three committed capability@0.1
+# pairs (docs/dev/lanes/b90repin_report.md).
+# ---------------------------------------------------------------------------
+
+NORMALIZATION_V1 = "v1"
+NORMALIZATION_V2 = "v2"
+SEP = "\n/* ---- header ---- */\n"
+
+_C_TOKENS = re.compile(
+    r'"(?:\\.|[^"\\\n])*"'          # a string literal: kept
+    r"|'(?:\\.|[^'\\\n])*'"         # a char literal: kept
+    r"|/\*.*?\*/"                   # a block comment: removed
+    r"|//[^\n]*"                    # a line comment: removed
+    r"|[ \t\f\v]+",                 # a blank run: one space
+    re.S)
+_ABI_OPEN = re.compile(r"^#\s*ifndef\s+PCREC_RX_ABI_H\b")
+_PP_IF = re.compile(r"^#\s*if(n?def)?\b")
+_PP_ENDIF = re.compile(r"^#\s*endif\b")
+_INFO_OPEN = re.compile(r"^const struct rx_info ([A-Za-z_][A-Za-z0-9_]*) = \{$")
+_OWN_INCLUDE = re.compile(r'^#\s*include\s+"[^"/]+\.h"$')
+_IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+
+def _strip_comments(text):
+    def sub(m):
+        t = m.group(0)
+        if t[0] in "\"'":
+            return t
+        if t.startswith("/*"):
+            return "\n" * t.count("\n") or " "
+        if t.startswith("//"):
+            return ""
+        return " "
+    return _C_TOKENS.sub(sub, text)
+
+
+def normalize_one(text):
+    """-> the v2-normalized text of ONE artifact (`.c` + SEP + `.h`); rules
+    in the block comment above."""
+    lines = [ln.strip() for ln in _strip_comments(text).split("\n")]
+    lines = [ln for ln in lines if ln]
+    # rule 2: the ABI declaration block (nesting-aware)
+    out, depth = [], 0
+    for ln in lines:
+        if depth:
+            if _PP_IF.match(ln):
+                depth += 1
+            elif _PP_ENDIF.match(ln):
+                depth -= 1
+            continue
+        if _ABI_OPEN.match(ln):
+            depth = 1
+            continue
+        out.append(ln)
+    lines = out
+    # rule 3: the rx_info reflection initializer, when nothing reads it
+    for i, ln in enumerate(lines):
+        m = _INFO_OPEN.match(ln)
+        if not m:
+            continue
+        name = m.group(1)
+        try:
+            end = lines.index("};", i)
+        except ValueError:
+            break
+        rest = lines[:i] + lines[end + 1:]
+        readers = [r for r in rest
+                   if re.search(r"\b%s\b" % re.escape(name), r)
+                   and not r.startswith("extern const struct rx_info ")]
+        if not readers:
+            lines = rest
+        break
+    # rule 4: the artifact's own header include
+    lines = ['#include "<artifact>.h"' if _OWN_INCLUDE.match(ln) else ln
+             for ln in lines]
+    # rule 5: unreferenced #defines (with their continuation lines)
+    defs = []            # (start, end_exclusive, name)
+    i = 0
+    while i < len(lines):
+        m = _DEFINE.match(lines[i])
+        if m:
+            j = i
+            while lines[j].endswith("\\") and j + 1 < len(lines):
+                j += 1
+            defs.append((i, j + 1, m.group(1)))
+            i = j + 1
+        else:
+            i += 1
+    in_def = set()
+    for a, b, _n in defs:
+        in_def.update(range(a, b))
+    counts = {}
+    for k, ln in enumerate(lines):
+        for tok in _IDENT.findall(ln):
+            counts[tok] = counts.get(tok, 0) + 1
+    drop = set()
+    for a, b, name in defs:
+        own = sum(_IDENT.findall(lines[k]).count(name) for k in range(a, b))
+        if counts.get(name, 0) - own == 0:
+            drop.update(range(a, b))
+    return "\n".join(ln for k, ln in enumerate(lines) if k not in drop) + "\n"
+
+
+def program_sha256_of_text(text):
+    """The v2 identity hash of ONE artifact's `.c` + SEP + `.h` text."""
+    return sha(normalize_one(text))
+
+
+def program_sha256_of_files(c_path, h_path=None):
+    """The v2 identity hash read off an emitted artifact's files -- the
+    exact concatenation `emit()` builds, so the adapter's field and the
+    census's column are one computation over one text."""
+    if h_path is None:
+        h_path = c_path[:-2] + ".h"
+    parts = []
+    for p in (c_path, h_path):
+        if os.path.exists(p):
+            with open(p, "rb") as fh:
+                parts.append(fh.read().decode("utf-8", "surrogateescape"))
+    return program_sha256_of_text(SEP.join(parts))
 
 
 def pin_binary(pin):
@@ -180,7 +370,7 @@ def emit(binary, shape, flags, pattern, workdir):
         if os.path.exists(p):
             with open(p, "rb") as fh:
                 parts.append(fh.read().decode("utf-8", "surrogateescape"))
-    return "\n/* ---- header ---- */\n".join(parts)
+    return SEP.join(parts)
 
 
 def newest_records(store_dir, subbench, version, engine, pin):
@@ -231,7 +421,7 @@ def flags_of(setup):
 
 
 def build_census(subbench, version, old, new, store_dir, engine="pcrec",
-                 log=sys.stderr):
+                 log=sys.stderr, normalization=NORMALIZATION_V2):
     sb = _sb.find(subbench)
     if sb.version != version:
         raise SystemExit(f"bench/{subbench} is at {sb.version}, not {version}")
@@ -241,14 +431,23 @@ def build_census(subbench, version, old, new, store_dir, engine="pcrec",
     if not slugs:
         raise SystemExit(f"no config measured at both {old} and {new}")
     bins = {old: pin_binary(old), new: pin_binary(new)}
-    meta = [f"# {CENSUS_VERSION}; subbench={subbench}@{version}; "
+    v2 = normalization == NORMALIZATION_V2
+    meta = [f"# {CENSUS_VERSION_V2 if v2 else CENSUS_VERSION}; "
+            f"subbench={subbench}@{version}; "
             f"engine={engine}; old={old}; new={new}",
             f"# binaries: {old}={file_sha256(bins[old])}; "
             f"{new}={file_sha256(bins[new])}",
-            "# normalization: dropped = the `/* Generated by pcrec` line, the "
-            "`.abi = N,` initializer, and every `#define` whose name is "
-            "defined on ONE side only; everything else compared verbatim "
-            "(.c + .h, emitted WITHOUT -fcomments)",
+            ("# normalization v2 (one artifact at a time; the SAME function "
+             "as the records' engine_metadata.program_sha256): C comments "
+             "removed and blank runs collapsed, the PCREC_RX_ABI_H block, "
+             "the unread rx_info initializer and every UNREFERENCED #define "
+             "dropped; everything else compared verbatim (.c + .h, emitted "
+             "WITHOUT -fcomments); the sha columns ARE program_sha256 values"
+             if v2 else
+             "# normalization: dropped = the `/* Generated by pcrec` line, the "
+             "`.abi = N,` initializer, and every `#define` whose name is "
+             "defined on ONE side only; everything else compared verbatim "
+             "(.c + .h, emitted WITHOUT -fcomments)"),
             "# generated by: tools/program_identity.py (docs/design/null_band_v1.md)"]
     rows = []
     cache = {}
@@ -298,9 +497,15 @@ def build_census(subbench, version, old, new, store_dir, engine="pcrec",
                         hb = "-" if b is None else sha(b)
                         ign = []
                     else:
-                        na, nb, ign = normalize_pair(a, b)
-                        ha, hb = sha(na), sha(nb)
-                        verdict = "identical" if na == nb else "changed"
+                        if v2:
+                            ha = program_sha256_of_text(a)
+                            hb = program_sha256_of_text(b)
+                            ign = []
+                            verdict = "identical" if ha == hb else "changed"
+                        else:
+                            na, nb, ign = normalize_pair(a, b)
+                            ha, hb = sha(na), sha(nb)
+                            verdict = "identical" if na == nb else "changed"
                     rows.append([slug, p.name, form, verdict, ha, hb,
                                  ",".join(ign) or "-"])
                 print(f"  {slug} {p.name}", file=log)
@@ -354,8 +559,22 @@ def main(argv=None):
     ap.add_argument("--out", help="default: the reporter's lookup path")
     ap.add_argument("--check", action="store_true",
                     help="re-derive and diff against the committed file")
+    ap.add_argument("--normalization", choices=(NORMALIZATION_V1, NORMALIZATION_V2),
+                    help="default: v2 for a new file; under --check, the "
+                         "version the COMMITTED file's first line names "
+                         "(the three [B79] files are v1 and stay v1)")
     a = ap.parse_args(argv)
-    meta, rows = build_census(a.subbench, a.version, a.old, a.new, a.store, a.engine)
+    out = a.out or census_path(a.subbench, a.version, a.engine, a.old, a.new)
+    norm = a.normalization
+    if norm is None:
+        norm = NORMALIZATION_V2
+        if a.check and os.path.exists(out):
+            with open(out, encoding="utf-8") as fh:
+                first = fh.readline()
+            if not first.startswith(f"# {CENSUS_VERSION_V2};"):
+                norm = NORMALIZATION_V1
+    meta, rows = build_census(a.subbench, a.version, a.old, a.new, a.store,
+                              a.engine, normalization=norm)
     xlines = []
     if a.cross_check:
         agree, dis, n = cross_check(rows, a.cross_check)
@@ -363,7 +582,6 @@ def main(argv=None):
                       f"(sha256 {file_sha256(a.cross_check)}): {agree}/{n} "
                       f"agree" + (f"; DISAGREE: {'; '.join(dis)}" if dis else ""))
     text = render(meta, rows, xlines)
-    out = a.out or census_path(a.subbench, a.version, a.engine, a.old, a.new)
     if a.check:
         with open(out, encoding="utf-8") as fh:
             committed = fh.read()

@@ -2,24 +2,25 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-6ef76820/build/pcrec --list-axes
+#     build/pcrec-ce658cb7/build/pcrec --list-axes
 #
-# pcrec commit 6ef768204cd0de4cf8594e7af6b08da5e050e2c0 (rx_info.abi 31,
-# read off a plain `abc` witness at this build), archived 2026-09-23 by
-# lane b84repin ([B84], inbox I-102: the [OPT-PRECHECK-ADMIT] merge,
-# b1885a83 -> 6ef76820). 89 data rows / 32 axes / 12 columns -- the
-# FOURTH registry surface (pcrec docs/spec/registry.md 6, [CHK-2]).
+# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33,
+# read off a plain `abc` witness at this build), archived 2026-09-25 by
+# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
+# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
+# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
+# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
+# 89 data rows / 32 axes / 12 columns -- the FOURTH registry surface
+# (pcrec docs/spec/registry.md 6, [CHK-2]).
 #
-# BYTE-IDENTICAL to the b1885a83 copy below the header (diffed line for
-# line, pcrec's own comments included): [OPT-PRECHECK-ADMIT]'s new
-# stamp, RX_REQ_WHY (a closed four-token set: none / emitted /
-# one-attempt / dominated -- whether the derived req_byte/req_run check
-# actually reached the artifact, and why not when it did not), is
-# UNCONDITIONAL on every artifact of both engines but is deliberately
-# NOT an axis -- no flag, no bit (pcrec docs/spec/tuning.md 2.29: "the
-# admission as its own subsection, explicitly NOT an axis"). `struct
-# rx_info` is also byte-identical field for field between the two pins
-# (diffed on the same witness): the shim floor STAYS 16.
+# BYTE-IDENTICAL to the 6ef76820 copy below the header (diffed line for
+# line, pcrec's own comments included): [VAR] is a MODULE (`--features
+# vars`), not an optimization axis, and K64's fix narrows an existing
+# admission predicate (req_route_one_attempt) with no flag and no bit.
+# `struct rx_info` GAINED two appended members at abi 32 (`vars`,
+# `nvars`, the variable-name table) and `rx_ctx` two appended members
+# (`vars`, `nvars`); no existing offset moves and the shim reads
+# neither rx_info member, so the shim floor STAYS 16.
 #
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in

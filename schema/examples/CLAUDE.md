@@ -121,6 +121,17 @@ File names are not chosen: rule X4 makes the name the record id plus
   the ACCEPT-side coverage of rule X34; `bad/x34-boolean-grain-nonnull-
   span.jsonl` is its one-field-mutation reject-side control.
 
+- `boolgrain-example@0.1__example-boolscan_1.0.0_block-nosom-nocaps-simd__example-box__20260925T120000Z.jsonl`
+  -- the schema **v1.7** record ([B88], BD13, lane `b90repin`): the v1.6
+  boolean-grain example above re-stamped 1.7 (timestamps moved to
+  2026-09-25, so its record id differs) with ONE addition, a
+  `program_sha256` pair declared with the new declaration TYPE `sha256`
+  and carried on its compile row with a well-formed value (64 lowercase
+  hex digits) -- the ACCEPT side of X15's `sha256` branch;
+  `bad/x15-sha256-malformed.jsonl` is its one-field reject-side twin.
+  Built by a one-off scratch script (the v1.6 file stays untouched as
+  1.6's own witness).
+
 ## Editing one
 
 Records are hashed (`content_hash`, note §3). After editing, restamp:

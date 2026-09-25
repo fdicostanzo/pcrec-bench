@@ -3096,6 +3096,29 @@ B84_STAMP_LINE_EMITTED = 29       # `#define RX_REQ_WHY "emitted"`
 B84_STAMP_LINE_DOMINATED = 31     # `#define RX_REQ_WHY "dominated"`
 B84_STAMP_LINE_ONE_ATTEMPT = 33   # `#define RX_REQ_WHY "one-attempt"`
 
+# [B90] (pin ce658cb7, TWO abi steps: 31 -> 32 [VAR], 32 -> 33 K64 fix A).
+# abi 32 is pcrec's caller-variable module ([VAR], `${name}`, D121): EVERY
+# artifact of both engines gains, in the shared PCREC_RX_ABI_H block of the
+# .h, the `rx_var` typedef, two appended `rx_ctx` members (`vars`, `nvars`),
+# `#define PCREC_ERR_UNSET_VAR (-8)` and two appended `struct rx_info`
+# members; in the .c, the two `rx_info` initializer lines (`.vars = NULL,`
+# `.nvars = 0,`) and -- under this adapter's `--features all` -- the
+# `,vars` suffix on `PCREC_FEATURE_MODULES`. MEASURED at +1001 B on the
+# comment-excluded port (`emit_bytes`/`emit_code_bytes`, .c + .h), every
+# one of the 30 size expectations below that carries a B84 term, and
+# INDEPENDENT of `-fcomments` (the lines are code lines whose trailing
+# comments the port counts as code; the same number with and without the
+# flag on four witnesses, both pins): .c +39 (34 initializer + 5 `,vars`),
+# .h +962. pcrec's own ritual number is +34 at DEFAULT features on the .c
+# alone (commit 68422ba1) -- the same event through a different measure.
+# abi 33 (K64 fix A) adds no line anywhere; it moves the pre-check of
+# framed, unguarded, anchored forced-VM one-attempt artifacts only (the
+# B90 K64 witnesses below carry their own MEASURED totals), and none of the
+# pre-existing witnesses in this file is in that population.
+B90_VAR_ABI_BLOCK = 1001
+B90_K64_BYTE_CHECK = 153    # fix A's restored 5-line byte pre-check (5 witnesses)
+B90_K64_RUN_CHECK = 581     # fix A's restored 16-line run pre-check (winpath)
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -3468,7 +3491,7 @@ STAMP_CASES = (
       "emit_bytes": 16558 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 2 * B42_PORTFIX_SEMI_PER_MACHINE
                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_DFA}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
     # class, the same ladder, the fallback candidate. Without this row the
@@ -3515,7 +3538,7 @@ STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE,
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
@@ -3542,7 +3565,7 @@ STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18045 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_VM}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
     # admit `b`/`B` -- so it stays a BITMAP class: folds 0 on a class-
@@ -3567,7 +3590,7 @@ STAMP_CASES = (
       # not one-attempt -- MEASURED req_why "emitted".
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -3584,7 +3607,7 @@ STAMP_CASES = (
       # [B84]: same as its sibling -- MEASURED req_why "emitted".
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -3808,9 +3831,9 @@ LEDGER_STAMP_CASES = (
       # has no required byte (req_byte "none") -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -3864,10 +3887,10 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE,
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                    + B84_STAMP_LINE_NONE, **_CAPS_DFA}),
+                    + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK, **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
     # I-23/I-25; plan [B22]). DECLINE (`pcrec_minw(root) == 0` on the
@@ -3909,9 +3932,9 @@ LEDGER_STAMP_CASES = (
       # req_run both stay "none", the flat +26.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE  # +4: the N1 _WHY prose
-                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -4025,7 +4048,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
      "pcrec-auto", "altwide", "srt-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57,
@@ -4035,7 +4058,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ------ [B37] / pcrec abi 18 ([ENG-ISL] STEP 1) -- THE ORDER PAIR ON
     # THE VM ROUTE, where the x8.87 (256) / x20.1 (512) branch-ORDER
     # effect of the 2026-09-03 ledger LIVED. Inbox I-43's prediction for
@@ -4062,7 +4085,7 @@ LEDGER_STAMP_CASES = (
       # VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
@@ -4095,7 +4118,7 @@ LEDGER_STAMP_CASES = (
       # "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -4115,7 +4138,7 @@ LEDGER_STAMP_CASES = (
       # canonicalises regardless of source order) -- the VM flat lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 292043 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 57}),
     # The prefix-3 and suffix arms island too (the shared literal is
     # factored OUT by [OPT-ALTCLS] stage 2 first, and the island asks
@@ -4148,7 +4171,7 @@ LEDGER_STAMP_CASES = (
       # island trie, not a byte/offset-set prefilter), and the machine is
       # not one-attempt -- MEASURED req_why "emitted".
       "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 242 + 423 + B84_STAMP_LINE_EMITTED,
+                    + 242 + 423 + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK,
       "req_byte": "113", "req_run": "717578@0"}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
@@ -4161,7 +4184,7 @@ LEDGER_STAMP_CASES = (
       # req_byte "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 185044 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # THE VM REFUSAL WALL MOVED: `w-384`'s forced-VM form REFUSED at
     # 288d505 (508,607 B of emitted code > the 500,000 code cap) and
     # COMPILES at this pin as an island at 427,824 B -- I-43's "the wall
@@ -4179,7 +4202,7 @@ LEDGER_STAMP_CASES = (
       # byte -- req_byte "none" -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 427824 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 17}),
     # ... and the floor: a single literal byte, no alternation, so
     # islands 0 -- the VM route's zero control -- and `forward` at 236
@@ -4201,7 +4224,7 @@ LEDGER_STAMP_CASES = (
       # candidate-start scan ahead of it (this forced-VM artifact carries
       # none), and the machine is not one-attempt -- MEASURED "emitted".
       "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 240 + B80_STAMP_LINE + B84_STAMP_LINE_EMITTED,
+                    + 240 + B80_STAMP_LINE + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK,
       "altcls_merges": 0, "altcls_factored": 0}),
     # `sh1-64`: every one of its 64 branches starts with the byte `k` --
     # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
@@ -4244,7 +4267,7 @@ LEDGER_STAMP_CASES = (
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE}),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # `dig-upto-16` forced VM: the [B33] (3) .text witness -- a
     # frameless program with no capture write, so the abi-17
     # always_inline (now the abi-22 `forward` rung) is what the cell
@@ -4260,7 +4283,7 @@ LEDGER_STAMP_CASES = (
       # -- the VM flat stamp lines.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
@@ -4275,8 +4298,239 @@ LEDGER_STAMP_CASES = (
       # [B74]: DFA route, req_byte/end_window both "none" -- the flat pair.
       # [B84]: req_why "none" -- MEASURED against the pin's own binary.
       "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3
-                    + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE}),
+                    + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK}),
+) + tuple(
+    # [B90] (pin ce658cb7, abi 33, inbox I-108) -- K64 FIX A BY VALUE. The
+    # SIX forced-VM one-attempt artifacts of bench/capability@0.1 with
+    # `RX_VM_FRAMELESS 0` that [OPT-PRECHECK-ADMIT]'s G2 had declined at
+    # 6ef76820 (pcrec known_issues K64's own population list): every one
+    # reads `req_why "emitted"` at ce658cb7 (was `one-attempt`), the
+    # pre-check restored in the search prologue -- `vm_program_bytes`
+    # UNMOVED on all six. SIZE BOOKS, MEASURED per witness against both
+    # pins' own binaries (adapter argv, comment-excluded port): the five
+    # single-BYTE pre-checks are +1150 = B90_VAR_ABI_BLOCK (1001) +
+    # B90_K64_BYTE_CHECK (153, the 5-line byte check) - 4 (the stamp's
+    # token 33 -> 29 B, B84_STAMP_LINE_ONE_ATTEMPT -> _EMITTED); the one
+    # RUN pre-check (winpath-near-miss, `RX_REQ_RUN "3a5c@1"`) is +1578 =
+    # 1001 + B90_K64_RUN_CHECK (581, the 16-line run check) - 4.
+    (("capability %s under --engine=vm: K64 fix A, the pre-check back" % name),
+     "pcrec-vm", "capability", name,
+     {"engine": "vm", "engine_sel": "forced", "prefilter": "none",
+      "vm_frameless": 0, "vm_start": "anchored", "req_why": "emitted",
+      "req_byte": rb, "req_run": rr, "vm_program_bytes": prog,
+      "emit_bytes": old + B90_VAR_ABI_BLOCK + check
+                    - B84_STAMP_LINE_ONE_ATTEMPT + B84_STAMP_LINE_EMITTED})
+    # (name, req_byte, req_run, vm_program_bytes, 6ef76820 emit_bytes, check)
+    for name, rb, rr, prog, old, check in (
+        ("email-nested-plus", "64", "none", 3299, 23896, B90_K64_BYTE_CHECK),
+        ("ipv4-near-miss", "46", "none", 13695, 31205, B90_K64_BYTE_CHECK),
+        ("wild-datetime-moment-iso8601", "45", "none", 15575, 33908, B90_K64_BYTE_CHECK),
+        ("wild-validator-email-owasp", "64", "none", 5616, 26328, B90_K64_BYTE_CHECK),
+        ("wild-validator-ipv4-owasp", "46", "none", 14007, 31862, B90_K64_BYTE_CHECK),
+        ("winpath-near-miss", "92", "3a5c@1", 2925, 23821, B90_K64_RUN_CHECK))
+) + (
+    # ... and the TWO arms of fix A's new conjunct, each KEEPING
+    # `one-attempt` -- the controls that the fix NARROWED G2 rather than
+    # retiring it. (1) THE EXACT-HYBRID arm: the SAME email-nested-plus
+    # under `auto` is a VM HYBRID with an `exact` prefilter language in
+    # front (the no-match proof itself), framed (`vm_frameless 0`) and
+    # still `one-attempt` -- +1001 exactly, the abi-32 block and nothing
+    # else. (2) THE FRAMELESS arm: uuid-near-miss forced-VM is framed-free
+    # (`vm_frameless 1`), cannot backtrack, and keeps `one-attempt` --
+    # +1001 exactly.
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt",
+     "pcrec-auto", "capability", "email-nested-plus",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact", "vm_frameless": 0, "vm_start": "anchored",
+      "req_why": "one-attempt", "req_byte": "64", "vm_program_bytes": 3299,
+      "emit_bytes": 27825 + B90_VAR_ABI_BLOCK}),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt",
+     "pcrec-vm", "capability", "uuid-near-miss",
+     {"engine": "vm", "engine_sel": "forced", "prefilter": "none",
+      "vm_frameless": 1, "vm_start": "anchored", "req_why": "one-attempt",
+      "req_byte": "45", "vm_program_bytes": 4685,
+      "emit_bytes": 23286 + B90_VAR_ABI_BLOCK}),
 )
+
+
+def check_program_sha256():
+    """[B88] (BD13, record schema v1.7, rides [B90]'s re-pin) -- THE RECORD
+    FIELD AND THE CENSUS ARE ONE COMPUTATION, checked at the pin.
+
+    Every pcrec compile row carries `engine_metadata.program_sha256`,
+    computed by tools/program_identity.py's OWN `normalize_one` (v2)
+    over the files the adapter emitted WITH `-fcomments`. The census
+    re-emits WITHOUT it. This check compiles real artifacts of three
+    kinds through the ordinary adapter path and asserts, per artifact:
+      1. the field is present and 64 lowercase hex (the schema's
+         `sha256` declaration type, X15);
+      2. the census's own emission of the same (pattern, config flags) at
+         the same pin hashes to the SAME value -- the agreement BD13 asks
+         for -- while the two raw texts DIFFER (the control that the
+         agreement is the normalization's doing, not two identical
+         inputs);
+    and across artifacts that two different programs hash differently.
+    ACROSS THE PIN PAIR (when build/pcrec-6ef76820 is present): the v1
+    pair normalization reads the DFA witness `changed` (abi 32's ABI
+    block + rx_info initializer, on EVERY artifact) where v2 reads it
+    `identical`, and v2 reads the backreference witness `changed` (abi
+    32's `rx_bref_match` -> `rx_span_match` seam) -- both BY VALUE, the
+    two findings of [B90]'s census."""
+    print("-- [B88] program_sha256: the record field vs the census (v2) at the pin --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("program_sha256", "no pcrec adapter")
+        return
+    import program_identity as PI
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b88-")
+    binary = adapter.pin_binary()
+    shape = PI._cli_shape(binary, tmp)
+    cases = (
+        ("email orig under auto (a DFA)", "pcrec-auto", _bench_pattern("email", "orig")),
+        ("capability email-nested-plus under --engine=vm (K64's witness)", "pcrec-vm",
+         _bench_pattern("capability", "email-nested-plus")),
+        ("capability doubled-word under auto (a backreference VM)", "pcrec-auto",
+         _bench_pattern("capability", "doubled-word")),
+    )
+    hashes = {}
+    try:
+        for label, tid, pattern in cases:
+            adapter.prepare(tid, tmp)
+            pid = re.sub(r"[^A-Za-z0-9]+", "-", label).strip("-")[:40]
+            cr = adapter.compile(tid, pid, pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("program_sha256: %s compiles" % label, "%s: %s" % (cr.outcome, cr.diagnostic))
+                continue
+            field = (cr.engine_metadata or {}).get("program_sha256")
+            if isinstance(field, str) and re.fullmatch(r"[0-9a-f]{64}", field):
+                ok("program_sha256: present, 64 lowercase hex on %s" % label, field[:16] + "...")
+            else:
+                bad("program_sha256: present, 64 lowercase hex on %s" % label, repr(field))
+                continue
+            flags = list(adapter.config(tid).get("flags", []))
+            plain = PI.emit(binary, shape, flags, pattern, os.path.join(tmp, "census"))
+            commented = PI.emit(binary, shape, flags + ["-fcomments"], pattern,
+                                os.path.join(tmp, "census-c"))
+            census = PI.program_sha256_of_text(plain)
+            if census == field and plain != commented:
+                ok("program_sha256: the record field == the census's v2 hash on %s" % label,
+                   "%s...; raw texts differ by -fcomments (%d vs %d chars), hashes equal"
+                   % (field[:16], len(plain), len(commented)))
+            else:
+                bad("program_sha256: the record field == the census's v2 hash on %s" % label,
+                    "field %s census %s; raw texts %s"
+                    % (field[:16], census[:16],
+                       "differ" if plain != commented else "IDENTICAL (no control)"))
+            hashes[label] = field
+        if len(set(hashes.values())) == len(hashes) == len(cases):
+            ok("program_sha256: three different programs, three different hashes", "")
+        else:
+            bad("program_sha256: three different programs, three different hashes",
+                repr(hashes))
+
+        # -- across the pair: the two census findings, by value
+        prev = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(binary))),
+                            "pcrec-6ef76820", "build", "pcrec")
+        if not os.path.exists(prev):
+            print("   (skip) the pair arms: no build/pcrec-6ef76820 on this box")
+            return
+        prev_shape = PI._cli_shape(prev, tmp)
+        for label, tid, pattern, want_v1, want_v2 in (
+                ("email orig under auto", "pcrec-auto", cases[0][2], "changed", "identical"),
+                ("capability doubled-word under auto", "pcrec-auto", cases[2][2],
+                 "changed", "changed")):
+            flags = list(adapter.config(tid).get("flags", []))
+            a = PI.emit(prev, prev_shape, flags, pattern, os.path.join(tmp, "o"))
+            b = PI.emit(binary, shape, flags, pattern, os.path.join(tmp, "n"))
+            na, nb, _ign = PI.normalize_pair(a, b)
+            v1 = "identical" if na == nb else "changed"
+            v2 = ("identical" if PI.program_sha256_of_text(a)
+                  == PI.program_sha256_of_text(b) else "changed")
+            span = "rx_span_match" in PI.normalize_one(b) and "rx_bref_match" in PI.normalize_one(a)
+            what = ("6ef76820 -> %s: v1 %s, v2 %s%s"
+                    % (os.path.basename(os.path.dirname(os.path.dirname(binary))), v1, v2,
+                       "; the bref_match -> span_match seam" if span else ""))
+            if (v1, v2) == (want_v1, want_v2) and (want_v2 == "identical" or span):
+                ok("program_sha256: the pair verdicts on %s (v1 %s / v2 %s)"
+                   % (label, want_v1, want_v2), what)
+            else:
+                bad("program_sha256: the pair verdicts on %s (v1 %s / v2 %s)"
+                    % (label, want_v1, want_v2), what)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_vars_surface():
+    """[B90] abi 32 ([VAR], pcrec D121): `${name}` caller variables. The
+    bench compiles every pcrec config with `--features all`, which since
+    abi 32 INCLUDES module `vars` -- so a pattern containing the byte pair
+    `${` would now be a variable reference (compiled VM-only, refused
+    under --engine=dfa, and `<prefix>_search` would gain a trailing
+    `vars, nvars` pair the shim does not pass). Three facts, each with its
+    control: (1) NO bench pattern contains `${` (every set enumerated, the
+    pattern BYTES read -- the control is a synthetic `a${x}b` the same scan
+    flags); (2) at the pin, `a${x}b` is REFUSED naming module `vars`
+    without it and COMPILES with `--features all` stamping `RX_NVARS 1`,
+    where a plain witness stamps no `RX_NVARS` at all; (3) the shim zeroes
+    `rx_ctx.vars` / `.nvars` under `#ifdef PCREC_ERR_UNSET_VAR`, and a
+    var-free artifact's own text never reads `ctx->vars`."""
+    print("-- [B90] the abi-32 caller-variable surface ([VAR]) --")
+    hits = []
+    n = 0
+    for set_name, bench in subbench_dirs():
+        sb = Subbench(bench)
+        for p in sb.patterns:
+            n += 1
+            if b"${" in sb.pattern_bytes(p.name):
+                hits.append("%s/%s" % (set_name, p.name))
+    if not hits and b"${" in b"a${x}b":
+        ok("vars: no bench pattern contains the byte pair `${`",
+           "%d patterns across %d sets scanned; the synthetic control a${x}b flags"
+           % (n, len(subbench_dirs())))
+    else:
+        bad("vars: no bench pattern contains the byte pair `${`", ", ".join(hits))
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("vars", "no pcrec adapter")
+        return
+    binary = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-vars-")
+    try:
+        out = os.path.join(tmp, "v.c")
+        r0 = run([binary, "-p", "rx", "-o", out, "--pattern", "a${x}b"], timeout=60)
+        r1 = run([binary, "-p", "rx", "--features", "all", "-o", out,
+                  "--pattern", "a${x}b"], timeout=60)
+        h1 = open(out[:-2] + ".h").read() if r1.returncode == 0 else ""
+        c1 = open(out).read() if r1.returncode == 0 else ""
+        plain = os.path.join(tmp, "p.c")
+        r2 = run([binary, "-p", "rx", "--features", "all", "-o", plain,
+                  "--pattern", "abc"], timeout=60)
+        pc = open(plain).read() if r2.returncode == 0 else ""
+        ph = open(plain[:-2] + ".h").read() if r2.returncode == 0 else ""
+        if (r0.returncode != 0 and "requires module 'vars'" in r0.stderr
+                and r1.returncode == 0 and "#define RX_NVARS 1" in h1 + c1
+                and r2.returncode == 0 and "RX_NVARS" not in pc + ph
+                and "PCREC_ERR_UNSET_VAR" in ph):
+            ok("vars: a${x}b refused without the module, a variable under --features all "
+               "(RX_NVARS 1); a plain artifact stamps no RX_NVARS but carries "
+               "PCREC_ERR_UNSET_VAR (the shim's guard macro)", r0.stderr.strip()[:80])
+        else:
+            bad("vars: a${x}b refused without the module, a variable under --features all",
+                "rc %s/%s/%s stderr %r" % (r0.returncode, r1.returncode, r2.returncode,
+                                           r0.stderr[:120]))
+        shim = open(os.path.join(ROOT, "testees", "pcrec", "shim.c")).read()
+        guarded = shim.count("#ifdef PCREC_ERR_UNSET_VAR\n    ctx.vars = (const rx_var *)0;")
+        if guarded == 2 and "ctx->vars" not in pc and "ctx->vars" in c1:
+            ok("vars: both shim rx_ctx builders zero vars/nvars; a var-free artifact "
+               "never reads ctx->vars (the var-bearing one does)", "")
+        else:
+            bad("vars: both shim rx_ctx builders zero vars/nvars",
+                "guarded builders %d; plain reads ctx->vars %s; var-bearing %s"
+                % (guarded, "ctx->vars" in pc, "ctx->vars" in c1))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_mechanism_stamps():
@@ -5656,12 +5910,12 @@ DENY_CONTROLS = (
       # own binary.
       "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE),
+                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                            + B84_STAMP_LINE_NONE)}, "deny"),
+                            + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -5706,10 +5960,10 @@ DENY_CONTROLS = (
       # own binary.
       "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -5742,9 +5996,9 @@ DENY_CONTROLS = (
       # [B84]: req_why "none" on BOTH arms -- MEASURED against the pin's
       # own binary.
       "emit_bytes": (18611 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE,
+                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK,
                      18881 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE)}, "deny"),
+                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -11065,6 +11319,8 @@ def main():
     check_kb1_runtime_options()
     check_describe_schema_shape()
     check_mechanism_stamps()
+    check_program_sha256()
+    check_vars_surface()
     check_deny_flag_controls()
     check_opt42_preempts_collapse_policy()
     check_cc_axis()

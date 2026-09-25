@@ -528,6 +528,117 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at ce658cb7 (abi 31 -> 33) — 2026-09-25, lane b90repin, inbox I-108
+
+**TWO abi steps, not the one I-108 describes.** Pin `ce658cb7` = the merge
+`Merge branch 'lane/k64fix': K64 fix A + abi 33`, against `6ef76820`
+(abi 31) as BEFORE. `git log 6ef76820..ce658cb7` is 122 commits; two of
+them bump `PCREC_ARTIFACT_ABI`:
+
+- **31 -> 32 is [VAR]** (pcrec D121, the "MVP pattern half", commit
+  68422ba1; NOT in I-108's text): module `vars`, `${name}` caller
+  variables whose bytes the caller supplies per call (docs/spec/vars.md).
+  On EVERY artifact of both engines: an `rx_var` typedef and TWO appended
+  `rx_ctx` members (`vars`, `nvars`) in the shared `PCREC_RX_ABI_H` block,
+  `#define PCREC_ERR_UNSET_VAR (-8)`, TWO appended `struct rx_info`
+  members (`vars`, `nvars`, the variable-NAME table) and their two
+  initializer lines (`.vars = NULL,` `.nvars = 0,`). **`--features all`
+  (every config here) now INCLUDES `vars`**, so the byte pair `${` in a
+  pattern is a variable reference -- VM-only, and a var-bearing
+  artifact's `<prefix>_search` gains a trailing `vars, nvars` pair the
+  shim does not pass (it would fail to BUILD, loudly). MEASURED: no
+  bench pattern contains `${` (249 patterns, six sets --
+  `check_vars_surface`). The [VAR] step also GENERALISED the
+  backreference compare: `rx_bref_match(s, n, ref_start, ref_end, at)`
+  became `rx_span_match(s, n, ref_ptr, reflen, at)` -- one encoding-seam
+  entry pair shared by backreferences and variables (D121 addendum) --
+  so **every backreference artifact's PROGRAM text changed**, on every
+  config (measured below).
+- **32 -> 33 is K64 fix A** (commit 1e6a90b0 + 7172f7f4): `[OPT-
+  PRECHECK-ADMIT]`'s G2 VM arm (`req_route_one_attempt`) now declines the
+  necessary-byte pre-check only when the one attempt is LINEAR -- an
+  EXACT-language hybrid in front, or a frameless program (a new
+  `Job.vm_frameless`). No stamp, declaration or layout change; it moves
+  `RX_REQ_WHY` `one-attempt` -> `emitted` and restores the pre-check's
+  code on framed, unguarded, anchored forced-VM one-attempt artifacts.
+
+**`struct rx_info` GREW (two appended members), and the shim floor STAYS
+16.** The shim reads neither new member (no consumer needs the names
+table: no bench artifact carries a variable), and appending moves no
+existing offset, so the abi-16 fields the floor protects are where they
+were; both abi-sabotage arms of `check_abi_floor_refusal` pass
+unchanged. The ONE shim edit: both `rx_ctx` builders (`pb_match_caps`,
+`pb_match_caps_in`) now zero `ctx.vars` / `ctx.nvars` under `#ifdef
+PCREC_ERR_UNSET_VAR` (the same abi-32 event, in the same block) -- the
+stack struct would otherwise carry an indeterminate pointer. A var-free
+artifact never reads `ctx->vars` (MEASURED), so this is hygiene, not a
+behaviour change.
+
+**Registries** (all four re-archived, every delta explained):
+`list_axes.tsv` 89/32 BYTE-IDENTICAL ([VAR] is a module, K64 a
+predicate narrowing; neither is an axis); `list_definitions.tsv` 50
+BYTE-IDENTICAL (the fourteenth pin running); `list_limits.tsv` 60 -> 62
+(`PCREC_MAX_VAR_NAME_LEN` 64 identifier cap, `PCREC_MAX_VAR_NEST_DEPTH`
+8 compile budget -- both [VAR]'s, limits.md §3.6); `list_schema.tsv` 71
+-> 73 (`block var` qualified-line + `block var-unset` token -- [VAR]'s
+`.rxt` production; pcrec's own `# schema-rows:` 67 -> 69).
+
+**Stamps BY VALUE.** No new stamp at either step; the new MACROS are
+`PCREC_ERR_UNSET_VAR` (every artifact) and, on a var-bearing artifact
+only, `RX_NVARS` / `RX_VAR_<NAME>` -- `check_vars_surface` asserts the
+first present and the second absent on a plain witness, and `a${x}b`
+refused naming module `vars` without the feature and compiling with
+`RX_NVARS 1` under `--features all`. K64 fix A, the SIX forced-VM
+one-attempt framed artifacts of capability@0.1 (pcrec's own K64
+population: `email-nested-plus`, `ipv4-near-miss`,
+`wild-datetime-moment-iso8601`, `wild-validator-email-owasp`,
+`wild-validator-ipv4-owasp`, `winpath-near-miss`) are LEDGER rows under
+`pcrec-vm`: `req_why "emitted"` (was `one-attempt`), `vm_frameless 0`,
+`prefilter none`, `vm_program_bytes` UNMOVED; with fix A's TWO arms as
+controls that keep `one-attempt`: `email-nested-plus` under `auto` (an
+EXACT hybrid, framed) and `uuid-near-miss` forced-VM (frameless).
+
+**Size books, MEASURED per witness** (the comment-excluded port, `.c` +
+`.h`, both pins' own binaries): every artifact +1001 B from abi 32
+(`B90_VAR_ABI_BLOCK`: `.c` +39 = the two initializer lines 34 + `,vars`
+in `PCREC_FEATURE_MODULES` 5; `.h` +962 = the typedef, the four struct
+members, the error code) -- the same with and without `-fcomments`
+(the new lines are code lines with trailing comments; pcrec's own ritual
+number, +34, is the `.c` alone at DEFAULT features). The 30 pre-existing
+size expectations each gained exactly that term; the six K64 movers are
++1150 (five BYTE pre-checks: 1001 + `B90_K64_BYTE_CHECK` 153 - 4, the
+stamp token 33 -> 29 B) and +1578 (the one RUN pre-check, winpath:
+1001 + `B90_K64_RUN_CHECK` 581 - 4).
+
+**The census** (compile-only, capability@0.1 x {auto-caps, auto-nocaps,
+vm-caps} x 64 x 2 forms, both pins; docs/dev/lanes/b90repin_report.md):
+REQ_WHY at 6ef76820 reproduces [B84]'s figures exactly (79/67/27/14,
+plain form), and at ce658cb7 reads `none` 79, `emitted` 73,
+`one-attempt` 21, `dominated` 14 -- exactly the six vm-caps movers,
+nothing on either auto config. PROGRAM identity (normalization v2, the
+[B88] field's own): 325 identical / 48 changed / 11 refused-both of 384;
+the 48 are the 12 K64 rows (6 x 2 forms, vm-caps) and 36 BACKREFERENCE
+rows -- `doubled-word`, `dup-param-detect`, `phone-palindrome-6`,
+`quoted-delim-match`, `tag-pair-match`, `tag-depth3-bound`, on ALL three
+configs, both forms -- the [VAR] seam generalisation above. **I-108's
+"auto configs program-identical to 6ef76820 on the bench patterns" does
+NOT hold against 6ef76820** for those six backreference patterns (pcrec
+counted fix A's movers against its own abi-32 baseline, where the seam
+change had already landed); it DOES hold for every non-backreference
+auto artifact. Under the v1 (pair) normalization EVERY artifact reads
+`changed` at this pair (the abi-32 block), which is why [B88]'s v2 exists.
+
+**[B88] rides this re-pin**: every compile row now carries
+`engine_metadata.program_sha256` (declaration type `sha256`, record
+schema v1.7) -- `tools/program_identity.py`'s `program_sha256_of_files()`
+imported, never re-implemented; `check_program_sha256` proves the field
+equals the census's own v2 hash of a WITHOUT-`-fcomments` emission on
+three artifact kinds at this pin.
+
+Catalogue 3.8 (`[[pin_order]]` append). Twenty pinned configs,
+unchanged -- no new deny testee (neither step ships a flag or an axis
+bit).
+
 ## Re-pin at 6ef76820 (abi 30 -> 31) — 2026-09-23, lane b84repin, inbox I-102
 
 **[OPT-PRECHECK-ADMIT], exactly as I-102 characterised it.** Pin

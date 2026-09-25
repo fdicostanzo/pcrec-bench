@@ -373,7 +373,9 @@ bindings) live here, vendored or system, pinned either way.
   (gitignored hand-off brief). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format at **v1.5**: `record.schema.json` (JSON
+- `schema/` — the RECORD format at **v1.7** (v1.6 [B44] `testee.grain`;
+  v1.7 [B88] the `sha256` engine_metadata declaration type, pcrec's
+  `program_sha256`): `record.schema.json` (JSON
   Schema draft 2020-12), `validate.py` (the validator the harness and the
   reporter share; rules X1..X33), `check_fields.py`, `check_rules.py`, and
   `examples/` + `examples/bad/` (records that must validate, and sabotaged
@@ -438,6 +440,27 @@ bindings) live here, vendored or system, pinned either way.
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  **ce658cb7, abi 33** (re-pinned from 6ef76820, 2026-09-25, lane
+  b90repin, inbox I-108 — TWO abi steps: 31→32 is pcrec's [VAR] module
+  (`${name}` caller variables, D121; NOT in I-108's text): `rx_var` +
+  two appended `rx_ctx` members + `PCREC_ERR_UNSET_VAR` + two appended
+  `rx_info` members on EVERY artifact (+1001 B, `B90_VAR_ABI_BLOCK`),
+  `--features all` now including `vars` (no bench pattern contains `${`,
+  checked), and the backreference compare generalised
+  (`rx_bref_match` → `rx_span_match`) so every BACKREFERENCE artifact's
+  program changed; 32→33 is K64 fix A (G2's VM arm declines the
+  pre-check only for an exact hybrid or a frameless program): the six
+  forced-VM framed one-attempt capability artifacts read `RX_REQ_WHY
+  "emitted"` (+1150 / +1578 B, measured), fix A's two arms as
+  controls. The shim floor STAYS 16 (it reads neither new `rx_info`
+  member; both `rx_ctx` builders now zero `vars`/`nvars`). Registries:
+  axes 89/32 and definitions 50 byte-identical, limits 60→62 (the two
+  VAR limits), schema 71→73 (`block var`/`var-unset`). Census
+  (capability, 3 configs × 64 × 2 forms): 325 program-identical / 48
+  changed / 11 refused — the 12 K64 rows and 36 backreference rows on
+  ALL configs, so I-108's "auto program-identical" holds EXCEPT the six
+  backreference patterns. [B88] rides it: `program_sha256` on every
+  compile row, record schema v1.7. Catalogue 3.8. Before it,
   **6ef76820, abi 31** (re-pinned from b1885a83, 2026-09-23, lane
   b84repin, inbox I-102: the [OPT-PRECHECK-ADMIT] merge — one new
   stamp, `RX_REQ_WHY`, unconditional on every artifact of both engines,
@@ -606,6 +629,8 @@ bindings) live here, vendored or system, pinned either way.
   fixture corpus. **Append the new pin to `[[pin_order]]` at every
   re-pin.** See its CLAUDE.md.
 - `tools/` — `selfcheck.py`, the harness half of `make check`;
+  `program_identity.py` ([B79]/[B88]: the program-identity census and
+  the ONE normalization the records' `program_sha256` field uses, v2);
   `viewer_export.py` ([B66]), the results viewer's data exporter.
 - `viewer/` — THE RESULTS VIEWER ([B66], docs/design/results_viewer_v1.md):
   a single self-contained `viewer.html` (no server, no build step, works

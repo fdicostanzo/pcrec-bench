@@ -571,6 +571,13 @@ from pcrecbench.driverrun import (C_ENV, build_driver,       # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PIN_SH = os.path.join(HERE, "pin.sh")
+
+# [B88] (BD13, schema v1.7): the program-identity hash is computed by the
+# census tool's OWN function (tools/program_identity.py `normalize_one`, its
+# v2 normalization) -- imported, never re-implemented, so a record's
+# `program_sha256` and a census row's `new_sha256` are one computation.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "tools"))
+import program_identity as _pid                              # noqa: E402
 PCREC_SRC = os.environ.get("PCREC_SRC", "/home/duxevents/pcrec")
 BENCH_ROOT = os.path.dirname(os.path.dirname(HERE))
 
@@ -1187,6 +1194,28 @@ METADATA_DECL = {
                        "caps (the one that tracks gcc time; a table-"
                        "dominated DFA artifact has a large `emit_bytes` "
                        "and a small one of these)",
+    },
+    # -- [B88] (BD13, record schema v1.7): THE PROGRAM IDENTITY. Not a
+    # stamp: a hash of the emitted text under the census tool's own v2
+    # normalization, so two compile rows of one config at two pins are
+    # PROGRAM-IDENTICAL iff their values are equal -- the null-control
+    # band's population read off the records instead of a re-emit census.
+    "program_sha256": {
+        "type": "sha256", "scope": "pattern",
+        "source": "tools/program_identity.py `program_sha256_of_files()` "
+                  "over the emitted .c and .h (the census's v2 "
+                  "normalization, imported: C comments removed and blank "
+                  "runs collapsed -- so `-fcomments` cannot move it -- the "
+                  "pin-constant PCREC_RX_ABI_H declaration block, the "
+                  "unread rx_info reflection initializer and every #define "
+                  "no emitted line references dropped; everything else "
+                  "compared verbatim)",
+        "description": "sha256 of the artifact's normalized PROGRAM text: "
+                       "equal on two rows of one config iff the emitted "
+                       "program did not change (the null band's identity, "
+                       "docs/design/null_band_v1.md; BD13). A pin-wide ABI "
+                       "or shim change is NOT in it -- a pin covariate, "
+                       "inside the band by design",
     },
     "warned_emit_bytes": {
         "type": "integer", "scope": "pattern",
@@ -3381,6 +3410,10 @@ class Adapter(_ad.Adapter):
         edges, edges_match = scan_edge_counts(emit_files)
         pairs = {"emit_bytes": tot, "emit_code_bytes": code,
                  "scan_edges": edges, "scan_edges_match": edges_match}
+        # [B88] the normalized PROGRAM hash (BD13): the null band's identity
+        # fact, read off the same emitted files the size port reads.
+        pairs["program_sha256"] = _pid.program_sha256_of_files(
+            emit_files[0], emit_files[1] if len(emit_files) > 1 else None)
         warn = parse_warn_line(stderr_text)
         if warn is None:
             return pairs, None
