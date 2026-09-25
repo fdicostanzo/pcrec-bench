@@ -471,6 +471,22 @@ and_query`'s I-101 assertion now checks the COMPUTED clearance (`clears
 IQR only` / `IQR 0.00% (clears)` / `no null band (no cross-pin pair in
 this report)`) in place of the retired "[B79] not-started" text.
 
+**[B87] addition (2026-09-25, lane b87query; the standing query pairs
+pcrec same-pin only, reporter v23)**: 1 new test in `test_report.py`
+(96 → 97) — `test_b87_query_pairs_pcrec_same_pin_only`: a synthetic
+two-pin fixture (`pinA`/`pinB`, each with its own `auto-caps`/
+`auto-nocaps` pair) plus one non-pcrec competitor, medians chosen so the
+OLD pairing would have produced 6 hits (2 same-pin pcrec + 2 cross-pin
+pcrec + 2 competitor-vs-each-pin) and the fix leaves 4 (the two
+cross-pin pcrec pairs dropped, everything else unchanged) — asserted
+directly against `report._cross_class_query_hits`'s own return value
+(every hit pair checked by testee id, not just the count) AND against
+both rendered surfaces (markdown table rows, the TSV `hit_count` row),
+plus a per-row check that neither `pinA_caps` nor `pinB_caps` ever
+appears paired with the OTHER pin's `auto-nocaps` anywhere in the
+rendered query section. `test_reporter_version_pin`'s docstring and
+pinned assertions move to v23.
+
 ## `make check-report`
 
 Runs `python3 -m pcrecbench.tests.test_report`, then

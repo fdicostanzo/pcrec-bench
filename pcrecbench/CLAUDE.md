@@ -1295,3 +1295,29 @@ census says `NO NULL BAND` naming the path (never a silent IQR-only
 fallback). `pcrecbench/tests/test_report.py` gained three tests (a
 hand-computed fixture with ok/insufficient/empty strata and all five
 verdict shapes; the no-census and single-pin controls): 96 total.
+
+## The reporter, [B87] (2026-09-25) -- I-101 pairs pcrec same-pin only (v23)
+
+Lane `b87query`; the manager's ruling on the OWED item [B79] left open
+(`docs/dev/lanes/b79nullband_report.md` 0 finding 5): `_cross_class_
+query_hits` was pairing ANY YES-class row with ANY pcrec `auto-nocaps`
+row present in a ranking group, with no regard for pin -- on a cross-pin
+report most of the reported "hits" were an OLD pin's caps config beaten
+by (or beating) a DIFFERENT pin's nocaps config, a PIN DELTA (R8's/
+[B79]'s own territory), never a class anomaly. Fix, `_query_pin_pair_
+ok(nc_t, y_t)`: a pcrec YES-class `y_t` is paired against `nc_t` ONLY
+when both share the same `version_slug`; a NON-pcrec competitor carries
+no pcrec pin and is unchanged -- still compared against EVERY pcrec
+`auto-nocaps` row present in the group, each pin producing its own hit
+labelled by that hit's own `nc_t` (whose id already names the pin, so no
+new column was needed). `REPORTER_VERSION` bumps to `v23 (2026-09-25)`;
+regenerated in the same lane: the three 2026-09-23 capability AFTER
+groups (`after-8d716693`, `after-b1885a83`, `after-6ef76820` -- the only
+cross-pin reports in `reports/` at the time), their sidecars, and the
+`R-STATUS-15__*` fixture pair (`catalogue/fixtures/fixtures.toml`,
+derived from `report_e` = `after-b1885a83`, whose own `codegrammar-flat`
+hit count drops from two to one -- the surviving row is the same-pin
+one). `R-STATUS-15` and `R-DELTA-5` need NO catalogue change: both read
+the reporter's own rows verbatim, with no pairing logic of their own to
+fix (catalogue stays at 3.7). See `docs/dev/lanes/b87query_report.md`
+for the full checklist and the before/after hit counts per group.

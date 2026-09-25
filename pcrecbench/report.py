@@ -1472,6 +1472,57 @@ interpreter rules), docs/design/null_band_v1.md (the design of record).
   carried them); at subject grain the IQR is stated `n/a`.
 - **Subject grain carries no band** (the section says so in one
   sentence): the D119 bar is a set-grain statement, as R8 is.
+
+[B87] THE STANDING QUERY PAIRS PCREC SAME-PIN ONLY (2026-09-25, lane
+b87query; v23)
+----------------------------------------------------------------------
+docs/dev/lanes/b79nullband_report.md 0 finding 5 (OWED item 3: "whether
+the standing query should pair same-pin only is a ruling for
+Frank/the manager"). The manager's ruling: SAME PIN ONLY for a pcrec
+YES-class config against pcrec `auto-nocaps`.
+
+- **The bug.** `_cross_class_query_hits` paired ANY YES-class row with
+  ANY `auto-nocaps` row present in a ranking group, with no regard for
+  which pin either side was measured at. On a cross-pin report both
+  pcrec pins' `auto-caps`/`auto-nocaps`/`vm-caps`/... rows sit in the
+  same group (R8's own precondition), so most of the [B82]/[B79] hit
+  counts (350/343/357 across the three 2026-09-23 capability AFTER
+  groups) were old-pin-caps-vs-new-pin-nocaps (or the reverse) -- a PIN
+  DELTA, the territory R8's `Δ vs previous version` column and [B79]'s
+  null band already read, never a class anomaly. Example:
+  `router-prefix-order`/thr, 8d716693 auto-caps vs b1885a83 auto-nocaps,
+  a 44.67% gap that clears max(IQR, band) -- [OPTLOOP] cycle-2 work
+  moving auto-caps, nothing to do with captures.
+- **The fix, `_query_pin_pair_ok(nc_t, y_t)`.** A pcrec YES-class `y_t`
+  (`_parse_testee_config(y_t)[0] == "pcrec"`) is compared against `nc_t`
+  ONLY when both share the same `version_slug` -- the same rule R8
+  itself already uses to decide "is this a re-pin of the SAME config"
+  (`_parse_testee_config`), applied here across the caps/nocaps axis
+  instead of across time on one config. A NON-pcrec competitor (onig,
+  rust-default, a jit, ...) carries no pcrec pin of its own and is
+  UNCHANGED: it is still compared against EVERY pcrec `auto-nocaps` row
+  present in the group, each pin producing its own hit -- labelled by
+  that hit's own `nc_t`, whose `version_slug` segment IS the pin (e.g.
+  `pcrec_b1885a83_auto-nocaps-simdna` names it in the id already; no
+  new column was needed).
+- **What moves.** Every committed cross-pin report's I-101 query section
+  and its `query_yes_beats_nocaps` TSV rows (the hit count and the
+  `beaten_by` rows the old pairing invented) -- a SINGLE-pin report's
+  query section is untouched (every hit in it was already same-pin by
+  construction, since only one pin exists in the roster). `REPORTER_
+  VERSION` bumps to `v23 (2026-09-25)`; regeneration of the three
+  2026-09-23 capability AFTER groups (`after-8d716693`, `after-b1885a83`,
+  `after-6ef76820` -- the only cross-pin reports in `reports/` at the
+  time of this fix) plus their sidecars is done in the same lane; every
+  other committed report's rendering is UNCHANGED but for the version
+  line (proven, `docs/dev/lanes/b87query_report.md`).
+- **The interpreter's R-STATUS-15 needs no change.** It reads the
+  reporter's own `query_yes_beats_nocaps` rows verbatim (`catalogue/
+  rules.toml`'s own rule: "never re-derived here") -- it has no pairing
+  logic of its own to fix, so the catalogue stays at 3.7 and no rule's
+  predicate/threshold/inputs/slots move. The rule's FACTS move only
+  because the reporter's own rows do -- an ordinary data-only diff, not
+  a catalogue bump.
 """
 
 from __future__ import annotations
@@ -1490,7 +1541,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v22 (2026-09-25)"
+REPORTER_VERSION = "v23 (2026-09-25)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -4503,6 +4554,38 @@ def _dispatch_ranking_views(rd, grain, out, render_pass):
     render_pass(f"## Ranking -- MIXED CLASSES, never compare across cells {tail}")
 
 
+def _query_pin_pair_ok(nc_t, y_t):
+    """[B87] (inbox I-101, the manager's ruling on the standing
+    cross-class query's own pairing): may `y_t` (a YES-class row) be
+    compared against `nc_t` (a pcrec `auto-nocaps` row) AT ALL?
+
+    A pcrec YES-class config (any capturing pcrec config -- `auto`,
+    `vm`, `auto-in`, `vm-in`) is compared against `auto-nocaps` ONLY AT
+    THE SAME PIN: `_parse_testee_config`'s `version_slug` segment must
+    agree on both sides. pcrec's own re-pins move BOTH configs by the
+    SAME optimization work (they share one compiler, one commit), so a
+    cross-pin pcrec-caps-vs-pcrec-nocaps pair is a PIN DELTA -- what R8's
+    `Δ vs previous version` column and [B79]'s null band already read --
+    never a class anomaly the standing query exists to surface. The
+    example that found this: `router-prefix-order`/thr, 8d716693
+    auto-caps vs b1885a83 auto-nocaps -- a 44.67% gap that is [OPTLOOP]
+    cycle-2 work moving auto-caps, read against a DIFFERENT pin's
+    auto-nocaps, nothing to do with captures at all.
+
+    A NON-pcrec competitor (onig, rust-default, jit, ...) carries no
+    pin of its own -- it is compared against EACH pcrec pin's
+    `auto-nocaps` row present in the group SEPARATELY (unchanged from
+    before this fix): every hit is still labelled by `nc_t`, whose
+    `version_slug` segment IS the pin it was compared to (e.g.
+    `pcrec_b1885a83_auto-nocaps-simdna` names the pin in its own id --
+    no separate column is needed to carry it)."""
+    y_parsed = _parse_testee_config(y_t)
+    if y_parsed is None or y_parsed[0] != "pcrec":
+        return True  # a non-pcrec competitor: no pin restriction
+    nc_parsed = _parse_testee_config(nc_t)
+    return nc_parsed is not None and y_parsed[1] == nc_parsed[1]
+
+
 def _cross_class_query_hits(rd, grain):
     """[B82] (inbox I-101, Frank's nuance to I-99): the STANDING
     CROSS-CLASS QUERY's own arithmetic, shared by `render_markdown` and
@@ -4515,6 +4598,15 @@ def _cross_class_query_hits(rd, grain):
     should have the data to do a query." Every cell where a YES-class
     config's median beats pcrec `auto-nocaps`' (any pin present in this
     report) is a finding on pcrec's side BY DEFINITION.
+
+    [B87] (the manager's ruling, docs/dev/lanes/b79nullband_report.md
+    §0 finding 5): a pcrec YES-class config is paired against
+    `auto-nocaps` AT THE SAME PIN ONLY -- see `_query_pin_pair_ok`. A
+    cross-pin pcrec-caps-vs-pcrec-nocaps pair is a PIN DELTA (R8/[B79]'s
+    own territory), not a class anomaly. A non-pcrec competitor carries
+    no pin and is still compared against EVERY pcrec `auto-nocaps` row
+    present in the group, each pin producing its own hit labelled by its
+    own `nc_t`.
 
     Returns a list of `(pattern_id, regime, nocaps_testee, nocaps_ns,
     competitor_testee, competitor_ns, ratio, clearance)` tuples, `ratio =
@@ -4554,6 +4646,8 @@ def _cross_class_query_hits(rd, grain):
                     if capture_class.classify_testee(t).bucket == capture_class.YES]
         for nc_t, _nc_form, nc_r in nocaps_rows:
             for y_t, _y_form, y_r in yes_rows:
+                if not _query_pin_pair_ok(nc_t, y_t):
+                    continue
                 if y_r.median_ns < nc_r.median_ns:
                     hits.append((pattern_id, regime, nc_t, nc_r.median_ns,
                                  y_t, y_r.median_ns,
