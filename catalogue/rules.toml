@@ -799,9 +799,12 @@ inputs        = [
   "report:query_yes_beats_nocaps?metric=beaten_by.{pattern,regime_or_na,testee,value,gave_up_summary}",
 ]
 predicate     = """
-A `query_yes_beats_nocaps` row whose `metric` is `beaten_by` -- one per
-cell where a YES-class (capturing) config's median beats a pcrec
-`auto-nocaps` row's median in the same report (inbox I-101, Frank: "it's
+A `query_yes_beats_nocaps` row whose `metric` is `beaten_by` and whose
+recorded `ratio=` (competitor ns / auto-nocaps ns) is strictly between 0
+and 1 -- one per cell where a YES-class (capturing) config's median
+beats a pcrec `auto-nocaps` row's median in the same report (the
+reporter emits no other kind of row; the ratio test restates the query's
+own definition so a malformed row cannot fire) (inbox I-101, Frank: "it's
 possible a capturing competitive engine is faster than our
 non-capturing. That would be surprising. We should validate that this
 isn't true."). Every hit is a finding on pcrec's side BY DEFINITION; the

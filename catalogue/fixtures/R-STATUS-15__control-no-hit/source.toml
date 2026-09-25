@@ -3,5 +3,6 @@
 name = "R-STATUS-15__control-no-hit"
 base = "R-STATUS-15__query-hit"
 report = "e"
-select = { pattern = "date-nested-plus" }
+select = { pattern = "codegrammar-flat" }
+mutate = { column = "gave_up_summary", value = "competitor_ns=598115.248394; nocaps_ns=598115.248394; ratio=1.000000; null_band_clearance=within max(IQR, band): gap 0.00%", all = true, where = { section = "query_yes_beats_nocaps", metric = "beaten_by" } }
 expect_not = ["R-STATUS-15"]

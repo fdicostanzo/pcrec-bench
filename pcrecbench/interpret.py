@@ -980,7 +980,10 @@ def r_status_15(view, ctx):
             ratio = float(kv.get("ratio", ""))
         except ValueError:
             continue
-        if ratio <= 0:
+        # the query's own definition (`_cross_class_query_hits`): the
+        # competitor's median is STRICTLY below auto-nocaps'. A row whose
+        # recorded ratio says otherwise is not a hit.
+        if not 0 < ratio < 1:
             continue
         # the clearance sentence is the row's LAST field and itself
         # carries `; ` (gap; IQR; band) -- read it whole, never via the

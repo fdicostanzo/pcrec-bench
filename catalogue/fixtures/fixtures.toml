@@ -273,9 +273,11 @@ expect_not = ["R-STATUS-14"]
 # [B79] R-STATUS-15, THE STANDING CROSS-CLASS QUERY FIRES: `codegrammar-flat`
 # (report_e) carries two real I-101 hits at large-subject-throughput (pcrec
 # b1885a83 auto-caps beating both pins' auto-nocaps). The CONTROL is the
-# SAME report narrowed to `date-nested-plus`, a pattern with no hit row at
-# all -- one declared field (`select`) apart; both keep the report-wide
-# `hit_count` row (pattern empty), so the rule is evaluable on both.
+# SAME slice with ONE declared mutation: both hit rows' `gave_up_summary`
+# rewritten to a recorded ratio of exactly 1.000000 (the competitor NOT
+# strictly faster -- the query's own definition of a non-hit, which the
+# rule's predicate restates); the report-wide `hit_count` row stays, so
+# the rule is evaluable on both.
 [[fixture]]
 name   = "R-STATUS-15__query-hit"
 report = "e"
@@ -286,7 +288,8 @@ expect = ["R-STATUS-15"]
 name   = "R-STATUS-15__control-no-hit"
 base   = "R-STATUS-15__query-hit"
 report = "e"
-select = { pattern = "date-nested-plus" }
+select = { pattern = "codegrammar-flat" }
+mutate = { column = "gave_up_summary", value = "competitor_ns=598115.248394; nocaps_ns=598115.248394; ratio=1.000000; null_band_clearance=within max(IQR, band): gap 0.00%", all = true, where = { section = "query_yes_beats_nocaps", metric = "beaten_by" } }
 expect_not = ["R-STATUS-15"]
 
 # ----------------------------------------------------------- R-DELTA --
