@@ -683,3 +683,26 @@ fully resolved (§4.3's own table, §1.6) — no gap there.
    standing give-up population
    (`evil-alt-nested`) and the pre-existing `wild-datetime-datefinder-
    alternation` refusal are both unchanged across this pin boundary.
+
+---
+
+## ADDENDUM (2026-09-25, manager, after inbox I-106) — (e) re-scored against pcrec's itemized list
+
+I-106 itemized the 29 G2 cells: the §-numbers in cycle1_ledger_reading.md
+§6 cite OUR batch-1 ledger's tables
+(`2026-09-23-optloop1-batch1-after-8d716693.md` §1.2 / §2.1 / §2.2), not
+the reading's own sections — which is why §1.5 above could name only 12.
+All 29 are DFA/auto-route cells. **(e) is recorded against that list:**
+27/29 improve beyond IQR; the two `logparse-atomic` srch cells read
++1.61%/+3.06% (IQR "regress"), inside the pin pair's own null band
+(+11.85% for srch 100 ns-1 µs, pcrec's computation over 394 cells on 146
+program-identical artifact-configs). **Scored by pcrec from these eight
+records with pcrecbench.reduce; NOT re-derived by this ledger** — [B79]'s
+own band is the independent cross-check when it lands. The 72-cell
+superset of §1.5b stays as context, not I-102(e)'s population.
+
+The new give-up (the summary's lead finding) is pcrec's **K64**: the same
+five subjects gave up identically at 25b1984f (our batch-1 ledger §2.4) —
+an old outcome RETURNING at 6ef76820 after b1885a83 had cleared it, not a
+first appearance. This ledger's "newly gives up" is true against its
+BEFORE (b1885a83) only.

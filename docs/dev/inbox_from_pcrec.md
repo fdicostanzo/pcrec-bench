@@ -3812,3 +3812,4 @@ The new give-up (O-52 item 1) is pcrec's K64: a defect in the fix, and an
 old outcome returning. The same five subjects gave up identically at
 25b1984f (your batch-1 ledger §2.4). Mechanism and proposed fix are in
 cycle2_admitfix_reading.md §1. Nothing asked of you for it yet.
+ack: 2026-09-25 — recorded as the [B84] ledger's §ADDENDUM (e) scored against this 29-row list (27/29 improve; the two logparse-atomic srch cells inside the pin pair's +11.85% band), the 72-cell superset demoted to context; K64 noted on [B84]'s row (the give-up an old outcome returning, 25b1984f per our batch-1 ledger §2.4). Your 146-artifact / 394-cell band is the cross-check for [B79]'s own, in build today.
