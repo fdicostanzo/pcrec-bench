@@ -1,0 +1,92 @@
+id	len	sha256	description	periodic
+cls-boundary-range	5	850f7dc43910ff890f8879c0ed26fe697c93a067ad93a7d50f466a7028a9bf4e	field/hit `[a-é]+` (cls-boundary-range): 'café' -- every character (c,a,f,é) is in the range U+0061..U+00E9	no
+cls-high-range	6	63fb1ae76a9f395bfa9843ca13f96dbc0521de2eae4f2a4590de20f50841f8c5	field/hit `[\x{100}-\x{2000}]+` (cls-high-range): a Cyrillic word, entirely inside the range	no
+cls-neg-single-miss	2	4a99557e4033c3539de2eb65472017cad5f9557f7a0625a09f1c3f6e2ba69c4c	field/miss `[^é]` (cls-neg-single): the WHOLE subject is é alone -- no non-é character exists to match	no
+cls-cyr-triple	12	4ed0608556890f1debeb0947b33bff409c18a80755422c362f4daa5cd5ce0749	field/edge, THREE members at once: `[^\x{80}-\x{10FFFF}]+` (cls-neg-allhigh) MISSES (no ASCII byte anywhere); `\w+` without UCP (cls-w-ascii) MISSES (Cyrillic letters are not ASCII word chars); `(*UCP)\w+` (cls-w-ucp) HITS on the same text	no
+cls-mixed-hit	5	1cab1dc0ec1c265e876bf719b7532b88696f2457128add39dee16ffc95a4b19d	field/hit `[a-zé\x{430}-\x{44F}]+` (cls-mixed) AND `[^\x{4E00}-\x{9FFF}]+` (cls-neg-cjk, none of these characters is Han): a, é, б in one run	no
+cls-dot-hit	3	85217f7aff77841438439fb3e7cf37bb3062fb026453c7692247d3a5641a0115	field/hit `.` (cls-dot): one CJK character	no
+cls-dot-rep-hit	12	a7af6a199a7f3992fff8f0f7fa60c6cf7a7ce1128815cc3cc9fe38dc944dfa02	field/hit `^.{5}$` (cls-dot-rep): 5 CHARACTERS (4x 2-byte + 1x 4-byte) totalling 12 BYTES	no
+cls-dot-rep-miss	5	5c9d05cb4bdf671496ea5740b46574429d48f2b213644f68992412e8949373ea	field/miss `^.{5}$` (cls-dot-rep): 3 characters (1+2+2 bytes = 5 BYTES) -- 5 bytes but only 3 characters, so it must NOT match	no
+cls-w-ascii-posix-hit	8	27cc6994fc1c01ce6659c6bddca9b69c4c6a9418065e612c69d110b3f7b11f8a	field/hit `\w+` ascii-scoped (cls-w-ascii) and `[[:alpha:]]+` (cls-posix-alpha): plain ASCII	no
+cls-digit-pair	8	9a952bdf815567e52691cd75fd69901a7aea4696b67e1e011a57b8ab292a1008	field/edge, digit ascii/ucp PAIR: four Arabic-Indic digits -- `\d{4}` ascii-scoped (cls-d-ascii) MISSES, `(*UCP)\d{4}` (cls-d-ucp) HITS	no
+cls-space-pair	4	9507017c6d887511a5a6ac28ea7e3a438882576e1bd76fe3df27a336f49c263b	field/edge, space ascii/ucp PAIR: 'a' NBSP 'b' -- `a\sb` ascii-scoped (cls-s-nbsp) MISSES, `(*UCP)a\sb` (cls-s-ucp) HITS	no
+cls-posix-straupperss	11	0c05438d17a67b70b3840474567e630fa26601bc38762a52cfb020950192645f	field/edge `[[:alpha:]]+` (cls-posix-alpha): 'Straße' -- the ASCII-scoped run stops at ß (not an ASCII letter), a scope-boundary witness	no
+cls-lead-pair-hit	6	a36d0b22783c5fac3141df5bd7c0cd4c58abfaf8e2eff196ff3043226d66fbb1	field/hit `[α-ω]+` (cls-lead-pair): Greek alpha-beta-gamma, a class UD 6.3 says a two-lead-byte bitmap-skip arm must take	no
+cls-neg-cjk-miss	9	77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5	field/miss `[^\x{4E00}-\x{9FFF}]+` (cls-neg-cjk): pure Han text -- every character IS in the negated range, so no run can match	no
+cls-allhigh-ascii-hit	10	c9ecf5e54c7b3f2640ecca21f96d4c3625a2b7935104f41c5ede29935a9e52c9	field/hit `[^\x{80}-\x{10FFFF}]+` (cls-neg-allhigh): pure byte-clean ASCII	no
+lit-2b-hit	2	4a99557e4033c3539de2eb65472017cad5f9557f7a0625a09f1c3f6e2ba69c4c	field/hit `é` (lit-1ch-2b): one 2-byte character alone	no
+lit-3b-hit	3	85217f7aff77841438439fb3e7cf37bb3062fb026453c7692247d3a5641a0115	field/hit `日` (lit-1ch-3b): one 3-byte character alone	no
+lit-4b-hit	4	f0443a342c5ef54783a111b51ba56c938e474c32324d90c3a60c9c8e3a37e2d9	field/hit `😀` (lit-1ch-4b): one 4-byte character alone	no
+lit-run3-hit	9	77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5	field/hit `日本語` (lit-run-3) AND `^日本語$` (lit-anchored-run): the EXACT 9-byte run, nothing else	no
+lit-nearmiss	9	c903d688cd526e8b89dcad2e79e3540cef101357049a418db2e9ac8409376c37	field/near-miss `日本語` (lit-nearmiss-run's own twin): shares two characters (six bytes) and fails at the third	no
+lit-mixedascii-hit	14	8d947d7a03005dff602206e880967fc959fdfe060cb0e6d83e9488811cea48d4	field/hit `user@例え.jp` (lit-mixed-ascii): the exact mixed-width literal, ASCII @ and . available as the necessary byte	no
+lit-mixedascii-miss	16	a4db7f5344067e799eef75f3d85316af2fb22b556e5e69da61c92c1e1de879c1	field/miss `user@例え.jp` (lit-mixed-ascii): the @ is replaced, breaking the literal	no
+lit-cyrrun-hit	12	eb63f79a229771cda0cdbb8e2f893003664faac42a98b0e2710e2d01e2dd6056	field/hit `Москва` (lit-cyr-run): the exact 12-byte run, every lead byte 0xD0/0xD1	no
+lit-offset-tail-hit	3	4ec47aa912ddeceec6194ecca1f74de238131ea3b65ab2a86dee16d0388aab3f	field/hit `é@` (lit-offset-at-tail): THE FIRST CUSTOMER (P1) -- the necessary byte at the TAIL	no
+lit-offset-head-hit	3	c13980c2d0644e5f0a79ece961a83b8361619b903901b844f7ca02063495d066	field/hit `@é` (lit-offset-at-head): P1's order pair -- the necessary byte at the HEAD	no
+lit-nfc-decomposed-miss	6	81ef060bcd98adc7824eb5c1ada83c32491b16018e11e79f00ab9d09e04b015a	field/miss `café` PRECOMPOSED (lit-nfc-pair): a DECOMPOSED subject (e + COMBINING ACUTE, U+0301) -- byte-different from the precomposed pattern, no normalization happens anywhere on this roster	no
+lit-nfc-precomposed-hit	8	2a5ec4ab9b79975245feb4ce626eb330efb0f68099f110276996e216e600b557	field/hit `café` PRECOMPOSED (lit-nfc-pair): the precomposed form, embedded in a sentence	no
+lit-sharps-hit	11	0c05438d17a67b70b3840474567e630fa26601bc38762a52cfb020950192645f	field/hit `Straße` (lit-sharp-s): the exact literal with its 2-byte ß, embedded	no
+lit-sharps-miss	11	90c98c78db19d70cf5f4ca2cbebf528ac2be47b6fbdfecbc2f77e8f806dd7c86	field/miss `Straße` (lit-sharp-s): case-sensitive AND 'SS' != 'ß' -- neither substitution matches the literal	no
+lit-anchored-extra-miss	15	2fef0605fcb751fecb982eb61d5ae5d6aa54117420eae0ddf8bc45c02e31d937	field/edge `^日本語$` (lit-anchored-run): the run plus trailing content -- lit-run-3 still HITS (substring search) but the anchored form MISSES (extra suffix breaks the exact match)	no
+ci-eacute-triple	2	a755f65d4e5201d92b6f264d1508ea0bec9913dd7b20a96ebde25de3cda84a84	field/edge, THREE members at once: `(?i)é` (ci-e-acute) HITS on uppercase É; `(*UCP)(?i)é` (ci-ucp-invariance) agrees (the control); `(?i)[^é]` (ci-neg-fold) MISSES -- the whole subject folds to é, no non-é-fold character is present	no
+ci-moskva-hit	12	96d8acf2128d1686fb2c76f89d4bec4c3f61880479a13e5a0ca2dad83dba552a	field/hit `(?i)москва` (ci-moskva): all-uppercase Cyrillic folds to the pattern	no
+ci-greek-hit	6	06b24ec0ffc004c09c195cc146ee40d7c54455fba067cc336ba241bd5af1d66d	field/hit `(?i)αβγ` (ci-greek-run): all-uppercase Greek folds to the pattern	no
+ci-kelvin-hit	4	35cd9bc6239b071a9f4343e0e0d7c081507ba9a824e8e042b3a687e492b5e81a	field/hit `(?i)k` (ci-kelvin): the fold CLOSURE reaching outside the written range -- U+212A KELVIN SIGN, a 3-byte character, folds to ASCII k	no
+ci-longs-hit	5	3de3178e030e8f3d0d2ebb0bfd5a4c883196d9609a815154837fb518c170c750	field/hit `(?i)s` (ci-long-s): U+017F LATIN SMALL LETTER LONG S, a 2-byte character, folds to ASCII s	no
+ci-classrange-hit	3	ade099751d2ea9f3393f0f32d20c6b980dd5d3b0989dea599b966ae0d3cd5a1e	field/hit `(?i)[a-z]+` (ci-class-range): uppercase ASCII folding into the written lowercase range	no
+ci-negfold-hit	3	5fde8f7b57feafcc55161b35a17a83e6367f4967223acb1fe9e75e7a5bbce0dd	field/hit `(?i)[^é]` (ci-neg-fold): an ASCII 'x' beside the fold-target É -- 'x' is NOT in the é fold class, so the negation matches it	no
+ci-strasse-hit	7	787f4770613d3824cbc89b6d5da90a123e41b07b90b45ea3738c216b14616140	field/hit `(?i)straße` (ci-strasse): the exact literal, lowercase	no
+ci-strasse-nearmiss	7	b97805af0949694d12dec848dcd294fef9d063f7965c7bb955a8c5eb51a8088f	field/near-miss `(?i)straße` (ci-strasse): the all-caps 'SS' spelling -- 10.46 does SIMPLE folding only, no one-to-many foldings, so this must NOT match	no
+ci-sigma-final-hit	10	04b1f31288f9c26fe9957ec7250a7648e912b87f6b545d83c6233cbcfa266199	field/hit `(?i)σ` (ci-sigma): a word carrying the FINAL SIGMA form (ς), which folds with σ/Σ under simple folding	no
+ci-sigma-capital-hit	10	509e643120f76402abbdca8b0dc1e05601cdce7d59f991329751ecc8461b75cc	field/hit `(?i)σ` (ci-sigma): an all-caps Greek word carrying Σ	no
+ci-turkish-i-capital-miss	9	24ec8f72b5eac4594cf4401235af1639159192194e025495d4a1055ab0f6dc9b	field/miss `(?i)i` (ci-turkish-i): U+0130 LATIN CAPITAL I WITH DOT ABOVE -- locale-free simple folding does NOT fold this to ASCII i/I	no
+ci-turkish-i-lower-miss	11	906b96bfb7d796f946c7fed78fdb6d4fb6d3c0ace60d7ce7abfa1539712a881f	field/miss `(?i)i` (ci-turkish-i): U+0131 LATIN SMALL LETTER DOTLESS I -- same simple-folding exclusion, the lowercase member of the pair	no
+ci-ascii-control-hit	3	b5d4045c3f466fa91fe2cc6abe79232a1a57cdf104f7a26e716e0a1e2789df78	field/hit `(?i)abc` (ci-ascii-control): the pure-ASCII fold, the cheapest member of the family	no
+ci-ascii-control-miss	6	5a4640c17e8e49ebcc72234cce9644dcacfbc2c53e026f59281ca33928bed52d	field/miss `(?i)abc` (ci-ascii-control): pure ASCII with no 'abc' substring anywhere, in any case	no
+alt-sharedchar-hit	6	cf2abf0c5be326cb922a70f8163f91079c4d9aa8655c60ead89ad545c9de2e92	field/hit `日本|日曜|日付` (alt-shared-char): the first branch, sharing the whole first character with the other two	no
+alt-nearmiss-miss	9	c903d688cd526e8b89dcad2e79e3540cef101357049a418db2e9ac8409376c37	field/miss `日本語|日本国` (alt-nearmiss): shares six of nine bytes with both branches, matches neither	no
+alt-sharedlead-hit	2	2245c1c8daf7694bc2b2fe9f156c39f4bac6c788dc32e42bccb74554af2b5d86	field/hit `α|β|γ` (alt-shared-lead): the middle branch, all three sharing one lead byte (0xCE)	no
+alt-distinctlead-hit	5	850f7dc43910ff890f8879c0ed26fe697c93a067ad93a7d50f466a7028a9bf4e	field/hit `日本|Москва|café` (alt-distinct-lead): the third branch, three distinct lead-byte groups	no
+alt-mixedwidth-1b	1	ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb	field/hit `a|é|日|😀` (alt-mixed-width): the 1-byte branch	no
+alt-mixedwidth-2b	2	4a99557e4033c3539de2eb65472017cad5f9557f7a0625a09f1c3f6e2ba69c4c	field/hit `a|é|日|😀` (alt-mixed-width): the 2-byte branch	no
+alt-mixedwidth-3b	3	85217f7aff77841438439fb3e7cf37bb3062fb026453c7692247d3a5641a0115	field/hit `a|é|日|😀` (alt-mixed-width): the 3-byte branch	no
+alt-mixedwidth-4b	4	f0443a342c5ef54783a111b51ba56c938e474c32324d90c3a60c9c8e3a37e2d9	field/hit `a|é|日|😀` (alt-mixed-width): the 4-byte branch	no
+alt-cyr64-hit	6	f5b3d757a732cd0f69fa04ad173952cc6d9e325118b3e83364bd017a0fbda02c	field/hit alt-cyr-64 (the 64-branch Cyrillic alternation, utf8_set_v1.md 5(d)): a common word ('дом', house) -- U4 COORDINATION: assumes the 64-word list includes this word; correct this subject if it does not	no
+alt-cyr64-miss	26	3becc3ceb0797757412e0ff1a4290bd37c71fda617bbc482c3bd568942ab62bc	field/miss alt-cyr-64: an uncommon compound word unlikely to be among the 64 chosen branches -- U4 COORDINATION, same caveat as alt-cyr64-hit	no
+qnt-plus-lazy-hit	6	355b7226e20cb564774ef99442e77ac003100624b42b5a92944f0dad75b126b0	field/hit `é+` (qnt-plus-2b) AND `é+?` (qnt-lazy-2b): three repeats of the 2-byte character	2
+qnt-counted3b-hit	12	a78706c403ee42126c66811e22995101a2b050712d56c3aae49a422ee382323a	field/hit `(?:日本){2,}` (qnt-counted-3b): two repeats of the two-character group	6
+qnt-bounded4b-hit	12	6d765426282a92f4b13cf7b0498f36d26b56f227a6743ce80993834ba230bc83	field/hit `😀{2,4}` (qnt-bounded-4b): three repeats of the 4-byte character	4
+qnt-dotbounded-hit	18	9efac1a7f84d0d977000c59abacce6035399ff335f03828423e366771008c424	field/hit `.{3,8}` (qnt-dot-bounded): six CJK CHARACTERS (18 bytes) -- within the CHARACTER bound despite exceeding it in bytes	9
+qnt-classrun-hit	12	4ed0608556890f1debeb0947b33bff409c18a80755422c362f4daa5cd5ce0749	field/hit `[\x{400}-\x{4FF}]{4,16}` (qnt-class-run): six characters, all in the Cyrillic block	no
+asr-b-ascii-hit	11	77255f02a3435d1feb590482a2f1ebc8895eec0b4264d4f59ad8a9ba0c1cfadf	field/hit `\bcat\b` (asr-b-ascii): a bounded word	10
+asr-b-ascii-miss	11	0afe756cd1e815034cfaf42660ea13c6eec402a3b9c4359838ed90dfb89ad2c3	field/miss `\bcat\b` (asr-b-ascii): 'cat' embedded with no boundary on either side	no
+asr-b-cyr-pair	12	eb63f79a229771cda0cdbb8e2f893003664faac42a98b0e2710e2d01e2dd6056	field/edge, the \b UCP PAIR: `\bМосква\b` ascii-scoped (asr-b-cyr) MISSES (Cyrillic letters are not ASCII word chars, so \b never fires); `(*UCP)\bМосква\b` (asr-b-cyr-ucp) HITS	no
+asr-b-ascii-adjacent-multibyte	9	bbf0474e1a0899621846972e9a81f6bb252bf73cac667c9923cb23a624164dbe	field/hit `\bcat\b` (asr-b-ascii): the SAME bounded word beside multi-byte neighbours, confirming \b's ASCII scope is unaffected by adjacent non-ASCII content	no
+asr-B-midchar-hit	2	769a4e6d0003189c7e96c5d9b7e810a0d11c3a12832527ec94b0f86d277f51ca	field/hit `\B` (asr-B-midchar): two adjacent ASCII word characters -- \B fires at the ENGINE-invented non-boundary position between them	no
+asr-lb-fixed-hit	3	75ffd91e9de1dcdd5f349e17f877dd3ea559667e1bdbf4c8f3560ca0b81a0b02	field/hit `(?<=é)x` (asr-lb-fixed) AND `(?<=a|é)x` (asr-lb-varwidth, the é branch): fixed CHARACTER width 1, BYTE width 2	no
+asr-lb-fixed-miss	3	c25cfc7101bdc6e1fed62f90f8e80fd1fd7f3a07a8e616087c24e74a41744819	field/miss `(?<=é)x` (asr-lb-fixed): a different preceding character	no
+asr-lb-varwidth-a-hit	2	5e85370e555e95d27df68f93c0ccaa4edfc1da5e281b47a2ebba2649a13ea5f4	field/hit `(?<=a|é)x` (asr-lb-varwidth, the 'a' branch): BYTE width 1 at the same CHARACTER width as the é branch	no
+asr-lb-neg-hit	6	d4a77643b5f73c98cc88838324c01f3adee90b76124e4237f8d9fcb6c6ed125a	field/hit `(?<!日)本` (asr-lb-neg): 本 preceded by 山, not 日	no
+asr-lb-neg-miss	6	cf2abf0c5be326cb922a70f8163f91079c4d9aa8655c60ead89ad545c9de2e92	field/miss `(?<!日)本` (asr-lb-neg): 本 preceded by 日 -- the negative lookbehind fails there	no
+asr-lb-class-hit	13	825ef60ffcfdd0c5577a87a81a83eecd825c157a47f513dd8dc49835bdf27f73	field/hit `(?<=[\x{400}-\x{4FF}])\s` (asr-lb-class): a Cyrillic word ending the run, followed by a space	no
+asr-caret-ml-hit	30	bff9a1e2d874abb3ccabb505cdcc3b73dd487992fe8f757efba3a9e28f411cb0	field/hit `(?m)^日` (asr-caret-ml): a second LINE beginning with 日	no
+asr-dollar-ml-hit	27	b4b7a8b4425e6b5266dbbac58534fe99e7fcc7cf2ec0dbeebfc7dc102bdc73fc	field/hit `(?m)語$` (asr-dollar-ml): the first line ENDS with 語	no
+asr-a-z-hit	9	77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5	field/hit `\A日本語\z` (asr-a-z): the EXACT whole subject, true-start to true-end	no
+asr-a-z-miss	12	03c722eb3feb5830134adbf85850938f0a51f072769c7ab1b7fd75129b7581c8	field/miss `\A日本語\z` (asr-a-z): trailing content after the run breaks the true-end anchor	no
+prp-l-hit	8	5e6cecb86f12e12b7e119d57563b09fd88188e758d212fb747b14ac1b46581b4	field/hit `\p{L}+` (prp-l): one letter from each of four scripts, cross-script	no
+prp-l-miss	3	a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3	field/miss `\p{L}+` (prp-l): digits only, no letter present	no
+prp-lu-hit	2	a77caf6622986ae3e270b2036745b5a5e0f3e19f4a142fbdbb1b437e83b528e4	field/hit `\p{Lu}` (prp-lu): an uppercase Latin-1 Supplement letter	no
+prp-lu-miss	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	field/miss `\p{Lu}` (prp-lu): lowercase only	no
+prp-n-hit	6	48113aa08cbd429475350f7fadd10d74aaa282a75b616e95584e7adde55d5d75	field/hit `\p{N}+` (prp-n): non-ASCII digits -- the positive twin of cls-d-ascii's designed near-miss	no
+prp-notl-hit	6	dd130a849d7b29e5541b05d2f7f86a4acd4f1ec598c1c9438783f56bc4f0ff80	field/hit `\P{L}+` (prp-notl): digits present (a non-letter run exists)	no
+prp-notl-miss	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	field/miss `\P{L}+` (prp-notl): letters only, no non-letter character anywhere	no
+prp-zs-hit	4	e1ac448b7c5f634646f05228ad1ed8495db93a55a1fe155c12c5153eeeebacf0	field/hit `\p{Zs}` (prp-zs): U+00A0 NO-BREAK SPACE, the positive twin of cls-s-nbsp's near-miss	no
+prp-greek-scx-witness	4	7daf780e112c5a8ef64a69bbe60764cdcfb62fe4cb1bc957e3d960fa7bd33b0e	field/edge `\p{Greek}` (prp-greek, Script | Script_Extensions) vs `\p{sc=Greek}` (prp-greek-sc, Script alone): Greek alpha carries U+0342 COMBINING GREEK PERISPOMENI, the stable Script_Extensions flipper this set authors AROUND U+00B7 (the confirmed version-sensitive point, utf8_set_v1.md 8.5/F-S1) -- both spellings HIT on the base letter; the oracle (U5) settles whether they diverge on the combining mark alone	no
+prp-l-anchored-hit	4	88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589	field/hit `^\p{L}{4}$` (prp-l-anchored): exactly 4 letters	no
+prp-l-anchored-miss	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	field/miss `^\p{L}{4}$` (prp-l-anchored): 3 letters, one short	no
+prp-cyrillic-hit	12	4ed0608556890f1debeb0947b33bff409c18a80755422c362f4daa5cd5ce0749	field/hit `\p{Cyrillic}+` (prp-cyrillic): the strongest script filter in the set, two lead bytes	no
+prp-han-hit	9	77710aedc74ecfa33685e33a6c7df5cc83004da1bdcef7fb280f5c2b2e97e0a5	field/hit `\p{Han}+` (prp-han): pure kanji, no kana admixture	no
+prp-han-miss	9	3f84d94766fbf6e2affbb82825687b811258217a3e1bd221e173ff7204a199d3	field/miss `\p{Han}+` (prp-han): pure katakana -- kana is NOT Han, so no run can match	no
+prp-latin-hit	5	850f7dc43910ff890f8879c0ed26fe697c93a067ad93a7d50f466a7028a9bf4e	field/hit `\p{Latin}+` (prp-latin): spans the ASCII / Latin-1-Supplement boundary in one property	no
+floor-hit	1	7ace431cb61584cb9b8dc7ec08cf38ac0a2d649660be86d349fb43108b542fa4	field/hit the floor byte '~', per-call overhead control -- never inside a multi-byte sequence (0x7E cannot be a UTF-8 continuation or lead byte)	no

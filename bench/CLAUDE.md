@@ -28,6 +28,15 @@ the capability survey set, with no `subbench.toml`/generator/manifest of
 its own yet. See `bench/capability/CLAUDE.md`. L3 builds the runnable set
 from it and earns a row here when it does.
 
+`utf8/` ([B77], lane b77u3, 2026-09-25) is ALSO NOT in the table above and
+NOT enumerated by `make check-harness`'s generic gates, for the same
+reason: only its SUBJECTS are built (five word pools, `utf8text.py`, the
+two subject generators + manifests, `subject_facts.tsv` -- the UTF-8
+lead-byte histogram, a new per-set facts table). No `subbench.toml`
+exists yet. See `bench/utf8/CLAUDE.md`; the design is
+`docs/design/utf8_set_v1.md`. U4 builds `patterns.rxt` and the sidecar
+and earns this set a row here when it does.
+
 `subjects/` and `throughput/` are GENERATED and gitignored; the
 generators and their sha256 manifests are committed, and `make check`
 regenerates both and requires the manifests to reproduce byte for byte --
