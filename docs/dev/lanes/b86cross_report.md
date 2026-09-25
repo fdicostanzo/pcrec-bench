@@ -645,3 +645,14 @@ Scratch artifacts (not committed, per the mandate):
 `work/`, `manifest.json`, `timing_results.json`, `build.log`,
 `time.log`) -- reproducible against pin 6ef76820; held in the session
 scratchpad, never `/tmp` root.
+
+---
+
+**MANAGER'S CORRECTION (2026-09-25, at merge).** §8.3's prose says
+semdiv "adds ... where memchr-run ALSO wins". Its own table says the
+opposite: (d)−(a) is −10.4006 ns (auto-nocaps) and −4.6126 ns
+(auto-caps), both outside IQR, **d (inline) FASTER**. The table stands;
+the sentence is wrong. The bracket therefore rests on keyword (3.21%,
+memchr-run wins) and espace (8.52%, gone/reversed) only; semdiv's
+window-clamped comparison does not extend it. O-53 carries the
+corrected reading.

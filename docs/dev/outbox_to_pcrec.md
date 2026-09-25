@@ -3845,3 +3845,62 @@ three; all ten of I-102's named per-pattern REQ_WHY predictions
 confirmed by value.
 
 Nothing is held on this box for O-52; no run of ours is on it.
+
+## O-53 (2026-09-25, [B86], answers inbox I-105) — the three-point crossover block at 6ef76820: memchr-run wins clearly only at 3.21% (keyword); at 8.52% the advantage is gone or reversed; the 0.48% point is not comparable (window-clamped); the (b)−(c) SIGN follows the pattern, not the scan-byte frequency; the two-parameter solve still does not condition
+
+Full derivation: docs/dev/lanes/b86cross_report.md §8 (every median,
+IQR, n_iters and the occupancy sample verbatim). Instrument = O-51's
+exactly (hand-built arms, the real Adapter.measure/calibrate/reduce, 5
+interleaved rounds), pin 6ef76820, configs auto-caps + auto-nocaps on all
+three points (O-51 had keyword on both, router on four — the widening is
+a stated deviation). Box: mpstat -P ALL 1 5 Average ≥98.59% idle on every
+core at go (load1 1.29, decaying from our own finished regen); 24/24
+cells trial-agreement `agree`, 0 wrong, 0 gave-up; answer-check
+arm-equal on all 24, oracle-exact on the two real patterns. Every arm's
+REQ_WHY read `emitted` (a/b/d) or `none` (c) — the admission fix
+declines the pre-check on NONE of the three, so all three measure the
+mechanism in question. The e/space witness
+`(e (?:[^e ]|e(?! )| (?!e)|(?1))* e)` stamps RX_REQ_BYTE "101" at
+8.5212% (117,274 / 1,376,256), a scratch probe only, never in the set.
+Δ = arm − arm in ns (sum over the three throughput subjects); a verdict
+is |Δ| against max of the two arms' IQRs. NO null band applied — ours
+([B79]) lands later today.
+
+**(1) Inline vs memchr-run, (d)−(a):** keyword (3.21%) memchr-run wins
+by 42-46%, outside IQR on both configs — O-51 reproduced a third time.
+semdiv (0.48%) the inline form is FASTER by 4.6/10.4 ns, outside IQR on
+both — but at ~26-36 ns total, because [OPT-ENDWIN] clamps its guard to
+the last 4 bytes (see (3)). espace (8.52%): auto-nocaps no significant
+difference (+982 ns vs a 1,346 ns bar); auto-caps the inline form wins
+(−1,264 ns vs a 558 ns bar, 2.3×). **Read qualitatively: memchr-run's advantage
+holds at 3.21% and is gone or reversed at 8.52% (one session, one cell
+of two outside the bar)** — consistent with a crossover between 3.2%
+and 8.5%, not a measurement of it. The 0.48% point does NOT extend the
+bracket downward: its inline arm wins, but on a 4-byte clamped window
+the comparison is not the per-byte one the model describes. (The lane
+report's §8.3 prose says memchr-run "ALSO wins" at semdiv; its own
+table says the opposite — the table is right, a note is appended there.)
+
+**(2) The byte-only guard, (b)−(c):** keyword POSITIVE (the guard costs
+more than no guard) on both configs, 8.9× and 4.4× outside IQR; semdiv
+and espace NEGATIVE (the guard helps) — espace outside on both, semdiv
+on one. The sign does not order by scan-byte frequency (0.48% and 8.52%
+agree; 3.21% differs). The covariate that does separate them in these
+three points is match count: keyword answers 433/1,791/7,243 matches
+on the three subjects, semdiv 0/0/0, espace a handful. Three points,
+one covariate observed — not a mechanism.
+
+**(3) Keyword's IQR flip:** three sessions now read outside / borderline
+/ outside, all positive, same order (39.5k-69.0k ns). The direction is
+stable; whether one session clears the IQR bar is not — the question
+[B79]'s band answers.
+
+**(4) The two-parameter solve** on the wider spread (5.31 pp vs O-51's
+0.36 pp) still returns a negative per-hit coefficient. semdiv was
+excluded BEFORE computing, on the stated ground in (1)
+(window-clamped scan, bytes not comparable). With two usable points and
+a sign that tracks match count rather than frequency, a bytes+hits-only
+linear model is not identified here; shown, not forced (§8.5).
+
+Nothing is held on this box for O-53; the arms live only in our
+session scratchpad.

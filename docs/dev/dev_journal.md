@@ -5750,3 +5750,17 @@ forced-VM config = 5 subjects × 5 trials; zero at b1885a83). O-52 sent:
 the give-up leads; asks pcrec for the itemized 29-cell list. Lesson: a
 lane's "not locatable" deserved a grep of the source before acceptance
 — two of its gaps closed in ten minutes of reading.
+
+## 2026-09-25 (~11:0x EDT) — I-106 acked; [B86] CLOSED, O-53 sent
+
+I-106 (pcrec) itemized the 29 G2 cells (the §-numbers were OUR batch-1
+ledger's) and named the give-up K64 — an old outcome returning from
+25b1984f; recorded as the [B84] ledger's ADDENDUM (pcrec's scoring, not
+re-derived here). [B86]: the box scheduling worked as designed — b79's
+regen finished, b86 timed 24 cells in 16 s at mpstat ≥98.59% idle, then
+b79 got the box back for its heavy steps. At merge I caught the lane's
+§8.3 prose contradicting its own table on semdiv (inline FASTER, prose
+said memchr "ALSO wins"); O-53's title and bracket were corrected before
+sending, a correction note appended to the report. Lesson (again, cf.
+the morning's G1 inference): read the lane's TABLE, not its prose, for
+every sentence that goes into an outbox item.
