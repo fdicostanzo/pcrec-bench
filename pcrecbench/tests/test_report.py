@@ -5183,6 +5183,114 @@ def test_b79_single_pin_report_renders_no_band():
                    for ln in tsv.splitlines()[2:]), "no band rows")
 
 
+# ------------------------------------ [B88] identity from the records FIRST
+#
+# BD13 / record schema v1.7: a pcrec compile row carries
+# `engine_metadata.program_sha256` (tools/program_identity.py's v2
+# normalization). The band reads it FIRST and the census only as fallback;
+# where both exist they are cross-checked. The fixture is [B79]'s own, with
+# one plain compile row per pattern added: an `identical` cell carries the
+# SAME hash on both sides, a `changed` cell two different ones.
+
+def _b88_loaded(field_sides=(0, 1), flip=()):
+    loaded = _b79_loaded()
+    for side, rec in enumerate(loaded):
+        if side not in field_sides:
+            continue
+        seq = max(r["seq"] for r in rec.rows)
+        for pat, cell in sorted(_B79_CELLS.items()):
+            seq += 1
+            same = (cell[2] == "identical") != (pat in flip)
+            import hashlib
+            h = hashlib.sha256((pat if same or side == 0 else pat + "+new")
+                               .encode()).hexdigest()
+            rec.rows.append({"kind": "compile", "pattern_id": pat, "trial": 1,
+                             "seq": seq, "compile_outcome": "compiled",
+                             "cost_class": "compiled-aot",
+                             "cost": {"total_ns": 1000},
+                             "engine_metadata": {"program_sha256": h}})
+    return loaded
+
+
+def _b88_render(census_path, **kw):
+    saved = report.census_path_for
+    report.census_path_for = lambda sb, engine, old, new: census_path
+    try:
+        rd, err = report.build_report(_b88_loaded(**kw),
+                                      _args(store="x", include_synthetic=True))
+        _check(err is None, f"unexpected refusal: {err}")
+        return rd, report.render_markdown(rd), report.render_tsv(rd)
+    finally:
+        report.census_path_for = saved
+
+
+def test_b88_null_band_reads_program_sha256_first():
+    """[B88] (BD13): (1) NO census, both sides carry the field -> the band
+    is built from the FIELD alone and its strata equal the census-built
+    band's exactly (10 null cells at >=1us, +-6.00%; 3 insufficient; 0
+    empty); (2) a census that DISAGREES with the field on one cell -> the
+    field wins (the record's own statement) and the disagreement is named;
+    (3) CONTROL: the field on ONE side only -> the census fallback, and the
+    render is byte-identical to [B79]'s pure-census render."""
+    import tempfile
+    from pcrecbench import nullband as nb
+    # the pure functions
+    _check(nb.field_identity({"program_sha256": "a" * 64},
+                             {"program_sha256": "a" * 64}) == "identical", "same hash")
+    _check(nb.field_identity({"program_sha256": "a" * 64},
+                             {"program_sha256": "b" * 64}) == "changed", "two hashes")
+    _check(nb.field_identity({"program_sha256": "a" * 64}, {}) is None, "one side")
+    _check(nb.cell_identity(None, "identical") == ("identical", "census", False),
+           "census fallback")
+    _check(nb.cell_identity("changed", "identical") == ("changed", "field", True),
+           "field wins, disagreement flagged")
+    _check(nb.cell_identity(None, None) == ("absent", None, False), "neither")
+    # (1) field only
+    rd, md, tsv = _b88_render("/nonexistent/census.tsv")
+    _check("_NO NULL BAND" not in md, "a field-only pair has a band")
+    band_rows = {ln.split("|")[2].strip(): ln for ln in md.splitlines()
+                 if ln.startswith("| `search` |")}
+    _check("| 10 | -6.00% | +0.50% | +5.00% | ±6.00% | ok |" in band_rows["`>=1us`"],
+           band_rows)
+    _check("insufficient (n=3 < 10)" in band_rows["`100ns-1us`"], band_rows)
+    _check("18 cell(s) read `engine_metadata.program_sha256` on BOTH compile rows, "
+           "0 fell back to the census; no census for this pair" in md, md[:4000])
+    _check("null_band: pcrec old1 -> new2: field program_sha256, 13 null of 18 cells"
+           in tsv.splitlines()[0], tsv.splitlines()[0][-300:])
+    idrow = [ln.split("\t") for ln in tsv.splitlines()
+             if ln.startswith("null_band\t") and "\tidentity_field\t" in ln]
+    _check(len(idrow) == 1 and "field_cells=18; census_fallback_cells=0; "
+           "disagreements=0" in idrow[0][16], idrow)
+    width = len(tsv.splitlines()[1].split("\t"))
+    _check(all(len(ln.split("\t")) == width for ln in tsv.splitlines()[1:] if ln),
+           "ragged TSV")
+    with tempfile.TemporaryDirectory() as tmp:
+        # (2) a census that disagrees on n0: the field says identical
+        census = _b79_census_file(tmp)
+        with open(census, encoding="utf-8") as fh:
+            text = fh.read()
+        with open(census, "w", encoding="utf-8") as fh:
+            fh.write(text.replace("auto-caps-simdna\tn0\tplain\tidentical",
+                                  "auto-caps-simdna\tn0\tplain\tchanged"))
+        rd2, md2, tsv2 = _b88_render(census)
+        _check("the field and the census DISAGREE on 1: "
+               "auto-caps-simdna/n0/plain: field=identical census=changed" in md2,
+               md2[:5000])
+        _check("13 program-identical" in md2, "the field decided n0 (still null)")
+        # (3) CONTROL: the field on ONE side only -> byte-identical to [B79]
+        os.makedirs(os.path.join(tmp, "c3"))
+        census3 = _b79_census_file(os.path.join(tmp, "c3"))
+        _rd3, md3, tsv3 = _b88_render(census3, field_sides=(1,))
+        _rdb, mdb, tsvb = _b79_render(census3)
+        # the compile-cost table differs (the NEW record has compile rows);
+        # the band section and every d119 row must not
+        sec = lambda m: m[m.index("## Null-control band"):m.index("\n## ", m.index("## Null-control band") + 5)]
+        _check(sec(md3) == sec(mdb), "one-sided field: the census band, unchanged")
+        d = lambda t: [ln for ln in t.splitlines() if ln.startswith(("d119", "null_band"))]
+        _check(d(tsv3) == d(tsvb), "one-sided field: the d119/null_band rows unchanged")
+        _check("identity from the records" not in md3, "no field line when no cell used it")
+
+
 TESTS = [
     test_store_discovery_uses_index_when_present,
     test_store_discovery_walks_when_index_absent,
@@ -5297,6 +5405,7 @@ TESTS = [
     test_b79_null_band_hand_computed,
     test_b79_no_census_is_stated_never_silent,
     test_b79_single_pin_report_renders_no_band,
+    test_b88_null_band_reads_program_sha256_first,
 ]
 
 

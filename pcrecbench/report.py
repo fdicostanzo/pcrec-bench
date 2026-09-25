@@ -3395,10 +3395,20 @@ def census_path_for(sb, engine, old_ver, new_ver):
 
 class _PairBand:
     __slots__ = ("sb", "engine", "old_ver", "new_ver", "census", "census_expected",
-                 "strata", "n_null", "n_cells")
+                 "strata", "n_null", "n_cells",
+                 # [B88]: identity read off the records' `program_sha256`
+                 # FIRST, the census as fallback (pcrecbench.nullband)
+                 "n_field", "n_census_only", "disagreements")
 
     def label(self):
         return f"{self.engine} {self.old_ver} -> {self.new_ver}"
+
+    @property
+    def has_identity(self):
+        """[B88]: a pair has an identity source when its census exists OR
+        at least one cell's two compile rows both carry program_sha256.
+        Without either, the pair renders NO NULL BAND exactly as before."""
+        return self.census is not None or bool(self.n_field)
 
 
 class _CellD119:
@@ -3456,11 +3466,13 @@ def _build_null_band_model(rd):
         pb.census = _CensusFile(cpath) if os.path.exists(cpath) else None
         pb.strata = {}
         pb.n_null = pb.n_cells = 0
+        pb.n_field = pb.n_census_only = 0
+        pb.disagreements = []
         model.pairs.append(pb)
         for prev, tid in pair_members[key]:
             model.pair_of_testee[(sb, prev)] = pb
             model.pair_of_testee[(sb, tid)] = pb
-        if pb.census is None or rd.grain != "set":
+        if rd.grain != "set":
             continue
         eligible = []
         regimes = set()
@@ -3481,9 +3493,26 @@ def _build_null_band_model(rd):
                 if (red.expectation_failing or pred.expectation_failing
                         or red.median_ns is None or not pred.median_ns):
                     continue
+                # [B88] identity: the records' program_sha256 FIRST, the
+                # census as fallback, a cross-check where both exist.
+                cv = (pb.census.verdicts.get((slug, pattern_id, form))
+                      if pb.census is not None else None)
+                fv = _nb.field_identity(_compile_meta(rd, sb, prev, pattern_id, form),
+                                        _compile_meta(rd, sb, tid, pattern_id, form))
+                identity, src, dis = _nb.cell_identity(fv, cv)
+                if src == _nb.SOURCE_FIELD:
+                    pb.n_field += 1
+                elif src == _nb.SOURCE_CENSUS:
+                    pb.n_census_only += 1
+                if dis:
+                    pb.disagreements.append(f"{slug}/{pattern_id}/{form}: "
+                                            f"field={fv} census={cv}")
                 regimes.add(regime)
-                identity = pb.census.verdicts.get((slug, pattern_id, form), "absent")
                 eligible.append((prev, tid, pattern_id, regime, form, pred, red, identity))
+        if pb.census is None and not pb.n_field:
+            # no identity source at all: the pre-[B88] NO NULL BAND path,
+            # byte for byte (no strata, no cells, the pair's own notice).
+            continue
         null_cells = [(regime, pred.median_ns, _nb.delta_pct(pred.median_ns, red.median_ns))
                       for (_p, _t, _pat, regime, _f, pred, red, identity) in eligible
                       if identity == "identical"]
@@ -3506,6 +3535,15 @@ def _build_null_band_model(rd):
                 c.verdict, c.bar, c.source = _nb.d119_verdict(c.delta, c.iqr_pct, c.stratum)
             model.cells[(sb, tid, pattern_id, regime, form)] = c
     return model
+
+
+def _compile_meta(rd, sb, testee_id, pattern_id, form):
+    """[B88]: one compile cell's declared-consistent engine_metadata (the
+    reduction's `sample_engine_metadata`), or None."""
+    hit = rd.compile_cells.get((sb, testee_id, pattern_id, form))
+    if hit is None:
+        return None
+    return getattr(hit[1], "sample_engine_metadata", None)
 
 
 def _d119_cell_text(c):
@@ -3584,17 +3622,30 @@ def _null_band_header_lines(model):
     out.append("")
     for pb in model.pairs:
         out.append(f"### `{pb.label()}` ({pb.sb})\n")
-        if pb.census is None:
+        if not pb.has_identity:
             out.append(f"_NO NULL BAND for this pair: no identity census at "
                        f"`{pb.census_expected}` (`tools/program_identity.py "
                        f"--old {pb.old_ver} --new {pb.new_ver}` writes it). "
                        f"No D119 verdict is rendered for this pair's cells; "
                        f"R8's `Δ vs previous version` stands alone._\n")
             continue
-        counts = ", ".join(f"{k} {v}" for k, v in sorted(pb.census.counts.items()))
-        out.append(f"- census: `{pb.census.relpath}` (sha256 "
-                   f"`{pb.census.sha256}`): {counts} (artifact rows: every "
-                   f"config x pattern x form)")
+        if pb.census is not None:
+            counts = ", ".join(f"{k} {v}" for k, v in sorted(pb.census.counts.items()))
+            out.append(f"- census: `{pb.census.relpath}` (sha256 "
+                       f"`{pb.census.sha256}`): {counts} (artifact rows: every "
+                       f"config x pattern x form)")
+        if pb.n_field:
+            out.append(f"- identity from the records ([B88], schema v1.7): "
+                       f"{pb.n_field} cell(s) read `engine_metadata."
+                       f"{_nb.IDENTITY_FIELD}` on BOTH compile rows, "
+                       f"{pb.n_census_only} fell back to the census"
+                       + (f"; the field and the census DISAGREE on "
+                          f"{len(pb.disagreements)}: "
+                          + "; ".join(pb.disagreements[:10])
+                          if pb.disagreements else
+                          ("; field and census agree on every cell "
+                           "carrying both" if pb.census is not None else
+                           "; no census for this pair")))
         out.append(f"- cells: {pb.n_cells} cross-pin set cell(s) measured on "
                    f"both sides; {pb.n_null} program-identical (the null "
                    f"population)")
@@ -3620,12 +3671,16 @@ def _null_band_tsv_header_value(model):
         return "set grain only (not computed at subject grain)"
     parts = []
     for pb in model.pairs:
-        if pb.census is None:
+        if not pb.has_identity:
             parts.append(f"{pb.label()}: NO census ({pb.census_expected})")
             continue
         st = list(pb.strata.values())
+        src = (f"census {pb.census.relpath}" if pb.census is not None
+               else f"field {_nb.IDENTITY_FIELD}")
+        if pb.census is not None and pb.n_field:
+            src += f" + field {_nb.IDENTITY_FIELD} ({pb.n_field} cells)"
         parts.append(
-            f"{pb.label()}: census {pb.census.relpath}, {pb.n_null} null of "
+            f"{pb.label()}: {src}, {pb.n_null} null of "
             f"{pb.n_cells} cells, strata ok={sum(s.status == 'ok' for s in st)} "
             f"insufficient={sum(s.status == 'insufficient' for s in st)} "
             f"empty={sum(s.status == 'empty' for s in st)}, n_min={_nb.N_MIN}")
@@ -3659,7 +3714,7 @@ def _query_clearance(rd, grain, sb, regime, nc_t, nc_red, y_red):
         pb = model.pair_of_testee.get((sb, nc_t))
         if pb is None:
             band_txt = f"no null band (`{nc_t}` is in no cross-pin pair)"
-        elif pb.census is None:
+        elif not pb.has_identity:
             band_txt = f"no null band (no identity census for {pb.label()})"
         else:
             st = pb.strata.get((regime, _nb.scale_bin(nc)))
@@ -5944,16 +5999,27 @@ def render_tsv(rd: ReportData):
     if nb_model is not None:
         for pb in nb_model.pairs:
             label = pb.label()
-            if pb.census is None or grain != "set":
+            if not pb.has_identity or grain != "set":
                 _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
                            "census", "absent" if pb.census is None else "set-grain-only",
                            "", "", "", "",
                            f"expected={pb.census_expected}", ""])
                 continue
-            counts = "; ".join(f"{k}={v}" for k, v in sorted(pb.census.counts.items()))
-            _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
-                       "census", pb.census.relpath, str(pb.n_null), "", "", "",
-                       f"sha256={pb.census.sha256}; {counts}; cells={pb.n_cells}", ""])
+            if pb.census is not None:
+                counts = "; ".join(f"{k}={v}" for k, v in sorted(pb.census.counts.items()))
+                _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
+                           "census", pb.census.relpath, str(pb.n_null), "", "", "",
+                           f"sha256={pb.census.sha256}; {counts}; cells={pb.n_cells}", ""])
+            if pb.n_field:
+                # [B88]: the identity read off the records' own field
+                _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
+                           "identity_field", _nb.IDENTITY_FIELD, str(pb.n_null),
+                           "", "", "",
+                           f"field_cells={pb.n_field}; census_fallback_cells="
+                           f"{pb.n_census_only}; disagreements="
+                           f"{len(pb.disagreements)}; cells={pb.n_cells}"
+                           + ("; " + "; ".join(pb.disagreements[:10])
+                              if pb.disagreements else ""), ""])
             for (regime, scale) in sorted(pb.strata, key=lambda k: (k[0], _nb.SCALE_BINS.index(k[1]))):
                 st = pb.strata[(regime, scale)]
                 fmt = (lambda v: f"{v:.6f}" if v is not None else "")

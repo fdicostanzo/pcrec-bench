@@ -79,6 +79,8 @@ LOCAL_VERSION_PREFIX = "local:"  # the local-binary engine_version shape (6.2)
 # a `git describe` string, an `-rc1`, a `+build` -- is not a release, and a
 # testee that is not on a release must carry the commit that IS its identity.
 RELEASE_TAG_RE = re.compile(r"^\d+\.\d+(\.\d+)?[a-z]?\d*$")
+# v1.7 ([B88]): the `sha256` engine_metadata declaration type's value shape.
+_SHA256_HEX = re.compile(r"[0-9a-f]{64}")
 
 
 class Problem:
@@ -970,6 +972,13 @@ class RecordValidator:
             add(Problem(path, n, field, f"declared `integer`, got {value!r}", "X15"))
         elif t == "string" and not isinstance(value, str):
             add(Problem(path, n, field, f"declared `string`, got {value!r}", "X15"))
+        elif t == "sha256" and not (isinstance(value, str)
+                                    and _SHA256_HEX.fullmatch(value)):
+            # v1.7 ([B88], BD13): a hash is 64 LOWERCASE hex digits, so two
+            # rows compare by string equality and never by case-folding.
+            add(Problem(path, n, field,
+                        f"declared `sha256` (64 lowercase hex digits), got "
+                        f"{value!r}", "X15"))
         elif t == "enum":
             if not isinstance(value, str) or value not in (d.get("values") or []):
                 add(Problem(path, n, field,
