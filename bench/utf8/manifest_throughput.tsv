@@ -1,0 +1,8 @@
+id	len	sha256	description	periodic
+t-64k	65536	9823deb235da5b43676fa08e4e66373288048f444ab8f894250657078ced52b6	throughput/mixed lat+cyr+cjk+asc+emoji grammar, the size sweep's first rung	no
+t-256k	262144	fd9b68c68a136ed48ed97ed30251dfe2c8f8f3620eb0b6e2534ab4c4058df0a1	throughput/mixed lat+cyr+cjk+asc+emoji grammar	no
+t-1m	1048576	ec3b31100fb3daf84013081218f56820d3ea22263cce70852468445c2bf542c3	throughput/mixed lat+cyr+cjk+asc+emoji grammar	no
+t-64k-lat	65536	d8cb3486e43358b47500708af845784fb7742432c7bd3f1b7fb2f2b88280e1df	throughput/Latin-1-Supplement-heavy (fr/de/es) prose, the per-script 64 KB arm -- 0xC3 near-universal lead byte	no
+t-64k-cyr	65536	40226266fd2322ebb9e867d29bf1511d59cc7ecc27e56bf961f2ccf4b83bca10	throughput/Russian prose, the per-script 64 KB arm -- 0xD0/0xD1 the only lead bytes	no
+t-64k-cjk	65536	0f6b3afd5c062c2969471181e1466015309e3c0797423e48fb430fb96dd8f102	throughput/Japanese+Chinese prose with a Latin admixture, the per-script 64 KB arm -- 0xE3-0xE9 lead bytes	no
+t-64k-asc	65536	49e3c128fcc3e62959df45d0191a6f15da8b0b6e4a25fce53b7c85bd633a97ea	throughput/byte-clean ASCII, the per-script 64 KB arm -- THE CONTROL, no byte >= 0x80	no
