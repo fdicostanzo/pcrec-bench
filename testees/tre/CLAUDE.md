@@ -404,3 +404,14 @@ since `pmatch[]` is slice-relative); TRE itself stays byte-literal and is
 excluded per-pattern from the utf8 set by `utf8-encoding` (`utf8_set_v1.md`
 7.3) -- it ranks there only on three byte-safe members that never match
 empty.
+
+## On the utf8 set ([B77] U2): excluded per pattern, witnessed
+
+utf8_set_v1.md 7.3's ruling stands and is now WITNESSED (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`):
+`utf8-encoding` NOT (`^.$` over `é` `nomatch`, `(?i)é` over `É`
+`nomatch`, `[^é]` over `ü` spans one BYTE -- the byte-decomposed reading
+the ruling predicts); `ascii-class-scope` SATISFIED (every byte >= 0x80 a
+non-word byte); `unicode-class-scope` NOT -- and a NEW instance of this
+file's `(*NAME)` silent-misparse hazard: `(*UCP)\w+` COMPILES and
+answers `nomatch` where the oracle matches; `\p{...}` refuses (code 10);
+`\x{...}`, lookbehind and `(?m)` refuse. Declares 6/20 on the utf8 set.

@@ -563,3 +563,20 @@ arm counts 12 on the witness -- so this UTF-8-semantic engine needs the
 flag exactly as the byte engines do; `utf8_set_v1.md` 7.1 keeps it
 UNCHANGED as a config, which is why the advance is keyed on the SET's
 oracle word and not on a config's encoding.
+
+## On the utf8 set ([B77] U2): UNCHANGED, and why
+
+`rust-default` is already UTF-8-semantic (`unicode(true)`, `regex::bytes`
+matches a code point against its UTF-8 encoding), so utf8_set_v1.md 7.1
+keeps it as-is -- no sibling config. WITNESSED against the three new
+tokens (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`): `utf8-encoding` SATISFIED; `ascii-class-scope` NOT
+(`\w`/`\d`/`\s` are Unicode by default; `[[:alpha:]]` is the one
+ASCII-scoped class); `unicode-class-scope` NOT -- rust WIDENS natively,
+but the set spells the widening `(*UCP)`, which rust's parser refuses
+(`repetition operator missing expression`). Scripts: `sc=`/`Script=`/
+`scx=`/`Script_Extensions=` ALL compile at 1.13.1 and read correctly;
+bare `\p{Greek}` reads SCRIPT (`nomatch` on U+0342, where PCRE2's bare
+name reads Script_Extensions) -- an answer divergence on `prp-greek`, not
+a capability one. `\B` over `é` answers `nomatch` (Unicode `\w`), where
+the oracle answers `match [0,0)`. Declares 8/20 on the utf8 set (its
+committed 17-token row plus `utf8-encoding`).

@@ -1,9 +1,10 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides sixteen testees at the commit pinned in `configs.toml`, and one —
+Provides twenty testees at the commit pinned in `configs.toml`, and one —
 `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
-re-pin, up from fourteen):
+re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
+siblings of the usual four, up from sixteen):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -18,11 +19,12 @@ re-pin, up from fourteen):
 | `pcrec-auto-noisland` | the same flags as `pcrec-auto`, plus `-fno-alt-island` | ([B37]) THE ALTERNATION-ISLAND DENY AXIS: pcrec [ENG-ISL] STEP 1's VM alternation island (abi 18, a trie over a flat literal alternation's bytes instead of vm_alt's resume chain) DENIED, so the artifact is the pre-[ENG-ISL] VM program built at the SAME pin — the island's BEFORE on bench/altwide (the ORDER pair w-256/srt-256, the VM refusal wall, the island/chain code-byte ratios), with the lowering as the one variable. Derives `pcrec_334fd10e_auto-caps-simdna_noisland`. At this pin the denial also moves `vm_frameless` (a prefix-free island pushes nothing; the chain does) and `vm_entry_shape` (a framed artifact is `plain`) — the frame discipline and the entry chain travel with the lowering |
 | `pcrec-auto-noclsfold`, `pcrec-vm-noclsfold` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-cls-fold` | ([B39], pin d34c9131 / abi 23) THE ASCII-FOLD CLASS-TEST DENY AXIS: pcrec [FORM-CHAR] STEP 1's fold shape denied — every two-member fold-pair class (what `(?i)` makes of a letter, D23) reads its 32-byte bitmap again instead of `(byte | 0x20) == lower`, and the tables are emitted again — at the SAME pin, so the pair is the fold's BEFORE/AFTER with the class-test shape as the one variable. TWO siblings because the fold is VM ROUTE ONLY (tuning.md §2.22): `auto` took the DFA on the bench's only `(?i)` patterns (altwide ci-256/ci-512) at 334fd10e, so the `auto` pair is byte-identical (MEASURED — the same-pin noise-floor control) and the `vm` pair is the one the AFTER is read on. `config_extra` word `noclsfold`, after `noisland`. |
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
+| `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the thirteen configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `effective_encoding()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, the engine-encoding rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
@@ -2297,6 +2299,71 @@ on far more heavily, are CODE, not comments, and are untouched by
 Catalogue **3.1** (`[[pin_order]]` append: `25b1984f`, MINOR — no
 rule predicate/threshold/inputs/slots moved). Sixteen pinned configs,
 unchanged.
+
+## The engine-encoding axis: `-e utf8` ([B77] U2; utf8_set_v1.md §7.1/§7.2, F-C1)
+
+pcrec compiles a pattern for ONE subject encoding, chosen per compile:
+`-e byte` (the default, every config before [B77]) or `-e utf8` (UD §9.2
+stage 2: a character is a UTF-8 sequence, `.` and classes step by
+character, `(?i)` folds non-ASCII). `bench/utf8` needs the usual four
+(`auto`, `nocaps`, `vm`, `vm-in`) compiled `-e utf8`, and those are four
+NEW testees, not the old four measured on new text: two records that
+differ only in encoding are two artifacts.
+
+**Visible, never a protocol token.** `-e utf8` is spelled in each
+config's `flags` — the ONE list feeding pcrec's argv, `build_flags` and
+`runtime_options` (`{"name": "-e", "value": "utf8"}`) — the opposite of
+`-fcomments`, which is deliberately invisible in `testee_id`.
+
+**But `flags` alone would have COLLIDED (F-C1, the design panel's
+blocker).** The id is derived from `config_extra` whole (record_schema.md
+§6.4, X5), and before U2 no part of `compose_config_extra` scanned
+`flags` for an encoding (`DENY_FLAGS` and `CAP_KEYS` are closed tuples
+that do not know `-e`), so `pcrec-auto-utf8` and `pcrec-auto` would have
+derived the SAME id and landed on top of each other in the store.
+`effective_encoding(testee_id, flags)` is the recognition, in the shape
+of `effective_denies` / `effective_caps`: it reads `-e X`,
+`--encoding=X` and `--encoding X` off the EFFECTIVE flags (so
+`$PCREC_LOCAL_FLAGS="-e utf8"` reaches `pcrec-local`'s id too), returns
+the token `utf8` (an explicit `-e byte` is pcrec's default and the same
+artifact: no token), and REFUSES by name an unknown encoding, two
+spellings that disagree, or a trailing `-e`. The token is
+`compose_config_extra`'s FIFTH part, LAST in chartering order (after
+`cc`, the caps, the denials, `cflags`) — the slug only ever grows by
+appending. `pcrec-auto-utf8` derives `pcrec_<pin>_auto-caps-simdna_utf8`.
+
+**Nothing moved for the old configs**, checked by `make
+check-harness`'s `check_encoding_axis`: a FROZEN table of every
+pre-existing config's id shape and `config_extra` (all 25, every engine —
+the six pcrec families plain/`-bigcap`/`-clang`/`-noedge`/`-align64`/
+`-noisland`+`-noclsfold`, the `-in` pair and `pcrec-local` included), a
+FROZEN COPY of the pre-U2 four-part composition checked against every
+pcrec config's live `config_extra`, and every COMMITTED record a
+pre-existing config derives re-deriving byte-identically (`build_flags`,
+`runtime_options`, `config_extra`). The control: `^.$` over `é` (C3 A9)
+answers `match [0,2)` on `pcrec-auto-utf8` / `pcrec-vm-utf8` and
+`nomatch` on their byte siblings, as the UTF and byte oracles do.
+
+**Capability declaration**, witnessed per (config, token) before
+shipping — `docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`
+(the declaration table at its end is what `bench/utf8`'s `ext bench`
+matrix transcribes): `utf8-encoding` and `ascii-class-scope` SATISFIED on
+all four (`\w`/`\d`/`\s`/`[[:alpha:]]` ASCII-scoped under `-e utf8`);
+`unicode-class-scope` NOT — pcrec has no UCP axis (UD §4.5) and the set's
+`(*UCP)` spelling is refused (`(*...) requires module 'verbs'`, even under
+`--features all`). Every Script / Script_Extensions spelling compiles and
+answers EXACTLY as the libpcre2 oracle, U+0342 included (bare `\p{Greek}`
+reads Script_Extensions, as PCRE2); `\p{InGreek}` refuses by name.
+`unicode-properties` is DECLARED on all four, but on `pcrec-vm-utf8` /
+`pcrec-vm-in-utf8` `\p{L}` and `\P{L}+` REFUSE at the 500,000-byte
+emitted-CODE cap (563,569 / 1,117,090 B) — a SIZE refusal, not a missing
+capability: utf8_set_v1.md §15 R4 / P7's finding, which the set must see
+as first-class `did-not-compile` rows (the probe's size rule), never as a
+declared absence. `-e utf8 --no-captures` `\P{L}+` takes ~41 s to EMIT
+(one DFA, 487,011 B, over the advisory `--warn-emit-bytes`) — a compile
+cost the first window pays. Declarations: 14/20 (`auto`, `vm`, `vm-in`),
+13/20 (`nocaps`, no `captures`); `non-utf8-subject` NOT by rule (a UTF-8
+config's subject contract is valid UTF-8; the utf8 set runs none).
 
 ## `--utf8`: the character-boundary find-all advance ([B77] U1)
 

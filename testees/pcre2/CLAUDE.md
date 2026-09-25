@@ -374,3 +374,29 @@ oracle's per-pattern word. No config passes them yet -- the
 (`utf8_set_v1.md` 7.1). Measured: under `--utf` WITHOUT `--utf8` the
 first mid-character call is PCRE2_ERROR_BADUTFOFFSET (-36), which ends
 the find-all loop early (count 2 on the witness, never the oracle's 6).
+
+## The UTF-8 siblings: `pcre2-utf-interp` / `-jit` / `-dfa` ([B77] U2)
+
+`encoding = "utf8"` in `configs.toml` (read by
+`pcrecbench.adapters.config_encoding`) puts PCRE2_UTF in
+`pcre2_compile_8`'s options word through the driver's `--utf` (built by
+U1) -- on the compile call AND on every measure call, because the driver
+recompiles per invocation. NEVER `--ucp`: class SCOPE is a PATTERN
+property in the utf8 set (utf8_set_v1.md 7.5), spelled `(*UCP)` in the
+pattern text, which PCRE2 reads inline -- so one config answers both the
+`ascii-class-scope` and the `unicode-class-scope` members, each by its
+own spelling, exactly as the oracle's word does. Never
+PCRE2_NO_UTF_CHECK (8.2). `config_extra = utf8`: `pcre2-utf-jit` derives
+`libpcre2_10.46_jit-caps-simdna_utf8`; `build_flags` gains an `ENGINE
+ENCODING utf8` clause and `runtime_options` `{encoding: utf8}` -- on the
+utf8 configs ONLY (the byte three are byte-identical,
+`check_encoding_axis` arm 1).
+
+WITNESSED (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`): all three satisfy `utf8-encoding`,
+`ascii-class-scope` AND `unicode-class-scope`; `unicode-properties` incl.
+every Script / Script_Extensions spelling, answering the oracle on
+U+0342 (bare `\p{Greek}` reads Script_Extensions); `\p{InGreek}`
+refuses (error 147's text). `interp`/`jit` declare 19/20, `dfa` 14/20
+(its byte sibling's withholds carried over). `non-utf8-subject` is NOT
+declared, by rule: PCRE2_UTF refuses an invalid subject outright
+(`giveup:-23`, witnessed) -- the utf8 set runs none.

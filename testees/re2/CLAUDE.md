@@ -314,3 +314,24 @@ subject: 6 positions with `--utf8`, the UTF oracle's count; 12 without).
 
 The flag moves the advance only; the engine stays `EncodingLatin1` -- an
 `re2-utf8` config is lane U2's (`utf8_set_v1.md` 7.1).
+
+## `re2-utf8` ([B77] U2)
+
+`encoding = "utf8"` -> the driver's `--encoding utf8` -> RE2's OWN default
+`EncodingUTF8` (every other config keeps the Latin-1 override this file
+explains above), on the compile AND every measure invocation.
+`config_extra = utf8`: `re2_11.0.0_default-caps-simdna_utf8`. Otherwise
+`re2-default` exactly.
+
+WITNESSED (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`): `utf8-encoding` and `ascii-class-scope` SATISFIED --
+RE2's `\w`/`\d`/`\s`/POSIX classes stay ASCII in UTF-8 mode and there is
+no widening dial; `unicode-class-scope` NOT (the set's `(*UCP)` spelling:
+`ErrorRepeatArgument`); `unicode-properties` SATISFIED on general
+categories. **Scripts (utf8_set_v1.md 7.4, settled):** bare `\p{Greek}` /
+`\p{Cyrillic}` / `\p{Han}` / `\p{Latin}` compile, but bare `\p{Greek}`
+reads SCRIPT, not PCRE2's Script_Extensions -- it answers `nomatch` on
+U+0342 where the oracle answers `match` (an ANSWER divergence, not a
+capability gap); every prefixed spelling (`sc=`, `Script=`, `scx=`,
+`Script_Extensions=`) and `\p{InGreek}` refuse (`ErrorBadCharRange`).
+Declares 7/20 (`non-utf8-subject` NOT by rule: the config's subject
+contract is valid UTF-8).

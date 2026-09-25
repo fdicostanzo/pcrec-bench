@@ -464,3 +464,30 @@ Here the flag is ACCEPTED and INERT: this driver has no find-all loop at
 boolean grain (`NMATCHES` is always `-`, above), so there is no advance for
 it to move. It never sets HS_FLAG_UTF8 -- that is a config's choice
 (`vectorscan-block-nosom-utf8`, lane U2).
+
+## `vectorscan-block-nosom-utf8` ([B77] U2) -- BOOLEAN GRAIN, like its sibling
+
+`encoding = "utf8"` -> the driver's `--encoding utf8` -> `HS_FLAG_UTF8` in
+the `hs_compile`/`hs_expression_info` flags word (compile and every
+measure invocation); NEVER `HS_FLAG_UCP` at the flag level (the measured
+A/B above). `config_extra = utf8`:
+`vectorscan_5.4.11_block-nosom-nocaps-simd_utf8`.
+
+WITNESSED (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`) -- and ONE result that corrects utf8_set_v1.md 7.6:
+
+- `utf8-encoding`, `ascii-class-scope`, `unicode-properties` SATISFIED.
+- **`unicode-class-scope` IS SATISFIED, per pattern.** Vectorscan honours
+  the PCRE `(*UCP)` start-of-pattern verb, so the set's own spelling
+  widens `\w`/`\d`/`\s` for THAT pattern only (`(*UCP)\w+` over
+  `Москва`, `(*UCP)\d{4}` over Arabic-Indic digits, `(*UCP)a\sb` over
+  U+00A0: all `match`, as the oracle). 7.6 (1)'s premise was the
+  flag-level dial; the per-pattern verb is a different thing.
+- **The `\b` breakage is real per pattern too**: `(*UCP)\bМосква\b`
+  REFUSES (`did-not-compile`) -- so `asr-b-cyr-ucp` becomes an honest
+  refusal row on this config, not a declared absence.
+- Scripts: bare names compile and read SCRIPT (`\p{Greek}` `nomatch` on
+  U+0342); prefixed spellings and `InGreek` refuse (`Unknown` /
+  `Malformed property`).
+
+Declares 7/20. `non-utf8-subject` NOT by rule -- Hyperscan documents
+invalid UTF-8 under `HS_FLAG_UTF8` as undefined.

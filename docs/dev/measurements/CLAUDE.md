@@ -624,3 +624,30 @@ Maintenance: update this file when files are added/removed or change role.
   arm (PCRE2_UTF forced per set). Oracle-only: no engine, no timing,
   no store. The archive is the script's verbatim stdout under a source
   header naming the sha256 of the four changed files it ran against.
+
+- `probe_b77u2_utf8_witness_census.py` / `2026-09-25-b77u2-utf8-witness-census.txt`
+  — ([B77] lane U2, `docs/design/utf8_set_v1.md` 7.4 / 13 U2 / 15 R2) THE
+  UTF-8 ROSTER'S WITNESS CENSUS, per (config, REQUIRES token), BEFORE any
+  UTF-8 config's declaration shipped (the L5 lesson). Through the REAL
+  adapters (compile + one smoke match per subject; no timing), every
+  expected answer DERIVED from the libpcre2 oracle under the utf8 set's
+  own word (PCRE2_UTF + inline `(*UCP)`). A: the three new tokens on the
+  ten UTF-8 configs, `rust-default`, `tre-default` and every byte config
+  (the control) + each engine's NATIVE `\w` scope and `(*UCP)\bМосква\b`;
+  B: `unicode-properties` re-censused (general categories); C: the
+  Script / Script_Extensions spellings over `α` / U+0342 / `a` (7.4's
+  UNCONFIRMED row); D: the fourteen compile-witness tokens (a sibling's
+  declaration carries over only if the witness also compiles under
+  UTF-8); E: span/captures/non-UTF-8-subject match witnesses; F: the
+  set's own spellings (informational); then THE DECLARATIONS U4
+  transcribes. Two stated rules: a pcrec SIZE refusal does not unset a
+  token (R4/P7), `non-utf8-subject` is NOT on every UTF-8 config by rule.
+  Headline readings: pcrec-*-utf8 ASCII-scoped + `(*UCP)` refused;
+  `onig-utf8` Unicode-scoped by default AND refuses `(*UCP)` — out of
+  BOTH class-scope families; `vectorscan-…-utf8` honours `(*UCP)` per
+  pattern (unicode-class-scope SATISFIED, `(*UCP)\b…\b` refused —
+  7.6 corrected in part); bare `\p{Greek}` reads Script_Extensions on
+  PCRE2/pcrec and Script on RE2/onig/Vectorscan/rust (an answer
+  divergence on U+0342); RE2/onig/Vectorscan refuse every prefixed
+  script spelling, rust accepts all four; pcrec-vm-utf8 `\p{L}` /
+  `\P{L}+` refuse at the 500,000 B code cap.

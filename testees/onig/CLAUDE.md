@@ -330,3 +330,37 @@ subject: 6 positions with `--utf8`, the UTF oracle's count; 12 without).
 
 The flag moves the advance only; the engine stays `ONIG_ENCODING_ASCII`
 (section (d)) -- an `onig-utf8` encoding is lane U2's (`utf8_set_v1.md` 7.1).
+
+## `onig-utf8` ([B77] U2) -- the re-census
+
+The driver's encoding was a compile-time constant; U2 made it a RUNTIME
+choice (`--encoding utf8|ascii`, default ASCII, so `onig-default` passes
+nothing and is unchanged). `encoding = "utf8"` -> `ONIG_ENCODING_UTF8` on
+`onig_initialize` and `onig_new`, compile and every measure invocation;
+`config_extra = utf8`: `oniguruma_6.9.10_default-caps-simdna_utf8`.
+
+THE RE-CENSUS this file's ASCII-encoding paragraph predicted, WITNESSED
+(`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`):
+
+- `unicode-properties` FLIPS to SATISFIED -- `\p{L}`, `\p{Lu}`,
+  `\p{N}`, `\P{L}`, `\p{Zs}` all compile and answer the oracle.
+- **Class scope is UNICODE by default under UTF-8 + PERL_NG** (no
+  `ONIG_OPTION_ASCII_RANGE`): `\w+` matches all of `Москва`, `\d{4}`
+  four Arabic-Indic digits, `a\sb` across U+00A0, `[[:alpha:]]+` `é` --
+  so `ascii-class-scope` is NOT satisfied. `unicode-class-scope` is NOT
+  either: the set's `(*UCP)` spelling is read as a CALLOUT and refused
+  (`ONIGERR -229, undefined callout name`). `onig-utf8` therefore sits
+  out BOTH class-scope families -- an outcome utf8_set_v1.md 7.4 did not
+  predict. An `ONIG_OPTION_ASCII_RANGE` sibling would satisfy
+  `ascii-class-scope`; named, not built.
+- Scripts: bare names compile and read SCRIPT (`\p{Greek}` `nomatch` on
+  U+0342, the oracle `match`); `sc=`/`Script=`/`scx=`/
+  `Script_Extensions=`/`InGreek` refuse (`-223, invalid character
+  property name`).
+- `\B` over `é` answers `nomatch` where the oracle answers `match [0,0)`
+  -- a consequence of the Unicode `\w`, i.e. every `\b`/`\B` member is
+  class-scope-dependent here.
+
+Declares 14/20 (the byte sibling's withholds carried over;
+`non-utf8-subject` NOT by rule -- Oniguruma documents invalid UTF-8
+input as undefined).

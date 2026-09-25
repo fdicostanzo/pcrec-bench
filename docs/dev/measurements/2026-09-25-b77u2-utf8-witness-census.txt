@@ -1,0 +1,1122 @@
+# 2026-09-25-b77u2-utf8-witness-census.txt
+#
+# source: docs/dev/measurements/probe_b77u2_utf8_witness_census.py, as
+#   committed at 33c93b6 (sha256 eaab29c4b8f0707d...), run from the lane
+#   b77u2 worktree whose adapters/drivers are those of 59afd08 (the
+#   config_encoding / effective_encoding / driver --encoding change this
+#   census witnesses; nothing under testees/ or pcrecbench/ moved between
+#   59afd08 and the run).
+# command: B77U2_TMP=/var/tmp/b77u2 gnutimeout 1800 python3 -u \
+#   docs/dev/measurements/probe_b77u2_utf8_witness_census.py
+# run: 2026-09-25, ended 15:37:29 EDT; box ubuntubudu (Linux
+#   7.0.0-29-generic, 12 cores); /proc/loadavg after: 0.64 0.84 0.71.
+#   NOT GATED and it does not need to be: every row is a COMPILE outcome
+#   or ONE smoke match's ANSWER (--trials 1 --iters 1 through the real
+#   adapter.measure()); no time is read, nothing here is a number a
+#   ranking could use (measurements/CLAUDE.md rule 5).
+# engines: pcrec pin 6ef76820 (abi 31; binary
+#   build/pcrec-6ef76820/build/pcrec, sha256
+#   171d9a6f3ebda89b7cddb65c4ba296d3267de6757eadd8c5dd2265e23afbadc5),
+#   `--features all` + each config's own flags (the four -e utf8 configs
+#   of testees/pcrec/configs.toml); libpcre2-8 10.46 (dlopen'd, the
+#   distribution .so); RE2 11.0.0 (pkg-config re2); Oniguruma 6.9.10;
+#   Vectorscan 5.4.11 (pkg-config libhs); rust regex 1.13.1 (committed
+#   Cargo.lock); TRE 0.9.0. Artifact/driver compiler gcc 15.2.0 / g++ 15.2.0.
+# oracle: pcrecbench.oracle_pcre2 (libpcre2 10.46) under the utf8 set's
+#   own word -- PCRE2_UTF, PCRE2_UCP arriving inline from a pattern's own
+#   (*UCP) (utf8_set_v1.md 8.1); every expected answer below is the
+#   oracle's, never hand-typed.
+# what it decides: [B77] U2's witness per (config, REQUIRES token) BEFORE
+#   any UTF-8 config's declaration ships (utf8_set_v1.md 7.4 / 13 U2 / 15
+#   R2, the L5 lesson). The DECLARATIONS block at the end is what
+#   bench/utf8's `ext bench` matrix (lane U4) transcribes. Sections A-F
+#   and the two verdict rules are described in the script's docstring.
+#
+# ----- verbatim stdout below this line -----
+pcrec pin: 6ef76820
+oracle: libpcre2 10.46 2025-08-27, option word PCRE2_UTF (+ inline (*UCP))
+
+=== A. the three new tokens (utf8_set_v1.md 7.5) ===
+config	token	witness	pattern	outcome	answers (vs the UTF oracle)
+pcre2-utf-interp	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcre2-utf-interp	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcre2-utf-interp	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcre2-utf-interp	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-utf-interp	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-utf-interp	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-utf-interp	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-utf-interp	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-utf-interp	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,12) nomatch
+pcre2-utf-interp	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	match[0,8) nomatch
+pcre2-utf-interp	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	match[0,4) nomatch
+pcre2-utf-interp	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-utf-interp	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	match[3,15) nomatch
+pcre2-utf-jit	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcre2-utf-jit	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcre2-utf-jit	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcre2-utf-jit	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-utf-jit	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-utf-jit	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-utf-jit	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-utf-jit	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-utf-jit	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,12) nomatch
+pcre2-utf-jit	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	match[0,8) nomatch
+pcre2-utf-jit	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	match[0,4) nomatch
+pcre2-utf-jit	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-utf-jit	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	match[3,15) nomatch
+pcre2-utf-dfa	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcre2-utf-dfa	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcre2-utf-dfa	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcre2-utf-dfa	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-utf-dfa	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-utf-dfa	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-utf-dfa	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-utf-dfa	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-utf-dfa	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,12) nomatch
+pcre2-utf-dfa	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	match[0,8) nomatch
+pcre2-utf-dfa	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	match[0,4) nomatch
+pcre2-utf-dfa	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-utf-dfa	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	match[3,15) nomatch
+pcrec-auto-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcrec-auto-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcrec-auto-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcrec-auto-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-auto-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-auto-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-auto-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-auto-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-auto-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto-utf8	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-auto-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-nocaps-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-nocaps-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-nocaps-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-nocaps-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-nocaps-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-nocaps-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps-utf8	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-nocaps-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-vm-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcrec-vm-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcrec-vm-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcrec-vm-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-vm-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-vm-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-vm-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-vm-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-vm-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-utf8	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-vm-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-vm-in-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+pcrec-vm-in-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+pcrec-vm-in-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+pcrec-vm-in-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-vm-in-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-vm-in-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-vm-in-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-vm-in-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-vm-in-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in-utf8	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-vm-in-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+re2-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+re2-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+re2-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+re2-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+re2-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+re2-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+re2-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+re2-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+re2-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-utf8	(native scope)	native-w	\w+	compiled	nomatch
+re2-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+onig-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+onig-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+onig-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+onig-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+onig-utf8	ascii-class-scope	w-ascii	\w+	compiled	match[0,12)!=oracle(nomatch) match[0,3)
+onig-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	match[0,8)!=oracle(nomatch) match[0,4)
+onig-utf8	ascii-class-scope	s-ascii	a\sb	compiled	match[0,4)!=oracle(nomatch) match[0,3)
+onig-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	match[0,2)!=oracle(nomatch) match[0,3)
+onig-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-utf8	(native scope)	native-w	\w+	compiled	match[0,12)
+onig-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+vectorscan-block-nosom-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match nomatch
+vectorscan-block-nosom-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match nomatch
+vectorscan-block-nosom-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match nomatch
+vectorscan-block-nosom-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match nomatch
+vectorscan-block-nosom-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match
+vectorscan-block-nosom-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match
+vectorscan-block-nosom-utf8	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match
+vectorscan-block-nosom-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match
+vectorscan-block-nosom-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match nomatch
+vectorscan-block-nosom-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	match nomatch
+vectorscan-block-nosom-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	match nomatch
+vectorscan-block-nosom-utf8	(native scope)	native-w	\w+	compiled	nomatch
+vectorscan-block-nosom-utf8	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+rust-default	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+rust-default	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+rust-default	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+rust-default	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+rust-default	ascii-class-scope	w-ascii	\w+	compiled	match[0,12)!=oracle(nomatch) match[0,3)
+rust-default	ascii-class-scope	d-ascii	\d{4}	compiled	match[0,8)!=oracle(nomatch) match[0,4)
+rust-default	ascii-class-scope	s-ascii	a\sb	compiled	match[0,4)!=oracle(nomatch) match[0,3)
+rust-default	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+rust-default	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: regex build failed [Syntax]: regex parse error: |     (*UCP)\w+ |      ^ | error: repetition operator missing expression
+rust-default	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: regex build failed [Syntax]: regex parse error: |     (*UCP)\d{4} |      ^ | error: repetition operator missing expression
+rust-default	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: regex build failed [Syntax]: regex parse error: |     (*UCP)a\sb |      ^ | error: repetition operator missing expression
+rust-default	(native scope)	native-w	\w+	compiled	match[0,12)
+rust-default	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+tre-default	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+tre-default	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+tre-default	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+tre-default	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+tre-default	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+tre-default	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+tre-default	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+tre-default	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+tre-default	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	nomatch!=oracle(match[0,12)) nomatch
+tre-default	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	nomatch!=oracle(match[0,8)) nomatch
+tre-default	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	nomatch!=oracle(match[0,4)) nomatch
+tre-default	(native scope)	native-w	\w+	compiled	nomatch
+tre-default	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	nomatch nomatch
+pcre2-interp	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-interp	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcre2-interp	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-interp	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-interp	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-interp	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-interp	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-interp	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-interp	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,1)!=oracle(match[0,12)) nomatch
+pcre2-interp	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	nomatch!=oracle(match[0,8)) nomatch
+pcre2-interp	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	nomatch!=oracle(match[0,4)) nomatch
+pcre2-interp	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-interp	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	nomatch match[0,12)
+pcre2-jit	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-jit	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcre2-jit	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-jit	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-jit	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-jit	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-jit	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-jit	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-jit	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,1)!=oracle(match[0,12)) nomatch
+pcre2-jit	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	nomatch!=oracle(match[0,8)) nomatch
+pcre2-jit	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	nomatch!=oracle(match[0,4)) nomatch
+pcre2-jit	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-jit	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	nomatch match[0,12)
+pcre2-dfa	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-dfa	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcre2-dfa	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcre2-dfa	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcre2-dfa	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcre2-dfa	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcre2-dfa	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcre2-dfa	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcre2-dfa	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match[0,1)!=oracle(match[0,12)) nomatch
+pcre2-dfa	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	nomatch!=oracle(match[0,8)) nomatch
+pcre2-dfa	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	nomatch!=oracle(match[0,4)) nomatch
+pcre2-dfa	(native scope)	native-w	\w+	compiled	nomatch
+pcre2-dfa	(native scope)	b-ucp	(*UCP)\bМосква\b	compiled	nomatch match[0,12)
+pcrec-auto	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-auto	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcrec-auto	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-auto	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-auto	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-auto	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-auto	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-auto	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-auto	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-auto	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-auto	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-nocaps	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-nocaps	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcrec-nocaps	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-nocaps	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-nocaps	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-nocaps	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-nocaps	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-nocaps	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-nocaps	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-nocaps	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-nocaps	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-vm	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-vm	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcrec-vm	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-vm	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-vm	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-vm	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-vm	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-vm	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-vm	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-vm	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+pcrec-vm-in	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-vm-in	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+pcrec-vm-in	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+pcrec-vm-in	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+pcrec-vm-in	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+pcrec-vm-in	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+pcrec-vm-in	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+pcrec-vm-in	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+pcrec-vm-in	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 0)
+pcrec-vm-in	(native scope)	native-w	\w+	compiled	nomatch
+pcrec-vm-in	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+re2-default	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+re2-default	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+re2-default	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+re2-default	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+re2-default	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+re2-default	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+re2-default	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+re2-default	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+re2-default	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-default	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-default	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-default	(native scope)	native-w	\w+	compiled	nomatch
+re2-default	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+re2-longest	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+re2-longest	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+re2-longest	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+re2-longest	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+re2-longest	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+re2-longest	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+re2-longest	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+re2-longest	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+re2-longest	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-longest	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-longest	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-longest	(native scope)	native-w	\w+	compiled	nomatch
+re2-longest	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+onig-default	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+onig-default	utf8-encoding	negated-class-universe	[^é]	compiled	match[1,2)!=oracle(match[0,2)) nomatch
+onig-default	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+onig-default	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+onig-default	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+onig-default	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+onig-default	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match[0,3)
+onig-default	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+onig-default	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-default	unicode-class-scope	d-ucp	(*UCP)\d{4}	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-default	unicode-class-scope	s-ucp	(*UCP)a\sb	did-not-compile: onig_new failed (code -229): undefined callout name
+onig-default	(native scope)	native-w	\w+	compiled	nomatch
+onig-default	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+vectorscan-block-nosom	utf8-encoding	dot-is-one-char	^.$	compiled	nomatch!=oracle(match[0,2)) nomatch
+vectorscan-block-nosom	utf8-encoding	negated-class-universe	[^é]	compiled	match nomatch
+vectorscan-block-nosom	utf8-encoding	caseless-non-ascii	(?i)é	compiled	nomatch!=oracle(match[0,2)) nomatch
+vectorscan-block-nosom	utf8-encoding	multibyte-range	[α-ω]+	compiled	match nomatch
+vectorscan-block-nosom	ascii-class-scope	w-ascii	\w+	compiled	nomatch match
+vectorscan-block-nosom	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match
+vectorscan-block-nosom	ascii-class-scope	s-ascii	a\sb	compiled	nomatch match
+vectorscan-block-nosom	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match
+vectorscan-block-nosom	unicode-class-scope	w-ucp	(*UCP)\w+	compiled	match nomatch
+vectorscan-block-nosom	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	nomatch!=oracle(match[0,8)) nomatch
+vectorscan-block-nosom	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	nomatch!=oracle(match[0,4)) nomatch
+vectorscan-block-nosom	(native scope)	native-w	\w+	compiled	nomatch
+vectorscan-block-nosom	(native scope)	b-ucp	(*UCP)\bМосква\b	did-not-compile
+
+--- A summary: SATISFIED (S) / NOT (-) ---
+config	utf8-encoding	ascii-class-scope	unicode-class-scope
+pcre2-utf-interp	S	S	S
+pcre2-utf-jit	S	S	S
+pcre2-utf-dfa	S	S	S
+pcrec-auto-utf8	S	S	-
+pcrec-nocaps-utf8	S	S	-
+pcrec-vm-utf8	S	S	-
+pcrec-vm-in-utf8	S	S	-
+re2-utf8	S	S	-
+onig-utf8	S	-	-
+vectorscan-block-nosom-utf8	S	S	S
+rust-default	S	-	-
+tre-default	-	S	-
+pcre2-interp	-	S	-
+pcre2-jit	-	S	-
+pcre2-dfa	-	S	-
+pcrec-auto	-	S	-
+pcrec-nocaps	-	S	-
+pcrec-vm	-	S	-
+pcrec-vm-in	-	S	-
+re2-default	-	S	-
+re2-longest	-	S	-
+onig-default	-	S	-
+vectorscan-block-nosom	-	S	-
+
+=== B. unicode-properties re-census (general categories) ===
+pcre2-utf-interp	L	\p{L}	compiled	match[0,2) nomatch
+pcre2-utf-interp	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcre2-utf-interp	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcre2-utf-interp	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+pcre2-utf-interp	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcre2-utf-jit	L	\p{L}	compiled	match[0,2) nomatch
+pcre2-utf-jit	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcre2-utf-jit	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcre2-utf-jit	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+pcre2-utf-jit	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcre2-utf-dfa	L	\p{L}	compiled	match[0,2) nomatch
+pcre2-utf-dfa	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcre2-utf-dfa	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcre2-utf-dfa	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+pcre2-utf-dfa	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcrec-auto-utf8	L	\p{L}	compiled	match[0,2) nomatch
+pcrec-auto-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcrec-auto-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcrec-auto-utf8	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+pcrec-auto-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcrec-nocaps-utf8	L	\p{L}	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcrec-nocaps-utf8	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+pcrec-nocaps-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcrec-vm-utf8	L	\p{L}	did-not-compile (size cap, not a capability): pcrec: pattern too large: 563569 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+pcrec-vm-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcrec-vm-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcrec-vm-utf8	notL-plus	\P{L}+	did-not-compile (size cap, not a capability): pcrec: pattern too large: 1117090 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+pcrec-vm-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+pcrec-vm-in-utf8	L	\p{L}	did-not-compile (size cap, not a capability): pcrec: pattern too large: 563569 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A re
+pcrec-vm-in-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+pcrec-vm-in-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+pcrec-vm-in-utf8	notL-plus	\P{L}+	did-not-compile (size cap, not a capability): pcrec: pattern too large: 1117090 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A r
+pcrec-vm-in-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+re2-utf8	L	\p{L}	compiled	match[0,2) nomatch
+re2-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+re2-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+re2-utf8	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+re2-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+onig-utf8	L	\p{L}	compiled	match[0,2) nomatch
+onig-utf8	Lu	\p{Lu}	compiled	match[0,2) nomatch
+onig-utf8	N-plus	\p{N}+	compiled	match[0,2) nomatch
+onig-utf8	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+onig-utf8	Zs	\p{Zs}	compiled	match[0,3) nomatch
+vectorscan-block-nosom-utf8	L	\p{L}	compiled	match nomatch
+vectorscan-block-nosom-utf8	Lu	\p{Lu}	compiled	match nomatch
+vectorscan-block-nosom-utf8	N-plus	\p{N}+	compiled	match nomatch
+vectorscan-block-nosom-utf8	notL-plus	\P{L}+	compiled	match nomatch
+vectorscan-block-nosom-utf8	Zs	\p{Zs}	compiled	match nomatch
+rust-default	L	\p{L}	compiled	match[0,2) nomatch
+rust-default	Lu	\p{Lu}	compiled	match[0,2) nomatch
+rust-default	N-plus	\p{N}+	compiled	match[0,2) nomatch
+rust-default	notL-plus	\P{L}+	compiled	match[0,1) nomatch
+rust-default	Zs	\p{Zs}	compiled	match[0,3) nomatch
+tre-default	L	\p{L}	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Lu	\p{Lu}	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	N-plus	\p{N}+	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	notL-plus	\P{L}+	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Zs	\p{Zs}	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+
+=== C. Script / Script_Extensions spellings (7.4's UNCONFIRMED row) ===
+subjects: 'α' (U+03B1, sc=Greek), U+0342 (sc=Inherited, scx={Greek}), 'a' -- oracle column = libpcre2's own reading
+Greek	\p{Greek}	(oracle: match match nomatch)
+sc=Greek	\p{sc=Greek}	(oracle: match nomatch nomatch)
+Script=Greek	\p{Script=Greek}	(oracle: match nomatch nomatch)
+scx=Greek	\p{scx=Greek}	(oracle: match match nomatch)
+Script_Extensions=Greek	\p{Script_Extensions=Greek}	(oracle: match match nomatch)
+Cyrillic	\p{Cyrillic}+	(oracle: match nomatch)
+Han	\p{Han}+	(oracle: match nomatch)
+Latin	\p{Latin}+	(oracle: match nomatch)
+InGreek	\p{InGreek}	(oracle: refused)
+pcre2-utf-interp	Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-interp	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-interp	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-interp	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-interp	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-interp	Cyrillic	compiled	match[0,12) nomatch
+pcre2-utf-interp	Han	compiled	match[0,6) nomatch
+pcre2-utf-interp	Latin	compiled	match[0,5) nomatch
+pcre2-utf-interp	InGreek	did-not-compile: pcre2_compile failed at offset 11: unknown property after \P or \p
+pcre2-utf-jit	Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-jit	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-jit	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-jit	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-jit	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-jit	Cyrillic	compiled	match[0,12) nomatch
+pcre2-utf-jit	Han	compiled	match[0,6) nomatch
+pcre2-utf-jit	Latin	compiled	match[0,5) nomatch
+pcre2-utf-jit	InGreek	did-not-compile: pcre2_compile failed at offset 11: unknown property after \P or \p
+pcre2-utf-dfa	Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-dfa	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-dfa	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcre2-utf-dfa	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-dfa	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcre2-utf-dfa	Cyrillic	compiled	match[0,12) nomatch
+pcre2-utf-dfa	Han	compiled	match[0,6) nomatch
+pcre2-utf-dfa	Latin	compiled	match[0,5) nomatch
+pcre2-utf-dfa	InGreek	did-not-compile: pcre2_compile failed at offset 11: unknown property after \P or \p
+pcrec-auto-utf8	Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-auto-utf8	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-auto-utf8	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-auto-utf8	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-auto-utf8	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-auto-utf8	Cyrillic	compiled	match[0,12) nomatch
+pcrec-auto-utf8	Han	compiled	match[0,6) nomatch
+pcrec-auto-utf8	Latin	compiled	match[0,5) nomatch
+pcrec-auto-utf8	InGreek	did-not-compile: pcrec: module 'unicode-props' is enabled but \p{...}: this Unicode property is not implemented yet (pattern offset 11)
+pcrec-nocaps-utf8	Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-nocaps-utf8	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-nocaps-utf8	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-nocaps-utf8	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-nocaps-utf8	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-nocaps-utf8	Cyrillic	compiled	match[0,12) nomatch
+pcrec-nocaps-utf8	Han	compiled	match[0,6) nomatch
+pcrec-nocaps-utf8	Latin	compiled	match[0,5) nomatch
+pcrec-nocaps-utf8	InGreek	did-not-compile: pcrec: module 'unicode-props' is enabled but \p{...}: this Unicode property is not implemented yet (pattern offset 11)
+pcrec-vm-utf8	Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-utf8	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-vm-utf8	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-vm-utf8	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-utf8	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-utf8	Cyrillic	compiled	match[0,12) nomatch
+pcrec-vm-utf8	Han	compiled	match[0,6) nomatch
+pcrec-vm-utf8	Latin	compiled	match[0,5) nomatch
+pcrec-vm-utf8	InGreek	did-not-compile: pcrec: module 'unicode-props' is enabled but \p{...}: this Unicode property is not implemented yet (pattern offset 11)
+pcrec-vm-in-utf8	Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-in-utf8	sc=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-vm-in-utf8	Script=Greek	compiled	match[0,2) nomatch nomatch
+pcrec-vm-in-utf8	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-in-utf8	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+pcrec-vm-in-utf8	Cyrillic	compiled	match[0,12) nomatch
+pcrec-vm-in-utf8	Han	compiled	match[0,6) nomatch
+pcrec-vm-in-utf8	Latin	compiled	match[0,5) nomatch
+pcrec-vm-in-utf8	InGreek	did-not-compile: pcrec: module 'unicode-props' is enabled but \p{...}: this Unicode property is not implemented yet (pattern offset 11)
+re2-utf8	Greek	compiled	match[0,2) nomatch!=oracle(match[0,2)) nomatch  <- DIVERGES
+re2-utf8	sc=Greek	did-not-compile: RE2 construction failed [ErrorBadCharRange]: invalid character class range: \p{sc=Greek}
+re2-utf8	Script=Greek	did-not-compile: RE2 construction failed [ErrorBadCharRange]: invalid character class range: \p{Script=Greek}
+re2-utf8	scx=Greek	did-not-compile: RE2 construction failed [ErrorBadCharRange]: invalid character class range: \p{scx=Greek}
+re2-utf8	Script_Extensions=Greek	did-not-compile: RE2 construction failed [ErrorBadCharRange]: invalid character class range: \p{Script_Extensions=Greek}
+re2-utf8	Cyrillic	compiled	match[0,12) nomatch
+re2-utf8	Han	compiled	match[0,6) nomatch
+re2-utf8	Latin	compiled	match[0,5) nomatch
+re2-utf8	InGreek	did-not-compile: RE2 construction failed [ErrorBadCharRange]: invalid character class range: \p{InGreek}
+onig-utf8	Greek	compiled	match[0,2) nomatch!=oracle(match[0,2)) nomatch  <- DIVERGES
+onig-utf8	sc=Greek	did-not-compile: onig_new failed (code -223): invalid character property name {sc=Greek}
+onig-utf8	Script=Greek	did-not-compile: onig_new failed (code -223): invalid character property name {Script=Greek}
+onig-utf8	scx=Greek	did-not-compile: onig_new failed (code -223): invalid character property name {scx=Greek}
+onig-utf8	Script_Extensions=Greek	did-not-compile: onig_new failed (code -223): invalid character property name {Script_Extensions=Greek}
+onig-utf8	Cyrillic	compiled	match[0,12) nomatch
+onig-utf8	Han	compiled	match[0,6) nomatch
+onig-utf8	Latin	compiled	match[0,5) nomatch
+onig-utf8	InGreek	did-not-compile: onig_new failed (code -223): invalid character property name {InGreek}
+vectorscan-block-nosom-utf8	Greek	compiled	match nomatch!=oracle(match[0,2)) nomatch  <- DIVERGES
+vectorscan-block-nosom-utf8	sc=Greek	did-not-compile: hs_compile failed (code -4, expression 0): Unknown property at index 3.
+vectorscan-block-nosom-utf8	Script=Greek	did-not-compile: hs_compile failed (code -4, expression 0): Malformed property at index 0.
+vectorscan-block-nosom-utf8	scx=Greek	did-not-compile: hs_compile failed (code -4, expression 0): Unknown property at index 3.
+vectorscan-block-nosom-utf8	Script_Extensions=Greek	did-not-compile: hs_compile failed (code -4, expression 0): Malformed property at index 0.
+vectorscan-block-nosom-utf8	Cyrillic	compiled	match nomatch
+vectorscan-block-nosom-utf8	Han	compiled	match nomatch
+vectorscan-block-nosom-utf8	Latin	compiled	match nomatch
+vectorscan-block-nosom-utf8	InGreek	did-not-compile: hs_compile failed (code -4, expression 0): Unknown property at index 3.
+rust-default	Greek	compiled	match[0,2) nomatch!=oracle(match[0,2)) nomatch  <- DIVERGES
+rust-default	sc=Greek	compiled	match[0,2) nomatch nomatch
+rust-default	Script=Greek	compiled	match[0,2) nomatch nomatch
+rust-default	scx=Greek	compiled	match[0,2) match[0,2) nomatch
+rust-default	Script_Extensions=Greek	compiled	match[0,2) match[0,2) nomatch
+rust-default	Cyrillic	compiled	match[0,12) nomatch
+rust-default	Han	compiled	match[0,6) nomatch
+rust-default	Latin	compiled	match[0,5) nomatch
+rust-default	InGreek	did-not-compile: regex build failed [Syntax]: regex parse error: |     \p{InGreek} |     ^^^^^^^^^^^ | error: Unicode property not found
+tre-default	Greek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	sc=Greek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Script=Greek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	scx=Greek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Script_Extensions=Greek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Cyrillic	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Han	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	Latin	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+tre-default	InGreek	did-not-compile: tre_regncompb failed (code 10): Invalid contents of {}
+
+=== D. the fourteen compile-witness tokens on the ten new configs ===
+pcre2-utf-interp	backrefs	(a)\1	compiled
+pcre2-utf-interp	lookaround	(?=a)a	compiled
+pcre2-utf-interp	lookaround	(?<=a)b	compiled
+pcre2-utf-interp	lookbehind-variable	(?<=a|bc)x	compiled
+pcre2-utf-interp	possessive-quantifier	a*+	compiled
+pcre2-utf-interp	atomic-group	(?>a*)b	compiled
+pcre2-utf-interp	recursion	(a(?1)?b)	compiled
+pcre2-utf-interp	conditionals	(?(1)a|b)(a)?	compiled
+pcre2-utf-interp	k-reset	a\Kb	compiled
+pcre2-utf-interp	control-verbs	a(*FAIL)|b	compiled
+pcre2-utf-interp	named-groups	(?<name>a)	compiled
+pcre2-utf-interp	free-spacing	(?x) a b c	compiled
+pcre2-utf-interp	callouts	a(?C1)b	compiled
+pcre2-utf-interp	true-end-anchor	a\z	compiled
+pcre2-utf-jit	backrefs	(a)\1	compiled
+pcre2-utf-jit	lookaround	(?=a)a	compiled
+pcre2-utf-jit	lookaround	(?<=a)b	compiled
+pcre2-utf-jit	lookbehind-variable	(?<=a|bc)x	compiled
+pcre2-utf-jit	possessive-quantifier	a*+	compiled
+pcre2-utf-jit	atomic-group	(?>a*)b	compiled
+pcre2-utf-jit	recursion	(a(?1)?b)	compiled
+pcre2-utf-jit	conditionals	(?(1)a|b)(a)?	compiled
+pcre2-utf-jit	k-reset	a\Kb	compiled
+pcre2-utf-jit	control-verbs	a(*FAIL)|b	compiled
+pcre2-utf-jit	named-groups	(?<name>a)	compiled
+pcre2-utf-jit	free-spacing	(?x) a b c	compiled
+pcre2-utf-jit	callouts	a(?C1)b	compiled
+pcre2-utf-jit	true-end-anchor	a\z	compiled
+pcre2-utf-dfa	backrefs	(a)\1	compiled
+pcre2-utf-dfa	lookaround	(?=a)a	compiled
+pcre2-utf-dfa	lookaround	(?<=a)b	compiled
+pcre2-utf-dfa	lookbehind-variable	(?<=a|bc)x	compiled
+pcre2-utf-dfa	possessive-quantifier	a*+	compiled
+pcre2-utf-dfa	atomic-group	(?>a*)b	compiled
+pcre2-utf-dfa	recursion	(a(?1)?b)	compiled
+pcre2-utf-dfa	conditionals	(?(1)a|b)(a)?	compiled
+pcre2-utf-dfa	k-reset	a\Kb	compiled
+pcre2-utf-dfa	control-verbs	a(*FAIL)|b	compiled
+pcre2-utf-dfa	named-groups	(?<name>a)	compiled
+pcre2-utf-dfa	free-spacing	(?x) a b c	compiled
+pcre2-utf-dfa	callouts	a(?C1)b	compiled
+pcre2-utf-dfa	true-end-anchor	a\z	compiled
+pcrec-auto-utf8	backrefs	(a)\1	compiled
+pcrec-auto-utf8	lookaround	(?=a)a	compiled
+pcrec-auto-utf8	lookaround	(?<=a)b	compiled
+pcrec-auto-utf8	lookbehind-variable	(?<=a|bc)x	compiled
+pcrec-auto-utf8	possessive-quantifier	a*+	compiled
+pcrec-auto-utf8	atomic-group	(?>a*)b	compiled
+pcrec-auto-utf8	recursion	(a(?1)?b)	compiled
+pcrec-auto-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 0)
+pcrec-auto-utf8	k-reset	a\Kb	compiled
+pcrec-auto-utf8	control-verbs	a(*FAIL)|b	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 1)
+pcrec-auto-utf8	named-groups	(?<name>a)	compiled
+pcrec-auto-utf8	free-spacing	(?x) a b c	compiled
+pcrec-auto-utf8	callouts	a(?C1)b	did-not-compile: pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 1)
+pcrec-auto-utf8	true-end-anchor	a\z	compiled
+pcrec-nocaps-utf8	backrefs	(a)\1	compiled
+pcrec-nocaps-utf8	lookaround	(?=a)a	compiled
+pcrec-nocaps-utf8	lookaround	(?<=a)b	compiled
+pcrec-nocaps-utf8	lookbehind-variable	(?<=a|bc)x	compiled
+pcrec-nocaps-utf8	possessive-quantifier	a*+	compiled
+pcrec-nocaps-utf8	atomic-group	(?>a*)b	compiled
+pcrec-nocaps-utf8	recursion	(a(?1)?b)	compiled
+pcrec-nocaps-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 0)
+pcrec-nocaps-utf8	k-reset	a\Kb	compiled
+pcrec-nocaps-utf8	control-verbs	a(*FAIL)|b	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 1)
+pcrec-nocaps-utf8	named-groups	(?<name>a)	compiled
+pcrec-nocaps-utf8	free-spacing	(?x) a b c	compiled
+pcrec-nocaps-utf8	callouts	a(?C1)b	did-not-compile: pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 1)
+pcrec-nocaps-utf8	true-end-anchor	a\z	compiled
+pcrec-vm-utf8	backrefs	(a)\1	compiled
+pcrec-vm-utf8	lookaround	(?=a)a	compiled
+pcrec-vm-utf8	lookaround	(?<=a)b	compiled
+pcrec-vm-utf8	lookbehind-variable	(?<=a|bc)x	compiled
+pcrec-vm-utf8	possessive-quantifier	a*+	compiled
+pcrec-vm-utf8	atomic-group	(?>a*)b	compiled
+pcrec-vm-utf8	recursion	(a(?1)?b)	compiled
+pcrec-vm-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 0)
+pcrec-vm-utf8	k-reset	a\Kb	compiled
+pcrec-vm-utf8	control-verbs	a(*FAIL)|b	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 1)
+pcrec-vm-utf8	named-groups	(?<name>a)	compiled
+pcrec-vm-utf8	free-spacing	(?x) a b c	compiled
+pcrec-vm-utf8	callouts	a(?C1)b	did-not-compile: pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 1)
+pcrec-vm-utf8	true-end-anchor	a\z	compiled
+pcrec-vm-in-utf8	backrefs	(a)\1	compiled
+pcrec-vm-in-utf8	lookaround	(?=a)a	compiled
+pcrec-vm-in-utf8	lookaround	(?<=a)b	compiled
+pcrec-vm-in-utf8	lookbehind-variable	(?<=a|bc)x	compiled
+pcrec-vm-in-utf8	possessive-quantifier	a*+	compiled
+pcrec-vm-in-utf8	atomic-group	(?>a*)b	compiled
+pcrec-vm-in-utf8	recursion	(a(?1)?b)	compiled
+pcrec-vm-in-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 0)
+pcrec-vm-in-utf8	k-reset	a\Kb	compiled
+pcrec-vm-in-utf8	control-verbs	a(*FAIL)|b	did-not-compile: pcrec: (*...) requires module 'verbs' (pattern offset 1)
+pcrec-vm-in-utf8	named-groups	(?<name>a)	compiled
+pcrec-vm-in-utf8	free-spacing	(?x) a b c	compiled
+pcrec-vm-in-utf8	callouts	a(?C1)b	did-not-compile: pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 1)
+pcrec-vm-in-utf8	true-end-anchor	a\z	compiled
+re2-utf8	backrefs	(a)\1	did-not-compile: RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \1
+re2-utf8	lookaround	(?=a)a	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?=
+re2-utf8	lookaround	(?<=a)b	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+re2-utf8	lookbehind-variable	(?<=a|bc)x	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+re2-utf8	possessive-quantifier	a*+	did-not-compile: RE2 construction failed [ErrorRepeatOp]: bad repetition operator: *+
+re2-utf8	atomic-group	(?>a*)b	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?>
+re2-utf8	recursion	(a(?1)?b)	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?1
+re2-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?(
+re2-utf8	k-reset	a\Kb	did-not-compile: RE2 construction failed [ErrorBadEscape]: invalid escape sequence: \K
+re2-utf8	control-verbs	a(*FAIL)|b	did-not-compile: RE2 construction failed [ErrorRepeatArgument]: no argument for repetition operator: *
+re2-utf8	named-groups	(?<name>a)	compiled
+re2-utf8	free-spacing	(?x) a b c	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?x
+re2-utf8	callouts	a(?C1)b	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?C
+re2-utf8	true-end-anchor	a\z	compiled
+onig-utf8	backrefs	(a)\1	compiled
+onig-utf8	lookaround	(?=a)a	compiled
+onig-utf8	lookaround	(?<=a)b	compiled
+onig-utf8	lookbehind-variable	(?<=a|bc)x	did-not-compile: onig_new failed (code -122): invalid pattern in look-behind
+onig-utf8	possessive-quantifier	a*+	compiled
+onig-utf8	atomic-group	(?>a*)b	compiled
+onig-utf8	recursion	(a(?1)?b)	compiled
+onig-utf8	conditionals	(?(1)a|b)(a)?	compiled
+onig-utf8	k-reset	a\Kb	compiled
+onig-utf8	control-verbs	a(*FAIL)|b	compiled
+onig-utf8	named-groups	(?<name>a)	compiled
+onig-utf8	free-spacing	(?x) a b c	compiled
+onig-utf8	callouts	a(?C1)b	did-not-compile: onig_new failed (code -119): undefined group option
+onig-utf8	true-end-anchor	a\z	compiled
+vectorscan-block-nosom-utf8	backrefs	(a)\1	did-not-compile: hs_compile failed (code -4, expression 0): Back-references are unsupported.
+vectorscan-block-nosom-utf8	lookaround	(?=a)a	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	lookaround	(?<=a)b	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	lookbehind-variable	(?<=a|bc)x	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	possessive-quantifier	a*+	did-not-compile: hs_compile failed (code -4, expression 0): Possessive quantifiers are not supported.
+vectorscan-block-nosom-utf8	atomic-group	(?>a*)b	did-not-compile: hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+vectorscan-block-nosom-utf8	recursion	(a(?1)?b)	did-not-compile: hs_compile failed (code -4, expression 0): Subpattern reference unsupported at index 2.
+vectorscan-block-nosom-utf8	conditionals	(?(1)a|b)(a)?	did-not-compile: hs_compile failed (code -4, expression 0): Conditional references are not supported.
+vectorscan-block-nosom-utf8	k-reset	a\Kb	did-not-compile: hs_compile failed (code -4, expression 0): \K at index 1 not supported.
+vectorscan-block-nosom-utf8	control-verbs	a(*FAIL)|b	did-not-compile: hs_compile failed (code -4, expression 0): Unknown control verb (*FAIL) at index 1.
+vectorscan-block-nosom-utf8	named-groups	(?<name>a)	compiled
+vectorscan-block-nosom-utf8	free-spacing	(?x) a b c	compiled
+vectorscan-block-nosom-utf8	callouts	a(?C1)b	did-not-compile: hs_compile failed (code -4, expression 0): Callout at index 1 not supported.
+vectorscan-block-nosom-utf8	true-end-anchor	a\z	compiled
+
+=== E. execution-model tokens on the ten new configs ===
+pcre2-utf-interp	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+pcre2-utf-interp	a over \xffa\xff	compiled	('giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)', None, None, None)
+pcre2-utf-jit	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+pcre2-utf-jit	a over \xffa\xff	compiled	('giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)', None, None, None)
+pcre2-utf-dfa	(a)(b) over xab	compiled	('match', 1, 3, None)
+pcre2-utf-dfa	a over \xffa\xff	compiled	('giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)', None, None, None)
+pcrec-auto-utf8	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+pcrec-auto-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+pcrec-nocaps-utf8	(a)(b) over xab	compiled	('match', 1, 3, None)
+pcrec-nocaps-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+pcrec-vm-utf8	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+pcrec-vm-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+pcrec-vm-in-utf8	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+pcrec-vm-in-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+re2-utf8	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+re2-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+onig-utf8	(a)(b) over xab	compiled	('match', 1, 3, '1:2,2:3')
+onig-utf8	a over \xffa\xff	compiled	('match', 1, 2, None)
+vectorscan-block-nosom-utf8	(a)(b) over xab	compiled	('match', None, None, None)
+vectorscan-block-nosom-utf8	a over \xffa\xff	compiled	('match', None, None, None)
+
+=== F. the set's own spellings (informational, for U4/U5) ===
+x-brace-range	[\x{100}-\x{2000}]+	(oracle: match nomatch)
+lb-fixed-2byte	(?<=é)x	(oracle: match nomatch)
+lb-varbyte-samechar	(?<=a|é)x	(oracle: match match nomatch)
+lb-neg-3byte	(?<!日)本	(oracle: nomatch match)
+lb-class	(?<=[\x{400}-\x{4FF}])\s	(oracle: match nomatch)
+caret-ml	(?m)^日	(oracle: match nomatch)
+dollar-ml	(?m)語$	(oracle: match nomatch)
+A-z	\A日本語\z	(oracle: match nomatch)
+B-midchar	\B	(oracle: match)
+emoji-bounded	😀{2,4}	(oracle: match nomatch)
+dot-bounded	.{3,8}	(oracle: match nomatch)
+pcre2-utf-interp	x-brace-range	compiled	match[0,4) nomatch
+pcre2-utf-interp	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcre2-utf-interp	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcre2-utf-interp	lb-neg-3byte	compiled	nomatch match[0,3)
+pcre2-utf-interp	lb-class	compiled	match[2,3) nomatch
+pcre2-utf-interp	caret-ml	compiled	match[2,5) nomatch
+pcre2-utf-interp	dollar-ml	compiled	match[0,3) nomatch
+pcre2-utf-interp	A-z	compiled	match[0,9) nomatch
+pcre2-utf-interp	B-midchar	compiled	match[0,0)
+pcre2-utf-interp	emoji-bounded	compiled	match[0,8) nomatch
+pcre2-utf-interp	dot-bounded	compiled	match[0,9) nomatch
+pcre2-utf-jit	x-brace-range	compiled	match[0,4) nomatch
+pcre2-utf-jit	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcre2-utf-jit	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcre2-utf-jit	lb-neg-3byte	compiled	nomatch match[0,3)
+pcre2-utf-jit	lb-class	compiled	match[2,3) nomatch
+pcre2-utf-jit	caret-ml	compiled	match[2,5) nomatch
+pcre2-utf-jit	dollar-ml	compiled	match[0,3) nomatch
+pcre2-utf-jit	A-z	compiled	match[0,9) nomatch
+pcre2-utf-jit	B-midchar	compiled	match[0,0)
+pcre2-utf-jit	emoji-bounded	compiled	match[0,8) nomatch
+pcre2-utf-jit	dot-bounded	compiled	match[0,9) nomatch
+pcre2-utf-dfa	x-brace-range	compiled	match[0,4) nomatch
+pcre2-utf-dfa	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcre2-utf-dfa	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcre2-utf-dfa	lb-neg-3byte	compiled	nomatch match[0,3)
+pcre2-utf-dfa	lb-class	compiled	match[2,3) nomatch
+pcre2-utf-dfa	caret-ml	compiled	match[2,5) nomatch
+pcre2-utf-dfa	dollar-ml	compiled	match[0,3) nomatch
+pcre2-utf-dfa	A-z	compiled	match[0,9) nomatch
+pcre2-utf-dfa	B-midchar	compiled	match[0,0)
+pcre2-utf-dfa	emoji-bounded	compiled	match[0,8) nomatch
+pcre2-utf-dfa	dot-bounded	compiled	match[0,9) nomatch
+pcrec-auto-utf8	x-brace-range	compiled	match[0,4) nomatch
+pcrec-auto-utf8	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcrec-auto-utf8	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcrec-auto-utf8	lb-neg-3byte	compiled	nomatch match[0,3)
+pcrec-auto-utf8	lb-class	compiled	match[2,3) nomatch
+pcrec-auto-utf8	caret-ml	compiled	match[2,5) nomatch
+pcrec-auto-utf8	dollar-ml	compiled	match[0,3) nomatch
+pcrec-auto-utf8	A-z	compiled	match[0,9) nomatch
+pcrec-auto-utf8	B-midchar	compiled	match[0,0)
+pcrec-auto-utf8	emoji-bounded	compiled	match[0,8) nomatch
+pcrec-auto-utf8	dot-bounded	compiled	match[0,9) nomatch
+pcrec-nocaps-utf8	x-brace-range	compiled	match[0,4) nomatch
+pcrec-nocaps-utf8	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcrec-nocaps-utf8	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcrec-nocaps-utf8	lb-neg-3byte	compiled	nomatch match[0,3)
+pcrec-nocaps-utf8	lb-class	compiled	match[2,3) nomatch
+pcrec-nocaps-utf8	caret-ml	compiled	match[2,5) nomatch
+pcrec-nocaps-utf8	dollar-ml	compiled	match[0,3) nomatch
+pcrec-nocaps-utf8	A-z	compiled	match[0,9) nomatch
+pcrec-nocaps-utf8	B-midchar	compiled	match[0,0)
+pcrec-nocaps-utf8	emoji-bounded	compiled	match[0,8) nomatch
+pcrec-nocaps-utf8	dot-bounded	compiled	match[0,9) nomatch
+pcrec-vm-utf8	x-brace-range	compiled	match[0,4) nomatch
+pcrec-vm-utf8	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcrec-vm-utf8	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcrec-vm-utf8	lb-neg-3byte	compiled	nomatch match[0,3)
+pcrec-vm-utf8	lb-class	compiled	match[2,3) nomatch
+pcrec-vm-utf8	caret-ml	compiled	match[2,5) nomatch
+pcrec-vm-utf8	dollar-ml	compiled	match[0,3) nomatch
+pcrec-vm-utf8	A-z	compiled	match[0,9) nomatch
+pcrec-vm-utf8	B-midchar	compiled	match[0,0)
+pcrec-vm-utf8	emoji-bounded	compiled	match[0,8) nomatch
+pcrec-vm-utf8	dot-bounded	compiled	match[0,9) nomatch
+pcrec-vm-in-utf8	x-brace-range	compiled	match[0,4) nomatch
+pcrec-vm-in-utf8	lb-fixed-2byte	compiled	match[2,3) nomatch
+pcrec-vm-in-utf8	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+pcrec-vm-in-utf8	lb-neg-3byte	compiled	nomatch match[0,3)
+pcrec-vm-in-utf8	lb-class	compiled	match[2,3) nomatch
+pcrec-vm-in-utf8	caret-ml	compiled	match[2,5) nomatch
+pcrec-vm-in-utf8	dollar-ml	compiled	match[0,3) nomatch
+pcrec-vm-in-utf8	A-z	compiled	match[0,9) nomatch
+pcrec-vm-in-utf8	B-midchar	compiled	match[0,0)
+pcrec-vm-in-utf8	emoji-bounded	compiled	match[0,8) nomatch
+pcrec-vm-in-utf8	dot-bounded	compiled	match[0,9) nomatch
+re2-utf8	x-brace-range	compiled	match[0,4) nomatch
+re2-utf8	lb-fixed-2byte	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+re2-utf8	lb-varbyte-samechar	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+re2-utf8	lb-neg-3byte	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<!
+re2-utf8	lb-class	did-not-compile: RE2 construction failed [ErrorBadPerlOp]: invalid perl operator: (?<=
+re2-utf8	caret-ml	compiled	match[2,5) nomatch
+re2-utf8	dollar-ml	compiled	match[0,3) nomatch
+re2-utf8	A-z	compiled	match[0,9) nomatch
+re2-utf8	B-midchar	compiled	match[0,0)
+re2-utf8	emoji-bounded	compiled	match[0,8) nomatch
+re2-utf8	dot-bounded	compiled	match[0,9) nomatch
+onig-utf8	x-brace-range	compiled	match[0,4) nomatch
+onig-utf8	lb-fixed-2byte	compiled	match[2,3) nomatch
+onig-utf8	lb-varbyte-samechar	compiled	match[2,3) match[1,2) nomatch
+onig-utf8	lb-neg-3byte	compiled	nomatch match[0,3)
+onig-utf8	lb-class	compiled	match[2,3) nomatch
+onig-utf8	caret-ml	compiled	match[2,5) nomatch
+onig-utf8	dollar-ml	compiled	match[0,3) nomatch
+onig-utf8	A-z	compiled	match[0,9) nomatch
+onig-utf8	B-midchar	compiled	nomatch!=oracle(match[0,0))  <- DIVERGES
+onig-utf8	emoji-bounded	compiled	match[0,8) nomatch
+onig-utf8	dot-bounded	compiled	match[0,9) nomatch
+vectorscan-block-nosom-utf8	x-brace-range	compiled	match nomatch
+vectorscan-block-nosom-utf8	lb-fixed-2byte	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	lb-varbyte-samechar	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	lb-neg-3byte	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	lb-class	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+vectorscan-block-nosom-utf8	caret-ml	compiled	match nomatch
+vectorscan-block-nosom-utf8	dollar-ml	compiled	match nomatch
+vectorscan-block-nosom-utf8	A-z	compiled	match nomatch
+vectorscan-block-nosom-utf8	B-midchar	compiled	match
+vectorscan-block-nosom-utf8	emoji-bounded	compiled	match nomatch
+vectorscan-block-nosom-utf8	dot-bounded	compiled	match nomatch
+rust-default	x-brace-range	compiled	match[0,4) nomatch
+rust-default	lb-fixed-2byte	did-not-compile: regex build failed [Syntax]: regex parse error: |     (?<=é)x |     ^^^^ | error: look-around, including look-ahead and look-behind, is not 
+rust-default	lb-varbyte-samechar	did-not-compile: regex build failed [Syntax]: regex parse error: |     (?<=a|é)x |     ^^^^ | error: look-around, including look-ahead and look-behind, is no
+rust-default	lb-neg-3byte	did-not-compile: regex build failed [Syntax]: regex parse error: |     (?<!日)本 |     ^^^^ | error: look-around, including look-ahead and look-behind, is not 
+rust-default	lb-class	did-not-compile: regex build failed [Syntax]: regex parse error: |     (?<=[\x{400}-\x{4FF}])\s |     ^^^^ | error: look-around, including look-ahead and loo
+rust-default	caret-ml	compiled	match[2,5) nomatch
+rust-default	dollar-ml	compiled	match[0,3) nomatch
+rust-default	A-z	compiled	match[0,9) nomatch
+rust-default	B-midchar	compiled	nomatch!=oracle(match[0,0))  <- DIVERGES
+rust-default	emoji-bounded	compiled	match[0,8) nomatch
+rust-default	dot-bounded	compiled	match[0,9) nomatch
+tre-default	x-brace-range	did-not-compile: tre_regncompb failed (code 11): Invalid character range
+tre-default	lb-fixed-2byte	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	lb-varbyte-samechar	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	lb-neg-3byte	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	lb-class	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	caret-ml	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	dollar-ml	did-not-compile: tre_regncompb failed (code 2): Invalid regexp
+tre-default	A-z	compiled	nomatch!=oracle(match[0,9)) nomatch  <- DIVERGES
+tre-default	B-midchar	compiled	match[1,1)!=oracle(match[0,0))  <- DIVERGES
+tre-default	emoji-bounded	compiled	nomatch!=oracle(match[0,8)) nomatch  <- DIVERGES
+tre-default	dot-bounded	compiled	match[0,8)!=oracle(match[0,9)) nomatch  <- DIVERGES
+
+=== THE DECLARATIONS (what bench/utf8's ext bench matrix transcribes) ===
+pcre2-utf-interp	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcre2-utf-interp	atomic-group	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	backrefs	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	callouts	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+pcre2-utf-interp	conditionals	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	control-verbs	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	free-spacing	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	k-reset	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	lookaround	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	lookbehind-variable	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	named-groups	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+pcre2-utf-interp	possessive-quantifier	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	recursion	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	span-reporting	SATISFIED	span reported; sibling declares
+pcre2-utf-interp	true-end-anchor	SATISFIED	sibling pcre2-interp declares; compile under UTF-8 all
+pcre2-utf-interp	unicode-class-scope	SATISFIED	w-ucp ok; d-ucp ok; s-ucp ok
+pcre2-utf-interp	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+pcre2-utf-interp	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcre2-utf-interp DECLARES 19/20: ascii-class-scope atomic-group backrefs callouts captures conditionals control-verbs free-spacing k-reset lookaround lookbehind-variable named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-class-scope unicode-properties utf8-encoding
+
+pcre2-utf-jit	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcre2-utf-jit	atomic-group	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	backrefs	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	callouts	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+pcre2-utf-jit	conditionals	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	control-verbs	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	free-spacing	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	k-reset	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	lookaround	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	lookbehind-variable	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	named-groups	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+pcre2-utf-jit	possessive-quantifier	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	recursion	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	span-reporting	SATISFIED	span reported; sibling declares
+pcre2-utf-jit	true-end-anchor	SATISFIED	sibling pcre2-jit declares; compile under UTF-8 all
+pcre2-utf-jit	unicode-class-scope	SATISFIED	w-ucp ok; d-ucp ok; s-ucp ok
+pcre2-utf-jit	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+pcre2-utf-jit	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcre2-utf-jit DECLARES 19/20: ascii-class-scope atomic-group backrefs callouts captures conditionals control-verbs free-spacing k-reset lookaround lookbehind-variable named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-class-scope unicode-properties utf8-encoding
+
+pcre2-utf-dfa	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcre2-utf-dfa	atomic-group	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	backrefs	not	sibling pcre2-dfa withholds; compile under UTF-8 all
+pcre2-utf-dfa	callouts	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	captures	not	caps None; sibling withholds
+pcre2-utf-dfa	conditionals	not	sibling pcre2-dfa withholds; compile under UTF-8 all
+pcre2-utf-dfa	control-verbs	not	sibling pcre2-dfa withholds; compile under UTF-8 all
+pcre2-utf-dfa	free-spacing	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	k-reset	not	sibling pcre2-dfa withholds; compile under UTF-8 all
+pcre2-utf-dfa	lookaround	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	lookbehind-variable	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	named-groups	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+pcre2-utf-dfa	possessive-quantifier	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	recursion	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	span-reporting	SATISFIED	span reported; sibling declares
+pcre2-utf-dfa	true-end-anchor	SATISFIED	sibling pcre2-dfa declares; compile under UTF-8 all
+pcre2-utf-dfa	unicode-class-scope	SATISFIED	w-ucp ok; d-ucp ok; s-ucp ok
+pcre2-utf-dfa	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+pcre2-utf-dfa	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcre2-utf-dfa DECLARES 14/20: ascii-class-scope atomic-group callouts free-spacing lookaround lookbehind-variable named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-class-scope unicode-properties utf8-encoding
+
+pcrec-auto-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcrec-auto-utf8	atomic-group	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	backrefs	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	callouts	not	sibling pcrec-auto withholds; compile under UTF-8 REFUSED
+pcrec-auto-utf8	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+pcrec-auto-utf8	conditionals	not	sibling pcrec-auto withholds; compile under UTF-8 REFUSED
+pcrec-auto-utf8	control-verbs	not	sibling pcrec-auto withholds; compile under UTF-8 REFUSED
+pcrec-auto-utf8	free-spacing	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	k-reset	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	lookaround	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	lookbehind-variable	not	sibling pcrec-auto withholds; compile under UTF-8 all
+pcrec-auto-utf8	named-groups	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+pcrec-auto-utf8	possessive-quantifier	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	recursion	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	span-reporting	SATISFIED	span reported; sibling declares
+pcrec-auto-utf8	true-end-anchor	SATISFIED	sibling pcrec-auto declares; compile under UTF-8 all
+pcrec-auto-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+pcrec-auto-utf8	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+pcrec-auto-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcrec-auto-utf8 DECLARES 14/20: ascii-class-scope atomic-group backrefs captures free-spacing k-reset lookaround named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-properties utf8-encoding
+
+pcrec-nocaps-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcrec-nocaps-utf8	atomic-group	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	backrefs	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	callouts	not	sibling pcrec-nocaps withholds; compile under UTF-8 REFUSED
+pcrec-nocaps-utf8	captures	not	caps None; sibling withholds
+pcrec-nocaps-utf8	conditionals	not	sibling pcrec-nocaps withholds; compile under UTF-8 REFUSED
+pcrec-nocaps-utf8	control-verbs	not	sibling pcrec-nocaps withholds; compile under UTF-8 REFUSED
+pcrec-nocaps-utf8	free-spacing	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	k-reset	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	lookaround	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	lookbehind-variable	not	sibling pcrec-nocaps withholds; compile under UTF-8 all
+pcrec-nocaps-utf8	named-groups	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+pcrec-nocaps-utf8	possessive-quantifier	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	recursion	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	span-reporting	SATISFIED	span reported; sibling declares
+pcrec-nocaps-utf8	true-end-anchor	SATISFIED	sibling pcrec-nocaps declares; compile under UTF-8 all
+pcrec-nocaps-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+pcrec-nocaps-utf8	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+pcrec-nocaps-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcrec-nocaps-utf8 DECLARES 13/20: ascii-class-scope atomic-group backrefs free-spacing k-reset lookaround named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-properties utf8-encoding
+
+pcrec-vm-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcrec-vm-utf8	atomic-group	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	backrefs	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	callouts	not	sibling pcrec-vm withholds; compile under UTF-8 REFUSED
+pcrec-vm-utf8	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+pcrec-vm-utf8	conditionals	not	sibling pcrec-vm withholds; compile under UTF-8 REFUSED
+pcrec-vm-utf8	control-verbs	not	sibling pcrec-vm withholds; compile under UTF-8 REFUSED
+pcrec-vm-utf8	free-spacing	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	k-reset	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	lookaround	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	lookbehind-variable	not	sibling pcrec-vm withholds; compile under UTF-8 all
+pcrec-vm-utf8	named-groups	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+pcrec-vm-utf8	possessive-quantifier	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	recursion	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	span-reporting	SATISFIED	span reported; sibling declares
+pcrec-vm-utf8	true-end-anchor	SATISFIED	sibling pcrec-vm declares; compile under UTF-8 all
+pcrec-vm-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+pcrec-vm-utf8	unicode-properties	SATISFIED	L SIZE-REFUSED; Lu ok; N-plus ok; notL-plus SIZE-REFUSED; Zs ok
+pcrec-vm-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcrec-vm-utf8 DECLARES 14/20: ascii-class-scope atomic-group backrefs captures free-spacing k-reset lookaround named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-properties utf8-encoding
+
+pcrec-vm-in-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+pcrec-vm-in-utf8	atomic-group	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	backrefs	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	callouts	not	sibling pcrec-vm-in withholds; compile under UTF-8 REFUSED
+pcrec-vm-in-utf8	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+pcrec-vm-in-utf8	conditionals	not	sibling pcrec-vm-in withholds; compile under UTF-8 REFUSED
+pcrec-vm-in-utf8	control-verbs	not	sibling pcrec-vm-in withholds; compile under UTF-8 REFUSED
+pcrec-vm-in-utf8	free-spacing	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	k-reset	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	lookaround	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	lookbehind-variable	not	sibling pcrec-vm-in withholds; compile under UTF-8 all
+pcrec-vm-in-utf8	named-groups	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+pcrec-vm-in-utf8	possessive-quantifier	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	recursion	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	span-reporting	SATISFIED	span reported; sibling declares
+pcrec-vm-in-utf8	true-end-anchor	SATISFIED	sibling pcrec-vm-in declares; compile under UTF-8 all
+pcrec-vm-in-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+pcrec-vm-in-utf8	unicode-properties	SATISFIED	L SIZE-REFUSED; Lu ok; N-plus ok; notL-plus SIZE-REFUSED; Zs ok
+pcrec-vm-in-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+pcrec-vm-in-utf8 DECLARES 14/20: ascii-class-scope atomic-group backrefs captures free-spacing k-reset lookaround named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-properties utf8-encoding
+
+re2-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+re2-utf8	atomic-group	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	backrefs	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	callouts	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+re2-utf8	conditionals	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	control-verbs	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	free-spacing	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	k-reset	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	lookaround	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	lookbehind-variable	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	named-groups	SATISFIED	sibling re2-default declares; compile under UTF-8 all
+re2-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+re2-utf8	possessive-quantifier	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	recursion	not	sibling re2-default withholds; compile under UTF-8 REFUSED
+re2-utf8	span-reporting	SATISFIED	span reported; sibling declares
+re2-utf8	true-end-anchor	SATISFIED	sibling re2-default declares; compile under UTF-8 all
+re2-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+re2-utf8	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+re2-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+re2-utf8 DECLARES 7/20: ascii-class-scope captures named-groups span-reporting true-end-anchor unicode-properties utf8-encoding
+
+onig-utf8	ascii-class-scope	not	w-ascii WRONG; d-ascii WRONG; s-ascii WRONG; posix-alpha-ascii WRONG
+onig-utf8	atomic-group	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	backrefs	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	callouts	not	sibling onig-default withholds; compile under UTF-8 REFUSED
+onig-utf8	captures	SATISFIED	caps '1:2,2:3'; sibling declares
+onig-utf8	conditionals	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	control-verbs	not	sibling onig-default withholds; compile under UTF-8 all
+onig-utf8	free-spacing	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	k-reset	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	lookaround	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	lookbehind-variable	not	sibling onig-default withholds; compile under UTF-8 REFUSED
+onig-utf8	named-groups	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+onig-utf8	possessive-quantifier	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	recursion	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	span-reporting	SATISFIED	span reported; sibling declares
+onig-utf8	true-end-anchor	SATISFIED	sibling onig-default declares; compile under UTF-8 all
+onig-utf8	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+onig-utf8	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+onig-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+onig-utf8 DECLARES 14/20: atomic-group backrefs captures conditionals free-spacing k-reset lookaround named-groups possessive-quantifier recursion span-reporting true-end-anchor unicode-properties utf8-encoding
+
+vectorscan-block-nosom-utf8	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+vectorscan-block-nosom-utf8	atomic-group	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	backrefs	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	callouts	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	captures	not	caps None; sibling withholds
+vectorscan-block-nosom-utf8	conditionals	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	control-verbs	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	free-spacing	SATISFIED	sibling vectorscan-block-nosom declares; compile under UTF-8 all
+vectorscan-block-nosom-utf8	k-reset	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	lookaround	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	lookbehind-variable	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	named-groups	SATISFIED	sibling vectorscan-block-nosom declares; compile under UTF-8 all
+vectorscan-block-nosom-utf8	non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8); witness: a over \xffa\xff -> match
+vectorscan-block-nosom-utf8	possessive-quantifier	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	recursion	not	sibling vectorscan-block-nosom withholds; compile under UTF-8 REFUSED
+vectorscan-block-nosom-utf8	span-reporting	not	span not reported; sibling withholds
+vectorscan-block-nosom-utf8	true-end-anchor	SATISFIED	sibling vectorscan-block-nosom declares; compile under UTF-8 all
+vectorscan-block-nosom-utf8	unicode-class-scope	SATISFIED	w-ucp ok; d-ucp ok; s-ucp ok
+vectorscan-block-nosom-utf8	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+vectorscan-block-nosom-utf8	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+vectorscan-block-nosom-utf8 DECLARES 7/20: ascii-class-scope free-spacing named-groups true-end-anchor unicode-class-scope unicode-properties utf8-encoding
+
+rust-default	ascii-class-scope	not	w-ascii WRONG; d-ascii WRONG; s-ascii WRONG; posix-alpha-ascii ok
+rust-default	atomic-group	not	unchanged config: its committed bench/capability declaration
+rust-default	backrefs	not	unchanged config: its committed bench/capability declaration
+rust-default	callouts	not	unchanged config: its committed bench/capability declaration
+rust-default	captures	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	conditionals	not	unchanged config: its committed bench/capability declaration
+rust-default	control-verbs	not	unchanged config: its committed bench/capability declaration
+rust-default	free-spacing	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	k-reset	not	unchanged config: its committed bench/capability declaration
+rust-default	lookaround	not	unchanged config: its committed bench/capability declaration
+rust-default	lookbehind-variable	not	unchanged config: its committed bench/capability declaration
+rust-default	named-groups	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	non-utf8-subject	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	possessive-quantifier	not	unchanged config: its committed bench/capability declaration
+rust-default	recursion	not	unchanged config: its committed bench/capability declaration
+rust-default	span-reporting	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	true-end-anchor	SATISFIED	unchanged config: its committed bench/capability declaration
+rust-default	unicode-class-scope	not	w-ucp did-not-compile; d-ucp did-not-compile; s-ucp did-not-compile
+rust-default	unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+rust-default	utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+rust-default DECLARES 8/20: captures free-spacing named-groups non-utf8-subject span-reporting true-end-anchor unicode-properties utf8-encoding
+
+tre-default	ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+tre-default	atomic-group	not	unchanged config: its committed bench/capability declaration
+tre-default	backrefs	SATISFIED	unchanged config: its committed bench/capability declaration
+tre-default	callouts	not	unchanged config: its committed bench/capability declaration
+tre-default	captures	SATISFIED	unchanged config: its committed bench/capability declaration
+tre-default	conditionals	not	unchanged config: its committed bench/capability declaration
+tre-default	control-verbs	not	unchanged config: its committed bench/capability declaration
+tre-default	free-spacing	not	unchanged config: its committed bench/capability declaration
+tre-default	k-reset	not	unchanged config: its committed bench/capability declaration
+tre-default	lookaround	not	unchanged config: its committed bench/capability declaration
+tre-default	lookbehind-variable	not	unchanged config: its committed bench/capability declaration
+tre-default	named-groups	not	unchanged config: its committed bench/capability declaration
+tre-default	non-utf8-subject	SATISFIED	unchanged config: its committed bench/capability declaration
+tre-default	possessive-quantifier	not	unchanged config: its committed bench/capability declaration
+tre-default	recursion	not	unchanged config: its committed bench/capability declaration
+tre-default	span-reporting	SATISFIED	unchanged config: its committed bench/capability declaration
+tre-default	true-end-anchor	SATISFIED	unchanged config: its committed bench/capability declaration
+tre-default	unicode-class-scope	not	w-ucp WRONG; d-ucp WRONG; s-ucp WRONG
+tre-default	unicode-properties	not	L did-not-compile; Lu did-not-compile; N-plus did-not-compile; notL-plus did-not-compile; Zs did-not-compile
+tre-default	utf8-encoding	not	dot-is-one-char WRONG; negated-class-universe WRONG; caseless-non-ascii WRONG; multibyte-range ok
+tre-default DECLARES 6/20: ascii-class-scope backrefs captures non-utf8-subject span-reporting true-end-anchor
+

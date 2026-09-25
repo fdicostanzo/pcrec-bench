@@ -145,6 +145,19 @@ also the terminating-oracle tier for hazard bands), Oniguruma, TRE
 perl. A hand-written-C ceiling arm (pcrec's [BENCH-CEIL]) is a natural
 later testee; not in the first cut.
 
+**Encoding is part of a testee's identity.** Every adapter's default
+configs are deliberately BYTE-mode (a byte is a character; what makes
+the non-UTF-8 capability family measurable at all). Since [B77] U2
+(2026-09-25, docs/design/utf8_set_v1.md §7) each engine that speaks
+UTF-8 also carries a CHARACTER-mode sibling config — `pcre2-utf-*`
+(PCRE2_UTF), `pcrec-*-utf8` (`-e utf8`, the usual four), `re2-utf8`,
+`onig-utf8`, `vectorscan-block-nosom-utf8` — whose derived `testee_id`
+is its byte sibling's plus `_utf8`, so the two can never collide in the
+store. `rust-default` is already UTF-8-semantic and serves both; TRE has
+no byte-mode UTF-8 path and ranks only on byte-safe patterns. Class
+SCOPE (`\w`/`\d`/`\s` ASCII vs Unicode-widened) is a PATTERN property
+(REQUIRES tokens), never a config dial.
+
 ## 6. Measurement discipline
 
 Inherited from pcrec (its docs/dev/learnings.md §1-3, D12/D14/D15/D17/
