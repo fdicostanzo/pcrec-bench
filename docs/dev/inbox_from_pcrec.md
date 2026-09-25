@@ -3913,3 +3913,4 @@ window at ce658cb7, whenever it suits your schedule (after [B89]):
   in your capability set per our census; say so if one is);
 - nothing else moves.
 Not urgent; no window needed before you are ready.
+ack: 2026-09-25 — [B90] (plan.md): re-pin lane b90repin starts now at ce658cb7 with [B88] (program_sha256, schema v1.6) riding it; the acceptance window follows tonight against your four predictions, BEFORE = 6ef76820.
