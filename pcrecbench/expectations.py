@@ -49,6 +49,7 @@ import argparse
 import os
 import sys
 
+from . import capability as _cap
 from . import oracle_pcre2 as oracle
 from .subbench import load as load_subbench
 
@@ -62,6 +63,33 @@ METHOD = "libpcre2-differential"
 REGIME_ORDER = ("match", "search_short", "throughput")
 
 
+def oracle_option_word(sb, pattern):
+    """[B77] U1 (docs/design/utf8_set_v1.md 8.1, 14 Q9): the ORACLE OPTION
+    WORD for ONE pattern of `sb` -- the parameter on the shared oracle
+    module, decided in ONE place so the expectations and the drivers'
+    find-all advance can never be told two different things:
+
+      * PCRE2_UTF iff the SET declares `[expectations] encoding = "utf8"`
+        (every pattern alike -- no per-subject or per-regime variation);
+      * PCRE2_UCP iff the PATTERN declares the `unicode-class-scope`
+        REQUIRES token (`requires-unicode-class-scope`).
+
+    Multiline is NOT in the word: every set spells it inline (`(?m)`).
+    For every set that declares neither (every set before bench/utf8) the
+    word is 0 -- the byte oracle, byte-identical to the pre-[B77] one."""
+    return oracle.option_word(
+        utf=(sb.encoding == "utf8"),
+        ucp=("unicode-class-scope" in _cap.pattern_requires(pattern)))
+
+
+def utf8_advance(sb, pattern):
+    """True iff `pattern`'s oracle word carries PCRE2_UTF -- the ONE fact
+    that turns on the character-boundary find-all advance in the oracle
+    AND (through `harness.run_cell` -> the handle's `utf8_advance` key ->
+    each adapter's `--utf8` driver flag) in every driver."""
+    return bool(oracle_option_word(sb, pattern) & oracle.PCRE2_UTF)
+
+
 def derive(sb, report=False):
     """-> (rows, giveups, oracle_version). `rows` are TSV column tuples."""
     version = oracle.version()
@@ -71,7 +99,7 @@ def derive(sb, report=False):
 
     for pat in sb.patterns:
         text = sb.pattern_bytes(pat.name)
-        rx = oracle.compile(text)
+        rx = oracle.compile(text, oracle_option_word(sb, pat))
         for regime in REGIME_ORDER:
             if regime not in sb.regimes:
                 continue

@@ -24,6 +24,21 @@ ADDITIONS for pcrec-bench (everything else is the origin's text):
     automaton). A pattern with none is a pattern no required-byte precheck
     can help, and `bench/loglines` states that per pattern FROM HERE rather
     than from a reading of the syntax.
+  * ([B77] U1, docs/design/utf8_set_v1.md 8 + 14 Q9) the per-pattern ORACLE
+    OPTION WORD as a PARAMETER of this ONE shared module -- never a second
+    oracle module: `option_word(utf=, ucp=)` builds it, `compile(pattern,
+    options)` takes it (the origin's own parameter, unchanged), and a
+    `Compiled` REMEMBERS it (`.options`, `.utf`). Absent a request the word
+    is 0 and every answer is byte-for-byte what it was (the acceptance
+    proof: docs/dev/measurements/2026-09-25-b77u1-byte-identical-rederivation.txt);
+  * ([B77] U1, utf8_set_v1.md 8.4) the CHARACTER-BOUNDARY find-all
+    advance, `next_start()`: active ONLY when the compiled word carries
+    PCRE2_UTF, where the empty-match advance is pcrec match_api.md
+    S3.1.1's NORMATIVE utf8 rule ("from pos + 1, advance past every byte in
+    0x80-0xBF, stopping at the first byte outside that range or at n")
+    rather than `start + 1` -- which under PCRE2_UTF would hand
+    pcre2_match a mid-character start offset (PCRE2_ERROR_BADUTFOFFSET,
+    -36). PCRE2_NO_UTF_CHECK is NEVER passed (utf8_set_v1.md 8.2).
 
 pcrec is NOT the source of truth here and neither is pcrec-bench: PCRE2 is
 (pcrec CLAUDE.md's Compatibility Standard, D26). `version()` is read live off
@@ -44,7 +59,14 @@ PCRE2_ERROR_NOMEMORY = -48
 
 # Compile-time option bits actually used here (pcre2.h, 8-bit build).
 PCRE2_MULTILINE = 0x00000400
-PCRE2_UTF = 0x00080000  # not used: this module stays byte-oriented like pcrec
+# [B77] U1: USED since the utf8 set (docs/design/utf8_set_v1.md 8.1) -- the
+# module was byte-oriented only and says so no longer. [measured] on this
+# box's 10.46: `\w` over b"\xc3\xa9" (e-acute) is NOMATCH under UTF alone
+# and (0, 2) under UTF|UCP, and a start offset of 1 into it under UTF is
+# rc -36 "bad offset into UTF string" -- the self-check below re-runs both.
+PCRE2_UTF = 0x00080000
+PCRE2_UCP = 0x00020000
+PCRE2_ERROR_BADUTFOFFSET = -36
 
 _CANDIDATES = ["libpcre2-8.so.0", "libpcre2-8.so"]
 
@@ -128,11 +150,13 @@ def _errmsg(code):
 
 
 class Compiled:
-    """A compiled PCRE2 8-bit pattern. Byte-oriented like pcrec (no UTF)."""
+    """A compiled PCRE2 8-bit pattern. Byte-oriented unless its option word
+    carries PCRE2_UTF ([B77] U1); the word is kept as `.options`."""
 
-    __slots__ = ("_code",)
+    __slots__ = ("_code", "options")
 
     def __init__(self, pattern, options=0):
+        self.options = int(options)
         if isinstance(pattern, str):
             pattern = pattern.encode("latin-1")
         errcode = ctypes.c_int(0)
@@ -296,6 +320,32 @@ def _match_impl(self, subject, start=0):
     return _search_raw(self, subject, start, PCRE2_ANCHORED | PCRE2_ENDANCHORED)
 
 
+def option_word(utf=False, ucp=False):
+    """[B77] U1: the ORACLE OPTION WORD for one pattern (utf8_set_v1.md 8.1).
+    `utf` -> PCRE2_UTF, `ucp` -> PCRE2_UCP; nothing else is ever set here.
+    `option_word()` is 0 -- the byte oracle every pre-utf8 set derives with."""
+    return (PCRE2_UTF if utf else 0) | (PCRE2_UCP if ucp else 0)
+
+
+def next_start(subject, pos, utf):
+    """[B77] U1: the find-all EMPTY-MATCH advance -- the smallest position
+    strictly greater than `pos` that is a character boundary.
+
+    Byte encoding (`utf` false): `pos + 1`, exactly the pre-[B77] rule.
+    UTF-8 (`utf` true): pcrec match_api.md S3.1.1's NORMATIVE rule, the
+    same one every driver implements under `--utf8`: from `pos + 1`, advance
+    past every byte in 0x80-0xBF, stopping at the first byte outside that
+    range or at len(subject). Positions >= len(subject) are boundaries, so
+    the result is `pos + 1` there and the loop still terminates."""
+    nxt = pos + 1
+    if not utf:
+        return nxt
+    n = len(subject)
+    while nxt < n and (subject[nxt] & 0xC0) == 0x80:
+        nxt += 1
+    return nxt
+
+
 def _find_all_impl(self, subject, limit=None):
     """The THROUGHPUT regime's expectation: the FIRST match's span and the
     COUNT of non-overlapping matches, found by the same advance rule both
@@ -305,10 +355,13 @@ def _find_all_impl(self, subject, limit=None):
     (`pos`) -- an empty match can be found AHEAD of `pos`, and advancing
     `pos` itself re-finds the same empty match next call. Byte encoding:
     S3.1.1's `<prefix>_next_pos` residual is `start + 1` (every position is
-    a character boundary); this bench never compiles a utf8 artifact."""
+    a character boundary). UTF-8 ([B77] U1, utf8_set_v1.md 8.4): when THIS
+    compiled word carries PCRE2_UTF the residual is the next CHARACTER
+    boundary (`next_start`), never `start + 1`."""
     if isinstance(subject, str):
         subject = subject.encode("latin-1")
     n = len(subject)
+    utf = bool(self.options & PCRE2_UTF)
     pos = 0
     count = 0
     first = None
@@ -320,7 +373,7 @@ def _find_all_impl(self, subject, limit=None):
         if first is None:
             first = (s, e)
         count += 1
-        pos = e if e > s else s + 1
+        pos = e if e > s else next_start(subject, s, utf)
         if limit is not None and count >= limit:
             break
     return first, count
@@ -368,3 +421,26 @@ if __name__ == "__main__":
     assert i2["required_code_unit"] is None and i2["required_code_type"] == 0, i2
     assert i2["min_length"] == 4, i2
     print("pattern_info (first / required code unit): OK")
+
+    # [B77] U1: the option word and the character-boundary advance. e-acute
+    # is two bytes; `x*` matches empty at every CHARACTER boundary, so the
+    # UTF count over "a\u00e9b" (4 bytes, 3 characters) is 4 and the byte
+    # count is 5 -- and a byte-stepping advance under UTF must FAIL loudly
+    # (a mid-character start offset is PCRE2_ERROR_BADUTFOFFSET), never
+    # return a count.
+    s_utf = "a\u00e9b".encode("utf-8")
+    assert option_word() == 0 and option_word(utf=True) == PCRE2_UTF
+    assert compile(r"x*").find_all(s_utf) == ((0, 0), 5)
+    rxu = compile(r"x*", option_word(utf=True))
+    assert rxu.find_all(s_utf) == ((0, 0), 4), rxu.find_all(s_utf)
+    try:
+        _search_raw(rxu, s_utf, 2, 0)
+        raise AssertionError("mid-character start offset did not error")
+    except Pcre2Error as e:
+        assert str(PCRE2_ERROR_BADUTFOFFSET) in str(e), e
+    assert compile(r"\w", option_word(utf=True)).search(b"\xc3\xa9") is None
+    assert compile(r"\w", option_word(utf=True, ucp=True)).search(
+        b"\xc3\xa9") == ((0, 2), ())
+    assert next_start(b"\xe6\x97\xa5x", 0, True) == 3
+    assert next_start(b"\x80\x80", 5, True) == 6
+    print("option word + UTF-8 find-all advance: OK")

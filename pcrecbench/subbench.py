@@ -219,6 +219,11 @@ class Expectation:
         return self.expected == "match"
 
 
+# [B77] U1: the closed set of `[expectations] encoding` values, spelled as
+# pcrec spells its own `-e` values.
+SET_ENCODINGS = ("byte", "utf8")
+
+
 class Subbench:
     def __init__(self, root):
         self.root = os.path.abspath(root)
@@ -278,6 +283,18 @@ class Subbench:
         exp = self.cfg.get("expectations", {})
         self.expectation_file = exp.get("file", "expectations.tsv")
         self.default_method = exp.get("default_method", "")
+        # [B77] U1 (docs/design/utf8_set_v1.md 8.1): the SET's encoding --
+        # `[expectations] encoding = "utf8"` puts PCRE2_UTF in the oracle
+        # option word of EVERY pattern (never per subject or per regime:
+        # one definition of "correct" per expectations.tsv), and the SAME
+        # fact tells every driver to use the character-boundary find-all
+        # advance (`expectations.oracle_option_word`, `harness.run_cell`).
+        # Absent -> "byte", which is what every pre-utf8 set is.
+        self.encoding = exp.get("encoding", "byte")
+        if self.encoding not in SET_ENCODINGS:
+            raise SubbenchError(
+                "%s: [expectations] encoding = %r; expected one of %s"
+                % (sidecar, self.encoding, ", ".join(SET_ENCODINGS)))
         # LAZY: gen_expectations.py loads the sub-bench in order to WRITE this
         # file, so construction must not require it to exist yet.
         self._expectations = None

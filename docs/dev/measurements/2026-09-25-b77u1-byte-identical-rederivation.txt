@@ -1,0 +1,121 @@
+# 2026-09-25-b77u1-byte-identical-rederivation.txt
+#
+# [B77] lane U1 (b77u1) -- THE ACCEPTANCE PROOF owed by
+# docs/design/utf8_set_v1.md 13 ("every existing set's expectations.tsv
+# re-derives BYTE-IDENTICALLY under the changed oracle when no UTF option is
+# requested -- the lane's first deliverable") and 15 R1.
+#
+# script:   docs/dev/measurements/probe_b77u1_rederive.py (committed beside this)
+# command:  python3 -u docs/dev/measurements/probe_b77u1_rederive.py --out /var/tmp/b77u1-final
+# bench:    branch lane/b77u1 off master 3a00884, the four changed files at
+#           (sha256, as they are COMMITTED with this archive):
+#   a5babd680b7a28b91e916dd152426a3720a2cf8483e06e86d5b475be5cca4f17  pcrecbench/oracle_pcre2.py
+#   2bfa9d81294f58ce824c5866c6124049acca720fe34517d25a912d05cf0e6214  pcrecbench/expectations.py
+#   71c8955333cb170c87a805e9b4b99884e775847515593fe72ccf02e50074caf5  pcrecbench/subbench.py
+#   389cc9f3143ef7115ae074e420e598ef79f81f8b54858e5d98d64d79a478df83  pcrecbench/capability.py
+#           (the "git HEAD" the script prints is the lane's BASE; the tree
+#           was the dirty working copy above, committed unchanged)
+# oracle:   libpcre2-8 10.46 2025-08-27 (read live by the script)
+# pcrec:    build/pcrec-6ef76820, used ONLY as bench/capability's `.rxt`
+#           reader (`pcrec --list-source`) -- no engine is run anywhere here
+# box:      ubuntubudu; loadavg ~0.9-1.1 (this lane's own informational run
+#           beside it). Oracle-only: NOTHING HERE IS A TIMING, so load cannot
+#           move a character of the P/N verdicts; the per-set seconds are
+#           wall clock for the reader, not a result.
+#
+# WHAT CHANGED IN THE ORACLE (the thing under test): a per-pattern OPTION
+# WORD (oracle_pcre2.option_word; expectations.oracle_option_word: PCRE2_UTF
+# iff the sidecar says `[expectations] encoding = "utf8"`, PCRE2_UCP iff the
+# pattern declares `requires-unicode-class-scope`), a Compiled that keeps its
+# word, and the character-boundary find-all advance (next_start) active only
+# under PCRE2_UTF. With the word 0 the advance is `start + 1` exactly.
+#
+# ARMS (the script's docstring has the full statement):
+#   P0  each set: sidecar encoding and the SET of option words its patterns get
+#   P1  each set's OWN gen_expectations.py --out <scratch>; bytes == committed
+#   N1  a one-byte-mutated copy of the committed file must compare UNEQUAL
+#   N2  in-process re-derivation with the word sabotaged must DIFFER
+#
+# RESULT: PASS -- 6/6 sets BYTE-IDENTICAL (22,192 expectation rows; sha256
+# prefixes below), every negative arm fired.
+#
+# ---- verbatim stdout, the run of record ----------------------------------
+libpcre2 10.46 2025-08-27; repo /home/duxevents/pcrec-bench/.claude/worktrees/agent-ae6ea8f6037218f2d; git HEAD 3a008847265bfeabea6bec5143b93eaf2da534b7
+P0 email      encoding=byte option words over 3 patterns=[0] -> PASS
+P1 email      rows=501 committed=8f95c640fe9e7c77 derived=8f95c640fe9e7c77 (1.2s) -> BYTE-IDENTICAL
+N1 email      one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 email      option word forced to PCRE2_ANCHORED: 78b327616aa7e15e giveups=0 (0.1s) -> DIFFERS (PASS: the word is live)
+P0 loglines   encoding=byte option words over 11 patterns=[0] -> PASS
+P1 loglines   rows=1364 committed=cc827833d78125fc derived=cc827833d78125fc (1.7s) -> BYTE-IDENTICAL
+N1 loglines   one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 loglines   option word forced to PCRE2_ANCHORED: db6219c8623af4d2 giveups=0 (0.0s) -> DIFFERS (PASS: the word is live)
+P0 bounded    encoding=byte option words over 43 patterns=[0] -> PASS
+P1 bounded    rows=4300 committed=768c1d90ee344cf9 derived=768c1d90ee344cf9 (2.8s) -> BYTE-IDENTICAL
+N1 bounded    one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 bounded    option word forced to PCRE2_ANCHORED: 6e142fd3a4231eac giveups=0 (2.7s) -> DIFFERS (PASS: the word is live)
+P0 altwide    encoding=byte option words over 33 patterns=[0] -> PASS
+P1 altwide    rows=2772 committed=b491e07e36f735ac derived=b491e07e36f735ac (136.1s) -> BYTE-IDENTICAL
+N1 altwide    one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 altwide    option word forced to PCRE2_ANCHORED: 07c6bc574430e3a7 giveups=0 (0.1s) -> DIFFERS (PASS: the word is live)
+P0 syntax     encoding=byte option words over 95 patterns=[0] -> PASS
+P1 syntax     rows=8265 committed=d938179f82f267be derived=d938179f82f267be (171.4s) -> BYTE-IDENTICAL
+N1 syntax     one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 syntax     option word forced to PCRE2_ANCHORED: 2c5d993094c7cc03 giveups=0 (0.2s) -> DIFFERS (PASS: the word is live)
+P0 capability encoding=byte option words over 64 patterns=[0] -> PASS
+P1 capability rows=4990 committed=6b408632a08dda3b derived=6b408632a08dda3b (12.7s) -> BYTE-IDENTICAL
+N1 capability one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 capability option word forced to PCRE2_ANCHORED: 346aa209a6626415 giveups=2 (0.7s) -> DIFFERS (PASS: the word is live)
+RESULT PASS (0 failing arm(s))
+DONE rc=0
+# ---- end of the run of record --------------------------------------------
+#
+# ---- an EARLIER run, same oracle/expectations/subbench files, capability.py
+# ---- before the three REQUIRES tokens were added (additive; no committed
+# ---- set declares them), and N2 using PCRE2_CASELESS -- kept verbatim
+# ---- because it (a) repeats P1 6/6 BYTE-IDENTICAL independently; (b) is WHY
+# ---- the N2 sabotage changed: loglines re-derives IDENTICALLY under
+# ---- CASELESS, so that sabotage is not a control on every set (its RESULT
+# ---- FAIL line is that N2 arm, not P1); and (c) carries the informational
+# ---- I1 arm (--utf: PCRE2_UTF forced on each BYTE set) -- NOT the utf8
+# ---- set's configuration and not a verdict on anything. It records only
+# ---- that the UTF bit leaves loglines/bounded/altwide identical, moves
+# ---- email (6 giveups) and syntax (665 giveups: non-UTF-8 subjects
+# ---- refused), refuses to COMPILE capability (a pattern with a raw 0x80+
+# ---- byte), and that the UTF-mode derivation over email's 1 MB subjects
+# ---- costs ~39 s vs 1.2 s in byte mode (PCRE2 validates the subject from
+# ---- the start offset on every call; PCRE2_NO_UTF_CHECK is forbidden by
+# ---- utf8_set_v1.md 8.2) -- a cost U5's gen_expectations will pay, stated
+# ---- here so it is not rediscovered.
+libpcre2 10.46 2025-08-27; repo /home/duxevents/pcrec-bench/.claude/worktrees/agent-ae6ea8f6037218f2d; git HEAD 3a008847265bfeabea6bec5143b93eaf2da534b7
+P0 email      encoding=byte option words over 3 patterns=[0] -> PASS
+P1 email      rows=501 committed=8f95c640fe9e7c77 derived=8f95c640fe9e7c77 (1.2s) -> BYTE-IDENTICAL
+N1 email      one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 email      option word forced to PCRE2_CASELESS: 4a442bfd6466278e giveups=0 (1.2s) -> DIFFERS (PASS: the word is live)
+I1 email      option word forced to PCRE2_UTF: 1b65be2af4792dfc giveups=6 (39.4s) -> differs
+P0 loglines   encoding=byte option words over 11 patterns=[0] -> PASS
+P1 loglines   rows=1364 committed=cc827833d78125fc derived=cc827833d78125fc (1.7s) -> BYTE-IDENTICAL
+N1 loglines   one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 loglines   option word forced to PCRE2_CASELESS: cc827833d78125fc giveups=0 (1.7s) -> IDENTICAL (FAIL)
+I1 loglines   option word forced to PCRE2_UTF: cc827833d78125fc giveups=0 (41.1s) -> identical
+P0 bounded    encoding=byte option words over 43 patterns=[0] -> PASS
+P1 bounded    rows=4300 committed=768c1d90ee344cf9 derived=768c1d90ee344cf9 (2.8s) -> BYTE-IDENTICAL
+N1 bounded    one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 bounded    option word forced to PCRE2_CASELESS: 5f1f3422419462c0 giveups=0 (2.7s) -> DIFFERS (PASS: the word is live)
+I1 bounded    option word forced to PCRE2_UTF: 768c1d90ee344cf9 giveups=0 (6.7s) -> identical
+P0 altwide    encoding=byte option words over 33 patterns=[0] -> PASS
+P1 altwide    rows=2772 committed=b491e07e36f735ac derived=b491e07e36f735ac (136.5s) -> BYTE-IDENTICAL
+N1 altwide    one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 altwide    option word forced to PCRE2_CASELESS: 22b34ce711dbd70d giveups=0 (190.4s) -> DIFFERS (PASS: the word is live)
+I1 altwide    option word forced to PCRE2_UTF: b491e07e36f735ac giveups=0 (139.8s) -> identical
+P0 syntax     encoding=byte option words over 95 patterns=[0] -> PASS
+P1 syntax     rows=8265 committed=d938179f82f267be derived=d938179f82f267be (171.0s) -> BYTE-IDENTICAL
+N1 syntax     one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 syntax     option word forced to PCRE2_CASELESS: 155eb2df365fccc2 giveups=0 (171.8s) -> DIFFERS (PASS: the word is live)
+I1 syntax     option word forced to PCRE2_UTF: 2b8735a2008ddd94 giveups=665 (0.2s) -> differs
+P0 capability encoding=byte option words over 64 patterns=[0] -> PASS
+P1 capability rows=4990 committed=6b408632a08dda3b derived=6b408632a08dda3b (12.8s) -> BYTE-IDENTICAL
+N1 capability one-byte-mutated copy vs derived -> UNEQUAL (PASS: the comparator can fail)
+N2 capability option word forced to PCRE2_CASELESS: a346e549f1885fc0 giveups=2 (13.3s) -> DIFFERS (PASS: the word is live)
+I1 capability PCRE2_UTF: compile refused: pcre2_compile failed at offset 0: UTF-8 error: isolated byte with 0x80 bit set
+RESULT FAIL (1 failing arm(s))
+DONE rc=1
