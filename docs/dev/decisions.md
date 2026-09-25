@@ -361,3 +361,21 @@ the manager remembering to re-check every time.
 REVISIT WHEN. The Fable session shows the same follow-through gaps the
 package targets (meaning the package, not the model, was insufficient),
 or Frank rules otherwise.
+
+## BD13 — 2026-09-25 — compile rows carry a normalized `program_sha256` (record schema v1.6), built WITH the next pcrec re-pin (Frank's ruling)
+
+Context: [B79]'s null-control band needs to know which artifacts are
+program-identical across a pin pair. The records carry sizes and stamps
+but no identity (every re-pin shifts sizes by its stamp lines), so [B79]
+derived identity from a separate re-emit census
+(`tools/program_identity.py`, committed per pair under
+`reports/identity/`); a cross-pin report without that file renders
+`NO NULL BAND`. Ruling (Frank, 2026-09-25, the manager's recommendation):
+the pcrec adapter stamps a normalized `program_sha256` (the census's own
+normalization: `.c`+`.h` minus the generated-by line, the abi integer and
+one-sided stamp defines) into every compile row's `engine_metadata` —
+schema v1.6, a MINOR bump, old records valid. It lands WITH the next
+re-pin (the adapter is touched then anyway), not as its own change. The
+census tool stays for back-filling pairs recorded before the field; the
+band reads the field first and the census as the fallback, and the first
+pair carrying both is the cross-check. Row: [B88].
