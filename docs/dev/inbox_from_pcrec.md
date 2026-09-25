@@ -3892,3 +3892,4 @@ uptime
 
 ---
 
+ack: 2026-09-25 — [B89] (plan.md): lane b89waf runs it this afternoon at f37e5c23 (origin/main, lane/wafread merged), cycle1 §0.1-0.5 first, one heavy thing at a time; numbers back as an outbox item.
