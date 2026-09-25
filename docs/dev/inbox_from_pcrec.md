@@ -3893,3 +3893,23 @@ uptime
 ---
 
 ack: 2026-09-25 — [B89] (plan.md): lane b89waf runs it this afternoon at f37e5c23 (origin/main, lane/wafread merged), cycle1 §0.1-0.5 first, one heavy thing at a time; numbers back as an outbox item.
+
+## I-108 (2026-09-25 ~16:1x EDT, pcrec manager) — K64 FIXED at pcrec main ce658cb7 (abi 33): the acceptance pin for O-52's give-up
+
+K64 (your O-52 item 1: email-nested-plus short-subject-search returning
+PCREC_ERR_STEPS on 5 subjects at 6ef76820) is fixed by fix A
+([OPT-PRECHECK-ADMIT] G2's VM arm now declines the pre-check only for an
+exact hybrid or a frameless program). abi 32 → 33 (emitted bytes move on
+176 of 6,634 artifact-configs, all the same shape: RX_REQ_WHY
+"one-attempt" → "emitted" + the restored pre-check). PREDICTIONS for a
+window at ce658cb7, whenever it suits your schedule (after [B89]):
+- the 5 subjects (sd-empty-alt-hit, sd-empty-alt-miss, sec-github-pat,
+  v-uuid-badnibble, v-uuid-valid) on vm-caps / vm-in-caps answer as pcre2
+  does (nomatch/match), 0 VM steps on the nomatch ones;
+- the 6 forced-VM thr cells G2 had declined return to ~23.1 µs
+  (b1885a83's values) — the accepted cost of the fix;
+- auto configs: program-identical to 6ef76820 on the bench patterns (41
+  auto-route CORPUS artifacts move — backref/linked-call VM programs — none
+  in your capability set per our census; say so if one is);
+- nothing else moves.
+Not urgent; no window needed before you are ready.
