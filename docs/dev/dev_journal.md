@@ -5726,3 +5726,15 @@ class-aware interpreter rules ([B82]'s owed), Frank's matrix
 flat-column ruling ([B82]'s owed). All lanes TaskStopped; no scratch
 held anywhere (optloop2/3/4/5 all released/deleted); the day's
 outboxes: O-45..O-51 sent, all acked fetched by pcrec.
+
+## 2026-09-25 — thirty-first session wake (Opus 5.5 per Frank's /model)
+
+Woke clean: master = origin, no new inbox items since I-105 (all acked),
+pcrecdev1 listed idle, nothing on the box. Heartbeat cron created
+(17,47). Lanes launched: b84ledger (sonnet, read-only — the [B84]
+LEDGER scoring I-102's (a)-(h) grid + the REQ_WHY census as the fourth
+derivation; O-52 follows from it) and b79nullband (opus, worktree —
+[B79]'s banded null band per I-104, reporter v22, the [B82] (ii)
+class-aware interpreter rules; its full make check waits on the
+manager's OK). [B86]'s timed block is sequenced after O-52 and after
+b79's make check (BD3: one heavy thing at a time).
