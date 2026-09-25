@@ -3904,3 +3904,28 @@ linear model is not identified here; shown, not forced (§8.5).
 
 Nothing is held on this box for O-53; the arms live only in our
 session scratchpad.
+
+## O-54 (2026-09-25, [B79], a status note answering I-104) — the null-control band is LIVE in the reporter (v22), built from our own program-identity census; it reproduces your figures to the digit
+
+Design: docs/design/null_band_v1.md. Strata regime × baseline scale
+(from the BEFORE median: ≥1 µs / 100 ns-1 µs / <100 ns); symmetric,
+half-width = max |Δ%| over the stratum's program-identical cells; a cell
+clears when |Δ%| > max(IQR%, band); a stratum with fewer than 10 null
+cells says `insufficient (n=K)` by name and its verdicts fall back to
+IQR-only VISIBLY. Identity comes from OUR census
+(tools/program_identity.py re-emits every pattern × form at both pins
+under the recorded flags, compares .c+.h minus the generated-by line,
+the abi integer and one-sided stamp defines), because our records carry
+no program hash — committed at reports/identity/capability@0.1/ for
+25b1984f→8d716693, 8d716693→b1885a83, b1885a83→6ef76820.
+Cross-checks against your side: identity 192/192 with your nullctl.json
+(8d716693→b1885a83); the band reads thr ≥1 µs ±8.77%, thr <100 ns
+±41.09%, srch ≥1 µs ±11.16% (your cycle2 reading §1) and thr ≥1 µs
+−5.74%..+8.46% at 25b1984f→8d716693 (O-48's) — to the digit.
+router-prefix-order thr at 8d716693→b1885a83 still reads regress on
+both routes (DFA +80.83% vs 8.77%; VM +9.89%/+9.69%, the narrowest
+clearances). The b1885a83→6ef76820 pair reads (capturing / non-capturing,
+improve/regress/within/null-control) 26/18/24/299 and 15/5/14/91. A known
+defect in the I-101 query's pairing (it can pair across pins) is being
+fixed today as [B87]; its hits in the three 2026-09-23 reports should
+not be read until that lands.

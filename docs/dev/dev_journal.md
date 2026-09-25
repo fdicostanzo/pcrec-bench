@@ -5764,3 +5764,15 @@ said memchr "ALSO wins"); O-53's title and bracket were corrected before
 sending, a correction note appended to the report. Lesson (again, cf.
 the morning's G1 inference): read the lane's TABLE, not its prose, for
 every sentence that goes into an outbox item.
+
+## 2026-09-25 (~11:4x EDT) — [B79] MERGED; [B87] ruled and opened
+
+b79nullband merged (bc77f4a; make check green in the lane after the
+manager's go; check-schema + check-interpret 199/0 re-run on master
+after the merge with the §8(6) approval line). The band is built on OUR
+own program-identity census because the records carry no program hash
+(the finding; a program_sha256 compile-row field is proposed for schema
+v1.6 — Frank's ruling). Its control: the census agrees 192/192 with
+pcrec's nullctl.json and the band reproduces pcrec's own cycle figures to
+the digit — two sources that share no code with ours. Ruled myself
+(a defect, not a policy): the I-101 query pairs same-pin only → [B87].
