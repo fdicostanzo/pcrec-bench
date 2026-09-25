@@ -98,7 +98,7 @@ and this report.
 | 13 | nullband reads the field FIRST, census fallback | DONE: `nullband.field_identity`/`cell_identity`; `report.py` `_build_null_band_model` asks the field first per cell, falls back to the census, NAMES a disagreement (field wins); a pair with no census but the field on both sides now gets a band; every existing report renders byte-identical (no stored record carries the field) so `REPORTER_VERSION` stays v23 | `d445150`, test `test_b88_null_band_reads_program_sha256_first` |
 | 14 | a check that the field and the census agree on >=1 artifact at this pin | DONE: `check_program_sha256` -- three artifact kinds (a DFA, K64's forced-VM witness, a backreference VM): field present + 64 hex, field == the census's own v2 hash of a WITHOUT-`-fcomments` emission while the raw texts differ, three programs three hashes, and across the pair v1 `changed`/v2 `identical` on the DFA and v2 `changed` on the backreference with the seam named (10 checks) | `d445150` |
 | 15 | acceptance-window draft cell list | DONE, §3 | this file |
-| 16 | validation: check-schema, gen.py --check, check-interpret, check-report, targeted harness | DONE except check-report -- see §2 | §2 |
+| 16 | validation: check-schema, gen.py --check, check-interpret, check-report, targeted harness | DONE -- see §2 (check-interpret 169/30, all 30 the catalogue-bump sidecar staleness, proven) | §2 |
 | 17 | full `make check` | OWED, manager-launched (§4) | — |
 
 ## 2. Validation (targeted; numbers)
@@ -124,14 +124,29 @@ and this report.
   `check_program_sha256` + `check_vars_surface` + `check_mechanism_stamps`
   (with the 8 new K64 ledger rows): **135 passed, 0 failed**.
 - the four null-band tests (`test_b79_*` x3 + `test_b88_*`): **4/4 pass**.
-- `make check-report`: RESULT BELOW (§2a).
+- `make check-report`: **OK** -- test_report **98 passed, 0 failed**,
+  test_quick 7/0, test_matrix_page 12/0, fixtures validated, CLI smokes
+  clean (~6 min, one core, ~1.4 GB).
 - `python3 tools/program_identity.py --subbench capability --version 0.1
   --old b1885a83 --new 6ef76820 --check`: **re-derives byte-identical**
   (v1 read off the file header).
 
-### 2a. check-report and the record-writing harness sections
+### 2a. The record-writing harness sections, and one scratch cell
 
-(filled in below before handback)
+- `check_describe_schema_shape` + `check_v11_fields` + `check_run_smoke`
+  + `check_tier_schema` + `check_quick` + `check_pcrec_local` +
+  `check_frame_buffer` + `check_floor_pattern` (every one writes and
+  VALIDATES real records carrying the new `sha256` declaration at schema
+  1.7): **47 passed, 0 failed**.
+- one SCRATCH `quick` cell (answers only, `--trials 1 --iters 1`, no
+  timing claimed; `build/scratch-store/`, never `store/`):
+  `capability / email-nested-plus / search_short`, `pcrec-vm` vs
+  `pcrec-vm-in`, all 75 subjects: **75/75 pass, 0 give-ups on BOTH** (at
+  6ef76820 five subjects gave up `PCREC_ERR_STEPS` on each) -- a preview
+  of I-108 P1, not its acceptance. The record is schema `1.7`, both
+  compile rows carry `req_why "emitted"` and a `program_sha256`; the
+  plain form's (`69721473...`) is the same value `check_program_sha256`
+  derived from the census side.
 
 ## 3. DRAFT acceptance-window cell list (I-108's four predictions)
 
