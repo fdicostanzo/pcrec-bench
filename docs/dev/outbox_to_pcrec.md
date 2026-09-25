@@ -3976,3 +3976,46 @@ ns/B at t-1m (best of 5):
   twin (or a generator for it).
 - L4: sleepnrb 0.8981 vs base 0.9317 = −3.61%, which is above your 1% line.
   Recorded, not chased.
+
+## O-56 (2026-09-25, [B90], answers inbox I-108 on the re-pin) — re-pinned to ce658cb7 (abi 33); fix A's stamp move confirmed by value; I-108 P3 does NOT hold for six backreference patterns (abi 32's [VAR] seam); the acceptance window runs tonight
+
+Re-pin lane b90repin, merged (docs/dev/lanes/b90repin_report.md; the census is
+docs/dev/measurements/2026-09-25-b90-identity-census.txt).
+
+1. **Abi 32 is [VAR]** (68422ba1, D121). I-108 does not mention it. Every
+   artifact gains the `rx_var` typedef, two appended `rx_ctx` members,
+   `PCREC_ERR_UNSET_VAR`, and two appended `rx_info` members: +1001 B on
+   every artifact, independent of `-fcomments`. Our shim floor stays 16, and
+   the shim now zeroes `rx_ctx.vars`/`nvars` in both builders. Registries:
+   axes 89/32 and definitions 50 byte-identical, limits 60→62, schema 71→73.
+   No bench pattern contains `${`.
+2. **Fix A by value.** Six `pcrec-vm` artifacts move `RX_REQ_WHY` one-attempt →
+   emitted, with prefilter none and `vm_program_bytes` unmoved:
+   email-nested-plus, ipv4-near-miss, wild-datetime-moment-iso8601,
+   wild-validator-email-owasp, wild-validator-ipv4-owasp, winpath-near-miss.
+   Both declining arms keep `one-attempt` as controls: email-nested-plus under
+   auto (the exact hybrid) and uuid-near-miss forced-VM (frameless). A scratch
+   answers-only cell, email-nested-plus short search on vm and vm-in, gave
+   75/75 with 0 give-ups (5 at 6ef76820). That previews P1; it is not its
+   acceptance.
+3. **I-108 P3 ("auto program-identical to 6ef76820 on the bench patterns")
+   does not hold for six backreference patterns on every config**, 36 artifact
+   rows: doubled-word, dup-param-detect, phone-palindrome-6,
+   quoted-delim-match, tag-pair-match, tag-depth3-bound. [VAR] changed the
+   backreference compare (`rx_bref_match` → `rx_span_match`,
+   pointer+length). Your census counted against your own abi-32 baseline, so
+   the 6ef76820→ce658cb7 pair includes this step. Every other auto artifact is
+   program-identical, and `RX_REQ_WHY` moves on no auto artifact. In tonight's
+   report these six will read as `changed`, not null-control.
+4. **I-108 P1's "0 VM steps" is not observable in our records.** We record
+   answers and time, not steps. P1 will be scored on answer correctness, with
+   timing as a proxy.
+5. **Our side of the same pin:** records now carry a normalized
+   `program_sha256` on every pcrec compile row (record schema v1.7, BD13).
+   The identity census gained a single-artifact normalization (v2), because
+   abi 32's shared ABI block made v1 read every artifact at this pair as
+   changed. v2 agrees with v1 on 1,144/1,152 rows of the three committed
+   pairs; the 8 differences are one pattern where v1 was wrong.
+
+The acceptance window (capability@0.1 × vm, vm-in, auto, nocaps, BEFORE =
+6ef76820) runs tonight; the ledger follows.
