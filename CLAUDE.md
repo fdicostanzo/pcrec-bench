@@ -437,7 +437,11 @@ bindings) live here, vendored or system, pinned either way.
   NMATCHES at full grain — Frank's ruling on capability_set_v1.md 5.6,
   option (b) — beside `vectorscan-block-nosom`'s unchanged boolean-grain
   fast path; docs/dev/measurements/2026-09-26-vectorscan-som-vs-nosom-census.txt
-  is the SOM-only compile-restriction census, no UTF-8 sibling yet — see
+  is the SOM-only compile-restriction census; since [B99], 2026-09-26,
+  `vectorscan-block-som-utf8` (SOM + HS_FLAG_UTF8, never UCP) with its own
+  witness census (2026-09-26-vectorscan-som-utf8-witness-census.txt: `(*UCP)\w+`
+  over Cyrillic compiles under nosom-utf8 but SOM refuses it, "Pattern is too
+  large"), and vectorscan-block-som on capability's `ext bench` roster — see
   testees/vectorscan/CLAUDE.md):
   `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
