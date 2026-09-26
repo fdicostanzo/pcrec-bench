@@ -5846,3 +5846,33 @@ pcrec-nocaps-utf8, pcrec-vm-utf8, pcrec-vm-in-utf8} (§14 Q6's first sample), lo
 build/windows/window_utf8_20260926T013438Z.log, watcher on completion. No lanes
 overnight (the box is the window's). Morning: commit the store, [B91] (unsupported
 section + selection-relative best) before the READ, [B92]/[B93] alongside.
+
+## 2026-09-26 ~09:08 UTC — [B94] built: pcre2 driver validate-once (lane b94pcre2utf)
+
+BD15's ruling implemented in testees/pcre2/driver.c: the find-all loop's call 1
+validates the whole subject (offset 0, no flag); calls 2..n on the same buffer
+pass PCRE2_NO_UTF_CHECK, a character-boundary assertion guarding every one
+(`die()`, never trusted). `--utf-always-check` is a driver-only control flag,
+reachable only from `make check-harness`'s new `check_pcre2_utf_validate_once`
+(seven checks) and the archived probe. MEASURED
+(docs/dev/measurements/2026-09-26-b94-pcre2-driver-validate-once.txt): 71x-1811x
+faster on interp/jit/dfa across bench/utf8's 64 KB/256 KB throughput subjects,
+answers byte-identical every time (the 1 MB always-check arm skipped by design,
+~2.5 h projected); JIT/DFA covered by the same `do_match` call site (man
+pcre2api cited for both). The single-call search/match regimes need no fix —
+measured linear in `--iters`, negligible at real (<=30 B) subject sizes.
+AUDITED the sibling UTF drivers: re2/onig scale (sub)linearly (16x size -> ~8-10x
+time); vectorscan is structurally immune (`--find-all` a no-op at boolean
+grain); rust-default is structurally immune (`regex::bytes` has no subject
+validity check), confirmed empirically on all four (onig/re2/rust built and
+timed directly; vectorscan's existing no-op behaviour re-confirmed). Identity:
+UNCHANGED — the fix is inert on every byte config (measured), no store record
+carries the pre-fix `pcre2-utf-*` build_flags text, only that text's wording
+moved (UTF_BUILD_NOTE, a match-time clause added beside the unchanged
+compile-time one). testees/pcre2/CLAUDE.md gained a full "[B94] VALIDATE-ONCE"
+section; docs/dev/lanes/b94pcre2utf_report.md has the charter-vs-committed
+checklist. OWED to the manager: the full `make check` (>4 min, per the
+boilerplate's DO-THEN-FINISH rule — this lane ran the targeted subset directly
+instead: check_pcre2_utf_validate_once, check_pcre2_dfa,
+check_kb17_find_all_advance, check_utf8_find_all_advance, all green) and the
+re-run of the two lost cells, exact command in the lane report.
