@@ -32,16 +32,17 @@ lane branch at merge time.
    "Revising an already-scored file" section, dated, four numbered
    conditions, pointing at this report.
 4. **Retire the stopgap; Q6 (i) must now pass on every predictions file
-   with no exception.** BUILT for Q6 (i) specifically — confirmed by
-   `make check-interpret` section 1 (21/21, no `_KNOWN_HISTORICAL_LOAD_
+   with no exception.** BUILT for Q6 (i) — confirmed by `make
+   check-interpret` section 1 (21/21, no `_KNOWN_HISTORICAL_LOAD_
    DEFECTS` table left in `catalogue/check_interpret.py`, no per-file
-   carve-out in the load loop). **NOT fully true for `make check-
-   interpret` as a whole** — see the P4 finding below, which needed a
-   NEW, narrower, differently-caused stopgap to keep the suite green.
-5. **Regenerate the four blocked sidecars, 0 failures.** NOT DONE — see
-   the P4 finding. `make check-interpret` is green (200/200, 0 FAILED)
-   but by SKIPPING the four sidecars again, for a different, real
-   reason, not by regenerating them.
+   carve-out in the load loop). **UPDATE, 2026-09-26: also true of Q6
+   (ii)/section 3 now** — the manager ruled on the P4 finding below the
+   same day; see "Follow-up (2026-09-26)". ALL THREE named exceptions
+   this file's history ever carried are gone.
+5. **Regenerate the four blocked sidecars, 0 failures.** **DONE,
+   2026-09-26** (was NOT DONE at first delivery — see "Follow-up
+   (2026-09-26)" below for the full P4 fix, the hand-verification table,
+   and the fact-diff review).
 
 ## What actually needed fixing (found empirically, not assumed)
 
@@ -210,6 +211,115 @@ simply be RETIRED from this file as un-recoverable authoring mistakes,
 carried forward only in prose the way syntax's own inexpressible
 clauses are; (c) some other resolution this lane did not consider).
 
+## Follow-up (2026-09-26) — the manager's P4 ruling, applied
+
+The manager sent a ruling on the P4 finding above while this lane was
+still open: **within Frank's option (b), because the notes state the
+meaning unambiguously.** P4.a is the atomic pattern's `artifact_bytes`
+÷ the non-atomic control's (`logparse-atomic-removed`), same testee;
+P4.b is the atomic pattern's `median_ns` ÷ the control's on the same
+subject (`lp-atomic-nonmatch`), same regime, same testee — both a
+cross-pattern `ratio_to` comparison, exactly P2's own shape. The
+instruction: fix the glob (`pcrec_*_auto-*`, checked against the real
+index), give P4.a `ratio_to(pattern=logparse-atomic-removed;testee=...)`
+in P2's corrected shape, give P4.b `ratio_to` (not
+`ratio_to_median_over`) with the same argument shape plus the
+subject/regime keys it needs so the denominator is the SAME subject/
+regime/testee cell, keep op/lo/hi/unit/note byte-identical, hand-derive
+the raw cells from the report TSV (or the records) for every committed
+report and show interpret's evaluated value equals it to the printed
+digits, and STOP rather than adjust if they ever disagree.
+
+**Applied exactly as instructed, verified, no disagreement found.**
+`docs/dev/predictions/capability-0.1-first.tsv`'s P4.a/P4.b:
+
+    P4.a selector:  pattern=logparse-atomic;testee=pcrec_*_auto-*
+    P4.a reducer:   ratio_to(pattern=logparse-atomic-removed;testee=pcrec_*_auto-*)
+    P4.b selector:  pattern=logparse-atomic;subject_or_na=lp-atomic-nonmatch;
+                    regime_or_na=short-subject-search;testee=pcrec_*_auto-*
+    P4.b reducer:   ratio_to(pattern=logparse-atomic-removed;subject_or_na=
+                    lp-atomic-nonmatch;regime_or_na=short-subject-search;
+                    testee=pcrec_*_auto-*)
+
+`quantity`/`op`/`lo`/`hi`/`unit`/`note` unchanged on both clauses (only
+the testee glob's hyphen and both reducers' argument text moved).
+
+**P4.a — hand-derived vs. interpreted, every committed report:**
+
+| report | raw cells (`compile:artifact_bytes`, atomic / removed) | hand ratio (worst) | `interpret`'s value | match? |
+|---|---|---|---|---|
+| 2026-09-17-...-first-a770139e | auto-caps 82,840/82,840 & 82,800/82,800 (=1.000); auto-nocaps 82,840/74,496 (=1.112006) & 82,800/74,448 (=**1.112186**) | 1.112 (worst of 4) | `refuted`, worst 1.112 over 4 value(s) | **yes** |
+| 2026-09-18-...-after-cf0962e3 | SAME four byte pairs, on BOTH a770139e and cf0962e3 (pcrec's own artifact is byte-identical across the two pins for this pattern — confirmed by direct read of the report's own compile rows) | 1.112 (worst of 8) | `refuted`, worst 1.112 over 8 value(s) | **yes** |
+| 2026-09-18-...-ext-first-cf0962e3 | no `pcrec_*` compile row at all (roster is the 5-engine ext sample) | n/a | `not evaluable`: no row matches the selector | **yes** (a real absence, not a defect — verified by grep of the report's own testee column) |
+| 2026-09-19-...-ext-second-cf0962e3 | same as above | n/a | `not evaluable`: same reason | **yes** |
+
+**P4.b — hand-derived from the underlying JSONL records (the set-grain
+report TSV cannot carry a real subject id at all, see below), cross-
+checked against the committed `.subject-grain.tsv` for the one report
+that has one and reproduces to six decimals:**
+
+| testee (pin a770139e) | atomic median_ns (5 trials) | removed median_ns (5 trials) | ratio |
+|---|---|---|---|
+| auto-caps | 14.802902 | 12.431209 | 1.191 |
+| auto-nocaps | 13.516966 | 8.571827 | 1.577 |
+
+(cf0962e3's own rows, read from the same subject-grain TSV: auto-caps
+13.736282/12.464492 = 1.102; auto-nocaps 13.359327/8.579463 = 1.557 —
+same direction, same order of magnitude, a different pin's own
+measurement.) **`interpret` itself reports `not evaluable` for P4.b on
+every one of the four reports** — not a disagreement with the hand
+derivation (there is no crash and no wrong number to disagree about),
+but a THIRD, separate structural fact found while verifying this exact
+clause: P4.b's own selector names `subject_or_na=lp-atomic-nonmatch`
+and `regime_or_na=short-subject-search` (unchanged — this was already
+in the file before either fix), and every one of these four reports is
+rendered at `grain=set`, where `render_tsv` writes the literal string
+`(set)` into every rank row's `subject_or_na`, never a real subject id
+(Cause A, `interpret_subject_grain_v1.md` §1.2/§4 — the identical gap
+P3/P6/P7/P10 already carry). Reaching a real subject id needs an
+explicit `grain=subject` key on the selector, routing the clause to the
+`--subject-grain` sibling file (two of the four reports have one
+committed) — outside the manager's own three-part description of the
+fix, so **not added here**, per "STOP and report; don't adjust until
+they match" and per "Revising an already-scored file"'s own item 3 (a
+further change needs its own verification and its own go-ahead). Had it
+been reachable, both testees' ratios are > 1 on every pin (1.10-1.58),
+which would **REFUTE** the clause's own claim ("the atomic form's search
+cost … is LOWER", i.e. predicting < 1) rather than confirm it — stated
+here for the record, not acted on.
+
+**The four sidecars are regenerated for real** (`python3 -m pcrecbench
+interpret <report> --index store/index.tsv --predictions docs/dev/
+predictions/capability-0.1-first.tsv [--subject-grain <sibling>]
+--render --out <sidecar>`, the exact invocation `scripts/
+regen_sidecars.py` uses per file, run directly rather than through that
+script since only these four — not all 35 committed sidecars, a
+memory-heavy whole-store operation — needed it); each one's determinism
+re-checked (a second run to stdout, byte-compared, all four identical).
+`catalogue/check_interpret.py`'s Cause-C stopgap
+(`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) and its module
+comment are retired; section 3 is the plain unconditional loop again.
+
+**Fact-diff review, all four** (`git diff -- reports/*.interpretation.md`):
+- `2026-09-17-...-first-a770139e` and `2026-09-18-...-after-cf0962e3`:
+  P2 moves `not evaluable` → `confirmed` (R-PRED-1, exactly the [B93]
+  first-delivery numbers, 5.289/6.976); P4 moves `not evaluable` →
+  `partial` (R-PRED-4, firing in this project for the FIRST time: 0
+  confirmed, 1 refuted, 1 not-evaluable, "P4.a refuted; P4.b
+  not-evaluable" — matching the roll-up rule exactly, `interpreter_v1.md`
+  §4.6's "any mix → partial"); the `catalogue: 3.2 → 3.8` stamp pulls in
+  two unrelated, already-landed rules (R-STATUS-15, R-DELTA-5) into the
+  "did not fire" table — explained by catalogue growth since these four
+  sidecars' last regeneration, not by this fix.
+- `2026-09-18-...-ext-first-cf0962e3` and `2026-09-19-...-ext-second-
+  cf0962e3`: the R-PRED section is **UNCHANGED** — only the stamp lines
+  (index/predictions sha256, `catalogue: 3.2 → 3.8`) and the SAME two
+  catalogue-growth rows move. This independently confirms neither P2
+  nor P4's fix touches these two reports at all (their roster carries
+  no pcrec testee, exactly as expected), and that the four-sidecar
+  regeneration this task asked for was blocked ONLY by the two load-time
+  checks, never by anything about these reports' own content.
+
 ## Validation
 
     $ make check-interpret
@@ -218,11 +328,11 @@ clauses are; (c) some other resolution this lane did not consider).
 
     check-interpret section 1: 21 check(s) passed
     check-interpret section 2: 8 check(s) passed
-    check-interpret section 3: 33 check(s) passed
+    check-interpret section 3: 36 check(s) passed
     check-interpret section 4: 133 check(s) passed
     check-interpret section 5: 4 check(s) passed
     check-interpret section 6: 1 check(s) passed
-    check-interpret: 200 passed, 0 FAILED
+    check-interpret: 203 passed, 0 FAILED
 
     $ python3 catalogue/fixtures/gen.py --check
     gen.py: checked 243 file(s) in 75 fixture(s) -- ok
@@ -231,42 +341,58 @@ clauses are; (c) some other resolution this lane did not consider).
     check-schema: 6 example(s) accepted, 74 sabotage(s) rejected for the
     intended rule, 0 sabotage(s) WRONG
 
-All three green. `make check-harness`/`make check-report` were not run
-(no file either touches; the boilerplate reserves long runs for the
-manager, and neither is on this task's own validation list). `catalogue/
-rules.toml`'s `catalogue_version` is unchanged at 3.8 (no rule, no
-threshold, no predicate moved) — no `[[pin_order]]` append is owed.
+All three green, 0 failures, 0 named exceptions anywhere in
+`check_interpret.py` for this file. `make check-harness`/`make
+check-report` were not run (neither touches a file this task changed;
+the boilerplate reserves long runs for the manager and neither is on
+the task's own validation list). `catalogue/rules.toml`'s
+`catalogue_version` is unchanged at 3.8 (no rule, threshold or
+predicate moved by this lane) — no `[[pin_order]]` append is owed.
 
 ## Files changed
 
-- `docs/dev/predictions/capability-0.1-first.tsv` — P2.a/P2.b's selector
-  and reducer argument corrected (two rows, both companion fixes);
-  everything else byte-identical to the committed history.
+- `docs/dev/predictions/capability-0.1-first.tsv` — P2.a/P2.b's and
+  P4.a/P4.b's selectors and reducer arguments corrected (four rows
+  total); everything else (every OTHER clause, every column but
+  selector/reducer on these four) byte-identical to the committed
+  history.
 - `docs/dev/predictions/CLAUDE.md` — new "Revising an already-scored
-  file" standing-rule section; the `capability-0.1-first.tsv` entry
-  gains a dated header addendum (naming the [B93] fix and pointing at
-  this report) and a dated addendum after the historical P9 discussion
-  (the applied fix, the ledger cross-check, and the filed P4 finding).
-- `catalogue/check_interpret.py` — the Q6 (i) named exception
+  file" standing-rule section; the `capability-0.1-first.tsv` entry's
+  header addendum now names both fixes and both dates; the P2 and P4
+  addenda (after the historical P9 discussion) carry the full
+  hand-verification tables and the Cause-A finding.
+- `catalogue/check_interpret.py` — ALL THREE named exceptions this
+  file's history ever carried are gone: the Q6 (i) one
   (`_KNOWN_HISTORICAL_LOAD_DEFECTS`, `_load_predictions_with_named_
-  exceptions`) is GONE; section 1's load loop is unconditional. A NEW,
-  differently-named, differently-caused stopgap for P4's Cause C
-  (`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) replaces it in
-  section 3, plus a general per-sidecar `try`/`except` so any OTHER
-  future `InterpretError` reports as a named failure rather than an
-  uncaught crash that would silently stop sections 4-6 from running.
-- `catalogue/CLAUDE.md` — the stopgap paragraph rewritten to describe
-  retirement (Cause B) and the new filing (Cause C), in place.
+  exceptions`, retired at first delivery) and the Q6 (ii)/Cause-C one
+  (`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`, retired in this
+  follow-up). Section 1 and section 3 are both the plain, unconditional
+  form; the general per-sidecar `try`/`except` (added at first delivery,
+  kept) still catches any OTHER, future `InterpretError` as a named
+  failure rather than an uncaught crash.
+- `catalogue/CLAUDE.md` — the stopgap paragraph rewritten again to
+  describe both retirements and the manager's P4 ruling, in place.
+- `reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.interpretation.md`,
+  `reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.interpretation.md`,
+  `reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.interpretation.md`,
+  `reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.interpretation.md`
+  — regenerated (determinism-checked, fact diffs reviewed above).
+- `docs/dev/plan.md` — `[B93]` row: `STATE:blocked` → `STATE:started`
+  (per the manager's instruction; the manager closes it at merge).
+- `docs/dev/dev_journal.md` — a matching follow-up entry.
 - `docs/dev/lanes/b93pred_report.md` — this report.
 
 ## Handback
 
-Item 1-4 of the charter are DELIVERED and independently verified (the
-ledger cross-check, the four-report empirical table, the byte-field
-diff table). Item 5 is NOT delivered: the four sidecars stay
-un-regenerated, blocked on a SECOND, separate, already-diagnosed defect
-(P4.a/P4.b's Cause C + malformed reducers) that Cause B's fix was
-masking and that this lane's own narrower charter does not license a
-unilateral fix for. `make check-interpret`/`gen.py --check`/`make
-check-schema` are all green. Nothing else is OWED beyond the P4 ruling
-named above.
+All five charter items are now DELIVERED and independently verified:
+P2.a/P2.b (first delivery, cross-checked against the 2026-09-17 ledger's
+5.29) and P4.a/P4.b (this follow-up, per the manager's own ruling,
+hand-verified against the report TSVs and the underlying JSONL records
+for every committed report, with the one residual — P4.b's Cause-A
+grain gap — found, hand-derived anyway, and left exactly as the ruling's
+own scope drew the line, never silently adjusted). The standing rule is
+written, the stopgap(s) are retired with no exception left anywhere in
+`check_interpret.py`, and the four sidecars are regenerated for real —
+`make check-interpret` 203/0, `gen.py --check` clean, `make check-schema`
+6/74/0. `docs/dev/plan.md`'s `[B93]` row is `STATE:started`, per the
+manager's own instruction, for them to close at merge. Nothing is OWED.

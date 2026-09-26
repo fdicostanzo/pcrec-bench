@@ -413,51 +413,21 @@ def section_2():
 # defect that moves no predicted value is NOT the kind of revision the
 # predictions-file immutability rule was meant to forbid -- so the file
 # IS edited (a SANCTIONED SYNTAX-ONLY CORRECTION, `docs/dev/predictions/
-# CLAUDE.md`'s new standing rule), and Q6 (i)'s own three-way tension
-# (fail-loudly; immutability; regenerability) is closed for Cause B: Q6
-# keeps catching a NEW file with this defect shape (a load-time check,
-# unaffected by this file's own repair), immutability is read narrowly
-# (a syntax fix that moves no predicted value, not a re-prediction), and
-# section 1's load loop above carries NO named exception any more.
-#
-# A SECOND, SEPARATE conflict surfaces once Cause B no longer masks it,
-# FILED here exactly as [B72smalls] filed the first one -- NOT decided
-# in this comment. `check_testee_globs` (Q6 (ii), the SAME lane's OTHER
-# load-time check) now raises on the SAME file's P4.a/P4.b, an
-# already-diagnosed Cause-C defect (`interpret_subject_grain_v1.md`
-# §1.2/§4: `testee=pcrec_*-auto-*` matches no testee that has ever
-# existed) that was ALSO always there but unreachable while Cause B's
-# crash fired first, on an earlier row. Unlike P2, this one is NOT
-# safely fixable under the [B93] standing rule TODAY: repairing the glob
-# alone still crashes `_reduce` on P4.a/P4.b's OWN malformed reducer
-# arguments (`ratio_to`'s bare arg, and `ratio_to_median_over` given a
-# pattern VALUE where it needs a KEY NAME -- P4.b may have been authored
-# for the wrong reducer entirely), and no ledger or design note states a
-# hand-derived number a P4 fix could be verified against the way P2's
-# companion fix was checked against the 2026-09-17 ledger's 5.29 (item 3
-# of "Revising an already-scored file"'s own permission test). Named
-# here, not silently absorbed: these four sidecars are counted
-# SEPARATELY below, BLOCKED ON A RULING, not folded into "fresh" -- and,
-# defensively, ANY OTHER sidecar hitting an unrelated `InterpretError`
-# is caught per-file and reported as a named FAILURE rather than an
-# uncaught crash that would silently stop sections 4-6 from running.
-_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C = {
-    "reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.interpretation.md",
-    "reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.interpretation.md",
-    "reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.interpretation.md",
-    "reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.interpretation.md",
-}
+# CLAUDE.md`'s new standing rule). The SECOND, separate Cause-C defect
+# on the SAME file's P4.a/P4.b (`check_testee_globs`, Q6 (ii)) is ALSO
+# now fixed under the same ruling (the manager's follow-up: both P4
+# clauses read the notes' own meaning unambiguously) -- see the file's
+# own entry in `docs/dev/predictions/CLAUDE.md` for the full derivation
+# and the hand-verified numbers. No named exception remains anywhere in
+# this module for this file; a per-sidecar `try`/`except` below still
+# catches any OTHER, future `InterpretError` as a named failure rather
+# than an uncaught crash that would silently stop sections 4-6.
 
 
 def section_3():
     n = 0
-    n_blocked = 0
     for name in sorted(os.listdir(REPORTS)):
         if not name.endswith(".interpretation.md"):
-            continue
-        rel = f"reports/{name}"
-        if rel in _SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C:
-            n_blocked += 1
             continue
         n += 1
         path = os.path.join(REPORTS, name)
@@ -508,12 +478,6 @@ def section_3():
             ok(3, f"{name}: fresh")
     ok(3, f"{n} committed sidecar(s) checked "
           f"(the sidecars themselves are [B13.4]'s deliverable)")
-    if n_blocked:
-        ok(3, f"{n_blocked} sidecar(s) SKIPPED, NOT counted as fresh -- "
-              f"BLOCKED ON A RULING (see the module-level comment above "
-              f"section_3: P4.a/P4.b's Cause-C testee-glob + reducer-"
-              f"argument defect, surfaced once [B93]'s own Cause-B fix "
-              f"stopped masking it)")
 
 
 # ------------------------------------------------------------ section 4

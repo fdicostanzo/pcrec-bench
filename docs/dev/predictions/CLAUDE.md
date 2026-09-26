@@ -82,21 +82,26 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   per-clause verdicts are `interpret`'s output and are authoritative,
   the parent verdict is the stated arithmetic, and a ledger's tally is a
   human reading the tool must not try to reproduce.
-- `capability-0.1-first.tsv` — **[B93] APPLIED, 2026-09-25** (Frank's
-  ruling on `docs/dev/lanes/b72smalls_report.md` §5's candidate (b);
+- `capability-0.1-first.tsv` — **[B93] APPLIED, 2026-09-25/26** (Frank's
+  ruling on `docs/dev/lanes/b72smalls_report.md` §5's candidate (b), and
+  the manager's follow-up ruling on P4, 2026-09-26;
   `docs/dev/lanes/b93pred_report.md`; "Revising an already-scored file"
   above states the standing rule this correction is the first
   application of): P2.a/P2.b's selector `regime_or_na=n/a` clause
   (Cause B, below) is DROPPED and its `ratio_to(...)` reducer argument
-  is corrected to name `pattern=`/`testee=` explicitly — a SANCTIONED
-  SYNTAX-ONLY CORRECTION, empirically verified to move no predicted
-  value (same `quantity`/`op`/`hi`/`unit`/`note` before and after; only
-  the selector/reducer TEXT changed). The ORIGINAL bytes are in git
-  history (the commit immediately before this one on this file). What
-  follows through "P9 (NOTES.md..." below is the UNCHANGED historical
-  record of the file's first scoring (2026-09-16/17), before this fix —
-  read it as that history, not as this file's current behavior; P2's
-  own corrected reading is at the end of this entry.
+  is corrected to name `pattern=`/`testee=` explicitly; P4.a/P4.b's
+  testee glob typo (Cause C) is corrected and their reducers
+  (`ratio_to`, replacing P4.b's wrong `ratio_to_median_over`) name
+  `pattern=`/`testee=`/(P4.b only)`subject_or_na=`/`regime_or_na=`
+  explicitly too — both SANCTIONED SYNTAX-ONLY CORRECTIONS, empirically
+  verified to move no predicted value (same `quantity`/`op`/`hi`/`unit`/
+  `note` before and after on every one of the four clauses; only
+  selector/reducer TEXT changed). The ORIGINAL bytes are in git history
+  (the commits immediately before this one on this file). What follows
+  through "P9 (NOTES.md..." below is the UNCHANGED historical record of
+  the file's first scoring (2026-09-16/17), before either fix — read it
+  as that history, not as this file's current behavior; P2's and P4's
+  own corrected readings are at the end of this entry.
   `bench/capability/NOTES.md`'s **P1-P10**,
   transcribed 2026-09-16, 17 clause rows over 9 parents (P9 has no row —
   see below). Scored against `reports/2026-09-17-capability-0.1-budu-
@@ -212,29 +217,93 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   roster does not carry these patterns/testees at all. Full derivation,
   the scratch probes and the exact before/after TSV bytes:
   `docs/dev/lanes/b93pred_report.md`.
-  **FILED, NOT FIXED HERE — a NEW, SEPARATE blocker surfaces once P2's
-  crash no longer masks it:** `check_testee_globs` (Q6 (ii), the SAME
-  lane's OTHER load-time check) now raises on P4.a/P4.b's OWN
-  already-diagnosed Cause C (`testee=pcrec_*-auto-*`, a hyphen where
-  every real testee_id has an underscore before `auto` —
-  `interpret_subject_grain_v1.md` §1.2/§4, `docs/dev/lanes/
-  b42subgrain_report.md`), which was previously unreachable for the
-  identical reason (Cause B's crash came first, on an earlier row).
-  Repairing the glob ALONE does not unblock the four sidecars either:
-  P4.a's `ratio_to(logparse-atomic-removed)` and P4.b's
-  `ratio_to_median_over(logparse-atomic-removed)` are BOTH malformed too
-  (a bare pattern name where `ratio_to` needs `<key>=<glob>`, exactly
-  P2's own second defect; and `ratio_to_median_over`'s argument must be
-  a KEY COLUMN NAME like `pattern`, never a pattern VALUE, so P4.b looks
-  to have been authored for the WRONG reducer entirely) — and, unlike
-  P2's companion fix, no ledger or design note states a hand-derived
-  number this lane could verify a P4 fix against (item 3 of "Revising an
-  already-scored file"'s own permission test), so [B93] does not attempt
-  one. `catalogue/check_interpret.py` section 3 now catches this
-  per-sidecar (a NAMED failure, not an uncaught crash) rather than
-  silently masking it; the four sidecars remain UN-regenerated pending a
-  ruling on P4. See `docs/dev/lanes/b93pred_report.md` for the full
-  finding.
+  **P4.a/P4.b: APPLIED, [B93] follow-up (manager ruling, 2026-09-26,
+  "within Frank's option (b), because the notes state the meaning
+  unambiguously").** The SECOND, separate blocker P2's own fix surfaced
+  — `check_testee_globs` (Q6 (ii), the SAME lane's OTHER load-time
+  check) raising on P4.a/P4.b's already-diagnosed Cause C
+  (`testee=pcrec_*-auto-*`, a hyphen where every real testee_id has an
+  underscore before `auto` — `interpret_subject_grain_v1.md` §1.2/§4,
+  `docs/dev/lanes/b42subgrain_report.md`) — is now fixed too, per the
+  manager's exact reading of both clauses' own notes: P4.a is the
+  atomic pattern's `artifact_bytes` ÷ the non-atomic control's
+  (`logparse-atomic-removed`), same testee; P4.b is the atomic
+  pattern's `median_ns` ÷ the control's on the same subject
+  (`lp-atomic-nonmatch`), same regime, same testee — both a `ratio_to`
+  comparison ACROSS patterns, exactly P2's own shape. The glob becomes
+  `pcrec_*_auto-*` (checked against `store/index.tsv`'s real measured
+  auto-caps/auto-nocaps testee ids, both routes, every pin); P4.a's
+  reducer becomes `ratio_to(pattern=logparse-atomic-removed;
+  testee=pcrec_*_auto-*)`; P4.b's becomes `ratio_to` (replacing
+  `ratio_to_median_over`) with the same argument shape plus the
+  subject/regime keys it needs
+  (`ratio_to(pattern=logparse-atomic-removed;subject_or_na=lp-atomic-
+  nonmatch;regime_or_na=short-subject-search;testee=pcrec_*_auto-*)`) —
+  in both, repeating `testee=pcrec_*_auto-*` VERBATIM on both sides of
+  the ratio (unlike P2, where the two sides differ on purpose) so the
+  join scopes the comparison to the SAME testee, per row. `op`/`lo`/
+  `hi`/`unit`/`note` are byte-identical before/after on both clauses.
+
+  **Empirically verified, hand-derived vs. interpreted, for every
+  committed report this file is stamped against** (`docs/dev/lanes/
+  b93pred_report.md` has the full script and every raw cell):
+
+  | report | P4.a (compile:artifact_bytes ratio, worst of N) | P4.b (median_ns ratio) |
+  |---|---|---|
+  | 2026-09-17-...-first-a770139e | **refuted**, worst 1.112 over 4 values (hand: 82,800÷74,448 auto-nocaps whole-subject = 1.11219, matches to 3 decimals; auto-caps both forms = 1.000) | not evaluable (Cause A — see below) |
+  | 2026-09-18-...-after-cf0962e3 | **refuted**, worst 1.112 over 8 values (SAME four byte pairs, twice — a770139e/cf0962e3 pins byte-identical on this pattern) | not evaluable (Cause A) |
+  | 2026-09-18-...-ext-first-cf0962e3 | not evaluable — no row matches (this report's roster carries NO pcrec testee at all; a correct, structural absence, not a defect) | not evaluable (same) |
+  | 2026-09-19-...-ext-second-cf0962e3 | not evaluable — same reason | not evaluable (same) |
+
+  Every P4.a number `interpret` reports matches the hand-derivation to
+  the printed digit; the two `ext-*` reports' "not evaluable" is
+  independently confirmed correct (no pcrec testee is present to
+  glob-match, checked directly against each report's own compile rows).
+
+  **A THIRD, separate structural fact, found while verifying P4.b, left
+  exactly as found — not something this fix could reach**: P4.b's
+  OUTER selector still names `subject_or_na=lp-atomic-nonmatch` /
+  `regime_or_na=short-subject-search` (unchanged from the original,
+  authoring intent), but every one of these four reports is rendered at
+  `grain=set` — at which `render_tsv` writes the literal string `(set)`
+  into every rank row's `subject_or_na`, never the real subject id
+  (Cause A, `interpret_subject_grain_v1.md` §1.2/§4 — the SAME gap that
+  set-grain P3/P6/P7/P10 all report). A selector naming a real subject
+  id can only ever be routed to the subject-grain view via an explicit
+  `grain=subject` key, which this fix does not add (outside the
+  manager's own three-part description; not attempted here). So P4.b
+  reads **not evaluable** on all four reports, correctly and safely (no
+  crash, the ordinary "no row in this report matches the selector"
+  reason) — never the wrong thing, just not yet the RIGHT thing. Hand-
+  derived DIRECTLY FROM THE UNDERLYING RECORDS (not the set-grain TSV,
+  which cannot carry it) for the two reports that DO have a subject-
+  grain sibling committed (`2026-09-18-...-after-cf0962e3`), and
+  cross-checked byte-for-byte against that committed
+  `.subject-grain.tsv`'s own already-reduced `median_ns` rows (same
+  values to six decimals): auto-caps ratio 1.191 (14.802902÷12.431209),
+  auto-nocaps ratio 1.577 (13.516966÷8.571827), both pins identical to
+  three decimals — the clause's own claim ("the atomic form's search
+  cost … is LOWER than the non-atomic control's", i.e. ratio < 1) would
+  be **REFUTED** were it evaluable, not confirmed. This is recorded here
+  as a finding, not acted on: adding `grain=subject` to P4.b was not
+  part of the manager's ruling, and per "Revising an already-scored
+  file"'s own item 3, a further change needs its own verification and
+  its own go-ahead, not a lane's unilateral addition.
+
+  `catalogue/check_interpret.py`'s Cause-C stopgap
+  (`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) is retired; the
+  four sidecars are regenerated (`make check-interpret`: 203 passed, 0
+  FAILED) and their fact diffs reviewed — P2 moves not-evaluable →
+  confirmed on the two reports carrying its patterns (as above); P4
+  moves not-evaluable → **partial** (R-PRED-4, firing for the first
+  time in this project: P4.a refuted, P4.b not-evaluable) on the same
+  two; the two `ext-*` reports change ONLY by the catalogue version
+  stamp (3.2 → 3.8, unrelated growth since these four sidecars were last
+  regenerated, R-STATUS-15/R-DELTA-5 rows appearing in their "did not
+  fire" tables) — their own R-PRED section is untouched, confirming
+  these two reports were never affected by any part of this fix. Full
+  diffs, every raw cell, and the reconciliation with the committed
+  subject-grain TSV: `docs/dev/lanes/b93pred_report.md`.
 
 - `capability-0.1-ext-roster.tsv` — lane `b51preds`, 2026-09-18: the
   predictions for the NEXT sample of the five new [B7]/L6b engines

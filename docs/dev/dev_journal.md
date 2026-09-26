@@ -5879,3 +5879,37 @@ green (200/200) while the four sidecars stay un-regenerated, reported as a
 separate "BLOCKED ON A RULING" count. [B93] STATE:blocked pending a ruling on
 P4; full detail in `docs/dev/lanes/b93pred_report.md`. `make check-interpret` /
 `catalogue/fixtures/gen.py --check` / `make check-schema` all green.
+
+## 2026-09-26 — lane b93pred follow-up: P4 fixed per the manager's ruling, four sidecars regenerated
+
+Manager ruling on the P4 finding filed in the prior entry: both P4.a/P4.b
+are within Frank's option (b) too, since the notes state their meaning
+unambiguously (cross-pattern ratio_to comparisons, exactly P2's own
+shape). Fixed: the testee glob (`pcrec_*-auto-*` -> `pcrec_*_auto-*`,
+checked against store/index.tsv's real measured testees), P4.a's reducer
+(`ratio_to(pattern=logparse-atomic-removed;testee=pcrec_*_auto-*)`),
+P4.b's reducer (switched from the wrong `ratio_to_median_over` to
+`ratio_to` with pattern/subject/regime/testee all repeated so the join
+scopes to the same cell). Hand-derived every raw cell from the report
+TSVs (and, for P4.b, directly from the underlying JSONL records, since
+set-grain rank rows carry no real subject id) and confirmed interpret's
+evaluated value matches to the printed digit on all four committed
+reports: P4.a refutes at worst-ratio 1.112 (82,800/74,448 auto-nocaps
+whole-subject) on the two reports carrying pcrec testees, correctly not
+evaluable on the two ext-roster reports (no pcrec testee in their
+roster at all -- a real absence, not a defect). P4.b stays not
+evaluable everywhere -- found and left as a THIRD, separate, structural
+fact (Cause A, the grain gap: subject_or_na is always the literal
+"(set)" at set grain, and grain=subject was not part of the manager's
+ruling) -- hand-derived anyway from the records and cross-checked
+byte-for-byte against the committed subject-grain TSV's own already-
+reduced numbers (ratio 1.191/1.577, which would REFUTE the clause's
+own "lower" claim if ever reachable). All three named stopgaps this
+file's history carried are retired from catalogue/check_interpret.py;
+the four sidecars regenerated and their fact diffs reviewed (P2 and P4
+move from not-evaluable to real verdicts on the two pcrec-bearing
+reports; the two ext-roster reports move only by the catalogue-version
+stamp, confirming they were never touched by any part of this fix).
+`make check-interpret` 203/0, `catalogue/fixtures/gen.py --check`
+clean, `make check-schema` 6/74/0. [B93] STATE:started, awaiting merge
+(the manager will close it). Full detail: docs/dev/lanes/b93pred_report.md.

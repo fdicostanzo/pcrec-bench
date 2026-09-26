@@ -87,38 +87,51 @@ from its own stamped inputs and requires byte equality, so a stale
 sidecar is a `make check` failure rather than something a reader has to
 notice.
 
-**The [B72smalls] (2026-09-22) stopgap is RETIRED ([B93], 2026-09-25,
-Frank's ruling; `docs/dev/lanes/b93pred_report.md`).** Q6 (i)'s load
-check correctly refused `docs/dev/predictions/capability-0.1-first.tsv`
-at load (P2.a/P2.b's already-diagnosed Cause-B defect) — stamped
-`predictions` on FOUR committed sidecars (`2026-09-17-capability-0.1-
-...-first-a770139e`, `2026-09-18-...-after-cf0962e3`, `2026-09-18-...
--ext-first-cf0962e3`, `2026-09-19-...-ext-second-cf0962e3`), so
-`interpret()` refused to run for any of them, and this section's own
-`section_1`/`section_3` carried a NAMED, provisional exception
+**Both [B72smalls] (2026-09-22) stopgaps are RETIRED ([B93], 2026-09-25/26,
+Frank's ruling + the manager's P4 follow-up ruling;
+`docs/dev/lanes/b93pred_report.md`).** Q6 (i)'s load check correctly
+refused `docs/dev/predictions/capability-0.1-first.tsv` at load (P2.a/
+P2.b's already-diagnosed Cause-B defect) — stamped `predictions` on FOUR
+committed sidecars (`2026-09-17-capability-0.1-...-first-a770139e`,
+`2026-09-18-...-after-cf0962e3`, `2026-09-18-...-ext-first-cf0962e3`,
+`2026-09-19-...-ext-second-cf0962e3`), so `interpret()` refused to run
+for any of them, and this section's own `section_1`/`section_3` carried
+a NAMED, provisional exception (`_KNOWN_HISTORICAL_LOAD_DEFECTS`,
+`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING`) filed for a ruling
+rather than silently absorbed. Frank ruled candidate (b) of that
+filing: fixing an ALREADY-DIAGNOSED, ALREADY-WRITTEN-UP authoring
+defect that moves no predicted value is NOT the revision the
+predictions-immutability rule was meant to forbid — `docs/dev/
+predictions/CLAUDE.md`'s new "Revising an already-scored file" section
+states the resulting standing rule, and P2.a/P2.b are fixed in the
+committed file itself under it.
+
+Retiring that stopgap surfaced a SECOND, separate Cause-C defect
+(P4.a/P4.b's testee-glob typo, Q6 (ii)) that Cause B's earlier-raising
+crash had been masking — filed, not fixed, the same day, pending a
+ruling (a second, differently-named stopgap,
+`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`, kept `make
+check-interpret` green while it was open). **The manager ruled the
+SAME DAY**: both P4 clauses' notes state their meaning unambiguously
+(cross-pattern `ratio_to` comparisons, exactly P2's own shape), so the
+glob and both reducers are fixed too, each hand-verified against the
+report TSV / underlying records before being trusted (`docs/dev/
+predictions/CLAUDE.md`'s file entry has the full table). ALL THREE
+named exceptions this file's history has carried
 (`_KNOWN_HISTORICAL_LOAD_DEFECTS`, `_SIDECARS_BLOCKED_ON_CAPABILITY_
-FIRST_RULING`) filed for a ruling rather than silently absorbed. Frank
-ruled candidate (b) of that filing: fixing an ALREADY-DIAGNOSED,
-ALREADY-WRITTEN-UP authoring defect that moves no predicted value is
-NOT the revision the predictions-immutability rule was meant to forbid
-— `docs/dev/predictions/CLAUDE.md`'s new "Revising an already-scored
-file" section states the resulting standing rule, and P2.a/P2.b are
-fixed in the committed file itself under it. Both named exceptions
-above are GONE from `check_interpret.py` — Q6 (i) now passes on every
-committed predictions file with no exception, exactly as it would for
-any file that never carried the defect.
-**A SECOND, SEPARATE Cause-C defect (P4.a/P4.b's testee-glob typo,
-Q6 (ii), previously masked by Cause B's earlier-raising crash) is now
-what blocks the four sidecars** — filed, not fixed, in the same lane
-report: no ledger or design note states a hand-derived number a P4 fix
-could be verified against, the way P2's companion reducer-argument fix
-was checked against the 2026-09-17 ledger's 5.29. `check_interpret.py`
-section 3 now catches this per-sidecar as a NAMED failure (never an
-uncaught crash that would silently stop sections 4-6 from running) —
-`make check-interpret` reports 4 FAILED there, honestly, rather than
-green by a workaround. The real `/pcrec-bench-interpret` skill and
-`scripts/regen_sidecars.py` hit the identical `PredictionError` today,
-for the identical reason, pending a ruling on P4.
+FIRST_RULING`, `_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) are
+GONE from `check_interpret.py` — Q6 (i)/Q6 (ii) now pass on every
+committed predictions file with no exception, exactly as they would
+for a file that never carried either defect, and the four sidecars are
+regenerated for real (`make check-interpret`: 203 passed, 0 FAILED).
+One residual, NOT part of this fix: P4.b's own `subject_or_na`/
+`regime_or_na` selector keys need `grain=subject` to ever be reachable
+at set grain (Cause A, a third, separate structural fact) — outside
+the manager's three-part ruling, so P4.b stays `not evaluable`
+(correctly, safely, no crash) on every report; hand-derived from the
+underlying records and cross-checked against the committed
+subject-grain TSV anyway, for the record (`docs/dev/predictions/
+CLAUDE.md`).
 
 ## Running
 
