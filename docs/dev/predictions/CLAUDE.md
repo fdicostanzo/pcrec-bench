@@ -704,8 +704,14 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   (`unsupported-by-declaration` — `render_tsv` has NO unsupported section;
   only `--format matrix` carries `unsup`, which `interpret` does not
   read; utf8_set_v1.md 11's proposed `unsupported_by_pattern` SECTION does
-  not exist)**, and P7's raised-cap half (no `pcrec-*-bigcap-utf8`
-  testee). `stated_utc` 2026-09-26T00:30:00Z precedes every `utf8` index
+  not exist)** -- **[B91] (2026-09-26) built it**: reporter v24's
+  `unsupported_by_pattern` section + catalogue 3.9 make them EXPRESSIBLE
+  (`section=unsupported_by_pattern`, quantity `section`, reducer `count`),
+  but this file is NOT amended -- its `stated_utc` precedes the window and a
+  clause added now would be written after the data exists; whether to add
+  them (as a dated post-hoc census, not a prediction) is the manager's
+  ruling (`docs/dev/lanes/b91views_report.md`) -- and P7's raised-cap half
+  (no `pcrec-*-bigcap-utf8` testee). `stated_utc` 2026-09-26T00:30:00Z precedes every `utf8` index
   row (there is none), so the normal CLI path scores it at the first
   window; P2/P3 need the report's `--subject-grain` slice.
 

@@ -150,7 +150,11 @@ rule it trips. (utf8_set_v1.md 12, in `bench/syntax`'s and
   missing data.** This set's share will be the largest in the repo
   (utf8_set_v1.md 7.4); read as a count per (engine, family), never as an
   absence. Read it off the `.matrix.tsv` sibling: the report TSV carries no
-  unsupported section (see P5 below).
+  unsupported section (see P5 below). **[B91] addendum (2026-09-26, after
+  this rule was stated, before the first sample was READ):** reporter v24's
+  report TSV now carries it -- the `unsupported_by_pattern` section, one row
+  per (pattern, form, testee), readable by `interpret` (catalogue 3.9); the
+  rule's meaning is unchanged.
 
 **Ranking** (I-42, Frank: "algorithmically and generally first, SIMD at
 the end"): R0, then R1, then any R2-R7 cell whose likely fix is a GENERAL
