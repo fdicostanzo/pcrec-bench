@@ -2902,6 +2902,113 @@ def check_describe_schema_shape():
         bad("KB-21: the fixed named_value shape validates clean (control)", err)
 
 
+# ---------------------------- 13b KB-33: a refusal row's engine_metadata
+
+#: A single pattern refused by EVERY adapter family on this roster with a
+#: clean, structural did-not-compile -- confirmed live against every
+#: discovered adapter's first testee (lane b98rider, docs/dev/lanes/
+#: b98rider_report.md): onig ("end pattern with unmatched parenthesis"),
+#: pcre2 ("missing closing parenthesis"), pcrec ("missing closing ) for
+#: group"), re2 (ErrorMissingParen), rust (Syntax, "unclosed group"), tre
+#: ("Missing ')'"), vectorscan ("Missing close parenthesis for group"). One
+#: witness serves every family, so this control needs no per-adapter
+#: pattern table, and no new one is needed the day an eighth adapter lands.
+_KB33_UNCLOSED_PATTERN = b"(unclosed"
+
+
+def check_kb33_refusal_metadata_declared():
+    """KB-33 (docs/dev/known_issues.md, found by the [B95] window): the re2
+    adapter emitted `engine_metadata.refusal_class` on every did-not-compile
+    row since it landed, but never listed it in `METADATA_DECL` -- invisible
+    until utf8@0.1's first re2 refusal (`prp-greek-sc`) hit
+    `schema/validate.py`'s X15 at `store.write()` and rejected the WHOLE
+    31-minute cell after every trial had already run, nothing written.
+    FIXED the same day; this is the control OWED after the fix.
+
+    Compiles ONE known-refused pattern (`_KB33_UNCLOSED_PATTERN` above)
+    through every discovered adapter's FIRST testee and asserts every key
+    its did-not-compile row's `engine_metadata` carries is a SUBSET of that
+    same testee's `describe()['engine_metadata_declaration']` -- the X15
+    rule, run here at the adapter boundary, BEFORE a whole cell's trials are
+    spent finding out at `store.write()` months later.
+
+    Both directions, same technique `check_describe_schema_shape`'s KB-21
+    negative already uses (a real block, one field reverted, never a
+    fixture invented from memory): the positive sweep, every real adapter
+    as it stands today, must pass clean; the NEGATIVE reproduces KB-33's
+    EXACT bug -- the re2 adapter's own real `describe()` block with
+    `refusal_class` stripped back out of its declaration -- and must be
+    REFUSED BY NAME, naming that one key and no other."""
+    print("-- KB-33: a refusal row's engine_metadata is declared --")
+    adapters = _ad.discover()
+    if not adapters:
+        bad("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+            "no adapters discovered")
+        return
+
+    failures, checked, captured = [], [], {}
+    for name, adapter in sorted(adapters.items()):
+        tids = sorted(adapter.testees())
+        if not tids:
+            continue
+        tid = tids[0]
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-kb33-%s-" % name)
+        try:
+            adapter.prepare(tid, tmp)
+            block = adapter.describe(tid, tmp)
+            cp = adapter.compile(tid, "kb33-unclosed", _KB33_UNCLOSED_PATTERN,
+                                 {}, 1, tmp)
+            cr = cp.get(_ad.FORM_PLAIN)
+        except Exception as e:  # noqa: BLE001
+            failures.append("%s/%s: raised: %s" % (name, tid, e))
+            continue
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        if cr is None or cr.outcome != "did-not-compile":
+            failures.append(
+                "%s/%s: `(unclosed` did not refuse (outcome=%r) -- this "
+                "witness needs a replacement for this family"
+                % (name, tid, cr.outcome if cr else None))
+            continue
+        decl = set((block.get("engine_metadata_declaration") or {}).keys())
+        undeclared = sorted(set(cr.engine_metadata) - decl)
+        captured[name] = (tid, block, cr)
+        if undeclared:
+            failures.append(
+                "%s/%s: refusal-row engine_metadata %s not in describe()'s "
+                "engine_metadata_declaration %s"
+                % (name, tid, undeclared, sorted(decl)))
+        else:
+            checked.append("%s/%s (%s)"
+                           % (name, tid, sorted(cr.engine_metadata) or "none"))
+    if failures:
+        bad("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+            "; ".join(failures)[:600])
+    else:
+        ok("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+           "%d adapter(s): %s" % (len(checked), ", ".join(checked)))
+
+    # ---- negative: re2's OWN real describe() block, `refusal_class`
+    # stripped back out of the declaration -- KB-33's exact bug, reproduced.
+    try:
+        tid, block, cr = captured["re2"]
+    except KeyError:
+        bad("KB-33: the re2 KB-33 shape is refused BY NAME",
+            "no re2 adapter discovered (or its own arm failed above)")
+        return
+    bug_decl = dict(block.get("engine_metadata_declaration") or {})
+    bug_decl.pop("refusal_class", None)
+    undeclared = sorted(set(cr.engine_metadata) - set(bug_decl))
+    if undeclared == ["refusal_class"]:
+        ok("KB-33: the re2 KB-33 shape is refused BY NAME",
+           "undeclared=%s (re2/%s, engine_metadata=%s)"
+           % (undeclared, tid, sorted(cr.engine_metadata)))
+    else:
+        bad("KB-33: the re2 KB-33 shape is refused BY NAME",
+            "undeclared=%r (expected exactly ['refusal_class'])"
+            % (undeclared,))
+
+
 # --------------------------------------- 14 the abi 4-8 mechanism stamps
 
 #: The artifacts the stamp check compiles, and what each is FOR. Every row
@@ -11340,6 +11447,318 @@ def check_wrap_spelling_fix():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+class _KB30Subject:
+    """A minimal duck-typed subject for `Adapter.measure()` -- only
+    `subject_id`/`path` are read (`driverrun.write_list`); no sub-bench,
+    no Subbench(), a real subject file on disk."""
+
+    def __init__(self, sid, path):
+        self.subject_id, self.path = sid, path
+
+
+def check_vectorscan_free_spacing_measure():
+    r"""KB-30 (docs/dev/known_issues.md, found by lane [B77] U2; FIXED
+    lane b98rider, 2026-09-26): `measure()`'s driver RECOMPILES from the
+    SAME pattern file `compile()` used (the same reason `--som`/
+    `--encoding utf8` already ride along, `adapter.py`'s own comments),
+    but never carried `--free-spacing` -- so an `(?x)` whole-subject
+    pattern ending in a `#` comment was compiled WITH the flag (the
+    correct `^(?:...\n)\z` wrap, comment safely terminated) and measured
+    WITHOUT it (the wrap's `)\z` lands ON the open comment, an unbalanced
+    paren `hs_compile` refuses) -- two different parses of the one
+    artifact `measure()` was supposed to be timing.
+
+    Both arms through the REAL adapter, never a second driver invocation
+    built by hand: (1) THE FIX -- compile a witness `(?x)` pattern ending
+    directly on a `#` comment (the [B69] census's own shape) with
+    `requires_free_spacing=True`, then MEASURE the real
+    handle (which now carries `free_spacing`) over a matching subject --
+    must answer `matched=True`, agreeing with what the pattern actually
+    means once the comment is safely closed. (2) THE NEGATIVE, reproducing
+    KB-30's exact bug: the SAME handle with `free_spacing` popped back out
+    (simulating the pre-fix adapter, which never set the key at all) --
+    the measure-time driver must CRASH (`hs_compile` refuses, exit 3, a
+    "crashed the driver" note) and the row must come back `matched=False`
+    -- a SILENT WRONG ANSWER, not merely a loud failure, which is why this
+    bug needed a control: a reader watching for a crash log would have
+    missed that the subject also scored incorrectly. (3) TWO controls
+    proving the fix is scoped to exactly the form that needed it: (3a)
+    this witness's OWN `plain` form is a real, documented Vectorscan
+    refusal (its `(?x)` parser wants a genuine newline to terminate a
+    comment, unlike PCRE's end-of-string rule -- testees/vectorscan/
+    CLAUDE.md) that has nothing to do with this fix, since the harness
+    never wraps `plain` at all; (3b) an ORDINARY compiling `plain`-form
+    handle (an `(?x)` pattern with no trailing comment) never carries
+    `free_spacing` at all (`_compile_one` only computes it for
+    `whole-subject`)."""
+    print("-- KB-30: vectorscan measure() carries --free-spacing too --")
+    if "vectorscan" not in _ad.discover():
+        print("   (vectorscan adapter/library not present on this box "
+              "-- skipped)")
+        return
+
+    a = _ad.discover()["vectorscan"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-kb30-")
+    try:
+        a.prepare("vectorscan-block-nosom", tmp)
+        # ends directly on a `#` comment, no trailing newline -- the [B69]
+        # census's own shape; matches the literal "a" once `(?x)`'s
+        # whitespace/comment handling is applied.
+        pattern = b"(?x)  a  # trailing comment, no newline"
+        cp = a.compile("vectorscan-block-nosom", "kb30-fs", pattern, {}, 1,
+                       tmp, requires_free_spacing=True)
+        ws = cp.get(_ad.FORM_WHOLE_SUBJECT)
+        plain = cp.get(_ad.FORM_PLAIN)
+        if ws.outcome != "compiled":
+            bad("KB-30: the witness compiles under the fixed wrap",
+                "outcome=%s diagnostic=%r" % (ws.outcome, ws.diagnostic))
+            return
+        ok("KB-30: the witness compiles under the fixed wrap", ws.outcome)
+
+        subj_path = os.path.join(tmp, "kb30-subject.txt")
+        with open(subj_path, "wb") as f:
+            f.write(b"a")
+        subj = _KB30Subject("s1", subj_path)
+
+        # 1. THE FIX: measure() with the real (fixed) handle.
+        rows_fixed, _i, notes_fixed = a.measure(dict(ws.handle), "match",
+                                                [subj], 1, 1, timeout=30)
+        row = rows_fixed[0][0]
+        if row.matched and not notes_fixed:
+            ok("KB-30: measure() with the fix answers matched=True, no crash",
+               "matched=%r notes=%r" % (row.matched, notes_fixed))
+        else:
+            bad("KB-30: measure() with the fix answers matched=True, no crash",
+                "matched=%r notes=%r" % (row.matched, notes_fixed))
+
+        # 2. THE NEGATIVE: KB-30's exact bug, reproduced by popping the key
+        # this fix added back out of a COPY of the same real handle (same
+        # technique KB-21's/KB-33's negatives use: a real object, one field
+        # reverted, never an invented fixture).
+        bug_handle = dict(ws.handle)
+        bug_handle.pop("free_spacing", None)
+        rows_bug, _i2, notes_bug = a.measure(bug_handle, "match", [subj],
+                                             1, 1, timeout=30)
+        row_bug = rows_bug[0][0]
+        crashed = any("crashed the driver" in n for n in notes_bug)
+        if crashed and row_bug.matched is False:
+            ok("KB-30: without the fix, measure() crashes AND silently "
+               "answers matched=False",
+               "matched=%r notes=%r" % (row_bug.matched, notes_bug))
+        else:
+            bad("KB-30: without the fix, measure() crashes AND silently "
+                "answers matched=False (the bug this fix closed no longer "
+                "reproduces -- update this witness)",
+                "matched=%r notes=%r" % (row_bug.matched, notes_bug))
+
+        # 3a. This witness's OWN plain form is a real, documented
+        # Vectorscan refusal (testees/vectorscan/CLAUDE.md: its `(?x)`
+        # parser wants a REAL newline to terminate a comment, unlike
+        # PCRE's end-of-string rule) -- not a shape this fix touches at
+        # all (the harness never wraps `plain`), so it must refuse the
+        # SAME way regardless of `requires_free_spacing`, proving this
+        # fix changes nothing about the plain form.
+        if plain.outcome == "did-not-compile" and "Unterminated comment" in (plain.diagnostic or ""):
+            ok("KB-30 control: the witness's own plain form refuses "
+               "(Vectorscan's real (?x) comment rule, untouched by this fix)",
+               plain.diagnostic)
+        else:
+            bad("KB-30 control: the witness's own plain form refuses "
+                "(Vectorscan's real (?x) comment rule, untouched by this fix)",
+                "outcome=%s diagnostic=%r" % (plain.outcome, plain.diagnostic))
+
+        # 3b. CONTROL: a plain-form handle that DOES compile (an (?x)
+        # pattern with no trailing comment) always carries `free_spacing:
+        # False` -- `_compile_one` computes it as `requires_free_spacing
+        # and form == FORM_WHOLE_SUBJECT`, so `plain` never gets a true
+        # value even when the CALLER asked for it -- so `measure()`'s
+        # `handle.get("free_spacing")` is falsy and appends nothing.
+        cp2 = a.compile("vectorscan-block-nosom", "kb30-fs-plain-ok",
+                        b"(?x) a", {}, 1, tmp, requires_free_spacing=True)
+        plain_ok = cp2.get(_ad.FORM_PLAIN)
+        if plain_ok.outcome == "compiled" and not plain_ok.handle.get("free_spacing"):
+            ok("KB-30 control: an ordinary compiling plain-form handle's "
+               "free_spacing is falsy (unaffected by this fix)",
+               "outcome=%s free_spacing=%r"
+               % (plain_ok.outcome, plain_ok.handle.get("free_spacing")))
+        else:
+            bad("KB-30 control: an ordinary compiling plain-form handle's "
+                "free_spacing is falsy (unaffected by this fix)",
+                "outcome=%s handle=%r" % (plain_ok.outcome, plain_ok.handle))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_kb29_find_all_giveup_propagation():
+    r"""KB-29 (docs/dev/known_issues.md, found by lane [B77] U1; FIXED for
+    pcre2/onig/pcrec by lane b98rider, 2026-09-26): in every driver's
+    find-all loop, a negative return from the engine AFTER at least one
+    match had already been found simply ended the loop -- so a genuine
+    give-up mid-subject was silently reported as an ordinary `match` with
+    a SHORT count, never as `giveup:<code>` by name. Fixed at the driver
+    level (`testees/{pcre2,onig,pcrec}/driver.c`): the loop's own terminal
+    code is now ALWAYS tracked (not only when the count is still 0), and
+    a genuine give-up discards any matches already accumulated THIS call
+    before falling through to the ordinary `giveup:<code>:<message>`
+    branch every FIRST-call give-up already took.
+
+    Three REAL witnesses, one per fixed engine, each a genuine engine
+    give-up (never a fabricated one) chosen so the first find-all call
+    succeeds (count becomes 1) and the SECOND call is where the engine
+    gives up -- exactly the shape the bug discarded:
+
+      - pcre2: `x*` under `--utf` WITHOUT `--utf8` (the byte-stepping
+        advance), with `--utf-always-check` so the driver's own [B94]
+        VALIDATE-ONCE guard (which would otherwise `die()` loudly on an
+        asserted non-boundary offset rather than ever calling pcre2_match)
+        is not what fires -- the second call genuinely reaches
+        pcre2_match mid-character and pcre2 ITSELF returns
+        PCRE2_ERROR_BADUTFOFFSET (-36) (this is ALSO `check_utf8_find_
+        all_advance`'s own documented negative case, re-used here for a
+        different purpose: propagation, not the advance rule itself).
+      - onig: `b|(a+)+$` over `b` + 35 `a` + `X` -- the first call matches
+        `b` at [0,1); the second call's `(a+)+$` alternative, tried from
+        offset 1 over the 'a'-run, blows Oniguruma's own DEFAULT
+        match-retry budget (`ONIGERR_RETRY_LIMIT_IN_MATCH_OVER`, -17,
+        ~0.2 s -- testees/onig/CLAUDE.md's own documented mechanism).
+      - pcrec: the SAME shape (`b|(a+)+$` over the same subject) under
+        `--engine=vm` -- pcrec's own step budget gives up
+        (`PCREC_ERR_STEPS`, -2) on the second call for the same reason.
+
+    Each is asserted TWICE against the REAL, compiled driver: the CURRENT
+    (fixed) build must answer `giveup:<code>` with NO span and NO count;
+    a control on the SAME driver/pattern with a subject too short to
+    reach the give-up at all must still answer plain `match` with the
+    real count, proving the fix does not turn every find-all cell into a
+    give-up. The bug's OWN reproduction (this exact `match`-with-a-
+    truncated-count answer on the SAME three witnesses, both directions)
+    was verified by hand during this lane against the pre-fix driver.c
+    (`git stash` the file, rebuild, re-run, `git stash pop`) -- recorded
+    in docs/dev/lanes/b98rider_report.md and docs/dev/known_issues.md
+    rather than re-run here every check-harness pass, since doing so
+    would mean carrying a second, permanently-unfixed copy of each
+    driver just to keep re-proving a bug this lane already closed."""
+    print("-- KB-29: a mid-loop find-all give-up is never silently "
+          "truncated to a short count --")
+    adapters = _ad.discover()
+
+    # ---------------------------------------------------------- pcre2
+    if "pcre2" in adapters:
+        a = adapters["pcre2"]
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-kb29-pcre2-")
+        try:
+            a.prepare("pcre2-interp", tmp)
+            cp = a.compile("pcre2-interp", "kb29-pcre2", b"x*", {}, 1, tmp)
+            plain = cp.get(_ad.FORM_PLAIN)
+            drv = plain.handle["driver"]
+            patfile = plain.handle["pattern_file"]
+
+            def run_pcre2(subject_bytes, label):
+                subj_path = os.path.join(tmp, "kb29-pcre2-%s.bin" % label)
+                with open(subj_path, "wb") as f:
+                    f.write(subject_bytes)
+                listfile = os.path.join(tmp, "kb29-pcre2-%s.tsv" % label)
+                with open(listfile, "w") as f:
+                    f.write("s1\t%s\n" % subj_path)
+                argv = [drv, "--pattern", patfile, "--list", listfile,
+                        "--mode", "search", "--find-all", "--utf",
+                        "--utf-always-check", "--iters", "1"]
+                out = subprocess.run(argv, capture_output=True, text=True,
+                                     timeout=30)
+                for line in out.stdout.splitlines():
+                    cols = line.split("\t")
+                    if cols and cols[0] == "subject":
+                        return cols
+                return None
+
+            # the give-up: 'a' + U+00E9 (2 bytes) -- call 1 matches the
+            # empty string at 0 (count 1, pos advances to 1 by start+1
+            # since byte-stepping is in effect), call 2 at byte offset 1
+            # lands mid-character.
+            giveup_row = run_pcre2(b"a" + "é".encode("utf-8"), "giveup")
+            if giveup_row and giveup_row[2].startswith("giveup:-36"):
+                ok("KB-29/pcre2: a mid-loop BADUTFOFFSET is reported "
+                   "giveup:-36, not a truncated match",
+                   "\t".join(giveup_row))
+            else:
+                bad("KB-29/pcre2: a mid-loop BADUTFOFFSET is reported "
+                    "giveup:-36, not a truncated match",
+                    giveup_row)
+
+            # CONTROL: an all-ASCII subject never reaches a mid-character
+            # offset at all -- ordinary match, real count.
+            ctrl_row = run_pcre2(b"aaaa", "control")
+            if ctrl_row and ctrl_row[2] == "match" and ctrl_row[9] == "5":
+                ok("KB-29/pcre2 control: an all-ASCII subject still "
+                   "answers an ordinary match with the real count",
+                   "\t".join(ctrl_row))
+            else:
+                bad("KB-29/pcre2 control: an all-ASCII subject still "
+                    "answers an ordinary match with the real count",
+                    ctrl_row)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+    else:
+        print("   (pcre2 adapter not present -- skipped)")
+
+    # ----------------------------------------------------- onig / pcrec
+    GIVEUP_WITNESS = b"b|(a+)+$"
+    GIVEUP_SUBJECT = b"b" + b"a" * 35 + b"X"
+    CONTROL_SUBJECT = b"b"
+
+    def run_c_driver(adapter, testee_id, subject_bytes, label, tmp):
+        adapter.prepare(testee_id, tmp)
+        cp = adapter.compile(testee_id, "kb29-" + label, GIVEUP_WITNESS,
+                             {}, 1, tmp)
+        plain = cp.get(_ad.FORM_PLAIN)
+        if plain.outcome != "compiled":
+            return None, plain
+        subj_path = os.path.join(tmp, "kb29-%s-subj.bin" % label)
+        with open(subj_path, "wb") as f:
+            f.write(subject_bytes)
+        subj = _KB30Subject("s1", subj_path)
+        rows_by_trial, _i, notes = adapter.measure(
+            dict(plain.handle), "throughput", [subj], 1, 1, timeout=30)
+        return rows_by_trial[0][0], plain
+
+    for engine, testee_id in (("onig", "onig-default"), ("pcrec", "pcrec-vm")):
+        if engine not in adapters:
+            print("   (%s adapter not present -- skipped)" % engine)
+            continue
+        a = adapters[engine]
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-kb29-%s-" % engine)
+        try:
+            row, plain = run_c_driver(a, testee_id, GIVEUP_SUBJECT,
+                                      "%s-giveup" % engine, tmp)
+            if row is None:
+                bad("KB-29/%s: the witness compiles" % engine,
+                    "outcome=%s diagnostic=%r"
+                    % (plain.outcome, plain.diagnostic))
+                continue
+            if row.answer.startswith("giveup:") and not row.matched:
+                ok("KB-29/%s: a mid-loop give-up is reported giveup:<code>, "
+                   "not a truncated match" % engine, row.answer)
+            else:
+                bad("KB-29/%s: a mid-loop give-up is reported giveup:<code>, "
+                    "not a truncated match" % engine,
+                    "answer=%r matched=%r" % (row.answer, row.matched))
+
+            # CONTROL: a subject that never reaches the second (blow-up)
+            # call at all -- the ordinary match, real count.
+            ctrl_row, _plain2 = run_c_driver(a, testee_id, CONTROL_SUBJECT,
+                                             "%s-control" % engine, tmp)
+            if ctrl_row is not None and ctrl_row.matched and ctrl_row.start == 0:
+                ok("KB-29/%s control: a short, non-blow-up subject still "
+                   "answers an ordinary match" % engine,
+                   "answer=%r start=%r" % (ctrl_row.answer, ctrl_row.start))
+            else:
+                bad("KB-29/%s control: a short, non-blow-up subject still "
+                    "answers an ordinary match" % engine,
+                    ctrl_row.answer if ctrl_row else None)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_vectorscan_som():
     """[B92] (docs/dev/plan.md; Frank's ruling on docs/dev/lanes/
     b72smalls_report.md 4 / `capability_set_v1.md` 5.6 -- option (b) of
@@ -11515,6 +11934,115 @@ def check_vectorscan_som():
                 "nosom, did-not-compile under som)",
                 "nosom=%s som=%s diag=%r"
                 % (cr_nosom.outcome, cr_som.outcome, cr_som.diagnostic))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_kb34_leading_verb_hoist():
+    r"""KB-34 (docs/dev/known_issues.md, found by lane [B95]/b95read;
+    FIXED lane b98rider, 2026-09-26): the vectorscan driver's own
+    whole-subject wrap used to put `^(?:` in front of the caller's raw
+    pattern bytes UNCONDITIONALLY, which moves a leading PCRE setting-verb
+    -- `(*UCP)`, in every corpus witness -- from index 0 to index 4,
+    something Hyperscan's own parser refuses outright ("(*UCP) must be at
+    start of expression"). `bench/utf8`'s five `(*UCP)`-leading patterns
+    (`cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp`, `ci-ucp-invariance`,
+    `asr-b-cyr-ucp`) therefore refused their WHOLE-SUBJECT form even
+    though their PLAIN form (and every other engine's whole-subject form)
+    compiled fine -- five spurious refusals, invisible in this set's
+    measured cells only because bench/utf8 has no `match` regime (a set
+    that did would have recorded them). Fixed by hoisting any leading
+    `(*VERB)` run OUTSIDE the `(?:...)` group (`leading_verb_len` in
+    driver.c): `(*UCP)\w+` now wraps as `(*UCP)^(?:\w+)\z` instead of
+    `^(?:(*UCP)\w+)\z`.
+
+    Four arms, all through the REAL adapter/driver: (1) the real corpus
+    witness (`cls-w-ucp`'s own pattern, `(*UCP)\w+`) now COMPILES
+    whole-subject where it used to refuse (reproduced against the
+    UNFIXED driver by hand during this lane -- `git stash` driver.c,
+    rebuild, confirm the exact "(*UCP) must be at start of expression,
+    encountered at index 6" refusal, `git stash pop` -- recorded in
+    docs/dev/lanes/b98rider_report.md rather than re-run here every
+    pass); (2) SEMANTICS, not merely compilation: the hoisted-verb
+    artifact answers a Cyrillic (UCP word-class) subject `match` and the
+    SAME subject with trailing punctuation `nomatch` -- the wrap did not
+    just start compiling, it means what it always should have; (3) the
+    PLAIN form of the same pattern is BYTE-FOR-BYTE UNAFFECTED (this fix
+    touches only the whole-subject wrap); (4) CONTROL -- a pattern
+    beginning with an UNTERMINATED `(*` (no closing `)` anywhere in the
+    text) is left ALONE by `leading_verb_len` (returns 0) and refuses
+    whole-subject exactly as before, proving the hoist is precise rather
+    than swallowing anything that merely starts with `(*`."""
+    print("-- KB-34: vectorscan's whole-subject wrap hoists a leading "
+          "(*VERB) --")
+    if "vectorscan" not in _ad.discover():
+        print("   (vectorscan adapter/library not present on this box "
+              "-- skipped)")
+        return
+    a = _ad.discover()["vectorscan"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-kb34-")
+    try:
+        a.prepare("vectorscan-block-nosom", tmp)
+
+        # 1 + 3: the real corpus witness, both forms.
+        cp = a.compile("vectorscan-block-nosom", "kb34-ucp", b"(*UCP)\\w+",
+                       {}, 1, tmp)
+        plain = cp.get(_ad.FORM_PLAIN)
+        ws = cp.get(_ad.FORM_WHOLE_SUBJECT)
+        if ws.outcome == "compiled":
+            ok("KB-34: (*UCP)\\w+ compiles whole-subject (was refused: "
+               "'(*UCP) must be at start of expression, encountered at "
+               "index 6')", ws.outcome)
+        else:
+            bad("KB-34: (*UCP)\\w+ compiles whole-subject", ws.diagnostic)
+        if plain.outcome == "compiled":
+            ok("KB-34: the plain form is unaffected by this fix",
+               plain.outcome)
+        else:
+            bad("KB-34: the plain form is unaffected by this fix",
+                "outcome=%s diagnostic=%r" % (plain.outcome, plain.diagnostic))
+
+        # 2: semantics, against hand-verified answers (UCP-scoped \w+
+        # matches a whole Cyrillic word; it must NOT match the same word
+        # plus trailing punctuation, which is not \w even under UCP).
+        # Needs HS_FLAG_UTF8 (the `-utf8` sibling testee, [B77] U2) --
+        # under byte mode a multi-byte UTF-8 character's individual bytes
+        # are not recognised as one \w character at all, which would
+        # test the ENCODING, not this fix's own hoist.
+        if "vectorscan-block-nosom-utf8" in a.testees() and ws.outcome == "compiled":
+            a.prepare("vectorscan-block-nosom-utf8", tmp)
+            cp_u = a.compile("vectorscan-block-nosom-utf8", "kb34-ucp-utf8",
+                             b"(*UCP)\\w+", {}, 1, tmp)
+            ws_u = cp_u.get(_ad.FORM_WHOLE_SUBJECT)
+            def mk_subj(sid, body, tmp=tmp):
+                path = os.path.join(tmp, "kb34-%s.bin" % sid)
+                with open(path, "wb") as f:
+                    f.write(body)
+                return _KB30Subject(sid, path)
+            subs = [mk_subj("cyr", "Москва".encode("utf-8")),
+                    mk_subj("cyr-bad", "Москва!".encode("utf-8"))]
+            rows_by_trial, _i, _n = a.measure(dict(ws_u.handle), "match", subs,
+                                              1, 1, timeout=30)
+            answers = {r.subject_id: r.matched for r in rows_by_trial[0]}
+            if answers.get("cyr") is True and answers.get("cyr-bad") is False:
+                ok("KB-34: the hoisted-verb artifact answers real UCP "
+                   "\\w+ semantics, not merely 'compiles'", answers)
+            else:
+                bad("KB-34: the hoisted-verb artifact answers real UCP "
+                    "\\w+ semantics, not merely 'compiles'", answers)
+
+        # 4: CONTROL -- an unterminated `(*` is left alone (hoist length
+        # 0) and the whole-subject form refuses exactly as it always has.
+        cp_bad = a.compile("vectorscan-block-nosom", "kb34-unterminated",
+                           b"(*UCPnotaverb", {}, 1, tmp)
+        ws_bad = cp_bad.get(_ad.FORM_WHOLE_SUBJECT)
+        if ws_bad.outcome == "did-not-compile":
+            ok("KB-34 control: an unterminated '(*' is untouched by the "
+               "hoist and refuses as before", ws_bad.diagnostic)
+        else:
+            bad("KB-34 control: an unterminated '(*' is untouched by the "
+                "hoist and refuses as before",
+                "outcome=%s" % ws_bad.outcome)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -11921,6 +12449,7 @@ def main():
     check_rxt_source_load()
     check_kb1_runtime_options()
     check_describe_schema_shape()
+    check_kb33_refusal_metadata_declared()
     check_mechanism_stamps()
     check_program_sha256()
     check_vars_surface()
@@ -11958,6 +12487,9 @@ def main():
     check_convention_scoring()
     check_boolean_grain_scoring()
     check_vectorscan_som()
+    check_vectorscan_free_spacing_measure()
+    check_kb34_leading_verb_hoist()
+    check_kb29_find_all_giveup_propagation()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     print()

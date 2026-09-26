@@ -1552,6 +1552,44 @@ YES-class config against pcrec `auto-nocaps`.
   program hash of their own" was true of the ce658cb7 pair's BEFORE
   only). `_field_carriage` counts, per side of each pair, the compiled
   cells whose compile row carries the field.
+
+KB-31 (2026-09-26, lane b98rider; v25) -- `did_not_compile` ROWS ARE NOW
+F26-IMMUNE TOO. `_tsv_ranking_pass`'s existing `did_not_compile` rows
+(emitted inside its `for gkey in sorted(groups)` loop) had the SAME F26
+gap `unsupported_by_pattern` was fixed for at [B91]: a pattern refused
+by EVERY testee in the roster has no `set_cells`/`match_cells` entry at
+ANY regime, so `groups` (built from exactly those dicts) carries no key
+for it, the per-group loop never visits it, and its refusal rows never
+printed even though `rd.did_not_compile_by_pattern` carries them. Fixed
+with the SAME technique as [B91] (A): a new block, right before the
+`unsupported_by_pattern` section, emits `did_not_compile` rows straight
+from `rd.did_not_compile_by_pattern` for exactly the `(sb, pattern_id)`
+pairs with ZERO representation in `groups` -- a pattern SOME testee
+compiled keeps getting its rows from the pre-existing per-group path,
+unchanged (proved by a control in the new test: a pattern with a real
+group emits from the OLD path only, never twice). Found live in a
+committed report, not merely constructed: `bench/utf8`'s `prp-ingreek`
+(a DECLARED oracle refusal -- every one of the 11 testees that measured
+utf8@0.1 refuses it, `\\p{InGreek}` being unimplemented everywhere) has
+ZERO ranking group and so, before this fix, printed ZERO
+`did_not_compile` rows in the committed
+`reports/2026-09-26-utf8-0.1-budu-ryzen1600-first-ce658cb7.tsv` despite
+appearing correctly in that file's `compile` rows and in its
+`.matrix.tsv` sibling (already F26-immune via `_matrix_row_keys`'s own
+union). `REPORTER_VERSION` bumps to `v25 (2026-09-26)`. Regeneration is
+OWED to the manager's regen wave; derived from the real committed store
+(`store/records/`, not a heuristic over the live `bench/*/` sidecars,
+which drift across sub-bench versions), the ONLY committed report this
+fix is known to change is the one named above (it gains eleven new
+`did_not_compile\tprp-ingreek\t...` rows, one per utf8@0.1 testee; its
+`.md` sibling is unaffected -- `render_markdown` has no analogous
+all-refused-pattern section and was out of this fix's scope, a
+follow-up worth its own KB entry if a fully-refused pattern's absence
+from the markdown rendering ever matters to a reader). No other
+committed `.tsv` has a pattern refused by every testee that ever
+measured it in the whole store (checked directly against
+`store/records/*/*/*.jsonl`'s compile rows), so no other file's
+rendering moves.
 """
 
 from __future__ import annotations
@@ -1570,7 +1608,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v24 (2026-09-26)"
+REPORTER_VERSION = "v25 (2026-09-26)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -6199,6 +6237,41 @@ def render_tsv(rd: ReportData):
             ):
                 _emit_row(["compile_stamp", "", "", "", "", "", testee_id,
                            "", "", "", name, str(val), "", "", "", "", "", ""])
+
+    # KB-31 (docs/dev/known_issues.md, found by lane [B91]; closed by lane
+    # b98rider, 2026-09-26): the `did_not_compile` rows `_tsv_ranking_pass`
+    # emits above (inside its `for gkey in sorted(groups)` loop) are the
+    # SAME F26 defect (`docs/design/predicate_audit_v1.md`) the
+    # `unsupported_by_pattern` section right below was fixed for at [B91]
+    # -- a pattern refused by EVERY testee in the roster has no `set_cells`/
+    # `match_cells` entry at ANY regime, so `groups` (built from exactly
+    # those dicts, `_ranking_groups` above) carries no key for it at all,
+    # the per-group loop never visits it, and its refusal rows silently
+    # never print -- the record exists (`rd.did_not_compile_by_pattern`
+    # carries it), but the TSV loses it. F26-IMMUNE BY CONSTRUCTION, the
+    # same technique as `unsupported_by_pattern`: emitted here from
+    # `rd.did_not_compile_by_pattern` directly, for exactly the patterns
+    # with ZERO representation in `groups` -- a pattern SOME testee
+    # compiled keeps getting its did_not_compile rows from inside the loop
+    # above, once per regime some OTHER testee ranked in, UNCHANGED (this
+    # section adds rows, it never removes or duplicates one). `regime_or_na`
+    # and `subject_or_na` are empty, same convention `unsupported_by_pattern`
+    # uses for a fact with no regime; `status` stays the literal
+    # `"did-not-compile"` string the per-group rows already use (never
+    # looked up from `rd.status_by_testee`, which is UNPOPULATED for a
+    # testee that compiled nothing on this set at all). NOTHING is emitted
+    # when every refused pattern also has a group (the population this
+    # fix adds is empty), so a report where at least one testee compiled
+    # every pattern renders byte-identically to v23/v24 but for the
+    # version line.
+    patterns_in_groups = {(gkey[0], gkey[1]) for gkey in groups}
+    for (sb, pattern_id), by_testee in sorted(rd.did_not_compile_by_pattern.items()):
+        if (sb, pattern_id) in patterns_in_groups:
+            continue
+        for t, diag in sorted(by_testee.items()):
+            _emit_row(["did_not_compile", pattern_id, "", "", "", "", t,
+                       "did-not-compile", "", "", "", "", "", "", "", "",
+                       diag, ""])
 
     # [B91] (2026-09-26, [B77] U5 finding 1; utf8_set_v1.md 11's F-M2
     # shape): the UNSUPPORTED-BY-DECLARATION population, one row per

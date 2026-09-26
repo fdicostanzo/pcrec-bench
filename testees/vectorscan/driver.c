@@ -310,6 +310,32 @@ static unsigned char *slurp(const char *path, size_t *sz_out) {
     return buf;
 }
 
+/* KB-34 (docs/dev/known_issues.md, found by lane [B95]/b95read; fixed lane
+ * b98rider, 2026-09-26): a PCRE setting-VERB -- `(*UCP)`, `(*UTF8)`,
+ * `(*CR)`, etc. -- must be the very first thing in the compiled
+ * expression text, by Hyperscan's own rule ("(*UCP) must be at start of
+ * expression"). The `whole-subject` wrap below used to put `^(?:` in
+ * front of the caller's raw pattern bytes unconditionally, which moves
+ * any leading verb from index 0 to index 4 -- a real refusal on every
+ * corpus pattern that opens with one (bench/utf8's five `(*UCP)`-leading
+ * members), even though the PLAIN form of the identical pattern compiles
+ * fine. `leading_verb_len` returns how many bytes at the START of `pat`
+ * are a run of one or more `(*NAME)` verbs (0 if none, or if the run is
+ * left unterminated -- in which case the caller's ordinary wrap is used
+ * and hs_compile refuses it honestly, the same as it always has), so the
+ * wrap can hoist them OUTSIDE the `(?:...)` group instead of leaving them
+ * buried inside it. */
+static size_t leading_verb_len(const unsigned char *pat, size_t patlen) {
+    size_t i = 0;
+    while (i + 1 < patlen && pat[i] == '(' && pat[i + 1] == '*') {
+        size_t j = i + 2;
+        while (j < patlen && pat[j] != ')') j++;
+        if (j >= patlen) break;   /* unterminated -- leave it where it is */
+        i = j + 1;                /* past this verb's closing ')' */
+    }
+    return i;
+}
+
 /* ------------------------------------------------- the per-subject alarm */
 
 static sigjmp_buf timeout_jmp;
@@ -465,7 +491,13 @@ int main(int argc, char **argv) {
      * conditional rule `pcrecbench.record.whole_subject_text`'s own
      * docstring states in full, applied here in C because this driver
      * builds its own wider wrapper rather than reusing that function.
-     * Requires a NUL-terminated C string either way:
+     * KB-34 (docs/dev/known_issues.md): any leading `(*VERB)` run
+     * (`leading_verb_len` above) is HOISTED in front of `^` rather than
+     * left inside the `(?:...)` group, so `(*UCP)\w+` wraps as
+     * `(*UCP)^(?:\w+)\z` -- the verb stays the very first thing in the
+     * expression, which is Hyperscan's own requirement, and the group
+     * wraps only the REST of the pattern. Requires a NUL-terminated C
+     * string either way:
      * hs_compile()/hs_expression_info() take `const char *expression`,
      * not a length-delimited buffer, the same constraint pcre2's
      * ZERO_TERMINATED convention and onig's `pat + patlen`-bounded call
@@ -474,14 +506,17 @@ int main(int argc, char **argv) {
      * here. */
     char *expr;
     if (whole_subject) {
+        size_t vlen = leading_verb_len(pat, patlen);
+        size_t blen = patlen - vlen;   /* the body AFTER the hoisted verb(s) */
         size_t nl = free_spacing ? 1 : 0;
-        size_t n = 4 + patlen + nl + 3 + 1;
+        size_t n = vlen + 4 + blen + nl + 3 + 1;
         expr = malloc(n);
-        memcpy(expr, "^(?:", 4);
-        memcpy(expr + 4, pat, patlen);
-        if (free_spacing) expr[4 + patlen] = '\n';
-        memcpy(expr + 4 + patlen + nl, ")\\z", 3);
-        expr[4 + patlen + nl + 3] = 0;
+        memcpy(expr, pat, vlen);
+        memcpy(expr + vlen, "^(?:", 4);
+        memcpy(expr + vlen + 4, pat + vlen, blen);
+        if (free_spacing) expr[vlen + 4 + blen] = '\n';
+        memcpy(expr + vlen + 4 + blen + nl, ")\\z", 3);
+        expr[vlen + 4 + blen + nl + 3] = 0;
     } else {
         expr = malloc(patlen + 1);
         memcpy(expr, pat, patlen);

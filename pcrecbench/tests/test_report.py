@@ -1939,7 +1939,13 @@ def test_reporter_version_pin():
     pcrec pin's `auto-nocaps` row present in the group) took it to v23.
     [B91] (the `unsupported_by_pattern` TSV section, the matrix's
     `_pooled`/`_yes`/`_no` best columns, and the null band's per-side
-    `program_sha256` identity bullet) took it to v24.
+    `program_sha256` identity bullet) took it to v24. KB-31 (lane
+    b98rider, 2026-09-26: the SAME F26 gap `unsupported_by_pattern` was
+    fixed for at [B91], now closed for `did_not_compile` too -- a
+    pattern refused by every testee in the roster now gets its
+    `did_not_compile` rows from a new section outside the ranking-group
+    loop; found live on `bench/utf8`'s `prp-ingreek`, which every one of
+    utf8@0.1's 11 testees refuses) took it to v25.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1950,20 +1956,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v24 (2026-09-26)",
-           f"expected REPORTER_VERSION == 'v24 (2026-09-26)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v25 (2026-09-26)",
+           f"expected REPORTER_VERSION == 'v25 (2026-09-26)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v24 (2026-09-26)" in md, f"expected the v24 header line:\n{md[:200]}")
+    _check("reporter: v25 (2026-09-26)" in md, f"expected the v25 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v24 (2026-09-26)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v25 (2026-09-26)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v24 (2026-09-26)" in matrix,
+    _check("reporter: v25 (2026-09-26)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4586,6 +4592,73 @@ def test_unsupported_by_pattern_section_b91():
            "a report with no declarations must carry no unsupported_by_pattern row")
 
 
+def test_kb31_all_refused_did_not_compile_f26():
+    """KB-31 (docs/dev/known_issues.md, found by lane [B91]; FIXED lane
+    b98rider): `_tsv_ranking_pass`'s `did_not_compile` rows (emitted
+    inside its per-group loop) are the SAME F26 shape
+    `unsupported_by_pattern` was fixed for at [B91] -- a pattern refused
+    by EVERY testee in the roster has no `set_cells` entry at any regime,
+    so `groups` carries no key for it and the per-group loop never visits
+    it. `p1` is refused by BOTH `engine-g` and `engine-h` here, so it has
+    NO ranking group at all, and its two did_not_compile rows must still
+    render -- from the NEW section this fix adds. CONTROL 1 (`p2`):
+    compiled and ranked by both testees, no did_not_compile row at all.
+    CONTROL 2 (`p3`): refused by `engine-h` alone while `engine-g`
+    compiles and ranks it -- a REAL ranking group exists, so `p3`'s
+    did_not_compile row must come from the PRE-EXISTING per-group
+    mechanism unchanged, and this fix's new section must not duplicate
+    it (proves the two paths partition the population rather than
+    overlapping)."""
+    row_g_p1 = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                "diagnostic": "engine-g: refused p1 -- FIXTURE"}
+    row_h_p1 = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                "diagnostic": "engine-h: refused p1 -- FIXTURE"}
+    row_h_p3 = {"kind": "compile", "pattern_id": "p3", "trial": 1, "seq": 2,
+                "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                "diagnostic": "engine-h: refused p3 -- FIXTURE"}
+
+    rows_g_p2 = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    rows_g_p3 = [_mini_row("p3", "s1", "short-subject-search", t, 20 + t, 50) for t in (1, 2, 3)]
+    loaded_g = [_mk_loaded("g.jsonl", _mini_setup("engine-g_1.0.0_cfg-caps-simdna"),
+                           [row_g_p1] + rows_g_p2 + rows_g_p3)]
+
+    rows_h_p2 = [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+    loaded_h = [_mk_loaded("h.jsonl", _mini_setup("engine-h_1.0.0_cfg-caps-simdna"),
+                           [row_h_p1, row_h_p3] + rows_h_p2)]
+
+    rd, err = report.build_report(loaded_g + loaded_h, _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    tsv = report.render_tsv(rd)
+    lines = tsv.splitlines()
+
+    dnc_p1 = [ln.split("\t") for ln in lines if ln.startswith("did_not_compile\tp1\t")]
+    _check(len(dnc_p1) == 2, f"expected one did_not_compile row per refusing testee: {dnc_p1}")
+    _check({c[6] for c in dnc_p1} == {"engine-g_1.0.0_cfg-caps-simdna",
+                                       "engine-h_1.0.0_cfg-caps-simdna"}, dnc_p1)
+    for cols in dnc_p1:
+        _check(cols[7] == "did-not-compile" and cols[2] == "" and cols[3] == "",
+               f"row shape (status/subject_or_na/regime_or_na): {cols}")
+    _check(not any(ln.startswith("rank\tp1\t") for ln in lines),
+           "p1 must have no ranking group (the F26 shape this section is immune to)")
+
+    # CONTROL 1: p2 compiled and ranked by both -- no did_not_compile row,
+    # nothing here duplicates the ordinary compiled case.
+    _check(not any(ln.startswith("did_not_compile\tp2\t") for ln in lines),
+           "a pattern every testee compiled must carry no did_not_compile row")
+    _check(any(ln.startswith("rank\tp2\t") for ln in lines), "p2 must rank")
+
+    # CONTROL 2: p3 has a real ranking group (engine-g ranks it); its
+    # engine-h did_not_compile row must come from the OLD per-group path,
+    # unchanged, and this fix must not add a second copy of it.
+    dnc_p3 = [ln.split("\t") for ln in lines if ln.startswith("did_not_compile\tp3\t")]
+    _check(len(dnc_p3) == 1 and dnc_p3[0][6] == "engine-h_1.0.0_cfg-caps-simdna",
+           f"p3's did_not_compile row must be exactly one, from the pre-existing "
+           f"per-group path: {dnc_p3}")
+    _check(any(ln.startswith("rank\tp3\t") for ln in lines), "p3 must still rank engine-g")
+
+
 def test_identity_bullet_per_side_b91():
     """[B91] (C), the owed [B90] wording fix: the null band's identity
     bullet states PER SIDE which records carry `program_sha256`. The
@@ -5551,6 +5624,7 @@ TESTS = [
     test_matrix_ratio_arithmetic,
     test_matrix_class_pure_best_columns_b91,
     test_unsupported_by_pattern_section_b91,
+    test_kb31_all_refused_did_not_compile_f26,
     test_identity_bullet_per_side_b91,
     # [B52] the baseline-identity fact (O-33 addendum, charter item 3)
     test_baseline_identity_interp_present,

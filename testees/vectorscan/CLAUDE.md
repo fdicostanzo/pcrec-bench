@@ -461,6 +461,22 @@ CONFIRMED (this lane's own smoke, `docs/dev/lanes/l6bvs_report.md`):
 `xfoo` → `nomatch` (the `^` anchor rejects the leading garbage a bare
 `(?:foo|bar)\z` would not).
 
+**KB-34 (docs/dev/known_issues.md, fixed lane b98rider, 2026-09-26): a
+leading PCRE setting verb is HOISTED outside the `(?:...)` group.** A
+verb such as `(*UCP)` must be the very first thing in the compiled
+expression (Hyperscan's own rule); the unconditional `^(?:` + pattern +
+`)\z` wrap used to bury it at index 4, which `hs_compile` refuses
+outright ("(*UCP) must be at start of expression"). `bench/utf8`'s five
+`(*UCP)`-leading patterns hit this on their whole-subject form only
+(their plain form, and every other engine's whole-subject form,
+compiled fine). `leading_verb_len()` now returns the byte length of any
+leading run of well-formed `(*NAME)` verbs (0 if none or unterminated),
+and the wrap becomes `<verbs>^(?:<rest>)\z`: `(*UCP)\w+` → `(*UCP)^(?:\w+)\z`.
+Witnessed both structurally (compiles where it used to refuse) and
+semantically (`vectorscan-block-nosom-utf8`: a whole Cyrillic word
+matches, the same word plus trailing punctuation does not) --
+`tools/selfcheck.py:check_kb34_leading_verb_hoist`.
+
 ## `--utf8`: the character-boundary find-all advance ([B77] U1)
 
 The driver protocol's `--utf8` flag (`pcrecbench/adapters.py`'s header;

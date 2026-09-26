@@ -792,7 +792,14 @@ int main(int argc, char **argv) {
                     for (;;) {
                         int r = do_search(s->buf, s->len, pos, caps);
                         if (r == 0) break;
-                        if (r < 0) { if (count == 0) giveup = r; break; }
+                        /* KB-29 (docs/dev/known_issues.md): ALWAYS track a
+                         * genuine give-up (r < 0 is never "no more matches"
+                         * on this engine -- r == 0 already owns that,
+                         * above), not only when `count == 0`, so a
+                         * mid-loop give-up after count > 0 is never
+                         * silently discarded in favour of the last
+                         * successful match. */
+                        if (r < 0) { giveup = r; break; }
                         if (first_s < 0) {
                             first_s = (long)caps[0][0];
                             first_e = (long)caps[0][1];
@@ -818,6 +825,15 @@ int main(int argc, char **argv) {
                         if (pos > s->len) break;
                     }
                     nmatch = count;
+                    /* KB-29: a genuine mid-loop give-up (any nonzero
+                     * `giveup`) must propagate as the WHOLE subject's
+                     * give-up, discarding any matches already
+                     * accumulated this call -- the same reason
+                     * `first_s`/`nmatch` are reset in testees/pcre2/
+                     * driver.c's own fix. Falls through to the ordinary
+                     * `giveup:<code>:<NAME>` branch below exactly as a
+                     * first-call give-up already does. */
+                    if (giveup) { first_s = first_e = -1; nmatch = -1; }
                 } else {
                     int r = do_search(s->buf, s->len, 0, caps);
                     if (r == 1) {

@@ -270,6 +270,20 @@ capability_set_v1.md §8) exists to make this fire on a WIDER range of
 ReDoS shapes at a controlled, small budget — `onig-default` already
 demonstrates the mechanism on a strong-enough witness without it.
 
+**KB-29 (docs/dev/known_issues.md, fixed lane b98rider, 2026-09-26):**
+that witness fires cleanly on the FIRST find-all call (count still 0),
+which the loop always handled correctly. A give-up on the SECOND OR
+LATER call, after at least one match had already been found this call,
+used to be silently absorbed into an ordinary `match` answer with a
+short count -- `rc_final` is now ALWAYS the loop's own terminal code
+(never gated on `count == 0`), and a genuine give-up (anything but
+ONIG_MISMATCH, the ordinary "no further matches" terminator) discards
+the accumulated matches and reports `giveup:<code>` the same way a
+first-call give-up already does. Witnessed on `b|(a+)+$` over
+`b`+35×`a`+`X` (the first call matches `b`; the second's `(a+)+$`
+alternative blows the SAME retry-limit budget above) --
+`tools/selfcheck.py:check_kb29_find_all_giveup_propagation`.
+
 ## The I-72 lesson: pattern bytes end to end
 
 This adapter passes the pattern via a FILE

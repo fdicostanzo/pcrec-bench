@@ -550,7 +550,13 @@ int main(int argc, char **argv) {
                          * happens, so marking `validated` here is never
                          * reached by an unvalidated subject in practice. */
                         if (utf_once && pos == 0 && !validated) validated = 1;
-                        if (rc < 0) { if (count == 0) rc_final = rc; break; }
+                        /* KB-29 (docs/dev/known_issues.md): `rc_final` is
+                         * now ALWAYS the loop's own terminal code -- not
+                         * only when `count == 0` -- so a genuine give-up
+                         * AFTER at least one match is never silently
+                         * discarded in favour of the LAST successful
+                         * match's own (non-negative) `rc`. */
+                        if (rc < 0) { rc_final = rc; break; }
                         if (first_s < 0) {
                             first_s = (long)ov[0];
                             first_e = (long)ov[1];
@@ -583,6 +589,23 @@ int main(int argc, char **argv) {
                         if (pos > s->len) break;
                     }
                     nmatch = count;
+                    /* KB-29: a MID-loop give-up (any negative terminal
+                     * code OTHER than PCRE2_ERROR_NOMATCH, which is the
+                     * ORDINARY "no further matches" termination every
+                     * find-all call ends on) must propagate as the whole
+                     * subject's give-up, with its own code -- never
+                     * silently absorbed into a truncated "match" answer
+                     * just because count > 0 by the time the engine gave
+                     * up. Discarding the partial match/count here is what
+                     * makes the classification below (`first_s >= 0` ->
+                     * "match") fall through correctly to the SAME
+                     * `giveup:<code>:<message>` branch a first-call
+                     * give-up already takes. */
+                    if (rc_final < 0 && rc_final != PCRE2_ERROR_NOMATCH) {
+                        first_s = first_e = -1;
+                        npairs = 0;
+                        nmatch = -1;
+                    }
                 } else {
                     int rc = do_match(dfa, code, s->buf, s->len, 0, opts,
                                       md, dfa_ws, dfa_ws_n);
