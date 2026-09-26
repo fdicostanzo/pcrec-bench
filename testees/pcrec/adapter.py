@@ -2454,6 +2454,35 @@ DENY_FLAGS = (
      "compare and the bitmap read are the same predicate over the pair's "
      "two bytes), and byte-identical to it wherever no pool class is a "
      "fold pair"),
+    # [B101] (pin 02902356, [OPT-REQBYTE], --list-axes `req-byte` bit 30;
+    # inbox I-111's owed timing). The FIFTH content-changing denial and the
+    # first on the pre-check rather than the machine: denied, no necessary
+    # byte (and so no necessary run -- `-fno-req-byte` denies the run with
+    # it) is analysed, so `req_byte`/`req_run`/`req_why` all read "none"
+    # and no pre-check is emitted on either engine. [OPT-REQBYTE] landed in
+    # pcrec's batch 1 (3aa13b6b, pin 8d716693), so every pin held since
+    # carries it and no pin-vs-pin pair isolates it: this twin at ONE pin
+    # is the only instrument. NOT a pure pre-check twin, MEASURED at
+    # 02902356: where the default artifact's DFA prefilter is S1's
+    # `run-pinned` form (built on the run), the denial also drops the
+    # prefilter back to the pre-S1 form (github-pat run-pinned-bounded ->
+    # offset-set-bounded, router-prefix-order run-pinned -> memchr) -- the
+    # pair then measures the byte, the run AND S1's prefilter together;
+    # and the bit is NOT in pcrec's strategy_denials mask
+    # (`rx_info.flags` = 1073741824 under it, 0 without), so even an
+    # artifact with no necessary byte differs from its sibling in that one
+    # initializer constant (program_sha256 ignores it: the v2 normalization
+    # drops the unread rx_info initializer).
+    ("-fno-req-byte", "noreqbyte",
+     "the [OPT-REQBYTE] NECESSARY-BYTE PRE-CHECK denied (--list-axes "
+     "`req-byte`, bit 30): no byte every match must contain is analysed, "
+     "so neither the one-memchr NOMATCH proof nor the necessary-RUN check "
+     "built on it is emitted (req_byte/req_run/req_why all `none`), and "
+     "where the default artifact's DFA prefilter is the run-pinned form "
+     "that verifies the run, the prefilter falls back to the pre-S1 form "
+     "as well -- the pre-check's BEFORE at the SAME pin, answer-identical "
+     "to its sibling by contract (the pre-check only ever answers NOMATCH "
+     "on a window no match can occupy)"),
 )
 
 

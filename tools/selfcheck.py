@@ -3119,6 +3119,42 @@ B90_VAR_ABI_BLOCK = 1001
 B90_K64_BYTE_CHECK = 153    # fix A's restored 5-line byte pre-check (5 witnesses)
 B90_K64_RUN_CHECK = 581     # fix A's restored 16-line run pre-check (winpath)
 
+# [B101] (pin 02902356, FOUR abi steps 33 -> 37, inbox I-111). NO flat
+# term at this pin: no stamp line is added anywhere (the abi digit moves,
+# same character count 33 -> 37), `struct rx_info` and the ABI block are
+# byte-identical, and every size move is a CODE move confined to the
+# population one step selects. MEASURED per witness at all five builds
+# (ce658cb7, the scratch builds 27a63314 / 0bb87eda / 42ee828f, the pin)
+# with the adapter's own argv -- docs/dev/measurements/
+# 2026-09-26-b101-sizes.txt (probe_b101_sizes.py) -- and ATTRIBUTED:
+#   K65 (abi 34, 27a63314): on a VM route with NO DFA scan in front, a
+#     necessary-SET member the byte/run check did not test gets its own
+#     `rq_set[]` memchr block, six lines, 242 B + the member list's
+#     decimal digits: `x[ac]y` / `x[@\x60]y` forced-VM +245 (`{ 121 }`,
+#     'y' beside the pick 'x'), `wild-validator-email-owasp` forced-VM
+#     +244 (`{ 46 }`, '.' beside the pick '@'). A set that is its pick
+#     alone emits nothing (email-nested-plus, ipv4, datetime, ipv4-owasp:
+#     0, measured).
+#   K66 (abi 35): the whole-run compare on the same route where the run is
+#     longer than its 8-byte window -- no witness here carries one.
+#   S1 steps 1-5 (abi 36, 0bb87eda): G1 widened -- where the DFA's
+#     offset-skip prefilter verifies the run, the run pre-check is ELIDED
+#     (`req_why` emitted -> dominated) and, where the run is pinned, the
+#     prefilter becomes `run-pinned`: `abc` under auto -543 (the 14-line
+#     loop gone, the offset-set test widened to the whole run; the stamp
+#     line +2 for "dominated"). No asserted witness below is in that
+#     population (the deny controls carry it by value).
+#   S1 step 6 (abi 37, 42ee828f): the inline run loop becomes a file-scope
+#     `rx_reqrun` block plus a one-line call -- -18 where the scan member
+#     is the run's first byte (`foo[0-9]+bar` auto, altwide `pfx3-256`
+#     forced-VM), -41 where it is not (winpath-near-miss forced-VM,
+#     "3a5c@1": the old loop's `rp_c - search_from >= 1` guard and the
+#     `- 1` offsets outweigh the block's `+ 1`s).
+B101_K65_SET_REST_121 = 245   # `rq_set[] = { 121 }` block (x[ac]y, x[@`]y)
+B101_K65_SET_REST_46 = 244    # `rq_set[] = { 46 }` block (email-owasp)
+B101_STEP6_RUN_AT0 = -18      # rx_reqrun extraction, scan member at run index 0
+B101_STEP6_RUN_AT1 = -41      # ... at run index 1 (winpath-near-miss)
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -3588,9 +3624,12 @@ STAMP_CASES = (
       # candidate-start scan ahead of it (this artifact carries none: a
       # bitmap class, not a byte/offset-set prefilter) and the machine is
       # not one-attempt -- MEASURED req_why "emitted".
+      # [B101]: K65 -- no DFA scan in front, so the necessary set's other
+      # member 'y' (121) is tested too: +245, MEASURED.
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
+                    + B101_K65_SET_REST_121, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
     # what caseless folding PRODUCES and a wider two-member-compare form
@@ -3605,9 +3644,12 @@ STAMP_CASES = (
       # as its sibling above -- rightmost 'y' = 121, the same +242 B.
       # [B80]: same as its sibling -- req_run "none", flat +26.
       # [B84]: same as its sibling -- MEASURED req_why "emitted".
+      # [B101]: K65 -- no DFA scan in front, so the necessary set's other
+      # member 'y' (121) is tested too: +245, MEASURED.
       "emit_bytes": 18261 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 242 + B80_STAMP_LINE
-                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK, **_CAPS_VM}),
+                    + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
+                    + B101_K65_SET_REST_121, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
     # `vm_cls_shape` -- NO pair (asserted after the loop by the scope
@@ -4171,7 +4213,9 @@ LEDGER_STAMP_CASES = (
       # island trie, not a byte/offset-set prefilter), and the machine is
       # not one-attempt -- MEASURED req_why "emitted".
       "emit_bytes": 231659 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
-                    + 242 + 423 + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK,
+                    + 242 + 423 + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
+                    # [B101]: S1 step 6's rx_reqrun extraction, MEASURED.
+                    + B101_STEP6_RUN_AT0,
       "req_byte": "113", "req_run": "717578@0"}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
@@ -4319,15 +4363,19 @@ LEDGER_STAMP_CASES = (
       "vm_frameless": 0, "vm_start": "anchored", "req_why": "emitted",
       "req_byte": rb, "req_run": rr, "vm_program_bytes": prog,
       "emit_bytes": old + B90_VAR_ABI_BLOCK + check
-                    - B84_STAMP_LINE_ONE_ATTEMPT + B84_STAMP_LINE_EMITTED})
-    # (name, req_byte, req_run, vm_program_bytes, 6ef76820 emit_bytes, check)
-    for name, rb, rr, prog, old, check in (
-        ("email-nested-plus", "64", "none", 3299, 23896, B90_K64_BYTE_CHECK),
-        ("ipv4-near-miss", "46", "none", 13695, 31205, B90_K64_BYTE_CHECK),
-        ("wild-datetime-moment-iso8601", "45", "none", 15575, 33908, B90_K64_BYTE_CHECK),
-        ("wild-validator-email-owasp", "64", "none", 5616, 26328, B90_K64_BYTE_CHECK),
-        ("wild-validator-ipv4-owasp", "46", "none", 14007, 31862, B90_K64_BYTE_CHECK),
-        ("winpath-near-miss", "92", "3a5c@1", 2925, 23821, B90_K64_RUN_CHECK))
+                    - B84_STAMP_LINE_ONE_ATTEMPT + B84_STAMP_LINE_EMITTED + b101})
+    # (name, req_byte, req_run, vm_program_bytes, 6ef76820 emit_bytes, check,
+    #  the [B101] move MEASURED at 02902356: K65's set block on email-owasp,
+    #  S1 step 6's extraction on winpath, 0 on the four single-member sets)
+    for name, rb, rr, prog, old, check, b101 in (
+        ("email-nested-plus", "64", "none", 3299, 23896, B90_K64_BYTE_CHECK, 0),
+        ("ipv4-near-miss", "46", "none", 13695, 31205, B90_K64_BYTE_CHECK, 0),
+        ("wild-datetime-moment-iso8601", "45", "none", 15575, 33908, B90_K64_BYTE_CHECK, 0),
+        ("wild-validator-email-owasp", "64", "none", 5616, 26328, B90_K64_BYTE_CHECK,
+         B101_K65_SET_REST_46),
+        ("wild-validator-ipv4-owasp", "46", "none", 14007, 31862, B90_K64_BYTE_CHECK, 0),
+        ("winpath-near-miss", "92", "3a5c@1", 2925, 23821, B90_K64_RUN_CHECK,
+         B101_STEP6_RUN_AT1))
 ) + (
     # ... and the TWO arms of fix A's new conjunct, each KEEPING
     # `one-attempt` -- the controls that the fix NARROWED G2 rather than
@@ -4350,6 +4398,53 @@ LEDGER_STAMP_CASES = (
       "vm_frameless": 1, "vm_start": "anchored", "req_why": "one-attempt",
       "req_byte": "45", "vm_program_bytes": 4685,
       "emit_bytes": 23286 + B90_VAR_ABI_BLOCK}),
+    # [B101] (pin 02902356, inbox I-111) -- THE MOVERS BY VALUE, on I-111's
+    # own landing-bar patterns (capability@0.1, `pcrec-auto`), each size
+    # the ce658cb7 value plus the ONE step that moved it, MEASURED at all
+    # five builds (docs/dev/measurements/2026-09-26-b101-sizes.txt).
+    # S1BUILD (abi 36) -- G1 WIDENED, `req_why` emitted -> dominated, the
+    # whole-window pre-check ELIDED: github-pat's `offset-set-bounded`
+    # becomes `run-pinned-bounded` (the whole "hub_pat_" run verified at
+    # its pin, offsets 0 + the run's 3..10, scan on 6), -489 B; uuid-grok
+    # keeps its `offset-set` (0,8*,13) and only the byte pre-check goes,
+    # -131 B; router-prefix-order's `memchr` becomes `run-pinned` with the
+    # scan at offset 0 (`0*`, which no older value's scan is), -184 B.
+    ("capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated",
+     "pcrec-auto", "capability", "wild-secrets-github-pat",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "dfa_prefilter": "run-pinned-bounded",
+      "dfa_prefilter_offsets": "0,3,4,5,6*,7,8,9,10",
+      "req_why": "dominated", "req_byte": "95",
+      "req_run": "6875625f7061745f@3", "emit_bytes": 58463 - 489}),
+    ("capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set",
+     "pcrec-auto", "capability", "wild-validator-uuid-grok",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_prefilter": "offset-set",
+      "dfa_prefilter_offsets": "0,8*,13", "req_why": "dominated",
+      "req_byte": "45", "req_run": "none", "emit_bytes": 47701 - 131}),
+    ("capability router-prefix-order under auto: S1 run-pinned, scan at offset 0",
+     "pcrec-auto", "capability", "router-prefix-order",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_prefilter": "run-pinned",
+      "dfa_prefilter_offsets": "0*,1,2,3,4", "req_why": "dominated",
+      "req_byte": "47", "req_run": "2f75736572@0", "emit_bytes": 20935 - 184}),
+    # K65 (abi 34) on the VM route with no DFA scan (a backreference
+    # declines the hybrid): the rest of the necessary set gets its rq_set[]
+    # block, +244 (one two-digit member); S1 step 6 (abi 37) extracts the
+    # "</" run loop, -18. `req_why` stays "emitted" on all three.
+    ("capability tag-pair-match under auto: K65 + S1 step 6",
+     "pcrec-auto", "capability", "tag-pair-match",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "none",
+      "req_why": "emitted", "req_byte": "60", "req_run": "3c2f@0",
+      "emit_bytes": 27125 + 244 + B101_STEP6_RUN_AT0}),
+    ("capability dup-param-detect under auto: K65 alone",
+     "pcrec-auto", "capability", "dup-param-detect",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "none",
+      "req_why": "emitted", "req_byte": "38", "req_run": "none",
+      "emit_bytes": 27081 + 244}),
+    ("capability nested-comment-rec under auto: S1 step 6 alone",
+     "pcrec-auto", "capability", "nested-comment-rec",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "none",
+      "req_why": "emitted", "req_byte": "42", "req_run": "2a2f@0",
+      "emit_bytes": 31539 + B101_STEP6_RUN_AT0}),
 )
 
 
@@ -5846,6 +5941,14 @@ def check_mechanism_stamps():
 # matches neither arm by design: the nullability decline, where the flag
 # asked for a collapse the policy refused). Omitted, the [B19] rule
 # applies (deny -> default arm, force -> flagged arm).
+# [B101] generalised once more, forced by the 02902356 registry: a row
+# whose candidate EITHER of several bits removes prints them `|`-joined in
+# lockstep (`-fno-offset-skip|-fno-run-prefilter`, `16|32`); the cells are
+# split on `|` as well as ` / `, an OPTIONAL eighth element names which
+# split spelling the control passes (it must be one the registry prints;
+# omitted, the first `-fno-` spelling), and the registry agreement reads
+# the row, among those carrying that spelling, whose stamp_value the arm
+# reads.
 DID_NOT_COMPILE = object()
 DENY_CONTROLS = (
     ("dfa_table", "table", ("literal", b"(?:[a-z]+)@(?:[a-z]+)"), "",
@@ -6018,6 +6121,30 @@ DENY_CONTROLS = (
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
+    # [B101] (pin 02902356, abi 36, [OPT-LITSCAN] S1): the axis's two NEW
+    # candidates, `run-pinned` / `run-pinned-bounded`, ahead of the seven,
+    # carry the registry's first `|`-joined deny (`16|32`,
+    # `-fno-offset-skip|-fno-run-prefilter`: EITHER bit removes them). Both
+    # spellings exercised on the plain `abc` (run "abc" pinned at offset 0,
+    # the scan on 'b' at offset 1), MEASURED: the new bit 32 alone falls
+    # back to the offset-set form the pin before chose (offsets lose the
+    # run's third byte), and bit 16 removes the whole offset-skip family
+    # (the memchr form). On both denied arms the run pre-check is EMITTED
+    # again -- `req_why` dominated -> emitted is S1's G1 widening seen from
+    # the flag's side. Neither bit reaches rx_info.flags (masked out, as
+    # match_api.md's abi-36 entry says; `.flags = 0ULL` on all three).
+    ("dfa_prefilter: -fno-run-prefilter denies the run-pinned candidate",
+     "prefilter", ("literal", b"abc"), "",
+     {"dfa_prefilter": ("run-pinned", "offset-set"),
+      "dfa_prefilter_offsets": ("0,1*,2", "0,1*"),
+      "req_why": ("dominated", "emitted")}, "deny", "default",
+     "-fno-run-prefilter"),
+    ("dfa_prefilter: -fno-offset-skip removes the run-pinned candidate too",
+     "prefilter", ("literal", b"abc"), "",
+     {"dfa_prefilter": ("run-pinned", "memchr"),
+      "dfa_prefilter_offsets": ("0,1*,2", "none"),
+      "req_why": ("dominated", "emitted")}, "deny", "default",
+     "-fno-offset-skip"),
     ("dfa_match", "match", ("email", "floor"), "",
      {"dfa_match": ("unwrapped", "search-filter")}, "deny"),
     # [B22]: since 263b013 the registry's `-fno-size-term` flag sits on the
@@ -6096,6 +6223,117 @@ DENY_CONTROLS = (
      {"req_run": ("626172@0", "none"),
       "req_byte": ("98", "98")}, "deny"),
 )
+
+
+#: [B101] THE NECESSARY-BYTE PRE-CHECK TWIN (`pcrec-auto-noreqbyte`, pcrec
+#: [OPT-REQBYTE] bit 30; inbox I-111's owed timing). Four arms:
+#:   1. the flag's SPELLING and bit come from the registry (axis
+#:      `req-byte`, order 1), never from this file;
+#:   2. the new config derives `pcrec-auto`'s id plus `_noreqbyte` and
+#:      `config_extra` = `noreqbyte`, and `pcrec-auto` itself still derives
+#:      the FROZEN shape (`_PRE_B77U2_IDS`) -- the new DENY_FLAGS word
+#:      inserted nothing ahead of an existing id's parts;
+#:   3. BY VALUE on real artifacts of the two configs (the adapter's own
+#:      compile, gcc and all): on `foo[0-9]+bar` the three req stamps move
+#:      (98/`626172@0`/emitted -> none/none/none) while the DFA prefilter
+#:      (`memchr`) does not; on capability's `wild-secrets-github-pat` the
+#:      denial ALSO drops S1's `run-pinned-bounded` prefilter to
+#:      `offset-set-bounded` (the twin is not a pure pre-check twin there);
+#:   4. the NULL arm: on capability's `wild-validator-uuid-grok` (byte
+#:      `dominated`, no run) the two artifacts' `program_sha256` are EQUAL
+#:      -- I-111's "may read identical" -- while on github-pat they differ
+#:      (the control that the equality is not a hash that ignores
+#:      everything).
+def check_noreqbyte_testee():
+    print("-- the [OPT-REQBYTE] twin: pcrec-auto-noreqbyte (-fno-req-byte, "
+          "bit 30; [B101], inbox I-111) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("noreqbyte twin", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    TW, BASE = "pcrec-auto-noreqbyte", "pcrec-auto"
+    # 1. the registry
+    rows = [r for r in mod.registry_rows()
+            if r["axis"] == "req-byte" and r.get("cli_flag", "").startswith("-f")]
+    title = "noreqbyte: the flag and bit come from the registry (axis req-byte)"
+    flags = adapter.config(TW)["flags"]
+    if (len(rows) == 1 and rows[0]["cli_flag"] == "-fno-req-byte"
+            and rows[0].get("deny_bit") == "30" and "-fno-req-byte" in flags):
+        ok(title, "order-1 row `%s`, bit %s, in the config's flags"
+           % (rows[0]["cli_flag"], rows[0]["deny_bit"]))
+    else:
+        bad(title, "registry rows %r, config flags %r" % (rows, flags))
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-noreqbyte-")
+    try:
+        # 2. the derived id
+        blocks = {}
+        for tid in (BASE, TW):
+            adapter.prepare(tid, tmp)
+            blocks[tid] = adapter.describe(tid, tmp)
+        ids = {t: _rec.derive_testee_id(b) for t, b in blocks.items()}
+        title = ("noreqbyte: the id is pcrec-auto's plus `_noreqbyte`, and "
+                 "pcrec-auto's own id shape is the frozen one")
+        want_base = _PRE_B77U2_IDS[BASE]
+        got_base = (ids[BASE].split("_", 2)[2], blocks[BASE].get("config_extra"))
+        if (ids[TW] == ids[BASE] + "_noreqbyte"
+                and blocks[TW].get("config_extra") == "noreqbyte"
+                and got_base == want_base):
+            ok(title, "%s / %s" % (ids[BASE], ids[TW]))
+        else:
+            bad(title, "ids %r, config_extra %r, base shape %r (frozen %r)"
+                % (ids, blocks[TW].get("config_extra"), got_base, want_base))
+
+        def meta(tid, pattern, pid):
+            cr = adapter.compile(tid, pid, pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                return None
+            return cr.engine_metadata
+        cases = (
+            ("foo[0-9]+bar", b"foo[0-9]+bar",
+             {"req_byte": ("98", "none"), "req_run": ("626172@0", "none"),
+              "req_why": ("emitted", "none"),
+              "dfa_prefilter": ("memchr", "memchr")}),
+            ("capability wild-secrets-github-pat",
+             _bench_pattern("capability", "wild-secrets-github-pat"),
+             {"req_byte": ("95", "none"),
+              "req_run": ("6875625f7061745f@3", "none"),
+              "req_why": ("dominated", "none"),
+              "dfa_prefilter": ("run-pinned-bounded", "offset-set-bounded")}),
+            ("capability wild-validator-uuid-grok",
+             _bench_pattern("capability", "wild-validator-uuid-grok"),
+             {"req_byte": ("45", "none"), "req_run": ("none", "none"),
+              "req_why": ("dominated", "none"),
+              "dfa_prefilter": ("offset-set", "offset-set")}),
+        )
+        shas = {}
+        for label, pattern, want in cases:
+            pid = re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")[:40]
+            m = {tid: meta(tid, pattern, pid) for tid in (BASE, TW)}
+            title = "noreqbyte: %s -- the req stamps by value, both arms" % label
+            if None in m.values():
+                bad(title, "an arm did not compile: %r" % (m,))
+                continue
+            got = {k: (m[BASE].get(k), m[TW].get(k)) for k in want}
+            shas[label] = (m[BASE].get("program_sha256"), m[TW].get("program_sha256"))
+            if got == want:
+                ok(title, ", ".join("%s %s -> %s" % (k, a, b)
+                                    for k, (a, b) in got.items()))
+            else:
+                bad(title, "got %r, want %r" % (got, want))
+        # 4. the null arm and its control
+        uu = shas.get("capability wild-validator-uuid-grok")
+        gh = shas.get("capability wild-secrets-github-pat")
+        title = ("noreqbyte: uuid-grok's two programs are IDENTICAL "
+                 "(program_sha256), github-pat's are NOT")
+        if uu and gh and uu[0] and uu[0] == uu[1] and gh[0] != gh[1]:
+            ok(title, "uuid-grok %s.. both arms; github-pat %s.. vs %s.."
+               % (uu[0][:12], gh[0][:12], gh[1][:12]))
+        else:
+            bad(title, "uuid-grok %r, github-pat %r" % (uu, gh))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_opt42_preempts_collapse_policy():
@@ -6262,10 +6500,29 @@ def check_deny_flag_controls():
                     % (axis,))
                 continue
             first = flagrows[:1]
-            spellings = [f.strip() for f in first[0]["cli_flag"].split(" / ")]
+            # [B101] (pcrec abi 36, [OPT-LITSCAN] S1): a candidate removed
+            # by EITHER of several bits carries them all `|`-joined, lowest
+            # bit first, in lockstep across deny_macro/deny_bit/cli_flag
+            # (pcrec registry.md's column rule: split all three together)
+            # -- the `run-pinned` rows, `-fno-offset-skip|-fno-run-prefilter`
+            # / `16|32`. The row's EIGHTH element names which of the split
+            # spellings the control exercises (it must be one the registry
+            # prints); without it the first `-fno-` spelling is taken.
+            spellings = [g.strip() for f in first[0]["cli_flag"].split(" / ")
+                         for g in f.split("|")]
+            pick = row_spec[7] if len(row_spec) > 7 else None
+            if pick is not None and pick not in spellings:
+                bad("deny control: %s" % label,
+                    "the row names %r but the registry's cli_flag for axis "
+                    "%r is %r" % (pick, axis, first[0]["cli_flag"]))
+                continue
             if arm_kind == "deny":
-                flag = next((f for f in spellings if f.startswith("-fno-")), None)
-                bit = first[0].get("deny_bit", "")
+                flag = pick or next((f for f in spellings if f.startswith("-fno-")), None)
+                bits = first[0].get("deny_bit", "").split("|")
+                dflags = [g.strip() for g in first[0]["cli_flag"].split("|")]
+                bit = (bits[dflags.index(flag)]
+                       if flag in dflags and len(bits) == len(dflags)
+                       else first[0].get("deny_bit", ""))
             else:
                 flag = next((f for f in spellings
                              if f.startswith("-f") and not f.startswith("-fno-")), None)
@@ -6312,7 +6569,20 @@ def check_deny_flag_controls():
                 continue
             agree = all(_stamp_ok(got[a][k], want[a][k]) for a in want for k in pairs)
             if agree:
-                reg_val = first[0].get("stamp_value", "")
+                # [B101]: where the flag sits on SEVERAL rows of the axis
+                # (`-fno-offset-skip` removes the two offset-set AND the two
+                # run-pinned candidates), the row checked is the one among
+                # them whose stamp_value the chosen arm reads, if any -- the
+                # value must still be a candidate this flag removes.
+                carriers = [r for r in flagrows
+                            if flag in [g.strip() for f in r.get("cli_flag", "").split(" / ")
+                                        for g in f.split("|")]] or first
+                _arm = "default" if reg_arm == "default" else flagged
+                _mp = next(iter(pairs))
+                reg_row = next((r for r in carriers
+                                if r.get("stamp_value", "") == got[_arm][_mp]),
+                               carriers[0])
+                reg_val = reg_row.get("stamp_value", "")
                 note = ""
                 main_pair = next(iter(pairs))
                 chosen_arm = "default" if reg_arm == "default" else flagged
@@ -11925,6 +12195,7 @@ def main():
     check_program_sha256()
     check_vars_surface()
     check_deny_flag_controls()
+    check_noreqbyte_testee()
     check_opt42_preempts_collapse_policy()
     check_cc_axis()
     check_cap_axis()

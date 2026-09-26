@@ -1,0 +1,45 @@
+pattern	cells	class	pin	arm	engine	engine_sel	req_why	req_byte	req_run	dfa_prefilter	dfa_prefilter_offsets	v2_sha
+wild-secrets-username-password-pair	thr	IMPROVE	ce658cb7	default	vm	selected	emitted	61	none	byte-class	none	4b9389658e14c8e4
+wild-secrets-username-password-pair	thr	IMPROVE	02902356	default	vm	selected	emitted	61	none	byte-class	none	4b9389658e14c8e4
+wild-secrets-username-password-pair	thr	IMPROVE	02902356	noreqbyte	vm	selected	none	none	none	byte-class	none	b44033169c40243f
+# wild-secrets-username-password-pair: 02902356 default vs -fno-req-byte program-DIFFERENT
+wild-logparse-winpath-grok	thr	IMPROVE	ce658cb7	default	vm	selected	emitted	92	none	byte-class	none	ab4c523c626d5246
+wild-logparse-winpath-grok	thr	IMPROVE	02902356	default	vm	selected	emitted	92	none	byte-class	none	ab4c523c626d5246
+wild-logparse-winpath-grok	thr	IMPROVE	02902356	noreqbyte	vm	selected	none	none	none	byte-class	none	530bbc5e52177945
+# wild-logparse-winpath-grok: 02902356 default vs -fno-req-byte program-DIFFERENT
+tag-depth3-bound	thr	IMPROVE	ce658cb7	default	vm	selected	emitted	60	3c2f@0	-	-	46d57e641e654ced
+tag-depth3-bound	thr	IMPROVE	02902356	default	vm	selected	emitted	60	3c2f@0	-	-	fedb0a4fb7286d22
+tag-depth3-bound	thr	IMPROVE	02902356	noreqbyte	vm	selected	none	none	none	-	-	03ff8826c36c1ab9
+# tag-depth3-bound: 02902356 default vs -fno-req-byte program-DIFFERENT
+dup-param-detect	thr	IMPROVE	ce658cb7	default	vm	selected	emitted	38	none	-	-	d8b4d20c713dd600
+dup-param-detect	thr	IMPROVE	02902356	default	vm	selected	emitted	38	none	-	-	07e596c9f7a6b60d
+dup-param-detect	thr	IMPROVE	02902356	noreqbyte	vm	selected	none	none	none	-	-	c868a29f074cf4ba
+# dup-param-detect: 02902356 default vs -fno-req-byte program-DIFFERENT
+tag-pair-match	thr	IMPROVE	ce658cb7	default	vm	selected	emitted	60	3c2f@0	-	-	d7fa0b0a17d7c694
+tag-pair-match	thr	IMPROVE	02902356	default	vm	selected	emitted	60	3c2f@0	-	-	7919641925e16bea
+tag-pair-match	thr	IMPROVE	02902356	noreqbyte	vm	selected	none	none	none	-	-	9556a3bdbb6ac0c8
+# tag-pair-match: 02902356 default vs -fno-req-byte program-DIFFERENT
+floor-byte	thr+srch	DO-NOT-REGRESS	ce658cb7	default	dfa	selected	dominated	126	none	memchr	none	5c097ce25ac62151
+floor-byte	thr+srch	DO-NOT-REGRESS	02902356	default	dfa	selected	dominated	126	none	memchr	none	5c097ce25ac62151
+floor-byte	thr+srch	DO-NOT-REGRESS	02902356	noreqbyte	dfa	selected	none	none	none	memchr	none	5c097ce25ac62151
+# floor-byte: 02902356 default vs -fno-req-byte program-IDENTICAL
+float-literal-bound	thr	DO-NOT-REGRESS	ce658cb7	default	vm	selected	emitted	46	none	byte-class	none	d1070dd2c7aad38e
+float-literal-bound	thr	DO-NOT-REGRESS	02902356	default	vm	selected	emitted	46	none	byte-class	none	d1070dd2c7aad38e
+float-literal-bound	thr	DO-NOT-REGRESS	02902356	noreqbyte	vm	selected	none	none	none	byte-class	none	294b588c02645f57
+# float-literal-bound: 02902356 default vs -fno-req-byte program-DIFFERENT
+nested-comment-rec	thr	DO-NOT-REGRESS	ce658cb7	default	vm	selected	emitted	42	2a2f@0	-	-	d3cc80682f718544
+nested-comment-rec	thr	DO-NOT-REGRESS	02902356	default	vm	selected	emitted	42	2a2f@0	-	-	83d0a88f55d378e4
+nested-comment-rec	thr	DO-NOT-REGRESS	02902356	noreqbyte	vm	selected	none	none	none	-	-	feda4d26f48fef28
+# nested-comment-rec: 02902356 default vs -fno-req-byte program-DIFFERENT
+wild-secrets-github-pat	thr	DO-NOT-REGRESS	ce658cb7	default	vm	selected	emitted	95	6875625f7061745f@3	offset-set-bounded	0,6*	7dd8207137f1a997
+wild-secrets-github-pat	thr	DO-NOT-REGRESS	02902356	default	vm	selected	dominated	95	6875625f7061745f@3	run-pinned-bounded	0,3,4,5,6*,7,8,9,10	4f2c1e90b0030ef6
+wild-secrets-github-pat	thr	DO-NOT-REGRESS	02902356	noreqbyte	vm	selected	none	none	none	offset-set-bounded	0,6*	ec6aa0b16b3a8635
+# wild-secrets-github-pat: 02902356 default vs -fno-req-byte program-DIFFERENT
+wild-validator-uuid-grok	thr	DO-NOT-REGRESS	ce658cb7	default	dfa	selected	emitted	45	none	offset-set	0,8*,13	c0a2303bdfb8e03c
+wild-validator-uuid-grok	thr	DO-NOT-REGRESS	02902356	default	dfa	selected	dominated	45	none	offset-set	0,8*,13	a3f87cba6551810c
+wild-validator-uuid-grok	thr	DO-NOT-REGRESS	02902356	noreqbyte	dfa	selected	none	none	none	offset-set	0,8*,13	a3f87cba6551810c
+# wild-validator-uuid-grok: 02902356 default vs -fno-req-byte program-IDENTICAL
+router-prefix-order	thr	TIMED (not a control)	ce658cb7	default	dfa	selected	emitted	47	2f75736572@0	memchr	none	d2da7e2e86e12af2
+router-prefix-order	thr	TIMED (not a control)	02902356	default	dfa	selected	dominated	47	2f75736572@0	run-pinned	0*,1,2,3,4	c67f6baea2b864fd
+router-prefix-order	thr	TIMED (not a control)	02902356	noreqbyte	dfa	selected	none	none	none	memchr	none	7f9b459e039a35b3
+# router-prefix-order: 02902356 default vs -fno-req-byte program-DIFFERENT
