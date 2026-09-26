@@ -1937,6 +1937,9 @@ def test_reporter_version_pin():
     is a pin delta, R8's/[B79]'s own territory, never a class anomaly; a
     non-pcrec competitor is unchanged, still compared against every
     pcrec pin's `auto-nocaps` row present in the group) took it to v23.
+    [B91] (the `unsupported_by_pattern` TSV section, the matrix's
+    `_pooled`/`_yes`/`_no` best columns, and the null band's per-side
+    `program_sha256` identity bullet) took it to v24.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -1947,20 +1950,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v23 (2026-09-25)",
-           f"expected REPORTER_VERSION == 'v23 (2026-09-25)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v24 (2026-09-26)",
+           f"expected REPORTER_VERSION == 'v24 (2026-09-26)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v23 (2026-09-25)" in md, f"expected the v23 header line:\n{md[:200]}")
+    _check("reporter: v24 (2026-09-26)" in md, f"expected the v24 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v23 (2026-09-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v24 (2026-09-26)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v23 (2026-09-25)" in matrix,
+    _check("reporter: v24 (2026-09-26)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4213,12 +4216,29 @@ def _matrix_rows_by_key(matrix_tsv):
         if header is None:
             header = cols
             continue
-        fixed = dict(zip(header[:6], cols[:6]))
-        testee_cells = dict(zip(header[6:], cols[6:]))
+        # [B91]: ten fixed columns (the pooled best RENAMED `_pooled`,
+        # plus the class-pure `_yes`/`_no` pairs). `best_testee`/`best_ns`
+        # stay as aliases of the POOLED pair so the pre-[B91] tests below
+        # read what they always read.
+        _check(header[:10] == _MATRIX_FIXED_COLS,
+               f"matrix header must start with {_MATRIX_FIXED_COLS}: {header[:10]}")
+        fixed = dict(zip(header[:10], cols[:10]))
+        testee_cells = dict(zip(header[10:], cols[10:]))
         key = (fixed["subbench"], fixed["pattern"], fixed["regime_or_na"], fixed["form"])
-        out[key] = {"best_testee": fixed["best_testee"], "best_ns": fixed["best_ns"],
+        out[key] = {"best_testee": fixed["best_testee_pooled"],
+                    "best_ns": fixed["best_ns_pooled"],
+                    "best_testee_yes": fixed["best_testee_yes"],
+                    "best_ns_yes": fixed["best_ns_yes"],
+                    "best_testee_no": fixed["best_testee_no"],
+                    "best_ns_no": fixed["best_ns_no"],
                     "cells": testee_cells}
     return out
+
+
+_MATRIX_FIXED_COLS = ["subbench", "pattern", "regime_or_na", "form",
+                      "best_testee_pooled", "best_ns_pooled",
+                      "best_testee_yes", "best_ns_yes",
+                      "best_testee_no", "best_ns_no"]
 
 
 def test_matrix_all_refused_pattern_f26():
@@ -4451,6 +4471,137 @@ def test_matrix_ratio_arithmetic():
            f"expected 80/40 = 2.0: {cells}")
     _check(rows[key]["best_testee"] == "engine-fast_1.0.0_cfg-caps-simdna", rows[key])
     _check(rows[key]["best_ns"] == "40.0", rows[key])
+
+
+def test_matrix_class_pure_best_columns_b91():
+    """[B91] (Frank's ruling, 2026-09-25: "calculate best based on what
+    is currently selected"): the static matrix cannot know a selection,
+    so it carries the CLASS-PURE bests beside the POOLED one. Fixture:
+    one row, a YES-class testee at 40 ns (the pooled best), a second YES
+    at 60 ns, a NO-class testee at 100 ns, and an UNDECLARED testee at
+    10 ns that is expectation-failing (never a best of any kind) plus an
+    undeclared rankable one at 20 ns -- hand-computed: pooled best is
+    the undeclared 20 ns testee, yes-best the 40 ns one, no-best the
+    100 ns one; the ratio cells stay POOLED (40/20 = 2.0). CONTROL: a
+    single-class (all-YES) roster reads best_*_no empty and best_*_yes
+    equal to the pooled pair."""
+    y1, y2 = "pcrec_abc_auto-caps-simdna", "libpcre2_10.46_jit-caps-simdna"
+    n1, u1 = "pcrec_abc_auto-nocaps-simdna", "engine-u_1.0.0_cfg-caps-simdna"
+
+    def _one(tid, med):
+        return [_mk_loaded(f"{tid}.jsonl", _mini_setup(tid),
+                           [_mini_row("p1", "s1", "short-subject-search", t, t, v)
+                            for t, v in ((1, med - 5), (2, med), (3, med + 5))])]
+
+    rd, err = report.build_report(_one(y1, 40) + _one(y2, 60) + _one(n1, 100) + _one(u1, 20),
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    rows = _matrix_rows_by_key(report.render_matrix_tsv(rd))
+    r = rows[("rb-mini@1.0", "p1", "short-subject-search", "plain")]
+    _check(r["best_testee"] == u1 and r["best_ns"] == "20.0", f"pooled best: {r}")
+    _check(r["best_testee_yes"] == y1 and r["best_ns_yes"] == "40.0", f"yes best: {r}")
+    _check(r["best_testee_no"] == n1 and r["best_ns_no"] == "100.0", f"no best: {r}")
+    _check(r["cells"][y1] == "2.000000", f"ratio cells stay POOLED (40/20): {r}")
+    # the documented identity: class ratio = ratio x best_ns_pooled / best_ns_<class>
+    _check(abs(float(r["cells"][y2]) * 20.0 / 40.0 - 1.5) < 1e-9,
+           f"60/40 re-derivable from the file alone: {r}")
+
+    # CONTROL: single-class roster
+    rd2, err2 = report.build_report(_one(y1, 40) + _one(y2, 60),
+                                    _args(store="x", include_synthetic=True))
+    _check(err2 is None, f"unexpected refusal: {err2}")
+    r2 = _matrix_rows_by_key(report.render_matrix_tsv(rd2))[
+        ("rb-mini@1.0", "p1", "short-subject-search", "plain")]
+    _check(r2["best_testee_no"] == "" and r2["best_ns_no"] == "", f"no NO class: {r2}")
+    _check((r2["best_testee_yes"], r2["best_ns_yes"]) == (r2["best_testee"], r2["best_ns"]),
+           f"single-class yes-best must equal pooled: {r2}")
+
+
+def test_unsupported_by_pattern_section_b91():
+    """[B91] (A): `render_tsv`'s `unsupported_by_pattern` SECTION -- one
+    row per (pattern, form, testee) declared unsupported, F26-IMMUNE:
+    `p1` is declared unsupported by `engine-h` (both forms) and refused
+    by `engine-g`, so NO testee compiled it and it has no ranking group;
+    its unsupported rows must still render. CONTROLS: the same report
+    minus engine-h's declaration renders NO `unsupported_by_pattern` row
+    at all (the byte-identity guarantee for a set with no declarations),
+    and the row round-trips through `pcrecbench.interpret.ReportTsv` as
+    an ordinary section a prediction can count."""
+    setup_g = _mini_setup("engine-g_1.0.0_cfg-caps-simdna")
+    row_g_p1 = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                "compile_outcome": "did-not-compile", "cost_class": "interpretive",
+                "diagnostic": "engine-g: refused p1 -- FIXTURE"}
+    rows_g_p2 = [_mini_row("p2", "s1", "short-subject-search", t, 10 + t, 50) for t in (1, 2, 3)]
+    loaded_g = [_mk_loaded("g.jsonl", setup_g, [row_g_p1] + rows_g_p2)]
+
+    def _h(declare):
+        rows = []
+        if declare:
+            for i, form in enumerate(("plain", "whole-subject"), start=1):
+                row = {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": i,
+                       "compile_outcome": "unsupported-by-declaration",
+                       "cost_class": "interpretive",
+                       "diagnostic": "REQUIRES foo; engine-h declares none of it -- FIXTURE"}
+                if form != "plain":
+                    row["form"] = form
+                rows.append(row)
+        rows += [_mini_row("p2", "s1", "short-subject-search", t, 30 + t, 55) for t in (1, 2, 3)]
+        return [_mk_loaded("h.jsonl", _mini_setup("engine-h_1.0.0_cfg-caps-simdna"), rows)]
+
+    rd, err = report.build_report(loaded_g + _h(True), _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    tsv = report.render_tsv(rd)
+    urows = [ln.split("\t") for ln in tsv.splitlines()
+             if ln.startswith("unsupported_by_pattern\t")]
+    _check(len(urows) == 2, f"expected one row per form (2), got {urows}")
+    for cols in urows:
+        _check(cols[1] == "p1" and cols[6] == "engine-h_1.0.0_cfg-caps-simdna"
+               and cols[3] == "" and cols[10] == "compile_outcome"
+               and cols[11] == "unsupported-by-declaration"
+               and cols[16] == "REQUIRES foo; engine-h declares none of it -- FIXTURE",
+               f"row shape: {cols}")
+    _check(sorted(c[4] for c in urows) == ["plain", "whole-subject"], urows)
+    _check(not any(ln.startswith("rank\tp1\t") for ln in tsv.splitlines()),
+           "p1 must have no ranking group (the F26 shape this section is immune to)")
+
+    # interpret reads it as an ordinary section
+    import tempfile
+    from pcrecbench import interpret
+    _check("unsupported_by_pattern" in interpret.SECTIONS, interpret.SECTIONS)
+    with tempfile.NamedTemporaryFile("w", suffix=".tsv", delete=False) as fh:
+        fh.write(tsv)
+        path = fh.name
+    try:
+        rt = interpret.ReportTsv(path)
+        _check(len(rt.by_section["unsupported_by_pattern"]) == 2,
+               f"ReportTsv must load the section: {dict(rt.by_section).keys()}")
+    finally:
+        os.unlink(path)
+
+    # CONTROL: no declaration -> no section, and nothing else moves
+    rd0, err0 = report.build_report(loaded_g + _h(False), _args(store="x", include_synthetic=True))
+    _check(err0 is None, f"unexpected refusal: {err0}")
+    tsv0 = report.render_tsv(rd0)
+    _check("unsupported_by_pattern" not in tsv0,
+           "a report with no declarations must carry no unsupported_by_pattern row")
+
+
+def test_identity_bullet_per_side_b91():
+    """[B91] (C), the owed [B90] wording fix: the null band's identity
+    bullet states PER SIDE which records carry `program_sha256`. The
+    pre-[B91] unconditional "the records carry no program hash of their
+    own" must be gone; `_field_carriage_text` renders the three cases."""
+    _check(report._field_carriage_text("BEFORE", "6ef76820", (0, 5))
+           == "the BEFORE (`6ef76820`) records carry NO `program_sha256` (0 of 5 compiled cell(s))",
+           report._field_carriage_text("BEFORE", "6ef76820", (0, 5)))
+    _check(report._field_carriage_text("AFTER", "ce658cb7", (5, 5)).startswith(
+           "the AFTER (`ce658cb7`) records carry `program_sha256`"), "all-carry case")
+    _check("partly carry" in report._field_carriage_text("AFTER", "x", (2, 5)), "partial case")
+    import inspect
+    src = "\n".join(ln for ln in inspect.getsource(report._null_band_header_lines).splitlines()
+                    if not ln.strip().startswith("#"))
+    _check("hash of their own" not in src,
+           "the unconditional pre-[B91] sentence must not survive in the bullet")
 
 
 # --------------------------------------------- [B52] the baseline-identity fact
@@ -5285,7 +5436,16 @@ def test_b88_null_band_reads_program_sha256_first():
         # the compile-cost table differs (the NEW record has compile rows);
         # the band section and every d119 row must not
         sec = lambda m: m[m.index("## Null-control band"):m.index("\n## ", m.index("## Null-control band") + 5)]
-        _check(sec(md3) == sec(mdb), "one-sided field: the census band, unchanged")
+        # [B91]: the identity bullet now states PER SIDE which records
+        # carry the field -- the one line that legitimately differs; every
+        # other line of the band section is unchanged.
+        nobullet = lambda m: "\n".join(ln for ln in sec(m).splitlines()
+                                        if not ln.startswith("- identity: "))
+        _check(nobullet(md3) == nobullet(mdb), "one-sided field: the census band, unchanged")
+        bullet3 = next(ln for ln in md3.splitlines() if ln.startswith("- identity: "))
+        _check("the BEFORE (`old1`) records carry NO `program_sha256`" in bullet3
+               and "the AFTER (`new2`) records carry `program_sha256`" in bullet3,
+               f"[B91] per-side bullet: {bullet3}")
         d = lambda t: [ln for ln in t.splitlines() if ln.startswith(("d119", "null_band"))]
         _check(d(tsv3) == d(tsvb), "one-sided field: the d119/null_band rows unchanged")
         _check("identity from the records" not in md3, "no field line when no cell used it")
@@ -5389,6 +5549,9 @@ TESTS = [
     test_matrix_status_tokens,
     test_matrix_no_empty_cells,
     test_matrix_ratio_arithmetic,
+    test_matrix_class_pure_best_columns_b91,
+    test_unsupported_by_pattern_section_b91,
+    test_identity_bullet_per_side_b91,
     # [B52] the baseline-identity fact (O-33 addendum, charter item 3)
     test_baseline_identity_interp_present,
     test_baseline_identity_row_best_fallback,

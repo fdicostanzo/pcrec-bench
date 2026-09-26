@@ -1523,6 +1523,35 @@ YES-class config against pcrec `auto-nocaps`.
   predicate/threshold/inputs/slots move. The rule's FACTS move only
   because the reporter's own rows do -- an ordinary data-only diff, not
   a catalogue bump.
+
+[B91] THREE RENDERING CHANGES, ONE BUMP (2026-09-26, lane b91views; v24)
+- **(A) `unsupported_by_pattern`, a new `render_tsv` SECTION** ([B77] U5
+  finding 1; utf8_set_v1.md 11's F-M2 shape). One row per (pattern,
+  form, testee) whose compile row reported `unsupported-by-declaration`
+  (`rd.unsupported_by_cell`): `regime_or_na` empty, `status` the
+  record's own, `metric=compile_outcome`, `value=unsupported-by-
+  declaration`, `gave_up_summary` the verbatim diagnostic. Emitted
+  AFTER the `compile_stamp` rows, OUTSIDE the ranking-group loop -- so
+  it is F26-immune by construction (a pattern nobody compiled still gets
+  its rows), unlike `did_not_compile`. Nothing is emitted when the
+  population is empty: a report over a set with no declarations renders
+  byte-identically to v23 but for the version line. `interpret` reads it
+  as an ordinary section (`interpret.SECTIONS`, catalogue 3.9), so a
+  prediction can `count` / `set_of` over it.
+- **(B) The matrix's best follows the selection** (Frank's ruling,
+  2026-09-25: "calculate best based on what is currently selected").
+  `render_matrix_tsv`'s `best_testee`/`best_ns` are RENAMED
+  `best_testee_pooled`/`best_ns_pooled` and joined by the class-pure
+  `best_testee_yes`/`best_ns_yes`/`best_testee_no`/`best_ns_no` (the
+  same `_matrix_best` over the roster's yes / no testees only); the
+  ratio cells stay pooled. `scripts/matrix_page.py` gains a client-side
+  testee selection that recomputes every row's best and ratio over what
+  is selected (the results viewer's own `computeBest`).
+- **(C) The null band's identity bullet states per side which records
+  carry `program_sha256`** (the owed [B90] fix: "the records carry no
+  program hash of their own" was true of the ce658cb7 pair's BEFORE
+  only). `_field_carriage` counts, per side of each pair, the compiled
+  cells whose compile row carries the field.
 """
 
 from __future__ import annotations
@@ -1541,7 +1570,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
-REPORTER_VERSION = "v23 (2026-09-25)"
+REPORTER_VERSION = "v24 (2026-09-26)"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -3398,7 +3427,11 @@ class _PairBand:
                  "strata", "n_null", "n_cells",
                  # [B88]: identity read off the records' `program_sha256`
                  # FIRST, the census as fallback (pcrecbench.nullband)
-                 "n_field", "n_census_only", "disagreements")
+                 "n_field", "n_census_only", "disagreements",
+                 # [B91] (the owed [B90] wording fix): per SIDE, how many
+                 # of the pair's compiled cells carry `program_sha256` on
+                 # their own compile row -- (with_field, compiled).
+                 "field_old", "field_new")
 
     def label(self):
         return f"{self.engine} {self.old_ver} -> {self.new_ver}"
@@ -3472,6 +3505,8 @@ def _build_null_band_model(rd):
         for prev, tid in pair_members[key]:
             model.pair_of_testee[(sb, prev)] = pb
             model.pair_of_testee[(sb, tid)] = pb
+        pb.field_old = _field_carriage(rd, sb, [p for p, _t in pair_members[key]])
+        pb.field_new = _field_carriage(rd, sb, [t for _p, t in pair_members[key]])
         if rd.grain != "set":
             continue
         eligible = []
@@ -3535,6 +3570,37 @@ def _build_null_band_model(rd):
                 c.verdict, c.bar, c.source = _nb.d119_verdict(c.delta, c.iqr_pct, c.stratum)
             model.cells[(sb, tid, pattern_id, regime, form)] = c
     return model
+
+
+def _field_carriage(rd, sb, testee_ids):
+    """[B91]: (n compiled cells whose compile-row engine_metadata carries
+    `program_sha256`, n compiled cells) over `testee_ids`' compile cells
+    in this report -- a cell with no engine_metadata (a refusal, an
+    unsupported declaration) produced no program and is not counted."""
+    wanted = set(testee_ids)
+    n_with = n_all = 0
+    for (sb2, tid, _p, _f), (_t, red) in rd.compile_cells.items():
+        if sb2 != sb or tid not in wanted:
+            continue
+        meta = getattr(red, "sample_engine_metadata", None)
+        if not meta:
+            continue
+        n_all += 1
+        if meta.get(_nb.IDENTITY_FIELD):
+            n_with += 1
+    return n_with, n_all
+
+
+def _field_carriage_text(side, ver, carriage):
+    n_with, n_all = carriage
+    if n_all and n_with == n_all:
+        word = "carry"
+    elif n_with:
+        word = "partly carry"
+    else:
+        word = "carry NO"
+    return (f"the {side} (`{ver}`) records {word} `{_nb.IDENTITY_FIELD}` "
+            f"({n_with} of {n_all} compiled cell(s))")
 
 
 def _compile_meta(rd, sb, testee_id, pattern_id, form):
@@ -3613,12 +3679,25 @@ def _null_band_header_lines(model):
                "cells -- the band is a sample maximum, and one more null "
                f"cell exceeds the maximum of n with chance 1/(n+1) (<= "
                f"{100.0 / (_nb.N_MIN + 1):.1f}% at n = {_nb.N_MIN}).")
-    out.append("- identity: OUR OWN census (`tools/program_identity.py`: "
+    # [B91] (the owed [B90] wording fix): the pre-[B88] sentence said
+    # "the records carry no program hash of their own" unconditionally --
+    # true of every pair before ce658cb7, false of its AFTER side. The
+    # bullet now states, PER SIDE of each pair, which records carry the
+    # field, read off this report's own compile rows.
+    carriage = "; ".join(
+        f"`{pb.label()}`: "
+        + _field_carriage_text("BEFORE", pb.old_ver, pb.field_old) + ", "
+        + _field_carriage_text("AFTER", pb.new_ver, pb.field_new)
+        for pb in model.pairs)
+    out.append("- identity: the records' own `engine_metadata."
+               f"{_nb.IDENTITY_FIELD}` ([B88], schema v1.7) where BOTH "
+               "compile rows of a cell carry it; otherwise OUR OWN census "
+               "(`tools/program_identity.py`: "
                "both pins re-emitted with the pinned binaries under each "
                "config's recorded flags, `.c` + `.h` compared after "
                "dropping ONLY the generated-by line, the `.abi` integer and "
-               "one-sided `#define` stamps); the records carry no program "
-               "hash of their own.")
+               "one-sided `#define` stamps). Which records carry the field, "
+               f"per side: {carriage}.")
     out.append("")
     for pb in model.pairs:
         out.append(f"### `{pb.label()}` ({pb.sb})\n")
@@ -3873,6 +3952,12 @@ class ReportData:
     # never an engine failure). Read only by `render_matrix_tsv`'s `unsup`
     # token today; nothing before this lane rendered it anywhere.
     unsupported_by_pattern: dict = field(default_factory=dict)
+    # [B91] (2026-09-26, from [B77] U5 finding 1): the SAME fact at the
+    # grain `render_tsv`'s `unsupported_by_pattern` SECTION renders it --
+    # (sb, pattern_id, form, testee_id) -> diagnostic, one entry per FORM
+    # (the dict above keeps one form per testee, `plain` winning, which is
+    # what the matrix's one-token cell needs; a TSV row names its form).
+    unsupported_by_cell: dict = field(default_factory=dict)
     # [B20] v1.4 (gate_shape_v14.md 6): threaded beside status_by_testee.
     agreement_by_record: dict = field(default_factory=dict)   # record_id -> block | None
     schema_version_by_record: dict = field(default_factory=dict)  # record_id -> "1.4"
@@ -4258,6 +4343,7 @@ def build_report(loaded, args, known_testee_ids=None):
     # ReportData field's own comment for why this is not folded into
     # `did_not_compile_by_pattern` above.
     unsupported_by_pattern = defaultdict(dict)  # (sb, pattern_id) -> {testee_id: diagnostic}
+    unsupported_by_cell = {}  # [B91] (sb, pattern_id, form, testee_id) -> diagnostic
     for key, rows in compile_rows_by_key.items():
         sb, testee_id, pattern_id, form = key
         pt_key = (sb, testee_id, pattern_id)
@@ -4275,6 +4361,8 @@ def build_report(loaded, args, known_testee_ids=None):
             by_pattern_u = unsupported_by_pattern[(sb, pattern_id)]
             if testee_id not in by_pattern_u or form == "plain":
                 by_pattern_u[testee_id] = _diagnostic_full(unsup_row.get("diagnostic"))
+            unsupported_by_cell[(sb, pattern_id, form, testee_id)] = \
+                _diagnostic_full(unsup_row.get("diagnostic"))
     did_not_compile_by_pattern = dict(did_not_compile_by_pattern)
     unsupported_by_pattern = dict(unsupported_by_pattern)
 
@@ -4335,6 +4423,7 @@ def build_report(loaded, args, known_testee_ids=None):
         variant_by_cell=variant_by_cell,
         did_not_compile_by_pattern=did_not_compile_by_pattern,
         unsupported_by_pattern=unsupported_by_pattern,
+        unsupported_by_cell=unsupported_by_cell,
         agreement_by_record=agreement_by_record,
         schema_version_by_record=schema_version_by_record,
         schema_version_by_testee=schema_version_by_testee,
@@ -6111,6 +6200,30 @@ def render_tsv(rd: ReportData):
                 _emit_row(["compile_stamp", "", "", "", "", "", testee_id,
                            "", "", "", name, str(val), "", "", "", "", "", ""])
 
+    # [B91] (2026-09-26, [B77] U5 finding 1; utf8_set_v1.md 11's F-M2
+    # shape): the UNSUPPORTED-BY-DECLARATION population, one row per
+    # (pattern, form, testee) whose compile row reported
+    # `compile_outcome == "unsupported-by-declaration"` -- the testee's
+    # own advance capability declaration, never an engine failure. F26-
+    # IMMUNE BY CONSTRUCTION: emitted from `rd.unsupported_by_cell`
+    # directly, OUTSIDE the ranking-group loop, so a pattern NO testee
+    # compiled (no ranking group at all) still gets its rows -- the
+    # defect `did_not_compile` still carries (predicate_audit_v1.md F26)
+    # is not repeated here. `regime_or_na` is empty (a compile outcome
+    # has no regime); `status` is the RECORD's status (the column's
+    # meaning everywhere else); the outcome is `metric=compile_outcome`,
+    # `value=unsupported-by-declaration`; `gave_up_summary` carries the
+    # verbatim diagnostic (the declaration reference). NOTHING is
+    # emitted when the population is empty, so a report over a set
+    # without declarations renders byte-identically to v23 but for the
+    # version line.
+    for (sb, pattern_id, form, testee_id), diag in sorted(rd.unsupported_by_cell.items()):
+        status, _d, _rid = _status_lookup(rd, sb, testee_id)
+        _emit_row(["unsupported_by_pattern", pattern_id, "", "", form, _form_fact(form),
+                   testee_id, status or "", _tier_lookup(rd, sb, testee_id) or "", "",
+                   "compile_outcome", "unsupported-by-declaration", "", "", "", "",
+                   diag, ""])
+
     return "\n".join(lines) + "\n"
 
 
@@ -6248,6 +6361,7 @@ def render_matrix_tsv(rd: ReportData):
     no_testees = sorted(t for t in all_testees
                          if capture_class.classify_testee(t).bucket == capture_class.NO)
     undeclared_testees = sorted(set(all_testees) - set(yes_testees) - set(no_testees))
+    yes_set, no_set = set(yes_testees), set(no_testees)
 
     lines = []
     lines.append("# " + "; ".join([
@@ -6277,8 +6391,8 @@ def render_matrix_tsv(rd: ReportData):
         "measured median_ns (best = lowest median_ns among the row's "
         "measured, pinned-tier, expectation-passing cells) -- ratios "
         "compare WITHIN A ROW ONLY, never across rows, patterns or "
-        "subbenches; best_testee/best_ns recover the absolute scale a "
-        "ratio alone loses. A cell excluded for a wrong answer or a "
+        "subbenches; best_testee_pooled/best_ns_pooled recover the "
+        "absolute scale a ratio alone loses. A cell excluded for a wrong answer or a "
         "give-up never enters the best-of comparison even where it also "
         "carries a timing. Closed status tokens, checked in this order: "
         "unsup = unsupported-by-declaration (the testee's own advance "
@@ -6313,24 +6427,44 @@ def render_matrix_tsv(rd: ReportData):
     # unless they do that division themselves. See `render_tsv`'s
     # `rank_yes`/`rank_no` sections or `render_markdown`'s two headline
     # views for numbers already reduced within one class.
+    # [B91] (Frank's ruling, 2026-09-25: "calculate best based on what
+    # is currently selected"): a static file cannot know a selection, so
+    # it carries the two CLASS-PURE bests beside the POOLED one, and the
+    # pooled pair is labelled `_pooled` by name. The ratio cells stay
+    # pooled (one number per cell); `scripts/matrix_page.py` recomputes
+    # every best and ratio over the reader's own testee selection.
     lines.append(
-        "# capture_class disclosure (inbox I-99): best_testee/best_ns and "
-        "every ratio cell above are the row's best/ratio ACROSS THE WHOLE "
-        "roster -- a capturing config's ratio may be computed against a "
-        "non-capturing config's median, or vice versa, when both classes "
-        "are present in this query. This is a DIFFERENT number from the "
+        "# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/"
+        "best_ns_pooled and every ratio cell above are the row's best/ratio "
+        "ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may "
+        "be computed against a non-capturing config's median, or vice "
+        "versa, when both classes are present in this query. "
+        "best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the "
+        "row's best over the capture_class yes / no testees ONLY (same "
+        "rankability rule; empty where that class has no rankable cell in "
+        "the row; an undeclared testee is in neither), so a class-pure "
+        "ratio is ratio x best_ns_pooled / best_ns_<class>. These match the "
         "report's own class-pure ranking sections; matrix_page.py "
-        "recomputes a class-pure ratio per its two split tables from this "
-        "line plus each cell's own ratio x best_ns, never from a second "
-        "reduction.")
-    header = ["subbench", "pattern", "regime_or_na", "form", "best_testee", "best_ns"] + all_testees
+        "recomputes every best and ratio over the reader's own testee "
+        "selection from each cell's ratio x best_ns_pooled, never from a "
+        "second reduction.")
+    header = (["subbench", "pattern", "regime_or_na", "form",
+               "best_testee_pooled", "best_ns_pooled",
+               "best_testee_yes", "best_ns_yes", "best_testee_no", "best_ns_no"]
+              + all_testees)
     lines.append("\t".join(header))
 
     for sb, pattern_id, regime, form in sorted(_matrix_row_keys(rd)):
         roster = sorted(roster_by_sb.get(sb, ()))
         best_ns, best_t = _matrix_best(rd, sb, pattern_id, regime, form, roster)
+        yes_ns, yes_t = _matrix_best(rd, sb, pattern_id, regime, form,
+                                     [t for t in roster if t in yes_set])
+        no_ns, no_t = _matrix_best(rd, sb, pattern_id, regime, form,
+                                   [t for t in roster if t in no_set])
         row = [sb, pattern_id, regime, form, best_t or "",
-               f"{best_ns:.1f}" if best_ns is not None else ""]
+               f"{best_ns:.1f}" if best_ns is not None else "",
+               yes_t or "", f"{yes_ns:.1f}" if yes_ns is not None else "",
+               no_t or "", f"{no_ns:.1f}" if no_ns is not None else ""]
         for t in all_testees:
             row.append(_matrix_cell(rd, sb, pattern_id, regime, form, t, best_ns)
                        if t in roster else "excluded")

@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.8"
+catalogue_version = "3.9"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,17 @@ catalogue_version = "3.8"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.9 (2026-09-26, lane b91views, [B91] (A)): MINOR, additive -- the
+# four R-PRED rules' `inputs` gain `report:unsupported_by_pattern`
+# (reporter v24's new SECTION: one row per (pattern, form, testee)
+# declared unsupported, `metric=compile_outcome`), and
+# `interpret.SECTIONS`/`_ELSEWHERE` name it, so a prediction clause can
+# `count`/`set_of` over it (utf8's P5.a, P9.b, R8) and a default-read
+# clause whose cell is declared unsupported says so by name. No fact or
+# verdict moves on an UNCHANGED input: no report before v24 carries a
+# row in that section. Fixtures: `R-PRED-1__unsupported-count-confirmed`
+# and its sabotage `R-PRED-2__unsupported-count-refuted`.
 #
 # 3.8 (2026-09-25, lane b90repin, [B90]/inbox I-108): MINOR, a
 # `[[pin_order]]` append only -- `ce658cb7` (abi 33: TWO abi steps, 31 ->
@@ -1333,6 +1344,7 @@ inputs        = [
   "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:unsupported_by_pattern.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
@@ -1386,6 +1398,7 @@ inputs        = [
   "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:unsupported_by_pattern.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
@@ -1431,6 +1444,7 @@ inputs        = [
   "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:unsupported_by_pattern.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
@@ -1486,6 +1500,7 @@ inputs        = [
   "report:not_ranked.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:scratch.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:did_not_compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
+  "report:unsupported_by_pattern.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:compile_stamp.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",
   "report:record.{pattern,subject_or_na,regime_or_na,form,testee,status,rank_or_na,metric,value,n,pass_rate,n_gave_up,n_wrong,delta_verdict}",

@@ -109,7 +109,16 @@ SECTIONS = ("record", "rank", "excluded", "not_ranked", "scratch",
             # `d119` (one per cross-pin cell; R-DELTA-5 reads it) and
             # `d119_view` (per-view counts). Emitted only on a report
             # with a cross-pin pair.
-            "null_band", "d119", "d119_view")
+            "null_band", "d119", "d119_view",
+            # [B91] (catalogue 3.9, reporter v24): the UNSUPPORTED-BY-
+            # DECLARATION population -- one row per (pattern, form,
+            # testee) whose compile row reported
+            # `unsupported-by-declaration` (`metric=compile_outcome`),
+            # emitted outside the ranking-group loop so F26 cannot hide
+            # it. Read by a prediction with `section=unsupported_by_pattern`
+            # (quantity `section`, reducer `count`/`set_of(...)`), e.g.
+            # utf8's P5.a / P9.b / R8 population.
+            "unsupported_by_pattern")
 
 # The known-key list for §2.1's NORMATIVE known-key header split. It is
 # DERIVED from `report.py`'s own header block (see
@@ -2415,7 +2424,10 @@ def _select(view, pred, sections=None):
     return rows
 
 
-_ELSEWHERE = ("excluded", "not_ranked", "did_not_compile", "scratch")
+_ELSEWHERE = ("excluded", "not_ranked", "did_not_compile", "scratch",
+              # [B91]: a default-read clause whose cell is declared
+              # unsupported now says so BY NAME (R-PRED-3's "found in").
+              "unsupported_by_pattern")
 
 
 def _elsewhere(view, pred):
