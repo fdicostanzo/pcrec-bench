@@ -419,7 +419,12 @@ bindings) live here, vendored or system, pinned either way.
   typed short subjects + a 64 KB-1 MB size sweep, the outlier rule R0-R7
   and P1-P13 stated in NOTES.md before any run, a utf sibling set left
   room for. `make check`'s generic gates enumerate `bench/*/` rather than naming a
-  set. See their CLAUDE.mds.
+  set. `bench/utf8/` is the UTF-8 ENCODING set ([B77], built U3-U5
+  2026-09-25/26): 75 members + the floor in six encoding-dependence
+  families over five generated script corpora, oracled under `PCRE2_UTF`
+  (+ `PCRE2_UCP` per declared pattern), 7,350 expectations, `prp-ingreek`
+  a declared oracle refusal, R0-R8 and P1-P11 in its NOTES.md.
+  See their CLAUDE.mds.
 - `testees/<name>/` — the ADAPTERS (since [B77] U2, 2026-09-25, every
   UTF-8-capable engine also carries a CHARACTER-mode sibling whose
   testee_id is its byte sibling's plus `_utf8`: `pcre2-utf-interp`/
@@ -837,6 +842,13 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # every committed record re-derived, the ten -utf8
                         # configs' shape, and ^.$ over `é` per engine family
                         # (check_encoding_axis)
+                        # and ([B77] U5) the oracle's VALIDATE-ONCE find-all
+                        # (utf8_set_v1.md 8.2 amended): rows identical to the
+                        # always-check path over bench/utf8's short + 64 KB
+                        # subjects (~66 s), an ill-formed subject refused BY
+                        # NAME, byte words pass no match option
+                        # (check_utf8_validate_once); bench/utf8's own
+                        # re-derivation is ~34 s of check_expectations
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
     make check-interpret # 132 checks in six sections (~28 s; [B13.3]): the
                         # catalogue/code correspondence and every load-time
