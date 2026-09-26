@@ -769,3 +769,27 @@ Maintenance: update this file when files are added/removed or change role.
   `…-ce658cb7.subject-grain.tsv`'s `rank` section) plus
   `bench/utf8/subject_facts.tsv`'s byte lengths — NO store record, no
   report render.
+- `2026-09-26-utf8-0.1-r6-addendum-extract.py` / `.txt` — ([B97], lane
+  b97r6) the per-pattern numbers behind
+  `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7-addendum-r6.md`'s
+  R6 scoring (engine-selection surprises) — the one rule the R2-R7
+  addendum could not score from the report TSVs at all. A NARROW
+  STREAMING read of the four `store/records/utf8@0.1/pcrec_ce658cb7_
+  {auto-caps,auto-nocaps,vm-caps,vm-in-caps}-simdna_utf8/*.jsonl` files
+  (136,048 lines / ~54 MB total; only `kind=="compile" and trial==1`
+  rows are kept, and only that row's `engine_metadata` dict — everything
+  else, including every `match` row, is discarded immediately; peak RSS
+  15.7 MB per `/usr/bin/time -v`, archived in the `.txt`'s own header)
+  plus `bench/utf8/patterns/*.rx` for the raw bytes of the small named
+  subset it quotes. Prints: `cls-lead-pair`'s own stamps against UD
+  §6.3's bitmap-arm claim (plus an unplanned `cls-high-range` control);
+  the `qnt-lazy-2b`/`qnt-plus-2b` and `ci-ascii-control`-vs-fold-family
+  control-twin pairs (the UCP twins are unsupported-by-declaration on
+  every pcrec-*-utf8 config and not checkable); the offset-skip
+  population beyond P1 (`lit-run-3`, `lit-mixed-ascii`,
+  `alt-shared-char`, F-C6's declared narrowing); a corpus-wide
+  `dfa_prefilter`/`prefilter` census over all 69 (auto/nocaps) and 67
+  (vm/vm-in) compiling plain-form patterns, with every `none`-stamped
+  pattern's own raw bytes printed for a text-level "strong lead-byte
+  set" judgment. NEVER the whole-store loader (KB-16), no report
+  render, no store index load.
