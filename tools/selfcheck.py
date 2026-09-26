@@ -10537,6 +10537,271 @@ def check_utf8_validate_once():
                                    sorted(set(seen_utf))))
 
 
+def check_pcre2_utf_validate_once():
+    """[B94] (docs/dev/decisions.md BD15, 2026-09-26): the pcre2 TESTEE's
+    own VALIDATE-ONCE find-all (testees/pcre2/driver.c), mirrored from
+    BD14's oracle fix (`check_utf8_validate_once` above) WITHOUT sharing
+    its code -- the testee and the oracle stay independently implemented.
+    Runs the REAL built driver (`adapters.discover()["pcre2"]
+    .prepare_driver`), never a reimplementation. Four controls:
+
+      (i)   IDENTICAL ROWS: for every bench/utf8 pattern that compiles
+            under PCRE2_UTF (the driver's own `--utf`), the find-all
+            answers (answer/span/ncaps/consumed/nmatches/caps -- every
+            column but the timed SECONDS one) over its short subjects AND
+            its <= 64 KB throughput subjects are BYTE IDENTICAL between
+            the default VALIDATE-ONCE path and `--utf-always-check`, a
+            DRIVER-ONLY flag (never part of the driver protocol in
+            pcrecbench/adapters.py, never passed by testees/pcre2/
+            adapter.py) that disables validate-once and is reachable ONLY
+            from this control -- the 256 KB / 1 MB rungs are left out on
+            purpose, the same reason `check_utf8_validate_once` leaves
+            them out of the oracle's own version of this control (the
+            always-check path is quadratic there; this project's own
+            2026-09-26 CELL_CAP loss is the reason for [B94] at all).
+      (ii)  REFUSAL BY NAME, identically on both paths: an ill-formed
+            subject (a lone 0xFF far past the first match) is refused
+            through libpcre2's own UTF-8 error, `giveup:-23:...`, on both
+            the validate-once and the always-check invocation -- the
+            refusal happens on call 1, before the two paths could even
+            diverge, so this is also a control that validate-once never
+            silently swallows a genuine UTF-8 error into a match/count.
+            NEGATIVE: the boundary ASSERTION (this file's header comment,
+            `die()`) fires by name -- exit code 2, the stated message --
+            when a BYTE-STEPPING advance (`--utf` without `--utf8`) lands a
+            find-all call on a non-boundary offset under validate-once.
+      (iii) BYTE-MODE CONFIGS UNTOUCHED: a real byte-mode invocation (no
+            `--utf` at all) is BYTE IDENTICAL with and without
+            `--utf-always-check` appended -- `copts` never carries
+            PCRE2_UTF for a byte config, so the flag (and validate-once's
+            own branch) is structurally a no-op there, demonstrated on a
+            real run rather than merely asserted from the source; plus
+            `pcre2-interp`'s (a byte config) `build_flags` carries NO
+            [B94]/BD15 note (the CONTROL: `pcre2-utf-interp`'s DOES), and
+            both testees' derived `testee_id`s keep their PRE-[B94] SHAPE
+            (`record_schema.md` 6.4 derives it from engine_name/version/
+            mode/captures/simd + config_extra, none of which [B94]
+            touches -- see this check's own report for the reasoning)."""
+    print("-- [B94]/BD15: the pcre2 driver's own validate-once find-all --")
+    import time as _time
+    from pcrecbench.subbench import load as _load_sb
+
+    adapter = _ad.discover()["pcre2"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b94-")
+    try:
+        drv = adapter.prepare_driver(tmp)
+        try:
+            sb = _load_sb(os.path.join(ROOT, "bench", "utf8"))
+        except Exception as e:                             # noqa: BLE001
+            bad("b94 (i): bench/utf8 loads", str(e)[:200])
+            return
+
+        short_subs = list(sb.subjects_for("search_short"))
+        thr_subs = [s for s in sb.subjects_for("throughput")
+                   if s.length <= 65536]
+        subs = short_subs + thr_subs
+        list_path = os.path.join(tmp, "subs.tsv")
+        with open(list_path, "w", encoding="utf-8") as f:
+            for s in subs:
+                f.write("%s\t%s\n" % (s.subject_id, s.path))
+
+        def run_find_all(pattern_file, always_check, extra=()):
+            argv = [drv, "--pattern", pattern_file, "--list", list_path,
+                    "--mode", "search", "--find-all", "--utf", "--utf8",
+                    "--iters", "1"] + list(extra)
+            if always_check:
+                argv.append("--utf-always-check")
+            return subprocess.run(argv, capture_output=True, text=True,
+                                  timeout=120)
+
+        def parse_rows(stdout):
+            rows = {}
+            for line in stdout.splitlines():
+                cols = line.split("\t")
+                if not cols or cols[0] != "subject":
+                    continue
+                # cols: subject ID ANSWER START END NCAPS CONSUMED ITERS
+                # SECONDS NMATCHES CAPS -- everything but ITERS(7)/
+                # SECONDS(8), the two that a timed re-run may legitimately
+                # differ on.
+                rows[cols[1]] = tuple(cols[2:7]) + tuple(cols[9:11])
+            return rows
+
+        npat = ncell = 0
+        diffs = []
+        refused_compile = []
+        t0 = _time.monotonic()
+        first_ok_patfile = None
+        for p in sb.patterns:
+            pdir = os.path.join(tmp, "p-" + p.name)
+            os.makedirs(pdir, exist_ok=True)
+            patfile = os.path.join(pdir, "pattern.rx")
+            with open(patfile, "wb") as f:
+                f.write(sb.pattern_bytes(p.name))
+            out_once = run_find_all(patfile, False)
+            if out_once.returncode == 3:
+                refused_compile.append(p.name)      # a declared refusal
+                continue
+            if out_once.returncode != 0:
+                bad("b94 (i): %s compiles under the driver" % p.name,
+                    "rc=%s stderr=%r"
+                    % (out_once.returncode, out_once.stderr[:200]))
+                continue
+            if first_ok_patfile is None:
+                first_ok_patfile = (p.name, patfile)
+            out_always = run_find_all(patfile, True)
+            npat += 1
+            rows_once = parse_rows(out_once.stdout)
+            rows_always = parse_rows(out_always.stdout)
+            for s in subs:
+                ncell += 1
+                a = rows_once.get(s.subject_id)
+                b = rows_always.get(s.subject_id)
+                if a != b:
+                    diffs.append((p.name, s.subject_id, a, b))
+        secs = _time.monotonic() - t0
+        if not diffs and npat and ncell:
+            ok("b94 (i): driver rows identical to the always-check path",
+               "%d pattern(s) (%d declared refusal(s) skipped) x "
+               "%d subject(s) (%d short + %d <=64 KB throughput) = "
+               "%d find-all cells, %.0f s"
+               % (npat, len(refused_compile), len(subs), len(short_subs),
+                  len(thr_subs), ncell, secs))
+        else:
+            bad("b94 (i): driver rows identical to the always-check path",
+                "%d diff(s), first %r" % (len(diffs), diffs[:3]))
+
+        # ---- (ii) an ill-formed subject, refused BY NAME, both paths
+        ill_path = os.path.join(tmp, "ill.bin")
+        with open(ill_path, "wb") as f:
+            f.write(("a" + "été " * 64).encode("utf-8") + b"\xff")
+        ill_list = os.path.join(tmp, "ill.tsv")
+        with open(ill_list, "w", encoding="utf-8") as f:
+            f.write("ill\t%s\n" % ill_path)
+        dot_pat = os.path.join(tmp, "dot.rx")
+        with open(dot_pat, "wb") as f:
+            f.write(b".")
+
+        def run_ill(always_check):
+            argv = [drv, "--pattern", dot_pat, "--list", ill_list, "--mode",
+                    "search", "--find-all", "--utf", "--utf8", "--iters", "1"]
+            if always_check:
+                argv.append("--utf-always-check")
+            return subprocess.run(argv, capture_output=True, text=True,
+                                  timeout=30)
+
+        out_once = run_ill(False)
+        out_always = run_ill(True)
+        line_once = [ln for ln in out_once.stdout.splitlines()
+                    if ln.startswith("subject\t")]
+        line_always = [ln for ln in out_always.stdout.splitlines()
+                       if ln.startswith("subject\t")]
+        if (line_once and "giveup:-23" in line_once[0]
+                and line_always and "giveup:-23" in line_always[0]):
+            ok("b94 (ii): ill-formed subject refused by name, both paths",
+               line_once[0].split("\t")[2])
+        else:
+            bad("b94 (ii): ill-formed subject refused by name, both paths",
+                "once=%r always=%r" % (line_once, line_always))
+
+        # NEGATIVE (ii): a byte-stepping advance under validate-once hits
+        # the boundary ASSERTION (die(), rc 2), never a silent count.
+        aeb_path = os.path.join(tmp, "aeb.bin")
+        with open(aeb_path, "wb") as f:
+            f.write("aéb".encode("utf-8"))
+        aeb_list = os.path.join(tmp, "aeb.tsv")
+        with open(aeb_list, "w", encoding="utf-8") as f:
+            f.write("aeb\t%s\n" % aeb_path)
+        xstar_pat = os.path.join(tmp, "xstar.rx")
+        with open(xstar_pat, "wb") as f:
+            f.write(b"x*")
+        out_bad = subprocess.run(
+            [drv, "--pattern", xstar_pat, "--list", aeb_list, "--mode",
+             "search", "--find-all", "--utf", "--iters", "1"],
+            capture_output=True, text=True, timeout=30)
+        if (out_bad.returncode == 2
+                and "not a character boundary" in out_bad.stdout):
+            ok("NEGATIVE: byte-stepping under validate-once dies by name",
+               out_bad.stdout.strip().splitlines()[-1][:120])
+        else:
+            bad("NEGATIVE: byte-stepping under validate-once dies by name",
+                "rc=%s stdout=%r" % (out_bad.returncode,
+                                     out_bad.stdout[-200:]))
+
+        # ---- (iii) byte-mode configs are untouched
+        def normalize_stdout(stdout):
+            """Every column but the two TIMED ones (`compile`'s SECONDS,
+            `subject`'s ITERS/SECONDS) -- a real wall-clock timer varies run
+            to run even with nothing behaviourally different, and this
+            control is about the ANSWER, not the clock."""
+            out = []
+            for line in stdout.splitlines():
+                cols = line.split("\t")
+                if cols and cols[0] == "compile":
+                    out.append(tuple(cols[:3]))
+                elif cols and cols[0] == "subject":
+                    out.append(("subject", cols[1]) + tuple(cols[2:7])
+                              + tuple(cols[9:11]))
+                else:
+                    out.append(tuple(cols))
+            return out
+
+        if first_ok_patfile is not None:
+            _pname, byte_patfile = first_ok_patfile
+
+            def run_byte(always_check):
+                argv = [drv, "--pattern", byte_patfile, "--list", list_path,
+                        "--mode", "search", "--find-all", "--iters", "1"]
+                if always_check:
+                    argv.append("--utf-always-check")
+                return subprocess.run(argv, capture_output=True, text=True,
+                                      timeout=60)
+
+            b_once = run_byte(False)
+            b_always = run_byte(True)
+            if (b_once.returncode == b_always.returncode
+                    and normalize_stdout(b_once.stdout)
+                    == normalize_stdout(b_always.stdout)):
+                ok("b94 (iii): a byte-mode run is untouched by "
+                   "--utf-always-check",
+                   "%s: %d line(s), identical modulo the timed columns"
+                   % (_pname, len(b_once.stdout.splitlines())))
+            else:
+                bad("b94 (iii): a byte-mode run is untouched by "
+                    "--utf-always-check", "outputs differ on %s" % _pname)
+        else:
+            bad("b94 (iii): a byte-mode run is untouched by "
+                "--utf-always-check", "no compiling pattern found")
+
+        d_byte = adapter.describe("pcre2-interp", tmp)
+        d_utf = adapter.describe("pcre2-utf-interp", tmp)
+        tid_byte = _rec.derive_testee_id(d_byte)
+        tid_utf = _rec.derive_testee_id(d_utf)
+        if not re.search(r"\[B94\]|BD15", d_byte["build_flags"]):
+            ok("b94: pcre2-interp's build_flags carries no [B94]/BD15 note",
+               tid_byte)
+        else:
+            bad("b94: pcre2-interp's build_flags carries no [B94]/BD15 note",
+                d_byte["build_flags"])
+        if re.search(r"\[B94\]|BD15", d_utf["build_flags"]):
+            ok("CONTROL: pcre2-utf-interp's build_flags DOES document it",
+               tid_utf)
+        else:
+            bad("CONTROL: pcre2-utf-interp's build_flags DOES document it",
+                d_utf["build_flags"])
+        shape_byte = re.match(r"^libpcre2_[^_]+_interp-caps-simdna$", tid_byte)
+        shape_utf = re.match(r"^libpcre2_[^_]+_interp-caps-simdna_utf8$",
+                             tid_utf)
+        if shape_byte and shape_utf:
+            ok("b94: testee_id shapes unchanged (byte plain, utf +_utf8)",
+               "%s / %s" % (tid_byte, tid_utf))
+        else:
+            bad("b94: testee_id shapes unchanged (byte plain, utf +_utf8)",
+                "%s / %s" % (tid_byte, tid_utf))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 # --------------------------------------------- 47 the capability policy
 
 def check_capability_policy():
@@ -11508,6 +11773,7 @@ def main():
     check_kb17_find_all_advance()
     check_utf8_find_all_advance()
     check_utf8_validate_once()
+    check_pcre2_utf_validate_once()
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
