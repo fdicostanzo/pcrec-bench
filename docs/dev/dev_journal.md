@@ -5968,3 +5968,17 @@ check-interpret 203/0, gen.py --check clean, make check-schema 6/74/0.
 docs/dev/predictions/CLAUDE.md's header note and P4 entry both updated,
 dated, naming this third ruling. Full detail:
 docs/dev/lanes/b93pred_report.md ("Follow-up 2").
+
+## 2026-09-26 ~07:1x EDT — morning lanes merged; utf8@0.1's first sample complete
+
+[B92] (vectorscan-block-som), [B94] (pcre2 driver validate-once, BD15) and [B93]
+(capability-0.1-first.tsv corrected: P2 + P4, all named exceptions retired)
+merged. Full make check on master with [B92]+[B94] rc=0 (harness 537/0 · report
+98+7+12 · interpret 200/0); interpret 203/0 after [B93]. Process note: lane
+b94pcre2utf used `pkill -f` once (a box-unique task-output path, disclosed in its
+report, no harm), a BD3 breach; the next brief restates the rule. The two pcre2
+utf8 cells re-ran at 05:44-07:04 (2/2 measured attempt 1, ~40 min each), so
+utf8@0.1's first sample is 7/7. The window close's sidecar regen reported 35/0
+failures, the first clean close since [B72]. [B91] lane b91views (opus) started;
+the utf8 READ follows it (pcrecdev1's ask: per-pattern pcrec compile times in the
+ledger).
