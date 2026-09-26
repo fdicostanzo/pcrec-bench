@@ -688,6 +688,32 @@ Maintenance: update this file when files are added/removed or change role.
   groups, recursion, conditionals, `\K`, control verbs, callouts, the
   two free-spacing comment-parser patterns) — SOM adds nothing new to
   that population.
+- `probe_vectorscan_som_utf8_witness_census.py` /
+  `2026-09-26-vectorscan-som-utf8-witness-census.txt` — ([B99], lane
+  `b99som`; closes [B92]'s own "No UTF-8 sibling yet" OWED item) THE
+  SOM x UTF-8 WITNESS CENSUS for `vectorscan-block-som-utf8`, mirroring
+  the [B77] U2 per-token discipline and the [B92] SOM-vs-nosom compile
+  census AT ONCE (compile/witness-level only, no timing, same exemption
+  as both). FINDING: mechanically composes exactly as [B92]'s own hand
+  smoke-test predicted (`alpha|alphabeta` over "alphabeta", UTF-8: `som-utf8`
+  reads [0,4) leftmost-longest against the oracle's leftmost-first
+  [0,2), the SAME divergence shape plain `som` shows on ASCII, now on
+  genuine multi-byte content); ONE finding neither parent census could
+  show — `(*UCP)\w+` over Cyrillic text, clean under `nosom-utf8`,
+  REFUSES under `som-utf8` with Hyperscan's OWN "Pattern is too large."
+  (the identical diagnostic HS_FLAG_SOM_LEFTMOST's history-tracking
+  budget uses on the isolated `.*a.{40,}` witness both SOM censuses
+  share), so `unicode-class-scope` is SATISFIED for `nosom-utf8` but NOT
+  for `som-utf8` — invisible to both parents (bench/capability's corpus
+  has no `(*UCP)` pattern; U2 never combined SOM with UTF-8). Everything
+  else transfers unmoved: the corpus SOM-only compile cost is the SAME
+  two patterns under UTF-8 as under byte encoding; the `\b`-under-UCP
+  breakage (utf8_set_v1.md 7.6) reproduces identically on both UTF-8
+  configs, orthogonal to SOM; `\p{Greek}` reads Script (not
+  Script_Extensions) on both. `vectorscan-block-som-utf8` carries NO
+  `EXT_BENCH_ROSTER` row (no `-utf8` config on this roster does); the
+  census states what it WOULD declare: 7/20 — `nosom-utf8`'s own 7 minus
+  `unicode-class-scope` plus `span-reporting`.
 - `probe_b94_driver_validate_once.py` / `2026-09-26-b94-pcre2-driver-
   validate-once.txt` — ([B94], `docs/dev/decisions.md` BD15, lane
   `b94pcre2utf`) THE TESTEE-SIDE BEFORE/AFTER for BD14's oracle fix's

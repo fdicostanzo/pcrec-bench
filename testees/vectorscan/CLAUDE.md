@@ -22,7 +22,7 @@ before this lane started); `/usr/include/hs/*.h`, `pkg-config libhs`.
 |---|---|
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure` for BOTH configs (branching on `engine_mode == "block-som"`); the engine-metadata DECLARATION (`min_width`, `max_width`, `unordered_matches`, `matches_at_eod`, `matches_only_at_eod`, `compiled_size_bytes`); the (empty) `GAVE_UP_CODES` set |
 | `driver.c` | the batched in-process timing driver for BOTH configs (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libhs.so.5` (`#include <hs/hs.h>`, `-lhs`); `--som` is the ONLY thing that tells the two configs' invocations apart — see the file's own "SOM MODE" header section |
-| `configs.toml` | the two config ids, `vectorscan-block-nosom` and (since [B92]) `vectorscan-block-som`, plus `vectorscan-block-nosom-utf8` |
+| `configs.toml` | the two config ids, `vectorscan-block-nosom` and (since [B92]) `vectorscan-block-som`, plus their UTF-8 siblings `vectorscan-block-nosom-utf8` ([B77] U2) and (since [B99]) `vectorscan-block-som-utf8` |
 | `_probe.rx` | one byte, `a` — the version-probe pattern (`testees/pcre2/_probe.rx`'s own convention) |
 
 ## THE GOVERNING RULING: BOOLEAN GRAIN (Frank, Q3, 2026-09-16)
@@ -657,17 +657,73 @@ by name. `check_encoding_axis` (unrelated to this lane, [B77] U2's own
 control) is the independent, pre-existing proof that `nosom` itself
 never moved.
 
-### No UTF-8 sibling yet
+### `vectorscan-block-som-utf8` -- [B99] (2026-09-26)
 
-`vectorscan-block-nosom-utf8` ([B77] U2) needed its own witness census
-before its capability declaration could ship (`docs/dev/measurements/
-2026-09-25-b77u2-utf8-witness-census.txt`) -- the SAME discipline would
-apply to a `vectorscan-block-som-utf8` sibling, and this lane did not
-run one. MECHANICALLY the combination composes cleanly (`--som
---encoding utf8` on the shared driver produces a real span and count
-exactly as expected, smoke-tested by hand during this lane), but "the
-mechanism composes" is not the same claim as "the capability
-declaration and the UTF-8-specific divergences (Script vs
-Script_Extensions, `(*UCP)`'s interaction with SOM_LEFTMOST, etc.) are
-known" -- so no `vectorscan-block-som-utf8` config is added here. OWED
-to whoever runs that census next.
+Closes [B92]'s own "No UTF-8 sibling yet" OWED item. `vectorscan-block-
+som`'s character-mode sibling, built exactly the shape [B77] U2 built
+for `vectorscan-block-nosom-utf8`: `hs_compile` flags `HS_FLAG_UTF8`
+(driver `--encoding utf8`) ORed ONTO `HS_FLAG_SOM_LEFTMOST`, never
+`HS_FLAG_UCP` (the same measured A/B). FULL grain, exactly like plain
+`som` (no `grain` key). No driver code changed -- `--som` and
+`--encoding utf8` were already independent argv flags on the one shared
+driver (`_compile_one`/`measure()` in `adapter.py` compose them from
+`cfg["engine_mode"]` and `config_encoding()` independently); the only
+CODE change this lane made was `describe()`'s `build_flags` text, which
+previously claimed "HS_FLAG_UCP/HS_FLAG_UTF8 ... never set" even when
+`som and enc == "utf8"` (HS_FLAG_UTF8 WOULD be set) -- a real
+record_schema.md 7 rule 1 violation waiting to ship the day this
+config existed, now a dedicated clause that names both flags ORed
+together, with `vectorscan-block-nosom`/`vectorscan-block-som`/
+`vectorscan-block-nosom-utf8`'s own `build_flags` text kept BYTE FOR
+BYTE unchanged (`tools/selfcheck.py:check_encoding_axis`'s committed-
+record arm re-proves the `nosom` pair; there is no committed record for
+`som` (byte) to compare against, so that combination's text was free to
+fix too, and was).
+
+**Mechanically composes exactly as [B92]'s own hand smoke-test
+predicted** -- witnessed live rather than merely re-asserted (`docs/dev/
+measurements/2026-09-26-vectorscan-som-utf8-witness-census.txt`,
+`probe_vectorscan_som_utf8_witness_census.py` beside it): `alpha|alphabeta`
+over "alphabeta" (UTF-8, 4 bytes) reads `[0,4)` count 1 against the
+oracle's leftmost-first `[0,2)` count 1 -- the SAME leftmost-longest
+divergence plain `som` shows on ASCII (`a|ab` over "ab"), now confirmed
+on genuinely multi-byte content, not merely predicted to survive
+encoding.
+
+**ONE GENUINE NEW FINDING neither parent census could have shown**:
+`unicode-class-scope` NARROWS under SOM+UTF-8. `(*UCP)\w+` over Cyrillic
+text -- which `vectorscan-block-nosom-utf8` compiles CLEAN (2026-09-25
+census, `unicode-class-scope` SATISFIED) -- REFUSES under `som-utf8`
+with Hyperscan's own `"Pattern is too large."`, the SAME diagnostic
+text HS_FLAG_SOM_LEFTMOST's history-tracking budget uses on the
+isolated `.*a.{40,}` witness both SOM censuses share; `(*UCP)\d{4}` and
+`(*UCP)a\sb` still compile fine under `som-utf8`. So `unicode-class-
+scope`, SATISFIED for `nosom-utf8`, is NOT satisfied for `som-utf8` --
+a real SOM x UTF-8 x `(*UCP)` interaction, invisible to both parent
+censuses (bench/capability's 64-pattern corpus contains no `(*UCP)`
+pattern at all, so [B92]'s own corpus-only SOM census could never have
+found it, and U2's own census never combined SOM with UTF-8).
+
+**Everything else transfers from one parent or the other, unmoved**:
+the SOM-only compile restriction over bench/capability's 64 corpus
+patterns costs the SAME two patterns under UTF-8 encoding as under byte
+encoding (`evil-alt-nested`, `trim-nested-star`, identical diagnostic
+text -- neither pattern uses non-ASCII bytes or `(*UCP)`, so encoding
+cannot move this population); the documented `\b`-under-UCP breakage
+(`(*UCP)\bМосква\b`, utf8_set_v1.md 7.6) reproduces IDENTICALLY on
+`som-utf8` and its `nosom-utf8` encoding sibling, confirming it is
+orthogonal to SOM; the `\p{Greek}` Script-vs-Script_Extensions reading
+is UNCHANGED by SOM (both `som-utf8` and `nosom-utf8` read Script, the
+opposite of PCRE2/pcrec's own Script_Extensions reading -- a divergence
+from the oracle, not a SOM-specific one).
+
+**No `EXT_BENCH_ROSTER` row** -- the SAME convention every other
+`-utf8` config on this roster follows (the roster is keyed by
+engine_mode, never by encoding); the census's own THE DECLARATIONS
+section states what `som-utf8` WOULD declare if it had one: 7/20 --
+exactly `nosom-utf8`'s own 7 (`ascii-class-scope`, `free-spacing`,
+`named-groups`, `true-end-anchor`, `unicode-properties`,
+`utf8-encoding`) MINUS `unicode-class-scope` (the new narrowing above)
+PLUS `span-reporting` (SOM's own execution-model gain, the same token
+plain `vectorscan-block-som` gained over `vectorscan-block-nosom`) --
+the union of both parents' own changes, nothing else moved.

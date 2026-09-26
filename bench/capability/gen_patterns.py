@@ -671,6 +671,43 @@ EXT_BENCH_ROSTER = [
                                     "recursion", "conditionals", "k-reset",
                                     "control-verbs", "callouts",
                                     "span-reporting", "captures")]),
+    # vectorscan-block-som ([B92]/[B99], 2026-09-26): `nosom`'s OWN row
+    # above already named it -- "the som config, documented not built,
+    # would satisfy [span-reporting]". [B92] built it (HS_FLAG_SOM_LEFTMOST
+    # always set), so this row is `nosom`'s exact set PLUS `span-reporting`,
+    # never re-witnessed from scratch: SOM changes nothing about which
+    # SYNTAX Hyperscan accepts (the eleven refused tokens above refuse for
+    # the identical reason on both configs -- `hs_compile` never even sees
+    # HS_FLAG_SOM_LEFTMOST until parsing succeeds) or about `captures`
+    # (Hyperscan has no capturing-group mechanism regardless of SOM). What
+    # SOM changes is EXECUTION-MODEL, exactly the `span-reporting`/
+    # `captures` distinction nosom's own row draws: `som` now carries a
+    # real leftmost-then-longest first-match span (Hyperscan's own
+    # all-ends architecture reduced by this driver's own callback, never a
+    # claim of leftmost-first semantics -- testees/vectorscan/CLAUDE.md's
+    # "THE DOCUMENTED DIVERGENCE" section), witnessed live and asserted BY
+    # VALUE against the libpcre2 oracle on three unambiguous constructs
+    # PLUS the divergence itself
+    # (`tools/selfcheck.py:check_vectorscan_som` arms 3-4; `captures` stays
+    # withheld -- unaffected by SOM).
+    #   HS_FLAG_SOM_LEFTMOST's OWN additional compile-time restriction
+    #   (its documented history-tracking budget -- distinct from every
+    #   REQUIRES_VOCAB token, since it is not a SYNTAX gate but a
+    #   pattern-SHAPE budget every engine on this roster could in
+    #   principle hit) costs exactly two real corpus patterns beyond
+    #   `nosom`'s own refusal set -- `evil-alt-nested` and
+    #   `trim-nested-star`, NEITHER carrying a `requires-*` tag at all
+    #   (both `family=redos-nested`), so this restriction touches none of
+    #   the six declared tokens; full census:
+    #   docs/dev/measurements/2026-09-26-vectorscan-som-vs-nosom-census.txt.
+    ("vectorscan-block-som", [t for t in REQUIRES_VOCAB
+                              if t not in (
+                                  "backrefs", "lookaround",
+                                  "lookbehind-variable",
+                                  "possessive-quantifier", "atomic-group",
+                                  "recursion", "conditionals", "k-reset",
+                                  "control-verbs", "callouts",
+                                  "captures")]),
     # tre-default ([B7]/L6b wave 2, lane l6btre, 2026-09-17): a POSIX
     # leftmost-longest engine (`testees/tre/`, `tre_regncompb`/
     # `tre_regnexecb`, REG_EXTENDED). WITNESSED before declaring (CS5's

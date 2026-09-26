@@ -1,0 +1,196 @@
+# 2026-09-26-vectorscan-som-utf8-witness-census.txt
+#
+# source: docs/dev/measurements/probe_vectorscan_som_utf8_witness_census.py,
+#   as committed on branch b99som (lane b99som, [B99]).
+# command: gnutimeout 180 python3 \
+#   docs/dev/measurements/probe_vectorscan_som_utf8_witness_census.py
+# run: 2026-09-26, ended ~22:58 UTC (~18:58 EDT); box ubuntubudu (Linux
+#   7.0.0-29-generic, 12 cores); bench commit 53ba4375 (branch b99som);
+#   /proc/loadavg at run time: 3.11 3.05 2.05 -- pcrecdev1's ASan battery
+#   was still running (box granted to pcrecdev1 until ~21:18 EDT per the
+#   lane brief). NOT GATED and it does not need to be: every row below is
+#   a COMPILE outcome or ONE smoke match's ANSWER (--trials 1 --iters 1
+#   through the real adapter's compile()/measure()); no time is read,
+#   nothing here is a number a ranking could use (measurements/CLAUDE.md
+#   rule 5 -- the same exemption probe_vectorscan_som_witness_census.py
+#   and probe_b77u2_utf8_witness_census.py both state).
+# engine: Vectorscan (Hyperscan-ABI-compatible fork) 5.4.11-2ubuntu2
+#   (pkg-config libhs 5.4.11), direct-linked -lhs via
+#   /usr/include/hs/*.h. Driver compiler gcc (Ubuntu 15.2.0-16ubuntu1)
+#   15.2.0, -O2 -std=gnu11. No pcrec binary involved (vectorscan-only
+#   census; bench/capability's own `--check` round-trip against the pin
+#   is a separate, already-passing step -- see the lane report).
+# oracle: pcrecbench.oracle_pcre2 (libpcre2 10.46 2025-08-27) under the
+#   utf8 set's own word -- PCRE2_UTF, PCRE2_UCP arriving inline from a
+#   pattern's own (*UCP) verb; every expected answer below is the
+#   oracle's, never hand-typed.
+#
+# WHAT THIS CENSUS DECIDES ([B99], closing [B92]'s own "No UTF-8 sibling
+# yet" OWED item in testees/vectorscan/CLAUDE.md): the witness census a
+# `vectorscan-block-som-utf8` config needs BEFORE anyone reads a report
+# row for it -- mirroring TWO prior censuses at once: [B77] U2's
+# per-(config, REQUIRES token) witness discipline (2026-09-25-b77u2-utf8-
+# witness-census.txt) and [B92]'s own SOM-vs-nosom compile-cost census
+# (2026-09-26-vectorscan-som-vs-nosom-census.txt), now for the SOM x
+# UTF-8 combination together. `vectorscan-block-som-utf8` carries NO
+# EXT_BENCH_ROSTER row (no `-utf8` config on this whole roster does --
+# the roster is keyed by engine_mode, not encoding); this file is
+# DOCUMENTATION for testees/vectorscan/CLAUDE.md's UTF-8/SOM sections,
+# never a machine-read declaration.
+#
+# HEADLINE FINDINGS:
+#   * `vectorscan-block-som-utf8` mechanically composes exactly as
+#     [B92]'s own hand smoke-test predicted: --som and --encoding utf8
+#     are independent driver flags, both honoured together, a real
+#     leftmost-then-longest span and a real non-overlapping NMATCHES
+#     over UTF-8-encoded text (section G: `alpha|alphabeta` over
+#     "alphabeta" reads [0,4) -- the FULL two-character string --
+#     against the oracle's leftmost-first [0,2), the SAME divergence
+#     shape plain `som` shows on ASCII, now confirmed on genuinely
+#     multi-byte content).
+#   * `unicode-class-scope` NARROWS under SOM+UTF-8 in a way NEITHER
+#     parent census predicts: `(*UCP)\w+` over Cyrillic text -- which
+#     `vectorscan-block-nosom-utf8` compiles CLEAN (2026-09-25 census,
+#     line 166) -- REFUSES under `som-utf8` with Hyperscan's own
+#     "Pattern is too large" (the SAME diagnostic text HS_FLAG_SOM_
+#     LEFTMOST's history-tracking budget uses on the isolated
+#     `.*a.{40,}` witness both SOM censuses share), while `(*UCP)\d{4}`
+#     and `(*UCP)a\sb` still compile fine under `som-utf8` -- so
+#     `unicode-class-scope` is SATISFIED for `nosom-utf8` but NOT for
+#     `som-utf8`, a genuine SOM x UTF8 x `(*UCP)` interaction this
+#     census exists to surface (section H). bench/capability's own
+#     64-pattern corpus contains no `(*UCP)` pattern, so [B92]'s own
+#     corpus-only census could never have found this.
+#   * bench/capability's 64-pattern SOM-only compile-cost census
+#     (section F), re-run under the UTF-8-encoded pair, reproduces
+#     [B92]'s byte-mode finding EXACTLY: the SAME two patterns
+#     (`evil-alt-nested`, `trim-nested-star`), the SAME diagnostic text
+#     -- SOM's corpus-level restriction is orthogonal to encoding on
+#     this corpus (neither pattern uses non-ASCII bytes or `(*UCP)`).
+#   * `(*UCP)\bМосква\b`'s documented `\b`-under-UCP breakage
+#     (utf8_set_v1.md 7.6, the measured A/B in CLAUDE.md) reproduces
+#     IDENTICALLY on `som-utf8` and its `nosom-utf8` encoding sibling --
+#     orthogonal to SOM, as predicted (section H).
+#   * The `\p{Greek}` Script-vs-Script_Extensions reading (section C)
+#     is UNCHANGED by SOM: `som-utf8` reads Script (nomatch on U+0342),
+#     the SAME reading `nosom-utf8` gives (2026-09-25 census) and the
+#     opposite of PCRE2/pcrec's own Script_Extensions reading -- a
+#     divergence from the oracle, not a SOM-specific one.
+#   * `vectorscan-block-som-utf8` WOULD DECLARE 7/20 REQUIRES tokens if
+#     it carried a roster row (section E's THE DECLARATIONS): exactly
+#     `vectorscan-block-nosom-utf8`'s own 7 (ascii-class-scope,
+#     free-spacing, named-groups, true-end-anchor, unicode-properties,
+#     utf8-encoding) MINUS `unicode-class-scope` (the new SOM narrowing
+#     above) PLUS `span-reporting` (SOM's own execution-model gain,
+#     the SAME token plain `vectorscan-block-som` gained over
+#     `vectorscan-block-nosom`) -- the union of both parents' changes,
+#     nothing else moved.
+#
+# Verbatim output follows.
+
+pcrec pin: n/a (vectorscan-only census)
+vectorscan version: 5.4.11 2026-01-29
+oracle: libpcre2 10.46 2025-08-27, option word PCRE2_UTF (+ inline (*UCP))
+vectorscan-block-som's own EXT_BENCH_ROSTER declaration (bench/capability): ['free-spacing', 'named-groups', 'non-utf8-subject', 'span-reporting', 'true-end-anchor', 'unicode-properties']
+
+=== A. the three utf8-set tokens on vectorscan-block-som-utf8 ===
+config	token	witness	pattern	outcome	answer (vs the UTF oracle, full grain)
+vectorscan-block-som-utf8	utf8-encoding	dot-is-one-char	^.$	compiled	match[0,2) nomatch
+vectorscan-block-som-utf8	utf8-encoding	negated-class-universe	[^é]	compiled	match[0,2) nomatch
+vectorscan-block-som-utf8	utf8-encoding	caseless-non-ascii	(?i)é	compiled	match[0,2) nomatch
+vectorscan-block-som-utf8	utf8-encoding	multibyte-range	[α-ω]+	compiled	match[1,7) nomatch
+vectorscan-block-som-utf8	ascii-class-scope	w-ascii	\w+	compiled	nomatch match[0,3)
+vectorscan-block-som-utf8	ascii-class-scope	d-ascii	\d{4}	compiled	nomatch match[0,4)
+vectorscan-block-som-utf8	ascii-class-scope	s-ascii	a\sb	compiled	match[0,3) match[0,3)
+vectorscan-block-som-utf8	ascii-class-scope	posix-alpha-ascii	[[:alpha:]]+	compiled	nomatch match[0,3)
+vectorscan-block-som-utf8	unicode-class-scope	w-ucp	(*UCP)\w+	did-not-compile: hs_compile failed (code -4, expression 0): Pattern is too large.
+vectorscan-block-som-utf8	unicode-class-scope	d-ucp	(*UCP)\d{4}	compiled	match[0,8) nomatch
+vectorscan-block-som-utf8	unicode-class-scope	s-ucp	(*UCP)a\sb	compiled	match[0,3) nomatch
+
+--- A summary: SATISFIED (S) / NOT (-), vectorscan-block-som-utf8, full grain ---
+utf8-encoding	S
+ascii-class-scope	S
+unicode-class-scope	-
+
+=== B. unicode-properties re-census (general categories), span-checked ===
+L	\p{L}	compiled	match[0,2) nomatch
+Lu	\p{Lu}	compiled	match[0,2) nomatch
+N-plus	\p{N}+	compiled	match[0,2) nomatch
+notL-plus	\P{L}+	compiled	match[0,1) nomatch
+Zs	\p{Zs}	compiled	match[0,3) nomatch
+unicode-properties: SATISFIED
+
+=== C. Script / Script_Extensions spellings (informational) ===
+subjects: 'alpha' (U+03B1, sc=Greek), U+0342 (sc=Inherited, scx={Greek}), 'a' -- oracle column = libpcre2's own reading
+Greek	\p{Greek}	(oracle: match match nomatch)	compiled	match[0,2) nomatch!=oracle(match[0,2)/n=1) nomatch  <- DIVERGES
+Script=Greek	\p{Script=Greek}	(oracle: match nomatch nomatch)	did-not-compile: hs_compile failed (code -4, expression 0): Malformed property at index 0.
+Script_Extensions=Greek	\p{Script_Extensions=Greek}	(oracle: match match nomatch)	did-not-compile: hs_compile failed (code -4, expression 0): Malformed property at index 0.
+InGreek	\p{InGreek}	(oracle: refused)	did-not-compile: hs_compile failed (code -4, expression 0): Unknown property at index 3.
+
+=== D. the thirteen syntax-refusal tokens on vectorscan-block-som-utf8 (sibling = vectorscan-block-som's own EXT_BENCH_ROSTER row) ===
+backrefs	(a)\1	did-not-compile: hs_compile failed (code -4, expression 0): Back-references are unsupported.
+lookaround	(?=a)a	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+lookaround	(?<=a)b	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+lookbehind-variable	(?<=a|bc)x	did-not-compile: hs_compile failed (code -4, expression 0): Zero-width assertions are not supported.
+possessive-quantifier	a*+	did-not-compile: hs_compile failed (code -4, expression 0): Possessive quantifiers are not supported.
+atomic-group	(?>a*)b	did-not-compile: hs_compile failed (code -4, expression 0): Atomic groups are unsupported.
+recursion	(a(?1)?b)	did-not-compile: hs_compile failed (code -4, expression 0): Subpattern reference unsupported at index 2.
+conditionals	(?(1)a|b)(a)?	did-not-compile: hs_compile failed (code -4, expression 0): Conditional references are not supported.
+k-reset	a\Kb	did-not-compile: hs_compile failed (code -4, expression 0): \K at index 1 not supported.
+control-verbs	a(*FAIL)|b	did-not-compile: hs_compile failed (code -4, expression 0): Unknown control verb (*FAIL) at index 1.
+named-groups	(?<name>a)	compiled
+free-spacing	(?x) a b c	compiled
+callouts	a(?C1)b	did-not-compile: hs_compile failed (code -4, expression 0): Callout at index 1 not supported.
+true-end-anchor	a\z	compiled
+
+=== E. execution-model tokens (span-reporting, captures, non-utf8-subject) ===
+(a)(b) over xab	compiled	('match', 1, 3, None, None)
+a over \xffa\xff	compiled	('match', 1, 2, None, None)
+
+=== F. the SOM-only compile restriction UNDER UTF-8 encoding ===
+isolated witness .*a.{40,}: vectorscan-block-nosom-utf8=compiled         vectorscan-block-som-utf8=did-not-compile 
+    vectorscan-block-nosom-utf8 diag: 
+    vectorscan-block-som-utf8 diag: hs_compile failed (code -4, expression 0): Pattern is too large.
+
+bench/capability's 64 corpus patterns, plain form, vectorscan-block-nosom-utf8 vs vectorscan-block-som-utf8:
+compiled under BOTH:                              37
+compiled under vectorscan-block-nosom-utf8 ONLY (SOM's own restriction under UTF-8): 2
+compiled under vectorscan-block-som-utf8 ONLY (unexpected):               0
+compiled under NEITHER:                            25
+
+--- the restriction's cost, by pattern ---
+  evil-alt-nested                                  -> hs_compile failed (code -4, expression 0): Start of match is not currently supported for patterns which match an empty buffer.
+  trim-nested-star                                 -> hs_compile failed (code -4, expression 0): Start of match is not currently supported for patterns which match an empty buffer.
+
+=== G. THE DOCUMENTED DIVERGENCE, over a genuinely multi-byte alternation ===
+'α|αβ' over b'\xce\xb1\xce\xb2' (UTF-8, 4 bytes)
+  oracle (leftmost-first): match [0,2) n=1
+  vectorscan-block-som-utf8 (leftmost-longest):   ('match', 0, 4, 1, None)
+
+=== H. (*UCP)'s interaction with SOM_LEFTMOST ===
+'(*UCP)\\w+' over b'\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0': did-not-compile	hs_compile failed (code -4, expression 0): Pattern is too large.
+'(*UCP)\\bМосква\\b': did-not-compile: hs_compile failed (code -4, expression 0): \b unsupported in UCP mode at index 6.
+  vectorscan-block-nosom-utf8 (encoding sibling, no SOM): did-not-compile: hs_compile failed (code -4, expression 0): \b unsupported in UCP mode at index 6. -- SAME breakage iff orthogonal to SOM
+
+=== THE DECLARATIONS (informational -- no EXT_BENCH_ROSTER row for any -utf8 config on this roster) ===
+ascii-class-scope	SATISFIED	w-ascii ok; d-ascii ok; s-ascii ok; posix-alpha-ascii ok
+atomic-group	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+backrefs	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+callouts	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+captures	not	caps None (Hyperscan has no capturing groups regardless of SOM/encoding)
+conditionals	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+control-verbs	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+free-spacing	SATISFIED	sibling vectorscan-block-som declares; compile under som+UTF-8 all
+k-reset	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+lookaround	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+lookbehind-variable	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+named-groups	SATISFIED	sibling vectorscan-block-som declares; compile under som+UTF-8 all
+non-utf8-subject	not	by rule (a UTF-8 config's subject contract is valid UTF-8, utf8_set_v1.md); witness: a over \xffa\xff -> match
+possessive-quantifier	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+recursion	not	sibling vectorscan-block-som withholds; compile under som+UTF-8 REFUSED
+span-reporting	SATISFIED	span reported (full grain: real span expected, exactly like plain vectorscan-block-som)
+true-end-anchor	SATISFIED	sibling vectorscan-block-som declares; compile under som+UTF-8 all
+unicode-class-scope	not	w-ucp did-not-compile; d-ucp ok; s-ucp ok
+unicode-properties	SATISFIED	L ok; Lu ok; N-plus ok; notL-plus ok; Zs ok
+utf8-encoding	SATISFIED	dot-is-one-char ok; negated-class-universe ok; caseless-non-ascii ok; multibyte-range ok
+vectorscan-block-som-utf8 WOULD DECLARE 7/20 if it carried a roster row: ascii-class-scope free-spacing named-groups span-reporting true-end-anchor unicode-properties utf8-encoding
