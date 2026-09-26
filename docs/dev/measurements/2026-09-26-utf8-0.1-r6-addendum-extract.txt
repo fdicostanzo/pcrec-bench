@@ -1,0 +1,197 @@
+# docs/dev/measurements/2026-09-26-utf8-0.1-r6-addendum-extract.txt
+#
+# Verbatim stdout of 2026-09-26-utf8-0.1-r6-addendum-extract.py, run from
+# the repo root, lane b97r6 ([B97] R6 follow-up).
+#
+# Source: store/records/utf8@0.1/pcrec_ce658cb7_{auto-caps,auto-nocaps,
+#   vm-caps,vm-in-caps}-simdna_utf8/*.jsonl (four files, 136,048 lines,
+#   ~54 MB total; streamed line by line, `kind=="compile" and trial==1`
+#   rows only, `engine_metadata` field only) + bench/utf8/patterns/*.rx
+#   (raw pattern bytes for the named subset this file quotes). No
+#   measurement run, no report rendered, no store index loaded.
+#
+# Resource check (`/usr/bin/time -v`): 0.82 s wall, 99% CPU, Maximum
+# resident set size 15,748 KB (15.7 MB) -- well under the 54 MB the
+# pcrec-only records occupy on disk and the 155 MB the whole
+# bench/utf8@0.1 store directory occupies (KB-16 is about the WHOLE-
+# STORE loader, pcrecbench.report's own path; this script never imports
+# it).
+#
+# Box: budu-ryzen1600, read-only (no compile, no run, no timing -- a
+# heavy peer run's presence on the box, if any, cannot affect a byte of
+# this file).
+#
+# Command: python3 docs/dev/measurements/2026-09-26-utf8-0.1-r6-addendum-extract.py
+#
+## 1. cls-lead-pair -- UD 6.3's own worked row: a TWO-lead-byte class (0xCE, 0xCF); the bitmap arm ('byte-class' in this set's vocabulary) must take it, memchr cannot
+  cls-lead-pair [plain]  b'[\xce\xb1-\xcf\x89]+'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  dfa_prefilter_offsets=none  prefilter=-  req_byte=none  req_run=none  req_why=none
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  dfa_prefilter_offsets=none  prefilter=-  req_byte=none  req_run=none  req_why=none
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  dfa_prefilter_offsets=-  prefilter=none  req_byte=none  req_run=none  req_why=none
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  dfa_prefilter_offsets=-  prefilter=none  req_byte=none  req_run=none  req_why=none
+  -- control: cls-high-range (many leads, U+0100-U+2000, three distinct lead bytes 0xC4-0xE2)
+  cls-high-range [plain]  b'[\\x{100}-\\x{2000}]+'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none
+
+## 2. control-twin pairs that BOTH compile on pcrec (the UCP twins do not -- P5.a, unsupported-by-declaration on every pcrec-*-utf8 config)
+### qnt-lazy-2b / qnt-plus-2b (utf8_set_v1.md 5: "the lazy twin -- the control pair for qnt-plus-2b")
+  qnt-plus-2b [plain]  b'\xc3\xa9+'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a9@0
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a9@0
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a9@0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a9@0
+  qnt-lazy-2b [plain]  b'\xc3\xa9+?'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a9@0
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a9@0
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a9@0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a9@0
+### the ci-* fold family against its own named control, ci-ascii-control ("the row every fold-set size above is read against")
+  ci-ascii-control [plain]  b'(?i)abc'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=3
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=3
+  ci-moskva [plain]  b'(?i)\xd0\xbc\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=208  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=208  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=208  vm_cls_folds=0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=208  vm_cls_folds=0
+  ci-greek-run [plain]  b'(?i)\xce\xb1\xce\xb2\xce\xb3'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=206  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=206  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=206  vm_cls_folds=0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=206  vm_cls_folds=0
+  ci-class-range [plain]  b'(?i)[a-z]+'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+  ci-neg-fold [plain]  b'(?i)[^\xc3\xa9]'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+  ci-strasse [plain]  b'(?i)stra\xc3\x9fe'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=4
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=4
+  ci-sigma [plain]  b'(?i)\xcf\x83'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=0
+  ci-turkish-i [plain]  b'(?i)i'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=byte-class  prefilter=-  req_byte=none  vm_cls_folds=-
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=1
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=none  vm_cls_folds=1
+
+## 3. the offset-skip population beyond P1's pair (F-C6's declared narrowing): lit-run-3, lit-mixed-ascii, alt-shared-char -- P1's own pair (lit-offset-at-head/-tail) reprinted for context
+  lit-offset-at-head [plain]  b'@\xc3\xa9'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=64  req_run=40c3a9@0  req_why=emitted
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=64  req_run=40c3a9@0  req_why=emitted
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=64  req_run=40c3a9@0  req_why=emitted
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=64  req_run=40c3a9@0  req_why=emitted
+  lit-offset-at-tail [plain]  b'\xc3\xa9@'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a940@0  req_why=emitted
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=195  req_run=c3a940@0  req_why=emitted
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a940@0  req_why=emitted
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=195  req_run=c3a940@0  req_why=emitted
+  lit-run-3 [plain]  b'\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=230  req_run=e697a5e69cace8aa@0  req_why=emitted
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=230  req_run=e697a5e69cace8aa@0  req_why=emitted
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=230  req_run=e697a5e69cace8aa@0  req_why=emitted
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=230  req_run=e697a5e69cace8aa@0  req_why=emitted
+  lit-mixed-ascii [plain]  b'user@\xe4\xbe\x8b\xe3\x81\x88.jp'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=offset-set  prefilter=-  req_byte=117  req_run=7573657240e4be8b@0  req_why=emitted
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=offset-set  prefilter=-  req_byte=117  req_run=7573657240e4be8b@0  req_why=emitted
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=117  req_run=7573657240e4be8b@0  req_why=emitted
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=117  req_run=7573657240e4be8b@0  req_why=emitted
+  alt-shared-char [plain]  b'\xe6\x97\xa5\xe6\x9c\xac|\xe6\x97\xa5\xe6\x9b\x9c|\xe6\x97\xa5\xe4\xbb\x98'
+    auto     engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=230  req_run=e697a5@0  req_why=emitted
+    nocaps   engine=dfa  engine_sel=selected  dfa_prefilter=memchr  prefilter=-  req_byte=230  req_run=e697a5@0  req_why=emitted
+    vm       engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=230  req_run=e697a5@0  req_why=emitted
+    vm-in    engine=vm  engine_sel=forced  dfa_prefilter=-  prefilter=none  req_byte=230  req_run=e697a5@0  req_why=emitted
+
+## 4. corpus-wide prefilter census, plain form, every compiling pattern (excluded: unicode-class-scope unsupported-by-declaration and the family-(f)/prp-ingreek refusals -- P5.a/P7.a's own populations, not re-derived here)
+### auto: {'byte-class': 34, 'hybrid': 4, 'memchr': 20, 'memchr-bounded': 1, 'none': 4, 'offset-set': 4, 'offset-set-bounded': 2}
+    declined (value 'none'), 4 of 69: asr-a-z, asr-b-midchar, cls-dot-rep, lit-anchored-run
+### nocaps: {'byte-class': 34, 'hybrid': 4, 'memchr': 20, 'memchr-bounded': 1, 'none': 4, 'offset-set': 4, 'offset-set-bounded': 2}
+    declined (value 'none'), 4 of 69: asr-a-z, asr-b-midchar, cls-dot-rep, lit-anchored-run
+### vm: {'none': 67}
+    declined (value 'none'), 67 of 67: alt-cyr-64, alt-distinct-lead, alt-mixed-width, alt-nearmiss, alt-shared-char, alt-shared-lead, asr-a-z, asr-b-ascii, asr-b-cyr, asr-b-midchar, asr-caret-ml, asr-dollar-ml, asr-lb-class, asr-lb-fixed, asr-lb-neg, asr-lb-varwidth, ci-ascii-control, ci-class-range, ci-e-acute, ci-greek-run, ci-kelvin, ci-long-s, ci-moskva, ci-neg-fold, ci-sigma, ci-strasse, ci-turkish-i, cls-boundary-range, cls-d-ascii, cls-dot, cls-dot-rep, cls-high-range, cls-lead-pair, cls-mixed, cls-neg-allhigh, cls-neg-cjk, cls-neg-single, cls-posix-alpha, cls-s-nbsp, cls-w-ascii, floor, lit-1ch-2b, lit-1ch-3b, lit-1ch-4b, lit-anchored-run, lit-cyr-run, lit-mixed-ascii, lit-nearmiss-run, lit-nfc-pair, lit-offset-at-head, lit-offset-at-tail, lit-run-3, lit-sharp-s, prp-cyrillic, prp-greek, prp-greek-sc, prp-han, prp-latin, prp-lu, prp-n, prp-zs, qnt-bounded-4b, qnt-class-run, qnt-counted-3b, qnt-dot-bounded, qnt-lazy-2b, qnt-plus-2b
+### vm-in: {'none': 67}
+    declined (value 'none'), 67 of 67: alt-cyr-64, alt-distinct-lead, alt-mixed-width, alt-nearmiss, alt-shared-char, alt-shared-lead, asr-a-z, asr-b-ascii, asr-b-cyr, asr-b-midchar, asr-caret-ml, asr-dollar-ml, asr-lb-class, asr-lb-fixed, asr-lb-neg, asr-lb-varwidth, ci-ascii-control, ci-class-range, ci-e-acute, ci-greek-run, ci-kelvin, ci-long-s, ci-moskva, ci-neg-fold, ci-sigma, ci-strasse, ci-turkish-i, cls-boundary-range, cls-d-ascii, cls-dot, cls-dot-rep, cls-high-range, cls-lead-pair, cls-mixed, cls-neg-allhigh, cls-neg-cjk, cls-neg-single, cls-posix-alpha, cls-s-nbsp, cls-w-ascii, floor, lit-1ch-2b, lit-1ch-3b, lit-1ch-4b, lit-anchored-run, lit-cyr-run, lit-mixed-ascii, lit-nearmiss-run, lit-nfc-pair, lit-offset-at-head, lit-offset-at-tail, lit-run-3, lit-sharp-s, prp-cyrillic, prp-greek, prp-greek-sc, prp-han, prp-latin, prp-lu, prp-n, prp-zs, qnt-bounded-4b, qnt-class-run, qnt-counted-3b, qnt-dot-bounded, qnt-lazy-2b, qnt-plus-2b
+
+## 5. the declined population's own pattern bytes (context for a 'strong lead-byte set' judgment -- no lead-byte histogram is computed here, see the ledger's own 'what was not read')
+  asr-a-z	b'\\A\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e\\z'
+  asr-b-midchar	b'\\B'
+  cls-dot-rep	b'^.{5}$'
+  lit-anchored-run	b'^\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e$'
+  alt-cyr-64	b'\xd0\xbd\xd0\xb0\xd0\xb4|\xd0\xb1\xd0\xbe\xd0\xbb\xd1\x8c\xd1\x88\xd0\xb5|\xd1\x87\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb7|\xd1\x8d\xd1\x82\xd0\xb8|\xd0\xbd\xd0\xb0\xd1\x81|\xd0\xbf\xd1\x80\xd0\xbe|\xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xbe|\xd0\xbd\xd0\xb8\xd1\x85|\xd0\xba\xd0\xb0\xd0\xba\xd0\xb0\xd1\x8f|\xd0\xbc\xd0\xbd\xd0\xbe\xd0\xb3\xd0\xbe|\xd1\x80\xd0\xb0\xd0\xb7\xd0\xb2\xd0\xb5|\xd1\x82\xd1\x80\xd0\xb8|\xd1\x8d\xd1\x82\xd1\x83|\xd0\xbc\xd0\xbe\xd1\x8f|\xd0\xb2\xd0\xbf\xd1\x80\xd0\xbe\xd1\x87\xd0\xb5\xd0\xbc|\xd1\x85\xd0\xbe\xd1\x80\xd0\xbe\xd1\x88\xd0\xbe|\xd1\x81\xd0\xb2\xd0\xbe\xd1\x8e|\xd1\x8d\xd1\x82\xd0\xbe\xd0\xb9|\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb4|\xd0\xb8\xd0\xbd\xd0\xbe\xd0\xb3\xd0\xb4\xd0\xb0|\xd0\xbb\xd1\x83\xd1\x87\xd1\x88\xd0\xb5|\xd1\x87\xd1\x83\xd1\x82\xd1\x8c|\xd1\x82\xd0\xbe\xd0\xbc|\xd0\xbd\xd0\xb5\xd0\xbb\xd1\x8c\xd0\xb7\xd1\x8f|\xd1\x82\xd0\xb0\xd0\xba\xd0\xbe\xd0\xb9|\xd0\xb8\xd0\xbc|\xd0\xb1\xd0\xbe\xd0\xbb\xd0\xb5\xd0\xb5|\xd0\xb2\xd1\x81\xd0\xb5\xd0\xb3\xd0\xb4\xd0\xb0|\xd0\xba\xd0\xbe\xd0\xbd\xd0\xb5\xd1\x87\xd0\xbd\xd0\xbe|\xd0\xb2\xd1\x81\xd1\x8e|\xd0\xbc\xd0\xb5\xd0\xb6\xd0\xb4\xd1\x83|\xd0\xb4\xd0\xbe\xd0\xbc|\xd0\xb3\xd0\xbe\xd1\x80\xd0\xbe\xd0\xb4|\xd0\xb4\xd0\xb5\xd1\x80\xd0\xb5\xd0\xb2\xd0\xbd\xd1\x8f|\xd0\xb4\xd1\x80\xd1\x83\xd0\xb3|\xd1\x80\xd0\xb0\xd0\xb1\xd0\xbe\xd1\x82\xd0\xb0|\xd0\xb4\xd0\xb5\xd0\xbb\xd0\xbe|\xd1\x81\xd0\xbb\xd0\xbe\xd0\xb2\xd0\xbe|\xd0\xb6\xd0\xb8\xd0\xb7\xd0\xbd\xd1\x8c|\xd0\xb2\xd1\x80\xd0\xb5\xd0\xbc\xd1\x8f|\xd1\x80\xd1\x83\xd0\xba\xd0\xb0|\xd0\xb3\xd0\xbb\xd0\xb0\xd0\xb7|\xd0\xb3\xd0\xbe\xd0\xbb\xd0\xbe\xd0\xb2\xd0\xb0|\xd0\xb2\xd0\xbe\xd0\xb4\xd0\xb0|\xd0\xb7\xd0\xb5\xd0\xbc\xd0\xbb\xd1\x8f|\xd1\x81\xd0\xbe\xd0\xbb\xd0\xbd\xd1\x86\xd0\xb5|\xd1\x81\xd0\xb2\xd0\xb5\xd1\x82|\xd0\xb4\xd0\xb2\xd0\xb5\xd1\x80\xd1\x8c|\xd0\xbe\xd0\xba\xd0\xbd\xd0\xbe|\xd1\x81\xd1\x82\xd0\xbe\xd0\xbb|\xd0\xba\xd0\xbd\xd0\xb8\xd0\xb3\xd0\xb0|\xd0\xbf\xd0\xb8\xd1\x81\xd1\x8c\xd0\xbc\xd0\xbe|\xd0\xb2\xd0\xbe\xd0\xb9\xd0\xbd\xd0\xb0|\xd0\xbc\xd0\xb8\xd1\x80|\xd0\xbb\xd1\x8e\xd0\xb1\xd0\xbe\xd0\xb2\xd1\x8c|\xd1\x81\xd1\x87\xd0\xb0\xd1\x81\xd1\x82\xd1\x8c\xd0\xb5|\xd0\xbc\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0|\xd1\x80\xd0\xbe\xd1\x81\xd1\x81\xd0\xb8\xd1\x8f|\xd0\xb4\xd0\xb5\xd0\xbd\xd1\x8c|\xd0\xbd\xd0\xbe\xd1\x87\xd1\x8c|\xd1\x83\xd1\x82\xd1\x80\xd0\xbe|\xd0\xb2\xd0\xb5\xd1\x87\xd0\xb5\xd1\x80|\xd0\xbd\xd0\xb5\xd0\xb4\xd0\xb5\xd0\xbb\xd1\x8f|\xd0\xbc\xd0\xb5\xd1\x81\xd1\x8f\xd1\x86'
+  alt-distinct-lead	b'\xe6\x97\xa5\xe6\x9c\xac|\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0|caf\xc3\xa9'
+  alt-mixed-width	b'a|\xc3\xa9|\xe6\x97\xa5|\xf0\x9f\x98\x80'
+  alt-nearmiss	b'\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e|\xe6\x97\xa5\xe6\x9c\xac\xe5\x9b\xbd'
+  alt-shared-char	b'\xe6\x97\xa5\xe6\x9c\xac|\xe6\x97\xa5\xe6\x9b\x9c|\xe6\x97\xa5\xe4\xbb\x98'
+  alt-shared-lead	b'\xce\xb1|\xce\xb2|\xce\xb3'
+  asr-b-ascii	b'\\bcat\\b'
+  asr-b-cyr	b'\\b\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0\\b'
+  asr-caret-ml	b'(?m)^\xe6\x97\xa5'
+  asr-dollar-ml	b'(?m)\xe8\xaa\x9e$'
+  asr-lb-class	b'(?<=[\\x{400}-\\x{4FF}])\\s'
+  asr-lb-fixed	b'(?<=\xc3\xa9)x'
+  asr-lb-neg	b'(?<!\xe6\x97\xa5)\xe6\x9c\xac'
+  asr-lb-varwidth	b'(?<=a|\xc3\xa9)x'
+  ci-ascii-control	b'(?i)abc'
+  ci-class-range	b'(?i)[a-z]+'
+  ci-e-acute	b'(?i)\xc3\xa9'
+  ci-greek-run	b'(?i)\xce\xb1\xce\xb2\xce\xb3'
+  ci-kelvin	b'(?i)k'
+  ci-long-s	b'(?i)s'
+  ci-moskva	b'(?i)\xd0\xbc\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0'
+  ci-neg-fold	b'(?i)[^\xc3\xa9]'
+  ci-sigma	b'(?i)\xcf\x83'
+  ci-strasse	b'(?i)stra\xc3\x9fe'
+  ci-turkish-i	b'(?i)i'
+  cls-boundary-range	b'[a-\xc3\xa9]+'
+  cls-d-ascii	b'\\d{4}'
+  cls-dot	b'.'
+  cls-high-range	b'[\\x{100}-\\x{2000}]+'
+  cls-lead-pair	b'[\xce\xb1-\xcf\x89]+'
+  cls-mixed	b'[a-z\xc3\xa9\\x{430}-\\x{44F}]+'
+  cls-neg-allhigh	b'[^\\x{80}-\\x{10FFFF}]+'
+  cls-neg-cjk	b'[^\\x{4E00}-\\x{9FFF}]+'
+  cls-neg-single	b'[^\xc3\xa9]'
+  cls-posix-alpha	b'[[:alpha:]]+'
+  cls-s-nbsp	b'a\\sb'
+  cls-w-ascii	b'\\w+'
+  floor	b'~'
+  lit-1ch-2b	b'\xc3\xa9'
+  lit-1ch-3b	b'\xe6\x97\xa5'
+  lit-1ch-4b	b'\xf0\x9f\x98\x80'
+  lit-cyr-run	b'\xd0\x9c\xd0\xbe\xd1\x81\xd0\xba\xd0\xb2\xd0\xb0'
+  lit-mixed-ascii	b'user@\xe4\xbe\x8b\xe3\x81\x88.jp'
+  lit-nearmiss-run	b'\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e'
+  lit-nfc-pair	b'caf\xc3\xa9'
+  lit-offset-at-head	b'@\xc3\xa9'
+  lit-offset-at-tail	b'\xc3\xa9@'
+  lit-run-3	b'\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e'
+  lit-sharp-s	b'Stra\xc3\x9fe'
+  prp-cyrillic	b'\\p{Cyrillic}+'
+  prp-greek	b'\\p{Greek}'
+  prp-greek-sc	b'\\p{sc=Greek}'
+  prp-han	b'\\p{Han}+'
+  prp-latin	b'\\p{Latin}+'
+  prp-lu	b'\\p{Lu}'
+  prp-n	b'\\p{N}+'
+  prp-zs	b'\\p{Zs}'
+  qnt-bounded-4b	b'\xf0\x9f\x98\x80{2,4}'
+  qnt-class-run	b'[\\x{400}-\\x{4FF}]{4,16}'
+  qnt-counted-3b	b'(?:\xe6\x97\xa5\xe6\x9c\xac){2,}'
+  qnt-dot-bounded	b'.{3,8}'
+  qnt-lazy-2b	b'\xc3\xa9+?'
+  qnt-plus-2b	b'\xc3\xa9+'
