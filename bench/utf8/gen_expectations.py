@@ -1,101 +1,46 @@
 #!/usr/bin/env python3
-"""gen_expectations.py -- `expectations.tsv` for bench/utf8@0.1 -- **A U4
-STUB, NOT THE REAL DERIVATION** ([B77] U4's own brief: "Expectations
-(expectations.tsv) and NOTES.md are U5, not yours, unless the generic
-gates require a stub. If they do, say so and make the smallest possible
-stub."). They do: the moment `subbench.toml` exists, `bench/utf8` is
-ENUMERATED by `tools/selfcheck.py`'s `subbench_dirs()` and TWO generic
-`make check-harness` gates unconditionally call this file --
-`check_expectations()` (`gen_expectations.py --check` must exit 0) and
-`check_floor_pattern()` (a real `pcrecbench quick --testee pcre2-jit
---regime search --pattern floor` cell, which reads `sb.expectation(...)`
-for the floor pattern against WHICHEVER 5 `search_short` subjects `quick`
-picks -- `pcrecbench/subbench.py`'s `Subbench.expectation()` raises if no
-row exists for the (pattern, subject, regime) triple it is asked about).
+"""gen_expectations.py -- `expectations.tsv` for bench/utf8@0.1, from the
+libpcre2 oracle (method `libpcre2-differential`, requirements 5) -- [B77] U5,
+the REAL 76-pattern derivation (U4's floor-only stub is retired).
 
-**What this stub derives, and what it does not.** It calls the SAME
-shared oracle derivation every other set uses
-(`pcrecbench.expectations.derive`), REAL and libpcre2-differential, never
-faked -- but restricted to the ONE pattern `check_floor_pattern` actually
-needs: the floor (`~`), over EVERY subject in EVERY regime this set
-declares (so it covers whichever short subjects `quick --subjects N`
-picks, not just a named few). The floor is byte-safe by design
-(utf8_set_v1.md 4.4) and pure ASCII, so this is fast (well under a
-second) regardless of the set's own ~30x-slower UTF-8 oracle cost
-(docs/dev/lanes/b77u4_report.md's own timed estimate for the REAL,
-76-pattern derivation U5 owes).
+The derivation itself is `pcrecbench/expectations.py` -- the sub-bench
+contract's chain, shared, not copied. This set declares `search_short` +
+`throughput` (utf8_set_v1.md 10.1: no `match`) and `[expectations] encoding
+= "utf8"`, so every pattern is oracled under PCRE2_UTF, plus PCRE2_UCP on
+exactly the patterns declaring `requires-unicode-class-scope`
+(`expectations.oracle_option_word`, [B77] U1), with U1's CHARACTER-BOUNDARY
+find-all advance on the throughput regime.
 
-**The 75 non-floor patterns carry NO expectation rows here.** A `quick`/
-`run` cell against any of them will raise (no expectation for that
-pattern) until U5 lands the real derivation -- this is the honest
-consequence of a stub, not a hidden gap: `bench/utf8/CLAUDE.md` and this
-lane's report both say so in writing, and `check_expectations()`/
-`check_floor_pattern()` are the only two generic gates that touch
-`expectations.tsv` at all (confirmed by reading both in
-`tools/selfcheck.py`; no other generic check queries a non-floor
-pattern's expectation).
+THE METHOD, recorded (NOTES.md "The oracle"): libpcre2 10.46 through
+`pcrecbench/oracle_pcre2.py`, find-all under utf8_set_v1.md 8.2 AS AMENDED
+by the manager's VALIDATE-ONCE ruling (2026-09-25): call 1 of each find-all
+loop (offset 0, no PCRE2_NO_UTF_CHECK) lets libpcre2 validate the whole
+subject; calls 2..n over that same buffer pass PCRE2_NO_UTF_CHECK at
+asserted character boundaries. Without it libpcre2 re-checks from the start
+offset to the END on every call, and the derivation is quadratic (~55-60
+min; docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt). The
+always-check path is kept (`find_all(validate_once=False)`) as the control
+`tools/selfcheck.py check_utf8_validate_once` compares against.
 
-    python3 bench/utf8/gen_expectations.py            # write (floor only)
+ONE DECLARED ORACLE REFUSAL: `prp-ingreek` (`\\p{InGreek}`) -- libpcre2
+refuses block names at compile time (utf8_set_v1.md 5(f): THE REFUSAL
+WITNESS). It carries NO expectation rows, by design; an undeclared refusal,
+or this pattern compiling, fails the derivation BY NAME.
+
+    python3 bench/utf8/gen_expectations.py            # write
     python3 bench/utf8/gen_expectations.py --check     # re-derive + diff
 """
-import argparse
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(HERE)))
 
-from pcrecbench.expectations import HEADER, derive  # noqa: E402
-from pcrecbench.subbench import load as load_subbench  # noqa: E402
+from pcrecbench.expectations import main  # noqa: E402
 
-OUT = os.path.join(HERE, "expectations.tsv")
-
-
-def _floor_only_derive():
-    sb = load_subbench(HERE)
-    floors = [p for p in sb.patterns if p.role == "floor"]
-    assert len(floors) == 1, (
-        "bench/utf8: expected exactly one floor-role pattern, found %d"
-        % len(floors))
-    sb.patterns = floors  # a plain list attribute (subbench.py); safe to
-    # narrow here since this process derives nothing else from `sb`.
-    rows, giveups, version = derive(sb, report=False)
-    for p, s, r, msg in giveups:
-        print("ORACLE GAVE UP, triple DROPPED: %s / %s / %s: %s"
-              % (p, s, r, msg), file=sys.stderr)
-    return HEADER + "\n" + "\n".join("\t".join(row) for row in rows) + "\n"
-
-
-def main():
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true")
-    args = ap.parse_args()
-
-    text = _floor_only_derive()
-
-    if args.check:
-        if not os.path.exists(OUT):
-            print("gen_expectations --check: %s does not exist" % OUT,
-                  file=sys.stderr)
-            return 1
-        with open(OUT, "r", encoding="utf-8") as f:
-            have = f.read()
-        if have != text:
-            print("gen_expectations --check: %s does NOT re-derive "
-                  "(STUB: floor pattern only -- see this file's own "
-                  "docstring)" % OUT, file=sys.stderr)
-            return 1
-        print("gen_expectations --check: OK (STUB: floor pattern only, "
-              "%d row(s))" % (text.count("\n") - 1))
-        return 0
-
-    with open(OUT, "w", encoding="utf-8", newline="\n") as f:
-        f.write(text)
-    print("gen_expectations: STUB wrote %d row(s) (floor pattern only) "
-          "-> %s -- the other 75 patterns' real UTF-aware oracle "
-          "derivation is U5's own scope" % (text.count("\n") - 1, OUT))
-    return 0
-
+# utf8_set_v1.md 5(f): the one pattern libpcre2 is DESIGNED to refuse.
+EXPECTED_ORACLE_REFUSALS = frozenset({"prp-ingreek"})
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(HERE, doc=__doc__.splitlines()[0],
+                  expected_refusals=EXPECTED_ORACLE_REFUSALS))

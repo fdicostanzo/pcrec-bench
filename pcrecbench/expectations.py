@@ -90,16 +90,53 @@ def utf8_advance(sb, pattern):
     return bool(oracle_option_word(sb, pattern) & oracle.PCRE2_UTF)
 
 
-def derive(sb, report=False):
-    """-> (rows, giveups, oracle_version). `rows` are TSV column tuples."""
+class OracleRefusalError(Exception):
+    """An oracle COMPILE refusal the set did not declare, or a declared
+    refusal the oracle compiled. Either way the set's own claim about which
+    patterns libpcre2 refuses is false, and no expectations are written."""
+
+
+def derive(sb, report=False, expected_refusals=frozenset(), refusals=None):
+    """-> (rows, giveups, oracle_version). `rows` are TSV column tuples.
+
+    ORACLE COMPILE REFUSALS ([B77] U5). A pattern libpcre2 refuses to
+    compile carries NO expectation rows -- the refusal IS its answer, the
+    first-class `did-not-compile` compile-axis outcome with no match rows
+    (utf8_set_v1.md 5(f)'s `prp-ingreek`; bench/bounded's 65535 rung is the
+    precedent, KB-4). It is legal ONLY where the calling set DECLARES it in
+    `expected_refusals` (pattern names): an undeclared refusal, or a
+    declared pattern that compiles, raises `OracleRefusalError` BY NAME --
+    never a silent skip, never a crash with no pattern named. Each declared
+    refusal is appended to `refusals` (when given) as `(pattern, message)`
+    so the caller can print it."""
     version = oracle.version()
     rows = []
     giveups = []
     ncaps_seen = {}
+    declared = set(expected_refusals)
+    unknown = declared - {p.name for p in sb.patterns}
+    if unknown:
+        raise OracleRefusalError(
+            "declared oracle refusal(s) %s name no pattern of %s"
+            % (sorted(unknown), sb.id))
 
     for pat in sb.patterns:
         text = sb.pattern_bytes(pat.name)
-        rx = oracle.compile(text, oracle_option_word(sb, pat))
+        try:
+            rx = oracle.compile(text, oracle_option_word(sb, pat))
+        except oracle.Pcre2Error as e:
+            if pat.name not in declared:
+                raise OracleRefusalError(
+                    "%s: pattern %r: the oracle REFUSED to compile it and "
+                    "the set does not declare that refusal: %s"
+                    % (sb.id, pat.name, e)) from e
+            if refusals is not None:
+                refusals.append((pat.name, str(e)))
+            continue
+        if pat.name in declared:
+            raise OracleRefusalError(
+                "%s: pattern %r is declared an oracle refusal but libpcre2 "
+                "%s COMPILED it" % (sb.id, pat.name, version))
         for regime in REGIME_ORDER:
             if regime not in sb.regimes:
                 continue
@@ -145,8 +182,10 @@ def derive(sb, report=False):
     return rows, giveups, version
 
 
-def main(here, argv=None, doc=None):
-    """The `gen_expectations.py` command line, for the sub-bench at `here`."""
+def main(here, argv=None, doc=None, expected_refusals=frozenset()):
+    """The `gen_expectations.py` command line, for the sub-bench at `here`.
+    `expected_refusals`: the pattern names this set DECLARES the oracle
+    refuses to compile (see `derive`)."""
     ap = argparse.ArgumentParser(description=doc or __doc__.splitlines()[0])
     ap.add_argument("--out", default=os.path.join(here, "expectations.tsv"))
     ap.add_argument("--check", action="store_true",
@@ -156,7 +195,13 @@ def main(here, argv=None, doc=None):
     args = ap.parse_args(argv)
 
     sb = load_subbench(here)
-    rows, giveups, version = derive(sb, report=args.report)
+    refusals = []
+    rows, giveups, version = derive(sb, report=args.report,
+                                    expected_refusals=expected_refusals,
+                                    refusals=refusals)
+    for p, msg in refusals:
+        print("ORACLE REFUSED (declared; no expectation rows, by design): "
+              "%s: %s" % (p, msg), file=sys.stderr)
 
     for p, s, r, msg in giveups:
         print("ORACLE GAVE UP, triple DROPPED: %s / %s / %s: %s"

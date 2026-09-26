@@ -38,7 +38,10 @@ ADDITIONS for pcrec-bench (everything else is the origin's text):
     0x80-0xBF, stopping at the first byte outside that range or at n")
     rather than `start + 1` -- which under PCRE2_UTF would hand
     pcre2_match a mid-character start offset (PCRE2_ERROR_BADUTFOFFSET,
-    -36). PCRE2_NO_UTF_CHECK is NEVER passed (utf8_set_v1.md 8.2).
+    -36). PCRE2_NO_UTF_CHECK: originally NEVER passed (utf8_set_v1.md
+    8.2); since [B77] U5 (8.2 as AMENDED, VALIDATE-ONCE) passed ONLY by
+    `find_all` on calls 2..n after libpcre2's own call-1 check of the whole
+    subject -- see `_find_all_impl`.
 
 pcrec is NOT the source of truth here and neither is pcrec-bench: PCRE2 is
 (pcrec CLAUDE.md's Compatibility Standard, D26). `version()` is read live off
@@ -67,6 +70,15 @@ PCRE2_MULTILINE = 0x00000400
 PCRE2_UTF = 0x00080000
 PCRE2_UCP = 0x00020000
 PCRE2_ERROR_BADUTFOFFSET = -36
+# [B77] U5 (utf8_set_v1.md 8.2, amended: VALIDATE-ONCE). A MATCH-time option,
+# never part of the compile-time option word. Passed ONLY by
+# `_find_all_impl`, ONLY under PCRE2_UTF, ONLY on calls 2..n of one find-all
+# loop over the same immutable `bytes` subject, and ONLY after call 1 (offset
+# 0, WITHOUT this flag) returned something other than an error -- i.e. after
+# libpcre2 ITSELF validated the whole subject. [measured] value 0x40000000 on
+# this box's 10.46 (docs/dev/measurements/2026-09-25-b77u5-validate-once-
+# probe.txt: same count, 36.1 s -> 0.018 s on `.` over t-256k).
+PCRE2_NO_UTF_CHECK = 0x40000000
 
 _CANDIDATES = ["libpcre2-8.so.0", "libpcre2-8.so"]
 
@@ -346,7 +358,7 @@ def next_start(subject, pos, utf):
     return nxt
 
 
-def _find_all_impl(self, subject, limit=None):
+def _find_all_impl(self, subject, limit=None, validate_once=True):
     """The THROUGHPUT regime's expectation: the FIRST match's span and the
     COUNT of non-overlapping matches, found by the same advance rule both
     drivers use -- pcrec match_api.md S3.1's find-all loop, adopted BY
@@ -357,16 +369,45 @@ def _find_all_impl(self, subject, limit=None):
     S3.1.1's `<prefix>_next_pos` residual is `start + 1` (every position is
     a character boundary). UTF-8 ([B77] U1, utf8_set_v1.md 8.4): when THIS
     compiled word carries PCRE2_UTF the residual is the next CHARACTER
-    boundary (`next_start`), never `start + 1`."""
+    boundary (`next_start`), never `start + 1`.
+
+    VALIDATE-ONCE ([B77] U5, utf8_set_v1.md 8.2 as amended by the manager's
+    ruling, 2026-09-25). libpcre2 re-checks UTF validity from the start
+    offset to the END of the subject on every pcre2_match call, which makes
+    a find-all loop quadratic in the subject's length (36.1 s for `.` over a
+    256 KB subject, 0.018 s without the re-check -- the probe in
+    docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt). So,
+    under PCRE2_UTF only: call 1 runs at offset 0 WITHOUT
+    PCRE2_NO_UTF_CHECK, so libpcre2 validates the WHOLE subject itself (and
+    an ill-formed subject is REFUSED there -- raised, no further call);
+    calls 2..n pass PCRE2_NO_UTF_CHECK over the SAME immutable `bytes`
+    object, and every such start offset is ASSERTED to be a character
+    boundary before the call (never assumed). `validate_once=False` is the
+    always-check path, kept as the CONTROL that validate-once rows are
+    byte-identical to it (tools/selfcheck.py check_utf8_validate_once).
+    Byte encoding: no flag is ever passed (a byte word has no check)."""
     if isinstance(subject, str):
         subject = subject.encode("latin-1")
+    subject = bytes(subject)  # one immutable buffer for the whole loop
     n = len(subject)
     utf = bool(self.options & PCRE2_UTF)
     pos = 0
     count = 0
     first = None
+    validated = False
     while pos <= n:
-        got = _search_raw(self, subject, pos, 0)
+        opts = 0
+        if validated:
+            if pos < n and (subject[pos] & 0xC0) == 0x80:
+                raise AssertionError(
+                    "validate-once: start offset %d is not a character "
+                    "boundary -- refusing to pass PCRE2_NO_UTF_CHECK" % pos)
+            opts = PCRE2_NO_UTF_CHECK
+        got = _search_raw(self, subject, pos, opts)
+        # Reaching here, call 1 did not raise: libpcre2 has checked the whole
+        # subject (offset 0, no lookbehind reach before it).
+        if utf and validate_once and pos == 0 and not validated:
+            validated = True
         if got is None:
             break
         (s, e), _g = got
