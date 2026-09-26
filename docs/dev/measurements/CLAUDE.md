@@ -729,3 +729,17 @@ Maintenance: update this file when files are added/removed or change role.
   (testee, family, requires), and the cells where the best full-grain
   non-pcrec testee beats pcrec-auto-utf8 by more than ×2. Reads the
   committed report group + records only.
+- `2026-09-26-utf8-0.1-r2-r7-addendum-extract.py` / `.txt` — ([B97],
+  lane b97read) the per-row numbers behind
+  `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7-addendum-r2r7.md`'s
+  R2-R7 scoring (R2 the pcre2-jit band incl. the per-(testee,regime)
+  slower/faster split; R7 the t-1m/t-64k sweep, all 91 hits; R3 the
+  ASCII-vs-per-script encoding band, all 22 hits; R4 the per-script
+  spread band, worst 40 of 297 hits plus the 4 missing-subject pairs
+  cross-checked against the `excluded` section's `n_wrong>0` rows; R5's
+  completion, compile-time cliffs on the 7 non-pcrec compiling testees).
+  Reads ONLY the two already-committed report files
+  (`…-ce658cb7.tsv`'s `rank`/`compile` sections,
+  `…-ce658cb7.subject-grain.tsv`'s `rank` section) plus
+  `bench/utf8/subject_facts.tsv`'s byte lengths — NO store record, no
+  report render.
