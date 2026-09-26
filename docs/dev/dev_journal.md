@@ -5846,3 +5846,36 @@ pcrec-nocaps-utf8, pcrec-vm-utf8, pcrec-vm-in-utf8} (§14 Q6's first sample), lo
 build/windows/window_utf8_20260926T013438Z.log, watcher on completion. No lanes
 overnight (the box is the window's). Morning: commit the store, [B91] (unsupported
 section + selection-relative best) before the READ, [B92]/[B93] alongside.
+
+## 2026-09-26 — lane b93pred: [B93]'s P2 fix delivered, P4 filed
+
+Applied Frank's [B93] ruling: `docs/dev/predictions/capability-0.1-first.tsv`
+P2.a/P2.b's Cause-B `regime_or_na=n/a` selector clause is dropped (Q6 (i)'s own
+suggested remedy). Empirically found a SECOND, masked defect in the same two
+clauses while proving "no predicted value changed": their `ratio_to(...)`
+reducer argument was bare (missing `<key>=<glob>` syntax), which crashes
+`interpret()` outright once Cause B stops shielding it, and a naive `testee=`-only
+patch would have scored a silently WRONG, cross-pattern-pooled ratio (116.674)
+instead of the intended same-pattern one. Fixed by repeating `pattern=`+`testee=`
+in the argument; verified against all four committed reports and cross-checked
+against the 2026-09-17 ledger's own hand-derived 5.29 (matches to three
+decimals; P2.b's 6.976 is a new, independently-derived number). Standing rule
+written to `docs/dev/predictions/CLAUDE.md` ("Revising an already-scored file").
+`_KNOWN_HISTORICAL_LOAD_DEFECTS`/`_load_predictions_with_named_exceptions` and
+the Cause-B sidecar block are GONE from `catalogue/check_interpret.py`; Q6 (i)
+now passes with no exception on any file.
+
+Retiring Cause B's stopgap surfaced Q6 (ii) raising on P4.a/P4.b's OWN
+already-diagnosed Cause C (`pcrec_*-auto-*`'s hyphen typo) — masked until now
+because Cause B's crash always fired first, on an earlier row. Repairing the
+glob alone does not help: P4.a's `ratio_to` argument has the SAME bare-arg bug,
+and P4.b's `ratio_to_median_over` argument is a pattern VALUE where the reducer
+needs a KEY NAME (wrong reducer entirely, on this reading). No ledger states a
+number to verify a P4 fix against, so this lane did not invent one (out of
+[B93]'s own narrow charter). Filed on `[B72smalls]`'s own precedent: a new,
+differently-named, dated stopgap in `check_interpret.py` section 3
+(`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) keeps `make check-interpret`
+green (200/200) while the four sidecars stay un-regenerated, reported as a
+separate "BLOCKED ON A RULING" count. [B93] STATE:blocked pending a ruling on
+P4; full detail in `docs/dev/lanes/b93pred_report.md`. `make check-interpret` /
+`catalogue/fixtures/gen.py --check` / `make check-schema` all green.

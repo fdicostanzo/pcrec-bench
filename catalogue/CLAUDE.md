@@ -87,28 +87,38 @@ from its own stamped inputs and requires byte equality, so a stale
 sidecar is a `make check` failure rather than something a reader has to
 notice.
 
-**EXCEPT four sidecars, since [B72smalls] (2026-09-22), BLOCKED ON A
-RULING, not silently passed.** Q6 (i)'s load check (below) correctly
-refuses `docs/dev/predictions/capability-0.1-first.tsv` at load (P2.a/
-P2.b's already-diagnosed Cause-B defect) — and that file is stamped
+**The [B72smalls] (2026-09-22) stopgap is RETIRED ([B93], 2026-09-25,
+Frank's ruling; `docs/dev/lanes/b93pred_report.md`).** Q6 (i)'s load
+check correctly refused `docs/dev/predictions/capability-0.1-first.tsv`
+at load (P2.a/P2.b's already-diagnosed Cause-B defect) — stamped
 `predictions` on FOUR committed sidecars (`2026-09-17-capability-0.1-
 ...-first-a770139e`, `2026-09-18-...-after-cf0962e3`, `2026-09-18-...
 -ext-first-cf0962e3`, `2026-09-19-...-ext-second-cf0962e3`), so
-`interpret()` now refuses to run for any of them. The file cannot be
-fixed (`docs/dev/predictions/CLAUDE.md`'s own stated rule: predictions
-files are stated-PRE-RUN artifacts with "no revision mechanism for an
-already-scored file"), so this ONE bump's own "every committed sidecar
-regenerates" guarantee cannot be restored by the usual means. THREE
-project rules are in genuine tension — Q6's fail-loudly load check,
-predictions-file immutability, and sidecar regenerability — and
-resolving that tension is a ruling, not a lane's call.
-`check_interpret.py`'s `section_3` names the four explicitly
-(`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING`) and reports them as a
-SEPARATE, clearly-labeled count, never folded into "fresh" — `make
-check-interpret` stays green, but not by hiding the gap. The real
-`/pcrec-bench-interpret` skill and `scripts/regen_sidecars.py` would hit
-the identical `PredictionError` if asked to refresh any of these four
-for real, today, regardless of this workaround.
+`interpret()` refused to run for any of them, and this section's own
+`section_1`/`section_3` carried a NAMED, provisional exception
+(`_KNOWN_HISTORICAL_LOAD_DEFECTS`, `_SIDECARS_BLOCKED_ON_CAPABILITY_
+FIRST_RULING`) filed for a ruling rather than silently absorbed. Frank
+ruled candidate (b) of that filing: fixing an ALREADY-DIAGNOSED,
+ALREADY-WRITTEN-UP authoring defect that moves no predicted value is
+NOT the revision the predictions-immutability rule was meant to forbid
+— `docs/dev/predictions/CLAUDE.md`'s new "Revising an already-scored
+file" section states the resulting standing rule, and P2.a/P2.b are
+fixed in the committed file itself under it. Both named exceptions
+above are GONE from `check_interpret.py` — Q6 (i) now passes on every
+committed predictions file with no exception, exactly as it would for
+any file that never carried the defect.
+**A SECOND, SEPARATE Cause-C defect (P4.a/P4.b's testee-glob typo,
+Q6 (ii), previously masked by Cause B's earlier-raising crash) is now
+what blocks the four sidecars** — filed, not fixed, in the same lane
+report: no ledger or design note states a hand-derived number a P4 fix
+could be verified against, the way P2's companion reducer-argument fix
+was checked against the 2026-09-17 ledger's 5.29. `check_interpret.py`
+section 3 now catches this per-sidecar as a NAMED failure (never an
+uncaught crash that would silently stop sections 4-6 from running) —
+`make check-interpret` reports 4 FAILED there, honestly, rather than
+green by a workaround. The real `/pcrec-bench-interpret` skill and
+`scripts/regen_sidecars.py` hit the identical `PredictionError` today,
+for the identical reason, pending a ruling on P4.
 
 ## Running
 

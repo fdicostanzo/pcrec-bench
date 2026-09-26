@@ -82,7 +82,22 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   per-clause verdicts are `interpret`'s output and are authoritative,
   the parent verdict is the stated arithmetic, and a ledger's tally is a
   human reading the tool must not try to reproduce.
-- `capability-0.1-first.tsv` — `bench/capability/NOTES.md`'s **P1-P10**,
+- `capability-0.1-first.tsv` — **[B93] APPLIED, 2026-09-25** (Frank's
+  ruling on `docs/dev/lanes/b72smalls_report.md` §5's candidate (b);
+  `docs/dev/lanes/b93pred_report.md`; "Revising an already-scored file"
+  above states the standing rule this correction is the first
+  application of): P2.a/P2.b's selector `regime_or_na=n/a` clause
+  (Cause B, below) is DROPPED and its `ratio_to(...)` reducer argument
+  is corrected to name `pattern=`/`testee=` explicitly — a SANCTIONED
+  SYNTAX-ONLY CORRECTION, empirically verified to move no predicted
+  value (same `quantity`/`op`/`hi`/`unit`/`note` before and after; only
+  the selector/reducer TEXT changed). The ORIGINAL bytes are in git
+  history (the commit immediately before this one on this file). What
+  follows through "P9 (NOTES.md..." below is the UNCHANGED historical
+  record of the file's first scoring (2026-09-16/17), before this fix —
+  read it as that history, not as this file's current behavior; P2's
+  own corrected reading is at the end of this entry.
+  `bench/capability/NOTES.md`'s **P1-P10**,
   transcribed 2026-09-16, 17 clause rows over 9 parents (P9 has no row —
   see below). Scored against `reports/2026-09-17-capability-0.1-budu-
   ryzen1600-first-a770139e.tsv`: 1 confirmed (P1), 1 refuted (P8), 6 not
@@ -154,6 +169,72 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   fixture case (it is not a "wrong quantity token" mistake to guard
   against — the format simply has no vocabulary for a schema-presence
   claim).
+  **Cause B, DIAGNOSED (`interpret_subject_grain_v1.md` §1.2/§4,
+  2026-09-17) then a LOAD ERROR (lane `b72smalls`, 2026-09-22, Q6 (i)):**
+  P2.a/P2.b's `regime_or_na=n/a` selector clause targets a `compile:`
+  quantity, whose section carries neither `subject_or_na` nor
+  `regime_or_na` at all (`render_tsv` writes the empty string there,
+  never the literal token `n/a`) — always a vacuous zero-row match, the
+  authoring defect the ledger's own P2 row names above. Once `load_
+  predictions` grew the Q6 (i) load-time check for this shape ([B72smalls]),
+  this file started refusing to load at all, blocking regeneration of
+  every sidecar stamped against it.
+  **[B93] FIX, APPLIED 2026-09-25 (SUPERSEDES the note above — P2 is no
+  longer 'not evaluable' by this cause):** `regime_or_na=n/a` is dropped
+  from both selectors, per Q6 (i)'s own suggested remedy. VERIFIED, not
+  merely reasoned about: dropping ONLY that clause and nothing else
+  makes `_select` match real `compile` rows for the first time — and
+  `interpret()` then CRASHES (`_reduce`'s `ratio_to` reducer parses its
+  own argument as a `<key>=<glob>` selector; `libpcre2_*_interp-*`, bare,
+  is not one) — a SECOND, previously-masked authoring defect in the same
+  two clauses, unreachable until Cause B's fix let anything past the
+  selector. Prefixing the argument with only `testee=` avoids the crash
+  but silently pools EVERY pattern's `median_total_ns` under that testee
+  as the ratio's denominator (`ratio_to`'s own join rule, `interpreter_
+  v1.md` line ~1872, joins on key columns BOTH selectors state with the
+  SAME literal text — `testee` alone is not shared with the outer
+  selector's `libpcre2_*_jit-*`, and `pattern` is absent from the
+  argument entirely), producing a WRONG number (measured: 116.674, a
+  corpus-wide pooled ratio) rather than the SAME-PATTERN comparison the
+  clause's own note describes. The reducer argument is therefore
+  corrected to repeat `pattern=<the same pattern>;testee=libpcre2_*_
+  interp-*` — both companion fixes are syntax-only by "Revising an
+  already-scored file"'s own test (quantity/op/hi/unit/note untouched)
+  and independently checked against the ledger's own hand-derived number:
+  P2.a now reads **confirmed**, ratio **5.289** (ledger: 386,192 ÷
+  73,020 = 5.29, exact to three decimals) on both reports that carry
+  `wild-waf-crs-942360-concat-sqli`'s jit/interp compile rows
+  (`2026-09-17-...-first-a770139e`, `2026-09-18-...-after-cf0962e3`);
+  P2.b now reads **confirmed**, ratio **6.976** (1,970,240 ÷ 282,442 —
+  a number the 2026-09-17 ledger did not itself state; independently
+  derived here) on the same two reports. Both clauses read **not
+  evaluable** (cleanly, no crash) on the two `ext-*` reports, whose
+  roster does not carry these patterns/testees at all. Full derivation,
+  the scratch probes and the exact before/after TSV bytes:
+  `docs/dev/lanes/b93pred_report.md`.
+  **FILED, NOT FIXED HERE — a NEW, SEPARATE blocker surfaces once P2's
+  crash no longer masks it:** `check_testee_globs` (Q6 (ii), the SAME
+  lane's OTHER load-time check) now raises on P4.a/P4.b's OWN
+  already-diagnosed Cause C (`testee=pcrec_*-auto-*`, a hyphen where
+  every real testee_id has an underscore before `auto` —
+  `interpret_subject_grain_v1.md` §1.2/§4, `docs/dev/lanes/
+  b42subgrain_report.md`), which was previously unreachable for the
+  identical reason (Cause B's crash came first, on an earlier row).
+  Repairing the glob ALONE does not unblock the four sidecars either:
+  P4.a's `ratio_to(logparse-atomic-removed)` and P4.b's
+  `ratio_to_median_over(logparse-atomic-removed)` are BOTH malformed too
+  (a bare pattern name where `ratio_to` needs `<key>=<glob>`, exactly
+  P2's own second defect; and `ratio_to_median_over`'s argument must be
+  a KEY COLUMN NAME like `pattern`, never a pattern VALUE, so P4.b looks
+  to have been authored for the WRONG reducer entirely) — and, unlike
+  P2's companion fix, no ledger or design note states a hand-derived
+  number this lane could verify a P4 fix against (item 3 of "Revising an
+  already-scored file"'s own permission test), so [B93] does not attempt
+  one. `catalogue/check_interpret.py` section 3 now catches this
+  per-sidecar (a NAMED failure, not an uncaught crash) rather than
+  silently masking it; the four sidecars remain UN-regenerated pending a
+  ruling on P4. See `docs/dev/lanes/b93pred_report.md` for the full
+  finding.
 
 - `capability-0.1-ext-roster.tsv` — lane `b51preds`, 2026-09-18: the
   predictions for the NEXT sample of the five new [B7]/L6b engines
@@ -552,5 +633,64 @@ pcrec predicted, and getting it wrong would be worse than not having it.
 
     python3 -m pcrecbench interpret --render \
         --predictions docs/dev/predictions/<slug>.tsv reports/<name>.tsv
+
+## Revising an already-scored file
+
+The standing rule stays what "Writing one" and the files above already
+say: predictions are stated-PRE-RUN artifacts, and this format defines
+no ordinary revision mechanism for a file already scored against a real
+sample — editing one in place to make it read a nicer verdict, or to
+add a clause it never had, or to move a threshold, would rewrite the
+historical record `stated_utc` exists to protect. **[B93] (2026-09-25,
+Frank's ruling on `docs/dev/lanes/b72smalls_report.md` §5's candidate
+(b); `docs/dev/lanes/b93pred_report.md`) carves ONE, narrow exception**:
+a SANCTIONED SYNTAX-ONLY CORRECTION — a fix that repairs how a clause's
+selector/reducer TEXT is written so `interpret` can reach the
+population the clause's own prose already names, while every PREDICTED
+value (`quantity`, `reducer`'s KIND, `op`, `lo`/`hi`, `unit`) stays
+byte-identical — is permitted, in place, on the committed file. This is
+NOT a re-prediction and NOT a changed verdict in the sense the
+immutability rule exists to forbid: nothing about what was predicted
+before the run moves: only a defect that stopped `interpret` from
+reaching that population is repaired. It is permitted ONLY when:
+
+1. The defect is ALREADY DIAGNOSED and ALREADY WRITTEN UP against this
+   exact file before the fix is applied (a design note, a ledger, a
+   lane report — not invented fresh to justify an edit);
+2. Every one of the clause's OTHER fields (`quantity`, `reducer` head,
+   `op`, `lo`, `hi`, `unit`, `note`, `stated_utc`) is checked
+   byte-identical before/after, so the correction cannot smuggle in a
+   changed threshold;
+3. The fix is verified EMPIRICALLY against the real committed report(s)
+   this file is already scored against — never merely reasoned about —
+   with the resulting verdict shown, not assumed;
+4. It is dated, in this file, naming the defect and the ruling that
+   sanctioned it (this section, and the file's own entry below).
+
+The corrected `capability-0.1-first.tsv` (below) is this rule's first
+application: P2.a/P2.b's `regime_or_na=n/a` clause against a `compile:`
+quantity (Cause B, `interpret_subject_grain_v1.md` §1.2/§4) is dropped
+per Q6 (i)'s own suggested remedy — and, VERIFIED EMPIRICALLY (not
+assumed), the SAME two clauses' `ratio_to(...)` reducer argument was
+ALSO malformed (a bare pattern/testee string, missing the `<key>=<glob>`
+prefix `ratio_to`'s own syntax requires everywhere else it appears in
+this project) and would otherwise CRASH `interpret()` outright the
+moment Cause B's fix let the clause reach a real row, or — worse, had
+only `testee=` been added without also repeating `pattern=` — silently
+score against a POOLED, cross-pattern baseline rather than the
+same-pattern one the clause's own note names. Both companion fixes are
+syntax-only by the same test above (nothing pred["quantity"]/`op`/`hi`
+moved) and are individually verified against the ledger's own
+hand-derived number (`docs/dev/ledgers/2026-09-17-capability-0.1-first-
+a770139e.md` §3: 386,192 ÷ 73,020 = 5.29, reproduced by `interpret` to
+three decimals once fixed). Anything OUTSIDE this narrow shape —
+changing a threshold, adding a clause that was never stated, swapping a
+reducer's KIND, or repairing a defect nobody has yet diagnosed in
+writing — remains forbidden, exactly as before.
+
+**Filed, not fixed here: `capability-0.1-first.tsv`'s P4.a/P4.b carry a
+SEPARATE, already-diagnosed defect (Cause C, the same design note) that
+this rule's own empirical-verification requirement (item 3 above)
+currently blocks from a safe fix** — see the file's own entry below.
 
 Maintenance: update this file when a prediction set is added or retired.
