@@ -156,7 +156,7 @@ The other three changes are narrowings:
 ## Commits
 
 - a68eeca: validate-once, declared refusals, the real expectations.
-- (next) check_utf8_validate_once, §8.2 amended, probe archived.
+- f6b35d6: check_utf8_validate_once, §8.2 amended, probe archived.
 - 2275d86: predictions and the dry run.
 - 8bac867: NOTES.md, the CLAUDE.md files, §13.
-- (final) root CLAUDE.md and this report.
+- 35d6532 + this fix-up: root CLAUDE.md and this report.
