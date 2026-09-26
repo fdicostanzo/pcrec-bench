@@ -1515,3 +1515,15 @@ so a pattern refused by EVERY testee in a report can lose its refusal rows from
 the TSV. Not fixed; a rider for the next reporter change. The fix needs a control:
 a fixture where every testee refuses one pattern, with its did_not_compile rows
 present.
+
+## KB-32 (2026-09-26, found at the [B91] regen wave's push; OPEN) — capability subject-grain TSVs are approaching GitHub's 100 MB hard limit
+
+The v24 regen wave grew the two largest committed reports to ~54 MB each
+(`reports/2026-09-23-capability-0.1-budu-ryzen1600-after-{8d716693,b1885a83}.subject-grain.tsv`;
+the push printed GH001's 50 MB warning). The v19-v23 sections and [B85]'s
+`capture_class` column were most of the growth. One more column-shaped rendering
+change, or a wider capability roster, could put a file past 100 MB, and the push
+would then be REFUSED. Options for a ruling when it bites: slice the capability
+subject-grain TSV (`--subject-grain-slice`, as some groups already do),
+compress committed subject-grain TSVs, or move them to LFS. Nothing is lost
+today; this is a watch item for the next reporter change.
