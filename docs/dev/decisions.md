@@ -379,3 +379,27 @@ re-pin (the adapter is touched then anyway), not as its own change. The
 census tool stays for back-filling pairs recorded before the field; the
 band reads the field first and the census as the fallback, and the first
 pair carrying both is the cross-check. Row: [B88].
+
+## BD14 — 2026-09-25 — the UTF oracle validates each subject ONCE per find-all (utf8_set_v1.md §8.2 amended; the manager's ruling, flagged to Frank)
+
+§8.2 said `PCRE2_NO_UTF_CHECK` is never passed on expectation derivation.
+Lane b77u5 measured why that made the derivation infeasible. libpcre2
+re-validates the subject from the start offset to the end on every
+`pcre2_match` call, so a find-all is quadratic. `.` over t-256k took 36.1 s
+checking every call and 0.018 s checking call 1 only, with the same count
+(docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt). The full set
+would have taken ~59 min in C or Python alike.
+
+RULING: call 1 of each find-all (offset 0, no flag) lets libpcre2 validate the
+whole subject; an ill-formed subject is refused there, and that refusal is the
+answer. Calls 2..n over the SAME immutable buffer pass the flag, and each start
+offset is ASSERTED to be a character boundary before the call. §8.2's rationale
+holds: the caller never promises validity the library has not itself checked.
+Only its letter changes, amended in place with the old sentence visible. Byte
+words never pass the flag.
+
+CONTROLS (check_utf8_validate_once): 7,200 find-all cells byte-identical to the
+always-check path; an ill-formed subject is refused by name; two negative arms
+(flagging call 1 hides the error; byte-stepping trips the assertion); byte
+words untouched. Result: bench/utf8's 7,350 rows derive in ~34 s. Frank may
+overturn the ruling; the always-check path is kept (`validate_once=False`).
