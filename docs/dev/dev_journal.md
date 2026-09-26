@@ -6006,3 +6006,4 @@ dies with this session.
 - I-109 disk: O-59 + data_management_v1.md §8. Root is a 100 GB LV on a 462.7 GB PV; Frank: "overrides the need to clean up", no space action taken. Trigger 4 FIRED (12 report groups > 25 MB); store ~79 MB/day; KB-32 (GitHub's 100 MB file limit).
 - [B96] DATA STORAGE v2 (Frank: "not working even medium term"): git keeps the ledger, S3 the bytes, name-addressed keys, index.tsv as the catalog. DEFERRED ~a month.
 - Memory compacted 13 -> 8 files on Frank's ask.
+- Close (~18:xx): I-110 acked (the utf8 scan byte is pcrec's run-path leftmost decline, [OPT-REQRUN-ENC] scheduled with O-60's surface as acceptance). Frank opened [B97]/[B98]/[B99] + [B100] (the viewer data is stale since 09-21) for a NEW session. pcrecdev1's Linux asan holds the box (17:18, 4 h cap). wake.md rewritten; cron deleted.
