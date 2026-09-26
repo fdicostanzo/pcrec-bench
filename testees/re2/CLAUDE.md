@@ -57,7 +57,10 @@ approximate measure of a regexp's cost"; the FORWARD program only) and
 `reverse_program_size` (`RE2::ReverseProgramSize()` — the SECOND program
 RE2 builds for an unanchored search's second phase; declared as its own
 pair rather than folded into `program_size` because RE2, unlike pcre2 or
-pcrec, genuinely has two).
+pcrec, genuinely has two). And `refusal_class`, on a did-not-compile row
+only. It was emitted from the start but DECLARED only at [B95],
+2026-09-26 (KB-33: the first re2 refusal ever measured, utf8@0.1's
+`prp-greek-sc`, got its whole cell rejected by X15 at store.write).
 
 ## `consumed_length`: the convention, stated plainly (deliverable (b))
 
