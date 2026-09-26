@@ -385,8 +385,10 @@ recompiles per invocation. NEVER `--ucp`: class SCOPE is a PATTERN
 property in the utf8 set (utf8_set_v1.md 7.5), spelled `(*UCP)` in the
 pattern text, which PCRE2 reads inline -- so one config answers both the
 `ascii-class-scope` and the `unicode-class-scope` members, each by its
-own spelling, exactly as the oracle's word does. Never
-PCRE2_NO_UTF_CHECK (8.2). `config_extra = utf8`: `pcre2-utf-jit` derives
+own spelling, exactly as the oracle's word does. Never PCRE2_NO_UTF_CHECK
+AT COMPILE TIME (8.2) -- at MATCH TIME, see "[B94] VALIDATE-ONCE" below,
+which the compile-time rule is unchanged by. `config_extra = utf8`:
+`pcre2-utf-jit` derives
 `libpcre2_10.46_jit-caps-simdna_utf8`; `build_flags` gains an `ENGINE
 ENCODING utf8` clause and `runtime_options` `{encoding: utf8}` -- on the
 utf8 configs ONLY (the byte three are byte-identical,
@@ -400,3 +402,127 @@ refuses (error 147's text). `interp`/`jit` declare 19/20, `dfa` 14/20
 (its byte sibling's withholds carried over). `non-utf8-subject` is NOT
 declared, by rule: PCRE2_UTF refuses an invalid subject outright
 (`giveup:-23`, witnessed) -- the utf8 set runs none.
+
+## [B94] VALIDATE-ONCE (`docs/dev/decisions.md` BD15, 2026-09-26) -- the
+find-all quadratic, and its fix
+
+utf8@0.1's first window LOST `pcre2-utf-interp` (CELL_CAP, rc=124,
+5400 s) and `pcre2-utf-jit` (~10/75 patterns at 76 min, capped ~00:35).
+Cause: under PCRE2_UTF, libpcre2 re-validates the subject as a UTF-8
+string from the CURRENT start offset to the end on EVERY
+`pcre2_match`/`pcre2_dfa_match` call (man pcre2api, "PCRE2_NO_UTF_CHECK":
+"the validity of the subject as a UTF string is checked unless
+PCRE2_NO_UTF_CHECK is passed"). A find-all loop calls the matcher once
+per match found at ever-increasing start offsets, so its UTF-check cost
+alone is quadratic in the subject's length -- the SAME shape BD14 already
+fixed in the oracle (`pcrecbench/oracle_pcre2.py`'s `_find_all_impl`,
+`docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt`). Frank's
+ruling (BD15): "keeping the check handicaps pcre2 times, so I want it
+removed after the first."
+
+**THE FIX** (`driver.c`'s find-all loop, its own header comment has the
+full rule and citations), mirroring BD14's oracle fix WITHOUT SHARING ITS
+CODE (the testee and the oracle stay independently implemented): call 1
+of a find-all runs at offset 0 WITHOUT `PCRE2_NO_UTF_CHECK`, so libpcre2
+validates the WHOLE subject itself -- an ill-formed subject is refused
+there, loudly, through the existing `giveup:<code>:<message>` protocol,
+never silently. Calls 2..n on the SAME buffer pass `PCRE2_NO_UTF_CHECK`,
+with every such start offset ASSERTED (`die()`, never trusted) to be a
+character boundary first. man pcre2api's own "PCRE2_NO_UTF_CHECK" section
+recommends exactly this caller shape: "You might want to do this for the
+second and subsequent calls to pcre2_match() if you are making repeated
+calls to find multiple matches in the same subject string."
+
+**JIT and DFA are covered by the SAME fix, measured, not assumed.** This
+driver never calls a separate `pcre2_jit_match` -- `pcre2_match()`
+dispatches to JIT-compiled code internally when present (man pcre2jit),
+and man pcre2api's "Option bits for pcre2_match()" states every match-time
+option is honoured by JIT "apart from PCRE2_NO_JIT (obviously)" -- so ONE
+call site (`do_match`) and one flag cover `pcre2-utf-interp` and
+`pcre2-utf-jit` alike. `pcre2_dfa_match()` honours the same flag too (man
+pcre2api, "Option bits for pcre2_dfa_match()": "All but the last four of
+these are exactly the same as for pcre2_match()"), covering
+`pcre2-utf-dfa` through the same `do_match` branch point.
+
+**MEASURED** (`docs/dev/measurements/2026-09-26-b94-pcre2-driver-
+validate-once.txt`, `.py` beside it): `.` find-all over every bench/utf8
+throughput subject <= 256 KB, on interp/jit/dfa -- 71x to 1811x faster,
+answers BYTE IDENTICAL to the pre-fix path every time (the 1 MB rung's
+always-check arm was skipped by design: ~2.5 h projected from the
+quadratic scaling). The ill-formed-subject refusal (`giveup:-23`) is
+identical on both paths.
+
+**THE SEARCH/MATCH REGIMES (no `--find-all`) NEED NO FIX, MEASURED.**
+Each iteration of the timed `--iters` loop is ONE call, always at offset
+0 on the same immutable buffer -- no compounding across increasing start
+offsets the way find-all's own loop has. The per-call validation cost IS
+real (measured ~0.39 ms/call on a 256 KB subject, vs ~0.25 ns/call with
+`PCRE2_NO_UTF_CHECK` forced) but it is FLAT per call: total time scales as
+`iters * subject_length`, never `subject_length^2`, and the harness's own
+calibration (which picks `--iters` to hit a target elapsed time) absorbs a
+larger per-call cost by choosing fewer iterations -- unlike find-all,
+where `iters=1` already contains the quadratic blow-up and calibration
+cannot touch it. At bench/utf8's REAL search_short subject sizes (<=30 B,
+the set's own manifest) the per-call cost is in the noise floor either
+way (measured ~150 ns/call amortized over 1000 iterations, no measurable
+difference from the always-check control). No change made here.
+
+**THE OTHER UTF DRIVERS, AUDITED, not assumed** (measured directly against
+each engine's own built driver on the same t-64k/t-256k/t-1m subjects;
+see this lane's report, `docs/dev/lanes/b94pcre2utf_report.md`, for the
+per-engine numbers):
+  * `re2-utf8` and `onig-utf8` -- MEASURED find-all timing SCALES
+    (SUB)LINEARLY with subject length (64 KB -> 1 MB is a 16x size step;
+    onig's time steps ~8.1x, re2's ~10.3x -- both far under the ~256x an
+    O(n^2) mechanism would show). Neither engine's API exposes a
+    validate-once/always-check TOGGLE the way PCRE2_NO_UTF_CHECK is one --
+    there is nothing analogous to disable, and nothing analogous
+    misbehaving.
+  * `vectorscan-block-nosom-utf8` -- STRUCTURALLY IMMUNE: this driver's
+    `--find-all` is a documented no-op at BOOLEAN GRAIN (`driver.c`:
+    `(void)find_all;`) -- there is no find-all loop to compound in the
+    first place.
+  * `rust-default` (no `-utf8` sibling exists; unicode mode is this
+    config's own default) -- STRUCTURALLY IMMUNE: `regex::bytes::Regex`
+    operates over `&[u8]` with no subject-validity check of any kind (the
+    crate's Unicode mode affects how CLASSES match, never whether the
+    subject itself is validated as UTF-8 first) -- there is no check to
+    repeat. CONFIRMED empirically, not merely by source reading: 64 KB ->
+    1 MB (16x) measures ~8.3x (7.08 ms -> 58.87 ms), the same (sub)linear
+    shape as re2/onig above.
+
+**DOES THIS CHANGE THE TESTEE'S IDENTITY? NO -- reasoned through, not
+assumed.** `record_schema.md` 6.4 derives `testee_id` from
+(engine_name, engine_version, engine_mode, captures, simd) + a config's
+`config_extra`; none of those fields, nor any `describe()` block field
+that feeds them, is touched by this fix. The new code path is INERT for
+every BYTE config (`pcre2-interp`/`-jit`/`-dfa`): `copts` (the compile-time
+options word) never carries `PCRE2_UTF` for them, so `utf_once` in the
+find-all loop is always false and their argv/behaviour is byte-for-byte
+unchanged (measured: `check_pcre2_utf_validate_once` (iii),
+`tools/selfcheck.py`). No new CLI flag reaches any real testee's argv
+either -- `--utf-always-check` is driver-only and reachable only from
+`make check-harness`'s own control and the archived probe, never from
+`adapter.py`. The only OBSERVABLE change for the `pcre2-utf-*` siblings
+is a WORDING correction to their `build_flags`
+(`testees/pcre2/adapter.py`'s `UTF_BUILD_NOTE`, distinguishing
+COMPILE-time from MATCH-time PCRE2_NO_UTF_CHECK) -- text, not a new
+axis, and no record in `store/` carries the old wording (the only prior
+attempt at these two testees LOST to CELL_CAP and wrote nothing), so
+this is not a case of mixing incomparable records under one id. A
+DRIVER SEMANTICS change that altered ANSWERS would need a new
+`testee_id` (record_schema.md's whole point); this one does not, because
+(i) is checked and holds: every answer is byte-identical to the pre-fix
+path, on every corpus pattern this lane could compile, over every subject
+size the fix's own control path could still finish in reasonable time.
+
+**CONTROLS** (`tools/selfcheck.py`'s `check_pcre2_utf_validate_once`,
+part of `make check-harness`): (i) validate-once vs `--utf-always-check`
+IDENTICAL over every compiling bench/utf8 pattern's short subjects + <=64
+KB throughput subjects (7,200 find-all cells, ~54 s); (ii) the ill-formed
+subject refused BY NAME on both paths, plus the NEGATIVE (a byte-stepping
+advance under validate-once hits the boundary assertion by name, `die()`,
+rc 2); (iii) a real byte-mode invocation byte-identical with and without
+`--utf-always-check` appended, plus `pcre2-interp`'s `build_flags`
+carrying NO `[B94]`/`BD15` note against `pcre2-utf-interp`'s CONTROL that
+DOES, and both testees' `testee_id` SHAPES unchanged.

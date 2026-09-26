@@ -54,6 +54,53 @@
  * high-water mark -- so the honest claim is "the engine was given and
  * accepted N bytes", never "the engine looked at N bytes". testees/pcre2/
  * CLAUDE.md states this where a reader of the numbers will find it.
+ *
+ * VALIDATE-ONCE ([B94], docs/dev/decisions.md BD15, 2026-09-26). Under
+ * PCRE2_UTF, libpcre2 re-validates the subject as a UTF-8 string on every
+ * pcre2_match/pcre2_dfa_match call (man pcre2api, "PCRE2_NO_UTF_CHECK":
+ * "the validity of the subject as a UTF string is checked unless
+ * PCRE2_NO_UTF_CHECK is passed"). A find-all loop calls the matcher once per
+ * match found, each call re-checking from its own start offset to the END of
+ * the subject -- quadratic in the subject's length. utf8@0.1's first window
+ * lost pcre2-utf-interp and pcre2-utf-jit to the 5400 s CELL_CAP over this.
+ * Frank's ruling (BD15): "keeping the check handicaps pcre2 times, so I want
+ * it removed after the first." The fix mirrors BD14's oracle
+ * (pcrecbench/oracle_pcre2.py's `_find_all_impl`, NOT shared code -- the
+ * testee and the oracle stay independently implemented): call 1 of a
+ * find-all runs at offset 0 WITHOUT PCRE2_NO_UTF_CHECK, so libpcre2 validates
+ * the WHOLE subject itself (an ill-formed subject is refused there, loudly,
+ * by the existing `giveup:<code>:<message>` protocol -- never silently);
+ * calls 2..n on the SAME buffer pass PCRE2_NO_UTF_CHECK, with every such
+ * start offset ASSERTED (`die()`, never silently trusted) to be a character
+ * boundary first. man pcre2api's own "PCRE2_NO_UTF_CHECK" section, under
+ * "Option bits for pcre2_match()", recommends EXACTLY this caller shape:
+ * "You might want to do this for the second and subsequent calls to
+ * pcre2_match() if you are making repeated calls to find multiple matches in
+ * the same subject string." The SAME section states JIT honours every
+ * match-time option "apart from PCRE2_NO_JIT (obviously)" -- and this driver
+ * never calls a separate pcre2_jit_match: pcre2_match() itself dispatches to
+ * the JIT-compiled code internally when present (man pcre2jit), so ONE call
+ * site (`do_match`) and one flag cover pcre2-utf-interp and pcre2-utf-jit
+ * alike, measured, not assumed
+ * (docs/dev/measurements/2026-09-26-b94-pcre2-driver-validate-once.txt). The
+ * DFA route (`pcre2_dfa_match`) honours PCRE2_NO_UTF_CHECK too (man
+ * pcre2api, "Option bits for pcre2_dfa_match()": "All but the last four of
+ * these are exactly the same as for pcre2_match()"), so `do_match`'s single
+ * branch point covers it as well.
+ *
+ * The single-call regimes (`search`/`match`, no --find-all) are UNCHANGED:
+ * one pcre2_match/pcre2_dfa_match call per iteration, always at offset 0 on
+ * the same immutable subject buffer -- each call independently pays the
+ * O(subject length) validation cost once, never compounding across
+ * increasing start offsets the way a find-all loop does. Measured, not
+ * assumed: docs/dev/measurements/2026-09-26-b94-pcre2-driver-validate-once.txt
+ * (the "search regime" section).
+ *
+ * `--utf-always-check` is a DRIVER-ONLY flag (never part of the driver
+ * PROTOCOL in pcrecbench/adapters.py, never passed by testees/pcre2/
+ * adapter.py) that disables validate-once and restores the always-check
+ * path -- reachable ONLY by `make check-harness`'s control, which compares
+ * the two paths' answers for identity.
  */
 
 #define _GNU_SOURCE
@@ -104,6 +151,18 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
  * `\w` ASCII-scoped over e-acute; UTF|UCP widens it). */
 #define PCRE2_UTF             0x00080000u
 #define PCRE2_UCP             0x00020000u
+/* [B94] (docs/dev/decisions.md BD15): the VALIDATE-ONCE match-time option --
+ * [measured] value 0x40000000, the same one pcrecbench/oracle_pcre2.py
+ * measured on this box's 10.46 (docs/dev/measurements/2026-09-25-b77u5-
+ * validate-once-probe.txt), independently re-measured here
+ * (docs/dev/measurements/2026-09-26-b94-pcre2-driver-validate-once.txt).
+ * Never part of the compile-time
+ * options word; passed only at match time, only under PCRE2_UTF, only on
+ * calls 2..n of one find-all loop over the SAME immutable subject buffer,
+ * only after call 1 (offset 0, WITHOUT this flag) completed -- i.e. after
+ * libpcre2 itself validated the whole subject. This file's header comment
+ * has the full rule and the man pcre2api citations. */
+#define PCRE2_NO_UTF_CHECK    0x40000000u
 
 /* [verified] 2026-09-16 ([B42] L6a): this box now HAS libpcre2-dev (a side
  * finding of docs/dev/research/2026-09-12-b42-engine-landscape.md (3),
@@ -275,6 +334,13 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;
+    /* [B94]: the CONTROL-ONLY escape hatch back to the always-check path
+     * (this file's header comment, "VALIDATE-ONCE"). Never set by
+     * testees/pcre2/adapter.py; `make check-harness`'s control invokes the
+     * driver directly with it, the same technique bench/utf8's own
+     * check_utf8_validate_once uses for the oracle's `validate_once=False`
+     * arm. */
+    volatile int utf_always_check = 0;
     int jit = 0, dfa = 0;
     uint32_t copts = 0;
 
@@ -297,6 +363,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
         else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
         else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
+        else if (!strcmp(a, "--utf-always-check"))          utf_always_check = 1;
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (dfa && jit) die("--dfa and --jit together: pcre2_dfa_match has no JIT "
@@ -446,9 +513,43 @@ int main(int argc, char **argv) {
                 if (find_all) {
                     size_t pos = 0;
                     long   count = 0;
+                    /* [B94]/BD15: VALIDATE-ONCE. `utf_once` is true only
+                     * under PCRE2_UTF and only when the control has not
+                     * disabled it; `validated` tracks whether call 1 (offset
+                     * 0, always without the flag) has completed. See this
+                     * file's header comment for the full rule and its man
+                     * pcre2api citations. */
+                    int utf_once = (copts & PCRE2_UTF) && !utf_always_check;
+                    int validated = 0;
                     for (;;) {
-                        int rc = do_match(dfa, code, s->buf, s->len, pos, opts,
-                                          md, dfa_ws, dfa_ws_n);
+                        uint32_t call_opts = opts;
+                        if (utf_once && validated) {
+                            /* NEVER trusted silently: assert pos is a
+                             * character boundary before passing the flag --
+                             * the same discipline oracle_pcre2.py's
+                             * `_find_all_impl` uses (an AssertionError there,
+                             * a loud die() here). A continuation byte here
+                             * would mean --utf8's advance rule broke, not
+                             * that this control should look away. */
+                            if (pos < s->len && (s->buf[pos] & 0xC0u) == 0x80u)
+                                die("validate-once: find-all start offset is "
+                                    "not a character boundary -- refusing to "
+                                    "pass PCRE2_NO_UTF_CHECK");
+                            call_opts |= PCRE2_NO_UTF_CHECK;
+                        }
+                        int rc = do_match(dfa, code, s->buf, s->len, pos,
+                                          call_opts, md, dfa_ws, dfa_ws_n);
+                        /* Call 1 (pos == 0) just RAN: whether it matched,
+                         * found no match, or gave up on something other than
+                         * UTF validity, libpcre2 has by now checked the
+                         * whole subject from offset 0 to its end (this
+                         * file's header comment). A call that genuinely
+                         * failed UTF validation is reported below through
+                         * the ordinary `giveup:<code>:<message>` protocol
+                         * and the loop breaks (rc < 0) before any call 2
+                         * happens, so marking `validated` here is never
+                         * reached by an unvalidated subject in practice. */
+                        if (utf_once && pos == 0 && !validated) validated = 1;
                         if (rc < 0) { if (count == 0) rc_final = rc; break; }
                         if (first_s < 0) {
                             first_s = (long)ov[0];

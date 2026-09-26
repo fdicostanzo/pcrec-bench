@@ -688,3 +688,22 @@ Maintenance: update this file when files are added/removed or change role.
   groups, recursion, conditionals, `\K`, control verbs, callouts, the
   two free-spacing comment-parser patterns) — SOM adds nothing new to
   that population.
+- `probe_b94_driver_validate_once.py` / `2026-09-26-b94-pcre2-driver-
+  validate-once.txt` — ([B94], `docs/dev/decisions.md` BD15, lane
+  `b94pcre2utf`) THE TESTEE-SIDE BEFORE/AFTER for BD14's oracle fix's
+  sibling: builds the REAL pcre2 driver via
+  `pcrecbench.adapters.discover()["pcre2"].prepare_driver()` (never a
+  hand-rolled prototype) and times `.` (find-all, PCRE2_UTF) over every
+  bench/utf8 throughput subject on interp/jit/dfa, twice each — the
+  fixed VALIDATE-ONCE default and `--utf-always-check` (a driver-only
+  control flag restoring the pre-fix always-check behaviour, never part
+  of the driver protocol, never passed by adapter.py). FINDINGS: 71x-
+  1811x faster on the 64 KB/256 KB rungs across all three engine modes,
+  answers byte-identical every time (t-1m's always-check arm is SKIPPED
+  by design — projected ~2.5 h from the quadratic scaling); the
+  ill-formed-subject refusal (`giveup:-23`) is identical on both paths;
+  the search regime's single-call path (no `--find-all`) scales LINEARLY
+  with `--iters` (never quadratically in subject length — one call per
+  iteration, always at offset 0, no compounding across positions), and
+  at bench/utf8's real (<=30 B) search_short subject sizes the per-call
+  cost is in the noise floor either way.

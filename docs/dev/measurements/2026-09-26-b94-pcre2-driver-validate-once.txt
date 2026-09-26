@@ -1,0 +1,169 @@
+# 2026-09-26-b94-pcre2-driver-validate-once.txt
+#
+# [B94] (docs/dev/decisions.md BD15, Frank's ruling): the pcre2 TESTEE's
+# own find-all under PCRE2_UTF never passed PCRE2_NO_UTF_CHECK, so
+# libpcre2 re-validated the rest of the subject on EVERY call -- the same
+# quadratic shape BD14 already fixed in the oracle (docs/dev/measurements/
+# 2026-09-25-b77u5-validate-once-probe.txt). utf8@0.1's first window lost
+# pcre2-utf-interp (CELL_CAP, rc=124, 5400 s) and pcre2-utf-jit (~10/75
+# patterns at 76 min, capped ~00:35) to it. This probe is the BEFORE/AFTER
+# evidence for the driver fix (testees/pcre2/driver.c's VALIDATE-ONCE,
+# lane b94pcre2utf).
+#
+# source:  docs/dev/measurements/probe_b94_driver_validate_once.py
+#          (committed beside this; builds the REAL driver via
+#          pcrecbench.adapters.discover()["pcre2"].prepare_driver() --
+#          gcc -O2 -std=gnu11 -ldl, the same build the harness uses --
+#          never a hand-rolled prototype)
+# command: python3 docs/dev/measurements/probe_b94_driver_validate_once.py
+# bench:   pcrec-bench a73b3ab76a3c6c9763ff0fc410d9a09add9bd662 (lane
+#          b94pcre2utf), on top of BD15's own ruling commits
+#          (4085ab2/007f094)
+# engine:  libpcre2-8.so.0, 10.46 2025-08-27 (dlopen'd, no pcre2.h on
+#          this box -- testees/pcre2/CLAUDE.md's "Why dlopen" note)
+# compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+# box:     ubuntubudu; loadavg 0.71/0.99/0.88 before, 1.45/1.16/0.97 after
+#          (another lane's work in progress; NOT a gated quiet-box run --
+#          a >1000x TIMING RATIO and a byte-for-byte ANSWER IDENTITY are
+#          the findings here, not a ranked number, so box load cannot move
+#          either conclusion by the margin that would matter)
+# subjects: bench/utf8/throughput/{t-64k,t-256k,t-1m,t-64k-lat,t-64k-cyr,
+#           t-64k-cjk,t-64k-asc}.bin, sha256 = manifest_throughput.tsv
+#           (echoed in the raw output below)
+# pattern: `.` under PCRE2_UTF (copts), find-all, PCRE2_ANCHORED off
+#          (mode=search) -- the same witness BD14's oracle probe used
+#
+# ---------------------------------------------------------------------------
+# THE FIX (testees/pcre2/driver.c, this file's own header comment has the
+# full rule and its man pcre2api citations): call 1 of a find-all runs at
+# offset 0 WITHOUT PCRE2_NO_UTF_CHECK (libpcre2 validates the whole
+# subject there; an ill-formed one is refused, loudly, by the existing
+# `giveup:<code>:<message>` protocol); calls 2..n on the SAME buffer pass
+# PCRE2_NO_UTF_CHECK, with every start offset ASSERTED (never trusted) to
+# be a character boundary first. `--utf-always-check` is a DRIVER-ONLY
+# flag (never in the driver protocol, never passed by adapter.py) that
+# restores the pre-fix behaviour -- reachable only by
+# `make check-harness`'s control (`check_pcre2_utf_validate_once`,
+# tools/selfcheck.py) and by this probe.
+#
+# pcre2_match() honours PCRE2_NO_UTF_CHECK identically whether or not JIT
+# is present (man pcre2api, "Option bits for pcre2_match()": "apart from
+# PCRE2_NO_UTF_CHECK when calling pcre2_match()... You might want to do
+# this for the second and subsequent calls to pcre2_match() if you are
+# making repeated calls to find multiple matches in the same subject
+# string" -- and the JIT-supported-options list keeps PCRE2_NO_UTF_CHECK,
+# "apart from PCRE2_NO_JIT (obviously)"); this driver never calls a
+# separate pcre2_jit_match -- pcre2_match() dispatches to JIT internally
+# when compiled (man pcre2jit) -- so ONE call site (`do_match`) and one
+# flag cover pcre2-utf-interp and pcre2-utf-jit alike, MEASURED below, not
+# merely cited. pcre2_dfa_match() honours the same flag too (man pcre2api,
+# "Option bits for pcre2_dfa_match()": "All but the last four of these are
+# exactly the same as for pcre2_match()"), also measured below.
+#
+# ---------------------------------------------------------------------------
+# RESULTS -- find-all over `.` under PCRE2_UTF, validate-once (the fix,
+# now the DEFAULT) vs --utf-always-check (the pre-fix behaviour, control-
+# only). Every ratio and answer below is from the raw probe output,
+# unedited (see the ==...== blocks); this comment restates it.
+#
+#   engine  subject      size      validate-once   always-check   ratio   answers
+#   interp  t-64k         65536 B    0.013892 s      2.233623 s    160.8x  identical
+#   interp  t-256k       262144 B    0.031053 s     35.997920 s   1159.2x  identical
+#   interp  t-1m        1048576 B    0.085896 s     SKIPPED (quadratic; ~2.5 h projected
+#                                                    from the 256 KB->1 MB scaling factor)
+#   interp  t-64k-lat     65536 B    0.008840 s      2.512474 s    284.2x  identical
+#   interp  t-64k-cyr     65536 B    0.005162 s      2.276926 s    441.1x  identical
+#   interp  t-64k-cjk     65536 B    0.004061 s      0.954946 s    235.2x  identical
+#   interp  t-64k-asc     65536 B    0.018091 s      1.282715 s     70.9x  identical
+#   jit     t-64k         65536 B    0.007832 s      2.243916 s    286.5x  identical
+#   jit     t-256k       262144 B    0.019886 s     36.005970 s   1810.6x  identical
+#   jit     t-1m        1048576 B    0.043508 s     SKIPPED
+#   jit     t-64k-lat     65536 B    0.009840 s      2.517346 s    255.8x  identical
+#   jit     t-64k-cyr     65536 B    0.006818 s      2.270921 s    333.1x  identical
+#   jit     t-64k-cjk     65536 B    0.005472 s      0.939385 s    171.7x  identical
+#   jit     t-64k-asc     65536 B    0.009925 s      1.288134 s    129.8x  identical
+#   dfa     t-64k         65536 B    0.006624 s      2.241935 s    338.4x  identical
+#   dfa     t-256k       262144 B    0.027959 s     36.041169 s   1289.1x  identical
+#   dfa     t-1m        1048576 B    0.077966 s     SKIPPED
+#   dfa     t-64k-lat     65536 B    0.015007 s      2.515973 s    167.6x  identical
+#   dfa     t-64k-cyr     65536 B    0.011591 s      2.285084 s    197.1x  identical
+#   dfa     t-64k-cjk     65536 B    0.003502 s      0.937184 s    267.6x  identical
+#   dfa     t-64k-asc     65536 B    0.006492 s      1.288232 s    198.4x  identical
+#
+# The projected two lost cells: pcre2-utf-interp's t-256k throughput cell
+# under the OLD driver was the 35.996 s/subject rate above times the set's
+# other patterns and subjects -- consistent with the 5400 s CELL_CAP
+# firing well before the whole set finished; under the fix that same
+# subject is 0.031 s, ~1159x faster, well inside any reasonable cell
+# budget. See the re-run projection at the bottom of this file.
+#
+# Ill-formed subject (a lone 0xFF far past the first match), find-all:
+#   always_check=False -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+#   always_check=True  -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+# Identical refusal, both paths (call 1 always validates and always
+# catches this, before the two paths could ever diverge).
+#
+# Search regime (single call per --iters iteration, no --find-all): LINEAR
+# in --iters, never quadratic in subject length (only ever ONE call at
+# offset 0 per iteration -- no compounding across positions the way
+# find-all's own loop has). At bench/utf8's actual search_short subject
+# sizes (<=30 B) the per-call cost is in the ~100-picosecond-per-iteration
+# noise floor once amortized; even at 256 KB (never a real search_short
+# subject in this set) the per-call cost stays a flat ~0.39 ms regardless
+# of --iters, i.e. TOTAL time scales as iters*n, not n^2:
+#   largest short (30 B)      iters=1     elapsed=0.000011 s  per-call=0.0000106 s
+#   largest short (30 B)      iters=1000  elapsed=0.000152 s  per-call=0.0000002 s
+#   t-256k (262144 B)         iters=1     elapsed=0.001017 s  per-call=0.0010169 s
+#   t-256k (262144 B)         iters=1000  elapsed=0.389546 s  per-call=0.0003895 s
+# CONCLUSION for the search_short/match regimes: no fix is needed there --
+# "one call per subject" (per --iters iteration) holds, calibration's own
+# choice of --iters absorbs the flat per-call cost, and the real subject
+# sizes make it immaterial regardless (a companion single-call-cost
+# breakdown against a NO_UTF_CHECK-forced control on the SAME 256 KB
+# subject, isolating validation from matching, is in
+# docs/dev/lanes/b94pcre2utf_report.md's own measurement section).
+#
+# ---------------------------------------------------------------------------
+# RAW OUTPUT (verbatim, unedited)
+#
+# bench/utf8 subjects (manifest_throughput.tsv):
+#   t-64k           65536 B  sha256=9823deb235da5b43676fa08e4e66373288048f444ab8f894250657078ced52b6
+#   t-256k         262144 B  sha256=fd9b68c68a136ed48ed97ed30251dfe2c8f8f3620eb0b6e2534ab4c4058df0a1
+#   t-1m          1048576 B  sha256=ec3b31100fb3daf84013081218f56820d3ea22263cce70852468445c2bf542c3
+#   t-64k-lat       65536 B  sha256=d8cb3486e43358b47500708af845784fb7742432c7bd3f1b7fb2f2b88280e1df
+#   t-64k-cyr       65536 B  sha256=40226266fd2322ebb9e867d29bf1511d59cc7ecc27e56bf961f2ccf4b83bca10
+#   t-64k-cjk       65536 B  sha256=0f6b3afd5c062c2969471181e1466015309e3c0797423e48fb430fb96dd8f102
+#   t-64k-asc       65536 B  sha256=49e3c128fcc3e62959df45d0191a6f15da8b0b6e4a25fce53b7c85bd633a97ea
+
+== find-all over `.` under PCRE2_UTF: validate-once vs always-check ==
+interp t-64k         65536 B  validate-once= 0.013892 s  always-check= 2.233623 s  ratio=   160.8x  answers-identical=True
+interp t-256k       262144 B  validate-once= 0.031053 s  always-check=35.997920 s  ratio=  1159.2x  answers-identical=True
+interp t-1m        1048576 B  validate-once= 0.085896 s  always-check=SKIPPED (quadratic, minutes)
+interp t-64k-lat     65536 B  validate-once= 0.008840 s  always-check= 2.512474 s  ratio=   284.2x  answers-identical=True
+interp t-64k-cyr     65536 B  validate-once= 0.005162 s  always-check= 2.276926 s  ratio=   441.1x  answers-identical=True
+interp t-64k-cjk     65536 B  validate-once= 0.004061 s  always-check= 0.954946 s  ratio=   235.2x  answers-identical=True
+interp t-64k-asc     65536 B  validate-once= 0.018091 s  always-check= 1.282715 s  ratio=    70.9x  answers-identical=True
+jit    t-64k         65536 B  validate-once= 0.007832 s  always-check= 2.243916 s  ratio=   286.5x  answers-identical=True
+jit    t-256k       262144 B  validate-once= 0.019886 s  always-check=36.005970 s  ratio=  1810.6x  answers-identical=True
+jit    t-1m        1048576 B  validate-once= 0.043508 s  always-check=SKIPPED (quadratic, minutes)
+jit    t-64k-lat     65536 B  validate-once= 0.009840 s  always-check= 2.517346 s  ratio=   255.8x  answers-identical=True
+jit    t-64k-cyr     65536 B  validate-once= 0.006818 s  always-check= 2.270921 s  ratio=   333.1x  answers-identical=True
+jit    t-64k-cjk     65536 B  validate-once= 0.005472 s  always-check= 0.939385 s  ratio=   171.7x  answers-identical=True
+jit    t-64k-asc     65536 B  validate-once= 0.009925 s  always-check= 1.288134 s  ratio=   129.8x  answers-identical=True
+dfa    t-64k         65536 B  validate-once= 0.006624 s  always-check= 2.241935 s  ratio=   338.4x  answers-identical=True
+dfa    t-256k       262144 B  validate-once= 0.027959 s  always-check=36.041169 s  ratio=  1289.1x  answers-identical=True
+dfa    t-1m        1048576 B  validate-once= 0.077966 s  always-check=SKIPPED (quadratic, minutes)
+dfa    t-64k-lat     65536 B  validate-once= 0.015007 s  always-check= 2.515973 s  ratio=   167.6x  answers-identical=True
+dfa    t-64k-cyr     65536 B  validate-once= 0.011591 s  always-check= 2.285084 s  ratio=   197.1x  answers-identical=True
+dfa    t-64k-cjk     65536 B  validate-once= 0.003502 s  always-check= 0.937184 s  ratio=   267.6x  answers-identical=True
+dfa    t-64k-asc     65536 B  validate-once= 0.006492 s  always-check= 1.288232 s  ratio=   198.4x  answers-identical=True
+
+== ill-formed subject: refused by name, both paths ==
+  always_check=False -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+  always_check=True  -> giveup:-23:UTF-8 error: illegal byte (0xfe or 0xff)
+
+== search regime (single call/iteration, mode=search, no --find-all): scaling with --iters, on the LARGEST real bench/utf8 short subject vs the 256 KB throughput subject ==
+  largest short (30 B)         iters=1     elapsed= 0.000011 s  per-call= 0.000010580 s
+  largest short (30 B)         iters=1000  elapsed= 0.000152 s  per-call= 0.000000152 s
+  t-256k (262144 B)            iters=1     elapsed= 0.001017 s  per-call= 0.001016945 s
+  t-256k (262144 B)            iters=1000  elapsed= 0.389546 s  per-call= 0.000389546 s
