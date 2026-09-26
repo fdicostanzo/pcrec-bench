@@ -5833,3 +5833,16 @@ correction → [B93]. (4) Viewer notes: given earlier and addressed; CLOSED for 
 (future features/bugs become new rows). BD14 (validate-once) was offered for
 review, and Frank did not overturn it. Also: `git push` as needed, and always by
 session end. U5's merged-master make check rc=0 (524/0 · 98+7+12 · 200/0), pushed.
+
+## 2026-09-25 ~21:35 EDT — bench/utf8's first window opened
+
+Rehearsal (one trial, scratch, pcrec-auto-utf8, 13 min): 6,762/6,762 matched as
+expected; compile outcomes 138 compiled / 5 unsupported-by-declaration / 4
+did-not-compile (prp-ingreek by design; prp-l-anchored both forms); prp-l 177 s
+and prp-notl 104 s to compile. Projected ~45 min/cell at 5 trials, under
+NOTES.md's 50-min Lever-1 threshold, so the set is unchanged. WINDOW opened 21:34:
+utf8@0.1 × {pcre2-utf-interp, pcre2-utf-jit, rust-default, pcrec-auto-utf8,
+pcrec-nocaps-utf8, pcrec-vm-utf8, pcrec-vm-in-utf8} (§14 Q6's first sample), log
+build/windows/window_utf8_20260926T013438Z.log, watcher on completion. No lanes
+overnight (the box is the window's). Morning: commit the store, [B91] (unsupported
+section + selection-relative best) before the READ, [B92]/[B93] alongside.
