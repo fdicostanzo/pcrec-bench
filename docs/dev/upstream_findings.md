@@ -219,3 +219,52 @@ bug report: hyperscan's PCRE-subset posture makes "stricter than PCRE"
 a documented stance, and the bench's capability machinery already
 renders the refusal as a first-class `did-not-compile` with the
 diagnostic carried.
+
+## U8 — RE2 11.0.0 (`EncodingUTF8`) reports an empty-width `\B` BETWEEN THE BYTES of one UTF-8 character (OBSERVED 2026-09-26, `utf8@0.1` first sample)
+
+Record `utf8@0.1__re2_11.0.0_default-caps-simdna_utf8__budu-ryzen1600__20260926T165447Z`,
+pattern `asr-b-midchar` (`\B`), both regimes: excluded from ranking,
+search_short pass-rate 0.9231 (35 wrong trials), throughput 0.2857 (25).
+On `cls-mixed-hit` (`61 C3 A9 D0 B1`, "aéб") RE2's first `\B` is `[2,2)` —
+between C3 and A9, inside é — where libpcre2 (PCRE2_UTF) answers `[3,3)`;
+on `cls-space-pair` / `prp-zs-hit` (a NBSP between two ASCII letters) RE2
+matches `[2,2)` inside the NBSP where the oracle has NO match. Find-all
+counts rise 3.0-3.3% (`t-64k` 36,728 vs 35,660; `t-1m` 587,877 vs 569,129).
+The driver's `--utf8` advance only moves the RESTART after an empty match
+to a character boundary; the first reported position is RE2's own. RE2's
+`\B` is ASCII-scoped (the config declares `ascii-class-scope`, satisfied)
+and evaluates between bytes, so both sides of an interior byte boundary
+read "not word". pcrec, pcre2-utf-interp/-jit/-dfa, rust and vectorscan
+answer as the oracle. Status: OBSERVED. Not checked against RE2's issue
+tracker or source. Ledger `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md` §3.3.
+
+## U9 — Oniguruma 6.9.10 (`ONIG_ENCODING_UTF8`) folds `ß` to `SS` under `(?i)`; PCRE2 10.46 folds one-to-one (OBSERVED 2026-09-26, `utf8@0.1` first sample)
+
+Record `utf8@0.1__oniguruma_6.9.10_default-caps-simdna_utf8__budu-ryzen1600__20260926T145215Z`,
+pattern `ci-strasse` (`(?i)straße`), search_short: n_wrong 10, pass-rate
+0.9780. It matches `STRASSE` at `[0,7)` (`ci-strasse-nearmiss`) and `DIE
+STRASSE` at `[4,11)` (`lit-sharps-miss`); the oracle (simple folding, no
+one-to-many) answers nomatch on both, as do pcrec, pcre2, rust, re2 and
+vectorscan. A SEMANTICS difference (Unicode full vs simple case folding),
+not a bug. We read it as Oniguruma's default case-fold flag including its
+multi-character folds; that reading comes from the documented option and
+is not checked against the source. Refutes utf8 P4.b/P4.c on this engine.
+Status: OBSERVED (NOT-A-BUG candidate). Ledger §3.2.
+
+## U10 — bare script properties read SCRIPT, not Script_Extensions, on rust-regex 1.13.1, RE2 11.0.0, Oniguruma 6.9.10 and Vectorscan 5.4.11 — on four scripts, not one (OBSERVED 2026-09-26, `utf8@0.1` first sample)
+
+U2's witness census (2026-09-25) measured `\p{Greek}` alone. The first
+sample shows the same divergence on `\p{Greek}`, `\p{Cyrillic}+` and
+`\p{Latin}+` through U+0301 COMBINING ACUTE ACCENT (in
+`lit-nfc-decomposed-miss`, "cafe" + U+0301), and on `\p{Han}+` through
+U+3001/U+3002 (、。). A libpcre2 check over every distinct non-ASCII
+character of `t-64k`/`t-256k`/`t-1m`/`t-64k-cjk` finds these two, and only
+these, separating `\p{Han}` from `\p{sc=Han}`. Every cell is n_wrong 5
+(short) or 20 (throughput) on rust, re2-utf8 and onig-utf8. Vectorscan's
+boolean grain shows only the nomatch-vs-match cells (`prp-greek`,
+`prp-cyrillic`); it cannot see `prp-latin`'s shorter span or `prp-han`'s
+lower count. PCRE2 reads a bare script name as Script_Extensions; the four
+engines read Script. This is a documented semantics difference, not a bug.
+It refuted the utf8 set's P9/P10 transcription, which excluded `prp-greek`
+alone. Status: UNDERSTOOD (the Unicode property difference; the separating
+code points are verified above). Ledger §3.1.
