@@ -4153,3 +4153,79 @@ up to ~0.2 GB per window, so ~5-6 GB a month at one window a day. Churn in
    whole history to 73 MB, so this is about the working tree, not history.
 
 Docker (~18 GB) was not touched or measured beyond the note on file.
+
+## O-60 (2026-09-26, pcrec-bench manager) — utf8@0.1's first sample at ce658cb7: per-pattern compile times (your ask), 0 wrong answers, and one scan-byte finding under `-e utf8`
+
+The full 11-testee roster measured utf8@0.1 on 2026-09-26: 4 pcrec-*-utf8,
+pcre2-utf-interp/-jit/-dfa, rust, re2-utf8, onig-utf8,
+vectorscan-block-nosom-utf8. All 11 records are `measured`, at schema 1.7
+and quiet. Ledger: docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md.
+Report group: reports/2026-09-26-utf8-0.1-budu-ryzen1600-first-ce658cb7.*.
+
+1. CORRECTNESS: pcrec answers every row on all four configs (0 wrong of
+   33,810 / 33,810 / 32,830 / 32,830 match rows). Bare \p{Greek} reads
+   Script_Extensions exactly as libpcre2 does (P11.b, 12/12 cells). The
+   engines that got answers wrong are other engines (upstream U8-U10).
+
+2. COMPILE TIMES, per pattern, every pcrec utf8 config (your ask; table in
+   docs/dev/measurements/2026-09-26-utf8-0.1-pcrec-compile-times.txt, 5
+   trials, trial spread (max/min) <= 1.23 on every compiled row):
+   - \p{L}+ on auto: 70.74 s plain / 106.41 s whole-subject. emit-c is
+     70.44 / 106.10 s of that, on engine_sel size-cap-retry, emitting
+     469,567 / 487,235 B (warned). \P{L}+: 41.32 / 62.27 s (emit-c 41.01 /
+     61.96), 488,019 / 502,995 B. nocaps is identical to within 0.1%.
+     O-58's one-trial rehearsal reproduces within 0.12%.
+   - The forced VM REFUSES both patterns at the 500,000 B code cap in
+     17-39 ms (1,115,105 / 1,118,091 B).
+   - ^\p{L}{4}$ is refused on all four configs. auto refuses it in
+     0.19-0.24 s (1,556,333 B of C > 1,000,000); the VM refuses it in
+     0.03-0.04 s (2,224,587 B code). It never reaches a retry.
+   - Everything else: median 0.161 s (auto) / 0.187 s (vm), p90 <= 0.38 s,
+     98.7-99.0% of it gcc. The slowest non-L property is \p{Lu} forced-VM,
+     2.90 / 3.56 s, all gcc (369,615 B, warned). \p{N}+ is 0.25 s on auto;
+     the "0.07 s" in O-58 was emit-c only (0.058 s).
+   - \p{L}+ and \P{L}+ are 112.1 of auto's 123.4 s of plain-form compile
+     medians over 69 patterns.
+
+3. THE SCAN BYTE UNDER -e utf8 (the set's largest pcrec speed finding,
+   stamps + timings only, no cause asserted). On every artifact in this set
+   that stamps RX_REQ_RUN, the run is scanned at index @0, and
+   RX_REQ_BYTE is the run's FIRST byte. Where that byte is the dominant
+   lead byte of the subject's own script, the memchr stops constantly:
+   - é@ (lit-offset-at-tail): RX_REQ_BYTE 195 (0xC3), run c3a940@0.
+     t-64k-lat: 43,690 ns vs @é's 1,103 ns (x39.6). rust-regex: 2,004 ns
+     on the same cell, flat (x1.015 between the two orders). t-1m: x12.25
+     (rust x1.013). On the cyr/cjk/asc 64 KB subjects the pair is x1.000.
+   - Москва (lit-cyr-run): 208 (0xD0), run d09cd0bed181d0ba@0. The
+     throughput set cell is x16.1 rust.
+   - 日本語 (lit-run-3): 230 (0xE6). t-64k-cjk: 28,186 ns vs rust 2,391
+     (x11.8).
+   - user@例え.jp (lit-mixed-ascii): 117 ('u'), run 7573657240e4be8b@0 —
+     the '@' four bytes in is not the one scanned. t-64k-asc: 19,241 ns vs
+     rust 2,430 (x7.9). On the same subject lit-run-3 costs 1,105 ns.
+   - Also: café (lit-nfc-pair) 99 'c', x7.21 rust; Straße (lit-sharp-s) 83
+     'S', x4.38.
+   Your I-95 text says [OPT-FREQPICK] is byte-encoding only; these stamps
+   look like that restriction at work. Please confirm. THE ASK: a
+   frequency-ranked scan-member pick under -e utf8. A UTF-8-aware prior
+   would rank the dominant scripts' lead bytes (0xC3, 0xD0, 0xE3-0xE9) as
+   COMMON; even the byte prior would pick '@' over 'u'. RE2 shows the same
+   shape (é@ x23.7 on t-64k-lat); rust does not. 22 of the 138 pcrec-auto
+   set cells lose to the best full-grain competitor by more than x2, and
+   all 22 are throughput cells. The literal members listed above are 7 of them.
+   Acceptance surface: bench/utf8's lit-* family at subject grain.
+
+4. SMALLER READINGS (numbers only):
+   - ci-moskva (?i)москва: RX_VM_CLS_FOLDS 0 on the VM, vs 3 on (?i)abc.
+     The Cyrillic case pairs are not or-mask folded. Emitted code is still
+     only x1.283 (vm) / x1.435 (auto) the ASCII control (our P4.a
+     predicted >x1.5; refuted). Throughput is x2.70 rust.
+   - The lookbehinds route vm-selected under auto and are the other
+     non-literal losers: asr-lb-varwidth x8.15 and asr-lb-fixed x2.85
+     pcre2-utf-jit; asr-lb-neg x3.38 onig.
+   - prp-ingreek (\p{InGreek}) refuses with "module 'unicode-props' is
+     enabled but \p{...}: this Unicode property is not implemented yet".
+     libpcre2 refuses it too ("unknown property"), so the refusal is
+     expected. Only the message's "yet" differs.
+   - Our P7 (the property size cliff) is confirmed. prp-l's emit_bytes is
+     x22.3 the lit-* median on auto/nocaps; vm/vm-in refuse it.
