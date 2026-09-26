@@ -403,3 +403,13 @@ always-check path; an ill-formed subject is refused by name; two negative arms
 (flagging call 1 hides the error; byte-stepping trips the assertion); byte
 words untouched. Result: bench/utf8's 7,350 rows derive in ~34 s. Frank may
 overturn the ruling; the always-check path is kept (`validate_once=False`).
+
+## BD15 — 2026-09-26 — the pcre2 TESTEE validates a UTF subject once per find-all, like the oracle (Frank's ruling)
+
+utf8@0.1's first window lost pcre2-utf-interp (and pcre2-utf-jit) to CELL_CAP:
+the driver never passed PCRE2_NO_UTF_CHECK, so libpcre2 re-validated the rest of
+the subject on every call of a find-all. Frank: "keeping the check handicaps
+pcre2 times, so I want it removed after the first." The driver's first call
+checks; later calls on the same buffer pass the flag, the same shape as BD14's
+oracle. Built as [B94], with a control that the answers are identical to the
+always-check path.
