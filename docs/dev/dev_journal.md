@@ -5997,3 +5997,12 @@ AT RESET: the v24 report-regeneration wave is RUNNING DETACHED (pids 2825361/2,
 /var/tmp/b91regen.log, done at a `DONE rc=` line), ~2/3 through and uncommitted —
 the next session reviews the diffs, runs make check, and commits. Its watcher
 dies with this session.
+
+## 2026-09-26 — thirty-third session (Opus 5.5): the v24 regen landed, the utf8 roster completed and READ, I-109, [B96] deferred
+
+- [B91]'s regen wave LANDED (1ffe35e): 74 groups / 436 files + 35 sidecars, 0 failures. The per-group `record`-row audit found ONE loss: email repin-692c2e8 had its evening re-measures dropped by --pin-until-from-git. That group was re-run unpinned; the hazard is now in the driver's --help, and NB the driver reads the query from the WORKING-TREE header. catalogue/fixtures/gen.py silently truncated the 19-column subject-grain slices ([B85]'s capture_class); it now projects on the file's own columns. Golden facts refreshed (R-STATUS-15/R-DELTA-5 only). make check 537/0 · 101+7+15 · 209/0.
+- [B95]: the window measured onig-utf8 / vectorscan-utf8 / pcre2-utf-dfa at attempt 1. X15 REJECTED the re2-utf8 cell: the re2 adapter emitted refusal_class without declaring it (KB-33, fixed; the missing control is owed). Re-measured clean. The READ lane b95read (opus) was merged at 34b1187: 0 wrong answers from pcrec; the -e utf8 scan-byte finding (é@ ×39.6); compile times vs O-58; U8-U10; second-sample predictions drafted. O-60 sent (0af6720).
+- Box: pcrecdev1 runs heavy suites here again by agreed slot (Frank's ruling). My wrapper for their s1step6 was classifier-refused and I did NOT work around it; Frank's ruling then made it moot. We held the report renders for their RAM (RUN-DONE 16:43).
+- I-109 disk: O-59 + data_management_v1.md §8. Root is a 100 GB LV on a 462.7 GB PV; Frank: "overrides the need to clean up", no space action taken. Trigger 4 FIRED (12 report groups > 25 MB); store ~79 MB/day; KB-32 (GitHub's 100 MB file limit).
+- [B96] DATA STORAGE v2 (Frank: "not working even medium term"): git keeps the ledger, S3 the bytes, name-addressed keys, index.tsv as the catalog. DEFERRED ~a month.
+- Memory compacted 13 -> 8 files on Frank's ask.
