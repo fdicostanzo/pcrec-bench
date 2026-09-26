@@ -1,0 +1,145 @@
+# 2026-09-25-b77u5-predictions-dryrun.txt
+#
+# [B77] lane U5 -- utf8_set_v1.md 11's F-M2 step: bench/utf8/NOTES.md's
+# P1-P11, transcribed to docs/dev/predictions/utf8-0.1-first.tsv (15 clause
+# rows over 10 parents: P8 deferred to 0.2 by the design itself; P1.b, P5.a,
+# P7's raised-cap half and P9.b inexpressible; P11 the prp-greek answer
+# divergence utf8_set_v1.md 7.4 charges U5 to predict -- see NOTES.md), run through
+# the REAL `pcrecbench interpret --predictions` CLI BEFORE any utf8@0.1 cell
+# exists.
+#
+# script:  docs/dev/measurements/probe_b77u5_predictions_dryrun.py
+# command: python3 docs/dev/measurements/probe_b77u5_predictions_dryrun.py
+# bench:   lane/b77u5 (off master 438ba8d), catalogue 3.8
+# inputs:  (A) catalogue/fixtures/CLEAN__all-measured (no-op); (B)/(C)
+#          SYNTHETIC reports built from its header + INVENTED rows -- nothing
+#          here is a measurement
+# verdict: (A) 10/10 parents LOAD and read not-evaluable (no row);
+#          (B) 10/10 CONFIRMED -- every selector/reducer/op path reduces,
+#          incl. ratio_to's nested selector + join, ratio_max_min_over,
+#          count over did_not_compile, grain=subject routing;
+#          (C) 9/10 REFUTED + P7 partial (P7.a not-evaluable with no refusal
+#          row -- its stated residual; P7.b refuted).
+#          No clause needed a fix after the dry run; the fixes were made AT
+#          transcription (NOTES.md "Predictions", "what the transcription
+#          changed").
+#
+== (A) NO-OP input: catalogue/fixtures/CLEAN__all-measured ==
+rc=0
+R-PRED-1	0	0									no-matching-rows
+R-PRED-2	0	0									no-matching-rows
+R-PRED-3	1	1							P1	prediction_id	P1
+R-PRED-3	1	1							P1	source	bench/utf8/NOTES.md
+R-PRED-3	1	1							P1	source_ref	P1
+R-PRED-3	1	1							P1	reason	P1.a: no row in this report matches the selector
+R-PRED-3	1	2							P10	prediction_id	P10
+R-PRED-3	1	2							P10	source	bench/utf8/NOTES.md
+R-PRED-3	1	2							P10	source_ref	P10
+R-PRED-3	1	2							P10	reason	P10.a: no row in this report matches the selector
+R-PRED-3	1	3							P11	prediction_id	P11
+R-PRED-3	1	3							P11	source	bench/utf8/NOTES.md
+R-PRED-3	1	3							P11	source_ref	P11
+R-PRED-3	1	3							P11	reason	P11.a: no row in this report matches the selector; P11.b: no row in this report matches the selector
+R-PRED-3	1	4							P2	prediction_id	P2
+R-PRED-3	1	4							P2	source	bench/utf8/NOTES.md
+R-PRED-3	1	4							P2	source_ref	P2
+R-PRED-3	1	4							P2	reason	P2.a: no row in this report matches the selector
+R-PRED-3	1	5							P3	prediction_id	P3
+R-PRED-3	1	5							P3	source	bench/utf8/NOTES.md
+R-PRED-3	1	5							P3	source_ref	P3
+R-PRED-3	1	5							P3	reason	P3.a: no row in this report matches the selector
+R-PRED-3	1	6							P4	prediction_id	P4
+R-PRED-3	1	6							P4	source	bench/utf8/NOTES.md
+R-PRED-3	1	6							P4	source_ref	P4
+R-PRED-3	1	6							P4	reason	P4.a: no row in this report matches the selector; P4.b: no row in this report matches the selector; P4.c: no row in this report matches the selector; P4.d: no row in this report matches the selector
+R-PRED-3	1	7							P5	prediction_id	P5
+R-PRED-3	1	7							P5	source	bench/utf8/NOTES.md
+R-PRED-3	1	7							P5	source_ref	P5
+R-PRED-3	1	7							P5	reason	P5.b: no row in this report matches the selector
+R-PRED-3	1	8							P6	prediction_id	P6
+R-PRED-3	1	8							P6	source	bench/utf8/NOTES.md
+R-PRED-3	1	8							P6	source_ref	P6
+R-PRED-3	1	8							P6	reason	P6.a: no row in this report matches the selector
+R-PRED-3	1	9							P7	prediction_id	P7
+R-PRED-3	1	9							P7	source	bench/utf8/NOTES.md
+R-PRED-3	1	9							P7	source_ref	P7
+R-PRED-3	1	9							P7	reason	P7.a: no row in this report matches the selector; P7.b: no row in this report matches the selector
+R-PRED-3	1	10							P9	prediction_id	P9
+R-PRED-3	1	10							P9	source	bench/utf8/NOTES.md
+R-PRED-3	1	10							P9	source_ref	P9
+R-PRED-3	1	10							P9	reason	P9.a: no row in this report matches the selector
+R-PRED-4	0	0									no-matching-rows
+
+
+== (B) SYNTHETIC input (invented values, every clause valued to confirm) ==
+rc=0
+R-PRED-1	1	1							P1	prediction_id	P1
+R-PRED-1	1	1							P1	source	bench/utf8/NOTES.md
+R-PRED-1	1	1							P1	source_ref	P1
+R-PRED-1	1	1							P1	claim	P1.a: median_ns gt 1.5x
+R-PRED-1	1	1							P1	measured	P1.a: worst (set)/short-subject-search/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 3.000 over 4 value(s)
+R-PRED-1	1	2							P10	prediction_id	P10
+R-PRED-1	1	2							P10	source	bench/utf8/NOTES.md
+R-PRED-1	1	2							P10	source_ref	P10
+R-PRED-1	1	2							P10	claim	P10.a: n_wrong eq 0
+R-PRED-1	1	2							P10	measured	P10.a: worst max = 0.000 over 1 value(s)
+R-PRED-1	1	3							P11	prediction_id	P11
+R-PRED-1	1	3							P11	source	bench/utf8/NOTES.md
+R-PRED-1	1	3							P11	source_ref	P11
+R-PRED-1	1	3							P11	claim	P11.a: n_wrong gte 1; P11.b: n_wrong eq 0
+R-PRED-1	1	3							P11	measured	P11.a: worst min = 1.000 over 1 value(s); P11.b: worst max = 0.000 over 1 value(s)
+R-PRED-1	1	4							P2	prediction_id	P2
+R-PRED-1	1	4							P2	source	bench/utf8/NOTES.md
+R-PRED-1	1	4							P2	source_ref	P2
+R-PRED-1	1	4							P2	claim	P2.a: median_ns gte 2x
+R-PRED-1	1	4							P2	measured	P2.a: worst lit-run-3/t-64k-cjk/large-subject-throughput/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 5.000 over 5 value(s)
+R-PRED-1	1	5							P3	prediction_id	P3
+R-PRED-1	1	5							P3	source	bench/utf8/NOTES.md
+R-PRED-1	1	5							P3	source_ref	P3
+R-PRED-1	1	5							P3	claim	P3.a: median_ns between 0.6667..1.5x
+R-PRED-1	1	5							P3	measured	P3.a: worst lit-run-3/t-64k-asc/large-subject-throughput/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 0.909 over 5 value(s)
+R-PRED-1	1	6							P4	prediction_id	P4
+R-PRED-1	1	6							P4	source	bench/utf8/NOTES.md
+R-PRED-1	1	6							P4	source_ref	P4
+R-PRED-1	1	6							P4	claim	P4.a: compile:emit_bytes gt 1.5x; P4.b: n_wrong eq 0; P4.c: n_wrong eq 0; P4.d: n_wrong eq 0
+R-PRED-1	1	6							P4	measured	P4.a: worst ci-moskva///plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 3.000 over 4 value(s); P4.b: worst max = 0.000 over 1 value(s); P4.c: worst max = 0.000 over 1 value(s); P4.d: worst max = 0.000 over 1 value(s)
+R-PRED-1	1	7							P5	prediction_id	P5
+R-PRED-1	1	7							P5	source	bench/utf8/NOTES.md
+R-PRED-1	1	7							P5	source_ref	P5
+R-PRED-1	1	7							P5	claim	P5.b: n_wrong eq 0
+R-PRED-1	1	7							P5	measured	P5.b: worst max = 0.000 over 1 value(s)
+R-PRED-1	1	8							P6	prediction_id	P6
+R-PRED-1	1	8							P6	source	bench/utf8/NOTES.md
+R-PRED-1	1	8							P6	source_ref	P6
+R-PRED-1	1	8							P6	claim	P6.a: n_wrong eq 0
+R-PRED-1	1	8							P6	measured	P6.a: worst max = 0.000 over 1 value(s)
+R-PRED-1	1	9							P7	prediction_id	P7
+R-PRED-1	1	9							P7	source	bench/utf8/NOTES.md
+R-PRED-1	1	9							P7	source_ref	P7
+R-PRED-1	1	9							P7	claim	P7.a: section gte 1; P7.b: compile:emit_bytes gt 10x
+R-PRED-1	1	9							P7	measured	P7.a: worst count = 4.000 over 1 value(s); P7.b: worst prp-l///plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 42.857 over 4 value(s)
+R-PRED-1	1	10							P9	prediction_id	P9
+R-PRED-1	1	10							P9	source	bench/utf8/NOTES.md
+R-PRED-1	1	10							P9	source_ref	P9
+R-PRED-1	1	10							P9	claim	P9.a: n_wrong eq 0
+R-PRED-1	1	10							P9	measured	P9.a: worst max = 0.000 over 1 value(s)
+R-PRED-2	0	0									no-matching-rows
+R-PRED-3	0	0									no-matching-rows
+R-PRED-4	0	0									no-matching-rows
+
+
+== (C) SYNTHETIC REFUTING input (the same rows, each valued to VIOLATE its clause: the clauses are not tautologies) ==
+rc=0
+R-PRED-1	0	0									no-matching-rows
+R-PRED-2	1	1							P1	measured	P1.a: worst (set)/short-subject-search/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 1.000 over 4 value(s)
+R-PRED-2	1	2							P10	measured	P10.a: worst max = 1.000 over 1 value(s)
+R-PRED-2	1	3							P11	measured	P11.a: worst min = 0.000 over 1 value(s); P11.b: worst max = 1.000 over 1 value(s)
+R-PRED-2	1	4							P2	measured	P2.a: worst lit-run-3/t-64k-cjk/large-subject-throughput/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 1.000 over 5 value(s)
+R-PRED-2	1	5							P3	measured	P3.a: worst lit-run-3/t-64k-asc/large-subject-throughput/plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 3.333 over 5 value(s)
+R-PRED-2	1	6							P4	measured	P4.a: worst ci-moskva///plain/pcrec_ce658cb7_auto-caps-simdna_utf8 = 1.000 over 4 value(s); P4.b: worst max = 1.000 over 1 value(s); P4.c: worst max = 1.000 over 1 value(s); P4.d: worst max = 1.000 over 1 value(s)
+R-PRED-2	1	7							P5	measured	P5.b: worst max = 1.000 over 1 value(s)
+R-PRED-2	1	8							P6	measured	P6.a: worst max = 1.000 over 1 value(s)
+R-PRED-2	1	9							P9	measured	P9.a: worst max = 1.000 over 1 value(s)
+R-PRED-3	0	0									no-matching-rows
+R-PRED-4	1	1							P7	clause_verdicts	P7.a not-evaluable; P7.b refuted
+
