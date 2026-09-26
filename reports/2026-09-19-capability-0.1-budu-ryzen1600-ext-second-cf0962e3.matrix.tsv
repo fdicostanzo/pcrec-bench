@@ -1,112 +1,113 @@
-# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=capability, version=0.1, since=2026-09-18T06:00:00Z, until=2026-09-19T05:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (3 record(s) matching this query); records: 3; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: re2_11.0.0_default-caps-simdna,tre_0.9.0_default-caps-simdna,vectorscan_5.4.11_block-nosom-nocaps-simd
-# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
-subbench	pattern	regime_or_na	form	best_testee	best_ns	re2_11.0.0_default-caps-simdna	tre_0.9.0_default-caps-simdna	vectorscan_5.4.11_block-nosom-nocaps-simd
-capability@0.1	balanced-parens-rec					unsup	unsup	unsup
-capability@0.1	base10num-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.8	1.698026	70578.767924	1.000000
-capability@0.1	base10num-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2051.2	1.982383	9.070666	1.000000
-capability@0.1	bracket-array-define					unsup	unsup	unsup
-capability@0.1	codegrammar-flat	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	121332.8	18.442069	527.219997	1.000000
-capability@0.1	codegrammar-flat	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2471.1	3.112019	9.695150	1.000000
-capability@0.1	codegrammar-xflag	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	121304.1	unsup	unsup	1.000000
-capability@0.1	codegrammar-xflag	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2468.2	unsup	unsup	1.000000
-capability@0.1	currency-lookbehind-fixed					unsup	unsup	unsup
-capability@0.1	date-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.714464	52011.099235	1.000000
-capability@0.1	date-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1866.0	5.161590	7.368952	1.000000
-capability@0.1	doubled-word	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	214644617.5	unsup	1.000000	unsup
-capability@0.1	doubled-word	short-subject-search	plain	tre_0.9.0_default-caps-simdna	211358.9	unsup	1.000000	unsup
-capability@0.1	dup-param-detect	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	185048882.0	unsup	1.000000	unsup
-capability@0.1	dup-param-detect	short-subject-search	plain	tre_0.9.0_default-caps-simdna	196700.5	unsup	1.000000	unsup
-capability@0.1	email-local-nodup					unsup	unsup	unsup
-capability@0.1	email-nested-plus	large-subject-throughput	plain	re2_11.0.0_default-caps-simdna	341.4	1.000000	64284.436597	92.585950
-capability@0.1	email-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1842.8	23.899862	111.051708	1.000000
-capability@0.1	evil-alt-nested	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	169.8	1.844398	60260.810008	1.000000
-capability@0.1	evil-alt-nested	short-subject-search	plain			wrong	wrong	wrong
-capability@0.1	file-ext-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	84722.6	2.957153	302.862360	1.000000
-capability@0.1	file-ext-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2477.7	3.084480	wrong	1.000000
-capability@0.1	float-literal-bound					unsup	unsup	unsup
-capability@0.1	floor-byte	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	23231.6	1.022503	1.000000	1.393420
-capability@0.1	floor-byte	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2040.9	3.674264	1.025677	1.000000
-capability@0.1	high-byte-run	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	64041.8	34.931052	wrong	1.000000
-capability@0.1	high-byte-run	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2643.3	3.663423	wrong	1.000000
-capability@0.1	ipv4-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	9.411398	505774.140762	1.000000
-capability@0.1	ipv4-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	951.0	7.169796	32.288752	1.000000
-capability@0.1	keyword-prefix-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	291.4	8355.860239	101130.747430	1.000000
-capability@0.1	keyword-prefix-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2667.3	2.981168	wrong	1.000000
-capability@0.1	logparse-atomic					unsup	unsup	unsup
-capability@0.1	logparse-atomic-removed	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	135.0	2.126275	142407.151956	1.000000
-capability@0.1	logparse-atomic-removed	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1150.4	6.858598	36.045923	1.000000
-capability@0.1	mojibake-curly-quote	large-subject-throughput	plain	re2_11.0.0_default-caps-simdna	23781.0	1.000000	913.353940	1.328964
-capability@0.1	mojibake-curly-quote	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2044.8	3.697502	wrong	1.000000
-capability@0.1	negation-scope-lookbehind-var					unsup	unsup	unsup
-capability@0.1	nested-comment-rec					unsup	unsup	unsup
-capability@0.1	numeric-id-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.5	1.710934	51896.112164	1.000000
-capability@0.1	numeric-id-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1963.8	4.917903	6.770203	1.000000
-capability@0.1	phone-list-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.713498	51996.508030	1.000000
-capability@0.1	phone-list-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1984.0	5.047882	7.563018	1.000000
-capability@0.1	phone-palindrome-6	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	28963805.0	unsup	1.000000	unsup
-capability@0.1	phone-palindrome-6	short-subject-search	plain	tre_0.9.0_default-caps-simdna	30494.1	unsup	1.000000	unsup
-capability@0.1	pwd-strength-chain					unsup	unsup	unsup
-capability@0.1	quoted-delim-match					unsup	unsup	unsup
-capability@0.1	router-prefix-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1249.4	320.179894	21071.843664	1.000000
-capability@0.1	router-prefix-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2297.6	3.321306	wrong	1.000000
-capability@0.1	tag-depth3-bound	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	34508904.2	unsup	1.000000	unsup
-capability@0.1	tag-depth3-bound	short-subject-search	plain	tre_0.9.0_default-caps-simdna	47435.2	unsup	1.000000	unsup
-capability@0.1	tag-pair-match	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	27821937.3	unsup	1.000000	unsup
-capability@0.1	tag-pair-match	short-subject-search	plain			unsup	wrong	unsup
-capability@0.1	trim-nested-star	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.715719	70903.338104	1.000000
-capability@0.1	trim-nested-star	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1862.7	5.058608	10.443599	1.000000
-capability@0.1	utf8-lead-no-cont					unsup	unsup	unsup
-capability@0.1	uuid-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.3	9.886831	389532.592733	1.000000
-capability@0.1	uuid-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	572.9	7.376640	61.863617	1.000000
-capability@0.1	wild-codegrammar-json-array-begin	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	124.1	13243.336709	5646.979974	1.000000
-capability@0.1	wild-codegrammar-json-array-begin	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2070.7	3.734891	1.057357	1.000000
-capability@0.1	wild-codegrammar-json-constant	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	182488.3	12.254533	359.641682	1.000000
-capability@0.1	wild-codegrammar-json-constant	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2988.3	3.206863	21.433207	1.000000
-capability@0.1	wild-codegrammar-json-number-extended					unsup	unsup	refused
-capability@0.1	wild-codegrammar-json-object-begin	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	23288.8	1.020661	1.000000	1.387333
-capability@0.1	wild-codegrammar-json-object-begin	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2041.4	3.693060	1.025109	1.000000
-capability@0.1	wild-codegrammar-json-stringcontent-escape					unsup	unsup	refused
-capability@0.1	wild-datetime-datefinder-alternation	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	650.7	1454909.081827	refused	1.000000
-capability@0.1	wild-datetime-datefinder-alternation	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3749.2	48.824088	refused	1.000000
-capability@0.1	wild-datetime-moment-iso8601	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	148.4	1.934586	104144.193277	1.000000
-capability@0.1	wild-datetime-moment-iso8601	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1618.6	6.008250	26.202437	1.000000
-capability@0.1	wild-logparse-base10num-grok					unsup	unsup	unsup
-capability@0.1	wild-logparse-base10num-noatomic					unsup	unsup	unsup
-capability@0.1	wild-logparse-quotedstring-grok					unsup	unsup	unsup
-capability@0.1	wild-logparse-quotedstring-noatomic					unsup	unsup	unsup
-capability@0.1	wild-logparse-syslogbase-expanded					unsup	unsup	unsup
-capability@0.1	wild-logparse-winpath-grok					unsup	unsup	unsup
-capability@0.1	wild-secrets-aws-access-key-id	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	292497.5	7.653696	592.231900	1.000000
-capability@0.1	wild-secrets-aws-access-key-id	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2105.2	4.704068	83.067630	1.000000
-capability@0.1	wild-secrets-github-pat	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	60270.7	37.209385	415.973228	1.000000
-capability@0.1	wild-secrets-github-pat	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	827.4	12.351560	68.579194	1.000000
-capability@0.1	wild-secrets-slack-webhook-url	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	111971.3	3.923391	314.205819	1.000000
-capability@0.1	wild-secrets-slack-webhook-url	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	694.7	12.999247	107.877860	1.000000
-capability@0.1	wild-secrets-username-password-pair	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	475639.5	4.718727	refused	1.000000
-capability@0.1	wild-secrets-username-password-pair	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1648.8	6.308406	refused	1.000000
-capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	153324.4	2.125034	186.709579	1.000000
-capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2405.6	3.114582	12.866271	1.000000
-capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	223.8	1.410604	82902.263982	1.000000
-capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2764.9	2.659103	4.593036	1.000000
-capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	242.0	266578.349675	193196.900116	1.000000
-capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3900.6	5.084336	7.856904	1.000000
-capability@0.1	wild-validator-email-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	202.1	1.818303	110148.832757	1.000000
-capability@0.1	wild-validator-email-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2248.6	3.614448	53.656819	1.000000
-capability@0.1	wild-validator-ipv4-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.4	9.454278	508506.591276	1.000000
-capability@0.1	wild-validator-ipv4-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	953.4	9.800637	40.647123	1.000000
-capability@0.1	wild-validator-us-zip-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	9.382264	284632.521245	1.000000
-capability@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	986.0	2.070644	14.126074	1.000000
-capability@0.1	wild-validator-uuid-grok	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	243258.4	9.199083	296.367427	1.000000
-capability@0.1	wild-validator-uuid-grok	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1623.9	6.108284	75.149462	1.000000
-capability@0.1	wild-waf-crs-942140-dbnames	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	600282.9	3.734031	469.507859	1.000000
-capability@0.1	wild-waf-crs-942140-dbnames	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3412.2	2.817535	94.517482	1.000000
-capability@0.1	wild-waf-crs-942160-sleep-benchmark	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	160319.3	13.965673	374.772028	1.000000
-capability@0.1	wild-waf-crs-942160-sleep-benchmark	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2424.2	3.974822	29.325720	1.000000
-capability@0.1	wild-waf-crs-942270-union-select	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	86476.9	5.079936	357.720438	1.000000
-capability@0.1	wild-waf-crs-942270-union-select	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1911.9	4.321853	20.523247	1.000000
-capability@0.1	wild-waf-crs-942360-concat-sqli	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	880368.1	2.554890	1317.769222	1.000000
-capability@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	4583.6	2.091708	wrong	1.000000
-capability@0.1	wild-waf-crs-942500-comment-obfuscation	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	60189.8	7.296043	refused	1.000000
-capability@0.1	wild-waf-crs-942500-comment-obfuscation	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2355.5	3.575780	refused	1.000000
-capability@0.1	winpath-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	133.2	2.256074	76474.090621	1.000000
-capability@0.1	winpath-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1471.6	4.709605	17.540016	1.000000
+# reporter: v24 (2026-09-26); surface: matrix; filters: subbench=capability, version=0.1, since=2026-09-18T06:00:00Z, until=2026-09-19T05:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd; source: store/index.tsv (3 record(s) matching this query); records: 3; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: re2_11.0.0_default-caps-simdna,tre_0.9.0_default-caps-simdna,vectorscan_5.4.11_block-nosom-nocaps-simd; capture_class: yes=re2_11.0.0_default-caps-simdna,tre_0.9.0_default-caps-simdna; no=vectorscan_5.4.11_block-nosom-nocaps-simd; undeclared=
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; no-expectation = excluded, n_no_expectation > 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine's own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row's best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may be computed against a non-capturing config's median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row's best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_<class>. These match the report's own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader's own testee selection from each cell's ratio x best_ns_pooled, never from a second reduction.
+subbench	pattern	regime_or_na	form	best_testee_pooled	best_ns_pooled	best_testee_yes	best_ns_yes	best_testee_no	best_ns_no	re2_11.0.0_default-caps-simdna	tre_0.9.0_default-caps-simdna	vectorscan_5.4.11_block-nosom-nocaps-simd
+capability@0.1	balanced-parens-rec									unsup	unsup	unsup
+capability@0.1	base10num-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.8	re2_11.0.0_default-caps-simdna	284.9	vectorscan_5.4.11_block-nosom-nocaps-simd	167.8	1.698026	70578.767924	1.000000
+capability@0.1	base10num-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2051.2	re2_11.0.0_default-caps-simdna	4066.2	vectorscan_5.4.11_block-nosom-nocaps-simd	2051.2	1.982383	9.070666	1.000000
+capability@0.1	bracket-array-define									unsup	unsup	unsup
+capability@0.1	codegrammar-flat	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	121332.8	re2_11.0.0_default-caps-simdna	2237627.3	vectorscan_5.4.11_block-nosom-nocaps-simd	121332.8	18.442069	527.219997	1.000000
+capability@0.1	codegrammar-flat	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2471.1	re2_11.0.0_default-caps-simdna	7690.0	vectorscan_5.4.11_block-nosom-nocaps-simd	2471.1	3.112019	9.695150	1.000000
+capability@0.1	codegrammar-xflag	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	121304.1			vectorscan_5.4.11_block-nosom-nocaps-simd	121304.1	unsup	unsup	1.000000
+capability@0.1	codegrammar-xflag	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2468.2			vectorscan_5.4.11_block-nosom-nocaps-simd	2468.2	unsup	unsup	1.000000
+capability@0.1	currency-lookbehind-fixed									unsup	unsup	unsup
+capability@0.1	date-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	re2_11.0.0_default-caps-simdna	286.4	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.714464	52011.099235	1.000000
+capability@0.1	date-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1866.0	re2_11.0.0_default-caps-simdna	9631.6	vectorscan_5.4.11_block-nosom-nocaps-simd	1866.0	5.161590	7.368952	1.000000
+capability@0.1	doubled-word	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	214644617.5	tre_0.9.0_default-caps-simdna	214644617.5			unsup	1.000000	unsup
+capability@0.1	doubled-word	short-subject-search	plain	tre_0.9.0_default-caps-simdna	211358.9	tre_0.9.0_default-caps-simdna	211358.9			unsup	1.000000	unsup
+capability@0.1	dup-param-detect	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	185048882.0	tre_0.9.0_default-caps-simdna	185048882.0			unsup	1.000000	unsup
+capability@0.1	dup-param-detect	short-subject-search	plain	tre_0.9.0_default-caps-simdna	196700.5	tre_0.9.0_default-caps-simdna	196700.5			unsup	1.000000	unsup
+capability@0.1	email-local-nodup									unsup	unsup	unsup
+capability@0.1	email-nested-plus	large-subject-throughput	plain	re2_11.0.0_default-caps-simdna	341.4	re2_11.0.0_default-caps-simdna	341.4	vectorscan_5.4.11_block-nosom-nocaps-simd	31608.8	1.000000	64284.436597	92.585950
+capability@0.1	email-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1842.8	re2_11.0.0_default-caps-simdna	44042.2	vectorscan_5.4.11_block-nosom-nocaps-simd	1842.8	23.899862	111.051708	1.000000
+capability@0.1	evil-alt-nested	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	169.8	re2_11.0.0_default-caps-simdna	313.2	vectorscan_5.4.11_block-nosom-nocaps-simd	169.8	1.844398	60260.810008	1.000000
+capability@0.1	evil-alt-nested	short-subject-search	plain							no-expectation	no-expectation	no-expectation
+capability@0.1	file-ext-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	84722.6	re2_11.0.0_default-caps-simdna	250537.7	vectorscan_5.4.11_block-nosom-nocaps-simd	84722.6	2.957153	302.862360	1.000000
+capability@0.1	file-ext-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2477.7	re2_11.0.0_default-caps-simdna	7642.3	vectorscan_5.4.11_block-nosom-nocaps-simd	2477.7	3.084480	wrong	1.000000
+capability@0.1	float-literal-bound									unsup	unsup	unsup
+capability@0.1	floor-byte	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	23231.6	tre_0.9.0_default-caps-simdna	23231.6	vectorscan_5.4.11_block-nosom-nocaps-simd	32371.4	1.022503	1.000000	1.393420
+capability@0.1	floor-byte	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2040.9	tre_0.9.0_default-caps-simdna	2093.3	vectorscan_5.4.11_block-nosom-nocaps-simd	2040.9	3.674264	1.025677	1.000000
+capability@0.1	high-byte-run	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	64041.8	re2_11.0.0_default-caps-simdna	2237046.8	vectorscan_5.4.11_block-nosom-nocaps-simd	64041.8	34.931052	wrong	1.000000
+capability@0.1	high-byte-run	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2643.3	re2_11.0.0_default-caps-simdna	9683.7	vectorscan_5.4.11_block-nosom-nocaps-simd	2643.3	3.663423	wrong	1.000000
+capability@0.1	ipv4-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	re2_11.0.0_default-caps-simdna	286.8	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	9.411398	505774.140762	1.000000
+capability@0.1	ipv4-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	951.0	re2_11.0.0_default-caps-simdna	6818.3	vectorscan_5.4.11_block-nosom-nocaps-simd	951.0	7.169796	32.288752	1.000000
+capability@0.1	keyword-prefix-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	291.4	re2_11.0.0_default-caps-simdna	2435148.9	vectorscan_5.4.11_block-nosom-nocaps-simd	291.4	8355.860239	101130.747430	1.000000
+capability@0.1	keyword-prefix-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2667.3	re2_11.0.0_default-caps-simdna	7951.8	vectorscan_5.4.11_block-nosom-nocaps-simd	2667.3	2.981168	wrong	1.000000
+capability@0.1	logparse-atomic									unsup	unsup	unsup
+capability@0.1	logparse-atomic-removed	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	135.0	re2_11.0.0_default-caps-simdna	287.0	vectorscan_5.4.11_block-nosom-nocaps-simd	135.0	2.126275	142407.151956	1.000000
+capability@0.1	logparse-atomic-removed	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1150.4	re2_11.0.0_default-caps-simdna	7889.9	vectorscan_5.4.11_block-nosom-nocaps-simd	1150.4	6.858598	36.045923	1.000000
+capability@0.1	mojibake-curly-quote	large-subject-throughput	plain	re2_11.0.0_default-caps-simdna	23781.0	re2_11.0.0_default-caps-simdna	23781.0	vectorscan_5.4.11_block-nosom-nocaps-simd	31604.1	1.000000	913.353940	1.328964
+capability@0.1	mojibake-curly-quote	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2044.8	re2_11.0.0_default-caps-simdna	7560.5	vectorscan_5.4.11_block-nosom-nocaps-simd	2044.8	3.697502	wrong	1.000000
+capability@0.1	negation-scope-lookbehind-var									unsup	unsup	unsup
+capability@0.1	nested-comment-rec									unsup	unsup	unsup
+capability@0.1	numeric-id-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.5	re2_11.0.0_default-caps-simdna	286.6	vectorscan_5.4.11_block-nosom-nocaps-simd	167.5	1.710934	51896.112164	1.000000
+capability@0.1	numeric-id-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1963.8	re2_11.0.0_default-caps-simdna	9657.8	vectorscan_5.4.11_block-nosom-nocaps-simd	1963.8	4.917903	6.770203	1.000000
+capability@0.1	phone-list-nested-plus	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	re2_11.0.0_default-caps-simdna	286.2	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.713498	51996.508030	1.000000
+capability@0.1	phone-list-nested-plus	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1984.0	re2_11.0.0_default-caps-simdna	10014.8	vectorscan_5.4.11_block-nosom-nocaps-simd	1984.0	5.047882	7.563018	1.000000
+capability@0.1	phone-palindrome-6	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	28963805.0	tre_0.9.0_default-caps-simdna	28963805.0			unsup	1.000000	unsup
+capability@0.1	phone-palindrome-6	short-subject-search	plain	tre_0.9.0_default-caps-simdna	30494.1	tre_0.9.0_default-caps-simdna	30494.1			unsup	1.000000	unsup
+capability@0.1	pwd-strength-chain									unsup	unsup	unsup
+capability@0.1	quoted-delim-match									unsup	unsup	unsup
+capability@0.1	router-prefix-order	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1249.4	re2_11.0.0_default-caps-simdna	400035.5	vectorscan_5.4.11_block-nosom-nocaps-simd	1249.4	320.179894	21071.843664	1.000000
+capability@0.1	router-prefix-order	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2297.6	re2_11.0.0_default-caps-simdna	7631.1	vectorscan_5.4.11_block-nosom-nocaps-simd	2297.6	3.321306	wrong	1.000000
+capability@0.1	tag-depth3-bound	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	34508904.2	tre_0.9.0_default-caps-simdna	34508904.2			unsup	1.000000	unsup
+capability@0.1	tag-depth3-bound	short-subject-search	plain	tre_0.9.0_default-caps-simdna	47435.2	tre_0.9.0_default-caps-simdna	47435.2			unsup	1.000000	unsup
+capability@0.1	tag-pair-match	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	27821937.3	tre_0.9.0_default-caps-simdna	27821937.3			unsup	1.000000	unsup
+capability@0.1	tag-pair-match	short-subject-search	plain							unsup	wrong	unsup
+capability@0.1	trim-nested-star	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	re2_11.0.0_default-caps-simdna	286.4	vectorscan_5.4.11_block-nosom-nocaps-simd	167.0	1.715719	70903.338104	1.000000
+capability@0.1	trim-nested-star	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1862.7	re2_11.0.0_default-caps-simdna	9422.8	vectorscan_5.4.11_block-nosom-nocaps-simd	1862.7	5.058608	10.443599	1.000000
+capability@0.1	utf8-lead-no-cont									unsup	unsup	unsup
+capability@0.1	uuid-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.3	re2_11.0.0_default-caps-simdna	300.0	vectorscan_5.4.11_block-nosom-nocaps-simd	30.3	9.886831	389532.592733	1.000000
+capability@0.1	uuid-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	572.9	re2_11.0.0_default-caps-simdna	4225.7	vectorscan_5.4.11_block-nosom-nocaps-simd	572.9	7.376640	61.863617	1.000000
+capability@0.1	wild-codegrammar-json-array-begin	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	124.1	tre_0.9.0_default-caps-simdna	700512.6	vectorscan_5.4.11_block-nosom-nocaps-simd	124.1	13243.336709	5646.979974	1.000000
+capability@0.1	wild-codegrammar-json-array-begin	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2070.7	tre_0.9.0_default-caps-simdna	2189.5	vectorscan_5.4.11_block-nosom-nocaps-simd	2070.7	3.734891	1.057357	1.000000
+capability@0.1	wild-codegrammar-json-constant	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	182488.3	re2_11.0.0_default-caps-simdna	2236308.9	vectorscan_5.4.11_block-nosom-nocaps-simd	182488.3	12.254533	359.641682	1.000000
+capability@0.1	wild-codegrammar-json-constant	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2988.3	re2_11.0.0_default-caps-simdna	9583.1	vectorscan_5.4.11_block-nosom-nocaps-simd	2988.3	3.206863	21.433207	1.000000
+capability@0.1	wild-codegrammar-json-number-extended									unsup	unsup	refused
+capability@0.1	wild-codegrammar-json-object-begin	large-subject-throughput	plain	tre_0.9.0_default-caps-simdna	23288.8	tre_0.9.0_default-caps-simdna	23288.8	vectorscan_5.4.11_block-nosom-nocaps-simd	32309.3	1.020661	1.000000	1.387333
+capability@0.1	wild-codegrammar-json-object-begin	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2041.4	tre_0.9.0_default-caps-simdna	2092.7	vectorscan_5.4.11_block-nosom-nocaps-simd	2041.4	3.693060	1.025109	1.000000
+capability@0.1	wild-codegrammar-json-stringcontent-escape									unsup	unsup	refused
+capability@0.1	wild-datetime-datefinder-alternation	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	650.7	re2_11.0.0_default-caps-simdna	946749306.0	vectorscan_5.4.11_block-nosom-nocaps-simd	650.7	1454909.081827	refused	1.000000
+capability@0.1	wild-datetime-datefinder-alternation	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3749.2	re2_11.0.0_default-caps-simdna	183049.2	vectorscan_5.4.11_block-nosom-nocaps-simd	3749.2	48.824088	refused	1.000000
+capability@0.1	wild-datetime-moment-iso8601	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	148.4	re2_11.0.0_default-caps-simdna	287.0	vectorscan_5.4.11_block-nosom-nocaps-simd	148.4	1.934586	104144.193277	1.000000
+capability@0.1	wild-datetime-moment-iso8601	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1618.6	re2_11.0.0_default-caps-simdna	9725.1	vectorscan_5.4.11_block-nosom-nocaps-simd	1618.6	6.008250	26.202437	1.000000
+capability@0.1	wild-logparse-base10num-grok									unsup	unsup	unsup
+capability@0.1	wild-logparse-base10num-noatomic									unsup	unsup	unsup
+capability@0.1	wild-logparse-quotedstring-grok									unsup	unsup	unsup
+capability@0.1	wild-logparse-quotedstring-noatomic									unsup	unsup	unsup
+capability@0.1	wild-logparse-syslogbase-expanded									unsup	unsup	unsup
+capability@0.1	wild-logparse-winpath-grok									unsup	unsup	unsup
+capability@0.1	wild-secrets-aws-access-key-id	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	292497.5	re2_11.0.0_default-caps-simdna	2238687.1	vectorscan_5.4.11_block-nosom-nocaps-simd	292497.5	7.653696	592.231900	1.000000
+capability@0.1	wild-secrets-aws-access-key-id	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2105.2	re2_11.0.0_default-caps-simdna	9902.8	vectorscan_5.4.11_block-nosom-nocaps-simd	2105.2	4.704068	83.067630	1.000000
+capability@0.1	wild-secrets-github-pat	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	60270.7	re2_11.0.0_default-caps-simdna	2242637.4	vectorscan_5.4.11_block-nosom-nocaps-simd	60270.7	37.209385	415.973228	1.000000
+capability@0.1	wild-secrets-github-pat	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	827.4	re2_11.0.0_default-caps-simdna	10219.9	vectorscan_5.4.11_block-nosom-nocaps-simd	827.4	12.351560	68.579194	1.000000
+capability@0.1	wild-secrets-slack-webhook-url	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	111971.3	re2_11.0.0_default-caps-simdna	439307.0	vectorscan_5.4.11_block-nosom-nocaps-simd	111971.3	3.923391	314.205819	1.000000
+capability@0.1	wild-secrets-slack-webhook-url	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	694.7	re2_11.0.0_default-caps-simdna	9030.9	vectorscan_5.4.11_block-nosom-nocaps-simd	694.7	12.999247	107.877860	1.000000
+capability@0.1	wild-secrets-username-password-pair	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	475639.5	re2_11.0.0_default-caps-simdna	2244413.2	vectorscan_5.4.11_block-nosom-nocaps-simd	475639.5	4.718727	refused	1.000000
+capability@0.1	wild-secrets-username-password-pair	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1648.8	re2_11.0.0_default-caps-simdna	10401.1	vectorscan_5.4.11_block-nosom-nocaps-simd	1648.8	6.308406	refused	1.000000
+capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	153324.4	re2_11.0.0_default-caps-simdna	325819.5	vectorscan_5.4.11_block-nosom-nocaps-simd	153324.4	2.125034	186.709579	1.000000
+capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2405.6	re2_11.0.0_default-caps-simdna	7492.3	vectorscan_5.4.11_block-nosom-nocaps-simd	2405.6	3.114582	12.866271	1.000000
+capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	223.8	re2_11.0.0_default-caps-simdna	315.8	vectorscan_5.4.11_block-nosom-nocaps-simd	223.8	1.410604	82902.263982	1.000000
+capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2764.9	re2_11.0.0_default-caps-simdna	7352.1	vectorscan_5.4.11_block-nosom-nocaps-simd	2764.9	2.659103	4.593036	1.000000
+capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	242.0	tre_0.9.0_default-caps-simdna	46745767.7	vectorscan_5.4.11_block-nosom-nocaps-simd	242.0	266578.349675	193196.900116	1.000000
+capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3900.6	re2_11.0.0_default-caps-simdna	19831.7	vectorscan_5.4.11_block-nosom-nocaps-simd	3900.6	5.084336	7.856904	1.000000
+capability@0.1	wild-validator-email-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	202.1	re2_11.0.0_default-caps-simdna	367.4	vectorscan_5.4.11_block-nosom-nocaps-simd	202.1	1.818303	110148.832757	1.000000
+capability@0.1	wild-validator-email-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2248.6	re2_11.0.0_default-caps-simdna	8127.6	vectorscan_5.4.11_block-nosom-nocaps-simd	2248.6	3.614448	53.656819	1.000000
+capability@0.1	wild-validator-ipv4-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.4	re2_11.0.0_default-caps-simdna	287.2	vectorscan_5.4.11_block-nosom-nocaps-simd	30.4	9.454278	508506.591276	1.000000
+capability@0.1	wild-validator-ipv4-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	953.4	re2_11.0.0_default-caps-simdna	9344.2	vectorscan_5.4.11_block-nosom-nocaps-simd	953.4	9.800637	40.647123	1.000000
+capability@0.1	wild-validator-us-zip-owasp	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	re2_11.0.0_default-caps-simdna	286.6	vectorscan_5.4.11_block-nosom-nocaps-simd	30.5	9.382264	284632.521245	1.000000
+capability@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	986.0	re2_11.0.0_default-caps-simdna	2041.7	vectorscan_5.4.11_block-nosom-nocaps-simd	986.0	2.070644	14.126074	1.000000
+capability@0.1	wild-validator-uuid-grok	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	243258.4	re2_11.0.0_default-caps-simdna	2237753.9	vectorscan_5.4.11_block-nosom-nocaps-simd	243258.4	9.199083	296.367427	1.000000
+capability@0.1	wild-validator-uuid-grok	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1623.9	re2_11.0.0_default-caps-simdna	9919.5	vectorscan_5.4.11_block-nosom-nocaps-simd	1623.9	6.108284	75.149462	1.000000
+capability@0.1	wild-waf-crs-942140-dbnames	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	600282.9	re2_11.0.0_default-caps-simdna	2241475.2	vectorscan_5.4.11_block-nosom-nocaps-simd	600282.9	3.734031	469.507859	1.000000
+capability@0.1	wild-waf-crs-942140-dbnames	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	3412.2	re2_11.0.0_default-caps-simdna	9613.9	vectorscan_5.4.11_block-nosom-nocaps-simd	3412.2	2.817535	94.517482	1.000000
+capability@0.1	wild-waf-crs-942160-sleep-benchmark	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	160319.3	re2_11.0.0_default-caps-simdna	2238967.6	vectorscan_5.4.11_block-nosom-nocaps-simd	160319.3	13.965673	374.772028	1.000000
+capability@0.1	wild-waf-crs-942160-sleep-benchmark	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2424.2	re2_11.0.0_default-caps-simdna	9635.8	vectorscan_5.4.11_block-nosom-nocaps-simd	2424.2	3.974822	29.325720	1.000000
+capability@0.1	wild-waf-crs-942270-union-select	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	86476.9	re2_11.0.0_default-caps-simdna	439297.2	vectorscan_5.4.11_block-nosom-nocaps-simd	86476.9	5.079936	357.720438	1.000000
+capability@0.1	wild-waf-crs-942270-union-select	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1911.9	re2_11.0.0_default-caps-simdna	8262.9	vectorscan_5.4.11_block-nosom-nocaps-simd	1911.9	4.321853	20.523247	1.000000
+capability@0.1	wild-waf-crs-942360-concat-sqli	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	880368.1	re2_11.0.0_default-caps-simdna	2249243.6	vectorscan_5.4.11_block-nosom-nocaps-simd	880368.1	2.554890	1317.769222	1.000000
+capability@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	4583.6	re2_11.0.0_default-caps-simdna	9587.6	vectorscan_5.4.11_block-nosom-nocaps-simd	4583.6	2.091708	wrong	1.000000
+capability@0.1	wild-waf-crs-942500-comment-obfuscation	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	60189.8	re2_11.0.0_default-caps-simdna	439147.6	vectorscan_5.4.11_block-nosom-nocaps-simd	60189.8	7.296043	refused	1.000000
+capability@0.1	wild-waf-crs-942500-comment-obfuscation	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	2355.5	re2_11.0.0_default-caps-simdna	8422.8	vectorscan_5.4.11_block-nosom-nocaps-simd	2355.5	3.575780	refused	1.000000
+capability@0.1	winpath-near-miss	large-subject-throughput	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	133.2	re2_11.0.0_default-caps-simdna	300.5	vectorscan_5.4.11_block-nosom-nocaps-simd	133.2	2.256074	76474.090621	1.000000
+capability@0.1	winpath-near-miss	short-subject-search	plain	vectorscan_5.4.11_block-nosom-nocaps-simd	1471.6	re2_11.0.0_default-caps-simdna	6930.6	vectorscan_5.4.11_block-nosom-nocaps-simd	1471.6	4.709605	17.540016	1.000000

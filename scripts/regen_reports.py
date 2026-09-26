@@ -99,7 +99,15 @@ def main():
                          "--until = the UTC time of the commit that FIRST added "
                          "G.tsv, so records measured after the report was first "
                          "rendered (e.g. rust's 2026-09-22 re-measure) do not "
-                         "silently enter it; printed per group")
+                         "silently enter it; printed per group. HAZARD "
+                         "(2026-09-26 wave): a group re-rendered AFTER its "
+                         "first commit to take in a same-day re-measure "
+                         "(email repin-692c2e8: first commit 18:13Z, "
+                         "re-measures 22:16-22:28Z) LOSES those records "
+                         "under the pin -- diff each group's `record` rows "
+                         "against HEAD after the wave. NB the query is read "
+                         "from the WORKING-TREE .tsv header, so restore it "
+                         "(git checkout) before re-running a group unpinned")
     a = ap.parse_args()
     bases = sorted(f[:-4] for f in os.listdir(REP)
                    if f.endswith(".tsv") and not f.endswith((".matrix.tsv", ".subject-grain.tsv")))

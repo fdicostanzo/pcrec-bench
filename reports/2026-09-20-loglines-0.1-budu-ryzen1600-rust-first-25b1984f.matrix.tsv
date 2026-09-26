@@ -1,25 +1,26 @@
-# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=loglines, version=0.1, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna
-# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
-subbench	pattern	regime_or_na	form	best_testee	best_ns	rust_1.13.1_default-caps-simdna
-loglines@0.1	bignum	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	17744002.3	1.000000
-loglines@0.1	bignum	short-subject-search	plain	rust_1.13.1_default-caps-simdna	725435.5	1.000000
-loglines@0.1	floor	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	4168307.1	1.000000
-loglines@0.1	floor	short-subject-search	plain	rust_1.13.1_default-caps-simdna	8061.1	1.000000
-loglines@0.1	hex32-id	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7465417.4	1.000000
-loglines@0.1	hex32-id	short-subject-search	plain	rust_1.13.1_default-caps-simdna	294679.3	1.000000
-loglines@0.1	http-5xx	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	443901.3	1.000000
-loglines@0.1	http-5xx	short-subject-search	plain	rust_1.13.1_default-caps-simdna	15746.8	1.000000
-loglines@0.1	ipv4	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7507131.5	1.000000
-loglines@0.1	ipv4	short-subject-search	plain	rust_1.13.1_default-caps-simdna	294105.3	1.000000
-loglines@0.1	ipv6	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7477277.2	1.000000
-loglines@0.1	ipv6	short-subject-search	plain	rust_1.13.1_default-caps-simdna	291467.7	1.000000
-loglines@0.1	iso-ts	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	5841273.9	1.000000
-loglines@0.1	iso-ts	short-subject-search	plain	rust_1.13.1_default-caps-simdna	207150.2	1.000000
-loglines@0.1	kv-quoted	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	210692.9	1.000000
-loglines@0.1	kv-quoted	short-subject-search	plain	rust_1.13.1_default-caps-simdna	9141.7	1.000000
-loglines@0.1	level-context	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1098535.0	1.000000
-loglines@0.1	level-context	short-subject-search	plain	rust_1.13.1_default-caps-simdna	42982.6	1.000000
-loglines@0.1	stack-frame	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	550473.1	1.000000
-loglines@0.1	stack-frame	short-subject-search	plain	rust_1.13.1_default-caps-simdna	12891.4	1.000000
-loglines@0.1	uuid	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	6148513.4	1.000000
-loglines@0.1	uuid	short-subject-search	plain	rust_1.13.1_default-caps-simdna	292934.2	1.000000
+# reporter: v24 (2026-09-26); surface: matrix; filters: subbench=loglines, version=0.1, until=2026-09-20T17:26:51Z, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna; capture_class: yes=; no=rust_1.13.1_default-caps-simdna; undeclared=
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; no-expectation = excluded, n_no_expectation > 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine's own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row's best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may be computed against a non-capturing config's median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row's best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_<class>. These match the report's own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader's own testee selection from each cell's ratio x best_ns_pooled, never from a second reduction.
+subbench	pattern	regime_or_na	form	best_testee_pooled	best_ns_pooled	best_testee_yes	best_ns_yes	best_testee_no	best_ns_no	rust_1.13.1_default-caps-simdna
+loglines@0.1	bignum	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	17744002.3			rust_1.13.1_default-caps-simdna	17744002.3	1.000000
+loglines@0.1	bignum	short-subject-search	plain	rust_1.13.1_default-caps-simdna	725435.5			rust_1.13.1_default-caps-simdna	725435.5	1.000000
+loglines@0.1	floor	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	4168307.1			rust_1.13.1_default-caps-simdna	4168307.1	1.000000
+loglines@0.1	floor	short-subject-search	plain	rust_1.13.1_default-caps-simdna	8061.1			rust_1.13.1_default-caps-simdna	8061.1	1.000000
+loglines@0.1	hex32-id	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7465417.4			rust_1.13.1_default-caps-simdna	7465417.4	1.000000
+loglines@0.1	hex32-id	short-subject-search	plain	rust_1.13.1_default-caps-simdna	294679.3			rust_1.13.1_default-caps-simdna	294679.3	1.000000
+loglines@0.1	http-5xx	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	443901.3			rust_1.13.1_default-caps-simdna	443901.3	1.000000
+loglines@0.1	http-5xx	short-subject-search	plain	rust_1.13.1_default-caps-simdna	15746.8			rust_1.13.1_default-caps-simdna	15746.8	1.000000
+loglines@0.1	ipv4	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7507131.5			rust_1.13.1_default-caps-simdna	7507131.5	1.000000
+loglines@0.1	ipv4	short-subject-search	plain	rust_1.13.1_default-caps-simdna	294105.3			rust_1.13.1_default-caps-simdna	294105.3	1.000000
+loglines@0.1	ipv6	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	7477277.2			rust_1.13.1_default-caps-simdna	7477277.2	1.000000
+loglines@0.1	ipv6	short-subject-search	plain	rust_1.13.1_default-caps-simdna	291467.7			rust_1.13.1_default-caps-simdna	291467.7	1.000000
+loglines@0.1	iso-ts	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	5841273.9			rust_1.13.1_default-caps-simdna	5841273.9	1.000000
+loglines@0.1	iso-ts	short-subject-search	plain	rust_1.13.1_default-caps-simdna	207150.2			rust_1.13.1_default-caps-simdna	207150.2	1.000000
+loglines@0.1	kv-quoted	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	210692.9			rust_1.13.1_default-caps-simdna	210692.9	1.000000
+loglines@0.1	kv-quoted	short-subject-search	plain	rust_1.13.1_default-caps-simdna	9141.7			rust_1.13.1_default-caps-simdna	9141.7	1.000000
+loglines@0.1	level-context	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	1098535.0			rust_1.13.1_default-caps-simdna	1098535.0	1.000000
+loglines@0.1	level-context	short-subject-search	plain	rust_1.13.1_default-caps-simdna	42982.6			rust_1.13.1_default-caps-simdna	42982.6	1.000000
+loglines@0.1	stack-frame	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	550473.1			rust_1.13.1_default-caps-simdna	550473.1	1.000000
+loglines@0.1	stack-frame	short-subject-search	plain	rust_1.13.1_default-caps-simdna	12891.4			rust_1.13.1_default-caps-simdna	12891.4	1.000000
+loglines@0.1	uuid	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	6148513.4			rust_1.13.1_default-caps-simdna	6148513.4	1.000000
+loglines@0.1	uuid	short-subject-search	plain	rust_1.13.1_default-caps-simdna	292934.2			rust_1.13.1_default-caps-simdna	292934.2	1.000000

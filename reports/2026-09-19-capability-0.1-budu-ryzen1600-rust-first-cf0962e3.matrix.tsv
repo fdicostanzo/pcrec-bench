@@ -1,108 +1,109 @@
-# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=capability, version=0.1, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna
-# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
-subbench	pattern	regime_or_na	form	best_testee	best_ns	rust_1.13.1_default-caps-simdna
-capability@0.1	balanced-parens-rec					unsup
-capability@0.1	base10num-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	90.2	1.000000
-capability@0.1	base10num-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2222.6	1.000000
-capability@0.1	bracket-array-define					unsup
-capability@0.1	codegrammar-flat	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2442428.7	1.000000
-capability@0.1	codegrammar-flat	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2496.1	1.000000
-capability@0.1	codegrammar-xflag	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2442944.3	1.000000
-capability@0.1	codegrammar-xflag	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2486.0	1.000000
-capability@0.1	currency-lookbehind-fixed					unsup
-capability@0.1	date-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82.0	1.000000
-capability@0.1	date-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1762.3	1.000000
-capability@0.1	doubled-word					unsup
-capability@0.1	dup-param-detect					unsup
-capability@0.1	email-local-nodup					unsup
-capability@0.1	email-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	107.4	1.000000
-capability@0.1	email-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4060.6	1.000000
-capability@0.1	evil-alt-nested	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	87.7	1.000000
-capability@0.1	evil-alt-nested	short-subject-search	plain			wrong
-capability@0.1	file-ext-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	46454.2	1.000000
-capability@0.1	file-ext-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1424.6	1.000000
-capability@0.1	float-literal-bound					unsup
-capability@0.1	floor-byte	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23422.6	1.000000
-capability@0.1	floor-byte	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1228.2	1.000000
-capability@0.1	high-byte-run	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2444100.7	1.000000
-capability@0.1	high-byte-run	short-subject-search	plain			wrong
-capability@0.1	ipv4-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1	1.000000
-capability@0.1	ipv4-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1435.3	1.000000
-capability@0.1	keyword-prefix-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	366013.7	1.000000
-capability@0.1	keyword-prefix-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1619.6	1.000000
-capability@0.1	logparse-atomic					unsup
-capability@0.1	logparse-atomic-removed	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.5	1.000000
-capability@0.1	logparse-atomic-removed	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1562.5	1.000000
-capability@0.1	mojibake-curly-quote					refused
-capability@0.1	negation-scope-lookbehind-var					unsup
-capability@0.1	nested-comment-rec					unsup
-capability@0.1	numeric-id-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.6	1.000000
-capability@0.1	numeric-id-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2674.0	1.000000
-capability@0.1	phone-list-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.8	1.000000
-capability@0.1	phone-list-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2969.7	1.000000
-capability@0.1	phone-palindrome-6					unsup
-capability@0.1	pwd-strength-chain					unsup
-capability@0.1	quoted-delim-match					unsup
-capability@0.1	router-prefix-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	60176.9	1.000000
-capability@0.1	router-prefix-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1313.2	1.000000
-capability@0.1	tag-depth3-bound					unsup
-capability@0.1	tag-pair-match					unsup
-capability@0.1	trim-nested-star	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82.5	1.000000
-capability@0.1	trim-nested-star	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1993.1	1.000000
-capability@0.1	utf8-lead-no-cont					unsup
-capability@0.1	uuid-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1	1.000000
-capability@0.1	uuid-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	698.2	1.000000
-capability@0.1	wild-codegrammar-json-array-begin	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	306992.6	1.000000
-capability@0.1	wild-codegrammar-json-array-begin	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1330.5	1.000000
-capability@0.1	wild-codegrammar-json-constant	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	280588.6	1.000000
-capability@0.1	wild-codegrammar-json-constant	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3048.9	1.000000
-capability@0.1	wild-codegrammar-json-number-extended	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	10611468.2	1.000000
-capability@0.1	wild-codegrammar-json-number-extended	short-subject-search	plain	rust_1.13.1_default-caps-simdna	11633.3	1.000000
-capability@0.1	wild-codegrammar-json-object-begin	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23453.4	1.000000
-capability@0.1	wild-codegrammar-json-object-begin	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1226.8	1.000000
-capability@0.1	wild-codegrammar-json-stringcontent-escape	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23643.5	1.000000
-capability@0.1	wild-codegrammar-json-stringcontent-escape	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2946.7	1.000000
-capability@0.1	wild-datetime-datefinder-alternation	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	35097768.8	1.000000
-capability@0.1	wild-datetime-datefinder-alternation	short-subject-search	plain	rust_1.13.1_default-caps-simdna	87853.4	1.000000
-capability@0.1	wild-datetime-moment-iso8601	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	298.8	1.000000
-capability@0.1	wild-datetime-moment-iso8601	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2043.2	1.000000
-capability@0.1	wild-logparse-base10num-grok					unsup
-capability@0.1	wild-logparse-base10num-noatomic					unsup
-capability@0.1	wild-logparse-quotedstring-grok					unsup
-capability@0.1	wild-logparse-quotedstring-noatomic					unsup
-capability@0.1	wild-logparse-syslogbase-expanded					unsup
-capability@0.1	wild-logparse-winpath-grok					unsup
-capability@0.1	wild-secrets-aws-access-key-id	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	135249.6	1.000000
-capability@0.1	wild-secrets-aws-access-key-id	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2143.1	1.000000
-capability@0.1	wild-secrets-github-pat	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	46777.4	1.000000
-capability@0.1	wild-secrets-github-pat	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1683.7	1.000000
-capability@0.1	wild-secrets-slack-webhook-url	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	645023.5	1.000000
-capability@0.1	wild-secrets-slack-webhook-url	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2558.7	1.000000
-capability@0.1	wild-secrets-username-password-pair	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	489279.0	1.000000
-capability@0.1	wild-secrets-username-password-pair	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2478.7	1.000000
-capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82230.5	1.000000
-capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1342.9	1.000000
-capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	78.3	1.000000
-capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1594.0	1.000000
-capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	13150186.6	1.000000
-capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	short-subject-search	plain	rust_1.13.1_default-caps-simdna	13254.6	1.000000
-capability@0.1	wild-validator-email-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	107.8	1.000000
-capability@0.1	wild-validator-email-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2580.2	1.000000
-capability@0.1	wild-validator-ipv4-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	17.9	1.000000
-capability@0.1	wild-validator-ipv4-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1253.8	1.000000
-capability@0.1	wild-validator-us-zip-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1	1.000000
-capability@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1669.5	1.000000
-capability@0.1	wild-validator-uuid-grok	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	210621.0	1.000000
-capability@0.1	wild-validator-uuid-grok	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1240.7	1.000000
-capability@0.1	wild-waf-crs-942140-dbnames	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2446068.2	1.000000
-capability@0.1	wild-waf-crs-942140-dbnames	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4408.0	1.000000
-capability@0.1	wild-waf-crs-942160-sleep-benchmark	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	388639.4	1.000000
-capability@0.1	wild-waf-crs-942160-sleep-benchmark	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3205.0	1.000000
-capability@0.1	wild-waf-crs-942270-union-select	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	280700.7	1.000000
-capability@0.1	wild-waf-crs-942270-union-select	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2127.7	1.000000
-capability@0.1	wild-waf-crs-942360-concat-sqli	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2454310.4	1.000000
-capability@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4812.2	1.000000
-capability@0.1	wild-waf-crs-942500-comment-obfuscation	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	41251.5	1.000000
-capability@0.1	wild-waf-crs-942500-comment-obfuscation	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2422.3	1.000000
-capability@0.1	winpath-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	96.0	1.000000
-capability@0.1	winpath-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1796.4	1.000000
+# reporter: v24 (2026-09-26); surface: matrix; filters: subbench=capability, version=0.1, until=2026-09-19T22:58:39Z, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna; capture_class: yes=; no=rust_1.13.1_default-caps-simdna; undeclared=
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; no-expectation = excluded, n_no_expectation > 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine's own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row's best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may be computed against a non-capturing config's median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row's best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_<class>. These match the report's own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader's own testee selection from each cell's ratio x best_ns_pooled, never from a second reduction.
+subbench	pattern	regime_or_na	form	best_testee_pooled	best_ns_pooled	best_testee_yes	best_ns_yes	best_testee_no	best_ns_no	rust_1.13.1_default-caps-simdna
+capability@0.1	balanced-parens-rec									unsup
+capability@0.1	base10num-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	90.2			rust_1.13.1_default-caps-simdna	90.2	1.000000
+capability@0.1	base10num-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2222.6			rust_1.13.1_default-caps-simdna	2222.6	1.000000
+capability@0.1	bracket-array-define									unsup
+capability@0.1	codegrammar-flat	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2442428.7			rust_1.13.1_default-caps-simdna	2442428.7	1.000000
+capability@0.1	codegrammar-flat	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2496.1			rust_1.13.1_default-caps-simdna	2496.1	1.000000
+capability@0.1	codegrammar-xflag	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2442944.3			rust_1.13.1_default-caps-simdna	2442944.3	1.000000
+capability@0.1	codegrammar-xflag	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2486.0			rust_1.13.1_default-caps-simdna	2486.0	1.000000
+capability@0.1	currency-lookbehind-fixed									unsup
+capability@0.1	date-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82.0			rust_1.13.1_default-caps-simdna	82.0	1.000000
+capability@0.1	date-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1762.3			rust_1.13.1_default-caps-simdna	1762.3	1.000000
+capability@0.1	doubled-word									unsup
+capability@0.1	dup-param-detect									unsup
+capability@0.1	email-local-nodup									unsup
+capability@0.1	email-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	107.4			rust_1.13.1_default-caps-simdna	107.4	1.000000
+capability@0.1	email-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4060.6			rust_1.13.1_default-caps-simdna	4060.6	1.000000
+capability@0.1	evil-alt-nested	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	87.7			rust_1.13.1_default-caps-simdna	87.7	1.000000
+capability@0.1	evil-alt-nested	short-subject-search	plain							no-expectation
+capability@0.1	file-ext-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	46454.2			rust_1.13.1_default-caps-simdna	46454.2	1.000000
+capability@0.1	file-ext-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1424.6			rust_1.13.1_default-caps-simdna	1424.6	1.000000
+capability@0.1	float-literal-bound									unsup
+capability@0.1	floor-byte	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23422.6			rust_1.13.1_default-caps-simdna	23422.6	1.000000
+capability@0.1	floor-byte	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1228.2			rust_1.13.1_default-caps-simdna	1228.2	1.000000
+capability@0.1	high-byte-run	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2444100.7			rust_1.13.1_default-caps-simdna	2444100.7	1.000000
+capability@0.1	high-byte-run	short-subject-search	plain							wrong
+capability@0.1	ipv4-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1			rust_1.13.1_default-caps-simdna	18.1	1.000000
+capability@0.1	ipv4-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1435.3			rust_1.13.1_default-caps-simdna	1435.3	1.000000
+capability@0.1	keyword-prefix-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	366013.7			rust_1.13.1_default-caps-simdna	366013.7	1.000000
+capability@0.1	keyword-prefix-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1619.6			rust_1.13.1_default-caps-simdna	1619.6	1.000000
+capability@0.1	logparse-atomic									unsup
+capability@0.1	logparse-atomic-removed	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.5			rust_1.13.1_default-caps-simdna	86.5	1.000000
+capability@0.1	logparse-atomic-removed	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1562.5			rust_1.13.1_default-caps-simdna	1562.5	1.000000
+capability@0.1	mojibake-curly-quote									refused
+capability@0.1	negation-scope-lookbehind-var									unsup
+capability@0.1	nested-comment-rec									unsup
+capability@0.1	numeric-id-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.6			rust_1.13.1_default-caps-simdna	86.6	1.000000
+capability@0.1	numeric-id-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2674.0			rust_1.13.1_default-caps-simdna	2674.0	1.000000
+capability@0.1	phone-list-nested-plus	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	86.8			rust_1.13.1_default-caps-simdna	86.8	1.000000
+capability@0.1	phone-list-nested-plus	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2969.7			rust_1.13.1_default-caps-simdna	2969.7	1.000000
+capability@0.1	phone-palindrome-6									unsup
+capability@0.1	pwd-strength-chain									unsup
+capability@0.1	quoted-delim-match									unsup
+capability@0.1	router-prefix-order	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	60176.9			rust_1.13.1_default-caps-simdna	60176.9	1.000000
+capability@0.1	router-prefix-order	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1313.2			rust_1.13.1_default-caps-simdna	1313.2	1.000000
+capability@0.1	tag-depth3-bound									unsup
+capability@0.1	tag-pair-match									unsup
+capability@0.1	trim-nested-star	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82.5			rust_1.13.1_default-caps-simdna	82.5	1.000000
+capability@0.1	trim-nested-star	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1993.1			rust_1.13.1_default-caps-simdna	1993.1	1.000000
+capability@0.1	utf8-lead-no-cont									unsup
+capability@0.1	uuid-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1			rust_1.13.1_default-caps-simdna	18.1	1.000000
+capability@0.1	uuid-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	698.2			rust_1.13.1_default-caps-simdna	698.2	1.000000
+capability@0.1	wild-codegrammar-json-array-begin	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	306992.6			rust_1.13.1_default-caps-simdna	306992.6	1.000000
+capability@0.1	wild-codegrammar-json-array-begin	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1330.5			rust_1.13.1_default-caps-simdna	1330.5	1.000000
+capability@0.1	wild-codegrammar-json-constant	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	280588.6			rust_1.13.1_default-caps-simdna	280588.6	1.000000
+capability@0.1	wild-codegrammar-json-constant	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3048.9			rust_1.13.1_default-caps-simdna	3048.9	1.000000
+capability@0.1	wild-codegrammar-json-number-extended	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	10611468.2			rust_1.13.1_default-caps-simdna	10611468.2	1.000000
+capability@0.1	wild-codegrammar-json-number-extended	short-subject-search	plain	rust_1.13.1_default-caps-simdna	11633.3			rust_1.13.1_default-caps-simdna	11633.3	1.000000
+capability@0.1	wild-codegrammar-json-object-begin	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23453.4			rust_1.13.1_default-caps-simdna	23453.4	1.000000
+capability@0.1	wild-codegrammar-json-object-begin	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1226.8			rust_1.13.1_default-caps-simdna	1226.8	1.000000
+capability@0.1	wild-codegrammar-json-stringcontent-escape	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	23643.5			rust_1.13.1_default-caps-simdna	23643.5	1.000000
+capability@0.1	wild-codegrammar-json-stringcontent-escape	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2946.7			rust_1.13.1_default-caps-simdna	2946.7	1.000000
+capability@0.1	wild-datetime-datefinder-alternation	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	35097768.8			rust_1.13.1_default-caps-simdna	35097768.8	1.000000
+capability@0.1	wild-datetime-datefinder-alternation	short-subject-search	plain	rust_1.13.1_default-caps-simdna	87853.4			rust_1.13.1_default-caps-simdna	87853.4	1.000000
+capability@0.1	wild-datetime-moment-iso8601	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	298.8			rust_1.13.1_default-caps-simdna	298.8	1.000000
+capability@0.1	wild-datetime-moment-iso8601	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2043.2			rust_1.13.1_default-caps-simdna	2043.2	1.000000
+capability@0.1	wild-logparse-base10num-grok									unsup
+capability@0.1	wild-logparse-base10num-noatomic									unsup
+capability@0.1	wild-logparse-quotedstring-grok									unsup
+capability@0.1	wild-logparse-quotedstring-noatomic									unsup
+capability@0.1	wild-logparse-syslogbase-expanded									unsup
+capability@0.1	wild-logparse-winpath-grok									unsup
+capability@0.1	wild-secrets-aws-access-key-id	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	135249.6			rust_1.13.1_default-caps-simdna	135249.6	1.000000
+capability@0.1	wild-secrets-aws-access-key-id	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2143.1			rust_1.13.1_default-caps-simdna	2143.1	1.000000
+capability@0.1	wild-secrets-github-pat	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	46777.4			rust_1.13.1_default-caps-simdna	46777.4	1.000000
+capability@0.1	wild-secrets-github-pat	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1683.7			rust_1.13.1_default-caps-simdna	1683.7	1.000000
+capability@0.1	wild-secrets-slack-webhook-url	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	645023.5			rust_1.13.1_default-caps-simdna	645023.5	1.000000
+capability@0.1	wild-secrets-slack-webhook-url	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2558.7			rust_1.13.1_default-caps-simdna	2558.7	1.000000
+capability@0.1	wild-secrets-username-password-pair	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	489279.0			rust_1.13.1_default-caps-simdna	489279.0	1.000000
+capability@0.1	wild-secrets-username-password-pair	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2478.7			rust_1.13.1_default-caps-simdna	2478.7	1.000000
+capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	82230.5			rust_1.13.1_default-caps-simdna	82230.5	1.000000
+capability@0.1	wild-semdiv-altorder-foo-foobar-rustregex	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1342.9			rust_1.13.1_default-caps-simdna	1342.9	1.000000
+capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	78.3			rust_1.13.1_default-caps-simdna	78.3	1.000000
+capability@0.1	wild-semdiv-dollar-trailing-newline-pcre2	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1594.0			rust_1.13.1_default-caps-simdna	1594.0	1.000000
+capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	13150186.6			rust_1.13.1_default-caps-simdna	13150186.6	1.000000
+capability@0.1	wild-semdiv-empty-alt-repeat-pcre2	short-subject-search	plain	rust_1.13.1_default-caps-simdna	13254.6			rust_1.13.1_default-caps-simdna	13254.6	1.000000
+capability@0.1	wild-validator-email-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	107.8			rust_1.13.1_default-caps-simdna	107.8	1.000000
+capability@0.1	wild-validator-email-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2580.2			rust_1.13.1_default-caps-simdna	2580.2	1.000000
+capability@0.1	wild-validator-ipv4-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	17.9			rust_1.13.1_default-caps-simdna	17.9	1.000000
+capability@0.1	wild-validator-ipv4-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1253.8			rust_1.13.1_default-caps-simdna	1253.8	1.000000
+capability@0.1	wild-validator-us-zip-owasp	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	18.1			rust_1.13.1_default-caps-simdna	18.1	1.000000
+capability@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1669.5			rust_1.13.1_default-caps-simdna	1669.5	1.000000
+capability@0.1	wild-validator-uuid-grok	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	210621.0			rust_1.13.1_default-caps-simdna	210621.0	1.000000
+capability@0.1	wild-validator-uuid-grok	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1240.7			rust_1.13.1_default-caps-simdna	1240.7	1.000000
+capability@0.1	wild-waf-crs-942140-dbnames	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2446068.2			rust_1.13.1_default-caps-simdna	2446068.2	1.000000
+capability@0.1	wild-waf-crs-942140-dbnames	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4408.0			rust_1.13.1_default-caps-simdna	4408.0	1.000000
+capability@0.1	wild-waf-crs-942160-sleep-benchmark	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	388639.4			rust_1.13.1_default-caps-simdna	388639.4	1.000000
+capability@0.1	wild-waf-crs-942160-sleep-benchmark	short-subject-search	plain	rust_1.13.1_default-caps-simdna	3205.0			rust_1.13.1_default-caps-simdna	3205.0	1.000000
+capability@0.1	wild-waf-crs-942270-union-select	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	280700.7			rust_1.13.1_default-caps-simdna	280700.7	1.000000
+capability@0.1	wild-waf-crs-942270-union-select	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2127.7			rust_1.13.1_default-caps-simdna	2127.7	1.000000
+capability@0.1	wild-waf-crs-942360-concat-sqli	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	2454310.4			rust_1.13.1_default-caps-simdna	2454310.4	1.000000
+capability@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	rust_1.13.1_default-caps-simdna	4812.2			rust_1.13.1_default-caps-simdna	4812.2	1.000000
+capability@0.1	wild-waf-crs-942500-comment-obfuscation	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	41251.5			rust_1.13.1_default-caps-simdna	41251.5	1.000000
+capability@0.1	wild-waf-crs-942500-comment-obfuscation	short-subject-search	plain	rust_1.13.1_default-caps-simdna	2422.3			rust_1.13.1_default-caps-simdna	2422.3	1.000000
+capability@0.1	winpath-near-miss	large-subject-throughput	plain	rust_1.13.1_default-caps-simdna	96.0			rust_1.13.1_default-caps-simdna	96.0	1.000000
+capability@0.1	winpath-near-miss	short-subject-search	plain	rust_1.13.1_default-caps-simdna	1796.4			rust_1.13.1_default-caps-simdna	1796.4	1.000000

@@ -1,130 +1,131 @@
-# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=bounded, version=0.3, since=2026-09-05T04:05:00Z, until=2026-09-05T06:00:00Z, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_cc-clang, testee=pcrec_288d505_auto-caps-simdna_cf-align-functions-64; source: store/index.tsv (3 record(s) matching this query); records: 3; subbench_versions: bounded@0.3; machines: budu-ryzen1600; schema_versions: 1.5; superseded: 0; newer_not_measured: 0; testees: pcrec_288d505_auto-caps-simdna,pcrec_288d505_auto-caps-simdna_cc-clang,pcrec_288d505_auto-caps-simdna_cf-align-functions-64
-# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
-subbench	pattern	regime_or_na	form	best_testee	best_ns	pcrec_288d505_auto-caps-simdna	pcrec_288d505_auto-caps-simdna_cc-clang	pcrec_288d505_auto-caps-simdna_cf-align-functions-64
-bounded@0.3	cls-atleast-4096	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	87207.4	1.001754	1.169211	1.000000
-bounded@0.3	cls-atleast-4096	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	7855.0	1.000000	1.034922	1.002399
-bounded@0.3	cls-atleast-4096	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	2630.0	1.000000	1.061298	1.054544
-bounded@0.3	cls-lazy-16384	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	331892.2	1.425334	1.000000	1.425348
-bounded@0.3	cls-lazy-16384	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	8666.9	1.010001	1.037558	1.000000
-bounded@0.3	cls-lazy-16384	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	419.9	1.067897	1.000000	1.068695
-bounded@0.3	cls-upto-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	109949.1	1.417646	1.000000	1.418336
-bounded@0.3	cls-upto-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	4501.7	1.073676	1.000000	1.069441
-bounded@0.3	cls-upto-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.2	1.109828	1.000000	1.109551
-bounded@0.3	cls-upto-128	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	143657.3	1.174028	1.000000	1.172331
-bounded@0.3	cls-upto-128	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1767.2	1.164008	1.000000	1.146929
-bounded@0.3	cls-upto-128	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	896.6	1.000000	1.025998	1.001083
-bounded@0.3	cls-upto-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	148432.3	1.358814	1.000000	1.352782
-bounded@0.3	cls-upto-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	449.6	1.560269	1.000000	1.524950
-bounded@0.3	cls-upto-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	503.4	1.176008	1.000000	1.173187
-bounded@0.3	cls-upto-16384	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111687.2	1.382937	1.000000	1.381330
-bounded@0.3	cls-upto-16384	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1990.1	1.020547	1.000000	1.007528
-bounded@0.3	cls-upto-16384	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	967.9	1.083955	1.000000	1.079443
-bounded@0.3	cls-upto-2048	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	108491.0	1.428101	1.000000	1.431362
-bounded@0.3	cls-upto-2048	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	12427.8	1.000000	1.044436	1.000013
-bounded@0.3	cls-upto-2048	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	944.0	1.108542	1.000000	1.108012
-bounded@0.3	cls-upto-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	113048.0	1.426269	1.000000	1.429963
-bounded@0.3	cls-upto-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	2689.7	1.113165	1.000000	1.101939
-bounded@0.3	cls-upto-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.1	1.111086	1.000000	1.111637
-bounded@0.3	cls-upto-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	159780.8	1.120038	1.000000	1.113307
-bounded@0.3	cls-upto-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	694.6	1.386206	1.000000	1.361276
-bounded@0.3	cls-upto-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	602.7	1.090088	1.000000	1.087829
-bounded@0.3	cls-upto-32768	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	154699.1	1.586171	1.000000	1.598958
-bounded@0.3	cls-upto-32768	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1995.9	1.016013	1.000000	1.004372
-bounded@0.3	cls-upto-32768	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1049.1	1.231352	1.000000	1.224761
-bounded@0.3	cls-upto-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	153658.9	2.078596	1.000000	2.075804
-bounded@0.3	cls-upto-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	274.5	1.987549	1.000000	1.891010
-bounded@0.3	cls-upto-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	427.9	1.231219	1.000000	1.230482
-bounded@0.3	cls-upto-4096	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	112140.8	1.380964	1.000000	1.378429
-bounded@0.3	cls-upto-4096	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	12418.1	1.000000	1.044350	1.000153
-bounded@0.3	cls-upto-4096	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	967.1	1.089342	1.000000	1.082546
-bounded@0.3	cls-upto-512	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111116.5	1.418188	1.000000	1.417705
-bounded@0.3	cls-upto-512	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3590.4	1.086829	1.000000	1.079457
-bounded@0.3	cls-upto-512	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	972.6	1.074857	1.000000	1.073758
-bounded@0.3	cls-upto-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	147818.1	1.235384	1.000000	1.239535
-bounded@0.3	cls-upto-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1203.0	1.233252	1.000000	1.207535
-bounded@0.3	cls-upto-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	751.0	1.054603	1.000000	1.054538
-bounded@0.3	cls-upto-65535					refused	refused	refused
-bounded@0.3	cls-upto-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	124346.5	1.909808	1.000000	1.903945
-bounded@0.3	cls-upto-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	332.3	1.773586	1.000000	1.728641
-bounded@0.3	cls-upto-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	433.2	1.258588	1.000000	1.261471
-bounded@0.3	cls-upto-8192	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111761.2	1.383965	1.000000	1.382098
-bounded@0.3	cls-upto-8192	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	12423.6	1.001869	1.045104	1.000000
-bounded@0.3	cls-upto-8192	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	969.4	1.081285	1.000000	1.078030
-bounded@0.3	csv5	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1669.3	1.000086	1.000000	1.000423
-bounded@0.3	csv5	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1773.3	1.121966	1.000000	1.121508
-bounded@0.3	csv5	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	947.4	1.000000	1.046851	1.033508
-bounded@0.3	ctx-greedy-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	199365.3	1.005452	1.114233	1.000000
-bounded@0.3	ctx-greedy-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	928.3	1.064344	1.000000	1.060059
-bounded@0.3	ctx-greedy-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	7163.3	1.002656	1.367512	1.000000
-bounded@0.3	ctx-lazy-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197322.8	1.000000	1.134960	1.001157
-bounded@0.3	ctx-lazy-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2162.8	1.000410	1.118841	1.000000
-bounded@0.3	ctx-lazy-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	9613.5	1.000642	1.325807	1.000000
-bounded@0.3	ctx-lazy-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197405.9	1.000000	1.132549	1.002299
-bounded@0.3	ctx-lazy-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	2167.2	1.000000	1.117214	1.001376
-bounded@0.3	ctx-lazy-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	9622.3	1.000000	1.326047	1.000489
-bounded@0.3	ctx-lazy-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197403.2	1.000000	1.132233	1.000394
-bounded@0.3	ctx-lazy-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1861.4	1.000577	1.107017	1.000000
-bounded@0.3	ctx-lazy-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	8909.7	1.000000	1.349256	1.001161
-bounded@0.3	dig-exact-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75048.8	1.000191	1.154815	1.000000
-bounded@0.3	dig-exact-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	475.8	1.505970	1.000000	1.505721
-bounded@0.3	dig-exact-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2241.8	1.024878	1.074937	1.000000
-bounded@0.3	dig-exact-2	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	123609.7	1.216998	1.000000	1.216739
-bounded@0.3	dig-exact-2	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	277.2	1.966123	1.000000	1.943031
-bounded@0.3	dig-exact-2	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1106.0	1.000000	1.012617	1.006539
-bounded@0.3	dig-exact-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65875.8	1.001981	1.343846	1.000000
-bounded@0.3	dig-exact-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	647.1	1.389431	1.000000	1.380047
-bounded@0.3	dig-exact-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2227.7	1.004053	1.101720	1.000000
-bounded@0.3	dig-exact-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	82010.8	1.096582	1.000000	1.096416
-bounded@0.3	dig-exact-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	360.6	1.681184	1.000000	1.683412
-bounded@0.3	dig-exact-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2057.2	1.023864	1.000000	1.004371
-bounded@0.3	dig-upto-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	84177.7	1.000000	1.064734	1.005122
-bounded@0.3	dig-upto-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	508.4	1.466983	1.000000	1.404292
-bounded@0.3	dig-upto-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1401.4	1.000000	1.041347	1.012312
-bounded@0.3	dig-upto-2	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	147639.6	1.003760	1.148962	1.000000
-bounded@0.3	dig-upto-2	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	278.0	1.964291	1.000000	1.941660
-bounded@0.3	dig-upto-2	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1021.2	1.000086	1.090970	1.000000
-bounded@0.3	dig-upto-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75767.0	1.005486	1.128082	1.000000
-bounded@0.3	dig-upto-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	711.1	1.329355	1.000000	1.283286
-bounded@0.3	dig-upto-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1518.0	1.010347	1.046027	1.000000
-bounded@0.3	dig-upto-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	106956.5	1.286852	1.000000	1.270403
-bounded@0.3	dig-upto-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	305.6	1.823541	1.000000	1.671029
-bounded@0.3	dig-upto-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1236.1	1.000000	1.008451	1.000858
-bounded@0.3	dig-upto-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	64247.8	1.603717	1.000000	1.573518
-bounded@0.3	dig-upto-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	381.1	1.623504	1.000000	1.539976
-bounded@0.3	dig-upto-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1061.9	1.234385	1.000000	1.222325
-bounded@0.3	dotted4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	66253.3	1.002052	1.321540	1.000000
-bounded@0.3	dotted4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	325.2	1.817534	1.000000	1.700058
-bounded@0.3	dotted4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	3106.2	1.000000	1.278479	1.007244
-bounded@0.3	floor	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1668.4	1.001808	1.000000	1.002600
-bounded@0.3	floor	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	231.5	2.125922	1.000000	2.000178
-bounded@0.3	floor	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	438.3	1.077814	1.000000	1.080795
-bounded@0.3	grp-upto-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	109647.5	1.423266	1.000000	1.421892
-bounded@0.3	grp-upto-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	4504.4	1.072587	1.000000	1.068684
-bounded@0.3	grp-upto-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.1	1.108846	1.000000	1.108787
-bounded@0.3	hex32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	254301.5	1.005931	1.000000	1.007840
-bounded@0.3	hex32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	741.5	1.336758	1.000000	1.326471
-bounded@0.3	hex32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2566.5	1.145110	1.000000	1.152291
-bounded@0.3	line-80	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75405.1	1.000795	1.177985	1.000000
-bounded@0.3	line-80	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	5451.3	1.000000	1.073526	1.000305
-bounded@0.3	line-80	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	3421.6	1.125683	1.000000	1.112717
-bounded@0.3	nest2-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	83991.3	1.004503	1.067720	1.000000
-bounded@0.3	nest2-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	508.7	1.464663	1.000000	1.404049
-bounded@0.3	nest2-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1387.8	1.012106	1.047917	1.000000
-bounded@0.3	nest2-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	64723.4	1.000000	1.164104	1.020679
-bounded@0.3	nest2-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2137.0	1.007723	1.030111	1.000000
-bounded@0.3	nest2-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1774.4	1.000000	1.044614	1.000242
-bounded@0.3	nest2-letters-6	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	155135.6	1.260556	1.000000	1.258503
-bounded@0.3	nest2-letters-6	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	930.9	1.292881	1.000000	1.242610
-bounded@0.3	nest2-letters-6	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1276.7	1.005621	1.015263	1.000000
-bounded@0.3	nest3-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65643.8	1.008020	1.147498	1.000000
-bounded@0.3	nest3-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3826.4	1.042139	1.000000	1.006687
-bounded@0.3	nest3-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1771.5	1.004473	1.047828	1.000000
-bounded@0.3	nest3-3	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	77758.7	1.002541	1.109438	1.000000
-bounded@0.3	nest3-3	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	644.5	1.378234	1.000000	1.330299
-bounded@0.3	nest3-3	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1502.8	1.000000	1.045030	1.002295
-bounded@0.3	pw-8-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	166075.5	1.262756	1.000000	1.268769
-bounded@0.3	pw-8-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3272.9	1.075979	1.000000	1.076308
-bounded@0.3	pw-8-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2430.1	1.254905	1.000000	1.252962
-bounded@0.3	year4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	96317.9	1.312248	1.000000	1.311374
-bounded@0.3	year4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	295.5	1.868475	1.000000	1.841969
-bounded@0.3	year4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1852.5	1.049328	1.000000	1.050375
+# reporter: v24 (2026-09-26); surface: matrix; filters: subbench=bounded, version=0.3, since=2026-09-05T04:05:00Z, until=2026-09-05T06:00:00Z, testee=pcrec_288d505_auto-caps-simdna, testee=pcrec_288d505_auto-caps-simdna_cc-clang, testee=pcrec_288d505_auto-caps-simdna_cf-align-functions-64; source: store/index.tsv (3 record(s) matching this query); records: 3; subbench_versions: bounded@0.3; machines: budu-ryzen1600; schema_versions: 1.5; superseded: 0; newer_not_measured: 0; testees: pcrec_288d505_auto-caps-simdna,pcrec_288d505_auto-caps-simdna_cc-clang,pcrec_288d505_auto-caps-simdna_cf-align-functions-64; capture_class: yes=pcrec_288d505_auto-caps-simdna,pcrec_288d505_auto-caps-simdna_cc-clang,pcrec_288d505_auto-caps-simdna_cf-align-functions-64; no=; undeclared=
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; no-expectation = excluded, n_no_expectation > 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine's own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row's best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may be computed against a non-capturing config's median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row's best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_<class>. These match the report's own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader's own testee selection from each cell's ratio x best_ns_pooled, never from a second reduction.
+subbench	pattern	regime_or_na	form	best_testee_pooled	best_ns_pooled	best_testee_yes	best_ns_yes	best_testee_no	best_ns_no	pcrec_288d505_auto-caps-simdna	pcrec_288d505_auto-caps-simdna_cc-clang	pcrec_288d505_auto-caps-simdna_cf-align-functions-64
+bounded@0.3	cls-atleast-4096	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	87207.4	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	87207.4			1.001754	1.169211	1.000000
+bounded@0.3	cls-atleast-4096	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	7855.0	pcrec_288d505_auto-caps-simdna	7855.0			1.000000	1.034922	1.002399
+bounded@0.3	cls-atleast-4096	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	2630.0	pcrec_288d505_auto-caps-simdna	2630.0			1.000000	1.061298	1.054544
+bounded@0.3	cls-lazy-16384	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	331892.2	pcrec_288d505_auto-caps-simdna_cc-clang	331892.2			1.425334	1.000000	1.425348
+bounded@0.3	cls-lazy-16384	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	8666.9	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	8666.9			1.010001	1.037558	1.000000
+bounded@0.3	cls-lazy-16384	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	419.9	pcrec_288d505_auto-caps-simdna_cc-clang	419.9			1.067897	1.000000	1.068695
+bounded@0.3	cls-upto-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	109949.1	pcrec_288d505_auto-caps-simdna_cc-clang	109949.1			1.417646	1.000000	1.418336
+bounded@0.3	cls-upto-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	4501.7	pcrec_288d505_auto-caps-simdna_cc-clang	4501.7			1.073676	1.000000	1.069441
+bounded@0.3	cls-upto-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.2	pcrec_288d505_auto-caps-simdna_cc-clang	943.2			1.109828	1.000000	1.109551
+bounded@0.3	cls-upto-128	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	143657.3	pcrec_288d505_auto-caps-simdna_cc-clang	143657.3			1.174028	1.000000	1.172331
+bounded@0.3	cls-upto-128	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1767.2	pcrec_288d505_auto-caps-simdna_cc-clang	1767.2			1.164008	1.000000	1.146929
+bounded@0.3	cls-upto-128	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	896.6	pcrec_288d505_auto-caps-simdna	896.6			1.000000	1.025998	1.001083
+bounded@0.3	cls-upto-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	148432.3	pcrec_288d505_auto-caps-simdna_cc-clang	148432.3			1.358814	1.000000	1.352782
+bounded@0.3	cls-upto-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	449.6	pcrec_288d505_auto-caps-simdna_cc-clang	449.6			1.560269	1.000000	1.524950
+bounded@0.3	cls-upto-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	503.4	pcrec_288d505_auto-caps-simdna_cc-clang	503.4			1.176008	1.000000	1.173187
+bounded@0.3	cls-upto-16384	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111687.2	pcrec_288d505_auto-caps-simdna_cc-clang	111687.2			1.382937	1.000000	1.381330
+bounded@0.3	cls-upto-16384	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1990.1	pcrec_288d505_auto-caps-simdna_cc-clang	1990.1			1.020547	1.000000	1.007528
+bounded@0.3	cls-upto-16384	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	967.9	pcrec_288d505_auto-caps-simdna_cc-clang	967.9			1.083955	1.000000	1.079443
+bounded@0.3	cls-upto-2048	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	108491.0	pcrec_288d505_auto-caps-simdna_cc-clang	108491.0			1.428101	1.000000	1.431362
+bounded@0.3	cls-upto-2048	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	12427.8	pcrec_288d505_auto-caps-simdna	12427.8			1.000000	1.044436	1.000013
+bounded@0.3	cls-upto-2048	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	944.0	pcrec_288d505_auto-caps-simdna_cc-clang	944.0			1.108542	1.000000	1.108012
+bounded@0.3	cls-upto-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	113048.0	pcrec_288d505_auto-caps-simdna_cc-clang	113048.0			1.426269	1.000000	1.429963
+bounded@0.3	cls-upto-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	2689.7	pcrec_288d505_auto-caps-simdna_cc-clang	2689.7			1.113165	1.000000	1.101939
+bounded@0.3	cls-upto-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.1	pcrec_288d505_auto-caps-simdna_cc-clang	943.1			1.111086	1.000000	1.111637
+bounded@0.3	cls-upto-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	159780.8	pcrec_288d505_auto-caps-simdna_cc-clang	159780.8			1.120038	1.000000	1.113307
+bounded@0.3	cls-upto-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	694.6	pcrec_288d505_auto-caps-simdna_cc-clang	694.6			1.386206	1.000000	1.361276
+bounded@0.3	cls-upto-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	602.7	pcrec_288d505_auto-caps-simdna_cc-clang	602.7			1.090088	1.000000	1.087829
+bounded@0.3	cls-upto-32768	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	154699.1	pcrec_288d505_auto-caps-simdna_cc-clang	154699.1			1.586171	1.000000	1.598958
+bounded@0.3	cls-upto-32768	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1995.9	pcrec_288d505_auto-caps-simdna_cc-clang	1995.9			1.016013	1.000000	1.004372
+bounded@0.3	cls-upto-32768	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1049.1	pcrec_288d505_auto-caps-simdna_cc-clang	1049.1			1.231352	1.000000	1.224761
+bounded@0.3	cls-upto-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	153658.9	pcrec_288d505_auto-caps-simdna_cc-clang	153658.9			2.078596	1.000000	2.075804
+bounded@0.3	cls-upto-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	274.5	pcrec_288d505_auto-caps-simdna_cc-clang	274.5			1.987549	1.000000	1.891010
+bounded@0.3	cls-upto-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	427.9	pcrec_288d505_auto-caps-simdna_cc-clang	427.9			1.231219	1.000000	1.230482
+bounded@0.3	cls-upto-4096	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	112140.8	pcrec_288d505_auto-caps-simdna_cc-clang	112140.8			1.380964	1.000000	1.378429
+bounded@0.3	cls-upto-4096	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	12418.1	pcrec_288d505_auto-caps-simdna	12418.1			1.000000	1.044350	1.000153
+bounded@0.3	cls-upto-4096	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	967.1	pcrec_288d505_auto-caps-simdna_cc-clang	967.1			1.089342	1.000000	1.082546
+bounded@0.3	cls-upto-512	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111116.5	pcrec_288d505_auto-caps-simdna_cc-clang	111116.5			1.418188	1.000000	1.417705
+bounded@0.3	cls-upto-512	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3590.4	pcrec_288d505_auto-caps-simdna_cc-clang	3590.4			1.086829	1.000000	1.079457
+bounded@0.3	cls-upto-512	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	972.6	pcrec_288d505_auto-caps-simdna_cc-clang	972.6			1.074857	1.000000	1.073758
+bounded@0.3	cls-upto-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	147818.1	pcrec_288d505_auto-caps-simdna_cc-clang	147818.1			1.235384	1.000000	1.239535
+bounded@0.3	cls-upto-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1203.0	pcrec_288d505_auto-caps-simdna_cc-clang	1203.0			1.233252	1.000000	1.207535
+bounded@0.3	cls-upto-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	751.0	pcrec_288d505_auto-caps-simdna_cc-clang	751.0			1.054603	1.000000	1.054538
+bounded@0.3	cls-upto-65535									refused	refused	refused
+bounded@0.3	cls-upto-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	124346.5	pcrec_288d505_auto-caps-simdna_cc-clang	124346.5			1.909808	1.000000	1.903945
+bounded@0.3	cls-upto-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	332.3	pcrec_288d505_auto-caps-simdna_cc-clang	332.3			1.773586	1.000000	1.728641
+bounded@0.3	cls-upto-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	433.2	pcrec_288d505_auto-caps-simdna_cc-clang	433.2			1.258588	1.000000	1.261471
+bounded@0.3	cls-upto-8192	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	111761.2	pcrec_288d505_auto-caps-simdna_cc-clang	111761.2			1.383965	1.000000	1.382098
+bounded@0.3	cls-upto-8192	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	12423.6	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	12423.6			1.001869	1.045104	1.000000
+bounded@0.3	cls-upto-8192	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	969.4	pcrec_288d505_auto-caps-simdna_cc-clang	969.4			1.081285	1.000000	1.078030
+bounded@0.3	csv5	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1669.3	pcrec_288d505_auto-caps-simdna_cc-clang	1669.3			1.000086	1.000000	1.000423
+bounded@0.3	csv5	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	1773.3	pcrec_288d505_auto-caps-simdna_cc-clang	1773.3			1.121966	1.000000	1.121508
+bounded@0.3	csv5	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	947.4	pcrec_288d505_auto-caps-simdna	947.4			1.000000	1.046851	1.033508
+bounded@0.3	ctx-greedy-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	199365.3	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	199365.3			1.005452	1.114233	1.000000
+bounded@0.3	ctx-greedy-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	928.3	pcrec_288d505_auto-caps-simdna_cc-clang	928.3			1.064344	1.000000	1.060059
+bounded@0.3	ctx-greedy-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	7163.3	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	7163.3			1.002656	1.367512	1.000000
+bounded@0.3	ctx-lazy-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197322.8	pcrec_288d505_auto-caps-simdna	197322.8			1.000000	1.134960	1.001157
+bounded@0.3	ctx-lazy-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2162.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2162.8			1.000410	1.118841	1.000000
+bounded@0.3	ctx-lazy-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	9613.5	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	9613.5			1.000642	1.325807	1.000000
+bounded@0.3	ctx-lazy-256	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197405.9	pcrec_288d505_auto-caps-simdna	197405.9			1.000000	1.132549	1.002299
+bounded@0.3	ctx-lazy-256	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	2167.2	pcrec_288d505_auto-caps-simdna	2167.2			1.000000	1.117214	1.001376
+bounded@0.3	ctx-lazy-256	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	9622.3	pcrec_288d505_auto-caps-simdna	9622.3			1.000000	1.326047	1.000489
+bounded@0.3	ctx-lazy-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	197403.2	pcrec_288d505_auto-caps-simdna	197403.2			1.000000	1.132233	1.000394
+bounded@0.3	ctx-lazy-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1861.4	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1861.4			1.000577	1.107017	1.000000
+bounded@0.3	ctx-lazy-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	8909.7	pcrec_288d505_auto-caps-simdna	8909.7			1.000000	1.349256	1.001161
+bounded@0.3	dig-exact-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75048.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75048.8			1.000191	1.154815	1.000000
+bounded@0.3	dig-exact-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	475.8	pcrec_288d505_auto-caps-simdna_cc-clang	475.8			1.505970	1.000000	1.505721
+bounded@0.3	dig-exact-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2241.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2241.8			1.024878	1.074937	1.000000
+bounded@0.3	dig-exact-2	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	123609.7	pcrec_288d505_auto-caps-simdna_cc-clang	123609.7			1.216998	1.000000	1.216739
+bounded@0.3	dig-exact-2	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	277.2	pcrec_288d505_auto-caps-simdna_cc-clang	277.2			1.966123	1.000000	1.943031
+bounded@0.3	dig-exact-2	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1106.0	pcrec_288d505_auto-caps-simdna	1106.0			1.000000	1.012617	1.006539
+bounded@0.3	dig-exact-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65875.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65875.8			1.001981	1.343846	1.000000
+bounded@0.3	dig-exact-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	647.1	pcrec_288d505_auto-caps-simdna_cc-clang	647.1			1.389431	1.000000	1.380047
+bounded@0.3	dig-exact-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2227.7	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2227.7			1.004053	1.101720	1.000000
+bounded@0.3	dig-exact-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	82010.8	pcrec_288d505_auto-caps-simdna_cc-clang	82010.8			1.096582	1.000000	1.096416
+bounded@0.3	dig-exact-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	360.6	pcrec_288d505_auto-caps-simdna_cc-clang	360.6			1.681184	1.000000	1.683412
+bounded@0.3	dig-exact-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2057.2	pcrec_288d505_auto-caps-simdna_cc-clang	2057.2			1.023864	1.000000	1.004371
+bounded@0.3	dig-upto-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	84177.7	pcrec_288d505_auto-caps-simdna	84177.7			1.000000	1.064734	1.005122
+bounded@0.3	dig-upto-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	508.4	pcrec_288d505_auto-caps-simdna_cc-clang	508.4			1.466983	1.000000	1.404292
+bounded@0.3	dig-upto-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1401.4	pcrec_288d505_auto-caps-simdna	1401.4			1.000000	1.041347	1.012312
+bounded@0.3	dig-upto-2	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	147639.6	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	147639.6			1.003760	1.148962	1.000000
+bounded@0.3	dig-upto-2	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	278.0	pcrec_288d505_auto-caps-simdna_cc-clang	278.0			1.964291	1.000000	1.941660
+bounded@0.3	dig-upto-2	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1021.2	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1021.2			1.000086	1.090970	1.000000
+bounded@0.3	dig-upto-32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75767.0	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75767.0			1.005486	1.128082	1.000000
+bounded@0.3	dig-upto-32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	711.1	pcrec_288d505_auto-caps-simdna_cc-clang	711.1			1.329355	1.000000	1.283286
+bounded@0.3	dig-upto-32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1518.0	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1518.0			1.010347	1.046027	1.000000
+bounded@0.3	dig-upto-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	106956.5	pcrec_288d505_auto-caps-simdna_cc-clang	106956.5			1.286852	1.000000	1.270403
+bounded@0.3	dig-upto-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	305.6	pcrec_288d505_auto-caps-simdna_cc-clang	305.6			1.823541	1.000000	1.671029
+bounded@0.3	dig-upto-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1236.1	pcrec_288d505_auto-caps-simdna	1236.1			1.000000	1.008451	1.000858
+bounded@0.3	dig-upto-8	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	64247.8	pcrec_288d505_auto-caps-simdna_cc-clang	64247.8			1.603717	1.000000	1.573518
+bounded@0.3	dig-upto-8	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	381.1	pcrec_288d505_auto-caps-simdna_cc-clang	381.1			1.623504	1.000000	1.539976
+bounded@0.3	dig-upto-8	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1061.9	pcrec_288d505_auto-caps-simdna_cc-clang	1061.9			1.234385	1.000000	1.222325
+bounded@0.3	dotted4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	66253.3	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	66253.3			1.002052	1.321540	1.000000
+bounded@0.3	dotted4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	325.2	pcrec_288d505_auto-caps-simdna_cc-clang	325.2			1.817534	1.000000	1.700058
+bounded@0.3	dotted4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	3106.2	pcrec_288d505_auto-caps-simdna	3106.2			1.000000	1.278479	1.007244
+bounded@0.3	floor	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1668.4	pcrec_288d505_auto-caps-simdna_cc-clang	1668.4			1.001808	1.000000	1.002600
+bounded@0.3	floor	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	231.5	pcrec_288d505_auto-caps-simdna_cc-clang	231.5			2.125922	1.000000	2.000178
+bounded@0.3	floor	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	438.3	pcrec_288d505_auto-caps-simdna_cc-clang	438.3			1.077814	1.000000	1.080795
+bounded@0.3	grp-upto-1024	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	109647.5	pcrec_288d505_auto-caps-simdna_cc-clang	109647.5			1.423266	1.000000	1.421892
+bounded@0.3	grp-upto-1024	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	4504.4	pcrec_288d505_auto-caps-simdna_cc-clang	4504.4			1.072587	1.000000	1.068684
+bounded@0.3	grp-upto-1024	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	943.1	pcrec_288d505_auto-caps-simdna_cc-clang	943.1			1.108846	1.000000	1.108787
+bounded@0.3	hex32	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	254301.5	pcrec_288d505_auto-caps-simdna_cc-clang	254301.5			1.005931	1.000000	1.007840
+bounded@0.3	hex32	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	741.5	pcrec_288d505_auto-caps-simdna_cc-clang	741.5			1.336758	1.000000	1.326471
+bounded@0.3	hex32	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2566.5	pcrec_288d505_auto-caps-simdna_cc-clang	2566.5			1.145110	1.000000	1.152291
+bounded@0.3	line-80	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75405.1	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	75405.1			1.000795	1.177985	1.000000
+bounded@0.3	line-80	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna	5451.3	pcrec_288d505_auto-caps-simdna	5451.3			1.000000	1.073526	1.000305
+bounded@0.3	line-80	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	3421.6	pcrec_288d505_auto-caps-simdna_cc-clang	3421.6			1.125683	1.000000	1.112717
+bounded@0.3	nest2-4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	83991.3	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	83991.3			1.004503	1.067720	1.000000
+bounded@0.3	nest2-4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	508.7	pcrec_288d505_auto-caps-simdna_cc-clang	508.7			1.464663	1.000000	1.404049
+bounded@0.3	nest2-4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1387.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1387.8			1.012106	1.047917	1.000000
+bounded@0.3	nest2-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna	64723.4	pcrec_288d505_auto-caps-simdna	64723.4			1.000000	1.164104	1.020679
+bounded@0.3	nest2-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2137.0	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	2137.0			1.007723	1.030111	1.000000
+bounded@0.3	nest2-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1774.4	pcrec_288d505_auto-caps-simdna	1774.4			1.000000	1.044614	1.000242
+bounded@0.3	nest2-letters-6	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	155135.6	pcrec_288d505_auto-caps-simdna_cc-clang	155135.6			1.260556	1.000000	1.258503
+bounded@0.3	nest2-letters-6	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	930.9	pcrec_288d505_auto-caps-simdna_cc-clang	930.9			1.292881	1.000000	1.242610
+bounded@0.3	nest2-letters-6	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1276.7	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1276.7			1.005621	1.015263	1.000000
+bounded@0.3	nest3-16	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65643.8	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	65643.8			1.008020	1.147498	1.000000
+bounded@0.3	nest3-16	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3826.4	pcrec_288d505_auto-caps-simdna_cc-clang	3826.4			1.042139	1.000000	1.006687
+bounded@0.3	nest3-16	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1771.5	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	1771.5			1.004473	1.047828	1.000000
+bounded@0.3	nest3-3	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	77758.7	pcrec_288d505_auto-caps-simdna_cf-align-functions-64	77758.7			1.002541	1.109438	1.000000
+bounded@0.3	nest3-3	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	644.5	pcrec_288d505_auto-caps-simdna_cc-clang	644.5			1.378234	1.000000	1.330299
+bounded@0.3	nest3-3	short-subject-search	plain	pcrec_288d505_auto-caps-simdna	1502.8	pcrec_288d505_auto-caps-simdna	1502.8			1.000000	1.045030	1.002295
+bounded@0.3	pw-8-64	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	166075.5	pcrec_288d505_auto-caps-simdna_cc-clang	166075.5			1.262756	1.000000	1.268769
+bounded@0.3	pw-8-64	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	3272.9	pcrec_288d505_auto-caps-simdna_cc-clang	3272.9			1.075979	1.000000	1.076308
+bounded@0.3	pw-8-64	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	2430.1	pcrec_288d505_auto-caps-simdna_cc-clang	2430.1			1.254905	1.000000	1.252962
+bounded@0.3	year4	large-subject-throughput	plain	pcrec_288d505_auto-caps-simdna_cc-clang	96317.9	pcrec_288d505_auto-caps-simdna_cc-clang	96317.9			1.312248	1.000000	1.311374
+bounded@0.3	year4	match-compliance	whole-subject	pcrec_288d505_auto-caps-simdna_cc-clang	295.5	pcrec_288d505_auto-caps-simdna_cc-clang	295.5			1.868475	1.000000	1.841969
+bounded@0.3	year4	short-subject-search	plain	pcrec_288d505_auto-caps-simdna_cc-clang	1852.5	pcrec_288d505_auto-caps-simdna_cc-clang	1852.5			1.049328	1.000000	1.050375

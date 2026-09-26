@@ -1,4 +1,4 @@
-# reporter: v18 (2026-09-18); filters: subbench=email-specimen, version=0.1; source: store/index.tsv (14 record(s) matching this query); records: 9; excluded_invalid: 0; superseded: 5; newer_not_measured: 0; subbench_versions: email-specimen@0.1; machines: budu-ryzen1600; schema_versions: 1.1,1.2; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 9; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none
+# reporter: v24 (2026-09-26); filters: subbench=email-specimen, version=0.1; source: store/index.tsv (14 record(s) matching this query); records: 9; excluded_invalid: 0; superseded: 5; newer_not_measured: 0; subbench_versions: email-specimen@0.1; machines: budu-ryzen1600; schema_versions: 1.1,1.2; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 9; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none; null_band: pcrec 8da6120 -> 692c2e8: NO census (reports/identity/email-specimen@0.1/pcrec_8da6120__692c2e8.tsv)
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T221651Z				agreement	n/a (v1.2)						
 record						email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T174132Z				agreement	n/a (v1.1)						
@@ -9,6 +9,44 @@ record						email-specimen@0.1__pcrec_692c2e8_vm-in-caps-simdna__budu-ryzen1600_
 record						email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z				agreement	n/a (v1.1)						
 record						email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z				agreement	n/a (v1.1)						
 record						email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z				agreement	n/a (v1.1)						
+baseline_yes	orig	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	9124618.500000	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	9088777.666667	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	max_ns	9377921.333333	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	stddev_ns	108199.920811	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	ratio_vs_baseline	0.317193	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	median_ns	13385534.866667	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	min_ns	13374012.066667	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	max_ns	13429397.800000	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	stddev_ns	19929.395780	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	0.465312	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.466969	3	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	median_ns	13397524.533333	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	min_ns	13376255.000000	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	max_ns	13464852.200000	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	stddev_ns	34677.180444	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	ratio_vs_baseline	0.465729	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-caps-simdna	measured	pinned	3	ratio_vs_best	1.468283	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	median_ns	28766801.450360	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	min_ns	28638545.923741	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	max_ns	29088419.417266	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	stddev_ns	149706.899727	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	ratio_vs_baseline	1.000000	3	1.0000	0	0		
+rank_yes	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	4	ratio_vs_best	3.152658	3	1.0000	0	0		
+baseline_no	orig	(set)	large-subject-throughput			pcrec_692c2e8_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_692c2e8_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	median_ns	13389609.666667	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	min_ns	13387860.400000	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	max_ns	13571799.600000	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	stddev_ns	70997.076933	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_692c2e8_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		unchanged (within spread)
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	median_ns	13419710.866667	3	1.0000	0	0		
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	min_ns	13378803.866667	3	1.0000	0	0		
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	max_ns	13495708.000000	3	1.0000	0	0		
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	stddev_ns	42286.702727	3	1.0000	0	0		
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.002248	3	1.0000	0	0		
+rank_no	orig	(set)	large-subject-throughput	plain	same program	pcrec_8da6120_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.002248	3	1.0000	0	0		
 baseline	orig	(set)	large-subject-throughput			libpcre2_10.46_interp-caps-simdna				baseline_identity	interp					libpcre2_10.46_interp-caps-simdna (interp, present in this group)	
 rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	median_ns	9124618.500000	3	1.0000	0	0		
 rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	1	min_ns	9088777.666667	3	1.0000	0	0		
@@ -46,6 +84,11 @@ rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_inter
 rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	stddev_ns	149706.899727	3	1.0000	0	0		
 rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	orig	(set)	large-subject-throughput	plain	same program	libpcre2_10.46_interp-caps-simdna	measured	pinned	6	ratio_vs_best	3.152658	3	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	14						
+query_yes_beats_nocaps	orig		large-subject-throughput			pcrec_692c2e8_auto-nocaps-simdna				beaten_by	libpcre2_10.46_jit-caps-simdna					competitor_ns=9124618.500000; nocaps_ns=13389609.666667; ratio=0.681470; null_band_clearance=clears IQR only: gap 31.85%; IQR 0.25% (clears); no null band (no identity census for pcrec 8da6120 -> 692c2e8)	
+query_yes_beats_nocaps	orig		large-subject-throughput			pcrec_692c2e8_auto-nocaps-simdna				beaten_by	pcrec_692c2e8_auto-caps-simdna					competitor_ns=13385534.866667; nocaps_ns=13389609.666667; ratio=0.999696; null_band_clearance=within IQR: gap 0.03%; IQR 0.24% (within); no null band (no identity census for pcrec 8da6120 -> 692c2e8)	
+query_yes_beats_nocaps	orig		large-subject-throughput			pcrec_8da6120_auto-nocaps-simdna				beaten_by	libpcre2_10.46_jit-caps-simdna					competitor_ns=9124618.500000; nocaps_ns=13419710.866667; ratio=0.679942; null_band_clearance=clears IQR only: gap 32.01%; IQR 0.32% (clears); no null band (no identity census for pcrec 8da6120 -> 692c2e8)	
+query_yes_beats_nocaps	orig		large-subject-throughput			pcrec_8da6120_auto-nocaps-simdna				beaten_by	pcrec_8da6120_auto-caps-simdna					competitor_ns=13397524.533333; nocaps_ns=13419710.866667; ratio=0.998347; null_band_clearance=within IQR: gap 0.17%; IQR 0.42% (within); no null band (no identity census for pcrec 8da6120 -> 692c2e8)	
 compile_stamp						libpcre2_10.46_interp-caps-simdna				engine	-						
 compile_stamp						libpcre2_10.46_interp-caps-simdna				entry	plain entry						
 compile_stamp						libpcre2_10.46_interp-caps-simdna				prefilter	-						

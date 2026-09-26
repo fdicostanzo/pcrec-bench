@@ -1,15 +1,15 @@
 <!-- pcrecbench interpret
 report:          reports/2026-09-23-capability-0.1-budu-ryzen1600-after-6ef76820.tsv
-report_sha256:   5cf843c5a77545865011aa438b185da3a7db39e60d3fa4e28e6500ff8435f007
+report_sha256:   e77eccfae8804edcc63fb12a7652ee3b48657ae1ec8457dc7430a989b3e93b4a
 index:           store/index.tsv
 index_sha256:    4134dcb7893f1825249078c3720252fa76236c1d1b42d23bd51f8bf206ed8c5b
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-09-23-capability-0.1-budu-ryzen1600-after-6ef76820.subject-grain.tsv
-subject_grain_sha256:0f0557fa090ac3d3e5b7568f61c2a716584929ff61c8d9e77b2f7a507ff54f27
+subject_grain_sha256:146d4ad6643c350d69d00753282d7d39ad34b06b24eebf17cdb7ba73e4592c2c
 catalogue:       3.9
 interpret:       v2
-reporter:        v23 (2026-09-25)
+reporter:        v24 (2026-09-26)
 query:           subbench=capability, version=0.1, since=2026-09-23T00:00:00Z, until=2026-09-24T06:00:00Z, testee=pcrec_b1885a83_auto-caps-simdna, testee=pcrec_b1885a83_auto-nocaps-simdna, testee=pcrec_b1885a83_vm-caps-simdna, testee=pcrec_b1885a83_vm-in-caps-simdna, testee=pcrec_6ef76820_auto-caps-simdna, testee=pcrec_6ef76820_auto-nocaps-simdna, testee=pcrec_6ef76820_vm-caps-simdna, testee=pcrec_6ef76820_vm-in-caps-simdna, testee=oniguruma_6.9.10_default-caps-simdna, testee=rust_1.13.1_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd
 -->
 

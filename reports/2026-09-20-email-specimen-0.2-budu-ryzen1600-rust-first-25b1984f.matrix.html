@@ -35,33 +35,101 @@ td.cell { text-align: right; }
 .chip-refused  { background: #7c3aed; color: #fff; text-align: center; }
 .chip-wrong    { background: #b91c1c; color: #fff; text-align: center; }
 .chip-gaveup   { background: #d97706; color: #fff; text-align: center; }
+.chip-no-expectation { background: #0891b2; color: #fff; text-align: center; }
 .chip-excluded { background: #4b5563; color: #fff; text-align: center; }
+h2 { font-size: 1rem; margin: 1.25rem 0 0.5rem; }
+p.viewnote { font-size: 12.5px; margin: 0 0 0.75rem; max-width: 70ch; }
+fieldset.selection { border: 1px solid var(--border); border-radius: 6px; margin: 0 0 1rem;
+                      padding: 0.5rem 0.8rem; }
+fieldset.selection legend { font-weight: 600; font-size: 12.5px; }
+.selboxes { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 12px; }
+.selbtns { margin: 0 0 0.5rem; font-size: 12px; }
+.selbtns button { font: inherit; padding: 0.1rem 0.5rem; }
 footer { margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }
 </style>
 </head>
 <body>
 <h1>Capability ratio matrix -- 2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.matrix.tsv</h1>
-<pre class="provenance"># reporter: v18 (2026-09-18); surface: matrix; filters: subbench=email-specimen, version=0.2, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: email-specimen@0.2; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna
-# matrix: a data cell is testee median_ns / this ROW&#x27;s best measured median_ns (best = lowest median_ns among the row&#x27;s measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong &gt; 0; gave-up = excluded, n_gave_up &gt; 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all). A row with regime_or_na=&quot;&quot; and form=&quot;&quot; is F26&#x27;s own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.</pre>
+<pre class="provenance"># reporter: v24 (2026-09-26); surface: matrix; filters: subbench=email-specimen, version=0.2, until=2026-09-20T16:45:48Z, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; subbench_versions: email-specimen@0.2; machines: budu-ryzen1600; schema_versions: 1.6; superseded: 0; newer_not_measured: 0; testees: rust_1.13.1_default-caps-simdna; capture_class: yes=; no=rust_1.13.1_default-caps-simdna; undeclared=
+# matrix: a data cell is testee median_ns / this ROW&#x27;s best measured median_ns (best = lowest median_ns among the row&#x27;s measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong &gt; 0; gave-up = excluded, n_gave_up &gt; 0 and no wrong answer; no-expectation = excluded, n_no_expectation &gt; 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine&#x27;s own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all). A row with regime_or_na=&quot;&quot; and form=&quot;&quot; is F26&#x27;s own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row&#x27;s best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config&#x27;s ratio may be computed against a non-capturing config&#x27;s median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row&#x27;s best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_&lt;class&gt;. These match the report&#x27;s own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader&#x27;s own testee selection from each cell&#x27;s ratio x best_ns_pooled, never from a second reduction.</pre>
 <div class="legend">
   <span><span class="swatch" style="background:rgb(56,161,255)"></span>1.0x (at par)</span>
   <span><span class="swatch" style="background:rgb(220,38,38)"></span>&ge;10<sup>7</sup>x (far behind)</span>
-  <span><span class="swatch chip-unsup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">unsup</span> unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure)</span><span><span class="swatch chip-refused" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">refused</span> did-not-compile</span><span><span class="swatch chip-wrong" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">wrong</span> excluded: n_wrong &gt; 0 (a wrong answer)</span><span><span class="swatch chip-gaveup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">gave-up</span> excluded: n_gave_up &gt; 0, no wrong answer</span><span><span class="swatch chip-excluded" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">excluded</span> excluded for any other reason (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all)</span>
+  <span><span class="swatch chip-unsup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">unsup</span> unsupported-by-declaration (the testee&#x27;s own advance capability declaration, not an engine failure)</span><span><span class="swatch chip-refused" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">refused</span> did-not-compile</span><span><span class="swatch chip-wrong" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">wrong</span> excluded: n_wrong &gt; 0 (a wrong answer)</span><span><span class="swatch chip-gaveup" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">gave-up</span> excluded: n_gave_up &gt; 0, no wrong answer</span><span><span class="swatch chip-no-expectation" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">no-expectation</span> excluded: n_no_expectation &gt; 0, no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all)</span><span><span class="swatch chip-excluded" style="width:1.1em;height:1.1em;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;border-radius:3px">excluded</span> excluded for any other reason (a non-measured status, a scratch-tier row not included, a different form&#x27;s own row, or this testee never ran this pattern under this row&#x27;s form at all)</span>
 </div>
-<div class="tablewrap">
-<table>
-<thead><tr><th>subbench</th><th>pattern</th><th>regime</th><th>form</th><th>best_testee</th><th>best_ns</th><th>rust_1.13.1_default-caps-simdna</th></tr></thead>
+<fieldset class="selection"><legend>Testee selection</legend><p class="viewnote">Each row's best and every ratio are recomputed over the testees selected here (the lowest measured median among the SELECTED cells of that row and table; a status-token cell is never a candidate). Unselected columns are hidden. With scripting off, the tables show the file's own fixed bests: pooled over the whole roster, or class-pure in the split tables.</p><div class="selbtns"><button type="button" data-act="all">all</button> <button type="button" data-act="none">none</button> <span class="selcount"></span></div><div class="selboxes"><label><input type="checkbox" class="sel" value="rust_1.13.1_default-caps-simdna" checked> <code>rust_1.13.1_default-caps-simdna</code></label></div></fieldset>
+<div class="tablewrap"><table>
+<thead><tr><th>subbench</th><th>pattern</th><th>regime</th><th>form</th><th>best_testee</th><th>best_ns</th><th data-t="rust_1.13.1_default-caps-simdna">rust_1.13.1_default-caps-simdna</th></tr></thead>
 <tbody>
-<tr><th class="rowhead">email-specimen@0.2</th><td>factored</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td class="cell chip-refused" title="did-not-compile">refused</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>large-subject-throughput</td><td>plain</td><td>rust_1.13.1_default-caps-simdna</td><td>850311.8</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~850,311.8 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>match-compliance</td><td>whole-subject</td><td>rust_1.13.1_default-caps-simdna</td><td>592.4</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~592.4 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>short-subject-search</td><td>plain</td><td>rust_1.13.1_default-caps-simdna</td><td>5089.3</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~5,089.3 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>large-subject-throughput</td><td>plain</td><td>rust_1.13.1_default-caps-simdna</td><td>13914223.0</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~13,914,223.0 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>match-compliance</td><td>whole-subject</td><td>rust_1.13.1_default-caps-simdna</td><td>121264.2</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~121,264.2 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
-<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>short-subject-search</td><td>plain</td><td>rust_1.13.1_default-caps-simdna</td><td>12519.9</td><td class="cell" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~12,519.9 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>factored</td><td>&mdash;</td><td>&mdash;</td><td class="best-t">&mdash;</td><td class="best-ns">&mdash;</td><td class="cell chip-refused" data-t="rust_1.13.1_default-caps-simdna" title="did-not-compile">refused</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>large-subject-throughput</td><td>plain</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">850311.8</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="850311.8000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~850,311.8 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>match-compliance</td><td>whole-subject</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">592.4</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="592.4000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~592.4 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>floor</td><td>short-subject-search</td><td>plain</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">5089.3</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="5089.3000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~5,089.3 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>large-subject-throughput</td><td>plain</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">13914223.0</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="13914223.0000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~13,914,223.0 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>match-compliance</td><td>whole-subject</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">121264.2</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="121264.2000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~121,264.2 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
+<tr><th class="rowhead">email-specimen@0.2</th><td>orig</td><td>short-subject-search</td><td>plain</td><td class="best-t">rust_1.13.1_default-caps-simdna</td><td class="best-ns">12519.9</td><td class="cell" data-t="rust_1.13.1_default-caps-simdna" data-ns="12519.9000" style="background:rgb(56,161,255);color:#0b0b0b" title="1.000x this row&#x27;s best -- ~12,519.9 ns/call (rust_1.13.1_default-caps-simdna)">1.000x</td></tr>
 </tbody>
-</table>
-</div>
-<footer>Generated by scripts/matrix_page.py from reports/2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.matrix.tsv -- dependency-free, regenerate on demand.</footer>
+</table></div>
+<footer>Generated by scripts/matrix_page.py from /home/duxevents/pcrec-bench/reports/2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.matrix.tsv -- dependency-free, regenerate on demand.</footer>
+<script>
+(function () {
+  var LOG_MAX = 7;
+  function ramp(ratio) {
+    var t = Math.log10(Math.max(ratio, 1.0)) / LOG_MAX;
+    if (!isFinite(t)) t = 0;
+    t = Math.max(0, Math.min(1, t));
+    var lo = [56, 161, 255], hi = [220, 38, 38];
+    var c = lo.map(function (v, i) { return Math.round(v + (hi[i] - v) * t); });
+    return { bg: "rgb(" + c.join(",") + ")", fg: t < 0.55 ? "#0b0b0b" : "#fbfbfb" };
+  }
+  function selected() {
+    var s = {};
+    document.querySelectorAll("input.sel").forEach(function (b) { if (b.checked) s[b.value] = true; });
+    return s;
+  }
+  function apply() {
+    var sel = selected();
+    var n = Object.keys(sel).length, total = document.querySelectorAll("input.sel").length;
+    var cnt = document.querySelector(".selcount");
+    if (cnt) cnt.textContent = n + " of " + total + " selected";
+    document.querySelectorAll("th[data-t], td[data-t]").forEach(function (el) {
+      el.style.display = sel[el.getAttribute("data-t")] ? "" : "none";
+    });
+    document.querySelectorAll("table tbody tr").forEach(function (tr) {
+      var bestNs = null, bestT = null;
+      tr.querySelectorAll("td[data-ns]").forEach(function (td) {
+        var t = td.getAttribute("data-t");
+        if (!sel[t]) return;
+        var ns = parseFloat(td.getAttribute("data-ns"));
+        if (bestNs === null || ns < bestNs) { bestNs = ns; bestT = t; }
+      });
+      var bt = tr.querySelector("td.best-t"), bn = tr.querySelector("td.best-ns");
+      if (bt) bt.textContent = bestT === null ? "—" : bestT;
+      if (bn) bn.textContent = bestNs === null ? "—" : bestNs.toFixed(1);
+      if (bestNs === null || !(bestNs > 0)) return;
+      tr.querySelectorAll("td[data-ns]").forEach(function (td) {
+        var ns = parseFloat(td.getAttribute("data-ns"));
+        var ratio = ns / bestNs, c = ramp(ratio);
+        td.textContent = ratio.toFixed(3) + "x";
+        td.style.background = c.bg;
+        td.style.color = c.fg;
+        td.title = ratio.toFixed(3) + "x this row's best (over the selection) -- ~" +
+          ns.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) +
+          " ns/call (" + td.getAttribute("data-t") + ")";
+      });
+    });
+  }
+  document.querySelectorAll("input.sel").forEach(function (b) { b.addEventListener("change", apply); });
+  document.querySelectorAll(".selbtns button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var on = btn.getAttribute("data-act") === "all";
+      document.querySelectorAll("input.sel").forEach(function (b) { b.checked = on; });
+      apply();
+    });
+  });
+  apply();
+})();
+</script>
 </body>
 </html>

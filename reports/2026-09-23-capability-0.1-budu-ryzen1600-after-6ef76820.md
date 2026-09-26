@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v23 (2026-09-25)
+reporter: v24 (2026-09-26)
 
 ## Query
 
@@ -33,7 +33,7 @@ reporter: v23 (2026-09-25)
 - D119 bar (inbox I-93 block B / I-104): a cross-pin cell moved iff |Δ%| > max(IQR%, null band) -- Δ% = (after - before) / before; IQR% = the BEFORE side's Type-7 IQR of its per-trial set sums over the before median; null band = the largest |Δ%| any PROGRAM-IDENTICAL cell of the same (regime, baseline scale) stratum reached across the same pin pair (symmetric); a stratum with fewer than 10 program-identical cells has NO usable band and its verdicts say `IQR only` by name.
 - baseline scale: the BEFORE (older pin) set-grain median -- `>=1us` / `100ns-1us` / `<100ns`; strata are per REGIME (I-104).
 - sufficiency: a stratum needs >= 10 program-identical cells -- the band is a sample maximum, and one more null cell exceeds the maximum of n with chance 1/(n+1) (<= 9.1% at n = 10).
-- identity: OUR OWN census (`tools/program_identity.py`: both pins re-emitted with the pinned binaries under each config's recorded flags, `.c` + `.h` compared after dropping ONLY the generated-by line, the `.abi` integer and one-sided `#define` stamps); the records carry no program hash of their own.
+- identity: the records' own `engine_metadata.program_sha256` ([B88], schema v1.7) where BOTH compile rows of a cell carry it; otherwise OUR OWN census (`tools/program_identity.py`: both pins re-emitted with the pinned binaries under each config's recorded flags, `.c` + `.h` compared after dropping ONLY the generated-by line, the `.abi` integer and one-sided `#define` stamps). Which records carry the field, per side: `pcrec b1885a83 -> 6ef76820`: the BEFORE (`b1885a83`) records carry NO `program_sha256` (0 of 497 compiled cell(s)), the AFTER (`6ef76820`) records carry NO `program_sha256` (0 of 497 compiled cell(s)).
 
 ### `pcrec b1885a83 -> 6ef76820` (capability@0.1)
 

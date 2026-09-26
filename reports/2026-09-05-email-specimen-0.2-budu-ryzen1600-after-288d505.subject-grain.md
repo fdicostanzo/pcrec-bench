@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v18 (2026-09-18)
+reporter: v24 (2026-09-26)
 
 ## Query
 
@@ -23,6 +23,10 @@ reporter: v18 (2026-09-18)
 - status rule: v1.4 X13 (pre-flight + trial agreement) on 4 record(s)
 - tier policy (R3, schema v1.2 `tier`, absent = `pinned`): a `scratch`-tier row is excluded from ranking by default, listed as `scratch: <testee>`; `--include-scratch` ranks it instead, with a `tier` column
 - duplicate-record policy (OD-B15, amended 2026-08-25): the NEWEST MEASURED record per (subbench@version, testee_id, machine) ranks by default -- a newer record that is NOT measured does not supersede a measured one of the same testee and version (listed as "newer, not measured" instead); only when no record in the group is measured does the newest record overall stand (itself unranked per the status policy above, unless --include-unmeasured). `--all-records` shows every record as its own row, its testee id suffixed `@<timestamp>`
+
+## Null-control band (D119 bar; [B79], inbox I-93 block B / I-104)
+
+_Computed at SET grain only (the D119 bar is a set-grain statement, as R8's `Δ vs previous version` is); this subject-grain render carries no band -- render the same query at `--grain set`._
 
 ## Ranking (per pattern x subject x regime; best median first)
 
@@ -6060,6 +6064,10 @@ _rows compare different programs answering the same regime; rank order is real, 
 | pattern | subject | regime | form | testee | n | pass-rate | gave-up | wrong | outcomes |
 |---|---|---|---|---|---|---|---|---|---|
 | `factored` | `t-c-long-atom-run` | `large-subject-throughput` | `plain` | `libpcre2_10.46_jit-caps-simdna` | 5 | 0% | 0 | 0 | timed-out=5 |
+
+## Standing cross-class query (inbox I-101; Frank's own anomaly check -- a QUERY, never a ranking; every hit below is a finding on pcrec's side by definition)
+
+_0 hits: no included YES-class config's median beats any pcrec `auto-nocaps` row's median in this report's roster._
 
 ## Compile cost (by execution-model class; never pooled across classes)
 

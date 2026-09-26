@@ -1,6 +1,6 @@
 # pcrec-bench report
 
-reporter: v18 (2026-09-18)
+reporter: v24 (2026-09-26)
 
 ## Query
 
@@ -4541,6 +4541,10 @@ reporter: v18 (2026-09-18)
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `pcrec_d34c9131_auto-caps-simdna` | measured | `plain` | same program | 3,095,320.2 | 3,087,598.5 | 3,100,842.1 | 4,652.3 | 1.000x | 1.000x |
 | 2 | `pcrec_d34c9131_auto-caps-simdna_noclsfold` | measured | `plain` | same program | 3,097,970.9 | 3,075,324.2 | 3,108,149.7 | 11,472.9 | 1.001x | 1.001x |
+
+## Standing cross-class query (inbox I-101; Frank's own anomaly check -- a QUERY, never a ranking; every hit below is a finding on pcrec's side by definition)
+
+_0 hits: no included YES-class config's median beats any pcrec `auto-nocaps` row's median in this report's roster._
 
 ## Compile cost (by execution-model class; never pooled across classes)
 

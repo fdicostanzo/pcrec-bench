@@ -1,123 +1,124 @@
-# reporter: v18 (2026-09-18); surface: matrix; filters: subbench=bounded, version=0.2, until=2026-09-01T00:00:00Z; source: store/index.tsv (7 record(s) matching this query); records: 6; subbench_versions: bounded@0.2; machines: budu-ryzen1600; schema_versions: 1.4; superseded: 1; newer_not_measured: 0; testees: libpcre2_10.46_interp-caps-simdna,libpcre2_10.46_jit-caps-simdna,pcrec_263b013_auto-caps-simdna,pcrec_263b013_auto-nocaps-simdna,pcrec_263b013_vm-caps-simdna,pcrec_263b013_vm-in-caps-simdna
-# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee/best_ns recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
-subbench	pattern	regime_or_na	form	best_testee	best_ns	libpcre2_10.46_interp-caps-simdna	libpcre2_10.46_jit-caps-simdna	pcrec_263b013_auto-caps-simdna	pcrec_263b013_auto-nocaps-simdna	pcrec_263b013_vm-caps-simdna	pcrec_263b013_vm-in-caps-simdna
-bounded@0.2	cls-atleast-4096	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	60464.0	1.840273	1.000000	5.249185	5.246199	2.272868	2.272077
-bounded@0.2	cls-atleast-4096	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	882.6	1.000000	1.007957	excluded	excluded	excluded	excluded
-bounded@0.2	cls-atleast-4096	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	630.3	excluded	excluded	6.028922	6.032531	1.012287	1.000000
-bounded@0.2	cls-atleast-4096	short-subject-search	plain	libpcre2_10.46_interp-caps-simdna	1213.4	1.000000	1.154637	2.862834	2.866290	42.800945	42.824208
-bounded@0.2	cls-lazy-16384	large-subject-throughput	plain	pcrec_263b013_auto-caps-simdna	537694.0	19.863004	7.979901	1.000000	1.003651	1.292306	1.922760
-bounded@0.2	cls-lazy-16384	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	13395.6	1.003459	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-lazy-16384	match-compliance	whole-subject	pcrec_263b013_auto-caps-simdna	2400.1	excluded	excluded	1.000000	1.011772	1.000090	1.034006
-bounded@0.2	cls-lazy-16384	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	276.6	11.935829	4.752308	1.102241	1.098712	1.000000	1.288305
-bounded@0.2	cls-upto-1024	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235934.1	9.227629	3.675787	1.764954	1.763823	1.000000	1.146949
-bounded@0.2	cls-upto-1024	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3389.1	1.007586	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-1024	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.1	excluded	excluded	1.876799	1.877610	1.032327	1.000000
-bounded@0.2	cls-upto-1024	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	833.9	4.604010	1.945607	2.912436	2.918554	1.000000	1.088113
-bounded@0.2	cls-upto-128	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	251044.9	8.942543	3.313852	1.669973	1.671798	1.000000	1.141462
-bounded@0.2	cls-upto-128	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3120.4	1.000979	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-128	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	570.7	excluded	excluded	1.611579	1.611024	1.038096	1.000000
-bounded@0.2	cls-upto-128	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	682.4	5.230779	2.285755	2.210963	2.212335	1.000000	1.109029
-bounded@0.2	cls-upto-16384	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233554.2	9.318755	3.587529	1.783366	1.784165	1.000000	1.152081
-bounded@0.2	cls-upto-16384	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3380.6	1.000000	1.002495	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-16384	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	723.3	excluded	excluded	1.026519	1.030959	1.036022	1.000000
-bounded@0.2	cls-upto-16384	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	835.3	4.603202	2.053508	2.906762	2.907844	1.000000	1.090545
-bounded@0.2	cls-upto-2048	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235036.4	9.250522	3.746636	1.765353	1.768322	1.000000	1.147109
-bounded@0.2	cls-upto-2048	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3390.2	1.003098	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-2048	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.3	excluded	excluded	7.118586	7.120623	1.031681	1.000000
-bounded@0.2	cls-upto-2048	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	833.9	4.579982	2.043186	2.908521	2.910561	1.000000	1.088292
-bounded@0.2	cls-upto-256	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	242223.4	9.194298	3.355041	1.728986	1.726388	1.000000	1.147388
-bounded@0.2	cls-upto-256	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3376.6	1.006947	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-256	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	722.6	excluded	excluded	1.901553	1.903609	1.030822	1.000000
-bounded@0.2	cls-upto-256	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	835.6	4.573480	1.997864	2.907526	2.911168	1.000000	1.087358
-bounded@0.2	cls-upto-32768	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	233447.4	9.292974	3.586250	1.001925	1.000000	1.000289	1.146857
-bounded@0.2	cls-upto-32768	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3385.1	1.000000	1.008021	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-32768	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	726.3	excluded	excluded	1.029165	1.024803	1.020973	1.000000
-bounded@0.2	cls-upto-32768	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	834.0	4.615226	2.035948	1.000000	1.003534	1.000526	1.088431
-bounded@0.2	cls-upto-4096	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233832.9	9.298850	3.477353	1.787221	1.780555	1.000000	1.146486
-bounded@0.2	cls-upto-4096	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3385.7	1.000000	1.003596	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-4096	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.7	excluded	excluded	7.123307	7.145864	1.025133	1.000000
-bounded@0.2	cls-upto-4096	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	836.3	4.560904	2.051275	2.896986	2.903551	1.000000	1.084127
-bounded@0.2	cls-upto-512	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	237927.3	9.210982	3.475381	1.753627	1.751292	1.000000	1.143334
-bounded@0.2	cls-upto-512	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3405.7	1.003325	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-512	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.4	excluded	excluded	1.877797	1.871272	1.031382	1.000000
-bounded@0.2	cls-upto-512	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	836.6	4.592933	2.007202	2.900603	2.902665	1.000000	1.081093
-bounded@0.2	cls-upto-64	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	269278.4	8.637559	3.220931	1.574912	1.575746	1.000000	1.140880
-bounded@0.2	cls-upto-64	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3012.4	1.000985	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-64	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	485.2	excluded	excluded	1.396486	1.397682	1.017231	1.000000
-bounded@0.2	cls-upto-64	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	607.6	5.685640	2.387727	1.715971	1.718595	1.000000	1.118037
-bounded@0.2	cls-upto-65535	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	234150.0	9.262030	3.454262	refused	refused	1.000000	1.147679
-bounded@0.2	cls-upto-65535	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3426.0	1.000000	1.004319	refused	refused	excluded	excluded
-bounded@0.2	cls-upto-65535	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	723.5	excluded	excluded	refused	refused	1.026205	1.000000
-bounded@0.2	cls-upto-65535	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	834.0	4.580694	2.006334	refused	refused	1.000000	1.088995
-bounded@0.2	cls-upto-8192	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233986.7	9.274725	3.574564	1.775395	1.782180	1.000000	1.145566
-bounded@0.2	cls-upto-8192	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3411.6	1.000000	1.001598	excluded	excluded	excluded	excluded
-bounded@0.2	cls-upto-8192	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.2	excluded	excluded	7.131148	7.112847	1.032317	1.000000
-bounded@0.2	cls-upto-8192	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	834.9	4.609950	2.035678	2.908841	2.907166	1.000000	1.087966
-bounded@0.2	csv5	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	1677.8	1.078097	1.993859	1.004691	1.000000	10670.841799	10683.141725
-bounded@0.2	csv5	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1623.1	1.010455	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	csv5	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	1319.1	excluded	excluded	1.006124	1.000000	2.930651	2.960958
-bounded@0.2	csv5	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	975.7	20.878746	5.628162	1.006141	1.000000	330.367590	330.291563
-bounded@0.2	ctx-greedy-256	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	105734.4	5.258882	1.000000	1.900456	1.896148	4.481468	4.487515
-bounded@0.2	ctx-greedy-256	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	1991.1	1.000000	1.000180	excluded	excluded	excluded	excluded
-bounded@0.2	ctx-greedy-256	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	676.4	excluded	excluded	1.002359	1.000000	1.002102	1.071887
-bounded@0.2	ctx-greedy-256	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	4334.8	5.104770	1.000000	1.461484	1.462872	4.512398	4.514740
-bounded@0.2	ctx-lazy-1024	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104456.1	5.332963	1.000000	1.895990	1.893724	4.252372	4.234555
-bounded@0.2	ctx-lazy-1024	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	7036.0	1.000000	1.000340	excluded	excluded	excluded	excluded
-bounded@0.2	ctx-lazy-1024	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1872.0	excluded	excluded	1.008104	1.008364	1.000000	1.032831
-bounded@0.2	ctx-lazy-1024	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	5485.3	6.303607	1.000000	1.609869	1.609483	3.965518	3.959137
-bounded@0.2	ctx-lazy-256	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104556.2	5.320916	1.000000	1.889976	1.897442	4.240157	4.237160
-bounded@0.2	ctx-lazy-256	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	7015.0	1.000000	1.001598	excluded	excluded	excluded	excluded
-bounded@0.2	ctx-lazy-256	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1879.0	excluded	excluded	1.001139	1.008339	1.000000	1.030485
-bounded@0.2	ctx-lazy-256	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	5492.6	6.283054	1.000000	1.607309	1.607955	3.963047	3.964875
-bounded@0.2	ctx-lazy-64	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104421.8	5.326120	1.000000	1.892334	1.902306	4.254653	4.234174
-bounded@0.2	ctx-lazy-64	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	5631.6	1.000000	1.001144	excluded	excluded	excluded	excluded
-bounded@0.2	ctx-lazy-64	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1568.9	excluded	excluded	1.030991	1.007085	1.000000	1.036950
-bounded@0.2	ctx-lazy-64	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	4509.0	6.076627	1.000000	1.852391	1.802019	4.924583	4.939428
-bounded@0.2	dotted4	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	34564.7	1.796961	1.000000	1.948280	1.937558	25.848117	26.720843
-bounded@0.2	dotted4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1473.4	1.011097	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	dotted4	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	364.3	excluded	excluded	1.016961	1.000000	1.327313	1.483596
-bounded@0.2	dotted4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	2372.0	4.769832	1.047574	1.015290	1.000000	9.259615	9.400250
-bounded@0.2	floor	large-subject-throughput	plain	pcrec_263b013_auto-caps-simdna	1674.8	1.073307	2.556180	1.000000	1.001573	170.002496	169.723516
-bounded@0.2	floor	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	866.4	1.000520	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	floor	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	240.2	excluded	excluded	1.221111	1.223776	1.000000	1.147294
-bounded@0.2	floor	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	328.0	4.254725	3.621088	1.000000	1.003185	13.630795	13.694848
-bounded@0.2	grp-upto-1024	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235852.5	29.196701	4.607841	1.763572	1.764896	1.000000	1.144032
-bounded@0.2	grp-upto-1024	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	33555.1	1.001806	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	grp-upto-1024	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.0	excluded	excluded	1.874773	1.871643	1.031466	1.000000
-bounded@0.2	grp-upto-1024	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	840.8	39.868261	3.664934	2.885848	2.886213	1.000000	1.079956
-bounded@0.2	hex32	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	287254.6	4.200163	1.000000	1.098170	1.091922	1.990282	1.996618
-bounded@0.2	hex32	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1416.4	1.026794	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	hex32	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	483.9	excluded	excluded	1.170595	1.160347	1.000000	1.036066
-bounded@0.2	hex32	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	2938.3	10.210484	1.394553	1.009523	1.000000	5.188788	5.178168
-bounded@0.2	line-80	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	32295.3	3.946521	1.000000	2.424059	2.351398	2.468819	2.452950
-bounded@0.2	line-80	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	5283.6	1.002787	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	line-80	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	2351.5	excluded	excluded	1.419391	1.409266	1.000000	1.021955
-bounded@0.2	line-80	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	2150.4	2.491943	1.000000	2.503932	2.480312	6.126010	6.170814
-bounded@0.2	nest2-4	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	99846.6	4.602591	1.072518	1.001712	1.000000	4.716831	6.350936
-bounded@0.2	nest2-4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	53506.3	1.001949	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	nest2-4	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	406.3	excluded	excluded	1.001066	1.000000	23.155390	23.493267
-bounded@0.2	nest2-4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	925.2	5.746547	1.947169	1.003412	1.000000	4.297881	5.562822
-bounded@0.2	nest2-64	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	72881.3	1.313528	1.000000	1.428621	1.427393	6.572297	6.395675
-bounded@0.2	nest2-64	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	4102.8	1.000748	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	nest2-64	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	875.5	excluded	excluded	1.001021	1.000000	1.000632	1.081038
-bounded@0.2	nest2-64	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1883.0	2.621126	1.105746	1.001876	1.000000	2.335264	2.365030
-bounded@0.2	nest2-letters-6	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	176229.6	5.317449	1.000000	1.759681	1.759536	1.491165	1.763351
-bounded@0.2	nest2-letters-6	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	4881375.6	1.000430	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	nest2-letters-6	match-compliance	whole-subject	pcrec_263b013_auto-caps-simdna	595.5	excluded	excluded	1.000000	1.000533	1724.764835	1726.505523
-bounded@0.2	nest2-letters-6	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	1075.3	4.515925	1.668728	1.000000	1.000247	2.767150	3.007299
-bounded@0.2	nest3-16	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	58364.0	2.333568	1.000000	1.786840	1.785750	13.834126	13.858937
-bounded@0.2	nest3-16	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	6481.0	1.002075	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	nest3-16	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	1683.5	excluded	excluded	1.002596	1.000000	1.022887	1.041661
-bounded@0.2	nest3-16	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1883.4	3.423203	1.121862	1.000167	1.000000	3.884513	4.026645
-bounded@0.2	nest3-3	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	90252.0	5.793716	1.000000	1.126513	1.127647	5.125331	5.273899
-bounded@0.2	nest3-3	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	6129581.9	1.003487	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	nest3-3	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	471.1	excluded	excluded	1.005891	1.000000	2024.780454	2019.560013
-bounded@0.2	nest3-3	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1051.4	6.978013	1.733869	1.004669	1.000000	3.874178	4.644447
-bounded@0.2	pw-8-64	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	125943.9	2.798475	1.037664	3.168827	3.131015	1.000000	1.027476
-bounded@0.2	pw-8-64	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	4763.3	1.000000	1.000724	excluded	excluded	excluded	excluded
-bounded@0.2	pw-8-64	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1466.4	excluded	excluded	1.669592	1.647661	1.000000	1.017525
-bounded@0.2	pw-8-64	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	1636.5	3.129422	1.137203	2.665998	2.639751	1.000000	1.055179
-bounded@0.2	year4	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	114221.0	4.928847	2.198252	1.015978	1.000000	2.494853	2.642917
-bounded@0.2	year4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1758.1	1.006615	1.000000	excluded	excluded	excluded	excluded
-bounded@0.2	year4	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	306.4	excluded	excluded	1.056407	1.048274	1.037071	1.000000
-bounded@0.2	year4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1583.1	8.023508	1.724513	1.009861	1.000000	4.177876	4.175971
+# reporter: v24 (2026-09-26); surface: matrix; filters: subbench=bounded, version=0.2, until=2026-09-01T00:00:00Z; source: store/index.tsv (7 record(s) matching this query); records: 6; subbench_versions: bounded@0.2; machines: budu-ryzen1600; schema_versions: 1.4; superseded: 1; newer_not_measured: 0; testees: libpcre2_10.46_interp-caps-simdna,libpcre2_10.46_jit-caps-simdna,pcrec_263b013_auto-caps-simdna,pcrec_263b013_auto-nocaps-simdna,pcrec_263b013_vm-caps-simdna,pcrec_263b013_vm-in-caps-simdna; capture_class: yes=libpcre2_10.46_interp-caps-simdna,libpcre2_10.46_jit-caps-simdna,pcrec_263b013_auto-caps-simdna,pcrec_263b013_vm-caps-simdna,pcrec_263b013_vm-in-caps-simdna; no=pcrec_263b013_auto-nocaps-simdna; undeclared=
+# matrix: a data cell is testee median_ns / this ROW's best measured median_ns (best = lowest median_ns among the row's measured, pinned-tier, expectation-passing cells) -- ratios compare WITHIN A ROW ONLY, never across rows, patterns or subbenches; best_testee_pooled/best_ns_pooled recover the absolute scale a ratio alone loses. A cell excluded for a wrong answer or a give-up never enters the best-of comparison even where it also carries a timing. Closed status tokens, checked in this order: unsup = unsupported-by-declaration (the testee's own advance capability declaration, not an engine failure); refused = did-not-compile; wrong = excluded, n_wrong > 0; gave-up = excluded, n_gave_up > 0 and no wrong answer; no-expectation = excluded, n_no_expectation > 0 and no wrong answer or give-up (KB-27: no derived expectation exists for this (pattern, subject, regime) at all -- an oracle give-up dropped it at derivation, or nobody has authored one yet -- so there is nothing to compare the engine's own answer against, which is why this is checked AFTER wrong/gave-up rather than folded into either); excluded = every other reason a cell is not timed (a non-measured status, a scratch-tier row not included, a different form's own row, or this testee never ran this pattern under this row's form at all). A row with regime_or_na="" and form="" is F26's own case (docs/design/predicate_audit_v1.md): every testee in the roster refused or declared unsupported for that pattern, so no ranking group -- and no regime -- ever existed for it; every (row, testee) cell in this file is populated, by construction, never blank.
+# capture_class disclosure (inbox I-99; [B91]): best_testee_pooled/best_ns_pooled and every ratio cell above are the row's best/ratio ACROSS THE WHOLE roster -- POOLED: a capturing config's ratio may be computed against a non-capturing config's median, or vice versa, when both classes are present in this query. best_testee_yes/best_ns_yes and best_testee_no/best_ns_no are the row's best over the capture_class yes / no testees ONLY (same rankability rule; empty where that class has no rankable cell in the row; an undeclared testee is in neither), so a class-pure ratio is ratio x best_ns_pooled / best_ns_<class>. These match the report's own class-pure ranking sections; matrix_page.py recomputes every best and ratio over the reader's own testee selection from each cell's ratio x best_ns_pooled, never from a second reduction.
+subbench	pattern	regime_or_na	form	best_testee_pooled	best_ns_pooled	best_testee_yes	best_ns_yes	best_testee_no	best_ns_no	libpcre2_10.46_interp-caps-simdna	libpcre2_10.46_jit-caps-simdna	pcrec_263b013_auto-caps-simdna	pcrec_263b013_auto-nocaps-simdna	pcrec_263b013_vm-caps-simdna	pcrec_263b013_vm-in-caps-simdna
+bounded@0.2	cls-atleast-4096	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	60464.0	libpcre2_10.46_jit-caps-simdna	60464.0	pcrec_263b013_auto-nocaps-simdna	317206.1	1.840273	1.000000	5.249185	5.246199	2.272868	2.272077
+bounded@0.2	cls-atleast-4096	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	882.6	libpcre2_10.46_interp-caps-simdna	882.6			1.000000	1.007957	excluded	excluded	excluded	excluded
+bounded@0.2	cls-atleast-4096	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	630.3	pcrec_263b013_vm-in-caps-simdna	630.3	pcrec_263b013_auto-nocaps-simdna	3802.0	excluded	excluded	6.028922	6.032531	1.012287	1.000000
+bounded@0.2	cls-atleast-4096	short-subject-search	plain	libpcre2_10.46_interp-caps-simdna	1213.4	libpcre2_10.46_interp-caps-simdna	1213.4	pcrec_263b013_auto-nocaps-simdna	3477.9	1.000000	1.154637	2.862834	2.866290	42.800945	42.824208
+bounded@0.2	cls-lazy-16384	large-subject-throughput	plain	pcrec_263b013_auto-caps-simdna	537694.0	pcrec_263b013_auto-caps-simdna	537694.0	pcrec_263b013_auto-nocaps-simdna	539656.9	19.863004	7.979901	1.000000	1.003651	1.292306	1.922760
+bounded@0.2	cls-lazy-16384	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	13395.6	libpcre2_10.46_jit-caps-simdna	13395.6			1.003459	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-lazy-16384	match-compliance	whole-subject	pcrec_263b013_auto-caps-simdna	2400.1	pcrec_263b013_auto-caps-simdna	2400.1	pcrec_263b013_auto-nocaps-simdna	2428.4	excluded	excluded	1.000000	1.011772	1.000090	1.034006
+bounded@0.2	cls-lazy-16384	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	276.6	pcrec_263b013_vm-caps-simdna	276.6	pcrec_263b013_auto-nocaps-simdna	303.9	11.935829	4.752308	1.102241	1.098712	1.000000	1.288305
+bounded@0.2	cls-upto-1024	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235934.1	pcrec_263b013_vm-caps-simdna	235934.1	pcrec_263b013_auto-nocaps-simdna	416146.1	9.227629	3.675787	1.764954	1.763823	1.000000	1.146949
+bounded@0.2	cls-upto-1024	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3389.1	libpcre2_10.46_jit-caps-simdna	3389.1			1.007586	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-1024	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.1	pcrec_263b013_vm-in-caps-simdna	724.1	pcrec_263b013_auto-nocaps-simdna	1359.6	excluded	excluded	1.876799	1.877610	1.032327	1.000000
+bounded@0.2	cls-upto-1024	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	833.9	pcrec_263b013_vm-caps-simdna	833.9	pcrec_263b013_auto-nocaps-simdna	2433.7	4.604010	1.945607	2.912436	2.918554	1.000000	1.088113
+bounded@0.2	cls-upto-128	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	251044.9	pcrec_263b013_vm-caps-simdna	251044.9	pcrec_263b013_auto-nocaps-simdna	419696.5	8.942543	3.313852	1.669973	1.671798	1.000000	1.141462
+bounded@0.2	cls-upto-128	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3120.4	libpcre2_10.46_jit-caps-simdna	3120.4			1.000979	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-128	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	570.7	pcrec_263b013_vm-in-caps-simdna	570.7	pcrec_263b013_auto-nocaps-simdna	919.4	excluded	excluded	1.611579	1.611024	1.038096	1.000000
+bounded@0.2	cls-upto-128	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	682.4	pcrec_263b013_vm-caps-simdna	682.4	pcrec_263b013_auto-nocaps-simdna	1509.6	5.230779	2.285755	2.210963	2.212335	1.000000	1.109029
+bounded@0.2	cls-upto-16384	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233554.2	pcrec_263b013_vm-caps-simdna	233554.2	pcrec_263b013_auto-nocaps-simdna	416699.3	9.318755	3.587529	1.783366	1.784165	1.000000	1.152081
+bounded@0.2	cls-upto-16384	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3380.6	libpcre2_10.46_interp-caps-simdna	3380.6			1.000000	1.002495	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-16384	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	723.3	pcrec_263b013_vm-in-caps-simdna	723.3	pcrec_263b013_auto-nocaps-simdna	745.7	excluded	excluded	1.026519	1.030959	1.036022	1.000000
+bounded@0.2	cls-upto-16384	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	835.3	pcrec_263b013_vm-caps-simdna	835.3	pcrec_263b013_auto-nocaps-simdna	2428.9	4.603202	2.053508	2.906762	2.907844	1.000000	1.090545
+bounded@0.2	cls-upto-2048	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235036.4	pcrec_263b013_vm-caps-simdna	235036.4	pcrec_263b013_auto-nocaps-simdna	415620.0	9.250522	3.746636	1.765353	1.768322	1.000000	1.147109
+bounded@0.2	cls-upto-2048	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3390.2	libpcre2_10.46_jit-caps-simdna	3390.2			1.003098	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-2048	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.3	pcrec_263b013_vm-in-caps-simdna	724.3	pcrec_263b013_auto-nocaps-simdna	5157.7	excluded	excluded	7.118586	7.120623	1.031681	1.000000
+bounded@0.2	cls-upto-2048	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	833.9	pcrec_263b013_vm-caps-simdna	833.9	pcrec_263b013_auto-nocaps-simdna	2427.2	4.579982	2.043186	2.908521	2.910561	1.000000	1.088292
+bounded@0.2	cls-upto-256	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	242223.4	pcrec_263b013_vm-caps-simdna	242223.4	pcrec_263b013_auto-nocaps-simdna	418171.5	9.194298	3.355041	1.728986	1.726388	1.000000	1.147388
+bounded@0.2	cls-upto-256	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3376.6	libpcre2_10.46_jit-caps-simdna	3376.6			1.006947	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-256	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	722.6	pcrec_263b013_vm-in-caps-simdna	722.6	pcrec_263b013_auto-nocaps-simdna	1375.5	excluded	excluded	1.901553	1.903609	1.030822	1.000000
+bounded@0.2	cls-upto-256	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	835.6	pcrec_263b013_vm-caps-simdna	835.6	pcrec_263b013_auto-nocaps-simdna	2432.6	4.573480	1.997864	2.907526	2.911168	1.000000	1.087358
+bounded@0.2	cls-upto-32768	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	233447.4	pcrec_263b013_vm-caps-simdna	233514.9	pcrec_263b013_auto-nocaps-simdna	233447.4	9.292974	3.586250	1.001925	1.000000	1.000289	1.146857
+bounded@0.2	cls-upto-32768	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3385.1	libpcre2_10.46_interp-caps-simdna	3385.1			1.000000	1.008021	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-32768	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	726.3	pcrec_263b013_vm-in-caps-simdna	726.3	pcrec_263b013_auto-nocaps-simdna	744.3	excluded	excluded	1.029165	1.024803	1.020973	1.000000
+bounded@0.2	cls-upto-32768	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	834.0	pcrec_263b013_auto-caps-simdna	834.0	pcrec_263b013_auto-nocaps-simdna	836.9	4.615226	2.035948	1.000000	1.003534	1.000526	1.088431
+bounded@0.2	cls-upto-4096	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233832.9	pcrec_263b013_vm-caps-simdna	233832.9	pcrec_263b013_auto-nocaps-simdna	416352.3	9.298850	3.477353	1.787221	1.780555	1.000000	1.146486
+bounded@0.2	cls-upto-4096	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3385.7	libpcre2_10.46_interp-caps-simdna	3385.7			1.000000	1.003596	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-4096	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.7	pcrec_263b013_vm-in-caps-simdna	724.7	pcrec_263b013_auto-nocaps-simdna	5178.7	excluded	excluded	7.123307	7.145864	1.025133	1.000000
+bounded@0.2	cls-upto-4096	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	836.3	pcrec_263b013_vm-caps-simdna	836.3	pcrec_263b013_auto-nocaps-simdna	2428.1	4.560904	2.051275	2.896986	2.903551	1.000000	1.084127
+bounded@0.2	cls-upto-512	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	237927.3	pcrec_263b013_vm-caps-simdna	237927.3	pcrec_263b013_auto-nocaps-simdna	416680.2	9.210982	3.475381	1.753627	1.751292	1.000000	1.143334
+bounded@0.2	cls-upto-512	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3405.7	libpcre2_10.46_jit-caps-simdna	3405.7			1.003325	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-512	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.4	pcrec_263b013_vm-in-caps-simdna	724.4	pcrec_263b013_auto-nocaps-simdna	1355.6	excluded	excluded	1.877797	1.871272	1.031382	1.000000
+bounded@0.2	cls-upto-512	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	836.6	pcrec_263b013_vm-caps-simdna	836.6	pcrec_263b013_auto-nocaps-simdna	2428.3	4.592933	2.007202	2.900603	2.902665	1.000000	1.081093
+bounded@0.2	cls-upto-64	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	269278.4	pcrec_263b013_vm-caps-simdna	269278.4	pcrec_263b013_auto-nocaps-simdna	424314.5	8.637559	3.220931	1.574912	1.575746	1.000000	1.140880
+bounded@0.2	cls-upto-64	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	3012.4	libpcre2_10.46_jit-caps-simdna	3012.4			1.000985	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-64	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	485.2	pcrec_263b013_vm-in-caps-simdna	485.2	pcrec_263b013_auto-nocaps-simdna	678.2	excluded	excluded	1.396486	1.397682	1.017231	1.000000
+bounded@0.2	cls-upto-64	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	607.6	pcrec_263b013_vm-caps-simdna	607.6	pcrec_263b013_auto-nocaps-simdna	1044.2	5.685640	2.387727	1.715971	1.718595	1.000000	1.118037
+bounded@0.2	cls-upto-65535	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	234150.0	pcrec_263b013_vm-caps-simdna	234150.0			9.262030	3.454262	refused	refused	1.000000	1.147679
+bounded@0.2	cls-upto-65535	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3426.0	libpcre2_10.46_interp-caps-simdna	3426.0			1.000000	1.004319	refused	refused	excluded	excluded
+bounded@0.2	cls-upto-65535	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	723.5	pcrec_263b013_vm-in-caps-simdna	723.5			excluded	excluded	refused	refused	1.026205	1.000000
+bounded@0.2	cls-upto-65535	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	834.0	pcrec_263b013_vm-caps-simdna	834.0			4.580694	2.006334	refused	refused	1.000000	1.088995
+bounded@0.2	cls-upto-8192	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	233986.7	pcrec_263b013_vm-caps-simdna	233986.7	pcrec_263b013_auto-nocaps-simdna	417006.5	9.274725	3.574564	1.775395	1.782180	1.000000	1.145566
+bounded@0.2	cls-upto-8192	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	3411.6	libpcre2_10.46_interp-caps-simdna	3411.6			1.000000	1.001598	excluded	excluded	excluded	excluded
+bounded@0.2	cls-upto-8192	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.2	pcrec_263b013_vm-in-caps-simdna	724.2	pcrec_263b013_auto-nocaps-simdna	5151.4	excluded	excluded	7.131148	7.112847	1.032317	1.000000
+bounded@0.2	cls-upto-8192	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	834.9	pcrec_263b013_vm-caps-simdna	834.9	pcrec_263b013_auto-nocaps-simdna	2427.1	4.609950	2.035678	2.908841	2.907166	1.000000	1.087966
+bounded@0.2	csv5	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	1677.8	pcrec_263b013_auto-caps-simdna	1685.6	pcrec_263b013_auto-nocaps-simdna	1677.8	1.078097	1.993859	1.004691	1.000000	10670.841799	10683.141725
+bounded@0.2	csv5	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1623.1	libpcre2_10.46_jit-caps-simdna	1623.1			1.010455	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	csv5	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	1319.1	pcrec_263b013_auto-caps-simdna	1327.2	pcrec_263b013_auto-nocaps-simdna	1319.1	excluded	excluded	1.006124	1.000000	2.930651	2.960958
+bounded@0.2	csv5	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	975.7	pcrec_263b013_auto-caps-simdna	981.7	pcrec_263b013_auto-nocaps-simdna	975.7	20.878746	5.628162	1.006141	1.000000	330.367590	330.291563
+bounded@0.2	ctx-greedy-256	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	105734.4	libpcre2_10.46_jit-caps-simdna	105734.4	pcrec_263b013_auto-nocaps-simdna	200488.1	5.258882	1.000000	1.900456	1.896148	4.481468	4.487515
+bounded@0.2	ctx-greedy-256	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	1991.1	libpcre2_10.46_interp-caps-simdna	1991.1			1.000000	1.000180	excluded	excluded	excluded	excluded
+bounded@0.2	ctx-greedy-256	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	676.4	pcrec_263b013_vm-caps-simdna	677.8	pcrec_263b013_auto-nocaps-simdna	676.4	excluded	excluded	1.002359	1.000000	1.002102	1.071887
+bounded@0.2	ctx-greedy-256	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	4334.8	libpcre2_10.46_jit-caps-simdna	4334.8	pcrec_263b013_auto-nocaps-simdna	6341.3	5.104770	1.000000	1.461484	1.462872	4.512398	4.514740
+bounded@0.2	ctx-lazy-1024	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104456.1	libpcre2_10.46_jit-caps-simdna	104456.1	pcrec_263b013_auto-nocaps-simdna	197811.0	5.332963	1.000000	1.895990	1.893724	4.252372	4.234555
+bounded@0.2	ctx-lazy-1024	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	7036.0	libpcre2_10.46_interp-caps-simdna	7036.0			1.000000	1.000340	excluded	excluded	excluded	excluded
+bounded@0.2	ctx-lazy-1024	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1872.0	pcrec_263b013_vm-caps-simdna	1872.0	pcrec_263b013_auto-nocaps-simdna	1887.7	excluded	excluded	1.008104	1.008364	1.000000	1.032831
+bounded@0.2	ctx-lazy-1024	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	5485.3	libpcre2_10.46_jit-caps-simdna	5485.3	pcrec_263b013_auto-nocaps-simdna	8828.5	6.303607	1.000000	1.609869	1.609483	3.965518	3.959137
+bounded@0.2	ctx-lazy-256	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104556.2	libpcre2_10.46_jit-caps-simdna	104556.2	pcrec_263b013_auto-nocaps-simdna	198389.4	5.320916	1.000000	1.889976	1.897442	4.240157	4.237160
+bounded@0.2	ctx-lazy-256	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	7015.0	libpcre2_10.46_interp-caps-simdna	7015.0			1.000000	1.001598	excluded	excluded	excluded	excluded
+bounded@0.2	ctx-lazy-256	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1879.0	pcrec_263b013_vm-caps-simdna	1879.0	pcrec_263b013_auto-nocaps-simdna	1894.7	excluded	excluded	1.001139	1.008339	1.000000	1.030485
+bounded@0.2	ctx-lazy-256	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	5492.6	libpcre2_10.46_jit-caps-simdna	5492.6	pcrec_263b013_auto-nocaps-simdna	8831.9	6.283054	1.000000	1.607309	1.607955	3.963047	3.964875
+bounded@0.2	ctx-lazy-64	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	104421.8	libpcre2_10.46_jit-caps-simdna	104421.8	pcrec_263b013_auto-nocaps-simdna	198642.2	5.326120	1.000000	1.892334	1.902306	4.254653	4.234174
+bounded@0.2	ctx-lazy-64	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	5631.6	libpcre2_10.46_interp-caps-simdna	5631.6			1.000000	1.001144	excluded	excluded	excluded	excluded
+bounded@0.2	ctx-lazy-64	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1568.9	pcrec_263b013_vm-caps-simdna	1568.9	pcrec_263b013_auto-nocaps-simdna	1580.0	excluded	excluded	1.030991	1.007085	1.000000	1.036950
+bounded@0.2	ctx-lazy-64	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	4509.0	libpcre2_10.46_jit-caps-simdna	4509.0	pcrec_263b013_auto-nocaps-simdna	8125.3	6.076627	1.000000	1.852391	1.802019	4.924583	4.939428
+bounded@0.2	dotted4	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	34564.7	libpcre2_10.46_jit-caps-simdna	34564.7	pcrec_263b013_auto-nocaps-simdna	66971.1	1.796961	1.000000	1.948280	1.937558	25.848117	26.720843
+bounded@0.2	dotted4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1473.4	libpcre2_10.46_jit-caps-simdna	1473.4			1.011097	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	dotted4	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	364.3	pcrec_263b013_auto-caps-simdna	370.5	pcrec_263b013_auto-nocaps-simdna	364.3	excluded	excluded	1.016961	1.000000	1.327313	1.483596
+bounded@0.2	dotted4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	2372.0	pcrec_263b013_auto-caps-simdna	2408.2	pcrec_263b013_auto-nocaps-simdna	2372.0	4.769832	1.047574	1.015290	1.000000	9.259615	9.400250
+bounded@0.2	floor	large-subject-throughput	plain	pcrec_263b013_auto-caps-simdna	1674.8	pcrec_263b013_auto-caps-simdna	1674.8	pcrec_263b013_auto-nocaps-simdna	1677.4	1.073307	2.556180	1.000000	1.001573	170.002496	169.723516
+bounded@0.2	floor	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	866.4	libpcre2_10.46_jit-caps-simdna	866.4			1.000520	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	floor	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	240.2	pcrec_263b013_vm-caps-simdna	240.2	pcrec_263b013_auto-nocaps-simdna	294.0	excluded	excluded	1.221111	1.223776	1.000000	1.147294
+bounded@0.2	floor	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	328.0	pcrec_263b013_auto-caps-simdna	328.0	pcrec_263b013_auto-nocaps-simdna	329.1	4.254725	3.621088	1.000000	1.003185	13.630795	13.694848
+bounded@0.2	grp-upto-1024	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	235852.5	pcrec_263b013_vm-caps-simdna	235852.5	pcrec_263b013_auto-nocaps-simdna	416255.1	29.196701	4.607841	1.763572	1.764896	1.000000	1.144032
+bounded@0.2	grp-upto-1024	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	33555.1	libpcre2_10.46_jit-caps-simdna	33555.1			1.001806	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	grp-upto-1024	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	724.0	pcrec_263b013_vm-in-caps-simdna	724.0	pcrec_263b013_auto-nocaps-simdna	1355.2	excluded	excluded	1.874773	1.871643	1.031466	1.000000
+bounded@0.2	grp-upto-1024	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	840.8	pcrec_263b013_vm-caps-simdna	840.8	pcrec_263b013_auto-nocaps-simdna	2426.7	39.868261	3.664934	2.885848	2.886213	1.000000	1.079956
+bounded@0.2	hex32	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	287254.6	libpcre2_10.46_jit-caps-simdna	287254.6	pcrec_263b013_auto-nocaps-simdna	313659.6	4.200163	1.000000	1.098170	1.091922	1.990282	1.996618
+bounded@0.2	hex32	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1416.4	libpcre2_10.46_jit-caps-simdna	1416.4			1.026794	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	hex32	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	483.9	pcrec_263b013_vm-caps-simdna	483.9	pcrec_263b013_auto-nocaps-simdna	561.5	excluded	excluded	1.170595	1.160347	1.000000	1.036066
+bounded@0.2	hex32	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	2938.3	pcrec_263b013_auto-caps-simdna	2966.3	pcrec_263b013_auto-nocaps-simdna	2938.3	10.210484	1.394553	1.009523	1.000000	5.188788	5.178168
+bounded@0.2	line-80	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	32295.3	libpcre2_10.46_jit-caps-simdna	32295.3	pcrec_263b013_auto-nocaps-simdna	75939.0	3.946521	1.000000	2.424059	2.351398	2.468819	2.452950
+bounded@0.2	line-80	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	5283.6	libpcre2_10.46_jit-caps-simdna	5283.6			1.002787	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	line-80	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	2351.5	pcrec_263b013_vm-caps-simdna	2351.5	pcrec_263b013_auto-nocaps-simdna	3313.8	excluded	excluded	1.419391	1.409266	1.000000	1.021955
+bounded@0.2	line-80	short-subject-search	plain	libpcre2_10.46_jit-caps-simdna	2150.4	libpcre2_10.46_jit-caps-simdna	2150.4	pcrec_263b013_auto-nocaps-simdna	5333.7	2.491943	1.000000	2.503932	2.480312	6.126010	6.170814
+bounded@0.2	nest2-4	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	99846.6	pcrec_263b013_auto-caps-simdna	100017.5	pcrec_263b013_auto-nocaps-simdna	99846.6	4.602591	1.072518	1.001712	1.000000	4.716831	6.350936
+bounded@0.2	nest2-4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	53506.3	libpcre2_10.46_jit-caps-simdna	53506.3			1.001949	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	nest2-4	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	406.3	pcrec_263b013_auto-caps-simdna	406.7	pcrec_263b013_auto-nocaps-simdna	406.3	excluded	excluded	1.001066	1.000000	23.155390	23.493267
+bounded@0.2	nest2-4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	925.2	pcrec_263b013_auto-caps-simdna	928.3	pcrec_263b013_auto-nocaps-simdna	925.2	5.746547	1.947169	1.003412	1.000000	4.297881	5.562822
+bounded@0.2	nest2-64	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	72881.3	libpcre2_10.46_jit-caps-simdna	72881.3	pcrec_263b013_auto-nocaps-simdna	104030.3	1.313528	1.000000	1.428621	1.427393	6.572297	6.395675
+bounded@0.2	nest2-64	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	4102.8	libpcre2_10.46_jit-caps-simdna	4102.8			1.000748	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	nest2-64	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	875.5	pcrec_263b013_vm-caps-simdna	876.0	pcrec_263b013_auto-nocaps-simdna	875.5	excluded	excluded	1.001021	1.000000	1.000632	1.081038
+bounded@0.2	nest2-64	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1883.0	pcrec_263b013_auto-caps-simdna	1886.5	pcrec_263b013_auto-nocaps-simdna	1883.0	2.621126	1.105746	1.001876	1.000000	2.335264	2.365030
+bounded@0.2	nest2-letters-6	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	176229.6	libpcre2_10.46_jit-caps-simdna	176229.6	pcrec_263b013_auto-nocaps-simdna	310082.3	5.317449	1.000000	1.759681	1.759536	1.491165	1.763351
+bounded@0.2	nest2-letters-6	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	4881375.6	libpcre2_10.46_jit-caps-simdna	4881375.6			1.000430	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	nest2-letters-6	match-compliance	whole-subject	pcrec_263b013_auto-caps-simdna	595.5	pcrec_263b013_auto-caps-simdna	595.5	pcrec_263b013_auto-nocaps-simdna	595.8	excluded	excluded	1.000000	1.000533	1724.764835	1726.505523
+bounded@0.2	nest2-letters-6	short-subject-search	plain	pcrec_263b013_auto-caps-simdna	1075.3	pcrec_263b013_auto-caps-simdna	1075.3	pcrec_263b013_auto-nocaps-simdna	1075.5	4.515925	1.668728	1.000000	1.000247	2.767150	3.007299
+bounded@0.2	nest3-16	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	58364.0	libpcre2_10.46_jit-caps-simdna	58364.0	pcrec_263b013_auto-nocaps-simdna	104223.5	2.333568	1.000000	1.786840	1.785750	13.834126	13.858937
+bounded@0.2	nest3-16	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	6481.0	libpcre2_10.46_jit-caps-simdna	6481.0			1.002075	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	nest3-16	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	1683.5	pcrec_263b013_auto-caps-simdna	1687.9	pcrec_263b013_auto-nocaps-simdna	1683.5	excluded	excluded	1.002596	1.000000	1.022887	1.041661
+bounded@0.2	nest3-16	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1883.4	pcrec_263b013_auto-caps-simdna	1883.7	pcrec_263b013_auto-nocaps-simdna	1883.4	3.423203	1.121862	1.000167	1.000000	3.884513	4.026645
+bounded@0.2	nest3-3	large-subject-throughput	plain	libpcre2_10.46_jit-caps-simdna	90252.0	libpcre2_10.46_jit-caps-simdna	90252.0	pcrec_263b013_auto-nocaps-simdna	101772.4	5.793716	1.000000	1.126513	1.127647	5.125331	5.273899
+bounded@0.2	nest3-3	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	6129581.9	libpcre2_10.46_jit-caps-simdna	6129581.9			1.003487	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	nest3-3	match-compliance	whole-subject	pcrec_263b013_auto-nocaps-simdna	471.1	pcrec_263b013_auto-caps-simdna	473.9	pcrec_263b013_auto-nocaps-simdna	471.1	excluded	excluded	1.005891	1.000000	2024.780454	2019.560013
+bounded@0.2	nest3-3	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1051.4	pcrec_263b013_auto-caps-simdna	1056.3	pcrec_263b013_auto-nocaps-simdna	1051.4	6.978013	1.733869	1.004669	1.000000	3.874178	4.644447
+bounded@0.2	pw-8-64	large-subject-throughput	plain	pcrec_263b013_vm-caps-simdna	125943.9	pcrec_263b013_vm-caps-simdna	125943.9	pcrec_263b013_auto-nocaps-simdna	394332.3	2.798475	1.037664	3.168827	3.131015	1.000000	1.027476
+bounded@0.2	pw-8-64	match-compliance	plain	libpcre2_10.46_interp-caps-simdna	4763.3	libpcre2_10.46_interp-caps-simdna	4763.3			1.000000	1.000724	excluded	excluded	excluded	excluded
+bounded@0.2	pw-8-64	match-compliance	whole-subject	pcrec_263b013_vm-caps-simdna	1466.4	pcrec_263b013_vm-caps-simdna	1466.4	pcrec_263b013_auto-nocaps-simdna	2416.1	excluded	excluded	1.669592	1.647661	1.000000	1.017525
+bounded@0.2	pw-8-64	short-subject-search	plain	pcrec_263b013_vm-caps-simdna	1636.5	pcrec_263b013_vm-caps-simdna	1636.5	pcrec_263b013_auto-nocaps-simdna	4319.9	3.129422	1.137203	2.665998	2.639751	1.000000	1.055179
+bounded@0.2	year4	large-subject-throughput	plain	pcrec_263b013_auto-nocaps-simdna	114221.0	pcrec_263b013_auto-caps-simdna	116046.0	pcrec_263b013_auto-nocaps-simdna	114221.0	4.928847	2.198252	1.015978	1.000000	2.494853	2.642917
+bounded@0.2	year4	match-compliance	plain	libpcre2_10.46_jit-caps-simdna	1758.1	libpcre2_10.46_jit-caps-simdna	1758.1			1.006615	1.000000	excluded	excluded	excluded	excluded
+bounded@0.2	year4	match-compliance	whole-subject	pcrec_263b013_vm-in-caps-simdna	306.4	pcrec_263b013_vm-in-caps-simdna	306.4	pcrec_263b013_auto-nocaps-simdna	321.2	excluded	excluded	1.056407	1.048274	1.037071	1.000000
+bounded@0.2	year4	short-subject-search	plain	pcrec_263b013_auto-nocaps-simdna	1583.1	pcrec_263b013_auto-caps-simdna	1598.7	pcrec_263b013_auto-nocaps-simdna	1583.1	8.023508	1.724513	1.009861	1.000000	4.177876	4.175971

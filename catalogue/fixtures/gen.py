@@ -85,18 +85,29 @@ def project_report(path, select, mutate=None, mutate_header=None):
             parts.append(clause)
         header = "# " + "; ".join(parts)
     out = [header, columns]
+    # The file's OWN column line, never REPORT_COLUMNS: a subject-grain
+    # slice of a mixed-capture-class roster carries a 19th column,
+    # `capture_class` ([B85], KB-28), which a fixed 18-name zip would
+    # silently drop from every row (the [B91] regen wave found it).
+    names = columns.split("\t")
+    if names[:len(REPORT_COLUMNS)] != REPORT_COLUMNS:
+        raise SystemExit(f"{path}: unexpected column line {columns!r}")
     done = False
     for ln in lines[2:]:
         if not ln:
             continue
-        row = dict(zip(REPORT_COLUMNS, ln.split("\t")))
+        fields = ln.split("\t")
+        if len(fields) != len(names):
+            raise SystemExit(f"{path}: row with {len(fields)} fields, "
+                             f"expected {len(names)}: {ln[:80]!r}")
+        row = dict(zip(names, fields))
         if select and not _matches(row, select):
             continue
         if mutate and (mutate.get("all") or not done):
             if _where_hit(row, mutate.get("where", {})):
                 row[mutate["column"]] = mutate["value"]
                 done = True
-        out.append("\t".join(row[c] for c in REPORT_COLUMNS))
+        out.append("\t".join(row[c] for c in names))
     return "\n".join(out) + "\n"
 
 

@@ -1,4 +1,4 @@
-# reporter: v18 (2026-09-18); filters: subbench=capability, version=0.1, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 1; mixed_x13: False; include_provenance: False; worst_other_core_busy: 42.61% (rust_1.13.1_default-caps-simdna / keyword-prefix-order / large-subject-throughput); floor_pattern: floor-byte
+# reporter: v24 (2026-09-26); filters: subbench=capability, version=0.1, until=2026-09-19T22:58:39Z, testee=rust_1.13.1_default-caps-simdna; source: store/index.tsv (1 record(s) matching this query); records: 1; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: capability@0.1; machines: budu-ryzen1600; schema_versions: 1.6; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 1; mixed_x13: False; include_provenance: False; worst_other_core_busy: 42.61% (rust_1.13.1_default-caps-simdna / keyword-prefix-order / large-subject-throughput); floor_pattern: floor-byte
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						capability@0.1__rust_1.13.1_default-caps-simdna__budu-ryzen1600__20260919T213423Z				agreement	agree (0 of 82 groups; 0 of 3194 rows; 4 unjudged; k=1.5, 2/3; 5 trials)						
 baseline	base10num-near-miss	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
@@ -78,7 +78,7 @@ rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	rust_1.13
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	9.578819	3	1.0000	0	0		
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	3	1.0000	0	0		
 rank	evil-alt-nested	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	3	1.0000	0	0		
-excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		pass_rate	0.9733	75	0.9733	0	10	0	
+excluded	evil-alt-nested	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		pass_rate	0.9733	75	0.9733	0	0	0	
 baseline	file-ext-order	(set)	large-subject-throughput			rust_1.13.1_default-caps-simdna				baseline_identity	row-best-fallback					rust_1.13.1_default-caps-simdna (row-best fallback -- interp absent from this group)	
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	median_ns	46454.240942	3	1.0000	0	0		
 rank	file-ext-order	(set)	large-subject-throughput	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	min_ns	46421.955156	3	1.0000	0	0		
@@ -563,6 +563,7 @@ rank	winpath-near-miss	(set)	short-subject-search	plain	same program	rust_1.13.1
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	stddev_ns	237.287688	75	1.0000	0	0		
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
 rank	winpath-near-miss	(set)	short-subject-search	plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	0						
 compile	balanced-parens-rec			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns		1					
 compile	base10num-near-miss			plain	same program	rust_1.13.1_default-caps-simdna				median_total_ns	140811.000000	5					
 compile	base10num-near-miss			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.525						
@@ -755,3 +756,25 @@ compile	winpath-near-miss			plain	same program	rust_1.13.1_default-caps-simdna		
 compile	winpath-near-miss			plain	same program	rust_1.13.1_default-caps-simdna				jitter	1.895						
 compile	winpath-near-miss			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				median_total_ns	204781.000000	5					
 compile	winpath-near-miss			whole-subject	separate artifact	rust_1.13.1_default-caps-simdna				jitter	1.996						
+unsupported_by_pattern	balanced-parens-rec			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES recursion; rust-default declares none of it	
+unsupported_by_pattern	bracket-array-define			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES recursion; rust-default declares none of it	
+unsupported_by_pattern	currency-lookbehind-fixed			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	doubled-word			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs; rust-default declares none of it	
+unsupported_by_pattern	dup-param-detect			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs; rust-default declares none of it	
+unsupported_by_pattern	email-local-nodup			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	float-literal-bound			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	logparse-atomic			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES atomic-group; rust-default declares none of it	
+unsupported_by_pattern	negation-scope-lookbehind-var			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround, lookbehind-variable; rust-default declares none of it	
+unsupported_by_pattern	nested-comment-rec			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround, recursion; rust-default declares none of it	
+unsupported_by_pattern	phone-palindrome-6			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs; rust-default declares none of it	
+unsupported_by_pattern	pwd-strength-chain			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	quoted-delim-match			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs, lookaround; rust-default declares none of it	
+unsupported_by_pattern	tag-depth3-bound			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs; rust-default declares none of it	
+unsupported_by_pattern	tag-pair-match			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES backrefs; rust-default declares none of it	
+unsupported_by_pattern	utf8-lead-no-cont			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-base10num-grok			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES atomic-group, lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-base10num-noatomic			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-quotedstring-grok			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES atomic-group, lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-quotedstring-noatomic			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-syslogbase-expanded			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES lookaround; rust-default declares none of it	
+unsupported_by_pattern	wild-logparse-winpath-grok			plain	same program	rust_1.13.1_default-caps-simdna	measured	pinned		compile_outcome	unsupported-by-declaration					REQUIRES atomic-group; rust-default declares none of it	

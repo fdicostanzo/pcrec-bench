@@ -1,4 +1,4 @@
-# reporter: v18 (2026-09-18); filters: subbench=email-specimen, version=0.1; source: store/index.tsv (14 record(s) matching this query); records: 9; excluded_invalid: 0; superseded: 5; newer_not_measured: 0; subbench_versions: email-specimen@0.1; machines: budu-ryzen1600; schema_versions: 1.1,1.2; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 9; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none
+# reporter: v24 (2026-09-26); filters: subbench=email-specimen, version=0.1; source: store/index.tsv (14 record(s) matching this query); records: 9; excluded_invalid: 0; superseded: 5; newer_not_measured: 0; subbench_versions: email-specimen@0.1; machines: budu-ryzen1600; schema_versions: 1.1,1.2; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.1-1.3 X13 (both samples quiet) on 9; mixed_x13: False; include_provenance: False; worst_other_core_busy: n/a; floor_pattern: none; null_band: pcrec 8da6120 -> 692c2e8: NO census (reports/identity/email-specimen@0.1/pcrec_8da6120__692c2e8.tsv)
 section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
 record						email-specimen@0.1__libpcre2_10.46_interp-caps-simdna__budu-ryzen1600__20260825T221651Z				agreement	n/a (v1.2)						
 record						email-specimen@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260825T174132Z				agreement	n/a (v1.1)						
@@ -9,6 +9,18 @@ record						email-specimen@0.1__pcrec_692c2e8_vm-in-caps-simdna__budu-ryzen1600_
 record						email-specimen@0.1__pcrec_8da6120_auto-caps-simdna__budu-ryzen1600__20260825T065046Z				agreement	n/a (v1.1)						
 record						email-specimen@0.1__pcrec_8da6120_auto-nocaps-simdna__budu-ryzen1600__20260825T063943Z				agreement	n/a (v1.1)						
 record						email-specimen@0.1__pcrec_8da6120_vm-caps-simdna__budu-ryzen1600__20260825T064436Z				agreement	n/a (v1.1)						
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	median_ns	12546.190865	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	min_ns	12511.794347	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	max_ns	12629.498757	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	stddev_ns	43.488345	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	ratio_vs_baseline	0.189397	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	4	ratio_vs_best	2.048748	77	1.0000	0	0		
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	median_ns	28996.905722	77	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	min_ns	28809.298167	77	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	max_ns	30000.957563	77	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	stddev_ns	431.081428	77	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	ratio_vs_baseline	0.437736	77	1.0000	0	0		unchanged (within spread)
+rank_yes	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	5	ratio_vs_best	4.735090	77	1.0000	0	0		unchanged (within spread)
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	6	median_ns	28996.905722	77	1.0000	0	0		
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	6	min_ns	12511.794347	77	1.0000	0	0		
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-in-caps-simdna	measured	pinned	6	max_ns	12629.498757	77	1.0000	0	0		
@@ -21,6 +33,7 @@ rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-si
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	7	stddev_ns	431.081428	77	1.0000	0	0		unchanged (within spread)
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	7	ratio_vs_baseline	0.437736	77	1.0000	0	0		unchanged (within spread)
 rank	orig	(set)	short-subject-search	plain	same program	pcrec_692c2e8_vm-caps-simdna	measured	pinned	7	ratio_vs_best	4.735090	77	1.0000	0	0		unchanged (within spread)
+query_yes_beats_nocaps										hit_count	14						
 compile_stamp						pcrec_692c2e8_vm-caps-simdna				engine	vm						
 compile_stamp						pcrec_692c2e8_vm-caps-simdna				entry	plain entry						
 compile_stamp						pcrec_692c2e8_vm-caps-simdna				prefilter	none						
