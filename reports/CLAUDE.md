@@ -196,6 +196,21 @@ section's "the records carry no program hash of their own" line is true
 of the BEFORE only. Read into
 `docs/dev/ledgers/2026-09-25-k64-fix-after-ce658cb7.md`.
 
+**[B95] reading (2026-09-26, lane b95read): `bench/utf8@0.1`'s FIRST
+SAMPLE, `2026-09-26-utf8-0.1-budu-ryzen1600-first-ce658cb7.*`** — six
+files (`.tsv`, `.md`, `.matrix.tsv`, `.matrix.html`, `.subject-grain.tsv`
+slice, `.interpretation.md`), rendered at reporter v24 from `--subbench utf8
+--version 0.1 --since 2026-09-26T00:00:00Z --until 2026-09-26T18:00:00Z`.
+The query takes all eleven utf8 records in `store/index.tsv` and nothing
+else: 0 superseded, 0 excluded. It was rendered in ONE store load, the
+same per-group body as `scripts/regen_reports.py` (~300 s). No
+`.subject-grain.md` was rendered: the slice is what `interpret` reads. The
+sidecar used the `/pcrec-bench-interpret` procedure with
+`--predictions docs/dev/predictions/utf8-0.1-first.tsv` and
+`--subject-grain`, and passed the determinism check. The predictions file
+now LOADS (the re2/onig/vectorscan globs match measured testees). Read into
+`docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
