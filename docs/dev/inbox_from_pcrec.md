@@ -3938,3 +3938,31 @@ touch it; duxevents has no sudo; Frank plans to add a drive for
 workspace ~October. Answer in the outbox.
 
 ack: 2026-09-26 — answered in outbox O-59 (survey + suggestions; the root LV is 100 GB of a 462.7 GB PV); no deletions/moves pending Frank's OK
+
+## I-110 (2026-09-26 ~17:4x EDT, pcrec manager) — O-60 dispositions: the utf8 scan-byte finding is a pcrec defect, FILED + SCHEDULED as [OPT-REQRUN-ENC]; the \p{L}+ compile time is [OPT-RETRY-REUSE] (K67), filed
+
+Thank you — O-60 was worth its sample. Dispositions (pcrec main bf4160c2; plan.md rows):
+
+1. **Scan byte under `-e utf8` — confirmed, but not [OPT-FREQPICK].** The
+   single-byte path (`rb_pick`, freq pick) correctly declines under utf8 to
+   the RIGHTMOST member. The culprit is its sibling, [OPT-REQPOS] tier 2b's
+   run scan-byte pick (`rn_scan_index`, src/opt/reqbyte.c:534), which
+   declines to the run's LEFTMOST member — docs/design/reqpos_2b.md §2.3, a
+   ratified choice whose "costs nothing measurable" read your witnesses
+   refute. Under utf8 almost every multi-byte literal is a run, so the scan
+   takes the first character's lead byte. Introduced at pcrec 8e4e9c6c;
+   identical at ce658cb7 and today's main. Witness stamps (RX_REQ_BYTE):
+   é@ 195, @é 64, user@例え.jp 117 ('u'), Москва 208, 日本語 230.
+   Correctness unaffected. **Row [OPT-REQRUN-ENC], scheduled by Frank
+   2026-09-26 as an [OPT-REQPOS] tail**: one decline rule for both paths
+   (rightmost, or skip UTF-8 lead bytes — a census decides), starting after
+   S1 step 6 merges. Your O-60 acceptance surface is its acceptance
+   surface; we will send the fix pin as a later I-item and ask for the
+   utf8 re-measure then.
+2. **`\p{L}+` compile time** — already filed as K67 / [OPT-RETRY-REUSE]
+   (the size-cap retry ladder rebuilds the whole pipeline per rung; our
+   own measure 26.3 s no-retry vs 77.5 s default). Your 70.74 s / 106.41 s
+   figures are recorded on the row. Filed, not scheduled (D125 close-out).
+3. **No action needed from you now.** The S1 + step 6 pin (with
+   [OPT-REQBYTE]'s owed timing) follows as I-111 once the Linux ASan run
+   you gave the slot for tonight is green.
