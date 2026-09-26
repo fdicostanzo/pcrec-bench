@@ -1,8 +1,15 @@
-# testees/vectorscan/ — the Vectorscan adapter (BOOLEAN GRAIN)
+# testees/vectorscan/ — the Vectorscan adapter (BOOLEAN GRAIN + SOM)
 
-Provides one testee: `vectorscan-block-nosom`. `vectorscan-block-som` is
-documented below as a LATER config (capability_set_v1.md §8's own roster
-row); this lane does not wire it.
+Provides TWO testees, sharing one driver: `vectorscan-block-nosom`
+(BOOLEAN GRAIN, unchanged since 2026-09-17) and, since [B92]
+(2026-09-26), `vectorscan-block-som` (HS_FLAG_SOM_LEFTMOST always set,
+FULL GRAIN: a real first-match span and a real non-overlapping NMATCHES).
+See "`vectorscan-block-som` — [B92]" below for the second testee; every
+section above it describes `nosom`, UNCHANGED by `som`'s arrival (its own
+argv, `build_flags`, `config_extra` and derived `testee_id` are all byte
+for byte what they were — `tools/selfcheck.py:check_encoding_axis`'s
+pre-existing frozen table proves this on every run, and
+`check_vectorscan_som` re-derives it directly).
 
 Built [B7]/L6b wave 2 (`capability_set_v1.md` §11.1's per-engine lane
 row), lane `l6bvs`, 2026-09-17. Vectorscan (the actively-maintained,
@@ -13,9 +20,9 @@ before this lane started); `/usr/include/hs/*.h`, `pkg-config libhs`.
 
 | file | role |
 |---|---|
-| `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION (`min_width`, `max_width`, `unordered_matches`, `matches_at_eod`, `matches_only_at_eod`, `compiled_size_bytes`); the (empty) `GAVE_UP_CODES` set |
-| `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libhs.so.5` (`#include <hs/hs.h>`, `-lhs`) |
-| `configs.toml` | the one config id, `vectorscan-block-nosom` |
+| `adapter.py` | `describe`/`prepare`/`compile`/`measure` for BOTH configs (branching on `engine_mode == "block-som"`); the engine-metadata DECLARATION (`min_width`, `max_width`, `unordered_matches`, `matches_at_eod`, `matches_only_at_eod`, `compiled_size_bytes`); the (empty) `GAVE_UP_CODES` set |
+| `driver.c` | the batched in-process timing driver for BOTH configs (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libhs.so.5` (`#include <hs/hs.h>`, `-lhs`); `--som` is the ONLY thing that tells the two configs' invocations apart — see the file's own "SOM MODE" header section |
+| `configs.toml` | the two config ids, `vectorscan-block-nosom` and (since [B92]) `vectorscan-block-som`, plus `vectorscan-block-nosom-utf8` |
 | `_probe.rx` | one byte, `a` — the version-probe pattern (`testees/pcre2/_probe.rx`'s own convention) |
 
 ## THE GOVERNING RULING: BOOLEAN GRAIN (Frank, Q3, 2026-09-16)
@@ -146,21 +153,26 @@ unilaterally (the fix lives in `pcrecbench/harness.py` and/or
 not to touch while pcrec's battery owns the box, and a schema/harness
 change needs a ruling regardless of the box).
 
-### `NMATCHES` (throughput regime): also unavailable, also honest
+### `NMATCHES` (throughput regime): unavailable on `nosom`, BUILT on `som` ([B92])
 
 pcrec match_api.md S3.1's non-overlapping-match COUNT (KB-17's advance
 rule) needs each match's START offset to de-duplicate correctly — that
-is exactly what `HS_FLAG_SOM_LEFTMOST` supplies, and this `nosom` config
-does not carry it by construction. `docs/dev/research/2026-09-12-b42-
+is exactly what `HS_FLAG_SOM_LEFTMOST` supplies, and `nosom` does not
+carry it by construction. `docs/dev/research/2026-09-12-b42-
 engine-landscape.md`'s own §11 gap states this precisely: "Hyperscan's
 natural one-pass 'all ends' callback does not produce that count on its
-own" and describes an adapter-side reduction as the fix. **This lane
+own" and describes an adapter-side reduction as the fix. **`nosom` still
 does NOT build that reduction** — `driver.c` accepts `--find-all` for
-protocol compliance but always prints `NMATCHES = -`, honestly, rather
-than a raw Hyperscan match-callback count that is NOT the same quantity
-every other engine's `NMATCHES` column reports (a raw count double-counts
-every overlapping start point a non-overlapping rule would collapse).
-OWED, named in the lane report.
+protocol compliance but always prints `NMATCHES = -`, honestly, on THIS
+config, unchanged by [B92]'s arrival.
+
+**[B92] (2026-09-26) BUILDS the reduction, on the SEPARATE `som` config**
+(Frank's ruling on `docs/dev/lanes/b72smalls_report.md` §4 / `capability_
+set_v1.md` §5.6: option (b) of the two live candidates — answer the
+EXISTING protocol shapes rather than grow a third invocation mode). See
+"`vectorscan-block-som` — [B92]" below for the reduction itself, the
+documented leftmost-longest-vs-leftmost-first divergence, the SOM-only
+compile restriction and its census, and the controls in `make check`.
 
 ## (a) The compile-cost definition
 
@@ -280,7 +292,12 @@ compile witnesses** (capability_set_v1.md §5.1's own note, the SAME
 class of exclusion `testees/pcre2/CLAUDE.md`'s `pcre2-dfa` section makes
 for its own `captures` withhold): `span-reporting` is withheld because
 this config never carries `HS_FLAG_SOM_LEFTMOST`, structurally, not
-because any construct refuses; `captures` is withheld because Hyperscan
+because any construct refuses ([B92], 2026-09-26: `vectorscan-block-som`
+now BUILDS a real span — see below — but this roster row is `nosom`'s
+own declaration and is untouched; `som` is not yet added to
+`EXT_BENCH_ROSTER` at all, which would need its own witness census the
+same discipline every other roster row on this file cites, OWED, not
+this lane's scope); `captures` is withheld because Hyperscan
 has **NO capturing-group mechanism at all** — confirmed live: `(?<name>a)`
 and `(?P<name>a)` BOTH compile clean (`named-groups` is SATISFIED), which
 is only possible because Hyperscan silently treats every group, named or
@@ -491,3 +508,166 @@ WITNESSED (`docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt`) -- 
 
 Declares 7/20. `non-utf8-subject` NOT by rule -- Hyperscan documents
 invalid UTF-8 under `HS_FLAG_UTF8` as undefined.
+
+## `vectorscan-block-som` -- [B92] (2026-09-26)
+
+Frank's ruling on `docs/dev/lanes/b72smalls_report.md` §4 / `capability_
+set_v1.md` §5.6: of the two live candidates left after (C) (dropping
+Vectorscan from the roster) was never seriously considered, **option (b)
+was chosen over option (A)** -- wire `HS_FLAG_SOM_LEFTMOST` into a
+SEPARATE config that answers the driver protocol's EXISTING first-match
+span and non-overlapping-NMATCHES shapes, rather than grow a THIRD
+invocation mode / a list-valued row (5.6 option (A), which needed a
+schema change this project has never built and stayed parked since
+2026-09-16).
+
+**Shares `driver.c` with `nosom` — `--som` is the ONLY thing that tells
+the two configs' invocations apart.** `testees/vectorscan/adapter.py`
+passes it iff `engine_mode == "block-som"`; `vectorscan-block-nosom`'s
+own compile/measure argv NEVER carries it, and the driver's own `if
+(som_mode) {...} else {<the pre-[B92] code, untouched>}` split is the
+ONLY fork point (`driver.c`'s "SOM MODE" header section states this in
+full) -- so `nosom`'s own byte-for-byte behaviour is provably unreached
+by anything this lane added, not merely "unaffected in practice".
+`tools/selfcheck.py:check_encoding_axis`'s pre-existing frozen table
+(unrelated to this lane, `[B77] U2`'s own control) still passes after
+this change, independently re-confirming `nosom`'s id/`build_flags`/
+`config_extra` never moved; `check_vectorscan_som` re-derives it
+directly too.
+
+### FULL GRAIN, not boolean
+
+`describe()` sets NO `grain` key for `vectorscan-block-som` at all --
+the SAME omission every non-boolean-grain testee on this roster makes,
+which `harness.outcome_for`'s own default (`grain="full"`) reads as an
+ORDINARY testee: its real span is compared against the sub-bench's
+expectation, and a genuine mismatch scores `wrong-span-or-captures`
+exactly like any other testee's would. This is deliberate -- see "THE
+DOCUMENTED DIVERGENCE" below for what that means in practice on a real
+corpus pattern. `conventions` stays `["all-ends"]` on BOTH configs
+(`capability_set_v1.md` §5.6's own table: that is Vectorscan's declared
+convention, full stop) -- `som`'s span/NMATCHES are this DRIVER's own
+reduction OVER that all-ends architecture, not a claim that Hyperscan
+itself became a leftmost-first engine.
+
+### The reduction: leftmost, then longest
+
+Hyperscan's callback, under `HS_FLAG_SOM_LEFTMOST`, reports a REAL
+`from` (start) offset beside the `to` (end) it always reported -- but
+the underlying architecture is still ALL-ENDS: for `a+` scanning "aaa",
+the callback fires once per valid END offset (1, 2, 3), each with
+`from=0` (SOM_LEFTMOST's own leftmost-start guarantee). `--som`'s
+callback (`on_match_som` in `driver.c`) therefore NEVER stops early --
+it accumulates EVERY `(from, to)` pair Hyperscan reports for the whole
+subject into a growable array, and the driver reduces that FULL set
+itself:
+
+1. **THE FIRST-MATCH SPAN**: the MINIMUM `from` over every reported
+   match, then the MAXIMUM `to` among matches sharing that minimum
+   `from` -- LEFTMOST, then LONGEST.
+2. **NMATCHES** (`--find-all` only): the same list, sorted by (`from`
+   ascending, `to` DESCENDING on a tie -- so the first entry at any
+   given `from` is already its own longest completion), walked with
+   pcrec match_api.md S3.1's advance rule (KB-17): a cursor starts at
+   0; the first remaining match with `from >= cursor` is counted, and
+   the cursor advances to that match's `to` when non-empty, else to
+   `from + 1` (or, under `--utf8` -- [B77] U1, now LIVE for this
+   config, unlike `nosom`'s inert one -- the next UTF-8 character
+   boundary).
+
+Both reductions are ONE pass over ONE `hs_scan()` call's full output --
+no re-scanning, no buffer-slicing (which would have corrupted `^`'s
+anchor semantics on any prefix cut away). **A real, documented COST**:
+`--som` always scans the WHOLE subject once per `iters` pass, even for
+a bare boolean/first-match query with no `--find-all` -- there is no
+early-stop optimisation to fall back to (unlike `nosom`, which always
+stops at the first callback). This is the SAME "unconditional space
+cost, not a dial" `testees/CLAUDE.md`'s roster row already states for
+SOM's compiled-database size, extended honestly to its MATCH-time cost
+too.
+
+### THE DOCUMENTED DIVERGENCE, measured, not hidden
+
+`a|ab` over `"ab"`: the libpcre2 oracle (`perl-leftmost-first`) answers
+span `[0,1)` ("a" wins, first alternative) with find-all count 1.
+`vectorscan-block-som` answers span `[0,2)` ("ab" -- the LONGEST
+completion at the leftmost start, since Hyperscan's all-ends scan
+reports BOTH `(0,1)` and `(0,2)` and this driver keeps the longer one)
+with find-all count ALSO 1 -- the two conventions agree on the COUNT
+here and disagree on the SPAN. This is exactly capability_set_v1.md
+§5.6's own "alternation order under leftmost-first vs leftmost-longest"
+divergence (family 11), reproduced live and asserted BY VALUE in
+`tools/selfcheck.py:check_vectorscan_som` (arm 4) rather than only
+described in prose. On patterns with no such ambiguity (a single-branch
+greedy quantifier, a plain literal), the two conventions coincide
+exactly -- also asserted (arm 3): `a+` over "aaa" ([0,3), 1), `a` over
+"aaaa" ([0,1), 4), `foo` over "xfooy" ([1,4), 1), all agreeing with the
+oracle byte for byte.
+
+A reader of a real report row for this testee should expect: most
+patterns agree with the oracle exactly (the reduction IS the oracle's
+own answer whenever there is only one candidate span at the leftmost
+start); a pattern with an alternation whose branches have different
+matched lengths at the same start point will diverge, visibly, as
+`wrong-span-or-captures` -- never silently absorbed, never hidden behind
+a `grain` relaxation the way `nosom`'s boolean grain is.
+
+### The SOM-only compile restriction, first-class and censused
+
+`HS_FLAG_SOM_LEFTMOST` documents a REAL, ADDITIONAL refusal set beyond
+`nosom`'s own: Hyperscan's own history-tracking limit refuses an
+expression that would need to track an unbounded amount of match
+history to report a leftmost start offset. This lands via the EXISTING
+generic `did-not-compile` path (`_compile_one` in `adapter.py`) --
+Vectorscan's own `hs_compile_error_t.message`, verbatim, no new code
+needed. Two independently-worded diagnostics, for two independently-
+shaped causes, both witnessed:
+
+- an isolated one-character-controlled witness, `.*a.{40,}`: compiles
+  under `nosom`, refuses under `som` with `"Pattern is too large."` (an
+  unbounded-history-tracking budget).
+- TWO real `bench/capability` corpus patterns, `evil-alt-nested` and
+  `trim-nested-star` -- both patterns whose language can match the EMPTY
+  string somewhere inside an unbounded-repeat context -- refuse under
+  `som` (but compile under `nosom`) with `"Start of match is not
+  currently supported for patterns which match an empty buffer."`, a
+  DIFFERENT diagnostic naming a different mechanism.
+
+**The full census** (`docs/dev/measurements/probe_vectorscan_som_witness_
+census.py` / `2026-09-26-vectorscan-som-vs-nosom-census.txt`): of
+`bench/capability`'s 64 real corpus patterns (plain form), 38 compile
+under BOTH configs, 2 compile under `nosom` ONLY (the SOM restriction's
+real cost, named above), 0 compile under `som` only, and the remaining
+24 compile under NEITHER -- the SAME 24 `nosom` already refuses on its
+own terms (backrefs, lookaround, atomic groups, recursion, conditionals,
+`\K`, control verbs, callouts, the two free-spacing comment-parser
+patterns; see "The capability declaration" above). SOM adds EXACTLY two
+patterns to the refusal set, no more.
+
+### The controls in `make check`
+
+`tools/selfcheck.py:check_vectorscan_som` (wired into `check-harness`,
+6 checks, all through the REAL adapter): (1) `nosom`'s own describe()/
+grain/NMATCHES/span are re-derived unchanged; (2) `som`'s identity
+(`grain` absent, `vectorscan_<version>_block-som-nocaps-simd`); (3)
+agreement with the libpcre2 oracle on three unambiguous witnesses,
+span AND NMATCHES both exact; (4) the leftmost-longest divergence on
+`a|ab`/"ab", asserted BY VALUE; (5) the SOM-only refusal, first-class
+by name. `check_encoding_axis` (unrelated to this lane, [B77] U2's own
+control) is the independent, pre-existing proof that `nosom` itself
+never moved.
+
+### No UTF-8 sibling yet
+
+`vectorscan-block-nosom-utf8` ([B77] U2) needed its own witness census
+before its capability declaration could ship (`docs/dev/measurements/
+2026-09-25-b77u2-utf8-witness-census.txt`) -- the SAME discipline would
+apply to a `vectorscan-block-som-utf8` sibling, and this lane did not
+run one. MECHANICALLY the combination composes cleanly (`--som
+--encoding utf8` on the shared driver produces a real span and count
+exactly as expected, smoke-tested by hand during this lane), but "the
+mechanism composes" is not the same claim as "the capability
+declaration and the UTF-8-specific divergences (Script vs
+Script_Extensions, `(*UCP)`'s interaction with SOM_LEFTMOST, etc.) are
+known" -- so no `vectorscan-block-som-utf8` config is added here. OWED
+to whoever runs that census next.

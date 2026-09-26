@@ -431,7 +431,14 @@ bindings) live here, vendored or system, pinned either way.
   `-jit`/`-dfa`, `pcrec-{auto,nocaps,vm,vm-in}-utf8` (`-e utf8`, the FIFTH
   `compose_config_extra` part), `re2-utf8`, `onig-utf8`,
   `vectorscan-block-nosom-utf8` — twenty pinned pcrec configs; the
-  declarations rest on docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt):
+  declarations rest on docs/dev/measurements/2026-09-25-b77u2-utf8-witness-census.txt;
+  since [B92], 2026-09-26, `vectorscan-block-som` (HS_FLAG_SOM_LEFTMOST
+  always set) wires a REAL first-match span and a real non-overlapping
+  NMATCHES at full grain — Frank's ruling on capability_set_v1.md 5.6,
+  option (b) — beside `vectorscan-block-nosom`'s unchanged boolean-grain
+  fast path; docs/dev/measurements/2026-09-26-vectorscan-som-vs-nosom-census.txt
+  is the SOM-only compile-restriction census, no UTF-8 sibling yet — see
+  testees/vectorscan/CLAUDE.md):
   `pcre2/` (interp, jit) and `pcrec/`
   (auto, nocaps, vm, the `-in` variants, the three `-clang` siblings and
   the two `-bigcap` siblings — both emitted-size caps raised to 8 MiB via
