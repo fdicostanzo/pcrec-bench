@@ -600,3 +600,17 @@ during this lane, not re-run automatically every pass -- see
 docs/dev/known_issues.md KB-29. `tre`/`re2`/`rust` have the identical
 loop shape and are OWED to the next harness lane; `vectorscan` is
 structurally exempt (`GAVE_UP_CODES = frozenset()`). 6 PASS lines.
+
+[B98] lane `b98rider` (2026-09-26, KB-34 -- the whole-subject wrap's
+leading-verb placement bug): `check_kb34_leading_verb_hoist` --
+`testees/vectorscan/driver.c`'s whole-subject wrap (`^(?:` + pattern +
+`)\z`) used to bury a leading PCRE setting verb like `(*UCP)` at index 4,
+which Hyperscan refuses (it must be at index 0); `leading_verb_len()`
+now hoists any leading `(*NAME)` run outside the `(?:...)` group. Four
+arms: the real `bench/utf8` witness (`(*UCP)\w+`) compiles where it used
+to refuse, byte-exact diagnostic quoted; SEMANTICS via the real
+`vectorscan-block-nosom-utf8` testee (a Cyrillic word matches, the same
+word plus punctuation does not); the plain form untouched; an
+unterminated `(*` left alone and still refusing. Verified against the
+real bug by hand (git-stash driver.c, rebuild, confirm the exact
+refusal, restore) -- see docs/dev/known_issues.md KB-34. 4 PASS lines.

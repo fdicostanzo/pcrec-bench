@@ -11938,6 +11938,115 @@ def check_vectorscan_som():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_kb34_leading_verb_hoist():
+    r"""KB-34 (docs/dev/known_issues.md, found by lane [B95]/b95read;
+    FIXED lane b98rider, 2026-09-26): the vectorscan driver's own
+    whole-subject wrap used to put `^(?:` in front of the caller's raw
+    pattern bytes UNCONDITIONALLY, which moves a leading PCRE setting-verb
+    -- `(*UCP)`, in every corpus witness -- from index 0 to index 4,
+    something Hyperscan's own parser refuses outright ("(*UCP) must be at
+    start of expression"). `bench/utf8`'s five `(*UCP)`-leading patterns
+    (`cls-w-ucp`, `cls-d-ucp`, `cls-s-ucp`, `ci-ucp-invariance`,
+    `asr-b-cyr-ucp`) therefore refused their WHOLE-SUBJECT form even
+    though their PLAIN form (and every other engine's whole-subject form)
+    compiled fine -- five spurious refusals, invisible in this set's
+    measured cells only because bench/utf8 has no `match` regime (a set
+    that did would have recorded them). Fixed by hoisting any leading
+    `(*VERB)` run OUTSIDE the `(?:...)` group (`leading_verb_len` in
+    driver.c): `(*UCP)\w+` now wraps as `(*UCP)^(?:\w+)\z` instead of
+    `^(?:(*UCP)\w+)\z`.
+
+    Four arms, all through the REAL adapter/driver: (1) the real corpus
+    witness (`cls-w-ucp`'s own pattern, `(*UCP)\w+`) now COMPILES
+    whole-subject where it used to refuse (reproduced against the
+    UNFIXED driver by hand during this lane -- `git stash` driver.c,
+    rebuild, confirm the exact "(*UCP) must be at start of expression,
+    encountered at index 6" refusal, `git stash pop` -- recorded in
+    docs/dev/lanes/b98rider_report.md rather than re-run here every
+    pass); (2) SEMANTICS, not merely compilation: the hoisted-verb
+    artifact answers a Cyrillic (UCP word-class) subject `match` and the
+    SAME subject with trailing punctuation `nomatch` -- the wrap did not
+    just start compiling, it means what it always should have; (3) the
+    PLAIN form of the same pattern is BYTE-FOR-BYTE UNAFFECTED (this fix
+    touches only the whole-subject wrap); (4) CONTROL -- a pattern
+    beginning with an UNTERMINATED `(*` (no closing `)` anywhere in the
+    text) is left ALONE by `leading_verb_len` (returns 0) and refuses
+    whole-subject exactly as before, proving the hoist is precise rather
+    than swallowing anything that merely starts with `(*`."""
+    print("-- KB-34: vectorscan's whole-subject wrap hoists a leading "
+          "(*VERB) --")
+    if "vectorscan" not in _ad.discover():
+        print("   (vectorscan adapter/library not present on this box "
+              "-- skipped)")
+        return
+    a = _ad.discover()["vectorscan"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-kb34-")
+    try:
+        a.prepare("vectorscan-block-nosom", tmp)
+
+        # 1 + 3: the real corpus witness, both forms.
+        cp = a.compile("vectorscan-block-nosom", "kb34-ucp", b"(*UCP)\\w+",
+                       {}, 1, tmp)
+        plain = cp.get(_ad.FORM_PLAIN)
+        ws = cp.get(_ad.FORM_WHOLE_SUBJECT)
+        if ws.outcome == "compiled":
+            ok("KB-34: (*UCP)\\w+ compiles whole-subject (was refused: "
+               "'(*UCP) must be at start of expression, encountered at "
+               "index 6')", ws.outcome)
+        else:
+            bad("KB-34: (*UCP)\\w+ compiles whole-subject", ws.diagnostic)
+        if plain.outcome == "compiled":
+            ok("KB-34: the plain form is unaffected by this fix",
+               plain.outcome)
+        else:
+            bad("KB-34: the plain form is unaffected by this fix",
+                "outcome=%s diagnostic=%r" % (plain.outcome, plain.diagnostic))
+
+        # 2: semantics, against hand-verified answers (UCP-scoped \w+
+        # matches a whole Cyrillic word; it must NOT match the same word
+        # plus trailing punctuation, which is not \w even under UCP).
+        # Needs HS_FLAG_UTF8 (the `-utf8` sibling testee, [B77] U2) --
+        # under byte mode a multi-byte UTF-8 character's individual bytes
+        # are not recognised as one \w character at all, which would
+        # test the ENCODING, not this fix's own hoist.
+        if "vectorscan-block-nosom-utf8" in a.testees() and ws.outcome == "compiled":
+            a.prepare("vectorscan-block-nosom-utf8", tmp)
+            cp_u = a.compile("vectorscan-block-nosom-utf8", "kb34-ucp-utf8",
+                             b"(*UCP)\\w+", {}, 1, tmp)
+            ws_u = cp_u.get(_ad.FORM_WHOLE_SUBJECT)
+            def mk_subj(sid, body, tmp=tmp):
+                path = os.path.join(tmp, "kb34-%s.bin" % sid)
+                with open(path, "wb") as f:
+                    f.write(body)
+                return _KB30Subject(sid, path)
+            subs = [mk_subj("cyr", "Москва".encode("utf-8")),
+                    mk_subj("cyr-bad", "Москва!".encode("utf-8"))]
+            rows_by_trial, _i, _n = a.measure(dict(ws_u.handle), "match", subs,
+                                              1, 1, timeout=30)
+            answers = {r.subject_id: r.matched for r in rows_by_trial[0]}
+            if answers.get("cyr") is True and answers.get("cyr-bad") is False:
+                ok("KB-34: the hoisted-verb artifact answers real UCP "
+                   "\\w+ semantics, not merely 'compiles'", answers)
+            else:
+                bad("KB-34: the hoisted-verb artifact answers real UCP "
+                    "\\w+ semantics, not merely 'compiles'", answers)
+
+        # 4: CONTROL -- an unterminated `(*` is left alone (hoist length
+        # 0) and the whole-subject form refuses exactly as it always has.
+        cp_bad = a.compile("vectorscan-block-nosom", "kb34-unterminated",
+                           b"(*UCPnotaverb", {}, 1, tmp)
+        ws_bad = cp_bad.get(_ad.FORM_WHOLE_SUBJECT)
+        if ws_bad.outcome == "did-not-compile":
+            ok("KB-34 control: an unterminated '(*' is untouched by the "
+               "hoist and refuses as before", ws_bad.diagnostic)
+        else:
+            bad("KB-34 control: an unterminated '(*' is untouched by the "
+                "hoist and refuses as before",
+                "outcome=%s" % ws_bad.outcome)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_pcre2_dfa():
     """THE `pcre2-dfa` TESTEE ([B42] L6a, testees/pcre2/adapter.py +
     driver.c): a THIRD execution model on the existing pcre2 driver file
@@ -12379,6 +12488,7 @@ def main():
     check_boolean_grain_scoring()
     check_vectorscan_som()
     check_vectorscan_free_spacing_measure()
+    check_kb34_leading_verb_hoist()
     check_kb29_find_all_giveup_propagation()
     check_pcre2_dfa()
     check_wrap_spelling_fix()

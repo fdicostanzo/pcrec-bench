@@ -1586,3 +1586,36 @@ naming exactly `re2/re2-default: refusal-row engine_metadata
 ['refusal_class'] not in describe()'s engine_metadata_declaration
 [...]`; the fix was then restored (`git checkout`) and the check passed
 again, both arms.
+
+## KB-34 (2026-09-26, found by lane [B95]/b95read; FIXED lane b98rider, 2026-09-26) — vectorscan's whole-subject wrap puts a leading `(*VERB)` mid-pattern
+
+`testees/vectorscan/driver.c`'s `whole-subject` form wraps the caller's
+raw pattern bytes as `^(?:<pattern>)\z` unconditionally. A PCRE setting
+verb such as `(*UCP)` must be the very first thing in the compiled
+expression text (Hyperscan's own rule); wrapped this way it lands at
+byte offset 4 (after `^(?:`) instead of 0, and `hs_compile` refuses:
+`"(*UCP) must be at start of expression, encountered at index 6"`. Hit
+`bench/utf8`'s five `(*UCP)`-leading patterns (`cls-w-ucp`, `cls-d-ucp`,
+`cls-s-ucp`, `ci-ucp-invariance`, `asr-b-cyr-ucp`) — five spurious
+whole-form refusals, invisible in this set's own measured cells only
+because `bench/utf8` declares no `match` regime (`docs/dev/lanes/
+b95read_report.md` finding 1); a set with a `match` regime and a leading
+verb would record them as real refusals.
+
+FIXED: `leading_verb_len()` (`driver.c`) returns the byte length of any
+leading run of one or more well-formed `(*NAME)` verbs (0 if none, or if
+the run is unterminated — left untouched, refusing exactly as before);
+the whole-subject wrap now hoists that prefix OUTSIDE the `(?:...)`
+group: `(*UCP)\w+` becomes `(*UCP)^(?:\w+)\z` instead of
+`^(?:(*UCP)\w+)\z`. `tools/selfcheck.py:check_kb34_leading_verb_hoist`
+(`make check-harness`) proves it on the real corpus witness (compiles
+where it used to refuse, byte-exact diagnostic quoted), SEMANTICS (not
+merely compilation — a UCP-scoped `\w+` over a whole Cyrillic word
+answers `match`, the same word plus trailing punctuation answers
+`nomatch`, both via the real `vectorscan-block-nosom-utf8` testee), the
+plain form's byte-for-byte non-involvement, and a control (an
+unterminated `(*` is left alone and refuses as before — the hoist is
+precise, not a blanket strip of anything starting `(*`). Verified
+against the real bug by hand (`git stash testees/vectorscan/driver.c`,
+rebuild, confirm the exact refusal, `git stash pop`) — recorded in
+`docs/dev/lanes/b98rider_report.md`.
