@@ -1,0 +1,80 @@
+# 2026-09-25-b77u5-validate-once-probe.txt
+#
+# [B77] lane U5 (b77u5) -- WHY the utf8 set's oracle derivation was hours,
+# and the evidence behind the manager's VALIDATE-ONCE ruling amending
+# docs/design/utf8_set_v1.md 8.2 (2026-09-25; to be recorded as a BD entry
+# at merge, flagged to Frank).
+#
+# sources:  docs/dev/measurements/probe_b77u5_validate_once.c (committed
+#           beside this; hand prototypes -- the libpcre2 -dev headers are
+#           not installed on this box)
+#           docs/dev/measurements/probe_b77u5_cost_model.py (the per-pattern
+#           cost MODEL below; it uses PCRE2_NO_UTF_CHECK only to COUNT calls
+#           cheaply -- a sizing tool, never an oracle)
+# build:    gcc -O2 -o fa probe_b77u5_validate_once.c /usr/lib/x86_64-linux-gnu/libpcre2-8.so.0
+# command:  ./fa bench/utf8/throughput/t-256k.bin 0   (check on EVERY call)
+#           ./fa bench/utf8/throughput/t-256k.bin 1   (check on call 1 only)
+#           ./fa bench/utf8/throughput/t-1m.bin 1
+# subjects: t-256k sha256 fd9b68c68a136ed48ed97ed30251dfe2c8f8f3620eb0b6e2534ab4c4058df0a1
+#           t-1m   sha256 ec3b31100fb3daf84013081218f56820d3ea22263cce70852468445c2bf542c3
+#           (= bench/utf8/manifest_throughput.tsv)
+# oracle:   libpcre2-8 10.46 2025-08-27, pattern `.`, compile word PCRE2_UTF
+# bench:    lane/b77u5 at a68eeca (off master 438ba8d)
+# box:      ubuntubudu; loadavg 0.8-3.1 during the runs (another lane
+#           rendering reports). The finding is a 2000x ratio, not a timing
+#           anyone ranks; load cannot move it by an order of magnitude.
+#
+# ---------------------------------------------------------------------------
+# THE MECHANISM
+#
+# pcre2api ("UTF-8 validity checking" / pcre2_match): with PCRE2_UTF and no
+# PCRE2_NO_UTF_CHECK, pcre2_match validates the subject from the start
+# offset (minus the longest lookbehind) to the END OF THE SUBJECT on every
+# call. A find-all loop calls pcre2_match once per match, so its cost is
+# sum over matches of (n - start): QUADRATIC in the subject length. pcre2api
+# itself recommends checking once and passing PCRE2_NO_UTF_CHECK on the
+# repeated calls over the same subject; pcre2_substitute does exactly that
+# internally.
+#
+# The U4 lane's hypothesis ("one ctypes call per match") is only ~1-3% of
+# the cost: a Python ctypes call measured ~5 us of overhead, a single UTF
+# call at offset 0 over the 64 KB t-64k ~102 us (i.e. ~0.68 GB/s of
+# validation). A C find-all helper under 8.2's original letter therefore
+# saves ~1-3%, and was NOT built.
+#
+# ---------------------------------------------------------------------------
+# RESULTS (C, same library, same compile word, same U1 advance)
+#
+#   mode=0 (check every call)  t-256k  count=185769  secs=36.135
+#   mode=1 (check call 1 only) t-256k  count=185769  secs=0.018
+#   mode=1 (check call 1 only) t-1m    count=743934  secs=0.076
+#
+# Same count both ways (and = the committed expectations.tsv's
+# cls-dot/t-256k and cls-dot/t-1m nmatches).
+#
+# THE MODEL over all 76 patterns x 7 throughput subjects under the original
+# 8.2 (5 us/call + remaining-bytes / 0.68 GB/s per call):
+#   TOTAL ~3553 s (~59 min); t-1m ~90% of it. Top: cls-dot 627 s,
+#   cls-neg-single 621 s, ci-neg-fold 621 s, asr-b-midchar 479 s,
+#   cls-mixed 99 s, prp-zs 96 s, prp-notl 94 s, prp-l 94 s, cls-w-ucp 94 s,
+#   qnt-dot-bounded 78 s, cls-w-ascii 74 s, cls-posix-alpha 73 s ...
+#   (prp-ingreek: COMPILE-REFUSED, "unknown property after \P or \p").
+#   The model's cls-dot/t-256k term, 36.7 s, agrees with the C mode=0
+#   measurement above (36.1 s) -- the model is the validation cost.
+#
+# UNDER VALIDATE-ONCE, in the existing Python oracle (no C helper):
+#   python3 bench/utf8/gen_expectations.py -> 7350 expectations in 33.7 s
+#   wall (all 76 patterns, both regimes, every subject incl. t-1m).
+#
+# ---------------------------------------------------------------------------
+# THE RULE AS IMPLEMENTED (pcrecbench/oracle_pcre2.py _find_all_impl)
+#
+#   * byte word: no flag is ever passed (unchanged);
+#   * UTF word: call 1 at offset 0 WITHOUT the flag (libpcre2 checks the
+#     whole subject; an ill-formed subject is refused here, raised, and no
+#     further call is made); calls 2..n over the same immutable `bytes`
+#     buffer pass PCRE2_NO_UTF_CHECK, each start offset ASSERTED to be a
+#     character boundary before the call;
+#   * `find_all(validate_once=False)` is the always-check path, kept as the
+#     control (tools/selfcheck.py check_utf8_validate_once).
+#   * search_short is ONE call per subject and never passes the flag.

@@ -653,3 +653,14 @@ Maintenance: update this file when files are added/removed or change role.
   divergence on U+0342); RE2/onig/Vectorscan refuse every prefixed
   script spelling, rust accepts all four; pcrec-vm-utf8 `\p{L}` /
   `\P{L}+` refuse at the 500,000 B code cap.
+
+- `probe_b77u5_validate_once.c` / `probe_b77u5_cost_model.py` /
+  `2026-09-25-b77u5-validate-once-probe.txt` — ([B77] lane U5,
+  `docs/design/utf8_set_v1.md` 8.2 AMENDED) WHY the utf8 set's oracle
+  derivation was ~1 hour: libpcre2 re-validates a UTF subject from the
+  start offset to the END on every `pcre2_match` call, so a find-all is
+  quadratic (C, `.` over t-256k: 36.1 s checking every call vs 0.018 s
+  checking call 1 only, same count 185,769); ctypes overhead is ~1-3% of
+  it, so a C helper under the old letter of 8.2 was not built. The model
+  prices all 76 patterns at ~3,553 s under the old rule; under the
+  manager's VALIDATE-ONCE ruling the real Python derivation is 33.7 s.

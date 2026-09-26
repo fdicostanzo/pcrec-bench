@@ -38,7 +38,10 @@ ADDITIONS for pcrec-bench (everything else is the origin's text):
     0x80-0xBF, stopping at the first byte outside that range or at n")
     rather than `start + 1` -- which under PCRE2_UTF would hand
     pcre2_match a mid-character start offset (PCRE2_ERROR_BADUTFOFFSET,
-    -36). PCRE2_NO_UTF_CHECK is NEVER passed (utf8_set_v1.md 8.2).
+    -36). PCRE2_NO_UTF_CHECK: originally NEVER passed (utf8_set_v1.md
+    8.2); since [B77] U5 (8.2 as AMENDED, VALIDATE-ONCE) passed ONLY by
+    `find_all` on calls 2..n after libpcre2's own call-1 check of the whole
+    subject -- see `_find_all_impl`.
 
 pcrec is NOT the source of truth here and neither is pcrec-bench: PCRE2 is
 (pcrec CLAUDE.md's Compatibility Standard, D26). `version()` is read live off

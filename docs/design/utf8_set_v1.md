@@ -926,8 +926,46 @@ dial: on one roster engine the "dial" is not a dial at all.
 
 ### 8.2 `PCRE2_NO_UTF_CHECK` — the rule
 
-> **`PCRE2_NO_UTF_CHECK` is NEVER passed on expectation derivation, at
-> any release, for any pattern or subject.**
+> ~~**`PCRE2_NO_UTF_CHECK` is NEVER passed on expectation derivation, at
+> any release, for any pattern or subject.**~~ — **SUPERSEDED
+> 2026-09-25** by the manager's VALIDATE-ONCE ruling during [B77] U5
+> (recorded as a BD entry at merge; flagged to Frank, who may overturn
+> it). The original sentence stays visible above; the rule in force is
+> below.
+
+> **VALIDATE-ONCE (in force).** `PCRE2_NO_UTF_CHECK` is passed ONLY on
+> calls 2..n of a SINGLE find-all loop over the SAME unmodified subject
+> buffer, and ONLY after call 1 of that loop — at offset 0, WITHOUT the
+> flag — has returned something other than an error. If call 1 returns
+> a UTF error, that refusal IS the recorded answer and no further call
+> is made. Every later start offset is a character boundary by §8.4's
+> advance, and the oracle ASSERTS it before each flagged call rather
+> than assuming it. Nowhere else — `search_short`'s single call, any
+> `match`, any compile — is the flag ever passed.
+
+**Why the letter changed and the rationale did not.** libpcre2 re-checks
+UTF validity from the start offset to the END of the subject on every
+`pcre2_match` call (pcre2api, "UTF-8 validity checking"), so a find-all
+loop under the original rule is QUADRATIC in the subject length:
+measured in C against the same library and word, `.` over the 256 KB
+throughput subject takes **36.1 s** checking every call and **0.018 s**
+checking call 1 only, same count (185,769); over all 76 patterns the old
+rule costs ~59 min, and the Python/ctypes overhead the U4 lane suspected
+is only ~1-3% of it
+(`docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt`).
+pcre2api itself recommends checking once and passing the flag on repeated
+calls over the same subject, and `pcre2_substitute` does exactly that
+internally. The rationale below is untouched: the flag is still never the
+CALLER's promise — libpcre2 has checked the whole subject itself before
+the first flagged call — so an ill-formed (h) subject is still REFUSED,
+at call 1, as a documented answer. Controls in `make check`
+(`tools/selfcheck.py check_utf8_validate_once`): validate-once rows
+byte-identical to the always-check path on the short subjects and the
+64 KB subjects; an ill-formed subject refused by name through the
+validate-once path; byte-mode sets untouched (their re-derivation
+unchanged).
+
+The original rule's reasoning, which still governs:
 
 `NO_UTF_CHECK` makes the subject's validity the CALLER's promise. Pass
 it over a subject that is not valid UTF-8 and the library's behaviour is
@@ -1424,7 +1462,7 @@ Each carries a recommendation and the consequence of each answer.
 | **Q7** | Growth ordering: 0.2 = (g)+(k), 0.3 = (h)+(i)+(j)? | **Yes.** (h)/(i)/(j) share one policy (§8.3) and one subject-generation problem; splitting them ships the policy twice | DEFAULT |
 | **Q8** | Axis 11's caller-supplied mid-character `startpos` needs a driver-protocol `--startpos` (§3.3 gap 3). Worth a protocol extension? | **No, and say so in `NOTES.md`.** It is a correctness question `~/pcrec/tests/utf8/axis11` already owns, and a protocol parameter used by one family of one set is a maintenance cost six other sets pay | DEFAULT |
 | **Q9** | Does the per-pattern oracle option word live as a parameter on the shared `oracle_pcre2.py`, or does this set get its own oracle module? | **A parameter on the shared module** — `bench/syntax/NOTES.md` predicted exactly this ("one option argument"), and a second oracle module would mean two definitions of "the oracle" in one repo. Consequence: U1 changes shared code and owes the byte-identical re-derivation check (§13) | DEFAULT |
-| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now. **(F-S5, v0.2, pointer for (h)'s ruling):** for the pcrec-vs-PCRE2 pair specifically, this is not a new instrument to build — `~/pcrec/tests/utf8/axis03_invalid_utf8.rxt` already runs libpcre2 under `PCRE2_MATCH_INVALID_UTF` as its own canonical differential oracle against pcrec, precedented since promotion. §8.3's "no cross-engine canonical answer" framing is true for the other five engines but should not be read as implying pcrec/PCRE2 starts from the same "nothing established" position; (h)'s ledger may cite AX's axis03 oracle as-is, without contradicting §8.2's "never `PCRE2_NO_UTF_CHECK`" rule (axis03 doesn't use it either) | **BLOCK at (h)** |
+| **Q10** | At growth (h): may the bench declare `PCRE2_MATCH_INVALID_UTF` as a SECOND canonical expectation, or is (h) documented-behaviour-only? | **Documented-behaviour-only** (§8.3). Asked at (h)'s own charter, not now. **(F-S5, v0.2, pointer for (h)'s ruling):** for the pcrec-vs-PCRE2 pair specifically, this is not a new instrument to build — `~/pcrec/tests/utf8/axis03_invalid_utf8.rxt` already runs libpcre2 under `PCRE2_MATCH_INVALID_UTF` as its own canonical differential oracle against pcrec, precedented since promotion. §8.3's "no cross-engine canonical answer" framing is true for the other five engines but should not be read as implying pcrec/PCRE2 starts from the same "nothing established" position; (h)'s ledger may cite AX's axis03 oracle as-is, without contradicting §8.2's `PCRE2_NO_UTF_CHECK` rule (the original "never", or the 2026-09-25 validate-once amendment; axis03 doesn't use the flag either) | **BLOCK at (h)** |
 
 ---
 

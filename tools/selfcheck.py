@@ -10378,6 +10378,165 @@ def _check_utf8_advance_through_harness(subject):
         shutil.rmtree(store_dir, ignore_errors=True)
 
 
+def check_utf8_validate_once():
+    """[B77] U5 (docs/design/utf8_set_v1.md 8.2 AS AMENDED, the manager's
+    VALIDATE-ONCE ruling, 2026-09-25): the oracle's find-all passes
+    PCRE2_NO_UTF_CHECK only on calls 2..n of one loop, after libpcre2's own
+    call-1 check of the whole subject. The ruling's three controls:
+
+      (i)  IDENTICAL ROWS: over bench/utf8 -- every compiling pattern x every
+           short subject AND every <= 64 KB throughput subject -- the
+           validate-once find-all (span, count) equals the always-check
+           path's (`find_all(validate_once=False)`, the ORIGINAL 8.2
+           letter), and search_short's single call is unchanged. The
+           256 KB / 1 MB rungs are left out on purpose: the always-check
+           path is quadratic there (~55 min, the reason for the ruling).
+      (ii) REFUSAL BY NAME: an ill-formed subject (a lone 0xFF at its END,
+           far past the first match) is REFUSED through the validate-once
+           path -- libpcre2's own "UTF-8 error", raised, never a count.
+           NEGATIVE: the same loop reproduced INLINE (never production code)
+           with the flag on call 1 too returns a COUNT silently -- so it is
+           call 1's check this control relies on, and a regression that
+           flagged call 1 would fail (ii). A second NEGATIVE: a
+           byte-stepping advance under validate-once hits the oracle's own
+           character-boundary ASSERTION by name, never a flagged
+           mid-character call.
+      (iii) BYTE SETS UNTOUCHED: a byte-word find-all never passes any
+           match option (a spy on the oracle's one pcre2_match site), and
+           each byte set's re-derivation is check_expectations' own row
+           (unchanged committed files re-derive)."""
+    print("-- [B77] U5: the oracle's validate-once find-all (8.2 amended) --")
+    from pcrecbench import oracle_pcre2 as _o
+    from pcrecbench import expectations as _expm
+    from pcrecbench.subbench import load as _load_sb
+    import time as _time
+
+    # ---- (i) identical rows
+    try:
+        sb = _load_sb(os.path.join(ROOT, "bench", "utf8"))
+    except Exception as e:                                # noqa: BLE001
+        bad("validate-once (i): bench/utf8 loads", str(e)[:200])
+        return
+    subs = [s for s in sb.subjects_for("search_short")]
+    subs += [s for s in sb.subjects_for("throughput") if s.length <= 65536]
+    bodies = [(s.subject_id, sb.subject_bytes(s.subject_id)) for s in subs]
+    npat = ncell = 0
+    diffs = []
+    t0 = _time.monotonic()
+    for p in sb.patterns:
+        try:
+            rx = _o.compile(sb.pattern_bytes(p.name),
+                            _expm.oracle_option_word(sb, p))
+        except _o.Pcre2Error:
+            continue                       # the set's declared refusal
+        if not rx.options & _o.PCRE2_UTF:
+            diffs.append((p.name, "-", "word lacks PCRE2_UTF"))
+            continue
+        npat += 1
+        for sid, body in bodies:
+            ncell += 1
+            a = rx.find_all(body)
+            b = rx.find_all(body, validate_once=False)
+            if a != b:
+                diffs.append((p.name, sid, "%r != %r" % (a, b)))
+    secs = _time.monotonic() - t0
+    if not diffs and npat and ncell:
+        ok("validate-once (i): rows identical to the always-check path",
+           "%d pattern(s) x %d subject(s) (%d short + %d <=64 KB "
+           "throughput) = %d find-all cells, %.0f s"
+           % (npat, len(bodies), len(sb.subjects_for("search_short")),
+              len(bodies) - len(sb.subjects_for("search_short")), ncell,
+              secs))
+    else:
+        bad("validate-once (i): rows identical to the always-check path",
+            "%d diff(s), first %r" % (len(diffs), diffs[:3]))
+
+    # ---- (ii) an ill-formed subject is refused BY NAME
+    rx = _o.compile(b"a", _o.option_word(utf=True))
+    ill = ("a" + "été " * 64).encode("utf-8") + b"\xff"
+    try:
+        got = rx.find_all(ill)
+        bad("validate-once (ii): ill-formed subject refused by name",
+            "returned a count %r" % (got,))
+    except _o.Pcre2Error as e:
+        if "UTF-8 error" in str(e):
+            ok("validate-once (ii): ill-formed subject refused by name",
+               str(e)[:120])
+        else:
+            bad("validate-once (ii): ill-formed subject refused by name",
+                str(e)[:200])
+
+    # NEGATIVE (ii): the flag on call 1 too -- inline, never production code
+    pos, n, count, err = 0, len(ill), 0, None
+    try:
+        while pos <= n:
+            g = _o._search_raw(rx, ill, pos, _o.PCRE2_NO_UTF_CHECK)
+            if g is None:
+                break
+            (s, e), _g = g
+            count += 1
+            pos = e if e > s else _o.next_start(ill, s, True)
+    except _o.Pcre2Error as e:
+        err = str(e)
+    if err is None and count > 0:
+        ok("NEGATIVE (ii): flagging call 1 too hides the refusal",
+           "the sabotaged loop silently counted %d -- call 1's check is "
+           "what refuses" % count)
+    else:
+        bad("NEGATIVE (ii): flagging call 1 too hides the refusal",
+            "count=%d err=%r -- the negative arm cannot discriminate"
+            % (count, err))
+
+    # NEGATIVE: a byte-stepping advance hits the boundary ASSERTION
+    real_next = _o.next_start
+    try:
+        _o.next_start = lambda subject, pos, utf: pos + 1
+        rxs = _o.compile(b"x*", _o.option_word(utf=True))
+        try:
+            got = rxs.find_all("aéb".encode("utf-8"))
+            bad("NEGATIVE: byte-stepping under validate-once is asserted",
+                "returned %r" % (got,))
+        except AssertionError as e:
+            if "not a character boundary" in str(e):
+                ok("NEGATIVE: byte-stepping under validate-once is asserted",
+                   str(e)[:120])
+            else:
+                bad("NEGATIVE: byte-stepping under validate-once is "
+                    "asserted", str(e)[:200])
+    finally:
+        _o.next_start = real_next
+
+    # ---- (iii) a byte word never passes a match option
+    seen = []
+    real_raw = _o._search_raw
+
+    def _spy(compiled, subject, start, options):
+        seen.append(options)
+        return real_raw(compiled, subject, start, options)
+    try:
+        _o._search_raw = _spy
+        rxb = _o.compile(b"x*")
+        rxb.find_all(b"abc " * 64)
+        rxu = _o.compile(b"x*", _o.option_word(utf=True))
+        n_byte = len(seen)
+        seen_byte = list(seen)
+        rxu.find_all(b"abc " * 64)
+        seen_utf = seen[n_byte:]
+    finally:
+        _o._search_raw = real_raw
+    if (seen_byte and set(seen_byte) == {0} and seen_utf
+            and seen_utf[0] == 0
+            and set(seen_utf[1:]) == {_o.PCRE2_NO_UTF_CHECK}):
+        ok("validate-once (iii): a byte word passes no match option",
+           "byte: %d call(s) all 0; the UTF control: call 1 = 0, calls "
+           "2..%d = NO_UTF_CHECK (the spy sees the flag where it belongs)"
+           % (len(seen_byte), len(seen_utf)))
+    else:
+        bad("validate-once (iii): a byte word passes no match option",
+            "byte %r / utf %r" % (sorted(set(seen_byte)),
+                                   sorted(set(seen_utf))))
+
+
 # --------------------------------------------- 47 the capability policy
 
 def check_capability_policy():
@@ -11348,6 +11507,7 @@ def main():
     check_timeline_provenance()
     check_kb17_find_all_advance()
     check_utf8_find_all_advance()
+    check_utf8_validate_once()
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
