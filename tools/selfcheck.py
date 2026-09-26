@@ -11075,6 +11075,185 @@ def check_wrap_spelling_fix():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_vectorscan_som():
+    """[B92] (docs/dev/plan.md; Frank's ruling on docs/dev/lanes/
+    b72smalls_report.md 4 / `capability_set_v1.md` 5.6 -- option (b) of
+    the two live candidates named there): `vectorscan-block-som`
+    (HS_FLAG_SOM_LEFTMOST always set) answers the driver protocol's
+    EXISTING non-overlapping find-all count (NMATCHES, KB-17's advance
+    rule) and first-match span, at FULL scoring grain -- never a third
+    invocation mode (5.6 option (A), which needed a schema change and a
+    list-valued row this project has never built). Every arm goes
+    through the REAL adapter (never a second parser):
+
+      1. `vectorscan-block-nosom` UNCHANGED: `describe()`'s `grain`
+         stays `"boolean"`, and its derived testee_id keeps the shape
+         `check_encoding_axis`'s own frozen table already re-proves
+         independently every run. A genuine match still prints
+         `NMATCHES = -` and `span = None,None` under `--find-all` --
+         re-derived here directly, not merely inferred from the id
+         being unchanged.
+      2. `vectorscan-block-som`'s IDENTITY: `describe()` carries NO
+         `grain` key at all (full grain, the schema default -- the
+         SAME omission every other testee on the roster makes) and
+         derives `vectorscan_<version>_block-som-nocaps-simd`.
+      3. AGREEMENT with the libpcre2 oracle (`pcrecbench.oracle_pcre2`)
+         on three witnesses with no leftmost-first/leftmost-longest
+         ambiguity: `a+` over "aaa" (span [0,3), 1 non-overlapping
+         match), `a` over "aaaa" (span [0,1), 4 matches) and `foo`
+         over "xfooy" (span [1,4), 1 match) -- span AND NMATCHES both
+         exact, both directions (som vs oracle).
+      4. THE DOCUMENTED DIVERGENCE, ASSERTED BY VALUE, not hidden:
+         `a|ab` over "ab" -- the oracle (leftmost-first) answers
+         span [0,1) with 1 match; `som` (Hyperscan's own all-ends
+         architecture, reduced by this driver to LEFTMOST-then-LONGEST)
+         answers span [0,2), ALSO 1 match -- the count agrees, the span
+         does not. This is exactly what a real report row would score
+         `wrong-span-or-captures` at (the default) full grain, and this
+         arm proves the reduction produces that value ON PURPOSE
+         (testees/vectorscan/CLAUDE.md names which corpus patterns this
+         actually fires on), not by a driver bug.
+      5. A SOM-ONLY REFUSAL, first-class BY NAME: `.*a.{40,}` COMPILES
+         under `nosom` (HS_FLAG_SOM_LEFTMOST's own documented history-
+         tracking restriction does not apply without the flag) but
+         hs_compile REFUSES it under `som`, same adapter, same driver,
+         same pattern -- `did-not-compile` with Vectorscan's own
+         diagnostic text, never an error."""
+    print("-- vectorscan-block-som: NMATCHES + first-match span, "
+          "nosom byte-for-byte unchanged --")
+    if "vectorscan" not in _ad.discover():
+        print("   (vectorscan adapter/library not present on this box "
+              "-- skipped)")
+        return
+
+    from pcrecbench import oracle_pcre2 as _o
+
+    a = _ad.discover()["vectorscan"]
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-vs-som-")
+    try:
+        a.prepare("vectorscan-block-som", tmp)
+        a.prepare("vectorscan-block-nosom", tmp)
+
+        d_som = a.describe("vectorscan-block-som", tmp)
+        d_nosom = a.describe("vectorscan-block-nosom", tmp)
+
+        # 1+2: identity -- grain and the derived testee_id.
+        if d_nosom.get("grain") == "boolean" and "grain" not in d_som:
+            ok("vectorscan-block-som carries no grain key (full grain); "
+               "vectorscan-block-nosom keeps grain=boolean",
+               "nosom grain=%r som grain=%r"
+               % (d_nosom.get("grain"), d_som.get("grain")))
+        else:
+            bad("vectorscan-block-som carries no grain key (full grain); "
+                "vectorscan-block-nosom keeps grain=boolean",
+                "nosom grain=%r som grain=%r"
+                % (d_nosom.get("grain"), d_som.get("grain")))
+
+        som_id = _rec.derive_testee_id(d_som)
+        if som_id.endswith("_block-som-nocaps-simd"):
+            ok("vectorscan-block-som derives ..._block-som-nocaps-simd",
+               som_id)
+        else:
+            bad("vectorscan-block-som derives ..._block-som-nocaps-simd",
+                som_id)
+
+        class _Subj:
+            def __init__(self, sid, path, length):
+                self.subject_id, self.path, self.length = sid, path, length
+
+        def mksubj(name, data):
+            p = os.path.join(tmp, name)
+            with open(p, "wb") as f:
+                f.write(data)
+            return _Subj(name, p, len(data))
+
+        def one(tid, label, pat, subj):
+            cr = a.compile(tid, label, pat, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                return None, cr.diagnostic
+            rows, _i, _n = a.measure(dict(cr.handle), "throughput", [subj],
+                                     1, 1, timeout=60)
+            return rows[0][0], None
+
+        # 1 (re-derived directly): nosom still reports the degenerate
+        # shape on a genuine match under --find-all.
+        subj_nosom = mksubj("s-nosom", b"aaa")
+        r, err = one("vectorscan-block-nosom", "w-nosom", b"a+", subj_nosom)
+        if (err is None and r.matched and r.start is None and r.end is None
+                and r.nmatches is None):
+            ok("vectorscan-block-nosom: NMATCHES=- and span=None,None "
+               "unchanged under --find-all",
+               "answer=%s start=%s end=%s nmatches=%s"
+               % (r.answer, r.start, r.end, r.nmatches))
+        else:
+            bad("vectorscan-block-nosom: NMATCHES=- and span=None,None "
+                "unchanged under --find-all",
+                "err=%r row=%r" % (err, r and (r.answer, r.start, r.end,
+                                               r.nmatches)))
+
+        # 3: agreement witnesses.
+        agree = [(b"a+", b"aaa", "s-a1"), (b"a", b"aaaa", "s-a2"),
+                (b"foo", b"xfooy", "s-a3")]
+        agree_ok = True
+        detail = []
+        for pat, subj_bytes, name in agree:
+            subj = mksubj(name, subj_bytes)
+            oracle_first, oracle_count = _o.compile(pat).find_all(subj_bytes)
+            r, err = one("vectorscan-block-som", "w-" + name, pat, subj)
+            got = (None if err else (r.start, r.end), None if err else r.nmatches)
+            want = (oracle_first, oracle_count)
+            detail.append("%r/%r: got=%r want=%r" % (pat, subj_bytes, got, want))
+            if err or (r.start, r.end) != oracle_first or r.nmatches != oracle_count:
+                agree_ok = False
+        if agree_ok:
+            ok("vectorscan-block-som agrees with the libpcre2 oracle on "
+               "span + NMATCHES (no leftmost ambiguity)", "; ".join(detail))
+        else:
+            bad("vectorscan-block-som agrees with the libpcre2 oracle on "
+                "span + NMATCHES (no leftmost ambiguity)", "; ".join(detail))
+
+        # 4: the documented leftmost-longest-vs-leftmost-first divergence,
+        # asserted BY VALUE -- not merely "differs from the oracle".
+        div_pat, div_subj_bytes = b"a|ab", b"ab"
+        div_subj = mksubj("s-div", div_subj_bytes)
+        oracle_first, oracle_count = _o.compile(div_pat).find_all(div_subj_bytes)
+        r, err = one("vectorscan-block-som", "w-div", div_pat, div_subj)
+        if (err is None and oracle_first == (0, 1) and oracle_count == 1
+                and (r.start, r.end) == (0, 2) and r.nmatches == 1):
+            ok("vectorscan-block-som's leftmost-longest divergence: "
+               "a|ab over ab -- oracle [0,1) count 1, som [0,2) count 1",
+               "oracle=%r/%d som=%r/%d"
+               % (oracle_first, oracle_count, (r.start, r.end), r.nmatches))
+        else:
+            bad("vectorscan-block-som's leftmost-longest divergence: "
+                "a|ab over ab -- oracle [0,1) count 1, som [0,2) count 1",
+                "err=%r oracle=%r/%r som=%r"
+                % (err, oracle_first, oracle_count,
+                   r and (r.start, r.end, r.nmatches)))
+
+        # 5: a SOM-ONLY refusal, first-class by name -- compiles under
+        # nosom, refuses under som's own history-tracking restriction.
+        som_refusal_pat = b".*a.{40,}"
+        cr_nosom = a.compile("vectorscan-block-nosom", "w-somref-nosom",
+                             som_refusal_pat, {}, 1, tmp).get(_ad.FORM_PLAIN)
+        cr_som = a.compile("vectorscan-block-som", "w-somref-som",
+                           som_refusal_pat, {}, 1, tmp).get(_ad.FORM_PLAIN)
+        if (cr_nosom.outcome == "compiled"
+                and cr_som.outcome == "did-not-compile"
+                and cr_som.diagnostic):
+            ok("a SOM-only refusal is first-class BY NAME (compiles under "
+               "nosom, did-not-compile under som)",
+               "nosom=%s som=%s diag=%r"
+               % (cr_nosom.outcome, cr_som.outcome, cr_som.diagnostic[:100]))
+        else:
+            bad("a SOM-only refusal is first-class BY NAME (compiles under "
+                "nosom, did-not-compile under som)",
+                "nosom=%s som=%s diag=%r"
+                % (cr_nosom.outcome, cr_som.outcome, cr_som.diagnostic))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_pcre2_dfa():
     """THE `pcre2-dfa` TESTEE ([B42] L6a, testees/pcre2/adapter.py +
     driver.c): a THIRD execution model on the existing pcre2 driver file
@@ -11512,6 +11691,7 @@ def main():
     check_capability_policy_noop_elsewhere()
     check_convention_scoring()
     check_boolean_grain_scoring()
+    check_vectorscan_som()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     print()

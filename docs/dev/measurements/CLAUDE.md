@@ -664,3 +664,27 @@ Maintenance: update this file when files are added/removed or change role.
   it, so a C helper under the old letter of 8.2 was not built. The model
   prices all 76 patterns at ~3,553 s under the old rule; under the
   manager's VALIDATE-ONCE ruling the real Python derivation is 33.7 s.
+
+- `probe_vectorscan_som_witness_census.py` /
+  `2026-09-26-vectorscan-som-vs-nosom-census.txt` — ([B92], lane
+  `b92vsom`, docs/dev/plan.md; Frank's ruling on docs/dev/lanes/
+  b72smalls_report.md 4 / capability_set_v1.md 5.6, option (b))
+  THE SOM-VS-NOSOM COMPILE CENSUS `vectorscan-block-som`'s own delivery
+  asked for: bench/capability's 64 corpus patterns compiled through the
+  REAL adapter under BOTH configs (plain form; compile-only, no timing,
+  mirrors `probe_vectorscan_capability_census.py`'s own stated
+  quiet-box exemption), plus the isolated SOM-only refusal witness
+  (`.*a.{40,}`) `tools/selfcheck.py:check_vectorscan_som`'s own arm 5
+  uses. FINDING: HS_FLAG_SOM_LEFTMOST's own documented history-tracking
+  restriction costs EXACTLY TWO real corpus patterns beyond `nosom`'s
+  refusal set — `evil-alt-nested` and `trim-nested-star`, both
+  empty-matching in an unbounded-repeat context, Hyperscan's own
+  diagnostic naming the mechanism directly ("Start of match is not
+  currently supported for patterns which match an empty buffer",
+  DISTINCT wording from the isolated witness's own "Pattern is too
+  large" — two independently-shaped SOM restrictions, neither invented
+  by this adapter). The other 24 non-compiling patterns are the SAME 24
+  `nosom` already refuses on its own terms (backrefs, lookaround, atomic
+  groups, recursion, conditionals, `\K`, control verbs, callouts, the
+  two free-spacing comment-parser patterns) — SOM adds nothing new to
+  that population.
