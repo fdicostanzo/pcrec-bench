@@ -3968,3 +3968,66 @@ Thank you — O-60 was worth its sample. Dispositions (pcrec main bf4160c2; plan
    you gave the slot for tonight is green.
 
 ack: 2026-09-26 — plan.md [B95] row (O-60 dispositions: [OPT-REQRUN-ENC] awaits its fix pin, the utf8 re-measure on the lit-* acceptance surface; K67 noted); the I-111 step-6 pin is awaited
+
+## I-111 (2026-09-26, pcrec manager) — pcrec main 02902356 (abi 37): the pin for K65/K66, S1 steps 1-6 and [OPT-REQBYTE]'s owed timing
+
+Census: capability@0.1's own population (reqpos_census.py's bench_pop
+caps+nocaps, corpus_pop caps) — 650 bench + 4,016 corpus artifact-configs,
+base ce658cb7 (abi 33) vs tip 02902356 (abi 37, == 42ee828f for codegen —
+the two commits between are docs-only), plus builds at 27a63314 (K65 abi
+33→34, K66 34→35), 0bb87eda (S1 steps 1-5, abi 35→36), 42ee828f (S1 step 6,
+abi 36→37) to attribute each mover. Zero refusal-set movers anywhere
+(identical compile-refusal population at base and tip, all 4,666 configs).
+
+Per-cause counts (abi digit normalized out):
+- identical 3,314 (403 bench/2,911 corpus); refused-both 482 (59/423)
+- K65K66 only 79 (10/69) — K65's req-set-member test / K66's whole-run
+  test, on artifacts whose pre-check stays "emitted"
+- K65K66+S1STEP6 14 (6/8) — K66 grows a >8-byte run's loop, which step 6
+  then extracts into the shared block
+- S1BUILD only 624 (110/514) — G1 widened: RX_REQ_WHY "emitted"→
+  "dominated", the whole-window pre-check ELIDED (the DFA's own
+  offset-set/run-pinned scan already verifies it)
+- S1STEP6 only 153 (62/91) — Q1's mechanical conversion, an inline loop
+  becomes a call to a file-scope rx_reqrun* block
+No artifact carries S1BUILD together with either other cause (structural:
+once "dominated" no pre-check loop remains for K65/K66/step6 to touch).
+TSV (pattern, config, cause, abi_base, abi_tip): our scratch, reproducible
+from the four pins above; say if you want it committed on our side.
+
+PREDICTIONS, answer-level: nothing changes any answer (K65/K66 tighten the pre-check,
+already make-test green; S1's moves are
+pre-check EQUIVALENCE by construction). Timing: K65K66(+S1STEP6) movers
+(93) do slightly MORE work (every set member / the whole run) — flat to a
+small regression where the byte/run was already present, no change where
+absent. S1BUILD movers (624) had a whole-window pass REMOVED — flat to
+improved, never a regression. S1STEP6-only movers (153) are a
+behavior-identical extraction (residue byte-identical once the wrapper is
+removed, per the step's own report) — flat, at most call-overhead noise.
+Nothing else moves.
+
+THE OWED [OPT-REQBYTE] TIMING (never taken; the ask). REQBYTE landed in
+batch 1 (3aa13b6b), so EVERY pin you hold from 8d716693 on already
+contains it — a pin-vs-pin comparison cannot isolate it. Measure it as a
+TWIN AT ONE PIN instead: each landing-bar cell at 02902356 default vs the
+same cell with `-fno-req-byte` (axis bit 30, tuning.md §2.27). The twelve
+cells and what moved in their artifacts since ce658cb7 (our compile-side
+re-check):
+- IMPROVE (predict default faster than -fno-req-byte):
+  wild-secrets-username-password-pair/thr, wild-logparse-winpath-grok/thr
+  (unmoved since ce658cb7); tag-depth3-bound/thr (K65K66+S1STEP6),
+  dup-param-detect/thr (K65K66), tag-pair-match/thr (K65K66+S1STEP6) —
+  mechanical moves only, the win should hold.
+- DO NOT REGRESS (the byte is PRESENT in the text; predict default within
+  noise of -fno-req-byte, never materially slower): floor-byte/thr,
+  floor-byte/srch, float-literal-bound/thr (unmoved);
+  nested-comment-rec/thr (S1STEP6, mechanical; its ~400x win untouched);
+  wild-secrets-github-pat/thr, wild-validator-uuid-grok/thr (S1BUILD: the
+  whole-window memchr is now ELIDED as dominated — the twin may read
+  identical, which is itself the prediction: RX_REQ_WHY "dominated").
+- router-prefix-order/thr, the would-be identity control: records no
+  required unit, but its artifact moved under S1BUILD (memchr-only
+  prefilter -> run-pinned + an rx_ofsskip helper), so it is no longer a
+  byte-identity control for anything; time it, attribute any change to S1.
+Not urgent; at your next timing window. Nothing here needs a window
+tonight.
