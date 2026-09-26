@@ -707,3 +707,25 @@ Maintenance: update this file when files are added/removed or change role.
   iteration, always at offset 0, no compounding across positions), and
   at bench/utf8's real (<=30 B) search_short subject sizes the per-call
   cost is in the noise floor either way.
+
+- `2026-09-26-utf8-0.1-pcrec-compile-times.py` / `.txt` — ([B95] READ,
+  lane b95read; pcrecdev1's ask via [B77] U5 and O-58) per-pattern pcrec
+  COMPILE times for the four `pcrec_ce658cb7_*_utf8` records of
+  utf8@0.1's first sample: per (config, pattern, form) the outcome, trial
+  count, median/min/max `cost.total_ns` and spread, the median of each
+  phase (emit-c / gcc / load), and the engine / engine_sel / emit_bytes /
+  warned_emit_bytes stamps; a refusal's diagnostic. A READ of committed
+  records only. Headline: `\p{L}+` on auto 70.74 s plain / 106.41 s
+  whole-subject, 99.6% of it pcrec's own emit-c on `size-cap-retry`
+  (O-58's one-shot rehearsal reproduced to 0.1-0.4%); every other
+  pattern median 0.16-0.19 s.
+- `2026-09-26-utf8-0.1-first-ledger-extract.py` / `.txt` — ([B95] READ,
+  lane b95read) the per-row numbers behind
+  `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md`'s P1-P11 / R8
+  scoring (the sidecar prints only the worst value per clause): P1's
+  order pair at set AND subject grain with the `RX_REQ_BYTE`/`RX_REQ_RUN`
+  stamps, P2/P3 per testee, P4.a's emit bytes, every non-zero `n_wrong`,
+  P7's refusals and ratio, the `unsupported_by_pattern` census per
+  (testee, family, requires), and the cells where the best full-grain
+  non-pcrec testee beats pcrec-auto-utf8 by more than ×2. Reads the
+  committed report group + records only.
