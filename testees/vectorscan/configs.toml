@@ -60,3 +60,25 @@ description = "Vectorscan 5.4.11, block mode (HS_MODE_BLOCK), HS_FLAG_SOM_LEFTMO
 engine_mode = "block-nosom"
 encoding = "utf8"
 description = "Vectorscan 5.4.11, block mode, NO SOM, hs_compile flags HS_FLAG_UTF8 (never HS_FLAG_UCP) -- vectorscan-block-nosom's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1/7.6), BOOLEAN GRAIN ONLY. See testees/vectorscan/CLAUDE.md's UTF-8 section before reading a report row for this testee."
+
+# [B99] (2026-09-26): the SOM x UTF-8 combination -- [B92]'s "no UTF-8
+# sibling yet" OWED item, closed. vectorscan-block-som's character-mode
+# sibling, exactly the same shape U2 built for nosom: hs_compile flags
+# HS_FLAG_UTF8 (driver `--encoding utf8`) ORed ONTO HS_FLAG_SOM_LEFTMOST
+# (never HS_FLAG_UCP -- the same measured A/B), FULL GRAIN (a real
+# leftmost-then-longest span and, under find-all, a real non-overlapping
+# NMATCHES -- `som`'s own reduction, now over UTF-8-encoded text; the
+# [B77] U1 character-boundary find-all advance is LIVE here, same as
+# plain `som`). No new driver code was needed: `--som` and `--encoding
+# utf8` are independent flags on one driver, smoke-tested by hand at
+# [B92] and re-witnessed here. Witnessed per (config, REQUIRES token)
+# BEFORE this declaration exists anywhere (it carries NO EXT_BENCH_ROSTER
+# row of its own -- see testees/vectorscan/CLAUDE.md, same convention as
+# every other `-utf8` config on this roster, none of which get a
+# per-encoding roster row either):
+# docs/dev/measurements/2026-09-26-vectorscan-som-utf8-witness-census.txt.
+
+[testees.vectorscan-block-som-utf8]
+engine_mode = "block-som"
+encoding = "utf8"
+description = "Vectorscan 5.4.11, block mode, HS_FLAG_SOM_LEFTMOST ALWAYS SET, hs_compile flags ALSO HS_FLAG_UTF8 (never HS_FLAG_UCP) -- vectorscan-block-som's character-mode sibling ([B92]/[B99], utf8_set_v1.md 7.1/7.6), FULL GRAIN: a real first-match span and, under find-all, a real non-overlapping match count, now over UTF-8-encoded text. See testees/vectorscan/CLAUDE.md's UTF-8/SOM sections before reading a report row for this testee."

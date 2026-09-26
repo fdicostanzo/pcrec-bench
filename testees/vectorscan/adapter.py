@@ -173,24 +173,46 @@ class Adapter(_ad.Adapter):
             "captures": "off",   # Hyperscan has NO capturing groups at all
             "engine_mode": cfg["engine_mode"],
             "simd": "on",        # Vectorscan/Hyperscan's whole raison d'etre
-            "build_flags": "distribution libhs.so.5 (%s), direct-linked "
-                           "(-lhs, pkg-config libhs); driver built with "
-                           "$CC -O2 -std=gnu11; hs_compile flags%s "
-                           "HS_FLAG_UCP/HS_FLAG_UTF8%s never set "
-                           "(testees/vectorscan/CLAUDE.md states the "
-                           "measured A/B and its consequences)"
-                           % (raw,
-                              " HS_FLAG_SOM_LEFTMOST --" if som else " 0 --",
-                              "" if som else "/HS_FLAG_SOM_LEFTMOST")
-                           # [B77] U2: named ONLY for the utf8 config, so
-                           # the byte config's build_flags is unchanged.
-                           + ("; ENGINE ENCODING utf8 ([B77] U2, "
-                              "utf8_set_v1.md 7.1/7.6): hs_compile flags "
-                              "HS_FLAG_UTF8 (driver --encoding utf8) in "
-                              "place of the 0 above -- HS_FLAG_UCP still "
-                              "never set, so \\w/\\d/\\s stay "
-                              "ASCII-scoped"
-                              if enc == "utf8" else ""),
+            "build_flags": ("distribution libhs.so.5 (%s), direct-linked "
+                            "(-lhs, pkg-config libhs); driver built with "
+                            "$CC -O2 -std=gnu11; " % raw)
+                           # [B99]: `som and enc == "utf8"` is the ONE new
+                           # combination this branch adds -- its own clause
+                           # below, kept SEPARATE from the som-byte /
+                           # nosom-either-encoding text beneath it so those
+                           # three combinations' build_flags stay BYTE FOR
+                           # BYTE what they always were (the [B77] U2 arm
+                           # 1c committed-record check depends on it for
+                           # `vectorscan-block-nosom`/`-nosom-utf8`, and no
+                           # combination's text should silently claim a
+                           # flag stays "never set" while it is, in fact,
+                           # ORed in -- record_schema.md 7 rule 1).
+                           + (("hs_compile flags HS_FLAG_SOM_LEFTMOST -- "
+                               "HS_FLAG_UCP never set "
+                               "(testees/vectorscan/CLAUDE.md states the "
+                               "measured A/B and its consequences)"
+                               "; ENGINE ENCODING utf8 ([B77] U2/[B99], "
+                               "utf8_set_v1.md 7.1/7.6): hs_compile flags "
+                               "ALSO HS_FLAG_UTF8 (driver --encoding "
+                               "utf8) beside HS_FLAG_SOM_LEFTMOST above "
+                               "-- HS_FLAG_UCP still never set, so "
+                               "\\w/\\d/\\s stay ASCII-scoped")
+                              if som and enc == "utf8" else
+                              ("hs_compile flags%s "
+                               "HS_FLAG_UCP/HS_FLAG_UTF8%s never set "
+                               "(testees/vectorscan/CLAUDE.md states the "
+                               "measured A/B and its consequences)"
+                               % (" HS_FLAG_SOM_LEFTMOST --" if som else " 0 --",
+                                  "" if som else "/HS_FLAG_SOM_LEFTMOST")
+                               # [B77] U2: named ONLY for the utf8 config, so
+                               # the byte config's build_flags is unchanged.
+                               + ("; ENGINE ENCODING utf8 ([B77] U2, "
+                                  "utf8_set_v1.md 7.1/7.6): hs_compile flags "
+                                  "HS_FLAG_UTF8 (driver --encoding utf8) in "
+                                  "place of the 0 above -- HS_FLAG_UCP still "
+                                  "never set, so \\w/\\d/\\s stay "
+                                  "ASCII-scoped"
+                                  if enc == "utf8" else ""))),
             "runtime_options": ([{"name": "encoding", "value": "utf8"}]
                                 if enc == "utf8" else []),
             "compile_cost_definition": (
