@@ -179,6 +179,23 @@ read the reporter's own rows verbatim, no rule change needed; the two
 were regenerated in content only (`gen.py`). Full detail:
 `docs/dev/lanes/b87query_report.md`.
 
+**[B90] reading (2026-09-25, lane b90ledger): the fourth capability
+cross-pin group, `2026-09-25-capability-0.1-budu-ryzen1600-after-ce658cb7.*`**
+(the same seven files per group), rendered at reporter v23 with the
+EXACT invocation of the `after-6ef76820` group (`--since
+2026-09-23T00:00:00Z`, `--until` moved to `2026-09-26T06:00:00Z`; the
+four pcrec testees at 6ef76820 + at ce658cb7 + the same three competitor
+ids, none of which has a record in the window -- 8 records), sidecar by
+the `/pcrec-bench-interpret` procedure with `--subject-grain`, no
+predictions file (none matches this pin pair), determinism check
+DETERMINISM-OK. Its null band reads the census
+`identity/capability@0.1/pcrec_6ef76820__ce658cb7.tsv` on EVERY cell: the
+ce658cb7 records carry `program_sha256` but the 6ef76820 ones do not, so
+`nullband.field_identity` (both sides required) never fires -- the
+section's "the records carry no program hash of their own" line is true
+of the BEFORE only. Read into
+`docs/dev/ledgers/2026-09-25-k64-fix-after-ce658cb7.md`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
