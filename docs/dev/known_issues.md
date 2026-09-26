@@ -1477,7 +1477,7 @@ the sizes land near their v19 baselines (~51 MB). Found by the remote's
 own pre-receive hook, not by a test — a size gate on regenerated
 reports (warn at 50 MB pre-commit) is worth considering with the fix.
 
-## KB-29 (2026-09-25, found by lane b77u1/[B77] U1; OPEN) — a find-all error after the first match silently truncates the count in every driver
+## KB-29 (2026-09-25, found by lane b77u1/[B77] U1; FIXED for pcre2/onig/pcrec, lane b98rider 2026-09-26; tre/re2/rust/vectorscan OWED) — a find-all error after the first match silently truncates the count in every driver
 
 In every driver's find-all loop, a negative return from the engine AFTER
 at least one match simply ends the loop, so an engine that gives up (or
@@ -1486,14 +1486,43 @@ Pre-existing behaviour, not introduced by U1 (U1 only changed how the
 loop advances). Consequence: a mid-subject give-up can read as
 `wrong-span-or-captures` / a count mismatch rather than as a give-up by
 name — the wrong outcome class, and one the scoreboard excludes for the
-wrong reason. Not yet measured how many committed records it touches
-(a give-up on the FIRST call is classified correctly — e.g. K64's
-PCREC_ERR_STEPS rows; a truncated one would NOT show as a give-up, so the
-records alone cannot bound how many exist). Fix shape: the
-loop propagates a mid-loop negative return as the call's give-up with
-its code, each driver + a check-harness arm (a synthetic engine error on
-the second call must read `gave-up`). Owner: unassigned; natural rider
-for the next harness lane.
+wrong reason.
+
+**FIXED for `testees/{pcre2,onig,pcrec}/driver.c`** (lane b98rider,
+2026-09-26), exactly per this KB's own prescription: the loop's own
+terminal code is now ALWAYS tracked (not gated on `count == 0`), and a
+genuine give-up (never the engine's own ordinary "no further matches"
+terminator — PCRE2_ERROR_NOMATCH / ONIG_MISMATCH / pcrec's `r == 0`,
+each already a SEPARATE case from a true negative give-up code) discards
+any matches already accumulated that call before falling through to the
+SAME `giveup:<code>:<message>` branch a first-call give-up already took.
+`tools/selfcheck.py:check_kb29_find_all_giveup_propagation` (`make
+check-harness`) proves it on three REAL witnesses chosen so the first
+find-all call succeeds and the second is where the engine gives up —
+never a fabricated error: pcre2's `x*` under `--utf --utf-always-check`
+without `--utf8` (PCRE2_ERROR_BADUTFOFFSET, -36, on a subject whose
+second character is multi-byte), onig's `b|(a+)+$` over `b`+35×`a`+`X`
+(ONIGERR_RETRY_LIMIT_IN_MATCH_OVER, -17, ~0.2 s), and the SAME pattern
+under `pcrec-vm` (PCREC_ERR_STEPS, -2) — each with a control subject too
+short to reach the give-up, still answering an ordinary `match`. Both
+fixes were verified against the real bug by hand (`git stash` the
+driver, rebuild, confirm the SAME three witnesses answer a truncated
+`match` instead of `giveup:...`, `git stash pop`) — recorded in
+`docs/dev/lanes/b98rider_report.md`, not re-run automatically every
+check-harness pass (that would mean carrying a second, permanently
+unfixed driver build just to keep re-proving a closed bug).
+
+**OWED**: `testees/{tre,re2,rust}/driver.c` have the SAME loop shape
+(`if (rc < 0) { if (count == 0) ...; break; }`, one line to change plus
+the post-loop discard, mirroring the three drivers above exactly) and
+were NOT touched by this lane — a rider for the next harness lane, same
+fix shape, ideally with its own real witness per engine (TRE's own
+retry-limit-shaped give-up, RE2's `ErrorPatternTooLarge`-adjacent
+match-time limits if any exist, rust's `regex` crate has no documented
+give-up surface at all per `testees/rust/CLAUDE.md` and may need no fix).
+`vectorscan` is STRUCTURALLY EXEMPT: `GAVE_UP_CODES = frozenset()` (no
+Hyperscan return code is ever classified `gave-up`, by design — its own
+CLAUDE.md), so this bug shape cannot manifest there.
 
 ## KB-30 (2026-09-25, found by lane b77u2/[B77] U2; OPEN) — vectorscan's measure() does not pass `--free-spacing`, so an `(?x)` pattern ending in a comment is wrapped differently at measure time than at compile time
 

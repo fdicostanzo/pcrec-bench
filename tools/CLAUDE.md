@@ -580,3 +580,23 @@ VERIFIED against the real incident, not just the synthetic negative:
 `refusal_class` `METADATA_DECL` entry removed, syntax preserved) and
 this check FAILED naming exactly the missing key; `git checkout`
 restored the fix and both arms passed again. 2 PASS lines.
+
+[B98] lane `b98rider` (2026-09-26, KB-29 -- the find-all mid-loop
+give-up truncation bug): `check_kb29_find_all_giveup_propagation` --
+`testees/{pcre2,onig,pcrec}/driver.c`'s find-all loops now ALWAYS track
+the loop's own terminal code (not only when no match had been found
+yet), so a genuine give-up AFTER a match already succeeded this call is
+never silently reported as a truncated `match`. Three REAL witnesses
+(never fabricated): pcre2's `x*` under `--utf --utf-always-check`
+without `--utf8` over an early multi-byte character
+(PCRE2_ERROR_BADUTFOFFSET, -36); onig's `b|(a+)+$` over `b`+35 `a`s+`X`
+(Oniguruma's own DEFAULT match-retry budget, ONIGERR_RETRY_LIMIT_
+IN_MATCH_OVER, ~0.2 s); the same pattern under `pcrec-vm`
+(PCREC_ERR_STEPS). Each with a control subject too short to reach the
+give-up, still answering an ordinary `match` with its real count. The
+bug's own reproduction (git-stash each driver, rebuild, confirm the
+SAME three witnesses truncate to `match`, restore) was verified by hand
+during this lane, not re-run automatically every pass -- see
+docs/dev/known_issues.md KB-29. `tre`/`re2`/`rust` have the identical
+loop shape and are OWED to the next harness lane; `vectorscan` is
+structurally exempt (`GAVE_UP_CODES = frozenset()`). 6 PASS lines.

@@ -358,7 +358,20 @@ class Adapter(_ad.Adapter):
             if name in out.info:
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
-                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf, "som": som}
+                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf, "som": som,
+                  # KB-30 (docs/dev/known_issues.md, found lane [B77] U2;
+                  # fixed lane b98rider, 2026-09-26): `measure()`'s driver
+                  # RECOMPILES from this same `pattern_file` (see the
+                  # `som`/`utf` comments right below in `measure()`), so
+                  # any flag that changes how that file's bytes PARSE must
+                  # ride along too. `free_spacing` was the one flag this
+                  # handle never carried, so an `(?x)` whole-subject
+                  # pattern ending in a `#` comment was compiled with
+                  # `--free-spacing` (comment stripped) but MEASURED
+                  # without it (comment left in, silently absorbing every
+                  # byte to end of pattern) -- two different parses of the
+                  # one artifact `measure()` was supposed to be timing.
+                  "free_spacing": free_spacing}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -376,6 +389,17 @@ class Adapter(_ad.Adapter):
             # pattern file, so `--som` rides here too -- never a nosom
             # stand-in at measure time.
             argv.append("--som")
+        if handle.get("free_spacing"):
+            # KB-30 (docs/dev/known_issues.md): the SAME reason as `--som`
+            # right above -- the measure-time driver recompiles from the
+            # SAME pattern file `--form whole-subject`'s `(?x)` wrap
+            # needed `--free-spacing` for at compile time, so this must
+            # ride here too, or an `(?x)` pattern ending in a `#` comment
+            # is wrapped (and therefore ANSWERED) differently at measure
+            # time than at compile time. Only ever set on a whole-subject
+            # handle (`_compile_one`'s own `free_spacing` computation), so
+            # a `plain`-form handle never carries this key at all.
+            argv.append("--free-spacing")
         if handle.get("utf"):
             # [B77] U2: the measure-time driver recompiles, so the ENGINE
             # encoding rides here too -- never a byte-mode stand-in.

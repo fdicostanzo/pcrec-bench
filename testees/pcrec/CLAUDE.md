@@ -1297,6 +1297,20 @@ producer yet. Schema v1.1 gives these rows their own `gave-up` outcome;
 until it lands they are `did-not-match-as-expected` — see
 `bench/email/NOTES.md`.
 
+**KB-29 (docs/dev/known_issues.md, fixed lane b98rider, 2026-09-26):**
+`driver.c`'s find-all loop distinguishes `do_search`'s ordinary `r == 0`
+("no further matches") from a genuine `r < 0` give-up at the return-value
+level already, but used to discard the give-up's own code (`giveup`) in
+favour of an earlier successful match whenever `count > 0` by the time it
+fired -- reported as a truncated `match`, never `giveup:<code>`. `giveup`
+is now ALWAYS set on `r < 0` (not gated on `count == 0`), and a nonzero
+`giveup` discards the call's accumulated matches so the subject falls
+through to the ordinary `giveup:<code>:<NAME>` branch above. Witnessed on
+`b|(a+)+$` over `b`+35×`a`+`X` under `--engine=vm` (the first call
+matches `b`; the second's `(a+)+$` alternative exhausts
+`PCREC_ERR_STEPS`) -- `tools/selfcheck.py:check_kb29_find_all_giveup_
+propagation`.
+
 ## Engine metadata
 
 From STRUCTURED fields only (requirements §4.2): `rx_info`'s

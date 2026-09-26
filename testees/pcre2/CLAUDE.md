@@ -324,6 +324,18 @@ than claiming a completeness this lane did not check.
 
 ### `--find-all` (throughput regime)
 
+**KB-29 (docs/dev/known_issues.md, fixed lane b98rider, 2026-09-26):** a
+mid-loop negative return AFTER at least one match had already been found
+used to be silently absorbed into an ordinary `match` answer with a
+SHORT count -- `rc_final` is now ALWAYS the loop's own terminal code
+(never gated on `count == 0`), and a genuine give-up (any code other
+than PCRE2_ERROR_NOMATCH, the ordinary "no further matches" terminator)
+discards the call's accumulated matches and reports `giveup:<code>` the
+same way a first-call give-up already does. Witnessed with
+PCRE2_ERROR_BADUTFOFFSET (`x*` under `--utf --utf-always-check` without
+`--utf8`, over a subject whose second character is multi-byte --
+`tools/selfcheck.py:check_kb29_find_all_giveup_propagation`).
+
 Uses the SAME advance rule as every other testee (`ov[0]`/`ov[1]` of the
 LONGEST match at each start point; `pos = end if end > start else
 start + 1`) — the non-overlapping match COUNT can still differ from

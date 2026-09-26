@@ -336,7 +336,14 @@ int main(int argc, char **argv) {
                             : onig_search(reg, s->buf, s->buf + s->len,
                                          s->buf + pos, s->buf + s->len,
                                          region, ONIG_OPTION_NONE);
-                        if (rc < 0) { if (count == 0) rc_final = rc; break; }
+                        /* KB-29 (docs/dev/known_issues.md): ALWAYS track
+                         * the loop's own terminal code, not only when
+                         * `count == 0` -- so a genuine give-up (any code
+                         * other than ONIG_MISMATCH, the ordinary "no more
+                         * matches" terminator) is never silently
+                         * discarded in favour of an earlier successful
+                         * match's own non-negative rc. */
+                        if (rc < 0) { rc_final = rc; break; }
                         if (first_s < 0) {
                             first_s = (long)region->beg[0];
                             first_e = (long)region->end[0];
@@ -357,6 +364,17 @@ int main(int argc, char **argv) {
                         if (pos > s->len) break;
                     }
                     nmatch = count;
+                    /* KB-29: a genuine mid-loop give-up (any terminal
+                     * code other than ONIG_MISMATCH) must propagate as
+                     * the whole subject's give-up, discarding any
+                     * matches already accumulated this call -- falls
+                     * through to the ordinary `giveup:<code>:<message>`
+                     * branch below exactly as a first-call give-up
+                     * already does. */
+                    if (rc_final < 0 && rc_final != ONIG_MISMATCH) {
+                        first_s = first_e = -1;
+                        nmatch = -1;
+                    }
                 } else {
                     int rc = whole_subject
                         ? onig_match(reg, s->buf, s->buf + s->len, s->buf,
