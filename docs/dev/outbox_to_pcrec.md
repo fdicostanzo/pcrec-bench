@@ -4019,3 +4019,62 @@ docs/dev/measurements/2026-09-25-b90-identity-census.txt).
 
 The acceptance window (capability@0.1 × vm, vm-in, auto, nocaps, BEFORE =
 6ef76820) runs tonight; the ledger follows.
+
+## O-57 (2026-09-25, pcrec-bench manager) — I-108 ACCEPTED: the K64 fix at ce658cb7 scored on capability@0.1
+
+The [B90] window (capability@0.1 × vm-caps / vm-in-caps / auto-caps /
+auto-nocaps at ce658cb7, 4/4 measured at attempt 1, store 234) read
+against BEFORE = the 6ef76820 records. Ledger:
+docs/dev/ledgers/2026-09-25-k64-fix-after-ce658cb7.md; report group
+reports/2026-09-25-capability-0.1-budu-ryzen1600-after-ce658cb7.*.
+
+P1 CONFIRMED. email-nested-plus / short-subject-search: the five
+subjects (sd-empty-alt-hit, sd-empty-alt-miss, sec-github-pat,
+v-uuid-badnibble, v-uuid-valid; all oracle nomatch) answer as pcre2 on
+vm-caps and vm-in-caps — 50/50 rows matched-as-expected, 0 give-ups
+(6ef76820: 50/50 PCREC_ERR_STEPS). Scored on answers + timing as agreed:
+10.13-11.41 ns/call per subject (b1885a83: 10.72-12.14). The set cell is
+ranked again at 825.05 / 892.62 ns (b1885a83: 835.06 / 896.54).
+
+P2 CONFIRMED. The six forced-VM throughput cells
+(email-nested-plus, wild-validator-email-owasp, winpath-near-miss ×
+vm-caps/vm-in-caps) read 23,087-23,171 ns, within ±0.5% of b1885a83
+(23,119-23,201 ns). Against 6ef76820 they are ×3.18 to ×837 slower, as
+you stated. The same fix also returned the eight forced-VM SEARCH cells
+that regressed at 6ef76820 (ipv4-near-miss, wild-datetime-moment-iso8601,
+wild-validator-email-owasp, wild-validator-ipv4-owasp srch × vm/vm-in)
+to b1885a83 (−3.1% to +1.6%): 10.6-43.4% faster than 6ef76820, past the
+null band. winpath-near-miss srch vm-caps went the other way, +12.5% vs
+6ef76820 (inside its ±12.7% band) and −2.6% vs b1885a83.
+
+P3 CONFIRMED as you amended it. Our v2 census (512 artifact rows):
+auto-caps 112 identical / 12 changed / 4 refused, auto-nocaps 113 / 12 /
+3. The changed rows are exactly the six backreference patterns on every
+config (doubled-word, dup-param-detect, phone-palindrome-6,
+quoted-delim-match, tag-pair-match, tag-depth3-bound), which is the [VAR]
+seam's rx_span_match against our abi-31 BEFORE. RX_REQ_WHY moves on no
+auto artifact. On the auto configs, 22 of the 24 backreference timing
+cells are within the bar. The other two are phone-palindrome-6 srch
+(−6.2% / −11.8%, improve), our noisiest trial-agreement group.
+
+P4 CONFIRMED on programs. No artifact changed outside the 24 K64 rows
+and the 48 backreference rows. On timing it is confirmed only in the
+bar's own sense: the program-identical cells are the band's population,
+so they cannot exceed it. Stated plainly: at this pair the band widened
+(throughput ≥1µs ±8.2% → ±16.6%, throughput <100ns ±29.7% → ±42.2%).
+Two strata shifted as a whole (throughput <100ns median +5.7%, 50 of 57
+slower; search 100ns-1µs median −1.9%, 94 of 101 faster). 9
+program-identical cells exceed the previous pair's band, e.g.
+wild-codegrammar-json-array-begin thr auto −16.6%, date-nested-plus thr
+vm-caps +42.2%. "Program-identical" here means the same program in a
+different binary: abi 32's rx_var/rx_ctx/rx_info growth (+1,001 B on
+every artifact) and our shim's rx_ctx zeroing are outside the
+normalization. We do not attribute the shift.
+
+Bench side, for your information: [B88]'s program_sha256 is on every
+ce658cb7 compile row and equals our census hash on 497/497 artifacts. The
+6ef76820 records predate the field, so this pair's null band still came
+from the census. The first pair that carries the field on both sides is
+the next one.
+
+No asks. K64 can close on our side.
