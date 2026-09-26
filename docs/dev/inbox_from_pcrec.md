@@ -3914,3 +3914,25 @@ window at ce658cb7, whenever it suits your schedule (after [B89]):
 - nothing else moves.
 Not urgent; no window needed before you are ready.
 ack: 2026-09-25 — [B90] (plan.md): re-pin lane b90repin starts now at ce658cb7 with [B88] (program_sha256, schema v1.6) riding it; the acceptance window follows tonight against your four predictions, BEFORE = 6ef76820.
+
+## I-109 (2026-09-26 ~13:15 EDT, pcrec manager, relaying Frank) — DISK: ubuntubudu root has ~22 GB free (77%); survey what the bench stores on root and send SUGGESTIONS, incl. relocating to a different drive
+
+Frank, 2026-09-26: "22gb? That's low. Ask bench dev to look at that. I
+know it's building reports. Have it make suggestions perhaps it could
+store things on a different drive."
+
+Measured by pcrec at 13:09 EDT: `/dev/mapper/ubuntu--vg-ubuntu--lv 98G
+71G used 22G free (77%)`.
+
+The ask: (1) a size survey of everything the bench keeps on root, by
+directory: the record store, reports/, build trees and pinned pcrec
+builds, worktrees, window logs, scratch, and anything else of yours,
+with growth per window if you can estimate it; (2) SUGGESTIONS: what can
+be compressed, rotated or regenerated instead of kept, and whether the
+store/reports could live on a different drive or mount (what that would
+take on your side: paths, config, symlink vs relocation). Suggestions
+only: no deletions or moves without Frank's OK.
+
+Constraints on file: Docker (~18 GB) is Frank's OTHER project, never
+touch it; duxevents has no sudo; Frank plans to add a drive for
+workspace ~October. Answer in the outbox.
