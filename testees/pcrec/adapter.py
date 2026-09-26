@@ -712,7 +712,8 @@ METADATA_DECL = {
     "dfa_prefilter": {
         "type": "enum", "scope": "pattern",
         "values": ["none", "memchr", "byte-class", "memchr-bounded",
-                   "byte-class-bounded", "offset-set", "offset-set-bounded"],
+                   "byte-class-bounded", "offset-set", "offset-set-bounded",
+                   "run-pinned", "run-pinned-bounded"],
         "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
                   "CHECKED against rx_info.prefilter (pb_info_prefilter()); "
                   "the value set is CHECKED against `pcrec --list-axes` "
@@ -728,7 +729,14 @@ METADATA_DECL = {
                        "values ([OPT-K], pcrec abi 9) scan for ONE byte at a "
                        "chosen offset k* inside the fixed-length prefix and "
                        "verify the other offsets per candidate; WHICH offsets "
-                       "is `dfa_prefilter_offsets`",
+                       "is `dfa_prefilter_offsets`. The two `run-pinned` "
+                       "values ([OPT-LITSCAN] S1, pcrec abi 36) are the "
+                       "offset-set block with the necessary run (`req_run`) "
+                       "as ONE term at its fixed offset from every match's "
+                       "start, verified as one memcmp per candidate -- the "
+                       "run pre-check is then not emitted (`req_why` "
+                       "`dominated`); removed by -fno-run-prefilter OR "
+                       "-fno-offset-skip",
     },
     "dfa_prefilter_offsets": {
         "type": "string", "scope": "pattern",
@@ -736,13 +744,14 @@ METADATA_DECL = {
                   "read through pb_dfa_prefilter_offsets(); same scope as "
                   "dfa_scan (every artifact that CONTAINS a DFA scan, VM "
                   "hybrids included); CHECKED to be \"none\" iff "
-                  "dfa_prefilter is not an offset-set value",
+                  "dfa_prefilter is not an offset-set or run-pinned "
+                  "value (OFFSET_SET_VALUES)",
         "description": "WHICH byte offsets from the candidate's own start the "
                        "offset-set filter tests, ascending, comma-separated, "
                        "`*` marking the one the scan searches for -- "
                        "`0,8*,13` on the uuid shape -- or `none` on every "
                        "artifact whose dfa_prefilter is not one of the two "
-                       "offset-set values. A fact about the individual "
+                       "offset-set or (pcrec abi 36+) two run-pinned values. A fact about the individual "
                        "MACHINE (free text), deliberately not folded into "
                        "dfa_prefilter's closed value set",
     },
@@ -1776,8 +1785,13 @@ ENGINE_SEL_OVERFLOW_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
                                 "size-cap-retry")
 
 #: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
-#: (match_api.md 6.3's iff, checked from both sides).
-OFFSET_SET_VALUES = ("offset-set", "offset-set-bounded")
+#: (match_api.md 6.3's iff, checked from both sides). [B101] (pcrec abi 36,
+#: [OPT-LITSCAN] S1): the two `run-pinned` values joined the iff -- the
+#: offsets stamp lists every offset the run-pinned test covers, the run's
+#: own offsets individually (`abc` at 02902356: "0,1*,2"), and its scan may
+#: be offset 0 (`0*`), which no older value's scan is.
+OFFSET_SET_VALUES = ("offset-set", "offset-set-bounded",
+                     "run-pinned", "run-pinned-bounded")
 
 #: The committed copy of `pcrec --list-axes` at the pin -- the FOURTH
 #: registry surface (pcrec docs/spec/registry.md 6; I-15 (5)). The stamp
