@@ -125,11 +125,22 @@ GAVE_UP_CODES_DFA = (set(GAVE_UP_CODES) - {-46}) | {-43, -39, -42, -40}
 # [B77] U2 (docs/design/utf8_set_v1.md 7.1): the build_flags clause a
 # `encoding = "utf8"` config appends -- and ONLY such a config, so every byte
 # config's build_flags is byte-identical to its pre-[B77] rendering.
+# [B94]/BD15 (2026-09-26): the COMPILE-time clause ("never PCRE2_NO_UTF_CHECK")
+# is unchanged and still literally true -- pcre2_compile_8's options word
+# (`copts` in driver.c) never carries it. What changed is MATCH time: the
+# driver's find-all loop now passes PCRE2_NO_UTF_CHECK on calls 2..n over the
+# same buffer, after call 1 (offset 0) has validated the whole subject --
+# VALIDATE-ONCE, the same shape as BD14's oracle fix. No config toggle exists
+# for this (it is unconditional under PCRE2_UTF), so it is stated here rather
+# than as a new build_flags clause of its own.
 UTF_BUILD_NOTE = ("; ENGINE ENCODING utf8 ([B77] U2): pcre2_compile_8 "
                   "options word carries PCRE2_UTF (driver --utf), never "
                   "PCRE2_UCP (a pattern that wants Unicode-widened classes "
-                  "spells (*UCP) itself), never PCRE2_NO_UTF_CHECK "
-                  "(utf8_set_v1.md 8.2)")
+                  "spells (*UCP) itself), never PCRE2_NO_UTF_CHECK AT COMPILE "
+                  "TIME (utf8_set_v1.md 8.2); AT MATCH TIME, a find-all's "
+                  "calls 2..n on one subject pass PCRE2_NO_UTF_CHECK after "
+                  "call 1 validates the whole subject ([B94]/BD15, "
+                  "VALIDATE-ONCE)")
 
 
 class Adapter(_ad.Adapter):
