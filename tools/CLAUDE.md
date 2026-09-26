@@ -559,3 +559,17 @@ observed 12"). 24 checks, ~1-2 min (builds every driver). The
 byte-identical re-derivation of every set (U1's acceptance) is the
 archived probe `docs/dev/measurements/probe_b77u1_rederive.py`; the
 generic `check_expectations` gate keeps re-proving it on every run.
+
+[B101] (2026-09-26, lane b101repin, the re-pin to 02902356, abi 37; inbox
+I-111): `check_noreqbyte_testee` (new, 6 checks) -- the `-fno-req-byte`
+twin `pcrec-auto-noreqbyte`: the flag and bit read off the registry, the
+derived id = `pcrec-auto`'s + `_noreqbyte` with `pcrec-auto`'s own shape
+still the frozen one, the three req stamps by value on both arms of
+`foo[0-9]+bar` / capability github-pat / uuid-grok (github-pat's denied
+arm ALSO drops S1's `run-pinned-bounded` prefilter), and the null arm
+(uuid-grok program-identical across the twin) with its control
+(github-pat not). `check_deny_flag_controls` now splits the registry's
+`|`-joined deny cells (the run-pinned rows) and takes an optional eighth
+element naming the spelling; two new rows on `abc` for bit 32 and bit 16.
+`check_mechanism_stamps` gains six ledger rows (I-111's S1BUILD / K65 /
+step-6 movers by value) and the `B101_*` size-book constants.

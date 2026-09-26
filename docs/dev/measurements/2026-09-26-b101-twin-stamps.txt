@@ -43,3 +43,6 @@ router-prefix-order	thr	TIMED (not a control)	ce658cb7	default	dfa	selected	emit
 router-prefix-order	thr	TIMED (not a control)	02902356	default	dfa	selected	dominated	47	2f75736572@0	run-pinned	0*,1,2,3,4	c67f6baea2b864fd
 router-prefix-order	thr	TIMED (not a control)	02902356	noreqbyte	dfa	selected	none	none	none	memchr	none	7f9b459e039a35b3
 # router-prefix-order: 02902356 default vs -fno-req-byte program-DIFFERENT
+
+# probe_b101_twin_refusals.py (capability@0.1, 64 patterns x 2 forms, pcrec-auto flags, 02902356 default vs -fno-req-byte):
+# rows 128 refused-both 4 program-identical 88 refusal movers [] -- the denial moves NO compile outcome (36 artifacts change program)

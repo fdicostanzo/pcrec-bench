@@ -455,7 +455,27 @@ bindings) live here, vendored or system, pinned either way.
   alternation island denied at the same pin, the island's BEFORE on
   altwide) — and `pcrec-auto-noclsfold` + `pcrec-vm-noclsfold`
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
-  denied at the same pin, the fold's BEFORE) — at a pinned commit —
+  denied at the same pin, the fold's BEFORE) — and `pcrec-auto-noreqbyte`
+  (`-fno-req-byte`, [B101]: [OPT-REQBYTE]'s pre-check denied at the same
+  pin, inbox I-111's owed twin; twenty-one pinned pcrec configs) — at a
+  pinned commit — **02902356, abi 37** (re-pinned from ce658cb7,
+  2026-09-26, lane b101repin, inbox I-111 — FOUR abi steps: 33→35 K65/K66
+  (27a63314: on a VM route with no DFA scan the pre-check tests the WHOLE
+  necessary set / the whole run), 35→36 [OPT-LITSCAN] S1 steps 1-5
+  (0bb87eda: G1 widened, `RX_REQ_WHY` emitted→dominated wherever the DFA's
+  offset-skip prefilter verifies the run, and TWO new `RX_DFA_PREFILTER`
+  values `run-pinned`/`run-pinned-bounded` with axis bit 32
+  `-fno-run-prefilter` — the registry's first `|`-joined deny,
+  `-fno-offset-skip|-fno-run-prefilter`), 36→37 S1 step 6 (42ee828f: the
+  run pre-check a file-scope `rx_reqrun` block); no new stamp, `struct
+  rx_info` byte-identical, the shim floor STAYS 16. Registries: axes
+  89→91/32 (the two run-pinned rows), definitions 50 and limits 62
+  byte-identical, schema 73→78 (pcrec's [FINDINGS] B0 `.rxt` rows, not an
+  abi step). I-111's bench census reproduced DIGIT FOR DIGIT (650 = 403
+  identical / 59 refused / 10 K65K66 / 6 K65K66+S1STEP6 / 110 S1BUILD /
+  62 S1STEP6, zero refusal movers; docs/dev/measurements/
+  2026-09-26-b101-census.txt); size books measured per witness at all
+  five builds, no flat term. Catalogue 3.10.) Before it,
   **ce658cb7, abi 33** (re-pinned from 6ef76820, 2026-09-25, lane
   b90repin, inbox I-108 — TWO abi steps: 31→32 is pcrec's [VAR] module
   (`${name}` caller variables, D121; NOT in I-108's text): `rx_var` +

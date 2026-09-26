@@ -128,6 +128,15 @@ behavioral witnesses (`tre-default`/`vectorscan-block-nosom` flipping a
 raw driver refusal to a clean `unsupported-by-declaration`). No pattern
 was found over-tagged.
 
+**[B101] (lane b101repin, 2026-09-26) adds `pcrec-auto-noreqbyte` to the
+`ext bench` roster** (pcrec-auto + `-fno-req-byte`, inbox I-111's
+[OPT-REQBYTE] twin; `patterns.rxt` regenerated, `--check` clean): exactly
+`pcrec-auto`'s tokens -- the denial is emit-side, and MEASURED the two
+configs' refusal sets over all 64 patterns x both forms are identical
+(4 refused both, 0 movers; docs/dev/measurements/2026-09-26-b101-twin-
+stamps.txt). Without the row the twin would read every requires-tagged
+pattern `unsupported-by-declaration` (the fail-closed rule).
+
 **[B7]/L6b (lane l6bonig, 2026-09-17) adds `onig-default` to the `ext
 bench` roster** (`EXT_BENCH_ROSTER` in `gen_patterns.py`, `patterns.rxt`
 regenerated): 13 of 17 REQUIRES tokens satisfied, withholding

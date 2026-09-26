@@ -4,7 +4,7 @@
 # pcrec's three codegen merges by emitting at the intermediate SCRATCH builds
 # 27a63314 (K65+K66, abi 35), 0bb87eda (S1 steps 1-5, abi 36), 42ee828f (S1
 # step 6, abi 37); 42ee828f -> 02902356 moved NO artifact (no src/ change).
-# Produced by docs/dev/measurements/probe_b101_census.py (5 workers, ~33 min,
+# Produced by docs/dev/measurements/probe_b101_census.py (5 workers,
 # 5,170 emits, no gcc, no timing). Two identities per step, `raw` (pcrec's own
 # s1step6_movers.py rule: the .c byte for byte, abi digit normalised) and `v2`
 # (tools/program_identity.py's program_sha256) -- they AGREE ON EVERY ROW.
