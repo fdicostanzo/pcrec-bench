@@ -4100,3 +4100,56 @@ overnight window.
 - Your repro differed in two ways: `\p{L}` without the `+`, and abi 35 rather
   than ce658cb7. The five-trial numbers per pattern, for every pcrec utf8
   config, go in the first-window ledger.
+
+## O-59 (2026-09-26 ~13:40 EDT, pcrec-bench manager) — answers I-109: the disk survey, and suggestions (nothing deleted or moved)
+
+**Lead finding: root is not really out of room.** `lsblk`: `sda` is 465.8 GB and
+`sda3` (the LVM physical volume) is 462.7 GB, but the only logical volume on it,
+`ubuntu--vg-ubuntu--lv` (root), is 100 GB. That is the Ubuntu installer's default
+layout, which leaves the rest of the volume group unallocated. Roughly **360 GB
+already sits on this disk unused.** duxevents cannot run `vgs` without root, so
+Frank should confirm it first. If `sudo vgs` shows that VFree, then
+`sudo lvextend -r -l +100%FREE /dev/ubuntu-vg/ubuntu-lv` grows root online (ext4
+grows live, no reboot, nothing moves). No second drive is needed for space; one
+may still be wanted for other reasons.
+
+**What the bench keeps on root: 9.3 GB of the 72 GB used** (`du`, 13:35 EDT):
+
+| path | size | what it is | disposable? |
+|---|---|---|---|
+| `worktrees/b74repin`, `worktrees/b75kb27` | 1.6 + 1.5 GB | two lane worktrees, both branches MERGED into master (2026-09-22) | yes: `git worktree remove` |
+| `build/work/` | 2.6 GB | per-testee compile work dirs (34), rebuilt by any run | yes, regenerated on demand |
+| `build/pcrec-<pin>/` ×20 | 1.1 GB | pinned pcrec builds, 41-98 MB each | all but the current pin (ce658cb7) and one back; `scripts/pin.sh` rebuilds any |
+| `store/` | 1.4 GB | the canonical record store (git-tracked; capability@0.1 455 MB, bounded@0.3 253 MB, utf8@0.1 155 MB; ~14 MB per utf8 record) | NO: the product |
+| `reports/` | 0.9 GB | committed reports (the capability subject-grain TSVs are 35-57 MB each, KB-32) | regenerable from the store; committed by convention |
+| `.git/` | 385 MB | 309 MB of LOOSE objects + a 73 MB pack | `git gc` would likely take it to ~100 MB |
+| `/var/tmp/` (ours) | ~0.2 GB | a rejected-records archive (86 MB, 2026-09-06), a sabotage dir, a mirror, the fixture backup from today | mostly yes |
+| everything else (bench/, docs/, catalogue/, viewer/) | ~45 MB | source | no |
+
+**Growth:** the store has grown ~1.4 GB since 2026-08-24, and recently faster:
+a 4-6 cell window adds ~50-150 MB of records plus 10-60 MB of reports. Call it
+up to ~0.2 GB per window, so ~5-6 GB a month at one window a day. Churn in
+`build/work` and new pin builds (~0.1 GB each) come on top.
+
+**Suggestions, in order of value (all need Frank's OK):**
+1. **Extend the root LV** (above). It is one command, and it solves the problem for years.
+2. **Free ~7 GB of the bench's 9.3 GB now, with nothing lost:** remove the two
+   merged worktrees (3.1 GB), clear `build/work` (2.6 GB, regenerated), prune
+   old pin builds down to the last two (~0.9 GB), `git gc` (~0.2-0.3 GB),
+   and clear our stale `/var/tmp` dirs (~0.15 GB). I'd make removing merged
+   worktrees and old pin builds a standing session-close step.
+3. **If a second drive/mount arrives instead:** the code uses REPO-RELATIVE
+   paths (one archived probe script hard-codes the home path), so the simplest
+   route is to move the WHOLE repo (`git clone` or `mv`, then update the two
+   sessions' cwd). Splitting `store/` alone is awkward, because it is
+   git-tracked and git does not follow a symlinked directory. The gitignored
+   bulk is the easy part: `build/` and `worktrees/` can be SYMLINKS to the new
+   mount today, with no code change, and `$PCRECBENCH_SCRATCH_STORE` already
+   relocates the scratch store.
+4. **Longer term, the reports:** the large subject-grain TSVs are deterministic
+   renders of the store. We could stop committing ones above a size bar and
+   regenerate them on demand, or compress them. That is also KB-32's fix
+   before GitHub's 100 MB limit bites. Git's own pack already compresses the
+   whole history to 73 MB, so this is about the working tree, not history.
+
+Docker (~18 GB) was not touched or measured beyond the note on file.

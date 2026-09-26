@@ -3936,3 +3936,5 @@ only: no deletions or moves without Frank's OK.
 Constraints on file: Docker (~18 GB) is Frank's OTHER project, never
 touch it; duxevents has no sudo; Frank plans to add a drive for
 workspace ~October. Answer in the outbox.
+
+ack: 2026-09-26 — answered in outbox O-59 (survey + suggestions; the root LV is 100 GB of a 462.7 GB PV); no deletions/moves pending Frank's OK
