@@ -84,7 +84,7 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   human reading the tool must not try to reproduce.
 - `capability-0.1-first.tsv` — **[B93] APPLIED, 2026-09-25/26** (Frank's
   ruling on `docs/dev/lanes/b72smalls_report.md` §5's candidate (b), and
-  the manager's follow-up ruling on P4, 2026-09-26;
+  the manager's TWO follow-up rulings on P4, both 2026-09-26;
   `docs/dev/lanes/b93pred_report.md`; "Revising an already-scored file"
   above states the standing rule this correction is the first
   application of): P2.a/P2.b's selector `regime_or_na=n/a` clause
@@ -93,13 +93,17 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   testee glob typo (Cause C) is corrected and their reducers
   (`ratio_to`, replacing P4.b's wrong `ratio_to_median_over`) name
   `pattern=`/`testee=`/(P4.b only)`subject_or_na=`/`regime_or_na=`
-  explicitly too — both SANCTIONED SYNTAX-ONLY CORRECTIONS, empirically
-  verified to move no predicted value (same `quantity`/`op`/`hi`/`unit`/
-  `note` before and after on every one of the four clauses; only
-  selector/reducer TEXT changed). The ORIGINAL bytes are in git history
-  (the commits immediately before this one on this file). What follows
-  through "P9 (NOTES.md..." below is the UNCHANGED historical record of
-  the file's first scoring (2026-09-16/17), before either fix — read it
+  explicitly too; P4.b's selector ALSO gains `grain=subject` under a
+  SECOND manager ruling the same day (the note names one subject,
+  `lp-atomic-nonmatch`, so the clause's meaning was never set-grain —
+  the same repair class, same test) — ALL SANCTIONED SYNTAX-ONLY
+  CORRECTIONS, empirically verified to move no predicted value (same
+  `quantity`/`op`/`hi`/`unit`/`note` before and after on every one of
+  the four clauses; only selector/reducer TEXT changed). The ORIGINAL
+  bytes are in git history (the commits immediately before this one on
+  this file). What follows through "P9 (NOTES.md..." below is the
+  UNCHANGED historical record of the file's first scoring
+  (2026-09-16/17), before any of these fixes — read it
   as that history, not as this file's current behavior; P2's and P4's
   own corrected readings are at the end of this entry.
   `bench/capability/NOTES.md`'s **P1-P10**,
@@ -260,50 +264,64 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   independently confirmed correct (no pcrec testee is present to
   glob-match, checked directly against each report's own compile rows).
 
-  **A THIRD, separate structural fact, found while verifying P4.b, left
-  exactly as found — not something this fix could reach**: P4.b's
-  OUTER selector still names `subject_or_na=lp-atomic-nonmatch` /
-  `regime_or_na=short-subject-search` (unchanged from the original,
-  authoring intent), but every one of these four reports is rendered at
-  `grain=set` — at which `render_tsv` writes the literal string `(set)`
-  into every rank row's `subject_or_na`, never the real subject id
-  (Cause A, `interpret_subject_grain_v1.md` §1.2/§4 — the SAME gap that
-  set-grain P3/P6/P7/P10 all report). A selector naming a real subject
-  id can only ever be routed to the subject-grain view via an explicit
-  `grain=subject` key, which this fix does not add (outside the
-  manager's own three-part description; not attempted here). So P4.b
-  reads **not evaluable** on all four reports, correctly and safely (no
-  crash, the ordinary "no row in this report matches the selector"
-  reason) — never the wrong thing, just not yet the RIGHT thing. Hand-
-  derived DIRECTLY FROM THE UNDERLYING RECORDS (not the set-grain TSV,
-  which cannot carry it) for the two reports that DO have a subject-
-  grain sibling committed (`2026-09-18-...-after-cf0962e3`), and
-  cross-checked byte-for-byte against that committed
-  `.subject-grain.tsv`'s own already-reduced `median_ns` rows (same
-  values to six decimals): auto-caps ratio 1.191 (14.802902÷12.431209),
-  auto-nocaps ratio 1.577 (13.516966÷8.571827), both pins identical to
-  three decimals — the clause's own claim ("the atomic form's search
-  cost … is LOWER than the non-atomic control's", i.e. ratio < 1) would
-  be **REFUTED** were it evaluable, not confirmed. This is recorded here
-  as a finding, not acted on: adding `grain=subject` to P4.b was not
-  part of the manager's ruling, and per "Revising an already-scored
-  file"'s own item 3, a further change needs its own verification and
-  its own go-ahead, not a lane's unilateral addition.
+  **A THIRD, separate structural fact, found while verifying P4.b, THEN
+  ALSO APPLIED under a second manager ruling the same day (2026-09-26):**
+  P4.b's OUTER selector names `subject_or_na=lp-atomic-nonmatch` /
+  `regime_or_na=short-subject-search` (unchanged authoring intent), but
+  every one of these four reports is rendered at `grain=set` — at which
+  `render_tsv` writes the literal string `(set)` into every rank row's
+  `subject_or_na`, never the real subject id (Cause A,
+  `interpret_subject_grain_v1.md` §1.2/§4 — the SAME gap set-grain
+  P3/P6/P7/P10 all report). A selector naming a real subject id can
+  only ever be routed to the subject-grain view via an explicit
+  `grain=subject` key — first left OUT (outside the manager's initial
+  three-part description), then ADDED under the manager's own follow-up
+  ruling: "the note names one subject … the clause's meaning was never
+  set-grain," the SAME repair class as the rest of this file's fix
+  (`op`/`lo`/`hi`/`unit`/`note` stay byte-identical; only the selector's
+  own key set gained one entry, `;grain=subject`, exactly as the load
+  format's own spec describes it).
+
+  **Interpreted vs. hand-derived, per report — every report whose
+  sidecar carries `--subject-grain`, and why the other two can't:**
+
+  | report | subject-grain sibling? | `interpret`'s P4.b value | hand-derived | match? |
+  |---|---|---|---|---|
+  | 2026-09-17-...-first-a770139e | NO (stamp: `subject_grain: (none)`) | not evaluable: "the clause selects grain=subject but no --subject-grain input was supplied" | n/a — no subject-grain input exists for this report to derive against | n/a, correctly explained |
+  | 2026-09-18-...-after-cf0962e3 | YES | **refuted**, worst 1.577 (`pcrec_a770139e_auto-nocaps-simdna`, `logparse-atomic/lp-atomic-nonmatch/short-subject-search/plain`, over 4 values) | 1.577 (13.516966÷8.571827, from the underlying JSONL records, cross-checked to six decimals against the committed `.subject-grain.tsv`'s own already-reduced rows) | **yes, exact** |
+  | 2026-09-18-...-ext-first-cf0962e3 | YES | not evaluable: "no row in this report matches the selector" | n/a — this report's roster carries NO pcrec testee at all (the 5-engine ext sample), so the glob matches nothing regardless of grain | n/a, correctly explained |
+  | 2026-09-19-...-ext-second-cf0962e3 | NO (stamp: `subject_grain: (none)`) | not evaluable: "the clause selects grain=subject but no --subject-grain input was supplied" | n/a — no subject-grain input exists for this report | n/a, correctly explained |
+
+  The one report where BOTH a subject-grain sibling exists AND a pcrec
+  testee is present (`2026-09-18-...-after-cf0962e3`) is now genuinely
+  evaluable, and its value matches the hand derivation exactly — the
+  full 1.10-1.58 range across both pins/testees (a770139e auto-caps
+  1.191, auto-nocaps 1.577; cf0962e3 auto-caps 1.102, auto-nocaps 1.557)
+  is present in that report's own subject-grain TSV, and `interpret`'s
+  own reducer correctly picks the WORST (1.577, `op=lt hi=1` — the
+  furthest from holding) among all four. **P4 as a whole now reads
+  `refuted` (not `partial`) on this one report** — P4.a and P4.b both
+  evaluate and both fail their own threshold; the truth stands as
+  measured, per the manager's own instruction.
 
   `catalogue/check_interpret.py`'s Cause-C stopgap
   (`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) is retired; the
   four sidecars are regenerated (`make check-interpret`: 203 passed, 0
   FAILED) and their fact diffs reviewed — P2 moves not-evaluable →
-  confirmed on the two reports carrying its patterns (as above); P4
-  moves not-evaluable → **partial** (R-PRED-4, firing for the first
-  time in this project: P4.a refuted, P4.b not-evaluable) on the same
-  two; the two `ext-*` reports change ONLY by the catalogue version
-  stamp (3.2 → 3.8, unrelated growth since these four sidecars were last
-  regenerated, R-STATUS-15/R-DELTA-5 rows appearing in their "did not
-  fire" tables) — their own R-PRED section is untouched, confirming
-  these two reports were never affected by any part of this fix. Full
-  diffs, every raw cell, and the reconciliation with the committed
-  subject-grain TSV: `docs/dev/lanes/b93pred_report.md`.
+  confirmed on the two reports carrying its patterns (as above); on
+  `2026-09-17-...-first-a770139e` (no subject-grain sibling) P4 moves
+  not-evaluable → **partial** (R-PRED-4: P4.a refuted, P4.b still
+  not-evaluable there, correctly, for the reason in the table above);
+  on `2026-09-18-...-after-cf0962e3` (the one report with BOTH a
+  subject-grain sibling and a pcrec testee) P4 moves not-evaluable →
+  **refuted** (both clauses evaluate and fail); the two `ext-*` reports
+  change ONLY by the catalogue version stamp (3.2 → 3.8, unrelated
+  growth since these four sidecars were last regenerated, R-STATUS-15/
+  R-DELTA-5 rows appearing in their "did not fire" tables) — their own
+  R-PRED section is otherwise untouched, confirming neither report was
+  affected by any part of this fix. Full diffs, every raw cell, and the
+  reconciliation with the committed subject-grain TSV: `docs/dev/lanes/
+  b93pred_report.md`.
 
 - `capability-0.1-ext-roster.tsv` — lane `b51preds`, 2026-09-18: the
   predictions for the NEXT sample of the five new [B7]/L6b engines

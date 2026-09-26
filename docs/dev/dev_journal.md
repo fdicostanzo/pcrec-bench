@@ -5913,3 +5913,29 @@ stamp, confirming they were never touched by any part of this fix).
 `make check-interpret` 203/0, `catalogue/fixtures/gen.py --check`
 clean, `make check-schema` 6/74/0. [B93] STATE:started, awaiting merge
 (the manager will close it). Full detail: docs/dev/lanes/b93pred_report.md.
+
+## 2026-09-26 — lane b93pred second follow-up: grain=subject added to P4.b
+
+Manager's third ruling on the same file, same day: add `grain=subject`
+to P4.b -- the note names one subject (lp-atomic-nonmatch), so a subject
+key can only be reached through that grain, the same repair class as
+the rest of this fix. Applied: P4.b's selector gains exactly
+`;grain=subject` (op/lo/hi/unit/note untouched). Verified per report,
+to the printed digit, on every report whose sidecar carries
+--subject-grain (two do; the other two correctly read not-evaluable for
+lacking one): 2026-09-18-after-cf0962e3 (the one report with BOTH a
+subject-grain sibling and a pcrec testee) now evaluates P4.b for real --
+interpret reports 1.577, exact match to the hand derivation
+(13.516966/8.571827, cross-checked against the report's own
+subject-grain TSV) -- and P4 as a whole moves from partial to refuted
+(P4.a and P4.b both fail their own threshold). 2026-09-18-ext-first
+(subject-grain present, no pcrec testee) and both non-subject-grain
+reports stay not-evaluable, each for its own distinct, verified reason.
+No hand-derived/interpreted mismatch anywhere -- nothing required
+stopping. All four sidecars regenerated again (determinism-checked),
+fact diffs reviewed (one real content move on after-cf0962e3; a more
+precise not-evaluable reason on ext-second; two stamp-only). make
+check-interpret 203/0, gen.py --check clean, make check-schema 6/74/0.
+docs/dev/predictions/CLAUDE.md's header note and P4 entry both updated,
+dated, naming this third ruling. Full detail:
+docs/dev/lanes/b93pred_report.md ("Follow-up 2").

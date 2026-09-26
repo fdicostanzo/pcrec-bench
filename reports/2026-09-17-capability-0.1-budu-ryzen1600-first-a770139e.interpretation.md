@@ -4,7 +4,7 @@ report_sha256:   e42ae860ef33011bc0c1d0375eba0f1611cb75ce6a2cae17b35a9777f1f9e10
 index:           store/index.tsv
 index_sha256:    c3cb6a669bc65e279e33f960dad6825dd97172c543e1e982b99e587fbe5099d0
 predictions:     docs/dev/predictions/capability-0.1-first.tsv
-predictions_sha256:2007c41b1462ec114b7d9cde73cf8ca969b044b9aaf4ca2129de142e44301425
+predictions_sha256:868837215f09663d6166a18f37da7f1bf70f80fd066e1523e5a94998c61c0bf6
 subject_grain:   (none)
 subject_grain_sha256:(none)
 catalogue:       3.8

@@ -320,6 +320,81 @@ comment are retired; section 3 is the plain unconditional loop again.
   regeneration this task asked for was blocked ONLY by the two load-time
   checks, never by anything about these reports' own content.
 
+## Follow-up 2 (2026-09-26) — the manager's `grain=subject` ruling, applied
+
+The manager sent a second ruling on the residual P4.b finding above,
+the SAME day: **add `grain=subject` to P4.b — same repair class, since
+the note names one subject (`lp-atomic-nonmatch`) and a subject key can
+only be reached through that grain, so the clause's meaning was never
+set-grain.** Instruction: keep `op`/`lo`/`hi`/`unit`/`note`
+byte-identical, add a line to the header correction note, show
+`interpret`'s P4.b value equals the hand-derived 1.10-1.58 per report
+to the printed digits (every report whose sidecar carries
+`--subject-grain`; say which ones can't and why), regenerate the
+affected sidecars, review the fact diffs, re-run the three checks, and
+— "if P4.b now reads REFUTED, that is the truth and stands."
+
+**Applied**: P4.b's selector gains one clause, `;grain=subject` (no
+other text moved — `docs/dev/predictions/capability-0.1-first.tsv`
+diff is a single `;grain=subject` insertion at the end of P4.b's
+selector column, nothing else). `docs/dev/predictions/CLAUDE.md`'s
+header addendum line and the file's own P4 entry are both updated,
+dated, naming this second ruling explicitly.
+
+**Interpreted vs. hand-derived, every committed report, to the printed
+digit — the table the ruling asked for:**
+
+| report | has `--subject-grain`? | `interpret`'s P4.b | hand-derived | match |
+|---|---|---|---|---|
+| 2026-09-17-...-first-a770139e | **no** (`subject_grain: (none)`) | not evaluable: "the clause selects grain=subject but no --subject-grain input was supplied" | n/a (no subject-grain input to derive against) | n/a — correctly explained, can't be evaluated here |
+| 2026-09-18-...-after-cf0962e3 | **yes** | **1.577** (worst, `pcrec_a770139e_auto-nocaps-simdna`, over 4 values) | **1.577** (13.516966÷8.571827, from the record; cross-checked to six decimals against the report's own committed `.subject-grain.tsv`) | **EXACT MATCH** |
+| 2026-09-18-...-ext-first-cf0962e3 | **yes** | not evaluable: "no row in this report matches the selector" | n/a (this report's roster has NO pcrec testee at all — verified by grep of its own compile rows; the glob matches nothing regardless of grain) | n/a — correctly explained, can't be evaluated here |
+| 2026-09-19-...-ext-second-cf0962e3 | **no** (`subject_grain: (none)`) | not evaluable: "the clause selects grain=subject but no --subject-grain input was supplied" | n/a (no subject-grain input) | n/a — correctly explained, can't be evaluated here |
+
+No disagreement anywhere — the ONE report where evaluation is actually
+possible (subject-grain present AND a pcrec testee in the roster)
+matches the hand derivation exactly, so nothing required stopping.
+**P4 as a whole now reads `refuted` on `2026-09-18-...-after-cf0962e3`**
+(P4.a and P4.b both evaluate and both fail their own threshold — the
+truth stands, per the ruling's own instruction), still `partial` on
+`2026-09-17-...-first-a770139e` (P4.a refuted, P4.b not-evaluable there,
+correctly, for lack of a subject-grain sibling), and still `not
+evaluable` on both `ext-*` reports (no pcrec testee, independent of
+grain).
+
+**All four sidecars regenerated again** (same direct invocation as
+Follow-up 1, since only these four are stamped against this file);
+determinism re-checked on all four (second run to stdout, byte-compared,
+identical). Fact diffs reviewed:
+- `2026-09-18-...-after-cf0962e3`: P4 moves `partial` (R-PRED-4) →
+  `refuted` (R-PRED-2, now 3 firings) with the exact measured line
+  `P4.a: ... = 1.112 over 8 value(s); P4.b: ... = 1.577 over 4
+  value(s)`; R-PRED-4 correspondingly drops out of the "fired" section
+  back into "did not fire" (no compound prediction disagrees any more,
+  since P4 no longer does).
+- `2026-09-17-...-first-a770139e`: **stamp-only** (`predictions_sha256`
+  moves; no other line changes) — P4 was already `partial` before and
+  after (P4.b's INTERNAL reason changed, from "no row matches" to "no
+  --subject-grain supplied", verified by calling `evaluate_predictions`
+  directly, but the sidecar's own rendering of a `partial` parent never
+  prints per-clause reasons — the SAME known, documented limitation
+  `docs/design/predicate_audit_v1.md` already names — so nothing visible
+  moves here).
+- `2026-09-18-...-ext-first-cf0962e3`: **stamp-only**, confirming this
+  report is unaffected either way.
+- `2026-09-19-...-ext-second-cf0962e3`: ONE visible line changes — P4's
+  rendered not-evaluable reason for P4.b goes from "no row in this
+  report matches the selector" to "the clause selects grain=subject but
+  no --subject-grain input was supplied", a MORE PRECISE, MORE HONEST
+  reason (the `grain=subject` check now fires before the row-match
+  check ever runs) — not a regression, an improvement in what the tool
+  says about why it can't answer.
+
+`catalogue/check_interpret.py` was not touched in this follow-up (no
+new load-time behavior; `grain=subject` is an existing, already-tested
+selector key, `catalogue/fixtures/predictions-subject-grain.tsv`'s own
+precedent).
+
 ## Validation
 
     $ make check-interpret
@@ -353,14 +428,16 @@ predicate moved by this lane) — no `[[pin_order]]` append is owed.
 
 - `docs/dev/predictions/capability-0.1-first.tsv` — P2.a/P2.b's and
   P4.a/P4.b's selectors and reducer arguments corrected (four rows
-  total); everything else (every OTHER clause, every column but
-  selector/reducer on these four) byte-identical to the committed
-  history.
+  total, across three commits: the P2 fix, the P4 glob+reducer fix,
+  P4.b's `;grain=subject` addition); everything else (every OTHER
+  clause, every column but selector/reducer on these four) byte-
+  identical to the committed history.
 - `docs/dev/predictions/CLAUDE.md` — new "Revising an already-scored
   file" standing-rule section; the `capability-0.1-first.tsv` entry's
-  header addendum now names both fixes and both dates; the P2 and P4
-  addenda (after the historical P9 discussion) carry the full
-  hand-verification tables and the Cause-A finding.
+  header addendum names all three fixes and all three dates/rulings;
+  the P2 and P4 addenda (after the historical P9 discussion) carry the
+  full hand-verification tables, including the final per-report
+  `grain=subject` table the second ruling asked for.
 - `catalogue/check_interpret.py` — ALL THREE named exceptions this
   file's history ever carried are gone: the Q6 (i) one
   (`_KNOWN_HISTORICAL_LOAD_DEFECTS`, `_load_predictions_with_named_
@@ -384,14 +461,22 @@ predicate moved by this lane) — no `[[pin_order]]` append is owed.
 
 ## Handback
 
-All five charter items are now DELIVERED and independently verified:
-P2.a/P2.b (first delivery, cross-checked against the 2026-09-17 ledger's
-5.29) and P4.a/P4.b (this follow-up, per the manager's own ruling,
-hand-verified against the report TSVs and the underlying JSONL records
-for every committed report, with the one residual — P4.b's Cause-A
-grain gap — found, hand-derived anyway, and left exactly as the ruling's
-own scope drew the line, never silently adjusted). The standing rule is
-written, the stopgap(s) are retired with no exception left anywhere in
+All five charter items are now DELIVERED and independently verified
+across three rulings, all applied the same day (2026-09-26): P2.a/P2.b
+(first delivery, cross-checked against the 2026-09-17 ledger's 5.29),
+P4.a/P4.b's glob+reducer fix (second ruling, hand-verified against the
+report TSVs and the underlying JSONL records for every committed
+report), and P4.b's `grain=subject` addition (third ruling — the
+residual Cause-A finding from the second ruling, resolved rather than
+merely left as found). The one report where P4.b is genuinely
+evaluable now matches its hand-derivation EXACTLY (1.577) and reads
+`refuted` — the manager's own instruction ("if P4.b now reads REFUTED,
+that is the truth and stands") — while the other three reports each
+read `not evaluable` for a distinct, correctly-explained, verified
+reason (two lack a subject-grain sibling; one lacks a pcrec testee).
+No hand-derived/interpreted disagreement occurred at any point, so
+nothing required stopping. The standing rule is written, all three
+named exceptions this file's history ever carried are retired from
 `check_interpret.py`, and the four sidecars are regenerated for real —
 `make check-interpret` 203/0, `gen.py --check` clean, `make check-schema`
 6/74/0. `docs/dev/plan.md`'s `[B93]` row is `STATE:started`, per the
