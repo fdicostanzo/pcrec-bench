@@ -130,7 +130,16 @@ report's `## Null-control band` section and its `D119 bar` column
 render: never hand-edited, and a cross-pin report whose pair has no
 file here says `NO NULL BAND` by name. Committed today: capability@0.1
 `25b1984f__8d716693`, `8d716693__b1885a83` (192/192 agreement with
-pcrec's own `nullctl.json`, recorded in the file) and `b1885a83__6ef76820`.
+pcrec's own `nullctl.json`, recorded in the file) and `b1885a83__6ef76820`
+(those three at normalization v1), and `6ef76820__ce658cb7` ([B90]
+reading, lane b90ledger, 2026-09-25 -- the first at normalization **v2**,
+512 rows: 425 identical / 72 changed / 15 refused-both, exactly lane
+b90repin's prediction per config; its `new_sha256` column equals the
+ce658cb7 records' own `engine_metadata.program_sha256` on 497/497
+compiled rows. The 6ef76820 BEFORE records predate [B88]'s field, so the
+reporter's field-first identity cannot fire on this pair and every cell
+reads the census -- the first pair with the field on BOTH sides is the
+next one).
 A future cross-pin report group needs its pair's census committed
 BEFORE it is rendered, or it renders without a band.
 
