@@ -715,6 +715,26 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   row (there is none), so the normal CLI path scores it at the first
   window; P2/P3 need the report's `--subject-grain` slice.
 
+- `utf8-0.1-second.tsv` — lane `b95read`, 2026-09-26 ([B95] READ, the
+  manager's ruling on b91views' finding 1): a DRAFT for utf8@0.1's SECOND
+  sample carrying the three first-sample PROSE clauses as rows now that
+  reporter v24's `unsupported_by_pattern` section makes them expressible
+  (`section=unsupported_by_pattern`, quantity `section`, reducer `count`,
+  op `eq`): **P5.a** (20 rows = 5 UCP patterns x 4 pcrec-*-utf8), **P9.b**
+  (6 rows = rust's ascii-class-scope absences) and **R8.a-e** (the per-
+  engine census: onig 11, re2 9, rust 15, vectorscan 4, pcrec 20). 7 clause
+  rows over 3 parents; `stated_utc` 2026-09-26T20:56:12Z is AFTER the first
+  sample (the CLI correctly refuses it against the first-sample report,
+  rc 2 by §6.5) and before any second-sample run. HONESTY NOTE: every count
+  is INFORMED by the first sample (scored from NOTES.md's pre-run prose in
+  docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md); the census is
+  declaration-driven, so these are DRIFT checks on the roster's
+  declarations, not independent predictions. The three pcre2-utf configs'
+  zero rows are prose only (a zero count has no row: P7.a's residual). Load
+  check: `interpret.load_predictions` 7/7 rows clean; mechanics dry-run on
+  a scratch copy re-dated to 2026-09-26T00:00:00Z against the first-sample
+  report reads 3/3 parents confirmed (docs/dev/lanes/b95read_report.md).
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
