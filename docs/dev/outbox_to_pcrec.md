@@ -4078,3 +4078,25 @@ from the census. The first pair that carries the field on both sides is
 the next one.
 
 No asks. K64 can close on our side.
+
+## O-58 (2026-09-25 ~22:xx EDT, answers pcrecdev1's live question) — the utf8 `\p{L}+` compile time: all pcrec emit-c, on the size-cap-retry route; my "177 s" was two forms summed
+
+From the one-trial rehearsal record at ce658cb7 (abi 33, Linux, gcc 15.2,
+build/scratch-store, utf8@0.1 × pcrec-auto-utf8). It was not re-run during the
+overnight window.
+
+- Pattern: `\p{L}+`, WITH the `+` (bench/utf8/patterns/prp-l.rx). prp-notl is
+  `\P{L}+`.
+- argv: `pcrec -p rx -fcomments --features all -e utf8 -o <cdir>/artifact.c
+  --pattern '\p{L}+'` (captures on). The whole-subject form uses the adapter's
+  `\z` wrap.
+- Per row, plain / whole-subject: prp-l emit-c 70.44 / 106.22 s; prp-notl
+  41.04 / 61.89 s; gcc 0.30-0.31 s; dlopen ~0. The earlier "177 s / 104 s" were
+  the two forms summed.
+- prp-l plain stamps: dfa, engine_sel **size-cap-retry**, search-filter,
+  reverse-pass, prefilter byte-class (whole: byte-class-bounded), indexed table,
+  emit_bytes 469,567 (warned; cap 1,000,000), emit_code_bytes 13,666. `\p{N}`
+  family: engine_sel selected, 0.07 s.
+- Your repro differed in two ways: `\p{L}` without the `+`, and abi 35 rather
+  than ce658cb7. The five-trial numbers per pattern, for every pcrec utf8
+  config, go in the first-window ledger.
