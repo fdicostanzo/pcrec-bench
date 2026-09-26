@@ -26,7 +26,7 @@ emoji, and a byte-clean ASCII control) whose lead-byte histogram is a \
 committed, re-derived fact rather than a claim. BUILT ON pcrec's \
 `.rxt` format as this set's pattern source of truth, in \
 bench/capability's own shape. See docs/design/utf8_set_v1.md and \
-bench/utf8/NOTES.md (owed, U5)."""
+bench/utf8/NOTES.md."""
 description = """\
 Seventy-five patterns (75 members + the floor) across six \
 encoding-dependence families -- cls (16, classes and the 1-byte/ \

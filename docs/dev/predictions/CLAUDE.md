@@ -517,6 +517,30 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   window's own report exists. See `docs/dev/lanes/b64window_report.md`
   for the scored verdicts.
 
+- `utf8-0.1-first.tsv` — lane `b77u5`, 2026-09-26 ([B77] U5):
+  `bench/utf8/NOTES.md`'s **P1-P11** (utf8_set_v1.md 11's P1-P10 on the
+  built ids, plus P11 — the `prp-greek` Script-vs-Script_Extensions answer
+  divergence U2 measured and 7.4 charges U5 to predict), transcribed and
+  DRY-RUN through the real `pcrecbench interpret --predictions` CLI BEFORE
+  any `utf8@0.1` cell exists (F-M2): **15 clause rows over 10 parents**
+  (P8 deferred to 0.2 by the design itself). The dry run
+  (`docs/dev/measurements/probe_b77u5_predictions_dryrun.py` +
+  `2026-09-25-b77u5-predictions-dryrun.txt`) runs three inputs: the CLEAN
+  null fixture (every clause loads, reads not-evaluable), a SYNTHETIC
+  report valued to confirm (10/10 confirmed — every reducer path reduces,
+  incl. `ratio_to`'s nested selector and join, `ratio_max_min_over`,
+  `count` over `did_not_compile`, `grain=subject`), and the same valued to
+  violate (9/10 refuted, P7 partial: P7.a's stated no-row residual).
+  **Four clauses are prose only, INEXPRESSIBLE today** (NOTES.md "What the
+  transcription changed"): P1.b (a stamp value), **P5.a and P9.b
+  (`unsupported-by-declaration` — `render_tsv` has NO unsupported section;
+  only `--format matrix` carries `unsup`, which `interpret` does not
+  read; utf8_set_v1.md 11's proposed `unsupported_by_pattern` SECTION does
+  not exist)**, and P7's raised-cap half (no `pcrec-*-bigcap-utf8`
+  testee). `stated_utc` 2026-09-26T00:30:00Z precedes every `utf8` index
+  row (there is none), so the normal CLI path scores it at the first
+  window; P2/P3 need the report's `--subject-grain` slice.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before

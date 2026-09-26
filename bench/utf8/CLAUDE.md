@@ -1,14 +1,13 @@
 # bench/utf8/ — the UTF-8 encoding set (`utf8@0.1`)
 
-WHAT THIS DIRECTORY IS TODAY ([B77] U3 + U4). The SUBJECTS (U3), the
-PATTERNS + SIDECAR (U4) — a real, ENUMERABLE sub-bench (`subbench.toml`
-exists), with a FLOOR-ONLY stub `expectations.tsv` (see "What is a STUB"
-below). Design: `docs/design/utf8_set_v1.md` v0.2 (plan row [B77], inbox
-I-90/I-94). `NOTES.md` and the REAL 76-pattern oracle derivation are
-**U5's own scope, not yet built** — see `docs/dev/lanes/b77u4_report.md`
-for U4's charter-vs-committed checklist and the U5 cost estimate.
+WHAT THIS DIRECTORY IS TODAY ([B77] U3 + U4 + U5). The SUBJECTS (U3), the
+PATTERNS + SIDECAR (U4), and the REAL oracle-derived EXPECTATIONS +
+`NOTES.md` (U5) — a complete, ENUMERABLE sub-bench, ready for its first
+window. Design: `docs/design/utf8_set_v1.md` v0.2 (plan row [B77], inbox
+I-90/I-94). Lane reports: `docs/dev/lanes/b77u3_report.md`,
+`b77u4_report.md`, `b77u5_report.md`.
 
-## What IS built (U3 + U4)
+## What IS built (U3 + U4 + U5)
 
 | file | role |
 |---|---|
@@ -24,38 +23,32 @@ for U4's charter-vs-committed checklist and the U5 cost estimate.
 | `gen_patterns.py` | **(U4) THE MASTER PATTERN TABLE**: every pattern's text authored fresh (transcribed verbatim from `utf8_set_v1.md` 5's own tables, one exception — see below), renders `patterns.rxt` + `patterns/*.rx` + (`--sidecar`) `subbench.toml`'s own `[[patterns]]` array + (`--provenance`) `provenance.tsv`. `--check` re-derives all three and diffs (structural only — no pcrec `--list-source` round-trip is wired; see the report for why) |
 | `patterns/*.rx` | (U4) one raw-bytes file per pattern, DERIVED from the table — the harness's LOADED pattern source (via `subbench.toml`'s `[[patterns]]` array, not `rxt_source`) |
 | `subbench.toml` | **(U4) THE SIDECAR**: `id="utf8"`, `version="0.1"`, `regimes = ["search_short", "throughput"]` (no `match`, per `utf8_set_v1.md` 10.1), `short_search_max_bytes = 512`, `[expectations] encoding = "utf8"` (the SET-WIDE `PCRE2_UTF` oracle flag, `pcrecbench/subbench.py`'s `SET_ENCODINGS` — [B77] U1), and the `[[patterns]]` array (`gen_patterns.py --sidecar`'s own output) |
-| `gen_expectations.py` | **(U4) A STUB, not U5's real derivation** — see "What is a STUB" below |
-| `expectations.tsv` | **(U4) STUB: 98 rows, the FLOOR PATTERN ONLY** (91 search_short + 7 throughput), real oracle-derived, `libpcre2-differential` |
+| `gen_expectations.py` | **(U5) THE REAL DERIVATION**: the shared `pcrecbench.expectations.main` over all 76 patterns, declaring ONE oracle refusal (`EXPECTED_ORACLE_REFUSALS = {prp-ingreek}`; an undeclared refusal or this pattern compiling fails BY NAME). ~34 s, `--check` included (validate-once, below) |
+| `expectations.tsv` | **(U5) 7,350 rows**, oracle-derived (`libpcre2-differential`, 10.46): 75 compiling patterns × (91 `search_short` + 7 `throughput`); `prp-ingreek` has NONE, by design. The floor's 98 rows are byte-identical to U4's stub |
+| `NOTES.md` | **(U5)** the objective + the limitation sentence, the oracle's method (option word, VALIDATE-ONCE, the declared refusal, what it settled about `prp-greek`/`-sc` and U+00B7), the outlier rule R0-R8, the predictions P1-P11 with what the transcription changed, the growth plan, engine neutrality, cell time. Stated before any run |
 | `provenance.tsv` | (U4) one row per pattern: `pattern_id, family, provenance_source, source_url, source_ref, license, retrieved, fidelity, adaptation, attribution` — every row `authored`/`synthesized`/`n-a` (this is a correctness/encoding census, not a wild-provenance set — `capability_set_v1.md`'s realism rule does not apply here) |
 
-## What is a STUB (read before touching `expectations.tsv`)
+## The oracle derivation (U5)
 
-U4's brief is explicit: expectations and `NOTES.md` are U5's scope
-**unless the generic `make check-harness` gates require a stub — then
-say so and make the smallest possible one.** They do, the moment
-`subbench.toml` exists and this directory is ENUMERATED by
-`tools/selfcheck.py`'s `subbench_dirs()`:
+`gen_expectations.py` calls the SAME shared chain every set uses
+(`pcrecbench/expectations.py`), under the set-wide `PCRE2_UTF` word plus
+`PCRE2_UCP` on the five `requires-unicode-class-scope` patterns ([B77] U1).
+Two things are this set's own:
 
-- `check_expectations()` unconditionally runs `gen_expectations.py
-  --check` on every enumerated sub-bench.
-- `check_floor_pattern()` runs a real `pcrecbench quick --testee
-  pcre2-jit --regime search --pattern floor --subjects 5` cell on every
-  enumerated sub-bench's floor pattern — which needs a real expectation
-  row for the floor pattern against whichever 5 `search_short` subjects
-  `quick` picks.
-
-`gen_expectations.py` here derives REAL rows (the SAME shared oracle,
-`pcrecbench.expectations.derive`, never faked) but restricted to the ONE
-pattern those two gates actually need: the floor (`~`), over EVERY
-subject in EVERY regime this set declares (91 search_short + 7
-throughput = 98 rows) — cheap, since the floor is byte-safe and pure
-ASCII. **The other 75 patterns carry NO expectation rows.** A `quick`/
-`run` cell against any of them will raise until U5's real derivation
-lands — the honest consequence of a stub, stated here rather than hidden.
-See `bench/utf8/gen_expectations.py`'s own docstring and
-`docs/dev/lanes/b77u4_report.md` for the timed cost estimate of the real
-76-pattern derivation (the UTF oracle is reported ~30× slower than byte
-mode).
+- **VALIDATE-ONCE** (`docs/design/utf8_set_v1.md` 8.2 as AMENDED by the
+  manager's ruling, 2026-09-25): the throughput find-all passes
+  `PCRE2_NO_UTF_CHECK` only on calls 2..n after libpcre2's own call-1 check
+  of the whole subject (`pcrecbench/oracle_pcre2.py` `_find_all_impl`).
+  Without it the derivation is quadratic in subject length (~59 min
+  modelled; `docs/dev/measurements/2026-09-25-b77u5-validate-once-probe.txt`);
+  with it, ~34 s, so `check_expectations` re-derives this set inside `make
+  check`. `tools/selfcheck.py check_utf8_validate_once` is the control
+  (rows identical to the always-check path on every short + ≤64 KB subject;
+  an ill-formed subject refused by name; byte sets untouched).
+- **The declared refusal, `prp-ingreek`**: no expectation rows, the
+  first-class `did-not-compile` compile-axis outcome (utf8_set_v1.md 5(f)).
+  `derive(expected_refusals=)` is what makes that legal — and only for a
+  DECLARED pattern.
 
 ## The alt-cyr-64 word list
 
@@ -133,7 +126,7 @@ In order (each reads the previous stage's output):
     python3 bench/utf8/gen_subjects.py             # subjects/ + manifest.tsv
     python3 bench/utf8/gen_throughput_subjects.py  # throughput/ + manifest_throughput.tsv
     python3 bench/utf8/gen_subject_facts.py        # subject_facts.tsv (reads both trees)
-    python3 bench/utf8/gen_expectations.py         # expectations.tsv (STUB: floor only)
+    python3 bench/utf8/gen_expectations.py         # expectations.tsv (~34 s, all 76 patterns)
 
 `subbench.toml`'s own `[[patterns]]` array is pasted by hand from
 `gen_patterns.py --sidecar`'s output whenever a pattern is added, removed
@@ -142,18 +135,11 @@ All generators support `--check` and are picked up automatically by
 `make check-harness`'s generic `bench/*/` gates now that `subbench.toml`
 exists (`tools/selfcheck.py`'s `subbench_dirs()`).
 
-## What is NOT built here — U5's own scope
+## What is NOT built here
 
-- **The REAL `expectations.tsv`** (76 patterns × 91 search_short + 76 × 7
-  throughput rows, oracle-derived under the per-pattern UTF/UCP option
-  word `utf8_set_v1.md` 8.1 specifies) — U4's `gen_expectations.py` is a
-  floor-only STUB (above); U5 replaces its body with the real
-  76-pattern derivation (the shared `pcrecbench.expectations.derive`
-  call, unrestricted). See `docs/dev/lanes/b77u4_report.md` for a timed
-  cost estimate.
-- **`NOTES.md`** — the objective, the outlier rule R0-R8, the growth
-  plan (0.2/0.3), the predictions TSV transcription (P1-P10, dry-run
-  BEFORE the first window per `utf8_set_v1.md` 11's F-M2 ruling).
+- The FIRST SAMPLE (no `utf8@0.1` record exists yet) — §14 Q6's seven cells.
+- A `pcrec-*-bigcap-utf8` config (P7's raised-cap half has no testee) and
+  the 0.2 `-e byte` mirror (P8) — roster growth, NOTES.md.
 - **`prp-ingreek`** (the REFUSAL witness) has **no typed subject**,
   deliberately — a refusal has no speed, so nothing here needs to hit
   or miss it.

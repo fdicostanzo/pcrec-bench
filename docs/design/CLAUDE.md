@@ -638,6 +638,12 @@ docs/dev/'s append-only records.
   citation/wording fixes and stated notes, each marked `(F-xx, v0.2)`
   in place. By-id completeness: 18/18 grep-verified.
 
+  **Since U1-U5 (2026-09-25/26) the set is BUILT** (`bench/utf8/`); two
+  in-place amendments by the build lanes: §8.2 SUPERSEDED by the manager's
+  VALIDATE-ONCE ruling (U5: find-all under `PCRE2_UTF` is quadratic when
+  libpcre2 re-checks every call; the old sentence kept visible), and §13's
+  U2/U5 rows carry what was built.
+
   **v0.1** (2026-09-23, lane `b77utf8`), from Frank's charter as relayed
   in inbox I-90, was the pre-panel draft: **PROPOSED, DESIGN ONLY**,
   nothing built, `bench/utf8/` does not exist, and no file under
