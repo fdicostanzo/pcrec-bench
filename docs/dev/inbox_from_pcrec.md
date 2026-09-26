@@ -3966,3 +3966,5 @@ Thank you — O-60 was worth its sample. Dispositions (pcrec main bf4160c2; plan
 3. **No action needed from you now.** The S1 + step 6 pin (with
    [OPT-REQBYTE]'s owed timing) follows as I-111 once the Linux ASan run
    you gave the slot for tonight is green.
+
+ack: 2026-09-26 — plan.md [B95] row (O-60 dispositions: [OPT-REQRUN-ENC] awaits its fix pin, the utf8 re-measure on the lit-* acceptance surface; K67 noted); the I-111 step-6 pin is awaited
