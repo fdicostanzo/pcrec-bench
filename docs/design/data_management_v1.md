@@ -9,7 +9,7 @@ OPEN at their Q5 triggers, each with a D6 panel attached for when it
 fires. IN FORCE from this date: the §4 retention taxonomy, routine
 `git gc` at boundaries, no-history-rewrite, store compression off the
 table, the four growth triggers, refuse-by-name on archived-record
-absence, the failed-gate cohort kept, no slice-specific ruling. The
+absence, the failed-gate cohort kept, no slice-specific ruling. **2026-09-26: §8 re-measures the §4.3 triggers (trigger 4 FIRED; store ~79 MB/day; the root LV is 100 GB of a 462.7 GB PV — Frank: that overrides cleanup; no action taken).** The
 paragraph below is the note's original v1.0 status, kept for the
 record. **v1.0, 2026-09-17 (lane `b45datamgmt`). Nothing
 here is enacted.** No policy is in force, no file is moved, no loader is
@@ -1126,3 +1126,51 @@ probes `nice -n 19`.
 Unmeasured and named as such: the `git gc` saving (§3.1); the archive
 tier's build cost (§1.4); the SQLite cache's effect on a real report
 render (§5.3); whether any box but this one has run the harness (§2.4).
+
+---
+
+## 8. STATUS 2026-09-26: the §4.3 triggers re-measured (inbox I-109, outbox O-59)
+
+Measured at commit `c0e1913` on `budu-ryzen1600`, 2026-09-26 ~13:40 EDT
+(`du -sb`, `git count-objects -v`, report headers). pcrec's s1step6
+battery held the box at the time, and every probe was of the `du`/header-read
+class. Nothing below was ENACTED: Frank, 2026-09-26: "It overrides the
+need to clean up … take no other space saving action." This section only
+records the readings and the finding that changed the question.
+
+**The finding that reframes disk pressure.** I-109 raised root at 77%
+(98 GB, 22 GB free). `lsblk` shows root is a 100 GB logical volume on a
+462.7 GB LVM physical volume (`sda3`) with no other LV, which is the
+Ubuntu installer's default. So roughly 360 GB of the disk is unallocated
+and can be added to root online by the box's admin (`sudo lvextend -r`).
+That is UNMEASURED from this account: `vgs` needs root. Frank ruled that
+this overrides cleanup. The rest of this section is therefore a
+trajectory record, not a call to act.
+
+**Store growth has tripled since §4.3.** `store/records/` is 1,418,176,499 B
+over 244 records, against 706.7 MB over 168 on 2026-09-17. That is +711 MB
+in 9 days (**~79 MB/day**, against §4.3's 26.6) and **~9.4 MB per new
+record** (against 7.67). The cause is the same one §4.3 named: the sets
+grew. capability@0.1 is 455 MB and utf8@0.1 is 155 MB at ~14 MB per
+record.
+
+| §4.3 trigger | reading 2026-09-26 | state |
+|---|---|---|
+| 1. store working tree > 5 GB → build the §1.4 archive tier | 1.42 GB; at ~79 MB/day it reaches 5 GB in **~45 days (~mid-November)**, not §4.3's 5.5 months | not fired; much closer than projected |
+| 2. pack > 500 MB → §3.4 clone options | 73 MB pack + **309 MB in 4,778 loose objects** | not fired. §3.1's routine `git gc` has LAPSED (§0 measured ~30 MB loose). Per Frank's 2026-09-26 instruction it was not run today |
+| 3. a committed query selects > 100 records → KB-16 (b)/(c) | largest is 16 records | not fired |
+| 4. any single report group > 25 MB → revisit the subject-grain slice | **12 groups exceed it.** Largest: capability after-8d716693 / after-b1885a83, 76.0 MB each (their subject-grain TSVs alone are 56.7 MB, KB-32); syntax after-25b1984f is 53.5 MB | **FIRED.** Opens a question for Frank (§4.4), not an action. It also bounds KB-32: GitHub refuses a push with any file over 100 MB |
+
+**Beyond §4.2's taxonomy: the DISPOSABLE class is now the bulk.** The
+bench occupies 9.3 GB on root: `.git` 385 MB, store 1.4 GB, reports
+0.9 GB, and **~6.8 GB DISPOSABLE**. That breaks down as two merged lane
+worktrees (3.1 GB), `build/work/` (2.6 GB, 34 per-testee compile dirs)
+and twenty `build/pcrec-<pin>/` builds (1.1 GB, 41-98 MB each). §4.2
+classes these as disposable but assigns no retention rule. That gap is
+worth a ruling when disk matters again: for example, remove a lane's
+worktree at merge, and keep the current pin build plus one back.
+
+**What reopens this section:** trigger 1 at ~5 GB (on today's slope, about
+mid-November); any committed file within ~20 MB of GitHub's 100 MB limit;
+or the root volume's free space falling below ~10 GB if the LV is not
+extended.
