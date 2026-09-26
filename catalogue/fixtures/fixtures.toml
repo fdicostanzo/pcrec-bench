@@ -33,6 +33,14 @@ report_d = "reports/2026-08-28-loglines-0.1-budu-ryzen1600-first-sample-35e1ab1.
 # the `d119`/null-band rows this fixture's R-DELTA-5 half reads are
 # UNTOUCHED by that fix -- only `query_yes_beats_nocaps` rows moved).
 report_e = "reports/2026-09-23-capability-0.1-budu-ryzen1600-after-b1885a83.tsv"
+# [B91] (catalogue 3.9): the first REAL reporter output carrying reporter
+# v24's `unsupported_by_pattern` SECTION -- capability@0.1's rust-first
+# query (1 record, cf0962e3 window, `--until 2026-09-20T00:00:00Z` so it
+# re-renders to the same population), rendered by lane b91views and
+# committed HERE as a fixture SOURCE rather than under `reports/` (the
+# committed `reports/...-rust-first-cf0962e3` group is at reporter v18
+# and is the manager's regeneration wave's to move, whole).
+report_f = "catalogue/fixtures/sources/capability-0.1-rust-first-cf0962e3.v24.tsv"
 index    = "catalogue/golden/index@2026-09-09.tsv"
 predictions = "docs/dev/predictions/syntax-0.1-first.tsv"
 
@@ -50,6 +58,8 @@ subject_grain_a = "reports/2026-08-25-email-specimen-0.1-budu-ryzen1600-repin-69
 # fixed to read `kind` from the reduced values themselves.
 predictions_kb24 = "catalogue/fixtures/predictions-kb24.tsv"
 predictions_subjectgrain = "catalogue/fixtures/predictions-subject-grain.tsv"
+# [B91]: a fixture-only clause counting rows of the new section.
+predictions_unsupported = "catalogue/fixtures/predictions-unsupported.tsv"
 
 # ---------------------------------------------------------- R-STATUS --
 
@@ -521,6 +531,32 @@ select = { pattern = "factored", regime_or_na = "short-subject-search" }
 predictions_source = "predictions_kb24"
 predictions_select = ["KB24A"]
 mutate_predictions = { column = "hi", value = "unchanged (within spread)", where = { prediction_id = "KB24A" } }
+expect = ["R-PRED-2"]
+expect_not = ["R-PRED-1"]
+
+# [B91] (catalogue 3.9): a prediction clause QUANTIFYING OVER the new
+# `unsupported_by_pattern` section (reporter v24) -- `section=
+# unsupported_by_pattern`, quantity `section`, reducer `count` -- the
+# shape utf8's P5.a / P9.b / R8 need. Real data: `report_f` carries
+# exactly six `wild-logparse-*` rows declared unsupported by rust-default.
+# The sabotage mutates `hi` (6 -> 5) so the SAME count refutes.
+[[fixture]]
+name   = "R-PRED-1__unsupported-count-confirmed"
+report = "f"
+select = { pattern = ["wild-logparse-base10num-grok", "wild-logparse-base10num-noatomic", "wild-logparse-quotedstring-grok", "wild-logparse-quotedstring-noatomic", "wild-logparse-syslogbase-expanded", "wild-logparse-winpath-grok"] }
+predictions_source = "predictions_unsupported"
+predictions_select = ["UNS1"]
+expect = ["R-PRED-1"]
+expect_not = ["R-PRED-2", "R-PRED-3"]
+
+[[fixture]]
+name   = "R-PRED-2__unsupported-count-refuted"
+base   = "R-PRED-1__unsupported-count-confirmed"
+report = "f"
+select = { pattern = ["wild-logparse-base10num-grok", "wild-logparse-base10num-noatomic", "wild-logparse-quotedstring-grok", "wild-logparse-quotedstring-noatomic", "wild-logparse-syslogbase-expanded", "wild-logparse-winpath-grok"] }
+predictions_source = "predictions_unsupported"
+predictions_select = ["UNS1"]
+mutate_predictions = { column = "hi", value = "5", where = { prediction_id = "UNS1" } }
 expect = ["R-PRED-2"]
 expect_not = ["R-PRED-1"]
 

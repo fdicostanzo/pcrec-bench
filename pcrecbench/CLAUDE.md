@@ -1344,4 +1344,32 @@ program_identity.py --old 6ef76820 --new ce658cb7`, v2 by default). The
 first pair carrying the field on BOTH sides is the next re-pin's.
 `test_b88_null_band_reads_program_sha256_first` (field-only band = the
 census-built band exactly; a disagreeing census named, the field
-winning; the one-sided CONTROL byte-identical to [B79]'s render).
+winning; the one-sided CONTROL byte-identical to [B79]'s render --
+amended at [B91]: every line but the per-side identity bullet).
+
+## The reporter, [B91] (2026-09-26) -- three rendering changes, one bump (v24)
+
+Lane `b91views` (`docs/dev/lanes/b91views_report.md`). **(A)** `render_tsv`
+gains the `unsupported_by_pattern` SECTION ([B77] U5 finding 1;
+utf8_set_v1.md 11's shape): one row per (pattern, form, testee) whose
+compile row reported `unsupported-by-declaration` (`rd.unsupported_by_cell`,
+a new `ReportData` field keyed per FORM beside the matrix's per-pattern
+`unsupported_by_pattern`), `regime_or_na` empty, `status` the record's own,
+`metric=compile_outcome`, `value=unsupported-by-declaration`, the verbatim
+diagnostic in `gave_up_summary`. Emitted after `compile_stamp`, OUTSIDE the
+ranking-group loop (F26-immune by construction); nothing at all when the
+population is empty, so a report over a set with no declarations is
+byte-identical to v23 but for the version line (proven per set, the lane
+report). `interpret` reads it as an ordinary section (catalogue 3.9).
+**(B)** `render_matrix_tsv`: `best_testee`/`best_ns` RENAMED
+`best_testee_pooled`/`best_ns_pooled`, plus the class-pure
+`best_testee_yes`/`best_ns_yes`/`best_testee_no`/`best_ns_no` (the same
+`_matrix_best` over the roster's yes / no testees); ratio cells stay pooled;
+`scripts/matrix_page.py` recomputes every best and ratio over the reader's
+testee selection (Frank's ruling, 2026-09-25). **(C)** the null band's
+identity bullet states PER SIDE which records carry `program_sha256`
+(`_field_carriage`), retiring the unconditional "the records carry no
+program hash of their own" (the owed [B90] fix). Tests:
+`test_unsupported_by_pattern_section_b91`,
+`test_matrix_class_pure_best_columns_b91`, `test_identity_bullet_per_side_b91`,
+`test_b88_...` amended; `test_matrix_page.py` +3.

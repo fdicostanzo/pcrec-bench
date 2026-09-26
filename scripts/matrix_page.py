@@ -31,6 +31,17 @@ generator FOR -- it takes no input but the TSV file and writes no
 `.tsv` of its own, so the TSV stays canonical (charter item 1) and this
 HTML stays DERIVED, regenerable from it at any time.
 
+[B91] (Frank's ruling, 2026-09-25: "calculate best based on what is
+currently selected"): the page carries a TESTEE SELECTION -- one checkbox
+per testee -- and a small inline script that recomputes every table's
+per-row best and every ratio over the checked testees only (the results
+viewer's `computeBest` rule), hiding unchecked columns. Every ratio cell
+carries its absolute median as `data-ns` (ratio x its table's best_ns),
+so the recompute is exact arithmetic on the file's own numbers. The
+reporter v24 header (`best_testee_pooled`/`best_ns_pooled` + the
+class-pure `_yes`/`_no` pairs) and the pre-v24 six-column header are
+both accepted.
+
 WHY A HAND-ROLLED PARSER, NOT `csv`. The stdlib `csv` module is fine for
 the TSV itself (`csv.reader(fh, delimiter="\\t")`, used below) --
 what needs hand-rolling is nothing: the file's `#`-prefixed provenance
@@ -64,6 +75,24 @@ import re
 import sys
 
 FIXED_COLS = ["subbench", "pattern", "regime_or_na", "form", "best_testee", "best_ns"]
+
+# [B91] (reporter v24): the pooled pair is RENAMED `_pooled` and joined by
+# the class-pure `_yes`/`_no` pairs. Both shapes are accepted; a v24 row
+# is NORMALISED on parse so `row["best_testee"]`/`row["best_ns"]` always
+# name the POOLED best (what every ratio cell in the file is relative
+# to), and the class-pure pairs ride along under their own names.
+FIXED_COLS_V24 = ["subbench", "pattern", "regime_or_na", "form",
+                  "best_testee_pooled", "best_ns_pooled",
+                  "best_testee_yes", "best_ns_yes",
+                  "best_testee_no", "best_ns_no"]
+
+
+def fixed_count(header):
+    """How many leading fixed columns `header` carries (10 at reporter
+    v24+, 6 before it) -- the testee roster is everything after."""
+    if header[:len(FIXED_COLS_V24)] == FIXED_COLS_V24:
+        return len(FIXED_COLS_V24)
+    return len(FIXED_COLS)
 
 # [B82] (inbox I-99/I-100): `pcrecbench.report.render_matrix_tsv` emits a
 # `capture_class: yes=<t1,t2,...>; no=<t3,...>; undeclared=<t4,...>`
@@ -137,16 +166,23 @@ def parse_matrix_tsv(path):
                 continue
             if header is None:
                 header = cols
-                if header[:len(FIXED_COLS)] != FIXED_COLS or len(header) <= len(FIXED_COLS):
+                shape = (FIXED_COLS_V24 if header[:len(FIXED_COLS_V24)] == FIXED_COLS_V24
+                         else FIXED_COLS)
+                if header[:len(shape)] != shape or len(header) <= len(shape):
                     raise MatrixParseError(
                         f"{path}:{lineno}: header {header!r} does not start with "
-                        f"{FIXED_COLS!r} plus at least one testee column")
+                        f"{FIXED_COLS_V24!r} (reporter v24+) or {FIXED_COLS!r} "
+                        f"plus at least one testee column")
                 continue
             if len(cols) != len(header):
                 raise MatrixParseError(
                     f"{path}:{lineno}: row has {len(cols)} column(s), "
                     f"header has {len(header)}: {cols!r}")
-            rows.append(dict(zip(header, cols)))
+            row = dict(zip(header, cols))
+            if "best_ns_pooled" in row:
+                row["best_testee"] = row["best_testee_pooled"]
+                row["best_ns"] = row["best_ns_pooled"]
+            rows.append(row)
     if header is None:
         raise MatrixParseError(f"{path}: no header row found (file empty or all-comment)")
     return provenance_lines, header, rows
@@ -238,24 +274,32 @@ def _cell_html(row, testee, best_ns):
     is `parse_matrix_tsv`'s job to catch, at the row-shape level, not
     this function's to re-detect cell by cell)."""
     raw = row.get(testee, "")
+    dt = f' data-t="{html.escape(testee)}"'
     if raw in STATUS_CHIPS:
         cls, title = STATUS_CHIPS[raw]
-        return (f'<td class="cell {cls}" title="{html.escape(title)}">'
+        return (f'<td class="cell {cls}"{dt} title="{html.escape(title)}">'
                 f'{html.escape(raw)}</td>')
     try:
         ratio = float(raw)
     except ValueError:
-        return f'<td class="cell chip-excluded" title="unparseable cell">{html.escape(raw)}</td>'
+        return (f'<td class="cell chip-excluded"{dt} title="unparseable cell">'
+                f'{html.escape(raw)}</td>')
     r, g, b, t = _ratio_color(ratio)
     fg = "#0b0b0b" if t < 0.55 else "#fbfbfb"
     title_bits = [f"{ratio:.3f}x this row's best"]
+    # [B91]: the cell's ABSOLUTE median (ratio x this table's best_ns),
+    # carried as `data-ns` so the page's selection script can recompute
+    # the row's best and every ratio over whatever testees are selected.
+    data_ns = ""
     if best_ns:
         try:
-            title_bits.append(f"~{ratio * float(best_ns):,.1f} ns/call ({testee})")
+            ns = ratio * float(best_ns)
+            title_bits.append(f"~{ns:,.1f} ns/call ({testee})")
+            data_ns = f' data-ns="{ns:.4f}"'
         except ValueError:
             pass
     title = " -- ".join(title_bits)
-    return (f'<td class="cell" style="background:rgb({r},{g},{b});color:{fg}" '
+    return (f'<td class="cell"{dt}{data_ns} style="background:rgb({r},{g},{b});color:{fg}" '
             f'title="{html.escape(title)}">{ratio:.3f}x</td>')
 
 
@@ -300,6 +344,12 @@ td.cell {{ text-align: right; }}
 .chip-excluded {{ background: #4b5563; color: #fff; text-align: center; }}
 h2 {{ font-size: 1rem; margin: 1.25rem 0 0.5rem; }}
 p.viewnote {{ font-size: 12.5px; margin: 0 0 0.75rem; max-width: 70ch; }}
+fieldset.selection {{ border: 1px solid var(--border); border-radius: 6px; margin: 0 0 1rem;
+                      padding: 0.5rem 0.8rem; }}
+fieldset.selection legend {{ font-weight: 600; font-size: 12.5px; }}
+.selboxes {{ display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 12px; }}
+.selbtns {{ margin: 0 0 0.5rem; font-size: 12px; }}
+.selbtns button {{ font: inherit; padding: 0.1rem 0.5rem; }}
 footer {{ margin-top: 0.75rem; font-size: 11px; opacity: 0.7; }}
 </style>
 </head>
@@ -324,7 +374,7 @@ def _table_html(rows, testees):
     render and each of the [B82] class-pure splits."""
     head_cells = ["<th>subbench</th>", "<th>pattern</th>", "<th>regime</th>", "<th>form</th>",
                   "<th>best_testee</th>", "<th>best_ns</th>"]
-    head_cells += [f"<th>{html.escape(t)}</th>" for t in testees]
+    head_cells += [f'<th data-t="{html.escape(t)}">{html.escape(t)}</th>' for t in testees]
     body_rows = []
     for row in rows:
         best_ns = row.get("best_ns") or ""
@@ -333,8 +383,8 @@ def _table_html(rows, testees):
             f'<td>{html.escape(row["pattern"])}</td>',
             f'<td>{html.escape(row["regime_or_na"]) or "&mdash;"}</td>',
             f'<td>{html.escape(row["form"]) or "&mdash;"}</td>',
-            f'<td>{html.escape(row["best_testee"]) or "&mdash;"}</td>',
-            f'<td>{html.escape(best_ns) or "&mdash;"}</td>',
+            f'<td class="best-t">{html.escape(row["best_testee"]) or "&mdash;"}</td>',
+            f'<td class="best-ns">{html.escape(best_ns) or "&mdash;"}</td>',
         ]
         cells += [_cell_html(row, t, best_ns) for t in testees]
         body_rows.append("<tr>" + "".join(cells) + "</tr>")
@@ -342,8 +392,101 @@ def _table_html(rows, testees):
             f'<tbody>\n{chr(10).join(body_rows)}\n</tbody>\n</table>')
 
 
+def _selection_html(testees):
+    """[B91] (Frank's ruling, 2026-09-25: "calculate best based on what
+    is currently selected"): one checkbox per testee in the roster, all
+    checked. The page script (`SELECTION_SCRIPT`) recomputes every
+    table's per-row best and every ratio over the checked testees only --
+    the results viewer's own `computeBest` rule (the lowest `data-ns`
+    among the row's selected ratio cells; a status-token cell is never a
+    candidate) -- and hides the unchecked columns. With scripting off
+    the page is the full-roster render below, unchanged in meaning."""
+    boxes = "".join(
+        f'<label><input type="checkbox" class="sel" value="{html.escape(t)}" checked> '
+        f'<code>{html.escape(t)}</code></label>'
+        for t in testees)
+    return (
+        '<fieldset class="selection"><legend>Testee selection</legend>'
+        '<p class="viewnote">Each row\'s best and every ratio are recomputed '
+        "over the testees selected here (the lowest measured median among "
+        "the SELECTED cells of that row and table; a status-token cell is "
+        "never a candidate). Unselected columns are hidden. With scripting "
+        "off, the tables show the file's own fixed bests: pooled over the "
+        "whole roster, or class-pure in the split tables.</p>"
+        '<div class="selbtns"><button type="button" data-act="all">all</button> '
+        '<button type="button" data-act="none">none</button> '
+        '<span class="selcount"></span></div>'
+        f'<div class="selboxes">{boxes}</div></fieldset>')
+
+
+# [B91]: the selection recompute, mirroring `_ratio_color`'s ramp exactly
+# (log10(max(ratio, 1)) / LOG_MAX, clamped, linear RGB between the two
+# stops; text colour flips at t = 0.55) so a recomputed cell is shaded
+# the same way a static one is. With every testee selected the recompute
+# reproduces the static render (same best, same ratios).
+SELECTION_SCRIPT = """<script>
+(function () {
+  var LOG_MAX = %(log_max)d;
+  function ramp(ratio) {
+    var t = Math.log10(Math.max(ratio, 1.0)) / LOG_MAX;
+    if (!isFinite(t)) t = 0;
+    t = Math.max(0, Math.min(1, t));
+    var lo = [56, 161, 255], hi = [220, 38, 38];
+    var c = lo.map(function (v, i) { return Math.round(v + (hi[i] - v) * t); });
+    return { bg: "rgb(" + c.join(",") + ")", fg: t < 0.55 ? "#0b0b0b" : "#fbfbfb" };
+  }
+  function selected() {
+    var s = {};
+    document.querySelectorAll("input.sel").forEach(function (b) { if (b.checked) s[b.value] = true; });
+    return s;
+  }
+  function apply() {
+    var sel = selected();
+    var n = Object.keys(sel).length, total = document.querySelectorAll("input.sel").length;
+    var cnt = document.querySelector(".selcount");
+    if (cnt) cnt.textContent = n + " of " + total + " selected";
+    document.querySelectorAll("th[data-t], td[data-t]").forEach(function (el) {
+      el.style.display = sel[el.getAttribute("data-t")] ? "" : "none";
+    });
+    document.querySelectorAll("table tbody tr").forEach(function (tr) {
+      var bestNs = null, bestT = null;
+      tr.querySelectorAll("td[data-ns]").forEach(function (td) {
+        var t = td.getAttribute("data-t");
+        if (!sel[t]) return;
+        var ns = parseFloat(td.getAttribute("data-ns"));
+        if (bestNs === null || ns < bestNs) { bestNs = ns; bestT = t; }
+      });
+      var bt = tr.querySelector("td.best-t"), bn = tr.querySelector("td.best-ns");
+      if (bt) bt.textContent = bestT === null ? "\u2014" : bestT;
+      if (bn) bn.textContent = bestNs === null ? "\u2014" : bestNs.toFixed(1);
+      if (bestNs === null || !(bestNs > 0)) return;
+      tr.querySelectorAll("td[data-ns]").forEach(function (td) {
+        var ns = parseFloat(td.getAttribute("data-ns"));
+        var ratio = ns / bestNs, c = ramp(ratio);
+        td.textContent = ratio.toFixed(3) + "x";
+        td.style.background = c.bg;
+        td.style.color = c.fg;
+        td.title = ratio.toFixed(3) + "x this row's best (over the selection) -- ~" +
+          ns.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) +
+          " ns/call (" + td.getAttribute("data-t") + ")";
+      });
+    });
+  }
+  document.querySelectorAll("input.sel").forEach(function (b) { b.addEventListener("change", apply); });
+  document.querySelectorAll(".selbtns button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var on = btn.getAttribute("data-act") === "all";
+      document.querySelectorAll("input.sel").forEach(function (b) { b.checked = on; });
+      apply();
+    });
+  });
+  apply();
+})();
+</script>"""
+
+
 def render_html(provenance_lines, header, rows, source_path):
-    testees = header[len(FIXED_COLS):]
+    testees = header[fixed_count(header):]
     title = f"Capability ratio matrix -- {os.path.basename(source_path)}"
     provenance = html.escape("\n".join(provenance_lines) or "(no provenance header found)")
     status_legend = "".join(
@@ -390,10 +533,15 @@ def render_html(provenance_lines, header, rows, source_path):
     else:
         tables_html = '<div class="tablewrap">' + _table_html(rows, testees) + '</div>'
 
-    return PAGE_TEMPLATE.format(
+    # [B91]: the selection offers exactly the testees the tables show
+    # (an undeclared testee in a class-split page is in neither table).
+    selectable = (yes_t + no_t) if spans_both else testees
+    page = PAGE_TEMPLATE.format(
         title=html.escape(title), provenance=provenance, log_max=LOG_MAX,
-        status_legend=status_legend, tables=tables_html,
+        status_legend=status_legend,
+        tables=_selection_html(selectable) + "\n" + tables_html,
         source=html.escape(source_path))
+    return page.replace("</body>", SELECTION_SCRIPT % {"log_max": LOG_MAX} + "\n</body>", 1)
 
 
 def main(argv=None):
@@ -420,7 +568,7 @@ def main(argv=None):
     page = render_html(provenance_lines, header, rows, args.matrix_tsv)
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(page)
-    print(f"wrote {out_path} ({len(rows)} row(s), {len(header) - len(FIXED_COLS)} testee(s))")
+    print(f"wrote {out_path} ({len(rows)} row(s), {len(header) - fixed_count(header)} testee(s))")
     return 0
 
 

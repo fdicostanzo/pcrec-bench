@@ -308,6 +308,137 @@ def test_matrix_single_class_roster_unchanged():
         os.unlink(path)
 
 
+# [B91] (reporter v24): the TEN-column header -- the pooled pair renamed
+# `_pooled`, the class-pure `_yes`/`_no` pairs beside it. Same row as
+# `SAMPLE_TSV_MIXED`: pooled best engine-a (100 ns); yes-best engine-a
+# (100); no-best engine-b (200 = 2.0 x 100).
+SAMPLE_TSV_V24 = (
+    "# reporter: v24 (2026-09-26); surface: matrix; filters: (none); "
+    "source: test; records: 4; testees: engine-a,engine-b,engine-c,engine-d; "
+    "capture_class: yes=engine-a,engine-c; no=engine-b; undeclared=engine-d\n"
+    "# matrix: a data cell is testee median_ns / this ROW's best.\n"
+    "subbench\tpattern\tregime_or_na\tform\tbest_testee_pooled\tbest_ns_pooled\t"
+    "best_testee_yes\tbest_ns_yes\tbest_testee_no\tbest_ns_no\t"
+    "engine-a\tengine-b\tengine-c\tengine-d\n"
+    "rb-mini@1.0\tp1\tshort-subject-search\tplain\tengine-a\t100.0\t"
+    "engine-a\t100.0\tengine-b\t200.0\t"
+    "1.000000\t2.000000\t4.000000\t3.000000\n"
+    "rb-mini@1.0\tp2\t\t\t\t\t\t\t\t\trefused\tunsup\trefused\tunsup\n"
+)
+
+
+def _cells_by_row(page):
+    """[(best_t_text, best_ns_text, {testee: data-ns float})] per <tbody>
+    row of every table, in page order -- a PYTHON re-statement of what
+    SELECTION_SCRIPT reads, so the recompute rule is checked on the very
+    attributes the page ships."""
+    import re as _re
+    out = []
+    for tr in _re.findall(r"<tr>(.*?)</tr>", page, flags=_re.S):
+        if "<th>subbench</th>" in tr:
+            continue
+        bt = _re.search(r'<td class="best-t">(.*?)</td>', tr)
+        bn = _re.search(r'<td class="best-ns">(.*?)</td>', tr)
+        ns = {m.group(1): float(m.group(2)) for m in
+              _re.finditer(r'data-t="([^"]+)" data-ns="([^"]+)"', tr)}
+        out.append((bt.group(1) if bt else None, bn.group(1) if bn else None, ns))
+    return out
+
+
+def _best_over(ns, selection):
+    """The viewer's `computeBest`: the lowest absolute ns among the
+    SELECTED ratio cells (a status-token cell carries no data-ns and is
+    never a candidate)."""
+    cand = {t: v for t, v in ns.items() if t in selection}
+    if not cand:
+        return None, None
+    t = min(cand, key=cand.get)
+    return t, cand[t]
+
+
+def test_v24_header_parses_and_normalises():
+    """[B91]: the reporter-v24 ten-column header parses, the testee
+    roster starts after the ten fixed columns, and every row's
+    `best_testee`/`best_ns` are NORMALISED to the POOLED pair (what the
+    file's ratio cells are relative to). CONTROL: the pre-v24 six-column
+    `SAMPLE_TSV` still parses to the same shape."""
+    path = _write_tmp(SAMPLE_TSV_V24)
+    try:
+        _prov, header, rows = mp.parse_matrix_tsv(path)
+        _check(mp.fixed_count(header) == 10, header)
+        _check(header[10:] == ["engine-a", "engine-b", "engine-c", "engine-d"], header)
+        _check(rows[0]["best_testee"] == "engine-a" and rows[0]["best_ns"] == "100.0", rows[0])
+        _check(rows[0]["best_ns_no"] == "200.0", rows[0])
+    finally:
+        os.unlink(path)
+    _p, header6, _r = mp.parse_matrix_tsv(_write_tmp(SAMPLE_TSV))
+    _check(mp.fixed_count(header6) == 6, header6)
+
+
+def test_selection_recomputes_best_over_selection():
+    """[B91] (Frank's ruling, 2026-09-25: "calculate best based on what
+    is currently selected"): the page carries one checkbox per shown
+    testee and every ratio cell its ABSOLUTE ns (`data-ns`, ratio x its
+    table's best_ns). Checked on those shipped attributes: (1) with
+    every testee selected the recompute reproduces each table's static
+    best; (2) selecting the YES class alone on the SINGLE-table page
+    yields the TSV's own `best_ns_yes`, the NO class alone its
+    `best_ns_no` -- the static class-pure columns and the page's
+    selection are one rule; (3) a status-token cell (`refused`/`unsup`)
+    carries no data-ns, so a row with none selectable has no best; (4)
+    the script's ramp constants are `_ratio_color`'s own."""
+    # a single-class-free file (no capture_class line) -> one table, all testees
+    single = SAMPLE_TSV_V24.replace(
+        "; capture_class: yes=engine-a,engine-c; no=engine-b; undeclared=engine-d", "")
+    path = _write_tmp(single)
+    try:
+        prov, header, rows = mp.parse_matrix_tsv(path)
+        page = mp.render_html(prov, header, rows, path)
+    finally:
+        os.unlink(path)
+    for t in ("engine-a", "engine-b", "engine-c", "engine-d"):
+        _check(f'<input type="checkbox" class="sel" value="{t}" checked>' in page,
+               f"a checkbox per testee: {t}")
+    _check("<script>" in page and "function apply()" in page, "the selection script ships")
+    rowcells = _cells_by_row(page)
+    bt, bn, ns = rowcells[0]
+    _check(ns == {"engine-a": 100.0, "engine-b": 200.0, "engine-c": 400.0, "engine-d": 300.0}, ns)
+    everyone = set(ns)
+    _check(_best_over(ns, everyone) == ("engine-a", 100.0) and (bt, bn) == ("engine-a", "100.0"),
+           "(1) full selection reproduces the static best")
+    _check(_best_over(ns, {"engine-a", "engine-c"})[1] == float(rows[0]["best_ns_yes"]),
+           "(2) the YES selection yields the TSV's best_ns_yes")
+    _check(_best_over(ns, {"engine-b"})[1] == float(rows[0]["best_ns_no"]),
+           "(2) the NO selection yields the TSV's best_ns_no")
+    _check(_best_over(ns, {"engine-c", "engine-d"}) == ("engine-d", 300.0),
+           "an arbitrary selection's best is its own fastest cell")
+    _check(rowcells[1][2] == {}, f"(3) status tokens carry no data-ns: {rowcells[1]}")
+    _check("var LOG_MAX = %d;" % mp.LOG_MAX in page and "[56, 161, 255]" in page
+           and "[220, 38, 38]" in page and "t < 0.55" in page,
+           "(4) the script's ramp must be _ratio_color's")
+
+
+def test_selection_on_class_split_page():
+    """[B91] on a MIXED roster: the selection lists exactly the testees
+    the two class-pure tables show (the undeclared one is in neither),
+    and each class table's cells carry data-ns in ABSOLUTE ns (the
+    class-rebased ratio x the class best), so selecting within a table
+    recomputes against the same absolute scale."""
+    path = _write_tmp(SAMPLE_TSV_MIXED)
+    try:
+        prov, header, rows = mp.parse_matrix_tsv(path)
+        page = mp.render_html(prov, header, rows, path)
+    finally:
+        os.unlink(path)
+    _check('value="engine-d"' not in page, "undeclared engine-d is not selectable")
+    for t in ("engine-a", "engine-b", "engine-c"):
+        _check(f'value="{t}"' in page, t)
+    rowcells = _cells_by_row(page)
+    _check(len(rowcells) == 2, rowcells)
+    _check(rowcells[0][2] == {"engine-a": 100.0, "engine-c": 400.0}, rowcells[0])
+    _check(rowcells[1][2] == {"engine-b": 200.0}, rowcells[1])
+
+
 TESTS = [
     test_parse_matrix_tsv_roundtrip,
     test_malformed_header_raises,
@@ -321,6 +452,9 @@ TESTS = [
     test_matrix_class_pure_split_renders_two_tables,
     test_matrix_single_class_roster_unchanged,
     test_main_writes_default_output_path,
+    test_v24_header_parses_and_normalises,
+    test_selection_recomputes_best_over_selection,
+    test_selection_on_class_split_page,
 ]
 
 
