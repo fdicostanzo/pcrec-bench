@@ -1,0 +1,291 @@
+# source: reports/2026-09-26-utf8-0.1-budu-ryzen1600-first-ce658cb7.tsv / reports/2026-09-26-utf8-0.1-budu-ryzen1600-first-ce658cb7.subject-grain.tsv (reporter v24); bench/utf8/subject_facts.tsv
+# no store access; no report render; lane b97read, 2026-09-26
+
+# cell_median: 1490 rows (75 patterns x 2 regimes x <=11 testees)
+
+==============================================================================
+R2 -- pcre2-utf-jit band: cell/jit ratio > 2 (worse) or < 1/20 (better)
+==============================================================================
+total: 431 of 1340 comparable cells trip R2
+
+per testee: slower(ratio>2)  faster(ratio<1/20)  comparable
+  libpcre2_10.46_dfa-nocaps-simdna_utf8                     53     0   149
+  libpcre2_10.46_interp-caps-simdna_utf8                    55     0   150
+  oniguruma_6.9.10_default-caps-simdna_utf8                 64     4   121
+  pcrec_ce658cb7_auto-caps-simdna_utf8                       3     9   138
+  pcrec_ce658cb7_auto-nocaps-simdna_utf8                     3     9   138
+  pcrec_ce658cb7_vm-caps-simdna_utf8                        24     7   134
+  pcrec_ce658cb7_vm-in-caps-simdna_utf8                     24     7   134
+  re2_11.0.0_default-caps-simdna_utf8                       70     8   124
+  rust_1.13.1_default-caps-simdna                           11    20   116
+  vectorscan_5.4.11_block-nosom-nocaps-simd_utf8             0    60   136
+
+per (testee, regime):
+  libpcre2_10.46_dfa-nocaps-simdna_utf8                   large-subject-throughput     33     0    75
+  libpcre2_10.46_dfa-nocaps-simdna_utf8                   short-subject-search         20     0    74
+  libpcre2_10.46_interp-caps-simdna_utf8                  large-subject-throughput     35     0    75
+  libpcre2_10.46_interp-caps-simdna_utf8                  short-subject-search         20     0    75
+  oniguruma_6.9.10_default-caps-simdna_utf8               large-subject-throughput     33     4    62
+  oniguruma_6.9.10_default-caps-simdna_utf8               short-subject-search         31     0    59
+  pcrec_ce658cb7_auto-caps-simdna_utf8                    large-subject-throughput      3     9    69
+  pcrec_ce658cb7_auto-caps-simdna_utf8                    short-subject-search          0     0    69
+  pcrec_ce658cb7_auto-nocaps-simdna_utf8                  large-subject-throughput      3     9    69
+  pcrec_ce658cb7_auto-nocaps-simdna_utf8                  short-subject-search          0     0    69
+  pcrec_ce658cb7_vm-caps-simdna_utf8                      large-subject-throughput     17     7    67
+  pcrec_ce658cb7_vm-caps-simdna_utf8                      short-subject-search          7     0    67
+  pcrec_ce658cb7_vm-in-caps-simdna_utf8                   large-subject-throughput     17     7    67
+  pcrec_ce658cb7_vm-in-caps-simdna_utf8                   short-subject-search          7     0    67
+  re2_11.0.0_default-caps-simdna_utf8                     large-subject-throughput     18     8    63
+  re2_11.0.0_default-caps-simdna_utf8                     short-subject-search         52     0    61
+  rust_1.13.1_default-caps-simdna                         large-subject-throughput      1    20    59
+  rust_1.13.1_default-caps-simdna                         short-subject-search         10     0    57
+  vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          large-subject-throughput      0    60    69
+  vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          short-subject-search          0     0    67
+
+worst 15 by ratio (of 431 hits):
+  cls-dot                large-subject-throughput   vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=    0.0000  ns=         517.6  jit_ns=    48110259.6
+  cls-neg-single         large-subject-throughput   vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=    0.0000  ns=         516.9  jit_ns=    48014921.9
+  ci-neg-fold            large-subject-throughput   vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=    0.0000  ns=         514.2  jit_ns=    47754370.5
+  lit-anchored-run       large-subject-throughput   pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=    0.0000  ns=          37.3  jit_ns=     2360769.0
+  asr-a-z                large-subject-throughput   pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=    0.0000  ns=          37.4  jit_ns=     2360565.4
+  cls-dot-rep            large-subject-throughput   rust_1.13.1_default-caps-simdna                         ratio=    0.0000  ns=          42.0  jit_ns=     2360545.4
+  lit-anchored-run       large-subject-throughput   rust_1.13.1_default-caps-simdna                         ratio=    0.0000  ns=          42.0  jit_ns=     2360769.0
+  asr-a-z                large-subject-throughput   rust_1.13.1_default-caps-simdna                         ratio=    0.0000  ns=          42.2  jit_ns=     2360565.4
+  prp-l-anchored         large-subject-throughput   rust_1.13.1_default-caps-simdna                         ratio=    0.0000  ns=          42.3  jit_ns=     2361228.2
+  lit-anchored-run       large-subject-throughput   pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=    0.0000  ns=          42.7  jit_ns=     2360769.0
+  lit-anchored-run       large-subject-throughput   pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=    0.0000  ns=          42.9  jit_ns=     2360769.0
+  lit-anchored-run       large-subject-throughput   pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=    0.0000  ns=          44.9  jit_ns=     2360769.0
+  asr-a-z                large-subject-throughput   pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=    0.0000  ns=          44.9  jit_ns=     2360565.4
+  asr-b-midchar          large-subject-throughput   vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=    0.0000  ns=         911.6  jit_ns=    43366048.4
+  asr-a-z                large-subject-throughput   pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=    0.0000  ns=          50.7  jit_ns=     2360565.4
+
+==============================================================================
+R7 -- t-1m/t-64k ns/byte ratio outside [0.7, 1.4], read on EVERY pattern
+==============================================================================
+total: 91 of 750 (pattern,testee) pairs trip R7
+
+all 91 hits:
+  lit-1ch-4b             pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  2.4527  t1m_ns/B=  0.110553  t64k_ns/B=  0.045074
+  lit-1ch-4b             pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  2.4498  t1m_ns/B=  0.110330  t64k_ns/B=  0.045037
+  lit-nfc-pair           vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0093  t1m_ns/B=  0.000088  t64k_ns/B=  0.009391
+  alt-shared-char        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0227  t1m_ns/B=  0.000196  t64k_ns/B=  0.008616
+  alt-distinct-lead      vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0264  t1m_ns/B=  0.000276  t64k_ns/B=  0.010460
+  cls-d-ucp              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0272  t1m_ns/B=  0.000362  t64k_ns/B=  0.013299
+  cls-d-ascii            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0302  t1m_ns/B=  0.000092  t64k_ns/B=  0.003034
+  qnt-lazy-2b            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0345  t1m_ns/B=  0.000048  t64k_ns/B=  0.001389
+  qnt-plus-2b            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0347  t1m_ns/B=  0.000048  t64k_ns/B=  0.001376
+  lit-1ch-2b             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0348  t1m_ns/B=  0.000048  t64k_ns/B=  0.001380
+  ci-ucp-invariance      vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0367  t1m_ns/B=  0.000082  t64k_ns/B=  0.002237
+  ci-e-acute             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0367  t1m_ns/B=  0.000083  t64k_ns/B=  0.002255
+  lit-1ch-4b             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  1.9605  t1m_ns/B=  1.524849  t64k_ns/B=  0.777766
+  prp-l-anchored         re2_11.0.0_default-caps-simdna_utf8                     ratio=  0.0403  t1m_ns/B=  0.000097  t64k_ns/B=  0.002405
+  cls-dot-rep            pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  0.0417  t1m_ns/B=  0.000034  t64k_ns/B=  0.000816
+  cls-dot-rep            pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  0.0447  t1m_ns/B=  0.000036  t64k_ns/B=  0.000806
+  ci-strasse             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0458  t1m_ns/B=  0.000344  t64k_ns/B=  0.007524
+  cls-dot-rep            re2_11.0.0_default-caps-simdna_utf8                     ratio=  0.0469  t1m_ns/B=  0.000096  t64k_ns/B=  0.002049
+  cls-dot-rep            pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  0.0471  t1m_ns/B=  0.000010  t64k_ns/B=  0.000212
+  cls-dot-rep            pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  0.0473  t1m_ns/B=  0.000010  t64k_ns/B=  0.000211
+  lit-1ch-4b             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  1.9512  t1m_ns/B=  1.518351  t64k_ns/B=  0.778172
+  prp-l-anchored         oniguruma_6.9.10_default-caps-simdna_utf8               ratio=  0.0544  t1m_ns/B=  0.000240  t64k_ns/B=  0.004421
+  ci-kelvin              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0559  t1m_ns/B=  0.000078  t64k_ns/B=  0.001398
+  cls-boundary-range     vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0560  t1m_ns/B=  0.000069  t64k_ns/B=  0.001225
+  cls-posix-alpha        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0561  t1m_ns/B=  0.000067  t64k_ns/B=  0.001185
+  cls-w-ascii            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0566  t1m_ns/B=  0.000067  t64k_ns/B=  0.001181
+  prp-han                vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0576  t1m_ns/B=  0.000339  t64k_ns/B=  0.005893
+  ci-turkish-i           vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0595  t1m_ns/B=  0.000038  t64k_ns/B=  0.000632
+  cls-neg-cjk            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0596  t1m_ns/B=  0.000067  t64k_ns/B=  0.001117
+  cls-neg-single         vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0597  t1m_ns/B=  0.000067  t64k_ns/B=  0.001115
+  alt-mixed-width        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0598  t1m_ns/B=  0.000081  t64k_ns/B=  0.001352
+  prp-zs                 vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0600  t1m_ns/B=  0.000078  t64k_ns/B=  0.001308
+  ci-neg-fold            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0600  t1m_ns/B=  0.000067  t64k_ns/B=  0.001113
+  cls-dot                vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0601  t1m_ns/B=  0.000067  t64k_ns/B=  0.001114
+  lit-anchored-run       pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  0.0615  t1m_ns/B=  0.000005  t64k_ns/B=  0.000083
+  lit-anchored-run       pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  0.0620  t1m_ns/B=  0.000006  t64k_ns/B=  0.000099
+  lit-anchored-run       vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0620  t1m_ns/B=  0.000010  t64k_ns/B=  0.000157
+  asr-a-z                pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  0.0621  t1m_ns/B=  0.000006  t64k_ns/B=  0.000098
+  asr-a-z                vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0621  t1m_ns/B=  0.000010  t64k_ns/B=  0.000157
+  cls-neg-allhigh        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0622  t1m_ns/B=  0.000067  t64k_ns/B=  0.001070
+  asr-a-z                oniguruma_6.9.10_default-caps-simdna_utf8               ratio=  0.0623  t1m_ns/B=  0.000029  t64k_ns/B=  0.000472
+  lit-anchored-run       oniguruma_6.9.10_default-caps-simdna_utf8               ratio=  0.0623  t1m_ns/B=  0.000029  t64k_ns/B=  0.000471
+  cls-dot-rep            oniguruma_6.9.10_default-caps-simdna_utf8               ratio=  0.0623  t1m_ns/B=  0.000236  t64k_ns/B=  0.003790
+  asr-a-z                re2_11.0.0_default-caps-simdna_utf8                     ratio=  0.0624  t1m_ns/B=  0.000011  t64k_ns/B=  0.000182
+  cls-dot-rep            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0624  t1m_ns/B=  0.000010  t64k_ns/B=  0.000156
+  lit-anchored-run       pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  0.0625  t1m_ns/B=  0.000006  t64k_ns/B=  0.000092
+  asr-a-z                pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  0.0625  t1m_ns/B=  0.000005  t64k_ns/B=  0.000082
+  lit-anchored-run       re2_11.0.0_default-caps-simdna_utf8                     ratio=  0.0626  t1m_ns/B=  0.000011  t64k_ns/B=  0.000183
+  prp-l-anchored         vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0628  t1m_ns/B=  0.000010  t64k_ns/B=  0.000155
+  lit-anchored-run       pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  0.0632  t1m_ns/B=  0.000006  t64k_ns/B=  0.000092
+  lit-anchored-run       rust_1.13.1_default-caps-simdna                         ratio=  0.0637  t1m_ns/B=  0.000006  t64k_ns/B=  0.000091
+  cls-dot-rep            rust_1.13.1_default-caps-simdna                         ratio=  0.0640  t1m_ns/B=  0.000006  t64k_ns/B=  0.000090
+  asr-a-z                rust_1.13.1_default-caps-simdna                         ratio=  0.0642  t1m_ns/B=  0.000006  t64k_ns/B=  0.000090
+  prp-l-anchored         rust_1.13.1_default-caps-simdna                         ratio=  0.0645  t1m_ns/B=  0.000006  t64k_ns/B=  0.000091
+  qnt-dot-bounded        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0662  t1m_ns/B=  0.000075  t64k_ns/B=  0.001141
+  ci-long-s              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0668  t1m_ns/B=  0.000078  t64k_ns/B=  0.001165
+  asr-b-midchar          vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0672  t1m_ns/B=  0.000128  t64k_ns/B=  0.001902
+  qnt-class-run          vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0678  t1m_ns/B=  0.000102  t64k_ns/B=  0.001510
+  cls-mixed              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0693  t1m_ns/B=  0.000179  t64k_ns/B=  0.002585
+  asr-a-z                pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  0.0694  t1m_ns/B=  0.000007  t64k_ns/B=  0.000106
+  asr-a-z                pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  0.0698  t1m_ns/B=  0.000007  t64k_ns/B=  0.000105
+  ci-moskva              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0757  t1m_ns/B=  0.000129  t64k_ns/B=  0.001710
+  alt-cyr-64             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0758  t1m_ns/B=  0.000100  t64k_ns/B=  0.001324
+  cls-s-nbsp             pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.9123  t1m_ns/B=  0.097400  t64k_ns/B=  0.050933
+  lit-1ch-3b             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.0931  t1m_ns/B=  0.000101  t64k_ns/B=  0.001089
+  cls-s-nbsp             pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.9012  t1m_ns/B=  0.097201  t64k_ns/B=  0.051127
+  cls-s-ucp              vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.1230  t1m_ns/B=  0.014118  t64k_ns/B=  0.114778
+  cls-s-nbsp             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.1235  t1m_ns/B=  0.014168  t64k_ns/B=  0.114716
+  lit-sharp-s            vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.1405  t1m_ns/B=  0.006239  t64k_ns/B=  0.044387
+  asr-dollar-ml          pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.8142  t1m_ns/B=  0.103365  t64k_ns/B=  0.056976
+  asr-dollar-ml          pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.8092  t1m_ns/B=  0.103288  t64k_ns/B=  0.057089
+  asr-dollar-ml          pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  1.8041  t1m_ns/B=  0.102564  t64k_ns/B=  0.056850
+  asr-dollar-ml          pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  1.7994  t1m_ns/B=  0.102510  t64k_ns/B=  0.056970
+  lit-1ch-4b             vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  0.2802  t1m_ns/B=  0.009347  t64k_ns/B=  0.033354
+  asr-dollar-ml          re2_11.0.0_default-caps-simdna_utf8                     ratio=  1.6730  t1m_ns/B=  0.099410  t64k_ns/B=  0.059420
+  lit-offset-at-tail     pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.6720  t1m_ns/B=  0.205910  t64k_ns/B=  0.123148
+  lit-offset-at-tail     pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.6638  t1m_ns/B=  0.206369  t64k_ns/B=  0.124037
+  lit-offset-at-tail     pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  1.6543  t1m_ns/B=  0.205833  t64k_ns/B=  0.124427
+  lit-offset-at-tail     pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  1.6289  t1m_ns/B=  0.206000  t64k_ns/B=  0.126468
+  lit-mixed-ascii        pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.6134  t1m_ns/B=  0.181496  t64k_ns/B=  0.112496
+  lit-mixed-ascii        pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  1.5995  t1m_ns/B=  0.181233  t64k_ns/B=  0.113307
+  lit-mixed-ascii        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  1.5801  t1m_ns/B=  0.181224  t64k_ns/B=  0.114689
+  lit-mixed-ascii        pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.5776  t1m_ns/B=  0.181583  t64k_ns/B=  0.115104
+  lit-nfc-pair           re2_11.0.0_default-caps-simdna_utf8                     ratio=  1.5660  t1m_ns/B=  0.242471  t64k_ns/B=  0.154837
+  lit-mixed-ascii        re2_11.0.0_default-caps-simdna_utf8                     ratio=  1.5059  t1m_ns/B=  0.179395  t64k_ns/B=  0.119126
+  lit-1ch-4b             re2_11.0.0_default-caps-simdna_utf8                     ratio=  1.5050  t1m_ns/B=  0.051431  t64k_ns/B=  0.034173
+  lit-nfc-pair           pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.4692  t1m_ns/B=  0.391595  t64k_ns/B=  0.266538
+  lit-nfc-pair           pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.4692  t1m_ns/B=  0.391950  t64k_ns/B=  0.266784
+  prp-lu                 vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          ratio=  1.4444  t1m_ns/B=  0.820745  t64k_ns/B=  0.568226
+  alt-shared-char        pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  1.4244  t1m_ns/B=  0.229168  t64k_ns/B=  0.160887
+  alt-shared-char        pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  1.4041  t1m_ns/B=  0.229145  t64k_ns/B=  0.163201
+
+==============================================================================
+R3 -- encoding band: floor/ci-ascii-control/asr-b-ascii ns/byte vs t-64k-asc, >x3
+==============================================================================
+total: 22 of 99 (pattern,testee,script) triples trip R3
+
+all 22 hits:
+  asr-b-ascii        pcrec_ce658cb7_vm-caps-simdna_utf8                      t-64k-cyr   ratio=   0.0042  npb=  0.016797  asc_npb=  4.027521
+  asr-b-ascii        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   t-64k-cyr   ratio=   0.0042  npb=  0.016854  asc_npb=  4.028357
+  asr-b-ascii        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   t-64k-cjk   ratio=   0.0042  npb=  0.016875  asc_npb=  4.028357
+  asr-b-ascii        pcrec_ce658cb7_vm-caps-simdna_utf8                      t-64k-cjk   ratio=   0.0042  npb=  0.017060  asc_npb=  4.027521
+  asr-b-ascii        pcrec_ce658cb7_auto-nocaps-simdna_utf8                  t-64k-cyr   ratio=   0.0305  npb=  0.016841  asc_npb=  0.552413
+  asr-b-ascii        pcrec_ce658cb7_auto-nocaps-simdna_utf8                  t-64k-cjk   ratio=   0.0305  npb=  0.016844  asc_npb=  0.552413
+  asr-b-ascii        pcrec_ce658cb7_auto-caps-simdna_utf8                    t-64k-cyr   ratio=   0.0305  npb=  0.016843  asc_npb=  0.551825
+  asr-b-ascii        pcrec_ce658cb7_auto-caps-simdna_utf8                    t-64k-cjk   ratio=   0.0306  npb=  0.016865  asc_npb=  0.551825
+  asr-b-ascii        pcrec_ce658cb7_vm-caps-simdna_utf8                      t-64k-lat   ratio=   0.0576  npb=  0.231902  asc_npb=  4.027521
+  asr-b-ascii        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   t-64k-lat   ratio=   0.0577  npb=  0.232416  asc_npb=  4.028357
+  ci-ascii-control   oniguruma_6.9.10_default-caps-simdna_utf8               t-64k-cjk   ratio=   0.2666  npb=  1.529330  asc_npb=  5.736503
+  asr-b-ascii        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          t-64k-cjk   ratio=   0.2676  npb=  0.044543  asc_npb=  0.166468
+  asr-b-ascii        vectorscan_5.4.11_block-nosom-nocaps-simd_utf8          t-64k-cyr   ratio=   0.2680  npb=  0.044607  asc_npb=  0.166468
+  ci-ascii-control   libpcre2_10.46_interp-caps-simdna_utf8                  t-64k-cjk   ratio=   0.2714  npb=  1.171327  asc_npb=  4.316064
+  ci-ascii-control   libpcre2_10.46_dfa-nocaps-simdna_utf8                   t-64k-cjk   ratio=   0.2870  npb=  1.169216  asc_npb=  4.074176
+  asr-b-ascii        rust_1.13.1_default-caps-simdna                         t-64k-cjk   ratio=   0.3180  npb=  0.030979  asc_npb=  0.097409
+  asr-b-ascii        rust_1.13.1_default-caps-simdna                         t-64k-cyr   ratio=   0.3191  npb=  0.031080  asc_npb=  0.097409
+  floor              libpcre2_10.46_dfa-nocaps-simdna_utf8                   t-64k-cyr   ratio=   3.1198  npb=  1.896939  asc_npb=  0.608032
+  floor              libpcre2_10.46_interp-caps-simdna_utf8                  t-64k-cyr   ratio=   3.1194  npb=  1.896876  asc_npb=  0.608090
+  ci-ascii-control   pcrec_ce658cb7_auto-caps-simdna_utf8                    t-64k-cyr   ratio=   0.3231  npb=  0.350078  asc_npb=  1.083423
+  ci-ascii-control   pcrec_ce658cb7_auto-nocaps-simdna_utf8                  t-64k-cyr   ratio=   0.3247  npb=  0.349411  asc_npb=  1.076209
+  floor              libpcre2_10.46_jit-caps-simdna_utf8                     t-64k-cyr   ratio=   3.0481  npb=  1.917831  asc_npb=  0.629192
+
+==============================================================================
+R4 -- script band: max/min ns/byte over the 4 per-script 64KB subjects, per (pattern,testee), >x4
+==============================================================================
+total: 297 of 750 (pattern,testee) pairs with all 4 subjects trip R4
+(pattern,testee) pairs missing >=1 of the 4 subjects (excluded; see R0 cross-check below): 4
+  MISSING  asr-b-midchar      re2_11.0.0_default-caps-simdna_utf8                     have=['t-64k-asc', 't-64k-cyr']
+  MISSING  prp-han            rust_1.13.1_default-caps-simdna                         have=['t-64k-asc', 't-64k-cyr', 't-64k-lat']
+  MISSING  prp-han            re2_11.0.0_default-caps-simdna_utf8                     have=['t-64k-asc', 't-64k-cyr', 't-64k-lat']
+  MISSING  prp-han            oniguruma_6.9.10_default-caps-simdna_utf8               have=['t-64k-asc', 't-64k-cyr', 't-64k-lat']
+
+worst 40 of 297 hits:
+  asr-lb-varwidth        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  920.6357  hi=t-64k-lat(15.833862)  lo=t-64k-cjk(0.017199)
+  asr-lb-varwidth        pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  920.0469  hi=t-64k-lat(15.852147)  lo=t-64k-cyr(0.017230)
+  asr-lb-varwidth        pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  917.2123  hi=t-64k-lat(15.680727)  lo=t-64k-cjk(0.017096)
+  asr-lb-varwidth        pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  802.4770  hi=t-64k-lat(15.678703)  lo=t-64k-cjk(0.019538)
+  qnt-lazy-2b            pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  496.4031  hi=t-64k-lat(8.395404)  lo=t-64k-cyr(0.016912)
+  qnt-lazy-2b            pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  489.0638  hi=t-64k-lat(8.292364)  lo=t-64k-asc(0.016956)
+  alt-cyr-64             libpcre2_10.46_dfa-nocaps-simdna_utf8                   ratio=  420.2813  hi=t-64k-cyr(557.959128)  lo=t-64k-asc(1.327585)
+  asr-lb-neg             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  407.9749  hi=t-64k-cjk(6.929965)  lo=t-64k-cyr(0.016986)
+  asr-lb-neg             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  404.7774  hi=t-64k-cjk(6.887318)  lo=t-64k-cyr(0.017015)
+  asr-lb-fixed           pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  352.2262  hi=t-64k-lat(5.970819)  lo=t-64k-cjk(0.016952)
+  lit-1ch-2b             re2_11.0.0_default-caps-simdna_utf8                     ratio=  348.5227  hi=t-64k-lat(6.473175)  lo=t-64k-asc(0.018573)
+  asr-lb-fixed           pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  316.1866  hi=t-64k-lat(5.316349)  lo=t-64k-cjk(0.016814)
+  asr-lb-fixed           pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  298.7576  hi=t-64k-lat(5.058779)  lo=t-64k-cjk(0.016933)
+  asr-lb-fixed           pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  297.6598  hi=t-64k-lat(5.026780)  lo=t-64k-cyr(0.016888)
+  ci-moskva              pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  293.3976  hi=t-64k-cyr(4.931161)  lo=t-64k-lat(0.016807)
+  ci-moskva              pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  292.0804  hi=t-64k-cyr(4.929971)  lo=t-64k-lat(0.016879)
+  asr-lb-neg             pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  247.3999  hi=t-64k-cjk(4.170689)  lo=t-64k-lat(0.016858)
+  qnt-plus-2b            pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  245.3903  hi=t-64k-lat(4.131336)  lo=t-64k-cjk(0.016836)
+  qnt-plus-2b            pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  242.6685  hi=t-64k-lat(4.088298)  lo=t-64k-cjk(0.016847)
+  asr-b-ascii            pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  239.7794  hi=t-64k-asc(4.027521)  lo=t-64k-cyr(0.016797)
+  asr-b-ascii            pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  239.0101  hi=t-64k-asc(4.028357)  lo=t-64k-cyr(0.016854)
+  asr-lb-neg             pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  238.6887  hi=t-64k-cjk(4.172326)  lo=t-64k-cyr(0.017480)
+  alt-cyr-64             libpcre2_10.46_interp-caps-simdna_utf8                  ratio=  228.0165  hi=t-64k-cyr(304.292707)  lo=t-64k-asc(1.334520)
+  lit-1ch-2b             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  151.9724  hi=t-64k-lat(2.557212)  lo=t-64k-cjk(0.016827)
+  lit-1ch-2b             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  148.0210  hi=t-64k-lat(2.486323)  lo=t-64k-cjk(0.016797)
+  ci-moskva              pcrec_ce658cb7_auto-nocaps-simdna_utf8                  ratio=  144.5907  hi=t-64k-cyr(2.437285)  lo=t-64k-asc(0.016856)
+  ci-moskva              pcrec_ce658cb7_auto-caps-simdna_utf8                    ratio=  143.7000  hi=t-64k-cyr(2.444420)  lo=t-64k-asc(0.017011)
+  qnt-counted-3b         pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  143.0400  hi=t-64k-cjk(2.411496)  lo=t-64k-cyr(0.016859)
+  qnt-counted-3b         pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  142.4461  hi=t-64k-cjk(2.392968)  lo=t-64k-asc(0.016799)
+  alt-cyr-64             oniguruma_6.9.10_default-caps-simdna_utf8               ratio=  129.6794  hi=t-64k-cyr(172.008087)  lo=t-64k-cjk(1.326411)
+  cls-s-nbsp             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  124.2598  hi=t-64k-lat(2.080968)  lo=t-64k-cyr(0.016747)
+  cls-s-nbsp             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  123.4367  hi=t-64k-lat(2.075382)  lo=t-64k-cjk(0.016813)
+  lit-1ch-3b             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  121.8834  hi=t-64k-cjk(2.048175)  lo=t-64k-asc(0.016804)
+  ci-e-acute             pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  121.7880  hi=t-64k-lat(2.042394)  lo=t-64k-asc(0.016770)
+  lit-1ch-3b             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  121.5928  hi=t-64k-cjk(2.044651)  lo=t-64k-lat(0.016816)
+  ci-e-acute             pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  120.0717  hi=t-64k-lat(2.025845)  lo=t-64k-cyr(0.016872)
+  lit-nfc-pair           pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  115.1647  hi=t-64k-lat(1.936242)  lo=t-64k-cyr(0.016813)
+  lit-nfc-pair           pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  114.7130  hi=t-64k-lat(1.928961)  lo=t-64k-cyr(0.016816)
+  alt-shared-char        pcrec_ce658cb7_vm-in-caps-simdna_utf8                   ratio=  109.5984  hi=t-64k-cjk(1.840958)  lo=t-64k-lat(0.016797)
+  alt-shared-char        pcrec_ce658cb7_vm-caps-simdna_utf8                      ratio=  108.7620  hi=t-64k-cjk(1.830422)  lo=t-64k-asc(0.016830)
+
+cross-check -- excluded-section rows (n_wrong>0) for the R4-missing pairs:
+  asr-b-midchar      re2_11.0.0_default-caps-simdna_utf8                     in excluded(n_wrong>0) section: True
+  prp-han            rust_1.13.1_default-caps-simdna                         in excluded(n_wrong>0) section: True
+  prp-han            re2_11.0.0_default-caps-simdna_utf8                     in excluded(n_wrong>0) section: True
+  prp-han            oniguruma_6.9.10_default-caps-simdna_utf8               in excluded(n_wrong>0) section: True
+
+==============================================================================
+R5 completion -- compile median_total_ns cliff (>x10 testee's own median),
+the 7 non-pcrec compiling testees (pcrec's 4 configs already scored in the
+first ledger's section 6/7)
+==============================================================================
+
+libpcre2_10.46_dfa-nocaps-simdna_utf8: n=75 plain-form median=780.0 ns; 1 cliffs (>x10); 1 refused (median_total_ns absent): ['prp-ingreek']
+    alt-cyr-64                  21590.0 ns  x   27.68
+
+libpcre2_10.46_interp-caps-simdna_utf8: n=75 plain-form median=1020.0 ns; 1 cliffs (>x10); 1 refused (median_total_ns absent): ['prp-ingreek']
+    alt-cyr-64                  52951.0 ns  x   51.91
+
+libpcre2_10.46_jit-caps-simdna_utf8: n=75 plain-form median=10330.0 ns; 0 cliffs (>x10); 1 refused (median_total_ns absent): ['prp-ingreek']
+
+oniguruma_6.9.10_default-caps-simdna_utf8: n=63 plain-form median=1790.0 ns; 4 cliffs (>x10); 13 refused (median_total_ns absent): ['asr-b-cyr', 'asr-b-cyr-ucp', 'asr-b-midchar', 'ci-ucp-invariance', 'cls-d-ascii', 'cls-d-ucp', 'cls-posix-alpha', 'cls-s-nbsp', 'cls-s-ucp', 'cls-w-ascii', 'cls-w-ucp', 'prp-greek-sc', 'prp-ingreek']
+    alt-cyr-64                  55240.0 ns  x   30.86
+    ci-neg-fold                 46190.0 ns  x   25.80
+    ci-class-range              44010.0 ns  x   24.59
+    prp-l-anchored              18140.0 ns  x   10.13
+
+re2_11.0.0_default-caps-simdna_utf8: n=65 plain-form median=11260.0 ns; 8 cliffs (>x10); 11 refused (median_total_ns absent): ['asr-b-cyr-ucp', 'asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth', 'ci-ucp-invariance', 'cls-d-ucp', 'cls-s-ucp', 'cls-w-ucp', 'prp-greek-sc', 'prp-ingreek']
+    prp-l-anchored            2643404.0 ns  x  234.76
+    prp-l                     1687839.0 ns  x  149.90
+    prp-lu                     893315.0 ns  x   79.34
+    prp-notl                   646553.0 ns  x   57.42
+    prp-n                      352691.0 ns  x   31.32
+    prp-latin                  117741.0 ns  x   10.46
+    prp-han                    116251.0 ns  x   10.32
+    alt-cyr-64                 112811.0 ns  x   10.02
+
+rust_1.13.1_default-caps-simdna: n=60 plain-form median=39080.0 ns; 3 cliffs (>x10); 16 refused (median_total_ns absent): ['asr-b-cyr', 'asr-b-cyr-ucp', 'asr-b-midchar', 'asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth', 'ci-ucp-invariance', 'cls-d-ascii', 'cls-d-ucp', 'cls-posix-alpha', 'cls-s-nbsp', 'cls-s-ucp', 'cls-w-ascii', 'cls-w-ucp', 'prp-ingreek']
+    prp-l-anchored            1235676.0 ns  x   31.62
+    alt-cyr-64                 455093.0 ns  x   11.65
+    ci-moskva                  448372.0 ns  x   11.47
+
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8: n=69 plain-form median=550853.0 ns; 9 cliffs (>x10); 7 refused (median_total_ns absent): ['asr-b-cyr-ucp', 'asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth', 'prp-greek-sc', 'prp-ingreek']
+    prp-l-anchored          282209492.0 ns  x  512.31
+    cls-w-ucp                54687968.0 ns  x   99.28
+    prp-l                    45186177.0 ns  x   82.03
+    prp-notl                 37165195.0 ns  x   67.47
+    cls-d-ucp                22408718.0 ns  x   40.68
+    prp-lu                   14544106.0 ns  x   26.40
+    prp-n                    12212474.0 ns  x   22.17
+    alt-cyr-64                8439224.0 ns  x   15.32
+    prp-latin                 7032247.0 ns  x   12.77
