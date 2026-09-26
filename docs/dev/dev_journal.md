@@ -5982,3 +5982,18 @@ utf8@0.1's first sample is 7/7. The window close's sidecar regen reported 35/0
 failures, the first clean close since [B72]. [B91] lane b91views (opus) started;
 the utf8 READ follows it (pcrecdev1's ask: per-pattern pcrec compile times in the
 ledger).
+
+## 2026-09-26 ~08:4x EDT — thirty-second session close (Frank asked for a reset)
+
+Span 2026-09-25 ~15:00 → 2026-09-26 ~08:40 EDT. Done: [B89] (I-107 WAF block,
+O-55); [B77] U2/U4/U5 merged (UTF roster, patterns, expectations; BD14
+validate-once oracle); [B90] re-pin ce658cb7 + [B88] program_sha256 (schema
+v1.7), window 4/4, ledger (I-108 P1-P4 confirmed; O-56/O-57; O-58 the \p{L}+
+compile facts); utf8@0.1's first sample 7/7 (the pcre2 pair after [B94]/BD15);
+Frank's rulings → [B91] (merged, reporter v24), [B92] (merged), [B93] (merged; the
+first clean sidecar close since [B72]), viewer closed. [B95] queued (complete the
+utf8 roster before the READ). KB-30, KB-31 filed.
+AT RESET: the v24 report-regeneration wave is RUNNING DETACHED (pids 2825361/2,
+/var/tmp/b91regen.log, done at a `DONE rc=` line), ~2/3 through and uncommitted —
+the next session reviews the diffs, runs make check, and commits. Its watcher
+dies with this session.
