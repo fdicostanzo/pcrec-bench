@@ -1527,3 +1527,18 @@ would then be REFUSED. Options for a ruling when it bites: slice the capability
 subject-grain TSV (`--subject-grain-slice`, as some groups already do),
 compress committed subject-grain TSVs, or move them to LFS. Nothing is lost
 today; this is a watch item for the next reporter change.
+
+## KB-33 (2026-09-26, found by the [B95] window; the re2 instance FIXED, the control OPEN) — no check asserts that an adapter's refusal-row engine_metadata is declared
+
+`testees/re2/adapter.py` has emitted `engine_metadata.refusal_class` on every
+did-not-compile row since the adapter landed, but never listed it in
+`METADATA_DECL`. No committed re2 record had refused until utf8@0.1
+(`prp-greek-sc`, `prp-ingreek`: `ErrorBadCharRange`-class syntax). At
+store.write, X15 then rejected the whole 31-minute re2-utf8 cell ("is not
+declared in setup.testee.engine_metadata_declaration"), and nothing was
+written. FIXED in the adapter the same day, with the same shape as rust's
+and onig's declarations; the success path skips the name, as rust's does.
+OWED, a rider for the next harness lane: a check-harness control that
+compiles one KNOWN-REFUSED pattern per adapter and config family, and asserts
+the returned engine_metadata keys are a subset of `describe()`'s declaration.
+The window, not `make check`, found this.

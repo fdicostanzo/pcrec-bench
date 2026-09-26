@@ -76,6 +76,21 @@ METADATA_DECL = {
                        "declared as its own pair rather than folded into "
                        "program_size",
     },
+    # [B95] (2026-09-26): emitted by compile() on every did-not-compile row
+    # since the adapter landed, but never DECLARED -- no committed re2
+    # record had refused until utf8@0.1's prp-greek-sc / prp-ingreek, whose
+    # record X15 then rejected at store.write. Same shape as rust's/onig's.
+    "refusal_class": {
+        "type": "string", "scope": "pattern",
+        "source": "the RE2::ErrorCode name the driver embeds in its `error` "
+                  "line on a did-not-compile outcome, bucketed by this "
+                  "adapter's REFUSAL_CLASS table (capability_set_v1.md 5.5: "
+                  "'declared ONLY by a config whose engine gives a closed, "
+                  "structural signal' -- RE2::ErrorCode is exactly that)",
+        "description": "'size-limit' for ErrorPatternTooLarge; 'syntax' for "
+                       "every other named ErrorCode; ABSENT when the "
+                       "diagnostic carries no parseable code",
+    },
 }
 
 # RE2::ErrorCode (re2.h, fetched verbatim by docs/dev/research/2026-09-12-
@@ -359,7 +374,7 @@ class Adapter(_ad.Adapter):
 
         meta = {}
         for name in METADATA_DECL:
-            if name in out.info:
+            if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile,
                   "longest": bool(cfg.get("longest")),
