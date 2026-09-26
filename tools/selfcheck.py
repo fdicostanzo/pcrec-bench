@@ -2902,6 +2902,113 @@ def check_describe_schema_shape():
         bad("KB-21: the fixed named_value shape validates clean (control)", err)
 
 
+# ---------------------------- 13b KB-33: a refusal row's engine_metadata
+
+#: A single pattern refused by EVERY adapter family on this roster with a
+#: clean, structural did-not-compile -- confirmed live against every
+#: discovered adapter's first testee (lane b98rider, docs/dev/lanes/
+#: b98rider_report.md): onig ("end pattern with unmatched parenthesis"),
+#: pcre2 ("missing closing parenthesis"), pcrec ("missing closing ) for
+#: group"), re2 (ErrorMissingParen), rust (Syntax, "unclosed group"), tre
+#: ("Missing ')'"), vectorscan ("Missing close parenthesis for group"). One
+#: witness serves every family, so this control needs no per-adapter
+#: pattern table, and no new one is needed the day an eighth adapter lands.
+_KB33_UNCLOSED_PATTERN = b"(unclosed"
+
+
+def check_kb33_refusal_metadata_declared():
+    """KB-33 (docs/dev/known_issues.md, found by the [B95] window): the re2
+    adapter emitted `engine_metadata.refusal_class` on every did-not-compile
+    row since it landed, but never listed it in `METADATA_DECL` -- invisible
+    until utf8@0.1's first re2 refusal (`prp-greek-sc`) hit
+    `schema/validate.py`'s X15 at `store.write()` and rejected the WHOLE
+    31-minute cell after every trial had already run, nothing written.
+    FIXED the same day; this is the control OWED after the fix.
+
+    Compiles ONE known-refused pattern (`_KB33_UNCLOSED_PATTERN` above)
+    through every discovered adapter's FIRST testee and asserts every key
+    its did-not-compile row's `engine_metadata` carries is a SUBSET of that
+    same testee's `describe()['engine_metadata_declaration']` -- the X15
+    rule, run here at the adapter boundary, BEFORE a whole cell's trials are
+    spent finding out at `store.write()` months later.
+
+    Both directions, same technique `check_describe_schema_shape`'s KB-21
+    negative already uses (a real block, one field reverted, never a
+    fixture invented from memory): the positive sweep, every real adapter
+    as it stands today, must pass clean; the NEGATIVE reproduces KB-33's
+    EXACT bug -- the re2 adapter's own real `describe()` block with
+    `refusal_class` stripped back out of its declaration -- and must be
+    REFUSED BY NAME, naming that one key and no other."""
+    print("-- KB-33: a refusal row's engine_metadata is declared --")
+    adapters = _ad.discover()
+    if not adapters:
+        bad("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+            "no adapters discovered")
+        return
+
+    failures, checked, captured = [], [], {}
+    for name, adapter in sorted(adapters.items()):
+        tids = sorted(adapter.testees())
+        if not tids:
+            continue
+        tid = tids[0]
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-kb33-%s-" % name)
+        try:
+            adapter.prepare(tid, tmp)
+            block = adapter.describe(tid, tmp)
+            cp = adapter.compile(tid, "kb33-unclosed", _KB33_UNCLOSED_PATTERN,
+                                 {}, 1, tmp)
+            cr = cp.get(_ad.FORM_PLAIN)
+        except Exception as e:  # noqa: BLE001
+            failures.append("%s/%s: raised: %s" % (name, tid, e))
+            continue
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        if cr is None or cr.outcome != "did-not-compile":
+            failures.append(
+                "%s/%s: `(unclosed` did not refuse (outcome=%r) -- this "
+                "witness needs a replacement for this family"
+                % (name, tid, cr.outcome if cr else None))
+            continue
+        decl = set((block.get("engine_metadata_declaration") or {}).keys())
+        undeclared = sorted(set(cr.engine_metadata) - decl)
+        captured[name] = (tid, block, cr)
+        if undeclared:
+            failures.append(
+                "%s/%s: refusal-row engine_metadata %s not in describe()'s "
+                "engine_metadata_declaration %s"
+                % (name, tid, undeclared, sorted(decl)))
+        else:
+            checked.append("%s/%s (%s)"
+                           % (name, tid, sorted(cr.engine_metadata) or "none"))
+    if failures:
+        bad("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+            "; ".join(failures)[:600])
+    else:
+        ok("KB-33: refusal engine_metadata vs describe() (positive sweep)",
+           "%d adapter(s): %s" % (len(checked), ", ".join(checked)))
+
+    # ---- negative: re2's OWN real describe() block, `refusal_class`
+    # stripped back out of the declaration -- KB-33's exact bug, reproduced.
+    try:
+        tid, block, cr = captured["re2"]
+    except KeyError:
+        bad("KB-33: the re2 KB-33 shape is refused BY NAME",
+            "no re2 adapter discovered (or its own arm failed above)")
+        return
+    bug_decl = dict(block.get("engine_metadata_declaration") or {})
+    bug_decl.pop("refusal_class", None)
+    undeclared = sorted(set(cr.engine_metadata) - set(bug_decl))
+    if undeclared == ["refusal_class"]:
+        ok("KB-33: the re2 KB-33 shape is refused BY NAME",
+           "undeclared=%s (re2/%s, engine_metadata=%s)"
+           % (undeclared, tid, sorted(cr.engine_metadata)))
+    else:
+        bad("KB-33: the re2 KB-33 shape is refused BY NAME",
+            "undeclared=%r (expected exactly ['refusal_class'])"
+            % (undeclared,))
+
+
 # --------------------------------------- 14 the abi 4-8 mechanism stamps
 
 #: The artifacts the stamp check compiles, and what each is FOR. Every row
@@ -11921,6 +12028,7 @@ def main():
     check_rxt_source_load()
     check_kb1_runtime_options()
     check_describe_schema_shape()
+    check_kb33_refusal_metadata_declared()
     check_mechanism_stamps()
     check_program_sha256()
     check_vars_surface()

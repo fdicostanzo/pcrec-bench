@@ -1528,7 +1528,7 @@ subject-grain TSV (`--subject-grain-slice`, as some groups already do),
 compress committed subject-grain TSVs, or move them to LFS. Nothing is lost
 today; this is a watch item for the next reporter change.
 
-## KB-33 (2026-09-26, found by the [B95] window; the re2 instance FIXED, the control OPEN) — no check asserts that an adapter's refusal-row engine_metadata is declared
+## KB-33 (2026-09-26, found by the [B95] window; FIXED and the control CLOSED, lane b98rider) — no check asserts that an adapter's refusal-row engine_metadata is declared
 
 `testees/re2/adapter.py` has emitted `engine_metadata.refusal_class` on every
 did-not-compile row since the adapter landed, but never listed it in
@@ -1538,7 +1538,22 @@ store.write, X15 then rejected the whole 31-minute re2-utf8 cell ("is not
 declared in setup.testee.engine_metadata_declaration"), and nothing was
 written. FIXED in the adapter the same day, with the same shape as rust's
 and onig's declarations; the success path skips the name, as rust's does.
-OWED, a rider for the next harness lane: a check-harness control that
-compiles one KNOWN-REFUSED pattern per adapter and config family, and asserts
-the returned engine_metadata keys are a subset of `describe()`'s declaration.
-The window, not `make check`, found this.
+
+CLOSED by lane b98rider (2026-09-26): `tools/selfcheck.py`'s
+`check_kb33_refusal_metadata_declared` (`make check-harness`) compiles ONE
+pattern (`` (unclosed ``) refused by EVERY adapter family with a clean,
+structural did-not-compile — confirmed live against all seven (onig, pcre2,
+pcrec, re2, rust, tre, vectorscan), so one witness serves every family with
+no per-adapter table — through each adapter's first testee, and asserts the
+did-not-compile row's `engine_metadata` keys are a subset of that testee's
+`describe()['engine_metadata_declaration']` (the X15 rule, run at the
+adapter boundary instead of after a whole cell's trials are spent). Two
+arms: the positive sweep (7/7 clean today) and a negative reproducing
+KB-33's exact bug (re2's own real `describe()` block, `refusal_class`
+stripped back out of the declaration) refused BY NAME. VERIFIED to catch
+the real bug: `testees/re2/adapter.py`'s `[B95]` fix was reverted locally
+(the `refusal_class` `METADATA_DECL` entry removed) and the check FAILED
+naming exactly `re2/re2-default: refusal-row engine_metadata
+['refusal_class'] not in describe()'s engine_metadata_declaration
+[...]`; the fix was then restored (`git checkout`) and the check passed
+again, both arms.

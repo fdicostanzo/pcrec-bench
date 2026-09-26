@@ -559,3 +559,24 @@ observed 12"). 24 checks, ~1-2 min (builds every driver). The
 byte-identical re-derivation of every set (U1's acceptance) is the
 archived probe `docs/dev/measurements/probe_b77u1_rederive.py`; the
 generic `check_expectations` gate keeps re-proving it on every run.
+
+[B98] lane `b98rider` (2026-09-26, `docs/dev/known_issues.md` KB-33):
+`check_kb33_refusal_metadata_declared` -- the control the [B95] re2
+incident owed. One pattern (`` (unclosed ``) refuses cleanly on EVERY
+discovered adapter family (onig, pcre2, pcrec, re2, rust, tre,
+vectorscan -- confirmed live, so one witness serves all seven with no
+per-adapter table); through each adapter's FIRST testee, the
+did-not-compile row's `engine_metadata` keys must be a subset of that
+testee's `describe()['engine_metadata_declaration']` -- the X15 rule
+(`schema/validate.py`), run at the adapter boundary rather than after a
+whole cell's trials are sunk into finding out at `store.write()` months
+later, the way KB-33 itself was found. Same technique
+`check_describe_schema_shape`'s KB-21 negative already established (a
+real block, one field reverted, never an invented fixture): the
+negative reproduces KB-33's exact bug (re2's own real `describe()`
+block with `refusal_class` stripped back out) and is refused BY NAME.
+VERIFIED against the real incident, not just the synthetic negative:
+`testees/re2/adapter.py`'s `[B95]` fix was reverted locally (the
+`refusal_class` `METADATA_DECL` entry removed, syntax preserved) and
+this check FAILED naming exactly the missing key; `git checkout`
+restored the fix and both arms passed again. 2 PASS lines.
