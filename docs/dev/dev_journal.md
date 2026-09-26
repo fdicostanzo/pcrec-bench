@@ -5822,3 +5822,14 @@ source before accepting a lane's "not locatable".
   ce658cb7, log build/windows/window_capability_20260925T215135Z.log, watcher on the
   completion line. Next: census (program_identity v2, 6ef76820→ce658cb7), the
   cross-pin report, the ledger against I-108's four predictions. U5 after the window.
+
+## 2026-09-25 ~21:2x EDT — Frank's rulings on the open questions
+
+(1) matrix flat columns: "calculate best based on what is currently selected" →
+folded into [B91] (the viewer already does; the matrix page gains selection, the
+TSV gains class-pure bests). (2) vectorscan NMATCHES: option (b) → [B92].
+(3) capability-0.1-first.tsv vs Q6 (i): option (b), a sanctioned syntax-only
+correction → [B93]. (4) Viewer notes: given earlier and addressed; CLOSED for now
+(future features/bugs become new rows). BD14 (validate-once) was offered for
+review, and Frank did not overturn it. Also: `git push` as needed, and always by
+session end. U5's merged-master make check rc=0 (524/0 · 98+7+12 · 200/0), pushed.
