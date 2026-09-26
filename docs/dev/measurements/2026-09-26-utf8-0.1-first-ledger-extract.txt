@@ -1,0 +1,260 @@
+## P1.a  lit-offset-at-head vs -tail, search_short set median_ns (max/min) + P1.b stamps
+pcrec_auto-caps-utf8	head 804.59	tail 910.79	max/min 1.132	head req_byte=64 run=40c3a9@0 why=emitted eng=dfa	tail req_byte=195 run=c3a940@0 why=emitted eng=dfa
+pcrec_auto-nocaps-utf8	head 804.54	tail 913.65	max/min 1.136	head req_byte=64 run=40c3a9@0 why=emitted eng=dfa	tail req_byte=195 run=c3a940@0 why=emitted eng=dfa
+pcrec_vm-caps-utf8	head 920.76	tail 1027.30	max/min 1.116	head req_byte=64 run=40c3a9@0 why=emitted eng=vm	tail req_byte=195 run=c3a940@0 why=emitted eng=vm
+pcrec_vm-in-caps-utf8	head 868.09	tail 968.68	max/min 1.116	head req_byte=64 run=40c3a9@0 why=emitted eng=vm	tail req_byte=195 run=c3a940@0 why=emitted eng=vm
+  (other testees, context)
+  libpcre2_dfa-nocaps-utf8	head 5028.23	tail 5131.03	max/min 1.020
+  libpcre2_interp-caps-utf8	head 6034.06	tail 6010.61	max/min 1.004
+  libpcre2_jit-caps-utf8	head 4358.39	tail 4343.72	max/min 1.003
+  oniguruma_6.9.10-utf8	head 3187.15	tail 3051.55	max/min 1.044
+  re2_11.0.0-utf8	head 9079.44	tail 9145.27	max/min 1.007
+  rust_1.13.1	head 1560.08	tail 1590.32	max/min 1.019
+  vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2517.18	tail 2564.31	max/min 1.019
+## P2.a (gte 2)  lit-run-3 / lit-mixed-ascii on t-64k-cjk, subject-grain median_ns
+## P3.a (0.6667..1.5)  lit-run-3 / lit-mixed-ascii on t-64k-asc, subject-grain median_ns
+## beyond P1.a: the ORDER PAIR at THROUGHPUT grain (subject grain), tail / head median_ns
+t-64k-lat	libpcre2_dfa-nocaps-utf8	head 84161.6	tail 84162.6	tail/head 1.000
+t-64k-lat	libpcre2_interp-caps-utf8	head 84123.8	tail 84174.8	tail/head 1.001
+t-64k-lat	libpcre2_jit-caps-utf8	head 85546.4	tail 85542.8	tail/head 1.000
+t-64k-lat	oniguruma_6.9.10-utf8	head 83267.3	tail 54732.5	tail/head 0.657
+t-64k-lat	pcrec_auto-caps-utf8	head 1103.0	tail 43689.9	tail/head 39.609
+t-64k-lat	pcrec_auto-nocaps-utf8	head 1102.5	tail 43538.3	tail/head 39.489
+t-64k-lat	pcrec_vm-caps-utf8	head 1102.4	tail 43800.2	tail/head 39.731
+t-64k-lat	pcrec_vm-in-caps-utf8	head 1103.8	tail 43741.7	tail/head 39.630
+t-64k-lat	re2_11.0.0-utf8	head 1207.7	tail 28589.7	tail/head 23.672
+t-64k-lat	rust_1.13.1	head 1975.5	tail 2004.2	tail/head 1.015
+t-64k-lat	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2892.7	tail 16911.0	tail/head 5.846
+t-64k-cyr	libpcre2_dfa-nocaps-utf8	head 124343.9	tail 124267.0	tail/head 0.999
+t-64k-cyr	libpcre2_interp-caps-utf8	head 124310.7	tail 124308.0	tail/head 1.000
+t-64k-cyr	libpcre2_jit-caps-utf8	head 125733.1	tail 125666.8	tail/head 0.999
+t-64k-cyr	oniguruma_6.9.10-utf8	head 70616.4	tail 52996.8	tail/head 0.750
+t-64k-cyr	pcrec_auto-caps-utf8	head 1103.3	tail 1102.5	tail/head 0.999
+t-64k-cyr	pcrec_auto-nocaps-utf8	head 1102.9	tail 1102.9	tail/head 1.000
+t-64k-cyr	pcrec_vm-caps-utf8	head 1101.9	tail 1103.1	tail/head 1.001
+t-64k-cyr	pcrec_vm-in-caps-utf8	head 1103.8	tail 1103.5	tail/head 1.000
+t-64k-cyr	re2_11.0.0-utf8	head 1206.7	tail 1202.5	tail/head 0.997
+t-64k-cyr	rust_1.13.1	head 1970.9	tail 2007.3	tail/head 1.018
+t-64k-cyr	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2894.0	tail 2893.6	tail/head 1.000
+t-64k-cjk	libpcre2_dfa-nocaps-utf8	head 74439.6	tail 74411.6	tail/head 1.000
+t-64k-cjk	libpcre2_interp-caps-utf8	head 74509.4	tail 74464.9	tail/head 0.999
+t-64k-cjk	libpcre2_jit-caps-utf8	head 75902.2	tail 75873.2	tail/head 1.000
+t-64k-cjk	oniguruma_6.9.10-utf8	head 72743.1	tail 53485.9	tail/head 0.735
+t-64k-cjk	pcrec_auto-caps-utf8	head 1103.2	tail 1103.3	tail/head 1.000
+t-64k-cjk	pcrec_auto-nocaps-utf8	head 1102.8	tail 1103.4	tail/head 1.001
+t-64k-cjk	pcrec_vm-caps-utf8	head 1103.0	tail 1102.4	tail/head 0.999
+t-64k-cjk	pcrec_vm-in-caps-utf8	head 1104.0	tail 1104.0	tail/head 1.000
+t-64k-cjk	re2_11.0.0-utf8	head 1206.0	tail 1205.3	tail/head 0.999
+t-64k-cjk	rust_1.13.1	head 1971.6	tail 2009.1	tail/head 1.019
+t-64k-cjk	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2892.8	tail 2892.1	tail/head 1.000
+t-64k-asc	libpcre2_dfa-nocaps-utf8	head 39855.0	tail 39839.6	tail/head 1.000
+t-64k-asc	libpcre2_interp-caps-utf8	head 39848.8	tail 39852.8	tail/head 1.000
+t-64k-asc	libpcre2_jit-caps-utf8	head 41227.3	tail 41219.2	tail/head 1.000
+t-64k-asc	oniguruma_6.9.10-utf8	head 70654.2	tail 52991.6	tail/head 0.750
+t-64k-asc	pcrec_auto-caps-utf8	head 1100.7	tail 1101.3	tail/head 1.001
+t-64k-asc	pcrec_auto-nocaps-utf8	head 1099.8	tail 1100.4	tail/head 1.001
+t-64k-asc	pcrec_vm-caps-utf8	head 1099.4	tail 1100.8	tail/head 1.001
+t-64k-asc	pcrec_vm-in-caps-utf8	head 1101.3	tail 1102.1	tail/head 1.001
+t-64k-asc	re2_11.0.0-utf8	head 1204.9	tail 1205.5	tail/head 1.001
+t-64k-asc	rust_1.13.1	head 1976.2	tail 2004.7	tail/head 1.014
+t-64k-asc	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2893.2	tail 2893.3	tail/head 1.000
+t-64k	libpcre2_dfa-nocaps-utf8	head 97754.0	tail 97781.1	tail/head 1.000
+t-64k	libpcre2_interp-caps-utf8	head 98340.2	tail 98316.2	tail/head 1.000
+t-64k	libpcre2_jit-caps-utf8	head 99405.5	tail 99393.4	tail/head 1.000
+t-64k	oniguruma_6.9.10-utf8	head 74023.6	tail 53543.4	tail/head 0.723
+t-64k	pcrec_auto-caps-utf8	head 1105.5	tail 8070.7	tail/head 7.300
+t-64k	pcrec_auto-nocaps-utf8	head 1104.5	tail 8128.9	tail/head 7.360
+t-64k	pcrec_vm-caps-utf8	head 1103.5	tail 8154.4	tail/head 7.389
+t-64k	pcrec_vm-in-caps-utf8	head 1105.6	tail 8288.2	tail/head 7.497
+t-64k	re2_11.0.0-utf8	head 1235.6	tail 8675.5	tail/head 7.021
+t-64k	rust_1.13.1	head 1977.1	tail 2013.2	tail/head 1.018
+t-64k	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 2903.7	tail 6007.8	tail/head 2.069
+t-256k	libpcre2_dfa-nocaps-utf8	head 393589.9	tail 393112.0	tail/head 0.999
+t-256k	libpcre2_interp-caps-utf8	head 393212.2	tail 393618.4	tail/head 1.001
+t-256k	libpcre2_jit-caps-utf8	head 399059.5	tail 398710.6	tail/head 0.999
+t-256k	oniguruma_6.9.10-utf8	head 296892.3	tail 214280.8	tail/head 0.722
+t-256k	pcrec_auto-caps-utf8	head 4372.2	tail 45619.3	tail/head 10.434
+t-256k	pcrec_auto-nocaps-utf8	head 4373.3	tail 45570.1	tail/head 10.420
+t-256k	pcrec_vm-caps-utf8	head 4373.0	tail 45442.9	tail/head 10.392
+t-256k	pcrec_vm-in-caps-utf8	head 4401.8	tail 45311.3	tail/head 10.294
+t-256k	re2_11.0.0-utf8	head 4494.9	tail 39080.0	tail/head 8.694
+t-256k	rust_1.13.1	head 7809.4	tail 7932.9	tail/head 1.016
+t-256k	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 11427.4	tail 28048.5	tail/head 2.454
+t-1m	libpcre2_dfa-nocaps-utf8	head 1573402.4	tail 1573349.6	tail/head 1.000
+t-1m	libpcre2_interp-caps-utf8	head 1573757.1	tail 1573569.4	tail/head 1.000
+t-1m	libpcre2_jit-caps-utf8	head 1595081.7	tail 1594991.6	tail/head 1.000
+t-1m	oniguruma_6.9.10-utf8	head 1187209.3	tail 857402.3	tail/head 0.722
+t-1m	pcrec_auto-caps-utf8	head 17625.8	tail 215912.3	tail/head 12.250
+t-1m	pcrec_auto-nocaps-utf8	head 17642.8	tail 216393.8	tail/head 12.265
+t-1m	pcrec_vm-caps-utf8	head 17626.1	tail 215831.9	tail/head 12.245
+t-1m	pcrec_vm-in-caps-utf8	head 17628.1	tail 216006.7	tail/head 12.254
+t-1m	re2_11.0.0-utf8	head 17774.2	tail 167527.5	tail/head 9.425
+t-1m	rust_1.13.1	head 31271.8	tail 31665.1	tail/head 1.013
+t-1m	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	head 45653.5	tail 119403.3	tail/head 2.615
+## lit-run-3 and lit-mixed-ascii per throughput subject (median_ns), every testee
+t-64k-lat	libpcre2_dfa-nocaps-utf8	lit-run-3 84152.2	lit-mixed-ascii 181177.0
+t-64k-lat	libpcre2_interp-caps-utf8	lit-run-3 84117.6	lit-mixed-ascii 185370.8
+t-64k-lat	libpcre2_jit-caps-utf8	lit-run-3 85495.9	lit-mixed-ascii 90143.7
+t-64k-lat	oniguruma_6.9.10-utf8	lit-run-3 23647.9	lit-mixed-ascii 20697.5
+t-64k-lat	pcrec_auto-caps-utf8	lit-run-3 1103.9	lit-mixed-ascii 15543.6
+t-64k-lat	pcrec_auto-nocaps-utf8	lit-run-3 1102.9	lit-mixed-ascii 15432.7
+t-64k-lat	pcrec_vm-caps-utf8	lit-run-3 1100.6	lit-mixed-ascii 15386.6
+t-64k-lat	pcrec_vm-in-caps-utf8	lit-run-3 1106.2	lit-mixed-ascii 15241.3
+t-64k-lat	re2_11.0.0-utf8	lit-run-3 1213.4	lit-mixed-ascii 15341.4
+t-64k-lat	rust_1.13.1	lit-run-3 2391.7	lit-mixed-ascii 2426.0
+t-64k-lat	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	lit-run-3 2890.1	lit-mixed-ascii 7315.0
+t-64k-cyr	libpcre2_dfa-nocaps-utf8	lit-run-3 124308.6	lit-mixed-ascii 124302.1
+t-64k-cyr	libpcre2_interp-caps-utf8	lit-run-3 124298.3	lit-mixed-ascii 124311.3
+t-64k-cyr	libpcre2_jit-caps-utf8	lit-run-3 125653.3	lit-mixed-ascii 125747.0
+t-64k-cyr	oniguruma_6.9.10-utf8	lit-run-3 23584.3	lit-mixed-ascii 20534.0
+t-64k-cyr	pcrec_auto-caps-utf8	lit-run-3 1104.3	lit-mixed-ascii 1107.0
+t-64k-cyr	pcrec_auto-nocaps-utf8	lit-run-3 1102.2	lit-mixed-ascii 1103.2
+t-64k-cyr	pcrec_vm-caps-utf8	lit-run-3 1102.0	lit-mixed-ascii 1103.9
+t-64k-cyr	pcrec_vm-in-caps-utf8	lit-run-3 1104.0	lit-mixed-ascii 1104.2
+t-64k-cyr	re2_11.0.0-utf8	lit-run-3 1209.5	lit-mixed-ascii 1212.2
+t-64k-cyr	rust_1.13.1	lit-run-3 2390.1	lit-mixed-ascii 2432.8
+t-64k-cyr	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	lit-run-3 2890.8	lit-mixed-ascii 3701.0
+t-64k-cjk	libpcre2_dfa-nocaps-utf8	lit-run-3 214419.2	lit-mixed-ascii 74433.5
+t-64k-cjk	libpcre2_interp-caps-utf8	lit-run-3 243982.3	lit-mixed-ascii 74485.7
+t-64k-cjk	libpcre2_jit-caps-utf8	lit-run-3 78375.8	lit-mixed-ascii 75888.4
+t-64k-cjk	oniguruma_6.9.10-utf8	lit-run-3 25553.2	lit-mixed-ascii 22515.8
+t-64k-cjk	pcrec_auto-caps-utf8	lit-run-3 28186.1	lit-mixed-ascii 1106.3
+t-64k-cjk	pcrec_auto-nocaps-utf8	lit-run-3 28247.1	lit-mixed-ascii 1102.3
+t-64k-cjk	pcrec_vm-caps-utf8	lit-run-3 28167.3	lit-mixed-ascii 1103.9
+t-64k-cjk	pcrec_vm-in-caps-utf8	lit-run-3 28243.4	lit-mixed-ascii 1105.3
+t-64k-cjk	re2_11.0.0-utf8	lit-run-3 26820.4	lit-mixed-ascii 1209.9
+t-64k-cjk	rust_1.13.1	lit-run-3 2390.9	lit-mixed-ascii 2433.9
+t-64k-cjk	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	lit-run-3 5122.0	lit-mixed-ascii 3700.2
+t-64k-asc	libpcre2_dfa-nocaps-utf8	lit-run-3 39886.3	lit-mixed-ascii 156517.5
+t-64k-asc	libpcre2_interp-caps-utf8	lit-run-3 39837.1	lit-mixed-ascii 162111.9
+t-64k-asc	libpcre2_jit-caps-utf8	lit-run-3 41207.7	lit-mixed-ascii 46821.2
+t-64k-asc	oniguruma_6.9.10-utf8	lit-run-3 23567.4	lit-mixed-ascii 20643.7
+t-64k-asc	pcrec_auto-caps-utf8	lit-run-3 1104.6	lit-mixed-ascii 19240.8
+t-64k-asc	pcrec_auto-nocaps-utf8	lit-run-3 1102.1	lit-mixed-ascii 19091.8
+t-64k-asc	pcrec_vm-caps-utf8	lit-run-3 1101.7	lit-mixed-ascii 19100.7
+t-64k-asc	pcrec_vm-in-caps-utf8	lit-run-3 1106.0	lit-mixed-ascii 18994.1
+t-64k-asc	re2_11.0.0-utf8	lit-run-3 1210.9	lit-mixed-ascii 18777.0
+t-64k-asc	rust_1.13.1	lit-run-3 2391.6	lit-mixed-ascii 2430.4
+t-64k-asc	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	lit-run-3 2890.8	lit-mixed-ascii 7337.7
+t-1m	libpcre2_dfa-nocaps-utf8	lit-run-3 2112454.7	lit-mixed-ascii 2426958.6
+t-1m	libpcre2_interp-caps-utf8	lit-run-3 2222610.8	lit-mixed-ascii 2445123.2
+t-1m	libpcre2_jit-caps-utf8	lit-run-3 1607841.8	lit-mixed-ascii 1637290.0
+t-1m	oniguruma_6.9.10-utf8	lit-run-3 384272.4	lit-mixed-ascii 335188.9
+t-1m	pcrec_auto-caps-utf8	lit-run-3 147263.0	lit-mixed-ascii 190312.4
+t-1m	pcrec_auto-nocaps-utf8	lit-run-3 147380.6	lit-mixed-ascii 190403.1
+t-1m	pcrec_vm-caps-utf8	lit-run-3 147471.5	lit-mixed-ascii 190036.5
+t-1m	pcrec_vm-in-caps-utf8	lit-run-3 147696.7	lit-mixed-ascii 190027.3
+t-1m	re2_11.0.0-utf8	lit-run-3 146477.0	lit-mixed-ascii 188108.9
+t-1m	rust_1.13.1	lit-run-3 37942.7	lit-mixed-ascii 38023.6
+t-1m	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	lit-run-3 61542.6	lit-mixed-ascii 119701.0
+## P4.a  ci-moskva / ci-ascii-control compile:emit_bytes (plain) + engine
+pcrec_auto-caps-utf8	ci-moskva 30544	ci-ascii-control 21290	ratio 1.435	engines dfa/dfa	clsfolds -/-
+pcrec_auto-nocaps-utf8	ci-moskva 30544	ci-ascii-control 21290	ratio 1.435	engines dfa/dfa	clsfolds -/-
+pcrec_vm-caps-utf8	ci-moskva 25561	ci-ascii-control 19917	ratio 1.283	engines vm/vm	clsfolds 0/3
+pcrec_vm-in-caps-utf8	ci-moskva 25561	ci-ascii-control 19917	ratio 1.283	engines vm/vm	clsfolds 0/3
+## n_wrong per (pattern, regime, testee), non-zero only (R0; P4.b-d, P5.b, P6, P9.a, P10.a, P11)
+asr-b-midchar	large-subject-throughput	re2_11.0.0-utf8	n_wrong 25	pass_rate 0.2857	(excluded)
+asr-b-midchar	short-subject-search	re2_11.0.0-utf8	n_wrong 35	pass_rate 0.9231	(excluded)
+ci-strasse	short-subject-search	oniguruma_6.9.10-utf8	n_wrong 10	pass_rate 0.9780	(excluded)
+prp-cyrillic	short-subject-search	oniguruma_6.9.10-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-cyrillic	short-subject-search	re2_11.0.0-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-cyrillic	short-subject-search	rust_1.13.1	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-cyrillic	short-subject-search	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-greek	short-subject-search	oniguruma_6.9.10-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-greek	short-subject-search	re2_11.0.0-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-greek	short-subject-search	rust_1.13.1	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-greek	short-subject-search	vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-han	large-subject-throughput	oniguruma_6.9.10-utf8	n_wrong 20	pass_rate 0.4286	(excluded)
+prp-han	large-subject-throughput	re2_11.0.0-utf8	n_wrong 20	pass_rate 0.4286	(excluded)
+prp-han	large-subject-throughput	rust_1.13.1	n_wrong 20	pass_rate 0.4286	(excluded)
+prp-latin	short-subject-search	oniguruma_6.9.10-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-latin	short-subject-search	re2_11.0.0-utf8	n_wrong 5	pass_rate 0.9890	(excluded)
+prp-latin	short-subject-search	rust_1.13.1	n_wrong 5	pass_rate 0.9890	(excluded)
+qnt-lazy-2b	short-subject-search	libpcre2_dfa-nocaps-utf8	n_wrong 10	pass_rate 0.9780	(excluded)
+## the P4.b/P5.b/P6/P11.b populations: n_wrong over every testee that ran them (short-subject-search)
+ci-strasse 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 oniguruma_6.9.10-utf8=10 pcrec_auto-caps-utf8=0 pcrec_auto-nocaps-utf8=0 pcrec_vm-caps-utf8=0 pcrec_vm-in-caps-utf8=0 re2_11.0.0-utf8=0 rust_1.13.1=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: -
+ci-turkish-i 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 oniguruma_6.9.10-utf8=0 pcrec_auto-caps-utf8=0 pcrec_auto-nocaps-utf8=0 pcrec_vm-caps-utf8=0 pcrec_vm-in-caps-utf8=0 re2_11.0.0-utf8=0 rust_1.13.1=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: -
+cls-dot-rep 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 oniguruma_6.9.10-utf8=0 pcrec_auto-caps-utf8=0 pcrec_auto-nocaps-utf8=0 pcrec_vm-caps-utf8=0 pcrec_vm-in-caps-utf8=0 re2_11.0.0-utf8=0 rust_1.13.1=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: -
+cls-w-ucp 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: oniguruma_6.9.10-utf8,pcrec_auto-caps-utf8,pcrec_auto-nocaps-utf8,pcrec_vm-caps-utf8,pcrec_vm-in-caps-utf8,re2_11.0.0-utf8,rust_1.13.1
+cls-d-ucp 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: oniguruma_6.9.10-utf8,pcrec_auto-caps-utf8,pcrec_auto-nocaps-utf8,pcrec_vm-caps-utf8,pcrec_vm-in-caps-utf8,re2_11.0.0-utf8,rust_1.13.1
+cls-s-ucp 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: oniguruma_6.9.10-utf8,pcrec_auto-caps-utf8,pcrec_auto-nocaps-utf8,pcrec_vm-caps-utf8,pcrec_vm-in-caps-utf8,re2_11.0.0-utf8,rust_1.13.1
+asr-b-cyr-ucp 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 	| no ranked row: oniguruma_6.9.10-utf8,pcrec_auto-caps-utf8,pcrec_auto-nocaps-utf8,pcrec_vm-caps-utf8,pcrec_vm-in-caps-utf8,re2_11.0.0-utf8,rust_1.13.1,vectorscan_5.4.11_block-nosom-nocaps-simd-utf8
+ci-ucp-invariance 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=0 	| no ranked row: oniguruma_6.9.10-utf8,pcrec_auto-caps-utf8,pcrec_auto-nocaps-utf8,pcrec_vm-caps-utf8,pcrec_vm-in-caps-utf8,re2_11.0.0-utf8,rust_1.13.1
+prp-greek 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 oniguruma_6.9.10-utf8=5 pcrec_auto-caps-utf8=0 pcrec_auto-nocaps-utf8=0 pcrec_vm-caps-utf8=0 pcrec_vm-in-caps-utf8=0 re2_11.0.0-utf8=5 rust_1.13.1=5 vectorscan_5.4.11_block-nosom-nocaps-simd-utf8=5 	| no ranked row: -
+prp-greek-sc 	 libpcre2_dfa-nocaps-utf8=0 libpcre2_interp-caps-utf8=0 libpcre2_jit-caps-utf8=0 pcrec_auto-caps-utf8=0 pcrec_auto-nocaps-utf8=0 pcrec_vm-caps-utf8=0 pcrec_vm-in-caps-utf8=0 rust_1.13.1=0 	| no ranked row: oniguruma_6.9.10-utf8,re2_11.0.0-utf8,vectorscan_5.4.11_block-nosom-nocaps-simd-utf8
+## P7.a  did_not_compile rows for family (f) on pcrec (section rows; prp-ingreek has no ranking group)
+prp-l	pcrec_vm-caps-utf8	
+prp-l	pcrec_vm-in-caps-utf8	
+prp-l	pcrec_vm-caps-utf8	
+prp-l	pcrec_vm-in-caps-utf8	
+prp-l-anchored	pcrec_auto-caps-utf8	
+prp-l-anchored	pcrec_auto-nocaps-utf8	
+prp-l-anchored	pcrec_vm-caps-utf8	
+prp-l-anchored	pcrec_vm-in-caps-utf8	
+prp-l-anchored	pcrec_auto-caps-utf8	
+prp-l-anchored	pcrec_auto-nocaps-utf8	
+prp-l-anchored	pcrec_vm-caps-utf8	
+prp-l-anchored	pcrec_vm-in-caps-utf8	
+prp-notl	pcrec_vm-caps-utf8	
+prp-notl	pcrec_vm-in-caps-utf8	
+prp-notl	pcrec_vm-caps-utf8	
+prp-notl	pcrec_vm-in-caps-utf8	
+## P7.b  prp-l emit_bytes / median(lit-* emit_bytes), plain
+pcrec_auto-caps-utf8	prp-l 469567	lit-* median 21062.5 over 12	ratio 22.294
+pcrec_auto-nocaps-utf8	prp-l 469567	lit-* median 21062.5 over 12	ratio 22.294
+pcrec_vm-caps-utf8	prp-l REFUSED (no emit_bytes)	lit-* median 20887.5 over 12
+pcrec_vm-in-caps-utf8	prp-l REFUSED (no emit_bytes)	lit-* median 20887.5 over 12
+## R8 / P5.a / P9.b  unsupported_by_pattern census per (testee, family, requires)
+oniguruma_6.9.10-utf8	asr	ascii-class-scope	2	asr-b-cyr,asr-b-midchar
+oniguruma_6.9.10-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+oniguruma_6.9.10-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+oniguruma_6.9.10-utf8	cls	ascii-class-scope	4	cls-d-ascii,cls-posix-alpha,cls-s-nbsp,cls-w-ascii
+oniguruma_6.9.10-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+pcrec_auto-caps-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+pcrec_auto-caps-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+pcrec_auto-caps-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+pcrec_auto-nocaps-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+pcrec_auto-nocaps-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+pcrec_auto-nocaps-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+pcrec_vm-caps-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+pcrec_vm-caps-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+pcrec_vm-caps-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+pcrec_vm-in-caps-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+pcrec_vm-in-caps-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+pcrec_vm-in-caps-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+re2_11.0.0-utf8	asr	lookaround	4	asr-lb-class,asr-lb-fixed,asr-lb-neg,asr-lb-varwidth
+re2_11.0.0-utf8	asr	unicode-class-scope	1	asr-b-cyr-ucp
+re2_11.0.0-utf8	ci	unicode-class-scope	1	ci-ucp-invariance
+re2_11.0.0-utf8	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+rust_1.13.1	asr	ascii-class-scope	2	asr-b-cyr,asr-b-midchar
+rust_1.13.1	asr	lookaround	4	asr-lb-class,asr-lb-fixed,asr-lb-neg,asr-lb-varwidth
+rust_1.13.1	asr	unicode-class-scope	1	asr-b-cyr-ucp
+rust_1.13.1	ci	unicode-class-scope	1	ci-ucp-invariance
+rust_1.13.1	cls	ascii-class-scope	4	cls-d-ascii,cls-posix-alpha,cls-s-nbsp,cls-w-ascii
+rust_1.13.1	cls	unicode-class-scope	3	cls-d-ucp,cls-s-ucp,cls-w-ucp
+vectorscan_5.4.11_block-nosom-nocaps-simd-utf8	asr	lookaround	4	asr-lb-class,asr-lb-fixed,asr-lb-neg,asr-lb-varwidth
+totals: {'oniguruma_6.9.10-utf8': 11, 'pcrec_auto-caps-utf8': 5, 'pcrec_auto-nocaps-utf8': 5, 'pcrec_vm-caps-utf8': 5, 'pcrec_vm-in-caps-utf8': 5, 're2_11.0.0-utf8': 9, 'rust_1.13.1': 15, 'vectorscan_5.4.11_block-nosom-nocaps-simd-utf8': 4} rows: 59
+## context: every set cell where the best NON-pcrec FULL-GRAIN testee (vectorscan-block-nosom-utf8 is BOOLEAN grain -- it stops at the first match, so its throughput cells are not comparable and it is left out) beats pcrec auto-caps-utf8 by more than x2 (median_ns, plain, rankable rows only)
+lit-cyr-run	large-subject-throughput	auto 961572.8	best-other rust_1.13.1 59623.1	x16.13
+asr-lb-varwidth	large-subject-throughput	auto 19994488.8	best-other libpcre2_jit-caps-utf8 2452473.4	x8.15
+alt-distinct-lead	large-subject-throughput	auto 2769752.5	best-other rust_1.13.1 377744.4	x7.33
+lit-nfc-pair	large-subject-throughput	auto 589559.1	best-other rust_1.13.1 81809.7	x7.21
+lit-offset-at-tail	large-subject-throughput	auto 316429.4	best-other rust_1.13.1 49621.1	x6.38
+lit-1ch-3b	large-subject-throughput	auto 573909.8	best-other rust_1.13.1 114855.6	x5.00
+asr-b-ascii	large-subject-throughput	auto 493345.6	best-other rust_1.13.1 99322.0	x4.97
+ci-ascii-control	large-subject-throughput	auto 1137471.0	best-other rust_1.13.1 242638.4	x4.69
+qnt-counted-3b	large-subject-throughput	auto 305145.2	best-other rust_1.13.1 66651.5	x4.58
+lit-mixed-ascii	large-subject-throughput	auto 272725.4	best-other rust_1.13.1 59727.8	x4.57
+lit-run-3	large-subject-throughput	auto 264541.7	best-other rust_1.13.1 59358.7	x4.46
+lit-nearmiss-run	large-subject-throughput	auto 264261.9	best-other rust_1.13.1 59333.6	x4.45
+lit-sharp-s	large-subject-throughput	auto 258141.3	best-other rust_1.13.1 58972.2	x4.38
+alt-nearmiss	large-subject-throughput	auto 306004.8	best-other rust_1.13.1 76455.1	x4.00
+ci-sigma	large-subject-throughput	auto 572892.3	best-other rust_1.13.1 167062.2	x3.43
+asr-lb-neg	large-subject-throughput	auto 6430536.7	best-other oniguruma_6.9.10-utf8 1902817.1	x3.38
+asr-dollar-ml	large-subject-throughput	auto 156354.3	best-other rust_1.13.1 49863.8	x3.14
+ci-strasse	large-subject-throughput	auto 1134589.7	best-other rust_1.13.1 394966.9	x2.87
+asr-lb-fixed	large-subject-throughput	auto 6977719.6	best-other libpcre2_jit-caps-utf8 2451522.0	x2.85
+ci-moskva	large-subject-throughput	auto 1297779.2	best-other rust_1.13.1 481034.8	x2.70
+cls-dot-rep	large-subject-throughput	auto 92.9	best-other rust_1.13.1 42.0	x2.21
+lit-1ch-4b	large-subject-throughput	auto 145074.4	best-other re2_11.0.0-utf8 70470.6	x2.06
+(22 cells of 138 with an auto-caps rankable row)
