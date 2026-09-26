@@ -1505,3 +1505,13 @@ in a `#` comment. PRE-EXISTING (not introduced by U2); not fixed. Owner: a
 rider for the next harness lane (with KB-29). A fix needs a control: an `(?x)`
 pattern with a trailing comment, answer and span agreeing between the compile
 path and the measure path.
+
+## KB-31 (2026-09-26, found by lane b91views/[B91]; OPEN) — render_tsv's did_not_compile rows are still exposed to F26
+
+[B91] made the new `unsupported_by_pattern` section F26-immune: it is emitted
+outside the ranking-group loop, so a pattern that no engine compiled still gets
+its rows. The existing `did_not_compile` rows are still emitted inside that loop,
+so a pattern refused by EVERY testee in a report can lose its refusal rows from
+the TSV. Not fixed; a rider for the next reporter change. The fix needs a control:
+a fixture where every testee refuses one pattern, with its did_not_compile rows
+present.
