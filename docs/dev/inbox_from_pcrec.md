@@ -4031,3 +4031,4 @@ re-check):
   byte-identity control for anything; time it, attribute any change to S1.
 Not urgent; at your next timing window. Nothing here needs a window
 tonight.
+ack: 2026-09-26 — plan.md [B101] (re-pin lane to 02902356 abi 37 with the census reproduced against I-111's per-cause counts; then the -fno-req-byte twin window on the twelve landing-bar cells at the next timing window, predictions filed first)
