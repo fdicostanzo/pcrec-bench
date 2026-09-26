@@ -5876,3 +5876,95 @@ boilerplate's DO-THEN-FINISH rule — this lane ran the targeted subset directly
 instead: check_pcre2_utf_validate_once, check_pcre2_dfa,
 check_kb17_find_all_advance, check_utf8_find_all_advance, all green) and the
 re-run of the two lost cells, exact command in the lane report.
+## 2026-09-26 — lane b93pred: [B93]'s P2 fix delivered, P4 filed
+
+Applied Frank's [B93] ruling: `docs/dev/predictions/capability-0.1-first.tsv`
+P2.a/P2.b's Cause-B `regime_or_na=n/a` selector clause is dropped (Q6 (i)'s own
+suggested remedy). Empirically found a SECOND, masked defect in the same two
+clauses while proving "no predicted value changed": their `ratio_to(...)`
+reducer argument was bare (missing `<key>=<glob>` syntax), which crashes
+`interpret()` outright once Cause B stops shielding it, and a naive `testee=`-only
+patch would have scored a silently WRONG, cross-pattern-pooled ratio (116.674)
+instead of the intended same-pattern one. Fixed by repeating `pattern=`+`testee=`
+in the argument; verified against all four committed reports and cross-checked
+against the 2026-09-17 ledger's own hand-derived 5.29 (matches to three
+decimals; P2.b's 6.976 is a new, independently-derived number). Standing rule
+written to `docs/dev/predictions/CLAUDE.md` ("Revising an already-scored file").
+`_KNOWN_HISTORICAL_LOAD_DEFECTS`/`_load_predictions_with_named_exceptions` and
+the Cause-B sidecar block are GONE from `catalogue/check_interpret.py`; Q6 (i)
+now passes with no exception on any file.
+
+Retiring Cause B's stopgap surfaced Q6 (ii) raising on P4.a/P4.b's OWN
+already-diagnosed Cause C (`pcrec_*-auto-*`'s hyphen typo) — masked until now
+because Cause B's crash always fired first, on an earlier row. Repairing the
+glob alone does not help: P4.a's `ratio_to` argument has the SAME bare-arg bug,
+and P4.b's `ratio_to_median_over` argument is a pattern VALUE where the reducer
+needs a KEY NAME (wrong reducer entirely, on this reading). No ledger states a
+number to verify a P4 fix against, so this lane did not invent one (out of
+[B93]'s own narrow charter). Filed on `[B72smalls]`'s own precedent: a new,
+differently-named, dated stopgap in `check_interpret.py` section 3
+(`_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_P4_CAUSE_C`) keeps `make check-interpret`
+green (200/200) while the four sidecars stay un-regenerated, reported as a
+separate "BLOCKED ON A RULING" count. [B93] STATE:blocked pending a ruling on
+P4; full detail in `docs/dev/lanes/b93pred_report.md`. `make check-interpret` /
+`catalogue/fixtures/gen.py --check` / `make check-schema` all green.
+
+## 2026-09-26 — lane b93pred follow-up: P4 fixed per the manager's ruling, four sidecars regenerated
+
+Manager ruling on the P4 finding filed in the prior entry: both P4.a/P4.b
+are within Frank's option (b) too, since the notes state their meaning
+unambiguously (cross-pattern ratio_to comparisons, exactly P2's own
+shape). Fixed: the testee glob (`pcrec_*-auto-*` -> `pcrec_*_auto-*`,
+checked against store/index.tsv's real measured testees), P4.a's reducer
+(`ratio_to(pattern=logparse-atomic-removed;testee=pcrec_*_auto-*)`),
+P4.b's reducer (switched from the wrong `ratio_to_median_over` to
+`ratio_to` with pattern/subject/regime/testee all repeated so the join
+scopes to the same cell). Hand-derived every raw cell from the report
+TSVs (and, for P4.b, directly from the underlying JSONL records, since
+set-grain rank rows carry no real subject id) and confirmed interpret's
+evaluated value matches to the printed digit on all four committed
+reports: P4.a refutes at worst-ratio 1.112 (82,800/74,448 auto-nocaps
+whole-subject) on the two reports carrying pcrec testees, correctly not
+evaluable on the two ext-roster reports (no pcrec testee in their
+roster at all -- a real absence, not a defect). P4.b stays not
+evaluable everywhere -- found and left as a THIRD, separate, structural
+fact (Cause A, the grain gap: subject_or_na is always the literal
+"(set)" at set grain, and grain=subject was not part of the manager's
+ruling) -- hand-derived anyway from the records and cross-checked
+byte-for-byte against the committed subject-grain TSV's own already-
+reduced numbers (ratio 1.191/1.577, which would REFUTE the clause's
+own "lower" claim if ever reachable). All three named stopgaps this
+file's history carried are retired from catalogue/check_interpret.py;
+the four sidecars regenerated and their fact diffs reviewed (P2 and P4
+move from not-evaluable to real verdicts on the two pcrec-bearing
+reports; the two ext-roster reports move only by the catalogue-version
+stamp, confirming they were never touched by any part of this fix).
+`make check-interpret` 203/0, `catalogue/fixtures/gen.py --check`
+clean, `make check-schema` 6/74/0. [B93] STATE:started, awaiting merge
+(the manager will close it). Full detail: docs/dev/lanes/b93pred_report.md.
+
+## 2026-09-26 — lane b93pred second follow-up: grain=subject added to P4.b
+
+Manager's third ruling on the same file, same day: add `grain=subject`
+to P4.b -- the note names one subject (lp-atomic-nonmatch), so a subject
+key can only be reached through that grain, the same repair class as
+the rest of this fix. Applied: P4.b's selector gains exactly
+`;grain=subject` (op/lo/hi/unit/note untouched). Verified per report,
+to the printed digit, on every report whose sidecar carries
+--subject-grain (two do; the other two correctly read not-evaluable for
+lacking one): 2026-09-18-after-cf0962e3 (the one report with BOTH a
+subject-grain sibling and a pcrec testee) now evaluates P4.b for real --
+interpret reports 1.577, exact match to the hand derivation
+(13.516966/8.571827, cross-checked against the report's own
+subject-grain TSV) -- and P4 as a whole moves from partial to refuted
+(P4.a and P4.b both fail their own threshold). 2026-09-18-ext-first
+(subject-grain present, no pcrec testee) and both non-subject-grain
+reports stay not-evaluable, each for its own distinct, verified reason.
+No hand-derived/interpreted mismatch anywhere -- nothing required
+stopping. All four sidecars regenerated again (determinism-checked),
+fact diffs reviewed (one real content move on after-cf0962e3; a more
+precise not-evaluable reason on ext-second; two stamp-only). make
+check-interpret 203/0, gen.py --check clean, make check-schema 6/74/0.
+docs/dev/predictions/CLAUDE.md's header note and P4 entry both updated,
+dated, naming this third ruling. Full detail:
+docs/dev/lanes/b93pred_report.md ("Follow-up 2").

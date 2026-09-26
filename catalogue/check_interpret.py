@@ -98,57 +98,6 @@ def _tmp_predictions_file(path, keep):
     return tmp.name
 
 
-def _load_predictions_with_named_exceptions(path, allowed, seen_allowed, name):
-    """The one NAMED historical exception's own control, both directions:
-    every clause in `path` OTHER than `allowed` (a set of clause ids)
-    must load clean with the exception rows removed -- proving the
-    exception does not silently widen to hide some OTHER, unrelated
-    defect in this file -- and each allowed clause, loaded IN ISOLATION
-    (its own header plus that one row), must fail with Q6 (i)'s own
-    reason (never load clean, and never fail for a DIFFERENT reason) --
-    adding `cid` to `seen_allowed` only when it does. Returns the clean
-    row count. Never touches the committed file itself: every load runs
-    against a scratch temp copy."""
-    with open(path, encoding="utf-8") as fh:
-        lines = fh.read().split("\n")
-    header = lines[0]
-    body = [ln for ln in lines[1:] if ln.strip()]
-
-    def _tmp_load(text):
-        tmp = tempfile.NamedTemporaryFile(
-            mode="w", suffix=".tsv", delete=False, encoding="utf-8")
-        try:
-            tmp.write(text)
-            tmp.close()
-            return I.load_predictions(tmp.name)
-        finally:
-            os.unlink(tmp.name)
-
-    clean_lines = [ln for ln in body if _pred_clause_id(ln) not in allowed]
-    rows = []
-    try:
-        rows = _tmp_load(header + "\n" + "\n".join(clean_lines) + "\n")
-    except I.PredictionError as exc:
-        bad(1, f"{name}: every clause OTHER than the named exception "
-               f"loads clean", str(exc))
-
-    for ln in body:
-        cid = _pred_clause_id(ln)
-        if cid not in allowed:
-            continue
-        try:
-            _tmp_load(header + "\n" + ln + "\n")
-            bad(1, f"{name}: {cid} fails with Q6 (i)'s reason",
-                "loaded without error -- the named exception no longer "
-                "reproduces; narrow or remove it")
-        except I.PredictionError as exc:
-            if "Q6 (i)" not in str(exc):
-                bad(1, f"{name}: {cid} fails with Q6 (i)'s reason", str(exc))
-            else:
-                seen_allowed.add(cid)
-    return len(rows)
-
-
 # ------------------------------------------------------------ section 1
 
 def section_1(cat):
@@ -234,57 +183,30 @@ def section_1(cat):
     else:
         ok(1, "no [[signature]] is registered (R-BUCKET-KB's stated gap)")
 
-    # every quantity token in every committed predictions file is closed --
-    # EXCEPT one NAMED, historical exception (below): `load_predictions`
-    # grew a NEW load-time rule at Q6 (i) (interpret_subject_grain_v1.md
-    # §6 Q6, RATIFIED: "both, under Frank's stated general posture 'fail
-    # loudly generally'") that correctly catches a genuine, ALREADY-
-    # DIAGNOSED authoring defect in ONE already-committed file --
-    # `capability-0.1-first.tsv`'s P2.a/P2.b, Cause B in the design note's
-    # own §1.2 ("regime_or_na=n/a against the compile section's EMPTY
-    # string... fixed by no grain change"). `docs/dev/predictions/
-    # CLAUDE.md`'s own entry for this file states the project's rule
-    # explicitly: "Predictions are stated-PRE-RUN artifacts... and this
-    # format defines no revision mechanism for an already-scored file" --
-    # this file is NOT edited to satisfy the new check, the same way its
-    # already-documented recommended fix (b42predhyg's) was deliberately
-    # NOT applied to it. The exception is scoped to EXACTLY these two
-    # clause ids in EXACTLY this file, quoting the reason Q6 (i) gives, so
-    # a NEW predictions file with the same defect still fails loudly here
-    # -- the check's whole point.
-    _KNOWN_HISTORICAL_LOAD_DEFECTS = {
-        "capability-0.1-first.tsv": {"P2.a", "P2.b"},
-    }
+    # every quantity token in every committed predictions file is closed.
+    # [B93] (2026-09-25, Frank's ruling on [B72] §5's candidate (b);
+    # docs/dev/lanes/b93pred_report.md): the ONE named historical exception
+    # this section carried for `capability-0.1-first.tsv`'s P2.a/P2.b
+    # (Cause B, §1.2 -- `regime_or_na=n/a` against a `compile:` quantity)
+    # is RETIRED -- the file itself is now fixed (a SANCTIONED SYNTAX-ONLY
+    # CORRECTION, `docs/dev/predictions/CLAUDE.md`'s new standing rule), so
+    # every committed predictions file loads clean with NO exception left.
+    # A future file with the same defect shape fails loudly here again --
+    # the check's whole point, undiminished.
     pred_dir = os.path.join(ROOT, "docs", "dev", "predictions")
     n_pred = 0
     for name in sorted(os.listdir(pred_dir)):
         if not name.endswith(".tsv"):
             continue
-        allowed = _KNOWN_HISTORICAL_LOAD_DEFECTS.get(name, set())
         path = os.path.join(pred_dir, name)
-        if not allowed:
-            try:
-                rows = I.load_predictions(path)
-                n_pred += len(rows)
-            except I.PredictionError as exc:
-                bad(1, f"{name} loads", str(exc))
-            continue
-        # A file with a named exception: every clause OTHER than the
-        # allowed ones must still load clean, and the allowed ones must
-        # fail with EXACTLY Q6 (i)'s own reason (a control against the
-        # exception silently widening to cover a future, different bug).
-        seen_allowed = set()
-        n_pred += _load_predictions_with_named_exceptions(
-            path, allowed, seen_allowed, name)
-        missing = allowed - seen_allowed
-        if missing:
-            bad(1, f"{name}: the named historical exception(s) fired",
-                f"expected {sorted(allowed)}, saw {sorted(seen_allowed)} "
-                f"fail with Q6 (i)'s reason")
+        try:
+            rows = I.load_predictions(path)
+            n_pred += len(rows)
+        except I.PredictionError as exc:
+            bad(1, f"{name} loads", str(exc))
     ok(1, f"{n_pred} prediction clause(s) load with every quantity, op, "
-          f"reducer and selector key in its closed set (the one NAMED "
-          f"historical exception above excepted, and checked to fail for "
-          f"exactly its own stated reason)")
+          f"reducer and selector key in its closed set (no named "
+          f"exception)")
 
     # the two INEXPRESSIBLE clauses must FAIL AT LOAD (§6.4)
     inexpressible = os.path.join(FIXTURES, "predictions-inexpressible.tsv")
@@ -481,48 +403,31 @@ def section_2():
             ok(2, f"{label}: {n} golden fact row(s) match")
 
 
-# [B72smalls] OPEN CONFLICT, FILED FOR A RULING, NOT DECIDED HERE:
-# Q6 (i)'s "fail loudly generally" load check (interpret_subject_grain_
-# v1.md §6 Q6, ratified) correctly refuses `capability-0.1-first.tsv` at
-# load -- P2.a/P2.b's ALREADY-DIAGNOSED Cause-B defect
-# (regime_or_na=n/a against a compile: quantity). `docs/dev/predictions/
-# CLAUDE.md`'s own entry for that file states this project's rule
-# explicitly: predictions files are stated-PRE-RUN artifacts with "no
-# revision mechanism for an already-scored file" -- so the file is not
-# edited (section 1's own named exception, above, covers `load_
-# predictions` alone). But FOUR committed `.interpretation.md` sidecars
-# are STAMPED against this exact predictions file
-# (`grep -l capability-0.1-first.tsv reports/*.interpretation.md`), and
-# `interpret()` now refuses to run for ANY of them -- so this section's
-# own "every committed sidecar re-renders byte-identical" invariant
-# (catalogue/CLAUDE.md: "every bump regenerates every committed sidecar
-# in the same commit") can never again be SATISFIED for these four,
-# through no fault of a future bump: fixing the ratified check made
-# fixing the file's own defect load-bearing, and fixing the file is
-# exactly what the immutability rule above forbids. THREE of this
-# project's own standing rules are in genuine tension (Q6 fail-loudly;
-# predictions immutability; sidecar regenerability) and picking among
-# them is not this lane's call. NAMED here, not silently absorbed: these
-# four are counted SEPARATELY from the ordinary pass count below, never
-# folded into "fresh", so a reader of `make check-interpret`'s own
-# output sees the exact gap rather than a false green.
-_SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING = {
-    "reports/2026-09-17-capability-0.1-budu-ryzen1600-first-a770139e.interpretation.md",
-    "reports/2026-09-18-capability-0.1-budu-ryzen1600-after-cf0962e3.interpretation.md",
-    "reports/2026-09-18-capability-0.1-budu-ryzen1600-ext-first-cf0962e3.interpretation.md",
-    "reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.interpretation.md",
-}
+# [B72smalls]'s OPEN CONFLICT over Q6 (i) IS RESOLVED. [B93] (2026-09-25,
+# Frank's ruling on [B72] §5's candidate (b); docs/dev/lanes/
+# b93pred_report.md): Q6 (i)'s "fail loudly generally" load check
+# (interpret_subject_grain_v1.md §6 Q6, ratified) correctly refused
+# `capability-0.1-first.tsv` at load -- P2.a/P2.b's ALREADY-DIAGNOSED
+# Cause-B defect (regime_or_na=n/a against a compile: quantity). Frank
+# ruled that fixing an ALREADY-DIAGNOSED, ALREADY-WRITTEN-UP authoring
+# defect that moves no predicted value is NOT the kind of revision the
+# predictions-file immutability rule was meant to forbid -- so the file
+# IS edited (a SANCTIONED SYNTAX-ONLY CORRECTION, `docs/dev/predictions/
+# CLAUDE.md`'s new standing rule). The SECOND, separate Cause-C defect
+# on the SAME file's P4.a/P4.b (`check_testee_globs`, Q6 (ii)) is ALSO
+# now fixed under the same ruling (the manager's follow-up: both P4
+# clauses read the notes' own meaning unambiguously) -- see the file's
+# own entry in `docs/dev/predictions/CLAUDE.md` for the full derivation
+# and the hand-verified numbers. No named exception remains anywhere in
+# this module for this file; a per-sidecar `try`/`except` below still
+# catches any OTHER, future `InterpretError` as a named failure rather
+# than an uncaught crash that would silently stop sections 4-6.
 
 
 def section_3():
     n = 0
-    n_blocked = 0
     for name in sorted(os.listdir(REPORTS)):
         if not name.endswith(".interpretation.md"):
-            continue
-        rel = f"reports/{name}"
-        if rel in _SIDECARS_BLOCKED_ON_CAPABILITY_FIRST_RULING:
-            n_blocked += 1
             continue
         n += 1
         path = os.path.join(REPORTS, name)
@@ -554,18 +459,25 @@ def section_3():
         # sidecar committed before this fix, so this is a no-op there.
         sg = stamp.get("subject_grain")
         sg = os.path.join(ROOT, sg) if sg and sg != "(none)" else None
-        fresh = run_interpret(report, index, pred, "md", subject_grain=sg)
+        # [B93] (2026-09-25): a stamped predictions file can raise at
+        # `interpret()` time for a reason this section is not chartered to
+        # fix (an already-diagnosed, DIFFERENT authoring defect than the
+        # one this lane's own scope covers -- see docs/dev/lanes/
+        # b93pred_report.md's own filed finding). Caught here and reported
+        # as a NAMED section-3 failure, never an uncaught crash that would
+        # silently stop sections 4-6 from running at all.
+        try:
+            fresh = run_interpret(report, index, pred, "md", subject_grain=sg)
+        except I.InterpretError as exc:
+            bad(3, f"{name}: interpret() runs against its own stamped "
+                   f"inputs", str(exc))
+            continue
         if fresh != text:
             bad(3, f"{name}: re-renders byte-identical")
         else:
             ok(3, f"{name}: fresh")
     ok(3, f"{n} committed sidecar(s) checked "
           f"(the sidecars themselves are [B13.4]'s deliverable)")
-    if n_blocked:
-        ok(3, f"{n_blocked} sidecar(s) SKIPPED, NOT counted as fresh -- "
-              f"BLOCKED ON A RULING (see the module-level comment above "
-              f"section_3: Q6 (i)'s load refusal vs. predictions-file "
-              f"immutability vs. sidecar regenerability)")
 
 
 # ------------------------------------------------------------ section 4
