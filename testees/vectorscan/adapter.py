@@ -2,12 +2,21 @@ r"""testees/vectorscan/adapter.py -- the Vectorscan adapter (harness
 contract 3), BOOLEAN GRAIN (capability_set_v1.md 5.6 option (B), Frank's
 Q3 ruling, 2026-09-16).
 
-Provides `vectorscan-block-nosom` only (block mode, no HS_FLAG_SOM_
-LEFTMOST). `vectorscan-block-som` is documented in testees/vectorscan/
-CLAUDE.md as a LATER config -- this lane does not wire it (capability_
-set_v1.md 8's own roster row: SOM is "an unconditional space cost, not a
-dial", gated on the span-grain scoring machinery boolean grain makes
-unnecessary).
+Provides TWO configs, sharing one driver: `vectorscan-block-nosom` (block
+mode, no HS_FLAG_SOM_LEFTMOST -- BOOLEAN GRAIN, Frank's Q3 ruling) and,
+since [B92] (docs/dev/plan.md; Frank's ruling on docs/dev/lanes/
+b72smalls_report.md 4 / capability_set_v1.md 5.6: option (b) of the two
+live candidates), `vectorscan-block-som` (HS_FLAG_SOM_LEFTMOST ALWAYS SET
+-- FULL GRAIN: a real first-match span and, under find-all, a real
+non-overlapping NMATCHES via KB-17's advance rule -- see driver.c's "SOM
+MODE" header section for the leftmost-longest reduction and the
+documented divergence from this project's leftmost-first oracle it
+genuinely produces on some patterns). SOM is "an unconditional space
+cost, not a dial" (testees/CLAUDE.md's roster row) -- there is no runtime
+toggle a shared config could turn on cheaply, so `--som` is this
+adapter's ONLY new argv token and it is passed iff `engine_mode ==
+"block-som"`; `vectorscan-block-nosom`'s own compile()/measure() argv is
+therefore BYTE FOR BYTE what it always was.
 
 COMPILE COST (requirements 3, per execution-model class): one phase,
 `compile` -- `hs_compile()`, timed in-driver. `execution_model =
@@ -139,6 +148,7 @@ class Adapter(_ad.Adapter):
     def describe(self, testee_id, workdir=None):
         cfg = self.config(testee_id)
         enc, enc_extra = _ad.config_encoding(testee_id, cfg)
+        som = cfg["engine_mode"] == "block-som"
         raw = self.probe_version(workdir or os.getcwd())
         version = raw.split()[0]
         block = {
@@ -149,28 +159,29 @@ class Adapter(_ad.Adapter):
             "automaton_class": "simd-multipattern",
             "openness": "open-source",
             "license_id": "BSD-3-Clause",
-            # capability_set_v1.md 5.6: Vectorscan/Hyperscan is "explicitly
-            # NOT leftmost-first-comparable at all" -- the `all-ends`
-            # token this project's own conventions vocabulary carries for
-            # exactly this engine. This is DECLARATIVE, not a claim this
-            # driver exercises today: the boolean-grain config never asks
-            # "which end" or "how many", only "did it match" -- see this
-            # module's own docstring and testees/vectorscan/CLAUDE.md.
+            # capability_set_v1.md 5.6's own table: Vectorscan's declared
+            # convention is `all-ends` on EVERY config, `som` included --
+            # [B92]'s first-match span and NMATCHES are this driver's OWN
+            # reduction OVER that all-ends architecture (leftmost, then
+            # longest completion; see driver.c's "SOM MODE" header
+            # section), not a claim that Hyperscan itself became a
+            # leftmost-first engine. `nosom`'s own boolean-grain config
+            # never asks "which end" or "how many", only "did it match" --
+            # see this module's own docstring and testees/vectorscan/
+            # CLAUDE.md.
             "conventions": ["all-ends"],
-            # schema v1.6 (lane b44boolgrain, Frank's Q3 ruling): this
-            # config is judged on `matched` alone -- outcome_for skips the
-            # span comparison and rule X34 holds its rows span-free.
-            "grain": "boolean",
             "captures": "off",   # Hyperscan has NO capturing groups at all
             "engine_mode": cfg["engine_mode"],
             "simd": "on",        # Vectorscan/Hyperscan's whole raison d'etre
             "build_flags": "distribution libhs.so.5 (%s), direct-linked "
                            "(-lhs, pkg-config libhs); driver built with "
-                           "$CC -O2 -std=gnu11; hs_compile flags 0 -- "
-                           "HS_FLAG_UCP/HS_FLAG_UTF8/HS_FLAG_SOM_LEFTMOST "
-                           "never set (testees/vectorscan/CLAUDE.md "
-                           "states the measured A/B and its "
-                           "consequences)" % raw
+                           "$CC -O2 -std=gnu11; hs_compile flags%s "
+                           "HS_FLAG_UCP/HS_FLAG_UTF8%s never set "
+                           "(testees/vectorscan/CLAUDE.md states the "
+                           "measured A/B and its consequences)"
+                           % (raw,
+                              " HS_FLAG_SOM_LEFTMOST --" if som else " 0 --",
+                              "" if som else "/HS_FLAG_SOM_LEFTMOST")
                            # [B77] U2: named ONLY for the utf8 config, so
                            # the byte config's build_flags is unchanged.
                            + ("; ENGINE ENCODING utf8 ([B77] U2, "
@@ -197,6 +208,19 @@ class Adapter(_ad.Adapter):
             "warmup_trials": 0,
             "engine_metadata_declaration": dict(METADATA_DECL),
         }
+        if not som:
+            # schema v1.6 (lane b44boolgrain, Frank's Q3 ruling): ONLY
+            # `nosom` is judged on `matched` alone -- outcome_for skips
+            # the span comparison and rule X34 holds its rows span-free.
+            # [B92]'s `som` config sets NO `grain` key at all, the SAME
+            # omission every other testee on this roster makes, which
+            # `outcome_for`'s own default (`grain="full"`) reads as an
+            # ORDINARY testee: its real span IS compared against the
+            # expectation's, and a genuine leftmost-longest-vs-leftmost-
+            # first divergence is scored `wrong-span-or-captures` --
+            # visible, not suppressed (testees/vectorscan/CLAUDE.md's SOM
+            # section names which corpus patterns this fires on).
+            block["grain"] = "boolean"
         # [B77] U2: the ENGINE encoding is an identity -- the utf8 config
         # derives `vectorscan-block-nosom`'s id plus `_utf8`.
         if enc_extra:
@@ -296,9 +320,16 @@ class Adapter(_ad.Adapter):
                 "--compile-trials", str(trials)]
         if free_spacing:
             argv.append("--free-spacing")
-        utf = _ad.config_encoding(testee_id, self.config(testee_id))[0] == "utf8"
+        cfg = self.config(testee_id)
+        utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
         if utf:
             argv += ["--encoding", "utf8"]      # [B77] U2
+        # [B92]: HS_FLAG_SOM_LEFTMOST, `vectorscan-block-som` only --
+        # `vectorscan-block-nosom`'s own argv NEVER gains this token, so
+        # its compile-phase invocation is byte for byte what it always was.
+        som = cfg["engine_mode"] == "block-som"
+        if som:
+            argv.append("--som")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         if out.timed_out:
@@ -310,7 +341,11 @@ class Adapter(_ad.Adapter):
             # index}`, no closed reason enum -- docs/dev/research/2026-09-
             # 12-b42-engine-landscape.md's own table row). Declaring it
             # anyway would be exactly the dishonest invention
-            # record_schema.md 7 rule 1 exists to prevent.
+            # record_schema.md 7 rule 1 exists to prevent. [B92]: this is
+            # ALSO where a SOM-only refusal (HS_FLAG_SOM_LEFTMOST's own
+            # documented history-tracking limit -- a pattern `nosom` may
+            # still accept) lands, first-class, by name, via the SAME
+            # generic path -- no new code needed for it.
             diag = out.diagnostic() or "hs_compile failed"
             return _ad.CompileResult("did-not-compile", diagnostic=diag)
         if out.returncode != 0:
@@ -323,7 +358,7 @@ class Adapter(_ad.Adapter):
             if name in out.info:
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
-                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf}
+                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf, "som": som}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -336,6 +371,11 @@ class Adapter(_ad.Adapter):
         argv = [handle["driver"], "--pattern", handle["pattern_file"],
                 "--form", handle["form"], "--mode", REGIME_MODE[regime],
                 "--iters", str(iters)]
+        if handle.get("som"):
+            # [B92]: the measure-time driver recompiles from the SAME
+            # pattern file, so `--som` rides here too -- never a nosom
+            # stand-in at measure time.
+            argv.append("--som")
         if handle.get("utf"):
             # [B77] U2: the measure-time driver recompiles, so the ENGINE
             # encoding rides here too -- never a byte-mode stand-in.

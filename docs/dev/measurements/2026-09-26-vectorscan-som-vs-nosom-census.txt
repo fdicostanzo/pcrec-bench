@@ -1,0 +1,64 @@
+docs/dev/measurements/2026-09-26-vectorscan-som-vs-nosom-census.txt
+Source: probe_vectorscan_som_witness_census.py (this directory)
+Lane: b92vsom ([B92], docs/dev/plan.md; Frank's ruling on docs/dev/lanes/
+  b72smalls_report.md 4 / capability_set_v1.md 5.6, option (b))
+Date: 2026-09-26T08:55:12Z
+Bench commit (worktree base): master @ a73b3ab, branch worktree-agent-a668f0546b32bf80c
+Vectorscan: libvectorscan-dev 5.4.11-2ubuntu2 (pkg-config libhs 5.4.11),
+  direct-linked -lhs, /usr/include/hs/*.h
+Compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, -O2 -std=gnu11
+Box: ubuntubudu, Linux 7.0.0-29-generic x86_64
+Load at run time: 0.64 0.64 0.73 (before) / 0.55 0.60 0.72 (after) --
+  COMPILE-ONLY, no timing, no match run, no driver loop beyond the compile
+  call itself, mirroring probe_vectorscan_capability_census.py's own
+  stated exemption from the quiet-box discipline
+Command: python3 docs/dev/measurements/probe_vectorscan_som_witness_census.py
+
+WHY THIS CENSUS EXISTS: [B92] wired `vectorscan-block-som`
+(HS_FLAG_SOM_LEFTMOST always set) to answer real spans and a real
+non-overlapping NMATCHES. HS_FLAG_SOM_LEFTMOST documents a real,
+ADDITIONAL compile-time restriction beyond `nosom`'s own refusal set
+(Hyperscan's own documented history-tracking limit: some expressions
+would need to track an unbounded amount of match history to report a
+leftmost start offset, and SOM tracking refuses those outright rather
+than accept and misreport them). This is the census the [B92] brief asks
+for: what compiles under `som` vs `nosom` over bench/capability's real
+corpus, so the restriction's real cost is a fact, not a guess.
+
+=== isolated witness(es): a SOM-only compile restriction ===
+som-only-refusal (unbounded lookahead-shaped repeat)    nosom=compiled         som=did-not-compile
+    nosom diag:
+    som   diag: hs_compile failed (code -4, expression 0): Pattern is too large.
+
+=== bench/capability's 64 corpus patterns, plain form, nosom vs som ===
+n patterns: 64
+compiled under BOTH:       38
+compiled under nosom ONLY (SOM's own restriction costs this pattern): 2
+compiled under som ONLY (unexpected):  0
+compiled under NEITHER:    24
+
+=== the SOM-only restriction's cost, by pattern ===
+  evil-alt-nested                                  -> hs_compile failed (code -4, expression 0): Start of match is not currently supported for patterns which match an empty buffer.
+  trim-nested-star                                 -> hs_compile failed (code -4, expression 0): Start of match is not currently supported for patterns which match an empty buffer.
+
+READING. The 24 "compiled under NEITHER" patterns are the SAME 24
+`nosom` already refuses on its own terms (testees/vectorscan/CLAUDE.md's
+"Corpus confirmation" section: backrefs, lookaround, atomic groups,
+recursion, conditionals, \K, control verbs, callouts, the two
+free-spacing comment-parser patterns) -- SOM_LEFTMOST adds NOTHING new
+to that population; a construct Hyperscan cannot express at all is
+refused identically with or without the flag.
+
+The SOM-ONLY restriction's real cost on this corpus is EXACTLY TWO
+patterns, `evil-alt-nested` and `trim-nested-star` -- both patterns whose
+language can match the EMPTY string somewhere in an unbounded-repeat
+context, and Hyperscan's own diagnostic names the mechanism directly
+("Start of match is not currently supported for patterns which match an
+empty buffer"), DISTINCT from the isolated witness's own message
+("Pattern is too large" -- an unbounded-history-tracking budget, a
+different SOM restriction). Two independently-worded refusals for two
+independently-shaped causes, neither invented by this adapter: both are
+Hyperscan's own hs_compile_error_t.message, verbatim, via the SAME
+generic did-not-compile path every other refusal on this roster takes
+(no new code was needed in testees/vectorscan/adapter.py's refusal
+handling -- see driver.c's "SOM MODE" header section).

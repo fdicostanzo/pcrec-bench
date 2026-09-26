@@ -10,20 +10,40 @@
 # No version is written here. It is PROBED from the loaded library
 # (`hs_version()`) on every run.
 #
-# ONLY ONE CONFIG WIRED: `vectorscan-block-nosom`, per Frank's Q3 boolean-
+# TWO CONFIGS WIRED. `vectorscan-block-nosom`, per Frank's Q3 boolean-
 # grain ruling (2026-09-16) -- boolean grain (does this pattern match
 # anywhere) does not need HS_FLAG_SOM_LEFTMOST. `vectorscan-block-som`
-# (capability_set_v1.md 8's own roster row) is documented, not built, in
-# testees/vectorscan/CLAUDE.md: it is gated on the span-grain scoring
-# machinery (capability_set_v1.md 5.6 option (A)) that does not exist yet,
-# and SOM is "an unconditional space cost, not a dial" once compiled with it
-# -- there is no runtime toggle a second `[testees.*]` entry sharing this
-# driver could turn on cheaply; it would need its own driver invocation
-# with HS_FLAG_SOM_LEFTMOST always set.
+# ([B92], docs/dev/plan.md, Frank's ruling on docs/dev/lanes/
+# b72smalls_report.md 4 -- option (b) of the two live candidates: answer
+# the EXISTING protocol shapes (a real first-match span, a real
+# non-overlapping NMATCHES) rather than grow a third invocation mode
+# (capability_set_v1.md 5.6 option (A), which needed a schema change and a
+# list-valued row this project has never built). Both configs share ONE
+# driver (`driver.c`); `--som` is the ONLY thing that tells them apart, so
+# `vectorscan-block-nosom`'s own argv (below) is UNCHANGED -- it never
+# carries the flag. SOM is "an unconditional space cost, not a dial" once
+# compiled with it (testees/CLAUDE.md's roster row) -- there is no runtime
+# toggle a shared config could turn on cheaply, so this is a SEPARATE
+# `[testees.*]` entry with its own compile, exactly like the pcrec `-in`
+# pairs share a driver but never a config.
 
 [testees.vectorscan-block-nosom]
 engine_mode = "block-nosom"
 description = "Vectorscan (Hyperscan-ABI-compatible fork) 5.4.11, block mode (HS_MODE_BLOCK), NO HS_FLAG_SOM_LEFTMOST -- BOOLEAN GRAIN ONLY (capability_set_v1.md 5.6 option (B), Frank's Q3 ruling): match/no-match and compile/refusal comparisons, never a match span or a non-overlapping match count. See testees/vectorscan/CLAUDE.md before reading a report row for this testee."
+
+# [B92]: HS_FLAG_SOM_LEFTMOST always set. FULL scoring grain (no `grain`
+# key -- the schema default): a real first-match span (Hyperscan's own
+# LEFTMOST, THEN LONGEST completion -- `all-ends` stays the declared
+# `conventions[]` token per capability_set_v1.md 5.6's own table, since
+# this is a reduction OVER that architecture, not a different one) and,
+# under `--find-all`, a real non-overlapping NMATCHES (KB-17's advance
+# rule applied to the same reduction). See testees/vectorscan/CLAUDE.md's
+# SOM section for the documented leftmost-longest-vs-leftmost-first
+# divergence this genuinely produces on some patterns, and the compile-time
+# refusal restriction HS_FLAG_SOM_LEFTMOST adds beyond `nosom`'s own set.
+[testees.vectorscan-block-som]
+engine_mode = "block-som"
+description = "Vectorscan 5.4.11, block mode (HS_MODE_BLOCK), HS_FLAG_SOM_LEFTMOST ALWAYS SET -- FULL GRAIN ([B92], Frank's ruling on capability_set_v1.md 5.6 option (b)): a real first-match span (leftmost, then longest -- Hyperscan's own all-ends architecture reduced to one canonical span) and, under find-all, a real non-overlapping match count. A pattern HS_FLAG_SOM_LEFTMOST's own history-tracking limit refuses (which `nosom` may still accept) is a first-class did-not-compile, never an error. See testees/vectorscan/CLAUDE.md before reading a report row for this testee."
 
 # [B77] U2 (docs/design/utf8_set_v1.md 7.1/7.6): the ONE UTF-8 config,
 # BOOLEAN GRAIN ONLY exactly as its byte sibling (Frank's Q3 ruling stands:
