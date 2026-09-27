@@ -11,11 +11,26 @@
 # matcher does NOT get the same benefit once the pattern's
 # `@(?&label)`-style bodies are reached through SUBROUTINE CALLS
 # ((?&atom) etc., pcrec-bench's bench/email/patterns/factored.rx), and
-# instead performs real per-start-position backtracking, which is
-# exponential in this subject's length near a sharp cliff around
-# 500,000 bytes. The HAND-INLINED control pattern (no subroutines,
-# bench/email/patterns/orig.rx) does NOT show this: JIT is instant on
-# the identical subject.
+# instead performs real per-start-position backtracking, whose cost
+# grows very steeply with this subject's length near a sharp cliff
+# around 500,000 bytes. The HAND-INLINED control pattern (no
+# subroutines, bench/email/patterns/orig.rx) does NOT show this: JIT
+# is instant on the identical subject.
+#
+# STACK-LIMIT ABLATION (manager review 2026-09-27, item 2 -- "check
+# whether this is a resource threshold, not a smooth cost; check the
+# JIT stack; report what flips"): this script also runs the JIT case
+# at a SMALLER, fixed subject size (N=501,000 B, already inside the
+# catastrophic band, ~4s by default) at TWO very different `jitstack`
+# sizes (1 KiB and 65536 KiB). If the cliff were a JIT-stack
+# exhaustion (as it genuinely IS for a different finding, U5's
+# recursion case -- PCRE2_ERROR_JIT_STACKLIMIT, error -46), a tiny
+# stack would either error quickly or behave very differently from a
+# huge one. Measured on this box: both sizes return the SAME clean
+# "No match" (rc 0, no error code of any kind) in statistically the
+# same ~4 seconds -- ruling out a JIT-stack cause. This is NOT a
+# resource-limit artifact; see README.md for the fuller discussion of
+# what was and was not established about the underlying mechanism.
 #
 # Exit 0 = PRESENT (the JIT run does not finish quickly / times out),
 # exit 1 = ABSENT, exit 2 = CANNOT-RUN. $UPSTREAM_SCRATCH holds the
@@ -100,6 +115,40 @@ if [ "$FACTORED_JIT" = "TIMEOUT" ]; then
 else
     echo "#   elapsed: ${FACTORED_JIT}s" >&2
 fi
+
+# --- STACK-LIMIT ABLATION (manager review item 2) ---
+# Fixed N=501,000 B (inside the cliff, ~4s by default), jitstack=1 KiB
+# vs jitstack=65536 KiB. If the outcome or the timing differed sharply
+# between the two, that would point at a JIT-stack cause; a check_rc
+# of anything but "clean, no error" would also be reported here.
+N_STACK=501000
+SUBJECT_STACK="$SCRATCH/subject_a_stack.bin"
+if [ ! -f "$SUBJECT_STACK" ] || [ "$(wc -c < "$SUBJECT_STACK")" != "$N_STACK" ]; then
+    python3 -c "
+with open('$SUBJECT_STACK', 'wb') as f:
+    f.write(b'a' * $N_STACK)
+"
+fi
+mk_stack_input() {
+    # mk_stack_input <outfile> <jitstack-KiB>
+    { printf '%s%s%s,jit\n' "$DELIM" "$PAT_FACTORED" "$DELIM"; cat "$SUBJECT_STACK"; printf '\\=jitstack=%s\n' "$2"; } > "$1"
+}
+echo "# stack-limit ablation: factored.rx, jit, fixed N=${N_STACK} B, two jitstack sizes:" >&2
+for STACK in 1 65536; do
+    STACK_INPUT="$SCRATCH/jit_stack_${STACK}.pcre2test"
+    mk_stack_input "$STACK_INPUT" "$STACK"
+    T0=$(date +%s.%N)
+    timeout 30 "$PCRE2TEST" -q "$STACK_INPUT" > "$SCRATCH/stack_${STACK}.out" 2>&1
+    RC=$?
+    T1=$(date +%s.%N)
+    ELAPSED=$(python3 -c "print(f'{$T1 - $T0:.3f}')")
+    OUTCOME="no-match"
+    if [ "$RC" -eq 124 ]; then OUTCOME="timeout"; fi
+    if grep -qa "^Failed:" "$SCRATCH/stack_${STACK}.out"; then
+        OUTCOME="$(grep -a '^Failed:' "$SCRATCH/stack_${STACK}.out" | head -1)"
+    fi
+    echo "#   jitstack=${STACK} KiB: elapsed ${ELAPSED}s, rc=${RC}, outcome: ${OUTCOME}" >&2
+done
 
 # PRESENT iff the factored+jit run either timed out or took long enough
 # to be unmistakably catastrophic (>2s), where the two controls above

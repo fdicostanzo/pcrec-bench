@@ -91,10 +91,11 @@ def paren_expr(rng, depth):
     return "%s(%s)" % (rng.choice("fgh"), inner)
 
 
-def parens_line(rng):
+def parens_line(rng, allow_unbalanced=True):
     e = " + ".join(paren_expr(rng, 3) for _ in range(1 + rng.below(3)))
-    if rng.chance(1, 8):
-        e += " - (" + rng.choice(WORDS)
+    unbalanced = rng.chance(1, 8)  # draw consumed either way -- keeps the
+    if unbalanced and allow_unbalanced:  # RNG stream position identical
+        e += " - (" + rng.choice(WORDS)  # between allow_unbalanced=True/False
     return e
 
 
@@ -121,20 +122,29 @@ KINDS = ((prose_line, 8), (order_line, 2), (tags_line, 1), (parens_line, 1),
 _TOTAL = sum(w for _f, w in KINDS)
 
 
-def line(rng):
+def line(rng, allow_unbalanced=True):
     r = rng.below(_TOTAL)
     for f, w in KINDS:
         if r < w:
+            if f is parens_line:
+                return f(rng, allow_unbalanced=allow_unbalanced)
             return f(rng)
         r -= w
     raise AssertionError
 
 
-def text(seed, nbytes):
+def text(seed, nbytes, allow_unbalanced=True):
+    """allow_unbalanced=False produces a BALANCED-ONLY control -- every
+    parens_line's own 1-in-8 draw is still consumed (so the RNG stream,
+    and therefore every OTHER line in the text, is identical either
+    way), but the unbalanced trailing `- (word` tail is never appended.
+    Manager review 2026-09-27 (item 1): this isolates whether U5's
+    super-linear cost comes from the RECURSION construct itself or
+    from the deliberately-unbalanced lines the grammar plants."""
     rng = Rng(seed)
     out = bytearray()
     while len(out) < nbytes:
-        s = line(rng)
+        s = line(rng, allow_unbalanced=allow_unbalanced)
         out += s.encode("latin-1") + b"\n"
     return bytes(out[:nbytes])
 
@@ -143,7 +153,8 @@ if __name__ == "__main__":
     seed = int(sys.argv[1])
     nbytes = int(sys.argv[2])
     outpath = sys.argv[3]
-    body = text(seed, nbytes)
+    allow_unbalanced = (sys.argv[4] != "0") if len(sys.argv) > 4 else True
+    body = text(seed, nbytes, allow_unbalanced=allow_unbalanced)
     assert len(body) == nbytes
     with open(outpath, "wb") as f:
         f.write(body)

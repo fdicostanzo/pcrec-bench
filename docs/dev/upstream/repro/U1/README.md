@@ -68,6 +68,69 @@ matcher does not get the same benefit for this pattern shape. The
 under JIT at the same subject size, isolating the cause to subroutine
 calls specifically, not to "this pattern" in general.
 
+**Is this a resource-limit artifact, or genuine cost? (manager review
+2026-09-27, item 2 — ruled out, not assumed.)** `run.sh` itself now
+runs a STACK-LIMIT ABLATION: the JIT case at a fixed, smaller subject
+(N=501,000 B, already inside the cliff, ~4 s by default) at two very
+different `jitstack` sizes, 1 KiB and 65536 KiB (man pcre2test
+"Setting the JIT stack size"; this IS the resource U5's OWN finding —
+a different pattern, a different mechanism — genuinely runs out of,
+`PCRE2_ERROR_JIT_STACKLIMIT`/error -46, see `repro/U5/README.md`).
+Here, on THIS pattern, both sizes return the identical clean "No
+match" (rc 0) in statistically the same ~4.1 seconds — no error code
+of any kind on either side of the threshold, at any subject size
+tested (up to the full 1,048,576-byte original observation). This
+rules out a JIT-stack cause specifically, and more generally: neither
+side of the ~500,000-byte threshold ever returns
+`PCRE2_ERROR_MATCHLIMIT`/`_DEPTHLIMIT`/`_JIT_STACKLIMIT` or any other
+documented resource-cap error — both sides return an honest, complete
+"No match". The cost is real computation, not a silently-capped
+one.
+
+**What we did NOT fully characterize**: the exact closed-form growth
+law. Fine-grained timing in a narrow band (jitstack irrelevant,
+default settings, single core) —
+
+| N (bytes) | elapsed (s) |
+|---|---|
+| 500,200 | 0.81 |
+| 500,500 | 2.03 |
+| 500,800 | 3.24 |
+| 501,000 | 4.06 |
+| 501,300 | 5.27 |
+| 501,600 | 6.52 |
+| 502,000 | 8.16 |
+
+— is well-approximated LOCALLY by an arithmetic (linear) rate of
+roughly 4 ms per additional byte in this narrow 1,800-byte band, a
+very large per-byte constant once past the threshold. That LOCAL rate
+does not, however, extrapolate globally: a straight line from this
+slope would predict well over half an hour at the full 1,048,576-byte
+subject, where the actual measured time is ~75-90 seconds — so the
+growth rate itself must be changing (moderating) further out, and we
+did not identify why. A `pcre2test find_limits` characterization
+(which reports the minimum match/depth limit PCRE2's own accounting
+would need) was attempted and abandoned: it re-runs the match many
+times to bisect the limit, and at this subject's already-large
+per-attempt cost that search does not complete in a reasonable time
+either. **What we can state confidently: this is not a resource-limit
+artifact, and its growth is dramatically steeper than the ~O(n)
+required-code-unit-scan cost U2/U4 describe on the same/similar
+patterns — but the exact algorithmic shape driving specifically the
+~500,000-byte threshold and the rate beyond it was not identified from
+source.**
+
+**Why this stays reportable (unlike U5, which the SAME manager review
+reclassified NOT-A-BUG for a different pattern).** The interpreter, BY
+DEFAULT, entirely avoids this cost class for this exact subject —
+its "last code unit" check is a genuine, effective, O(1)-ish dismissal
+that only the JIT's compiled matcher fails to apply once the pattern's
+body is reached through subroutine calls. This is not "any backtracking
+engine would be slow on this input" (U5's shape, confirmed on a THIRD,
+independent engine, Oniguruma, in `repro/U5/`) — it is specifically
+that ONE EXECUTION ROUTE of the SAME LIBRARY does not use an
+optimization the OTHER ROUTE already computes and already uses.
+
 **Expected PRESENT output.** `run.sh` prints one diagnostic block to
 stderr (elapsed times for the two controls and the JIT-on-`factored`
 case) and one final line to stdout:
