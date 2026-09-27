@@ -141,9 +141,57 @@ and do not see a global a parent's `main()` sets afterward (confirmed live:
 identical class of mistake the CLI-shape fix itself was, caught before
 archiving rather than after.
 
-**[NUMBERS OWED — the census was launched in the background (tracked,
-`run_in_background: true`) and had not completed when this report was
-written; see the marker below.]** <!-- FILLED IN ONCE THE JOB COMPLETES -->
+**The census completed** (`DONE rc=0`; archived as
+`docs/dev/measurements/2026-09-27-b104-o62-identity-census.txt`):
+**306 identical / 692 changed / 112 refused-both / 0 refusal-movers**
+overall. Per (set, config) — `auto-caps`/`auto-nocaps` always agree
+(identical/changed/refused-both):
+
+| set | auto-caps | auto-nocaps | vm-caps |
+|---|---|---|---|
+| email-specimen | 1/5/0 | 1/5/0 | 0/6/0 |
+| loglines | 5/17/0 | 5/17/0 | 2/20/0 |
+| bounded | 39/45/2 | 39/45/2 | 38/48/0 |
+| altwide | 25/34/7 | 25/34/7 | 15/29/22 |
+| syntax | 45/121/24 | 45/121/24 | 21/145/24 |
+
+These counts are folded into each of the five O-62 predictions files' own
+`delta_verdict` clause notes (`vm-in-caps` cites the `vm-caps` numbers,
+since it is compile-identical).
+
+**The manager's own follow-up question** (asked after reading this report's
+first draft): does `program_identity`'s v2 normalization exclude the abi
+29-37 STAMP `#define` lines (`RX_REQ_BYTE`/`_RUN`/`_WHY`, `RX_END_WINDOW`,
+`RX_VM_START`), or is "changed" inflated by stamp text alone? Answered with
+a second script, `docs/dev/measurements/probe_b104_o62_identity_sanity.py`
+(output folded into the same archive's PART 2):
+
+1. On `bench/email/patterns/factored.rx` (auto-caps, plain): 25b1984f emits
+   NONE of the five stamp names at all (the feature does not exist in that
+   build); 751b9c6d emits all four. After `normalize_one`, NEITHER side's
+   normalized text contains any of them — CONFIRMED empirically, not merely
+   read from the module's own docstring.
+2. Three independent "changed" witnesses, one per set (email/factored,
+   syntax/alt-nested, bounded/cls-lazy-16384 — chosen before their diffs
+   were read, not cherry-picked afterward: email/factored was the first
+   "changed" row in the census file by construction, the other two were
+   picked only for being different sets), unified-diffed after
+   normalization. **Every one is a genuine functional code addition**: a
+   `memchr` necessary-byte guard (byte `64` = `'@'`, [OPT-REQBYTE]'s own
+   mechanism) on `email/factored`; a `search_from` clamp to the pattern's
+   own minimum match length ([OPT-ENDWIN]'s own mechanism) on both
+   `syntax/alt-nested` (3 bytes) and `bounded/cls-lazy-16384` (16,384
+   bytes). None of the three diffs contains a `#define` line at all.
+
+**Conclusion: the predictor is NOT weak on this account.** v2 normalization
+correctly excludes the new one-sided stamp lines, and every "changed"
+verdict checked (3/692, a spot check, not an exhaustive proof) was driven
+by a real, functional code difference — consistent with the abi 29-37
+pin-order mechanisms landed in this range ([OPT-ANCHOR-VM]/[OPT-ENDWIN]/
+[OPT-REQBYTE] at abi 29, [OPT-FREQPICK]/[OPT-REQPOS] at abi 30,
+[OPT-PRECHECK-ADMIT] at abi 31, K64 at abi 33, K65/K66/[OPT-LITSCAN] S1 at
+abi 35-37 — root `CLAUDE.md`'s own pin history), not merely new
+observability.
 
 ## 3. syntax's anc-z-lc/anc-dollar hypothesis
 
@@ -207,28 +255,11 @@ copied from prose or assumed by the naming rule alone.
 
 ## 6. OWED
 
-- **The O-62 identity census's full identical/changed/refused counts**,
-  per set and per config — the background job (tracked,
-  `run_in_background: true`, NOT a disowned `setsid`) was launched from
-  this worktree:
+Nothing from the predictions-authoring brief remains OWED: the O-62
+identity census (§2) completed, its counts are folded into all five O-62
+files' notes, and the manager's own sanity-check follow-up (§2) is
+answered and archived.
 
-      cd /home/duxevents/pcrec-bench/worktrees/b104pred
-      gnutimeout 1800 python3 docs/dev/measurements/probe_b104_o62_identity.py \
-          /var/tmp/b104scratch/b104_o62_identity.tsv \
-          > /var/tmp/b104scratch/b104_o62_identity.log 2>&1
-      echo "DONE rc=$?" >> /var/tmp/b104scratch/b104_o62_identity.log
-
-  Completion marker: the log's own last line, `DONE rc=<n>`. A fresh agent
-  (or this lane, resumed) should check
-  `/var/tmp/b104scratch/b104_o62_identity.log`'s tail before relying on any
-  count. Once it completes: archive its stdout as
-  `docs/dev/measurements/2026-09-27-b104-o62-identity-census.txt` (source
-  header per convention — bench commit, both pin binaries' sha256, no
-  timing/load relevance since it is compile-only), fold the per-set
-  identical/changed/refused-both counts into each O-62 predictions file's
-  own `delta_verdict` clause notes (replacing the `[identity census
-  pending]` placeholder text currently in all five files), and update
-  `docs/dev/predictions/CLAUDE.md`'s own entry with the real numbers.
 - **The window itself** (utf8 + O-62 §2-6, per I-112's own ask and
   [B104]'s plan row) is explicitly NOT this lane's — the brief says
   predictions come BEFORE the run, which the manager schedules.
@@ -246,10 +277,10 @@ copied from prose or assumed by the naming rule alone.
 | 7 | predict (a) NOT cells improve, (b) CONTAINS cells residual gap, cite I-112's ×50/×15 | DONE: P2 (a), P3 (b); ×15 lit-run-3 found NOT reproducible at throughput grain, stated honestly | §1 |
 | 8 | ci-\*/alt-\*/asr-\*/cls-dot-rep: no prediction | DONE: no row, stated | `utf8-...tsv` note |
 | 9 | O-62 §2-6: no per-cell predictions except the syntax hypothesis | DONE: only P2/P3 in the syntax file are per-cell | five O-62 files |
-| 10 | O-62 §2-6: structural predictor — program identity 25b1984f vs 751b9c6d, per pattern×form×config | DONE (script, launched); numbers OWED (§6) | `probe_b104_o62_identity.py` |
-| 11 | O-62 §2-6: predict identical→null band, changed→direction where a landed mechanism explains it, else "changed, direction not predicted" | PARTIALLY DONE: the delta_verdict structural clauses are in place; the per-pattern identical/changed fold-in is OWED (§6) | five O-62 files |
+| 10 | O-62 §2-6: structural predictor — program identity 25b1984f vs 751b9c6d, per pattern×form×config | DONE: 1,110 cells, 306/692/112/0; the manager's own follow-up sanity question (does v2 exclude the abi 29-37 stamp lines?) also answered, empirically confirmed | `probe_b104_o62_identity.py` + `_sanity.py`, census archive |
+| 11 | O-62 §2-6: predict identical→null band, changed→direction where a landed mechanism explains it, else "changed, direction not predicted" | DONE: the delta_verdict structural clauses carry the real per-set/per-config identical/changed/refused-both counts | five O-62 files |
 | 12 | list O-62 §2-6 losses >×2 as the read lane's own priority | DONE (below, not a TSV row — not a prediction) | §8 |
-| 13 | commit, hand back, end | DOING | this section |
+| 13 | commit, hand back, end | DONE | this section |
 
 ## 8. What the read lane should look at first (O-62's own list, restated — not a prediction)
 

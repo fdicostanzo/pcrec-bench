@@ -875,13 +875,32 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   all five sets' own `bench/*/patterns/*.rx` files -- is
   `docs/dev/measurements/probe_b104_o62_identity.py` /
   `2026-09-27-b104-o62-identity-census.txt` (1,110 cells: 185 patterns x 3
-  distinct compiled configs x 2 forms); its identical/changed counts are
-  folded into each clause's own note (a program-IDENTICAL cell is predicted to
-  fall inside the cross-window null band, citing the [B71]/2026-09-18
-  93.2%-of-Δ-cells-unchanged reading as the widest CITED empirical prior for
-  "ordinary noise on an unmoved artifact"; a program-CHANGED cell is named
-  explained-or-unexplained per the abi 29-39 pin-order mechanisms landed in
-  between). `syntax-0.1-b104-751b9c6d.tsv` additionally carries P2/P3, I-112's
+  distinct compiled configs x 2 forms; **306 identical / 692 changed / 112
+  refused-both / 0 refusal-movers** overall -- per (set, config):
+  email-specimen 1/5/0 (auto-caps/nocaps), 0/6/0 (vm-caps); loglines
+  5/17/0, 5/17/0, 2/20/0; bounded 39/45/2, 39/45/2, 38/48/0; altwide
+  25/34/7, 25/34/7, 15/29/22; syntax 45/121/24, 45/121/24, 21/145/24) --
+  its identical/changed/refused counts are folded into each clause's own
+  note, one per (set, config). **The manager's own sanity question,
+  answered in the census file's PART 2 (the archive's second script,
+  `probe_b104_o62_identity_sanity.py`)**: does `program_identity`'s v2
+  normalization exclude the abi 29-37 stamp `#define` lines (`RX_REQ_BYTE`/
+  `_RUN`/`_WHY`, `RX_END_WINDOW`, `RX_VM_START`), or is "changed" inflated
+  by stamp text alone? CONFIRMED EMPIRICALLY (not merely from the module's
+  docstring): 25b1984f emits NONE of those five stamp names at all (the
+  feature does not exist in that build); after `normalize_one`, NEITHER
+  pin's normalized text contains any of them. Diffing three independent
+  "changed" witnesses, one per set (email/factored, syntax/alt-nested,
+  bounded/cls-lazy-16384), every one is a REAL functional code addition
+  (a `memchr` necessary-byte guard -- [OPT-REQBYTE]; a `search_from` clamp
+  -- [OPT-ENDWIN], twice) and none contains a `#define` line at all -- the
+  predictor is NOT weak on this account. A program-IDENTICAL cell is
+  predicted to fall inside the cross-window null band, citing the
+  [B71]/2026-09-18 93.2%-of-Δ-cells-unchanged reading as the widest CITED
+  empirical prior for "ordinary noise on an unmoved artifact"; a
+  program-CHANGED cell is where a real move is expected (the abi 29-37
+  mechanisms landed in between, per CLAUDE.md's own pin history).
+  `syntax-0.1-b104-751b9c6d.tsv` additionally carries P2/P3, I-112's
   OWN hypothesis transcribed literally ("syntax anc-z-lc / anc-dollar collapse
   from x6,500 the way capability's semdiv-dollar did"): a conservative
   `ratio_to(rust) lt 65` bound (from the committed ~6,343x/6,514x baseline,

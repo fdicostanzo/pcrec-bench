@@ -914,4 +914,31 @@ Maintenance: update this file when files are added/removed or change role.
   whose workers are forked from an import-time template and do not see a global
   a parent process's `main()` sets afterward -- the identical class of mistake
   the CLI-shape fix itself was, caught before archiving rather than after. 1,110
-  rows (185 patterns x 3 configs x 2 forms).
+  rows (185 patterns x 3 configs x 2 forms): **306 identical / 692 changed /
+  112 refused-both / 0 refusal-movers** (per (set, config): email-specimen
+  1/5/0, 1/5/0, 0/6/0; loglines 5/17/0 x2, 2/20/0; bounded 39/45/2 x2,
+  38/48/0; altwide 25/34/7 x2, 15/29/22; syntax 45/121/24 x2, 21/145/24 --
+  auto-caps/auto-nocaps always agree, since neither set's own patterns use
+  captures in a way that changes the DFA/VM route chosen).
+- `probe_b104_o62_identity_sanity.py` (output folded into the SAME archive's
+  PART 2) — the manager's own sanity question on the census above: does
+  `program_identity`'s v2 normalization exclude the abi 29-37 STAMP `#define`
+  lines (`RX_REQ_BYTE`/`_RUN`/`_WHY`, `RX_END_WINDOW`, `RX_VM_START`), or does
+  "changed" just mean "the pin added a stamp line" (which would make the
+  census WEAK)? TWO checks: (1) on `bench/email/patterns/factored.rx`
+  (auto-caps, plain), the raw emitted stamp lines are printed on both pins
+  (NONE at 25b1984f -- the feature does not exist in that build; all four
+  at 751b9c6d), then confirmed that NEITHER side's `normalize_one` output
+  contains any of the five stamp names; (2) three independent "changed"
+  witnesses, one per set (email/factored, syntax/alt-nested,
+  bounded/cls-lazy-16384, none cherry-picked for its diff content), unified-
+  diffed after normalization. FINDING: every diff is a REAL functional code
+  addition -- a `memchr` necessary-byte guard ([OPT-REQBYTE], byte 64='@')
+  on email/factored, a `search_from` clamp ([OPT-ENDWIN], to the pattern's
+  own minimum length) on both syntax/alt-nested and bounded/cls-lazy-16384
+  -- and NONE contains a `#define` line at all. The predictor is NOT weak on
+  this account: v2 normalization correctly excludes the new stamp lines
+  (confirmed empirically, not merely from the module's own docstring), and
+  every "changed" verdict checked was driven by genuine emitted-code
+  differences matching the abi 29-37 pin-order mechanisms
+  (`docs/dev/predictions/CLAUDE.md`'s own O-62 entry has the full reading).
