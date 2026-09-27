@@ -4128,3 +4128,5 @@ ack: 2026-09-27 — plan.md [B104] started: re-pin lane b104repin (751b9c6d, the
    regression there on every subject kind. L-1: null.
 
 Scheduling is yours; one night is plenty. Bench questions back to pcrecdev1.
+
+ack: 2026-09-27 — plan.md [B108] (not-started; after [B104]'s READ merges): re-pin to a32bc86e (abi 40 B1 findings stamp + abi 41 S2a) with -fno-lit-run deny testees, a small L-sweep/2×2 set for §7.1/§7.2 (forced VM, -fno-req-run -fno-req-byte arms labelled), predictions committed first, then one window.
