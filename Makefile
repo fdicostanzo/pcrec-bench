@@ -116,17 +116,26 @@ check-interpret:
 	@LC_ALL=C $(PYTHON) catalogue/check_interpret.py
 
 ## check-upstream: the upstream-findings pipeline's registry ([B103],
-## docs/design/upstream_pipeline_v1.md). Two parts, both seconds-scale
-## and neither ever running an engine: tools/tests/test_upstream.py (13
-## fixture cases -- a good registry with zero issues, twelve sabotages
-## each rejected for the one rule its name claims: COLUMNS, ID-FORMAT,
-## DUP-ID, ENGINE, KIND, STATUS, REPRO (two variants), TRACKER, NOTE,
-## TSV-ORPHAN, NARRATIVE-ORPHAN); then tools/upstream.py check over the
-## REAL docs/dev/upstream/findings.tsv against docs/dev/upstream_findings.md
-## -- every row's tokens closed-vocabulary-valid, every id's narrative
-## section present and vice versa, repro/tracker/note present wherever
-## its status requires them. `tools/upstream.py repro` (which DOES run
-## an engine) is deliberately NOT part of this target.
+## docs/design/upstream_pipeline_v1.md; threads.tsv grown by [B106]). Two
+## parts, both seconds-scale and neither ever running an engine or
+## calling `gh`: tools/tests/test_upstream.py (23 fixture cases over
+## three checkers -- findings.tsv's check_registry: a good registry with
+## zero issues, twelve sabotages each rejected for the one rule its name
+## claims (COLUMNS, ID-FORMAT, DUP-ID, ENGINE, KIND, STATUS, REPRO (two
+## variants), TRACKER, NOTE, TSV-ORPHAN, NARRATIVE-ORPHAN); threads.tsv's
+## check_threads_registry: a good registry with zero issues, five
+## sabotages (THREAD-COLUMNS, THREAD-FORMAT, THREAD-URL, THREAD-DUP,
+## THREAD-BAD-ID); the two-way check_tracker_thread_linkage: a good pair
+## with zero issues, two THREAD-MISSING sabotages, one below-REPORTED
+## control); then tools/upstream.py check over the REAL
+## docs/dev/upstream/{findings,threads}.tsv against
+## docs/dev/upstream_findings.md -- every row's tokens closed-vocabulary-
+## valid, every id's narrative section present and vice versa, repro/
+## tracker/note present wherever its status requires them, and every
+## REPORTED/FIXED/KNOWN-UPSTREAM GitHub tracker named by a threads.tsv
+## row that also lists the finding's id. `tools/upstream.py repro`/
+## `threads` (which DO run something -- a build, a `gh api` call) are
+## deliberately NOT part of this target.
 check-upstream:
 	@echo "== check-upstream =="
 	@$(PYTHON) tools/tests/test_upstream.py
