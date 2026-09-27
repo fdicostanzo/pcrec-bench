@@ -89,6 +89,11 @@ package this section and §4/§6 below only summarize.
    `tools/archive_inbox.py`/`make archive-inbox`) to keep this read
    short; check there for anything not in the live file. Run
    `make archive-inbox` occasionally as housekeeping, not every wake.
+1b. **Check the upstream issue threads**: `python3 tools/upstream.py
+   threads` (read-only; exit 0 nothing new, 10 new activity, 2 error).
+   On 10, read it, tell Frank, draft any reply per
+   `/pcrec-bench-upstream`'s Watch procedure (never post), then
+   `--record`. Put the same call in the session heartbeat.
 2. Read the tail of `docs/dev/dev_journal.md` (append-only, newest at
    bottom) — the restart/status-recovery record.
 3. Check `docs/dev/plan.md` state: `grep -n "STATE:started" docs/dev/plan.md`
