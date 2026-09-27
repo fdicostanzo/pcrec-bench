@@ -1,0 +1,12 @@
+# U7 expected.txt -- verbatim PRESENT output (D35 style)
+#
+# Date:    2026-09-27
+# Box:     ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Engine:  vectorscan (Hyperscan-ABI-compatible fork), hs_compile()
+# Version: libvectorscan-dev 5.4.11-2ubuntu2, /usr/include/hs/hs.h, -lhs
+#          (the version pcrec-bench's testees/vectorscan/ pins today)
+#
+plain (no trailing newline)      REFUSED code -4: Unterminated comment.
+plain + one trailing \n          COMPILED
+PRESENT: the plain form refuses (code -4, "Unterminated comment.") while appending a bare trailing newline alone makes the identical pattern text compile
+U7 PRESENT vectorscan 5.4.11 1

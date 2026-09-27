@@ -72,6 +72,32 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
   `non-utf8-subject`, `captures`, `true-end-anchor`. Corpus totals:
   `bench/capability` 39/64 compiled; `bench/syntax` 47/95 compiled.
 
+- `probe_tre_bracket_escape_census.py` / `2026-09-27-tre-bracket-escape-census.txt`
+  — (U6 follow-up, manager review 2026-09-27, lane `b103other`) THE
+  BACKSLASH-IN-BRACKET CENSUS over every `bench/*/patterns/*.rx` file
+  across all seven sub-benches: which patterns contain a bracket
+  expression `[...]` with a backslash inside it — the exact shape TRE
+  (POSIX-conformingly, per U6's corrected reading) parses with no
+  escaping power. Read-only, no compile, no store load; classifies
+  pattern TEXT only. 98 hits / 30 distinct patterns (bounded 1,
+  capability 20, email 2, loglines 1, utf8 6). The archive cross-
+  references the 20 capability@0.1 hits against the committed
+  cf0962e3 cross-pin report (11 already `unsupported_by_pattern` for
+  unrelated reasons, 3 already `did-not-compile` per `testees/tre/
+  CLAUDE.md` (d)4, 6 compile-and-run — the SILENT-WRONG-ANSWER
+  manifestation (d)4 does not yet document) and states which of the
+  other 10 hits are measured at all (none — `tre-default` has never
+  run against bounded/email/loglines/utf8; the six utf8 hits are
+  additionally MOOT under that set's own TRE-exclusion design).
+- `probe_tre_bracket_escape_followups.c` (output folded into the same
+  `.txt` above) — three targeted witnesses: csv5's `[^,\n]` crossing an
+  embedded newline it should exclude (dormant — no committed bounded
+  subject has one); the "escape the backslash" `[^"\\]` idiom being
+  COINCIDENTALLY SAFE under TRE's literal parse (a doubled backslash
+  read literally still excludes one backslash byte); `[\w:-]` accepting
+  a literal backslash/`'w'` as if they were `\w` while rejecting real
+  digits. Self-contained (`<tre/tre.h>` + `-ltre` only).
+
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
 - `2026-09-01-emit-sizes-a7e0bdf-vs-1989c62.tsv` — ([B26] (a)) the emit-size port on the ledger patterns at both pins: +202 B total / +105 B code flat (abi 15's two rx_info fields), o42's declines the only downward moves.

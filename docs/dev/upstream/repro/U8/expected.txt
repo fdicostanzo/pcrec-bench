@@ -1,0 +1,23 @@
+# U8 expected.txt -- verbatim PRESENT output (D35 style)
+#
+# Date:    2026-09-27
+# Box:     ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Engine:  RE2, RE2::Match (RE2::Options::EncodingUTF8)
+# Version tested (a): distribution package, libre2-dev (Debian/Ubuntu
+#                      package version 20250805-1build3, pkg-config
+#                      `re2.pc` reports Version: 11.0.0 -- this is
+#                      pcrec-bench's own `re2_11.0.0` testee)
+# Version tested (b): pristine upstream tag `2025-11-05`
+#                      (github.com/google/re2, the newest tag as of
+#                      2026-09-27; `libre2-dev`'s package version
+#                      20250805 corresponds to the nearby tag
+#                      `2025-08-05`, so (b) is genuinely newer),
+#                      built with the repo's own plain `make
+#                      obj/libre2.a` against this box's system
+#                      libabsl-dev 20260107.0-4 -- no cmake needed.
+# Both builds produce this IDENTICAL output (byte for byte):
+#
+\B match at byte [2,2)  <-- INSIDE the 2-byte encoding of U+00E9
+\B match at byte [3,3)
+PRESENT: RE2 reports \B at a byte offset with no character boundary (inside U+00E9's 2-byte encoding)
+U8 PRESENT re2 11.0.0 1

@@ -1,0 +1,33 @@
+# U6 expected.txt -- verbatim output (D35 style)
+#
+# Date:    2026-09-27
+# Box:     ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Engine:  TRE, tre_regncompb/tre_regnexecb (byte-mode POSIX API)
+# Version tested (a): distribution package, libtre-dev 0.9.0-1build1
+#                      (Ubuntu "resolute"), /usr/include/tre/tre.h, -ltre
+# Version tested (b): pristine upstream v0.9.0 tag
+#                      (github.com/laurikari/tre/releases/tag/v0.9.0,
+#                      tre-0.9.0.tar.gz, sha the release asset carries),
+#                      built with `./configure --disable-shared
+#                      --enable-static && make`, linked statically
+#                      against lib/.libs/libtre.a -- eliminates any
+#                      Debian/Ubuntu packaging-patch explanation.
+# Both builds produce this IDENTICAL output (byte for byte) for
+# repro.c's own case A/case B lines.
+#
+# CONTROL (manager review, 2026-09-27): control_glibc.c links ONLY
+# glibc's <regex.h> (no TRE) and runs the SAME pattern/subjects through
+# regcomp()/regexec(), REG_EXTENDED -- the box's reference POSIX ERE
+# implementation. It shows the IDENTICAL split (case A matches, case B
+# does not), confirming this is POSIX bracket-expression semantics
+# (POSIX.1-2017 XBD 9.3.5: backslash loses its special meaning inside
+# `[...]`), not a TRE-specific defect. See README.md's revised reading.
+#
+case A ("GET /products?category=shoes&sort=price"): glibc=MATCH [0,3)
+case B (0x81 0x82): glibc=nomatch
+CONTROL: glibc AGREES with TRE (same POSIX bracket-literal-backslash parse)
+
+case A ("GET /products?category=shoes&sort=price"): tre=MATCH oracle=nomatch [0,3)
+case B (0x81 0x82): tre=nomatch oracle=match [0,2)
+PRESENT: TRE's [\x80-\xff] disagrees with the oracle (case A wrong=1, case B wrong=1)
+U6 PRESENT tre 0.9.0 1
