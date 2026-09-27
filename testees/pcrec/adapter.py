@@ -1504,6 +1504,50 @@ METADATA_DECL = {
                        "scan edge's class bodies never consult "
                        "vm_cls_shape",
     },
+    # [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a): the fifth VM-only
+    # activity count, on `vm_cls_folds`'/`vm_alt_islands`' scope and for
+    # the same reason -- a mechanism DISCOVERED WHILE EMITTING, never a
+    # mode chosen upstream.
+    "vm_lit_runs": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_LIT_RUNS ([OPT-LITSCAN] S2a, pcrec abi "
+                  "41+), read through pb_vm_lit_runs() behind "
+                  "pb_has_vm_lit_runs(); no rx_info mirror (D77: no "
+                  "run-time consumer); scope checked by STAMP_SCOPE "
+                  "(every VM artifact, hybrids included, no DFA artifact) "
+                  "and the VALUE in tools/selfcheck.py on a hand-chosen "
+                  "literal-run witness and on bench/capability's own "
+                  "`wild-secrets-aws-access-key-id` (auto/vm hybrid, "
+                  "MEASURED 7 runs, matching pcrec's own s2a_report.md "
+                  "§7.1 (a') exactly) with `-fno-lit-run` (--list-axes "
+                  "`lit-run`, bit 33) as the deny control that reaches 0 "
+                  "and restores the pre-abi-41 per-byte compare chain",
+        "description": "how many EMISSION-CONTIGUOUS runs of two or more "
+                       "consecutive one-byte literals on one concatenation "
+                       "(`pcrec_lit_run`, a pure node-grain fact over "
+                       "A_CLASS singleton elements) -- and, on the SAME "
+                       "terms, an alternation island's single-child trie "
+                       "chain down to its first branching or accepting "
+                       "node -- this artifact emits as ONE bounds check "
+                       "(`pos + L <= n`) plus one constant-length `memcmp` "
+                       "(P4, `pcrec_emit_exact_compare`), instead of the "
+                       "per-byte compare chain every pin before abi 41 "
+                       "wrote. A COUNT rather than a boolean: a pattern "
+                       "mixes runs with single-byte and multi-byte class "
+                       "positions, and each run is charged as ONE step "
+                       "(D51: forward progress within a run is free) so "
+                       "denying the flag can only make a give-up happen "
+                       "no earlier. 0 is a value: no run of two-plus "
+                       "qualified, or a `-fno-lit-run` build. "
+                       "ANSWER-IDENTICAL either way (the same bytes "
+                       "accepted; pcrec's own s2a_report.md: the denied "
+                       "program is main's pre-abi-41 program byte for "
+                       "byte, past the one new stamp line) -- a SIZE and "
+                       "cost fact only. NULL on every DFA-routed cell: the "
+                       "DFA route's own necessary-run pre-check shares P4 "
+                       "as an emitter function but has its own stamp, "
+                       "`RX_REQ_RUN` -- the two counts are never one",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1629,7 +1673,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "fast_frames", "fast_trail", "vm_frameless",
              "altcls_merges", "altcls_factored",
              "dfa_uniform_folds", "vm_alt_islands", "vm_program_bytes",
-             "vm_cls_folds",
+             "vm_cls_folds", "vm_lit_runs",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1739,6 +1783,13 @@ STAMP_SCOPE = {
     # witness, a forced-VM one, an anchored one-attempt VM one, and a
     # dominated DFA one; the closed four-token set holds on all four.
     "req_why":               ("every",    31),
+    # [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a): the fifth VM-only
+    # activity count, on `vm_cls_folds`'/`vm_alt_islands`' own scope and
+    # for the same reason (family (b): what the emitted program turned
+    # out to CONTAIN, discovered while emitting). An abi-39/40 artifact
+    # (a `pcrec-local` binary at the previous pin) records it as "not
+    # stamped" without tripping this table.
+    "vm_lit_runs":           ("vm",       41),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -3702,6 +3753,15 @@ class Adapter(_ad.Adapter):
             further neighbour to imply -- they are readable only against
             req_byte/req_run's own value, which this rule already covers,
             and by name in tools/selfcheck.py's by-value witnesses.
+
+        [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a) adds no numbered
+        claim, on `vm_cls_folds`'s own precedent: `vm_lit_runs` is a count
+        with no mirror and no neighbour to imply, checked by scope here
+        (`vm` since 41) and by value in tools/selfcheck.py. abi 40
+        ([FINDINGS] B1) adds no claim of any kind: `rx_info.findings` has
+        no macro pair this adapter reads at all (D77's reason again --
+        no consumer needs the analysis-provenance string), so there is
+        nothing here for it to agree or disagree with.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never
