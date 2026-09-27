@@ -1,0 +1,28 @@
+id	len	sha256	description	periodic
+at-match-b1	5	5199deb359632a747ae784441b1ddc32c9242b6e50032fe3764365e53e57664e	alt-foo-tails: matches branch 1 (foo.x)	no
+at-match-b2	6	c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2	alt-foo-tails: matches branch 2 (foobar), the only branch with no wildcard tail	no
+at-match-b3	4	c0e0aaaea050bcf3be26c0c23d58fa890c0dfb79c8a23016b4a86cd28ca6ea71	alt-foo-tails: matches branch 3 (foo.), the shortest branch	no
+at-nearmiss-short	3	2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae	alt-foo-tails: too short for any branch (all three need >= 4 bytes)	no
+at-nearmiss-wrongchar	5	5c3cd62381f1f49c4d64f2bb87325c820bc6a493e22179647fff0cc6543e2603	alt-foo-tails: missing the second 'o' -- contains no branch's 'foo' prefix at all	no
+at-embed-search	10	16368da24758a13414c326acbc4b3490e51c731ea799b54a25e3ee8fddf8386c	alt-foo-tails: 'foobar' embedded at offset 2, for search_short only	8
+aws-match	20	1a5d44a2dca19669d72edf4c4f1c27c4c1ca4b4408fbb17f6ce4ad452d78ddb3	wild-secrets-aws-access-key-id: AWS's own published example key	no
+aws-nearmiss-short	19	565627ba0d2dda3f8288f5dda81fc1382dafea471007721fbd376f14df343d3a	wild-secrets-aws-access-key-id: one byte short of the required 16 after the prefix	no
+aws-nearmiss-prefix	20	d10aa6d7cd959db8c783f3ef434ba24cf2276dbcba17591806d405c394d79adf	wild-secrets-aws-access-key-id: prefix not in the nine-alternative set	no
+aws-embed-search	25	36d9616f474a18028c0835a999d75bc91e358bd4423ea88605c4ffbc7c1d9d03	wild-secrets-aws-access-key-id: embedded with \b satisfied on both sides, for search_short only	no
+dollar-match	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	ctrl-abc-dollar: $ matches end of subject	no
+dollar-match-trailing-nl	4	edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb	ctrl-abc-dollar: $ matches before a trailing newline too (pcre2 testdata's own stated behaviour)	no
+dollar-nearmiss	4	7571ce1f8e21c6b13dd7ec2c5ec7c9e4dd9852e209869511853f2f1f74b17927	ctrl-abc-dollar: a byte follows abc	no
+dollar-nearmiss-multiline	7	d53d6b91af7caf8fe3d8021f116270137c0079d579a1e16965da80c2ed138ffb	ctrl-abc-dollar: pcre2 testdata's own 'expect no match' case -- no /m, so $ does not match before an INTERNAL newline	no
+ghp-match	93	2332de4756f97989126d43aaf74c6368ae059d9024d37471b796fc8bb2b79626	wild-secrets-github-pat: exact 82-byte suffix	no
+ghp-nearmiss-short	92	eaf22a5d24a2662b7275c4a438137a6f7daceea1c915a2250722d178b03feb1a	wild-secrets-github-pat: 81-byte suffix, one short	no
+ghp-nearmiss-prefix	95	1e1ba8df0669645f2c2719be12320a9fef6ffcdcef3469054d7239bd64e477ad	wild-secrets-github-pat: wrong prefix ('token' for 'pat')	no
+ghp-embed-search	100	4fdd143bab7e86535e04b93d1013d918fbafeda174754c9989d586aebf5a3ece	wild-secrets-github-pat: embedded with \b satisfied on both sides, for search_short only	no
+bnd-l2	1	ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb	lit-l2: length L-1 (1 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l2's own first 1 bytes	no
+bnd-l3	2	fb8e20fc2e4c3f248c60c39bd652f3c1347298bb977b8b4d5903b85055620603	lit-l3: length L-1 (2 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l3's own first 2 bytes	no
+bnd-l4	3	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad	lit-l4: length L-1 (3 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l4's own first 3 bytes	no
+bnd-l7	6	bef57ec7f53a6d40beb640a780a639c83bc29ac8a9816f1fc6c5c6dcd93c4721	lit-l7: length L-1 (6 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l7's own first 6 bytes	no
+bnd-l8	7	7d1a54127b222502f5b79b5fb0803061152a44f92b37e23c6527baf665d4da9a	lit-l8: length L-1 (7 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l8's own first 7 bytes	no
+bnd-l10	9	19cc02f26df43cc571bc9ed7b0c4d29224a3ec229529221725ef76d021c8326f	lit-l10: length L-1 (9 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l10's own first 9 bytes	no
+bnd-l16	15	41c7760c50efde99bf574ed8fffc7a6dd3405d546d3da929b214c8945acf8a97	lit-l16: length L-1 (15 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l16's own first 15 bytes	no
+bnd-l31	30	22ce81c762374e2766fd65bd61b141f6c875f9f15e9f912db95ff46f97a3bea9	lit-l31: length L-1 (30 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l31's own first 30 bytes	no
+bnd-l40	39	56ee6c80d1b48e4731fc8e69815298667d87f331ccc1453a5afec5d5fd072fc3	lit-l40: length L-1 (39 B) -- pcrec's P8 guard (pos + L <= n) fails on length alone; content is lit-l40's own first 39 bytes	no

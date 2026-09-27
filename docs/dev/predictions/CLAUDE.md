@@ -945,6 +945,44 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   (was ×6,343/×6,514). Full tables:
   `docs/dev/ledgers/2026-09-27-b104-751b9c6d.md` §3-§4.
 
+- `litrun-0.1-first.tsv` — lane `b108set`, 2026-09-27: [B108]'s predictions
+  for `bench/litrun@0.1`'s FIRST SAMPLE, transcribing inbox I-113's P4 (the
+  §7.1 2×2 set) and P5 (the §7.2 L-sweep) — pcrec `docs/dev/lanes/
+  s2a_report.md` at a32bc86e, [OPT-LITSCAN] S2a. **I-113's P1/P2/P3 name
+  patterns in `bench/bounded@0.3`/`bench/loglines@0.1`/`bench/capability@0.1`
+  (existing sets) and are NOT in this file** — `bench/litrun/NOTES.md`
+  transcribes all five in prose for a single reader, but only P4/P5 are
+  litrun's own scorable cells; P1-P3 belong in a predictions file for each
+  of those other sets, not authored by this lane. **24 clause rows over 6
+  parents** (P4.a-d, one per 2×2 cell, `compile:emit_bytes ratio_to`
+  default vs `pcrec_*_vm-caps-simdna_nolitrun`, `op lt hi 1` — the LIT-RUN
+  axis only; the FACTORING axis (`-fno-altcls-factor`) has no deny testee
+  named among [B108]'s ack, so P4.b's note states that half is an unscored
+  expectation, not a dropped clause — nothing here is fated to always read
+  not-evaluable, R-BENCH's own "must not happen" rule); P5.a (6 lengths,
+  L∈{4,7,8,10,16,40}, matching+last-byte-mismatch, `median_ns ratio_to`
+  default vs the nolitrun twin on `large-subject-throughput`, `op lt hi
+  1`); P5.b (4 lengths: `L=2,3` a DO-NOT-REGRESS-BEYOND-1.3× bound on
+  first-byte mismatch, the per-call-constant watch; `L=4,40` a flat
+  `between 0.85 1.15` band); P5.c (the L=31 named watch cell, all three
+  subject kinds, `op gt hi 1` — REGRESSION predicted, the gcc
+  `memcmp()`-out-of-line cliff); P5.d (9 lengths, one row per L, the L-1
+  boundary subject `bnd-l<L>` against `match-compliance|short-subject-
+  search`, a loose `between 0.5 2` null band). Every clause's two-testee
+  `ratio_to` join is DIAGONAL by construction (pattern fixed to one exact
+  `lit-l<L>` per row, never an alternation crossing two different lengths)
+  — the same off-diagonal hazard `bench/altwide`'s own order-pair
+  predictions avoid by naming one width at a time. **Load-checked, not
+  scorable yet** (no `litrun` record exists as of authoring, and lane
+  `b108repin`'s re-pin + the `-nolitrun` deny testees are still landing in
+  parallel): `interpret.load_predictions` — **24/24 clause rows load, zero
+  closed-set errors**, the `lt`/`gt` op's threshold correctly in `hi` (not
+  `lo` — the exact column-swap bug `syntax-0.1-rust-first.tsv`'s own entry
+  above documents, caught here at authoring time, not after a window);
+  `check_testee_globs` is VACUOUS by its own stated rule (no `litrun`
+  index row exists yet for either testee glob to be checked against).
+  See `docs/dev/lanes/b108set_report.md`.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
