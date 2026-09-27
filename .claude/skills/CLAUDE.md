@@ -9,3 +9,7 @@
   report's `reports/<name>.interpretation.md` sidecar; states the
   opinion firewall (the renderer phrases, a fired rule is changed only
   through the catalogue, never by hand-editing a sidecar).
+- `pcrec-bench-upstream/SKILL.md` — `/pcrec-bench-upstream` ([B103]): the
+  upstream-findings pipeline's session procedure (file, reproduce, triage,
+  draft, approve/send, re-verify) over `docs/dev/upstream/` and
+  `tools/upstream.py`; spec `docs/design/upstream_pipeline_v1.md`.
