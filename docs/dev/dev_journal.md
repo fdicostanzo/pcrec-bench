@@ -6035,3 +6035,23 @@ Light lanes first, heavy work after the slot:
 - pcrecdev1: the twin on github-pat/router = REQBYTE + S1 prefilter; findings
   (3) prefilter-drop and (4) bit 30 in rx_info.flags under their review;
   I-112 ([OPT-REQRUN-ENC], abi 38, the utf8 re-measure) likely tomorrow.
+- (close, ~23:0x) [B101] READ merged a733fb7 (lane b101read, opus): twin
+  12/12 (the stated_utc bypass NOT needed — the report's population is the
+  two new testee ids, first measured after the file's stated_utc); answers
+  24,180/24,180 identical; same-window noise from 87 program-identical cells
+  ±1.96% thr ≥1us — the borrowed cross-pin band was 8.5× too wide (a lesson
+  for twin predictions: a same-pin twin's null band is much tighter);
+  float-literal-bound +5.5% a real pre-check cost; cross-pin S1BUILD 4
+  improve / 5 regress on SHORT subjects (a per-call constant, 8 -> 12-16 ns).
+  O-61 SENT; pcrecdev1 accepted: `dominated` is a soundness argument whose
+  cost model missed the per-call constant -> [OPT-LITSCAN] S1 F1 (step-6
+  +1 ns/call = F2); disposition with I-112 (abi 39: the utf8 scan-byte fix +
+  K68's flags mask), likely 2026-09-27.
+- KB-31's one moved report regenerated at v25 (utf8 first-ce658cb7: +11
+  prp-ingreek did_not_compile rows exactly, sidecar R-STATUS-4 12 -> 23).
+- KB-29 CLOSED (lane b98kb29, f9f55f5): re2/rust have no error channel in
+  their find loops (structurally exempt); tre's give-up unreachable on the
+  pinned libtre by a fault-injection allocation census (0 allocations in any
+  exec call) + a defensive mirrored fix.
+- make check #3 at f9f55f5: 569/0 · OK · 212/0. All of Frank's opened rows
+  ([B97]-[B100]) and [B101] complete; no lane alive; box free.
