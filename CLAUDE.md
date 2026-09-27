@@ -370,7 +370,8 @@ bindings) live here, vendored or system, pinned either way.
 - `docs/dev/` — plan.md (grep'able `[Bn] STATE:` rows), plan_completed.md,
   dev_journal.md (append-only), decisions.md (BDn), pcrec_references.md
   (the map of every pcrec document this project depends on), wake.md
-  (gitignored hand-off brief). See docs/dev/CLAUDE.md.
+  (gitignored hand-off brief), upstream_findings.md + upstream/
+  (the upstream-findings pipeline, [B103]). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
 - `schema/` — the RECORD format at **v1.7** (v1.6 [B44] `testee.grain`;
@@ -667,7 +668,9 @@ bindings) live here, vendored or system, pinned either way.
 - `tools/` — `selfcheck.py`, the harness half of `make check`;
   `program_identity.py` ([B79]/[B88]: the program-identity census and
   the ONE normalization the records' `program_sha256` field uses, v2);
-  `viewer_export.py` ([B66]), the results viewer's data exporter.
+  `viewer_export.py` ([B66]), the results viewer's data exporter;
+  `upstream.py` ([B103]), the upstream-findings pipeline's CLI
+  (`check`/`list`/`repro`/`new`/`status`), self-tested by `tools/tests/`.
 - `viewer/` — THE RESULTS VIEWER ([B66], docs/design/results_viewer_v1.md):
   a single self-contained `viewer.html` (no server, no build step, works
   from `file://`) over `data/*.js` (generated, committed, `make
@@ -686,6 +689,7 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
     make                # == make check-schema (the default target)
     make check          # EVERYTHING: check-schema + check-harness
                         #             + check-report + check-interpret
+                        #             + check-upstream
     make check-schema   # the record schema: the design note's field tables
                         # against the JSON Schema, every schema/examples/
                         # record accepted, every schema/examples/bad/ record
@@ -895,6 +899,12 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # sidecar re-renders from its own facts TSV byte for
                         # byte), and the template-diff gate. Never loads the
                         # record store.
+    make check-upstream # [B103] the upstream-findings pipeline's registry
+                        # (docs/dev/upstream/findings.tsv against
+                        # docs/dev/upstream_findings.md): 13 self-test
+                        # fixture cases + the real registry validated,
+                        # seconds, never runs an engine (`tools/upstream.py
+                        # repro` does, and is not part of this target)
     make deps           # what the harness needs, and whether this box has it
     make cc-gate-census # [B33] (1): every bench pattern x 3 pcrec engine
                         # modes (auto/nocaps/vm) x 2 forms compiled under

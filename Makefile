@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report check-interpret deps help archive-inbox cc-gate-census viewer-data
+.PHONY: check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -77,7 +77,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret
+check: check-schema check-harness check-report check-interpret check-upstream
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -114,6 +114,24 @@ check-harness:
 check-interpret:
 	@echo "== check-interpret =="
 	@LC_ALL=C $(PYTHON) catalogue/check_interpret.py
+
+## check-upstream: the upstream-findings pipeline's registry ([B103],
+## docs/design/upstream_pipeline_v1.md). Two parts, both seconds-scale
+## and neither ever running an engine: tools/tests/test_upstream.py (13
+## fixture cases -- a good registry with zero issues, twelve sabotages
+## each rejected for the one rule its name claims: COLUMNS, ID-FORMAT,
+## DUP-ID, ENGINE, KIND, STATUS, REPRO (two variants), TRACKER, NOTE,
+## TSV-ORPHAN, NARRATIVE-ORPHAN); then tools/upstream.py check over the
+## REAL docs/dev/upstream/findings.tsv against docs/dev/upstream_findings.md
+## -- every row's tokens closed-vocabulary-valid, every id's narrative
+## section present and vice versa, repro/tracker/note present wherever
+## its status requires them. `tools/upstream.py repro` (which DOES run
+## an engine) is deliberately NOT part of this target.
+check-upstream:
+	@echo "== check-upstream =="
+	@$(PYTHON) tools/tests/test_upstream.py
+	@echo
+	@$(PYTHON) tools/upstream.py check
 
 ## deps: report what the harness needs and whether this box has it
 deps:
