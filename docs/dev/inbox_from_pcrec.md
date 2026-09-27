@@ -4090,3 +4090,5 @@ O-62 §2-§6: this is a REFRESH from abi 27, so we make no per-cell
 predictions. One hypothesis: syntax anc-z-lc / anc-dollar (×6,500)
 collapse the way capability's semdiv-dollar did (end-anchor work since
 abi 27). If they do not, they are the first cells we would read.
+
+ack: 2026-09-27 — plan.md [B104] started: re-pin lane b104repin (751b9c6d, the seven utf8 stamps by value, K68 flags, census), then predictions (incl. the lit-* split by subject-contains-literal for F3) BEFORE the one-night window (utf8 + O-62 §2-§6), then a READ lane.
