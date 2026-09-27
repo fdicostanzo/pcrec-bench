@@ -801,6 +801,20 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   would read as an authoring-defect false positive until the window
   writes the first 02902356 records — at which point it passes for the
   ordinary reason. See `docs/dev/lanes/b101pred_report.md`.
+  **SCORED 2026-09-26 (lane b101read): 12/12 clauses HOLD** (R-PRED-1
+  ×11, R-PRED-2/3/4 none) against
+  `reports/2026-09-26-capability-0.1-budu-ryzen1600-twin-noreqbyte-02902356.tsv`,
+  **through the NORMAL CLI path, with `check_stated_utc` ENABLED**. The
+  anticipated F27 refusal did NOT fire. The anchor is taken over the
+  report's own population, and here that is two testee ids first
+  measured at 2026-09-27T00:34:06Z, after this file's `stated_utc`.
+  A same-pin twin under NEW testee ids has no older population; the
+  25b1984f-confirm files did, because their `delta_verdict` needed a
+  BEFORE. So no bypass was used, and the committed sidecar carries the
+  predictions stamp. The twin's own same-window noise (±1.96% thr ≥1us,
+  ±2.25% srch 100ns-1us) is 8.5×/5.7× tighter than the cross-pin bands
+  borrowed here. P7 holds against 1.1662 but reads 1.0546, outside that
+  noise. See docs/dev/ledgers/2026-09-26-noreqbyte-twin-02902356.md.
 
 ## Writing one
 
