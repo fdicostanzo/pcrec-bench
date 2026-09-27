@@ -83,10 +83,18 @@ decisions) so cross-references between the two repos are never ambiguous.
   session (findings about pcrec, requests for pcrec changes, questions
   that must outlive the session); the pcrec manager reads it at wake.
   Items `O-n`, never deleted.
-- `upstream_findings.md` — findings about OTHER engines with the record
-  that shows them (U1 2026-08-25: pcre2-jit's 60 s timeout on the
-  factored email pattern over 1 MB of `a`). Findings about pcrec go to
-  the pcrec manager for pcrec's known_issues.md, never here.
+- `upstream_findings.md` — the NARRATIVE half of the upstream-findings
+  pipeline ([B103], `../design/upstream_pipeline_v1.md`): findings about
+  OTHER engines with the record that shows them (U1 2026-08-25:
+  pcre2-jit's 60 s timeout on the factored email pattern over 1 MB of
+  `a`). Findings about pcrec go to the pcrec manager for pcrec's
+  known_issues.md, never here. The machine-read REGISTRY half is
+  `upstream/findings.tsv`; see `upstream/CLAUDE.md`.
+- `upstream/` — the pipeline's REGISTRY (`findings.tsv`, one row per
+  narrative `## U<n>` section), standalone `repro/U<n>/` reproductions
+  and `notes/<engine>-<date>.md` maintainer-facing drafts, kept
+  consistent by `../../tools/upstream.py` / `make check-upstream`. See
+  its own CLAUDE.md.
 
 - `known_issues.md` — bugs in pcrec-bench's OWN harness/adapters/
   reporter (`KB-n`); KB-1 the runtime_options bare-flag pairing.

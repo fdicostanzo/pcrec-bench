@@ -6073,3 +6073,73 @@ classifier — left for Frank).
   libpcre2 routes is pcre2_match/pcre2_dfa_match's own UTF-8 validation
   (one call, zero matches); PCRE2_NO_UTF_CHECK collapses it to 1.00.
 - viewer/data regenerated (index_rows 246, the two twin records in).
+
+## 2026-09-27, thirty-sixth session (part 2) — [B103] lane b103infra: the
+upstream-findings pipeline's infrastructure + the U1-U13 migration
+
+`docs/design/upstream_pipeline_v1.md` §2/§5/§7 built: `docs/dev/upstream/`
+(`findings.tsv` — the registry, `repro/`+`notes/` — empty, `.gitkeep` only,
+CLAUDE.md), `tools/upstream.py` (`check`/`list`/`repro`/`new`/`status`, two
+pure functions `check_registry()`/`narrative_ids()` with no fixed paths),
+`tools/tests/test_upstream.py` (13 in-tempdir fixture cases: the good
+registry clean, twelve one-field sabotages each rejected for the rule its
+name claims — COLUMNS, ID-FORMAT, DUP-ID, ENGINE, KIND, STATUS, REPRO ×2,
+TRACKER, NOTE, TSV-ORPHAN, NARRATIVE-ORPHAN), `make check-upstream` (wired
+into `check:`, seconds, never runs an engine). All 13/13 self-test cases
+pass; `tools/upstream.py check` against the real registry is clean (0
+issues, 13 findings); a full `new`→edit repro/run.sh→`status REPRODUCED`→
+`repro --record`→`status REPORTED` smoke run in a throwaway copy exercised
+every subcommand end to end (a REPORTED move without `--tracker` refused
+by name, as designed).
+
+MIGRATION: the two duplicate ids renamed in `upstream_findings.md` — the
+second `## U2` (JIT slower than interp on pure-scan find-all) → `## U12`,
+the second `## U3` (bounded repeated group replication, NOT-A-BUG) →
+`## U13`, each with a `(formerly the second U2/U3 entry)` line; the one
+internal self-reference ("Records as U2;", inside the renamed U13 section)
+fixed to "Records as U12;". Repo-wide grep for citations of the two
+duplicate ids found the token overloaded elsewhere in ways that made a
+blind rename dangerous (`[B77]`'s UTF-8 lane numbers U1-U5, an unrelated
+I-107 WAF-attribution test numbering U1/U2/U3 in outbox O-55 and this
+journal's own 2026-09-25 entry) — each candidate hit was read in context
+before deciding; the two duplicates' actual second-entry content
+("JIT slower... pure-scan find-all", "bounded repeated group... NOT-A-BUG")
+is distinctive enough that every true hit was unambiguous. Confirmed
+citations of the SECOND U2/U3 outside `upstream_findings.md` itself: three,
+all in THIS file (a session heading at the 2026-08-30 bounded-ledger entry,
+and two sentences in its body: "U2 (pcre2-jit slower...), U3 (PCRE2's
+group replication, NOT-A-BUG)" and "U2 re-measured"). They are deliberately
+NOT edited: `docs/dev/CLAUDE.md` states this file is append-only, and that
+invariant outranks the migration brief's literal instruction for a file
+this project's own convention protects from retroactive edits — this
+entry is the correction on the record instead, forward-referenced from
+here rather than rewritten into the old prose. `docs/dev/outbox_to_pcrec.md`'s
+own "U2"/"U3" hits (O-7's body, "upstream_findings U2-U4") are the FIRST
+(never-duplicated) U2/U3/U4 and needed no change; nothing in
+`docs/dev/ledgers/2026-08-30-{bounded-0.1-first-sample-36d5963,abi12-after-96e44c2}.md`
+names either duplicate id at all (checked by grep — both files describe
+the same findings in prose with no `U2`/`U3` token).
+
+Thirteen findings entered `findings.tsv`, decided from the narrative per
+the brief's own steer plus this lane's reasoning, stated in
+`docs/dev/lanes/b103infra_report.md`: OBSERVED by default (U1-U8, U12);
+U9/U10 NOT-A-BUG (both narratives already read "documented ... semantics
+difference, not a bug"); U13 NOT-A-BUG (its own original title already
+said so); U11 UNDERSTOOD (the brief's explicit call, backed by U11's own
+`PCRE2_NO_UTF_CHECK` ablation) — WITHOUT a `repro/U11/` directory, which
+meant re-reading `check`'s own "repro required at status ≥ REPRODUCED"
+rule: since §3 states REPRODUCED and UNDERSTOOD may come in either order,
+requiring repro/ at UNDERSTOOD alone would make that impossible, so
+`REPRO_REQUIRED` in `tools/upstream.py` deliberately excludes UNDERSTOOD
+(DRAFTED and beyond still requires it). U6/U7/U8 stay OBSERVED rather
+than the narrative's own colloquial "now REPRODUCED" wording, because the
+pipeline's REPRODUCED means a standalone `repro/U<n>/` exists — which is
+b103pcre2's/b103other's owed work, not built here (their brief explicitly
+withholds those three ids from this lane). No row reaches DRAFTED or
+later; nothing is sent.
+
+`make check-upstream` green, `make check-schema` unaffected (74/74
+sabotages, 6/6 examples) — neither the full `make check` nor
+`check-harness`/`check-report`/`check-interpret` run (out of this lane's
+charter; the manager runs those after folding in the sibling lanes).
+Report: `docs/dev/lanes/b103infra_report.md`.

@@ -3,9 +3,19 @@
 Findings about engines other than pcrec, each with the record that shows
 it (pcrec D35 style: cite the record id and the row; the raw trials are
 the transcript). Findings about pcrec itself go to the pcrec manager for
-pcrec's known_issues.md, never here. Status vocabulary: OBSERVED (seen in
-records) → UNDERSTOOD (cause explained by reading the engine's source or
-a maintainer's answer) → REPORTED (filed upstream) / NOT-A-BUG.
+pcrec's known_issues.md, never here.
+
+[B103] (2026-09-27): this file is the NARRATIVE half of the
+upstream-findings PIPELINE, `docs/design/upstream_pipeline_v1.md` — the
+machine-read REGISTRY is `docs/dev/upstream/findings.tsv` (one row per
+`## U<n>` section here, kept in sync by `tools/upstream.py check` /
+`make check-upstream`), reproductions live under
+`docs/dev/upstream/repro/U<n>/`, and draft notes to maintainers under
+`docs/dev/upstream/notes/`. The STATUS LADDER (§3 there) is
+OBSERVED → REPRODUCED/UNDERSTOOD (either order) → DRAFTED → APPROVED →
+REPORTED → FIXED, with three terminal outcomes that are never sent —
+NOT-A-BUG, KNOWN-UPSTREAM, STALE. Nothing here is sent to a maintainer
+without Frank's per-note approval (APPROVED, recorded in this file).
 
 ## U1 — libpcre2 10.46 JIT: 60 s per-subject timeout on the subroutine-factored email pattern over 1 MB of `a`, where the interpreter answers in ~18 µs (OBSERVED 2026-08-25)
 
@@ -76,7 +86,10 @@ not a memchr for `"`; the interpreter's start-of-match memchr is what
 makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 `no_start_optimize` separates the hypotheses.
 
-## U2 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
+## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
+
+(formerly the second U2 entry — this file used `## U2` twice; renumbered
+2026-09-27 by [B103]'s pipeline migration, `docs/dev/upstream/findings.tsv`.)
 
 Records `bounded@0.1__libpcre2_10.46_jit-caps-simdna__budu-ryzen1600__20260830T092238Z`
 and `...interp-caps-simdna__...T032115Z`, regime large-subject-throughput
@@ -93,9 +106,12 @@ where "jit = faster" does not hold. Re-measured at the 96e44c2 window
 (2026-08-30, the same binaries): csv5 3,151 vs 1,723 ns (×1.83), floor
 4,063 vs 1,716 (×2.37) — stable. Next: none owed.
 
-## U3 — libpcre2 10.46 compiles a bounded REPEATED GROUP by replication (~51 B per repetition; `(?:a|[b-z]){0,1024}` = 52,377 B, interp compile 33,030 ns, jit 108,590 ns) where a repeated CLASS is count-independent (197 B flat from `{0,256}` to `{0,65535}`) (OBSERVED 2026-08-30; NOT-A-BUG)
+## U13 — libpcre2 10.46 compiles a bounded REPEATED GROUP by replication (~51 B per repetition; `(?:a|[b-z]){0,1024}` = 52,377 B, interp compile 33,030 ns, jit 108,590 ns) where a repeated CLASS is count-independent (197 B flat from `{0,256}` to `{0,65535}`) (OBSERVED 2026-08-30; NOT-A-BUG)
 
-Records as U2; the compile-cost tables (`eager-jit`, `interpretive`) in
+(formerly the second U3 entry — this file used `## U3` twice; renumbered
+2026-09-27 by [B103]'s pipeline migration, `docs/dev/upstream/findings.tsv`.)
+
+Records as U12; the compile-cost tables (`eager-jit`, `interpretive`) in
 reports/2026-08-30-bounded-0.1-*-first-sample-36d5963.md; ledger §1.5.
 `nest2-64` 1,298 B and `nest3-16` 4,754 B likewise grow with the count.
 bench/bounded/oracle_limits.tsv predicted this from the oracle's own
