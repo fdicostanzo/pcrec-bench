@@ -597,9 +597,29 @@ give-up, still answering an ordinary `match` with its real count. The
 bug's own reproduction (git-stash each driver, rebuild, confirm the
 SAME three witnesses truncate to `match`, restore) was verified by hand
 during this lane, not re-run automatically every pass -- see
-docs/dev/known_issues.md KB-29. `tre`/`re2`/`rust` have the identical
-loop shape and are OWED to the next harness lane; `vectorscan` is
+docs/dev/known_issues.md KB-29. `vectorscan` is
 structurally exempt (`GAVE_UP_CODES = frozenset()`). 6 PASS lines.
+
+[B98] lane `b98kb29` (2026-09-26, KB-29's tre/re2/rust rider): the SAME
+check gained a SEVENTH arm and a documentary note, closing KB-29's
+"OWED" line. `tre`: FIXED defensively (the same mirrored shape), but an
+exhaustive fault-injection census
+(docs/dev/measurements/2026-09-26-kb29-tre-giveup-reachability.txt, an
+LD_PRELOAD malloc/calloc/realloc call counter around exactly this
+driver's own find-all call shape) found ZERO allocations inside ANY
+`tre_regnexecb()` exec call across 1-7 backreference groups and
+subjects 10 B-1,000,000 B, so `REG_ESPACE` -- the only code besides
+`REG_OK`/`REG_NOMATCH` an exec call can return (confirmed against
+libtre's own source, `tre-mem.c`/`tre-stack.c`) -- is UNREACHABLE from a
+find-all loop's second-or-later call here; the new arm is a REGRESSION
+CONTROL only (a genuine backreference-stress subject with no answer
+still resolves as an ordinary `nomatch`, never a spurious `giveup:`),
+never a positive give-up witness. `re2`/`rust`: NO code change --
+confirmed by direct inspection that neither find-all loop has an
+error-code channel at all (`RE2::Match()` returns `bool`;
+`regex::find_at()`/`find()` return `Option`), so the bug shape cannot
+exist there structurally, the same disposition `vectorscan` already
+carries for an unrelated reason. 7 PASS lines total.
 
 [B98] lane `b98rider` (2026-09-26, KB-34 -- the whole-subject wrap's
 leading-verb placement bug): `check_kb34_leading_verb_hoist` --

@@ -384,6 +384,16 @@ refusal code — the SAME structural fact `testees/re2/CLAUDE.md` states
 for RE2's `Match()` API (capability_set_v1.md §5.4). `handle["giveup_
 codes"]` is the empty set, by construction, not merely by omission.
 
+**KB-29 audit (docs/dev/known_issues.md, lane b98kb29, 2026-09-26):**
+confirmed CLOSED, no code change. KB-29's mid-loop find-all give-up
+truncation bug (fixed for pcre2/onig/pcrec, lane b98rider) needs a
+per-call error-code channel a fix could silently discard — `src/main.rs`'s
+find-all loop (above) has no such channel: `re.find_at(...)` returns a
+plain `Option`, matched with `Some(m) => m, None => break` — there is no
+`Err` arm to have the bug in the first place. Confirmed by direct
+inspection of the loop, not merely by this section's own pre-existing
+claim.
+
 A construct the `EXT_BENCH_ROSTER` row below declares missing never
 reaches this adapter's own refusal path — `pcrecbench.capability`'s
 pre-compile policy intercepts it first (`unsupported-by-declaration`).

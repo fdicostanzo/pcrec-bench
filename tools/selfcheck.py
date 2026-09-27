@@ -11907,7 +11907,25 @@ def check_kb29_find_all_giveup_propagation():
     in docs/dev/lanes/b98rider_report.md and docs/dev/known_issues.md
     rather than re-run here every check-harness pass, since doing so
     would mean carrying a second, permanently-unfixed copy of each
-    driver just to keep re-proving a bug this lane already closed."""
+    driver just to keep re-proving a bug this lane already closed.
+
+    KB-29, lane b98kb29 (2026-09-26), the tre/re2/rust rider this KB
+    entry owed: `testees/tre/driver.c` got the SAME mirrored fix
+    (defensively -- an exhaustive fault-injection census,
+    docs/dev/measurements/2026-09-26-kb29-tre-giveup-reachability.txt,
+    found ZERO allocations inside any tre_regnexecb() exec call across
+    1-7 backreference groups and subjects 10 B-1,000,000 B, so
+    REG_ESPACE -- the only code besides REG_OK/REG_NOMATCH an exec call
+    can return -- is UNREACHABLE from a find-all loop's second-or-later
+    call on this pinned libtre build; no real witness exists to assert,
+    only a regression control that a genuine backreference-stress
+    subject still resolves cleanly, never a spurious `giveup:`).
+    `testees/{re2,rust}/driver.*` need NO code change at all: RE2's
+    `Match()` returns a plain `bool` and the `regex` crate's `find_at`/
+    `find` return a plain `Option` -- neither has an error-code channel
+    a mid-loop give-up could even be smuggled through, confirmed by
+    direct inspection of both find-all loops, not merely by their own
+    driver-header claims."""
     print("-- KB-29: a mid-loop find-all give-up is never silently "
           "truncated to a short count --")
     adapters = _ad.discover()
@@ -12027,6 +12045,95 @@ def check_kb29_find_all_giveup_propagation():
                     ctrl_row.answer if ctrl_row else None)
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
+
+    # ------------------------------------------------------------- tre
+    # KB-29 (lane b98kb29, 2026-09-26): the SAME mirrored fix landed in
+    # testees/tre/driver.c (defensively -- see below), but no REAL
+    # witness exists for it the way pcre2/onig/pcrec have one.
+    # docs/dev/measurements/2026-09-26-kb29-tre-giveup-reachability.txt
+    # is an exhaustive fault-injection census (an LD_PRELOAD malloc/
+    # calloc/realloc call counter, 1-7 backreference groups, subjects
+    # 10 B-1,000,000 B): ZERO allocations ever occur inside a
+    # tre_regnexecb() exec call on this pinned libtre build, and
+    # REG_ESPACE -- the only code besides REG_OK/REG_NOMATCH TRE's own
+    # source can return from an exec call (tre-mem.c/tre-stack.c: it
+    # fires only on a genuine allocation failure) -- therefore CANNOT
+    # arise from a find-all loop's second-or-later call here. The fix
+    # is correct and harmless but structurally unreachable on this
+    # build; this arm is a REGRESSION CONTROL only, proving the fix
+    # does not turn an ordinary NOMATCH into a spurious `giveup:` on a
+    # pattern that genuinely stresses TRE's backtracking matcher (a
+    # real backreference, `automaton_class`'s own iff for routing there
+    # at all -- testees/tre/CLAUDE.md), never a positive give-up
+    # witness the way the three fixed engines above have one.
+    if "tre" in adapters:
+        a = adapters["tre"]
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-kb29-tre-")
+        try:
+            testee_id = "tre-default"
+            a.prepare(testee_id, tmp)
+            # X|a(b*)\1c: call 1 (pos 0) matches the leading literal 'X'
+            # trivially; call 2 (pos 1), over a long 'b'-run with no
+            # trailing 'c', drives the SAME backreference machinery
+            # 2026-09-26-kb29-tre-giveup-reachability.txt exhaustively
+            # probed, fully exploring before answering NOMATCH.
+            pattern = b"X|a(b*)\\1c"
+            cp = a.compile(testee_id, "kb29-tre-stress", pattern, {}, 1, tmp)
+            plain = cp.get(_ad.FORM_PLAIN)
+            if plain.outcome != "compiled":
+                bad("KB-29/tre: the backreference stress witness compiles",
+                    "outcome=%s diagnostic=%r"
+                    % (plain.outcome, plain.diagnostic))
+            else:
+                subj_path = os.path.join(tmp, "kb29-tre-subj.bin")
+                with open(subj_path, "wb") as f:
+                    f.write(b"Xa" + b"b" * 2000)
+                subj = _KB30Subject("s1", subj_path)
+                rows_by_trial, _i, notes = a.measure(
+                    dict(plain.handle), "throughput", [subj], 1, 1,
+                    timeout=30)
+                row = rows_by_trial[0][0]
+                if row.answer == "match" and row.start == 0 and row.end == 1:
+                    ok("KB-29/tre regression control: a genuine "
+                       "backreference stress subject with no answer "
+                       "still resolves cleanly (the leading 'X' "
+                       "matches), never a spurious giveup",
+                       row.answer)
+                else:
+                    bad("KB-29/tre regression control: a genuine "
+                        "backreference stress subject with no answer "
+                        "still resolves cleanly, never a spurious "
+                        "giveup", "answer=%r notes=%r" % (row.answer, notes))
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+    else:
+        print("   (tre adapter not present -- skipped)")
+
+    # ------------------------------------------------------- re2 / rust
+    # KB-29: NEITHER driver has the bug shape at all, by API construction
+    # rather than by a fix -- documented in BOTH engines' own driver
+    # source header AND testees/{re2,rust}/CLAUDE.md long before this
+    # lane: RE2's Match() returns a plain bool (testees/re2/driver.cc's
+    # own header, "`giveup:<code>` NEVER FIRES FROM THIS DRIVER"); the
+    # `regex` crate's find_at()/find() return a plain Option, and the
+    # crate guarantees worst-case linear time with no resource-limit
+    # refusal surface at all (testees/rust/src/main.rs's own header,
+    # identical wording). Confirmed by direct source inspection of both
+    # find-all loops (testees/re2/driver.cc, testees/rust/src/main.rs):
+    # neither has an `if (rc < 0)`/`match ... Err` branch to fix in the
+    # first place -- there is no variable capable of holding a
+    # hypothetical error code. No code change, no check possible here
+    # (there is nothing to assert against): both are structurally
+    # exempt, the same disposition `vectorscan`'s `GAVE_UP_CODES =
+    # frozenset()` already carries for a different reason (Hyperscan HAS
+    # closed error codes; this project's driver simply never classifies
+    # any of them `gave-up`).
+    print("   KB-29/re2, KB-29/rust: structurally exempt, not a check --"
+          " the public match API (RE2::Match() -> bool; regex::find_at()/"
+          "find() -> Option) has no error-code channel to fix at all, "
+          "confirmed by direct inspection of testees/re2/driver.cc and "
+          "testees/rust/src/main.rs (see each file's own header comment "
+          "and testees/{re2,rust}/CLAUDE.md)")
 
 
 def check_vectorscan_som():
