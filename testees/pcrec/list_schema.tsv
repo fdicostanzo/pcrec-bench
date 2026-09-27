@@ -1,23 +1,21 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# tenth archiving of this surface (first: cd371441; second: a770139e,
+# eleventh archiving of this surface (first: cd371441; second: a770139e,
 # byte-identical; third: cf0962e3, +1 row; fourth: 8d716693, fifth:
 # b1885a83, sixth: 6ef76820, all byte-identical; eighth: ce658cb7, +2
-# rows; ninth: 02902356, +6 rows / -1 row / 5 rows re-worded; this one:
-# byte-identical).
+# rows; ninth: 02902356, +6 rows / -1 row / 5 rows re-worded; tenth:
+# 751b9c6d, byte-identical; this one: byte-identical).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-751b9c6d/build/pcrec --list-schema
+#     build/pcrec-a32bc86e/build/pcrec --list-schema
 #
-# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
-# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: [OPT-REQRUN-ENC] stage 2
-# (37 -> 38, the necessary run's `!bytekey` decline moves leftmost ->
-# rightmost -- an emit-side selection change, no `.rxt` grammar move) and
-# the K68 flags-mask fix (38 -> 39, a reflection-surface fix). Neither
-# touches src/parse/rxt_schema.def or rxt_source.c.
-# 78 data rows across two sections -- BYTE-IDENTICAL to the 02902356 copy
+# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
+# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (data-tier
+# only, no `.rxt` grammar move) and [OPT-LITSCAN] S2a (emit-side only).
+# Neither touches src/parse/rxt_schema.def or rxt_source.c.
+# 78 data rows across two sections -- BYTE-IDENTICAL to the 751b9c6d copy
 # below the header (diffed line for line).
 # Nothing in this project's adapters or checks reads this file (declared
 # for a future `.rxt`-format check, per docs/design/rxt_needs_v1.md);

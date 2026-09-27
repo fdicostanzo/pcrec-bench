@@ -3,16 +3,32 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-751b9c6d/build/pcrec --list-limits
+#     build/pcrec-a32bc86e/build/pcrec --list-limits
 #
-# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
-# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: [OPT-REQRUN-ENC] stage 2
-# (37 -> 38) and the K68 flags-mask fix (38 -> 39). Neither adds, removes
-# or reworks a numeric limit.
-# 62 data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- BYTE-IDENTICAL to the 02902356 copy below the header (diffed
-# line for line).
+# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
+# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (39 -> 40,
+# the byte-rate accessor + default.rxt data tier, TWO new limit rows:
+# PCREC_MAX_FIND_COUNT and PCREC_FIND_FLOOR_PPM) and [OPT-LITSCAN] S2a
+# (40 -> 41, the VM literal-run compare, no limit row of its own).
+# 64 data rows / 7 columns (name, value, unit, kind, override, anchor,
+# desc) -- TWO new rows against the 751b9c6d copy below the header
+# (diffed line for line): every other row BYTE-IDENTICAL.
+# pcrec numeric-limits registry (docs/spec/table_contract.md, the
+# SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
+# src/core/limits.def, in the table's own order.
+#
+# unit: the quantity's dimension, or empty for a dimensionless
+# magnitude ceiling.
+# kind: "compile budget" (bounds the COMPILER's own analysis or
+#   emission; crossing it can refuse a pattern) | "runtime
+#   capacity" (bounds the EMITTED MATCHER's own resource use;
+#   crossing it is a give-up, never a wrong answer) | "size cap"
+#   (bounds emitted artifact bytes) | "selection knee" (a
+#   threshold or default that steers a selection mechanism, not a
+#   hard ceiling) | "identifier cap" (bounds a name's length or a
+#   naming-tied count).
+# override: "flag" (a CLI flag or pcrec_options field moves it per
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -64,6 +80,8 @@ PCREC_MAX_SPLICE_NODES	512	nodes	compile budget	none		[DD-14 wave G]: per-call-s
 PCREC_MAX_SPLICE_TOTAL	8192	nodes	compile budget	none		[DD-14 wave G]: total added AST nodes across every spliced call site in one compile
 PCREC_ANCHORED_MAX_STATES	4096	states	compile budget	-D		[ENG-ABS]: the optional anchored match-here machine's own DFA state ceiling, lower than the mandatory pair's
 PCREC_MAX_VM_EMIT_CODE_BYTES	500000	bytes	size cap	flag+-D	8	[ART-SIZE]/D84: emitted C bytes OUTSIDE table initializers; --max-emit-code-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default (run_size_term.sh's reference-compiler consumer) -- [LIM-OVR] 2026-09-22: override was BUILD_D ('never a caller lever'), false given --max-emit-code-bytes; FLAG_D names the two-lever shape honestly
+PCREC_MAX_FIND_COUNT	1099511627776	count	compile budget	none	3.7	[FINDINGS] B1: the largest count one `row` of an analysis data block may carry (2^40); over it the block is refused by this name at parse, never truncated. Keeps the byte-rate normalization's product (count x 10^6 <= 2^60) and every later derivation inside uint64_t (docs/design/findings/design.md §2.3, §2.5, §9)
+PCREC_FIND_FLOOR_PPM	2	ppm	selection knee	none	3.7	[FINDINGS] B1: the byte-rate floor, in parts per million — the rate a byte a data block never counted (or counted too rarely) is given by the normalization, so no rate reader ever believes a byte IMPOSSIBLE and selects on a certainty it does not have. The shipped default's own floor, which is why it normalizes to itself (docs/design/findings/design.md §0.7, §2.5)
 PCREC_DEFAULT_WARN_EMIT_BYTES	250000	bytes	size cap	flag+-D	8	[OPT-4]: the advisory --warn-emit-bytes default (never refuses, 0 disables) ALSO settable per-compile; -D moves the built-in default -- [LIM-OVR] 2026-09-22: override was BUILD_D; --warn-emit-bytes is a real (non-raise-only) caller lever on top of the -D-movable default, the same two-lever shape as the raise-only rows above, now FLAG_D
 PCREC_MAX_EMIT_BYTES	1000000	bytes	size cap	flag+-D	8	[ART-SIZE]/D84: the whole comment-excluded artifact; --max-emit-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default -- [LIM-OVR] 2026-09-22: override was BUILD_D ('never a caller lever'), false given --max-emit-bytes; FLAG_D names the two-lever shape honestly
 PCREC_SIZE_TERM_THRESHOLD	120000	bytes	selection knee	-D		[ART-SIZE]: the emitted-size knee above which the unroll-K size term evaluates the ladder at all
