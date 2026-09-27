@@ -1,0 +1,17 @@
+# Source information (D35 style)
+# date: 2026-09-27
+# box: ubuntubudu, Linux 7.0.0-29-generic, x86_64, 12 cores (quiet, BD3)
+# engine: pcre2test (system) 10.46 2025-08-27, libpcre2-8-0 10.46-1build1
+#      (the same version pcrec-bench's own pcre2-jit/pcre2-interp testees
+#      link, testees/pcre2/CLAUDE.md)
+# command: UPSTREAM_SCRATCH=/tmp/upstream-test-U4b bash run.sh
+# result: PRESENT (three repeated runs on this box: 30.87x, 22.97x, 34.33x)
+#
+# --- stderr (diagnostics, one representative run) ---
+# U4 repro: pcre2test 10.46, http-5xx.rx over 1048576 B of quote-free prose, 20 reps
+#   jit median match time:    571.0500 us
+#   interp median match time: 18.5000 us
+#   ratio (jit/interp): 30.87x
+#
+# --- stdout (the one line tools/upstream.py parses) ---
+U4 PRESENT pcre2 10.46 30.87x

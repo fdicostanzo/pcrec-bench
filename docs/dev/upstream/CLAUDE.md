@@ -31,16 +31,24 @@ about pcrec go to the pcrec manager's outbox, never this directory.
   output of the last PRESENT run, D35-style source header) once one has
   been run. Never generated from the bench's store at run time — a
   maintainer must be able to run it with no access to this repo beyond
-  the one directory. Empty today (`.gitkeep` only): b103infra built the
-  registry and the tool; repro/ directories are the two sibling lanes'
-  and Frank's own proving-batch work (design note §7), not created here.
+  the one directory. b103infra built the registry and the tool with
+  `repro/` empty (`.gitkeep` only); `repro/U1/`, `U2/`, `U4/`, `U5/`
+  (2026-09-27, lane b103pcre2, the proving batch's libpcre2 quarter)
+  are the first populated ones — each with README.md/run.sh/
+  expected.txt, confirmed PRESENT on both the box's system libpcre2
+  10.46 and a from-source PCRE2 10.48 build (the current release);
+  U6-U8 (TRE/vectorscan/RE2) are the proving batch's other sibling
+  lanes, per design note §7.
 - `notes/<engine>-<YYYY-MM-DD>.md` — per-engine NOTE DRAFTS bundling
   findings for one maintainer submission (§4): a header block (the ids,
   the target channel, an approval line left blank until Frank fills or
   confirms it) plus one self-contained write-up per finding, in the
-  maintainer's terms, not this project's. Empty today (`.gitkeep` only)
-  — nothing is drafted before at least one finding here reaches
-  REPRODUCED/UNDERSTOOD with a tracker search done.
+  maintainer's terms, not this project's. `notes/pcre2-2026-09-27.md`
+  (2026-09-27, lane b103pcre2) is the first one written, bundling
+  U1/U2/U4/U5 for GitHub issues; its approval line is blank — nothing
+  is drafted before at least one finding here reaches
+  REPRODUCED/UNDERSTOOD with a tracker search done, and nothing is
+  sent without Frank's word.
 
 ## Tooling
 

@@ -1,0 +1,21 @@
+# Source information (D35 style)
+# date: 2026-09-27
+# box: ubuntubudu, Linux 7.0.0-29-generic, x86_64, 12 cores (load average
+#      ~1.06/0.57/0.57 at capture time -- a quiet box, BD3)
+# engine: pcre2test (system) 10.46 2025-08-27, libpcre2-8-0 10.46-1build1
+#      (the same version pcrec-bench's own pcre2-jit/pcre2-interp testees
+#      link, testees/pcre2/CLAUDE.md)
+# command: UPSTREAM_SCRATCH=/tmp/upstream-test-U1 bash run.sh
+# result: PRESENT (this is the PRESENT case -- the bug reproduces)
+#
+# --- stderr (diagnostics) ---
+# U1 repro: pcre2test 10.46, subject 524288 B of 'a' (no '@')
+# control (orig.rx, no subroutines), jit:
+#   elapsed: 0.115s
+# factored.rx, interpreter (no jit):
+#   elapsed: 0.120s
+# factored.rx, jit (the finding):
+#   elapsed: >45s (timed out)
+#
+# --- stdout (the one line tools/upstream.py parses) ---
+U1 PRESENT pcre2 10.46 timeout45s
