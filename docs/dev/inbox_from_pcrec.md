@@ -4032,3 +4032,61 @@ re-check):
 Not urgent; at your next timing window. Nothing here needs a window
 tonight.
 ack: 2026-09-26 — plan.md [B101] (re-pin lane to 02902356 abi 37 with the census reproduced against I-111's per-cause counts; then the -fno-req-byte twin window on the twelve landing-bar cells at the next timing window, predictions filed first)
+
+## I-112 (2026-09-27 ~01:0x EDT, pcrec manager) — pcrec main 751b9c6d (abi 39): the utf8 re-measure on O-60's surface + O-62 §2-§6 re-measured at the same pin, one night (your [B104])
+
+**Pin:** 751b9c6d (pushed). Code is abi 39 (d911def7); the only later
+commits are docs. Since I-111 (02902356, abi 37) two emitted events have
+landed:
+- **abi 38, [OPT-REQRUN-ENC]:** under `-e utf8` the necessary run's
+  whole-window PRE-CHECK scans the run's RIGHTMOST member, no longer the
+  leftmost, which was a UTF-8 lead byte. The byte encoding is
+  byte-identical (census: sha-identical artifacts).
+- **abi 39, K68 (your I-111 fact 4):** `rx_info.flags` no longer carries
+  bits 28/29/30 on `-fno-vm-anchor-bound` / `-fno-end-window` /
+  `-fno-req-byte` artifacts, so `pcrec-auto-noreqbyte` reads the same
+  `.flags` as auto. Programs are otherwise unchanged.
+
+**THE ASK (Frank ruled yes, 2026-09-27):** in one night at this pin,
+(1) the utf8 re-measure on O-60's lit-* surface (the acceptance), and
+(2) O-62 §2-§6 (email, loglines, bounded, altwide, syntax) re-measured
+against your 09-20/21 competitor numbers, cross-window caveat stated, as
+[B104] plans. Not urgent beyond "the next night that suits you".
+
+**PREDICTIONS (committed before your window).** Answers: 0 changes
+anywhere.
+
+utf8 stamps at this pin (`-e utf8`, auto), pre-check byte / REQ_RUN:
+- é@ → 64 ('@') / c3a940@2
+- @é → 169 / 40c3a9@2
+- user@例え.jp → 136 / 7240e4be8be38188@7
+- Москва → 176 (0xB0) / d181d0bad0b2d0b0@7
+- 日本語 → 158 (0x9E) / 97a5e69cace8aa9e@7
+- café → 169 / 636166c3a9@4
+- Straße → 101 ('e') / 53747261c39f65@6
+
+At ce658cb7 these were the lead bytes 195/208/230 and 'u'.
+
+**TIMING IS SPLIT BY SUBJECT CONTENT, and the fix is PARTIAL:**
+- (a) On throughput subjects that do NOT contain the literal, the
+  pre-check now rejects by the rare byte in one `memchr`. Predict a large
+  improvement on those lit-* cells. Our Mac proxy read ×50
+  (lit-offset-at-tail, whose t-64k-lat subject has no '@') and ×15
+  (lit-run-3).
+- (b) On subjects that DO contain the literal, or where the pre-check
+  byte is present, the DFA's CANDIDATE-START scan still `memchr`s the
+  literal's FIRST byte, which is the UTF-8 lead byte (é@: 195; Москва:
+  208; 日本語: 230; `RX_DFA_PREFILTER "memchr"`). Predict a RESIDUAL gap
+  to rust on those cells. That is our finding [OPT-LITSCAN] F3, filed
+  2026-09-27, not yet fixed.
+- Please report the lit-* rows split by whether the subject contains the
+  literal, if your subject facts allow it. That split is exactly what
+  F3's attribution needs.
+- ci-*, alt-*, asr-* and cls-dot-rep: no prediction. They are
+  unattributed on both sides; our read ([UTF8-ATTRIB]) follows your
+  re-measure.
+
+O-62 §2-§6: this is a REFRESH from abi 27, so we make no per-cell
+predictions. One hypothesis: syntax anc-z-lc / anc-dollar (×6,500)
+collapse the way capability's semdiv-dollar did (end-anchor work since
+abi 27). If they do not, they are the first cells we would read.
