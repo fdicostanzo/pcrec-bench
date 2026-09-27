@@ -2467,12 +2467,18 @@ DENY_FLAGS = (
     # `run-pinned` form (built on the run), the denial also drops the
     # prefilter back to the pre-S1 form (github-pat run-pinned-bounded ->
     # offset-set-bounded, router-prefix-order run-pinned -> memchr) -- the
-    # pair then measures the byte, the run AND S1's prefilter together;
-    # and the bit is NOT in pcrec's strategy_denials mask
+    # pair then measures the byte, the run AND S1's prefilter together.
+    # AT 02902356 the bit was NOT in pcrec's strategy_denials mask
     # (`rx_info.flags` = 1073741824 under it, 0 without), so even an
-    # artifact with no necessary byte differs from its sibling in that one
-    # initializer constant (program_sha256 ignores it: the v2 normalization
-    # drops the unread rx_info initializer).
+    # artifact with no necessary byte differed from its sibling in that one
+    # initializer constant (program_sha256 ignored it: the v2 normalization
+    # drops the unread rx_info initializer). **[B104] (pin 751b9c6d, K68
+    # FIXED)**: bit 30 now JOINS the mask (with bits 28/29), so
+    # `rx_info.flags` reads IDENTICALLY (0) on `router-prefix-order` under
+    # default and under `-fno-req-byte` -- MEASURED directly (`.flags = 0ULL`
+    # both arms, both the `.c` grep and the field). The twin is now a pure
+    # `.flags`-identical pair on every artifact with no necessary byte,
+    # closing the one-constant residue this comment used to name.
     ("-fno-req-byte", "noreqbyte",
      "the [OPT-REQBYTE] NECESSARY-BYTE PRE-CHECK denied (--list-axes "
      "`req-byte`, bit 30): no byte every match must contain is analysed, "
