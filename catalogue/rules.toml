@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.10"
+catalogue_version = "3.11"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,17 @@ catalogue_version = "3.10"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.11 (2026-09-27, lane b104repin, [B104]/inbox I-112): MINOR, a
+# `[[pin_order]]` append only -- `751b9c6d` (abi 39: TWO abi steps, 37 ->
+# 38 [OPT-REQRUN-ENC] stage 2 -- the necessary run's `!bytekey` decline
+# moves leftmost -> rightmost, byte encoding untouched by construction --
+# and 38 -> 39 the K68 fix, `rx_info.flags`'s strategy_denials mask gains
+# bits 28/29/30, a reflection-surface fix with no answer or program move)
+# joins after `02902356`. No rule predicate/threshold/inputs/slots moved;
+# no golden fact re-derives; the compile-only census over both b101's
+# populations (docs/dev/measurements/2026-09-27-b104-census.txt) reads
+# 964 identical / 70 refused-both / 0 changed / 0 refusal-mover of 1034.
 #
 # 3.10 (2026-09-26, lane b101repin, [B101]/inbox I-111): MINOR, a
 # `[[pin_order]]` append only -- `02902356` (abi 37: FOUR abi steps, 33
@@ -218,7 +229,8 @@ engine = "pcrec"
 pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "263b013", "a7e0bdf", "1989c62", "288d505", "334fd10e",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
-          "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356"]
+          "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
+          "751b9c6d"]
 
 # ===================================================== class R-STATUS ==
 
