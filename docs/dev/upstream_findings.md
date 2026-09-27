@@ -268,3 +268,64 @@ engines read Script. This is a documented semantics difference, not a bug.
 It refuted the utf8 set's P9/P10 transcription, which excluded `prp-greek`
 alone. Status: UNDERSTOOD (the Unicode property difference; the separating
 code points are verified above). Ledger §3.1.
+
+## U11 — libpcre2 10.46's `pcre2_match()`/`pcre2_dfa_match()` built-in UTF-8 subject validation costs ~3.05-3.13× more per byte on Cyrillic text than on ASCII text of the same byte length, on ALL THREE routes — a genuine engine cost, not a driver artifact (OBSERVED and UNDERSTOOD 2026-09-26, `utf8@0.1` first sample; lane b102floor)
+
+The addendum ledger (`docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7-
+addendum-r2r7.md` §5/§8 item 4) flagged the `floor` pattern (the literal
+`~`, NOT match-anything) costing ~3.05-3.12× more ns/byte on `t-64k-cyr`
+than on `t-64k-asc` on `libpcre2-dfa`/`-interp`/`-jit`, all three at
+`t-64k-cyr` only (extract lines 183-185: dfa ratio 3.1198, interp 3.1194,
+jit 3.0481, npb 0.608/0.608/0.629 asc vs 1.897/1.897/1.918 cyr). Both
+subjects are exactly 65536 bytes (`bench/utf8/subject_facts.tsv`); `~`
+matches ZERO times on either (`expectations.tsv`: both `nomatch`), so the
+real driver's find-all loop makes exactly ONE match call per subject —
+this cost IS the whole measured cost, no loop involved.
+
+A standalone C probe (`docs/dev/measurements/probe_libpcre2_floor_cyr.c`,
+archived `2026-09-26-libpcre2-floor-cyr-probe.txt`) isolates the cause:
+with `PCRE2_UTF` set and NO `PCRE2_NO_UTF_CHECK`, a single
+`pcre2_match()`/`pcre2_dfa_match()` call over the SAME 65536-byte
+buffers reproduces the ratio almost exactly (7 outer runs, medians
+3.051/3.128/3.051 for interp/dfa/jit-via-match, within ~1.6% of the
+committed report's three numbers) — using a single isolated call, no
+bench harness, no store. Forcing `PCRE2_NO_UTF_CHECK` on the SAME calls
+COLLAPSES the ratio to ~1.00 on all three routes AND brings the absolute
+cost down to byte-mode (no `PCRE2_UTF` at all) levels: the entire gap
+IS the built-in UTF-8 validation pass libpcre2 performs before its own
+scan begins (man pcre2api, "PCRE2_NO_UTF_CHECK": validated "unless
+PCRE2_NO_UTF_CHECK is passed", already the mechanism behind this
+project's own [B94]/BD15 VALIDATE-ONCE fix — this finding is the SAME
+validation call, priced by SCRIPT rather than by call count).
+
+**pcrec-bench's own driver (`testees/pcre2/driver.c`) reaches this
+validation cost on the `pcre2-jit` testee too**, and the probe confirms
+why: the real driver never calls `pcre2_jit_match()` — `pcre2_match()`
+dispatches to JIT-compiled code internally when present (driver.c's own
+header comment, man pcre2jit). The probe's `jit_via_match` measurement
+(pcre2_match() called on a JIT-compiled pattern, the ACTUAL testee call
+shape) reproduces the ~3.05× ratio exactly; calling `pcre2_jit_match()`
+DIRECTLY (which the real testee never does) shows FLAT cost on BOTH
+scripts, check or no-check — localising the validation cost to
+`pcre2_match()`'s/`pcre2_dfa_match()`'s own pre-dispatch check, which the
+lower-level JIT entry point bypasses or performs far more cheaply as
+part of its own vectorized code.
+
+A negative control (the common byte `' '`, find-all loop, VALIDATE-ONCE)
+shows the OPPOSITE, much smaller ratio (~1.10-1.16, ASC costlier) once
+the one-time validation cost is amortised across many per-match calls
+(9216 matches on asc vs 7214 on cyr in the same 65536 bytes) —
+confirming the ×3 gap is specific to `floor`'s own one-call, zero-match
+shape, not a property of every pattern in the set.
+
+Status: UNDERSTOOD (confirmed live by the `PCRE2_NO_UTF_CHECK` ablation
+and the `pcre2_jit_match()`-vs-`pcre2_match()` comparison; no libpcre2
+source read — this is a black-box characterisation of `PRIV(valid_utf)`-
+class behaviour, not a line-level attribution). NOT REPORTED upstream:
+plausibly a documented ASCII-fast-path/multi-byte-slow-path
+characteristic of any UTF-8 validator, not obviously a defect. Not ours
+to fix or work around — `floor`'s own charter (bench/utf8/NOTES.md) is
+the byte-safe control pattern, and this cost is intrinsic to what
+`PCRE2_UTF` validation does, not to anything this project's driver or
+harness chooses. `docs/dev/measurements/probe_libpcre2_floor_cyr.c` /
+`2026-09-26-libpcre2-floor-cyr-probe.txt`.
