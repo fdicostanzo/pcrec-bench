@@ -614,3 +614,17 @@ word plus punctuation does not); the plain form untouched; an
 unterminated `(*` left alone and still refusing. Verified against the
 real bug by hand (git-stash driver.c, rebuild, confirm the exact
 refusal, restore) -- see docs/dev/known_issues.md KB-34. 4 PASS lines.
+
+[B101] (2026-09-26, lane b101repin, the re-pin to 02902356, abi 37; inbox
+I-111): `check_noreqbyte_testee` (new, 6 checks) -- the `-fno-req-byte`
+twin `pcrec-auto-noreqbyte`: the flag and bit read off the registry, the
+derived id = `pcrec-auto`'s + `_noreqbyte` with `pcrec-auto`'s own shape
+still the frozen one, the three req stamps by value on both arms of
+`foo[0-9]+bar` / capability github-pat / uuid-grok (github-pat's denied
+arm ALSO drops S1's `run-pinned-bounded` prefilter), and the null arm
+(uuid-grok program-identical across the twin) with its control
+(github-pat not). `check_deny_flag_controls` now splits the registry's
+`|`-joined deny cells (the run-pinned rows) and takes an optional eighth
+element naming the spelling; two new rows on `abc` for bit 32 and bit 16.
+`check_mechanism_stamps` gains six ledger rows (I-111's S1BUILD / K65 /
+step-6 movers by value) and the `B101_*` size-book constants.

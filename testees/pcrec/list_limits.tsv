@@ -3,20 +3,22 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-ce658cb7/build/pcrec --list-limits
+#     build/pcrec-02902356/build/pcrec --list-limits
 #
-# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33 --
-# see list_axes.tsv's header), archived 2026-09-25 by
-# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
-# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
-# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
-# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
+# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37 -- see list_axes.tsv's header),
+# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
+# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
+# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
+# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
+# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
+# prefilter that verifies the run, and the two `run-pinned` prefilter
+# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
+# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
+# 42ee828f..02902356 touches no src/ file.
 # 62 data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- 60 -> 62 against the 6ef76820 copy, TWO rows APPENDED to the
-# identifier-cap / compile-budget block and nothing else moved (diffed
-# line for line): PCREC_MAX_VAR_NAME_LEN 64 (identifier cap) and
-# PCREC_MAX_VAR_NEST_DEPTH 8 (compile budget), both [VAR]'s own (abi 32,
-# pcrec docs/spec/limits.md 3.6). K64 (abi 33) adds no limit.
+# desc) -- BYTE-IDENTICAL to the ce658cb7 copy below the header (diffed
+# line for line): K65/K66's set and whole run are bounded by the existing
+# PCREC_MAX_REQ_RUN_SCAN, S1 adds no numeric cap.
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.

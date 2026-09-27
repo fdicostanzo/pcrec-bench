@@ -735,6 +735,73 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   a scratch copy re-dated to 2026-09-26T00:00:00Z against the first-sample
   report reads 3/3 parents confirmed (docs/dev/lanes/b95read_report.md).
 
+- `capability-0.1-noreqbyte-twin-02902356.tsv` — lane `b101pred`, 2026-09-26:
+  the predictions for [B101]'s OWED [OPT-REQBYTE] timing window (inbox
+  I-111), stated BEFORE it runs. **12 clause rows over 11 parents**, one
+  per I-111's own twelve landing-bar cells (capability@0.1 x
+  `{pcrec_02902356_auto-caps-simdna, pcrec_02902356_auto-caps-simdna_noreqbyte}`
+  at pin 02902356; both testee ids independently re-derived against
+  `schema/validate.py`'s `derive_testee_id` and confirmed against
+  `docs/dev/lanes/b101repin_report.md`'s own values): P1-P5 IMPROVE
+  (`op=lt hi=1`, ratio default/twin strictly below 1, on the five cells
+  I-111 names unmoved-or-mechanically-moved since ce658cb7); P6.a/.b
+  (`floor-byte`/thr and /srch) and P10 (`wild-validator-uuid-grok`/thr)
+  are DO-NOT-REGRESS on the three cells `b101repin_report.md` §5 marks
+  **program-identical** twins (`program_sha256` equal) — read as
+  SAME-PIN NOISE readings (`op=between`, a symmetric band), doubling as
+  the window's own null-control sample per the brief; P7-P9
+  (`float-literal-bound`, `nested-comment-rec`, `wild-secrets-github-pat`,
+  all /thr) are DO-NOT-REGRESS on cells whose programs DIFFER under the
+  denial — one-sided (`op=lte`, no lower bound: a faster twin is not a
+  regression) — P9's note carries the required caveat that its twin also
+  changes S1's DFA prefilter (offset-set-bounded → run-pinned-bounded),
+  so any Δ there is the pre-check AND the prefilter together, never the
+  pre-check alone; P11 (`router-prefix-order`/thr) is a RECORD-ONLY,
+  NON-DIRECTIONAL clause (`quantity=median_ns; reducer=identity;
+  op=present` on the twin's own row) — I-111 states only that this cell
+  is "timed, attributed" to S1's prefilter move in the ledger, never a
+  predicted direction, so no `ratio_to`/`lt`/`lte` clause is written for
+  it (inventing a direction I-111 does not give is exactly what this
+  file must not do). **The DO-NOT-REGRESS bands are CITED, not invented**
+  (per the brief): both numeric bands (`>=1us` stratum ±16.62%, n=150,
+  ok; `100ns-1us` stratum ±12.72%, n=101, ok) are read directly from
+  `docs/design/null_band_v1.md` ([B79]) / `pcrecbench/nullband.py`'s own
+  arithmetic, as MOST RECENTLY MEASURED for capability@0.1 at the
+  immediately-prior cross-pin pair (6ef76820 → ce658cb7,
+  `reports/2026-09-25-capability-0.1-budu-ryzen1600-after-ce658cb7.md`'s
+  own "Null-control band" table) — generalised here from that tool's
+  native population (cross-pin, same-testee, program-identical cells) to
+  this file's own (same-pin, cross-testee) comparison as the widest
+  CITED floor available, since no same-pin cross-testee band has ever
+  been computed by this project's tooling; each affected row's note says
+  so explicitly, including the honest caveat that a true same-window
+  noise floor should be tighter, so a within-band P6/P10 reading is a
+  weak confirm, not a strong one. Each cell's stratum (baseline scale) is
+  read from `pcrec_ce658cb7_auto-caps-simdna`'s own rank-row median in
+  `reports/2026-09-25-capability-0.1-budu-ryzen1600-after-ce658cb7.md`
+  (every named cell but `floor-byte`/srch falls in `>=1us`; `floor-byte`/
+  srch alone is `100ns-1us`). **Load-checked, not scorable yet**: no
+  `capability@0.1` record exists at pin 02902356 as of authoring, so
+  `pcrecbench interpret --predictions ... <report>` has no report to
+  take (the CLI's `report` argument is positional and required) and
+  `check_stated_utc` would in any case refuse this file the same
+  structural way this file's own `capability-0.1-first.tsv` /
+  `capability-0.1-pin-25b1984f-confirm.tsv` entries above already
+  document (capability@0.1's population has been measured many times
+  before, so any honestly-dated new file trips the F27 re-anchor).
+  Validated the same way those files' pre-window commits were: a direct
+  `interpret.load_predictions(path)` call — **12/12 clause rows load,
+  zero closed-set errors** — plus `make check-interpret` (174 passed / 36
+  FAILED, identical to `docs/dev/lanes/b101repin_report.md`'s own count:
+  every failure is the pre-existing catalogue 3.9→3.10 sidecar-freshness
+  gap, OWED at merge, not moved by this file). `check_testee_globs`
+  (Q6 (ii)) was deliberately NOT run pre-window, same precedent as the
+  25b1984f-confirm files: capability@0.1 already has measured records at
+  older pins, so it is not vacuous, and an exact not-yet-measured pin id
+  would read as an authoring-defect false positive until the window
+  writes the first 02902356 records — at which point it passes for the
+  ordinary reason. See `docs/dev/lanes/b101pred_report.md`.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before

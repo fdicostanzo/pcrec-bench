@@ -449,6 +449,15 @@ EXT_BENCH_ROSTER = [
     ("pcrec-vm-in", [t for t in REQUIRES_VOCAB
                      if t not in ("callouts", "conditionals",
                                   "control-verbs", "lookbehind-variable")]),
+    # [B101] (pin 02902356): the [OPT-REQBYTE] twin, pcrec-auto plus
+    # `-fno-req-byte` -- an EMIT-side denial (no pre-check, no run), so it
+    # satisfies exactly pcrec-auto's tokens. MEASURED, not inferred: over
+    # this set's 64 patterns x both forms the two configs' refusal sets are
+    # IDENTICAL (4 refused both, 0 movers; docs/dev/measurements/
+    # 2026-09-26-b101-twin-stamps.txt).
+    ("pcrec-auto-noreqbyte", [t for t in REQUIRES_VOCAB
+                              if t not in ("callouts", "conditionals",
+                                           "control-verbs", "lookbehind-variable")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct

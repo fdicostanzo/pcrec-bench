@@ -1,30 +1,37 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# eighth archiving of this surface (first: cd371441, the W23 delivery pin
-# that shipped `--list-schema` itself; second: a770139e, byte-identical;
-# third: cf0962e3, +1 row for the `config tune` directive; fourth:
-# 8d716693, byte-identical; fifth: b1885a83, byte-identical; sixth:
-# 6ef76820, byte-identical; this one: +2 rows).
+# ninth archiving of this surface (first: cd371441; second: a770139e,
+# byte-identical; third: cf0962e3, +1 row; fourth: 8d716693, fifth:
+# b1885a83, sixth: 6ef76820, all byte-identical; eighth: ce658cb7, +2
+# rows; this one: +6 rows / -1 row / 5 rows re-worded).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-ce658cb7/build/pcrec --list-schema
+#     build/pcrec-02902356/build/pcrec --list-schema
 #
-# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33 --
-# see list_axes.tsv's header), archived 2026-09-25 by
-# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
-# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
-# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
-# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
-# 73 data rows across two sections (`#section schema`, `#section
-# surface`) -- 71 -> 73 against the 6ef76820 copy: TWO rows INSERTED,
-# `block var` (qualified-line) and `block var-unset` (token), [VAR]'s
-# `.rxt` production (pcrec 41e9aa38, "[VAR] M10 (1/2): the .rxt
-# production"), and pcrec's own trailing `# schema-rows:` count 67 -> 69
-# with them; nothing else moved. Nothing in this project's adapters or
-# checks reads this file yet (declared for a future `.rxt`-format check,
-# per docs/design/rxt_needs_v1.md); archived so the registry-surface
-# census stays complete at this pin.
+# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37 -- see list_axes.tsv's header),
+# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
+# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
+# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
+# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
+# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
+# prefilter that verifies the run, and the two `run-pinned` prefilter
+# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
+# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
+# 42ee828f..02902356 touches no src/ file.
+# 78 data rows across two sections -- 73 -> 78 against the ce658cb7 copy.
+# NOT one of I-111's four abi steps: pcrec's [FINDINGS] B0 (.rxt format
+# rows, merge 54bb1159, commits 9f287312..0cf88aca, landed between
+# 0bb87eda and 42ee828f; src/parse/rxt_schema.def + rxt_source.c only, no
+# emitter change): the file-level `freq` row REMOVED and replaced by
+# `file analysis` (opens a BUNDLE); `config analysis` list/repeat ->
+# token/at-most-one; three `bundle` rows (include, description, freq) and
+# two `data` rows (encoding, serves) ADDED; the `provenance url`/`ref`/
+# `bytes`/`sha256` constraints gain an `and source != authored` /
+# `parent == block` conjunct; pcrec's trailing `# schema-rows:` 69 -> 74.
+# Nothing in this project's adapters or checks reads this file (declared
+# for a future `.rxt`-format check, per docs/design/rxt_needs_v1.md);
+# archived so the registry-surface census stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,
 # [DD-13b.W23.1]). One row per (scope, line-kind), walked out of
@@ -68,8 +75,8 @@ file	vocabulary	list	false	prose	repeat	unique-by first-word	format	pcrec	23
 file	oracle	token	false	none	at-most-one		format	pcrec	23
 file	tag	list	false	none	repeat	closed per-key	format	pcrec	23
 file	use	list	false	none	repeat		format	pcrec	23
-file	freq	token	false	data	repeat		format	pcrec	23
 file	ext	token	false	tree	repeat		format	pcrec	23
+file	analysis	token	false	bundle	repeat	unique-by value	format	pcrec	23
 file	version	token	false	none	at-most-one		format	pcrec	999
 config	pcrec	raw	false	none	accumulate		format	pcrec	1
 config	flags	token	false	none	at-most-one		format	pcrec	1
@@ -78,7 +85,7 @@ config	encoding	token	false	none	at-most-one		format	pcrec	1
 config	engine	token	false	none	at-most-one		format	pcrec	1
 config	budget	pair	false	none	accumulate		format	pcrec	1
 config	tune	token	false	none	at-most-one		format	pcrec	1
-config	analysis	list	false	none	repeat		format	pcrec	23
+config	analysis	token	false	none	at-most-one		format	pcrec	23
 block	pattern	raw	true	none	repeat		format	none	1
 block	pattern-esc	raw	true	none	repeat		format	none	23
 block	name	token	false	none	at-most-one		format	all-readers	1
@@ -108,24 +115,29 @@ block	provenance	none	false	provenance	at-most-one		format	pcrec	23
 block	variant	token	false	variant	repeat	unique-by value	format	pcrec	23
 block	ext	token	false	tree	repeat		format	pcrec	23
 provenance	source	token	false	none	at-most-one	required	format	pcrec	23
-provenance	url	token	false	none	at-most-one	required-if source != authored;forbidden-if source == authored	format	pcrec	23
-provenance	ref	token	false	none	at-most-one	required-if source != authored;forbidden-if source == authored	format	pcrec	23
+provenance	url	token	false	none	at-most-one	required-if parent == block and source != authored;forbidden-if source == authored	format	pcrec	23
+provenance	ref	token	false	none	at-most-one	required-if parent == block and source != authored;forbidden-if source == authored	format	pcrec	23
 provenance	retrieved	token	false	none	at-most-one	required	format	pcrec	23
 provenance	license	token	false	none	at-most-one	required-if parent == block	format	pcrec	23
 provenance	license-note	prose	false	prose	at-most-one		format	pcrec	23
 provenance	fidelity	token	false	none	at-most-one	required-if parent == block;closed fidelity verbatim adapted synthesized	format	pcrec	23
 provenance	adaptation	prose	false	prose	at-most-one	required-if fidelity != verbatim	format	pcrec	23
 provenance	attribution	prose	false	prose	at-most-one		format	pcrec	23
-provenance	bytes	int	false	none	at-most-one	required-if parent == data	format	pcrec	23
-provenance	sha256	token	false	none	at-most-one	required-if parent == data	format	pcrec	23
+provenance	bytes	int	false	none	at-most-one	required-if parent == data and source != authored	format	pcrec	23
+provenance	sha256	token	false	none	at-most-one	required-if parent == data and source != authored	format	pcrec	23
 variant	text	raw	false	none	at-most-one	exactly-one-of text unsupported	format	pcrec	23
 variant	unsupported	line	false	none	at-most-one	exactly-one-of text unsupported	format	pcrec	23
 variant	kind	token	false	none	at-most-one	closed kind;forbidden-if unsupported present	format	pcrec	23
 variant	groups	list	false	none	at-most-one	forbidden-if unsupported present	format	pcrec	23
 variant	note	prose	false	prose	at-most-one	forbidden-if unsupported present	format	pcrec	23
+bundle	include	token	false	none	at-most-one		format	pcrec	23
+bundle	description	prose	false	prose	at-most-one		format	pcrec	23
+bundle	freq	none	false	data	at-most-one		format	pcrec	23
 data	question	line	false	none	one	required	format	pcrec	23
 data	reader	line	false	none	one	required	format	pcrec	23
 data	analyzer	line	false	none	one	required	format	pcrec	23
+data	encoding	token	false	none	one	required;closed data-encoding ascii utf8 latin1 bytes	format	pcrec	23
+data	serves	list	false	none	repeat	required;unique-by first-word	format	pcrec	23
 data	row	list	false	none	repeat		format	pcrec	23
 data	provenance	none	false	provenance	at-most-one	required	format	pcrec	23
 #
@@ -142,6 +154,6 @@ subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never r
 pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
 config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
 ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
-# schema-rows: 69
+# schema-rows: 74
 # wave-built: 23
 # wave-reserved: 999

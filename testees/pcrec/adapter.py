@@ -712,7 +712,8 @@ METADATA_DECL = {
     "dfa_prefilter": {
         "type": "enum", "scope": "pattern",
         "values": ["none", "memchr", "byte-class", "memchr-bounded",
-                   "byte-class-bounded", "offset-set", "offset-set-bounded"],
+                   "byte-class-bounded", "offset-set", "offset-set-bounded",
+                   "run-pinned", "run-pinned-bounded"],
         "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
                   "CHECKED against rx_info.prefilter (pb_info_prefilter()); "
                   "the value set is CHECKED against `pcrec --list-axes` "
@@ -728,7 +729,14 @@ METADATA_DECL = {
                        "values ([OPT-K], pcrec abi 9) scan for ONE byte at a "
                        "chosen offset k* inside the fixed-length prefix and "
                        "verify the other offsets per candidate; WHICH offsets "
-                       "is `dfa_prefilter_offsets`",
+                       "is `dfa_prefilter_offsets`. The two `run-pinned` "
+                       "values ([OPT-LITSCAN] S1, pcrec abi 36) are the "
+                       "offset-set block with the necessary run (`req_run`) "
+                       "as ONE term at its fixed offset from every match's "
+                       "start, verified as one memcmp per candidate -- the "
+                       "run pre-check is then not emitted (`req_why` "
+                       "`dominated`); removed by -fno-run-prefilter OR "
+                       "-fno-offset-skip",
     },
     "dfa_prefilter_offsets": {
         "type": "string", "scope": "pattern",
@@ -736,13 +744,14 @@ METADATA_DECL = {
                   "read through pb_dfa_prefilter_offsets(); same scope as "
                   "dfa_scan (every artifact that CONTAINS a DFA scan, VM "
                   "hybrids included); CHECKED to be \"none\" iff "
-                  "dfa_prefilter is not an offset-set value",
+                  "dfa_prefilter is not an offset-set or run-pinned "
+                  "value (OFFSET_SET_VALUES)",
         "description": "WHICH byte offsets from the candidate's own start the "
                        "offset-set filter tests, ascending, comma-separated, "
                        "`*` marking the one the scan searches for -- "
                        "`0,8*,13` on the uuid shape -- or `none` on every "
                        "artifact whose dfa_prefilter is not one of the two "
-                       "offset-set values. A fact about the individual "
+                       "offset-set or (pcrec abi 36+) two run-pinned values. A fact about the individual "
                        "MACHINE (free text), deliberately not folded into "
                        "dfa_prefilter's closed value set",
     },
@@ -1776,8 +1785,13 @@ ENGINE_SEL_OVERFLOW_FALLBACK = ("overflowed-dfa", "overflowed-prefilter",
                                 "size-cap-retry")
 
 #: `dfa_prefilter` values for which `dfa_prefilter_offsets` is NOT "none"
-#: (match_api.md 6.3's iff, checked from both sides).
-OFFSET_SET_VALUES = ("offset-set", "offset-set-bounded")
+#: (match_api.md 6.3's iff, checked from both sides). [B101] (pcrec abi 36,
+#: [OPT-LITSCAN] S1): the two `run-pinned` values joined the iff -- the
+#: offsets stamp lists every offset the run-pinned test covers, the run's
+#: own offsets individually (`abc` at 02902356: "0,1*,2"), and its scan may
+#: be offset 0 (`0*`), which no older value's scan is.
+OFFSET_SET_VALUES = ("offset-set", "offset-set-bounded",
+                     "run-pinned", "run-pinned-bounded")
 
 #: The committed copy of `pcrec --list-axes` at the pin -- the FOURTH
 #: registry surface (pcrec docs/spec/registry.md 6; I-15 (5)). The stamp
@@ -2440,6 +2454,35 @@ DENY_FLAGS = (
      "compare and the bitmap read are the same predicate over the pair's "
      "two bytes), and byte-identical to it wherever no pool class is a "
      "fold pair"),
+    # [B101] (pin 02902356, [OPT-REQBYTE], --list-axes `req-byte` bit 30;
+    # inbox I-111's owed timing). The FIFTH content-changing denial and the
+    # first on the pre-check rather than the machine: denied, no necessary
+    # byte (and so no necessary run -- `-fno-req-byte` denies the run with
+    # it) is analysed, so `req_byte`/`req_run`/`req_why` all read "none"
+    # and no pre-check is emitted on either engine. [OPT-REQBYTE] landed in
+    # pcrec's batch 1 (3aa13b6b, pin 8d716693), so every pin held since
+    # carries it and no pin-vs-pin pair isolates it: this twin at ONE pin
+    # is the only instrument. NOT a pure pre-check twin, MEASURED at
+    # 02902356: where the default artifact's DFA prefilter is S1's
+    # `run-pinned` form (built on the run), the denial also drops the
+    # prefilter back to the pre-S1 form (github-pat run-pinned-bounded ->
+    # offset-set-bounded, router-prefix-order run-pinned -> memchr) -- the
+    # pair then measures the byte, the run AND S1's prefilter together;
+    # and the bit is NOT in pcrec's strategy_denials mask
+    # (`rx_info.flags` = 1073741824 under it, 0 without), so even an
+    # artifact with no necessary byte differs from its sibling in that one
+    # initializer constant (program_sha256 ignores it: the v2 normalization
+    # drops the unread rx_info initializer).
+    ("-fno-req-byte", "noreqbyte",
+     "the [OPT-REQBYTE] NECESSARY-BYTE PRE-CHECK denied (--list-axes "
+     "`req-byte`, bit 30): no byte every match must contain is analysed, "
+     "so neither the one-memchr NOMATCH proof nor the necessary-RUN check "
+     "built on it is emitted (req_byte/req_run/req_why all `none`), and "
+     "where the default artifact's DFA prefilter is the run-pinned form "
+     "that verifies the run, the prefilter falls back to the pre-S1 form "
+     "as well -- the pre-check's BEFORE at the SAME pin, answer-identical "
+     "to its sibling by contract (the pre-check only ever answers NOMATCH "
+     "on a window no match can occupy)"),
 )
 
 

@@ -2,25 +2,33 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-ce658cb7/build/pcrec --list-axes
+#     build/pcrec-02902356/build/pcrec --list-axes
 #
-# pcrec commit ce658cb7c3f16fed665930b54073fbf635d81f51 (rx_info.abi 33,
-# read off a plain `abc` witness at this build), archived 2026-09-25 by
-# lane b90repin ([B90], inbox I-108: the K64 fix A merge, 6ef76820 ->
-# ce658cb7 -- TWO abi steps absorbed: 31 -> 32 is [VAR] (module `vars`,
-# `${name}` caller variables, pcrec D121; not in I-108's own text), 32 -> 33
-# is K64 fix A ([OPT-PRECHECK-ADMIT] G2's VM arm gains a linearity conjunct).
-# 89 data rows / 32 axes / 12 columns -- the FOURTH registry surface
+# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37, read off a plain `abc` witness at this build),
+# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
+# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
+# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
+# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
+# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
+# prefilter that verifies the run, and the two `run-pinned` prefilter
+# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
+# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
+# 42ee828f..02902356 touches no src/ file.
+# 91 data rows / 32 axes / 12 columns -- the FOURTH registry surface
 # (pcrec docs/spec/registry.md 6, [CHK-2]).
 #
-# BYTE-IDENTICAL to the 6ef76820 copy below the header (diffed line for
-# line, pcrec's own comments included): [VAR] is a MODULE (`--features
-# vars`), not an optimization axis, and K64's fix narrows an existing
-# admission predicate (req_route_one_attempt) with no flag and no bit.
-# `struct rx_info` GAINED two appended members at abi 32 (`vars`,
-# `nvars`, the variable-name table) and `rx_ctx` two appended members
-# (`vars`, `nvars`); no existing offset moves and the shim reads
-# neither rx_info member, so the shim floor STAYS 16.
+# 89 -> 91 against the ce658cb7 copy (diffed line for line): axis
+# `prefilter` gains TWO rows AHEAD of its seven, `run-pinned-bounded`
+# (order 1) and `run-pinned` (order 2), [OPT-LITSCAN] S1 (abi 36); the
+# seven old rows keep their text and move down two orders (3..9). The new
+# rows are the registry's FIRST with a `|`-joined deny: deny_macro
+# `PCREC_NO_OFFSET_SKIP|PCREC_NO_RUN_PREFILTER`, deny_bit `16|32`,
+# cli_flag `-fno-offset-skip|-fno-run-prefilter` (pcrec registry.md's
+# column rule: split all three cells on `|` together). K65/K66 (abi 34-35)
+# and step 6 (abi 37) add no axis and no row. The axis count stays 32.
+# `struct rx_info` is BYTE-IDENTICAL to ce658cb7's (the `.h` struct body
+# diffed on `abc`); `.prefilter` mirrors the two new values. The shim
+# floor STAYS 16.
 #
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
@@ -51,13 +59,15 @@ table	1	premultiplied	list	RX_DFA_TABLE	premultiplied	PCREC_NO_PREMUL_TABLE	15		
 table	2	indexed	list	RX_DFA_TABLE	indexed						always (fallback)
 table	3	none	predicate	RX_DFA_TABLE	none						the artifact has no DFA scan-table at all: a proven-empty engine (dfa_engine_is_empty), or the ENG_ATTEMPT label-dispatch engine, which is asked first (src/gen/CLAUDE.md's [DD-13c] #5)
 table	4	mixed	predicate	RX_DFA_TABLE	mixed						the artifact's own machines took DIFFERENT per-machine table representations (dfa_table_name(): forward vs. reverse, and since [ENG-ABS] the anchored machine, disagree) — a per-artifact composition, never a single machine's own selection
-prefilter	1	offset-set-bounded	list	RX_DFA_PREFILTER	offset-set-bounded	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected, under a $/\Z/\z view or a word-context accept ([OPT-K])
-prefilter	2	offset-set	list	RX_DFA_PREFILTER	offset-set	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected: one memchr at the chosen offset k*, the other offsets verified per candidate ([OPT-K])
-prefilter	3	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
-prefilter	4	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
-prefilter	5	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
-prefilter	6	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
-prefilter	7	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
+prefilter	1	run-pinned-bounded	list	RX_DFA_PREFILTER	run-pinned-bounded	PCREC_NO_OFFSET_SKIP|PCREC_NO_RUN_PREFILTER	16|32			-fno-offset-skip|-fno-run-prefilter	forward scan, the necessary run is pinned at a fixed offset and the scan already runs on its scan member there: the whole run verified as one compare per candidate, the run pre-check then dominated; under a $/\Z/\z view or a word-context accept ([OPT-LITSCAN] S1)
+prefilter	2	run-pinned	list	RX_DFA_PREFILTER	run-pinned	PCREC_NO_OFFSET_SKIP|PCREC_NO_RUN_PREFILTER	16|32			-fno-offset-skip|-fno-run-prefilter	forward scan, the necessary run is pinned at a fixed offset and the scan already runs on its scan member there: the whole run verified as one compare per candidate, the run pre-check then dominated ([OPT-LITSCAN] S1)
+prefilter	3	offset-set-bounded	list	RX_DFA_PREFILTER	offset-set-bounded	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected, under a $/\Z/\z view or a word-context accept ([OPT-K])
+prefilter	4	offset-set	list	RX_DFA_PREFILTER	offset-set	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected: one memchr at the chosen offset k*, the other offsets verified per candidate ([OPT-K])
+prefilter	5	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
+prefilter	6	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
+prefilter	7	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
+prefilter	8	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
+prefilter	9	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
 view	1	end+eol	list								both a \z view and a $/\Z view exist on this machine
 view	2	end	list								a \z view exists and no $/\Z view does
 view	3	eol	list								a $/\Z view exists and no \z view does

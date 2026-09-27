@@ -115,6 +115,12 @@ and the bitmap test text return) with gcc superlinear in it -- budget the
 `vm` figure plus a fifth on altwide (8.6-14.5 min measured for the VM arms
 at 334fd10e, ledger 2026-09-05-b37 6 (13)), the `vm` figure elsewhere.
 
+**`pcrec-auto-noreqbyte` ([B101], pin 02902356, built 2026-09-26; not yet
+measured).** Estimate from its sibling `pcrec-auto`: the same route on every
+set, the artifact SMALLER by the pre-check (and, on S1's run-pinned
+artifacts, by the offset-skip block's run compare) -- budget the
+`pcrec-auto` capability@0.1 figure exactly.
+
 ## Maintenance
 
 Update this file when a script is added, removed, or changes role.

@@ -1,10 +1,11 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides twenty testees at the commit pinned in `configs.toml`, and one —
+Provides twenty-one testees at the commit pinned in `configs.toml`, and one —
 `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
-siblings of the usual four, up from sixteen):
+siblings of the usual four, up from sixteen; [B101], 2026-09-26: one more,
+`pcrec-auto-noreqbyte`, at the 02902356 re-pin):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -18,6 +19,7 @@ siblings of the usual four, up from sixteen):
 | `pcrec-auto-noedge` | the same flags as `pcrec-auto`, plus `-fno-scan-edge` | ([B32]) THE SCAN-EDGE DENY AXIS: the [OPT-5] scan edge denied, so the artifact is the pre-[OPT-5] machine built at the SAME pin — [OPT-EDGE]'s BEFORE. See below |
 | `pcrec-auto-noisland` | the same flags as `pcrec-auto`, plus `-fno-alt-island` | ([B37]) THE ALTERNATION-ISLAND DENY AXIS: pcrec [ENG-ISL] STEP 1's VM alternation island (abi 18, a trie over a flat literal alternation's bytes instead of vm_alt's resume chain) DENIED, so the artifact is the pre-[ENG-ISL] VM program built at the SAME pin — the island's BEFORE on bench/altwide (the ORDER pair w-256/srt-256, the VM refusal wall, the island/chain code-byte ratios), with the lowering as the one variable. Derives `pcrec_334fd10e_auto-caps-simdna_noisland`. At this pin the denial also moves `vm_frameless` (a prefix-free island pushes nothing; the chain does) and `vm_entry_shape` (a framed artifact is `plain`) — the frame discipline and the entry chain travel with the lowering |
 | `pcrec-auto-noclsfold`, `pcrec-vm-noclsfold` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-cls-fold` | ([B39], pin d34c9131 / abi 23) THE ASCII-FOLD CLASS-TEST DENY AXIS: pcrec [FORM-CHAR] STEP 1's fold shape denied — every two-member fold-pair class (what `(?i)` makes of a letter, D23) reads its 32-byte bitmap again instead of `(byte | 0x20) == lower`, and the tables are emitted again — at the SAME pin, so the pair is the fold's BEFORE/AFTER with the class-test shape as the one variable. TWO siblings because the fold is VM ROUTE ONLY (tuning.md §2.22): `auto` took the DFA on the bench's only `(?i)` patterns (altwide ci-256/ci-512) at 334fd10e, so the `auto` pair is byte-identical (MEASURED — the same-pin noise-floor control) and the `vm` pair is the one the AFTER is read on. `config_extra` word `noclsfold`, after `noisland`. |
+| `pcrec-auto-noreqbyte` | the same flags as `pcrec-auto`, plus `-fno-req-byte` | ([B101], pin 02902356 / abi 37) THE NECESSARY-BYTE PRE-CHECK DENY AXIS: pcrec [OPT-REQBYTE] (bit 30) denied, so no necessary byte or run is analysed or checked — `req_byte`/`req_run`/`req_why` all `none` — at the SAME pin. [OPT-REQBYTE] landed in pcrec's batch 1 (every pin held since 8d716693 carries it), so this TWIN is the only instrument that isolates it (inbox I-111's owed timing, capability@0.1's twelve landing-bar cells). NOT a pure pre-check twin where S1's `run-pinned` prefilter is built on the run (github-pat, router-prefix-order: the prefilter falls back too); program-IDENTICAL where the byte is `dominated` with no run (floor-byte, uuid-grok); `rx_info.flags` = 1073741824 on every denied artifact (not in pcrec's strategy_denials mask). `config_extra` word `noreqbyte`, after `noclsfold`. See "Re-pin at 02902356" |
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
 | `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
@@ -527,6 +529,89 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin at 02902356 (abi 33 -> 37) — 2026-09-26, lane b101repin, inbox I-111
+
+**FOUR abi steps in three codegen merges**, against `ce658cb7` (abi 33) as
+BEFORE; `git log ce658cb7..02902356` is 135 commits, and the three merges
+I-111 names are the only ones that bump `PCREC_ARTIFACT_ABI`:
+`27a63314` (K65 fix (a) 33 -> 34 + K66 34 -> 35: on a VM route with NO DFA
+scan in front -- `!pcrec_artifact_has_dfa_scan` -- the pre-check also
+tests every OTHER member of the necessary set, an `rq_set[]` memchr block,
+and compares a run longer than its 8-byte window WHOLE; no stamp moves),
+`0bb87eda` ([OPT-LITSCAN] S1 steps 1-5, 35 -> 36: G1 widened to every
+`<prefix>_ofsskip` prefilter, `RX_REQ_WHY` emitted -> `dominated` and the
+run pre-check ELIDED wherever the prefilter verifies the run; two new
+`RX_DFA_PREFILTER` values `run-pinned` / `run-pinned-bounded` -- the
+necessary run pinned at a fixed offset from every match's start, verified
+as one memcmp per candidate, `rx_info.prefilter` mirrors them -- ranked
+ahead of the other seven; axis bit 32 `-fno-run-prefilter`, masked out of
+`rx_info.flags`; the cx->opt->flags word widened to 64 bits), `42ee828f`
+(S1 step 6, 36 -> 37: the run pre-check's inline loop becomes a
+file-scope `static inline size_t rx_reqrun` / `rx_reqrun_whole` block and a
+one-line call). `42ee828f..02902356` touches no `src/` file. Two non-merge
+`src/` changes ride the range and move NO artifact: a comment in
+`definitions.c`, and pcrec's [FINDINGS] B0 `.rxt` schema rows
+(`rxt_schema.def` / `rxt_source.c`, merge 54bb1159) -- the latter IS the
+`list_schema.tsv` delta below, not an abi step.
+
+**The shim floor STAYS 16.** `struct rx_info` diffed on an `abc` witness at
+both pins: byte-identical. No new stamp, so nothing new to read; the
+adapter change is `dfa_prefilter`'s value set (+ the two run-pinned
+values) and `OFFSET_SET_VALUES` (the `_OFFSETS` iff now spans four values;
+a run-pinned stamp lists the run's own offsets individually and its scan
+may be offset 0: `abc` -> `"0,1*,2"`, router `/user` -> `"0*,1,2,3,4"`).
+
+**Registries.** `list_axes.tsv` 89 -> 91 rows / 32 axes (the two
+run-pinned rows at orders 1-2 of `prefilter`, the registry's first
+`|`-joined deny: `PCREC_NO_OFFSET_SKIP|PCREC_NO_RUN_PREFILTER`, `16|32`,
+`-fno-offset-skip|-fno-run-prefilter` -- `check_deny_flag_controls` now
+splits on `|` and takes an optional eighth element naming the spelling);
+`list_definitions.tsv` 50 and `list_limits.tsv` 62 BYTE-IDENTICAL;
+`list_schema.tsv` 73 -> 78 (+6 / -1 / 5 re-worded: [FINDINGS] B0's
+`analysis` bundle, `data encoding`/`serves`, the provenance conjuncts --
+not in I-111's text, no reader here). `--list-syntax` is byte-identical
+to ce658cb7's; the syntax seed's two pre-existing deltas (`\p{L}` built,
+`${name}`) are unchanged and still un-re-seeded.
+
+**Stamps by value.** `check_mechanism_stamps`: I-111's movers as ledger
+rows -- github-pat `run-pinned-bounded` / `0,3,4,5,6*,7,8,9,10` /
+`dominated`, uuid-grok `offset-set` / `dominated` (only the byte check
+elided), router-prefix-order `run-pinned` / `0*,1,2,3,4` / `dominated`,
+and the K65/step-6 VM-route rows (tag-pair-match, dup-param-detect,
+nested-comment-rec, `emitted` unmoved). `check_deny_flag_controls`: the
+two new run-pinned rows on `abc` (`-fno-run-prefilter` -> `offset-set`
+`0,1*`; `-fno-offset-skip` -> `memchr`; both arms `req_why` back to
+`emitted`).
+
+**Size books MEASURED per witness at all five builds, no flat term**
+(docs/dev/measurements/2026-09-26-b101-sizes.txt; no stamp line is added
+and the abi digit keeps its width): K65's `rq_set[]` block +245 / +244
+(242 B + the member's digits: `x[ac]y`, `` x[@`]y ``, email-owasp,
+tag-pair-match, tag-depth3-bound, dup-param-detect); step 6 -18 (scan member at
+run index 0) / -41 (index 1, winpath-near-miss); S1BUILD -543 (`abc`),
+-489 (github-pat), -131 (uuid-grok), -184 (router); every other asserted
+witness 0. Constants `B101_*` in tools/selfcheck.py.
+
+**The census** (probe_b101_census.py, compile-only, the three
+intermediates as scratch builds under `/var/tmp/b101scratch`): I-111's
+bench half reproduced DIGIT FOR DIGIT -- 650 = 403 identical / 59
+refused-both / 10 K65K66 / 6 K65K66+S1STEP6 / 110 S1BUILD / 62 S1STEP6,
+ZERO refusal movers, no S1BUILD combined with another cause -- under BOTH
+pcrec's raw-`.c` rule and our v2 `program_sha256` (they agree on every
+row). NOTE the population: pcrec's `bench_pop` is ALL 325 `bench/*/
+patterns/*.rx` (every set), not capability alone. capability@0.1 under
+our three compiled configs x 2 forms: 277 identical / 11 refused /
+24 / 14 / 32 / 26.
+
+**The `-fno-req-byte` twin: `pcrec-auto-noreqbyte`** (the [B37]/[B39]
+precedent; see the table above and configs.toml). Pre-window facts on
+I-111's twelve cells: docs/dev/measurements/2026-09-26-b101-twin-stamps.txt
+and the lane report. The denial is NOT a pure pre-check twin where the
+default carries S1's run-pinned prefilter (github-pat, router-prefix-order:
+the prefilter falls back to the pre-S1 form), and `rx_info.flags` reads
+1073741824 on every denied artifact (bit 30 is not in pcrec's
+strategy_denials mask; `-fno-req-run`'s bit 31 is).
 
 ## Re-pin at ce658cb7 (abi 31 -> 33) — 2026-09-25, lane b90repin, inbox I-108
 
