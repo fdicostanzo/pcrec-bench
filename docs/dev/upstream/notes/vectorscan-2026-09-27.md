@@ -17,7 +17,7 @@ latest checked: source-diffed (not built) against tags vectorscan/5.4.12
                 not attempted (see docs/dev/lanes/b103other_report.md)
 repro:          docs/dev/upstream/repro/U7/ (repro.c, run.sh,
                 expected.txt)
-approval:       [ ] Frank has approved sending this note — DATE: ____
+approval:       [x] Frank approved 2026-09-27 — SENT https://github.com/VectorCamp/vectorscan/issues/416
 -->
 
 ---

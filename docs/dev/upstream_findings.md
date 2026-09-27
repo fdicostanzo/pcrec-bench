@@ -37,6 +37,8 @@ labels this cell "(other)" — `timed-out` needs its own label (OD-B11).
 
 **2026-09-27 ([B103], lane b103pcre2): UNDERSTOOD → DRAFTED.** Repro `docs/dev/upstream/repro/U1/`, PRESENT on 10.46 and a from-source 10.48. Ablation: the interpreter under `no_start_optimize` is as slow as the JIT; a no-subroutine control stays instant under JIT; the ~500,000-byte cliff is NOT a resource limit (jitstack 1 KiB vs 64 MiB identical, clean no-match, no error code at any size). Tracker/ChangeLog 10.47-10.48: nothing. In `notes/pcre2-2026-09-27.md`.
 
+**2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
+
 ## U2 — libpcre2 10.46 JIT does NOT get the interpreter's whole-subject required-code-unit dismissal on a 1 MB failing subject: 2.4-3.2 ms where the interpreter answers in 18 µs (OBSERVED 2026-08-25 at 692c2e8, re-observed 2026-08-28 on `email-specimen@0.2`)
 
 Records `email-specimen@0.2__libpcre2_10.46_{interp,jit}-caps-simdna__budu-ryzen1600__20260828T14{5051,1718}Z`,
@@ -57,6 +59,8 @@ the check on a plain (non-call-bearing) pattern, that is reportable.
 Status: OBSERVED.
 
 **2026-09-27 ([B103], lane b103pcre2): REPRODUCED → DRAFTED.** ×86-160 (JIT vs interp) on 10.46 and 10.48; tracker/ChangeLog: nothing. In `notes/pcre2-2026-09-27.md`.
+
+**2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
 
 ## U3 — libpcre2 10.46 JIT pays ~2.8 ms/MB MORE on prose with 496 sparse addresses than on address-free prose, where pcrec's DFA pays the same on both (OBSERVED 2026-08-28, `email-specimen@0.2`)
 
@@ -91,6 +95,8 @@ makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 `no_start_optimize` separates the hypotheses.
 
 **2026-09-27 ([B103], lane b103pcre2): REPRODUCED (1 MB grain) → DRAFTED.** The short-subject ×1.8 did NOT reproduce robustly at pcre2test's timing resolution (stated in the README); the 1 MB throughput form is ×23-34, PRESENT on 10.48. In `notes/pcre2-2026-09-27.md`.
+
+**2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
 
 ## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
 
@@ -247,6 +253,8 @@ renders the refusal as a first-class `did-not-compile` with the
 diagnostic carried.
 
 **2026-09-27 ([B103], lane b103other): REPRODUCED → DRAFTED.** Standalone repro `docs/dev/upstream/repro/U7/` PRESENT on 5.4.11; latest 5.4.13 not built (ragel/Boost absent), `Parser.rl`'s comment handling byte-identical 5.4.11→5.4.13; no tracker issue found (VectorCamp, intel/hyperscan). Draft `docs/dev/upstream/notes/vectorscan-2026-09-27.md` awaits Frank.
+
+**2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/VectorCamp/vectorscan/issues/416 (body = notes/vectorscan-2026-09-27.md minus our header, repro.c inlined).
 
 ## U8 — RE2 11.0.0 (`EncodingUTF8`) reports an empty-width `\B` BETWEEN THE BYTES of one UTF-8 character (OBSERVED 2026-09-26, `utf8@0.1` first sample)
 
