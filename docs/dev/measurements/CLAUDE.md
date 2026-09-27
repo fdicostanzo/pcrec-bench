@@ -866,3 +866,52 @@ Maintenance: update this file when files are added/removed or change role.
   `reports/*.matrix.tsv` only, pcrec's best config per row vs the best full-grain
   competitor (vectorscan block-nosom excluded), tallies + every loss >×2. Stdlib;
   run it on any matrix TSV.
+- `probe_b104_utf8_litcontains.py` / `2026-09-27-b104-utf8-litcontains-census.txt`
+  — ([B104], inbox I-112, lane b104pred) THE lit-* CONTAINS-LITERAL CENSUS for
+  the [OPT-LITSCAN] F3 split I-112's own window asks the read lane to report by:
+  classifies every (lit-* pattern x subject) in bench/utf8@0.1, both regimes, by
+  TWO independently-derived rules (Rule A: the oracle's own `expected` column;
+  Rule B: whether the single pre-check byte I-112 stamped by value at 751b9c6d
+  occurs anywhere in the subject's raw bytes -- Rule A implies Rule B always, a
+  sanity invariant the script asserts and never found violated), PLUS a THIRD
+  column this lane added beyond I-112's own ask: the SAME rule at the OLD
+  (ce658cb7, abi 33, leftmost-byte) scan position, so every cell is classified
+  into one of four FLIP classes (`flip_to_fast`: old byte present, new byte
+  absent -- a genuine improvement witness; `flip_to_slow`: the reverse, a
+  REGRESSION RISK I-112's own text does not name; `stays_slow`/`stays_fast`:
+  unmoved either way). Read-only over the committed generators' regenerated
+  subject bytes (no pcrec build, no compile, no timing); 686 cells (7 patterns x
+  98 subjects), reproduced byte-identical against the committed
+  manifest.tsv/manifest_throughput.tsv sha256es. FINDING: `lit-run-3` (日本語) has
+  NO flip subject in the THROUGHPUT regime specifically (its old lead byte 0xE6
+  and new tail byte 0x9E occur in exactly the same four of seven throughput
+  subjects), so I-112's own "×15 lit-run-3" figure cannot be reproduced from this
+  bench's own throughput corpus -- it flips only at `search_short` grain (10
+  `flip_to_fast` / 2 `flip_to_slow` of 91), where the whole pair's effect is
+  independently known to be small (the first-sample ledger's own P1.a finding).
+  Corpus-wide flip census: 59 `flip_to_fast`, 49 `flip_to_slow`, 47 `stays_slow`,
+  531 `stays_fast` (686 total). Feeds `docs/dev/predictions/
+  utf8-0.1-b104-751b9c6d.tsv`'s P2 (IMPROVE)/P3 (RESIDUAL)/P4
+  (REGRESSION-RISK, the new finding) witnesses.
+- `probe_b104_o62_identity.py` / `2026-09-27-b104-o62-identity-census.txt` —
+  ([B104], lane b104pred) THE STRUCTURAL PREDICTOR for O-62 SS2-6 (email,
+  loglines, bounded, altwide, syntax): every `bench/{email,loglines,bounded,
+  altwide,syntax}/patterns/*.rx` file x THREE distinct compiled configs
+  (auto-caps, auto-nocaps, vm-caps -- vm-in-caps is compile-identical to
+  vm-caps, the same fact `probe_b104_census.py`'s own `cap` population already
+  relies on) x BOTH forms, emitted at BOTH 25b1984f (abi 27, O-62's own cited
+  baseline) and 751b9c6d (abi 39, this window's pin) and compared by v2
+  identity (`tools/program_identity.py`, called directly -- no store record
+  exists for either pin on these five sets' pcrec testees at authoring time).
+  ADAPTED from `probe_b104_census.py` (same emit()/tempfile-per-job shape) with
+  ONE FIX this lane's own first run found necessary: 25b1984f PREDATES pcrec's
+  D118 CLI reshape (abi 29, `testees/pcrec/CLAUDE.md`'s own abi-29 entry), so it
+  refuses `--pattern` outright and needs the pre-D118 `--` positional shape --
+  probed live per pin via `program_identity._cli_shape` (never hard-coded), and
+  passed EXPLICITLY through each job tuple rather than read as a module global
+  inside a worker, because this project's Python defaults
+  `concurrent.futures.ProcessPoolExecutor` to the `forkserver` start method,
+  whose workers are forked from an import-time template and do not see a global
+  a parent process's `main()` sets afterward -- the identical class of mistake
+  the CLI-shape fix itself was, caught before archiving rather than after. 1,110
+  rows (185 patterns x 3 configs x 2 forms).
