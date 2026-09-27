@@ -1,0 +1,37 @@
+# Source information (D35 style)
+# date: 2026-09-27
+# box: ubuntubudu, Linux 7.0.0-29-generic, x86_64, 12 cores (load average
+#      ~1.44/1.19/1.11 at capture time)
+# engine: pcre2test (system) 10.46 2025-08-27, libpcre2-8-0 10.46-1build1
+#      (the same version pcrec-bench's own pcre2-interp/pcre2-jit testees
+#      link, testees/pcre2/CLAUDE.md); this repro exercises BOTH the
+#      interpreter and the JIT (see the ablation below)
+# command: UPSTREAM_SCRATCH=/tmp/upstream-test-U5final bash run.sh
+# result: PRESENT (the raw phenomenon; CLASSIFICATION below is NOT-A-BUG)
+#
+# --- stderr (diagnostics: the full four-way ablation) ---
+# U5 repro: pcre2test 10.46, rec-r-uc.rx, find-all, 64 KiB vs 1 MiB (16x)
+#   interp ORIGINAL (unbalanced lines present): 953.0334 -> 8867.6062 ns/byte (n=117,2068)
+#   interp CONTROL  (balanced only):            3.4790 -> 3.0966 ns/byte (n=136,2064)
+#   jit    ORIGINAL (jitstack=65536 KiB):        55.6183 -> 692.7118 ns/byte (n=117,2068)
+#   jit    CONTROL  (balanced only):             2.4414 -> 1.7710 ns/byte (n=136,2064)
+#   ratio 1MiB:64KiB  interp-orig=9.30x  interp-ctl=0.89x  jit-orig=12.45x  jit-ctl=0.73x
+#   CLASSIFICATION: both engines flat on the balanced-only control, both super-linear on the original -- the unbalanced lines are the cause on BOTH engines (pattern-inherent backtracking cost, see README.md: NOT-A-BUG)
+#
+# --- stdout (the one line tools/upstream.py parses) ---
+U5 PRESENT pcre2 10.46 9.30x
+#
+# --- independent third-engine cross-check (NOT run by run.sh; onig_probe.c) ---
+# Oniguruma 6.9.10 (libonig.so.5, ONIG_SYNTAX_PERL_NG, ONIG_ENCODING_ASCII,
+# recursion spelled \g<0>), same two subject files (identical bytes to the
+# interp/jit cells above):
+#   control:  8.9724 -> 3.7910 ns/byte  (ratio 0.42x -- flat/improving)
+#   original: 150.2674 -> 264.2927 ns/byte (ratio 1.76x -- milder than
+#             libpcre2's 9-12x, but clearly above the flat control)
+#
+# For comparison, pcrec-bench's own original observation
+# (docs/dev/upstream_findings.md U5, bench/syntax@0.1 first sample,
+# 2026-09-07, its OWN t-64k/t-1m subjects, byte-identical to what
+# gen_subject.py reproduces here at allow_unbalanced=1): 870.4 -> 8704.8
+# ns/byte -- this repro's interp-original 953.0 -> 8867.6 ns/byte agrees
+# to within 2%.
