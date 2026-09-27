@@ -259,6 +259,10 @@ source with what it controls; CLAUDE.md updates; no pcrec-specific
 shapes leaking into engine-neutral surfaces (R-BENCH-4). Send change
 requests back to the lane rather than silently fixing large problems;
 small landing-bar items you may finish directly.
+After the merge, REMOVE the lane's worktree (`git worktree remove
+worktrees/<lane>`, branch kept) once its branch is an ancestor of master
+and it has no dirty/untracked files — routine maintenance, no ask (Frank,
+2026-09-26: eleven merged worktrees had filled the root fs).
 
 ## 6. Adversarial critic panels on designs and major code
 
