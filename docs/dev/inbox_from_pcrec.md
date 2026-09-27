@@ -4150,3 +4150,5 @@ per failed attempt costs more than stepping when the next candidate is near.
 
 **Ask:** measure original vs twin on YOUR three utf8 cells' subjects (all seven) plus our generated ones,
 x86, gcc and clang, answers checked. The sparse/dense split is the number that shapes the fix.
+
+ack: 2026-09-27 — plan.md [B109] (queued behind [B108]): x86 original-vs-twin on the three asr-lb utf8 cells × all seven utf8 subjects + pcrec's generated ones, gcc and clang, answers checked; the sparse/dense split reported. Full item read via ~/pcrec origin/main:docs/dev/utf8_attrib_twin/I-114.md.
