@@ -482,7 +482,9 @@ bindings) live here, vendored or system, pinned either way.
   ([OPT-LITSCAN] F3, filed 2026-09-27, NOT yet fixed — the DFA
   candidate-start scan is a separate mechanism the abi step did not
   touch). K68's `.flags = 0ULL` confirmed on default and all three
-  denied arms (was `1073741824`/`536870914`/`268435458` in turn). The
+  denied arms (under `--features all`; pcrec's own fix commit quotes
+  their own default flags reading `1073741826`/`536870914`/`268435458`
+  in turn before the fix, baseline `2`). The
   compile-only census over I-111's own two populations (bench_pop 650 +
   capability@0.1 384 = 1,034) reads 964 identical / 70 refused-both / 0
   changed / 0 refusal-mover — CONFIRMING I-112's own "0 changes
