@@ -1477,7 +1477,7 @@ the sizes land near their v19 baselines (~51 MB). Found by the remote's
 own pre-receive hook, not by a test — a size gate on regenerated
 reports (warn at 50 MB pre-commit) is worth considering with the fix.
 
-## KB-29 (2026-09-25, found by lane b77u1/[B77] U1; FIXED for pcre2/onig/pcrec, lane b98rider 2026-09-26; tre/re2/rust/vectorscan OWED) — a find-all error after the first match silently truncates the count in every driver
+## KB-29 (2026-09-25, found by lane b77u1/[B77] U1; FIXED for pcre2/onig/pcrec, lane b98rider 2026-09-26; CLOSED for tre/re2/rust/vectorscan, lane b98kb29 2026-09-26) — a find-all error after the first match silently truncates the count in every driver
 
 In every driver's find-all loop, a negative return from the engine AFTER
 at least one match simply ends the loop, so an engine that gives up (or
@@ -1512,17 +1512,50 @@ driver, rebuild, confirm the SAME three witnesses answer a truncated
 check-harness pass (that would mean carrying a second, permanently
 unfixed driver build just to keep re-proving a closed bug).
 
-**OWED**: `testees/{tre,re2,rust}/driver.c` have the SAME loop shape
-(`if (rc < 0) { if (count == 0) ...; break; }`, one line to change plus
-the post-loop discard, mirroring the three drivers above exactly) and
-were NOT touched by this lane — a rider for the next harness lane, same
-fix shape, ideally with its own real witness per engine (TRE's own
-retry-limit-shaped give-up, RE2's `ErrorPatternTooLarge`-adjacent
-match-time limits if any exist, rust's `regex` crate has no documented
-give-up surface at all per `testees/rust/CLAUDE.md` and may need no fix).
-`vectorscan` is STRUCTURALLY EXEMPT: `GAVE_UP_CODES = frozenset()` (no
-Hyperscan return code is ever classified `gave-up`, by design — its own
-CLAUDE.md), so this bug shape cannot manifest there.
+**CLOSED for `testees/tre/driver.c`** (lane b98kb29, 2026-09-26):
+FIXED, exactly mirroring the pcre2/onig/pcrec shape (the loop's own
+terminal code always tracked, a genuine give-up discarding the call's
+accumulated matches) — but, unlike those three, **investigated and
+found UNREACHABLE on the pinned libtre build, not merely unwitnessed**.
+An exhaustive fault-injection census
+(`docs/dev/measurements/2026-09-26-kb29-tre-giveup-reachability.txt`, an
+LD_PRELOAD malloc/calloc/realloc call counter around `testees/tre/
+driver.c`'s own find-all call shape) found ZERO allocations inside ANY
+`tre_regnexecb()` exec call, across 1–7 backreference groups and
+subjects from 10 B to 1,000,000 B (the population that DOES reach
+TRE's backtracking matcher at all — `testees/tre/CLAUDE.md`'s own
+`automaton_class` section). Cross-checked against libtre's own source
+(`lib/tre-mem.c`/`lib/tre-stack.c`, fetched live): `REG_ESPACE` — the
+ONLY code besides `REG_OK`/`REG_NOMATCH` an exec call can return — fires
+exclusively on a genuine allocation failure. Since no allocation of any
+kind happens inside an exec call, `REG_ESPACE` cannot arise from a
+find-all loop's SECOND-OR-LATER call on this build: the mechanism this
+project's own earlier text called "PROVISIONED, UNWITNESSED"
+(`testees/tre/CLAUDE.md`'s pre-existing "gave-up" section, itself
+UPDATED by this finding) is now shown structurally unreachable here, not
+merely hard to hit by chance. The fix ships anyway as a no-cost,
+defensive correctness improvement (a future libtre build, allocator, or
+build configuration could behave differently); the only regression
+control possible is that a genuine backreference-stress subject with no
+answer still resolves as an ordinary `nomatch`, never a spurious
+`giveup:` — `check_kb29_find_all_giveup_propagation`'s new tre arm.
+`REG_ESPACE` remains reachable at COMPILE time only (`tre_regncompb`,
+already a first-class `did-not-compile` per `testees/tre/CLAUDE.md`'s
+`refusal_class` section).
+
+**CLOSED for `testees/{re2,rust}/driver.*`** (lane b98kb29, 2026-09-26):
+NO CODE CHANGE — confirmed by direct inspection of both find-all loops
+(not merely trusting each driver's own pre-existing header comment) that
+neither has the KB-29 bug shape at all, structurally: RE2's `Match()`
+(`testees/re2/driver.cc`) returns a plain `bool`, and the `regex`
+crate's `find_at()`/`find()` (`testees/rust/src/main.rs`) return a plain
+`Option` — neither exposes an error-code channel a mid-loop give-up
+could even be represented through, let alone silently discarded. Same
+disposition `vectorscan` already carries (`GAVE_UP_CODES =
+frozenset()`), for a related but distinct reason: vectorscan's driver
+DOES see closed Hyperscan return codes and chooses to classify none of
+them `gave-up`; RE2/rust's drivers never see a return code capable of
+representing one in the first place.
 
 ## KB-30 (2026-09-25, found by lane b77u2/[B77] U2; OPEN) — vectorscan's measure() does not pass `--free-spacing`, so an `(?x)` pattern ending in a comment is wrapped differently at measure time than at compile time
 

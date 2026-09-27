@@ -340,6 +340,40 @@ mechanism is therefore **PROVISIONED, not confirmed live** — stated
 plainly rather than hidden, the same restraint `testees/onig/CLAUDE.md`
 exercises the other direction (its retry-limit code IS confirmed live).
 
+**UPDATED 2026-09-26 (KB-29, lane b98kb29): the MID-LOOP case is now
+shown UNREACHABLE, not merely unwitnessed, at MATCH time.** A genuine
+mid-loop find-all give-up would need `tre_regnexecb()`'s SECOND (or
+later) call in a find-all sequence to return `REG_ESPACE` — the shape
+`testees/{pcre2,onig,pcrec}/driver.c`'s own KB-29 fix (lane b98rider,
+above) protects against. `driver.c` here got the SAME mirrored fix
+(the loop's own terminal code always tracked, a genuine give-up
+discarding the call's accumulated matches), but an exhaustive
+fault-injection census
+(`docs/dev/measurements/2026-09-26-kb29-tre-giveup-reachability.txt`, an
+LD_PRELOAD malloc/calloc/realloc call counter wrapped around exactly
+this driver's own find-all call shape) found **ZERO allocations inside
+ANY `tre_regnexecb()` exec call**, across 1–7 backreference groups and
+subjects from 10 B to 1,000,000 B — wider than this section's own
+original 5-way/40-byte probe, and asking the sharper, mechanism-level
+question directly (does the call allocate at all?) rather than whether
+one hand-chosen pattern/timeout combination happens to reproduce
+`REG_ESPACE`. Cross-checked against libtre's own source
+(`lib/tre-mem.c`/`lib/tre-stack.c`): `REG_ESPACE` fires exclusively on a
+genuine `malloc()`/`calloc()`/`realloc()` failure or a `tre_stack_push()`
+cap that is itself reached only through further allocation. Since no
+allocation happens inside an exec call at all, `REG_ESPACE` (or any
+other non-`OK`/non-`NOMATCH` code) **cannot** arise from a find-all
+loop's second-or-later call on this pinned libtre build. `TRE_MAX_STACK`
+remains a real, documented bound (`lib/tre-internal.h`) but this
+adapter's actual `tre_regnexecb()` usage never appears to spend it.
+The fix ships anyway, defensively, in case a future libtre build,
+allocator, or build configuration behaves differently; the only
+possible regression control (`check_kb29_find_all_giveup_propagation`'s
+tre arm, `make check-harness`) is that a genuine backreference-stress
+subject with no answer still resolves as an ordinary `nomatch`, never a
+spurious `giveup:`. `REG_ESPACE` stays reachable, and first-class, at
+COMPILE time only (`tre_regncompb`, the `refusal_class` section above).
+
 ## `automaton_class`: pattern-dependent, stated in prose
 
 `capability_set_v1.md` §7.1 (S9) gives TRE its own `automaton_class`

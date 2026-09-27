@@ -1,0 +1,138 @@
+SOURCE HEADER
+=============
+Topic: KB-29 (docs/dev/known_issues.md) -- is a genuine mid-loop find-all
+  give-up REACHABLE for testees/tre/driver.c, i.e. can tre_regnexecb()'s
+  SECOND (or later) find-all call ever return something other than
+  REG_OK/REG_NOMATCH, the way pcre2/onig/pcrec's own KB-29 witnesses do?
+Bench commit: 6322ec65f2faa270d41b4ac3c2e744855f5d5cc4 (master, before
+  lane b98kb29's own commits)
+Lane: b98kb29 (KB-29 rider for tre/re2/rust, briefed by team-lead)
+Engine library: libtre5 / libtre-dev 0.9.0-1build1 (this box's apt
+  package; no pcrec pin involved -- this probe is TRE-only)
+Compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+Box: ubuntubudu, Linux 7.0.0-29-generic #29-Ubuntu SMP PREEMPT_DYNAMIC,
+  x86_64. NOT gated -- this is a compile+allocation-count probe (no
+  timing claim rests on wall-clock, only on a fixed 8 s per-cell budget
+  used to bound total run time; loadavg before 0.51/0.38/0.42, ordinary
+  background load, does not affect an allocation count).
+Script: probe_kb29_tre_giveup_reachability.py (this directory), which
+  builds and runs probe_kb29_tre_giveup_reachability.c (the driver.c-
+  shaped two-call find-all probe) under probe_kb29_tre_failmalloc.c (an
+  LD_PRELOAD malloc/calloc/realloc call counter, TRE_FAILMALLOC_VERBOSE=1,
+  no failure injected -- TRE_FAILMALLOC_AT unset). Command:
+  `python3 probe_kb29_tre_giveup_reachability.py` from this directory.
+Method, precisely: testees/tre/driver.c's find-all loop calls
+  tre_regnexecb() repeatedly, advancing `pos` by KB-17's rule. This probe
+  reproduces exactly that shape as two calls: call 1 (pos 0) is given
+  only the subject's leading byte, so it matches a literal alternative
+  trivially and cheaply; call 2 (pos 1) receives the REST of the subject
+  and the pattern's OWN backreference groups, which is what routes TRE to
+  its backtracking matcher at all (has_backrefs, testees/tre/CLAUDE.md's
+  own `automaton_class` section) -- exactly the population a real
+  KB-29 mid-loop witness needs (find-all call 1 already succeeded; call 2
+  is where a give-up would have to originate). The subject is
+  "Xa" + N x 'b' with NO trailing 'c', so the pattern
+  X|a(b*)(b*)...\1\2...c can never find its required 'c' and call 2 must
+  fully explore the backtracking search space before answering NOMATCH --
+  the worst case for the search to need memory, if it ever does. The
+  LD_PRELOAD interposer counts every malloc/calloc/realloc call the WHOLE
+  process makes; three stderr MARK lines around compile()/call1/call2
+  let the script attribute each allocation to its phase. A cell that
+  would run past 8 seconds of wall time (pure CPU, not an allocation
+  question -- TRE's backtracking search is exponential in TIME for these
+  patterns) is killed and excluded from the total, named explicitly
+  rather than silently treated as "0 allocations".
+Prior context this probe follows up on: testees/tre/CLAUDE.md's own
+  "gave-up: PROVISIONED by design, UNWITNESSED on this corpus" section
+  already tried ONE 5-way backreference pattern over 40 bytes under a 2 s
+  alarm and did not reproduce TRE_MAX_STACK's REG_ESPACE (REG_NOMATCH
+  came back inside the alarm). This probe widens that check to 1/3/5/7
+  backreference groups and b-run lengths from 10 B to 1,000,000 B (at 1
+  group; fewer at higher group counts, capped by the 8 s budget), and
+  asks a SHARPER, mechanism-level question directly: does the exec call
+  ever ALLOCATE at all? (Not: does a specific pattern/subject/timeout
+  combination happen to reproduce REG_ESPACE.)
+
+
+VERBATIM OUTPUT
+===============
+== KB-29 TRE reachability: allocation census per phase ==
+libtre: 0.9.0-1build1 (libtre-dev, this box)
+gcc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+box: Linux ubuntubudu 7.0.0-29-generic #29-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 17 20:52:35 UTC 2026 x86_64 GNU/Linux
+loadavg (before): 0.51 0.38 0.42 1/688 793276
+
+Subject: 'Xa' + N x 'b' (no trailing 'c') -- call 1 matches the leading 'X' alone; call 2 runs a(b*)(b*)...\1\2...c against 'a'+the b-run, which can never find the required 'c' -- the worst case for the backtracking matcher to fully explore before answering NOMATCH.
+
+groups   b-run-len  compile# call1#   call2#   call2-result    
+---------------------------------------------------------------
+1        10         46       0        0        NOMATCH         
+1        100        46       0        0        NOMATCH         
+1        1000       46       0        0        NOMATCH         
+1        20000      46       0        0        NOMATCH         
+1        200000     46       0        0        NOMATCH         
+1        1000000    46       0        0        NOMATCH         
+3        10         69       0        0        NOMATCH         
+3        100        69       0        0        NOMATCH         
+3        1000       69       0        0        TIMEOUT>8s      
+3        5000       69       0        0        TIMEOUT>8s      
+3        20000      69       0        0        TIMEOUT>8s      
+5        10         94       0        0        NOMATCH         
+5        50         94       0        0        NOMATCH         
+5        200        94       0        0        TIMEOUT>8s      
+5        1000       94       0        0        TIMEOUT>8s      
+7        10         121      0        0        NOMATCH         
+7        30         121      0        0        NOMATCH         
+7        100        121      0        0        TIMEOUT>8s      
+7        300        121      0        0        TIMEOUT>8s      
+
+SUMMARY: 19 cells run (12 completed, 7 timed out at 8s and excluded from the total below); total malloc/calloc/realloc calls inside call 2 across the 12 COMPLETED cells: 0
+  TIMED OUT (excluded): groups=3 b-run-len=1000
+  TIMED OUT (excluded): groups=3 b-run-len=5000
+  TIMED OUT (excluded): groups=3 b-run-len=20000
+  TIMED OUT (excluded): groups=5 b-run-len=200
+  TIMED OUT (excluded): groups=5 b-run-len=1000
+  TIMED OUT (excluded): groups=7 b-run-len=100
+  TIMED OUT (excluded): groups=7 b-run-len=300
+Zero allocations occurred inside any COMPLETED call-2 invocation, across 1-7 backreference groups and the b-run lengths that completed within 8s (10 B up to 1,000,000 B at 1 group). Since REG_ESPACE can only be returned when a malloc()/calloc()/realloc() call genuinely fails (tre-mem.c/tre-stack.c), and no such call is ever observed inside a tre_regnexecb() exec call in this build, a SECOND-OR-LATER find-all call cannot return REG_ESPACE (or any other code) on any of these cells -- only REG_OK or REG_NOMATCH. The skipped (timed-out) cells are NOT claimed to make zero allocations -- they simply ran too long to bracket; this lane's own separate interactive check under /usr/bin/time -v (not part of this script) found RSS flat at ~2.18 MB regardless of pattern/subject size on several of the same timed-out shapes, consistent with the same zero-allocation mechanism, but this file does not claim to have proven that for these specific cells.
+
+
+ADDITIONAL, SEPARATE INTERACTIVE CHECK (not part of the script above,
+recorded here rather than silently relied on): the same lane also ran
+`/usr/bin/time -v` directly against ad hoc standalone probes of several
+of the TIMEOUT rows above (3/5/7 backreference groups at b-run lengths up
+to 200,000 B, run to completion with no time cap rather than killed at
+8 s) and read "Maximum resident set size" flat at ~2,176-2,244 kB in
+every case -- the SAME order of magnitude as the completed cells in the
+table above, never growing with pattern complexity or b-run length. This
+is consistent with, but does not by itself prove, the same
+zero-allocation mechanism for those specific timed-out cells; it is
+offered as corroborating evidence, not as an independent proof.
+
+READING (mine, not the script's -- the file's own convention keeps
+interpretation out of the printed block above)
+======================================================================
+Zero allocations were observed inside ANY tre_regnexecb() exec call in
+this build, across every combination this probe could complete (1-7
+backreference groups, subjects from 10 B to 1,000,000 B). Cross-checked
+against libtre's own source (lib/tre-mem.c, lib/tre-stack.c, fetched
+2026-09-26): REG_ESPACE -- the ONLY code besides REG_OK/REG_NOMATCH TRE's
+regexec-family functions can return -- is returned exclusively when a
+real malloc()/calloc()/realloc() call fails, or when tre_stack_push()'s
+own internal doubling would exceed its max_size cap (itself reached only
+through further allocation). Since no allocation of any kind happens
+inside an exec call here, REG_ESPACE (or any other non-OK/non-NOMATCH
+code) CANNOT arise from testees/tre/driver.c's find-all loop's SECOND (or
+later) tre_regnexecb() call on this pinned libtre build -- the KB-29 bug
+shape this lane fixed defensively in driver.c (mirroring pcre2/onig/
+pcrec) is therefore UNREACHABLE here, not merely hard to hit by chance.
+The only place REG_ESPACE CAN fire is tre_regncompb() (compile time),
+which testees/tre/CLAUDE.md's `refusal_class` section already handles as
+a first-class `did-not-compile` (size-limit when the pattern's own byte
+length exceeds TRE_MAX_RE, absent otherwise -- TRE overloads REG_ESPACE
+between the two causes and this project already declines to guess which).
+This does NOT rule out some future libtre build (a different version, a
+different allocator, a different build configuration) behaving
+differently -- the fix in driver.c stays in place as a defensive, no-cost
+correctness improvement for that hypothetical, mirroring the three
+already-fixed drivers exactly.

@@ -202,6 +202,15 @@ is a match-time MECHANISM change the caller cannot observe, per
 capability_set_v1.md §5.4). This driver's only per-subject answers are
 `match`/`nomatch`/`timedout` (this driver's own alarm).
 
+**KB-29 audit (docs/dev/known_issues.md, lane b98kb29, 2026-09-26):**
+confirmed CLOSED, no code change. KB-29's mid-loop find-all give-up
+truncation bug (fixed for pcre2/onig/pcrec, lane b98rider) needs a
+per-call error-code channel a fix could silently discard — `driver.cc`'s
+find-all loop (above) has no such channel: `re->Match(...)` returns a
+plain `bool`, so there is no `rc < 0` branch to have the bug in the
+first place. Confirmed by direct inspection of the loop, not merely by
+this section's own pre-existing claim.
+
 ## The I-72 lesson: raw bytes end to end
 
 The pattern travels from python to the driver as a **FILE**

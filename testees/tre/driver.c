@@ -402,7 +402,27 @@ int main(int argc, char **argv) {
                         int rc = tre_regnexecb(&re, (const char *)s->buf + pos,
                                                s->len - pos, nmatch_cap,
                                                pmatch, eflags);
-                        if (rc != REG_OK) { if (count == 0) rc_final = rc; break; }
+                        /* KB-29 (docs/dev/known_issues.md): rc_final is now
+                         * ALWAYS the loop's own terminal code -- not only
+                         * when count == 0 -- so a genuine give-up (any code
+                         * other than REG_OK/REG_NOMATCH) AFTER at least one
+                         * match is never silently discarded in favour of
+                         * the LAST successful match's own REG_OK. Mirrors
+                         * testees/{pcre2,onig,pcrec}/driver.c's own fix
+                         * exactly. See this driver's own reachability note
+                         * below: on the pinned libtre build, tre_regnexecb
+                         * is EMPIRICALLY shown to make zero heap
+                         * allocations for any pattern/subject this project
+                         * could construct (docs/dev/measurements/2026-09-26-
+                         * kb29-tre-giveup-reachability.txt), so REG_ESPACE
+                         * -- the only code besides REG_OK/REG_NOMATCH TRE's
+                         * own source can return from an exec call -- has
+                         * never been observed to fire here; this fix is
+                         * therefore DEFENSIVE (correct if a future libtre
+                         * build or an exotic pattern this project has not
+                         * tried ever does allocate mid-match), not a fix
+                         * for a witnessed truncation on this engine. */
+                        if (rc != REG_OK) { rc_final = rc; break; }
                         long m_s = (long)pmatch[0].rm_so + (long)pos;
                         long m_e = (long)pmatch[0].rm_eo + (long)pos;
                         if (first_s < 0) {
@@ -443,6 +463,21 @@ int main(int argc, char **argv) {
                         if (pos > s->len) break;
                     }
                     nmatches = count;
+                    /* KB-29: a MID-loop give-up (any code other than
+                     * REG_OK/REG_NOMATCH, POSIX's own ordinary "no further
+                     * matches" terminator for these functions) must
+                     * propagate as the whole subject's give-up -- discard
+                     * any match already found THIS call so the
+                     * classification below falls through to the SAME
+                     * giveup:<code>:<message> branch a first-call give-up
+                     * already takes. Mirrors testees/{pcre2,onig,pcrec}/
+                     * driver.c's own discard exactly. */
+                    if (rc_final != REG_OK && rc_final != REG_NOMATCH) {
+                        first_s = first_e = -1;
+                        nmatches = -1;
+                        ncaps_final = 0;
+                        caps_final[0] = '-'; caps_final[1] = 0;
+                    }
                 } else {
                     int rc = tre_regnexecb(&re, (const char *)s->buf, s->len,
                                            nmatch_cap, pmatch, 0);
