@@ -459,7 +459,35 @@ bindings) live here, vendored or system, pinned either way.
   denied at the same pin, the fold's BEFORE) — and `pcrec-auto-noreqbyte`
   (`-fno-req-byte`, [B101]: [OPT-REQBYTE]'s pre-check denied at the same
   pin, inbox I-111's owed twin; twenty-one pinned pcrec configs) — at a
-  pinned commit — **02902356, abi 37** (re-pinned from ce658cb7,
+  pinned commit — **751b9c6d, abi 39** (re-pinned from 02902356,
+  2026-09-27, lane b104repin, inbox I-112 — TWO abi steps: 37→38
+  [OPT-REQRUN-ENC] stage 2 (43039d4e: the necessary run's `!bytekey`
+  decline — the fallback used under every encoding `req_byte`'s own
+  byte-frequency prior is not keyed to, `-e utf8` today — moves from
+  LEFTMOST to RIGHTMOST, matching `rb_pick`'s own `!bytekey` fallback
+  exactly; byte encoding untouched by construction), 38→39 the K68 fix
+  (d911def7: `rx_info.flags`'s `strategy_denials` mask gains bits
+  28/29/30 — `-fno-vm-anchor-bound`/`-fno-end-window`/`-fno-req-byte`,
+  which moved five bytes of `.flags` on every artifact including ones
+  the flag cannot act on, our own I-111 fact 4/K68 finding, now FIXED — a
+  reflection-surface fix, no answer or program move). No new stamp,
+  `struct rx_info` byte-identical, the shim floor STAYS 16. Registries
+  (axes 91/32, definitions 50, limits 62, schema 78) BYTE-IDENTICAL to
+  02902356's. The seven `-e utf8` `pcrec-auto` lit-* stamps I-112
+  predicted confirmed BY VALUE (é@→64/`c3a940@2`, @é→169/`40c3a9@2`,
+  `user@例え.jp`→136/`7240e4be8be38188@7`, Москва→176/`d181d0bad0b2d0b0@7`,
+  日本語→158/`97a5e69cace8aa9e@7`, café→169/`636166c3a9@4`,
+  Straße→101/`53747261c39f65@6`) — `RX_DFA_PREFILTER` on the same seven
+  still `memchr`/`offset-set` on the literal's UTF-8 LEAD byte
+  ([OPT-LITSCAN] F3, filed 2026-09-27, NOT yet fixed — the DFA
+  candidate-start scan is a separate mechanism the abi step did not
+  touch). K68's `.flags = 0ULL` confirmed on default and all three
+  denied arms (was `1073741824`/`536870914`/`268435458` in turn). The
+  compile-only census over I-111's own two populations (bench_pop 650 +
+  capability@0.1 384 = 1,034) reads 964 identical / 70 refused-both / 0
+  changed / 0 refusal-mover — CONFIRMING I-112's own "0 changes
+  anywhere" on byte encoding. Catalogue 3.11.) Before it,
+  **02902356, abi 37** (re-pinned from ce658cb7,
   2026-09-26, lane b101repin, inbox I-111 — FOUR abi steps: 33→35 K65/K66
   (27a63314: on a VM route with no DFA scan the pre-check tests the WHOLE
   necessary set / the whole run), 35→36 [OPT-LITSCAN] S1 steps 1-5
