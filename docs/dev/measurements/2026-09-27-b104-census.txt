@@ -1,0 +1,47 @@
+2026-09-27-b104-census.txt -- [B104] (lane b104repin) THE COMPILE-ONLY
+PROGRAM-IDENTITY CENSUS for the re-pin 02902356 (abi 37) -> 751b9c6d
+(abi 39), reproducing I-112's own claim ("0 changes anywhere") over the
+SAME two populations b101repin's census used.
+
+Source: docs/dev/measurements/probe_b104_census.py
+Command: python3 docs/dev/measurements/probe_b104_census.py OUT.tsv
+Box: budu-ryzen1600, not gated (read-only, compile-only; no timing, no
+quiet-box requirement -- BD3's heavy-suite rule does not apply to a
+compile sweep).
+Binaries: build/pcrec-02902356/build/pcrec, build/pcrec-751b9c6d/build/pcrec
+(both built by testees/pcrec/pin.sh; the 751b9c6d build's sha256 is
+whatever `pin.sh --path 751b9c6d` resolves to at merge time).
+Populations (same as probe_b101_census.py's i111/cap):
+  i111: pcrec's own bench_pop() -- every bench/*/patterns/*.rx (325 at
+        this HEAD, all six sets) x {caps, nocaps}, plain form, auto
+        engine = 650 artifact-configs, BYTE encoding.
+  cap:  capability@0.1's three distinct compiled configs (auto-caps,
+        auto-nocaps, vm-caps) x 64 patterns x 2 forms = 384.
+Identity: v2 (program_identity.program_sha256_of_text), the record
+field's own normalization -- comments stripped, the shared ABI block and
+the unreferenced rx_info initializer dropped, every referenced #define
+compared verbatim.
+
+RESULT (verbatim stdout):
+
+DONE rows=1034 identical=964 changed=0 refused-both=70 refusal-mover=0
+
+READING: 964 identical + 70 refused-both (both pins refuse the SAME
+artifacts for the SAME reason -- no compiler ran) = 1034/1034 accounted
+for, ZERO changed and ZERO refusal-movers. This CONFIRMS I-112's own
+predicted answer ("0 changes anywhere") on the BYTE-encoding population:
+neither abi step touches a byte-encoded program. [OPT-REQRUN-ENC]'s
+leftmost->rightmost change is gated on `!bytekey` (every encoding
+req_byte's own byte-frequency prior is NOT keyed to -- today, `-e utf8`
+alone), so it cannot move a byte-encoded artifact by construction; K68's
+`.flags` mask fix touches only the unread rx_info reflection initializer,
+which v2's own rule 3 already drops. The refused-both count (70 = 59 i111
++ 11 cap) matches probe_b101_census.py's own refused-both count exactly,
+confirming the population and the refusal set are unchanged across this
+re-pin too.
+
+The seven `-e utf8` lit-* witnesses I-112 predicts BY VALUE (é@, @é,
+user@例え.jp, Москва, 日本語, café, Straße) are OUTSIDE this population
+(byte encoding only) by design -- they are asserted separately, by value,
+in tools/selfcheck.py's STAMP_CASES (see the lane report and
+testees/pcrec/CLAUDE.md's re-pin entry).

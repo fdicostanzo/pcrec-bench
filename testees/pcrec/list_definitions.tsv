@@ -3,22 +3,19 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-02902356/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-751b9c6d/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37 -- see list_axes.tsv's header),
-# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
-# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
-# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
-# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
-# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
-# prefilter that verifies the run, and the two `run-pinned` prefilter
-# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
-# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
-# 42ee828f..02902356 touches no src/ file.
+# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
+# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: 43039d4e [OPT-REQRUN-ENC]
+# (37 -> 38, the necessary run's `!bytekey` decline moves leftmost ->
+# rightmost); b255027f K68 fix (38 -> 39, `rx_info.flags`'s
+# strategy_denials mask gains bits 28/29/30). Neither step touches
+# definitions.c or registry.c.
 # 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
-# definition, applies -- BYTE-IDENTICAL to the ce658cb7 copy below the
+# definition, applies -- BYTE-IDENTICAL to the 02902356 copy below the
 # header (diffed line for line): every step in the range is emit-side --
-# the fifteenth pin running.
+# the sixteenth pin running.
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
