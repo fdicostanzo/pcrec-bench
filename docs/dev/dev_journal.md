@@ -6159,3 +6159,23 @@ Report: `docs/dev/lanes/b103infra_report.md`.
   the re-measure rides I-112's pin → [B104].
 - I-112 (751b9c6d, abi 39) landed ~01:1x: re-pinned (b104repin), predictions
   committed (b104pred), WINDOW OPEN 01:49 EDT (24 cells, ~8-10 h).
+
+## 2026-09-27 ~20:xx — thirty-fifth session close
+
+- [B104] COMPLETE: window 01:49-14:11 EDT, 24/24 at 751b9c6d; READ merged
+  (twelve report groups, ledger, O-63 sent). Headlines: syntax anc-dollar/
+  anc-z-lc full collapse (×6,500 → pcrec beats rust ×0.30); utf8 F3 NOT
+  uniform (2/4 residual witnesses resolved, lit-cyr-run flat, lit-sharp-s
+  ×2.84 regression unpredicted); the flip-to-slow risk class confirmed
+  (×17.6 / ×3.2); O-62 refreshed. KB-35 filed.
+- Found in conversation with Frank: auto picks the DFA on SHORT whole-subject
+  matches where its own VM is ×1.5-4.5 faster (syntax grp-*/rec-* nocaps;
+  altwide cnt-64 size-cap-retry 822 KB DFA 1.8 µs vs VM 0.4 µs); census
+  archived, in O-63 §5; pcrecdev1: feeds their next optimisation cycle.
+- Upstream: U1/U2/U4 → PCRE2Project/pcre2#1015, U7 → VectorCamp/vectorscan#416
+  (Frank approved, posted from his account); thread watcher [B106]
+  (threads.tsv + tools/upstream.py threads), checked once per session at wake.
+- Viewer v1.3 (Frank's feedback, lane b107viewer): sticky corner, log-ratio
+  colour scale, picker scroll kept, encoding/captures categories, hide-empty,
+  virtual pcrec (auto) column; viewer/data regenerated with capture counts.
+- I-113 (a32bc86e, abi 41, S2a) acked → [B108], not started.

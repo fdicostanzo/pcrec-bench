@@ -1652,3 +1652,13 @@ precise, not a blanket strip of anything starting `(*`). Verified
 against the real bug by hand (`git stash testees/vectorscan/driver.c`,
 rebuild, confirm the exact refusal, `git stash pop`) — recorded in
 `docs/dev/lanes/b98rider_report.md`.
+
+## KB-35 — tools/program_identity.py cannot census email-specimen (directory alias vs subbench id)
+
+Found 2026-09-27 by lane b104read ([B104]). The CLI resolves the bench
+DIRECTORY alias (`email`) for its pattern loader, then compares that same
+raw string against `store/index.tsv`'s `subbench` column (`email-specimen`)
+— never equal, so it reports `no config measured at both` and the
+email-specimen cross-pin report carries no D119 null band. Fix: resolve the
+alias to the sidecar's subbench id once and use that id for the index
+lookup. Status: OPEN (small; no measurement depends on it beyond the band).
