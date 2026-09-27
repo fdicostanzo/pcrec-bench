@@ -45,6 +45,13 @@
   --shadow: 0 1px 3px rgba(20, 20, 25, 0.08), 0 1px 2px rgba(20, 20, 25, 0.06);
   --focus-ring: #1656c9;
   --code-bg: #eef0f3;
+  /* v1.3 item 2: the row-relative colour scale's three anchors -- ALIASES
+     of existing theme-aware tokens (never new hex constants) so the
+     scale always agrees with the "this is the winner" green and the
+     "wrong answer" red this page already uses elsewhere. */
+  --scale-good: var(--best-bg);
+  --scale-mid: var(--bg-panel);
+  --scale-bad: var(--status-wrong-bg);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -198,6 +205,12 @@ table.matrix { border-collapse: separate; border-spacing: 0; width: 100%; min-wi
 table.matrix thead th { position: sticky; top: 0; background: var(--bg-panel); z-index: 5; border-bottom: 1px solid var(--border); }
 table.matrix th.fam-band { text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-muted); background: var(--bg-inset); border-left: 1px solid var(--border); padding: 4px 6px; }
 table.matrix th.rowhead-band { background: var(--bg-inset); }
+/* v1.3 item 1: the header's own leftmost cell (the band row's blank
+   corner, the col-labels row's "set / pattern" cell) is sticky on BOTH
+   axes -- z-index above the ordinary sticky-top header row (5) AND the
+   body's sticky-left rowhead column (2), since a corner cell must beat
+   whichever axis is scrolling under it from either direction. */
+table.matrix thead th.corner-head { left: 0; z-index: 20; }
 table.matrix thead tr.col-labels th { padding: 6px 10px; font-weight: 600; border-left: 1px solid var(--border); white-space: nowrap; }
 table.matrix thead tr.col-labels th.sortable { cursor: pointer; }
 table.matrix thead tr.col-labels th.sortable:hover { color: var(--accent); }
@@ -214,6 +227,16 @@ td.cell .metric-lbl { color: var(--fg-faint); font-size: 10px; font-weight: 600;
 .sort-metric-row button.active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 #engine-picker-toggle { width: 100%; text-align: left; display: flex; justify-content: space-between; }
 .engine-dropdown-panel { margin-top: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-inset); max-height: 60vh; overflow-y: auto; }
+/* v1.3 item 4: the category selectors sit above the family tree, same
+   tree-row mechanics, with a small heading of their own. */
+.category-group { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.category-group h3 { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-faint); margin: 4px 0 2px; }
+/* v1.3 item 2: the colour-scale legend -- a five-stop gradient swatch
+   (green -> white -> red) plus the two adjustable N/M number inputs. */
+#colorscale-legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--fg-muted); }
+#colorscale-legend .swatch { display: inline-block; width: 90px; height: 12px; border-radius: 3px; border: 1px solid var(--border); }
+#colorscale-legend input[type="number"] { width: 52px; padding: 2px 5px; }
+#colorscale-legend label { display: flex; align-items: center; gap: 3px; }
 .pattern-inline { color: var(--fg-muted); font-size: 11.5px; margin-left: 6px; }
 .pattern-popover-text { white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-width: 360px; }
 .pattern-popover-note { color: color-mix(in srgb, var(--bg) 65%, transparent); margin-top: 4px; }
@@ -353,6 +376,16 @@ var App = (function () {
   // survive a re-render; this module-level flag is what does.
   var engineDropdownOpen = false;
 
+  // v1.3 item 7: the ONE family this page resolves a virtual "auto"
+  // column for today -- the resolution function itself (below) is
+  // generic over any family with a caps/nocaps pair, so a future engine
+  // gaining both classes needs only a second constant, never new code.
+  var VIRTUAL_AUTO_FAMILY = "pcrec";
+  // A key that can never collide with a real testee_id: every real one
+  // is a schema slug (`^[a-z0-9]([a-z0-9-]*[a-z0-9])?$` plus `_`/`@`
+  // joins), none of which can contain U+0000.
+  var VIRTUAL_AUTO_TESTEE_ID = "\u0000virtual-pcrec-auto";
+
   // ---------------------------------------------------------- utilities
 
   function statusRank(st) {
@@ -426,7 +459,12 @@ var App = (function () {
     var sets = Object.create(null);     // setKey -> {subbench, version, n_rows}
     var regimes = Object.create(null);
     var forms = Object.create(null);
-    var patternText = Object.create(null); // setKey -> {pattern_id -> {text,omitted,truncated,full_bytes}}
+    var patternText = Object.create(null); // setKey -> {pattern_id -> {text,omitted,truncated,full_bytes,captures}}
+    // v1.3 item 7: setKey -> true iff this set carries at least one pcrec
+    // testee_id ending `_utf8` -- the SET's own encoding, for the virtual
+    // "pcrec (auto)" column (never a global fact: a byte-only set has no
+    // utf8 sibling to pick at all).
+    var setUsesUtf8Pcrec = Object.create(null);
     allRows = [];
     testeeIndex = Object.create(null);
 
@@ -446,6 +484,9 @@ var App = (function () {
         vv.pins[r.pin || ""] = r.testee_id;
         regimes[r.regime || ""] = true;
         forms[r.form || "plain"] = true;
+        if (r.engine_family === VIRTUAL_AUTO_FAMILY && encodingOf(r.testee_id) === "utf8") {
+          setUsesUtf8Pcrec[sk] = true;
+        }
         var ti = testeeIndex[r.testee_id];
         if (!ti) {
           ti = testeeIndex[r.testee_id] = { family: r.engine_family, variant: r.engine_variant, pin: r.pin || "", newestDate: null };
@@ -469,7 +510,8 @@ var App = (function () {
         sets[e.set] = { subbench: e.subbench, version: e.version, n_rows: 0, missing: true };
       }
     });
-    return { families: families, sets: sets, regimes: regimes, forms: forms, patternText: patternText };
+    return { families: families, sets: sets, regimes: regimes, forms: forms,
+             patternText: patternText, setUsesUtf8Pcrec: setUsesUtf8Pcrec };
   }
 
   function allTesteeIds() {
@@ -490,6 +532,123 @@ var App = (function () {
   // filter-dependent), same posture as `newestDate`.
   function isAblationArm(variant) {
     return variant.indexOf("_") !== -1;
+  }
+
+  // v1.3 items 4/7: the config slug's OWN `-caps-`/`-nocaps-` segment
+  // (record_schema.md 6.4's universal `<mode>-<caps>-<simd>[...]` shape,
+  // every engine, not only pcrec) -- "nocaps" checked FIRST since
+  // "-nocaps-" is not itself a superstring match for "-caps-" (the
+  // literal bytes `-c-a-p-s-` never occur contiguously inside
+  // "-nocaps-"), so the order does not matter for correctness, only for
+  // never accidentally checking the substring against itself. `null` for
+  // a variant whose slug carries neither segment (none exist in this
+  // corpus today; a real, definED-but-unpopulated third bucket, not a
+  // swallowed case).
+  function capsToken(variant) {
+    if (variant.indexOf("-nocaps-") !== -1) return "nocaps";
+    if (variant.indexOf("-caps-") !== -1) return "caps";
+    return null;
+  }
+
+  // v1.3 items 4/7: a testee_id's own ENCODING -- every UTF-8-capable
+  // engine's character-mode sibling's testee_id is its byte sibling's
+  // plus a trailing `_utf8` (testees/CLAUDE.md's own stated rule, [B77]
+  // U2), so this is engine-neutral by construction, not a pcrec fact.
+  function encodingOf(testeeId) {
+    return (testeeId.length > 5 && testeeId.slice(-5) === "_utf8") ? "utf8" : "byte";
+  }
+
+  // v1.3 item 7: for one family, {base -> {byte:{caps,nocaps}, utf8:
+  // {caps,nocaps}}} -- `base` is the variant string with its OWN
+  // caps/nocaps segment collapsed to one placeholder token (so
+  // `auto-caps-simdna` and `auto-nocaps-simdna` fall into the SAME base,
+  // `auto-\0-simdna`) and its trailing `_utf8` (if any) stripped off
+  // separately, so caps/nocaps and byte/utf8 are two INDEPENDENT axes of
+  // one lookup rather than four hand-enumerated variant strings. A
+  // variant whose slug carries neither segment (`capsToken` null) is
+  // left out of the index entirely -- it can never be half of a pair.
+  function familyCapsNocapsIndex(fam) {
+    var variants = (domain.families[fam] && domain.families[fam].variants) || {};
+    var idx = Object.create(null);
+    Object.keys(variants).forEach(function (v) {
+      var enc = "byte", vv = v;
+      if (vv.length > 5 && vv.slice(-5) === "_utf8") { enc = "utf8"; vv = vv.slice(0, -5); }
+      var tok = capsToken(vv);
+      if (!tok) return;
+      var base = vv.replace(tok === "nocaps" ? "-nocaps-" : "-caps-", "-\u0000-");
+      var g = idx[base] || (idx[base] = {});
+      var e = g[enc] || (g[enc] = {});
+      e[tok] = v; // the variant string AS SEEN (with its own _utf8 suffix, if any)
+    });
+    return idx;
+  }
+
+  // v1.3 item 7: per matrix ROW GROUP, which real pcrec testee_id the
+  // virtual "pcrec (auto)" column reads, and why -- see
+  // docs/design/results_viewer_v1.md 11 item 7 for the full rule.
+  // `testeeId` is `null` when no qualifying caps/nocaps pair exists for
+  // this row's own encoding (today: any family but pcrec, or a set with
+  // no pcrec `_utf8` sibling at all under `needUtf8`).
+  function resolveVirtualAutoTestee(g) {
+    var idx = familyCapsNocapsIndex(VIRTUAL_AUTO_FAMILY);
+    var enc = (domain.setUsesUtf8Pcrec && domain.setUsesUtf8Pcrec[g.set]) ? "utf8" : "byte";
+    var bases = Object.keys(idx).filter(function (b) {
+      var e = idx[b][enc];
+      return e && e.caps && e.nocaps;
+    });
+    if (bases.length !== 1) {
+      return { testeeId: null,
+        why: "no caps/nocaps pair for " + VIRTUAL_AUTO_FAMILY + " at this encoding (" + enc + ")" };
+    }
+    var pair = idx[bases[0]][enc];
+    var patInfo = patternTextInfo(g.set, g.pattern);
+    var captures = patInfo ? patInfo.captures : undefined;
+    var unknown = (captures === null || captures === undefined);
+    var needCaps = unknown ? true : captures > 0;
+    var variant = needCaps ? pair.caps : pair.nocaps;
+    var pinsMap = (domain.families[VIRTUAL_AUTO_FAMILY].variants[variant] || {}).pins || {};
+    var order = pinsByDate(pinsMap);
+    if (!order.length) {
+      return { testeeId: null, why: "no pin measured for " + variant };
+    }
+    var testeeId = pinsMap[order[0]];
+    var why = unknown
+      ? ("pattern's capture-group count is unknown (pattern text omitted, or it did not "
+         + "compile stand-alone) → falling back to " + variant)
+      : ("pattern has " + captures + " capture group" + (captures === 1 ? "" : "s")
+         + " → " + variant);
+    return { testeeId: testeeId, why: why };
+  }
+
+  // v1.3 item 7: mutates each group's OWN `cells` map in place, adding
+  // `VIRTUAL_AUTO_TESTEE_ID` -- an ALIAS of the resolved real testee's
+  // cell object (never a copy, never a mutation of it: two column keys
+  // may point at the very same row, exactly as if a plain testee tied
+  // another one, per the design note's "no special dedup" ruling) when
+  // that real testee actually has a cell in this group, else a SYNTHETIC
+  // `excluded`-status placeholder naming why -- never a blank cell. A
+  // fresh `groups` array is rebuilt every render (`buildMatrixRows`), so
+  // this mutation never leaks between renders. No-op entirely when the
+  // toggle is off.
+  function injectVirtualAutoCells(groups) {
+    if (!state.virtualAuto || !domain.families[VIRTUAL_AUTO_FAMILY]) return;
+    groups.forEach(function (g) {
+      var resolved = resolveVirtualAutoTestee(g);
+      g.virtualAutoWhy = resolved.why;
+      g.virtualAutoResolvedId = resolved.testeeId;
+      var real = resolved.testeeId ? g.cells[resolved.testeeId] : null;
+      if (real) {
+        g.cells[VIRTUAL_AUTO_TESTEE_ID] = real;
+      } else {
+        g.cells[VIRTUAL_AUTO_TESTEE_ID] = {
+          status: "excluded",
+          diagnostic: resolved.testeeId
+            ? ("pcrec (auto): " + resolved.why + " — not measured on this row")
+            : ("pcrec (auto): " + resolved.why),
+          testee_id: null, pin: null, record_id: null, measured_utc: null
+        };
+      }
+    });
   }
 
   function computeDefaultTesteeIds() {
@@ -535,6 +694,8 @@ var App = (function () {
       forms: null,      // null = "all"
       q: "",
       showNonMeasured: true,
+      showEmptyEngines: false, // v1.3 item 5: hidden by default from the matrix AND the picker
+      virtualAuto: true,       // v1.3 item 7: the "pcrec (auto)" virtual column, on by default
       metrics: ["ns"],    // 9.4: any non-empty subset of ns|mbps|best, fixed display order
       sortMetric: null,   // 9.5: which DISPLAYED metric a "testee" sort ranks by; null = first of `metrics`
       sortKind: null,    // null (natural: set,pattern,regime,form) | "testee" | "pattern" | "set" | "best"
@@ -587,6 +748,8 @@ var App = (function () {
     parts.push("forms=" + encodeSet(st.forms, Object.keys(domain.forms)));
     if (st.q) parts.push("q=" + encodeURIComponent(st.q));
     parts.push("nm=" + (st.showNonMeasured ? 1 : 0));
+    parts.push("ee=" + (st.showEmptyEngines ? 1 : 0));
+    parts.push("va=" + (st.virtualAuto ? 1 : 0));
     parts.push("metric=" + st.metrics.join(","));
     if (st.sortMetric) parts.push("sortmetric=" + st.sortMetric);
     if (st.sortKind) {
@@ -614,6 +777,8 @@ var App = (function () {
     st.forms = decodeSet(q.forms, Object.keys(domain.forms));
     st.q = q.q ? decodeURIComponent(q.q) : "";
     st.showNonMeasured = q.nm === undefined ? true : q.nm === "1";
+    st.showEmptyEngines = q.ee === "1"; // absent = false, the stated default
+    st.virtualAuto = q.va === undefined ? true : q.va === "1";
     // Comma-list, any non-empty subset of METRIC_ORDER; an unknown token
     // (a hash edited by hand, or a future metric this build predates) is
     // dropped rather than crashing the render, and an all-unknown/empty
@@ -668,6 +833,95 @@ var App = (function () {
     persist();
   }
 
+  // ---------------------------------------------------- v1.3 item 2: colour scale
+
+  // A DISPLAY preference, not a query/filter -- kept OUT of `state`
+  // (never hash-serialized; the hash's own shareability contract is for
+  // what a report is ABOUT, not how it happens to be painted) and given
+  // its own localStorage key, try/catch-guarded exactly like `persist()`
+  // already guards `state`'s own save.
+  var COLOR_SCALE_KEY = "pcrecbench-viewer-colorscale";
+  var colorScale = { n: 2, m: 10 }; // Frank's own defaults
+
+  function loadColorScalePrefs() {
+    try {
+      var raw = localStorage.getItem(COLOR_SCALE_KEY);
+      if (!raw) return;
+      var obj = JSON.parse(raw);
+      if (obj && obj.n > 1 && obj.m > obj.n) { colorScale.n = obj.n; colorScale.m = obj.m; }
+    } catch (e) { /* private window etc. */ }
+  }
+
+  function saveColorScalePrefs() {
+    try { localStorage.setItem(COLOR_SCALE_KEY, JSON.stringify(colorScale)); }
+    catch (e) { /* ignore */ }
+  }
+
+  function hexToRgb(hex) {
+    var m = /^#([0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!m) return [255, 255, 255];
+    var n = parseInt(m[1], 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function rgbLerp(a, b, t) {
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  }
+
+  function rgbToCss(rgb) {
+    return "rgb(" + Math.round(rgb[0]) + "," + Math.round(rgb[1]) + "," + Math.round(rgb[2]) + ")";
+  }
+
+  // `--scale-good`/`-mid`/`-bad` are themselves ONE-LEVEL ALIASES
+  // (`--scale-good: var(--best-bg);`) rather than duplicated hex
+  // literals, so the scale can never drift from the tokens it is named
+  // after. Real browsers resolve a nested `var()` chain to its final
+  // value inside `getComputedStyle` by themselves (the CSS Custom
+  // Properties spec requires full substitution at computed-value time);
+  // this one extra step resolves it manually too, defensively, since it
+  // costs nothing when the browser already did it (the regex simply
+  // fails to match an already-resolved `#rrggbb` string and the raw
+  // value is returned unchanged).
+  function resolveCssVarOnce(cs, raw) {
+    var v = String(raw).trim();
+    var m = /^var\((--[a-zA-Z0-9-]+)\)$/.exec(v);
+    return m ? cs.getPropertyValue(m[1]).trim() : v;
+  }
+
+  // The three anchors, read ONCE per render (never per cell) off the
+  // CURRENT theme's computed custom properties.
+  function getScaleAnchors() {
+    var cs = getComputedStyle(document.documentElement);
+    function anchor(name) { return hexToRgb(resolveCssVarOnce(cs, cs.getPropertyValue(name))); }
+    return { good: anchor("--scale-good"), mid: anchor("--scale-mid"), bad: anchor("--scale-bad") };
+  }
+
+  // Frank's own wording: colour by the cell's ratio to its ROW's best
+  // (1.0 = best), full green AT 1.0, fading NON-LINEARLY (log-ratio
+  // interpolation) to white at N, then light red rising to full red at M
+  // and above. `ratio <= 1` is a real case (the row's own best cell,
+  // where `ratio === 1` exactly by construction of `bestNs`) rather than
+  // only a boundary, so it is checked first and returns pure green
+  // rather than falling through the log arithmetic at `log(1) === 0`
+  // (which WOULD also give exactly `t=0`/pure green here, but stating it
+  // as its own branch is what makes "full green at 1.0" a fact the code
+  // asserts rather than a coincidence of the formula below it). `n`/`m`
+  // are guarded here, not at the call site, against a corrupted
+  // persisted preference (n <= 1 or m <= n) by silently falling back to
+  // the stated defaults -- a broken saved pair degrades the SCALE, never
+  // the render.
+  function colorForRatio(ratio, anchors, n, m) {
+    if (!(ratio > 0) || !isFinite(ratio)) return null;
+    if (!(n > 1) || !(m > n)) { n = 2; m = 10; }
+    if (ratio <= 1) return rgbToCss(anchors.good);
+    if (ratio >= m) return rgbToCss(anchors.bad);
+    if (ratio <= n) {
+      return rgbToCss(rgbLerp(anchors.good, anchors.mid, Math.log(ratio) / Math.log(n)));
+    }
+    var t = (Math.log(ratio) - Math.log(n)) / (Math.log(m) - Math.log(n));
+    return rgbToCss(rgbLerp(anchors.mid, anchors.bad, t));
+  }
+
   // ------------------------------------------------------------- filters
 
   function filteredRows() {
@@ -684,6 +938,34 @@ var App = (function () {
 
   function visibleTestees() {
     return allTesteeIds().filter(function (t) { return isSelected(state.testees, t); }).sort();
+  }
+
+  // v1.3 item 5: HIDE EMPTY ENGINES. Deliberately a DISPLAY filter, never
+  // a change to `state.testees` itself -- `visibleTestees()` above (the
+  // SELECTION) is untouched and is still what the picker's own "Engines:
+  // n/N selected" count reads, so toggling "show engines with no data"
+  // back on can never have lost which engines the user actually picked.
+  function nonEmptyTesteeIds(groups) {
+    return allTesteeIds().filter(function (t) { return coverageFor(t, groups).n > 0; });
+  }
+
+  // Which ids the picker (family tree + the two category rows) may LIST
+  // at all, against the CURRENT filtered `groups` -- every id when the
+  // toggle is on, else only ones with >=1 measured cell here.
+  function pickerEnumerableTesteeIds(groups) {
+    if (state.showEmptyEngines) return allTesteeIds();
+    return nonEmptyTesteeIds(groups);
+  }
+
+  // Which ids actually become MATRIX COLUMNS: the user's own selection,
+  // further narrowed by the same enumerable set the picker itself is
+  // built from (so a selected-but-hidden testee never renders as an
+  // empty column while its selected-ness survives underneath).
+  function displayedTesteeIds(groups) {
+    if (state.showEmptyEngines) return visibleTestees();
+    var enumerable = Object.create(null);
+    nonEmptyTesteeIds(groups).forEach(function (t) { enumerable[t] = true; });
+    return visibleTestees().filter(function (t) { return enumerable[t]; });
   }
 
   // --------------------------------------------------------------- rows
@@ -828,14 +1110,70 @@ var App = (function () {
     });
   }
 
+  // v1.3 items 3/4/6: a tri-state checkbox ROW shared by the family tree
+  // AND the two new category selectors (encoding, captures) -- item 6's
+  // click semantics ("select all if any unselected, deselect all if all
+  // selected") is the BROWSER's own native indeterminate-checkbox click
+  // behavior (this function sets `checked=false` whenever `indeterminate`
+  // is true, so a click always lands on `checked=true` from there; a
+  // fully-checked row's click lands on `checked=false`), stated once here
+  // rather than re-derived per caller.
+  function renderCategoryRow(container, focusKey, label, ids, groups) {
+    var checked = ids.filter(function (t) { return isSelected(state.testees, t); });
+    var st = checked.length === 0 ? "unchecked" : checked.length === ids.length ? "checked" : "indeterminate";
+    var row = document.createElement("div"); row.className = "tree-row";
+    var cb = document.createElement("input"); cb.type = "checkbox";
+    cb.checked = st === "checked"; cb.indeterminate = st === "indeterminate";
+    cb.disabled = ids.length === 0;
+    cb.setAttribute("data-focus-key", focusKey);
+    cb.addEventListener("change", function () { setTesteesSelected(ids, cb.checked); rerenderAll(); });
+    var lbl = document.createElement("label"); lbl.textContent = label;
+    lbl.addEventListener("click", function () { if (!cb.disabled) cb.click(); });
+    row.appendChild(cb); row.appendChild(lbl);
+    var cnt = document.createElement("span"); cnt.className = "tree-count"; cnt.textContent = ids.length;
+    row.appendChild(cnt);
+    row.appendChild(covChip(familyCoverage(ids, groups)));
+    container.appendChild(row);
+    return row;
+  }
+
+  // v1.3 item 3: capture the OLD panel's scroll position and which
+  // control (by its stable `data-focus-key`, never a DOM index -- a
+  // filter change can add or remove rows above the click point) had
+  // focus, BEFORE `renderFilters` clears and rebuilds `#filters` (and
+  // therefore this panel) from scratch on every toggle.
+  function captureEnginePanelState() {
+    var panel = document.getElementById("engine-picker-panel");
+    if (!panel) return null;
+    var focusKey = null;
+    var active = document.activeElement;
+    if (active) {
+      if (panel.contains(active)) focusKey = active.getAttribute("data-focus-key");
+      else if (active.id === "engine-picker-toggle") focusKey = "toggle";
+    }
+    return { scrollTop: panel.scrollTop, focusKey: focusKey };
+  }
+
+  function restoreEnginePanelState(saved) {
+    if (!saved) return;
+    var panel = document.getElementById("engine-picker-panel");
+    if (panel) panel.scrollTop = saved.scrollTop;
+    if (!saved.focusKey) return;
+    var el = saved.focusKey === "toggle"
+      ? document.getElementById("engine-picker-toggle")
+      : (panel && panel.querySelector('[data-focus-key="' + saved.focusKey + '"]'));
+    if (el) el.focus({ preventScroll: true }); // preventScroll: our own scrollTop restore already ran
+  }
+
   // 9.7: the engine picker as a DROPDOWN -- a compact toggle button that
   // opens the grouped tree as a panel, instead of v1.0's always-visible
   // list. `engineDropdownOpen` is read/written here only.
-  function renderEnginePicker(host, groups) {
+  function renderEnginePicker(host, groups, saved) {
     var visible = visibleTestees().length, total = allTesteeIds().length;
     var toggle = document.createElement("button");
     toggle.type = "button"; toggle.id = "engine-picker-toggle"; toggle.className = "small-btn";
     toggle.setAttribute("aria-expanded", engineDropdownOpen ? "true" : "false");
+    toggle.setAttribute("data-focus-key", "toggle");
     toggle.textContent = "Engines: " + visible + "/" + total + " selected " + (engineDropdownOpen ? "▴" : "▾");
     toggle.addEventListener("click", function (e) {
       e.stopPropagation();
@@ -847,15 +1185,59 @@ var App = (function () {
     var panel = document.createElement("div");
     panel.id = "engine-picker-panel";
     panel.className = "engine-dropdown-panel";
-    if (!engineDropdownOpen) { panel.hidden = true; return; }
+    if (!engineDropdownOpen) {
+      panel.hidden = true; host.appendChild(panel);
+      restoreEnginePanelState(saved); // v1.3 item 3: the toggle button itself, at least
+      return;
+    }
     panel.addEventListener("click", function (e) { e.stopPropagation(); });
     host.appendChild(panel);
 
     var engBtns = document.createElement("div"); engBtns.className = "btn-row";
-    engBtns.appendChild(mkSmallBtn("all", function () { state.testees = null; rerenderAll(); }));
-    engBtns.appendChild(mkSmallBtn("none", function () { state.testees = {}; rerenderAll(); }));
-    engBtns.appendChild(mkSmallBtn("latest only", function () { state.testees = computeDefaultTesteeIds(); rerenderAll(); }));
+    engBtns.appendChild(mkSmallBtn("all", function () { state.testees = null; rerenderAll(); }, "btn:all"));
+    engBtns.appendChild(mkSmallBtn("none", function () { state.testees = {}; rerenderAll(); }, "btn:none"));
+    engBtns.appendChild(mkSmallBtn("latest only", function () { state.testees = computeDefaultTesteeIds(); rerenderAll(); }, "btn:latest"));
     panel.appendChild(engBtns);
+
+    // v1.3 item 5: which ids the WHOLE picker (categories + family tree)
+    // may list at all -- every id when "show engines with no data" is
+    // on, else only ones with >=1 measured cell in the CURRENT filtered
+    // `groups` (the same test §9.3's coverage chips already use).
+    var enumerable = pickerEnumerableTesteeIds(groups);
+    var enumerableSet = Object.create(null);
+    enumerable.forEach(function (t) { enumerableSet[t] = true; });
+
+    // v1.3 item 4: two one-click CATEGORY groups above the family tree.
+    var encWrap = document.createElement("div"); encWrap.className = "category-group";
+    var encH = document.createElement("h3"); encH.textContent = "By encoding"; encWrap.appendChild(encH);
+    var byEnc = { byte: [], utf8: [] };
+    enumerable.forEach(function (t) { byEnc[encodingOf(t)].push(t); });
+    renderCategoryRow(encWrap, "cat:encoding:byte", "byte", byEnc.byte, groups);
+    renderCategoryRow(encWrap, "cat:encoding:utf8", "UTF-8", byEnc.utf8, groups);
+    panel.appendChild(encWrap);
+
+    var capWrap = document.createElement("div"); capWrap.className = "category-group";
+    var capH = document.createElement("h3"); capH.textContent = "By captures"; capWrap.appendChild(capH);
+    var byCap = { caps: [], nocaps: [] };
+    enumerable.forEach(function (t) {
+      var tok = capsToken(testeeIndex[t].variant);
+      if (tok === "caps") byCap.caps.push(t);
+      else if (tok === "nocaps") byCap.nocaps.push(t);
+    });
+    var capsRow = renderCategoryRow(capWrap, "cat:captures:caps", "caps", byCap.caps, groups);
+    // Frank's own words, verbatim -- the manager answers whether this is
+    // a real comparability problem; this lane only states the fact and
+    // implements the filter.
+    capsRow.querySelector("label").title =
+      "nocaps configs skip capture work, so they can look faster than caps configs on " +
+      "patterns with groups; several engines exist in only one class (e.g. pcre2-dfa and " +
+      "vectorscan nocaps-only)";
+    renderCategoryRow(capWrap, "cat:captures:nocaps", "nocaps", byCap.nocaps, groups);
+    renderCategoryRow(capWrap, "cat:captures:both", "both", enumerable, groups);
+    panel.appendChild(capWrap);
+
+    var h3fam = document.createElement("h3"); h3fam.textContent = "By family"; h3fam.style.margin = "6px 0 2px";
+    panel.appendChild(h3fam);
 
     var famNames = Object.keys(domain.families).sort();
     famNames.forEach(function (fam) {
@@ -864,10 +1246,16 @@ var App = (function () {
       // The REAL testee_id straight off each pin leaf -- see buildDomain's
       // comment: this map is never reconstructed, so a family toggle can
       // never miss a testee that shares another one's display label.
+      // v1.3 item 5: narrowed to the ENUMERABLE set -- a testee hidden
+      // for having no data in the current filter is neither counted nor
+      // clickable here (it stays selected underneath; only its ROW is
+      // gone from the tree).
       var allTesteesOfFam = [];
       varNames.forEach(function (v) { Object.keys(variants[v].pins).forEach(function (p) {
-        allTesteesOfFam.push(variants[v].pins[p]);
+        var tid = variants[v].pins[p];
+        if (enumerableSet[tid]) allTesteesOfFam.push(tid);
       }); });
+      if (!allTesteesOfFam.length) return; // v1.3 item 5: an entirely-hidden family disappears
       var famChecked = allTesteesOfFam.filter(function (t) { return isSelected(state.testees, t); });
       var famState = famChecked.length === 0 ? "unchecked" : famChecked.length === allTesteesOfFam.length ? "checked" : "indeterminate";
 
@@ -876,6 +1264,7 @@ var App = (function () {
       var cb = document.createElement("input"); cb.type = "checkbox";
       cb.checked = famState === "checked";
       cb.indeterminate = famState === "indeterminate";
+      cb.setAttribute("data-focus-key", "family:" + fam);
       cb.addEventListener("change", function () {
         setTesteesSelected(allTesteesOfFam, cb.checked);
         rerenderAll();
@@ -890,7 +1279,8 @@ var App = (function () {
 
       var kids = document.createElement("div"); kids.className = "tree-children";
       varNames.forEach(function (v) {
-        var pins = pinsByDate(variants[v].pins);
+        var pins = pinsByDate(variants[v].pins).filter(function (p) { return enumerableSet[variants[v].pins[p]]; });
+        if (!pins.length) return; // v1.3 item 5: an entirely-hidden variant disappears
         var varTestees = pins.map(function (p) { return variants[v].pins[p]; });
         var vChecked = varTestees.filter(function (t) { return isSelected(state.testees, t); });
         var vState = vChecked.length === 0 ? "unchecked" : vChecked.length === varTestees.length ? "checked" : "indeterminate";
@@ -899,6 +1289,7 @@ var App = (function () {
         var vrow = document.createElement("div"); vrow.className = "tree-row";
         var vcb = document.createElement("input"); vcb.type = "checkbox";
         vcb.checked = vState === "checked"; vcb.indeterminate = vState === "indeterminate";
+        vcb.setAttribute("data-focus-key", "variant:" + fam + "|" + v);
         vcb.addEventListener("change", function () { setTesteesSelected(varTestees, vcb.checked); rerenderAll(); });
         var vlbl = document.createElement("label"); vlbl.textContent = v;
         if (pins.length === 1) vlbl.title = varTestees[0];
@@ -914,6 +1305,7 @@ var App = (function () {
             var prow = document.createElement("div"); prow.className = "chk-row";
             var pcb = document.createElement("input"); pcb.type = "checkbox";
             pcb.checked = isSelected(state.testees, tid);
+            pcb.setAttribute("data-focus-key", "pin:" + tid);
             pcb.addEventListener("change", function () { setTesteesSelected([tid], pcb.checked); rerenderAll(); });
             var pDate = (testeeIndex[tid] && dateOnly(testeeIndex[tid].newestDate)) || "no date";
             var plbl = document.createElement("label");
@@ -931,13 +1323,19 @@ var App = (function () {
       node.appendChild(kids);
       panel.appendChild(node);
     });
+
+    restoreEnginePanelState(saved); // v1.3 item 3
   }
 
   function renderFilters(groups) {
     var host = document.getElementById("filters");
+    // v1.3 item 3: captured BEFORE the clear below destroys the OLD
+    // #engine-picker-panel -- capturing inside renderEnginePicker itself
+    // would be too late, since by then this innerHTML="" has already run.
+    var savedPanelState = captureEnginePanelState();
     host.innerHTML = "";
 
-    renderEnginePicker(host, groups);
+    renderEnginePicker(host, groups, savedPanelState);
 
     // -------- areas (sets)
     var h2s = document.createElement("h2"); h2s.textContent = "Sets"; host.appendChild(h2s);
@@ -1007,11 +1405,23 @@ var App = (function () {
     slbl.addEventListener("click", function () { scb.click(); });
     srow.appendChild(scb); srow.appendChild(slbl);
     host.appendChild(srow);
+
+    // v1.3 item 5: default OFF -- an engine with zero measured cells in
+    // the CURRENT filter is hidden from the matrix AND the picker until
+    // this is checked; its own SELECTION never changes either way.
+    var erow = document.createElement("div"); erow.className = "chk-row";
+    var ecb = document.createElement("input"); ecb.type = "checkbox"; ecb.checked = state.showEmptyEngines;
+    ecb.addEventListener("change", function () { state.showEmptyEngines = ecb.checked; rerenderAll(); });
+    var elbl = document.createElement("label"); elbl.textContent = "show engines with no data";
+    elbl.addEventListener("click", function () { ecb.click(); });
+    erow.appendChild(ecb); erow.appendChild(elbl);
+    host.appendChild(erow);
   }
 
-  function mkSmallBtn(text, onClick) {
+  function mkSmallBtn(text, onClick, focusKey) {
     var b = document.createElement("button"); b.type = "button"; b.className = "small-btn";
     b.textContent = text; b.addEventListener("click", onClick);
+    if (focusKey) b.setAttribute("data-focus-key", focusKey); // v1.3 item 3
     return b;
   }
 
@@ -1079,10 +1489,60 @@ var App = (function () {
     }
   }
 
+  // v1.3 item 2: the colour-scale legend -- a gradient swatch plus the
+  // two adjustable N/M inputs. Persisted OUTSIDE `state` (a display
+  // preference, not part of the shareable query); re-rendered every
+  // `renderControls()` call so the swatch always reflects the CURRENT
+  // theme (it reads the resolved custom properties fresh each time).
+  function renderColorScaleLegend(host) {
+    var anchors = getScaleAnchors();
+    var wrap = document.createElement("div");
+    wrap.id = "colorscale-legend";
+    wrap.appendChild(document.createTextNode("colour:"));
+    var swatch = document.createElement("span");
+    swatch.className = "swatch";
+    swatch.style.background = "linear-gradient(to right, " + rgbToCss(anchors.good) + ", " +
+      rgbToCss(anchors.mid) + ", " + rgbToCss(anchors.bad) + ")";
+    swatch.title = "green = at the row's own best; fades to white, then to red, on a log scale";
+    wrap.appendChild(swatch);
+    wrap.appendChild(document.createTextNode("1×"));
+
+    function numInput(label, value, min, onCommit) {
+      var lbl = document.createElement("label");
+      lbl.appendChild(document.createTextNode(label));
+      var inp = document.createElement("input");
+      inp.type = "number"; inp.min = min; inp.step = "0.1"; inp.value = value;
+      inp.addEventListener("change", function () { onCommit(parseFloat(inp.value), inp); });
+      lbl.appendChild(inp);
+      return lbl;
+    }
+    wrap.appendChild(numInput("white at ×", colorScale.n, "1.01", function (v, inp) {
+      if (v > 1 && v < colorScale.m) { colorScale.n = v; saveColorScalePrefs(); rerenderAll(); }
+      else { inp.value = colorScale.n; }
+    }));
+    wrap.appendChild(numInput("full red at ×", colorScale.m, "1.02", function (v, inp) {
+      if (v > colorScale.n) { colorScale.m = v; saveColorScalePrefs(); rerenderAll(); }
+      else { inp.value = colorScale.m; }
+    }));
+    host.appendChild(wrap);
+  }
+
   function renderControls() {
     var host = document.getElementById("controls-row");
     host.innerHTML = "";
     renderMetricChecks(host);
+    renderColorScaleLegend(host);
+
+    // v1.3 item 7: the virtual "pcrec (auto)" column, on by default.
+    var vaLbl = document.createElement("label"); vaLbl.className = "chk-row";
+    vaLbl.style.display = "inline-flex";
+    var vaCb = document.createElement("input"); vaCb.type = "checkbox"; vaCb.checked = state.virtualAuto;
+    vaCb.addEventListener("change", function () { state.virtualAuto = vaCb.checked; rerenderAll(); });
+    vaLbl.appendChild(vaCb);
+    vaLbl.appendChild(document.createTextNode("pcrec (auto) column"));
+    vaLbl.title = "an extra column resolving, per row, to the newest-pinned pcrec caps/nocaps " +
+      "config chosen by the pattern's own capture-group count and the row's own encoding";
+    host.appendChild(vaLbl);
 
     var resetBtn = mkSmallBtn("reset view", function () {
       // 9.6: "reset" goes back to the same sensible default a fresh
@@ -1209,12 +1669,23 @@ var App = (function () {
     lines.push(["record_id", cellRow.record_id]);
     lines.push(["pin", cellRow.pin]);
     lines.push(["measured_utc", cellRow.measured_utc]);
-    return lines;
+    // v1.3 item 7: the synthetic "no pair"/"not measured" cell the
+    // virtual column can carry has null record_id/pin/measured_utc --
+    // filtered here rather than rendered as three "field: null" lines.
+    return lines.filter(function (kv) { return kv[1] !== null && kv[1] !== undefined; });
   }
 
-  function showTooltip(evt, cellRow) {
-    var lines = tooltipText(cellRow);
-    if (!lines) return;
+  // v1.3 item 7: `virtualWhy`, when given, is the virtual "pcrec (auto)"
+  // column's own "which real testee and why" sentence, prepended ahead
+  // of whatever `tooltipText` says about the cell itself (which, for
+  // that column, IS the resolved real testee's own row -- an ALIAS, per
+  // `injectVirtualAutoCells`, never a copy) -- so hovering the virtual
+  // cell never leaves a reader wondering whether it duplicates a real
+  // column they can already see.
+  function showTooltip(evt, cellRow, virtualWhy) {
+    var lines = tooltipText(cellRow) || [];
+    if (virtualWhy) lines = [["pcrec (auto)", virtualWhy]].concat(lines);
+    if (!lines.length) return;
     var tt = document.getElementById("tooltip");
     tt.innerHTML = lines.map(function (kv) {
       return '<div class="tt-row"><span class="tt-k">' + escapeHtml(kv[0]) + ':</span>' + escapeHtml(String(kv[1])) + "</div>";
@@ -1268,8 +1739,8 @@ var App = (function () {
       if (pinnedPattern) return; // a pinned popover ignores hover elsewhere (9.8)
       var td = e.target.closest && e.target.closest("td.cell[data-cid]");
       if (td) {
-        var c = cellRegistry[Number(td.getAttribute("data-cid"))];
-        if (c) showTooltip(e, c); else hideTooltip();
+        var entry = cellRegistry[Number(td.getAttribute("data-cid"))];
+        if (entry) showTooltip(e, entry.row, entry.virtualWhy); else hideTooltip();
         return;
       }
       var rh = e.target.closest && e.target.closest("th.rowhead[data-pattern]");
@@ -1300,32 +1771,56 @@ var App = (function () {
 
   function renderTable(rows, groups) {
     var scroll = document.getElementById("table-scroll");
-    var testees = visibleTestees();
+    // v1.3 item 5: the SELECTED-and-visible-for-display set (hidden,
+    // no-data engines dropped unless the toggle is on) -- never
+    // `visibleTestees()` directly, which is the raw SELECTION and stays
+    // what the picker's own "n/N selected" count reads.
+    var testees = displayedTesteeIds(groups);
+    // v1.3 item 7: appended LAST, unconditionally sorted to the end (see
+    // the famOrder loop below) -- present only when the toggle is on AND
+    // the family this page resolves a virtual column for is even loaded.
+    var showVirtualAuto = state.virtualAuto && !!domain.families[VIRTUAL_AUTO_FAMILY];
+    if (showVirtualAuto) testees = testees.concat([VIRTUAL_AUTO_TESTEE_ID]);
     cellRegistry = [];
 
     if (!rows.length || !testees.length) {
       scroll.innerHTML = "";
       var d = document.createElement("div"); d.id = "empty-state";
-      d.textContent = !testees.length ? "No engines selected." : "No rows match the current filters.";
+      d.textContent = !testees.length
+        ? (visibleTestees().length
+           ? "No selected engine has data for the current filters (see “show engines with no data”)."
+           : "No engines selected.")
+        : "No rows match the current filters.";
       scroll.appendChild(d);
       updateSummary(0, testees.length);
       return;
     }
 
     groups = sortGroups(groups, testees);
+    var scaleAnchors = getScaleAnchors(); // v1.3 item 2: read ONCE per render, not per cell
 
     // family bands over the visible testee columns, in family/variant/pin
     // order -- ONE pass over `testees` (not one `allRows.find` scan PER
     // testee PER render, the earlier version's real cost) using the
-    // domain-wide index `buildDomain()` already computed.
+    // domain-wide index `buildDomain()` already computed. The virtual
+    // column's pseudo-family ("pcrec (auto)") is never in `testeeIndex`,
+    // so it is read directly rather than through `info` -- it sorts to
+    // the far end regardless (its family name is first seen only after
+    // every real one, since it is the LAST entry `testees` carries).
     var famOrder = [];
     var famOf = Object.create(null);
     var pinOf = Object.create(null);
     var variantOf = Object.create(null);
     testees.forEach(function (t) {
-      var info = testeeIndex[t];
-      var fam = info ? info.family : "?";
-      famOf[t] = fam; pinOf[t] = info ? info.pin : ""; variantOf[t] = info ? info.variant : t;
+      var fam;
+      if (t === VIRTUAL_AUTO_TESTEE_ID) {
+        fam = "pcrec (auto)"; pinOf[t] = ""; variantOf[t] = "virtual";
+      } else {
+        var info = testeeIndex[t];
+        fam = info ? info.family : "?";
+        pinOf[t] = info ? info.pin : ""; variantOf[t] = info ? info.variant : t;
+      }
+      famOf[t] = fam;
       if (famOrder.indexOf(fam) === -1) famOrder.push(fam);
     });
     testees.sort(function (a, b) {
@@ -1336,16 +1831,25 @@ var App = (function () {
     var bandCounts = Object.create(null);
     testees.forEach(function (t) { bandCounts[famOf[t]] = (bandCounts[famOf[t]] || 0) + 1; });
 
-    var bandHtml = ['<tr><th class="rowhead-band"></th>'];
+    var bandHtml = ['<tr><th class="rowhead-band corner-head"></th>'];
     famOrder.forEach(function (fam) {
       bandHtml.push('<th class="fam-band" colspan="' + bandCounts[fam] + '">' + escapeHtml(fam) + "</th>");
     });
     bandHtml.push("</tr>");
 
-    var labelHtml = ['<tr class="col-labels"><th class="sortable" data-sort="pattern" ' +
+    var labelHtml = ['<tr class="col-labels"><th class="sortable corner-head" data-sort="pattern" ' +
       'title="click: sort by pattern name (shift-click: sort by set)">set / pattern' +
       sortIndicatorFor("pattern", null) + "</th>"];
     testees.forEach(function (t) {
+      if (t === VIRTUAL_AUTO_TESTEE_ID) {
+        var vaTitle = "virtual column: pcrec (auto) — resolves per row to the newest-pinned " +
+          "caps/nocaps pcrec config, chosen by the pattern's own capture-group count and the " +
+          "row's own encoding (docs/design/results_viewer_v1.md 11 item 7)";
+        labelHtml.push('<th class="cell-head sortable" data-sort="testee" data-testee="' +
+          escapeHtml(t) + '" title="' + escapeHtml(vaTitle) + '">pcrec (auto)' +
+          sortIndicatorFor("testee", t) + '<span class="variant">virtual</span></th>');
+        return;
+      }
       // 9.2: the DATE leads (newest measured_utc, YYYY-MM-DD) -- the
       // sha-like pin moves to the title tooltip, never the visible
       // label. 9.3: a coverage chip rides beside it, against THIS
@@ -1374,9 +1878,19 @@ var App = (function () {
       testees.forEach(function (t) {
         var c = g.cells[t];
         var disp = cellDisplay(c, best.ns);
-        var cidAttr = "";
-        if (c) { cidAttr = ' data-cid="' + cellRegistry.length + '"'; cellRegistry.push(c); }
-        bodyHtml.push('<td class="cell num' + (disp.best ? " best" : "") + '"' + cidAttr + ">" + disp.html + "</td>");
+        var cidAttr = "", colorAttr = "";
+        if (c) {
+          cidAttr = ' data-cid="' + cellRegistry.length + '"';
+          cellRegistry.push({ row: c, virtualWhy: t === VIRTUAL_AUTO_TESTEE_ID ? g.virtualAutoWhy : null });
+          // v1.3 item 2: row-relative, independent of which metric(s)
+          // are displayed -- computed off the SAME `best.ns` the ×best
+          // metric and the `.best` highlight already use.
+          if (c.status === "measured" && best.ns) {
+            var col = colorForRatio(c.median_ns / best.ns, scaleAnchors, colorScale.n, colorScale.m);
+            if (col) colorAttr = ' style="background-color:' + col + '"';
+          }
+        }
+        bodyHtml.push('<td class="cell num' + (disp.best ? " best" : "") + '"' + cidAttr + colorAttr + ">" + disp.html + "</td>");
       });
       bodyHtml.push("</tr>");
     });
@@ -1415,6 +1929,7 @@ var App = (function () {
     // both cost the perf budget again and risk the two disagreeing.
     var rows = filteredRows();
     var groups = buildMatrixRows(rows);
+    injectVirtualAutoCells(groups); // v1.3 item 7, before either panel reads `groups`
     renderFilters(groups);
     renderControls();
     renderTable(rows, groups);
@@ -1423,6 +1938,7 @@ var App = (function () {
 
   function init() {
     domain = buildDomain();
+    loadColorScalePrefs(); // v1.3 item 2, a display preference, not part of `state`
     var persisted = loadPersisted();
     // 9.6: "on first load (no saved state)" is the literal condition --
     // a hash OR a localStorage restore is a RETURNING state and is used

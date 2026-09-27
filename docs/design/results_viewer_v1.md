@@ -249,3 +249,235 @@ Frank's five notes, verbatim-mapped; [B67] implements:
    the implementer's call at real data; Frank reviews from results.
 3. The wrap-artifact marker (§ ruling earlier today) becomes one token
    of that same classifier rather than a separate mechanism.
+
+## 11. v1.3 amendments ([B107], Frank's review 2026-09-27)
+
+STATUS: IMPLEMENTED (lane `b107viewer`, 2026-09-27). Numbered §10 already
+names one prior round "v1.2" ([B70]); this is the NEXT one, so it is
+"v1.3" here even though the manager's brief for this lane said "v1.2" —
+a naming slip in the brief, not a ruling to preserve; `viewer/CLAUDE.md`
+follows the same v1.3 numbering. Seven items, Frank's own numbering kept:
+
+1. **BUG: the pattern-name column is now sticky on both axes.** The
+   body's `th.rowhead` was already `position: sticky; left: 0` (a prior
+   wave); the header's own leftmost cells — the band row's empty corner
+   (`th.rowhead-band`) and the col-labels row's `set / pattern` header —
+   were NOT, so scrolling right left the row labels pinned but the
+   column that told you what a row's OWN header cell was scrolled away
+   with everything else, and on a wide table (altwide's 40+ columns) the
+   header no longer lined up with anything. Both corner cells get a new
+   shared class, `.corner-head` (`left: 0`, `z-index: 20` — above the
+   ordinary header row's `z-index: 5` AND the body rowhead's `z-index: 2`,
+   since a corner cell must win against both a sticky-top header row
+   scrolling under it and a sticky-left body column scrolling under it
+   from the other axis).
+2. **COLOUR SCALE: row-relative, log-interpolated, adjustable.** Every
+   `measured` cell's colour is now a function of its OWN ratio to its
+   row's best (`bestNs`, already computed for the `×best` metric) —
+   independent of which metric(s) are DISPLAYED, the same posture the
+   `best` highlight already had (§9.4's own note: "a fact about the CELL
+   relative to its row"). `ratio = median_ns / bestNs`; the interpolation
+   is over `log(ratio)` (Frank's own word, "non-linearly"), NOT ratio
+   itself — a linear ramp puts almost every real cell in the bottom few
+   percent of the scale, since most ratios cluster near 1.0-3.0 and the
+   tail runs to the hundreds; log-space spreads the common range legibly.
+   `colorForRatio(ratio, n, m)`: `log(ratio) / log(n)` for `ratio <= n`
+   interpolates green → white (full green at `ratio <= 1`, by
+   construction — the row's own best cannot exceed its own bound); for
+   `n < ratio <= m`, `(log(ratio) - log(n)) / (log(m) - log(n))`
+   interpolates white → red; `ratio > m` is flat full red. Defaults
+   `N = 2`, `M = 10` (the ask's own numbers); both are plain number
+   inputs in a new legend row, changing which a full re-render recolors
+   every cell against (never a metric- or filter-scoped state — one pair
+   of numbers for the whole page, matching how `bestNs`/the green
+   highlight already work). Persisted in `localStorage`
+   (`pcrecbench-viewer-colorscale`, try/catch-guarded per the design
+   note's own convention — `persist()`'s existing pattern, a SEPARATE
+   key from the hash-serialized `state` object since N/M are a display
+   preference, not a query/filter the hash's shareability contract
+   covers). A non-measured cell's chip styling (§10's refusal classes,
+   the status colors) is UNTOUCHED — the color scale only ever touches a
+   `measured` cell's background, applied as an inline `background-color`
+   style (light/dark aware: the green/white/red anchor colors are CSS
+   custom properties read via `getComputedStyle`, so the ramp itself
+   never hard-codes a light-theme white). A small legend
+   (`#colorscale-legend`) shows a five-stop gradient swatch with the `1×`
+   / `N×` / `M×` labels and the two number inputs.
+3. **BUG: the engine picker panel keeps its scroll position and focus
+   across a re-render.** Every checkbox toggle inside the panel calls
+   `rerenderAll()`, which rebuilds `#filters` (and therefore the panel)
+   from scratch via `innerHTML`-adjacent `appendChild` calls — the OLD
+   panel element (with its scroll offset) is discarded and a new one
+   built at `scrollTop = 0`, so ticking one engine near the bottom of a
+   long tree snapped the view back to the top every click. Fixed the
+   same way §9.7's dropdown-close bug was fixed — by naming what
+   survives a rebuild explicitly rather than fighting the rebuild:
+   `renderEnginePicker` now reads `scrollTop` off the OLD
+   `#engine-picker-panel` (if present) before replacing it, and, since a
+   fresh `innerHTML` replacement also drops DOM focus, records which
+   control had focus (`document.activeElement`'s own `data-focus-key`,
+   a stable string built from the row's own identity — a testee_id, a
+   family name, or `"toggle"` for the picker button — never a DOM index,
+   which would point at the wrong row the moment a checkbox is added or
+   removed by a filter change) — then, after the new panel is in the
+   document, restores both: `scrollTop` directly, and focus by
+   `querySelector('[data-focus-key="..."]')`. A click that toggles a
+   FAMILY checkbox (which can add or remove rows above the click point
+   as coverage chips move) restores by the SAME key, which is the row
+   itself, not a scroll pixel count, so a family-level toggle does not
+   defeat the fix the way a raw scrollTop-only save/restore would.
+4. **CATEGORY SELECTORS: encoding, captures, family.** Three one-click
+   GROUPS above the existing family tree, each rendered as a tri-state
+   checkbox row identical in mechanics to a family checkbox (§10's
+   existing `famState`/`indeterminate` pattern, generalized): `encoding`
+   splits `allTesteeIds()` into `utf8` (`testee_id` ends `_utf8`) and
+   `byte` (everything else); `captures` splits by `capsToken(variant)` —
+   `"nocaps"` iff the variant string (testee_id's own config_slug
+   segment, already carried at every tree leaf since §9.1) contains the
+   substring `-nocaps-`, else `"caps"` iff it contains `-caps-`, else
+   `null` (a config whose slug does not carry the segment at all — none
+   exist today, so this is a defined-but-unpopulated third bucket, not a
+   swallowed case) — grouped as `caps` / `nocaps` / `both` (a "both"
+   button selects the union, matching a family checkbox's "select
+   everyone in this bucket" semantics — there is no per-engine
+   ambiguity to resolve, since `capsToken` is closed and total over every
+   testee_id this page ever sees); `family` is the EXISTING per-engine
+   tree, unchanged, now sitting under its own heading below the two new
+   selectors rather than being the whole picker. `capsToken` is also
+   what §7 (below) reads. One line of hover help sits on the `captures`
+   row's label (`title` attribute, never a tooltip popover — this is
+   static, not per-cell): *"nocaps configs skip capture work, so they
+   can look faster than caps configs on patterns with groups; several
+   engines exist in only one class (e.g. pcre2-dfa and vectorscan
+   nocaps-only)"* — Frank's own words, verbatim; the manager answers
+   `caps`/`nocaps` comparability as a QUESTION to Frank, this lane only
+   implements the filter and states the fact at the point a reader would
+   ask it.
+5. **HIDE EMPTY ENGINES.** A testee with ZERO `measured` cells in the
+   CURRENT filtered `groups` (the same `groups` §9.3's coverage chips
+   already thread through — `coverageFor(t, groups).n === 0`) is hidden
+   from both the matrix's visible columns AND every picker row (the
+   family tree, the three category selectors' own counts) UNLESS a new
+   toggle, "show engines with no data" (default OFF, a `chk-row` beside
+   the Status filter's own "show refusals / failures" row, mirroring its
+   shape), is checked. This is a FILTER on top of `state.testees`, not a
+   change to it: `visibleTestees()` still starts from the user's own
+   selection and additionally drops a zero-coverage id when the toggle
+   is off, so toggling it back on never loses which engines the user had
+   actually picked. A testee hidden this way still counts in `n/N`
+   totals ("Engines: n/N selected") against the FULL selected set, not
+   the visible one — hiding a column is a DISPLAY fact, not an implicit
+   deselect, the same distinction §9.6's "latest only" vs "all" buttons
+   already draw between "selected" and "shown".
+6. **CATEGORY CLICK SEMANTICS.** Stated once, generically, because it
+   now governs FOUR checkboxes (family, encoding, captures, and each of
+   their own tri-state group headers): clicking a category checkbox
+   whose group is `unchecked` OR `indeterminate` SELECTS every member;
+   clicking one that is already fully `checked` DESELECTS every member.
+   This is the native `<input type=checkbox>` click behavior for
+   indeterminate → checked ALREADY (browsers set `checked = true` on a
+   click regardless of the indeterminate flag), so the family tree
+   needed no change; the two new category rows use the identical
+   `famState`-shaped three-way read and the identical
+   `cb.addEventListener("change", ...)` wiring, so the semantics are
+   ONE piece of shared logic (`renderGroupRow`, a new small helper both
+   the family loop and the two category rows call) rather than stated
+   twice and left free to drift.
+7. **VIRTUAL ENGINE "pcrec (auto)".** A fourteenth-or-so column, ON by
+   default (a checkbox beside the metric checks, `#virtual-auto-toggle`,
+   persisted in `state` like any other filter — turning it off removes
+   the column from the matrix, the picker's `n/N` counts and the hash
+   the same way deselecting a real testee would, since for every OTHER
+   purpose this column behaves like an ordinary one once computed): per
+   ROW, resolves to ONE real pcrec testee_id — the NEWEST-PINNED
+   canonical config of a chosen CAPS/NOCAPS pair, chosen by the pattern's
+   OWN capture-group count, chosen for the ROW's OWN encoding. The
+   resolution is GENERIC in code (`familyCapsNocapsIndex(fam)`, taking
+   any `engine_family` string): it groups a family's variant strings by
+   the SAME `capsToken` substring rule item 4 already established,
+   stripping the matched `-caps-`/`-nocaps-` token to a placeholder so
+   `auto-caps-simdna` and `auto-nocaps-simdna` collapse to one "base"
+   key, `auto-\0-simdna`, and separately tracks whether a variant carries
+   a trailing `_utf8` suffix (byte vs. utf8, independent of the caps
+   token); a base with EXACTLY ONE caps variant and ONE nocaps variant
+   in a given encoding is a "pair", and `VIRTUAL_AUTO_FAMILY = "pcrec"`
+   is the one family this page asks the generic function about today —
+   named as a constant, not inlined, because the function itself does
+   not know or care which family qualifies (the brief's own ask: no
+   OTHER family has both classes today, so nothing else is asked). Given
+   a pair, the ROW's own encoding (byte, unless the row's `_set` has ANY
+   pcrec testee_id ending `_utf8` among ITS OWN rows — computed once per
+   set in `buildDomain`, `domain.setUsesUtf8Pcrec[setKey]`, never a
+   global fact, since a byte-only set never has a utf8 sibling to pick
+   at all) selects which of the pair's two encodings to read, and the
+   pattern's own capture-group count (§ below) selects caps vs. nocaps;
+   the variant's `pins` map (already keyed by real testee_id, never
+   reconstructed — the §9.1 rule) gives the NEWEST pin via the same
+   `pinsByDate()` this page already uses for the third-tier pin picker.
+   Where no qualifying pair exists for the row's encoding (a family with
+   only one class, or [today] any family but pcrec), the virtual column
+   renders `n/a (no caps/nocaps pair for this encoding)`, never a blank
+   cell and never a silent fallback to the wrong encoding.
+   **Capture counting (the one exporter change this wave needs):**
+   `tools/viewer_export.py` gains `_pattern_capture_count(canonical_text)`
+   — `PCRE2_INFO_CAPTURECOUNT` (a NEW constant + self-check in
+   `pcrecbench/oracle_pcre2.py`, the ONE oracle binding this project
+   already trusts for everything else pattern-shaped) over the pattern's
+   OWN `canonical_text`, re-encoded to UTF-8 bytes (never through
+   `oracle_pcre2.compile`'s own `str`→`latin-1` auto-encode path, which
+   would corrupt a non-Latin-1 UTF-8 set pattern like `café`/`Москва` —
+   `canonical_text` is real decoded Unicode text, `record.py`'s
+   `pattern_entry` already proved it round-trips through UTF-8 losslessly
+   whenever it is present at all). Capture counting is a SYNTACTIC fact
+   (how many parenthesized groups a pattern declares; named groups
+   count, `(?:...)` does not) independent of match-time options, so this
+   compiles with `options=0` regardless of the set's own encoding or any
+   pattern's `requires-unicode-class-scope` tag — no oracle option word
+   is threaded through. `None` (unknown) when `canonical_text` is
+   omitted (the schema's own free_text-cap fallback, KB-7 — same
+   omission `_pattern_text_entry` already names) or the pattern does not
+   compile stand-alone under byte-mode libpcre2 at all (a declared
+   oracle refusal, e.g. bench/utf8's `prp-ingreek` — rare, and honest
+   silence beats a guess); `viewer.html` falls back to the CAPS side of
+   the pair on `null` and says so in the cell's own tooltip, per the
+   ask's own instruction. Exported as a `captures` key on the SAME
+   per-pattern `patterns` map entry §9.8 already carries (one entry per
+   pattern_id, not per row, unchanged).
+   **May the virtual cell BE the row's best?** YES, and it is treated
+   exactly like any other measured cell for `computeBest`/the colour
+   scale/sorting: it is a REAL measured number (the newest pin's own
+   record, reduced by the same `pcrecbench.reduce` path every other
+   cell is), not a synthetic average, so excluding it from "best in row"
+   would hide the actual fastest engine on a row where the newest pcrec
+   pin happens to win. **Double-counting rule** (stated because the
+   brief asked for one): the virtual column is a SEPARATE, ADDITIONAL
+   column, never a replacement — a reader with BOTH `pcrec-auto` and
+   `pcrec-nocaps` (or their `_utf8` siblings) ALSO selected in the real
+   engine tree sees the SAME underlying number appear TWICE in that row
+   (once under its own real column, once under the virtual one) exactly
+   as if a THIRD, ordinary column happened to tie a real one — this page
+   already renders two real testees whose numbers happen to be equal
+   without merging them, and the virtual column is not given special
+   deduplication against the real roster for the same reason two real
+   `-cc-clang`/`-cc-gcc` siblings are not merged: it is one more
+   comparable fact, not a summary of the others. The tooltip states
+   which real testee_id was actually read and why (`"pattern has 3
+   capture groups → pcrec_<pin>_auto-caps-simdna"`, or the capture-count
+   fallback sentence, or the no-pair `n/a` reason) so a reader is never
+   left wondering whether the virtual cell duplicates one they can
+   already see.
+
+`viewer/CLAUDE.md` states the same seven items in its own file-inventory
+voice; `tools/CLAUDE.md`'s `viewer_export.py` row gains the `captures`
+field. Verification for this wave: a careful static review (headless
+Chromium in this sandbox refused to load a `file://` page under its snap
+confinement — `chromium --headless --dump-dom` returned a
+sub-frame-error page rather than the viewer's own DOM; not pursued
+further given the sandbox's own mount-namespace refusals) plus a
+`node --check` syntax pass over the inline script (extracted to a
+scratch `.js` file) and `python3 -m py_compile` / `pytest`-free direct
+calls into the two new/changed `oracle_pcre2.py`/`viewer_export.py`
+functions; `make viewer-data ARGS="--sets loglines"` run and diffed
+against the committed `viewer/data/loglines@0.1.js` to confirm the
+`captures` field is the ONLY per-pattern addition and every row is
+otherwise byte-identical.

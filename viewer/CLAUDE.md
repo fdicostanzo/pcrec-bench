@@ -18,7 +18,7 @@ page never reimplements a median.
 |---|---|
 | `viewer.html` | the whole app: inline CSS + JS, no CDN, no build step, no ES modules — works from `file://` (R12). Registers `window.BENCH` before loading `data/manifest.js` and each `data/<set>.js` via dynamically-created `<script src>` tags (the one loading mechanism `file://` permits: `fetch()`/XHR are null-origin-CORS-blocked, and classic scripts are not). A missing/stale data file degrades to a named per-set notice (`Sets` panel, `(data file missing)`), never a blank page. |
 | `data/manifest.js` | generated: `BENCH.manifest({generated_utc, store_rows, all_pins, files, sets, status_sink_order})` — which `data/*.js` files exist and how each set's rows are grouped/counted, plus the non-measured sink order `viewer.html`'s sort rule reads (so the exporter and the page can never disagree about it). |
-| `data/<subbench>@<version>.js` | generated, one per exported set: `BENCH.load({set, subbench, version, rows: [...], patterns: {...}})`. `patterns` is [B67] 9.8's addition -- one pattern-text entry per `pattern_id`, keyed separately from `rows` (a pattern's text does not repeat per row). Committed so a fresh clone works without running the exporter first; regenerate at will (`make viewer-data`). |
+| `data/<subbench>@<version>.js` | generated, one per exported set: `BENCH.load({set, subbench, version, rows: [...], patterns: {...}})`. `patterns` is [B67] 9.8's addition -- one pattern-text entry per `pattern_id`, keyed separately from `rows` (a pattern's text does not repeat per row); each entry also carries `captures` ([B107], v1.3 item 7) -- `PCRE2_INFO_CAPTURECOUNT` over the pattern's own full `canonical_text`, or `null` when that text is omitted or does not compile stand-alone. Committed so a fresh clone works without running the exporter first; regenerate at will (`make viewer-data`). |
 
 The exporter itself, `tools/viewer_export.py`, is documented in
 `tools/CLAUDE.md` — its own module docstring is the full design
@@ -153,6 +153,86 @@ covers this (the HASH always wins when present, and a broken restore
 degrades rather than crashes) — worth knowing if two people's clones of
 this repo are ever opened side by side in one browser session, not
 worth changing the persistence design over.
+
+## v1.3 amendments ([B107], docs/design/results_viewer_v1.md 11)
+
+Frank's seven 2026-09-27 review notes, all IMPLEMENTED (lane `b107viewer`):
+
+1. **BUG fix: the header's own leftmost cell is sticky on both axes.**
+   The body's `th.rowhead` was already sticky-left; the band row's blank
+   corner and the col-labels row's "set / pattern" cell now share a new
+   `.corner-head` class (`left: 0; z-index: 20` — above both the
+   ordinary header row's 5 and the body column's 2), so scrolling right
+   never separates the row labels from the header that names them.
+2. **Row-relative, log-interpolated, adjustable COLOUR SCALE.** Every
+   `measured` cell's background is `colorForRatio(median_ns / row's
+   bestNs, ...)`: full green at `ratio<=1`, log-space green→white up to
+   `N`, log-space white→red from `N` to `M`, flat red above `M` —
+   independent of which metric(s) are displayed. Defaults `N=2`/`M=10`,
+   both plain number inputs in a new legend (`#colorscale-legend`),
+   persisted in `localStorage` (`pcrecbench-viewer-colorscale`, a
+   DISPLAY preference kept OUT of the hash-serialized `state`). The
+   three anchor colours (`--scale-good`/`-mid`/`-bad`) are ONE-LEVEL
+   ALIASES of existing theme tokens (`var(--best-bg)` etc.) rather than
+   new hex constants; `getScaleAnchors()` resolves that one level of
+   `var()` itself as a defensive belt-and-suspenders step (real browsers
+   already do this inside `getComputedStyle`; the jsdom verification
+   harness this wave used does not — see below).
+3. **BUG fix: the engine picker keeps its scroll position and focus
+   across a re-render.** `renderFilters` captures the OLD panel's
+   `scrollTop` and which control (by a stable `data-focus-key`, never a
+   DOM index) had focus BEFORE clearing `#filters`; `renderEnginePicker`
+   restores both once the new panel exists. Every control the panel can
+   contain (the toggle, the all/none/latest-only buttons, every
+   category/family/variant/pin checkbox) carries its own `data-focus-key`.
+4. **Two new one-click CATEGORY selectors above the family tree**: by
+   ENCODING (`byte`/`UTF-8`, a testee_id's own trailing `_utf8`) and by
+   CAPTURES (`caps`/`nocaps`/`both`, the config slug's own
+   `-caps-`/`-nocaps-` segment — `capsToken()`, engine-neutral). The
+   `caps` row carries Frank's own hover-help sentence verbatim. Both
+   reuse the SAME tri-state row builder (`renderCategoryRow`) the family
+   tree's own mechanics already had.
+5. **HIDE EMPTY ENGINES**, default OFF: a testee with zero measured
+   cells in the CURRENT filter is dropped from the matrix's columns AND
+   every picker listing (`displayedTesteeIds`/`pickerEnumerableTesteeIds`)
+   — a pure DISPLAY filter, never a change to the underlying selection
+   (`state.testees`) or the picker's own "n/N selected" count.
+6. **Category click semantics**, stated once (`renderCategoryRow`'s own
+   comment): a click on an unchecked-or-indeterminate row selects every
+   member, on a fully-checked row deselects every member — the BROWSER's
+   own native indeterminate-checkbox click behavior, so the family tree
+   needed no code change at all.
+7. **VIRTUAL ENGINE "pcrec (auto)"**, on by default. Per matrix ROW,
+   `resolveVirtualAutoTestee` picks the newest-pinned pcrec testee from
+   whichever ONE caps/nocaps pair the row's own encoding has
+   (`familyCapsNocapsIndex`, generic over any family — `pcrec` is simply
+   the one constant asked today), choosing caps vs. nocaps by the
+   pattern's own capture-group count (`patterns[].captures`, [B107]'s
+   exporter addition) and falling back to caps when that count is
+   unknown. `injectVirtualAutoCells` ALIASES the resolved real cell into
+   each group under a NUL-prefixed synthetic key that can never collide
+   with a real testee_id (never a copy — the SAME row object, so it can
+   legitimately BE the row's own best, exactly like two real testees
+   tying); a synthetic `excluded`-status placeholder names the reason
+   when no pair or no measured cell exists. The cell's own tooltip
+   states which real testee_id was read and why.
+
+**Verification this wave**: headless Chromium in this sandbox refused to
+render a `file://` page under its snap confinement (`--headless
+--dump-dom` returned a sub-frame-error page, not the real DOM), so this
+wave used `jsdom` instead — a synthetic multi-set fixture (captures 0/1/2
+per pattern, a pcrec caps/nocaps pair, a pcre2 jit/dfa pair, one
+unknown-captures pattern) driven through `JSDOM.fromFile` with
+`runScripts:"dangerously"`, exercising every one of the seven items by
+DOM inspection and event dispatch (documented in the lane report). One
+jsdom-only artifact was found and is NOT a page bug: jsdom's
+`getComputedStyle` does not resolve a NESTED `var()` reference (`--scale-
+good: var(--best-bg)` read back literally as the string `"var(--best-
+bg)"` rather than the final hex colour) — confirmed in isolation against
+a bare stylesheet before concluding it was jsdom's own limitation, not
+this page's; `resolveCssVarOnce` (item 2, above) works around it
+defensively for both environments at no cost in a real browser, where
+this was never broken.
 
 ## Regenerating
 

@@ -258,6 +258,15 @@ PCRE2_INFO_FIRSTCODETYPE = 6
 PCRE2_INFO_LASTCODEUNIT = 11
 PCRE2_INFO_LASTCODETYPE = 12
 PCRE2_INFO_MINLENGTH = 16
+# [B107] ([viewer] the results-viewer's virtual "pcrec (auto)" column,
+# docs/design/results_viewer_v1.md 11 item 7): [measured] on three
+# patterns whose group count is known by construction and checked below
+# -- `(a)(b)` -> 2, `(?:a)` -> 0 (a non-capturing group never counts),
+# `(?<x>a)` -> 1 (a NAMED group counts the same as a plain one). A purely
+# SYNTACTIC count (how many parenthesized capturing groups the pattern
+# text declares), independent of match-time options -- UTF/UCP change
+# what a CHARACTER is, never how many groups a pattern's own text opens.
+PCRE2_INFO_CAPTURECOUNT = 4
 
 _lib.pcre2_pattern_info_8.restype = ctypes.c_int
 _lib.pcre2_pattern_info_8.argtypes = [ctypes.c_void_p, ctypes.c_uint32,
@@ -299,6 +308,15 @@ def _pattern_info_impl(self):
                                if ltype == 1 else None),
         "min_length": _info_u32(self, PCRE2_INFO_MINLENGTH),
     }
+
+
+def capture_count(compiled):
+    """[B107]: the number of CAPTURING groups `compiled`'s own pattern text
+    declares (`PCRE2_INFO_CAPTURECOUNT`) -- a plain function, not a
+    `Compiled` method, since it is a one-off reading a caller takes once
+    per pattern (the results viewer's exporter), not part of the
+    search/match surface every driver-facing call above shares."""
+    return _info_u32(compiled, PCRE2_INFO_CAPTURECOUNT)
 
 
 def _search_raw(compiled, subject, start, options):
@@ -462,6 +480,15 @@ if __name__ == "__main__":
     assert i2["required_code_unit"] is None and i2["required_code_type"] == 0, i2
     assert i2["min_length"] == 4, i2
     print("pattern_info (first / required code unit): OK")
+
+    # [B107]: capture_count on three patterns whose group count is known
+    # by construction -- a non-capturing group must NOT be counted, and a
+    # NAMED group must count the same as a plain one, so a wrong code
+    # (e.g. one that counted every parenthesis) cannot pass silently.
+    assert capture_count(compile(r"(a)(b)")) == 2
+    assert capture_count(compile(r"(?:a)")) == 0
+    assert capture_count(compile(r"(?<x>a)")) == 1
+    print("capture_count: OK")
 
     # [B77] U1: the option word and the character-boundary advance. e-acute
     # is two bytes; `x*` matches empty at every CHARACTER boundary, so the

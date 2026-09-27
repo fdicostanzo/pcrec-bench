@@ -37,17 +37,27 @@ WHICH RECORDS ARE INCLUDED (mirrors `report.py`'s R2/OD-B15 dedup, and
      becomes its own column.
 
 PATTERN TEXT ([B67] 9.8): each set's payload also carries `patterns`, a
-`{pattern_id: {text, omitted, truncated, full_bytes}}` map -- ONE entry
-per pattern (factored out of the per-row data; a pattern's text is
-invariant across every row that shares it). `text` is the record's own
-`patterns[].canonical_text` (record_schema.md), truncated to
-`PATTERN_TEXT_MAX_BYTES` (~2 KB) with `truncated`/`full_bytes` naming
+`{pattern_id: {text, omitted, truncated, full_bytes, captures}}` map --
+ONE entry per pattern (factored out of the per-row data; a pattern's
+text is invariant across every row that shares it). `text` is the
+record's own `patterns[].canonical_text` (record_schema.md), truncated
+to `PATTERN_TEXT_MAX_BYTES` (~2 KB) with `truncated`/`full_bytes` naming
 the cut honestly; `omitted` is true when the RECORD itself carries no
 `canonical_text` at all (the schema's own free_text-cap fallback, KB-7 --
 `full_bytes` is `None` in that case, since nothing anywhere states the
 true length of an omitted field). First record processed for a set wins
 each pattern_id (canonical per sub-bench, so every record that reaches
 it should agree).
+
+`captures` ([B107], docs/design/results_viewer_v1.md 11 item 7): the
+pattern's own `PCRE2_INFO_CAPTURECOUNT` -- how many CAPTURING groups its
+`canonical_text` declares, a purely SYNTACTIC count independent of any
+match-time option, computed FROM THE UNTRUNCATED text (never the
+popover's ~2 KB cut) by `_pattern_capture_count`. `None` (unknown) when
+`canonical_text` is omitted or the pattern does not compile stand-alone
+under byte-mode libpcre2 (a declared oracle refusal) -- the viewer's
+virtual "pcrec (auto)" column falls back to the caps side of a
+caps/nocaps pair on `None` and says so in its tooltip, never guessing.
 
 STATUS PER ROW, in priority order (design note 2's vocabulary: measured |
 refused | unsup | wrong | gave-up | timed-out | inconclusive-*):
@@ -107,6 +117,7 @@ from pcrecbench.reduce import (  # noqa: E402
     reduce_set_cell,
 )
 from pcrecbench.record import FORM_WHOLE_SUBJECT  # noqa: E402
+from pcrecbench import oracle_pcre2  # noqa: E402
 
 DEFAULT_STORE = os.path.join(ROOT, "store")
 DEFAULT_OUT = os.path.join(ROOT, "viewer", "data")
@@ -464,6 +475,42 @@ def _pattern_text_entry(canonical_text):
             "full_bytes": full_bytes}
 
 
+def _pattern_capture_count(canonical_text):
+    """[B107]: `PCRE2_INFO_CAPTURECOUNT` for one pattern's own FULL
+    `canonical_text` (never the ~2 KB popover cut `_pattern_text_entry`
+    makes -- a truncated pattern's trailing groups must not silently
+    vanish from its own count) -- a purely SYNTACTIC fact (how many
+    parenthesized CAPTURING groups the pattern declares; a named group
+    counts, `(?:...)` does not) independent of any match-time option, so
+    this always compiles with `options=0` regardless of the set's own
+    encoding or any pattern's own `requires-unicode-class-scope` tag --
+    no oracle option word is threaded through here at all.
+
+    Encodes to UTF-8 BYTES itself before calling `oracle_pcre2.compile`:
+    that module's own `Compiled.__init__` auto-encodes a `str` argument
+    via `.encode("latin-1")` (its established byte-oriented convention,
+    fine for a SUBJECT string that is really raw bytes one-per-character)
+    -- but `canonical_text` is real DECODED Unicode text
+    (`pcrecbench/record.py`'s `pattern_entry`: omitted, never mangled,
+    whenever the pattern's original bytes are not valid UTF-8), so
+    `.encode("latin-1")` would raise on a non-Latin-1 character (a
+    UTF-8 set's `café`/`Москва` literals). This function encodes to
+    UTF-8 itself and passes BYTES, bypassing that auto-encode path
+    entirely and reproducing the pattern's original bytes exactly.
+
+    `None` (unknown, never a guess) when `canonical_text` is `None` (the
+    schema's own free_text-cap omission, KB-7) or the pattern does not
+    compile stand-alone under byte-mode libpcre2 at all (a declared
+    oracle refusal, e.g. bench/utf8's `prp-ingreek` -- rare)."""
+    if canonical_text is None:
+        return None
+    try:
+        compiled = oracle_pcre2.compile(canonical_text.encode("utf-8"))
+    except oracle_pcre2.Pcre2Error:
+        return None
+    return oracle_pcre2.capture_count(compiled)
+
+
 def _failing_kind(red):
     """The dominant status word for one FAILING SetCellReduction (its own
     `expectation_failing` already True): `wrong` ahead of `gave-up` (a
@@ -525,10 +572,12 @@ def export_rows_for_record(path, rv):
     if rec.setup is None or rec.problems:
         return [], {}, set()
     setup = rec.setup
-    patterns_meta = {
-        p["pattern_id"]: _pattern_text_entry(p.get("canonical_text"))
-        for p in (setup.get("patterns") or [])
-    }
+    patterns_meta = {}
+    for p in (setup.get("patterns") or []):
+        canonical_text = p.get("canonical_text")
+        entry = _pattern_text_entry(canonical_text)
+        entry["captures"] = _pattern_capture_count(canonical_text)  # [B107]
+        patterns_meta[p["pattern_id"]] = entry
     sb = f"{setup['subbench']['id']}@{setup['subbench']['version']}"
     testee = setup["testee"]
     testee_id = testee["testee_id"]
