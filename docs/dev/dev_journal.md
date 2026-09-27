@@ -6055,3 +6055,21 @@ Light lanes first, heavy work after the slot:
   exec call) + a defensive mirrored fix.
 - make check #3 at f9f55f5: 569/0 · OK · 212/0. All of Frank's opened rows
   ([B97]-[B100]) and [B101] complete; no lane alive; box free.
+
+## 2026-09-27 ~00:2x — thirty-fifth session (Opus 5.5): [B102] the unblocked utf8 candidates
+
+Frank: "go ahead on unblocked items". Two lanes, no window. The root fs was at
+100% (920 MB free): b102floor's `git worktree add` hit ENOSPC and the lane
+stopped to ask — correct. Frank clarified the carried-over "no-cleanup" ruling
+covered one fix-up, not maintenance; eleven merged, clean worktrees removed
+(~23 GB; root 75%). New standing practice: remove a lane's worktree at merge
+(memory; the skill-file edit to state it was refused by the permission
+classifier — left for Frank).
+- b102altctl MERGED a6b5a69: altwide@0.2's w-64/w-96 bracket alt-cyr-64's
+  compile cost (no script penalty; cross-pin 25b1984f vs ce658cb7; four engine
+  families never measured on altwide); the match axis is not answerable from
+  altwide (ASCII-only, engineered sparse densities). No control chartered.
+- b102floor MERGED e01e1f8: U11 — floor's ×3/byte on Cyrillic on all three
+  libpcre2 routes is pcre2_match/pcre2_dfa_match's own UTF-8 validation
+  (one call, zero matches); PCRE2_NO_UTF_CHECK collapses it to 1.00.
+- viewer/data regenerated (index_rows 246, the two twin records in).
