@@ -8771,6 +8771,141 @@ def check_encoding_axis():
                                         proc.returncode))
 
 
+#: [B104] (re-pin to 751b9c6d, abi 39; inbox I-112) the seven `bench/utf8`
+#: lit-* pattern texts I-112 predicted the abi-38 [OPT-REQRUN-ENC] stage-2
+#: pre-check byte / RX_REQ_RUN VALUES for, under `-e utf8`, `pcrec-auto`'s
+#: flags: (label, pattern bytes as UTF-8, expected req_byte, expected
+#: req_run). At ce658cb7/02902356 (abi <= 37) these read the LEAD byte of
+#: the first multi-byte character (195/208/230 or `u`); at 751b9c6d the
+#: run's `!bytekey` fallback is `rb_pick`'s own -- RIGHTMOST, not
+#: leftmost -- so every one of these now reads a byte from LATER in the
+#: run (I-112's own seven predictions, confirmed against the pin's real
+#: binary before this check was written).
+_B104_UTF8_LITRUN_CASES = (
+    ("lit-offset-at-tail (é@)", "é@".encode("utf-8"), "64", "c3a940@2"),
+    ("lit-offset-at-head (@é)", "@é".encode("utf-8"), "169", "40c3a9@2"),
+    ("lit-mixed-ascii (user@例え.jp)", "user@例え.jp".encode("utf-8"),
+     "136", "7240e4be8be38188@7"),
+    ("lit-cyr-run (Москва)",
+     "Москва".encode("utf-8"),
+     "176", "d181d0bad0b2d0b0@7"),
+    ("lit-nearmiss-run (日本語)", "日本語".encode("utf-8"),
+     "158", "97a5e69cace8aa9e@7"),
+    ("lit-nfc-pair (café)", "café".encode("utf-8"), "169", "636166c3a9@4"),
+    ("lit-sharp-s (Straße)", "Straße".encode("utf-8"), "101", "53747261c39f65@6"),
+)
+
+
+def check_b104_reqrunenc_rightmost():
+    """[B104] (pin 751b9c6d, abi 39, [OPT-REQRUN-ENC] stage 2; inbox I-112).
+
+    Asserts I-112's seven predicted `-e utf8` `pcrec-auto` stamps BY VALUE,
+    from the ACTUAL bench/utf8 lit-* pattern texts (not retyped hex): the
+    necessary RUN's scanned member (and so `req_byte`, which reports the
+    run's own scan byte once a run ships) moves from the run's LEFTMOST
+    member (a UTF-8 lead byte on every one of these seven, since each
+    pattern's run opens mid-character or the whole run IS one multi-byte
+    character) to its RIGHTMOST -- `rb_pick`'s own `!bytekey` fallback,
+    which every encoding req_byte's byte-frequency prior is not keyed to
+    (today: `-e utf8` alone) already used for the single-byte pick.
+
+    Also RECORDS `dfa_prefilter` on each (I-112's finding [OPT-LITSCAN] F3:
+    the DFA's own candidate-start scan still `memchr`s the literal's FIRST
+    byte -- a UTF-8 lead byte on four of the seven -- REGARDLESS of which
+    byte the whole-window pre-check now scans) -- printed, never asserted
+    to a fixed value: F3 is not yet fixed, and this check's job is to
+    prove the pre-check moved, not to grade the residual gap."""
+    print("-- [B104]/I-112: the seven -e utf8 lit-* req_byte/req_run stamps, RIGHTMOST not LEFTMOST --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b104 reqrunenc rightmost", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b104reqrun-")
+    try:
+        adapter.prepare("pcrec-auto-utf8", tmp)
+        for label, pattern_bytes, want_byte, want_run in _B104_UTF8_LITRUN_CASES:
+            pid = re.sub(r"[^A-Za-z0-9]+", "-", label).strip("-")[:40]
+            cr = adapter.compile("pcrec-auto-utf8", pid, pattern_bytes, {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("b104 reqrunenc: %s" % label,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                continue
+            em = cr.engine_metadata
+            got_byte, got_run = em.get("req_byte"), em.get("req_run")
+            if got_byte == want_byte and got_run == want_run:
+                ok("b104 reqrunenc: %s" % label,
+                   "req_byte=%s, req_run=%s, dfa_prefilter=%s"
+                   % (got_byte, got_run, em.get("dfa_prefilter")))
+            else:
+                bad("b104 reqrunenc: %s" % label,
+                    "req_byte: got %r want %r; req_run: got %r want %r"
+                    % (got_byte, want_byte, got_run, want_run))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b104_k68_flags_mask():
+    """[B104] (pin 751b9c6d, abi 39, K68 FIXED; inbox I-112 item, our own
+    I-111 fact 4). Before this pin, `rx_info.flags` (the `strategy_denials`
+    mask, `.flags = N ULL` in the emitted `.c`) was NOT masked for three
+    [OPTLOOP.1] batch-1 bits -- `-fno-vm-anchor-bound` (28) /
+    `-fno-end-window` (29) / `-fno-req-byte` (30) -- so a denied artifact's
+    `.flags` differed from its default sibling by that one constant even
+    where the flag could not act (K68, `docs/dev/known_issues.md`). At
+    751b9c6d ALL THREE join the mask: this asserts, on a real repro
+    (`/user|/users`, the same witness pcrec's own K68 fix commit used),
+    that `.flags = 0ULL` on the default arm AND on all three denied arms --
+    where before the fix it read 1073741826 / 536870914 / 268435458 in
+    turn (bits 30/29/28 set)."""
+    print("-- [B104]/K68: rx_info.flags masks deny bits 28/29/30 (pcrec-auto-noreqbyte vs pcrec-auto) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b104 k68 flags mask", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b104k68-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    pattern = b"/user|/users"
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        arms = (("default", ""),
+                ("-fno-vm-anchor-bound", "-fno-vm-anchor-bound"),
+                ("-fno-end-window", "-fno-end-window"),
+                ("-fno-req-byte", "-fno-req-byte"))
+        flags_re = re.compile(r"^\s*\.flags\s*=\s*(\d+)ULL,\s*$", re.M)
+        results = {}
+        for arm, extra in arms:
+            os.environ["PCREC_LOCAL_FLAGS"] = ("--features all " + extra).strip()
+            adapter.prepare("pcrec-local", tmp)
+            pid = re.sub(r"[^A-Za-z0-9]+", "-", "b104-k68-%s" % arm).strip("-")[:48]
+            cr = adapter.compile("pcrec-local", pid, pattern, {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("b104 k68: %s" % arm, "%s: %s" % (cr.outcome, cr.diagnostic))
+                return
+            with open(cr.handle["artifact_c"], encoding="utf-8") as fh:
+                text = fh.read()
+            m = flags_re.search(text)
+            results[arm] = m.group(1) if m else None
+        if all(v == "0" for v in results.values()):
+            ok("b104 k68: `.flags` reads 0ULL on default and all three "
+               "denied arms (bits 28/29/30 now masked)",
+               "%r" % (results,))
+        else:
+            bad("b104 k68: `.flags` reads 0ULL on default and all three "
+                "denied arms (bits 28/29/30 now masked)",
+                "%r (expected all '0')" % (results,))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -12838,6 +12973,8 @@ def main():
     check_noedge_axis()
     check_cflags_axis()
     check_encoding_axis()
+    check_b104_reqrunenc_rightmost()
+    check_b104_k68_flags_mask()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()

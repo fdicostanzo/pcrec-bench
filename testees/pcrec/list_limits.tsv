@@ -3,22 +3,16 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-02902356/build/pcrec --list-limits
+#     build/pcrec-751b9c6d/build/pcrec --list-limits
 #
-# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37 -- see list_axes.tsv's header),
-# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
-# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
-# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
-# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
-# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
-# prefilter that verifies the run, and the two `run-pinned` prefilter
-# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
-# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
-# 42ee828f..02902356 touches no src/ file.
+# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
+# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: [OPT-REQRUN-ENC] stage 2
+# (37 -> 38) and the K68 flags-mask fix (38 -> 39). Neither adds, removes
+# or reworks a numeric limit.
 # 62 data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- BYTE-IDENTICAL to the ce658cb7 copy below the header (diffed
-# line for line): K65/K66's set and whole run are bounded by the existing
-# PCREC_MAX_REQ_RUN_SCAN, S1 adds no numeric cap.
+# desc) -- BYTE-IDENTICAL to the 02902356 copy below the header (diffed
+# line for line).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.

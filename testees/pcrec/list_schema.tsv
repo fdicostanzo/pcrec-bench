@@ -1,34 +1,24 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# ninth archiving of this surface (first: cd371441; second: a770139e,
+# tenth archiving of this surface (first: cd371441; second: a770139e,
 # byte-identical; third: cf0962e3, +1 row; fourth: 8d716693, fifth:
 # b1885a83, sixth: 6ef76820, all byte-identical; eighth: ce658cb7, +2
-# rows; this one: +6 rows / -1 row / 5 rows re-worded).
+# rows; ninth: 02902356, +6 rows / -1 row / 5 rows re-worded; this one:
+# byte-identical).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-02902356/build/pcrec --list-schema
+#     build/pcrec-751b9c6d/build/pcrec --list-schema
 #
-# pcrec commit 029023563a06071909fab5fa5b15e13b6940c816 (rx_info.abi 37 -- see list_axes.tsv's header),
-# archived 2026-09-26 by lane b101repin ([B101], inbox I-111: pcrec main
-# 02902356 -- FOUR abi steps absorbed, 33 -> 37: 27a63314 K65 (33 -> 34,
-# the whole necessary SET tested) + K66 (34 -> 35, the whole RUN compared)
-# on a VM route with no DFA scan; 0bb87eda [OPT-LITSCAN] S1 steps 1-5
-# (35 -> 36: G1 widened, RX_REQ_WHY "dominated" on every <prefix>_ofsskip
-# prefilter that verifies the run, and the two `run-pinned` prefilter
-# values + axis bit 32 `-fno-run-prefilter`); 42ee828f S1 step 6 (36 ->
-# 37: the run pre-check a call of a file-scope <prefix>_reqrun block).
-# 42ee828f..02902356 touches no src/ file.
-# 78 data rows across two sections -- 73 -> 78 against the ce658cb7 copy.
-# NOT one of I-111's four abi steps: pcrec's [FINDINGS] B0 (.rxt format
-# rows, merge 54bb1159, commits 9f287312..0cf88aca, landed between
-# 0bb87eda and 42ee828f; src/parse/rxt_schema.def + rxt_source.c only, no
-# emitter change): the file-level `freq` row REMOVED and replaced by
-# `file analysis` (opens a BUNDLE); `config analysis` list/repeat ->
-# token/at-most-one; three `bundle` rows (include, description, freq) and
-# two `data` rows (encoding, serves) ADDED; the `provenance url`/`ref`/
-# `bytes`/`sha256` constraints gain an `and source != authored` /
-# `parent == block` conjunct; pcrec's trailing `# schema-rows:` 69 -> 74.
+# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
+# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: [OPT-REQRUN-ENC] stage 2
+# (37 -> 38, the necessary run's `!bytekey` decline moves leftmost ->
+# rightmost -- an emit-side selection change, no `.rxt` grammar move) and
+# the K68 flags-mask fix (38 -> 39, a reflection-surface fix). Neither
+# touches src/parse/rxt_schema.def or rxt_source.c.
+# 78 data rows across two sections -- BYTE-IDENTICAL to the 02902356 copy
+# below the header (diffed line for line).
 # Nothing in this project's adapters or checks reads this file (declared
 # for a future `.rxt`-format check, per docs/design/rxt_needs_v1.md);
 # archived so the registry-surface census stays complete at this pin.

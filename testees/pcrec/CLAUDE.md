@@ -530,6 +530,123 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at 751b9c6d (abi 37 -> 39) — 2026-09-27, lane b104repin, inbox I-112
+
+**TWO abi steps, no new stamp, no new axis, no new registry row.** Pin
+`751b9c6d` = pcrec main HEAD at fetch time (`d911def7` is the merge; the
+one later commit, `751b9c6d`, is a docs/plan-only commit -- `751b9c6d`
+IS `d911def7`'s code, confirmed: `git diff --stat d911def7 751b9c6d`
+touches only `docs/dev/plan.md`), against `02902356` (abi 37) as BEFORE.
+`git log 02902356..751b9c6d` is 47 commits; two of them bump
+`PCREC_ARTIFACT_ABI`:
+
+- **37 -> 38 is [OPT-REQRUN-ENC]** (merge `43039d4e`, stage 2 --
+  stage 1 was the D77 census that measured candidate R identical to
+  candidate S on the whole real population and ruled R the cheaper
+  build): `src/opt/reqbyte.c`'s `rn_scan_index` -- the function that
+  picks WHICH member of a necessary literal RUN the emitted memchr
+  tests -- had its `!bytekey` fallback (the pick used under every
+  encoding `req_byte`'s own byte-frequency prior is NOT keyed to; today
+  that means `-e utf8` alone) change from `return 0` (leftmost) to
+  `return r->n - 1` (rightmost), matching `rb_pick`'s own `!bytekey`
+  fallback (the single-BYTE pick) exactly -- "one mechanism, two call
+  sites, general-mechanism rule" (the source comment). WHY: a `-e utf8`
+  run is a run of complete lowered UTF-8 code-unit sequences, so its
+  LEFTMOST byte is a UTF-8 LEAD BYTE whenever the run opens
+  mid-character -- shared by every character in that script block, so
+  the emitted memchr stopped on nearly every byte of a non-Latin
+  subject instead of the rare one the literal needs (pcrec's own
+  measurement: the run path fires on 12.0%/28.3% of the corpus/bench
+  under `-e utf8`, and the OLD leftmost pick was a lead byte on
+  12.0%/20.7% of those). The rightmost member is never this defect on a
+  REAL run (a run's last byte is a lead byte only if the run is
+  truncated mid-character, which pcrec's D77 census found in ZERO of
+  912 real `-e utf8` runs). NO new stamp, no new declaration, no
+  `rx_info` layout move -- the bump moves the emitted memchr/memcmp
+  TARGET BYTE and the `RX_REQ_RUN` stamp's `@offset` VALUE on `-e utf8`
+  artifacts whose run's leftmost member is not already its rightmost
+  (236/1,167 bench, 763/10,818 corpus artifact-configs, pcrec's own
+  count). **BYTE encoding is untouched by construction**: `!bytekey`
+  gates the whole candidate difference, and `-e byte` is `bytekey=true`
+  on every pattern this bench compiles outside `bench/utf8`.
+- **38 -> 39 is the K68 fix** (merge `d911def7`; K68 was FILED by this
+  project's OWN re-pin work, `docs/dev/known_issues.md` on pcrec's
+  side, inbox I-111 fact 4/lane b101repin's own bit30 finding): the
+  three `[OPTLOOP.1]` batch-1 whole-window pre-check deny bits --
+  `PCREC_NO_VM_ANCHOR_BOUND` (28) / `PCREC_NO_END_WINDOW` (29) /
+  `PCREC_NO_REQ_BYTE` (30) -- shipped OUTSIDE `emit_info_def`'s
+  `strategy_denials` mask from `[OPTLOOP.1.impl]` BATCH 1 (pin
+  8d716693) through `02902356`, moving five bytes of `rx_info.flags` on
+  EVERY artifact including ones the flag cannot act on -- the identical
+  defect the `-fno-prefilter-collapse` comment already measured on bit
+  19. All three are ANSWER-IDENTITY-PRESERVING (their own `lib/pcrec.h`
+  comments say so: the removed attempts/window/check are ones that
+  would have run and failed), so they now join the mask for the mask's
+  own reason. A REFLECTION-SURFACE FIX: no struct offset moves, no
+  `rx_info` member is added or changed, no emitted PROGRAM byte moves
+  and no answer moves on any artifact.
+
+**`struct rx_info` is BYTE-IDENTICAL to 02902356's** (diffed field for
+field on a plain `abc` witness, both binaries): **the shim floor STAYS
+16**. Neither step touches a struct member; K68 is a bitmask
+computation over an existing field, and [OPT-REQRUN-ENC] moves an
+emitted VALUE, not a declaration.
+
+**Registries: ALL FOUR BYTE-IDENTICAL below their source headers**
+(re-archived from the 751b9c6d binary and diffed line for line against
+the 02902356 archives) -- `list_axes.tsv` 91/32, `list_definitions.tsv`
+50, `list_limits.tsv` 62, `list_schema.tsv` 78. Neither abi step adds,
+removes or reworks an axis, a definition, a limit or a schema row --
+structural confirmation that [OPT-REQRUN-ENC] is a selection-VALUE
+change with no new candidate, and K68 is a mask fix with no new flag.
+
+**Stamps by value: I-112's seven `-e utf8` `pcrec-auto` predictions,
+confirmed exactly** (`tools/selfcheck.py`'s `check_b104_reqrunenc_
+rightmost`, from the actual `bench/utf8` lit-* pattern texts): é@ ->
+`req_byte 64` / `req_run c3a940@2`; @é -> `169` / `40c3a9@2`; `user@例え.jp`
+-> `136` / `7240e4be8be38188@7`; Москва -> `176` / `d181d0bad0b2d0b0@7`;
+日本語 -> `158` / `97a5e69cace8aa9e@7`; café -> `169` / `636166c3a9@4`;
+Straße -> `101` / `53747261c39f65@6`. At 02902356 these read the lead
+bytes 195/208/230 or `u` (the letter's own `!bytekey` leftmost-fallback
+pick). **[OPT-LITSCAN] F3, NOT YET FIXED**: `dfa_prefilter` on the same
+seven records `memchr` on four (é@, @é, Москва, 日本語 -- a plain,
+un-offset scan) and `offset-set` on three (`user@例え.jp`, café, Straße
+-- an offset-pinned scan); on EVERY one the value is still the
+literal's UTF-8 LEAD byte, unmoved by the run's own rightmost pick --
+the DFA candidate-start scan is a SEPARATE mechanism from the
+whole-window pre-check this abi step touched, and it still scans the
+common lead byte on non-Latin script text (pcrec's own finding, filed
+2026-09-27, not yet fixed). Recorded by value, not asserted to a fixed
+number: a fix would move it, and this check's job is to prove the
+pre-check moved, not to grade the residual gap.
+
+**K68 by value** (`check_b104_k68_flags_mask`, the `router-prefix-order`
+repro `/user|/users` pcrec's own fix commit used): `.flags = 0ULL` on
+the default arm AND on all three denied arms
+(`-fno-vm-anchor-bound`/`-fno-end-window`/`-fno-req-byte`) -- where at
+02902356 they read `1073741824`/... in turn (bit 30/29/28 set, in
+turn). The `pcrec-auto-noreqbyte` twin's own adapter comment (the
+[B101] entry above) is updated: the twin is now a pure `.flags`-
+identical pair on every artifact with no necessary byte, closing the
+one-constant residue [B101] measured.
+
+**The compile-only census, over the SAME two populations
+`probe_b101_census.py` used** (`docs/dev/measurements/probe_b104_
+census.py`, two pins only -- no intermediate scratch build needed,
+since neither abi step is attributable to more than one merge each and
+I-112 predicts zero movement outright): I-111's bench_pop (650
+artifact-configs, byte encoding, all six sets) + capability@0.1's three
+configs x 64 x 2 forms (384) = 1,034 rows, v2 program identity.
+**964 identical / 70 refused-both (= b101's own 59+11) / 0 changed / 0
+refusal-mover** -- CONFIRMS I-112's own predicted answer ("0 changes
+anywhere") on the byte-encoding population: `docs/dev/measurements/
+2026-09-27-b104-census.txt`.
+
+Catalogue **3.11** (`[[pin_order]]` append). Twenty-one pinned configs,
+unchanged -- no new deny testee (neither step ships a CLI flag pcrec-
+bench denies against; K68 has no flag of its own, and [OPT-REQRUN-ENC]
+rides the existing `-e utf8` configs).
+
 ## Re-pin at 02902356 (abi 33 -> 37) — 2026-09-26, lane b101repin, inbox I-111
 
 **FOUR abi steps in three codegen merges**, against `ce658cb7` (abi 33) as

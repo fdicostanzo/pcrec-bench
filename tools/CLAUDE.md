@@ -659,3 +659,21 @@ arm ALSO drops S1's `run-pinned-bounded` prefilter), and the null arm
 element naming the spelling; two new rows on `abc` for bit 32 and bit 16.
 `check_mechanism_stamps` gains six ledger rows (I-111's S1BUILD / K65 /
 step-6 movers by value) and the `B101_*` size-book constants.
+
+[B104] (2026-09-27, lane b104repin, the re-pin to 751b9c6d, abi 39;
+inbox I-112): TWO new check functions, `check_b104_reqrunenc_rightmost`
+(7 checks) and `check_b104_k68_flags_mask` (1 check). The first asserts
+I-112's seven predicted `-e utf8` `pcrec-auto` stamps BY VALUE from the
+ACTUAL `bench/utf8` lit-* pattern texts (never retyped hex): the
+necessary run's scanned member moves from its LEFTMOST byte (a UTF-8
+lead byte on all seven at 02902356) to its RIGHTMOST (`rb_pick`'s own
+`!bytekey` fallback, [OPT-REQRUN-ENC] stage 2), and RECORDS
+`dfa_prefilter` on each without asserting a fixed value ([OPT-LITSCAN]
+F3, filed by pcrec 2026-09-27, not yet fixed: the DFA candidate-start
+scan still `memchr`s the literal's UTF-8 lead byte on four of the
+seven). The second reproduces the K68 fix's own repro
+(`/user\|/users`) through `pcrec-local`, grepping the emitted `.c`'s
+`.flags = <N>ULL` line directly (no `engine_metadata` pair carries this
+value): `0ULL` on the default arm and all three denied arms
+(`-fno-vm-anchor-bound`/`-fno-end-window`/`-fno-req-byte`), where at
+02902356 they read `1073741824`/`536870914`/`268435458` in turn.
