@@ -8,54 +8,174 @@ search, `expected.txt`, and (for findings still PRESENT and not
 NOT-A-BUG) a per-engine note draft. Sibling lane `b103infra` owns
 `findings.tsv`/`tools/upstream.py`/the skill; this lane wrote only
 `docs/dev/upstream/repro/U{6,7,8}/`, `docs/dev/upstream/notes/
-{tre,vectorscan}-2026-09-27.md`, and this report. `findings.tsv` and
-`docs/dev/upstream_findings.md` are untouched — the statuses below are
-what I reached; the manager applies them.
+{tre,vectorscan}-2026-09-27.md`, `docs/dev/measurements/
+{probe_tre_bracket_escape_census.py,probe_tre_bracket_escape_followups.c,
+2026-09-27-tre-bracket-escape-census.txt}` (the U6 correction's follow-up,
+below), and this report. `findings.tsv` and `docs/dev/upstream_findings.md`
+are untouched — the statuses below are what I reached; the manager
+applies them.
 
-## U6 — TRE 0.9.0, `[\x80-\xff]{2,4}` (and any bracket-expression escape)
+## U6 — TRE 0.9.0, `[\x80-\xff]{2,4}` — CORRECTED to NOT-A-BUG (2026-09-27, manager review)
 
-**Status reached: UNDERSTOOD** (upgraded from the narrative's "not yet
-UNDERSTOOD" — new since the narrative was last written).
+**This lane's first pass called this a TRE defect and nearly sent a
+note to its maintainers. It was wrong. Corrected the same day on
+manager review**, before anything was sent (nothing ever is without
+Frank's approval, but the DRAFTED note was itself the wrong artifact to
+have written). What follows is the corrected state; the original
+mis-framing is preserved nowhere except this sentence and git history.
 
-- **Repro**: `docs/dev/upstream/repro/U6/repro.c` — self-contained,
-  `#include <tre/tre.h>` + `-ltre` only. Two cases: plain ASCII text
-  ("GET /products?...") spuriously MATCHES `[0,3)` where the oracle
-  says nomatch; the genuine high-byte pair `0x81 0x82` fails to match
-  where the oracle says `[0,2)`. `run.sh` builds+runs it, prints the
-  contract's final line. Verified: `U6 PRESENT tre 0.9.0 1`, exit 0.
-- **latest_checked**: `0.9.0@2026-09-27`. TRE's newest GitHub *release*
-  is `v0.9.0` (2024-09-20) — the SAME version already installed
-  (`libtre-dev 0.9.0-1build1`), confirmed via `gh api
-  repos/laurikari/tre/{tags,releases}`. To rule out a Debian/Ubuntu
-  packaging-patch explanation, I also downloaded the `v0.9.0` release
-  tarball, built it from source (`./configure --disable-shared
-  --enable-static && make`, ~2 min, no extra deps needed) and linked
-  the repro statically against that `libtre.a`: **byte-for-byte
-  identical output** to the distribution package (see
-  `expected.txt`'s header). So this is confirmed against the true
-  current upstream release, not just the distro build.
-- **tracker**: `searched:2026-09-27:none-found`. Checked
-  `laurikari/tre`'s full issue list (all 45+ issues, open and closed,
-  via `gh issue list --state all`) plus keyword searches for "byte" and
-  "regncompb". Nearest related issues are #143 ("Heap out-of-bounds
-  read in byte-mode approximate regex matching") and #120 ("Unicode
-  range matched mistake") — neither is this mechanism.
-- **Cause, source-confirmed**: fetched TRE 0.9.0's
-  `lib/tre-parse.c` from GitHub and read `tre_parse_bracket_items()`
-  (~lines 256-365): it builds ranges/literals directly off raw
-  characters (`min = *re; max = *(re + 2);` / `min = max = *re++;`)
-  with **no escape processing at all** — contrast the top-level atom
-  parser's `case L'x':` (~line 1466 of the same file), which DOES
-  decode `\xHH`, a thousand-plus lines away and never reached from
-  inside `[...]`. A behavioural scan (`^[\x80-\xff]$` against all 256
-  byte values) matches this exactly: the matched set is precisely
-  `{0x30-0x5C} ∪ {0x66, 0x78}` (the literal-parse of `\x80-\xff` as
-  `\ x 8 0 - \ x f f`), nowhere near 0x80-0xFF. This generalises: the
-  SAME parser gap explains the two other wrong patterns the bench
-  already observed (`tag-pair-match`'s `[\w:-]`, the SQLi pattern's
-  `[\s\x0b]`) — every one of them puts a backslash escape inside `[...]`.
-- **Note**: `docs/dev/upstream/notes/tre-2026-09-27.md`, drafted,
-  approval line blank.
+**Status reached: NOT-A-BUG** (POSIX bracket-expression semantics).
+
+- **Repro** (unchanged in mechanics, `docs/dev/upstream/repro/U6/repro.c`):
+  self-contained, `#include <tre/tre.h>` + `-ltre` only. Two cases:
+  plain ASCII text ("GET /products?...") MATCHES `[0,3)`; the genuine
+  high-byte pair `0x81 0x82` does not match. `run.sh` builds+runs it,
+  prints the contract's final line. Verified: `U6 PRESENT tre 0.9.0 1`,
+  exit 0 — PRESENT still means "TRE disagrees with a PCRE-style
+  reading", which is still literally true; only the INTERPRETATION of
+  that fact changed.
+- **NEW: `control_glibc.c`**, added per the manager's ask — links ONLY
+  glibc's own `<regex.h>` (no TRE at all), runs the identical pattern
+  and both subjects through `regcomp()`/`regexec()`, `REG_EXTENDED`.
+  Result: **glibc shows the exact same split** (case A matches `[0,3)`,
+  case B does not) — see `expected.txt`'s CONTROL block, archived
+  verbatim. `run.sh` now builds and runs both, the control's result
+  informational-only (never affects the script's exit code).
+- **Why this settles it**: POSIX.1-2017 XBD 9.3.5: *"The special
+  characters `.`, `*`, `[`, and `\` shall lose their special meaning
+  within a bracket expression."* TRE ("a lightweight, robust, and
+  efficient **POSIX compliant** regexp matching library", its own
+  package description) is reading `[\x80-\xff]` correctly by the rules
+  it implements; `\xHH` inside `[...]` was never valid POSIX syntax to
+  begin with. glibc's `regcomp` — nobody's idea of a broken POSIX
+  implementation — agrees with TRE byte for byte. Full citation and the
+  corrected README in `docs/dev/upstream/repro/U6/README.md`.
+- **latest_checked** (unchanged): `0.9.0@2026-09-27`, same as installed;
+  also confirmed against a pristine `v0.9.0` source build (identical
+  output) — see the earlier note in this file's git history / the
+  README for the full build detail.
+- **tracker**: `searched:2026-09-27:none-found` (unchanged — moot now
+  that the answer is NOT-A-BUG; recorded for completeness only).
+- **Note deleted**: `docs/dev/upstream/notes/tre-2026-09-27.md` REMOVED.
+  Telling TRE's maintainers their POSIX-conforming bracket parser is
+  wrong would have been exactly backwards.
+- **The real, actionable finding is BENCH-SIDE**, not upstream's problem
+  at all: this project's `tre-default` adapter hands PCRE-dialect
+  pattern text (with `\xHH`/`\w`/`\s`-style escapes inside `[...]`) to a
+  POSIX-only engine that reads those bytes under different rules.
+  Already partially documented: `testees/tre/CLAUDE.md` (d)4 names the
+  identical mechanism's REFUSAL manifestation on three patterns
+  (`wild-datetime-datefinder-alternation`,
+  `wild-secrets-username-password-pair`,
+  `wild-waf-crs-942500-comment-obfuscation` — a descending range,
+  `REG_ERANGE`) but nothing today documents or handles the
+  SILENT-WRONG-ANSWER manifestation this repro demonstrates. Neither
+  `testees/tre/adapter.py` nor `configs.toml` translates or intercepts
+  any bracket-escape pattern — verified by reading both files: no
+  string in either mentions `\x`, `\w`, `\s`, or any bracket-content
+  rewriting at all; the pattern travels to `tre_regncompb` byte for
+  byte, unmodified.
+
+### The corpus census (the manager's asks 2-4)
+
+New: `docs/dev/measurements/probe_tre_bracket_escape_census.py` +
+`2026-09-27-tre-bracket-escape-census.txt` (source-headered, per D35;
+`probe_tre_bracket_escape_followups.c` alongside it for three targeted
+witnesses). Scans every `bench/*/patterns/*.rx` file (all seven
+sub-benches, not just capability) for a bracket expression containing a
+backslash.
+
+**98 bracket-span hits across 30 distinct (subbench, pattern) pairs**:
+bounded 1 (`csv5`), capability 20, email 2 (`orig`, `factored`),
+loglines 1 (`kv-quoted`), utf8 6. `tre-default` has **only ever been
+measured against `bench/capability@0.1`** (confirmed:
+`find store/records -iname '*tre_*' -maxdepth 2 -type d` returns exactly
+one subbench dir) — so only the 20 capability hits have a "scored wrong
+today" answer at all; the other 10 are unmeasured (utf8's six are also
+MOOT: `utf8_set_v1.md` F-S2/F-S3 excludes TRE from ranking on every
+pattern except three byte-safe controls, none of which is among these
+six — TRE is never run against them by the set's own design).
+
+Of the 20 capability@0.1 hits, read against the committed cross-pin
+report (`reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.tsv`):
+
+- **11 never reach `tre_regncompb` at all** — an existing
+  `unsupported-by-declaration` policy intercepts them first, for
+  reasons unrelated to bracket escapes (backrefs, lookaround, etc.):
+  `bracket-array-define`, `codegrammar-xflag`, `float-literal-bound`,
+  `pwd-strength-chain`, `quoted-delim-match`, `utf8-lead-no-cont`,
+  `wild-codegrammar-json-stringcontent-escape`,
+  `wild-logparse-quotedstring-grok`, `wild-logparse-quotedstring-noatomic`,
+  `wild-logparse-syslogbase-expanded`, `wild-logparse-winpath-grok`.
+- **3 already `did-not-compile`** (the `REG_ERANGE` descending-range
+  refusal `testees/tre/CLAUDE.md` (d)4 already documents, unchanged by
+  this census): `wild-datetime-datefinder-alternation`,
+  `wild-secrets-username-password-pair`,
+  `wild-waf-crs-942500-comment-obfuscation`.
+- **6 compile and are scored WRONG today, at least partially** —
+  `high-byte-run` (`n_wrong=15/15` throughput, `195/375` search, the
+  worst by far), `tag-pair-match`/`wild-waf-crs-942360-concat-sqli`/
+  `mojibake-curly-quote` (each `n_wrong=5/75` search only, `0` on
+  throughput), `codegrammar-flat`/`winpath-near-miss` (`n_wrong=0`
+  everywhere DESPITE the mechanism — see below).
+
+**Not every hit is harmful.** `codegrammar-flat` (`[^"\\]`) and
+`winpath-near-miss` (`[^<>:"/\\|?*]`) both use the common
+"escape-the-backslash" idiom — a DOUBLED backslash (two raw pattern
+bytes) that, read literally under POSIX, still ends up excluding one
+backslash character; the doubled escape happens to mean the same thing
+whether or not backslash is special. `probe_tre_bracket_escape_followups.c`
+isolates this witness directly (a lone backslash byte and a lone `"`
+byte are both correctly excluded). Contrast `tag-pair-match`'s `[\w:-]`,
+which is NOT coincidentally safe: it accepts a literal backslash or the
+letter `w` as if they were "word chars" and rejects real digits — the
+same probe shows this directly (`[\w:-]+` vs `"5"`: nomatch, wrong;
+vs a lone backslash: MATCH, wrong).
+
+A third probe result, outside capability entirely: `bench/bounded/
+patterns/csv5.rx` is `(?:[^,\n]{0,32},){4}[^,\n]{0,32}` — `[^,\n]` is
+meant to exclude comma-or-newline; under TRE's literal parse it excludes
+`{',', '\\', 'n'}` instead, so a REAL embedded newline byte is not
+excluded and the class crosses it. Checked against the corpus: NO
+committed `bench/bounded` subject today contains an embedded newline
+(a `python3 -c "...count(b'\n')"` sweep over every file in
+`bench/bounded/subjects/`), so this is DORMANT, not a live wrong answer
+— but a real semantic gap if that set ever grows multi-line subjects,
+and `tre-default` has never been run against `bench/bounded` regardless
+(no store/scratch record), so there is nothing to score today either way.
+
+### Proposed fix (not implemented, per the brief)
+
+Two shapes, either is workable; I did not build either:
+
+1. **Translate, in `testees/tre/adapter.py`, before the pattern reaches
+   `tre_regncompb`**: rewrite `\xHH` → the raw byte, `\w`/`\W`/`\s`/`\S`/
+   `\d`/`\D` → their POSIX `[:alnum:]`-family equivalents, ONLY inside
+   bracket-expression spans (the same span-finder this census's script
+   already implements could be reused/hardened for this). Preserves the
+   PATTERN AUTHOR's intent; the adapter already does comparable
+   compile-time work (`refusal_class` derivation) so this is not an
+   unprecedented shape for this file. Risk: a translation bug becomes a
+   SECOND silent-wrong-answer source, one this project owns instead of
+   TRE.
+2. **Declare unsupported**: extend the existing pre-compile capability
+   declaration (the same mechanism that already intercepts 11 of these
+   20 patterns for other reasons) to also refuse any pattern whose
+   bracket expression contains a backslash — turning today's SILENT
+   wrong answer into a named, honest `unsupported-by-declaration` /
+   `did-not-compile`-shaped exclusion, at the cost of narrowing
+   `tre-default`'s measured population further (it is already the
+   narrowest on the roster).
+
+I lean toward (2) as the lower-risk near-term move (it costs nothing
+but coverage, and TRE is already this project's narrowest-declared
+engine) with (1) as a possible follow-up if `tre-default`'s coverage
+becomes a stated priority — but this is a recommendation, not a
+ruling; PROPOSING only, as asked. A natural adjacent follow-up neither
+asked for nor done here: a `testees/tre/CLAUDE.md` addendum recording
+this census's own finding (the WRONG-ANSWER manifestation) alongside
+(d)4's existing REFUSAL one, so a future reader of that file gets the
+whole mechanism in one place.
 
 ## U7 — vectorscan 5.4.11, `(?x)` pattern ending in an unterminated `#` comment
 
@@ -166,16 +286,30 @@ manager to confirm or overrule.
 
 ## Charter-vs-committed checklist
 
+**The manager's U6 change request (this session's second pass):**
+
+| ask | status |
+|---|---|
+| (1) glibc regcomp/regexec CONTROL on case A/B, in the U6 repro dir, archived in expected.txt | COMMITTED `docs/dev/upstream/repro/U6/control_glibc.c`; wired into `run.sh` (informational, never changes exit code); output archived in `expected.txt`'s CONTROL block. Result: glibc AGREES with TRE |
+| (2) since glibc agrees: NOT-A-BUG; delete the TRE note; rewrite README's reading | COMMITTED — `notes/tre-2026-09-27.md` deleted; `repro/U6/README.md` rewritten around the POSIX citation + the glibc control |
+| Look at `testees/tre/` for an existing declaration/translation | COMMITTED (investigated, not edited) — NONE exists for the wrong-answer manifestation; `adapter.py`/`configs.toml` contain no bracket-escape handling at all; `CLAUDE.md` (d)4 documents only the REFUSAL manifestation on 3 different patterns |
+| Which bench/*/ patterns contain a backslash inside `[...]` sent to tre, committed under docs/dev/measurements/ with a source header | COMMITTED `docs/dev/measurements/probe_tre_bracket_escape_census.py` + `2026-09-27-tre-bracket-escape-census.txt` + `probe_tre_bracket_escape_followups.c` — 30 patterns across 5 sub-benches; only capability@0.1 has ever been measured |
+| State whether those rows are scored wrong for tre today | COMMITTED — 6/20 capability patterns wrong (1 badly, 3 partially, 2 not at all despite the mechanism); the other 24 (14 capability + 10 elsewhere) are moot/unmeasured, each named with why |
+| Propose the fix (don't implement) | COMMITTED — two shapes (translate vs. declare-unsupported) in the U6 section above, no code changed under `testees/tre/` |
+| Commit on the same branch, update the report, hand back | COMMITTED — this same commit; report updated (this file) |
+
+**The original brief:**
+
 | brief item | status |
 |---|---|
-| U6 repro (min. standalone C, links only TRE) | COMMITTED `docs/dev/upstream/repro/U6/{repro.c,run.sh,expected.txt,README.md}` |
+| U6 repro (min. standalone C, links only TRE) | COMMITTED `docs/dev/upstream/repro/U6/{repro.c,run.sh,expected.txt,README.md,control_glibc.c}` |
 | U7 repro (min. standalone C, links only vectorscan) | COMMITTED `docs/dev/upstream/repro/U7/{repro.c,run.sh,expected.txt,README.md}` |
 | U8 repro (min. standalone C++, links only RE2; "upstream-canonical way to show it") | COMMITTED `docs/dev/upstream/repro/U8/{repro.cc,run.sh,expected.txt,README.md}` — the repro IS the canonical few-line RE2::Options/RE2::Match C++ shape |
 | latest-release check, each engine | COMMITTED: U6 built+ran pristine v0.9.0 (identical); U7 CANNOT-RUN a real build (heavy deps absent), source-diffed 5.4.12/5.4.13 instead (identical); U8 built+ran pristine 2025-11-05 (identical) |
 | tracker search, each engine | COMMITTED: U6 none-found; U7 none-found (both vectorscan and hyperscan); U8 found #344 (related, not identical) — none touch `findings.tsv`, all stated above and in each README |
 | U8: does RE2 document `\B` under UTF-8 as intended | COMMITTED — yes, `doc/syntax.txt`'s ASCII-only wording, cited in `repro/U8/README.md` and above; verdict NOT-A-BUG |
 | `expected.txt` per repro, source-information header | COMMITTED, all three |
-| note per engine with ≥1 REPRODUCED non-NOT-A-BUG finding | COMMITTED: `notes/tre-2026-09-27.md`, `notes/vectorscan-2026-09-27.md`. NOT drafted: `notes/re2-2026-09-27.md` (U8 resolved NOT-A-BUG — see above; flagged, not silently skipped) |
+| note per engine with ≥1 REPRODUCED non-NOT-A-BUG finding | COMMITTED: `notes/vectorscan-2026-09-27.md` only. NOT drafted: `notes/tre-2026-09-27.md` (U6 corrected to NOT-A-BUG this session — the note was drafted then DELETED, see above), `notes/re2-2026-09-27.md` (U8 resolved NOT-A-BUG — see above; both flagged, neither silently skipped) |
 | findings.tsv / upstream_findings.md | NOT TOUCHED (b103infra's / the manager's, per brief) |
 | nothing sent anywhere | TRUE — no issue created, no post made on any tracker; only read-only `gh`/`curl`/`WebSearch`-equivalent calls |
 

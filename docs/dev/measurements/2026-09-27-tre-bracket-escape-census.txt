@@ -1,0 +1,207 @@
+# docs/dev/measurements/2026-09-27-tre-bracket-escape-census.txt
+#
+# U6 follow-up (manager review, 2026-09-27): once glibc's own regcomp
+# confirmed TRE's `[\x80-\xff]` parse is POSIX-conforming (a bracket
+# expression gives backslash no special meaning, POSIX.1-2017 XBD
+# 9.3.5), the actionable finding moved from "TRE bug" to "our tre
+# adapter receives PCRE-dialect patterns with backslash escapes inside
+# `[...]` and hands them to a POSIX-only engine". This is the census:
+# every bench/*/patterns/*.rx file across all seven sub-benches that
+# contains a bracket expression with a backslash inside it.
+#
+# Box:        ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Repo:       pcrec-bench, commit 5b4883ef2a40b15baeb9bb732827f7ae1533c6c2
+#             (lane/b103other)
+# Script:     docs/dev/measurements/probe_tre_bracket_escape_census.py
+#             (committed beside this file; read-only, no store load,
+#             classifies pattern TEXT only -- never compiles anything)
+# Python:     3.14.4
+# gcc:        15.2.0 (Ubuntu 15.2.0-16ubuntu1) -- used for the two
+#             follow-up probes below, not for this script itself
+# libtre-dev: 0.9.0-1build1
+# libc6:      2.43-2ubuntu2.4 (the glibc regcomp control's own version)
+#
+# ---- VERBATIM SCRIPT OUTPUT (stdout) -----------------------------------
+subbench	pattern_id	bracket_content_with_backslash
+bounded	csv5	[^,\n]
+bounded	csv5	[^,\n]
+capability	bracket-array-define	[\n      (?: [^\[\]
+capability	codegrammar-flat	[^"\\]
+capability	codegrammar-xflag	[^"\\]
+capability	float-literal-bound	[\d.]
+capability	float-literal-bound	[\d.]
+capability	high-byte-run	[\x80-\xff]
+capability	mojibake-curly-quote	[\x20-\x7e]
+capability	pwd-strength-chain	[^\w\s]
+capability	quoted-delim-match	[^\\]
+capability	tag-pair-match	[\w:-]
+capability	utf8-lead-no-cont	[\xc2-\xdf]
+capability	utf8-lead-no-cont	[\x80-\xbf]
+capability	wild-codegrammar-json-stringcontent-escape	["\\/bfnrt]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[.\s]
+capability	wild-datetime-datefinder-alternation	[/:\-,.\s_+@]
+capability	wild-logparse-quotedstring-grok	[^\\"]
+capability	wild-logparse-quotedstring-grok	[^\\']
+capability	wild-logparse-quotedstring-grok	[^\\`]
+capability	wild-logparse-quotedstring-noatomic	[^\\"]
+capability	wild-logparse-quotedstring-noatomic	[^\\']
+capability	wild-logparse-quotedstring-noatomic	[^\\`]
+capability	wild-logparse-syslogbase-expanded	[\x21-\x5a\x5c\x5e-\x7e]
+capability	wild-logparse-syslogbase-expanded	[(?<pid>\b(?:[1-9]
+capability	wild-logparse-winpath-grok	[^\\?*]
+capability	wild-secrets-username-password-pair	[ \t]
+capability	wild-secrets-username-password-pair	[ \t]
+capability	wild-secrets-username-password-pair	[a-zA-Z0-9.@_\-+]
+capability	wild-secrets-username-password-pair	[^\n\r]
+capability	wild-secrets-username-password-pair	[\n\r]
+capability	wild-secrets-username-password-pair	[ \t]
+capability	wild-secrets-username-password-pair	[ \t]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b\(]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\"'`]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\"'0-9A-Z_-z]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\"'0-9A-Z_-z]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942360-concat-sqli	[\s\x0b]
+capability	wild-waf-crs-942500-comment-obfuscation	[\s\x0b]
+capability	wild-waf-crs-942500-comment-obfuscation	[!\+]
+capability	wild-waf-crs-942500-comment-obfuscation	[\s\x0b\(\)\-0-9=A-Z_a-z]
+capability	winpath-near-miss	[^<>:"/\\|?*]
+capability	winpath-near-miss	[^<>:"/\\|?*]
+email	factored	[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]
+email	factored	[\x01-\x09\x0b\x0c\x0e-\x7f]
+email	factored	[(?:(?:(?&octet))\.){3}(?:(?&octet)|[a-z0-9-]
+email	factored	[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]
+email	factored	[\x01-\x09\x0b\x0c\x0e-\x7f]
+email	orig	[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]
+email	orig	[\x01-\x09\x0b\x0c\x0e-\x7f]
+email	orig	[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]
+email	orig	[\x01-\x09\x0b\x0c\x0e-\x7f]
+loglines	kv-quoted	[^"\\]
+utf8	asr-lb-class	[\x{400}-\x{4FF}]
+utf8	cls-high-range	[\x{100}-\x{2000}]
+utf8	cls-mixed	[a-zé\x{430}-\x{44F}]
+utf8	cls-neg-allhigh	[^\x{80}-\x{10FFFF}]
+utf8	cls-neg-cjk	[^\x{4E00}-\x{9FFF}]
+utf8	qnt-class-run	[\x{400}-\x{4FF}]
+
+# ---- SCRIPT'S OWN STDERR SUMMARY ---------------------------------------
+
+# total: 98 bracket-span hits across 30 distinct (subbench, pattern) pairs
+#   bounded: 1 pattern(s) -- csv5
+#   capability: 20 pattern(s) -- bracket-array-define, codegrammar-flat, codegrammar-xflag, float-literal-bound, high-byte-run, mojibake-curly-quote, pwd-strength-chain, quoted-delim-match, tag-pair-match, utf8-lead-no-cont, wild-codegrammar-json-stringcontent-escape, wild-datetime-datefinder-alternation, wild-logparse-quotedstring-grok, wild-logparse-quotedstring-noatomic, wild-logparse-syslogbase-expanded, wild-logparse-winpath-grok, wild-secrets-username-password-pair, wild-waf-crs-942360-concat-sqli, wild-waf-crs-942500-comment-obfuscation, winpath-near-miss
+#   email: 2 pattern(s) -- factored, orig
+#   loglines: 1 pattern(s) -- kv-quoted
+#   utf8: 6 pattern(s) -- asr-lb-class, cls-high-range, cls-mixed, cls-neg-allhigh, cls-neg-cjk, qnt-class-run
+
+# ---- CROSS-REFERENCE AGAINST THE STORE (capability@0.1 only) ----------
+#
+# tre-default has ONLY EVER been measured against bench/capability@0.1
+# (confirmed: `find store/records -iname '*tre_*' -maxdepth 2 -type d`
+# returns exactly one subbench directory, capability@0.1). The other 10
+# hits above (bounded x1, email x2, loglines x1, utf8 x6) are UNMEASURED
+# for tre-default -- no store or scratch record exists, so there is no
+# "wrong answer today" to report for them either way; they are named
+# here as a standing risk (utf8's six are separately MOOT: bench/utf8's
+# own design, utf8_set_v1.md F-S2/F-S3, excludes TRE from ranking on
+# every pattern except three byte-safe controls -- the floor,
+# ci-ascii-control, asr-b-ascii -- none of which is among these six, so
+# TRE is never even run against them by the set's own design).
+#
+# Of the 20 capability@0.1 patterns, read against
+# reports/2026-09-19-capability-0.1-budu-ryzen1600-ext-second-cf0962e3.tsv
+# (the committed cross-pin report covering tre-default; command used:
+# `awk -F'\t' -v p="$pattern" '$2==p && $7 ~ /tre/ {...}' <that file>`,
+# columns 1/4/8/13/14/16 = section/regime_or_na/status/n/pass_rate/n_wrong):
+#
+#   11 unsupported_by_pattern (never reach tre_regncompb at all -- an
+#      existing `requires-*` declaration intercepts them first, for
+#      reasons UNRELATED to bracket escapes, e.g. backrefs/lookaround):
+#      bracket-array-define, codegrammar-xflag, float-literal-bound,
+#      pwd-strength-chain, quoted-delim-match, utf8-lead-no-cont,
+#      wild-codegrammar-json-stringcontent-escape,
+#      wild-logparse-quotedstring-grok, wild-logparse-quotedstring-noatomic,
+#      wild-logparse-syslogbase-expanded, wild-logparse-winpath-grok
+#
+#   3 did-not-compile (REG_ERANGE, a descending range -- ALREADY
+#      documented in testees/tre/CLAUDE.md (d)4, unchanged by this
+#      census, a DIFFERENT manifestation of the same backslash-not-
+#      special mechanism):
+#      wild-datetime-datefinder-alternation,
+#      wild-secrets-username-password-pair,
+#      wild-waf-crs-942500-comment-obfuscation
+#
+#   6 compile and run -- the SILENT-WRONG-ANSWER manifestation this
+#      census adds to (d)4's refusal-only picture:
+#      high-byte-run:                      n_wrong=15/15  (throughput)
+#                                           n_wrong=195/375 (search, 0.4800)
+#      tag-pair-match:                     n_wrong=0/15   (throughput)
+#                                           n_wrong=5/75   (search, 0.9867)
+#      wild-waf-crs-942360-concat-sqli:     n_wrong=0/15   (throughput)
+#                                           n_wrong=5/75   (search, 0.9867)
+#      mojibake-curly-quote:                n_wrong=0/15   (throughput)
+#                                           n_wrong=5/75   (search, 0.9867)
+#      codegrammar-flat:                    n_wrong=0 on every regime
+#      winpath-near-miss:                   n_wrong=0 on every regime
+#
+#   codegrammar-flat and winpath-near-miss both use the "escape the
+#   backslash" idiom `[^"\\]` / `[^<>:"/\\|?*]` -- COINCIDENTALLY SAFE
+#   under TRE's literal parse (see probe (2) below): a doubled backslash
+#   read literally still excludes one backslash character, same result
+#   either way.
+#
+# ---- FOLLOW-UP WITNESSES (probe_tre_bracket_escape_followups.c) -------
+(1) csv5 [^,\n] crosses an embedded newline it should exclude:
+  csv5 vs "a,b,c,d,e\nZZZZZZZZZZ"              MATCH [0,20) = "a,b,c,d,e
+ZZZZZZZZZZ"
+  (oracle/PCRE reading would stop the class at the newline;
+   the whole line above is one 20-byte match under TRE)
+
+(2) [^"\\] / doubled-backslash idiom: coincidentally SAFE:
+  [^"\\]+ vs "\\" (a lone backslash byte)      nomatch
+  [^"\\]+ vs "quoted\"here"                    MATCH [0,6) = "quoted"
+  (both a literal backslash byte AND a literal '"' byte are
+   correctly EXCLUDED -- the doubled escape happens to mean
+   the same thing whether or not backslash is special)
+
+(3) tag-pair-match [\w:-] accepts accidental members, not \w:
+  [\w:-]+ vs "w" (should be a real \w match anyway) MATCH [0,1) = "w"
+  [\w:-]+ vs "5" (a digit -- \w should match, TRE's literal set does not) nomatch
+  [\w:-]+ vs "\\" (a lone backslash -- \w should NOT match, TRE's literal set DOES) MATCH [0,1) = "\"

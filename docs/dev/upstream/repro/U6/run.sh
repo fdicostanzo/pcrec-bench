@@ -26,6 +26,18 @@ if ! "$CC" -O2 -std=gnu11 "$HERE/repro.c" -ltre -o "$BIN" 2>"$SCRATCH/u6_build.l
     exit 2
 fi
 
+# CONTROL (manager review, 2026-09-27): does glibc's own POSIX regcomp
+# show the SAME parse? Informational only -- links no TRE symbol, never
+# affects this script's exit code (that stays TRE's own PRESENT/ABSENT/
+# CANNOT-RUN per the pipeline contract).
+CONTROL_BIN="$SCRATCH/u6_control_glibc"
+if "$CC" -O2 -std=gnu11 "$HERE/control_glibc.c" -o "$CONTROL_BIN" 2>"$SCRATCH/u6_control_build.log"; then
+    "$CONTROL_BIN" || true
+else
+    echo "CONTROL: glibc build failed, see $SCRATCH/u6_control_build.log (informational only)"
+fi
+echo
+
 VERSION="unknown"
 if command -v pkg-config >/dev/null 2>&1 && pkg-config --exists tre 2>/dev/null; then
     VERSION="$(pkg-config --modversion tre 2>/dev/null || echo unknown)"
