@@ -4092,3 +4092,39 @@ collapse the way capability's semdiv-dollar did (end-anchor work since
 abi 27). If they do not, they are the first cells we would read.
 
 ack: 2026-09-27 — plan.md [B104] started: re-pin lane b104repin (751b9c6d, the seven utf8 stamps by value, K68 flags, census), then predictions (incl. the lit-* split by subject-contains-literal for F3) BEFORE the one-night window (utf8 + O-62 §2-§6), then a READ lane.
+
+## I-113 (2026-09-27, pcrecdev1) — pcrec a32bc86e (abi 41): [OPT-LITSCAN] S2a, the VM exact literal run as ONE compare
+
+**WHAT MOVED (41 vs 39 at 751b9c6d; three units merged today, pushed to origin):**
+- abi 40 = [FINDINGS] B1: byte-rate accessor + default.rxt (data, not code); `<P>_FINDINGS` + `rx_info.findings`
+  on every artifact (+385 code bytes each). Byte-mode emitted PROGRAMS unchanged; utf8 offset-k selections move
+  (161 corpus+bench artifacts, answer- and give-up-identical). Expect NO timing movement from B1.
+- abi 41 = S2a: in the VM, a run of L >= 2 exact literal bytes (and the island's single-child chains) is one
+  `pos+L<=n` check + one constant-length `memcmp`, instead of a per-byte chain. New deny axis
+  `-fno-lit-run` (bit 33, masked out of rx_info.flags) restores the old program. Movers: exactly 1,081
+  artifact-configs (63 bench + 1,018 corpus); every DFA-routed cell is byte-null in its PROGRAM.
+  One ACCEPTANCE mover: wild-datetime-datefinder-alternation `--engine=vm` was refused (666,632 code bytes),
+  now compiles (482,736).
+- Answers: 0 changes anywhere (1,077/1,077 bindable movers identical over 1.1M cells).
+
+**PREDICTIONS (full text: pcrec docs/dev/lanes/s2a_report.md §7, §7.1, §7.2 at a32bc86e):**
+1. FASTER: ctx-lazy-*/ctx-greedy-* (bounded), level-context (loglines) — the named population; largest on
+   the no-context-word worst case. wild-secrets-username-password-pair and aws-access-key-id: faster
+   throughput (island tails now one load). github-pat / slack-webhook-url: small gain at most.
+2. FLAT to slightly faster: email-local-nodup, tag-pair-match, nested-comment-rec (most likely to show it),
+   logparse-atomic(-removed), tag-depth3-bound, quotedstring-grok, syslogbase-expanded.
+   WATCH: a small REGRESSION on 2-byte runs on subjects failing at the first byte.
+3. NULL: every DFA-routed cell.
+4. NEW 2×2 (§7.1): {default, -fno-altcls-factor} × {default, -fno-lit-run} on (a) `foo.x|foobar|foo.`
+   --engine=vm, (a′) wild-secrets-aws-access-key-id (auto and vm) — the cell most likely to FLIP the sign of
+   factoring under lit-run —, controls (b) `abc$` --engine=vm and (b′) wild-secrets-github-pat (factoring
+   must read null there).
+5. NEW L-SWEEP (§7.2), forced VM vs -fno-lit-run, built with `-fno-req-run -fno-req-byte` (else the
+   pre-check answers the failing subjects — measure both rows, labelled): literal of length
+   L = 2,3,4,7,8,10,16,31,40; subjects matching / first-byte flipped / last-byte flipped / length L-1.
+   Predict: faster from L=4 on match and last-byte-mismatch; flat on first-byte mismatch with a possible
+   small REGRESSION at L=2,3 (the per-call constant, LITSCAN F1's class); L=31 a named WATCH cell —
+   gcc calls memcmp() out of line at L=31 only (pcrec docs/dev/memcmp_lowering_study.md), expect a
+   regression there on every subject kind. L-1: null.
+
+Scheduling is yours; one night is plenty. Bench questions back to pcrecdev1.
