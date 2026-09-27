@@ -8,8 +8,11 @@ description: Run pcrec-bench's upstream-findings pipeline — file, reproduce, t
 The spec is `docs/design/upstream_pipeline_v1.md`; this is the procedure.
 Surfaces: `docs/dev/upstream/findings.tsv` (the registry), the narrative
 `docs/dev/upstream_findings.md` (one `## U<n>` per id), `docs/dev/upstream/
-repro/U<n>/`, `docs/dev/upstream/notes/<engine>-<date>.md`, and the one
-interface `python3 tools/upstream.py {check,list,repro,new,status}`.
+repro/U<n>/`, `docs/dev/upstream/notes/<engine>-<date>.md`,
+`docs/dev/upstream/threads.tsv` ([B106] — one row per FILED GitHub
+thread, the ids it carries, and the state/comment bookkeeping the
+`threads` subcommand reads and writes), and the one interface
+`python3 tools/upstream.py {check,list,repro,new,status,threads}`.
 `make check-upstream` must stay green after every change.
 
 ## Hard rules
@@ -33,6 +36,10 @@ interface `python3 tools/upstream.py {check,list,repro,new,status}`.
 - Performance repros run single-core (`taskset`), last seconds, take the
   median of ≥5 runs, state their PRESENT threshold, and record the box load.
   Only run them on a quiet box (BD3).
+- **`tools/upstream.py threads` is READ-ONLY against GitHub** — `gh api`
+  GETs only. It never posts a comment, opens/closes an issue, or files a
+  PR. A reply is drafted as a file (see **Watch**, below) and sent only
+  on Frank's explicit word, exactly like a note.
 
 ## Procedures
 
@@ -69,11 +76,39 @@ DRAFTED --note PATH`.
 
 **Approve / send**: only on Frank's word. Record the date in the
 narrative and set `status … APPROVED`. After sending, set `status …
-REPORTED --tracker URL`.
+REPORTED --tracker URL` — this AUTO-STARTS (or grows, if the same
+thread already carries another id) that URL's `threads.tsv` row, so
+watching begins at filing time with no separate step.
 
 **Re-verify** (at a new engine release, or monthly): `tools/upstream.py
 repro --all` against the pinned and latest builds. A REPORTED finding
 that is now ABSENT becomes `FIXED`. Record the answer in the narrative.
+
+**Watch** (a filed thread may get a maintainer answer at any time — run
+this at session wake, and by a heartbeat if one is set up): `tools/
+upstream.py threads` (or `--thread OWNER/REPO#N` for one). Exit 0 =
+nothing new, 10 = something moved, 2 = a `gh`/network error (never treat
+2 as "quiet" — investigate before assuming nothing happened). Read what
+printed:
+- A **state/label change** or **cross-reference** — note it in the
+  finding's narrative section; a closing commit or PR is often the
+  fastest way to learn the fix.
+- A **comment with no `[NEEDS-ANSWER]` flag** (informational, a
+  duplicate report, a "thanks, looking into it") — note it in the
+  narrative; no reply needed.
+- A **`[NEEDS-ANSWER]` comment** (contains a `?` or `@fdicostanzo`) —
+  draft a reply into `docs/dev/upstream/notes/replies/
+  <thread-with-slashes-as-dashes>-<YYYY-MM-DD>.md` (maintainer's terms,
+  self-contained, citing the repro/finding it answers). A reply is
+  SENT ONLY ON FRANK'S APPROVAL, exactly like a note — never posted by a
+  session on its own read of "this seems like a reasonable answer".
+- If the answer confirms a fix, or the maintainer wants a different
+  repro build: re-run `repro --engine-build PATH --record` and move the
+  finding's status (`FIXED`, or note the ask and stay `REPORTED`).
+
+Once read, `tools/upstream.py threads --record` (or `--thread … --record`
+for the one thread just handled) commits the new seen-state so the next
+check reports only what is newer still.
 
 **Hand-off**: read lanes that meet another engine's behaviour list it in
 their ledger's candidates. The manager (or a lane briefed with this
@@ -83,5 +118,6 @@ skill) runs **File**.
 
 `tools/upstream.py list` shows the state. Look for anything OBSERVED
 without a repro, anything DRAFTED awaiting Frank, and any REPORTED
-finding whose tracker has moved. Finish with `make check-upstream` and
-commit.
+finding whose tracker has moved. Run `tools/upstream.py threads` (see
+**Watch**) — a fresh session should treat this as part of orientation,
+not an afterthought. Finish with `make check-upstream` and commit.

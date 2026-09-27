@@ -49,18 +49,53 @@ about pcrec go to the pcrec manager's outbox, never this directory.
   is drafted before at least one finding here reaches
   REPRODUCED/UNDERSTOOD with a tracker search done, and nothing is
   sent without Frank's word.
+- `notes/replies/<thread-with-slashes-as-dashes>-<YYYY-MM-DD>.md` —
+  ([B106]) DRAFT REPLIES to a `[NEEDS-ANSWER]` comment on an already-filed
+  thread (a maintainer's question, or something addressed to
+  `@fdicostanzo`), same posture as `notes/`: written for the maintainer,
+  self-contained, and sent only on Frank's explicit word — `tools/
+  upstream.py threads` never posts anything itself. Empty until the first
+  one is drafted.
+- `threads.tsv` — ([B106], "track the ids of the issue threads, then a
+  script to check for comments", Frank 2026-09-27) THE THREAD REGISTRY:
+  one row per FILED GitHub thread (a thread can carry several finding
+  ids, `;`-joined — the same convention `findings.tsv`'s own
+  `engine`/`evidence` cells use), columns `thread` (`OWNER/REPO#N`,
+  gh's own shorthand), `url`, `ids`, `filed`, `state` (`open`/`closed` as
+  last seen), `labels` (`;`-joined, `-` if none), `comments_seen`,
+  `last_seen_comment_id`, `last_seen_at` (the newest comment's own
+  timestamp), `last_checked` (ISO time of the last successful
+  `threads --record`). Seeded 2026-09-27 (lane b106threads) with the two
+  threads Frank filed from his own GitHub account the same day:
+  `PCRE2Project/pcre2#1015` (U1/U2/U4) and `VectorCamp/vectorscan#416`
+  (U7). Grown automatically by `status U<n> REPORTED --tracker <GitHub
+  issue URL>` (a new row if the URL is unseen, the id appended to an
+  existing row's `ids` if not) — tracking starts at filing time, no
+  separate step. Edited only through `tools/upstream.py status`/
+  `threads --record`, or by hand followed by `make check-upstream`.
 
 ## Tooling
 
 `../../../tools/upstream.py` (see its own module docstring and
-`tools/CLAUDE.md`) is the one interface onto `findings.tsv` and its
-narrative twin: `check` (validates both files against each other and
-the closed vocabularies, `make check-upstream`, never runs an engine),
-`list`, `repro U<n>|--all` (the only subcommand that runs anything),
+`tools/CLAUDE.md`) is the one interface onto `findings.tsv`/its
+narrative twin AND `threads.tsv`: `check` (validates all three against
+each other and the closed vocabularies, `make check-upstream`, never
+runs an engine), `list`, `repro U<n>|--all` (runs `repro/U<n>/run.sh`),
 `new` (allocates the next id, stubs the row + narrative section +
 `repro/U<n>/README.md`), `status` (moves a finding along the ladder,
 refusing a move whose prerequisite — a complete `repro/`, a tracker, a
-note — is not yet on disk).
+note — is not yet on disk; `… REPORTED --tracker <GitHub URL>` also
+starts/grows that URL's `threads.tsv` row), and `threads [--thread
+OWNER/REPO#N] [--record] [--json]` ([B106]) — the ONLY other subcommand
+that runs something: one `gh api` GET per thread (the issue, its
+comments paginated, its timeline best-effort), diffed against the row's
+own stored state and printed as what is NEW (a state/label change, a
+cross-reference, each new-or-edited comment with a `[NEEDS-ANSWER]` flag
+when it contains a `?` or addresses `@fdicostanzo`). Exit 0 = nothing
+new, 10 = something new, 2 = a `gh`/network error — `--record` is the
+only thing that writes the seen-state back, same posture as `repro
+--record`. Strictly read-only against GitHub: GET only, never a POST/
+PATCH, so it can never itself comment, close, or label an issue.
 
 ## Design decision worth flagging
 
@@ -74,3 +109,14 @@ exactly the case that reading exists to allow. If a future reading of
 the design note disagrees, `tools/upstream.py`'s `REPRO_REQUIRED`
 constant is the one place to change it, and `tools/tests/test_upstream.py`
 is the self-test that would need a case added for it.
+
+`check`'s THREAD-MISSING rule ([B106]) requires a `threads.tsv` row at
+REPORTED, FIXED **and** KNOWN-UPSTREAM (`THREAD_STATUSES_NEEDING_THREAD`)
+— not REPORTED alone. FIXED is reached FROM REPORTED, so its tracker is
+already a thread worth having kept watching (the maintainer's own
+closing comment/commit is exactly the kind of thing `threads` surfaces);
+KNOWN-UPSTREAM is a thread this project never filed but still points at
+by URL, and an existing issue can still get a relevant answer worth
+seeing. A non-GitHub tracker (a mailing-list URL, a bare
+`searched:<date>:none-found` citation) is never required to have a row —
+`threads.tsv`/`tools/upstream.py threads` only knows how to watch GitHub.

@@ -931,10 +931,12 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # record store.
     make check-upstream # [B103] the upstream-findings pipeline's registry
                         # (docs/dev/upstream/findings.tsv against
-                        # docs/dev/upstream_findings.md): 13 self-test
-                        # fixture cases + the real registry validated,
-                        # seconds, never runs an engine (`tools/upstream.py
-                        # repro` does, and is not part of this target)
+                        # docs/dev/upstream_findings.md; [B106]
+                        # docs/dev/upstream/threads.tsv against both): 23
+                        # self-test fixture cases + the real registries
+                        # validated, seconds, never runs an engine or
+                        # calls `gh` (`tools/upstream.py repro`/`threads`
+                        # do, and are not part of this target)
     make deps           # what the harness needs, and whether this box has it
     make cc-gate-census # [B33] (1): every bench pattern x 3 pcrec engine
                         # modes (auto/nocaps/vm) x 2 forms compiled under

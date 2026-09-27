@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """tools/tests/test_upstream.py -- self-tests for `tools/upstream.py`'s
-`check_registry()` (make check-upstream).
+`check_registry()`, `check_threads_registry()` and
+`check_tracker_thread_linkage()` (make check-upstream; the latter two,
+[B106], validate threads.tsv's own shape and its two-way link with
+findings.tsv).
 
 Small in-tempdir fixtures, in the spirit of tools/CLAUDE.md's own
 established precedent for a fixture too small to earn a committed file
@@ -213,22 +216,178 @@ def mut_note_missing(header, rows, narrative, repro_root):
 case("note-missing", {"NOTE"}, mut_note_missing)
 
 
+# --------------------------------------------------------------------------
+# check_threads_registry -- [B106]. Same posture: one small GOOD
+# threads.tsv (the two real rows this project actually filed, U1/U2/U4
+# on the pcre2 thread and U7 on the vectorscan one) that must pass with
+# ZERO issues, then one-field sabotages named for the rule each must
+# fire alone.
+# --------------------------------------------------------------------------
+
+def _good_threads_fixture():
+    header = list(U.THREADS_COLUMNS)
+
+    def row(**kw):
+        r = {c: "-" for c in header}
+        r.update(kw)
+        return r
+
+    rows = [
+        row(thread="pcre2project/pcre2#1015", url="https://github.com/pcre2project/pcre2/issues/1015",
+            ids="U1;U2", filed="2026-09-27", state="open", comments_seen="0"),
+        row(thread="vectorcamp/vectorscan#416", url="https://github.com/vectorcamp/vectorscan/issues/416",
+            ids="U7", filed="2026-09-27", state="open", comments_seen="0"),
+    ]
+    valid_ids = {"U1", "U2", "U7"}
+    return header, rows, valid_ids
+
+
+def _run_threads(mutate=None):
+    header, rows, valid_ids = _good_threads_fixture()
+    if mutate is not None:
+        header, rows, valid_ids = mutate(header, [dict(r) for r in rows], set(valid_ids))
+    return U.check_threads_registry(header, rows, valid_ids)
+
+
+THREADS_CASES = []
+
+
+def threads_case(name, expect_rules, mutate=None):
+    THREADS_CASES.append((name, set(expect_rules), mutate))
+
+
+threads_case("good-threads-fixture-clean", set())
+
+
+def tmut_columns(header, rows, valid_ids):
+    return header[:-1], rows, valid_ids  # drop "last_checked"
+
+
+threads_case("threads-columns-mismatch", {"THREAD-COLUMNS"}, tmut_columns)
+
+
+def tmut_format(header, rows, valid_ids):
+    rows[0]["thread"] = "not-a-valid-thread-key"
+    return header, rows, valid_ids
+
+
+threads_case("thread-format-bad", {"THREAD-FORMAT"}, tmut_format)
+
+
+def tmut_url(header, rows, valid_ids):
+    rows[0]["url"] = "https://github.com/wrong/repo/issues/999"
+    return header, rows, valid_ids
+
+
+threads_case("thread-url-mismatch", {"THREAD-URL"}, tmut_url)
+
+
+def tmut_dup(header, rows, valid_ids):
+    rows.append(dict(rows[0]))  # the same thread key twice
+    return header, rows, valid_ids
+
+
+threads_case("thread-dup", {"THREAD-DUP"}, tmut_dup)
+
+
+def tmut_badid(header, rows, valid_ids):
+    rows[0]["ids"] = "U1;U99"  # U99 does not exist
+    return header, rows, valid_ids
+
+
+threads_case("thread-bad-id", {"THREAD-BAD-ID"}, tmut_badid)
+
+
+# --------------------------------------------------------------------------
+# check_tracker_thread_linkage -- the two-way findings.tsv <-> threads.tsv
+# link `check` enforces: a REPORTED/FIXED/KNOWN-UPSTREAM finding with a
+# GitHub tracker must have a threads.tsv row naming both the URL and the
+# finding's own id.
+# --------------------------------------------------------------------------
+
+def _good_linkage_fixture():
+    finding_rows = [
+        {"id": "U1", "status": "REPORTED", "tracker": "https://github.com/pcre2project/pcre2/issues/1015"},
+        {"id": "U6", "status": "NOT-A-BUG", "tracker": "searched:2026-09-27:none-found"},
+        {"id": "U7", "status": "REPORTED", "tracker": "https://github.com/vectorcamp/vectorscan/issues/416"},
+    ]
+    thread_rows = [
+        {"thread": "pcre2project/pcre2#1015", "url": "https://github.com/pcre2project/pcre2/issues/1015", "ids": "U1"},
+        {"thread": "vectorcamp/vectorscan#416", "url": "https://github.com/vectorcamp/vectorscan/issues/416", "ids": "U7"},
+    ]
+    return finding_rows, thread_rows
+
+
+def _run_linkage(mutate=None):
+    finding_rows, thread_rows = _good_linkage_fixture()
+    if mutate is not None:
+        finding_rows, thread_rows = mutate(
+            [dict(r) for r in finding_rows], [dict(r) for r in thread_rows]
+        )
+    return U.check_tracker_thread_linkage(finding_rows, thread_rows)
+
+
+LINKAGE_CASES = []
+
+
+def linkage_case(name, expect_rules, mutate=None):
+    LINKAGE_CASES.append((name, set(expect_rules), mutate))
+
+
+linkage_case("good-linkage-fixture-clean", set())
+
+
+def lmut_missing_row(finding_rows, thread_rows):
+    thread_rows.pop()  # the vectorscan row is gone entirely; U7 REPORTED is now orphaned
+    return finding_rows, thread_rows
+
+
+linkage_case("thread-missing-row", {"THREAD-MISSING"}, lmut_missing_row)
+
+
+def lmut_missing_id(finding_rows, thread_rows):
+    thread_rows[1]["ids"] = "-"  # the row exists but forgot to list U7
+    return finding_rows, thread_rows
+
+
+linkage_case("thread-missing-id", {"THREAD-MISSING"}, lmut_missing_id)
+
+
+def lmut_not_required(finding_rows, thread_rows):
+    finding_rows[0]["status"] = "OBSERVED"  # U1 no longer needs a thread row
+    thread_rows.pop(0)                      # and its row is gone too -- clean
+    return finding_rows, thread_rows
+
+
+linkage_case("not-required-below-reported", set(), lmut_not_required)
+
+
 def main():
-    results = []
-    for name, expect_rules, mutate in CASES:
-        with tempfile.TemporaryDirectory() as td:
-            issues = _run(Path(td), mutate)
-        got_rules = {i.rule for i in issues}
-        ok = got_rules == expect_rules
-        results.append((name, ok, got_rules, expect_rules))
+    groups = [
+        ("check_registry", CASES, _run),
+        ("check_threads_registry", THREADS_CASES, _run_threads),
+        ("check_tracker_thread_linkage", LINKAGE_CASES, _run_linkage),
+    ]
 
-    for name, ok, got, expect in results:
-        status = "PASS" if ok else "FAIL"
-        print(f"  {status}  {name:28s} got={sorted(got)!r:40s} expect={sorted(expect)!r}")
+    total = 0
+    total_ok = 0
+    for label, cases, runner in groups:
+        print(f"-- {label} --")
+        for name, expect_rules, mutate in cases:
+            if runner is _run:
+                with tempfile.TemporaryDirectory() as td:
+                    issues = runner(Path(td), mutate)
+            else:
+                issues = runner(mutate)
+            got_rules = {i.rule for i in issues}
+            ok = got_rules == expect_rules
+            total += 1
+            total_ok += 1 if ok else 0
+            status = "PASS" if ok else "FAIL"
+            print(f"  {status}  {name:28s} got={sorted(got_rules)!r:40s} expect={sorted(expect_rules)!r}")
 
-    n_ok = sum(1 for _, ok, _, _ in results if ok)
-    print(f"test_upstream: {n_ok}/{len(results)} cases OK")
-    return 0 if n_ok == len(results) else 1
+    print(f"test_upstream: {total_ok}/{total} cases OK")
+    return 0 if total_ok == total else 1
 
 
 if __name__ == "__main__":
