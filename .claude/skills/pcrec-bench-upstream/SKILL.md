@@ -85,7 +85,7 @@ repro --all` against the pinned and latest builds. A REPORTED finding
 that is now ABSENT becomes `FIXED`. Record the answer in the narrative.
 
 **Watch** (a filed thread may get a maintainer answer at any time — run
-this at session wake, and by a heartbeat if one is set up): `tools/
+this ONCE per session, at wake — Frank, 2026-09-27; not in a heartbeat): `tools/
 upstream.py threads` (or `--thread OWNER/REPO#N` for one). Exit 0 =
 nothing new, 10 = something moved, 2 = a `gh`/network error (never treat
 2 as "quiet" — investigate before assuming nothing happened). Read what
