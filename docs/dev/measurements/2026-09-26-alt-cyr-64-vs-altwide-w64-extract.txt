@@ -1,0 +1,133 @@
+## 1. alt-cyr-64's own shape (bench/utf8/patterns.rxt)
+
+  total pattern bytes (escaped text decoded): 663
+  branch count: 64
+  branch byte lengths: min=4 max=14 avg=9.375
+  distinct lead bytes: ['0xd0', '0xd1'] (count 2)
+
+## 2. bench/altwide@0.2's own width-ladder table (NOTES.md, verbatim rows)
+
+  w-8      branches=8     branch_B=4-12   bytes=56     trie_nodes=43     first_cu=bitmap
+  w-64     branches=64    branch_B=3-12   bytes=526    trie_nodes=413    first_cu=bitmap
+  w-96     branches=96    branch_B=3-12   bytes=804    trie_nodes=624    first_cu=bitmap
+  w-128    branches=128   branch_B=3-12   bytes=1056   trie_nodes=809    first_cu=bitmap
+
+  alt-cyr-64 has 64 branches (== w-64) and 663 pattern bytes, which sits
+  BETWEEN w-64 (526 B) and w-96 (804 B) by total pattern bytes:
+    (663-526)/(804-526) = 0.493  -- about halfway from w-64 toward w-96
+
+## 3. Compile axis: alt-cyr-64 (ce658cb7, abi 33) vs w-64/w-96 (25b1984f, abi 27)
+
+  CROSS-PIN: alt-cyr-64's pcrec configs are pinned at ce658cb7 (abi 33);
+  altwide's most recent pcrec sample is 25b1984f (abi 27) -- 6 abi steps
+  behind (abi 29 OPT-REQBYTE/-ENDWIN/-ANCHOR-VM, abi 30 OPT-FREQPICK/
+  -REQPOS, abi 31 OPT-PRECHECK-ADMIT's req_why, abi 32 the [VAR] module,
+  abi 33 K64 fix A all land in between). Every ratio below is a
+  cross-pin ratio; labelled, not hidden.
+
+  testee families with NO altwide@0.2 counterpart at all (never measured on altwide):
+    libpcre2_10.46_dfa-nocaps-simdna_utf8
+    oniguruma_6.9.10_default-caps-simdna_utf8
+    re2_11.0.0_default-caps-simdna_utf8
+    vectorscan_5.4.11_block-nosom-nocaps-simd_utf8
+
+  testee (utf8 side)                                    cyr ns         w64 ns         w96 ns   cyr/w64   cyr/w96
+  libpcre2_10.46_interp-caps-simdna_utf8               52951.0        59640.0        36730.0    0.8878    1.4416
+  libpcre2_10.46_jit-caps-simdna_utf8                  83060.0        80631.0       118971.0    1.0301    0.6982
+  pcrec_ce658cb7_auto-caps-simdna_utf8             230460471.0    260297758.0    308883517.0    0.8854    0.7461
+  pcrec_ce658cb7_auto-nocaps-simdna_utf8           230178672.0    259105063.0    308288399.0    0.8884    0.7466
+  pcrec_ce658cb7_vm-caps-simdna_utf8               585287396.0    555431373.0    808522563.0    1.0538    0.7239
+  pcrec_ce658cb7_vm-in-caps-simdna_utf8            593657564.0    554532750.0    808255242.0    1.0706    0.7345
+  rust_1.13.1_default-caps-simdna                     455093.0       504001.0      1002312.0    0.9030    0.4540
+
+  testee (utf8 side)                                 cyr B      w64 B      w96 B   cyr/w64   cyr/w96
+  libpcre2_10.46_interp-caps-simdna_utf8              1248       1272       1860    0.9811    0.6710
+  libpcre2_10.46_jit-caps-simdna_utf8                 1248       1272       1860    0.9811    0.6710
+  pcrec_ce658cb7_auto-caps-simdna_utf8              109704     105432     142296    1.0405    0.7710
+  pcrec_ce658cb7_auto-nocaps-simdna_utf8            109704     105432     142296    1.0405    0.7710
+  pcrec_ce658cb7_vm-caps-simdna_utf8                 43768      43592      51784    1.0040    0.8452
+  pcrec_ce658cb7_vm-in-caps-simdna_utf8              43768      43592      51784    1.0040    0.8452
+
+## 4. Match axis: hit density, alt-cyr-64/utf8 vs w-64/altwide's own design
+
+  alt-cyr-64's own expectations.tsv rows (throughput regime):
+    alt-cyr-64	t-64k	throughput	match	0	6	934	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-256k	throughput	match	305	313	3724	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-1m	throughput	match	428	436	14655	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-64k-lat	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-64k-cyr	throughput	match	0	12	2996	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-64k-cjk	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+    alt-cyr-64	t-64k-asc	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+
+  t-64k-cyr: len=65536 n_chars=36555 pct_multibyte=0.8830 dominant_lead=0xd0
+  t-64k-asc: len=65536 n_chars=65536 pct_multibyte=0.0000 dominant_lead=n/a
+
+  bench/altwide@0.2's own throughput subjects (manifest_throughput.tsv, first 4 rows):
+    id	len	sha256	description	periodic
+    t-128k-clean	131072	7ea5f6065cc62675b8647093bf0e22c0e7c1d158832f7c121b79d786cc73c1b2	run/prose 131072 B, 0 branch occurrence(s) -- the failing scan alone: no branch of any pool occurs	no
+    t-128k-sparse	131072	192a069d46b0390cacd25adc13091b7ce8bab00450b0241e45a3f1471792bc41	run/prose 131072 B, 16 branch occurrence(s) -- one occurrence per 8 KB, each of the sixteen HIT_WORDS once	no
+    t-128k-dense	131072	e56c3aca9124d72786aa4603546cbedb4e9abd1cb6aebb6a4f15d063fdf2dab1	run/prose 131072 B, 1024 branch occurrence(s) -- one occurrence per 128 B, each of the sixteen HIT_WORDS 64 times	no
+    t-512k-sparse	524288	a7f553a2f682537f7568a893d1124f2c69f2263ac591b3ea3a998767a7769096	run/prose 524288 B, 64 branch occurrence(s) -- the SIZE arm: 4x t-128k-sparse's bytes at t-128k-sparse's density	no
+
+  alt-cyr-64 on t-64k-cyr: 2996 non-overlapping matches / 65536 B
+    = 1 hit per 21.9 bytes (natural word-frequency density)
+  altwide's OWN densest throughput subject at 128 KiB (t-128k-dense):
+    1024 hits / 131072 B = 1 hit per 128.0 bytes -- 5.8x SPARSER than
+    alt-cyr-64's natural Cyrillic density, and every altwide subject is
+    pure ASCII (no byte >= 0x80 anywhere in the corpus).
+
+  bench/utf8/pool_cyr.tsv: 175 words (header + 175 entries);
+  alt-cyr-64's 64 branches are drawn from this SAME high-frequency word
+  pool used to GENERATE t-64k-cyr's running Russian prose -- the pattern
+  is not a random 64-branch sample, it is (a subset of) the corpus's own
+  vocabulary, which is why its hit density on t-64k-cyr is so high.
+
+## 5. Mechanism: ONE compile row each, read directly (no store index)
+
+  field                  alt-cyr-64 (ce658cb7/abi33)    w-64 (25b1984f/abi27)
+  abi                    33                             27
+  engine                 dfa                            dfa
+  engine_sel             selected                       selected
+  dfa_prefilter          byte-class                     byte-class
+  dfa_prefilter_offsets  none                           none
+  dfa_scan_edge          none                           range
+  scan_edges             0                              4
+  req_byte               none                           <absent, pre-dates this abi>
+  req_run                none                           <absent, pre-dates this abi>
+  req_why                none                           <absent, pre-dates this abi>
+  dfa_table              premultiplied                  premultiplied
+
+  NOTE: w-64's record predates req_byte/req_run/req_why (introduced
+  abi 29/31) entirely -- their 'absent' above is an abi-vintage gap, not
+  a stamped value, and is NOT comparable to alt-cyr-64's 'none'.
+
+## 6. The one no-hit-background comparison that DOES exist, and why it
+   points the OPPOSITE way from R4's ratio
+
+  alt-cyr-64 on t-64k-asc (pure ASCII, 0 possible hits -- cited from
+  docs/dev/measurements/2026-09-26-utf8-0.1-r2-r7-addendum-extract.txt
+  lines 206/222, not recomputed here):
+    libpcre2-dfa    : 1.327585 ns/B
+    libpcre2-interp : 1.334520 ns/B
+
+  w-64 on t-128k-clean (pure run/prose, 0 branch occurrences), 131072 B,
+  ns/byte = median_ns / 131072 (this report has no ns_per_byte column,
+  computed here from the same 'rank'/median_ns row the report prints):
+    rust_1.13.1_default-caps-simdna          2.384500 ns/B  (312541.2 ns total)
+    pcrec_25b1984f_auto-caps-simdna          3.674676 ns/B  (481647.2 ns total)
+    pcrec_25b1984f_auto-nocaps-simdna        3.691265 ns/B  (483821.5 ns total)
+    pcrec_25b1984f_vm-in-caps-simdna         14.342083 ns/B  (1879845.4 ns total)
+    pcrec_25b1984f_vm-caps-simdna            14.365822 ns/B  (1882957.1 ns total)
+    libpcre2_10.46_jit-caps-simdna           36.777829 ns/B  (4820543.6 ns total)
+    libpcre2_10.46_interp-caps-simdna        623.851845 ns/B  (81769509.0 ns total)
+
+  So on their respective all-miss backgrounds, alt-cyr-64 (2 lead bytes,
+  0xd0/0xd1, IMPOSSIBLE in ASCII text) is ~2-3 orders of magnitude
+  CHEAPER per byte than w-64 (26-letter bitmap, common in English prose)
+  on libpcre2-interp -- the opposite direction from R4's ×420/×228. This
+  is explained by candidate-start SELECTIVITY (2 possible lead bytes vs
+  26), not by Cyrillic-vs-ASCII per se; altwide's own sh1-*(1 lead byte)/
+  nar4-*(4)/w-*(26) structure-arm family already brackets this axis, so a
+  same-branch-count ASCII control at exactly 2 lead bytes would land
+  INSIDE that already-charted family, not open new machinery.
+
