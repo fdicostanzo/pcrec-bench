@@ -6143,3 +6143,19 @@ sabotages, 6/6 examples) — neither the full `make check` nor
 `check-harness`/`check-report`/`check-interpret` run (out of this lane's
 charter; the manager runs those after folding in the sibling lanes).
 Report: `docs/dev/lanes/b103infra_report.md`.
+
+## 2026-09-27 ~01:5x — thirty-fifth session, night (Frank AFK since ~01:2x)
+
+- [B103] COMPLETE: the upstream-findings pipeline (design docs/design/
+  upstream_pipeline_v1.md, registry + tools/upstream.py + make
+  check-upstream, the pcrec-bench-upstream skill). Triage verdicts: U1/U2/U4
+  (libpcre2 JIT, PRESENT on 10.48) and U7 (vectorscan) DRAFTED — two notes
+  await Frank; U5 NOT-A-BUG (pattern-inherent, 3-engine ablation, my change
+  request), U6 NOT-A-BUG (POSIX bracket semantics — the drafted TRE note was
+  WITHDRAWN at review; glibc control agrees; bench-side fix → [B105]), U8
+  NOT-A-BUG. Lesson built into the skill: check documented/standard semantics
+  and pattern-inherent cost before calling anything an upstream bug.
+- O-62 (cross-engine outliers on every set) sent at Frank's ask; Frank ruled
+  the re-measure rides I-112's pin → [B104].
+- I-112 (751b9c6d, abi 39) landed ~01:1x: re-pinned (b104repin), predictions
+  committed (b104pred), WINDOW OPEN 01:49 EDT (24 cells, ~8-10 h).
