@@ -2489,6 +2489,89 @@ DENY_FLAGS = (
      "as well -- the pre-check's BEFORE at the SAME pin, answer-identical "
      "to its sibling by contract (the pre-check only ever answers NOMATCH "
      "on a window no match can occupy)"),
+    # [B108] (pin a32bc86e; --list-axes `req-run` bit 31; inbox I-113 §7.2's
+    # L-sweep, which needs the PRE-CHECKS out of the way so a failing
+    # subject reaches the VM's own P4 compare rather than being answered by
+    # a memchr/memcmp pair before it). NARROWER than `-fno-req-byte`: the
+    # necessary BYTE's own one-memchr proof still fires (req_byte can still
+    # read a value); only the RUN's extra constant-length memcmp -- built
+    # on the byte, [OPT-REQPOS] tier 2b -- is removed (req_run reads
+    # `none`). Masked (PCREC_NO_REQ_RUN joins strategy_denials for the
+    # mask's own reason, pcrec's own comment: "the run check answers
+    # NOMATCH only where every attempt would have failed"), so an artifact
+    # with no necessary run (81.4% of pcrec's own corpus, per their
+    # comment) is `.flags`-identical to its sibling. The L-sweep's own
+    # forced-VM configs combine this with `-fno-req-byte` (both denied
+    # removes both pre-checks entirely, the sweep's own stated need) and,
+    # on the second row, with `-fno-lit-run` as well.
+    ("-fno-req-run", "noreqrun",
+     "the [OPT-REQPOS] tier 2b NECESSARY-RUN check denied (--list-axes "
+     "`req-run`, bit 31): the byte's own one-memchr proof still fires "
+     "where a necessary byte exists, but the run's extra constant-length "
+     "memcmp built on it is not emitted (req_run reads `none`) -- masked, "
+     "so an artifact with no necessary run of two or more bytes is "
+     "`.flags`-identical to its sibling; [B108]'s own reason to name it "
+     "is the L-sweep (inbox I-113 §7.2), which denies this beside "
+     "`-fno-req-byte` so a failing subject reaches the VM compare under "
+     "test rather than a pre-check answering NOMATCH first"),
+    # [B108] (pin a32bc86e; --list-axes `altcls-factor` bit 11; inbox
+    # I-113 §7.1's 2x2). The axis has existed since [OPT-ALTCLS] (well
+    # before this bench read any of its stamps, shim.c's own ALTCLS
+    # paragraph); no pinned testee named it because nothing had asked for
+    # its BEFORE until S2a's own factoring x lit-run interaction (a run's
+    # length, and so whether P4 fires as one compare or several, depends
+    # on whether stage 2 pulled a shared prefix OUT of the alternation
+    # first). Denied, only stage 2 (the PREFIX-FACTORING pass, `RX_ALTCLS_
+    # FACTORED` reads its own registry row 2, "denied") is skipped; stage
+    # 1 (merging a maximal single-character run into one class,
+    # `RX_ALTCLS_MERGES`) is unaffected -- the two stages are indepen-
+    # dently denied by DESIGN (`-fno-altcls-merge` is a separate, unused-
+    # here bit). Masked (bit 11 has been in strategy_denials since long
+    # before this shim read either stamp), so a pattern with no factorable
+    # run is `.flags`-identical to its sibling. Answer-identical by
+    # construction: factoring only regroups an alternation's own branches
+    # (docs/spec, pcrec I-39), so denying it changes which runs the VM
+    # sees, never what a subject matches.
+    ("-fno-altcls-factor", "noaltclsfactor",
+     "the [OPT-ALTCLS] stage-2 PREFIX-FACTORING pass denied (--list-axes "
+     "`altcls-factor`, bit 11): stage 1's single-character class merge is "
+     "unaffected, but no shared-prefix run is pulled out of an "
+     "alternation's branches first (RX_ALTCLS_FACTORED reads `denied`), "
+     "so this artifact is the pre-factoring alternation lowering at the "
+     "SAME pin -- [B108]'s reason to name it is reading factoring's "
+     "interaction with S2a's literal-run compare (inbox I-113 §7.1's "
+     "2x2), never a claim that factoring itself is new here; masked, "
+     "answer-identical to its sibling by construction (factoring only "
+     "regroups branches, pcrec I-39)"),
+    # [B108] (pin a32bc86e, abi 41; [OPT-LITSCAN] S2a; --list-axes
+    # `lit-run` bit 33; inbox I-113). THE SIXTH content-changing denial and
+    # the third on the VM route: denied, a run of two or more consecutive
+    # one-byte literals (and an alternation island's single-child trie
+    # chain) is emitted as the PRE-abi-41 per-byte compare chain instead of
+    # P4's one bounds check plus one constant-length memcmp
+    # (`RX_VM_LIT_RUNS` reads 0, where the default sibling reads the
+    # run's own count), so this artifact is the pre-S2a VM program built
+    # by the SAME compiler -- S2a's BEFORE, and pcrec's own s2a_report.md
+    # states the denied program is main's (pre-abi-41) byte for byte past
+    # the one new stamp line, verified there by diff on three witnesses.
+    # Masked (`PCREC_NO_LIT_RUN` joins strategy_denials at its own
+    # introduction, pcrec's comment: "no answer moves ... masked so an
+    # artifact with no run is byte-identical under the flag"), so a
+    # pattern with no VM literal run of two-plus bytes is `.flags`-
+    # identical to its sibling -- MEASURED here: this census's OLD-pin
+    # column (`docs/dev/measurements/probe_b108_census.py`) is exactly
+    # this denied program's v2 identity on every row.
+    ("-fno-lit-run", "nolitrun",
+     "the [OPT-LITSCAN] S2a VM LITERAL-RUN compare denied (--list-axes "
+     "`lit-run`, bit 33): a run of two or more consecutive one-byte "
+     "literals (and an island's single-child trie chain) is emitted as "
+     "the pre-abi-41 per-byte compare chain instead of P4's one bounds "
+     "check plus one constant-length memcmp (RX_VM_LIT_RUNS reads 0), so "
+     "this artifact is the pre-S2a VM program built by the SAME compiler "
+     "-- S2a's BEFORE, byte-identical to the same pattern's pre-abi-41 "
+     "program past the one new stamp line (pcrec's own s2a_report.md), "
+     "and masked so a run-free pattern is `.flags`-identical to its "
+     "sibling"),
 )
 
 
