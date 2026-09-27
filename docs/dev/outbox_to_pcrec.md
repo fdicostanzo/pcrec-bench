@@ -4316,3 +4316,118 @@ reports/2026-09-26-capability-0.1-budu-ryzen1600-{twin-noreqbyte,after}-02902356
 
 No action needed tonight. The asks are: item 3's question, and whether
 item 4's S1STEP6 short-subject cost is expected.
+
+## O-62 (2026-09-27, pcrec-bench manager) — cross-engine outliers on every OTHER sub-bench (Frank's ask, following O-60's utf8 answer by message)
+
+Read from committed matrix TSVs only. The extract is
+docs/dev/measurements/2026-09-27-cross-engine-outliers-extract.py.
+- Method: per row, pcrec's best config (auto, auto-nocaps, vm, vm-in) ÷ the
+  best FULL-GRAIN competitor. Competitors are libpcre2 interp/jit/dfa,
+  oniguruma, re2, rust and tre. vectorscan block-nosom is EXCLUDED, because
+  it is boolean grain.
+- Ratios are within a row, at set grain. "large" means
+  large-subject-throughput, "short" short-subject-search, "whole"
+  match-compliance/whole-subject.
+- IMPORTANT, the pins: the latest cross-engine measurement of email, loglines,
+  bounded, altwide and syntax is the fullroster sample at pcrec 25b1984f (abi
+  27, 2026-09-20/21). pcrec has NOT been re-measured on those five sets since.
+  So every loss below on them predates [OPT-REQBYTE], [OPT-ENDWIN] and
+  [OPT-ANCHOR-VM] (abi 29) and everything after. capability is the only set
+  with later pcrec records. §1 shows those pins removed its largest losses, so
+  treat the 25b1984f losses on the other sets as CANDIDATES to re-check, not
+  standing gaps.
+
+### 1. capability@0.1 — pcrec auto at 02902356 against the fullroster competitors
+The comparison is CROSS-WINDOW: pcrec auto at 02902356 (2026-09-26) against
+the competitors' 25b1984f-window medians (2026-09-20). The competitor engines
+are unchanged between the two windows.
+
+GONE since 25b1984f, 02902356 now at ≤×1.0:
+- bracket-array-define ×52,145 → 0.77
+- trim-nested-star, large, ×39,447 → 0.57
+- wild-semdiv-dollar-trailing-newline ×1,401 → 0.50
+- dup-param-detect ×579 → 1.00
+- tag-pair-match ×200 → 0.99
+- tag-depth3-bound ×194 → 1.00
+- nested-comment-rec ×150 → 0.45
+- wild-logparse-winpath-grok ×149 → 0.99
+- wild-secrets-username-password-pair ×55 → 0.99
+
+STILL >×2 at 02902356. Figures are pcrec ÷ best, 25b1984f → 02902356, with the
+winner in brackets:
+- trim-nested-star SHORT ×4,501 → ×5,110 (rust 2.0 µs). The largest standing
+  ratio in the bench; LOOK FIRST.
+- evil-alt-nested large ×49,016 → ×138 (rust 0.1 µs).
+- wild-secrets-aws-access-key-id large ×43.9 → ×43.2 (pcre2-jit).
+- quoted-delim-match large ×21.9 → ×21.8 (pcre2-jit); short ×3.28.
+- wild-waf-crs-942270-union-select large ×16.6 (pcre2-jit).
+- wild-codegrammar-json-constant large ×15.0 (rust).
+- balanced-parens-rec large ×9.1 (pcre2-jit).
+- wild-secrets-slack-webhook-url large ×6.8 (pcre2-jit).
+- currency-lookbehind-fixed large ×6.5 (pcre2-jit).
+- router-prefix-order large ×5.7 and file-ext-order large ×5.5 (rust).
+- wild-waf-crs-942360-concat-sqli large ×5.4 (re2 longest).
+- wild-semdiv-altorder-foo-foobar large ×4.3 (rust).
+- email-local-nodup large ×3.8. This is a 0.3 µs cell.
+- wild-waf-crs-942160-sleep-benchmark large ×3.5 (rust).
+- phone-palindrome-6 large ×3.0 (pcre2-jit).
+- wild-secrets-github-pat large ×2.7 (rust).
+
+### 2. syntax@0.1 at 25b1984f
+Tally:
+- large: 29 wins, 26 losses ≤×2, 25 losses >×2, 15 n/a.
+- short: 75 wins, 4 losses ≤×2, 4 losses >×2.
+- whole: 43 wins, no losses.
+The losses >×2:
+- End-anchored: anc-z-lc ×6,514 and anc-dollar ×6,343 (rust 0.1 µs). This is
+  the shape capability's semdiv-dollar lost at 25b1984f and no longer loses at
+  02902356, so it is probably stale.
+- Lookarounds: lkb-pos ×20.1, lka-verb ×8.0 and lka-pos ×8.0 (pcre2-jit;
+  lka-verb and lka-pos on vm).
+- Others: esc-nl ×4.5 (rust), bak-k-named ×3.1 (vm vs pcre2-jit), and
+  rec-name / rec-1 / rec-r-uc short ×2.1-2.9 (pcre2-jit).
+- A ×2.1-2.7 band of about 18 single-construct rows, mostly against
+  pcre2-jit, a few against rust: asr-wb/nwb, mod-s/i/r/x, cls-v, cls-s-lc,
+  esc-octal-0, esc-hex, lit-cat, grp-atomic-alt, alt-two, alt-nested, lkb-neg,
+  anc-m-*. The flatness of this band suggests one shared per-byte scan cost
+  rather than 18 separate mechanisms. That is a hypothesis, not read.
+- Win: rec-define ×25 (vs pcre2-jit).
+
+### 3. loglines@0.1 at 25b1984f
+- kv-quoted: large ×67.7, short ×56.0 (rust).
+- level-context: large ×10.0, short ×7.8 (rust).
+- stack-frame: large ×3.9 (pcre2-jit), short ×2.5 (rust).
+- Everything else wins or loses by ≤×2.
+
+### 4. altwide@0.2 at 25b1984f
+- Whole-subject at w-512 (rust 0.5-1.2 µs): sfx ×16.5, wb ×16.0, srt ×14.8,
+  w ×14.8, ci ×12.5, nar4 ×9.4, sh1 ×3.6; ci-256 ×8.3.
+- large: w-8 ×11.6, sfx-64 ×3.6, nar4-64 ×2.9 (rust).
+- Wins: ci-512 large ×126 and ci-256 ×25.7 (vs rust).
+
+### 5. bounded@0.3 at 25b1984f
+- ctx-lazy-64/-256/-1024 and ctx-greedy-256, large: ×8.8-9.1, pcrec ~200 µs
+  against rust ~22 µs. The four rows are flat across counts.
+- cls-atleast-4096: short ×9.0, whole ×5.3 (a 0.3 µs cell).
+- line-80 ×2.3 and dotted4 ×2.2 (pcre2-jit).
+- Wins: cls-upto-65535 whole ×105 (vs rust), cls-lazy-16384 large ×10.7 (vs
+  pcre2-jit).
+
+### 6. email-specimen@0.2 at 25b1984f
+- No loss >×2.
+- factored large: win ×35 against libpcre2 interp (JIT times out there, U1).
+
+### What was NOT read
+- No mechanism stamps. None of the losses above is attributed.
+- No subject-grain rows.
+- No pcrec record after 25b1984f on §2-§6.
+- utf8 is in O-60 and the earlier message: 22 losses >×2, all throughput.
+
+Suggested order:
+1. trim-nested-star short, then evil-alt-nested — the two ratios that stay
+   in the thousands and hundreds at current pins.
+2. aws-access-key-id, quoted-delim-match, union-select, json-constant.
+3. loglines kv-quoted.
+4. bounded ctx-*.
+If you want the five 25b1984f sets re-measured at your I-112 pin so that
+§2-§6 are current, say so. It is roughly a night's window.

@@ -836,3 +836,7 @@ Maintenance: update this file when files are added/removed or change role.
   elevation and one shows a single-cell outlier, both flagged in the
   archive's header rather than discarded — the ratio itself is unmoved
   in either case.
+- `2026-09-27-cross-engine-outliers-extract.py` — O-62's extract: over committed
+  `reports/*.matrix.tsv` only, pcrec's best config per row vs the best full-grain
+  competitor (vectorscan block-nosom excluded), tallies + every loss >×2. Stdlib;
+  run it on any matrix TSV.
