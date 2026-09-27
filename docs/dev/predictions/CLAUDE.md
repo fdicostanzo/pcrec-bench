@@ -856,6 +856,23 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   errors**; `python3 catalogue/check_interpret.py`: **212 passed, 0 FAILED**
   (unchanged from HEAD, confirming this file moves nothing in the catalogue
   correspondence). See `docs/dev/lanes/b104pred_report.md`.
+  **SCORED 2026-09-27 (lane b104read)**, via a direct
+  `interpret.evaluate_predictions` call (the F27 bypass; the committed
+  sidecar carries NO predictions stamp, matching [B63]/[B64]'s own
+  precedent — attaching a bypass-needing predictions file to a sidecar
+  fails `check-interpret` section 3 forever, found live and reverted):
+  P1 confirmed (0 wrong); P2 confirmed 5/5 (ratios 0.025-0.082, far past
+  the `lt 0.33`/`lt 0.5` floors); P4 confirmed 2/2 (ratios 3.24/17.57,
+  far past the `gt 1.2` floor); P5 confirmed 2/2 (0.752/1.023). **P3
+  (compound, 4 residual witnesses) reads `partial`, 4/8 clauses**:
+  `lit-cyr-run`/`t-1m` held flat as predicted (both clauses confirm), but
+  `lit-mixed-ascii`/`t-1m` and `lit-run-3`/`t-64k-cjk` actually RESOLVED
+  almost completely (×0.271/×0.087, both clauses refuted — a much
+  BETTER outcome than "stays slow" predicted) while `lit-sharp-s`/`t-1m`
+  got a real, UNPREDICTED ×2.844 regression the `.d.i` clause's
+  one-sided `gte 0.5` construction cannot see (mechanically confirmed,
+  substantively a miss). Full per-cell numbers:
+  `docs/dev/ledgers/2026-09-27-b104-751b9c6d.md` §2.3.
 
 - `email-specimen-0.2-b104-751b9c6d.tsv`, `loglines-0.1-b104-751b9c6d.tsv`,
   `bounded-0.3-b104-751b9c6d.tsv`, `altwide-0.2-b104-751b9c6d.tsv`,
@@ -913,6 +930,20 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   as [B64] found); `check_stated_utc`'s F27 bypass, same precedent. All five
   files load clean (`interpret.load_predictions`); `check-interpret` unmoved
   (212/0). See `docs/dev/lanes/b104pred_report.md`.
+  **SCORED 2026-09-27 (lane b104read)**, via a direct
+  `interpret.evaluate_predictions` call per set (no committed sidecar
+  carries any of these five files — same [B63]/[B64] precedent as the
+  utf8 file's own SCORED note above): **P1 REFUTED on all five sets, all
+  four configs** — exactly the honest-null outcome each file's own text
+  anticipated; mismatch counts range 42/54 (email, auto-caps) to
+  1230/1458 (syntax, vm-caps/vm-in-caps), and the identity census is the
+  predictor (a program-changed cell moves, a program-identical one that
+  still mismatches is same-window jitter against the strict `eq-token`
+  op). **syntax's P2/P3 CONFIRMED, past the conservative `lt 65` bound —
+  the FULL collapse**: `pcrec_751b9c6d_auto-caps-simdna` now WINS the
+  row outright (24.0 ns) against rust's 80.9/79.8 ns, ratios 0.297/0.301
+  (was ×6,343/×6,514). Full tables:
+  `docs/dev/ledgers/2026-09-27-b104-751b9c6d.md` §3-§4.
 
 ## Writing one
 

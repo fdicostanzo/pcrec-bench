@@ -211,6 +211,64 @@ sidecar used the `/pcrec-bench-interpret` procedure with
 now LOADS (the re2/onig/vectorscan globs match measured testees). Read into
 `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md`.
 
+**[B104] reading (2026-09-27, lane b104read) ADDED twelve NEW report
+groups — I-112's utf8 O-60 acceptance re-measure + O-62 §2-6's five-set
+pcrec-only refresh, all at pcrec 751b9c6d (abi 39)** — and changed NOTHING
+else here: the reporter is unchanged at v25. Each of the six sets
+(email-specimen@0.2, loglines@0.1, bounded@0.3, altwide@0.2, syntax@0.1,
+utf8@0.1) got TWO groups, mirroring the [B63]/[B64] `fullroster`/`after`
+split rather than one combined query (R8's cross-pin pairing needs both
+pcrec pins in one query; the competitor roster needs the new pin plus the
+unpinned/rust arms, which is a DIFFERENT roster):
+
+- `2026-09-27-<set>-<ver>-budu-ryzen1600-fullroster-751b9c6d.*` — the four
+  new `pcrec_751b9c6d_*` configs plus each set's competitor roster
+  (`libpcre2-interp`/`-jit`/`rust-default` for the five byte sets;
+  `+libpcre2-dfa`/`re2`/`oniguruma`/`vectorscan-block-nosom-utf8` for
+  utf8). `.tsv`/`.md`/`.matrix.tsv`/`.matrix.html`; utf8's also carries
+  `.subject-grain.tsv`.
+- `2026-09-27-<set>-<ver>-budu-ryzen1600-after-751b9c6d.*` — the four
+  `pcrec_25b1984f_*` (`pcrec_ce658cb7_*` for utf8) configs plus the same
+  four at 751b9c6d, so R8's `Δ vs previous version` and the D119 null
+  band fire; utf8's `after` group ALSO carries `rust-default` (added on a
+  second render after the first omitted it and starved the predictions
+  file's `ratio_to(rust)` clauses — a lesson: a cross-pin AFTER group
+  needs every testee ANY attached prediction's `ratio_to(...)` names, not
+  only the two pins).
+
+Rendered with a new script written for this window,
+`scripts/render_b104_reports.py` (one store load per group, mirroring
+`scripts/regen_reports.py`'s per-group body but for groups with no
+existing committed header to read a query from) — relocated to the
+session scratchpad after the window per the manager's note (a one-off,
+not a maintained tool). Identity censuses (`tools/program_identity.py`)
+were generated fresh for four of the five cross-pin pairs — loglines (7 s,
+88 rows), bounded (131 s, 354 rows), syntax (7 s, 760 rows), altwide
+(1,800 s on a second attempt after a 300 s `gnutimeout` killed the first;
+264 rows) — so their `after-751b9c6d` reports carry a real D119 band.
+**email-specimen's could NOT be generated**: `tools/program_identity.py`'s
+CLI resolves the bench DIRECTORY alias (`email`) for its own `_sb.find()`
+call but then compares that SAME raw string literally against
+`store/index.tsv`'s `subbench` column, which reads `email-specimen` — the
+two never match (`no config measured at both`), a tool bug filed for the
+manager, not fixed by this lane. All twelve `.interpretation.md` sidecars
+carry NO predictions stamp (`predictions: (none)`, same precedent as
+[B63]/[B64]'s own committed sidecars): `check-interpret` section 3 always
+re-verifies a stamped predictions file with `check_utc=True`, so a sidecar
+stamped against one needing the F27 bypass would fail freshness forever —
+found live (an intermediate version with predictions attached read
+217 passed / 7 FAILED, one per set whose file genuinely needed the
+bypass) and fixed by dropping the stamp; every prediction clause's value
+in the ledger instead comes from a SEPARATE direct
+`interpret.interpret(..., check_utc=False)` call per set. All twelve
+sidecars determinism-checked (a second render byte-equal); `make
+check-interpret`: 224 passed, 0 FAILED. Read into
+`docs/dev/ledgers/2026-09-27-b104-751b9c6d.md`; the headline finding is
+syntax's `anc-dollar`/`anc-z-lc` FULL collapse (×6,343/×6,514 → pcrec now
+BEATS rust at ×0.297/×0.301) and utf8's [OPT-LITSCAN] F3 residual
+quantified per cell (2 of 4 "stays slow" witnesses actually resolved
+almost completely, one held flat, one regressed ×2.84 unpredicted).
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
