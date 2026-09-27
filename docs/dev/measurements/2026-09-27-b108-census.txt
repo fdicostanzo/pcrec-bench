@@ -1,0 +1,58 @@
+2026-09-27-b108-census.txt -- [B108] (lane b108repin) THE COMPILE-ONLY
+PROGRAM-IDENTITY CENSUS for the re-pin 751b9c6d (abi 39) -> a32bc86e
+(abi 41), reproducing pcrec's OWN S2a movers manifest
+(~/pcrec docs/dev/lanes/s2a_report.md, section 2, read-only) over the
+SAME population that lane's own `s1_identity.py` calls `bench`.
+
+Source: docs/dev/measurements/probe_b108_census.py
+Command: python3 docs/dev/measurements/probe_b108_census.py OUT.tsv
+Box: budu-ryzen1600, not gated (read-only, compile-only; no timing, no
+quiet-box requirement -- BD3's heavy-suite rule does not apply to a
+compile sweep).
+Binaries: build/pcrec-751b9c6d/build/pcrec, build/pcrec-a32bc86e/build/pcrec
+(both built by testees/pcrec/pin.sh).
+Population (pcrec's own s2a_report.md §2's `bench` population, exactly):
+  capability@0.1's 64 patterns x FOUR configs -- auto-caps, auto-nocaps,
+  vm-caps, vm-nocaps (`--features all` [+ --no-captures] [+ --engine=vm]),
+  plain form only = 256 artifact-configs.
+Identity: v2 (program_identity.program_sha256_of_text), the record
+field's own normalization -- comments stripped, the shared ABI block
+(struct rx_info's own declaration, the appended `findings` member
+included) and the unreferenced rx_info initializer (`.findings =
+"byte-rate=..."` included) dropped, every referenced #define compared
+verbatim (the unreferenced `#define RX_FINDINGS "..."` line is dropped
+too, rule 5). So [FINDINGS] B1's own two-line addition is INVISIBLE to
+this identity by construction -- the census reads S2a alone.
+
+RESULT (verbatim stdout):
+
+DONE rows=256 identical=186 changed=63 refused-both=5 refusal-mover=2
+
+READING: 186 identical + 63 changed + 5 refused-both + 2 refusal-mover =
+256/256 accounted for. This reproduces pcrec's own s2a_report.md §2
+manifest EXACTLY, digit for digit (their table: bench identical 186 /
+changed 63 / refused(both) 5 / refusal-mismatch 2). I-113's own summary
+line ("Movers: exactly 1,081 artifact-configs (63 bench + 1,018
+corpus)") is this 63; the 1,018-corpus half is pcrec's own
+`tests/**/*.rxt` population, out of scope here (this project carries no
+such tree, and I-113's own manifest table already reports it).
+
+The two refusal-movers are BOTH `wild-datetime-datefinder-alternation`:
+vm-caps refused at 751b9c6d ("pattern too large: 666,249 bytes of
+emitted code (limit 500000)" -- this project's own direct measurement,
+differing slightly from I-113's quoted 666,632 because of the
+`--features all` protocol token every compile here carries) and compiles
+at a32bc86e (482,765 code bytes -- again close to but not identical to
+I-113's 482,736, the same protocol-token difference); vm-nocaps refused
+at 751b9c6d (655,275 bytes) and compiles at a32bc86e (471,791 bytes).
+This is THE ACCEPTANCE MOVER (`check_b108_acceptance_mover`,
+tools/selfcheck.py, checked on the vm-caps arm), confirmed against BOTH
+binaries directly rather than assumed from either lane's own report.
+
+A sample of the 63 `changed` rows confirms the mechanism by value: the
+`wild-secrets-aws-access-key-id` auto-caps row (a VM hybrid) reads
+`vm_lit_runs` old=- new=7 -- matching pcrec's own s2a_report.md §7.1
+(a') witness EXACTLY ("1 island / 7 runs"), `vm_program_bytes` 7403 ->
+5475. `logparse-atomic` (auto-caps) reads runs new=15, program bytes
+16167 -> 9687 (old=- for both on every row: RX_VM_LIT_RUNS did not exist
+before abi 41, so there is nothing to read at 751b9c6d).
