@@ -7,14 +7,23 @@ tracker search: searched 2026-09-27, no existing report found (checked
                 checked github.com/intel/hyperscan, the original
                 project this is forked from — not archived, still
                 receives pushes, but no matching issue there either)
-latest checked: source-diffed (not built) against tags vectorscan/5.4.12
+latest checked: source-diffed against tags vectorscan/5.4.12
                 (2025-07-22) and vectorscan/5.4.13 (2026-08-23, the
                 current latest release) — src/parser/Parser.rl's
                 comment-handling logic is byte-for-byte unchanged
-                across all three tags including our pinned 5.4.11; a
-                real build of 5.4.12/5.4.13 needs ragel + CMake + Boost
-                dev headers, none of which are on this box, so it was
-                not attempted (see docs/dev/lanes/b103other_report.md)
+                across all three tags including our pinned 5.4.11 (see
+                docs/dev/lanes/b103other_report.md, when neither ragel
+                nor CMake nor Boost dev headers were on this box).
+                2026-09-27 (lane u7vs5413): BUILT vectorscan/5.4.13 from
+                source in user space (Ragel 6.10 + CMake 3.31.6 fetched
+                as binaries, Boost 1.86.0 headers + the simde submodule
+                fetched as tarballs, no sudo/apt) and ran the repro
+                against the real binary — STILL PRESENT, byte-identical
+                output to 5.4.11's (`hs_version()` "5.4.13 2026-09-27");
+                findings.tsv latest_checked = 5.4.13@2026-09-27.
+                docs/dev/upstream/repro/U7/probe_5413_build.txt is the
+                archived probe (build provenance: tag, commit sha,
+                compiler, cmake options).
 repro:          docs/dev/upstream/repro/U7/ (repro.c, run.sh,
                 expected.txt)
 approval:       [x] Frank approved 2026-09-27 — SENT https://github.com/VectorCamp/vectorscan/issues/416

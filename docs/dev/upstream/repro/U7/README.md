@@ -57,8 +57,24 @@ plain-form refusal, independent of any wrapping.
   suppression comment, two `reinterpret_cast` style changes, a
   `std::move` removal, and a NEW, unrelated restriction (nested
   character classes / `&&` intersection now refused, issue #210) added
-  in 5.4.12. None of the diff touches comment handling. This is
-  read-only source evidence, not a run against the newest binary.
+  in 5.4.12. This was read-only source evidence at the time, not a run
+  against the newest binary.
+- **2026-09-27 (lane u7vs5413), CONFIRMED AT THE BINARY LEVEL**: the
+  maintainer (markos) asked for exactly this on the filed issue, so
+  `vectorscan/5.4.13` (commit `acd7363aadea43da9c5246542d9969db843dd132`)
+  was built from source in user space — Ragel 6.10 (built from
+  colm.net's own release tarball), CMake 3.31.6 (Kitware's official
+  linux-x86_64 binary release), Boost 1.86.0 headers (archives.boost.io,
+  extracted into the source tree's own `include/` per its documented
+  fallback), and the `simde` submodule (pin
+  `416091ebdb9e901b29d026633e73167d6353a0b0`, resolved via GitHub's
+  contents API since the release tarball ships the submodule directory
+  empty) — no sudo, no apt/system packages. The library built and ran:
+  **the repro is still PRESENT**, output byte-identical to 5.4.11's
+  (`hs_version()` reports `5.4.13 2026-09-27`, the build-date stamp).
+  Archived in `probe_5413_build.txt` (full provenance: tag, commit sha,
+  compiler, CMake options). `findings.tsv`'s `latest_checked` is now
+  `5.4.13@2026-09-27`.
 
 ## Build and run
 
@@ -67,7 +83,11 @@ Needs `libvectorscan-dev` (`<hs/hs.h>`, `-lhs`) — this project's own
 `gcc -O2 -std=gnu11 -I/usr/include/hs` (override the include dir with
 `$VECTORSCAN_INCLUDE_DIR` for an alternate build under
 `$UPSTREAM_SCRATCH`) and runs the single binary; no pcrec-bench code,
-no store, no stdin.
+no store, no stdin. `$UPSTREAM_ENGINE_BUILD` (a directory holding
+`include/hs/hs.h` + `lib/libhs.so*`, i.e. a vectorscan install prefix)
+points the repro at an alternate build instead — the latest-release
+check above used this, via `tools/upstream.py repro U7 --engine-build
+<prefix> --record`.
 
     UPSTREAM_SCRATCH=/var/tmp/some-dir ./run.sh
 
@@ -87,13 +107,14 @@ found / build failed).
 REPRODUCED (this repro, and the bench's own
 `capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__...`
 record — see `docs/dev/upstream_findings.md` U7) and UNDERSTOOD (the
-Parser.rl mechanism above). `latest_checked`: source-diffed (not run)
-against `5.4.12`@2025-07-22 and `5.4.13`@2026-08-23, both unchanged in
-the relevant code; no build of either was performed on this box (see
-"heavy build" above). Tracker: searched, no existing report found (see
-`docs/dev/lanes/b103other_report.md`). Not REPORTED. Whether this is
-reportable-as-a-defect or simply vectorscan's documented "stricter than
-PCRE" parsing stance (Hyperscan's PCRE-subset posture is stated policy,
-not full PCRE compatibility) is a judgment call for whoever drafts the
-note — this repro establishes only that it is real, reproducible, and
-still present on the newest released source.
+Parser.rl mechanism above). `latest_checked`: `5.4.13@2026-09-27` —
+CONFIRMED BY AN ACTUAL FROM-SOURCE BUILD (see "2026-09-27" above and
+`probe_5413_build.txt`), not just the source diff; still PRESENT.
+Tracker: searched, no existing report found (see
+`docs/dev/lanes/b103other_report.md`); filed as
+https://github.com/VectorCamp/vectorscan/issues/416 (Frank approved
+2026-09-27), REPORTED. The maintainer (markos) asked
+2026-09-27T19:39Z whether 5.4.13 was tested — this build is that
+answer; a reply is drafted at
+`docs/dev/upstream/notes/replies/VectorCamp-vectorscan-416-2026-09-27.md`,
+not yet sent (awaits Frank's approval, same posture as any note).

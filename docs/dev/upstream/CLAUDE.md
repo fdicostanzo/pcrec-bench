@@ -38,7 +38,15 @@ about pcrec go to the pcrec manager's outbox, never this directory.
   expected.txt, confirmed PRESENT on both the box's system libpcre2
   10.46 and a from-source PCRE2 10.48 build (the current release);
   U6-U8 (TRE/vectorscan/RE2) are the proving batch's other sibling
-  lanes, per design note §7.
+  lanes, per design note §7. `U7/run.sh` (2026-09-27, lane u7vs5413)
+  gained `$UPSTREAM_ENGINE_BUILD` support (a vectorscan install prefix:
+  `include/hs/hs.h` + `lib/libhs.so*`) so `tools/upstream.py repro U7
+  --engine-build PATH --record` can point it at a from-source build,
+  same convention as U1/U2/U4/U5; `U7/probe_5413_build.txt` is the
+  archived from-source-build probe (D35-style header: tag, commit sha,
+  every fetched-tool/dependency's own pin, compiler, CMake options) —
+  the pattern for archiving a from-source engine build's confirmation
+  beside a source-diff-only one.
 - `notes/<engine>-<YYYY-MM-DD>.md` — per-engine NOTE DRAFTS bundling
   findings for one maintainer submission (§4): a header block (the ids,
   the target channel, an approval line left blank until Frank fills or
@@ -54,8 +62,12 @@ about pcrec go to the pcrec manager's outbox, never this directory.
   thread (a maintainer's question, or something addressed to
   `@fdicostanzo`), same posture as `notes/`: written for the maintainer,
   self-contained, and sent only on Frank's explicit word — `tools/
-  upstream.py threads` never posts anything itself. Empty until the first
-  one is drafted.
+  upstream.py threads` never posts anything itself.
+  `VectorCamp-vectorscan-416-2026-09-27.md` (2026-09-27, lane u7vs5413)
+  is the first one drafted: markos's "could you please test against
+  5.4.13?" (comment id 5859185642), answered with a real from-source
+  5.4.13 build's confirmation (`repro/U7/probe_5413_build.txt`) — not
+  yet sent.
 - `threads.tsv` — ([B106], "track the ids of the issue threads, then a
   script to check for comments", Frank 2026-09-27) THE THREAD REGISTRY:
   one row per FILED GitHub thread (a thread can carry several finding

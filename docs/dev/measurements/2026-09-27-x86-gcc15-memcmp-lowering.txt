@@ -1,0 +1,41 @@
+# x86_64 gcc-15 memcmp(p,q,L)==0 lowering, L=1..64 — the x86 column pcrec's
+# docs/dev/memcmp_lowering_study.md (at a32bc86e) lists as OWED ("gcc-15 on x86").
+# Source: manager session pcrecdev2, 2026-09-27, box ubuntubudu (budu-ryzen1600),
+# gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, x86_64. Probe: for each L, compile
+#   #include <string.h>
+#   int f(const unsigned char*p,const unsigned char*q){return memcmp(p,q,L)==0;}
+# with gcc -<O> -S, grep the asm for "call.*memcmp". Synthetic C loop only;
+# the real pcrec artifact at L=31 is to be read by objdump at the [B108] window.
+# Why: [B108]'s litrun P5c (the L=31 WATCH cell) transcribes an arm64 gcc-16
+# cliff; this is whether it can exist on this box's toolchain. Our phase-2 build is -O2.
+gcc-15 x86_64 -O1 calls memcmp at L: 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64
+gcc-15 x86_64 -O2 calls memcmp at L: none
+gcc-15 x86_64 -O3 calls memcmp at L: none
+gcc-15 x86_64 -Os calls memcmp at L: 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64
+
+# -O2 asm at L=31 (two overlapping 16-byte xor/or blocks, no call):
+f:
+	endbr64
+	movq	(%rdi), %rax
+	movq	8(%rdi), %rdx
+	xorq	(%rsi), %rax
+	xorq	8(%rsi), %rdx
+	orq	%rdx, %rax
+	je	.L5
+	movl	$1, %eax
+	xorl	$1, %eax
+	ret
+	movq	15(%rdi), %rax
+	movq	23(%rdi), %rdx
+	xorq	15(%rsi), %rax
+	xorq	23(%rsi), %rdx
+	orq	%rdx, %rax
+	jne	.L2
+	xorl	%eax, %eax
+	xorl	$1, %eax
+	ret
+0:
+1:
+2:
+3:
+4:

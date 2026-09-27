@@ -1,0 +1,84 @@
+# U7 probe -- actual FROM-SOURCE build of vectorscan/5.4.13, run against
+# the repro (not the earlier source-diff-only check). markos asked
+# (github.com/VectorCamp/vectorscan/issues/416, 2026-09-27T19:39Z):
+# "could you please test against 5.4.13?" -- this is that test.
+#
+# Date:        2026-09-27T22:42:35Z
+# Bench commit: master @ da15f05
+# Box:         ubuntubudu, Linux 7.0.0-29-generic x86_64
+# Compiler:    gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, -O2 -std=gnu11
+#
+# --- vectorscan 5.4.13 build provenance ---
+# Source:      github.com/VectorCamp/vectorscan, tag vectorscan/5.4.13
+#              (release date 2026-08-23), commit
+#              acd7363aadea43da9c5246542d9969db843dd132 (resolved via
+#              GitHub's refs API against the tag), downloaded as the
+#              tag's release tarball (read-only, no git clone/push)
+# CMake:       3.31.6 (official Kitware linux-x86_64 binary release,
+#              fetched into scratch -- no system cmake, no pip/apt)
+# Ragel:       6.10 (colm.net's own ragel-6.10.tar.gz, built from
+#              source with its bundled ./configure + make; the version
+#              vectorscan's own README.md names as the reference
+#              Ragel release; no colm dependency at 6.10)
+# Boost:       1.86.0 headers only (archives.boost.io release tarball,
+#              boost/ subtree extracted into the source tree's own
+#              include/boost/ per CMakeLists.txt's own documented
+#              fallback -- header-only use, no COMPONENTS in
+#              find_package(Boost), confirmed by grep of cmake/boost.cmake)
+# simde:       submodule pin 416091ebdb9e901b29d026633e73167d6353a0b0
+#              (github.com/simd-everywhere/simde), resolved via GitHub's
+#              contents API against the vectorscan/5.4.13 tag path
+#              "simde" (a git submodule; the release tarball itself
+#              ships the submodule directory empty) and extracted into
+#              vectorscan's own simde/ directory
+# CMake configure options:
+#   -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
+#   -DBUILD_STATIC_LIBS=OFF -DBUILD_UNIT=OFF -DBUILD_TOOLS=OFF
+#   -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF -DBUILD_DOC=OFF
+#   (everything but the library itself disabled; libpcre >=8.41 was
+#   NOT found by pkg-config on this box, which only disables vectorscan's
+#   OWN unit-test correctness comparisons -- already off via BUILD_UNIT,
+#   so it has no effect here)
+# Targets built: hs_shared, hs_runtime_shared (both needed for `cmake
+#   --install`'s manifest); installed to a private prefix
+#   (`cmake --install . --prefix <prefix>`) giving a self-contained
+#   include/hs/*.h + lib/libhs.so* tree, exactly system
+#   libvectorscan-dev's own layout, so run.sh needs no engine-specific
+#   changes beyond the existing $UPSTREAM_ENGINE_BUILD convention (see
+#   U1/U2/U4/U5's run.sh; U7's run.sh gained that support in this
+#   session -- it previously only read $VECTORSCAN_INCLUDE_DIR)
+# hs_version() reported by the resulting library: "5.4.13 2026-09-27"
+#   (the trailing date is vectorscan's own build-date stamp, not a
+#   release date -- confirmed against the system 5.4.11 build's
+#   "5.4.11 2026-01-29" using the identical one-line hs_version() probe)
+# Entirely user-space: no sudo, no apt/system package installs; every
+#   tool (cmake, ragel) and every dependency (Boost headers, simde) was
+#   fetched as a read-only tarball/release asset and built or unpacked
+#   under /var/tmp/pcrecbench-u7/ (gitignored scratch, never committed;
+#   only this probe's OUTPUT and the run.sh change are).
+#
+# --- system 5.4.11 (unchanged control, this project's current pin) ---
+# libvectorscan-dev 5.4.11-2ubuntu2, /usr/include/hs, hs_version()
+# "5.4.11 2026-01-29"
+
+$ UPSTREAM_SCRATCH=/var/tmp/run-scratch ./run.sh
+plain (no trailing newline)      REFUSED code -4: Unterminated comment.
+plain + one trailing \n          COMPILED
+PRESENT: the plain form refuses (code -4, "Unterminated comment.") while appending a bare trailing newline alone makes the identical pattern text compile
+U7 PRESENT vectorscan 5.4.11 1
+
+$ UPSTREAM_SCRATCH=/var/tmp/run-scratch UPSTREAM_ENGINE_BUILD=<the private install prefix above> ./run.sh
+plain (no trailing newline)      REFUSED code -4: Unterminated comment.
+plain + one trailing \n          COMPILED
+PRESENT: the plain form refuses (code -4, "Unterminated comment.") while appending a bare trailing newline alone makes the identical pattern text compile
+U7 PRESENT vectorscan 5.4.13 1
+
+# Reading: markos's fix, if any, is not yet in 5.4.13 -- this is a real
+# from-source binary-level confirmation (not the source-diff-only check
+# this project's note already disclosed), and it agrees with that
+# source diff's own conclusion: src/parser/Parser.rl's comment-handling
+# is unchanged in the tags checked, and the ACTUAL BUILT LIBRARY still
+# refuses the plain form and still accepts the newline-appended one,
+# identically to 5.4.11. `tools/upstream.py repro U7 --engine-build
+# <prefix> --record` set findings.tsv's latest_checked to
+# "5.4.13@2026-09-27" from this run.
