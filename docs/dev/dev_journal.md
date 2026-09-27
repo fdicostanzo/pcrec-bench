@@ -6007,3 +6007,31 @@ dies with this session.
 - [B96] DATA STORAGE v2 (Frank: "not working even medium term"): git keeps the ledger, S3 the bytes, name-addressed keys, index.tsv as the catalog. DEFERRED ~a month.
 - Memory compacted 13 -> 8 files on Frank's ask.
 - Close (~18:xx): I-110 acked (the utf8 scan byte is pcrec's run-path leftmost decline, [OPT-REQRUN-ENC] scheduled with O-60's surface as acceptance). Frank opened [B97]/[B98]/[B99] + [B100] (the viewer data is stale since 09-21) for a NEW session. pcrecdev1's Linux asan holds the box (17:18, 4 h cap). wake.md rewritten; cron deleted.
+
+## 2026-09-26 (evening) — thirty-fourth session (Opus 5.5): [B97]-[B100] closed, [B101] re-pin + twin window
+
+Woke 18:44 EDT with pcrecdev1's asan6 on the box (RUN-DONE 19:09, EXIT=0).
+Light lanes first, heavy work after the slot:
+- [B97] b97read (R2-R7 addendum, from committed TSVs only) + b97r6 (R6 from
+  a 15.7 MB-RSS streaming read of the four pcrec utf8 records) MERGED
+  636f691/29181ba: no engine-selection surprise; no pcrec finding beyond O-60.
+- [B99] b99som MERGED 3c08045: vectorscan-block-som-utf8 + census ((*UCP)\w+
+  over Cyrillic refused under SOM, "Pattern is too large"); som on capability's
+  ext bench roster. The lane also wrote the census into the MAIN tree (an
+  identical untracked copy blocked the merge; removed).
+- [B100] make viewer-data 19:16-19:28 EXIT=0 (utf8@0.1 in). LESSON: my
+  `git commit -a` for the I-111 ack swept nine half-regenerated viewer files
+  (final by then, so harmless) — never -a while a job writes tracked files.
+- [B98] b98rider MERGED 6ef85f2 (KB-33 control, KB-31 reporter v25, KB-30,
+  KB-29 pcre2/onig/pcrec, KB-34 vectorscan verb hoist). make check #1 at
+  6ef85f2: 554/0 · OK · 210/0.
+- I-111 arrived (02902356, abi 37) -> [B101]: b101repin (opus) reproduced
+  pcrec's bench census digit-for-digit (650 = 403/59/10/6/110/62), fixed two
+  adapter breakages (S1's run-pinned prefilter values; the registry's joined
+  deny cell), added pcrec-auto-noreqbyte; b101pred wrote the 12-clause
+  predictions first. Merged 7dcc9c7, 36 sidecars at catalogue 3.10, make
+  check #2 at b722e60: 568/0 · OK · 210/0. TWIN WINDOW 20:34-21:41, 2/2
+  measured at attempt 1, store 246 (646dee3). READ lane b101read launched.
+- pcrecdev1: the twin on github-pat/router = REQBYTE + S1 prefilter; findings
+  (3) prefilter-drop and (4) bit 30 in rx_info.flags under their review;
+  I-112 ([OPT-REQRUN-ENC], abi 38, the utf8 re-measure) likely tomorrow.
