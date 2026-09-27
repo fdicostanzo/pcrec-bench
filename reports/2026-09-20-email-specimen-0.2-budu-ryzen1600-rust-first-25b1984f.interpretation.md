@@ -2,7 +2,7 @@
 report:          reports/2026-09-20-email-specimen-0.2-budu-ryzen1600-rust-first-25b1984f.tsv
 report_sha256:   cd524efb6a19f6a3d2a2be4b20ffabbf8d815900ad45c36cdc8d1b356ec9b34f
 index:           store/index.tsv
-index_sha256:    4062259c5a8f851628721952d6ed441c37f4d168cf1f0ad34477832275a9fb00
+index_sha256:    e682ef6fc3f9835484dcfd291175fe64626fca616a260531a0e3fcdfd95e36b5
 predictions:     docs/dev/predictions/email-specimen-0.2-rust-first.tsv
 predictions_sha256:0a98c4d07d4c5ca8d1eb34a5a93c7256b2712bb229940fe2636048eb3f4cee39
 subject_grain:   (none)
