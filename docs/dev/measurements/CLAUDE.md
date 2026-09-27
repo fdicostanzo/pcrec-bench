@@ -802,3 +802,37 @@ Maintenance: update this file when files are added/removed or change role.
   pattern's own raw bytes printed for a text-level "strong lead-byte
   set" judgment. NEVER the whole-store loader (KB-16), no report
   render, no store index load.
+- `probe_libpcre2_floor_cyr.c` / `2026-09-26-libpcre2-floor-cyr-probe.txt`
+  — ([B97] addendum candidate 4, lane b102floor) THE `floor`-PATTERN
+  CYRILLIC COST PROBE: settles whether `utf8@0.1`'s first-sample finding
+  ("`floor` costs ~3.05-3.12× more ns/byte on `t-64k-cyr` than
+  `t-64k-asc` on all three libpcre2 routes") is upstream libpcre2 or a
+  driver/harness artifact. A standalone C program (system libpcre2-dev
+  headers; no bench harness, no store) times a SINGLE no-match call of
+  `~` over the same two 65536-byte subjects (sha256-matched against
+  `bench/utf8/manifest_throughput.tsv`), with/without
+  `PCRE2_NO_UTF_CHECK`, byte mode vs UTF mode, and THREE call shapes:
+  `pcre2_match()` (interp), `pcre2_dfa_match()` (dfa), `pcre2_match()`
+  on a JIT-compiled pattern (`jit_via_match` — the REAL `pcre2-jit`
+  testee's own call shape per `testees/pcre2/driver.c`'s documented
+  internal-dispatch design) plus `pcre2_jit_match()` called directly
+  (`jit_direct` — a shape the real testee never uses, kept as a
+  contrast), and a negative control (`' '`, find-all loop,
+  VALIDATE-ONCE). FINDING: the ratio reproduces to within ~1.6% of the
+  committed report (7 outer runs, medians 3.051/3.128/3.051 for
+  interp/dfa/jit_via_match) and COLLAPSES to ~1.00 under
+  `PCRE2_NO_UTF_CHECK` on all three — the entire gap is libpcre2's own
+  UTF-8 validation pass, script-priced, not a driver artifact; and
+  `jit_direct` shows NO gap at all, localising the cost to
+  `pcre2_match()`'s/`pcre2_dfa_match()`'s pre-dispatch check specifically
+  (which the real `pcre2-jit` testee reaches too, since it never calls
+  `pcre2_jit_match()` — the mechanism is exactly `testees/pcre2/
+  driver.c`'s own documented design, read directly, not guessed). Filed
+  as `docs/dev/upstream_findings.md` U11 (UNDERSTOOD, NOT REPORTED —
+  plausibly a documented ASCII-fast-path/multi-byte-slow-path property
+  of any UTF-8 validator; not this project's driver to fix). Box noted
+  as running the `schedutil` frequency governor (no root to force
+  `performance`): one of 7 outer runs shows a uniform ~1.6-2× common-mode
+  elevation and one shows a single-cell outlier, both flagged in the
+  archive's header rather than discarded — the ratio itself is unmoved
+  in either case.

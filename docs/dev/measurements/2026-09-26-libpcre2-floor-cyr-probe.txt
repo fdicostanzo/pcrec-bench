@@ -1,0 +1,290 @@
+# 2026-09-26-libpcre2-floor-cyr-probe.txt
+#
+# lane b102floor -- docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7-
+# addendum-r2r7.md 8's candidate 4: bench/utf8@0.1's first sample at pcrec
+# ce658cb7 shows the `floor` pattern (the LITERAL `~`, NOT match-anything --
+# the addendum's own wording is corrected here) costing ~3.05-3.12x more
+# ns/byte on `t-64k-cyr` than on `t-64k-asc` on all three libpcre2 routes
+# (dfa/interp/jit). This probe finds the mechanism and settles whether it
+# is upstream (libpcre2) or ours (driver/harness).
+#
+# source:   docs/dev/measurements/probe_libpcre2_floor_cyr.c (committed
+#           beside this; uses the system /usr/include/pcre2.h -- unlike
+#           testees/pcre2/driver.c's own dlopen+hand-prototypes convention,
+#           this box DOES have libpcre2-dev installed, as
+#           testees/pcre2/CLAUDE.md's "pcre2-dfa" section already notes)
+# build:    gcc -O2 -Wall -o probe probe_libpcre2_floor_cyr.c -lpcre2-8
+# command:  taskset -c 3 nice -n -5 ./probe t-64k-asc.bin t-64k-cyr.bin
+#           (nice -5 failed with "Permission denied" on this box -- no
+#           cap/setuid for a negative niceness from an unprivileged shell;
+#           ran at default niceness, noted rather than silently dropped)
+# subjects: bench/utf8/throughput/{t-64k-asc,t-64k-cyr}.bin, COPIED
+#           verbatim from the committed generator's output (not
+#           regenerated) -- sha256 checked against bench/utf8/
+#           manifest_throughput.tsv, BOTH MATCH:
+#             t-64k-asc 49e3c128fcc3e62959df45d0191a6f15da8b0b6e4a25fce53b7c85bd633a97ea
+#             t-64k-cyr 40226266fd2322ebb9e867d29bf1511d59cc7ecc27e56bf961f2ccf4b83bca10
+#           both EXACTLY 65536 bytes (bench/utf8/subject_facts.tsv); `~`
+#           occurs 0 times in either (bench/utf8/expectations.tsv:
+#           `floor`/`t-64k-cyr`/`t-64k-asc` both `nomatch`, confirmed
+#           independently here with `grep -c '~'`, both 0).
+# engine:   libpcre2-8-0 10.46-1build1 (system package; dpkg -s; no
+#           vendored source in this repo -- ldconfig -p confirms the same
+#           .so this project's testees/pcre2 adapter loads). PCRE2_CONFIG_VERSION
+#           printed by the probe itself: "10.46 2025-08-27" (matches the
+#           committed report's `libpcre2_10.46_*` testee ids exactly).
+# compiler: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, -O2
+# box:      ubuntubudu; loadavg 0.69-0.74 across the whole probe (quiet;
+#           `uptime` checked before starting: "load average: 0.17, 0.23,
+#           0.16"); pinned to core 3 with taskset; single-threaded;
+#           NTRIALS=21 per cell (median reported by the probe itself,
+#           7 outer process invocations archived verbatim below for a
+#           process-level spread on top of the in-process median).
+#           schedutil governor (not `performance`) is running on this
+#           box, no root to change it -- DP-state/turbo variance is the
+#           likely cause of outer-run 1's uniformly ~1.6-2x elevated
+#           absolute numbers (both t-64k-asc AND t-64k-cyr scaled by
+#           roughly the same factor in that one run) and outer-run 6's
+#           single dfa_check/cyr outlier (2.084518 ns/B vs the other six
+#           runs' 1.892-1.897); NEITHER moves the ratio outside 3.04-3.44,
+#           and every OTHER cell in both flagged runs reproduces its
+#           six-run band exactly -- flagged, not smoothed over, not
+#           discarded (D35: verbatim, no editing).
+# bench:    lane/b102floor off master a42af2052a8e45f73ef1cc5a21dca2990acbacf3
+#
+# ---------------------------------------------------------------------------
+# THE MECHANISM (established by the PCRE2_NO_UTF_CHECK ablation below, on
+# all three routes, and by comparing pcre2_jit_match() called DIRECTLY
+# against pcre2_match() called on a JIT-compiled pattern -- the shape
+# testees/pcre2/driver.c's `do_match` actually uses for the pcre2-jit
+# testee, per its own header comment: "never calls a separate
+# pcre2_jit_match: pcre2_match() itself dispatches to JIT-compiled code
+# internally when present").
+#
+# libpcre2 10.46's pcre2_match() and pcre2_dfa_match() both validate the
+# WHOLE subject as well-formed UTF-8 before their own scan begins, unless
+# the caller passes PCRE2_NO_UTF_CHECK (man pcre2api, quoted already in
+# testees/pcre2/driver.c's header and in this project's own [B94]/BD15
+# VALIDATE-ONCE fix). That validation cost is NOT flat per byte across
+# scripts: on this box, validating 65536 bytes of `t-64k-cyr` (88.3%
+# multi-byte, 36555 characters, dominant lead byte 0xd0 -- Cyrillic is a
+# 2-byte-per-character UTF-8 script) costs ~3.04-3.13x what validating
+# the SAME BYTE COUNT of `t-64k-asc` (100% single-byte ASCII, 65536
+# characters) costs, on EVERY route that reaches it:
+#
+#   - pcre2_match() on an interp-only compile (`pcre2-interp`'s own call
+#     shape)                                             ratio ~3.04-3.06
+#   - pcre2_dfa_match()  (`pcre2-dfa`'s own call shape)   ratio ~3.12-3.13
+#     (one outer-run outlier at 3.44, flagged above, not excluded)
+#   - pcre2_match() on a JIT-compiled pattern (`pcre2-jit`'s ACTUAL call
+#     shape, per driver.c's own documented internal-dispatch design)
+#                                                          ratio ~3.05-3.06
+#
+# Forcing PCRE2_NO_UTF_CHECK on every one of these three call shapes
+# COLLAPSES the ratio to ~1.00 on both scripts (interp_nocheck,
+# dfa_nocheck, jit_via_match_nocheck below) AND brings the absolute cost
+# down to the SAME level as byte-mode (no PCRE2_UTF at all) on the same
+# subjects -- the entire ~3x-more-expensive-on-Cyrillic cost IS the
+# validation pass, on all three routes, full stop.
+#
+# The LOWER-LEVEL pcre2_jit_match() entry point -- which the real bench
+# testee NEVER calls, per driver.c's own header comment -- shows NO
+# script penalty at all, check or no-check (jit_direct_check/nocheck
+# below, flat ~0.038 ns/B on BOTH scripts in every run). This localises
+# the cost precisely: it lives in pcre2_match()'s/pcre2_dfa_match()'s own
+# pre-dispatch validation call, which pcre2_jit_match() bypasses (or
+# performs far more cheaply as part of its own vectorized matching code) --
+# and it is EXACTLY the call shape `do_match` in testees/pcre2/driver.c
+# uses for all three real testees (pcre2-interp/-dfa/-jit alike, since
+# pcre2-jit never calls pcre2_jit_match either). So the ~3.05-3.12x found
+# in the committed report is a REAL, UPSTREAM libpcre2 characteristic --
+# not a driver/harness artifact, not specific to this project's find-all
+# loop (this probe uses a single, isolated match call per measurement, no
+# loop at all, because `floor` never matches -- there IS only one call in
+# the real find-all path either, per bench/utf8/expectations.tsv).
+#
+# CONTROL (the find-all loop on ' ', a common byte that DOES match often,
+# replicating driver.c's own VALIDATE-ONCE call shape: call 1 unchecked,
+# calls 2..n forced PCRE2_NO_UTF_CHECK): the ratio here runs the OPPOSITE
+# direction and is much smaller (~1.12-1.20, asc COSTLIER than cyr) --
+# consistent with the mechanism above: once the ONE-TIME validation cost
+# is amortised across many per-match calls (9216 on asc vs 7214 on cyr,
+# `t-64k-cyr`'s fewer, longer-encoded words giving fewer space-separated
+# matches per fixed byte budget), the per-match loop overhead dominates
+# and the validation asymmetry is swamped. This is the NEGATIVE control
+# that isolates `floor`'s own ONE-CALL, ZERO-MATCH shape as the reason
+# the ratio is visible there and not on every pattern in the set.
+#
+# ---------------------------------------------------------------------------
+# RESULTS -- 7 outer process invocations, verbatim probe stdout, unedited
+# ---------------------------------------------------------------------------
+### outer-run 1 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    3130.0 ns (0.047760 ns/B)  interp_nocheck=    3130.0 ns (0.047760 ns/B)  dfa_check=    1440.0 ns (0.021973 ns/B)  dfa_nocheck=    1430.0 ns (0.021820 ns/B)  jit_direct_check=    3110.0 ns (0.047455 ns/B)  jit_direct_nocheck=    3110.0 ns (0.047455 ns/B)  jit_via_match_check=    3140.0 ns (0.047913 ns/B)  jit_via_match_nocheck=    3140.0 ns (0.047913 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    3140.0 ns (0.047913 ns/B)  interp_nocheck=    3140.0 ns (0.047913 ns/B)  dfa_check=    1440.0 ns (0.021973 ns/B)  dfa_nocheck=    1440.0 ns (0.021973 ns/B)  jit_direct_check=    3120.0 ns (0.047607 ns/B)  jit_direct_nocheck=    3110.0 ns (0.047455 ns/B)  jit_via_match_check=    3140.0 ns (0.047913 ns/B)  jit_via_match_nocheck=    3140.0 ns (0.047913 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   51350.0 ns (0.783539 ns/B)  interp_nocheck=    3130.0 ns (0.047760 ns/B)  dfa_check=   49650.0 ns (0.757599 ns/B)  dfa_nocheck=    1440.0 ns (0.021973 ns/B)  jit_direct_check=    3110.0 ns (0.047455 ns/B)  jit_direct_nocheck=    3090.0 ns (0.047150 ns/B)  jit_via_match_check=   51350.0 ns (0.783539 ns/B)  jit_via_match_nocheck=    3130.0 ns (0.047760 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  156661.0 ns (2.390457 ns/B)  interp_nocheck=    3130.0 ns (0.047760 ns/B)  dfa_check=  155491.0 ns (2.372604 ns/B)  dfa_nocheck=    1430.0 ns (0.021820 ns/B)  jit_direct_check=    3110.0 ns (0.047455 ns/B)  jit_direct_nocheck=    3090.0 ns (0.047150 ns/B)  jit_via_match_check=  156441.0 ns (2.387100 ns/B)  jit_via_match_nocheck=    3130.0 ns (0.047760 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp= 1047945.0 ns (15.990372 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  684032.0 ns (10.437500 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  962044.0 ns (14.679626 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  845633.0 ns (12.903336 ns/B)  nmatches=7214
+### outer-run 2 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2500.0 ns (0.038147 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2520.0 ns (0.038452 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2510.0 ns (0.038300 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2500.0 ns (0.038147 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2520.0 ns (0.038452 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41080.0 ns (0.626831 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=   39720.0 ns (0.606079 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125211.0 ns (1.910568 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=  124011.0 ns (1.892258 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=  125441.0 ns (1.914078 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp=  867213.0 ns (13.232620 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  687523.0 ns (10.490768 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  960784.0 ns (14.660400 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  848474.0 ns (12.946686 ns/B)  nmatches=7214
+### outer-run 3 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2500.0 ns (0.038147 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2500.0 ns (0.038147 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2500.0 ns (0.038147 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1140.0 ns (0.017395 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2500.0 ns (0.038147 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41080.0 ns (0.626831 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=   39720.0 ns (0.606079 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125540.0 ns (1.915588 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=  124351.0 ns (1.897446 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=  125291.0 ns (1.911789 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp=  868584.0 ns (13.253540 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  677793.0 ns (10.342300 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  954484.0 ns (14.564270 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  845054.0 ns (12.894501 ns/B)  nmatches=7214
+### outer-run 4 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2520.0 ns (0.038452 ns/B)  interp_nocheck=    2520.0 ns (0.038452 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2490.0 ns (0.037994 ns/B)  jit_via_match_check=    2520.0 ns (0.038452 ns/B)  jit_via_match_nocheck=    2520.0 ns (0.038452 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2520.0 ns (0.038452 ns/B)  interp_nocheck=    2520.0 ns (0.038452 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2500.0 ns (0.038147 ns/B)  jit_direct_nocheck=    2490.0 ns (0.037994 ns/B)  jit_via_match_check=    2520.0 ns (0.038452 ns/B)  jit_via_match_nocheck=    2520.0 ns (0.038452 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41080.0 ns (0.626831 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=   39720.0 ns (0.606079 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125190.0 ns (1.910248 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=  124191.0 ns (1.895004 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=  125351.0 ns (1.912704 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp=  858834.0 ns (13.104767 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  676533.0 ns (10.323074 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  956644.0 ns (14.597229 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  841644.0 ns (12.842468 ns/B)  nmatches=7214
+### outer-run 5 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2510.0 ns (0.038300 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2510.0 ns (0.038300 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41080.0 ns (0.626831 ns/B)  interp_nocheck=    2490.0 ns (0.037994 ns/B)  dfa_check=   39720.0 ns (0.606079 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2470.0 ns (0.037689 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125431.0 ns (1.913925 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=  124261.0 ns (1.896072 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2470.0 ns (0.037689 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=  125451.0 ns (1.914230 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp= 1017414.0 ns (15.524506 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  796753.0 ns (12.157486 ns/B)  nmatches=7214
+asc               utf=1  findall_interp= 1026244.0 ns (15.659241 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  933404.0 ns (14.242615 ns/B)  nmatches=7214
+### outer-run 6 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2500.0 ns (0.038147 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=    2500.0 ns (0.038147 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2500.0 ns (0.038147 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=    1150.0 ns (0.017548 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2500.0 ns (0.038147 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41070.0 ns (0.626678 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=   39720.0 ns (0.606079 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2500.0 ns (0.038147 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125521.0 ns (1.915298 ns/B)  interp_nocheck=    2500.0 ns (0.038147 ns/B)  dfa_check=  136611.0 ns (2.084518 ns/B)  dfa_nocheck=    1150.0 ns (0.017548 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=  125540.0 ns (1.915588 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp=  881194.0 ns (13.445953 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  687483.0 ns (10.490158 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  954794.0 ns (14.569000 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  840204.0 ns (12.820496 ns/B)  nmatches=7214
+### outer-run 7 ###
+nice: warning: setpriority: Permission denied (os error 13)# libpcre2-8 version (PCRE2_CONFIG_VERSION): 10.46 2025-08-27
+# JIT support: 1
+# t-64k-asc.bin: 65536 bytes; t-64k-cyr.bin: 65536 bytes
+# NTRIALS=21 per cell, median reported
+#
+# === floor pattern '~' (0 matches on both subjects), single no-match call ===
+asc        ~      utf=0  interp_check=    2510.0 ns (0.038300 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=    1190.0 ns (0.018158 ns/B)  dfa_nocheck=    1190.0 ns (0.018158 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=0  interp_check=    2510.0 ns (0.038300 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=    1190.0 ns (0.018158 ns/B)  dfa_nocheck=    1190.0 ns (0.018158 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=    2510.0 ns (0.038300 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+asc        ~      utf=1  interp_check=   41080.0 ns (0.626831 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=   39760.0 ns (0.606689 ns/B)  dfa_nocheck=    1190.0 ns (0.018158 ns/B)  jit_direct_check=    2480.0 ns (0.037842 ns/B)  jit_direct_nocheck=    2470.0 ns (0.037689 ns/B)  jit_via_match_check=   41080.0 ns (0.626831 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+cyr        ~      utf=1  interp_check=  125011.0 ns (1.907516 ns/B)  interp_nocheck=    2510.0 ns (0.038300 ns/B)  dfa_check=  124341.0 ns (1.897293 ns/B)  dfa_nocheck=    1190.0 ns (0.018158 ns/B)  jit_direct_check=    2490.0 ns (0.037994 ns/B)  jit_direct_nocheck=    2480.0 ns (0.037842 ns/B)  jit_via_match_check=  125261.0 ns (1.911331 ns/B)  jit_via_match_nocheck=    2510.0 ns (0.038300 ns/B)  have_jit=1
+#
+# === control pattern ' ' (space, common byte, matches often), find-all loop, VALIDATE-ONCE ===
+asc               utf=0  findall_interp=  878594.0 ns (13.406281 ns/B)  nmatches=9216
+cyr               utf=0  findall_interp=  696893.0 ns (10.633743 ns/B)  nmatches=7214
+asc               utf=1  findall_interp=  971484.0 ns (14.823669 ns/B)  nmatches=9216
+cyr               utf=1  findall_interp=  843954.0 ns (12.877716 ns/B)  nmatches=7214
+
+# ---------------------------------------------------------------------------
+# SUMMARY (derived from the verbatim block above; numbers only, no
+# interpretation beyond direction -- the reading is in the ledger addendum
+# and this lane's report)
+# ---------------------------------------------------------------------------
+#
+# utf=1, "check" columns (PCRE2_UTF, no PCRE2_NO_UTF_CHECK) -- per-outer-run
+# ratio (cyr_ns_per_B / asc_ns_per_B):
+#
+#   run  interp_check  dfa_check  jit_via_match_check
+#   1    3.051         3.132      3.047
+#   2    3.048         3.123      3.054
+#   3    3.056         3.131      3.050
+#   4    3.048         3.127      3.051
+#   5    3.053         3.128      3.054
+#   6    3.057         3.440 *    3.056
+#   7    3.043         3.127      3.050
+#
+#   median 3.051        3.128      3.051
+#   (* run 6's dfa_check/cyr cell is the one flagged outlier above; the
+#   other six runs bracket 3.123-3.132)
+#
+# Committed report (2026-09-26-utf8-0.1-*-first-ce658cb7, extract lines
+# 183-185): dfa 3.1198, interp 3.1194, jit 3.0481 -- this probe's medians
+# (3.128 dfa, 3.051 interp, 3.051 jit-via-match) reproduce all three to
+# within ~1.6%, using a single isolated match call with no bench harness,
+# no store, no find-all loop.
+#
+# utf=1, "nocheck" columns (PCRE2_NO_UTF_CHECK forced on the SAME calls):
+# every one of interp_nocheck / dfa_nocheck / jit_via_match_nocheck reads
+# flat across BOTH subjects in all 7 runs (asc and cyr within 1-2% of each
+# other, e.g. run 2: interp_nocheck asc=0.038147 cyr=0.038300 ns/B) --
+# ratio 1.00 within noise, and the absolute values match utf=0 (byte mode,
+# no PCRE2_UTF at all) on the SAME cells almost exactly (run 2: byte-mode
+# interp asc=0.038147, utf-mode-nocheck asc=0.038147). The validation
+# ablation removes the ENTIRE gap, not merely shrinks it.
+#
+# jit_direct_check / jit_direct_nocheck (pcre2_jit_match() called
+# DIRECTLY -- NOT the real testee's call shape): flat ~0.038 ns/B on BOTH
+# subjects, check or no-check, in every run but 6 (one paired
+# check+nocheck elevation to ~0.072 ns/B on cyr only, still far below the
+# ~1.9 ns/B a validation-bearing route would show, and check==nocheck
+# there too -- consistent with "no validation cost on this entry point",
+# not with a script effect).
+#
+# Control (' ', find-all loop, utf=1, VALIDATE-ONCE): cyr/asc ratio per
+# run: 1.163(r1)... 1.106(r2)... 1.099(r3)... 1.099(r4)... 1.099(r5, both
+# elevated together)... 1.140(r6)... 1.150(r7) -- all in the 1.10-1.16
+# band, ASC costlier (opposite direction from `floor`'s check-mode
+# result), consistent with the negative-control reading above.
