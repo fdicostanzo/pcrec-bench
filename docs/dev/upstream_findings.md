@@ -207,6 +207,8 @@ ext-second-cf0962e3.md` §6); a direct read of TRE 0.9.0's
 `tre_regncompb`/byte-mode matching source, if this gap is ever chased
 past reproduction into a cause.
 
+**2026-09-27 ([B103], lane b103other): NOT-A-BUG.** TRE reads `\` inside `[...]` literally, which POSIX.1-2017 XBD 9.3.5 requires; glibc's regcomp gives the identical answers (control in `docs/dev/upstream/repro/U6/`). The wrong answers are a BENCH-SIDE mismatch: our tre testee receives PCRE-dialect bracket escapes. Census `docs/dev/measurements/2026-09-27-tre-bracket-escape-census.txt` (30 bench patterns carry one; 6 capability patterns reach TRE and run, 4 of them wrong). Fix queued as plan.md [B105]. No upstream note.
+
 ## U7 — vectorscan 5.4.11 refuses a `(?x)` pattern whose final line is an UNTERMINATED `#` comment (`hs_compile` code -4 "Unterminated comment") where libpcre2, pcrec, oniguruma and rust-regex all accept it — and the bench's [B70] whole-subject wrap spelling, whose trailing newline terminates the comment, makes the WRAPPED form compile while the plain form still refuses (OBSERVED 2026-09-22, `bench/capability@0.1` [B71] wrapfix window)
 
 Record `capability@0.1__vectorscan_5.4.11_block-nosom-nocaps-simd__
@@ -236,6 +238,8 @@ a documented stance, and the bench's capability machinery already
 renders the refusal as a first-class `did-not-compile` with the
 diagnostic carried.
 
+**2026-09-27 ([B103], lane b103other): REPRODUCED → DRAFTED.** Standalone repro `docs/dev/upstream/repro/U7/` PRESENT on 5.4.11; latest 5.4.13 not built (ragel/Boost absent), `Parser.rl`'s comment handling byte-identical 5.4.11→5.4.13; no tracker issue found (VectorCamp, intel/hyperscan). Draft `docs/dev/upstream/notes/vectorscan-2026-09-27.md` awaits Frank.
+
 ## U8 — RE2 11.0.0 (`EncodingUTF8`) reports an empty-width `\B` BETWEEN THE BYTES of one UTF-8 character (OBSERVED 2026-09-26, `utf8@0.1` first sample)
 
 Record `utf8@0.1__re2_11.0.0_default-caps-simdna_utf8__budu-ryzen1600__20260926T165447Z`,
@@ -253,6 +257,8 @@ and evaluates between bytes, so both sides of an interior byte boundary
 read "not word". pcrec, pcre2-utf-interp/-jit/-dfa, rust and vectorscan
 answer as the oracle. Status: OBSERVED. Not checked against RE2's issue
 tracker or source. Ledger `docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7.md` §3.3.
+
+**2026-09-27 ([B103], lane b103other): NOT-A-BUG.** Repro `docs/dev/upstream/repro/U8/` PRESENT on 11.0.0 and a 2025-11-05 build; RE2's `doc/syntax.txt` defines `\b`/`\B` as ASCII word-boundary tests, which the byte automaton applies between the bytes of a multi-byte character — documented design (related maintainer statement: google/re2#344). No note.
 
 ## U9 — Oniguruma 6.9.10 (`ONIG_ENCODING_UTF8`) folds `ß` to `SS` under `(?i)`; PCRE2 10.46 folds one-to-one (OBSERVED 2026-09-26, `utf8@0.1` first sample)
 
