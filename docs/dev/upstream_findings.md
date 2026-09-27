@@ -35,6 +35,8 @@ separate the two hypotheses; if the JIT genuinely lacks the prescan on
 call-bearing patterns, that is reportable. Reporter note: the reporter
 labels this cell "(other)" — `timed-out` needs its own label (OD-B11).
 
+**2026-09-27 ([B103], lane b103pcre2): UNDERSTOOD → DRAFTED.** Repro `docs/dev/upstream/repro/U1/`, PRESENT on 10.46 and a from-source 10.48. Ablation: the interpreter under `no_start_optimize` is as slow as the JIT; a no-subroutine control stays instant under JIT; the ~500,000-byte cliff is NOT a resource limit (jitstack 1 KiB vs 64 MiB identical, clean no-match, no error code at any size). Tracker/ChangeLog 10.47-10.48: nothing. In `notes/pcre2-2026-09-27.md`.
+
 ## U2 — libpcre2 10.46 JIT does NOT get the interpreter's whole-subject required-code-unit dismissal on a 1 MB failing subject: 2.4-3.2 ms where the interpreter answers in 18 µs (OBSERVED 2026-08-25 at 692c2e8, re-observed 2026-08-28 on `email-specimen@0.2`)
 
 Records `email-specimen@0.2__libpcre2_10.46_{interp,jit}-caps-simdna__budu-ryzen1600__20260828T14{5051,1718}Z`,
@@ -53,6 +55,8 @@ path is not. Next: `pcre2test` with `jit` vs `no_jit` and
 `no_start_optimize` on the same subject; if the JIT genuinely lacks
 the check on a plain (non-call-bearing) pattern, that is reportable.
 Status: OBSERVED.
+
+**2026-09-27 ([B103], lane b103pcre2): REPRODUCED → DRAFTED.** ×86-160 (JIT vs interp) on 10.46 and 10.48; tracker/ChangeLog: nothing. In `notes/pcre2-2026-09-27.md`.
 
 ## U3 — libpcre2 10.46 JIT pays ~2.8 ms/MB MORE on prose with 496 sparse addresses than on address-free prose, where pcrec's DFA pays the same on both (OBSERVED 2026-08-28, `email-specimen@0.2`)
 
@@ -85,6 +89,8 @@ alternation is a per-position attempt with the alternation unrolled,
 not a memchr for `"`; the interpreter's start-of-match memchr is what
 makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 `no_start_optimize` separates the hypotheses.
+
+**2026-09-27 ([B103], lane b103pcre2): REPRODUCED (1 MB grain) → DRAFTED.** The short-subject ×1.8 did NOT reproduce robustly at pcre2test's timing resolution (stated in the README); the 1 MB throughput form is ×23-34, PRESENT on 10.48. In `notes/pcre2-2026-09-27.md`.
 
 ## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
 
@@ -142,6 +148,8 @@ records (`store/records/syntax@0.1/*/*.jsonl`, commit 28cb034) via
 `pcrecbench.reduce`'s own reduction, cross-checked against the rendered
 report at the cited lines; not re-measured independently outside the
 store.
+
+**2026-09-27 ([B103], lane b103pcre2): NOT-A-BUG (pattern-inherent backtracking cost).** Four-way ablation in `docs/dev/upstream/repro/U5/`: on a balanced-only control subject (same seed) interp AND JIT are flat per byte; on the original (≈1 in 8 paren lines deliberately unbalanced) both are super-linear (interp ×9.2, JIT ×12.45 per byte for a 16× size step), and Oniguruma 6.9.10 shows the same shape. Each unbalanced `(` extends `[^()]*` through the rest of the subject under ANY backtracker. Not sent. (Side note: JIT needs jitstack > 32 KiB on the original; at default it returns PCRE2_ERROR_JIT_STACKLIMIT, correctly reported.)
 
 ## U6 — TRE 0.9.0's `high-byte-run` correctness gap is a REAL, REPRODUCIBLE property of `tre_regncompb`'s byte-mode matching, not a one-off — CONFIRMED across two independent samples one day apart (OBSERVED 2026-09-18, REPRODUCED 2026-09-19, `bench/capability@0.1`; lane b48read's ledger §5.4, lane b55extread's ledger)
 
