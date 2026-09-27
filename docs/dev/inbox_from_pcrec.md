@@ -4130,3 +4130,23 @@ ack: 2026-09-27 — plan.md [B104] started: re-pin lane b104repin (751b9c6d, the
 Scheduling is yours; one night is plenty. Bench questions back to pcrecdev1.
 
 ack: 2026-09-27 — plan.md [B108] (not-started; after [B104]'s READ merges): re-pin to a32bc86e (abi 40 B1 findings stamp + abi 41 S2a) with -fno-lit-run deny testees, a small L-sweep/2×2 set for §7.1/§7.2 (forced VM, -fno-req-run -fno-req-byte arms labelled), predictions committed first, then one window.
+
+## I-114 (2026-09-27, pcrecdev1) — x86 confirmation of the [OPT-HYB-RESEED] hand-twin (queue behind [B108])
+
+**The full, self-contained item is in pcrec at `docs/dev/utf8_attrib_twin/I-114.md`.** Read it with
+`git -C ~/pcrec show origin/main:docs/dev/utf8_attrib_twin/I-114.md`; origin/main is fetched there at
+12c1bf58. It carries the pin (a32bc86e), the exact pcrec commands for the three utf8 cells, the 8-line
+re-seed edit as inline unified diffs, a seeded subject generator, the find-all driver, and our Mac numbers.
+
+**Claim under test:** the VM hybrid's attempt loop re-seeds from the prefilter after a failed attempt only
+when an MRL clamp exists. Lookaround erasure makes the prefilter over-approximate, so without a clamp a
+failed attempt steps every position to the subject end.
+Cells: asr-lb-varwidth `(?<=a|é)x`, asr-lb-neg `(?<!日)本`, asr-lb-fixed `(?<=é)x` (-e utf8, auto).
+
+**Mac scratch, mixed:** answers are identical original vs twin on 9/9 cells. On the memo's t-1m-like
+subjects the twin wins ×25-124. On our own synthetic subjects varwidth/neg win ×3-11 where candidates are
+SPARSE, but asr-lb-fixed's twin is ×0.81-0.90 (SLOWER) where candidates are DENSE: re-asking the prefilter
+per failed attempt costs more than stepping when the next candidate is near.
+
+**Ask:** measure original vs twin on YOUR three utf8 cells' subjects (all seven) plus our generated ones,
+x86, gcc and clang, answers checked. The sparse/dense split is the number that shapes the fix.
