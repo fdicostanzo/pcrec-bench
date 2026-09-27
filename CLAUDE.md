@@ -458,8 +458,58 @@ bindings) live here, vendored or system, pinned either way.
   (`-fno-cls-fold`, [B39]: the [CC-DIFF]-adjacent case-fold lowering
   denied at the same pin, the fold's BEFORE) — and `pcrec-auto-noreqbyte`
   (`-fno-req-byte`, [B101]: [OPT-REQBYTE]'s pre-check denied at the same
-  pin, inbox I-111's owed twin; twenty-one pinned pcrec configs) — at a
-  pinned commit — **751b9c6d, abi 39** (re-pinned from 02902356,
+  pin, inbox I-111's owed twin) — and `pcrec-{auto,vm}-nolitrun`
+  (`-fno-lit-run`, [B108]: [OPT-LITSCAN] S2a's VM literal-run compare
+  denied at the same pin, S2a's BEFORE), `pcrec-{auto,vm}-noaltclsfactor`
+  (`-fno-altcls-factor`: the pre-existing [OPT-ALTCLS] stage-2 axis's
+  first pinned testee, for I-113 §7.1's factoring x lit-run 2x2),
+  `pcrec-{auto,vm}-noaltclsfactor-nolitrun` (the 2x2's fourth corner) and
+  `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` (I-113 §7.2's L-sweep rows,
+  both whole-window pre-checks denied so a failing subject reaches the
+  VM compare under test; twenty-nine pinned pcrec configs) — at a
+  pinned commit — **a32bc86e, abi 41** (re-pinned from 751b9c6d,
+  2026-09-27, lane b108repin, inbox I-113 — TWO abi steps: 39→40
+  [FINDINGS] B1 (the byte-rate accessor + `default.rxt` data tier;
+  `<PREFIX>_FINDINGS` + `rx_info.findings` APPENDED at the struct's end
+  on every artifact, byte-mode programs unchanged, +385 code bytes each
+  — MEASURED, matching pcrec's own number exactly), 40→41
+  [OPT-LITSCAN] S2a (a VM literal run of two-plus one-byte literals, and
+  an alternation island's single-child trie chain, becomes ONE bounds
+  check plus one constant-length memcmp (P4) instead of a per-byte
+  compare chain — new axis `lit-run` bit 33, `-fno-lit-run`, masked out
+  of `rx_info.flags`; NULL on every DFA-routed cell; answer-identical by
+  construction). `struct rx_info` gains only the one appended `findings`
+  field (no `rx_info` mirror for `RX_VM_LIT_RUNS`, D77's own precedent),
+  so the shim floor STAYS 16 (both abi-sabotage arms unchanged).
+  Registries: axes 91/32 → 93/32 (the two `lit-run` rows), limits
+  62 → 64 (`PCREC_MAX_FIND_COUNT` / `PCREC_FIND_FLOOR_PPM`), definitions
+  and schema BYTE-IDENTICAL (50 / 78 rows). The acceptance mover
+  `wild-datetime-datefinder-alternation` under `--engine=vm`, refused at
+  751b9c6d (666,249 code bytes > the 500,000 cap under this project's
+  `--features all` protocol), COMPILES at a32bc86e (482,765 code bytes,
+  `vm_lit_runs 826`) — confirmed against BOTH binaries directly. The
+  compile-only census over capability@0.1's four-config population
+  reproduces I-113's own bench manifest EXACTLY (186 identical / 63
+  changed / 5 refused-both / 2 refusal-mover;
+  docs/dev/measurements/probe_b108_census.py, archived
+  2026-09-27-b108-census.txt) — v2 program identity needs no change for
+  [FINDINGS] B1 (its own rx_info-block-drop rule already hides it). Size
+  books are NOT flat: two new constants (`B108_FINDINGS_STAMP_LINE` 385
+  both engines, `B108_VM_LIT_RUNS_STAMP_LINE` 25 VM-only at any
+  run-free/denied count) cover the non-collapsing population; every VM
+  artifact stamping a literal run was RE-MEASURED individually (the
+  altwide island witnesses shrink 34-56%, `wild-secrets-github-pat`'s
+  hybrid VM body shrinks net -1150 B, `nested-comment-rec` nets a
+  SHRINK). Two derived findings re-measured rather than patched: I-43's
+  altwide island/chain code-byte ratio INVERTS (0.856/0.812/0.764 →
+  1.3105/1.3206/1.3561 — the chain's per-branch runs now collapse more
+  than the island's shared trie), and the altwide VM refusal wall moves
+  a SECOND time, 384<w≤512 → 1024<w≤2048 on both the island and the
+  `-fno-alt-island` chain routes (the DFA wall, untouched by a VM-only
+  mechanism, stays 512<w≤1024). `check_mechanism_stamps` 129/129,
+  `check_deny_flag_controls` 18/18. Catalogue 3.12. No store/reports
+  write, no timing — the measurement window is the manager's. Before it,
+  **751b9c6d, abi 39** (re-pinned from 02902356,
   2026-09-27, lane b104repin, inbox I-112 — TWO abi steps: 37→38
   [OPT-REQRUN-ENC] stage 2 (43039d4e: the necessary run's `!bytekey`
   decline — the fallback used under every encoding `req_byte`'s own

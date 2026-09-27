@@ -51,6 +51,7 @@
  * `info dfa_scan / dfa_prefilter / dfa_table / dfa_prefilter_offsets /
  * dfa_scan_edge / dfa_start / dfa_match / dfa_uniform_folds / vm_frameless /
  * vm_alt_islands / vm_entry_shape / vm_program_bytes / vm_cls_folds /
+ * vm_lit_runs /
  * altcls_merges /
  * altcls_factored / fast_frames /
  * fast_trail / unroll_k /
@@ -108,7 +109,12 @@
  * (none/emitted/one-attempt/dominated) naming the EMISSION decision
  * where req_byte/req_run name the ANALYSIS; no rx_info mirror, struct
  * rx_info byte-identical to abi 30, floor still 16; NOT an axis (no
- * flag, no bit).
+ * flag, no bit). [OPT-LITSCAN] S2a (pin a32bc86e, abi 41, [B108]) adds
+ * ONE more, `info vm_lit_runs` -- `vm_cls_folds`'s own scope and shape
+ * (VM-only, hybrids included, no DFA artifact; a COUNT with no rx_info
+ * mirror, printed behind its own presence check, `0` a value). abi 40
+ * ([FINDINGS] B1) appends ONE `rx_info` member (`findings`) this shim
+ * does not read, so the floor stays 16 across BOTH abi 40 and 41.
  */
 
 #define _GNU_SOURCE
@@ -178,6 +184,8 @@ static const char *(*pb_vm_entry_shape)(void);
 static long long (*pb_vm_program_bytes)(void);
 static int       (*pb_has_vm_cls_folds)(void);
 static long long (*pb_vm_cls_folds)(void);
+static int       (*pb_has_vm_lit_runs)(void);
+static long long (*pb_vm_lit_runs)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -411,6 +419,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_entry_shape); SYM(pb_vm_entry_shape);
     SYM(pb_vm_program_bytes);
     SYM(pb_has_vm_cls_folds); SYM(pb_vm_cls_folds);
+    SYM(pb_has_vm_lit_runs); SYM(pb_vm_lit_runs);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -688,6 +697,8 @@ int main(int argc, char **argv) {
      * VM artifact" (or a pcrec before abi 23). */
     if (pb_has_vm_cls_folds())
         printf("info\tvm_cls_folds\t%lld\n", pb_vm_cls_folds());
+    if (pb_has_vm_lit_runs())
+        printf("info\tvm_lit_runs\t%lld\n", pb_vm_lit_runs());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

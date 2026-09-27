@@ -1,11 +1,14 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides twenty-one testees at the commit pinned in `configs.toml`, and one —
-`pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
+Provides twenty-nine testees at the commit pinned in `configs.toml`, and
+one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
 siblings of the usual four, up from sixteen; [B101], 2026-09-26: one more,
-`pcrec-auto-noreqbyte`, at the 02902356 re-pin):
+`pcrec-auto-noreqbyte`, at the 02902356 re-pin; [B108], 2026-09-27: eight
+more at the a32bc86e re-pin — `pcrec-{auto,vm}-nolitrun`,
+`pcrec-{auto,vm}-noaltclsfactor`, `pcrec-{auto,vm}-noaltclsfactor-
+nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -20,6 +23,10 @@ siblings of the usual four, up from sixteen; [B101], 2026-09-26: one more,
 | `pcrec-auto-noisland` | the same flags as `pcrec-auto`, plus `-fno-alt-island` | ([B37]) THE ALTERNATION-ISLAND DENY AXIS: pcrec [ENG-ISL] STEP 1's VM alternation island (abi 18, a trie over a flat literal alternation's bytes instead of vm_alt's resume chain) DENIED, so the artifact is the pre-[ENG-ISL] VM program built at the SAME pin — the island's BEFORE on bench/altwide (the ORDER pair w-256/srt-256, the VM refusal wall, the island/chain code-byte ratios), with the lowering as the one variable. Derives `pcrec_334fd10e_auto-caps-simdna_noisland`. At this pin the denial also moves `vm_frameless` (a prefix-free island pushes nothing; the chain does) and `vm_entry_shape` (a framed artifact is `plain`) — the frame discipline and the entry chain travel with the lowering |
 | `pcrec-auto-noclsfold`, `pcrec-vm-noclsfold` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-cls-fold` | ([B39], pin d34c9131 / abi 23) THE ASCII-FOLD CLASS-TEST DENY AXIS: pcrec [FORM-CHAR] STEP 1's fold shape denied — every two-member fold-pair class (what `(?i)` makes of a letter, D23) reads its 32-byte bitmap again instead of `(byte | 0x20) == lower`, and the tables are emitted again — at the SAME pin, so the pair is the fold's BEFORE/AFTER with the class-test shape as the one variable. TWO siblings because the fold is VM ROUTE ONLY (tuning.md §2.22): `auto` took the DFA on the bench's only `(?i)` patterns (altwide ci-256/ci-512) at 334fd10e, so the `auto` pair is byte-identical (MEASURED — the same-pin noise-floor control) and the `vm` pair is the one the AFTER is read on. `config_extra` word `noclsfold`, after `noisland`. |
 | `pcrec-auto-noreqbyte` | the same flags as `pcrec-auto`, plus `-fno-req-byte` | ([B101], pin 02902356 / abi 37) THE NECESSARY-BYTE PRE-CHECK DENY AXIS: pcrec [OPT-REQBYTE] (bit 30) denied, so no necessary byte or run is analysed or checked — `req_byte`/`req_run`/`req_why` all `none` — at the SAME pin. [OPT-REQBYTE] landed in pcrec's batch 1 (every pin held since 8d716693 carries it), so this TWIN is the only instrument that isolates it (inbox I-111's owed timing, capability@0.1's twelve landing-bar cells). NOT a pure pre-check twin where S1's `run-pinned` prefilter is built on the run (github-pat, router-prefix-order: the prefilter falls back too); program-IDENTICAL where the byte is `dominated` with no run (floor-byte, uuid-grok); `rx_info.flags` = 1073741824 on every denied artifact (not in pcrec's strategy_denials mask). `config_extra` word `noreqbyte`, after `noclsfold`. See "Re-pin at 02902356" |
+| `pcrec-auto-nolitrun`, `pcrec-vm-nolitrun` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-lit-run` | ([B108], pin a32bc86e / abi 41) THE [OPT-LITSCAN] S2a VM LITERAL-RUN DENY AXIS: every VM literal run of two-plus bytes (and an island's single-child trie chain) goes back to the pre-abi-41 per-byte compare chain — S2a's BEFORE at the SAME pin. `RX_VM_LIT_RUNS` 1 → 0 on a plain 3-byte literal forced VM (`vm_program_bytes` 256 → 550); `-fno-lit-run` is in pcrec's strategy_denials mask, so a run-free artifact is `.flags`-identical. `config_extra` word `nolitrun`, after `noreqbyte`. See "Re-pin at a32bc86e" |
+| `pcrec-auto-noaltclsfactor`, `pcrec-vm-noaltclsfactor` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-altcls-factor` | ([B108], pin a32bc86e) THE [OPT-ALTCLS] STAGE-2 PREFIX-FACTORING DENY AXIS: an axis that predates this bench (shim.c's own ALTCLS paragraph) but never had a pinned testee until I-113 §7.1's 2x2 asked whether factoring changes what S2a's runs ARE. `config_extra` word `noaltclsfactor`, after `nolitrun` |
+| `pcrec-auto-noaltclsfactor-nolitrun`, `pcrec-vm-noaltclsfactor-nolitrun` | `-fno-altcls-factor -fno-lit-run` together | ([B108]) the 2x2's fourth corner, both mechanisms denied at once |
+| `pcrec-vm-noreqbyte-noreqrun`, `pcrec-vm-noreqbyte-noreqrun-nolitrun` | `--engine=vm -fno-req-byte -fno-req-run[ -fno-lit-run]` | ([B108], I-113 §7.2's L-SWEEP) both whole-window pre-checks denied so a failing subject reaches the VM's own P4 compare (or, on the second config, the pre-abi-41 chain) rather than being answered by a memchr/memcmp pair first |
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
 | `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
@@ -529,6 +536,140 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin at a32bc86e (abi 39 -> 41) — 2026-09-27, lane b108repin, inbox I-113
+
+**TWO abi steps, one merge (`Merge branch 'lane/s2a'`), against `751b9c6d`
+(abi 39) as BEFORE.** `git log 751b9c6d..a32bc86e` shows exactly two
+`PCREC_ARTIFACT_ABI` bumps:
+
+- **39 -> 40 is [FINDINGS] B1**: pcrec's byte-rate accessor + the
+  `src/findings/default.rxt` embedded data tier (a "block var"-shaped
+  addition, not code): `<PREFIX>_FINDINGS` (a string, `"byte-rate=
+  default:<16 hex>"` — a hash of the SHIPPED DEFAULT RATE TABLE, never of
+  the pattern text: MEASURED identical across unrelated patterns) and
+  `rx_info.findings` (a `const char *`) APPENDED at the very end of
+  `struct rx_info`, inside the SAME `#ifndef PCREC_RX_ABI_H` block as
+  every other field (diffed field for field on a plain `abc` witness:
+  empty diff but for the one appended line). Byte-mode emitted PROGRAMS
+  are UNCHANGED (pcrec's own claim, confirmed): the only artifact bytes
+  this step moves are the new stamp line and its rx_info initializer,
+  +385 B FLAT on both engines (MEASURED via `pcrec-local` at both pins on
+  a pure-DFA witness, `foo[0-9]+bar`: 22156 -> 22541 total, 15735 -> 16120
+  code — exactly pcrec's own quoted number). `PCREC_MAX_FIND_COUNT` /
+  `PCREC_FIND_FLOOR_PPM` join `--list-limits` (62 -> 64 rows); no new axis,
+  no new definition, no `.rxt` grammar row.
+- **40 -> 41 is [OPT-LITSCAN] S2a**: a VM literal run of two-plus
+  consecutive one-byte literals on one concatenation (`pcrec_lit_run`),
+  and an alternation island's single-child trie chain down to its first
+  branching or accepting node, is emitted as ONE `pos + L <= n` bounds
+  check plus one constant-length `memcmp` (P4, `pcrec_emit_exact_compare`
+  — the SAME emitter function the DFA route's own necessary-run pre-check
+  already used since [OPT-LITSCAN] S1, shared CODE never a shared COUNT:
+  `RX_REQ_RUN` and `RX_VM_LIT_RUNS` are two different stamps). New axis
+  `lit-run` (`--list-axes` 91/32 -> 93/32: order-1 `run` predicate / order-2
+  `denied`, `PCREC_NO_LIT_RUN` bit 33, `-fno-lit-run`, masked out of
+  `rx_info.flags` from its own introduction). ANSWER-IDENTICAL by
+  construction (the same bytes accepted; pcrec's own s2a_report.md: the
+  denied program is main's pre-abi-41 program byte for byte, past the one
+  new stamp line — verified there by diff on three witnesses). NULL on
+  every DFA-routed cell.
+
+**`struct rx_info` gains exactly the ONE appended `findings` member; the
+shim floor STAYS 16.** `RX_VM_LIT_RUNS` has no `rx_info` mirror at all
+(D77's "no run-time consumer" precedent, `vm_alt_islands`'/`vm_cls_folds`'
+own shape), so abi 41 raises nothing; abi 40's one appended field is read
+by no shim getter (the SAME judgement [B90] made for `vars`/`nvars` — a
+table with no consumer here). Both directions confirmed at the build:
+the abi-sabotage arms (`check_abi_floor_refusal`, an artifact claiming
+`.abi = 15`) still refuse by name, and the unmodified artifact still
+loads in the same run.
+
+**Registries: THREE of four byte-identical, one gains two axis rows and
+two limit rows — every delta diffed against the live pin, not asserted
+from either lane's own report.** `list_axes.tsv` 91/32 -> **93/32** (the
+two `lit-run` rows above); `list_limits.tsv` 62 -> **64**
+(`PCREC_MAX_FIND_COUNT` 2^40, `PCREC_FIND_FLOOR_PPM` 2 ppm — both
+[FINDINGS] B1's); `list_definitions.tsv` **50 rows byte-identical**
+(neither step touches `.rxt` grammar); `list_schema.tsv` **78 rows
+byte-identical**.
+
+**The acceptance mover, CONFIRMED against BOTH binaries directly**
+(`check_b108_acceptance_mover`, never assumed from I-113's own quoted
+numbers): `wild-datetime-datefinder-alternation` (bench/capability) under
+`--engine=vm` REFUSES at 751b9c6d ("pattern too large: 666,249 bytes of
+emitted code... limit 500000" — this project's `--features all` protocol
+token makes the exact byte count differ slightly from I-113's own
+666,632/482,736, quoted under pcrec's bare default flags) and COMPILES at
+a32bc86e (482,765 code bytes, `RX_VM_LIT_RUNS 826`).
+
+**The compile-only census reproduces I-113's own bench manifest EXACTLY**
+(`docs/dev/measurements/probe_b108_census.py`, capability@0.1's 64
+patterns x pcrec's own 4-config population — `auto-caps`/`auto-nocaps`/
+`vm-caps`/`vm-nocaps` — the same population S2a's own `s1_identity.py`
+used): **186 identical / 63 changed / 5 refused-both / 2
+refusal-mover** — digit for digit against I-113's "63 bench + 1,018
+corpus" line (the corpus half is pcrec's own `tests/**/*.rxt` population,
+out of scope for this project). v2 program identity (`tools/
+program_identity.py`) needs NO change for [FINDINGS] B1: its rule 2
+drops the whole `#ifndef PCREC_RX_ABI_H` block wholesale (`rx_info`'s own
+declaration, `findings`'s appended member included) and rule 3 drops the
+unreferenced initializer (`.findings = "byte-rate=..."`), so B1's own
+addition is invisible to the identity by construction — this census is a
+pure S2a read, archived at
+`docs/dev/measurements/2026-09-27-b108-census.txt`.
+
+**`RX_VM_LIT_RUNS` wired end to end** (`pb_has_vm_lit_runs()`/
+`pb_vm_lit_runs()` in shim.c behind the same presence-question shape as
+`pb_vm_cls_folds()`; `driver.c`'s `info vm_lit_runs`; adapter.py's
+`INT_PAIRS`, `STAMP_SCOPE["vm_lit_runs"] = ("vm", 41)`, and a
+`METADATA_DECL` entry) and asserted BY VALUE on two witnesses: a plain
+3-byte literal forced VM (`abc`: runs 1 -> 0 under `-fno-lit-run`,
+`vm_program_bytes` 256 -> 550 — both `check_b108_litrun_stamp` and the
+new `DENY_CONTROLS` row) and `foo|bar` (an island witness: runs 2,
+`vm_program_bytes` 1532 -> 1227, MEASURED — the island's own single-child
+chains collapse too).
+
+**Size books: NOT a single flat term, MEASURED per witness.** Two new
+constants, `B108_FINDINGS_STAMP_LINE` (385, both engines, flat — the
+findings macro + its rx_info initializer line) and
+`B108_VM_LIT_RUNS_STAMP_LINE` (25, VM only, flat AT ANY run-free/denied
+count — the new stamp line's own text). Where a VM artifact stamps a
+literal run, P4's collapse SHRINKS the program by a witness-specific
+amount that overrides the flat terms — re-measured directly rather than
+derived on every affected `STAMP_CASES`/`LEDGER_STAMP_CASES` row: the
+`foo|bar` island witness (+125 net, not +410), the altwide island
+witnesses w-256/srt-256/pfx3-256/s-256/w-384 (vm_program_bytes falls by
+34-56%), `wild-secrets-github-pat` (a HYBRID whose VM body is not exempt:
+net -1150), `tag-pair-match` (+270, not +410), `nested-comment-rec` (a
+net SHRINK, -154), `winpath-near-miss`'s K64 row (+271, not +410) and
+`level-context`'s [SEL-1] hybrid (12,026 -> 6,805 program bytes, two
+islanded level-word sets). `check_mechanism_stamps` 129/129,
+`check_deny_flag_controls` 18/18.
+
+**Two derived FINDINGS re-measured, never silently patched.** I-43's
+island/chain code-byte ratio (bench/altwide, against the SAME pin's
+`-fno-alt-island` arm) INVERTS at this pin: 0.856/0.812/0.764 (every
+prior pin through d34c9131) -> **1.3105/1.3206/1.3561** — the island is
+now LARGER than the chain it replaces, because the chain's per-branch
+literal runs collapse independently and in full where the island's
+shared trie dispatch cannot collapse the same way branch by branch. The
+altwide VM refusal wall MOVES A SECOND TIME: [B37] held it at
+384<w<=512; at this pin BOTH the forced-VM island route and the
+`-fno-alt-island` chain route now compile through `w-1024` (456,072 /
+318,862 code bytes, both over the 250,000 advisory but under the 500,000
+cap) and refuse at `w-2048` (884,931 / 621,150 bytes) — the new wall is
+**1024<w<=2048** on both arms. The DFA route's own wall (512<w<=1024,
+[B42]'s [K53-SELRETRY] finding) is UNTOUCHED, since S2a is a VM-only
+mechanism.
+
+**Eight new pinned testees** for I-113 §7.1's factoring x lit-run 2x2 and
+§7.2's L-sweep (the table above); three new `DENY_FLAGS` entries in
+adapter.py (`-fno-req-run`/`noreqrun`, `-fno-altcls-factor`/
+`noaltclsfactor`, `-fno-lit-run`/`nolitrun`, appended AFTER `noreqbyte`
+so no existing `testee_id`'s parts move). Catalogue **3.12**
+(`[[pin_order]]` append). No store/reports write, no timing of any kind
+— the measurement window is the manager's (I-113's own instruction).
 
 ## Re-pin at 751b9c6d (abi 37 -> 39) — 2026-09-27, lane b104repin, inbox I-112
 

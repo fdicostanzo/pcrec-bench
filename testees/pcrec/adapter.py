@@ -1504,6 +1504,50 @@ METADATA_DECL = {
                        "scan edge's class bodies never consult "
                        "vm_cls_shape",
     },
+    # [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a): the fifth VM-only
+    # activity count, on `vm_cls_folds`'/`vm_alt_islands`' scope and for
+    # the same reason -- a mechanism DISCOVERED WHILE EMITTING, never a
+    # mode chosen upstream.
+    "vm_lit_runs": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_LIT_RUNS ([OPT-LITSCAN] S2a, pcrec abi "
+                  "41+), read through pb_vm_lit_runs() behind "
+                  "pb_has_vm_lit_runs(); no rx_info mirror (D77: no "
+                  "run-time consumer); scope checked by STAMP_SCOPE "
+                  "(every VM artifact, hybrids included, no DFA artifact) "
+                  "and the VALUE in tools/selfcheck.py on a hand-chosen "
+                  "literal-run witness and on bench/capability's own "
+                  "`wild-secrets-aws-access-key-id` (auto/vm hybrid, "
+                  "MEASURED 7 runs, matching pcrec's own s2a_report.md "
+                  "§7.1 (a') exactly) with `-fno-lit-run` (--list-axes "
+                  "`lit-run`, bit 33) as the deny control that reaches 0 "
+                  "and restores the pre-abi-41 per-byte compare chain",
+        "description": "how many EMISSION-CONTIGUOUS runs of two or more "
+                       "consecutive one-byte literals on one concatenation "
+                       "(`pcrec_lit_run`, a pure node-grain fact over "
+                       "A_CLASS singleton elements) -- and, on the SAME "
+                       "terms, an alternation island's single-child trie "
+                       "chain down to its first branching or accepting "
+                       "node -- this artifact emits as ONE bounds check "
+                       "(`pos + L <= n`) plus one constant-length `memcmp` "
+                       "(P4, `pcrec_emit_exact_compare`), instead of the "
+                       "per-byte compare chain every pin before abi 41 "
+                       "wrote. A COUNT rather than a boolean: a pattern "
+                       "mixes runs with single-byte and multi-byte class "
+                       "positions, and each run is charged as ONE step "
+                       "(D51: forward progress within a run is free) so "
+                       "denying the flag can only make a give-up happen "
+                       "no earlier. 0 is a value: no run of two-plus "
+                       "qualified, or a `-fno-lit-run` build. "
+                       "ANSWER-IDENTICAL either way (the same bytes "
+                       "accepted; pcrec's own s2a_report.md: the denied "
+                       "program is main's pre-abi-41 program byte for "
+                       "byte, past the one new stamp line) -- a SIZE and "
+                       "cost fact only. NULL on every DFA-routed cell: the "
+                       "DFA route's own necessary-run pre-check shares P4 "
+                       "as an emitter function but has its own stamp, "
+                       "`RX_REQ_RUN` -- the two counts are never one",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1629,7 +1673,7 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "fast_frames", "fast_trail", "vm_frameless",
              "altcls_merges", "altcls_factored",
              "dfa_uniform_folds", "vm_alt_islands", "vm_program_bytes",
-             "vm_cls_folds",
+             "vm_cls_folds", "vm_lit_runs",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1739,6 +1783,13 @@ STAMP_SCOPE = {
     # witness, a forced-VM one, an anchored one-attempt VM one, and a
     # dominated DFA one; the closed four-token set holds on all four.
     "req_why":               ("every",    31),
+    # [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a): the fifth VM-only
+    # activity count, on `vm_cls_folds`'/`vm_alt_islands`' own scope and
+    # for the same reason (family (b): what the emitted program turned
+    # out to CONTAIN, discovered while emitting). An abi-39/40 artifact
+    # (a `pcrec-local` binary at the previous pin) records it as "not
+    # stamped" without tripping this table.
+    "vm_lit_runs":           ("vm",       41),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -2489,6 +2540,89 @@ DENY_FLAGS = (
      "as well -- the pre-check's BEFORE at the SAME pin, answer-identical "
      "to its sibling by contract (the pre-check only ever answers NOMATCH "
      "on a window no match can occupy)"),
+    # [B108] (pin a32bc86e; --list-axes `req-run` bit 31; inbox I-113 §7.2's
+    # L-sweep, which needs the PRE-CHECKS out of the way so a failing
+    # subject reaches the VM's own P4 compare rather than being answered by
+    # a memchr/memcmp pair before it). NARROWER than `-fno-req-byte`: the
+    # necessary BYTE's own one-memchr proof still fires (req_byte can still
+    # read a value); only the RUN's extra constant-length memcmp -- built
+    # on the byte, [OPT-REQPOS] tier 2b -- is removed (req_run reads
+    # `none`). Masked (PCREC_NO_REQ_RUN joins strategy_denials for the
+    # mask's own reason, pcrec's own comment: "the run check answers
+    # NOMATCH only where every attempt would have failed"), so an artifact
+    # with no necessary run (81.4% of pcrec's own corpus, per their
+    # comment) is `.flags`-identical to its sibling. The L-sweep's own
+    # forced-VM configs combine this with `-fno-req-byte` (both denied
+    # removes both pre-checks entirely, the sweep's own stated need) and,
+    # on the second row, with `-fno-lit-run` as well.
+    ("-fno-req-run", "noreqrun",
+     "the [OPT-REQPOS] tier 2b NECESSARY-RUN check denied (--list-axes "
+     "`req-run`, bit 31): the byte's own one-memchr proof still fires "
+     "where a necessary byte exists, but the run's extra constant-length "
+     "memcmp built on it is not emitted (req_run reads `none`) -- masked, "
+     "so an artifact with no necessary run of two or more bytes is "
+     "`.flags`-identical to its sibling; [B108]'s own reason to name it "
+     "is the L-sweep (inbox I-113 §7.2), which denies this beside "
+     "`-fno-req-byte` so a failing subject reaches the VM compare under "
+     "test rather than a pre-check answering NOMATCH first"),
+    # [B108] (pin a32bc86e; --list-axes `altcls-factor` bit 11; inbox
+    # I-113 §7.1's 2x2). The axis has existed since [OPT-ALTCLS] (well
+    # before this bench read any of its stamps, shim.c's own ALTCLS
+    # paragraph); no pinned testee named it because nothing had asked for
+    # its BEFORE until S2a's own factoring x lit-run interaction (a run's
+    # length, and so whether P4 fires as one compare or several, depends
+    # on whether stage 2 pulled a shared prefix OUT of the alternation
+    # first). Denied, only stage 2 (the PREFIX-FACTORING pass, `RX_ALTCLS_
+    # FACTORED` reads its own registry row 2, "denied") is skipped; stage
+    # 1 (merging a maximal single-character run into one class,
+    # `RX_ALTCLS_MERGES`) is unaffected -- the two stages are indepen-
+    # dently denied by DESIGN (`-fno-altcls-merge` is a separate, unused-
+    # here bit). Masked (bit 11 has been in strategy_denials since long
+    # before this shim read either stamp), so a pattern with no factorable
+    # run is `.flags`-identical to its sibling. Answer-identical by
+    # construction: factoring only regroups an alternation's own branches
+    # (docs/spec, pcrec I-39), so denying it changes which runs the VM
+    # sees, never what a subject matches.
+    ("-fno-altcls-factor", "noaltclsfactor",
+     "the [OPT-ALTCLS] stage-2 PREFIX-FACTORING pass denied (--list-axes "
+     "`altcls-factor`, bit 11): stage 1's single-character class merge is "
+     "unaffected, but no shared-prefix run is pulled out of an "
+     "alternation's branches first (RX_ALTCLS_FACTORED reads `denied`), "
+     "so this artifact is the pre-factoring alternation lowering at the "
+     "SAME pin -- [B108]'s reason to name it is reading factoring's "
+     "interaction with S2a's literal-run compare (inbox I-113 §7.1's "
+     "2x2), never a claim that factoring itself is new here; masked, "
+     "answer-identical to its sibling by construction (factoring only "
+     "regroups branches, pcrec I-39)"),
+    # [B108] (pin a32bc86e, abi 41; [OPT-LITSCAN] S2a; --list-axes
+    # `lit-run` bit 33; inbox I-113). THE SIXTH content-changing denial and
+    # the third on the VM route: denied, a run of two or more consecutive
+    # one-byte literals (and an alternation island's single-child trie
+    # chain) is emitted as the PRE-abi-41 per-byte compare chain instead of
+    # P4's one bounds check plus one constant-length memcmp
+    # (`RX_VM_LIT_RUNS` reads 0, where the default sibling reads the
+    # run's own count), so this artifact is the pre-S2a VM program built
+    # by the SAME compiler -- S2a's BEFORE, and pcrec's own s2a_report.md
+    # states the denied program is main's (pre-abi-41) byte for byte past
+    # the one new stamp line, verified there by diff on three witnesses.
+    # Masked (`PCREC_NO_LIT_RUN` joins strategy_denials at its own
+    # introduction, pcrec's comment: "no answer moves ... masked so an
+    # artifact with no run is byte-identical under the flag"), so a
+    # pattern with no VM literal run of two-plus bytes is `.flags`-
+    # identical to its sibling -- MEASURED here: this census's OLD-pin
+    # column (`docs/dev/measurements/probe_b108_census.py`) is exactly
+    # this denied program's v2 identity on every row.
+    ("-fno-lit-run", "nolitrun",
+     "the [OPT-LITSCAN] S2a VM LITERAL-RUN compare denied (--list-axes "
+     "`lit-run`, bit 33): a run of two or more consecutive one-byte "
+     "literals (and an island's single-child trie chain) is emitted as "
+     "the pre-abi-41 per-byte compare chain instead of P4's one bounds "
+     "check plus one constant-length memcmp (RX_VM_LIT_RUNS reads 0), so "
+     "this artifact is the pre-S2a VM program built by the SAME compiler "
+     "-- S2a's BEFORE, byte-identical to the same pattern's pre-abi-41 "
+     "program past the one new stamp line (pcrec's own s2a_report.md), "
+     "and masked so a run-free pattern is `.flags`-identical to its "
+     "sibling"),
 )
 
 
@@ -3619,6 +3753,15 @@ class Adapter(_ad.Adapter):
             further neighbour to imply -- they are readable only against
             req_byte/req_run's own value, which this rule already covers,
             and by name in tools/selfcheck.py's by-value witnesses.
+
+        [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a) adds no numbered
+        claim, on `vm_cls_folds`'s own precedent: `vm_lit_runs` is a count
+        with no mirror and no neighbour to imply, checked by scope here
+        (`vm` since 41) and by value in tools/selfcheck.py. abi 40
+        ([FINDINGS] B1) adds no claim of any kind: `rx_info.findings` has
+        no macro pair this adapter reads at all (D77's reason again --
+        no consumer needs the analysis-provenance string), so there is
+        nothing here for it to agree or disagree with.
 
         A pcrec too old to stamp a given macro is not a disagreement: an
         absent macro is checked only against the field's own absence, never

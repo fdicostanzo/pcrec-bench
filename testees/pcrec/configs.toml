@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "751b9c6d"
+pin = "a32bc86e"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -580,6 +580,80 @@ engine_mode = "auto"
 captures = "on"
 flags = ["--features", "all", "-fno-req-byte"]
 description = "pcrec defaults with the [OPT-REQBYTE] NECESSARY-BYTE PRE-CHECK DENIED (-fno-req-byte, --list-axes bit 30): no required byte or run analysed or checked at the SAME pin, so against pcrec-auto the pre-check's BEFORE/AFTER with the pre-check (and, where the default carries it, S1's run-pinned prefilter) as the one variable ([B101], pcrec I-111)"
+
+# ---------------------------------------------------------------------------
+# [B108] (pin a32bc86e, abi 41; [OPT-LITSCAN] S2a; inbox I-113). EIGHT new
+# testees, all scratch-free pinned configs, [B37]/[B39]/[B101]'s shape
+# exactly: the flag rides in `flags`, the adapter DERIVES the axis
+# (`effective_denies`, `DENY_FLAGS` in adapter.py -- three new entries this
+# pin, `noreqrun`/`noaltclsfactor`/`nolitrun`, appended AFTER `noreqbyte` so
+# no existing id's parts move), and `config_extra` composes the combined
+# word in that fixed DENY_FLAGS order regardless of the order a config's
+# own `flags` list spells the pcrec options in.
+#
+# I-113 §7.1's 2x2 (factoring x lit-run, on `wild-secrets-aws-access-key-
+# id`'s auto/vm forms and `foo.x|foobar|foo.` --engine=vm): the
+# default x default corner is the PRE-EXISTING `pcrec-auto`/`pcrec-vm`;
+# the other three corners are the four configs below through
+# `pcrec-vm-noaltclsfactor-nolitrun`. `-fno-altcls-factor` never had a
+# pinned testee before this pin (the axis itself is pre-[B108], [OPT-
+# ALTCLS]; nothing had asked for its BEFORE until this interaction).
+#
+# I-113 §7.2's L-sweep needs BOTH pre-checks out of the way so a failing
+# subject reaches the VM's P4 compare under test rather than being
+# answered by a memchr/memcmp pair first (the report's own words: "under
+# default flags... the default-flags row measures the pre-check, not
+# S2a. Measure both rows and label them"); the pre-existing `pcrec-vm`
+# IS that "default flags" row, and `pcrec-vm-noreqbyte-noreqrun` /
+# `pcrec-vm-noreqbyte-noreqrun-nolitrun` below are the sweep's own two
+# rows against each other.
+[testees.pcrec-auto-nolitrun]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-lit-run"]
+description = "pcrec defaults with the [OPT-LITSCAN] S2a VM LITERAL-RUN COMPARE DENIED (-fno-lit-run, --list-axes bit 33): every VM literal run/island chain goes back to the pre-abi-41 per-byte compare at the SAME pin, so against pcrec-auto this is S2a's BEFORE/AFTER wherever auto selects a VM hybrid with a run ([B108], pcrec I-113)"
+
+[testees.pcrec-vm-nolitrun]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-lit-run"]
+description = "pcrec --engine=vm with the [OPT-LITSCAN] S2a VM LITERAL-RUN COMPARE DENIED (-fno-lit-run, bit 33): the forced-VM route is where every literal run/island chain is measured, so against pcrec-vm this is S2a's own BEFORE/AFTER -- the D77 bench pass's own named pair ([B108], pcrec I-113 §7)"
+
+[testees.pcrec-auto-noaltclsfactor]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-altcls-factor"]
+description = "pcrec defaults with the [OPT-ALTCLS] stage-2 PREFIX-FACTORING DENIED (-fno-altcls-factor, --list-axes bit 11): the pre-factoring alternation lowering at the SAME pin, first pinned here for I-113 §7.1's 2x2 -- against pcrec-auto this is factoring's own BEFORE/AFTER, crossed with pcrec-auto-nolitrun to read the two mechanisms' interaction ([B108], pcrec I-113 §7.1)"
+
+[testees.pcrec-vm-noaltclsfactor]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-altcls-factor"]
+description = "pcrec --engine=vm with the [OPT-ALTCLS] stage-2 PREFIX-FACTORING DENIED (-fno-altcls-factor, bit 11): against pcrec-vm, factoring's BEFORE/AFTER on the forced-VM route, crossed with pcrec-vm-nolitrun for I-113 §7.1's 2x2 ([B108])"
+
+[testees.pcrec-auto-noaltclsfactor-nolitrun]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-altcls-factor", "-fno-lit-run"]
+description = "pcrec defaults with BOTH [OPT-ALTCLS] stage-2 factoring AND the [OPT-LITSCAN] S2a literal-run compare DENIED: the 2x2's fourth corner against pcrec-auto/pcrec-auto-noaltclsfactor/pcrec-auto-nolitrun ([B108], pcrec I-113 §7.1)"
+
+[testees.pcrec-vm-noaltclsfactor-nolitrun]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-altcls-factor", "-fno-lit-run"]
+description = "pcrec --engine=vm with BOTH [OPT-ALTCLS] stage-2 factoring AND the [OPT-LITSCAN] S2a literal-run compare DENIED: the 2x2's fourth corner on the forced-VM route against pcrec-vm/pcrec-vm-noaltclsfactor/pcrec-vm-nolitrun ([B108], pcrec I-113 §7.1)"
+
+[testees.pcrec-vm-noreqbyte-noreqrun]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-req-byte", "-fno-req-run"]
+description = "pcrec --engine=vm with BOTH necessary-byte and necessary-run pre-checks DENIED (-fno-req-byte -fno-req-run, bits 30/31): I-113 §7.2's L-SWEEP first row -- with neither pre-check emitted, a failing subject reaches the VM's own P4 literal-run compare (or, under the sibling below, the pre-abi-41 chain) instead of being answered by a memchr/memcmp pair before the VM ever runs ([B108], pcrec I-113 §7.2)"
+
+[testees.pcrec-vm-noreqbyte-noreqrun-nolitrun]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-req-byte", "-fno-req-run", "-fno-lit-run"]
+description = "pcrec-vm-noreqbyte-noreqrun plus the [OPT-LITSCAN] S2a literal-run compare DENIED (-fno-lit-run, bit 33): I-113 §7.2's L-SWEEP second row -- against its sibling above, S2a's own BEFORE/AFTER with both pre-checks already out of the way on every subject kind (matching, first-byte-mismatch, last-byte-mismatch, length L-1) ([B108], pcrec I-113 §7.2)"
 
 # [B77] U2 (docs/design/utf8_set_v1.md 7.1/7.2, F-C1 -- a MUST per inbox
 # I-94): the usual four, all compiled `-e utf8` (I-90 clause 4). The
