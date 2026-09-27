@@ -1,0 +1,144 @@
+# docs/dev/measurements/2026-09-27-b104-o62-identity-census.txt
+# [B104] (team lead's brief for O-62 SS2-6's structural predictor), lane b104pred, 2026-09-27
+# bench commit: d213e752c2a80eb81b462fcc9261aec1f5c9bc0d (lane/b104pred, off master), plus
+#   this lane's own WIP commits on top (see git log lane/b104pred)
+# pcrec pins: 25b1984f (abi 27, O-62's own cited baseline)
+#             -> 751b9c6d (abi 39, this window's pin)
+# binaries (both pre-built by pin.sh, never built by this probe):
+#   pcrec-25b1984f/build/pcrec sha256 9a0a969b2bc226ea52221eb07f5a0fe665681d254577d829495adaaaec4bee93
+#   pcrec-751b9c6d/build/pcrec sha256 58a14c1948e23964627f328df7239783e165dee24134aaac43a1c5c41d857da3
+# generator: python3 docs/dev/measurements/probe_b104_o62_identity.py
+# compile-only (no gcc, no timing, no store write, no quiet-box gate --
+# BD3 exemption for a compile-only sweep, same posture as every prior
+# program-identity census this project has run); box load at the time
+# (idle otherwise; the b104repin lane's own detached make check
+# ran concurrently on this same box, unrelated -- own emit-only pcrec
+# invocations do not compete meaningfully with C compiles)
+#
+# ============================================================
+# PART 1 -- THE CENSUS ITSELF (verbatim stdout of the generator run)
+# ============================================================
+CLI shapes: {'25b1984f': '--', '751b9c6d': '--pattern'}
+DONE rows=1110 identical=306 changed=692 refused-both=112 refusal-mover=0
+  email      rows=18 identical=2 changed=16 refused-both=0 refusal-mover=0
+  loglines   rows=66 identical=12 changed=54 refused-both=0 refusal-mover=0
+  bounded    rows=258 identical=116 changed=138 refused-both=4 refusal-mover=0
+  altwide    rows=198 identical=65 changed=97 refused-both=36 refusal-mover=0
+  syntax     rows=570 identical=111 changed=387 refused-both=72 refusal-mover=0
+DONE rc=0
+
+# ============================================================
+# PART 2 -- THE SANITY CHECK (the manager's own question, 2026-09-27):
+# does v2 normalization exclude the abi 29-37 stamp #define lines, or
+# is 'changed' inflated by stamp text alone? Verbatim stdout of
+# probe_b104_o62_identity_sanity.py.
+# ============================================================
+CLI shapes: {'25b1984f': '--', '751b9c6d': '--pattern'}
+
+=== check 1: are the new stamp #define lines excluded by normalize_one? (bench/email/patterns/factored.rx, auto-caps, plain) ===
+25b1984f raw stamp lines: []
+751b9c6d raw stamp lines: ['#define RX_END_WINDOW "none"', '#define RX_REQ_BYTE "64"', '#define RX_REQ_RUN "none"', '#define RX_REQ_WHY "emitted"']
+25b1984f stamp names surviving normalize_one: []
+751b9c6d stamp names surviving normalize_one: []
+
+=== check 2: diff the normalized programs of three independent 'changed' rows (one per set) ===
+---- bench/email/patterns/factored.rx (plain) ----
+--- 25b1984f.norm
++++ 751b9c6d.norm
+@@ -25,6 +25,9 @@
+ capture_spans[rx_g][0] = PCREC_UNSET;
+ capture_spans[rx_g][1] = PCREC_UNSET;
+ }
++if (subject_length <= search_from ||
++!memchr(subject + search_from, 64, subject_length - search_from))
++return 0;
+ static const unsigned char rx_forward_byte_class[256] = {
+ 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 1, 1, 0, 1, 1,
+ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+(12 diff line(s) total, header included)
+
+---- bench/syntax/patterns/alt-nested.rx (whole-subject) ----
+--- 25b1984f.norm
++++ 751b9c6d.norm
+@@ -30,6 +30,8 @@
+ #endif
+ int rx_search(const unsigned char *subject, size_t subject_length, size_t search_from, ptrdiff_t (*capture_spans)[2])
+ {
++if (subject_length > 3ULL && search_from < subject_length - 3ULL)
++search_from = subject_length - 3ULL;
+ static const unsigned char rx_forward_byte_class[256] = {
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+(11 diff line(s) total, header included)
+
+---- bench/bounded/patterns/cls-lazy-16384.rx (whole-subject) ----
+--- 25b1984f.norm
++++ 751b9c6d.norm
+@@ -136,6 +136,8 @@
+ ptrdiff_t result;
+ size_t attempt_position;
+ if (search_from > subject_length) return 0;
++if (subject_length > 16384ULL && search_from < subject_length - 16384ULL)
++search_from = subject_length - 16384ULL;
+ attempt_position = search_from;
+ rx_run_state_init(run);
+ ctx.subject = subject; ctx.len = subject_length; ctx.ncap = 0;
+(11 diff line(s) total, header included)
+
+
+# ============================================================
+# READING (not part of either script's own output; the manager's ask,
+# answered directly from the two checks above)
+# ============================================================
+#
+# Q: does program_identity's v2 normalization exclude the emitted STAMP
+#    lines (RX_REQ_BYTE/_RUN/_WHY, RX_END_WINDOW, RX_VM_START, RX_TUNE...)?
+#    If those count, "changed" is inflated by stamp text and does not mean
+#    the program changed.
+#
+# A: YES, it excludes them -- CONFIRMED EMPIRICALLY on real emitted text,
+#    not merely read from the module's own docstring (tools/program_
+#    identity.py's rule 3: "every #define NAME line whose NAME is #define'd
+#    on ONE side only"). Check 1 above shows 25b1984f (abi 27) emits NONE
+#    of RX_REQ_BYTE/_RUN/_WHY/RX_END_WINDOW at all -- the feature does not
+#    exist in that build -- while 751b9c6d (abi 39) emits all four; after
+#    normalize_one, NEITHER side's normalized text contains any of those
+#    five stamp names. RX_TUNE is NOT in this category (it predates
+#    25b1984f, landing at abi 26/cf0962e3), so it is compared VERBATIM on
+#    both sides per rule 3's own scope -- but its value is a fixed tuning
+#    constant this project's own configs do not vary, so it contributes no
+#    movement either.
+#
+#    Check 2 diffs THREE independent "changed" rows, one per set (email,
+#    syntax, bounded), and every single one is a REAL, FUNCTIONAL code
+#    difference -- never a stamp remnant:
+#      - email/factored (auto-caps, plain): a memchr NECESSARY-BYTE GUARD
+#        (byte 64 = '@', the pattern's own required byte) -- [OPT-REQBYTE]'s
+#        own emitted code, exactly as CLAUDE.md's abi-29 entry describes
+#        ("a memchr guard + #include").
+#      - syntax/alt-nested (whole-subject): a SEARCH_FROM CLAMP to the last
+#        3 bytes (the pattern's own minimum match length) -- [OPT-ENDWIN]'s
+#        own emitted code ("a search_from clamp").
+#      - bounded/cls-lazy-16384 (whole-subject): the SAME search_from clamp
+#        mechanism, at 16384 bytes (this pattern's own minimum length).
+#    All three diffs are 1-2 new lines of REAL C, inserted at the top of
+#    rx_search's body, nothing else moved -- and in every case the ONLY
+#    lines differing are these, never a stamp #define (confirmed: none of
+#    the three diffs contains a `#define` line at all).
+#
+# CONCLUSION: the predictor is NOT weak on this account. "changed" in the
+# 1,110-row census means a real, functional program difference every time
+# it was checked (3/3 witnesses, one per set, chosen before this check
+# ran -- not cherry-picked after the fact: email/factored was the FIRST
+# "changed" row in the census file by construction; syntax/alt-nested and
+# bounded/cls-lazy-16384 were chosen only for being different SETS, not for
+# their diff content, which was read only afterward). This does not prove
+# EVERY one of the 692 "changed" rows is a real code difference -- three
+# witnesses are a spot check, not an exhaustive proof -- but it does rule
+# out the specific failure mode asked about (stamp-line-only inflation),
+# and it is consistent with what landed in the abi 29-37 pin range
+# ([OPT-ANCHOR-VM]/[OPT-ENDWIN]/[OPT-REQBYTE] at abi 29, [OPT-FREQPICK]/
+# [OPT-REQPOS] at abi 30, [OPT-PRECHECK-ADMIT] at abi 31, K64 at abi 33,
+# K65/K66/[OPT-LITSCAN] S1 at abi 35-37 -- CLAUDE.md's own history) being
+# real optimization work that touches emitted code, not merely new
+# observability.

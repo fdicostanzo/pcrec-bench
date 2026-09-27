@@ -816,6 +816,104 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   borrowed here. P7 holds against 1.1662 but reads 1.0546, outside that
   noise. See docs/dev/ledgers/2026-09-26-noreqbyte-twin-02902356.md.
 
+- `utf8-0.1-b104-751b9c6d.tsv` — lane `b104pred`, 2026-09-27: the predictions
+  for [B104]'s I-112 window's utf8@0.1 half (the O-60 acceptance re-measure at
+  751b9c6d, abi 39). **18 clause rows over 5 parents.** P1 transcribes I-112's
+  own blanket claim literally ("Answers: 0 changes anywhere" -> `n_wrong eq 0`
+  on `pcrec_751b9c6d_*_utf8`, wildcard pattern). P2-P4 are the lit-* THROUGHPUT
+  split I-112 asks for, grounded in a NEW classification census this lane wrote
+  (`docs/dev/measurements/probe_b104_utf8_litcontains.py` /
+  `2026-09-27-b104-utf8-litcontains-census.txt`): every (lit-* pattern, subject)
+  cell classified by whether the OLD (ce658cb7, leftmost-byte) and NEW
+  (751b9c6d, rightmost-byte) pre-check scan bytes occur in the subject's raw
+  bytes, giving four FLIP classes. P2 (IMPROVE, 5 witnesses, `flip_to_fast`):
+  `ratio_to(ce658cb7 same cell)` `op=lt`, a CONSERVATIVE floor (3x-2x) well
+  under I-112's own cited ~15-50x, one witness (`lit-offset-at-tail`/
+  `t-64k-lat`) I-112's own text names by pattern and subject. P3 (RESIDUAL,
+  4 witnesses x 2 sub-clauses, `stays_slow`): `.i` predicts no large win
+  (`ratio_to(ce658cb7) gte 0.5`), `.ii` predicts the residual gap TO RUST
+  (`ratio_to(rust)`) stays above a conservative floor (a third of the
+  ce658cb7-window ratio, 2x-5.6x). P4 (REGRESSION RISK, 2 witnesses,
+  `flip_to_slow`) is a finding this lane made that I-112 does NOT name: a
+  subject where the OLD byte was ABSENT (already at the ~1,100 ns floor) but
+  the NEW byte is PRESENT, so the new fix's own fast-reject path cannot fire
+  and a modest slowdown (`ratio_to(ce658cb7) gt 1.2`) is predicted instead of
+  an improvement. P5 (2 witnesses, both regimes) is a WEAK, honestly-scoped
+  `search_short`-grain band (`between 0.5 2.0`), grounded in the first
+  sample's own finding that this pair's whole effect "lives at throughput
+  grain" (2026-09-26 ledger S2.1) -- answering I-112's "THROUGHPUT and search
+  cells" ask for the regime with no measurable effect, rather than silently
+  dropping it. `ci-*`/`alt-*`/`asr-*`/`cls-dot-rep`: NO prediction, per I-112's
+  own text (no row, by the directory's "must not happen" rule for an
+  inexpressible/ungrounded claim). Every P2-P5 clause needs the read lane's
+  report to embed BOTH the existing `pcrec_ce658cb7_*_utf8` records (and, for
+  P3.ii, `rust_1.13.1_default-caps-simdna`) and the new `pcrec_751b9c6d_*_utf8`
+  ones in ONE query (the same cross-pin structural need every prior
+  `ratio_to`-across-pins file in this directory states) -- `check_stated_utc`'s
+  F27 re-anchor will need the same bypass those files document, since
+  `utf8@0.1` has been measured before this file's `stated_utc`.
+  `interpret.load_predictions`: **18/18 clause rows load, zero closed-set
+  errors**; `python3 catalogue/check_interpret.py`: **212 passed, 0 FAILED**
+  (unchanged from HEAD, confirming this file moves nothing in the catalogue
+  correspondence). See `docs/dev/lanes/b104pred_report.md`.
+
+- `email-specimen-0.2-b104-751b9c6d.tsv`, `loglines-0.1-b104-751b9c6d.tsv`,
+  `bounded-0.3-b104-751b9c6d.tsv`, `altwide-0.2-b104-751b9c6d.tsv`,
+  `syntax-0.1-b104-751b9c6d.tsv` — lane `b104pred`, 2026-09-27: the predictions
+  for [B104]'s I-112 window's O-62 SS2-6 half (email, loglines, bounded,
+  altwide, syntax pcrec-only re-measure at 751b9c6d vs the 25b1984f fullroster
+  baseline, O-62's own framing: "this is a REFRESH from abi 27, so we make no
+  per-cell predictions"). **4 clause rows each** (6 for syntax), one
+  `delta_verdict` structural clause per pcrec canonical config
+  (`auto-caps`/`auto-nocaps`/`vm-caps`/`vm-in-caps`), `pattern=*` wildcard,
+  `op=eq-token hi="unchanged (within spread)"` -- the SAME "honest null" shape
+  [B63]/[B64] already used for a cross-pin refresh, stated KNOWING it will read
+  partial/refuted on whichever patterns' PROGRAMS actually changed between the
+  two pins (R-PRED's own arithmetic roll-up is the honest instrument for that
+  mix). The STRUCTURAL PREDICTOR the team lead's brief asks for --
+  program-identity at 25b1984f vs 751b9c6d, per (pattern, form, config), over
+  all five sets' own `bench/*/patterns/*.rx` files -- is
+  `docs/dev/measurements/probe_b104_o62_identity.py` /
+  `2026-09-27-b104-o62-identity-census.txt` (1,110 cells: 185 patterns x 3
+  distinct compiled configs x 2 forms; **306 identical / 692 changed / 112
+  refused-both / 0 refusal-movers** overall -- per (set, config):
+  email-specimen 1/5/0 (auto-caps/nocaps), 0/6/0 (vm-caps); loglines
+  5/17/0, 5/17/0, 2/20/0; bounded 39/45/2, 39/45/2, 38/48/0; altwide
+  25/34/7, 25/34/7, 15/29/22; syntax 45/121/24, 45/121/24, 21/145/24) --
+  its identical/changed/refused counts are folded into each clause's own
+  note, one per (set, config). **The manager's own sanity question,
+  answered in the census file's PART 2 (the archive's second script,
+  `probe_b104_o62_identity_sanity.py`)**: does `program_identity`'s v2
+  normalization exclude the abi 29-37 stamp `#define` lines (`RX_REQ_BYTE`/
+  `_RUN`/`_WHY`, `RX_END_WINDOW`, `RX_VM_START`), or is "changed" inflated
+  by stamp text alone? CONFIRMED EMPIRICALLY (not merely from the module's
+  docstring): 25b1984f emits NONE of those five stamp names at all (the
+  feature does not exist in that build); after `normalize_one`, NEITHER
+  pin's normalized text contains any of them. Diffing three independent
+  "changed" witnesses, one per set (email/factored, syntax/alt-nested,
+  bounded/cls-lazy-16384), every one is a REAL functional code addition
+  (a `memchr` necessary-byte guard -- [OPT-REQBYTE]; a `search_from` clamp
+  -- [OPT-ENDWIN], twice) and none contains a `#define` line at all -- the
+  predictor is NOT weak on this account. A program-IDENTICAL cell is
+  predicted to fall inside the cross-window null band, citing the
+  [B71]/2026-09-18 93.2%-of-Δ-cells-unchanged reading as the widest CITED
+  empirical prior for "ordinary noise on an unmoved artifact"; a
+  program-CHANGED cell is where a real move is expected (the abi 29-37
+  mechanisms landed in between, per CLAUDE.md's own pin history).
+  `syntax-0.1-b104-751b9c6d.tsv` additionally carries P2/P3, I-112's
+  OWN hypothesis transcribed literally ("syntax anc-z-lc / anc-dollar collapse
+  from x6,500 the way capability's semdiv-dollar did"): a conservative
+  `ratio_to(rust) lt 65` bound (from the committed ~6,343x/6,514x baseline,
+  `reports/2026-09-21-syntax-0.1-budu-ryzen1600-fullroster-25b1984f.tsv`), far
+  short of the full collapse-below-1 the analogous capability witness shows,
+  honestly scoped. Every `delta_verdict` clause needs the read lane's query to
+  embed BOTH each set's existing `pcrec_25b1984f_*` records and the new
+  `pcrec_751b9c6d_*` ones (confirmed present for all five sets today, all four
+  configs, via `store/index.tsv` -- syntax is PIN-UNIFORM at 25b1984f exactly
+  as [B64] found); `check_stated_utc`'s F27 bypass, same precedent. All five
+  files load clean (`interpret.load_predictions`); `check-interpret` unmoved
+  (212/0). See `docs/dev/lanes/b104pred_report.md`.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before
