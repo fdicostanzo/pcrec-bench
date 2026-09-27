@@ -173,15 +173,38 @@ one.
   and `wild-secrets-aws-access-key-id` (`bench/capability`, auto-caps):
   faster throughput. `wild-secrets-github-pat`/`slack-webhook-url`
   (`bench/capability`): small gain at most. **Scored against**:
-  `bounded@0.3`, `loglines@0.1`, `capability@0.1`'s own reports.
+  `bounded@0.3`, `loglines@0.1`, `capability@0.1`'s own reports —
+  `docs/dev/predictions/bounded-0.3-litrun-a32bc86e.tsv`,
+  `loglines-0.1-litrun-a32bc86e.tsv`,
+  `capability-0.1-litrun-a32bc86e.tsv` (lane b108pred, 2026-09-27). All
+  four named `bounded`/`loglines` cells and all eleven named `capability`
+  cells were CONFIRMED to compile to the VM under `auto` at this pin,
+  `RX_VM_LIT_RUNS` > 0 on every one (direct build against
+  `build/pcrec-a32bc86e/build/pcrec`), so `pcrec-auto` vs
+  `pcrec-auto-nolitrun` IS the vm/vm-nolitrun pair I-113 item 5 asks for
+  wherever a named cell is VM — no separate forced-`--engine=vm` testee
+  was needed for any of them.
 - **P2 — FLAT to slightly faster**: `email-local-nodup`, `tag-pair-match`,
   `nested-comment-rec` (`bench/capability`, most likely to show it),
-  `logparse-atomic(-removed)`, `tag-depth3-bound`, `quotedstring-grok`,
-  `syslogbase-expanded` (`bench/loglines`/`bench/capability`). WATCH: a
-  small regression on 2-byte runs on subjects failing at the first byte.
-  **Scored against**: `capability@0.1`, `loglines@0.1`.
+  `logparse-atomic(-removed)`, `tag-depth3-bound`,
+  `wild-logparse-quotedstring-grok`, `wild-logparse-syslogbase-expanded`
+  (`bench/capability` — the last two carry the `wild-logparse-` prefix in
+  `bench/capability/patterns.rxt`; I-113's own text elides it). WATCH: a
+  small regression on 2-byte runs on subjects failing at the first byte —
+  already scored generically by this set's own P5.b/P5.g (no capability
+  cell is a 2-byte-run pattern, so the watch names no NAMED cell here).
+  **Scored against**: `capability@0.1`'s own report —
+  `docs/dev/predictions/capability-0.1-litrun-a32bc86e.tsv`. (I-113's own
+  text also lists `logparse-atomic(-removed)` under `bench/loglines`
+  alongside `syslogbase-expanded`; both patterns were found ONLY under
+  `bench/capability`'s `patterns.rxt` — confirmed by grep across every
+  `bench/*/patterns.rxt`/`subbench.toml` — so all eight P2 cells are
+  scored against `capability@0.1` alone, none against `loglines@0.1`.)
 - **P3 — NULL**: every DFA-routed cell, in EVERY set. **Scored against**:
-  every set's own report (a structural claim, not a named-pattern one).
+  one representative DFA-routed control per set (confirmed `RX_ENGINE
+  "dfa"` by direct build), since the claim names no specific pattern:
+  `cls-upto-64` (bounded), `iso-ts` (loglines), `router-prefix-order`
+  (capability) — the same three predictions files as P1/P2.
 - **P4 — the 2×2 (§7.1)**, litrun's own cells, above:
   - P4.a: `alt-foo-tails` — lit-run gains MORE with factoring DENIED (3
     runs, longer, each re-compared per branch retry) than with it ON (2
@@ -194,6 +217,33 @@ one.
     `-fno-altcls-factor` reads NULL (no alternation); only the lit-run
     column moves, a small gain at most on the github-pat control (one
     verify per match behind an exact hybrid window).
+  - All four clauses are scored on the DEFAULT pair (`pcrec-vm` vs
+    `pcrec-vm-nolitrun`, exact testee ids `pcrec_a32bc86e_vm-caps-simdna`
+    / `..._nolitrun`) — a compile-time byte-count claim, unaffected by
+    the pre-check confound below.
+- **P6 — the 2×2's TIMING half, NEW (lane b108pred, 2026-09-27)**: P4
+  above is a compile-fact claim (`emit_bytes`); this scores `median_ns`
+  over the same throughput subjects the L-sweep uses (set-grain, all 27,
+  no filter — these four patterns carry `tput_mn` 0/27 or 1/27 in
+  `pattern_facts.tsv`, so this is a failing/near-failing SCAN cost, where
+  a per-candidate literal-run compare is visible), on all FOUR corners of
+  `{default, -fno-altcls-factor} × {default, -fno-lit-run}`, on BOTH
+  engine routes (`vm` and `auto`):
+  - P6.a-d: `alt-foo-tails`, both routes × both factoring columns —
+    lit-run faster than `-fno-lit-run` WITHIN each factoring column
+    (the per-column direction, not the cross-column one P4.a reads).
+  - P6.e-h: `wild-secrets-aws-access-key-id`, the same four cells — **NO
+    DIRECTION PREDICTED**. I-113 §7.1 names this pattern's cell (a') the
+    one MOST LIKELY TO FLIP THE SIGN of factoring under lit-run, an
+    explicitly OPEN empirical question in the lane report's own text;
+    scored `op present` (the ratio must be MEASURABLE, nothing about its
+    direction) rather than inventing a `lt`/`gt` this project has no
+    grounds to state (R-BENCH's "must not happen" rule).
+  - P6.i-l: the two controls (`ctrl-abc-dollar`, `wild-secrets-github-pat`),
+    both routes — the FACTORING axis reads NULL (`between 0.85 1.15`,
+    default vs `-fno-altcls-factor`, lit-run held at its own default on
+    both arms), restating P4.c/P4.d's own "factoring reads NULL there"
+    as a timing claim.
 - **P5 — the L-sweep (§7.2)**, litrun's own cells, above:
   - P5.a: matching and last-byte-mismatch — faster from `L=4` up, growing
     with `L` (gcc's own decomposition: `L=7` is 3 pieces, `L=10` is 2,
@@ -201,21 +251,70 @@ one.
   - P5.b: first-byte mismatch — flat, with a POSSIBLE small regression at
     `L=2`/`L=3` (a halfword load and the P8 test against one byte
     compare) — the per-call constant this sweep exists to catch.
-  - P5.c: `L=31` — a named WATCH cell, expect a REGRESSION against
-    `-fno-lit-run` on every subject kind, largest on first-byte mismatch
-    (the gcc-specific `memcmp()`-out-of-line cliff).
+  - P5.c: `L=31` — the named WATCH cell, **RESTATED** (lane b108pred,
+    2026-09-27): pcrec's own `docs/dev/memcmp_lowering_study.md` cliff is
+    ARM64 GCC-16 ONLY. This box is x86_64 gcc 15.2.0 at -O2 (the
+    project's own phase-2 compile flags), where `memcmp(p,q,L)==0` is
+    INLINED at every `L = 1..64` — confirmed twice: on a synthetic loop
+    (`docs/dev/measurements/2026-09-27-x86-gcc15-memcmp-lowering.txt`,
+    merged from master) and, this lane, on the REAL `lit-l31` forced-VM
+    artifact itself, built through the harness's own adapter compile path
+    (`objdump -T`/`readelf -r`/`objdump -d`, zero memcmp references —
+    `docs/dev/measurements/2026-09-27-litrun-l31-artifact-memcmp.txt`,
+    `probe_b108_litrun_l31_memcmp.py`; `lit-l16` as the control, same
+    result). **On this box L=31 is predicted IN LINE with its L=16/L=40
+    neighbours** — split into `c.matlbf` (same "faster" threshold as
+    P5.a's own L=16/L=40 rows) and `c.fbf` (same "flat" threshold as
+    P5.b's own L=4/L=40 rows) rather than the old single combined-subject
+    regression claim. Kept named as the WATCH cell: a toolchain, flag or
+    gcc-version change on this box should re-run the archived probe
+    before trusting either clause again.
   - P5.d: `L-1` (`bnd-l<L>`) — null (both forms fail on one bounds test).
   - **The pre-check confound, stated explicitly because the lane report
     itself flags it**: under DEFAULT pcrec flags, a NECESSARY run's
     failing subject is answered by the whole-window `req_run`/`req_byte`
     precheck — itself a P4-shaped memcmp — before the VM's own per-
     position compare is ever reached, so the default-flags row measures
-    the PRECHECK, not S2a. Every L-sweep cell must therefore be read on
-    TWO labelled arms: `default` and `-fno-req-run -fno-req-byte`
-    (both build variables of the WINDOW's testee configs, not this set).
+    the PRECHECK, not S2a. Every L-sweep cell is therefore read on TWO
+    labelled arms (lane b108pred, 2026-09-27 — re-aimed and split
+    explicitly rather than left as a stated caveat):
+    - **PRIMARY** (P5.a/b/c/d, above): `pcrec-vm-noreqbyte-noreqrun` vs
+      `pcrec-vm-noreqbyte-noreqrun-nolitrun` — both whole-window
+      pre-checks denied, so a failing subject reaches the VM's own P4
+      compare (or, on the nolitrun sibling, the pre-abi-41 chain) instead
+      of being answered by the pre-check first. This is the pair that
+      isolates S2a on its own.
+    - **DEFAULT, a LABELLED SECOND ROW** (P5.e/f/g): `pcrec-vm` vs
+      `pcrec-vm-nolitrun`, no denial. On this pair the pre-check answers
+      a failing subject before the VM compare is ever reached, so
+      **fbf/lbf read NULL here** (P5.f, P5.g: `between(0.85, 1.15)`) and
+      **mat is the only faster claim** (P5.e: same threshold as P5.a) —
+      the pre-check's own prefix-scoped scanned byte/run does not move
+      on a last-byte flip, so P5.f's reasoning differs from P5.g's (see
+      each clause's own note in the TSV) even though both read NULL.
 
-`docs/dev/predictions/litrun-0.1-first.tsv` carries P4/P5 as
-machine-readable clauses, scorable against this set's own first report.
+`docs/dev/predictions/litrun-0.1-first.tsv` carries P4/P5/P6 as
+machine-readable clauses (53 rows: P4 a-d; P5 a/b/c/d on the PRIMARY pair,
+e/f/g on the DEFAULT pair; P6 a-l, the §7.1 2×2's timing half), scorable
+against this set's own first report.
+Every `testee=` selector spells the EXACT derived testee id at this pin
+(`pcrec_a32bc86e_...`, verified against `pcrecbench.record.
+derive_testee_id`/`testees/pcrec/adapter.py`'s own `describe()`) rather
+than a `pcrec_*_...` pin wildcard: unlike this file's own first cut, a
+wildcard here would ALSO match a future re-pin's own `-nolitrun` sibling
+(every prior deny testee — `-noreqbyte`, `-noclsfold`, … — has kept its
+config across every later re-pin), silently pooling two different pins'
+programs under one `ratio_to` the moment a report spans both — the same
+class of cross-pin-pairing defect [B87]/I-108 fixed for the null-control
+band's own cross-class query. `check_testee_globs` reads
+`pcrec_a32bc86e_...` as NONE-YET-MEASURED for `bounded`/`loglines`/
+`capability@0.1` today (those sets already carry OTHER pins' measured
+records, so the check is non-vacuous and fires until this pin's own
+window runs) — expected, not a defect: the SAME shape every fresh-pin
+predictions file in this directory has at authoring time (confirmed
+against `capability-0.1-noreqbyte-twin-02902356.tsv`, whose own pin has
+SINCE been measured). `litrun-0.1-first.tsv` itself is vacuous either way
+(litrun@0.1 has never been measured at any pin).
 
 ## Cell-time estimate
 
