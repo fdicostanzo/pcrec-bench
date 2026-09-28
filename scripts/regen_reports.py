@@ -21,7 +21,9 @@ include_* flags), every sibling that exists:
                             three 2026-09-23 capability groups, per [B87]),
                             else --subject-grain-slice
     G.matrix.tsv         -- --format matrix --grain set
-    G.matrix.html        -- scripts/matrix_page.py G.matrix.tsv
+(G.matrix.html is no longer produced: retired 2026-09-28, [B114] -- the
+results viewer covers it; `scripts/matrix_page.py G.matrix.tsv` renders
+one on demand, gitignored.)
 
 Records are loaded ONCE per group (the KB-16 prefilter, exactly as
 `report.main` does). One broken group never stops the others. Prints one
@@ -179,13 +181,6 @@ def main():
                 del srd
             del loaded
             gc.collect()
-            if os.path.exists(p(".matrix.tsv")):
-                rc = subprocess.call([sys.executable, "scripts/matrix_page.py", p(".matrix.tsv")],
-                                     stdout=subprocess.DEVNULL)
-                if rc:
-                    raise RuntimeError(f"matrix_page.py rc={rc}")
-                print(f"OK   {base}.matrix.html", flush=True)
-                n_ok += 1
         except Exception as exc:  # noqa: BLE001
             n_fail += 1
             print(f"FAIL {base}: {exc!r}", flush=True)

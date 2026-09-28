@@ -36,6 +36,16 @@ rest are generated on demand (§11 Q5).
 
 ## `.matrix.tsv` / `.matrix.html` siblings ([B52], 2026-09-18)
 
+**`.matrix.html` RETIRED 2026-09-28 ([B114], Frank):** the results viewer
+(`viewer/viewer.html`, with "current engines only" off for past pins)
+covers the reading need, so the 98 committed `.matrix.html` pages were
+deleted (they remain in git history before [B114]'s commit) and
+`scripts/regen_reports.py` no longer renders them. `reports/*.matrix.html`
+is gitignored; `python3 scripts/matrix_page.py <name>.matrix.tsv` still
+renders one on demand. The `.matrix.tsv` files STAY: canonical ([B52]),
+frozen per window, read by probes and ledgers. Mentions of `.matrix.html`
+below are history.
+
 A group may also carry `<name>.matrix.tsv` — the CANONICAL tests-x-
 engines ratio matrix (Frank's ruling, docs/dev/dev_journal.md, the
 twenty-fifth session close): `pcrecbench report --format matrix` (same

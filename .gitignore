@@ -43,3 +43,6 @@ dist/
 
 # per-machine Claude Code permissions (Frank, 2026-09-11): never committed
 .claude/settings.local.json
+
+# [B114] retired 2026-09-28: matrix pages render on demand only (scripts/matrix_page.py)
+reports/*.matrix.html
