@@ -7,7 +7,7 @@ finding:       U7 (docs/dev/upstream/findings.tsv)
 built from:    docs/dev/upstream/repro/U7/probe_5413_build.txt (this
                session's from-source build of tag vectorscan/5.4.13,
                commit acd7363aadea43da9c5246542d9969db843dd132)
-approval:      [x] Frank approved 2026-09-27 (the tightened text below); to be posted by Frank
+approval:      [x] Frank approved 2026-09-27 -- POSTED https://github.com/VectorCamp/vectorscan/issues/416#issuecomment-5862112605
 -->
 
 ---
