@@ -328,6 +328,27 @@ evaluable: 7/8 confirmed, P2e (`logparse-atomic-removed`) refuted
 Read into the ADDENDUM section of
 `docs/dev/ledgers/2026-09-28-b108-a32bc86e.md` (appended, not rewritten).
 
+**[B110] I-115 Q2 placement twin (2026-09-28, lane b110read) ADDED ONE
+report group, `2026-09-28-capability-0.1-budu-ryzen1600-align64loops-a32bc86e.*`**
+(same six siblings as above), over the two testees O-66 built and
+`[B110]` measured: `pcrec-auto-align64loops`/
+`pcrec-auto-nolitrun-align64loops` (= `pcrec-auto`/`pcrec-auto-nolitrun`
++ `cflags = ["-falign-functions=64", "-falign-loops=64"]`, I-115 Q2's
+own ask — separate PLACEMENT from CODE in O-64's two named misses).
+Plain `pcrecbench report --testee … --testee …` on the two new ids, no
+`--since`/`--until` needed. **Every clause of
+`docs/dev/predictions/capability-0.1-litrun-a32bc86e.tsv` reads `not
+evaluable` (R-PRED-3)** — its selectors name the UNALIGNED testee ids
+by exact string, so none matches this report's population; this is the
+correct behavior for a predictions file scoped to a different testee
+id, not a defect, and every ratio in the ledger below is instead
+cross-checked directly against the report's own `ratio_vs_baseline`
+column. Sidecar via `/pcrec-bench-interpret`, determinism-checked. Read
+into a NEW ledger file (not an addendum to `2026-09-28-b108-a32bc86e.md`
+— that file's O-65 addendum is already sent, and a sent ledger is never
+edited again per `docs/dev/ledgers/CLAUDE.md`):
+`docs/dev/ledgers/2026-09-28-capability-0.1-i115q2-align64loops-a32bc86e.md`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
