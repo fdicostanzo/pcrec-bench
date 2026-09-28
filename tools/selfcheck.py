@@ -13473,6 +13473,141 @@ def check_giveup_not_batched():
         bad("the note names the held-back subject", "%r" % notes)
 
 
+def check_b105_tre_bracket_backslash_declaration():
+    """[B105] THE TRE BRACKET-ESCAPE DECLARATION (testees/tre/CLAUDE.md
+    (d)4; docs/dev/measurements/2026-09-27-tre-bracket-escape-census.txt;
+    U6, docs/dev/upstream_findings.md): `tre-default`'s `compile()` now
+    scans a pattern's text for a bracket expression `[...]` containing a
+    backslash (POSIX rules -- backslash has no escaping power inside a
+    POSIX bracket expression, so a `]` right after `[`/`[^` is the only
+    kind of literal member that does not close the class, and a `[:
+    name:]`/`[.sym.]`/`[=c=]` sub-construct's own interior `]` must not
+    be mistaken for the outer bracket's close) and declares a hit
+    `unsupported-by-declaration` BEFORE `tre_regncompb` is ever called --
+    never a silent wrong answer, never a `did-not-compile` guess at
+    TRE's own diagnostic.
+
+    Two levels: the SCANNER unit-tested directly (`_bracket_backslash_
+    content` imported off the loaded adapter module -- fast, no driver
+    build, every edge case the brief names: `[]...]`, `[^]...]`, a POSIX
+    class `[[:alpha:]]`, an escaped-looking `\\]` that a naive PCRE
+    reading would treat as staying inside the class but POSIX/TRE reads
+    as closing it, and the plain no-backslash case); and the WIRING
+    through the real `Adapter.compile()` call, which is what actually
+    reaches `tre_regncompb` or does not -- a bracket-with-backslash
+    pattern refused BY NAME with no whole-subject artifact even
+    attempted, and an ordinary bracket pattern still compiling clean on
+    both forms, exactly as before this change."""
+    if "tre" not in _ad.discover():
+        return
+    print("-- [B105] the tre bracket-escape declaration --")
+    adapter = _ad.discover()["tre"]
+    # `_ad.discover()` loads each adapter module with `module_from_spec` +
+    # `exec_module` directly, WITHOUT registering it in `sys.modules`
+    # (`_ad._load_module`) -- so `type(adapter).__module__` names a
+    # module that is not actually importable that way. Load the same
+    # file again, the identical technique `discover()` itself uses, to
+    # reach the scanner functions this check is about.
+    mod = _ad._load_module(
+        os.path.join(_ad.TESTEES_ROOT, "tre", "adapter.py"),
+        "pcrecbench_testee_tre_b105check")
+
+    # Level 1: the scanner alone, no driver, no workdir.
+    SCANNER_CASES = [
+        # (pattern, expect a hit, label)
+        (rb"[^,\n]", True, "[^,\\n] -- ordinary backslash-escape idiom"),
+        (rb"[a-z]+", False, "[a-z]+ -- no backslash at all"),
+        (rb"[]abc]", False, "[]abc] -- unescaped ] as first member"),
+        (rb"[^]abc]", False, "[^]abc] -- unescaped ] after ^"),
+        (rb"[[:alpha:]]+", False,
+         "[[:alpha:]]+ -- POSIX class, no backslash inside it"),
+        (rb"[[:alpha:]\d]", True,
+         "[[:alpha:]\\d] -- POSIX class PLUS a real backslash member"),
+        (rb"[a\]b]c", True,
+         r"[a\]b]c -- an escaped-looking \] closes the class early under "
+         "POSIX rules (content 'a\\' still carries the backslash)"),
+        (b"", False, "empty pattern"),
+        (rb"[", False, "unterminated [ -- no span at all"),
+    ]
+    scanner_fail = False
+    for (pattern, expect_hit, label) in SCANNER_CASES:
+        got = mod._bracket_backslash_content(pattern)
+        if (got is not None) == expect_hit:
+            continue
+        scanner_fail = True
+        bad("the bracket scanner: %s" % label,
+            "expected hit=%s, got %r" % (expect_hit, got))
+    if not scanner_fail:
+        ok("the bracket scanner handles []...], [^]...], POSIX classes "
+           "and an escaped-looking \\] (%d case(s))" % len(SCANNER_CASES),
+           "")
+
+    # Level 2: the real Adapter.compile() call -- the wiring.
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b105-")
+    try:
+        adapter.prepare("tre-default", tmp)
+
+        # A bracket expression with a backslash: refused BY NAME, no
+        # driver ever invoked (form_for_regime falls back to plain for
+        # every regime since no whole-subject key exists).
+        PAT_BS = rb'[^"\\]+'
+        cp = adapter.compile("tre-default", "b105-bracket-backslash",
+                             PAT_BS, {}, 1, tmp)
+        cr = cp.get(_ad.FORM_PLAIN)
+        if (cr is not None and cr.outcome == "unsupported-by-declaration"
+                and cr.declaration_ref and "(d)4" in cr.declaration_ref
+                and _ad.FORM_WHOLE_SUBJECT not in cp.forms):
+            ok("a bracket-with-backslash pattern is refused BY NAME "
+               "(unsupported-by-declaration, no whole-subject attempt)",
+               "declaration_ref=%r" % (cr.declaration_ref[:80] + "..."))
+        else:
+            bad("a bracket-with-backslash pattern is refused BY NAME "
+                "(unsupported-by-declaration, no whole-subject attempt)",
+                "outcome=%r declaration_ref=%r forms=%r"
+                % (cr.outcome if cr else None,
+                   cr.declaration_ref if cr else None,
+                   sorted(cp.forms)))
+
+        # The "coincidentally safe" doubled-backslash idiom (testees/tre/
+        # CLAUDE.md's census note: codegrammar-flat / winpath-near-miss)
+        # is refused TOO -- the ruling is "ANY bracket expression
+        # containing a backslash", no exception for one that happens to
+        # answer correctly today.
+        PAT_COINCIDENTAL = rb'[^<>:"/\\|?*]+'
+        cp2 = adapter.compile("tre-default", "b105-coincidental-safe",
+                              PAT_COINCIDENTAL, {}, 1, tmp)
+        cr2 = cp2.get(_ad.FORM_PLAIN)
+        if cr2 is not None and cr2.outcome == "unsupported-by-declaration":
+            ok("the 'coincidentally safe' doubled-backslash idiom is "
+               "refused too (no exception for an accidentally-right "
+               "answer)", "")
+        else:
+            bad("the 'coincidentally safe' doubled-backslash idiom is "
+                "refused too (no exception for an accidentally-right "
+                "answer)", "outcome=%r" % (cr2.outcome if cr2 else None))
+
+        # A plain bracket pattern (no backslash) still compiles clean on
+        # BOTH forms -- the declaration is additive, not a new refusal
+        # for every bracket expression.
+        PAT_PLAIN = rb"[a-z0-9]+"
+        cp3 = adapter.compile("tre-default", "b105-plain-bracket",
+                              PAT_PLAIN, {}, 1, tmp)
+        cr3p = cp3.get(_ad.FORM_PLAIN)
+        cr3w = cp3.get(_ad.FORM_WHOLE_SUBJECT)
+        if (cr3p is not None and cr3p.outcome == "compiled"
+                and cr3w is not None and cr3w.outcome == "compiled"):
+            ok("a plain bracket pattern (no backslash) still compiles "
+               "on both forms", "")
+        else:
+            bad("a plain bracket pattern (no backslash) still compiles "
+                "on both forms",
+                "plain=%r whole-subject=%r"
+                % (cr3p.outcome if cr3p else None,
+                   cr3w.outcome if cr3w else None))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -13551,6 +13686,7 @@ def main():
     check_kb29_find_all_giveup_propagation()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
+    check_b105_tre_bracket_backslash_declaration()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))
