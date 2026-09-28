@@ -6179,3 +6179,11 @@ Report: `docs/dev/lanes/b103infra_report.md`.
   colour scale, picker scroll kept, encoding/captures categories, hide-empty,
   virtual pcrec (auto) column; viewer/data regenerated with capture counts.
 - I-113 (a32bc86e, abi 41, S2a) acked → [B108], not started.
+
+## 2026-09-27 evening — 36th session (Opus 5.5): [B108] built and windowed; U7 answered
+
+- Woke to I-113/I-114 acked, box quiet. Lanes: b108repin (re-pin a32bc86e, abi 41, eight deny testees), b108set (bench/litrun@0.1), then b108pred (predictions re-aimed: real testee ids, L-sweep primary pair = noreqbyte-noreqrun ± nolitrun, the 2x2 timing half, three cross-set files) and b108fix (two harness failures the re-pin's own make check found: list_limits.tsv double-pasted preamble; the [B31] cap-axis control re-aimed w-512 → w-2048 after S2a moved the VM wall). Merged b7a6b62, make check all green.
+- Manager probe: x86 gcc 15.2 inlines memcmp(p,q,L)==0 at every L=1..64 at -O2 (pcrec's study was arm64 gcc-16, where L=31 is out of line) — P5c restated; the real L=31 artifact confirmed call-free. Answers pcrec's owed x86 column.
+- Rehearsal caught ungenerated litrun subjects (generated, --check clean); 11/11 synthetic cells rc=0 in 31 min. WINDOW OPEN 22:25 EDT (pcrecdev1 ACKed): litrun x11, loglines/capability/bounded x {auto, auto-nolitrun}.
+- U7: vectorscan 5.4.13 built in user space (lane u7vs5413) — still refuses; Frank approved the reply; the classifier blocked the post, Frank then added per-issue allow rules (only our two filed threads) and it was posted (vectorscan#416 comment 5862112605).
+- Lessons: a watcher's `pgrep -f` matched its own command line (use PIDs); this box's `find` is bfs (no `-newermt "-N min"`); lanes still idle waiting on notifications — nudge them with the finished marker.
