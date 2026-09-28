@@ -308,6 +308,26 @@ Render and interpret were done by a scratch script in the session
 scratchpad (never `scripts/`): narrow `--testee` rosters, 0.5-2.5 min per
 group, run detached. Read into `docs/dev/ledgers/2026-09-28-b108-a32bc86e.md`.
 
+**[B108] cap re-measure (2026-09-28, lane b108cap) ADDED ONE report
+group, `2026-09-28-capability-0.1-budu-ryzen1600-litrun2-a32bc86e.*`**
+(same six siblings as above), owed by the `[B108]` reading above: the
+`ext bench` roster there omitted `pcrec-auto-nolitrun`, so 27 of
+capability's 64 patterns were `unsupported-by-declaration` on the deny
+arm and 7 of the `-litrun` twin's 8 P2 clauses could not be scored.
+`bench/capability/patterns.rxt`'s roster was fixed (commit `fef55af`)
+and the cell re-measured (commit `b4a131d`) — the roster now attempts
+all 64 patterns on both arms. This `-litrun2` group is the SAME query
+as `-litrun` (same two `--testee` ids, `pcrecbench report`'s default
+newest-wins dedup alone selects the new pair out of the four records
+now matching), restricted to exactly the new pair by construction — no
+`--since`/`--until` needed. Sidecar via `/pcrec-bench-interpret`,
+determinism-checked. All eight P2 clauses of
+`docs/dev/predictions/capability-0.1-litrun-a32bc86e.tsv` are now
+evaluable: 7/8 confirmed, P2e (`logparse-atomic-removed`) refuted
+(unchanged verdict from the `-litrun` twin, which already scored it).
+Read into the ADDENDUM section of
+`docs/dev/ledgers/2026-09-28-b108-a32bc86e.md` (appended, not rewritten).
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
