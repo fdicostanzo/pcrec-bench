@@ -945,6 +945,146 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   (was ×6,343/×6,514). Full tables:
   `docs/dev/ledgers/2026-09-27-b104-751b9c6d.md` §3-§4.
 
+- `litrun-0.1-first.tsv` — lane `b108set`, 2026-09-27, **REVISED lane
+  `b108pred`, 2026-09-27 (litrun@0.1 has never been measured, so this is
+  a pre-run revision of a NOT-YET-SCORED file, not the "Revising an
+  already-scored file" exception below)**: [B108]'s predictions for
+  `bench/litrun@0.1`'s FIRST SAMPLE, transcribing inbox I-113's P4 (the
+  §7.1 2×2 set) and P5 (the §7.2 L-sweep) — pcrec `docs/dev/lanes/
+  s2a_report.md` at a32bc86e, [OPT-LITSCAN] S2a. **I-113's P1/P2/P3 name
+  patterns in `bench/bounded@0.3`/`bench/loglines@0.1`/`bench/capability@0.1`
+  (existing sets) and are NOT in this file** — see the three cross-set
+  files below (lane `b108pred`), authored per this same review.
+  **53 clause rows** (up from 24): every `testee=`
+  selector now spells the EXACT derived id at this pin
+  (`pcrec_a32bc86e_vm-caps-simdna[...]`, verified against
+  `pcrecbench.record.derive_testee_id`) rather than a `pcrec_*_...`
+  wildcard — the review's own finding: a wildcard here would ALSO match a
+  future re-pin's own `-nolitrun` sibling (every prior deny testee has
+  kept its config across every later re-pin), silently pooling two
+  pins' programs the moment a report spans both, the same cross-pin-
+  pairing hazard [B87]/I-108 fixed for the null-control band's cross-
+  class query. P4.a-d unchanged in content (the LIT-RUN axis only,
+  `compile:emit_bytes`, default `pcrec-vm` vs `pcrec-vm-nolitrun`, `op lt
+  hi 1`; the FACTORING axis's own unscored-expectation note is
+  unchanged). **P5 RE-AIMED at the PRIMARY pair** (I-113 item 5's own
+  caveat, now literally split into two labelled pairs rather than a
+  stated aside): `pcrec-vm-noreqbyte-noreqrun` vs
+  `pcrec-vm-noreqbyte-noreqrun-nolitrun` (both whole-window pre-checks
+  denied, so a failing subject reaches the VM's own P4 compare instead of
+  being answered first) carries P5.a (6 lengths, faster), P5.b (4
+  lengths, flat/do-not-regress), P5.c (RESTATED, split into `c.matlbf`/
+  `c.fbf` reusing P5.a/b's own L=16/L=40 thresholds — see below), P5.d (9
+  lengths, the L-1 boundary null). **P5 GAINS a labelled second parent
+  on the DEFAULT pair** (`pcrec-vm`/`pcrec-vm-nolitrun`, no denial): P5.e
+  (6 lengths, MATCHING subjects only, faster — the pre-check does not
+  intervene on a subject with no failing candidate), P5.f (6 lengths,
+  last-byte-mismatch, NULL `between 0.85 1.15` — the pre-check's own
+  scanned prefix survives a last-byte flip and answers the subject before
+  the VM compare runs), P5.g (4 lengths, first-byte mismatch, NULL
+  `between 0.85 1.15` — the pre-check's scanned byte/run is simply
+  absent, dismissing the subject even earlier). **P5.c RESTATED**
+  (I-113 item 3's own ask; the L=31 named WATCH cell): pcrec's
+  memcmp-lowering cliff is ARM64 GCC-16 ONLY — this box's x86_64 gcc
+  15.2.0 at -O2 INLINES `memcmp(p,q,31)==0` on BOTH a synthetic loop
+  (`docs/dev/measurements/2026-09-27-x86-gcc15-memcmp-lowering.txt`,
+  merged from master) and the REAL `lit-l31` forced-VM artifact itself,
+  built through the harness's own adapter compile path (`objdump -T`/
+  `readelf -r`/`objdump -d`, zero memcmp references either way —
+  `docs/dev/measurements/2026-09-27-litrun-l31-artifact-memcmp.txt`,
+  `probe_b108_litrun_l31_memcmp.py`, `lit-l16` as the control). Predicted
+  IN LINE with its L=16/L=40 neighbours, not a regression; kept named as
+  the WATCH cell (a toolchain change on this box should re-run the
+  archived probe first). Every clause's two-testee `ratio_to` join stays
+  DIAGONAL by construction, as before. **P6 — NEW, the §7.1 2×2's TIMING
+  half** (item 4 of the review; P4 above is the COMPILE-FACT half,
+  `emit_bytes`, kept unchanged): `median_ns` over the throughput regime's
+  own 27 shared subjects (set-grain, no subject filter — these four 2×2
+  patterns carry `tput_mn` 0/27 or 1/27 in `pattern_facts.tsv`, a failing/
+  near-failing scan cost, exactly where a per-candidate literal-run
+  compare is visible), over all FOUR corners of `{default,
+  -fno-altcls-factor} × {default, -fno-lit-run}`, on BOTH engine routes
+  (`vm` and `auto`) — eight testees total per pattern pair
+  (`pcrec-{vm,auto}[-noaltclsfactor][-nolitrun]`). P6.a-d: `alt-foo-tails`,
+  both routes × both factoring columns, `op lt hi 1` (lit-run faster than
+  `-fno-lit-run` WITHIN each factoring column — the per-column direction
+  is unambiguous even though the CROSS-column comparison, P4.a's own
+  compile-fact reading, is a different question). P6.e-h:
+  `wild-secrets-aws-access-key-id`, the SAME four cells, but **`op
+  present`, NO DIRECTION PREDICTED** — I-113 §7.1 itself names this
+  pattern's cell (a') the one MOST LIKELY TO FLIP THE SIGN of factoring
+  under lit-run, an explicitly OPEN empirical question in the lane
+  report's own text; `present` (the OPS vocabulary's own non-directional
+  member, `_op_holds`: `value is not None`) commits only to the ratio
+  being MEASURABLE, never to a faster/slower claim — the honest
+  expression the review asked for rather than an invented direction
+  (R-BENCH's "must not happen" rule for an ungrounded claim). P6.i-l: the
+  two controls (`ctrl-abc-dollar`, `wild-secrets-github-pat`), both
+  routes, reading the FACTORING axis NULL (`between 0.85 1.15`, default
+  vs `-fno-altcls-factor`, litrun held at its own default on both arms) —
+  P4.c/P4.d's own compile-fact reading ("no alternation... factoring
+  reads NULL") restated as a timing claim. **Load-checked** (`interpret.
+  load_predictions` — 53/53 rows, zero closed-set errors; the `between`/
+  `present`/plain-threshold `lo`/`hi` shape checked programmatically for
+  all three shapes, same column-swap-bug control as v1); **`check_testee_globs` is
+  NON-VACUOUS-and-fails today for the three cross-set files below**
+  (`bounded`/`loglines`/`capability@0.1` already carry OTHER pins'
+  measured records, so the check genuinely looks for
+  `pcrec_a32bc86e_...` among them and does not find it) **but VACUOUS for
+  this file** (litrun@0.1 has no measured record at any pin) — the
+  cross-set files' failure is EXPECTED, the same shape every fresh-pin
+  predictions file in this directory has at authoring time (confirmed:
+  `capability-0.1-noreqbyte-twin-02902356.tsv`'s own pin has SINCE been
+  measured and that file now passes), not a defect this review needed to
+  fix. See `docs/dev/lanes/b108set_report.md` (v1) and
+  `docs/dev/lanes/b108pred_report.md` (this revision).
+
+- `bounded-0.3-litrun-a32bc86e.tsv`, `loglines-0.1-litrun-a32bc86e.tsv`,
+  `capability-0.1-litrun-a32bc86e.tsv` — lane `b108pred`, 2026-09-27:
+  I-113 items 1-3's cross-set predictions (`litrun-0.1-first.tsv`'s own
+  entry, above, carries only P4/P5 — litrun's own cells), one file per
+  set per [B104]'s own precedent (`docs/dev/lanes/b104pred_report.md
+  §0`'s "one per set" rule). All against `pcrec-auto`
+  (`pcrec_a32bc86e_auto-caps-simdna`) vs `pcrec-auto-nolitrun` (`
+  ..._nolitrun`) — every NAMED cell in all three files was CONFIRMED to
+  compile to the VM under `auto` at this pin (`RX_ENGINE "vm"`,
+  `RX_VM_LIT_RUNS` > 0, direct build against
+  `build/pcrec-a32bc86e/build/pcrec`), so `auto`/`auto-nolitrun` IS the
+  vm/vm-nolitrun pair I-113 item 5 asks for wherever a named cell is
+  VM — no forced `--engine=vm` testee was needed anywhere in these three
+  files.
+  - `bounded-0.3-litrun-a32bc86e.tsv` (5 rows): P1.a-d (`ctx-lazy-64`/
+    `-256`/`-1024`, `ctx-greedy-256`, `short-subject-search`, `op lt hi
+    1`, faster — the "no-context-word worst case" magnitude claim is
+    stated in the note as the expected largest-margin SUBSET of this
+    set-grain cell, not separately scored at subject grain); P3 (`cls-
+    upto-64`, confirmed DFA-routed by direct build, `between 0.85 1.15`
+    null control).
+  - `loglines-0.1-litrun-a32bc86e.tsv` (3 rows): P1.a/b (`level-context`
+    on `large-subject-throughput`/`short-subject-search`, `op lt hi 1`);
+    P3 (`iso-ts`, confirmed DFA-routed, `between 0.85 1.15` null
+    control).
+  - `capability-0.1-litrun-a32bc86e.tsv` (13 rows): P1.a-d
+    (`wild-secrets-username-password-pair`/`-aws-access-key-id`, `op lt
+    hi 1`, larger gain; `-github-pat`/`-slack-webhook-url`, `op lte hi
+    1.0`, a do-not-regress bound for I-113's own "small gain at most");
+    P2.a-h (`email-local-nodup`, `tag-pair-match`, `nested-comment-rec`,
+    `logparse-atomic`, `logparse-atomic-removed`, `tag-depth3-bound`,
+    `wild-logparse-quotedstring-grok`, `wild-logparse-syslogbase-
+    expanded` — the last two carry the `wild-logparse-` prefix in
+    `bench/capability/patterns.rxt`, elided in I-113's own text; `between
+    0.85 1.05`, flat-to-slightly-faster, never a regression); P3
+    (`router-prefix-order`, confirmed DFA-routed, `between 0.85 1.15`
+    null control). I-113 item 2's WATCH ("a small regression on 2-byte
+    runs on subjects failing at the first byte") names no capability
+    cell (none of P2's eight patterns is a 2-byte-run pattern) and is
+    already scored generically by `litrun-0.1-first.tsv`'s own P5.b/P5.g
+    — no duplicate clause here. All three files load-checked
+    (`interpret.load_predictions`, zero errors each);
+    `check_testee_globs` fails today for the reason stated in
+    `litrun-0.1-first.tsv`'s own entry above (expected, not a defect).
+    See `docs/dev/lanes/b108pred_report.md`.
+
 ## Writing one
 
 By hand, by the person who states it, before the run, committed before

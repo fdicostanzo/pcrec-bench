@@ -1,0 +1,240 @@
+# The literal-run sub-bench SIDECAR (harness contract 2, requirements 5).
+# Fields only, no grammar, no directives, no includes -- [DD-13]'s territory
+# is deliberately untouched, so the unified format absorbs this mechanically
+# when it lands.
+
+id = "litrun"
+version = "0.1"
+objective_kind = "hazard"
+objective = """\
+What pcrec's [OPT-LITSCAN] S2a (the VM's exact literal run of L >= 2 bytes, \
+one bounds check plus one memcmp, replacing a per-byte compare chain) costs \
+and saves, on the two shapes pcrec's own lane report (docs/dev/lanes/\
+s2a_report.md S7.1, S7.2 at pcrec a32bc86e) asked a bench for: whether a \
+factoring pass and a literal-run lowering interact (S7.1's 2x2), and \
+whether the compare itself carries a per-call constant or a toolchain-\
+specific length cliff, at the literal lengths PCRE2's own gcc-16 lowering \
+study names as interesting (S7.2's L-sweep, docs/dev/memcmp_lowering_study.md)."""
+description = """\
+Fourteen patterns. THE 2x2 SET (S7.1): `alt-foo-tails` (`foo.x|foobar|foo.`, \
+cell a -- an alternation whose tails are not all literal, so factoring and \
+lit-run can interact), `wild-secrets-aws-access-key-id` (cell a', copied \
+verbatim from bench/capability -- an island-shaped alternation where \
+factoring is predicted to flip sign under lit-run), `ctrl-abc-dollar` \
+(`abc$`, cell b -- no alternation, the factoring-reads-null control) and \
+`wild-secrets-github-pat` (cell b', copied verbatim from bench/capability -- \
+one 11-byte run behind an exact hybrid window, the factoring-reads-null \
+control's wild-provenance twin). THE L-SWEEP (S7.2): `lit-l2` .. `lit-l40`, \
+nine EXACT LITERALS of length L = 2, 3, 4, 7, 8, 10, 16, 31, 40 (the first L \
+bytes of a 52-character, no-repeated-byte alphabet), each with THREE \
+THROUGHPUT-SCALE subjects built DENSE IN CANDIDATE STARTS by tiling a \
+per-length unit back-to-back to ~64 KiB (`mat-l<L>`: the literal itself, \
+every aligned window a full match; `fbf-l<L>`: the literal's own tail with \
+byte 0 replaced, every window fails at the FIRST compared byte; `lbf-l<L>`: \
+the literal's own head with the LAST byte replaced, every window fails only \
+after L-1 matching bytes) plus ONE short boundary subject (`bnd-l<L>`, \
+exactly L-1 bytes: pcrec's P8 guard, `pos + L <= n`, fails on length alone, \
+never on content -- inherently a single per-subject event, so it is not \
+tiled). Plus the floor (`#`, the ONE byte every fbf/lbf tiled subject also \
+contains, so the floor's own per-attempt cost is read against the same \
+density the L-sweep measures, not only against a full-length miss). See \
+NOTES.md for the pattern table, the regime choice and why, the tiling \
+construction's own no-accidental-match proof, the predictions transcribed \
+from I-113, and the cell-time estimate."""
+
+# All three. `match`/`search_short` carry the 2x2 set's hit/near-miss
+# subjects and the L-sweep's boundary subjects; `throughput` carries ONLY
+# the L-sweep's 27 dense tiled subjects (S7.2's own per-attempt-cost
+# instrument -- NOTES.md, "Regime choice").
+regimes = ["match", "search_short", "throughput"]
+
+# THE MEMBERS. `feature_tier` is `base` throughout: every pattern here is
+# {classes, literals, alternation, anchors}, pcrec's frozen `std1` set --
+# no testee flag is needed for any member (unlike bench/loglines' `\b`
+# pair or bench/altwide's `\b...\b` wrapper).
+
+# ---- the 2x2 set (S7.1) -------------------------------------------------
+
+[[patterns]]
+name = "alt-foo-tails"
+file = "patterns/alt-foo-tails.rx"
+feature_tier = "base"
+hazard_class = "wide-alternation"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "2x2", "cell-a", "alt-tails", "tier-base"]
+role = "member"
+
+[[patterns]]
+# Copied verbatim from bench/capability/patterns/ (provenance.tsv).
+name = "wild-secrets-aws-access-key-id"
+file = "patterns/wild-secrets-aws-access-key-id.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["litrun", "2x2", "cell-a-prime", "wild-secret", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "ctrl-abc-dollar"
+file = "patterns/ctrl-abc-dollar.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "2x2", "cell-b", "control", "tier-base"]
+role = "member"
+
+[[patterns]]
+# Copied verbatim from bench/capability/patterns/ (provenance.tsv).
+name = "wild-secrets-github-pat"
+file = "patterns/wild-secrets-github-pat.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["litrun", "2x2", "cell-b-prime", "wild-secret", "control", "tier-base"]
+role = "member"
+
+# ---- the L-sweep (S7.2) --------------------------------------------------
+
+[[patterns]]
+name = "lit-l2"
+file = "patterns/lit-l2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-2", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l3"
+file = "patterns/lit-l3.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-3", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l4"
+file = "patterns/lit-l4.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-4", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l7"
+file = "patterns/lit-l7.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-7", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l8"
+file = "patterns/lit-l8.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-8", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l10"
+file = "patterns/lit-l10.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-10", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l16"
+file = "patterns/lit-l16.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-16", "tier-base"]
+role = "member"
+
+[[patterns]]
+# gcc-16's own cliff (docs/dev/memcmp_lowering_study.md S4): the ONE length
+# from 1 to 64 where -O1/-O2/-O3 all call `memcmp()` out of line. A named
+# WATCH cell (S7.2's own words), not a normal ladder rung.
+name = "lit-l31"
+file = "patterns/lit-l31.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-31", "watch-cell", "tier-base"]
+role = "member"
+
+[[patterns]]
+name = "lit-l40"
+file = "patterns/lit-l40.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["litrun", "l-sweep", "exact-literal", "l-40", "tier-base"]
+role = "member"
+
+# ---- the floor ------------------------------------------------------------
+
+[[patterns]]
+name = "floor"
+file = "patterns/floor.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["floor", "control", "one-literal"]
+role = "floor"
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+throughput_generator = "gen_throughput_subjects.py"
+throughput_manifest = "manifest_throughput.tsv"
+# Every short subject here is well under 200 B (the widest is the
+# github-pat embed-search subject, ~110 B); 200 is headroom, not a wider
+# band -- no short subject is excluded from search_short by this cap.
+short_search_max_bytes = 200
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+
+# Per-testee notes. No testee runs a VARIANT of any pattern in this
+# sub-bench: all fourteen are canonical PCRE2 spellings and every adapter
+# runs the canonical text (requirements 4.5 -- the record still STATES
+# that, as `patterns[].variant = null`). `options` is empty for both
+# engines: every pattern carries its own semantics inline (`abc$`'s `$`
+# needs no flag; PCRE2's default multiline-off is what the control's own
+# testdata provenance assumes) and neither adapter passes a compile
+# option. See NOTES.md.
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}
+# `feature_tier = "base"` on every member: {classes, literals, alternation,
+# anchors} is inside pcrec's frozen `std1` set, so no `--features` flag is
+# needed for this set specifically (every pcrec testee already passes
+# `--features all` regardless). The two flags this set exists to be read
+# against, `-fno-lit-run` and `-fno-altcls-factor`, are TESTEE config
+# variables (deny testees, [B108]/lane b108repin), never a pattern
+# variant -- the text is byte-identical under either.

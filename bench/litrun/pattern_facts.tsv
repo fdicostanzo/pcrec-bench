@@ -1,0 +1,15 @@
+pattern	first_code_unit	required_code_unit	min_length	match_mn	search_mn	tput_mn	oracle
+alt-foo-tails	f	NONE	4	3/27	4/27	0/27	10.46 2025-08-27
+wild-secrets-aws-access-key-id	A	NONE	20	1/27	2/27	0/27	10.46 2025-08-27
+ctrl-abc-dollar	a	c	3	2/27	3/27	1/27	10.46 2025-08-27
+wild-secrets-github-pat	g	_	93	1/27	2/27	0/27	10.46 2025-08-27
+lit-l2	a	b	2	1/27	16/27	17/27	10.46 2025-08-27
+lit-l3	a	c	3	2/27	15/27	15/27	10.46 2025-08-27
+lit-l4	a	d	4	0/27	10/27	13/27	10.46 2025-08-27
+lit-l7	a	g	7	1/27	9/27	11/27	10.46 2025-08-27
+lit-l8	a	h	8	0/27	8/27	9/27	10.46 2025-08-27
+lit-l10	a	j	10	0/27	7/27	7/27	10.46 2025-08-27
+lit-l16	a	p	16	0/27	6/27	5/27	10.46 2025-08-27
+lit-l31	a	E	31	0/27	5/27	3/27	10.46 2025-08-27
+lit-l40	a	N	40	0/27	4/27	1/27	10.46 2025-08-27
+floor	#	NONE	1	0/27	0/27	18/27	10.46 2025-08-27

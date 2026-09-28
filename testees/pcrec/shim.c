@@ -313,6 +313,30 @@
  * because its `<prefix>_search` gains a trailing `vars, nvars` pair -- a
  * loud failure, never a silent one. The shim reads neither `rx_info`
  * member, so the floor does not move ([B90]).
+ *
+ * FINDINGS ANALYSIS PROVENANCE ([FINDINGS] B1, abi 40, pcrec docs/design/
+ * findings/design.md; [B108]). abi 40 appended ONE member, `findings`
+ * (const char *), to the END of `struct rx_info` -- inside the SAME
+ * `#ifndef PCREC_RX_ABI_H` block as every other rx_info field, and past
+ * `vars`/`nvars` ([VAR]'s own pair), so [VAR]'s append-only precedent
+ * applies again: no earlier member's OFFSET moves (diffed field for field
+ * against abi 39 on a plain `abc` witness -- empty diff but for the one
+ * appended line). The value mirrors `<PREFIX>_FINDINGS`
+ * ("<query>=<answer>:<digest>", `""` when no query was asked) -- D43's own
+ * reason, stated in the field's doc comment: "the canonical machine-
+ * readable record" would otherwise be invisible to a linked binary with no
+ * C header to read the macro from. NEITHER SURFACE HAS A CONSUMER HERE:
+ * this shim's protocol has no `pb_findings()` getter and no reader asks
+ * what analysis a compile's byte-rate lookups consumed -- the SAME
+ * judgement [B90] made for `vars`/`nvars` (a name TABLE with no bench
+ * consumer) and for the same reason (D77: a field this shim's own
+ * protocol never needed). So the floor does NOT move: `PB_SHIM_MIN_ABI`
+ * stays 16, an abi-39 artifact still links this shim (it simply predates
+ * the appended member, which nothing here reads), and the CLAIM is backed
+ * by the same abi-sabotage arms `check_abi_floor_refusal` already runs --
+ * an artifact claiming `.abi = 15` (one below the floor) is refused by
+ * name at every re-pin including this one, which is the test that would
+ * catch a floor comment gone stale.
  */
 
 #include <stddef.h>
@@ -1121,6 +1145,46 @@ int pb_has_vm_cls_folds(void) {
 long long pb_vm_cls_folds(void) {
 #ifdef RX_VM_CLS_FOLDS
     return (long long)RX_VM_CLS_FOLDS;
+#else
+    return 0;
+#endif
+}
+
+/* [OPT-LITSCAN] S2a, abi 41 ([B108], pcrec lane/s2a, merge a32bc86e).
+ * `RX_VM_LIT_RUNS`: how many EMISSION-CONTIGUOUS runs of two or more
+ * one-byte literals (`pcrec_lit_run`, src/core/cpset.c) -- and, since the
+ * same lane, an alternation island's single-child trie chain down to its
+ * first branching or accepting node -- this artifact emits as ONE `pos +
+ * L <= n` bounds check plus one constant-length `memcmp` (P4,
+ * `pcrec_emit_exact_compare`), instead of the per-byte compare chain
+ * every earlier pin wrote. A COUNT on `RX_VM_ALT_ISLANDS`' own precedent
+ * (family (b): not a mode chosen upstream, what the emitted program
+ * turned out to CONTAIN) and its exact scope: UNCONDITIONAL on every VM
+ * artifact, hybrids included, never on a pure-DFA one (the DFA route's
+ * own run pre-check, `pcrec_emit_exact_compare`'s OTHER caller, has its
+ * own stamp, `RX_REQ_RUN` -- P4 is shared code, not a shared count). No
+ * rx_info mirror (D77: no run-time consumer). `-fno-lit-run`
+ * (`PCREC_NO_LIT_RUN`, bit 33) is the deny control that reaches 0 on a
+ * pattern that would otherwise take it, and IS in emit_info_def's
+ * strategy_denials mask, so a run-free artifact is `.flags`-identical
+ * under it -- unlike bit 30's `-fno-req-byte` before K68's fix, this bit
+ * was masked from its own introduction.
+ *
+ * Two getters behind one presence question, this shim's standing rule
+ * since `vm_cls_folds`: `0` is a value ("no run of two-plus qualified",
+ * or a denied build) and ABSENCE is a different fact ("not a VM
+ * artifact", or a pcrec before abi 41). */
+int pb_has_vm_lit_runs(void) {
+#ifdef RX_VM_LIT_RUNS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_vm_lit_runs(void) {
+#ifdef RX_VM_LIT_RUNS
+    return (long long)RX_VM_LIT_RUNS;
 #else
     return 0;
 #endif

@@ -3,19 +3,25 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-751b9c6d/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-a32bc86e/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 751b9c6d4769c033db9850002a12707948c562a5 (rx_info.abi 39 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b104repin ([B104], inbox I-112: pcrec main
-# 751b9c6d -- TWO abi steps absorbed, 37 -> 39: 43039d4e [OPT-REQRUN-ENC]
-# (37 -> 38, the necessary run's `!bytekey` decline moves leftmost ->
-# rightmost); b255027f K68 fix (38 -> 39, `rx_info.flags`'s
-# strategy_denials mask gains bits 28/29/30). Neither step touches
+# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
+# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
+# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (39 -> 40,
+# the byte-rate accessor + default.rxt data tier) and [OPT-LITSCAN] S2a
+# (40 -> 41, the VM literal-run compare). Neither step touches
 # definitions.c or registry.c.
 # 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
-# definition, applies -- BYTE-IDENTICAL to the 02902356 copy below the
-# header (diffed line for line): every step in the range is emit-side --
-# the sixteenth pin running.
+# definition, applies -- BYTE-IDENTICAL to the 751b9c6d copy below the
+# header (diffed line for line): both steps in the range are emit-side --
+# the seventeenth pin running.
+# pcrec definitions table (D85, docs/design/definitions_table.md). Empty field = none.
+# `kind`/`selector`/`syntax` are the SAME three columns --list-syntax prints for the owning row, so the two dumps join on them.
+# `order` is 1-based, dense per row (this row's Nth definitions-array entry).
+# `predicate` is the option-scope tag's OWN NAME (a closed, stable vocabulary a consumer may switch on), never hand-authored prose.
+# `definition` is the core-syntax TEXT for a string-kind entry, or the literal `<builder>` for an operand-taking one — never a live evaluation.
+# `applies` is `active` (this entry substitutes a different construct) or `identity` (restates the row's own primitive form).
+#kind	selector	syntax	order	predicate	definition	applies
 esc	d	\d	1	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
 esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active

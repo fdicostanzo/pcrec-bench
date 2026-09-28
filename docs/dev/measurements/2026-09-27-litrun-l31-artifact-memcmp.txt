@@ -1,0 +1,53 @@
+2026-09-27-litrun-l31-artifact-memcmp.txt -- [B108pred] (lane b108pred)
+whether the REAL pcrec a32bc86e forced-VM artifact for bench/litrun's
+`lit-l31` (a 31-byte exact literal) calls out to libc's `memcmp` on THIS
+box's toolchain, with `lit-l16` as a control two rungs below.
+
+Source: docs/dev/measurements/probe_b108_litrun_l31_memcmp.py
+Command: python3 docs/dev/measurements/probe_b108_litrun_l31_memcmp.py
+Box: budu-ryzen1600, x86_64, gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0. Compile-
+only, not gated (no timing, no quiet-box requirement).
+Binary: build/pcrec-a32bc86e/build/pcrec (built by testees/pcrec/pin.sh,
+lane b108repin).
+Method: built through the harness's own adapter compile path
+(`testees/pcrec/adapter.py`'s `Adapter._compile_one`, config `pcrec-vm` --
+the forced-VM route bench/litrun's own L-sweep window measures), the
+SAME -O2 -fPIC -shared phase-2 gcc invocation `_compile_one` always uses.
+Checked THREE ways on the resulting `.so`: `objdump -T` (dynamic symbol
+table -- a PLT/GOT entry), `readelf -r` (relocations), `objdump -d`
+(disassembly text) -- any one finding "memcmp" counts as present; this
+probe found none of the three on either witness.
+
+Why: docs/dev/predictions/litrun-0.1-first.tsv's P5.c names L=31 a WATCH
+cell because pcrec's own docs/dev/memcmp_lowering_study.md reports gcc-16
+on arm64 calling memcmp() out of line AT L=31 ONLY (S4). The companion
+probe docs/dev/measurements/2026-09-27-x86-gcc15-memcmp-lowering.txt
+(merged from master into this lane) already found a SYNTHETIC
+`memcmp(p,q,31)==0` function fully inlined by this box's gcc at -O2/-O3
+(out-of-line only at -O1/-Os). This probe repeats the question on the
+REAL artifact rather than a hand-written stand-in, because the emitted
+P4 compare (`pcrec_emit_exact_compare`, [OPT-LITSCAN] S2a) is not
+guaranteed to have the exact same shape gcc's own inliner heuristics saw
+in the synthetic loop (a different calling context, a different function
+size around it) -- and confirms it does not.
+
+RESULT (verbatim stdout):
+
+gcc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+lit-l31 (L=31, engine=vm forced, a32bc86e): memcmp reference ABSENT (fully inlined)
+lit-l16 (L=16, engine=vm forced, a32bc86e): memcmp reference ABSENT (fully inlined)
+
+READING: on this box's toolchain (x86_64, gcc 15.2.0, -O2, the project's
+own phase-2 compile flags), the REAL a32bc86e forced-VM artifact for
+`lit-l31` contains NO memcmp call anywhere -- neither a PLT/GOT entry nor
+a relocation nor a disassembled `call` instruction -- confirming the
+synthetic-loop finding on the artifact pcrec's own [OPT-LITSCAN] S2a
+actually emits, not merely on a hand-written stand-in of the same shape.
+`lit-l16`'s control reads identically (also fully inlined), so this box
+shows NO CLIFF at L=31 distinguishing it from a neighbouring rung -- the
+opposite of pcrec's own arm64-gcc-16 finding, which is an ARM64-SPECIFIC
+codegen decision (gcc's `x86_64_expand_movmem`-family inlining threshold
+differs by target; nothing in gcc's generic memcmp-lowering pass is
+architecture-neutral). `litrun-0.1-first.tsv`'s P5.c is restated
+accordingly: on THIS box, L=31 is predicted IN LINE with its L=16/L=40
+neighbours, not a regression -- see that file's own P5.c clause and note.
