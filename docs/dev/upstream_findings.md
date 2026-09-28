@@ -100,6 +100,8 @@ makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 
 **2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
 
+**2026-09-28: NOT-A-BUG (Frank, the unambiguous-bugs rule).** A UTF-8 validator's per-byte cost on multi-byte sequences is inherent; the validation and its documented bypasses (`PCRE2_NO_UTF_CHECK`, `pcre2_jit_match()`) are the API's own. Kept as the bench's explanation of the utf8 floor rows.
+
 ## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30; NOT-A-BUG 2026-09-28)
 
 (formerly the second U2 entry — this file used `## U2` twice; renumbered
@@ -311,7 +313,7 @@ It refuted the utf8 set's P9/P10 transcription, which excluded `prp-greek`
 alone. Status: UNDERSTOOD (the Unicode property difference; the separating
 code points are verified above). Ledger §3.1.
 
-## U11 — libpcre2 10.46's `pcre2_match()`/`pcre2_dfa_match()` built-in UTF-8 subject validation costs ~3.05-3.13× more per byte on Cyrillic text than on ASCII text of the same byte length, on ALL THREE routes — a genuine engine cost, not a driver artifact (OBSERVED and UNDERSTOOD 2026-09-26, `utf8@0.1` first sample; lane b102floor)
+## U11 — libpcre2 10.46's `pcre2_match()`/`pcre2_dfa_match()` built-in UTF-8 subject validation costs ~3.05-3.13× more per byte on Cyrillic text than on ASCII text of the same byte length, on ALL THREE routes — a genuine engine cost, not a driver artifact (OBSERVED and UNDERSTOOD 2026-09-26, `utf8@0.1` first sample; lane b102floor; NOT-A-BUG 2026-09-28)
 
 The addendum ledger (`docs/dev/ledgers/2026-09-26-utf8-0.1-first-ce658cb7-
 addendum-r2r7.md` §5/§8 item 4) flagged the `floor` pattern (the literal
