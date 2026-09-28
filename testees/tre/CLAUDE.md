@@ -227,6 +227,41 @@ without opening that one):
    call (a bracket-with-backslash pattern refused BY NAME with no
    whole-subject artifact even attempted; a plain bracket pattern with
    no backslash still compiles clean on both forms).
+
+   **A REAL OVER-REFUSAL BUG FOUND AND FIXED BEFORE MERGE (manager
+   review, 2026-09-28):** the first version of `_find_bracket_spans`
+   gave backslash NO escaping power ANYWHERE, including OUTSIDE a
+   bracket expression -- but ERE (and TRE's own REG_EXTENDED parsing)
+   DOES give backslash its ordinary escaping power there: `\[` is an
+   escaped literal `[` that opens nothing. `\[\d+\]`, `a\[b`,
+   `foo\[0\]` carry NO real bracket expression at all (every `[`/`]` in
+   them is escaped), yet the first version misread an escaped `\[` as a
+   genuine open and, where a LATER unescaped `]` happened to exist
+   anywhere in the pattern, declared the whole thing unsupported -- a
+   real correctness regression (lost coverage on ordinary escaped-
+   bracket patterns, never a wrong answer, but out of the ruling's own
+   stated scope: "ANY bracket expression with a backslash", never "any
+   `[` byte"). Fixed with an explicit two-state scan: OUTSIDE a bracket,
+   backslash keeps its ordinary escaping power (`\[` never opens one,
+   `\\` is one two-byte unit); once a genuine UNESCAPED `[` opens a
+   bracket, INSIDE it backslash still has NO power (unchanged from the
+   scanner's first version -- `[\]]`/`[a\-z]` still close early / still
+   declare). Five regression cases added to `check_b105_tre_bracket_
+   backslash_declaration`'s scanner unit tests (`\[\d+\]`/`a\[b` must
+   NOT declare; `[\]]`/`[a\-z]`/`\\[\\]` must). **Re-derived over EVERY
+   pattern in EVERY `bench/*/` set (339 patterns, 8 sub-bench dirs, not
+   only the original 30-hit population)** in
+   `docs/dev/measurements/2026-09-28-tre-bracket-escape-full-corpus-census.txt`:
+   the AFTER declaration set is BYTE-FOR-BYTE the same 30 patterns the
+   pre-fix census found (`bench/litrun`/`bench/altwide` contribute zero
+   hits), and a direct old-scanner-vs-fixed-scanner diff over all 339
+   patterns finds **ZERO** that differ -- the bug was real (proven by
+   the five synthetic cases) but never actually fired on today's corpus
+   (every one of the six patterns containing a literal `\[` also
+   carries a SEPARATE, genuine, unescaped bracket expression elsewhere
+   that both scanners correctly flag regardless, traced by hand in that
+   archive). The fix is forward-looking correctness protecting a future
+   `\[\d+\]`-shaped pattern, not a correction to today's roster.
 5. **Two corpus patterns REFUSE for a reason their OWN `requires-*` tags
    do not name**: `quoted-delim-match` (tagged `requires-backrefs` only;
    its actual body is `(["'])(?:(?!\1)[^\\]|\\.)*\1` — the REAL refusal

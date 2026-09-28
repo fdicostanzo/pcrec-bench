@@ -136,6 +136,32 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
   production behavior change (the pre-existing capability policy
   already intercepts them before `compile()` is ever called in a real
   cell).
+- `probe_tre_bracket_escape_full_corpus_census.py` /
+  `2026-09-28-tre-bracket-escape-full-corpus-census.txt` — ([B105], lane
+  `b105tre`) THE FULL-CORPUS CENSUS, manager-requested before merge
+  after the over-refusal fix (commit cd9251c: `_find_bracket_spans`
+  used to give backslash NO escaping power even OUTSIDE a bracket, so
+  an escaped `\[` — opening nothing under real ERE rules — was still
+  read as an open, over-refusing e.g. `\[\d+\]`/`a\[b`, which carry no
+  real bracket expression at all; fixed with an explicit two-state
+  outside/inside-bracket scan). Every `bench/*/patterns/*.rx` file
+  across EVERY sub-bench directory that exists today (339 patterns, 8
+  dirs — `bench/litrun`/`bench/altwide` included, by directory
+  discovery), run through the FIXED scanner directly. BEFORE (master):
+  the EMPTY SET by construction (`testees/tre/adapter.py` on `master`
+  carries no bracket-escape mechanism at all, confirmed structurally).
+  AFTER: byte-for-byte the SAME 30-pattern population the 2026-09-27
+  census found (litrun/altwide contribute zero hits). A THIRD
+  comparison beyond the manager's own ask — the OLD (buggy) scanner run
+  side by side with the fixed one over all 339 patterns — finds 0
+  differences: the over-refusal bug is real (proven by the five
+  synthetic regression cases) but never actually fired on any pattern
+  in today's corpus, because every one of the six `\[`-containing
+  patterns also carries a SEPARATE, genuine, unescaped bracket
+  expression elsewhere that both scanners correctly flag regardless
+  (manually traced in the archive's own READING section); the fix is
+  forward-looking correctness (protects a future `\[\d+\]`-shaped
+  pattern), not a correction to today's declaration set.
 
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
