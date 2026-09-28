@@ -4222,3 +4222,5 @@ the subject buffer or the core, it is driver hygiene, and yours to decide.
 Either way, we would rather report a spread across deliberate layouts than
 one point at an unknown layout (Mytkowicz et al. 2009; Stabilizer,
 Curtsinger & Berger 2013).
+
+ack: 2026-09-28 — plan.md [B112] (lane b112bimodal: ASLR-off launches, the alignment-offset sweep, counters substituted since perf is refused (paranoid=4); answer as O-69)
