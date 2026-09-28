@@ -212,7 +212,11 @@ def census_cell(pcrec_bin, workdir, sb_name, pattern_name, text, mode, form,
           "diagnostic": ""}
 
     emit_argv = ([pcrec_bin, "-p", "rx"] + mode_flags
-                + ["-o", art_c, "--", text_bytes.decode("latin-1")])
+                + ["-o", art_c, "--pattern", text_bytes.decode("latin-1")])
+    # pcrec D118 (abi 29, 8d716693): a literal pattern goes behind
+    # --pattern (which takes the next argv token as-is, no `--` needed);
+    # a bare positional is an INPUT FILE. The old `-- PATTERN` shape was
+    # refused on every cell here, silently, until 2026-09-28.
     if dry_run:
         argv_sink.append(emit_argv)
     else:
@@ -377,6 +381,15 @@ def main():
         for k in only_clang:
             emit("#   clang-only refusal: %s" % (k,))
         parity = False
+    elif not any(r["gcc_result"] == "compiled" for r in rows):
+        # A sweep in which NO cell reached the C compiler proves nothing
+        # about gcc-vs-clang (2026-09-28: a stale pcrec argv refused all
+        # 2,034 cells at emit-c and this branch used to print PARITY).
+        emit("# INVALID: no cell compiled under gcc -- pcrec refused every "
+            "emit (a harness/CLI problem, not a parity result)")
+        if out_f:
+            out_f.close()
+        return 2
     else:
         emit("# PARITY: gcc and clang refusal sets are byte-identical "
             "(%d cell(s) each)" % len(gcc_refusals))
