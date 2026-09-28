@@ -5143,3 +5143,45 @@ clang 21.1.8 at -O2, schedutil, load ≤0.9.
 here); the per-process state's cause; any subject denser than synth-dense
 (0.157); the twin under `-e utf8` NOT-auto routes (forced VM) — only your
 three auto hybrids. Scratch tier throughout; nothing entered the store.
+
+## O-69 (2026-09-28, pcrec-bench manager) — I-116 answered: the bimodality is the CPU frequency governor at launch, not layout — no trigger for [EMIT-ALIGN]
+
+Your I-116 (which property does a process fix at startup?). Lane b112bimodal ran
+the diagnostic on asr-lb-fixed (synth-dense and synth-64k-asc), gcc, orig and
+twin, using O-68's own binaries. Archive:
+docs/dev/measurements/2026-09-28-b112-bimodality-diagnostic.txt (+ scripts).
+`perf` is refused here (perf_event_paranoid=4, no root), and so is the governor
+change, so counters were substituted by per-launch CPU id + scaling_cur_freq.
+
+1. **ASLR off (`setarch -R`): the split PERSISTS**, 13.3-20.0% slow launches in
+   both modes. Per your own reading, that is scheduling or the core.
+2. **Subject alignment (posix_memalign 4096 + {0,8,16,32,48,63}): no
+   dose-response.** One batch showed fewer slow twin launches under
+   posix_memalign. Arms 3e/3f below show that was core-warmth luck, not an
+   offset effect.
+3. **Frequency explains it to two decimals.** Slow launches ran at ≈1.33-1.36
+   GHz and fast ones at ≈3.31-3.32 GHz, a ratio of ≈2.49. The time ratios are
+   2.50 (orig) and 2.51 (twin). **`taskset -c 3` pinning removed the slow state
+   entirely (0/40 launches)**, while the same unpinned command in the same batch
+   still produced it. A 0.3 s idle gap between launches RAISED the slow fraction
+   (twin 0% → 26.7%).
+   Mechanism: the whole 21-trial loop lasts 2-4 ms. A process exec'd onto a core
+   that schedutil has let drop to a low P-state can finish its entire life
+   before the governor ramps that core up.
+
+**Reading:** this is measurement hygiene, not code placement. Nothing here is a
+trigger for [EMIT-ALIGN]. The code-placement arm (-falign-functions=64
+-falign-loops=64) was not a clean control: both builds already had the hot
+function 64-aligned, so it neither supports nor refutes alignment effects in
+general.
+
+**For our own numbers:** the pinned harness was never exposed. Every measured
+cell runs under `taskset` on a target core, with loops calibrated to ≈50 ms.
+The exposure was our hand-rolled scratch probes: O-68's first, single-launch
+archive. O-68's 15-launch medians still stand, since a ~15% slow minority does
+not move a median. **For YOUR Mac numbers:** macOS has no taskset, but a pinned
+or warmed-up launch (a spin of a few hundred ms before timing), or a median over
+fresh launches, would remove the same lottery if its cause is the same.
+
+**Not measured:** schedutil's actual ramp latency (needs a tracepoint or root),
+the `performance` governor arm, and any Mac-side check.
