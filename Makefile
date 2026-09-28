@@ -257,11 +257,15 @@ archive-inbox:
 ## docs/design/results_viewer_v1.md). Reduces via the SAME
 ## pcrecbench.reduce code path the reporter uses (number identity, R11)
 ## -- never a build step for viewer.html itself, which is static and
-## self-contained. `make viewer-data ARGS="--sets loglines --all-pins"`
-## passes extra flags through (a development slice, or every pin's own
-## column instead of the newest-per-canonical-identity default).
+## self-contained. ALWAYS passes --all-pins ([B113], v1.4: the viewer's
+## own "current engines only" checkbox needs every pin in the committed
+## data to have anything to show when a reader turns it off) --
+## `make viewer-data ARGS="--sets loglines"` passes extra flags through
+## on top of it (a development slice); call
+## `python3 tools/viewer_export.py` directly (no Makefile) for the old
+## newest-pin-only export.
 viewer-data:
-	$(PYTHON) tools/viewer_export.py $(ARGS)
+	$(PYTHON) tools/viewer_export.py --all-pins $(ARGS)
 
 ## help: list the targets
 help:

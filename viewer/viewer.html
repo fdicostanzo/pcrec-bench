@@ -651,17 +651,22 @@ var App = (function () {
     });
   }
 
-  function computeDefaultTesteeIds() {
-    var byCanonical = Object.create(null); // "family|variant" -> [testee_id...]
+  // Shared grouping: the NEWEST testee_id per (family, variant) identity,
+  // domain-wide (not filter-dependent). `admit(info)` optionally drops a
+  // testee from the grouping entirely (never from another group's
+  // candidacy) before the newest-per-group pick runs -- `null`/omitted
+  // admits everything.
+  function newestPerFamilyVariant(admit) {
+    var byKey = Object.create(null); // "family|variant" -> [testee_id...]
     Object.keys(testeeIndex).forEach(function (id) {
       var info = testeeIndex[id];
-      if (isAblationArm(info.variant)) return;
+      if (admit && !admit(info)) return;
       var key = info.family + "|" + info.variant;
-      (byCanonical[key] = byCanonical[key] || []).push(id);
+      (byKey[key] = byKey[key] || []).push(id);
     });
     var out = Object.create(null);
-    Object.keys(byCanonical).forEach(function (key) {
-      var ids = byCanonical[key];
+    Object.keys(byKey).forEach(function (key) {
+      var ids = byKey[key];
       var best = ids[0];
       ids.forEach(function (id) {
         if ((testeeIndex[id].newestDate || "") > (testeeIndex[best].newestDate || "")) best = id;
@@ -669,6 +674,22 @@ var App = (function () {
       out[best] = true;
     });
     return out;
+  }
+
+  // 9.6: the fresh-load/`reset view`/`latest only` SELECTION default --
+  // an ablation/deny-flag/toolchain arm never contributes (dropped
+  // entirely, not just its older pins).
+  function computeDefaultTesteeIds() {
+    return newestPerFamilyVariant(function (info) { return !isAblationArm(info.variant); });
+  }
+
+  // [B113]: "current engines only" -- the newest pin of EVERY (family,
+  // variant) identity, ablation/deny-flag/toolchain arms INCLUDED (an
+  // arm's own newest pin is still "current" for that arm -- this is a
+  // VISIBILITY filter over what is already selected, never a change to
+  // the selection-default rule above).
+  function currentTesteeIds() {
+    return newestPerFamilyVariant(null);
   }
 
   // -------------------------------------------------------------- state
@@ -695,6 +716,7 @@ var App = (function () {
       q: "",
       showNonMeasured: true,
       showEmptyEngines: false, // v1.3 item 5: hidden by default from the matrix AND the picker
+      currentEnginesOnly: true, // [B113]: hides non-current pins by default from the matrix AND the picker
       virtualAuto: true,       // v1.3 item 7: the "pcrec (auto)" virtual column, on by default
       metrics: ["ns"],    // 9.4: any non-empty subset of ns|mbps|best, fixed display order
       sortMetric: null,   // 9.5: which DISPLAYED metric a "testee" sort ranks by; null = first of `metrics`
@@ -749,6 +771,7 @@ var App = (function () {
     if (st.q) parts.push("q=" + encodeURIComponent(st.q));
     parts.push("nm=" + (st.showNonMeasured ? 1 : 0));
     parts.push("ee=" + (st.showEmptyEngines ? 1 : 0));
+    parts.push("ceo=" + (st.currentEnginesOnly ? 1 : 0)); // [B113]
     parts.push("va=" + (st.virtualAuto ? 1 : 0));
     parts.push("metric=" + st.metrics.join(","));
     if (st.sortMetric) parts.push("sortmetric=" + st.sortMetric);
@@ -778,6 +801,11 @@ var App = (function () {
     st.q = q.q ? decodeURIComponent(q.q) : "";
     st.showNonMeasured = q.nm === undefined ? true : q.nm === "1";
     st.showEmptyEngines = q.ee === "1"; // absent = false, the stated default
+    // [B113]: absent = true, the stated default -- an OLDER persisted
+    // hash/localStorage state (from before this key existed) has no `ceo`
+    // key at all, so `q.ceo === undefined` and this defaults ON exactly
+    // like a fresh load, never silently OFF.
+    st.currentEnginesOnly = q.ceo === undefined ? true : q.ceo === "1";
     st.virtualAuto = q.va === undefined ? true : q.va === "1";
     // Comma-list, any non-empty subset of METRIC_ORDER; an unknown token
     // (a hash edited by hand, or a future metric this build predates) is
@@ -951,20 +979,30 @@ var App = (function () {
 
   // Which ids the picker (family tree + the two category rows) may LIST
   // at all, against the CURRENT filtered `groups` -- every id when the
-  // toggle is on, else only ones with >=1 measured cell here.
+  // "show engines with no data" toggle is on, else only ones with >=1
+  // measured cell here; then, [B113], further narrowed to CURRENT pins
+  // only (the newest of each (family,variant) identity, ablation arms
+  // included) unless "current engines only" is off. Composed the same
+  // way as `nonEmptyTesteeIds` -- a pure DISPLAY filter, never a change
+  // to `state.testees` itself.
   function pickerEnumerableTesteeIds(groups) {
-    if (state.showEmptyEngines) return allTesteeIds();
-    return nonEmptyTesteeIds(groups);
+    var base = state.showEmptyEngines ? allTesteeIds() : nonEmptyTesteeIds(groups);
+    if (!state.currentEnginesOnly) return base;
+    var current = currentTesteeIds();
+    return base.filter(function (t) { return current[t]; });
   }
 
   // Which ids actually become MATRIX COLUMNS: the user's own selection,
   // further narrowed by the same enumerable set the picker itself is
   // built from (so a selected-but-hidden testee never renders as an
-  // empty column while its selected-ness survives underneath).
+  // empty column while its selected-ness survives underneath) -- now
+  // ALWAYS routed through `pickerEnumerableTesteeIds` so the "current
+  // engines only" narrowing (and any future one) applies identically to
+  // both; when neither toggle would remove anything, `pickerEnumerableTesteeIds`
+  // returns `allTesteeIds()` and this is exactly `visibleTestees()`, as before.
   function displayedTesteeIds(groups) {
-    if (state.showEmptyEngines) return visibleTestees();
     var enumerable = Object.create(null);
-    nonEmptyTesteeIds(groups).forEach(function (t) { enumerable[t] = true; });
+    pickerEnumerableTesteeIds(groups).forEach(function (t) { enumerable[t] = true; });
     return visibleTestees().filter(function (t) { return enumerable[t]; });
   }
 
@@ -1416,6 +1454,23 @@ var App = (function () {
     elbl.addEventListener("click", function () { ecb.click(); });
     erow.appendChild(ecb); erow.appendChild(elbl);
     host.appendChild(erow);
+
+    // [B113], Frank 2026-09-28: default ON -- an OLDER pin of a
+    // (family,variant) identity already selected (incl. an ablation/
+    // deny-flag/toolchain arm's own older pin) is hidden from the matrix
+    // AND the picker until this is unchecked; its own SELECTION never
+    // changes either way, and the pin sub-picker (9.2) stays reachable
+    // once this is off.
+    var curow = document.createElement("div"); curow.className = "chk-row";
+    var cucb = document.createElement("input"); cucb.type = "checkbox"; cucb.checked = state.currentEnginesOnly;
+    cucb.addEventListener("change", function () { state.currentEnginesOnly = cucb.checked; rerenderAll(); });
+    var culbl = document.createElement("label"); culbl.textContent = "current engines only";
+    culbl.title = "hide older pins of an already-selected engine (family, variant) identity -- " +
+      "only its own newest pin shows; turn off to compare against past pins " +
+      "(the pin sub-picker under a variant then lists every one)";
+    culbl.addEventListener("click", function () { cucb.click(); });
+    curow.appendChild(cucb); curow.appendChild(culbl);
+    host.appendChild(curow);
   }
 
   function mkSmallBtn(text, onClick, focusKey) {
@@ -1788,7 +1843,7 @@ var App = (function () {
       var d = document.createElement("div"); d.id = "empty-state";
       d.textContent = !testees.length
         ? (visibleTestees().length
-           ? "No selected engine has data for the current filters (see “show engines with no data”)."
+           ? "No selected engine has data for the current filters (see “show engines with no data” / “current engines only”)."
            : "No engines selected.")
         : "No rows match the current filters.";
       scroll.appendChild(d);

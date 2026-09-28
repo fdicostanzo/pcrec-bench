@@ -481,3 +481,97 @@ functions; `make viewer-data ARGS="--sets loglines"` run and diffed
 against the committed `viewer/data/loglines@0.1.js` to confirm the
 `captures` field is the ONLY per-pattern addition and every row is
 otherwise byte-identical.
+
+## 12. v1.4 amendments ([B113], Frank 2026-09-28)
+
+STATUS: IMPLEMENTED (lane `b113viewer`, 2026-09-28). Frank, verbatim:
+*"i want to have the 'current engine' visibility a checkbox defaulting
+on. i sometimes want to compare to past engines."* Two parts.
+
+**Part 1 — the export default.** The committed `viewer/data/*.js` were
+generated WITHOUT `--all-pins` (`manifest.js`'s own `all_pins: false`),
+so an OLDER pin of a (family, variant) identity was never in the data
+at all — there was nothing for "compare to past engines" to reach.
+Re-exported with `--all-pins`; `make viewer-data`'s own default flag set
+changes to match (§"Regenerating" above), since the committed data must
+now carry every pin for the new toggle's OFF state to have anything to
+show.
+
+**Part 2 — "current engines only", default ON.** A new boolean in
+`state` (`defaultState().currentEnginesOnly = true`, hash key `ceo`,
+`q.ceo === undefined` also defaulting `true` so an OLDER persisted
+hash/`localStorage` state with no `ceo` key at all gets ON, never a
+silent OFF — the same posture §9's `nm` key already established, not
+`ee`'s absent-means-OFF one). "Current" is defined identically to
+§9.6's own selection-default rule EXCEPT for one deliberate difference:
+the newest `testee_id` (by `testeeIndex[id].newestDate`, domain-wide) of
+each **(family, variant)** identity is current — where §9.6's
+`computeDefaultTesteeIds` additionally DROPS every ablation/deny-flag/
+toolchain arm from the SELECTION default entirely, this rule does not:
+an arm's own newest pin is still "current" for that arm, because this
+is a VISIBILITY filter over whatever is already selected, not a change
+to which arm a fresh load starts with. `viewer.html` factors the shared
+"newest id per (family,variant)" grouping into one helper
+(`newestPerFamilyVariant(admit)`) that `computeDefaultTesteeIds` (its
+`admit` callback drops arms) and the new `currentTesteeIds` (`admit`
+omitted, nothing dropped) both call, rather than stating the grouping
+rule twice.
+
+When ON, non-current testees are hidden from BOTH the matrix's columns
+and the engine picker (the family tree, its two category rows, the
+third-tier pin sub-picker) — composed the same way §9.3 item 5's "show
+engines with no data" toggle already composes: `pickerEnumerableTesteeIds`
+narrows to the current set (on top of, not instead of, the empty-engine
+narrowing), and `displayedTesteeIds` is now ALWAYS routed through
+`pickerEnumerableTesteeIds` (previously it special-cased "show engines
+with no data" ON as a shortcut back to the raw selection; folding that
+shortcut into the shared function costs nothing when neither toggle
+would remove anything, and it is what lets one narrowing rule serve
+both surfaces without a second copy). A testee's own SELECTION
+(`state.testees`) is untouched either way — exactly the "display filter,
+not an implicit deselect" distinction §9.3 item 5 already draws for
+"show engines with no data" — so switching the toggle OFF reveals
+exactly what was already selected, older pins included, and the pin
+sub-picker (§9.2's third tier) becomes reachable again for any variant
+whose non-newest pin was hidden. "latest only" and "reset view" keep
+their existing meaning verbatim (they set the SELECTION via
+`computeDefaultTesteeIds`, which this change does not touch); the
+virtual "pcrec (auto)" column is unaffected by construction
+(`resolveVirtualAutoTestee` already always reads the newest pin of its
+resolved variant, regardless of any display filter, and is appended to
+`displayedTesteeIds`'s result rather than routed through it). The
+checkbox sits in the Status filter group immediately below "show
+engines with no data", labeled "current engines only", with a `title`
+naming what "current" means and that the pin sub-picker is where a past
+pin is reached.
+
+**Verification.** No headless Chromium in this sandbox (unchanged from
+every prior wave); a synthetic `jsdom` fixture shaped like a real
+exporter payload (two (family,variant) identities each carrying an
+OLD/NEW pin pair — one canonical, one an ABLATION ARM with a
+`config_extra` suffix — plus one single-pin control family), driven
+through `JSDOM.fromFile` with `runScripts: "dangerously"`, confirmed by
+DOM inspection and event dispatch: the checkbox is present, checked by
+default, and sits immediately after "show engines with no data"; with
+all five testees explicitly selected, the picker AND the matrix show
+exactly the 3 current ids under ON (both OLD pins hidden, the arm's own
+NEWEST pin present) and all 5 under OFF, with the pin sub-picker
+reachable; the "Engines: n/N selected" count is unchanged by toggling
+either way (selection untouched underneath); an old hash with no `ceo`
+key defaults ON, an explicit `ceo=0`/`ceo=1` is honored either way; and
+"latest only" still excludes the ablation arm entirely (§9.6's rule,
+confirmed unmoved by this change). One jsdom-only artifact, NOT a page
+bug (same posture as the `getComputedStyle`/`var()` artifact §11 already
+names): jsdom throws a `SecurityError` from `history.replaceState()` on
+a `file://` document whenever `persist()` runs (unconditionally, not
+`try/catch`-guarded, unlike the `localStorage` call two lines below it
+in the same function) — real browsers permit same-document
+`replaceState` on `file://` freely, and the error is thrown AFTER
+`persist()`'s own render calls already completed, so it never corrupted
+a check in this wave; confirmed harmless by isolating a bare
+`history.replaceState` call against a minimal jsdom document outside
+`viewer.html` before concluding it. NOT verified: a real-browser
+confirmation of the same ten checks (Frank's own, per the standing
+sandbox limitation) and a full-scale spot check against the
+regenerated, real `--all-pins` production data (the re-export is a
+separate, long-running job; see the lane report for its own numbers).
