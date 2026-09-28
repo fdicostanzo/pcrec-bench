@@ -1,0 +1,137 @@
+# docs/dev/measurements/2026-09-28-tre-bracket-escape-declaration-verify.txt
+#
+# [B105] the RE-DERIVATION of 2026-09-27-tre-bracket-escape-census.txt
+# against testees/tre/adapter.py's new pre-compile bracket-escape
+# declaration (lane b105tre): every one of that census's 30 distinct
+# (subbench, pattern) hits, compiled again through the REAL
+# `tre-default` adapter (`Adapter.compile()`, PLAIN form), asking one
+# question -- is it `unsupported-by-declaration` now, and for the 20
+# bench/capability@0.1 patterns the earlier census could cross-reference
+# against a committed report, does the BEFORE bucket (unsupported_by_
+# pattern / did-not-compile / compiled-wrong / compiled-coincidentally-
+# safe, read-only, cited from that file, never re-measured) match what
+# the ruling predicts.
+#
+# Box:        ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Repo:       pcrec-bench, commit 8acf0782c662b3f0fabfcec2020552876cb41db
+#             (lane/b105tre)
+# Script:     docs/dev/measurements/probe_tre_bracket_escape_declaration_verify.py
+#             (committed beside this file; imports find_bracket_spans
+#             UNCHANGED from probe_tre_bracket_escape_census.py -- never
+#             a second bracket-scan implementation; compile-only, no
+#             store, no timing)
+# Python:     3.14.4
+# gcc:        15.2.0 (Ubuntu 15.2.0-16ubuntu1) -- builds testees/tre's
+#             driver once (libtre-dev is direct-linked, no artifact per
+#             pattern the way pcrec has)
+# libtre-dev: 0.9.0-1build1
+# libc6:      (unchanged from the 2026-09-27 census's own header)
+# Box load:   load average 0.20/0.26/0.18 at run start (uptime); no
+#             heavy suite running; this probe is compile-only so the
+#             box's load cannot affect a character of it (same
+#             exemption probe_rxt_format.py's own archives state)
+#
+# ---- VERBATIM SCRIPT OUTPUT (stdout) -----------------------------------
+subbench	pattern_id	before	after_compile_outcome	after_declaration_ref_cites_b105	newly_refused
+bounded	csv5	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+capability	bracket-array-define	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	codegrammar-flat	compiled, coincidentally correct	unsupported-by-declaration	True	True
+capability	codegrammar-xflag	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	float-literal-bound	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	high-byte-run	compiled, answered WRONG	unsupported-by-declaration	True	False
+capability	mojibake-curly-quote	compiled, answered WRONG	unsupported-by-declaration	True	False
+capability	pwd-strength-chain	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	quoted-delim-match	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	tag-pair-match	compiled, answered WRONG	unsupported-by-declaration	True	False
+capability	utf8-lead-no-cont	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-codegrammar-json-stringcontent-escape	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-datetime-datefinder-alternation	did-not-compile (descending POSIX range, (d)4)	unsupported-by-declaration	True	False
+capability	wild-logparse-quotedstring-grok	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-logparse-quotedstring-noatomic	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-logparse-syslogbase-expanded	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-logparse-winpath-grok	unsupported_by_pattern (unrelated declared token)	unsupported-by-declaration	True	False
+capability	wild-secrets-username-password-pair	did-not-compile (descending POSIX range, (d)4)	unsupported-by-declaration	True	False
+capability	wild-waf-crs-942360-concat-sqli	compiled, answered WRONG	unsupported-by-declaration	True	False
+capability	wild-waf-crs-942500-comment-obfuscation	did-not-compile (descending POSIX range, (d)4)	unsupported-by-declaration	True	False
+capability	winpath-near-miss	compiled, coincidentally correct	unsupported-by-declaration	True	True
+email	factored	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+email	orig	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+loglines	kv-quoted	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	asr-lb-class	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	cls-high-range	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	cls-mixed	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	cls-neg-allhigh	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	cls-neg-cjk	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+utf8	qnt-class-run	not measured (no store record for tre-default on this set)	unsupported-by-declaration	True	False
+#
+# ---- SCRIPT'S OWN STDERR SUMMARY ---------------------------------------
+#
+# total: 30 distinct (subbench, pattern) pair(s) re-derived
+# every pattern's compile_outcome under tre-default: ALL unsupported-by-declaration
+# previously WRONG (compiled, answered wrong) rows now refused: checked against BEFORE_COMPILED_WRONG (4 patterns)
+# previously did-not-compile rows now reclassified to unsupported-by-declaration: [('capability', 'wild-datetime-datefinder-alternation'), ('capability', 'wild-secrets-username-password-pair'), ('capability', 'wild-waf-crs-942500-comment-obfuscation')]
+# previously CORRECT rows that NEWLY refuse ('coincidentally safe' doubled-backslash idiom): [('capability', 'codegrammar-flat', 'compiled, coincidentally correct'), ('capability', 'winpath-near-miss', 'compiled, coincidentally correct')]
+#
+# ---- READING ------------------------------------------------------------
+#
+# EVERY PREVIOUSLY WRONG ROW IS NOW REFUSED: the census's own four
+# compiled-and-answered-wrong patterns (high-byte-run, tag-pair-match,
+# wild-waf-crs-942360-concat-sqli, mojibake-curly-quote -- the fourth,
+# mojibake-curly-quote, the census's own "SAME raw-high-byte shape pcrec
+# itself got wrong" cross-reference) all read `unsupported-by-declaration`
+# now, `declaration_ref` citing (d)4/[B105] on every one. `tre_regncompb`
+# is never called on any of them, so the silent wrong answer this lane
+# exists to close cannot recur.
+#
+# NO PREVIOUSLY CORRECT ROW SILENTLY MISCLASSIFIES -- but TWO newly
+# refuse, exactly as the ruling states and by design, not a bug:
+# `codegrammar-flat` (`[^"\\]`) and `winpath-near-miss` (`[^<>:"/\\|?*]`)
+# were the census's own "coincidentally safe" doubled-backslash idiom
+# (n_wrong=0 on every regime at cf0962e3) -- the ruling is "ANY bracket
+# expression containing a backslash is refused ... never a wrong
+# answer", with NO carve-out for a spelling that happens to answer right
+# today (translation, including recognising this one safe idiom, is out
+# of scope). Both now read `unsupported-by-declaration`. This is the
+# ONE class of row the brief asked to be listed "with the reason": these
+# two, reason above.
+#
+# THREE ROWS RECLASSIFY FROM ONE REFUSAL SHAPE TO ANOTHER, never through
+# a wrong answer: wild-datetime-datefinder-alternation, wild-secrets-
+# username-password-pair, wild-waf-crs-942500-comment-obfuscation moved
+# from a genuine `tre_regncompb` `did-not-compile` (the descending-
+# POSIX-range REG_ERANGE bug, (d)4's original finding) to `unsupported-
+# by-declaration` -- the SAME underlying (d)4 mechanism (backslash has
+# no meaning inside a POSIX bracket expression), now caught before the
+# driver runs rather than by the driver's own refusal. Both are
+# `did-not-compile`-family refusals in the reporter's sense (excluded
+# from ranking, never a wrong answer); the outcome TOKEN changes but no
+# behavior a reader would call "correctness" moves.
+#
+# THE 11 `unsupported_by_pattern` capability@0.1 ROWS ALSO NOW READ
+# `unsupported-by-declaration` under this probe's DIRECT `adapter.
+# compile()` call -- but this is NOT evidence of anything moving in
+# production: in the real harness (`pcrecbench.harness.run_cell`),
+# these 11 are intercepted by the PRE-EXISTING capability policy
+# (`pcrecbench.capability.missing_capabilities`, an unrelated declared
+# token such as `lookaround`) BEFORE `Adapter.compile()` is ever called
+# at all -- this adapter's own compile() method never runs on them in a
+# real cell. This probe calls `compile()` directly (bypassing that
+# earlier interception layer, the same way `check_high_byte_pattern_argv`
+# and this lane's own make-check control both do, on purpose, to
+# exercise the adapter in isolation) and finds [B105]'s OWN bracket
+# scanner would ALSO catch most of these patterns' text independently
+# (many share the exact `[^\\...]`/`[a-zA-Z0-9.@_\-+]`-shaped idioms the
+# census's own table lists for them) -- a defense-in-depth agreement,
+# not a new finding, and not a change to what a real `pcrecbench run`/
+# `quick` cell would ever have shown for these 11 (they were, and
+# remain, `unsupported-by-declaration` end to end, just via the earlier
+# gate).
+#
+# ALL 30 PATTERNS, INCLUDING THE 10 ON THE THREE UNMEASURED SETS
+# (bounded/email/loglines/utf8), NOW READ `unsupported-by-declaration`
+# under `tre-default`'s PLAIN form -- consistent with the census's own
+# finding that none of these ten has ever been measured for tre-default
+# (no store record; utf8's six are additionally MOOT under that set's
+# own design, `testees/tre/CLAUDE.md`'s utf8 sections), so there is no
+# regression to state for them: the declaration reaches every hit the
+# census found, corpus-wide, by the SAME rule.

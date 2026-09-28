@@ -1,0 +1,143 @@
+# docs/dev/measurements/2026-09-28-tre-bracket-escape-full-corpus-census.txt
+#
+# [B105] THE FULL-CORPUS CENSUS, manager-requested before merge (lane
+# b105tre, 2026-09-28), following the over-refusal fix (commit cd9251c):
+# `_find_bracket_spans` used to give backslash NO escaping power at all,
+# even OUTSIDE a bracket expression -- so a literal `\[` (an escaped
+# bracket open, opening nothing under real ERE/POSIX rules) was still
+# read as if it opened a class, over-refusing patterns like `\[\d+\]`
+# and `a\[b` that contain no real bracket expression whatsoever. Fixed
+# with an explicit two-state scan (outside a bracket, backslash keeps
+# its ordinary escaping power; inside one, still none, unchanged from
+# the section's first version). This file is the request the manager's
+# review made in the same turn as the fix: run the (now fixed) census
+# over EVERY pattern in every bench/*/ set, not just the 2026-09-27
+# census's own 30-hit population, and state the before/after declaration
+# sets plus every newly-declared pattern's own bracket text.
+#
+# Box:        ubuntubudu (pcrec-bench's box), Linux 7.0.0-29-generic, x86_64
+# Repo:       pcrec-bench, commit cd9251c196cc8fb0c3f022b7b96d8e78710aca9f
+#             (lane/b105tre, post-merge of master d0220be)
+# Script:     docs/dev/measurements/probe_tre_bracket_escape_full_corpus_census.py
+#             (committed beside this file; read-only, no compile, no
+#             store, no engine run -- classifies pattern TEXT only, via
+#             the real testees/tre/adapter.py scanner loaded the same
+#             way tools/selfcheck.py's own [B105] check loads it)
+# Python:     3.14.4
+# gcc:        15.2.0 (Ubuntu 15.2.0-16ubuntu1) -- unused by this script
+#             (no compile happens here at all)
+# libtre-dev: 0.9.0-1build1 -- unused by this script (no engine call)
+# Box load:   load average 0.29/0.47/0.65 at run start (uptime); no
+#             heavy suite running; this probe is text-classification
+#             only, so the box's state cannot affect a character of it
+#             (the same exemption probe_rxt_format.py's own archives
+#             state for a parse-only probe)
+#
+# BEFORE (master, commit d0220be at merge time): `testees/tre/
+# adapter.py` on `master` carries NO `_bracket_backslash_content`/
+# `_find_bracket_spans` function at all -- confirmed structurally
+# (`git show master:testees/tre/adapter.py | grep -c
+# _bracket_backslash_content` reads 0, this script's own first stderr
+# line). The BEFORE declaration set from THIS MECHANISM is therefore
+# the EMPTY SET, by construction, not a per-pattern claim needing
+# re-derivation -- master's `tre-default` only ever refuses via
+# `tre_regncompb` itself (the pre-existing descending-range bug,
+# testees/tre/CLAUDE.md (d)4's original finding) or via the unrelated
+# `requires-*` capability policy.
+#
+# ---- VERBATIM SCRIPT OUTPUT (stdout) -----------------------------------
+subbench	pattern_id	before_declared	after_declared	bracket_text
+bounded	csv5	False	True	[^,\n]
+capability	bracket-array-define	False	True	[^\[\]
+capability	codegrammar-flat	False	True	[^"\\]
+capability	codegrammar-xflag	False	True	[^"\\]
+capability	float-literal-bound	False	True	[\d.]
+capability	high-byte-run	False	True	[\x80-\xff]
+capability	mojibake-curly-quote	False	True	[\x20-\x7e]
+capability	pwd-strength-chain	False	True	[^\w\s]
+capability	quoted-delim-match	False	True	[^\\]
+capability	tag-pair-match	False	True	[\w:-]
+capability	utf8-lead-no-cont	False	True	[\xc2-\xdf]
+capability	wild-codegrammar-json-stringcontent-escape	False	True	["\\/bfnrt]
+capability	wild-datetime-datefinder-alternation	False	True	[.\s]
+capability	wild-logparse-quotedstring-grok	False	True	[^\\"]
+capability	wild-logparse-quotedstring-noatomic	False	True	[^\\"]
+capability	wild-logparse-syslogbase-expanded	False	True	[\x21-\x5a\x5c\x5e-\x7e]
+capability	wild-logparse-winpath-grok	False	True	[^\\?*]
+capability	wild-secrets-username-password-pair	False	True	[ \t]
+capability	wild-waf-crs-942360-concat-sqli	False	True	[\s\x0b]
+capability	wild-waf-crs-942500-comment-obfuscation	False	True	[\s\x0b]
+capability	winpath-near-miss	False	True	[^<>:"/\\|?*]
+email	factored	False	True	[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]
+email	orig	False	True	[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]
+loglines	kv-quoted	False	True	[^"\\]
+utf8	asr-lb-class	False	True	[\x{400}-\x{4FF}]
+utf8	cls-high-range	False	True	[\x{100}-\x{2000}]
+utf8	cls-mixed	False	True	[a-zé\x{430}-\x{44F}]
+utf8	cls-neg-allhigh	False	True	[^\x{80}-\x{10FFFF}]
+utf8	cls-neg-cjk	False	True	[^\x{4E00}-\x{9FFF}]
+utf8	qnt-class-run	False	True	[\x{400}-\x{4FF}]
+#
+# ---- SCRIPT'S OWN STDERR SUMMARY ---------------------------------------
+#
+# master has the bracket-escape mechanism: False (BEFORE set is EMPTY)
+#
+# 339 total pattern(s) scanned across every bench/*/patterns/*.rx file (8 sub-bench dir(s))
+# BEFORE (master): 0 patterns declared by this mechanism (the mechanism does not exist on master)
+# AFTER (this branch): 30 pattern(s) declared across 5 sub-bench(es)
+#   bounded: 1 pattern(s) -- csv5
+#   capability: 20 pattern(s) -- bracket-array-define, codegrammar-flat, codegrammar-xflag, float-literal-bound, high-byte-run, mojibake-curly-quote, pwd-strength-chain, quoted-delim-match, tag-pair-match, utf8-lead-no-cont, wild-codegrammar-json-stringcontent-escape, wild-datetime-datefinder-alternation, wild-logparse-quotedstring-grok, wild-logparse-quotedstring-noatomic, wild-logparse-syslogbase-expanded, wild-logparse-winpath-grok, wild-secrets-username-password-pair, wild-waf-crs-942360-concat-sqli, wild-waf-crs-942500-comment-obfuscation, winpath-near-miss
+#   email: 2 pattern(s) -- factored, orig
+#   loglines: 1 pattern(s) -- kv-quoted
+#   utf8: 6 pattern(s) -- asr-lb-class, cls-high-range, cls-mixed, cls-neg-allhigh, cls-neg-cjk, qnt-class-run
+# every one of these 30 newly-declared patterns is a GENUINE bracket expression with a backslash INSIDE it -- the scanner that produced this list is the same two-state POSIX scanner check_b105_tre_bracket_backslash_declaration unit-tests directly, including the five over-refusal regression cases (\[\d+\]/a\[b must NOT hit; [\]]/[a\-z]/\\[\\] must) -- the bracket_text column above is each hit's own verbatim span, printed for manual spot-check, not merely asserted
+#
+# OLD-BUGGY-SCANNER-vs-NEW-FIXED-SCANNER diff over all 339 corpus patterns: 0 differ
+# ZERO -- the over-refusal bug the five synthetic cases prove is REAL never actually fired on any pattern in TODAY's corpus (no committed pattern happens to have an escaped \[ followed, later in the same pattern, by a coincidental unescaped ] that would form a spurious span under the old rule); the fix is forward-looking correctness, not a correction to today's 30-pattern declaration set
+#
+# ---- READING --------------------------------------------------------------
+#
+# THE AFTER SET IS BYTE-FOR-BYTE the 2026-09-27 census's own 30-pattern
+# population, over the FULL current corpus (339 patterns, 8 sub-bench
+# directories -- bench/litrun and bench/altwide are new since that
+# census ran, both contributing ZERO hits). This is not a coincidence
+# to wave past: it is the THIRD line of evidence (beside the five
+# synthetic regression cases and the manual trace below) that the
+# over-refusal bug, while real (a genuine defect the manager's review
+# caught before merge, demonstrated on `\[\d+\]`/`a\[b`), never actually
+# CHANGED any real corpus pattern's classification -- confirmed
+# DIRECTLY, not merely inferred from set equality, by running the OLD
+# (buggy) scanner and the NEW (fixed) one side by side over the same
+# 339 patterns: 0 differ (the script's own OLD-BUGGY-vs-NEW-FIXED
+# section above).
+#
+# WHY NONE OF THE SIX `\[`-CONTAINING PATTERNS TRIPPED THE BUG (manually
+# traced, since a 0-diff result deserves a check beyond "the script said
+# so"): `bench/capability/patterns/{bracket-array-define,
+# wild-codegrammar-json-array-begin,wild-logparse-syslogbase-expanded,
+# wild-logparse-winpath-grok}.rx` and `bench/email/patterns/{orig,
+# factored}.rx` are the six files containing a literal `\[` byte
+# sequence anywhere. `wild-codegrammar-json-array-begin` is LITERALLY
+# `\[` and nothing else -- no closing `]` anywhere, so BOTH scanners
+# (old and new) find no span at all; it was never a hit either way and
+# is not in the AFTER list. The other five all ALSO contain a SEPARATE,
+# genuine, unescaped bracket expression elsewhere in the same pattern
+# (`bracket-array-define`'s `[^\[\]]` real class -- once the sub-
+# construct-adjacent `\[` inside IT is read as an ordinary member, not a
+# new open, since it is not followed by `:`/`.`/`='; `wild-logparse-
+# syslogbase-expanded`'s `[\x21-\x5a\x5c\x5e-\x7e]`; `wild-logparse-
+# winpath-grok`'s `[^\\?*]`; `orig`/`factored`'s several quoted-string
+# classes) -- so both scanners find that LATER genuine bracket and both
+# correctly flag it; the old scanner's over-refusal bug (misreading an
+# escaped `\[` as an open) never gets the chance to matter here because
+# a real hit exists downstream regardless.
+#
+# WHAT THE FIX ACTUALLY PROTECTS: not today's roster, but any FUTURE
+# pattern of the `\[\d+\]`/`foo\[0\]` shape -- an escaped bracket with
+# no real class construct anywhere else in the pattern -- which the OLD
+# scanner would have wrongly declared unsupported (a real coverage
+# loss: the pattern has nothing TRE would misparse, so refusing it
+# would have been a false economy, the opposite of the declaration
+# mechanism's own purpose). The five cases in `check_b105_tre_bracket_
+# backslash_declaration`'s `SCANNER_CASES` are this protection's
+# regression control, run every `make check-harness`.

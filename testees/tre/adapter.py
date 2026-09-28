@@ -128,6 +128,130 @@ def _parse_code(diagnostic):
         return None
 
 
+# [B105] THE BRACKET-ESCAPE DECLARATION (docs/dev/measurements/2026-09-27-
+# tre-bracket-escape-census.txt; testees/tre/CLAUDE.md (d)4; U6 in
+# docs/dev/upstream_findings.md): POSIX bracket expressions give backslash
+# NO special meaning under `tre_regncompb` (confirmed AGREEING with
+# glibc's own POSIX regcomp, U6's corrected reading) -- a PCRE-dialect
+# pattern that escapes something inside `[...]` (`[^"\\]`, `[a-zA-Z0-9.@_
+# \-+]`, ...) is read by TRE LITERALLY, which is sometimes a compile
+# refusal (item 4's descending-range case) but, on this census's own
+# evidence, is SOMETIMES a silent WRONG ANSWER instead (`high-byte-run`,
+# `tag-pair-match`, `wild-waf-crs-942360-concat-sqli`, `mojibake-curly-
+# quote` all compile clean and answer wrong). Translation is out of
+# scope (rewriting the corpus's own PCRE-authored patterns to a portable
+# POSIX spelling is a realism-breaking change this adapter does not make
+# unilaterally) -- so EVERY bracket expression containing a backslash,
+# with no exception for a spelling that happens to answer correctly
+# today (`codegrammar-flat`'s/`winpath-near-miss`'s "coincidentally
+# safe" doubled-backslash idiom, the census's own finding), is declared
+# `unsupported-by-declaration` before `tre_regncompb` is ever called --
+# a named, checkable outcome, never a silent wrong answer.
+_BRACKET_OPEN = b"["
+_BRACKET_CLOSE = b"]"
+_BRACKET_NEGATE = b"^"
+_BRACKET_SUBCONSTRUCT_DELIMS = (b":", b".", b"=")
+_BACKSLASH = b"\\"
+
+
+def _find_bracket_spans(pattern):
+    r"""POSIX-style `[...]` scan over PATTERN's raw BYTES. TWO DISTINCT
+    escaping rules, kept apart by an explicit "are we inside a bracket
+    expression right now" state -- the bug this docstring's own FIX note
+    exists to explain (found by the manager's review, 2026-09-28, before
+    merge):
+
+    OUTSIDE a bracket expression (ERE, and TRE's own REG_EXTENDED
+    parsing), a backslash DOES have its ordinary escaping power: `\[`
+    never opens a bracket at all (it is an escaped literal `[`), and
+    `\\` is one two-byte unit, not two independent bytes. A scanner that
+    treated every `[` byte as an open -- REGARDLESS of a preceding
+    unconsumed backslash -- OVER-REFUSED: `\[\d+\]`, `\[(.*?)\]` and
+    `foo\[0\]` contain no real bracket expression at all (every `[`/`]`
+    in them is escaped), yet an earlier version of this scanner read
+    `[\d+\]` bytes 1-6 of `\[\d+\]` as if `\[` had opened a class ending
+    at the LATER escaped `\]`'s own `]` byte -- a genuine correctness
+    regression (lost coverage on ordinary literal-bracket patterns), not
+    a wrong answer, but out of the ruling's own stated scope ("ANY
+    bracket expression with a backslash", never "any `[` byte").
+
+    INSIDE a bracket expression (once a genuine, unescaped `[` has
+    opened one), backslash is given NO escaping power at all -- POSIX's
+    own rule, unchanged from the scanner's first version: a `]`
+    immediately after `[`/`[^` is a literal FIRST member, never a
+    close; a POSIX bracket sub-expression (`[:name:]` / `[.symbol.]` /
+    `[=char=]`) is skipped as ONE unit so its own interior `]` is never
+    misread as the outer bracket's own close (bench/syntax's
+    `cls-posix.rx` and bench/utf8's `cls-posix-alpha.rx`, both
+    `[[:alpha:]]+`, are the corpus witnesses that need this); and an
+    escaped-looking `\]` CLOSES the class early under real POSIX/TRE
+    rules, the same way a bare `]` does -- `[\]]`/`[a\-z]` are the
+    witnesses this direction (a naive PCRE-style "backslash escapes the
+    next byte" reading INSIDE a bracket would under-detect this hazard's
+    worst case: an escaped `]` a PCRE author intended to stay inside the
+    class instead closes it TRE-side).
+
+    Yields `(start, end)` byte-offset pairs, `end` exclusive of the
+    closing `]`, over spans that are GENUINE bracket expressions by this
+    two-state rule."""
+    spans = []
+    i = 0
+    n = len(pattern)
+    while i < n:
+        if pattern[i:i + 1] == _BACKSLASH:
+            # OUTSIDE a bracket: an escaped unit, two bytes wide (or one,
+            # at the very end of the pattern -- i simply steps past the
+            # trailing backslash with nothing left to scan). `\[` never
+            # opens a bracket; `\\` is one unit, not two independent
+            # bytes.
+            i += 2
+            continue
+        if pattern[i:i + 1] != _BRACKET_OPEN:
+            i += 1
+            continue
+        # A genuine, UNESCAPED '[' -- POSIX bracket-expression rules,
+        # unchanged from this function's first version (backslash has
+        # NO escaping power inside).
+        j = i + 1
+        if j < n and pattern[j:j + 1] == _BRACKET_NEGATE:
+            j += 1
+        if j < n and pattern[j:j + 1] == _BRACKET_CLOSE:
+            j += 1  # literal ] as first member (or first after ^)
+        closed = False
+        while j < n:
+            if (pattern[j:j + 1] == _BRACKET_OPEN and j + 1 < n and
+                    pattern[j + 1:j + 2] in _BRACKET_SUBCONSTRUCT_DELIMS):
+                delim = pattern[j + 1:j + 2]
+                end = pattern.find(delim + _BRACKET_CLOSE, j + 2)
+                if end < 0:
+                    j = n  # unterminated sub-construct; no close found
+                    break
+                j = end + 2
+                continue
+            if pattern[j:j + 1] == _BRACKET_CLOSE:
+                closed = True
+                break
+            j += 1
+        if closed:
+            spans.append((i, j + 1))
+            i = j + 1
+        else:
+            i += 1  # no closing ] found from here; keep scanning
+    return spans
+
+
+def _bracket_backslash_content(pattern):
+    """-> the raw bytes of the FIRST bracket expression in PATTERN
+    (`[...]`, inclusive) that contains a backslash, or `None`.
+    `Adapter.compile()` checks this BEFORE calling `_compile_one` at
+    all -- the pre-compile declaration this whole section is about."""
+    for (start, end) in _find_bracket_spans(pattern):
+        content = pattern[start:end]
+        if _BACKSLASH in content:
+            return content
+    return None
+
+
 class Adapter(_ad.Adapter):
     name = "tre"
 
@@ -276,8 +400,47 @@ class Adapter(_ad.Adapter):
         policy (`harness.run_cell`) already turns any free-spacing
         pattern into an `unsupported-by-declaration` row before this
         method is ever called -- confirmed on the [B69] census's own two
-        CASE-1 patterns, which `tre-default` never attempts at all."""
+        CASE-1 patterns, which `tre-default` never attempts at all.
+
+        [B105] THE BRACKET-ESCAPE DECLARATION, checked FIRST, before
+        `_compile_one` is ever called for either form: a pattern whose
+        text contains a bracket expression with a backslash inside it
+        (`_bracket_backslash_content`, POSIX rules) is declared
+        `unsupported-by-declaration` outright -- `tre_regncompb` is
+        never invoked, so there is no chance of the silent wrong answer
+        this census found (testees/tre/CLAUDE.md (d)4's own witnesses).
+        Only `FORM_PLAIN` carries the declaration row, matching
+        `harness.run_cell`'s own central capability-decline shape
+        (pcrecbench/harness.py's `missing` branch) -- `CompiledPattern.
+        form_for_regime` falls back to `plain` for `match` when no
+        `whole-subject` key exists, so every regime reads the same
+        declined result and no whole-subject compile is attempted
+        either (the wrap cannot fix a backslash already inside the
+        pattern body it wraps)."""
         del requires_free_spacing
+        bracket = _bracket_backslash_content(pattern)
+        if bracket is not None:
+            declaration_ref = (
+                "testees/tre/CLAUDE.md (d)4 / [B105]: POSIX bracket "
+                "expressions give backslash no special meaning under "
+                "tre_regncompb (REG_EXTENDED, confirmed against glibc's "
+                "own POSIX regcomp -- U6, docs/dev/upstream_findings.md); "
+                "pattern %s contains a bracket expression %r with a "
+                "backslash inside it, which tre-default would parse "
+                "LITERALLY rather than refuse or translate (translation "
+                "is out of scope) -- declared unsupported rather than "
+                "risking the silent wrong answer docs/dev/measurements/"
+                "2026-09-27-tre-bracket-escape-census.txt found on "
+                "exactly this shape"
+                % (pattern_id, bracket))
+            cr = _ad.CompileResult(
+                outcome="unsupported-by-declaration",
+                diagnostic=("bracket expression %r contains a backslash; "
+                           "tre-default declares this unsupported "
+                           "(testees/tre/CLAUDE.md (d)4 / [B105])"
+                           % bracket),
+                declaration_ref=declaration_ref)
+            return _ad.CompiledPattern({_ad.FORM_PLAIN: cr})
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT, pattern)):
