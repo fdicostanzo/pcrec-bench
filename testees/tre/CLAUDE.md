@@ -11,7 +11,7 @@ before this lane started).
 
 | file | role |
 |---|---|
-| `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION (`capturecount`, `has_backrefs`, `refusal_class`); the `refusal_class`/`_REFUSAL_SYNTAX_CODES` derivation |
+| `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION (`capturecount`, `has_backrefs`, `refusal_class`); the `refusal_class`/`_REFUSAL_SYNTAX_CODES` derivation; ([B105]) `_find_bracket_spans`/`_bracket_backslash_content`, the pre-compile bracket-escape declaration `compile()` checks before ever calling `tre_regncompb` (item 4's FIXED note below) |
 | `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libtre.so.5` (`#include <tre/tre.h>`, `-ltre`); the `^(?:...)$` whole-subject wrap |
 | `configs.toml` | the one config id, `tre-default` |
 | `_probe.rx` | one byte, `a` — the version-probe pattern (`testees/pcre2/_probe.rx`'s own convention) |
@@ -178,6 +178,55 @@ without opening that one):
    patterns from real PCRE-syntax sources; TRE's refusal here is a
    genuine capability-and-portability finding, not a bug to route
    around silently).
+
+   **FIXED, widened to EVERY manifestation, not just this one (lane
+   `b105tre`, [B105], 2026-09-28):** the descending-range refusal above
+   is only ONE symptom of this mechanism — the U6 follow-up census
+   (`docs/dev/measurements/2026-09-27-tre-bracket-escape-census.txt`)
+   found the SAME "backslash has no meaning inside `[...]`" property
+   also produces a SILENT WRONG ANSWER on four other corpus patterns
+   (`high-byte-run`, `tag-pair-match`, `wild-waf-crs-942360-concat-sqli`,
+   `mojibake-curly-quote` — all compile clean and answer wrong, none of
+   them hitting the descending-range refusal at all). `Adapter.compile()`
+   now scans a pattern's raw bytes for ANY bracket expression `[...]`
+   containing a backslash (`_bracket_backslash_content`/
+   `_find_bracket_spans`, POSIX rules — a `]` right after `[`/`[^` is a
+   literal first member, a `[:name:]`/`[.sym.]`/`[=c=]` sub-construct is
+   skipped as one unit so its own interior `]` cannot be mis-read as the
+   outer bracket's close, and backslash is given NO escaping power
+   anywhere in the scan, modelling TRE's own POSIX reading exactly —
+   confirmed a naive PCRE-style "backslash escapes the next byte" reading
+   would UNDER-detect: an escaped-looking `\]` a PCRE author intended to
+   stay inside the class instead CLOSES it early under real POSIX/TRE
+   rules, which this scanner's own no-escaping-power design catches by
+   construction) and declares any hit `unsupported-by-declaration`
+   BEFORE `tre_regncompb` is ever called — a named, checkable outcome
+   with `declaration_ref` citing this section, never a `did-not-compile`
+   guess at TRE's diagnostic and never a silent wrong answer. **Every
+   hit is refused, with NO exception for a spelling that happens to
+   answer correctly today** (translation to a portable POSIX spelling,
+   the item's own "out of this lane's scope" note above, stays out of
+   scope) — `codegrammar-flat`'s `[^"\\]` and `winpath-near-miss`'s
+   `[^<>:"/\\|?*]`, the census's own "coincidentally safe" doubled-
+   backslash idiom (n_wrong=0 on every regime at cf0962e3, because a
+   doubled backslash read literally still excludes one backslash byte),
+   are now ALSO declared unsupported, on purpose: a spelling that reads
+   right by coincidence today is not a contract this adapter can rely
+   on staying right. Re-derived corpus-wide (all seven sub-benches, not
+   only bench/capability) in
+   `docs/dev/measurements/2026-09-28-tre-bracket-escape-declaration-verify.txt`
+   — 30/30 hits now `unsupported-by-declaration`; the three genuine
+   `did-not-compile` refusals above (this pattern, `wild-secrets-
+   username-password-pair`, `wild-waf-crs-942500-comment-obfuscation`)
+   reclassify to `unsupported-by-declaration` too (the SAME underlying
+   mechanism, now caught before the driver runs). `make check-harness`'s
+   `check_b105_tre_bracket_backslash_declaration` is the regression
+   control: the scanner's own edge cases (`[]...]`, `[^]...]`, a POSIX
+   `[[:alpha:]]` class, the escaped-`\]`-closes-early case) unit-tested
+   directly, plus the wiring proof through a real `Adapter.compile()`
+   call (a bracket-with-backslash pattern refused BY NAME with no
+   whole-subject artifact even attempted; a plain bracket pattern with
+   no backslash still compiles clean on both forms).
 5. **Two corpus patterns REFUSE for a reason their OWN `requires-*` tags
    do not name**: `quoted-delim-match` (tagged `requires-backrefs` only;
    its actual body is `(["'])(?:(?!\1)[^\\]|\\.)*\1` — the REAL refusal
@@ -416,6 +465,22 @@ checklist (§8 item 2) names the pass-rate split itself (0% throughput
 vs 48% search on the identical pattern) as worth re-checking for
 reproducibility — a possible one-off box artifact — the next time
 `tre-default` measures this set, before treating it as settled.
+
+**MECHANISM IDENTIFIED AND CLOSED (lane `b105tre`, [B105], 2026-09-28):**
+all four wrong rows above (`high-byte-run`, `tag-pair-match`,
+`wild-waf-crs-942360-concat-sqli`, `mojibake-curly-quote`) share the
+SAME bracket-expression-with-backslash shape the U6 follow-up census
+found (`[\x80-\xff]`/`[\w:-]`/`[\s\x0b]`/`[\x20-\x7e]` respectively) —
+not a raw-high-byte-handling gap distinct from item 4's POSIX-bracket
+finding, but a FURTHER manifestation of the exact same mechanism (item
+4's FIXED note above has the full derivation). The "systematic
+raw-high-byte handling gap" reading above is superseded: the four rows
+are all bracket-backslash hits, and `Adapter.compile()` now declares
+every one `unsupported-by-declaration` before `tre_regncompb` runs, so
+this correctness gap cannot recur at the next measurement of this set.
+The reproducibility question the ledger's own checklist raised (§8 item
+2) is now moot for these four rows specifically — a declined pattern has
+no pass-rate to be reproducible or not.
 
 ## `--utf8`: the character-boundary find-all advance ([B77] U1)
 
