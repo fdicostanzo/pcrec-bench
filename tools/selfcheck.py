@@ -13583,7 +13583,7 @@ def check_b105_tre_bracket_backslash_declaration():
     (d)4; docs/dev/measurements/2026-09-27-tre-bracket-escape-census.txt;
     U6, docs/dev/upstream_findings.md): `tre-default`'s `compile()` now
     scans a pattern's text for a bracket expression `[...]` containing a
-    backslash (POSIX rules -- backslash has no escaping power inside a
+    backslash (POSIX rules -- backslash has no escaping power INSIDE a
     POSIX bracket expression, so a `]` right after `[`/`[^` is the only
     kind of literal member that does not close the class, and a `[:
     name:]`/`[.sym.]`/`[=c=]` sub-construct's own interior `]` must not
@@ -13592,17 +13592,29 @@ def check_b105_tre_bracket_backslash_declaration():
     never a silent wrong answer, never a `did-not-compile` guess at
     TRE's own diagnostic.
 
+    OUTSIDE a bracket expression, by contrast, backslash DOES keep its
+    ordinary escaping power -- `\\[` never opens one at all (manager
+    review, 2026-09-28, before merge: an earlier scanner version gave
+    backslash NO power anywhere, over-refusing `\\[\\d+\\]`/`a\\[b`,
+    genuine losses of coverage on patterns with no real bracket
+    expression in them). `\\[\\d+\\]` / `a\\[b` (must NOT declare) and
+    `[\\]]` / `[a\\-z]` / `\\\\[\\\\]` (must declare -- the last one an
+    escaped backslash OUTSIDE the class followed by a real one-member
+    bracket `[\\\\]` INSIDE which backslash has no meaning) are this
+    section's own regression cases for the two-state rule.
+
     Two levels: the SCANNER unit-tested directly (`_bracket_backslash_
     content` imported off the loaded adapter module -- fast, no driver
     build, every edge case the brief names: `[]...]`, `[^]...]`, a POSIX
     class `[[:alpha:]]`, an escaped-looking `\\]` that a naive PCRE
     reading would treat as staying inside the class but POSIX/TRE reads
-    as closing it, and the plain no-backslash case); and the WIRING
-    through the real `Adapter.compile()` call, which is what actually
-    reaches `tre_regncompb` or does not -- a bracket-with-backslash
-    pattern refused BY NAME with no whole-subject artifact even
-    attempted, and an ordinary bracket pattern still compiling clean on
-    both forms, exactly as before this change."""
+    as closing it, the outside-bracket escape cases above, and the plain
+    no-backslash case); and the WIRING through the real `Adapter.
+    compile()` call, which is what actually reaches `tre_regncompb` or
+    does not -- a bracket-with-backslash pattern refused BY NAME with no
+    whole-subject artifact even attempted, and an ordinary bracket
+    pattern still compiling clean on both forms, exactly as before this
+    change."""
     if "tre" not in _ad.discover():
         return
     print("-- [B105] the tre bracket-escape declaration --")
@@ -13633,6 +13645,25 @@ def check_b105_tre_bracket_backslash_declaration():
          "POSIX rules (content 'a\\' still carries the backslash)"),
         (b"", False, "empty pattern"),
         (rb"[", False, "unterminated [ -- no span at all"),
+        # the manager's own over-refusal regression cases (2026-09-28,
+        # found before merge): OUTSIDE a bracket, backslash escapes the
+        # next byte -- \[ never opens one -- so these carry NO real
+        # bracket expression at all and must NOT be declared.
+        (rb"\[\d+\]", False,
+         r"\[\d+\] -- every [ and ] here is escaped; no real bracket"),
+        (rb"a\[b", False,
+         r"a\[b -- \[ is an escaped literal [, opens nothing"),
+        # ... while a GENUINE bracket, reached past an escaped unit, is
+        # still read under POSIX no-escaping-power rules INSIDE it.
+        (rb"[\]]", True,
+         r"[\]] -- a real bracket (unescaped [) whose one member is a "
+         "literal backslash, closed by the following ]"),
+        (rb"[a\-z]", True,
+         r"[a\-z] -- the 'escape the hyphen inside a class' idiom"),
+        (b"\\\\[\\\\]", True,
+         r"\\[\\] -- an escaped backslash OUTSIDE the bracket, then a "
+         "real one-member bracket [\\\\] (backslash has no meaning "
+         "inside it either)"),
     ]
     scanner_fail = False
     for (pattern, expect_hit, label) in SCANNER_CASES:
@@ -13643,8 +13674,9 @@ def check_b105_tre_bracket_backslash_declaration():
         bad("the bracket scanner: %s" % label,
             "expected hit=%s, got %r" % (expect_hit, got))
     if not scanner_fail:
-        ok("the bracket scanner handles []...], [^]...], POSIX classes "
-           "and an escaped-looking \\] (%d case(s))" % len(SCANNER_CASES),
+        ok("the bracket scanner handles []...], [^]...], POSIX classes, "
+           "an escaped-looking \\] and outside-bracket \\[ escapes "
+           "(%d case(s))" % len(SCANNER_CASES),
            "")
 
     # Level 2: the real Adapter.compile() call -- the wiring.

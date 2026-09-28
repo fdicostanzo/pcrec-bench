@@ -155,32 +155,63 @@ _BACKSLASH = b"\\"
 
 
 def _find_bracket_spans(pattern):
-    r"""POSIX-style `[...]` scan over PATTERN's raw BYTES, mirroring
-    docs/dev/measurements/probe_tre_bracket_escape_census.py's own
-    convention (a `]` immediately after `[` or `[^` is a literal FIRST
-    member, never a close) and WIDENING it to also skip a POSIX bracket
-    sub-expression (`[:name:]` / `[.symbol.]` / `[=char=]`) as ONE unit,
-    so its own interior `]` is never misread as the outer bracket's own
-    close -- bench/syntax's `cls-posix.rx` and bench/utf8's `cls-posix-
-    alpha.rx`, both `[[:alpha:]]+`, are the corpus witnesses that need
-    this (no backslash in either, but a scanner that mis-closed on the
-    sub-construct's own `]` could misread a LATER, real bracket
-    expression's span in some other pattern). No escaping power is given
-    to a backslash ANYWHERE in this scan -- that absence is the exact
-    thing being modelled, not an oversight: `\]` inside a bracket closes
-    it early under real POSIX/TRE rules, the same way `]` does, so a
-    naive PCRE-style 'backslash escapes the next byte' reading would
-    silently under-detect this hazard's worst case (an escaped `]`
-    intended by the pattern's PCRE author to stay inside the class,
-    instead closing it TRE-side). Yields `(start, end)` byte-offset
-    pairs, `end` exclusive of the closing `]`."""
+    r"""POSIX-style `[...]` scan over PATTERN's raw BYTES. TWO DISTINCT
+    escaping rules, kept apart by an explicit "are we inside a bracket
+    expression right now" state -- the bug this docstring's own FIX note
+    exists to explain (found by the manager's review, 2026-09-28, before
+    merge):
+
+    OUTSIDE a bracket expression (ERE, and TRE's own REG_EXTENDED
+    parsing), a backslash DOES have its ordinary escaping power: `\[`
+    never opens a bracket at all (it is an escaped literal `[`), and
+    `\\` is one two-byte unit, not two independent bytes. A scanner that
+    treated every `[` byte as an open -- REGARDLESS of a preceding
+    unconsumed backslash -- OVER-REFUSED: `\[\d+\]`, `\[(.*?)\]` and
+    `foo\[0\]` contain no real bracket expression at all (every `[`/`]`
+    in them is escaped), yet an earlier version of this scanner read
+    `[\d+\]` bytes 1-6 of `\[\d+\]` as if `\[` had opened a class ending
+    at the LATER escaped `\]`'s own `]` byte -- a genuine correctness
+    regression (lost coverage on ordinary literal-bracket patterns), not
+    a wrong answer, but out of the ruling's own stated scope ("ANY
+    bracket expression with a backslash", never "any `[` byte").
+
+    INSIDE a bracket expression (once a genuine, unescaped `[` has
+    opened one), backslash is given NO escaping power at all -- POSIX's
+    own rule, unchanged from the scanner's first version: a `]`
+    immediately after `[`/`[^` is a literal FIRST member, never a
+    close; a POSIX bracket sub-expression (`[:name:]` / `[.symbol.]` /
+    `[=char=]`) is skipped as ONE unit so its own interior `]` is never
+    misread as the outer bracket's own close (bench/syntax's
+    `cls-posix.rx` and bench/utf8's `cls-posix-alpha.rx`, both
+    `[[:alpha:]]+`, are the corpus witnesses that need this); and an
+    escaped-looking `\]` CLOSES the class early under real POSIX/TRE
+    rules, the same way a bare `]` does -- `[\]]`/`[a\-z]` are the
+    witnesses this direction (a naive PCRE-style "backslash escapes the
+    next byte" reading INSIDE a bracket would under-detect this hazard's
+    worst case: an escaped `]` a PCRE author intended to stay inside the
+    class instead closes it TRE-side).
+
+    Yields `(start, end)` byte-offset pairs, `end` exclusive of the
+    closing `]`, over spans that are GENUINE bracket expressions by this
+    two-state rule."""
     spans = []
     i = 0
     n = len(pattern)
     while i < n:
+        if pattern[i:i + 1] == _BACKSLASH:
+            # OUTSIDE a bracket: an escaped unit, two bytes wide (or one,
+            # at the very end of the pattern -- i simply steps past the
+            # trailing backslash with nothing left to scan). `\[` never
+            # opens a bracket; `\\` is one unit, not two independent
+            # bytes.
+            i += 2
+            continue
         if pattern[i:i + 1] != _BRACKET_OPEN:
             i += 1
             continue
+        # A genuine, UNESCAPED '[' -- POSIX bracket-expression rules,
+        # unchanged from this function's first version (backslash has
+        # NO escaping power inside).
         j = i + 1
         if j < n and pattern[j:j + 1] == _BRACKET_NEGATE:
             j += 1
