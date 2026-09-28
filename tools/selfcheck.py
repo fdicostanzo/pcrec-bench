@@ -7364,7 +7364,29 @@ def _committed_at_any_pin(committed, block):
 #: standing ("pattern too large: 1243275 bytes ... (limit 1000000)",
 #: 5.6 s) and compiles under the 8 MiB raise (1,263,319 B, 2.8 s) -- both
 #: of the control's premises, measured.
-_CAP_PAIRS = (("pcrec-vm-bigcap", "pcrec-vm", "w-512"),
+#:
+#: THE VM ARM MOVED FROM `w-512` TO `w-2048` AT a32bc86e ([B108], lane
+#: b108fix, 2026-09-27 -- this check's own premise arm caught it, exactly
+#: as designed: `make check` failed naming `w-512` compiling under
+#: `pcrec-vm`). pcrec's [OPT-LITSCAN] S2a (abi 40 -> 41, the VM
+#: literal-run compare) shrinks a forced-VM artifact's alternation-island
+#: chains, and the altwide VM refusal wall moved a SECOND time as a
+#: result (see the pcrec-auto-noisland CLAUDE.md entry): [B37] held it at
+#: 384<w<=512; at a32bc86e BOTH the forced-VM island route and the
+#: `-fno-alt-island` chain route compile through `w-1024` and refuse at
+#: `w-2048` -- the wall is now 1024<w<=2048 on both arms. Re-swept
+#: directly against the pin binary: `w-512` (the retired control) now
+#: COMPILES under `pcrec-vm` at the default cap (456,072 code bytes,
+#: under the 500,000 cap -- the premise failure `make check` reported),
+#: so it can no longer separate the two configs; `w-2048` refuses at the
+#: default cap ("pattern too large: 884927 bytes of emitted code (limit
+#: 500000)", 0.05 s) and compiles under the 8 MiB raise (894,611 file
+#: bytes / 884,928 measured code bytes, 0.06 s) -- both of the control's
+#: premises, measured. The DFA route's own wall (checked by the
+#: refusal-boundary check elsewhere in this file) is untouched, since
+#: S2a is a VM-only mechanism -- which is also why the auto arm's rung
+#: (`w-1024`) did not need to move at this pin.
+_CAP_PAIRS = (("pcrec-vm-bigcap", "pcrec-vm", "w-2048"),
               ("pcrec-auto-bigcap", "pcrec-auto", "w-1024"))
 
 

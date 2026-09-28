@@ -29,21 +29,6 @@
 #   hard ceiling) | "identifier cap" (bounds a name's length or a
 #   naming-tied count).
 # override: "flag" (a CLI flag or pcrec_options field moves it per
-# pcrec numeric-limits registry (docs/spec/table_contract.md, the
-# SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
-# src/core/limits.def, in the table's own order.
-#
-# unit: the quantity's dimension, or empty for a dimensionless
-# magnitude ceiling.
-# kind: "compile budget" (bounds the COMPILER's own analysis or
-#   emission; crossing it can refuse a pattern) | "runtime
-#   capacity" (bounds the EMITTED MATCHER's own resource use;
-#   crossing it is a give-up, never a wrong answer) | "size cap"
-#   (bounds emitted artifact bytes) | "selection knee" (a
-#   threshold or default that steers a selection mechanism, not a
-#   hard ceiling) | "identifier cap" (bounds a name's length or a
-#   naming-tied count).
-# override: "flag" (a CLI flag or pcrec_options field moves it per
 #   compile) | "-D" (only a build-time -D at pcrec's OWN compile
 #   moves it, never a caller lever) | "flag+-D" (BOTH: a caller
 #   flag moves it per compile AND a build-time -D moves the
