@@ -458,6 +458,19 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-noreqbyte", [t for t in REQUIRES_VOCAB
                               if t not in ("callouts", "conditionals",
                                            "control-verbs", "lookbehind-variable")]),
+    # [B108] (pin a32bc86e): the [OPT-LITSCAN] S2a twin, pcrec-auto plus
+    # `-fno-lit-run` -- an EMIT-side denial (the VM's literal-run compare
+    # back to the per-byte chain), so it satisfies exactly pcrec-auto's
+    # SYNTAX tokens. Its one refusal-set difference is SIZE, not syntax:
+    # wild-datetime-datefinder-alternation's whole-subject form compiles
+    # under auto (482,896 code B) and is refused under the denial (666,790 >
+    # the 500,000 cap) -- a measured did-not-compile, never a capability
+    # (docs/dev/ledgers/2026-09-28-b108-a32bc86e.md). Omitting this row in
+    # the [B108] window left 27/64 patterns unsupported-by-declaration on
+    # the deny arm (O-64 (4)).
+    ("pcrec-auto-nolitrun", [t for t in REQUIRES_VOCAB
+                             if t not in ("callouts", "conditionals",
+                                          "control-verbs", "lookbehind-variable")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct

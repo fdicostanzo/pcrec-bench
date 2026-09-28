@@ -13,7 +13,7 @@ vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifie
 vocabulary convention perl-leftmost-first posix-leftmost-longest
 tag set=capability, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcrec-auto-noreqbyte pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom vectorscan-block-som tre-default rust-default
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcrec-auto-noreqbyte pcrec-auto-nolitrun pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom vectorscan-block-som tre-default rust-default
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -106,6 +106,20 @@ ext bench
     captures
     true-end-anchor
   capabilities pcrec-auto-noreqbyte
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-auto-nolitrun
     backrefs
     lookaround
     possessive-quantifier
