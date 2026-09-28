@@ -423,6 +423,32 @@ cflags = ["-falign-functions=64"]
 flags = ["--features", "all"]
 description = "pcrec defaults with the artifact+shim compiled under -falign-functions=64 ([B35], pcrec I-39 (v)'s layout probe for the disputed floor/match/auto cell): against pcrec-auto -- one variable moved, the COMPILEE's own function alignment, never pcrec's emitted C"
 
+# THE PLACEMENT TWIN -- inbox I-115 Q2 (docs/dev/lanes/b110probe): pcrec's
+# own follow-up on O-64/O-65's [OPT-LITSCAN] S2a reading asks whether the
+# aws-access-key-id ×1.037 and logparse-atomic-removed's +0.7-1.4 ns are
+# CODE (S2a's own doing) or PLACEMENT (where the compiler happened to land
+# the loop). `-falign-functions=64 -falign-loops=64` together pin BOTH the
+# function's own landing AND its inner loop heads, which `pcrec-auto-align64`
+# alone (function alignment only) does not -- b110probe's own objdump
+# probe (Q6) found the lit-run "attempt" loop's head lands at THREE
+# different offsets mod 16 across L=2..40 with no `.p2align` directive at
+# all (gcc placed it wherever the preceding bytes happened to end), which
+# is exactly the "layout, not code" hypothesis these two testees exist to
+# pin down on a REAL bench cell rather than a hand-picked witness.
+[testees.pcrec-auto-align64loops]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-falign-functions=64", "-falign-loops=64"]
+flags = ["--features", "all"]
+description = "pcrec defaults with the artifact+shim compiled under -falign-functions=64 -falign-loops=64 ([B110], inbox I-115 Q2's placement twin -- BOTH function AND loop-head landing pinned, against pcrec-auto-align64's function-only pin): the `auto` arm of the aws-access-key-id / logparse-atomic-removed placement-vs-code pair"
+
+[testees.pcrec-auto-nolitrun-align64loops]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-falign-functions=64", "-falign-loops=64"]
+flags = ["--features", "all", "-fno-lit-run"]
+description = "pcrec-auto-nolitrun ([OPT-LITSCAN] S2a's VM literal-run compare denied, -fno-lit-run) with the artifact+shim ALSO compiled under -falign-functions=64 -falign-loops=64 ([B110], inbox I-115 Q2): the `auto-nolitrun` arm of the same placement-vs-code pair -- against pcrec-auto-align64loops, one variable moved (S2a on/off); against pcrec-auto-nolitrun, one variable moved (the compilee's own function+loop alignment)"
+
 # ---------------------------------------------------------------------------
 # THE ALTERNATION-ISLAND DENY AXIS -- `-fno-alt-island` ([B37]; pcrec
 # [ENG-ISL] STEP 1, docs/spec/tuning.md 2.20, --list-axes `alt-island`

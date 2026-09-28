@@ -8457,6 +8457,76 @@ def check_cflags_axis():
                "%s -> %s (its gcc sibling's id plus `cf-align-functions-64`)"
                ", the flag in build_flags, absent from runtime_options"
                % (plain, derived))
+
+        # ---- 2b. the TWO PLACEMENT-TWIN testees ([B110], inbox I-115 Q2):
+        # -falign-functions=64 -falign-loops=64 TOGETHER, on `auto` and on
+        # `auto` + `-fno-lit-run` -- both flags land as ONE cf- token
+        # (effective_cflags joins every declared flag's body with `-`
+        # before the shared `cf-` prefix, cflags_token's own doc), and the
+        # nolitrun pair proves DENY-AXIS composition still orders BEFORE
+        # cflags (chartering order: cc, caps, denies, cflags, encoding) --
+        # `nolitrun-cf-align-functions-64-align-loops-64`, never the
+        # reverse, and never colliding with pcrec-auto-align64's own
+        # single-flag token or with pcrec-auto-nolitrun's bare one.
+        ALIGN64LOOPS = "pcrec-auto-align64loops"
+        NOLITRUN_ALIGN64LOOPS = "pcrec-auto-nolitrun-align64loops"
+        LOOPS_FLAG = "-falign-loops=64"
+        loops_probs = []
+        cfg2 = adapter.config(ALIGN64LOOPS)
+        block2 = adapter.describe(ALIGN64LOOPS)
+        derived2 = _rec.derive_testee_id(block2)
+        if cfg2.get("cflags") != [_ALIGN64_FLAG, LOOPS_FLAG]:
+            loops_probs.append("%s: cflags is %r" % (ALIGN64LOOPS, cfg2.get("cflags")))
+        if block2.get("config_extra") != "cf-align-functions-64-align-loops-64":
+            loops_probs.append("%s: config_extra is %r"
+                               % (ALIGN64LOOPS, block2.get("config_extra")))
+        if derived2 != plain + "_cf-align-functions-64-align-loops-64":
+            loops_probs.append("%s: derived id %r is not %r plus the joined token"
+                               % (ALIGN64LOOPS, derived2, plain))
+        if _ALIGN64_FLAG not in block2["build_flags"] \
+                or LOOPS_FLAG not in block2["build_flags"]:
+            loops_probs.append("%s: build_flags is missing one of the two flags"
+                               % ALIGN64LOOPS)
+        ro2 = {o["name"] for o in block2["runtime_options"]}
+        if _ALIGN64_FLAG in ro2 or LOOPS_FLAG in ro2:
+            loops_probs.append("%s: runtime_options carries a compilee flag"
+                               % ALIGN64LOOPS)
+
+        nolitrun_plain = _rec.derive_testee_id(adapter.describe("pcrec-auto-nolitrun"))
+        cfg3 = adapter.config(NOLITRUN_ALIGN64LOOPS)
+        block3 = adapter.describe(NOLITRUN_ALIGN64LOOPS)
+        derived3 = _rec.derive_testee_id(block3)
+        if cfg3.get("cflags") != [_ALIGN64_FLAG, LOOPS_FLAG]:
+            loops_probs.append("%s: cflags is %r"
+                               % (NOLITRUN_ALIGN64LOOPS, cfg3.get("cflags")))
+        if "-fno-lit-run" not in cfg3.get("flags", []):
+            loops_probs.append("%s: pcrec flags do not carry -fno-lit-run"
+                               % NOLITRUN_ALIGN64LOOPS)
+        if block3.get("config_extra") != "nolitrun-cf-align-functions-64-align-loops-64":
+            loops_probs.append("%s: config_extra is %r (deny word must precede "
+                               "the cf- token, chartering order)"
+                               % (NOLITRUN_ALIGN64LOOPS, block3.get("config_extra")))
+        if derived3 != plain + "_nolitrun-cf-align-functions-64-align-loops-64":
+            loops_probs.append("%s: derived id %r is not %r plus the joined token"
+                               % (NOLITRUN_ALIGN64LOOPS, derived3, nolitrun_plain))
+        if derived3 in (derived2, derived, nolitrun_plain):
+            loops_probs.append("%s: derived id collides with a sibling testee's"
+                               % NOLITRUN_ALIGN64LOOPS)
+        if "-fno-lit-run" not in block3["build_flags"]:
+            loops_probs.append("%s: build_flags does not name -fno-lit-run"
+                               % NOLITRUN_ALIGN64LOOPS)
+
+        if loops_probs:
+            bad("cflags axis: the placement-twin pair (%s, %s) compose BOTH "
+                "flags into one token, in chartering order" % (ALIGN64LOOPS,
+                NOLITRUN_ALIGN64LOOPS), "; ".join(loops_probs)[:800])
+        else:
+            ok("cflags axis: the placement-twin pair (%s, %s) compose BOTH "
+               "flags into one token, in chartering order"
+               % (ALIGN64LOOPS, NOLITRUN_ALIGN64LOOPS),
+               "%s -> %s; %s -> %s (deny word before the cf- token, no "
+               "collision with pcrec-auto-align64 or pcrec-auto-nolitrun)"
+               % (plain, derived2, nolitrun_plain, derived3))
     finally:
         os.environ.clear()
         os.environ.update(saved)
@@ -8464,13 +8534,14 @@ def check_cflags_axis():
     # ---- 6. the CLI lists it ---------------------------------------------
     proc = run([sys.executable, "-m", "pcrecbench", "testees"], cwd=ROOT,
                timeout=300)
-    if proc.returncode == 0 and re.search(r"(?m)^\s*%s\b" % re.escape(ALIGN64),
-                                          proc.stdout):
-        ok("cflags axis: `pcrecbench testees` lists %s" % ALIGN64, ALIGN64)
-    else:
-        bad("cflags axis: `pcrecbench testees` lists %s" % ALIGN64,
-            "not found (exit %d): %s"
-            % (proc.returncode, (proc.stderr or "")[-200:]))
+    for tid in (ALIGN64, ALIGN64LOOPS, NOLITRUN_ALIGN64LOOPS):
+        if proc.returncode == 0 and re.search(r"(?m)^\s*%s\b" % re.escape(tid),
+                                              proc.stdout):
+            ok("cflags axis: `pcrecbench testees` lists %s" % tid, tid)
+        else:
+            bad("cflags axis: `pcrecbench testees` lists %s" % tid,
+                "not found (exit %d): %s"
+                % (proc.returncode, (proc.stderr or "")[-200:]))
 
     # ---- 3 + 4. a real compile: the argv on BOTH sides, and THE CONTROL --
     tmp = tempfile.mkdtemp(prefix="pcrecbench-cflags-")
