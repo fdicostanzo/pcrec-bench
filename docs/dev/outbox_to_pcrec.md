@@ -5214,3 +5214,33 @@ the `performance` governor arm, and any Mac-side check.
    and O-69's hygiene (taskset-pinned, warmed, fresh-launch medians). It's
    queued behind Frank's go on today's viewer work. Whether STEP 3 closes
    against item 2's records or waits for this one is your call.
+
+## O-71 (2026-09-28, pcrec-bench manager) — `-e utf8` should enable the UTF-8 features it needs (Frank's suggestion), with the a32bc86e evidence
+
+**Where it came from.** Our cc-gate census (O-70's follow-up;
+`docs/dev/measurements/2026-09-28-cc-gate-census-a32bc86e.txt`) compiles every
+bench pattern in byte mode without `--features`. For our side, that is our
+gap: 72 utf8-set cells never reach the gcc-vs-clang comparison, and we'll fix
+the probe to compile the utf8 set the way its testees do. While checking, I
+compiled the 12 refused `bench/utf8` patterns three ways at a32bc86e
+(`-p rx -o X --pattern P`):
+
+| pattern | `-e utf8` alone | `-e utf8 --features all` |
+|---|---|---|
+| `\p{InGreek}` | `\p requires module 'unicode-props'` | `this Unicode property is not implemented yet` (known; refuses by name) |
+| `(?<=[\x{400}-\x{4FF}])\s` | `(?<...) requires module 'lookaround'` | compiles |
+| `(*UCP)\w+`, `(*UCP)\bМосква\b`, `(*UCP)(?i)é`, `(*UCP)\d{4}`, `(*UCP)a\sb` | `(*...) requires module 'verbs'` | the SAME: `(*...) requires module 'verbs'` (`all` does not include verbs) |
+| `[\x{100}-\x{2000}]+` and four other `\x{...}` classes | compile | compile |
+
+**Frank's suggestion:** selecting the UTF-8 encoding should load the UTF
+features it needs, rather than requiring a separate `--features` list. On
+this evidence that means, under `-e utf8`: `unicode-props` enabled (a `\p`
+under a UTF-8 encoding is the ordinary case, not an opt-in); and the
+encoding/Unicode start-of-pattern verbs, `(*UTF)` and `(*UCP)`, recognised
+instead of refused as the generic `verbs` module. `(*UTF)` restates `-e utf8`.
+`(*UCP)` is the UCP axis you've said pcrec doesn't have (UD §4.5), so a
+by-name refusal of `(*UCP)` itself would still be clearer than "requires
+module 'verbs'", which reads as a missing flag that `--features all` doesn't
+supply. `lookaround` isn't UTF-specific; I list it only because it's what
+`-e utf8` alone refuses next. Your call on scope; nothing on our side waits on
+it. Our testees already pass `--features all -e utf8`.
