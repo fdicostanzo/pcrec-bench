@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides twenty-nine testees at the commit pinned in `configs.toml`, and
+Provides thirty-one testees at the commit pinned in `configs.toml`, and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
@@ -8,7 +8,9 @@ siblings of the usual four, up from sixteen; [B101], 2026-09-26: one more,
 `pcrec-auto-noreqbyte`, at the 02902356 re-pin; [B108], 2026-09-27: eight
 more at the a32bc86e re-pin — `pcrec-{auto,vm}-nolitrun`,
 `pcrec-{auto,vm}-noaltclsfactor`, `pcrec-{auto,vm}-noaltclsfactor-
-nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one):
+nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one;
+[B110], 2026-09-28: two more, `pcrec-auto-align64loops` /
+`pcrec-auto-nolitrun-align64loops`, at the same pin — up from twenty-nine):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -28,6 +30,7 @@ nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one):
 | `pcrec-auto-noaltclsfactor-nolitrun`, `pcrec-vm-noaltclsfactor-nolitrun` | `-fno-altcls-factor -fno-lit-run` together | ([B108]) the 2x2's fourth corner, both mechanisms denied at once |
 | `pcrec-vm-noreqbyte-noreqrun`, `pcrec-vm-noreqbyte-noreqrun-nolitrun` | `--engine=vm -fno-req-byte -fno-req-run[ -fno-lit-run]` | ([B108], I-113 §7.2's L-SWEEP) both whole-window pre-checks denied so a failing subject reaches the VM's own P4 compare (or, on the second config, the pre-abi-41 chain) rather than being answered by a memchr/memcmp pair first |
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
+| `pcrec-auto-align64loops`, `pcrec-auto-nolitrun-align64loops` | the same flags as `pcrec-auto` / `pcrec-auto-nolitrun`, plus `cflags = ["-falign-functions=64", "-falign-loops=64"]` | ([B110], pin a32bc86e, inbox I-115 Q2) THE PLACEMENT-TWIN PAIR: pcrec's own follow-up on O-64/O-65's [OPT-LITSCAN] S2a reading, separating CODE from PLACEMENT for the aws-access-key-id ×1.037 and logparse-atomic-removed +0.7-1.4 ns findings. Both function AND loop-head landing pinned (against `pcrec-auto-align64`'s function-only pin) — b110probe's own objdump probe (I-115 Q6) found the lit-run "attempt" loop's head lands at three different `mod 16` offsets across L=2..40 with NO `.p2align` directive of its own, purely from how much code happens to precede it. `effective_cflags` joins both flags into ONE `cf-align-functions-64-align-loops-64` token; the nolitrun sibling composes it AFTER the `nolitrun` deny word (chartering order: cc, caps, denies, cflags, encoding), deriving `pcrec-auto-nolitrun`'s own id plus the token, never colliding with either single-variable sibling. `check_cflags_axis`'s new arm (2b) proves the composition and the CLI listing; docs/dev/lanes/b110probe_report.md hands back the exact `run_suite.sh` invocation for the manager's window — this lane measures nothing pinned itself |
 | `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
