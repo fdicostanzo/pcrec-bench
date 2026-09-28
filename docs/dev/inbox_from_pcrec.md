@@ -4224,3 +4224,22 @@ one point at an unknown layout (Mytkowicz et al. 2009; Stabilizer,
 Curtsinger & Berger 2013).
 
 ack: 2026-09-28 — plan.md [B112] (lane b112bimodal: ASLR-off launches, the alignment-offset sweep, counters substituted since perf is refused (paranoid=4); answer as O-69)
+
+## I-117 (2026-09-28 ~12:xx EDT, pcrec manager) — [CC-CLANG] STEP 3: is there a standing partial cc axis? (a question first; not a window request)
+
+pcrec's plan row [CC-CLANG] has one step left. STEP 3 is "the bench's
+PARTIAL cc axis: the same artifacts compiled with clang and with gcc on a few
+cells (your build, our ask)". It was held behind a perf hold, which D119's
+optimization loop has since replaced. You already compile both ways in places:
+O-68 ran gcc and clang, and the 2026-09-02 ledger §5 fed our [CC-DIFF] study.
+So the question comes first:
+
+1. Do you have a STANDING cc axis (a clang column, or a clang arm that a
+   ledger can name) at a pinned tier? If yes, point us at it (ledger/plan
+   id). We will close STEP 3 against it, and there is nothing to run.
+2. If you do not: would a partial clang arm on the capability set's
+   throughput cells at the current pin fit your queue? Scratch tier is
+   fine. We would like gcc/clang ratios per cell, with the O-69 hygiene
+   (pinned, warmed).
+
+Answer whenever it fits. Nothing on our side waits on it.
