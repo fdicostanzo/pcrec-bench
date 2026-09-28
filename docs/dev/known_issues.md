@@ -1653,12 +1653,33 @@ against the real bug by hand (`git stash testees/vectorscan/driver.c`,
 rebuild, confirm the exact refusal, `git stash pop`) — recorded in
 `docs/dev/lanes/b98rider_report.md`.
 
-## KB-35 — tools/program_identity.py cannot census email-specimen (directory alias vs subbench id)
+## KB-35 (2026-09-27, found by lane b104read/[B104]; FIXED lane kb35alias, 2026-09-28) — tools/program_identity.py cannot census email-specimen (directory alias vs subbench id)
 
-Found 2026-09-27 by lane b104read ([B104]). The CLI resolves the bench
-DIRECTORY alias (`email`) for its pattern loader, then compares that same
-raw string against `store/index.tsv`'s `subbench` column (`email-specimen`)
-— never equal, so it reports `no config measured at both` and the
-email-specimen cross-pin report carries no D119 null band. Fix: resolve the
-alias to the sidecar's subbench id once and use that id for the index
-lookup. Status: OPEN (small; no measurement depends on it beyond the band).
+The CLI resolves the bench DIRECTORY alias (`email`) for its pattern
+loader, then compares that same raw string against `store/index.tsv`'s
+`subbench` column (`email-specimen`) — never equal, so it reports `no
+config measured at both` and the email-specimen cross-pin report carries
+no D119 null band.
+
+FIXED: `tools/program_identity.py`'s `build_census`/`main` now resolve
+`Subbench.id` ONCE, into `sb_id`, and use it for every store lookup and
+output path from that point on; `--subbench` still takes the bench/
+DIRECTORY name (`pcrecbench.subbench.find`'s own contract), unchanged —
+commit `0cabeaf`. `tools/selfcheck.py:check_kb35_email_alias_resolution`
+(`make check-harness`) proves the bug directly against the unfixed
+`newest_records()` primitive (a literal `email` lookup finds nothing),
+the fix (the resolved id finds real records), the output path (keyed on
+the id, not the directory alias), and the whole thing end to end through
+`build_census` and the CLI's own `--check` path. `bench/email` is
+confirmed the ONLY sub-bench whose directory name and sidecar id diverge
+(every other `bench/*/subbench.toml`'s `id` equals its directory name,
+checked live by the same check).
+
+The owed census itself (`--subbench email --version 0.2 --old 25b1984f
+--new 751b9c6d`, the pair lane b104read wanted for its email-specimen
+AFTER report's null band) was also run this lane, commit `d1d8898`:
+`reports/identity/email-specimen@0.2/pcrec_25b1984f__751b9c6d.tsv`
+(22 changed / 2 identical — only the `floor` pattern's plain-form DFA
+artifact on both caps configs; the pair spans abi 30-39, ten re-pins'
+worth of new stamps and code-emitting optimizations, so this population
+is expected).

@@ -4731,6 +4731,111 @@ def check_program_sha256():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_kb35_email_alias_resolution():
+    """KB-35 (docs/dev/known_issues.md), fixed this lane
+    (kb35alias): `tools/program_identity.py` resolved bench/email's
+    DIRECTORY alias (`email`, `pcrecbench.subbench.find`'s own contract)
+    for its pattern loader, then compared that SAME raw string against
+    `store/index.tsv`'s `subbench` column (`email-specimen`, the
+    sidecar's own `id`) -- never equal, so `newest_records` found
+    nothing and every email-specimen census refused "no config measured
+    at both". `bench/email` is the ONLY sub-bench where the directory
+    name and the sidecar id diverge (checked live below: every other
+    `bench/*/subbench.toml`'s `id` equals its directory name).
+
+    Fixed: `build_census`/`main` resolve `Subbench.id` ONCE (`sb_id`)
+    and use it for every store lookup and output path; `--subbench`
+    still takes the bench/ DIRECTORY name, `_sb.find`'s own contract,
+    unchanged. This check proves the bug's shape directly against the
+    unfixed primitive (a literal `email` lookup finds nothing -- the
+    negative control), the fix (the resolved id finds real records),
+    the output PATH (keyed on the id, not the directory alias), and the
+    whole thing end to end through `build_census` and the CLI's own
+    `--check` path against the census this lane committed
+    (`reports/identity/email-specimen@0.2/pcrec_25b1984f__751b9c6d.tsv`)."""
+    print("-- KB-35: program_identity.py's email-specimen directory-alias fix --")
+    import program_identity as PI
+
+    store_dir = os.path.join(ROOT, "store")
+    sb = Subbench(os.path.join(ROOT, "bench", "email"))
+    if sb.id == "email-specimen" and sb.id != "email":
+        ok("KB-35: bench/email's directory name != its sidecar id",
+           "dir=email id=%s" % sb.id)
+    else:
+        bad("KB-35: bench/email's directory name != its sidecar id",
+            "id=%r -- this check's fixture premise is stale" % sb.id)
+        return
+
+    # every OTHER set's directory name already equals its id -- the bug
+    # (and this fix) is invisible there by construction; stated, not left
+    # for a reader to take on faith.
+    other_aliased = [d for d in sorted(os.listdir(os.path.join(ROOT, "bench")))
+                     if d != "email"
+                     and os.path.isfile(os.path.join(ROOT, "bench", d, "subbench.toml"))
+                     and Subbench(os.path.join(ROOT, "bench", d)).id != d]
+    if not other_aliased:
+        ok("KB-35: bench/email is the ONLY directory/id divergence", "checked every bench/*/")
+    else:
+        bad("KB-35: bench/email is the ONLY directory/id divergence",
+            "also diverging: %r (this fix's reach may need to widen)" % other_aliased)
+
+    # the BUG, reproduced directly against the unfixed primitive: a
+    # lookup keyed on the raw directory name finds nothing, ever.
+    buggy = PI.newest_records(store_dir, "email", sb.version, "pcrec", "751b9c6d")
+    if buggy == {}:
+        ok("KB-35: newest_records(subbench='email') (the pre-fix lookup) finds nothing",
+           "store/index.tsv has no subbench=='email' row")
+    else:
+        bad("KB-35: newest_records(subbench='email') (the pre-fix lookup) finds nothing",
+            "found %d config(s) -- store/index.tsv now carries a literal "
+            "'email' subbench row, or this control is stale" % len(buggy))
+
+    # the FIX: the resolved id finds real records.
+    fixed = PI.newest_records(store_dir, sb.id, sb.version, "pcrec", "751b9c6d")
+    if len(fixed) >= 1:
+        ok("KB-35: newest_records(subbench=sb.id) finds email-specimen@0.2 records",
+           "%d config(s) at pin 751b9c6d" % len(fixed))
+    else:
+        bad("KB-35: newest_records(subbench=sb.id) finds email-specimen@0.2 records", repr(fixed))
+
+    # end to end: build_census(<directory name>, ...) resolves internally
+    # and returns real rows instead of "no config measured at both".
+    with open(os.devnull, "w") as devnull:
+        try:
+            meta, rows = PI.build_census("email", sb.version, "25b1984f", "751b9c6d",
+                                         store_dir, log=devnull)
+        except SystemExit as e:
+            bad("KB-35: build_census('email', ...) resolves the alias end to end", str(e))
+        else:
+            if rows and any(m.startswith("# ") and "subbench=email-specimen@" in m for m in meta):
+                ok("KB-35: build_census('email', ...) resolves the alias end to end",
+                   "%d row(s), meta names subbench=email-specimen@%s" % (len(rows), sb.version))
+            else:
+                bad("KB-35: build_census('email', ...) resolves the alias end to end",
+                    "rows=%d meta=%r" % (len(rows), meta))
+
+    # the output PATH is keyed on the id too -- census_path("email", ...)
+    # would be a DIFFERENT (wrong) path from census_path(sb.id, ...).
+    wrong_path = PI.census_path("email", sb.version, "pcrec", "25b1984f", "751b9c6d")
+    right_path = PI.census_path(sb.id, sb.version, "pcrec", "25b1984f", "751b9c6d")
+    if right_path != wrong_path and os.path.exists(right_path) and not os.path.exists(wrong_path):
+        ok("KB-35: the committed census lives at the ID path, not the directory-alias path",
+           os.path.relpath(right_path, ROOT))
+    else:
+        bad("KB-35: the committed census lives at the ID path, not the directory-alias path",
+            "right=%s (exists=%s) wrong=%s (exists=%s)"
+            % (right_path, os.path.exists(right_path), wrong_path, os.path.exists(wrong_path)))
+
+    # the CLI's own --check path (main()), non-destructively, against the
+    # census this lane committed.
+    rc = PI.main(["--subbench", "email", "--version", sb.version,
+                 "--old", "25b1984f", "--new", "751b9c6d", "--check"])
+    if rc == 0:
+        ok("KB-35: `program_identity.py --subbench email ... --check` exits 0", "")
+    else:
+        bad("KB-35: `program_identity.py --subbench email ... --check` exits 0", "exit %r" % rc)
+
+
 def check_vars_surface():
     """[B90] abi 32 ([VAR], pcrec D121): `${name}` caller variables. The
     bench compiles every pcrec config with `--features all`, which since
@@ -13504,6 +13609,7 @@ def main():
     check_kb33_refusal_metadata_declared()
     check_mechanism_stamps()
     check_program_sha256()
+    check_kb35_email_alias_resolution()
     check_vars_surface()
     check_deny_flag_controls()
     check_noreqbyte_testee()

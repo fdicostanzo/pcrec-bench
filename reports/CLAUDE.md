@@ -269,6 +269,17 @@ BEATS rust at ×0.297/×0.301) and utf8's [OPT-LITSCAN] F3 residual
 quantified per cell (2 of 4 "stays slow" witnesses actually resolved
 almost completely, one held flat, one regressed ×2.84 unpredicted).
 
+**KB-35 FIXED (2026-09-28, lane kb35alias)**: the directory-alias bug
+`[B104]` reading found (above, "email-specimen's could NOT be
+generated") is fixed — `tools/program_identity.py` now resolves
+`Subbench.id` once and uses it for every store lookup and output path
+(`docs/dev/known_issues.md` KB-35). The owed census itself was also run
+this lane: `identity/email-specimen@0.2/pcrec_25b1984f__751b9c6d.tsv`
+(22 changed / 2 identical). No report was regenerated — the
+`after-751b9c6d` email-specimen group committed above (the [B104] wave)
+predates this file and still says `NO NULL BAND`; the next render of
+that group (or query) is what picks it up.
+
 **[B108] reading (2026-09-28, lane b108read) ADDED seven NEW report groups
 at pcrec a32bc86e (abi 41, [OPT-LITSCAN] S2a)** and changed nothing else
 here: the reporter is unchanged at v25. Every group carries `.tsv`, `.md`,
