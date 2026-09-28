@@ -48,3 +48,20 @@ own version out of the built artifact or the loaded library
 claim the record could not check, and `testee_id` is DERIVED from it
 (record_schema.md §6.4, rule X5) — so a wrong version silently renames
 the testee.
+
+**A NEW TESTEE ID needs a `bench/capability` roster row or an EXCLUDED
+entry in the SAME commit** ([B111], 2026-09-28): `bench/capability`'s
+`ext bench` roster (`EXT_BENCH_ROSTER` in
+`bench/capability/gen_patterns.py`) is hand-listed per testee id, and
+its fail-closed policy (`pcrecbench/capability.py` 5.2) means a testee
+absent from it satisfies NOTHING — every `requires-*`-tagged pattern
+reads `unsupported-by-declaration` rather than a real compile attempt.
+`make check-harness`'s `check_capability_roster_coverage` enumerates
+every testee id across every `testees/*/configs.toml`
+(`pcrecbench.adapters.all_testees()`) and fails BY NAME on one in
+neither `EXT_BENCH_ROSTER` nor `bench/capability/gen_patterns.py`'s
+`EXCLUDED_TESTEES` (every deliberately-absent id, with why — see that
+file and `bench/capability/CLAUDE.md`). This bit twice in three days
+before the gate existed (outbox O-64/O-65, O-67 item 4); adding a
+config here without the matching roster/excluded entry is caught at
+`make check-harness` time, not discovered mid-window.

@@ -151,3 +151,39 @@ isolated witness's exact `ONIGERR_*` code and are left to fail HONESTLY
 as real `did-not-compile` rows rather than being hidden behind a token
 withhold that would misrepresent the other patterns in their own
 families.
+
+**[B111] (lane b111roster, 2026-09-28) closes THE ROSTER GAP,
+STRUCTURALLY.** `EXT_BENCH_ROSTER` was hand-listed per testee with no
+gate on it, so a new pinned testee (a deny-flag twin, a compiler
+sibling, a buffer variant) silently read `unsupported-by-declaration`
+on all 27 `requires-*`-tagged patterns until someone happened to run it
+against this set and noticed — it bit twice in three days (outbox O-64
+-> O-65 on `pcrec-auto-nolitrun`; O-67 item 4 on the two [B110]
+`align64loops` testees the very next day). Two things now exist beside
+`EXT_BENCH_ROSTER`:
+
+- **`EXCLUDED_TESTEES`** (`gen_patterns.py`, right after the roster
+  list): every pinned testee id deliberately NOT on the roster, by
+  name, with why — `pcrec-local` (no fixed pin, scratch tier, never
+  ranked) and every `-utf8` engine-encoding sibling (this set is
+  byte-mode-only; `-utf8` configs are `bench/utf8`'s, per the
+  convention `testees/vectorscan/CLAUDE.md` already states for
+  `vectorscan-block-som-utf8`).
+- **`tools/selfcheck.py`'s `check_capability_roster_coverage`**, in
+  `make check-harness`: every testee id `pcrecbench.adapters.
+  all_testees()` finds across EVERY `testees/*/configs.toml` must
+  appear in `EXT_BENCH_ROSTER` OR `EXCLUDED_TESTEES` — a testee in
+  NEITHER fails the check by name, before any window runs it and finds
+  27/64 patterns silently blocked.
+
+**A NEW TESTEE (any `testees/*/configs.toml` addition, on ANY engine,
+not only pcrec) needs a roster row or an `EXCLUDED_TESTEES` entry in
+the SAME commit that pins it**, or `make check-harness` fails by name.
+Add a row to `EXT_BENCH_ROSTER` (citing why its declared token set is
+what it is — measured where cheap, as the `pcrec-auto-noreqbyte`/
+`pcrec-auto-nolitrun` rows above do, or reasoned from an existing row's
+own measurement where the new axis is provably parse-invariant, as the
+twenty [B111] deny-flag/compiler/buffer/cap rows do) or, when the
+testee should never run against this set, an `EXCLUDED_TESTEES` entry
+naming the reason. Either way, regenerate `patterns.rxt`
+(`python3 bench/capability/gen_patterns.py`, then `--check`).

@@ -471,6 +471,110 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-nolitrun", [t for t in REQUIRES_VOCAB
                              if t not in ("callouts", "conditionals",
                                           "control-verbs", "lookbehind-variable")]),
+    # [B111] (2026-09-28, plan row [B111], lane b111roster): EVERY OTHER
+    # PINNED pcrec-* CONFIG whose testees/pcrec/configs.toml comment says
+    # its own testee is `pcrec-auto` / `pcrec-nocaps` / `pcrec-vm` (or
+    # `pcrec-auto-nolitrun`) PLUS ONE VARIABLE that is not a parser
+    # choice: which COMPILER built the artifact+shim (`cc`), whether a
+    # caller-provided frame buffer is used (`-in`), an emitted-size cap
+    # raise (`-bigcap`), a COMPILEE-side alignment flag (`cflags`), or an
+    # emit-side/selection-side DENY FLAG that changes what the codegen
+    # BACKEND does with an already-parsed pattern (`-fno-scan-edge`,
+    # `-fno-alt-island`, `-fno-cls-fold`, `-fno-lit-run`,
+    # `-fno-altcls-factor`, `-fno-req-run` -- every one of these rides
+    # alongside `-fno-req-byte`, already on the roster above, whose own
+    # comment states the same reasoning: "an EMIT-side denial ... so it
+    # satisfies exactly pcrec-auto's tokens"). The PARSE-time refusals
+    # this vocabulary's four withheld tokens name (`callouts`,
+    # `conditionals`, `control-verbs`, `lookbehind-variable`) are module/
+    # construct gates pcrec's PARSER enforces before any engine, deny
+    # flag, buffer, compiler or cap axis is even chosen -- already proven
+    # invariant across `--engine=`/`--no-captures` by the `pcrec-auto`/
+    # `pcrec-nocaps`/`pcrec-vm` rows' own shared exclusion set above, and
+    # none of these axes touches the parser at all (every one of their
+    # own configs.toml comments says so: "OUR OWN phase-2 command line",
+    # "never passed to pcrec", "an EMIT-side denial", "never a refusal").
+    # None of these rows has been separately witness-compiled (MEASURING
+    # would re-run the SAME 64-pattern refusal census pcrec-auto-nolitrun
+    # and pcrec-auto-noreqbyte's own comments already cite for this exact
+    # reasoning); a lane that wants that measurement narrows this
+    # comment, it does not need to widen it.
+    ("pcrec-auto-clang", [t for t in REQUIRES_VOCAB
+                          if t not in ("callouts", "conditionals",
+                                       "control-verbs", "lookbehind-variable")]),
+    ("pcrec-nocaps-clang", [t for t in REQUIRES_VOCAB
+                            if t not in ("callouts", "captures", "conditionals",
+                                         "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-clang", [t for t in REQUIRES_VOCAB
+                        if t not in ("callouts", "conditionals",
+                                     "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-in", [t for t in REQUIRES_VOCAB
+                       if t not in ("callouts", "conditionals",
+                                    "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-bigcap", [t for t in REQUIRES_VOCAB
+                           if t not in ("callouts", "conditionals",
+                                        "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-bigcap", [t for t in REQUIRES_VOCAB
+                         if t not in ("callouts", "conditionals",
+                                      "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-noedge", [t for t in REQUIRES_VOCAB
+                           if t not in ("callouts", "conditionals",
+                                        "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-align64", [t for t in REQUIRES_VOCAB
+                            if t not in ("callouts", "conditionals",
+                                         "control-verbs", "lookbehind-variable")]),
+    # THE TWO [B110] PLACEMENT-TWIN TESTEES ([B111]'s own trigger, outbox
+    # O-67 item 4): both compile through the SAME two-phase path as every
+    # other row here -- `cflags` (`-falign-functions=64
+    # -falign-loops=64`) rides on THIS PROJECT'S OWN phase-2 `$CC`
+    # compile of the artifact+shim only (testees/pcrec/configs.toml's own
+    # words: "THESE ARE NEVER PASSED TO PCREC"), so it is invisible to
+    # the parser exactly as `-falign-functions=64` alone already is on
+    # `pcrec-auto-align64` above. `pcrec-auto-align64loops` is
+    # `pcrec-auto` plus that flag: pcrec-auto's tokens.
+    # `pcrec-auto-nolitrun-align64loops` is `pcrec-auto-nolitrun` (already
+    # on this roster) plus the SAME compilee-only flag: the roster row is
+    # therefore `pcrec-auto-nolitrun`'s own token set, unchanged.
+    ("pcrec-auto-align64loops", [t for t in REQUIRES_VOCAB
+                                 if t not in ("callouts", "conditionals",
+                                              "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-nolitrun-align64loops",
+     [t for t in REQUIRES_VOCAB
+      if t not in ("callouts", "conditionals",
+                   "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-noisland", [t for t in REQUIRES_VOCAB
+                             if t not in ("callouts", "conditionals",
+                                          "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-noclsfold", [t for t in REQUIRES_VOCAB
+                              if t not in ("callouts", "conditionals",
+                                           "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-noclsfold", [t for t in REQUIRES_VOCAB
+                            if t not in ("callouts", "conditionals",
+                                         "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-nolitrun", [t for t in REQUIRES_VOCAB
+                           if t not in ("callouts", "conditionals",
+                                        "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-noaltclsfactor", [t for t in REQUIRES_VOCAB
+                                   if t not in ("callouts", "conditionals",
+                                                "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-noaltclsfactor", [t for t in REQUIRES_VOCAB
+                                 if t not in ("callouts", "conditionals",
+                                              "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-noaltclsfactor-nolitrun",
+     [t for t in REQUIRES_VOCAB
+      if t not in ("callouts", "conditionals",
+                   "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-noaltclsfactor-nolitrun",
+     [t for t in REQUIRES_VOCAB
+      if t not in ("callouts", "conditionals",
+                   "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-noreqbyte-noreqrun", [t for t in REQUIRES_VOCAB
+                                     if t not in ("callouts", "conditionals",
+                                                  "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-noreqbyte-noreqrun-nolitrun",
+     [t for t in REQUIRES_VOCAB
+      if t not in ("callouts", "conditionals",
+                   "control-verbs", "lookbehind-variable")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct
@@ -849,6 +953,65 @@ EXT_BENCH_ROSTER = [
                                    "conditionals", "k-reset",
                                    "control-verbs", "callouts")]),
 ]
+
+# [B111] (2026-09-28, plan row [B111]): EVERY PINNED testee id NOT on
+# `EXT_BENCH_ROSTER` above, by NAME, with why it is deliberately absent --
+# the OTHER SIDE of the fail-closed rule `pcrecbench/capability.py`
+# already states (5.2: a config the matrix never mentions satisfies
+# NOTHING). `tools/selfcheck.py`'s `check_capability_roster_coverage`
+# ([B111]) requires every testee id in every `testees/*/configs.toml` to
+# appear in ONE of `EXT_BENCH_ROSTER` or `EXCLUDED_TESTEES` -- a new
+# testee absent from BOTH fails that check BY NAME instead of silently
+# reading `unsupported-by-declaration` on 27/64 patterns until someone
+# happens to run this set against it (the [B108]/[B110] incidents this
+# row exists to close, outbox O-64 -> O-65, O-67 item 4).
+EXCLUDED_TESTEES = {
+    # `pcrec-local` ([B10]): a PROVIDED binary at NO PIN
+    # (testees/pcrec/configs.toml: "$PCREC_BIN ... SCRATCH TIER BY
+    # CONSTRUCTION"). Its capabilities depend on whatever binary and
+    # `$PCREC_LOCAL_FLAGS` the caller supplies at run time, so there is no
+    # single commit's parser behaviour to declare here, and a scratch
+    # record never enters `store/` or a ranking to begin with
+    # (record_schema.md 6.8) -- nothing this roster's fail-closed rule
+    # protects is at stake for it.
+    "pcrec-local": (
+        "no fixed pin ($PCREC_BIN / $PCREC_LOCAL_FLAGS chosen at run "
+        "time, [B10]); scratch tier by construction, never entering the "
+        "canonical store or a ranking -- no static capability declaration "
+        "is possible"),
+}
+
+# Every `-utf8` engine-encoding sibling ([B77] U2, 2026-09-25) is
+# EXCLUDED for the SAME one reason, already the established convention
+# stated verbatim in testees/vectorscan/CLAUDE.md's own
+# `vectorscan-block-som-utf8` row: "no `EXT_BENCH_ROSTER` row, same
+# convention as every other `-utf8` config". `bench/capability` declares
+# NO `[expectations] encoding = "utf8"` (its `subbench.toml` is silent on
+# the key, which defaults to `byte`, `pcrecbench.subbench.SET_ENCODINGS`)
+# and none of its 64 patterns carries a `requires-utf8-encoding` /
+# `-ascii-class-scope` / `-unicode-class-scope` tag -- this set is
+# chartered byte-mode-only (`bench/utf8` is where those three tokens and
+# every `-utf8` config's own declaration already live,
+# docs/design/utf8_set_v1.md 7.5/7.6). Compiling `bench/capability`
+# against an engine-encoding sibling was never asked for and is not
+# expected to happen; this dict records the choice by name rather than
+# leaving it to be inferred from the roster's silence.
+_UTF8_SIBLING_REASON = (
+    "engine-ENCODING sibling ([B77] U2); bench/capability is a "
+    "byte-mode-only set (no `[expectations] encoding = \"utf8\"`, no "
+    "pattern tagged requires-utf8-encoding/-ascii-class-scope/"
+    "-unicode-class-scope) -- the established convention for every "
+    "`-utf8` testee is no roster row here at all "
+    "(testees/vectorscan/CLAUDE.md's own words); bench/utf8 is where "
+    "these configs are declared and run")
+for _utf8_id in (
+    "pcrec-auto-utf8", "pcrec-nocaps-utf8", "pcrec-vm-utf8",
+    "pcrec-vm-in-utf8", "pcre2-utf-interp", "pcre2-utf-jit",
+    "pcre2-utf-dfa", "onig-utf8", "re2-utf8",
+    "vectorscan-block-nosom-utf8", "vectorscan-block-som-utf8",
+):
+    EXCLUDED_TESTEES[_utf8_id] = _UTF8_SIBLING_REASON
+del _utf8_id
 
 
 def render_ext_bench():

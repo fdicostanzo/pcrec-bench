@@ -12118,6 +12118,103 @@ def check_capability_policy_noop_elsewhere():
                 "found requires-* on: %r" % offenders)
 
 
+def _capability_gen_patterns_module():
+    """bench/capability/gen_patterns.py as a module, imported rather than
+    retyped (its `EXT_BENCH_ROSTER` / `EXCLUDED_TESTEES` tables) -- the
+    same `spec_from_file_location` shape `_pcrec_adapter_module` already
+    uses for testees/pcrec/adapter.py."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "capability_gen_patterns_for_selfcheck",
+        os.path.join(ROOT, "bench", "capability", "gen_patterns.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _capability_roster_gap(testee_ids, roster_ids, excluded_ids):
+    """-> the sorted set of `testee_ids` naming neither a roster row nor
+    an excluded one -- the ONE predicate [B111]'s gate and its negative
+    control both call, so the two can never disagree about what "covered"
+    means."""
+    return sorted(set(testee_ids) - set(roster_ids) - set(excluded_ids))
+
+
+def check_capability_roster_coverage():
+    """[B111] (2026-09-28, plan row [B111]): THE CAPABILITY ROSTER GAP,
+    CLOSED. `bench/capability`'s `ext bench` roster
+    (`gen_patterns.EXT_BENCH_ROSTER`) is hand-listed per testee id, and
+    `pcrecbench/capability.py`'s fail-closed rule (5.2) means a pinned
+    testee id ABSENT from it satisfies NOTHING -- every one of the 27/64
+    `requires-*`-tagged patterns reads `unsupported-by-declaration`, not
+    a real compile attempt. This bit twice before this lane closed it:
+    `pcrec-auto-nolitrun` was measured against `bench/capability` with no
+    roster row (outbox O-64 -> fixed in fef55af, O-65), and the SAME gap
+    recurred the very next day on the two [B110] `align64loops` testees
+    (outbox O-67 item 4) -- a hand-maintained list with no gate on it
+    will keep reopening at every new deny-flag/compiler/buffer/cap
+    testee. This check is that gate: EVERY pinned testee id in EVERY
+    `testees/*/configs.toml` (`pcrecbench.adapters.all_testees()`, the
+    SAME discovery `python3 -m pcrecbench testees` and the harness itself
+    use -- never a second, hand-typed roster) must appear in ONE of
+    `EXT_BENCH_ROSTER` or `gen_patterns.EXCLUDED_TESTEES`
+    (bench/capability/gen_patterns.py's own by-name registry of every
+    testee deliberately left off the roster, and why); a testee id in
+    NEITHER fails BY NAME, naming the missing id(s) so a future addition
+    (a new deny-flag testee, a new engine) cannot silently repeat the
+    incident.
+
+    THE NEGATIVE CONTROL is not "add a testee and see the check fail" --
+    that would mean editing `configs.toml` inside a check, which is worse
+    than not checking at all. It is the SAME predicate
+    (`_capability_roster_gap`) run a second time over the real
+    population PLUS one synthetic unlisted id: the check function itself
+    cannot silently always pass, because this arm proves it CAN see a
+    gap when one is manufactured, on the exact code path the real arm
+    above uses."""
+    print("-- [B111] every pinned testee is on the capability roster, or "
+          "excluded by name --")
+    gp = _capability_gen_patterns_module()
+    roster_ids = set(t for t, _ in gp.EXT_BENCH_ROSTER)
+    excluded_ids = set(gp.EXCLUDED_TESTEES)
+
+    overlap = roster_ids & excluded_ids
+    if not overlap:
+        ok("no testee id is both rostered and excluded", "%d roster, %d excluded"
+           % (len(roster_ids), len(excluded_ids)))
+    else:
+        bad("no testee id is both rostered and excluded", "%r" % sorted(overlap))
+
+    blank = [t for t, r in gp.EXCLUDED_TESTEES.items() if not r or not r.strip()]
+    if not blank:
+        ok("every EXCLUDED_TESTEES entry carries a non-empty reason",
+           "%d entries" % len(excluded_ids))
+    else:
+        bad("every EXCLUDED_TESTEES entry carries a non-empty reason",
+            "blank reason(s): %r" % sorted(blank))
+
+    real_ids = sorted(_ad.all_testees().keys())
+    gap = _capability_roster_gap(real_ids, roster_ids, excluded_ids)
+    if not gap:
+        ok("every real pinned testee id is rostered or excluded",
+           "%d testee id(s) checked (%s)"
+           % (len(real_ids), ", ".join(sorted(_ad.discover().keys()))))
+    else:
+        bad("every real pinned testee id is rostered or excluded",
+            "missing from both: %r" % gap)
+
+    # CONTROL: a synthetic unlisted id is a manufactured gap, and this
+    # SAME predicate must report it BY NAME.
+    sentinel = "z-selfcheck-unlisted-testee"
+    control_gap = _capability_roster_gap(real_ids + [sentinel], roster_ids, excluded_ids)
+    if control_gap == [sentinel]:
+        ok("CONTROL: an unlisted testee id is reported by name",
+           "%r" % control_gap)
+    else:
+        bad("CONTROL: an unlisted testee id is reported by name",
+            "expected [%r], got %r" % (sentinel, control_gap))
+
+
 def check_wrap_spelling_fix():
     """[B70] THE WRAP-SPELLING FIX (docs/design/capability_set_v1.md 14,
     the [B69] census's `wild-codegrammar-json-number-extended` finding):
@@ -13445,6 +13542,7 @@ def main():
     check_pcre2_utf_validate_once()
     check_capability_policy()
     check_capability_policy_noop_elsewhere()
+    check_capability_roster_coverage()
     check_convention_scoring()
     check_boolean_grain_scoring()
     check_vectorscan_som()

@@ -64,6 +64,18 @@ moved, DO NOT re-seed on your own initiative unless only non-machine-read
 columns changed — report the delta for a ruling (cd371441 moved two
 rows' `built` column only, `\p{L}`/`\P{L}`, left un-re-seeded).
 
+**A NEW `configs.toml` ROW needs a `bench/capability` roster row too**
+([B111], 2026-09-28): every entry in the table at the top of this file
+must also appear in `bench/capability/gen_patterns.py`'s
+`EXT_BENCH_ROSTER` (its declared REQUIRES tokens) or its
+`EXCLUDED_TESTEES` (a one-line reason it is deliberately absent) — `make
+check-harness`'s `check_capability_roster_coverage` fails BY NAME on a
+config in neither, in the SAME commit that adds it. This bit the two
+[B110] `align64loops` testees the day after `pcrec-auto-nolitrun`'s own
+identical incident (outbox O-64/O-65 -> O-67 item 4); see
+`bench/capability/CLAUDE.md`'s own `[B111]` section for the exact
+procedure and every existing pcrec row's reasoning.
+
 ## `pin.sh` never writes inside pcrec
 
 `/home/duxevents/pcrec` is read-only to this project. `pin.sh` extracts a
