@@ -1,0 +1,535 @@
+# reporter: v25 (2026-09-26); filters: subbench=loglines, version=0.1, machine=budu-ryzen1600, testee=pcrec_a32bc86e_auto-caps-simdna, testee=pcrec_a32bc86e_auto-caps-simdna_nolitrun; source: store/index.tsv (2 record(s) matching this query); records: 2; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: loglines@0.1; machines: budu-ryzen1600; schema_versions: 1.7; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 2; mixed_x13: False; include_provenance: False; worst_other_core_busy: 2.69% (pcrec_a32bc86e_auto-caps-simdna_nolitrun / floor / large-subject-throughput); floor_pattern: floor
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						loglines@0.1__pcrec_a32bc86e_auto-caps-simdna__budu-ryzen1600__20260928T044846Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						loglines@0.1__pcrec_a32bc86e_auto-caps-simdna_nolitrun__budu-ryzen1600__20260928T045826Z				agreement	agree (0 of 22 groups; 0 of 1364 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	bignum	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	13190793.867647	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	13173886.014706	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	13200185.117647	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	8837.913741	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	13200168.954545	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	13183137.060606	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	13209800.530303	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	8999.253335	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.000711	12	1.0000	0	0		
+rank	bignum	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.000711	12	1.0000	0	0		
+baseline	bignum	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	426507.323469	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	425042.485151	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	430904.939048	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	2049.162446	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	432292.976175	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	429712.940785	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	433555.688999	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	1568.648040	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.013565	112	1.0000	0	0		
+rank	bignum	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.013565	112	1.0000	0	0		
+baseline	floor	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	2958010.963235	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	2954369.474265	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	2968759.514706	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	4910.469528	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	2965017.003650	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	2957721.886861	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	2973910.003650	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	5476.764685	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002368	12	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002368	12	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	2038.352428	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	2027.072611	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	2045.726556	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	7.585265	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	2042.218849	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	2023.761952	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	2057.754820	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	12.988872	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001897	112	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001897	112	1.0000	0	0		
+baseline	hex32-id	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	13165327.119403	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	12995471.313433	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	13184207.805970	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	84731.150873	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	13179869.029851	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	13177483.955224	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	13180926.686567	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	1373.916878	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.001105	12	1.0000	0	0		
+rank	hex32-id	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.001105	12	1.0000	0	0		
+baseline	hex32-id	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	435868.571505	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	432659.290049	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	436696.267225	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	1539.086166	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	437312.585253	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	431908.133051	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	439166.762780	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	2890.064167	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.003313	112	1.0000	0	0		
+rank	hex32-id	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.003313	112	1.0000	0	0		
+baseline	http-5xx	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	285698.656897	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	285199.610067	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	288726.261230	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	1365.867786	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	286435.847230	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	285387.013411	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	287468.438192	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	806.228761	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.002580	12	1.0000	0	0		
+rank	http-5xx	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.002580	12	1.0000	0	0		
+baseline	http-5xx	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	5003.078288	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	4994.602180	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	5054.770080	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	22.199255	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	5047.477514	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	5038.150530	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	5063.420889	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	9.067466	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.008874	112	1.0000	0	0		
+rank	http-5xx	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.008874	112	1.0000	0	0		
+baseline	ipv4	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	6953627.136691	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	6948014.151079	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	6964703.597122	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	5793.011455	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	6957120.021277	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	6946937.503546	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	6964831.709220	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	5919.490778	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000502	12	1.0000	0	0		
+rank	ipv4	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000502	12	1.0000	0	0		
+baseline	ipv4	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	207403.223946	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	205802.889760	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	208727.210539	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	980.649368	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	207797.464076	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	206296.606929	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	208087.447954	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	650.541591	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.001901	112	1.0000	0	0		
+rank	ipv4	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.001901	112	1.0000	0	0		
+baseline	ipv6	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	10508943.541176	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	10477243.482353	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	10627440.847059	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	64010.674166	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	10552103.740741	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	10495751.358025	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	10629109.592593	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	54714.995247	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.004107	12	1.0000	0	0		
+rank	ipv6	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.004107	12	1.0000	0	0		
+baseline	ipv6	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	259570.830660	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	257620.458837	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	261989.263901	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	1670.679596	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	260041.631927	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	258816.173729	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	260778.225158	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	667.466946	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001814	112	1.0000	0	0		
+rank	ipv6	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001814	112	1.0000	0	0		
+baseline	iso-ts	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	1150509.554502	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	1148900.244076	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	1152392.560427	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	1168.701217	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	1150850.408115	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	1148534.214797	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	1152085.818616	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	1233.038624	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.000296	12	1.0000	0	0		
+rank	iso-ts	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.000296	12	1.0000	0	0		
+baseline	iso-ts	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	20591.242641	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	20555.516295	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	20626.733594	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	24.302401	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	20603.474776	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	20591.106698	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	20674.359098	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	29.813134	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.000594	112	1.0000	0	0		
+rank	iso-ts	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.000594	112	1.0000	0	0		
+baseline	kv-quoted	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	5175674.121644	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	5172252.376678	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	5180345.731544	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	2644.987351	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	5177510.013245	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	5168876.657285	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	5181254.519040	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	5483.399986	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000355	12	1.0000	0	0		
+rank	kv-quoted	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000355	12	1.0000	0	0		
+baseline	kv-quoted	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	24725.690428	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	24693.883435	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	24752.749681	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	18.911180	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	24770.641446	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	24748.107319	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	24782.739061	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	12.240549	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.001818	112	1.0000	0	0		
+rank	kv-quoted	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.001818	112	1.0000	0	0		
+baseline	level-context	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	11489344.342105	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	11481393.513158	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	11505512.184211	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	9118.229044	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	11516150.467532	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	11501856.363636	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	11522945.688312	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	7360.568770	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.002333	12	1.0000	0	0		
+rank	level-context	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.002333	12	1.0000	0	0		
+baseline	level-context	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	341899.078498	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	341073.493402	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	343091.947894	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	664.273760	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	342413.944433	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	341376.309643	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	342586.756527	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	435.390799	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001506	112	1.0000	0	0		
+rank	level-context	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001506	112	1.0000	0	0		
+baseline	stack-frame	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	2297757.246347	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	2294362.388309	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	2298902.405010	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	1547.348061	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	2297812.428274	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	2296652.064449	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	2299956.991684	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	1375.002737	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000024	12	1.0000	0	0		
+rank	stack-frame	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000024	12	1.0000	0	0		
+baseline	stack-frame	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna_nolitrun				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna_nolitrun (row-best fallback -- interp absent from this group)	
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	median_ns	36044.294346	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	min_ns	35951.503353	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	max_ns	36055.418131	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	stddev_ns	38.712040	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	median_ns	36093.293888	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	min_ns	36021.980534	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	max_ns	36154.141869	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	stddev_ns	47.256813	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001359	112	1.0000	0	0		
+rank	stack-frame	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001359	112	1.0000	0	0		
+baseline	uuid	(set)	large-subject-throughput			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	1080621.784598	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	1079993.946429	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	1082326.235491	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	850.199002	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	1081751.039019	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	1078519.662207	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	1083494.358974	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	1674.012668	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.001045	12	1.0000	0	0		
+rank	uuid	(set)	large-subject-throughput	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.001045	12	1.0000	0	0		
+baseline	uuid	(set)	short-subject-search			pcrec_a32bc86e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_a32bc86e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	median_ns	21064.632752	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	min_ns	21048.540925	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	max_ns	21098.358803	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	stddev_ns	17.251010	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	median_ns	21065.905867	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	min_ns	21032.876716	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	max_ns	21084.450693	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	stddev_ns	18.164260	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_baseline	1.000060	112	1.0000	0	0		
+rank	uuid	(set)	short-subject-search	plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun	measured	pinned	2	ratio_vs_best	1.000060	112	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	0						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	163489108.000000	5					
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.011						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28200						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	25722						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16471						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				dfa_match	unwrapped						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				dfa_scan_edge	none						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna				engine_sel	selected						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	170363413.000000	5					
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.025						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28336						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	29385						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	18558						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	155955937.000000	5					
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.015						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	27872						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	19791						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	14794						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	152158418.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.038						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28016						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	22246						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16923						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	156526551.000000	5					
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.031						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28200						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	27211						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16471						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	165931441.000000	5					
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.020						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28336						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	30406						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	18558						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	181309189.000000	5					
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.021						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	36368						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	54526						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	18407						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	201475576.000000	5					
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.044						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	36512						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	58300						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	20372						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	147658470.000000	5					
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.005						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	27920						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	26575						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	14957						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	168991493.000000	5					
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.036						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28064						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	30513						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16985						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	162983241.000000	5					
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.023						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	27960						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	27542						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	15999						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	168034157.000000	5					
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.023						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28104						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	33037						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	17911						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	220892603.000000	5					
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.012						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	32008						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	35875						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	22673						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	225489757.000000	5					
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.024						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	32144						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	41095						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	24435						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	172467010.000000	5					
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.036						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	32304						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	40714						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16611						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	175231494.000000	5					
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.033						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	32408						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	45218						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	18406						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	798010297.000000	5					
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.006						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	40560						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	73064						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	31236						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	1020119590.000000	5					
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.009						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	44752						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	76207						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	32777						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	172951937.000000	5					
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.009						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	40320						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	66953						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	16993						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	188463908.000000	5					
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.034						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	40464						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	71247						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	18958						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	165060246.000000	5					
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna				jitter	0.020						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28240						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	33080						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	17465						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				median_total_ns	182353967.000000	5					
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				jitter	0.008						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				artifact_bytes	28384						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_bytes	36469						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna				emit_code_bytes	19552						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	158603757.000000	5					
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.022						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28200						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	25722						
+compile	bignum			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16471						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				engine	dfa						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				entry	plain entry						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				prefilter	-						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				vm_rungs	-						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				buffers	0 (DFA)						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				frame	0 (DFA)						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				dfa_match	unwrapped						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				dfa_scan_edge	none						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				scan_edges	0						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				scan_edges_match	0						
+compile_stamp						pcrec_a32bc86e_auto-caps-simdna_nolitrun				engine_sel	selected						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	172568050.000000	5					
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.040						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28336						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	29385						
+compile	bignum			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	18558						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	152145614.000000	5					
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.040						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	27872						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	19791						
+compile	floor			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	14794						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	157165110.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.027						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28016						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	22246						
+compile	floor			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16923						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	159062690.000000	5					
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.019						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28200						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	27211						
+compile	hex32-id			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16471						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	167213272.000000	5					
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.031						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28336						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	30406						
+compile	hex32-id			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	18558						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	189240597.000000	5					
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.039						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	36368						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	54526						
+compile	http-5xx			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	18407						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	200517276.000000	5					
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.024						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	36512						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	58300						
+compile	http-5xx			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	20372						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	154367755.000000	5					
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.042						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	27920						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	26575						
+compile	ipv4			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	14957						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	159397071.000000	5					
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.032						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28064						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	30513						
+compile	ipv4			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16985						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	168117397.000000	5					
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.031						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	27960						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	27542						
+compile	ipv6			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	15999						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	171070582.000000	5					
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.048						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28104						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	33037						
+compile	ipv6			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	17911						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	220419490.000000	5					
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.013						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	32008						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	35875						
+compile	iso-ts			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	22673						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	228986385.000000	5					
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.026						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	32144						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	41095						
+compile	iso-ts			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	24435						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	172252219.000000	5					
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.013						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	32304						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	40714						
+compile	kv-quoted			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16611						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	178066770.000000	5					
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.038						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	32408						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	45218						
+compile	kv-quoted			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	18406						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	828992004.000000	5					
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.004						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	40560						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	78286						
+compile	level-context			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	36458						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	1049947086.000000	5					
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.009						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	44752						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	81429						
+compile	level-context			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	37999						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	182833964.000000	5					
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.019						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	40320						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	66953						
+compile	stack-frame			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	16993						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	193996812.000000	5					
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.010						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	40464						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	71247						
+compile	stack-frame			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	18958						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	169463596.000000	5					
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.022						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28240						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	33080						
+compile	uuid			plain	same program	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	17465						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				median_total_ns	180249652.000000	5					
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				jitter	0.029						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				artifact_bytes	28384						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_bytes	36469						
+compile	uuid			whole-subject	separate artifact	pcrec_a32bc86e_auto-caps-simdna_nolitrun				emit_code_bytes	19552						

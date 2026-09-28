@@ -269,6 +269,45 @@ BEATS rust at ×0.297/×0.301) and utf8's [OPT-LITSCAN] F3 residual
 quantified per cell (2 of 4 "stays slow" witnesses actually resolved
 almost completely, one held flat, one regressed ×2.84 unpredicted).
 
+**[B108] reading (2026-09-28, lane b108read) ADDED seven NEW report groups
+at pcrec a32bc86e (abi 41, [OPT-LITSCAN] S2a)** and changed nothing else
+here: the reporter is unchanged at v25. Every group carries `.tsv`, `.md`,
+`.matrix.tsv`, `.matrix.html`, `.subject-grain.tsv` (the slice) and an
+`.interpretation.md` sidecar.
+
+- `2026-09-28-litrun-0.1-budu-ryzen1600-first-a32bc86e.*` is
+  `bench/litrun@0.1`'s FIRST SAMPLE. Its roster is all 11 window arms:
+  - `libpcre2_10.46_jit-caps-simdna`;
+  - `pcrec_a32bc86e_{vm,auto}-caps-simdna` with the four
+    `{,_nolitrun,_noaltclsfactor,_noaltclsfactor-nolitrun}` corners each;
+  - `pcrec_a32bc86e_vm-caps-simdna_noreqbyte-noreqrun[-nolitrun]`.
+- `2026-09-28-{loglines-0.1,capability-0.1,bounded-0.3}-budu-ryzen1600-litrun-a32bc86e.*`
+  are SAME-WINDOW TWINS: `pcrec_a32bc86e_auto-caps-simdna` +
+  `…_nolitrun` only.
+- `2026-09-28-{loglines-0.1,bounded-0.3,capability-0.1}-budu-ryzen1600-after-a32bc86e.*`
+  are CROSS-PIN AFTERs of `pcrec-auto`: 751b9c6d → a32bc86e for loglines
+  and bounded, and 02902356 → a32bc86e for capability. The capability
+  pair's last pin spans 751b9c6d, so R-BUCKET-SPAN fires.
+
+Identity is field-first on all three cross-pin pairs, because every pin
+postdates [B88]; no census file was generated.
+
+**The four `first`/`litrun` sidecars carry their predictions file
+STAMPED** (`docs/dev/predictions/litrun-0.1-first.tsv` and
+`<set>-litrun-a32bc86e.tsv`). `check_stated_utc` passes with
+`check_utc=True`, because those predictions predate their own population;
+unlike [B104]'s case, no F27 bypass was needed. The three `after`
+sidecars carry none.
+
+`litrun-0.1-first.tsv`'s P5 selectors name `subject_or_na` without
+`grain=subject`. The committed sidecar therefore reads P5 `not evaluable`
+on all 37 clauses. That is the correct verdict for the file as written.
+The ledger scores P5 from a scratch re-score plus direct extraction.
+
+Render and interpret were done by a scratch script in the session
+scratchpad (never `scripts/`): narrow `--testee` rosters, 0.5-2.5 min per
+group, run detached. Read into `docs/dev/ledgers/2026-09-28-b108-a32bc86e.md`.
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
