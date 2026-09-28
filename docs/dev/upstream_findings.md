@@ -62,7 +62,7 @@ Status: OBSERVED.
 
 **2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
 
-## U3 — libpcre2 10.46 JIT pays ~2.8 ms/MB MORE on prose with 496 sparse addresses than on address-free prose, where pcrec's DFA pays the same on both (OBSERVED 2026-08-28, `email-specimen@0.2`)
+## U3 — libpcre2 10.46 JIT pays ~2.8 ms/MB MORE on prose with 496 sparse addresses than on address-free prose, where pcrec's DFA pays the same on both (OBSERVED 2026-08-28, `email-specimen@0.2`; NOT-A-BUG 2026-09-28)
 
 Same records; `orig`, `t-d-prose-sparse-addrs` (1 MB generated prose,
 496 valid addresses, seed 20260828) vs `t-e-prose-no-at` (the same
@@ -77,6 +77,8 @@ is found), the same backtracking shape the interpreter pays 30× more
 for. Status: OBSERVED; a pcre2test `find-all` count over t-d with
 `jit` timing per iteration would separate per-match from per-near-miss
 cost.
+
+**2026-09-28: NOT-A-BUG (Frank's ruling: "bugs we report should be unambiguous").** Near-miss backtracking is a backtracking engine's documented cost, the JIT pays it ~30× below the interpreter, and no PCRE2-side spelling or option removes it; the cross-engine gap (DFA vs backtracker) stays a bench result, not an upstream report. Never reproduced or checked on 10.48.
 
 ## U4 — libpcre2 10.46 JIT is 1.8× SLOWER than its own interpreter and 15× slower than pcrec's DFA on the HTTP-access-line pattern over log text (OBSERVED 2026-08-28, `loglines@0.1`)
 
