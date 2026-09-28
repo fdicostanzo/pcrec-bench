@@ -1,0 +1,115 @@
+# source: [B110] docs/dev/measurements/probe_b110_align64loops_placement.py
+# bench commit: 3b3b0b4085e10b7e9f28cd292397485c5c35b972
+# pcrec pin: a32bc86e, binary build/pcrec-a32bc86e/build/pcrec
+# pcrec binary sha256: da89bcba46abb40c04fc97fb98f1004561e5ac1443a72562669738218dded592
+# gcc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+# box: ubuntubudu
+# store records read: see STORE dict in the probe script (O-65's same-window
+#   unaligned pair 081053Z/084613Z; [B110]'s aligned pair 101609Z/103722Z)
+# build/work/ directories read (NOT reproducible after a `build/` wipe --
+#   the .so sha256 values and objdump excerpts below are the durable copy):
+#   build/work/pcrec-auto/p-{wild-secrets-aws-access-key-id,logparse-atomic-removed}/plain/t1/
+#   build/work/pcrec-auto-align64loops/p-{same}/plain/t1/
+#   mtimes 2026-09-28 04:12-04:48 EDT (unaligned) and 06:16-06:38 EDT (aligned)
+
+==============================================================================
+PART 1: program_sha256 identity, witness patterns, both forms
+==============================================================================
+
+wild-secrets-aws-access-key-id / plain
+  auto                 outcome=compiled   program_sha256=58991f9823e5a672e79bcffbf9bedb62a20169cd996a6f7b9c78677af6153cda emit_bytes=46133 vm_program_bytes=5475
+  nolitrun             outcome=compiled   program_sha256=333603db3cc2190f25532d0962b62fed3a8ae0be7f08f445daccf782a92978e9 emit_bytes=48061 vm_program_bytes=7403
+  auto-aligned         outcome=compiled   program_sha256=58991f9823e5a672e79bcffbf9bedb62a20169cd996a6f7b9c78677af6153cda emit_bytes=46133 vm_program_bytes=5475
+  nolitrun-aligned     outcome=compiled   program_sha256=333603db3cc2190f25532d0962b62fed3a8ae0be7f08f445daccf782a92978e9 emit_bytes=48061 vm_program_bytes=7403
+
+wild-secrets-aws-access-key-id / whole-subject
+  auto                 outcome=compiled   program_sha256=b5865b8481c06ea632b5251ba83a5d6305a99372ac6a3489af3fbb7ef528c71f emit_bytes=48666 vm_program_bytes=5580
+  nolitrun             outcome=compiled   program_sha256=a9a7214dae3c1d1a3d4b8f166ad8cb1b2afdf974da0d6305cfbbf6ba4961a566 emit_bytes=50594 vm_program_bytes=7508
+  auto-aligned         outcome=compiled   program_sha256=b5865b8481c06ea632b5251ba83a5d6305a99372ac6a3489af3fbb7ef528c71f emit_bytes=48666 vm_program_bytes=5580
+  nolitrun-aligned     outcome=compiled   program_sha256=a9a7214dae3c1d1a3d4b8f166ad8cb1b2afdf974da0d6305cfbbf6ba4961a566 emit_bytes=50594 vm_program_bytes=7508
+
+logparse-atomic-removed / plain
+  auto                 outcome=compiled   program_sha256=04f55e428a88f8b4543740fe7c4bb5c156bef43e8afa3fb16bea9402e8124932 emit_bytes=57232 vm_program_bytes=9277
+  nolitrun             outcome=compiled   program_sha256=2e6fb2745ce732ca36a47d95f536e245995a224dbe9726f1bde4e3d43bc0d299 emit_bytes=63692 vm_program_bytes=15757
+  auto-aligned         outcome=compiled   program_sha256=04f55e428a88f8b4543740fe7c4bb5c156bef43e8afa3fb16bea9402e8124932 emit_bytes=57232 vm_program_bytes=9277
+  nolitrun-aligned     outcome=compiled   program_sha256=2e6fb2745ce732ca36a47d95f536e245995a224dbe9726f1bde4e3d43bc0d299 emit_bytes=63692 vm_program_bytes=15757
+
+logparse-atomic-removed / whole-subject
+  auto                 outcome=compiled   program_sha256=9aaef690ee5bbbed4eb59aa6c3dad80e06d011b2308c26fee783171f266d0344 emit_bytes=57159 vm_program_bytes=9382
+  nolitrun             outcome=compiled   program_sha256=baa56ec6a2f10a716e2bf1fea639ed0b3f961f057ef491a0db74e0afa30c1ad6 emit_bytes=63619 vm_program_bytes=15862
+  auto-aligned         outcome=compiled   program_sha256=9aaef690ee5bbbed4eb59aa6c3dad80e06d011b2308c26fee783171f266d0344 emit_bytes=57159 vm_program_bytes=9382
+  nolitrun-aligned     outcome=compiled   program_sha256=baa56ec6a2f10a716e2bf1fea639ed0b3f961f057ef491a0db74e0afa30c1ad6 emit_bytes=63619 vm_program_bytes=15862
+
+==============================================================================
+PART 2: DFA-null (program-identical) census, aligned vs unaligned
+==============================================================================
+
+auto vs auto-aligned: same=73 diff=0 (of 101 shared keys)
+
+nolitrun vs nolitrun-aligned: same=72 diff=0 (of 101 shared keys)
+
+==============================================================================
+PART 3: the roster-declaration gap on the two new -align64loops testees
+==============================================================================
+
+auto-aligned: 27 (pattern,form) rows unsupported-by-declaration
+  example: capability@0.1 ext bench: capabilities pcrec-auto-align64loops does not declare atomic-group (pattern logparse-atomic requires atomic-group)
+  affected patterns: ['balanced-parens-rec', 'bracket-array-define', 'codegrammar-xflag', 'currency-lookbehind-fixed', 'doubled-word', 'dup-param-detect', 'email-local-nodup', 'float-literal-bound', 'high-byte-run', 'logparse-atomic', 'mojibake-curly-quote', 'negation-scope-lookbehind-var', 'nested-comment-rec', 'phone-palindrome-6', 'pwd-strength-chain', 'quoted-delim-match', 'tag-depth3-bound', 'tag-pair-match', 'utf8-lead-no-cont', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape', 'wild-logparse-base10num-grok', 'wild-logparse-base10num-noatomic', 'wild-logparse-quotedstring-grok', 'wild-logparse-quotedstring-noatomic', 'wild-logparse-syslogbase-expanded', 'wild-logparse-winpath-grok']
+
+nolitrun-aligned: 27 (pattern,form) rows unsupported-by-declaration
+  example: capability@0.1 ext bench: capabilities pcrec-auto-nolitrun-align64loops does not declare atomic-group (pattern logparse-atomic requires atomic-group)
+  affected patterns: ['balanced-parens-rec', 'bracket-array-define', 'codegrammar-xflag', 'currency-lookbehind-fixed', 'doubled-word', 'dup-param-detect', 'email-local-nodup', 'float-literal-bound', 'high-byte-run', 'logparse-atomic', 'mojibake-curly-quote', 'negation-scope-lookbehind-var', 'nested-comment-rec', 'phone-palindrome-6', 'pwd-strength-chain', 'quoted-delim-match', 'tag-depth3-bound', 'tag-pair-match', 'utf8-lead-no-cont', 'wild-codegrammar-json-number-extended', 'wild-codegrammar-json-stringcontent-escape', 'wild-logparse-base10num-grok', 'wild-logparse-base10num-noatomic', 'wild-logparse-quotedstring-grok', 'wild-logparse-quotedstring-noatomic', 'wild-logparse-syslogbase-expanded', 'wild-logparse-winpath-grok']
+
+==============================================================================
+PART 4: objdump placement facts (sha256 + function table)
+==============================================================================
+
+wild-secrets-aws-access-key-id / auto: build/work/pcrec-auto/p-wild-secrets-aws-access-key-id/plain/t1/artifact-1.so
+  sha256: 87648e6ba9c9038f938a858a9a33d758f16f8ef5b10ea208969bc1b649a2bbe4
+    0000000000002200 <rx_match_anchored>:
+    0000000000002890 <rx_search_run>:
+    0000000000002bf0 <rx_search>:
+    0000000000002c60 <rx_search_in>:
+    0000000000002ce0 <rx_match>:
+    0000000000002d90 <rx_match_in>:
+    0000000000002e50 <rx_match_caps>:
+    0000000000002f40 <rx_match_caps_in>:
+    0000000000003040 <rx_next_pos>:
+
+wild-secrets-aws-access-key-id / auto-aligned: build/work/pcrec-auto-align64loops/p-wild-secrets-aws-access-key-id/plain/t1/artifact-1.so
+  sha256: 99dac88f736cdfa3bf7a3253e32cd69f5b8eb667637b37cd9c7e372e3a9838fb
+    0000000000002200 <rx_match_anchored>:
+    00000000000028c0 <rx_search_run>:
+    0000000000002c00 <rx_search>:
+    0000000000002c80 <rx_search_in>:
+    0000000000002d00 <rx_match>:
+    0000000000002dc0 <rx_match_in>:
+    0000000000002e80 <rx_match_caps>:
+    0000000000002f80 <rx_match_caps_in>:
+    0000000000003080 <rx_next_pos>:
+
+logparse-atomic-removed / auto: build/work/pcrec-auto/p-logparse-atomic-removed/plain/t1/artifact-1.so
+  sha256: 2f9300f12ad6a1dbc5b736aa9d7b91731e44bdb52b9db84c9d2980508f871ad6
+    000000000000a1c0 <rx_prefilter>:
+    000000000000ac50 <rx_match_anchored>:
+    000000000000b1c0 <rx_search_run>:
+    000000000000b330 <rx_search>:
+    000000000000b3a0 <rx_search_in>:
+    000000000000b420 <rx_match>:
+    000000000000b4d0 <rx_match_in>:
+    000000000000b590 <rx_match_caps>:
+    000000000000b680 <rx_match_caps_in>:
+    000000000000b780 <rx_next_pos>:
+
+logparse-atomic-removed / auto-aligned: build/work/pcrec-auto-align64loops/p-logparse-atomic-removed/plain/t1/artifact-1.so
+  sha256: f926cf02582123dd988c2b2023c2eababa3ec7bf38b2550a1e97491adade0695
+    000000000000a1c0 <rx_prefilter>:
+    000000000000ac80 <rx_match_anchored>:
+    000000000000b240 <rx_search_run>:
+    000000000000b3c0 <rx_search>:
+    000000000000b440 <rx_search_in>:
+    000000000000b4c0 <rx_match>:
+    000000000000b580 <rx_match_in>:
+    000000000000b640 <rx_match_caps>:
+    000000000000b740 <rx_match_caps_in>:
+    000000000000b840 <rx_next_pos>:
