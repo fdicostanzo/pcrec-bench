@@ -4187,3 +4187,5 @@ none is a window request on its own.
    byte strings across ctx-lazy-64/256/1024? Their VM bodies differ by one
    immediate, so identical subjects would make the 1.010/1.034/1.042 spread
    placement.
+
+ack: 2026-09-28 — plan.md [B110] (a probe lane after [B108]'s FLAT-cell addendum; (3) answered by lane b108cap: the re-measure covers all 64 patterns incl. logparse-atomic)
