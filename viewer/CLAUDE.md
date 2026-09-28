@@ -234,12 +234,81 @@ this page's; `resolveCssVarOnce` (item 2, above) works around it
 defensively for both environments at no cost in a real browser, where
 this was never broken.
 
+## v1.4 amendments ([B113], docs/design/results_viewer_v1.md 12)
+
+Frank, verbatim, 2026-09-28: *"i want to have the 'current engine'
+visibility a checkbox defaulting on. i sometimes want to compare to past
+engines."* IMPLEMENTED (lane `b113viewer`):
+
+1. **The committed data is now exported with `--all-pins`** (`make
+   viewer-data` passes it unconditionally now -- see Regenerating,
+   below) -- without it, an older pin of a (family, variant) identity
+   was never in `viewer/data/*.js` at all, so there was nothing for
+   "compare to past engines" to reach.
+2. **"current engines only" checkbox, default ON**, in the Status filter
+   group immediately below "show engines with no data". "Current" =
+   the NEWEST `testee_id` (domain-wide `newestDate`) of its own
+   (family, variant) identity -- unlike `computeDefaultTesteeIds` (the
+   fresh-load/`reset view`/`latest only` SELECTION default, v1.1 item
+   6), this rule does NOT drop ablation/deny-flag/toolchain arms: an
+   arm's own newest pin is still "current" for that arm, since this is
+   a VISIBILITY filter over whatever is already selected, never a
+   change to the selection-default rule. Both rules now share one
+   grouping helper, `newestPerFamilyVariant(admit)` (an optional
+   filter callback), rather than stating "newest per (family,variant)"
+   twice.
+
+   When ON, a non-current testee is hidden from BOTH the matrix's
+   columns and the engine picker (family tree, category rows, and the
+   third-tier pin sub-picker) -- composed on top of "show engines with
+   no data"'s own narrowing (`pickerEnumerableTesteeIds`), never
+   instead of it; `displayedTesteeIds` now always routes through that
+   same function (folding in a prior shortcut that only mattered when
+   neither toggle removed anything). A testee's own SELECTION
+   (`state.testees`) is untouched -- the same "display filter, not an
+   implicit deselect" rule "show engines with no data" already
+   established -- so switching OFF reveals exactly what was already
+   selected, older pins included, with the pin sub-picker reachable
+   again. "latest only" and "reset view" keep their existing meaning
+   (they set the SELECTION, which this change never touches); the
+   virtual "pcrec (auto)" column is unaffected by construction (it
+   always resolves the newest pin itself, appended to
+   `displayedTesteeIds`'s result rather than routed through it).
+   Persisted like the other booleans (hash key `ceo`; absent, including
+   an OLDER persisted state predating this key, defaults ON -- the same
+   posture `nm` already has, not `ee`'s absent-means-OFF one).
+
+**Verification**: no headless Chromium in this sandbox (unchanged); a
+synthetic `jsdom` fixture (two (family,variant) identities each with an
+OLD/NEW pin pair, one of them an ablation arm, plus a single-pin control
+family) driven through `JSDOM.fromFile` confirmed: default ON and placed
+correctly; with all 5 testees selected, the picker AND matrix show
+exactly the 3 current ids under ON (2 old pins hidden, the arm's own
+newest pin present) and all 5 under OFF with the pin sub-picker
+reachable; the "Engines: n/N selected" count unchanged by the toggle
+either way; an old hash without `ceo` defaults ON, an explicit
+`ceo=0`/`ceo=1` honored either way; "latest only" still excludes the
+ablation arm entirely, unmoved by this change. One jsdom-only artifact,
+not a page bug (same posture as the pre-existing `var()` one, above):
+`persist()`'s un-guarded `history.replaceState()` throws a
+`SecurityError` under jsdom on a `file://` document on every state
+change -- AFTER that render has already completed, confirmed harmless
+in isolation, and real browsers permit same-document `replaceState` on
+`file://` freely. NOT verified: a real browser, and a full-scale spot
+check against the regenerated `--all-pins` production data (see the
+lane report for the export's own numbers).
+
 ## Regenerating
 
-    make viewer-data                              # every set, newest pin
-                                                    # per canonical identity
-    make viewer-data ARGS="--sets loglines"        # one set (dev slice)
-    make viewer-data ARGS="--all-pins"             # every pin its own column
+    make viewer-data                              # every set, EVERY pin
+                                                    # ([B113]: --all-pins is
+                                                    # now the Makefile's own
+                                                    # default -- see above)
+    make viewer-data ARGS="--sets loglines"        # one set (dev slice),
+                                                    # still every pin
+    python3 tools/viewer_export.py                 # the OLD newest-pin-only
+                                                    # export, direct (no
+                                                    # Makefile, no --all-pins)
 
 Then open `viewer/viewer.html` directly in a browser (`file://` works; no
 server needed).
