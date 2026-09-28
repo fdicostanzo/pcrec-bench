@@ -6226,3 +6226,29 @@ Report: `docs/dev/lanes/b103infra_report.md`.
 - Lessons: a single-process timing probe on this box (schedutil) is a lottery.
   Hand-rolled scratch timing must pin (taskset) or take medians over fresh
   launches. Re-run any surprising lane headline before sending it to pcrec.
+
+## 2026-09-28 (38th session, Opus 5.5) — viewer past pins, four upstream/prediction rulings, the cc gate repaired, matrix HTML retired
+
+- Frank's rulings, one at a time: (1) re-score the email b104 predictions — it
+  turned out b104read had ALREADY scored it via the F27 bypass; my re-run
+  reproduced P1 refuted (42/54 …), recorded with an erratum on the file's
+  pre-KB-35 identity counts (c37f986); wake.md's "unscored" was my misreading.
+  (2-4) U3, U12, U11 → NOT-A-BUG under Frank's new rule "bugs we report should
+  be unambiguous" (saved as a feedback memory). Registry: 4 reported, 9
+  NOT-A-BUG, 0 open.
+- [B113] (lane b113viewer, sonnet): "current engines only" checkbox, default
+  ON; viewer data now exported with --all-pins (12 MB). Merged c0c23cd. Real
+  browser check owed to Frank.
+- [B114] (Frank agreed): 98 `reports/*.matrix.html` retired (viewer covers
+  them); `.matrix.tsv` kept as canonical; matrix_page.py on demand.
+- I-117 (pcrecdev1): answered as O-70 — the [B24]/[B33] cc axis exists; they
+  closed [CC-CLANG] STEP 3 against it and declined the capability clang arm.
+- The cc-gate census had LAPSED since d34c9131 and was BROKEN since D118
+  (stale `-- PATTERN` argv: all cells refused, yet it printed PARITY rc 0).
+  Fixed (`--pattern` + INVALID exit 2) and run at a32bc86e: PARITY, 2,034 cells
+  / 8 sets, 1,848 compiled both, 186 genuine pcrec refusals (cbb180b). Owed
+  (low): the probe is byte-mode without --features all.
+- Lessons: a sweep that reports success must prove something reached the thing
+  under test (the probe printed PARITY over zero compiles); a re-pin's CLI
+  change must be grepped across docs/dev/measurements/ probes too, not only the
+  adapters and selfcheck.
