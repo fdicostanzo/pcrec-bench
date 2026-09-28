@@ -24,70 +24,50 @@ Branch `lane/b105tre`, worktree `worktrees/b105tre`. Plan row [B105].
 > watch the PID yourself until it finishes. Report the counts. Do not
 > run a pinned window or write store/.
 
+Amended mid-lane, twice, by the team lead: (1) do not launch
+`make check-harness` myself while `b109twin` is timing the box — wait
+for the slot, then launch and watch it (complied: killed my first,
+in-flight launch by PID within ~80 s, relaunched once the slot cleared,
+watched it to completion — **610/0**, confirmed by the team lead); (2)
+after the team lead's own review caught a real over-refusal bug in the
+scanner before merge, fix it, add the five named regression cases to
+the selfcheck control, and re-derive the census over EVERY pattern in
+every `bench/*/` set (not just the original 30-hit population),
+archiving the before/after and every newly-declared pattern's bracket
+text; re-run only the selfcheck function and the census, not the full
+`make check-harness` again (the team lead's own call on whether to
+re-run that).
+
 ## Charter-vs-committed checklist
 
 | Item | Status | Where |
 |---|---|---|
-| Extend tre's pre-compile declaration: ANY bracket expr with a backslash → `unsupported-by-declaration` | **DONE** | `testees/tre/adapter.py` — `Adapter.compile()` checks `_bracket_backslash_content(pattern)` before ever calling `_compile_one` (`tre_regncompb`); only `FORM_PLAIN` carries the declaration row, matching `harness.run_cell`'s own central capability-decline shape, so every regime (incl. `match`, which falls back to `plain` when no `whole-subject` key exists) reads the declined result |
-| Bracket scanner handles `[]...]`, `[^]...]`, POSIX classes `[[:alpha:]]`, escaped/unescaped `]` | **DONE** | `_find_bracket_spans`/`_bracket_backslash_content`, `testees/tre/adapter.py`. POSIX rules throughout: a `]` right after `[`/`[^` is a literal first member; a `[:name:]`/`[.sym.]`/`[=c=]` sub-construct is skipped as one unit so its own interior `]` cannot be mistaken for the outer close (guards `bench/syntax/patterns/cls-posix.rx` / `bench/utf8/patterns/cls-posix-alpha.rx`, both `[[:alpha:]]+`); backslash is given NO escaping power anywhere in the scan (an escaped-looking `\]` closes the class EARLY under real POSIX/TRE rules — confirmed by test case, not assumed) |
-| Test edge cases | **DONE** | `tools/selfcheck.py`'s `check_b105_tre_bracket_backslash_declaration`, Level 1: 9 scanner unit cases (`[^,\n]`, `[a-z]+`, `[]abc]`, `[^]abc]`, `[[:alpha:]]+`, `[[:alpha:]\d]`, `[a\]b]c` — the escaped-`]`-closes-early case, empty pattern, unterminated `[`) |
-| make-check control: bracket-with-backslash refused BY NAME, plain bracket still compiles | **DONE** | Same function, Level 2: real `Adapter.compile()` calls — a bracket-with-backslash pattern reads `unsupported-by-declaration` with `declaration_ref` citing `(d)4`/`[B105]` and no whole-subject artifact attempted; the "coincidentally safe" doubled-backslash idiom refuses too; a plain bracket pattern (no backslash) still compiles clean on both forms. Registered in `main()`. Standalone run: 4/4 PASS |
-| Re-derive the census; list any newly-refused previously-correct row with reason | **DONE** | `docs/dev/measurements/probe_tre_bracket_escape_declaration_verify.py` + archived `2026-09-28-tre-bracket-escape-declaration-verify.txt`. All 30 of the original census's hits now read `unsupported-by-declaration`. The four previously-wrong rows (`high-byte-run`, `tag-pair-match`, `wild-waf-crs-942360-concat-sqli`, `mojibake-curly-quote`) are refused. **Exactly two previously-correct rows newly refuse**, named and reasoned in both the archive and `testees/tre/CLAUDE.md`: `codegrammar-flat` (`[^"\\]`) and `winpath-near-miss` (`[^<>:"/\\|?*]`) — the census's own "coincidentally safe" doubled-backslash idiom (n_wrong=0 at cf0962e3); the ruling is "ANY bracket expression containing a backslash", with no carve-out for a spelling that happens to answer right today. Three more rows reclassify `did-not-compile` → `unsupported-by-declaration` (same (d)4 mechanism, caught earlier — not a correctness move) |
-| Update `testees/tre/CLAUDE.md` | **DONE** | File-table row for `adapter.py`; item 4 gets a FIXED note with the full derivation; the correctness table's "systematic raw-high-byte handling gap" reading is superseded with a note identifying all four wrong rows as the same bracket-backslash mechanism, now closed |
-| Run `make check-harness` detached, watch PID, report counts | **OWED — see below** | |
+| Extend tre's pre-compile declaration: ANY bracket expr with a backslash → `unsupported-by-declaration` | **DONE** | `testees/tre/adapter.py` — `Adapter.compile()` checks `_bracket_backslash_content(pattern)` before ever calling `_compile_one` (`tre_regncompb`); only `FORM_PLAIN` carries the declaration row, matching `harness.run_cell`'s own central capability-decline shape |
+| Bracket scanner handles `[]...]`, `[^]...]`, POSIX classes `[[:alpha:]]`, escaped/unescaped `]` | **DONE, and CORRECTED before merge** | `_find_bracket_spans`/`_bracket_backslash_content`, `testees/tre/adapter.py`. TWO-STATE scan: OUTSIDE a bracket, backslash keeps its ordinary ERE escaping power (`\[` never opens one, `\\` is one unit) — the manager's own review caught a real over-refusal bug in the first version, which gave backslash no power anywhere and so misread an escaped `\[` as a genuine open, wrongly declaring patterns like `\[\d+\]`/`a\[b` that contain no real bracket expression at all. INSIDE a genuine bracket, unchanged from the first version: a `]` right after `[`/`[^` is a literal first member; a `[:name:]`/`[.sym.]`/`[=c=]` sub-construct is skipped as one unit; backslash still has NO power (an escaped-looking `\]` closes the class early) |
+| Test edge cases | **DONE** | `tools/selfcheck.py`'s `check_b105_tre_bracket_backslash_declaration`, Level 1: 14 scanner unit cases — the original 9 (`[^,\n]`, `[a-z]+`, `[]abc]`, `[^]abc]`, `[[:alpha:]]+`, `[[:alpha:]\d]`, `[a\]b]c`, empty pattern, unterminated `[`) plus the manager's 5 over-refusal regression cases (`\[\d+\]`/`a\[b` must NOT declare; `[\]]`/`[a\-z]`/`\\[\\]` must) |
+| make-check control: bracket-with-backslash refused BY NAME, plain bracket still compiles | **DONE** | Same function, Level 2: real `Adapter.compile()` calls — a bracket-with-backslash pattern reads `unsupported-by-declaration` with `declaration_ref` citing `(d)4`/`[B105]` and no whole-subject artifact attempted; the "coincidentally safe" doubled-backslash idiom refuses too; a plain bracket pattern (no backslash) still compiles clean on both forms. Registered in `main()`. Standalone run after the fix: 4/4 PASS |
+| Re-derive the census; list any newly-refused previously-correct row with reason | **DONE, TWICE** | (a) `probe_tre_bracket_escape_declaration_verify.py` + archived `.txt` — the original 30-pattern population through the real adapter: all 30 now `unsupported-by-declaration`, the four previously-wrong rows refused, exactly two previously-correct rows newly refuse by design (`codegrammar-flat`, `winpath-near-miss` — the "coincidentally safe" doubled-backslash idiom, no carve-out). (b) After the scanner fix, `probe_tre_bracket_escape_full_corpus_census.py` + archived `.txt` — EVERY pattern in EVERY `bench/*/` set (339 patterns, 8 sub-bench dirs, litrun/altwide included): the AFTER set is byte-for-byte the same 30 patterns; an old-buggy-vs-new-fixed scanner diff over all 339 finds **0** differences (the bug was real, proven by the 5 synthetic cases, but never fired on today's corpus — every `\[`-containing pattern also carries a separate genuine bracket elsewhere, traced by hand in the archive) |
+| Update `testees/tre/CLAUDE.md` | **DONE, TWICE** | First pass: file-table row, item 4's FIXED note, the correctness table's superseded reading. Second pass (after the scanner fix): a new sub-note on item 4 documenting the over-refusal bug, the two-state fix, the five regression cases and the full-corpus census's 0-diff finding |
+| Run `make check-harness` detached, watch PID, report counts | **DONE — 610/0** | Launched detached (`setsid bash -c 'gnutimeout 2400 make check-harness > LOG 2>&1; echo "DONE rc=$?" >> LOG; touch MARKER' & disown`) after `uptime` confirmed the box quiet (load average 0.29–0.50 range across both launches), watched by PID; confirmed by the team lead: **610/0**. (First launch predated the team lead's "wait for the slot" amendment and was killed by PID within ~80 s before it could interfere with `b109twin`'s timing window; relaunched cleanly once the slot cleared.) |
 | No pinned window, no store/ write | **Confirmed not done** | — |
-
-## The one deviation from the brief: `make check-harness` is OWED to the manager
-
-I launched `make check-harness` detached exactly as briefed (`uptime` checked
-quiet first: load average 0.15/0.24/0.18; `setsid bash -c '/usr/bin/gnutimeout
-2400 make check-harness > LOG 2>&1; echo "DONE rc=$?" >> LOG; touch MARKER' &
-disown`) and began watching the PID. Mid-run, the team lead sent an amendment:
-**do not launch `make check-harness` on my own** — lane `b109twin` is timing
-on this box, and my run would contend with it. I killed the run immediately
-by PID (verified each PID's `cwd` was this worktree first, per BD3 — never
-`pkill -f`): `kill -TERM` on the `setsid bash` wrapper, `gnutimeout`, `make`,
-the `sh -c` and the `python3 tools/selfcheck.py` process, all five confirmed
-gone within a second. I removed the stale log/marker files and stopped the
-background poll task I had also started (`TaskStop`) so nothing keeps
-watching for a marker that will never appear from that killed run.
-
-**Owed**: the full `make check-harness` run, once the manager clears the box
-of `b109twin`'s timing window. Exact command (run from
-`/home/duxevents/pcrec-bench/worktrees/b105tre`):
-
-```
-uptime   # confirm quiet first
-LOG=<scratchpad>/b105tre-checkharness.log
-MARKER=<scratchpad>/b105tre-checkharness.done
-rm -f "$LOG" "$MARKER"
-setsid bash -c "/usr/bin/gnutimeout 2400 make check-harness > '$LOG' 2>&1; echo \"DONE rc=\$?\" >> '$LOG'; touch '$MARKER'" < /dev/null &
-disown
-```
-
-Then poll `$MARKER` (a background `run_in_background: true` until-loop, not a
-blocking foreground sleep) and report the final `check-harness: N check(s)
-passed, M FAILED` line plus the pass/fail count for the new
-`check_b105_tre_bracket_backslash_declaration` control specifically. The
-control was verified standalone (see above, 4/4 PASS) and the rest of the
-suite is untouched by this lane's changes (no other file besides
-`testees/tre/adapter.py`, `tools/selfcheck.py`, `testees/tre/CLAUDE.md`,
-`docs/dev/measurements/{CLAUDE.md,probe_tre_bracket_escape_declaration_verify.py,
-2026-09-28-tre-bracket-escape-declaration-verify.txt}` changed), so the
-expected full-suite delta is "+1 check, 0 regressions" — but that expectation
-is unverified against the real suite count until the run happens.
 
 ## Commits (branch `lane/b105tre`)
 
 1. `d22e8c6` — the adapter change (the scanner + `compile()` hook)
 2. `8acf078` — the make-check control
-3. `adae9ab` — the re-derived census (probe + archive)
-4. `3c5cea4` — `testees/tre/CLAUDE.md` documentation
-5. this report
+3. `adae9ab` — the re-derived census over the original 30-pattern population (probe + archive)
+4. `3c5cea4` — `testees/tre/CLAUDE.md` documentation, first pass
+5. `fa56cb2` — this report, first version
+6. `43cfc52` — merge `master` (brings in KB-35's selfcheck row + [B109]'s reseed-twin work; no conflict with this lane's own files beyond a clean auto-merge in `docs/dev/measurements/CLAUDE.md`/`tools/selfcheck.py`)
+7. (the post-merge `make check-harness` run, launched and killed once, relaunched and watched to completion — **610/0**, confirmed by the team lead)
+8. `cd9251c` — the over-refusal fix: the two-state scanner, the five regression cases
+9. `b5d1729` — the full-corpus census (probe + archive) over all 339 patterns, plus the `testees/tre/CLAUDE.md` second-pass documentation
+10. this report, updated
 
 ## Not done, per the brief's own scope
 
 - No pinned window, no `store/` write.
 - No translation of any pattern's PCRE-dialect bracket syntax to a
-  portable POSIX spelling — explicitly out of scope; every hit is
-  refused, unconditionally.
+  portable POSIX spelling — explicitly out of scope; every genuine hit
+  is refused, unconditionally, with no exception for a spelling that
+  happens to answer correctly today.
