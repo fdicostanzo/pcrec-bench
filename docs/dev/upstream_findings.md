@@ -100,7 +100,7 @@ makes it faster. Status: OBSERVED; `pcre2test` with `jit` /
 
 **2026-09-27: APPROVED by Frank and REPORTED** as https://github.com/PCRE2Project/pcre2/issues/1015 (one issue carrying U1/U2/U4; posted from the fdicostanzo account; body = notes/pcre2-2026-09-27.md minus our header, with one sentence corrected: the hand-inlined control under JIT is linear at a few ms per MB, not sub-millisecond).
 
-## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30)
+## U12 — libpcre2 10.46 JIT is SLOWER than the interpreter on pure-scan find-all rows where the start-code dismissal does the work (OBSERVED 2026-08-30; NOT-A-BUG 2026-09-28)
 
 (formerly the second U2 entry — this file used `## U2` twice; renumbered
 2026-09-27 by [B103]'s pipeline migration, `docs/dev/upstream/findings.tsv`.)
@@ -119,6 +119,8 @@ interpreter's `memchr`/first-code-unit fast path. Not a bug; a shape
 where "jit = faster" does not hold. Re-measured at the 96e44c2 window
 (2026-08-30, the same binaries): csv5 3,151 vs 1,723 ns (×1.83), floor
 4,063 vs 1,716 (×2.37) — stable. Next: none owed.
+
+**2026-09-28: NOT-A-BUG (Frank, same rule as U3: report only unambiguous bugs).** ~2 µs absolute, no wrong answer, no cliff, the mechanism unverified. Possibly the same start-scan mechanism as U4 (reported in pcre2#1015); if so, that thread's answer covers it — nothing is added there.
 
 ## U13 — libpcre2 10.46 compiles a bounded REPEATED GROUP by replication (~51 B per repetition; `(?:a|[b-z]){0,1024}` = 52,377 B, interp compile 33,030 ns, jit 108,590 ns) where a repeated CLASS is count-independent (197 B flat from `{0,256}` to `{0,65535}`) (OBSERVED 2026-08-30; NOT-A-BUG)
 
