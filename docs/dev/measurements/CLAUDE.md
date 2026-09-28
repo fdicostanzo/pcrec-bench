@@ -109,6 +109,31 @@ is the same as ~/pcrec's `docs/design/*_measurements/` and its D35:
   read literally still excludes one backslash byte); `[\w:-]` accepting
   a literal backslash/`'w'` as if they were `\w` while rejecting real
   digits. Self-contained (`<tre/tre.h>` + `-ltre` only).
+- `probe_tre_bracket_escape_declaration_verify.py` /
+  `2026-09-28-tre-bracket-escape-declaration-verify.txt` — ([B105], lane
+  `b105tre`) THE DECLARATION VERIFY: re-derives the census above's own
+  30-pattern population against the REAL `tre-default` adapter now
+  carrying `testees/tre/adapter.py`'s pre-compile bracket-escape
+  declaration (`_bracket_backslash_content`, POSIX rules) — reuses
+  `find_bracket_spans` UNCHANGED from the census script above, then
+  calls `Adapter.compile()` directly (compile-only, no store, no
+  timing). FINDING: all 30 patterns now read `unsupported-by-
+  declaration`; the four previously-wrong patterns (`high-byte-run`,
+  `tag-pair-match`, `wild-waf-crs-942360-concat-sqli`,
+  `mojibake-curly-quote`) are refused, never compiled; the three
+  previously-`did-not-compile` patterns reclassify to
+  `unsupported-by-declaration` (the same (d)4 mechanism, caught earlier
+  — no behavior a reader would call correctness moves); exactly TWO
+  previously-CORRECT rows newly refuse, by design and named in the
+  ruling itself — `codegrammar-flat`/`winpath-near-miss`, the census's
+  own "coincidentally safe" doubled-backslash idiom, with NO carve-out
+  under "ANY bracket expression containing a backslash is refused".
+  The 11 capability@0.1 `unsupported_by_pattern` rows also read
+  `unsupported-by-declaration` under this probe's direct `compile()`
+  call — a defense-in-depth agreement with [B105]'s own scanner, not a
+  production behavior change (the pre-existing capability policy
+  already intercepts them before `compile()` is ever called in a real
+  cell).
 
 Maintenance: update this file when files are added/removed or change role.
 - `2026-09-01-engine-sel-census-a7e0bdf-vs-1989c62.tsv` — ([B26] (a), lane b26repin) every bench pattern × form × engine mode compiled at both pins, the RX_ENGINE_SEL / engine / prefilter / lang stamps per cell: identical totals at both pins; NO bench artifact stamps `declined-nullable-default`; 80 refusals per pin incl. altwide's ci-512 at the 1,000,000 B emit cap.
