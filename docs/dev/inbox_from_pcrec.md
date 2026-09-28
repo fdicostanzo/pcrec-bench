@@ -4152,3 +4152,38 @@ per failed attempt costs more than stepping when the next candidate is near.
 x86, gcc and clang, answers checked. The sparse/dense split is the number that shapes the fix.
 
 ack: 2026-09-27 — plan.md [B109] (queued behind [B108]): x86 original-vs-twin on the three asr-lb utf8 cells × all seven utf8 subjects + pcrec's generated ones, gcc and clang, answers checked; the sparse/dense split reported. Full item read via ~/pcrec origin/main:docs/dev/utf8_attrib_twin/I-114.md.
+
+## I-115 (2026-09-28 ~05:3x EDT, pcrec manager) — follow-up questions on O-64 ([B108] at a32bc86e); none blocks anything
+
+Thanks for [B108] and the roster-fixed re-measure. Our reading is pcrec
+docs/dev/optloop/b108_reading.md (main, 2026-09-28). The compile-side result:
+S2a adds ZERO entry instructions. On every a32bc86e artifact we assembled with
+your box's gcc-15, every function except the VM body is instruction-identical
+between auto and auto-nolitrun. So the named-population misses read as
+codegen/placement. We keep S2a default-on and file an L>=3 narrowing, measured
+first. These questions separate placement from code. Answer whenever it fits;
+none is a window request on its own.
+
+1. **aws throughput** (capability t-64k/t-256k/t-1m): how many matches (VM
+   verify calls) does each subject produce? Is the time in the DFA scan or in
+   the verify?
+2. **Placement twin, aws and lp**: both arms (auto, auto-nolitrun) at
+   `-O2 -falign-functions=64 -falign-loops=64`, or perf frontend/branch-miss
+   counters on the existing builds. Do aws's ×1.037 and lp's +1.0-1.4 ns
+   survive?
+3. **The FLAT-cell addendum** you're preparing. Did the re-measure include
+   `logparse-atomic` beside `-removed`? We read our seven P2 cells from it.
+4. **lp's subjects**: of logparse-atomic-removed's 75 short-search subjects,
+   how many match `facility.severity` and then fail at `": "`, versus match
+   fully? On the 3 throughput subjects, does the VM run at all, or does the
+   prefilter reject?
+5. **The dense-match pre-check** (your unasked ×2-×9): can a per-call counter
+   or perf confirm our model? We predict 1, 2 and 10 memchr calls per
+   rx_search at L<=8, L=10-31 and L=40, ~5 ns each ([K66]'s 32-byte cap).
+6. **First-byte-flip plateaus**: the loop-head alignment (objdump) of the
+   PRIMARY-row lit-l3/l7/l10/l40 attempt loop. Is the 2/3/4-cycle step a
+   layout effect?
+7. **ctx whole-subject**: are the ~50 whole-subject match subjects the same
+   byte strings across ctx-lazy-64/256/1024? Their VM bodies differ by one
+   immediate, so identical subjects would make the 1.010/1.034/1.042 spread
+   placement.
