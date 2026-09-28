@@ -42,14 +42,16 @@ measurement archive `docs/dev/measurements/2026-09-28-b110-align64loops-placemen
    | logparse-atomic-removed / search | **1.0833** | **1.0341** | ±2.4% |
    | router-prefix-order (DFA control) | 1.0003 / 1.0003 | 1.0004 / 0.9977 | — |
 
-   aws throughput: ~60% of the 3.61% excess is gone (to 1.44%), still
-   outside the ±3.9% band on the aligned window's own noise, but the
-   direction and rough size say placement is the majority cause.
-   lp-removed throughput: ~83% of the 11.74% excess is gone (to 2.86%)
-   — now arguably inside the noise band. lp-removed search: ~59% gone
-   (8.33%→3.41%), stays outside its own ±2.4% band. **Read plainly:
-   placement/alignment explains most but not clearly all of either
-   miss — a partial-placement finding, not a clean either/or.**
+   aws throughput: ~60% of the 3.61% excess is gone (to 1.44%), which is
+   INSIDE this window's ±3.9% throughput band. lp-removed throughput: ~83%
+   of the 11.74% excess is gone (to 2.86%), also inside the ±3.9% band.
+   lp-removed search: ~59% gone (8.33%→3.41%), still OUTSIDE its ±2.4%
+   band — the one residual that stands on this window's own noise.
+   (Caveat: this window's DFA-null band is wider than the ~±1% the
+   O-64/O-65 twins read, so "inside the band" is a weaker statement than
+   "null".) **Read plainly: alignment removes most of both misses; on
+   this window's own noise only lp-removed's search residual remains —
+   a mostly-placement finding, not a clean either/or.**
 
 3. **The aligned/unaligned-per-arm table, stated with its caveat.**
    Not asked directly, but sitting in the same numbers: does adding the
