@@ -6196,3 +6196,33 @@ Report: `docs/dev/lanes/b103infra_report.md`.
 - The roster gap RECURRED on the new aligned testees → [B111] (lane b111roster): every pinned testee now on the roster or EXCLUDED by reason, and a make-check gate fails by name otherwise; harness 599/0.
 - Manager corrections on merge: O-67 draft and ledger misread aws's aligned 1.44% as outside a ±3.9% band.
 - Lessons: rehearse EVERY set a window touches with the new testees, not just the new set (the rehearsal covered litrun only); check that a predictions file's selectors resolve (litrun P5 lacked grain=subject → sidecar not-evaluable; scratch re-score 32/37); a lane that launches a check as its own tracked task keeps it alive only while the lane lives — watch by PID before stopping it; `perf` is unavailable unprivileged here (paranoid=4).
+
+## 2026-09-28 — 37th session (Opus 5.5): [B109], [B105], KB-35, [B112]
+
+- Woke to a quiet box, no new inbox, both upstream threads quiet. Heartbeat cron on;
+  lanes b109twin, b105tre, kb35alias in parallel.
+- KB-35 FIXED (kb35alias, 3fad9eb): program_identity resolves the email alias
+  to its sidecar id once; email-specimen census 25b1984f→751b9c6d committed
+  (22 changed / 2 identical). The owed regen (kb35regen, 16fa1ee) was an 11 s
+  `regen_reports.py --only`, not a store load. The null band is present but
+  every stratum has n<10 → IQR only. The b104 predictions file was left
+  unwired for that group (it was b104read's choice; a re-score is a separate call).
+- [B109] (I-114, b109twin d0220be): answers 60/60 identical. The lane's headline
+  "gcc-only inversion ×0.57" DID NOT REPRODUCE on my re-run (×1.62). Repeated
+  launches showed the driver is bimodal per process; medians of 15 fresh
+  launches (probe_b109_multilaunch.sh) found the only slowdown to be
+  asr-lb-fixed/synth-dense gcc ×0.957 (clang ×1.20); all else ×1.04-96. O-68.
+- [B105] (b105tre, c8925a6): tre declares any bracket expression with a
+  backslash unsupported. Review caught an over-refusal (the scanner ignored
+  ERE escapes OUTSIDE brackets, so `\[\d+\]` was refused); fixed. A full-corpus
+  census found 30/339, the same set, and the bug never fired on today's corpus.
+  check-harness 610/0.
+- I-116 → [B112] (b112bimodal, e80737f): the bimodality is per-core DVFS at
+  launch. The clock ratio equals the time ratio (2.5), taskset pinning gives
+  0/40 slow, idle gaps raise it, ASLR/alignment are ruled out. The pinned
+  harness is taskset-pinned with ~50 ms loops, so it is unexposed. O-69.
+- Process slip: b105tre launched check-harness before my "wait" amendment
+  reached it; I killed it by PID. Put box-sharing rules IN the brief, not after.
+- Lessons: a single-process timing probe on this box (schedutil) is a lottery.
+  Hand-rolled scratch timing must pin (taskset) or take medians over fresh
+  launches. Re-run any surprising lane headline before sending it to pcrec.
