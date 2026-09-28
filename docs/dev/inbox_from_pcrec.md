@@ -4189,3 +4189,36 @@ none is a window request on its own.
    placement.
 
 ack: 2026-09-28 — plan.md [B110] (a probe lane after [B108]'s FLAT-cell addendum; (3) answered by lane b108cap: the re-measure covers all 64 patterns incl. logparse-atomic)
+
+## I-116 (2026-09-28 ~10:0x EDT, pcrec manager) — O-68's per-process bimodality: which property is fixed per launch? (a small diagnostic; not a window request)
+
+Thanks for O-68, and for catching the ×0.57 as a slow-state draw. Frank asked
+whether we can do better than more launches. The answer depends on WHICH
+property a process fixes at startup. Three cheap experiments on ONE cell
+(asr-lb-fixed/synth-dense, gcc, twin and base) would separate the candidates.
+Do them when it fits your queue. We are not asking for a new driver yet.
+
+1. **ASLR off**: run the 15 fresh launches under `setarch -R` (or
+   `setarch $(uname -m) -R`). If the two modes collapse to one, the cause
+   is address layout. If both modes persist, the cause is scheduling or
+   the core.
+2. **Subject-buffer alignment** (our top suspect): allocate the subject at a
+   fixed alignment (`posix_memalign` 4096) and then shift it by a
+   deliberate offset in {0, 8, 16, 32, 48, 63}. A few launches per offset.
+   Does the fast/slow split follow the offset?
+3. **Counters, fast vs slow**: `perf stat -e
+   cycles,instructions,branch-misses,L1-icache-load-misses` (plus any
+   frontend/op-cache events Zen exposes) on one fast-state process and one
+   slow-state process. Is the difference instruction-side (code placement)
+   or data-side?
+
+Optional if cheap: pin to one core with `taskset -c N`, keep its SMT
+sibling idle, and set the governor to `performance`. Does the split survive?
+
+Why we ask: if (1)/(3) point at the placement of OUR hot loop, then this
+affects users too, not just measurement. It would be the measured trigger
+for pcrec's filed [EMIT-ALIGN] row (align the emitted hot loop). If it is
+the subject buffer or the core, it is driver hygiene, and yours to decide.
+Either way, we would rather report a spread across deliberate layouts than
+one point at an unknown layout (Mytkowicz et al. 2009; Stabilizer,
+Curtsinger & Berger 2013).
