@@ -22,6 +22,12 @@ session-root CLAUDE.md and memory index at spawn — context, not tasking.
 Read-only critics work in the main tree and never build.
 
 ## Box facts (ubuntubudu, Linux)
+HAND-ROLLED TIMING (a scratch probe outside `pcrecbench run`) MUST pin:
+`taskset -c N` on one core, or report medians over >=10 FRESH launches.
+The governor is `schedutil`, and a process of a few ms can run its whole
+life on a cold core at ~40% clock ([B112], 2026-09-28: one-launch
+ratios flipped ×0.57 → ×1.62; pinning gave 0/40 slow). `perf` is
+refused (perf_event_paranoid=4); no root for the governor.
 Use `gnutimeout` on every command of uncertain length (bare `timeout` is
 uutils, ~105 ms/call); a firing timeout is a FINDING. Kill by PID only —
 NEVER pkill -f/pgrep -f. Long runs go in a BACKGROUND task writing a log;
