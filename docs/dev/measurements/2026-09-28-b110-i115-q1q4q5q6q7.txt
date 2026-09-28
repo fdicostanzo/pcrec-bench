@@ -1,0 +1,238 @@
+# source: [B110] docs/dev/measurements/probe_b110_i115.py
+# bench commit: 8d65ef031aa9bef4774f38364acb6c065d79be7f
+# pcrec pin: a32bc86e, binary /home/duxevents/pcrec-bench/build/pcrec-a32bc86e/build/pcrec
+# pcrec binary sha256: da89bcba46abb40c04fc97fb98f1004561e5ac1443a72562669738218dded592
+# gcc: gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+# box: ubuntubudu
+# load (before): 0.90 0.49 0.41 2/703 1514719
+
+==============================================================================
+Q1: aws-access-key-id throughput (t-64k/t-256k/t-1m) -- matches and VM verify calls
+==============================================================================
+  #define RX_ENGINE "vm"
+  #define RX_ENGINE_SEL "selected"
+  #define RX_ENGINE_WHY "capture group at pattern offset 2"
+  #define RX_VM_PREFILTER "hybrid"
+  #define RX_VM_PREFILTER_LANG "exact"
+  #define RX_VM_PREFILTER_LANG_WHY "exact"
+  #define RX_DFA_SCAN "unanchored"
+  #define RX_DFA_PREFILTER "byte-class-bounded"
+  #define RX_DFA_PREFILTER_OFFSETS "none"
+  #define RX_DFA_TABLE "premultiplied"
+  #define RX_DFA_UNIFORM_FOLDS 0
+  #define RX_DFA_SCAN_EDGE "none"
+  #define RX_DFA_START "reverse-pass"
+  t-64k	bytes=65536	rx_search_calls=1	matches=0	g_verify_calls=0
+  t-256k	bytes=262144	rx_search_calls=1	matches=0	g_verify_calls=0
+  t-1m	bytes=1048576	rx_search_calls=1	matches=0	g_verify_calls=0
+
+==============================================================================
+Q4 (first half): logparse-atomic-removed's 75 short-search subjects -- prefix match then fail at ": " vs full match vs no prefix match
+==============================================================================
+  total subjects: 75
+  category C (full match, facility.severity + ': ' + rest): 1 -- [('lp-atomic-hit', 'match')]
+  category B (facility.severity matches, THEN fails at ': '): 0 -- []
+  category A (no facility.severity prefix match at all): 74
+
+==============================================================================
+Q4 (second half): logparse-atomic-removed on the 3 throughput subjects -- does the VM run, or does the prefilter reject?
+==============================================================================
+  #define RX_REQ_BYTE "58"
+  #define RX_REQ_RUN "3a20@0"
+  #define RX_REQ_WHY "one-attempt"
+  #define RX_ENGINE "vm"
+  #define RX_ENGINE_SEL "selected"
+  #define RX_ENGINE_WHY "capture group at pattern offset 101"
+  #define RX_DFA_SCAN "attempt"
+  #define RX_DFA_PREFILTER "none"
+  #define RX_DFA_PREFILTER_OFFSETS "none"
+  #define RX_DFA_TABLE "none"
+  #define RX_DFA_UNIFORM_FOLDS 0
+  #define RX_DFA_SCAN_EDGE "none"
+  #define RX_DFA_START "reverse-pass"
+  t-64k	bytes=65536	rx_search_calls=1	matches=0	g_prefilter_calls=1	g_verify_calls=0
+  t-256k	bytes=262144	rx_search_calls=1	matches=0	g_prefilter_calls=1	g_verify_calls=0
+  t-1m	bytes=1048576	rx_search_calls=1	matches=0	g_prefilter_calls=1	g_verify_calls=0
+
+==============================================================================
+Q5: the dense-match pre-check's memchr count per rx_search call, `pcrec-vm` (pre-checks ON) on mat-l<L>
+==============================================================================
+  L=2   bytes=65536	rx_search_calls=32769	matches=32768	g_memchr_calls=32768	g_verify_calls=32768	memchr_per_rx_search_call=1.0000
+  L=3   bytes=65535	rx_search_calls=21846	matches=21845	g_memchr_calls=21845	g_verify_calls=21845	memchr_per_rx_search_call=1.0000
+  L=4   bytes=65536	rx_search_calls=16385	matches=16384	g_memchr_calls=16384	g_verify_calls=16384	memchr_per_rx_search_call=0.9999
+  L=7   bytes=65534	rx_search_calls=9363	matches=9362	g_memchr_calls=9362	g_verify_calls=9362	memchr_per_rx_search_call=0.9999
+  L=8   bytes=65536	rx_search_calls=8193	matches=8192	g_memchr_calls=8192	g_verify_calls=8192	memchr_per_rx_search_call=0.9999
+  L=10  bytes=65530	rx_search_calls=6554	matches=6553	g_memchr_calls=13106	g_verify_calls=6553	memchr_per_rx_search_call=1.9997
+  L=16  bytes=65536	rx_search_calls=4097	matches=4096	g_memchr_calls=8192	g_verify_calls=4096	memchr_per_rx_search_call=1.9995
+  L=31  bytes=65534	rx_search_calls=2115	matches=2114	g_memchr_calls=4228	g_verify_calls=2114	memchr_per_rx_search_call=1.9991
+  L=40  bytes=65520	rx_search_calls=1639	matches=1638	g_memchr_calls=16380	g_verify_calls=1638	memchr_per_rx_search_call=9.9939
+
+==============================================================================
+Q6: PRIMARY row (--engine=vm -fno-req-byte -fno-req-run) lit-l<L> attempt-loop head, real .so, objdump loop-head alignment mod 16
+==============================================================================
+  -- L=3 loop excerpt --
+        21e0:	f3 0f 1e fa          	endbr64
+        21e4:	4d 85 c0             	test   %r8,%r8
+        21e7:	74 4f                	je     2238 <rx_search_in+0x58>
+        21e9:	31 c0                	xor    %eax,%eax
+        21eb:	48 39 d6             	cmp    %rdx,%rsi
+        21ee:	72 22                	jb     2212 <rx_search_in+0x32>
+        21f0:	48 8d 42 03          	lea    0x3(%rdx),%rax
+        21f4:	48 39 c6             	cmp    %rax,%rsi
+        21f7:	72 0c                	jb     2205 <rx_search_in+0x25>
+        21f9:	4c 8d 04 17          	lea    (%rdi,%rdx,1),%r8
+        21fd:	66 41 81 38 61 62    	cmpw   $0x6261,(%r8)
+        2203:	74 13                	je     2218 <rx_search_in+0x38>
+        2205:	48 39 d6             	cmp    %rdx,%rsi
+        2208:	74 06                	je     2210 <rx_search_in+0x30>
+        220a:	48 83 c2 01          	add    $0x1,%rdx
+        220e:	eb e0                	jmp    21f0 <rx_search_in+0x10>
+        2210:	31 c0                	xor    %eax,%eax
+        2212:	c3                   	ret
+        2213:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+        2218:	41 80 78 02 63       	cmpb   $0x63,0x2(%r8)
+        221d:	75 e6                	jne    2205 <rx_search_in+0x25>
+        221f:	48 85 c9             	test   %rcx,%rcx
+        2222:	74 07                	je     222b <rx_search_in+0x4b>
+        2224:	48 89 11             	mov    %rdx,(%rcx)
+        2227:	48 89 41 08          	mov    %rax,0x8(%rcx)
+        222b:	b8 01 00 00 00       	mov    $0x1,%eax
+        2230:	c3                   	ret
+        2231:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+        2238:	e9 a3 fe ff ff       	jmp    20e0 <rx_search@plt>
+  -- L=7 loop excerpt --
+        21e0:	f3 0f 1e fa          	endbr64
+        21e4:	4d 85 c0             	test   %r8,%r8
+        21e7:	74 4f                	je     2238 <rx_search_in+0x58>
+        21e9:	31 c0                	xor    %eax,%eax
+        21eb:	48 39 d6             	cmp    %rdx,%rsi
+        21ee:	72 23                	jb     2213 <rx_search_in+0x33>
+        21f0:	48 8d 42 07          	lea    0x7(%rdx),%rax
+        21f4:	48 39 c6             	cmp    %rax,%rsi
+        21f7:	72 0d                	jb     2206 <rx_search_in+0x26>
+        21f9:	4c 8d 04 17          	lea    (%rdi,%rdx,1),%r8
+        21fd:	41 81 38 61 62 63 64 	cmpl   $0x64636261,(%r8)
+        2204:	74 12                	je     2218 <rx_search_in+0x38>
+        2206:	48 39 d6             	cmp    %rdx,%rsi
+        2209:	74 06                	je     2211 <rx_search_in+0x31>
+        220b:	48 83 c2 01          	add    $0x1,%rdx
+        220f:	eb df                	jmp    21f0 <rx_search_in+0x10>
+        2211:	31 c0                	xor    %eax,%eax
+        2213:	c3                   	ret
+        2214:	0f 1f 40 00          	nopl   0x0(%rax)
+        2218:	41 81 78 03 64 65 66 	cmpl   $0x67666564,0x3(%r8)
+        221f:	67 
+        2220:	75 e4                	jne    2206 <rx_search_in+0x26>
+        2222:	48 85 c9             	test   %rcx,%rcx
+        2225:	74 07                	je     222e <rx_search_in+0x4e>
+        2227:	48 89 11             	mov    %rdx,(%rcx)
+        222a:	48 89 41 08          	mov    %rax,0x8(%rcx)
+        222e:	b8 01 00 00 00       	mov    $0x1,%eax
+        2233:	c3                   	ret
+        2234:	0f 1f 40 00          	nopl   0x0(%rax)
+        2238:	e9 a3 fe ff ff       	jmp    20e0 <rx_search@plt>
+  -- L=10 loop excerpt --
+        21e0:	f3 0f 1e fa          	endbr64
+        21e4:	4d 85 c0             	test   %r8,%r8
+        21e7:	74 57                	je     2240 <rx_search_in+0x60>
+        21e9:	31 c0                	xor    %eax,%eax
+        21eb:	48 39 d6             	cmp    %rdx,%rsi
+        21ee:	72 29                	jb     2219 <rx_search_in+0x39>
+        21f0:	49 b9 61 62 63 64 65 	movabs $0x6867666564636261,%r9
+        21f7:	66 67 68 
+        21fa:	48 8d 42 0a          	lea    0xa(%rdx),%rax
+        21fe:	48 39 c6             	cmp    %rax,%rsi
+        2201:	72 09                	jb     220c <rx_search_in+0x2c>
+        2203:	4c 8d 04 17          	lea    (%rdi,%rdx,1),%r8
+        2207:	4d 39 08             	cmp    %r9,(%r8)
+        220a:	74 14                	je     2220 <rx_search_in+0x40>
+        220c:	48 39 d6             	cmp    %rdx,%rsi
+        220f:	74 06                	je     2217 <rx_search_in+0x37>
+        2211:	48 83 c2 01          	add    $0x1,%rdx
+        2215:	eb e3                	jmp    21fa <rx_search_in+0x1a>
+        2217:	31 c0                	xor    %eax,%eax
+        2219:	c3                   	ret
+        221a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+        2220:	66 41 81 78 08 69 6a 	cmpw   $0x6a69,0x8(%r8)
+        2227:	75 e3                	jne    220c <rx_search_in+0x2c>
+        2229:	48 85 c9             	test   %rcx,%rcx
+        222c:	74 07                	je     2235 <rx_search_in+0x55>
+        222e:	48 89 11             	mov    %rdx,(%rcx)
+        2231:	48 89 41 08          	mov    %rax,0x8(%rcx)
+        2235:	b8 01 00 00 00       	mov    $0x1,%eax
+        223a:	c3                   	ret
+        223b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+        2240:	e9 9b fe ff ff       	jmp    20e0 <rx_search@plt>
+  -- L=40 loop excerpt --
+        21e0:	f3 0f 1e fa          	endbr64
+        21e4:	49 89 f9             	mov    %rdi,%r9
+        21e7:	48 89 cf             	mov    %rcx,%rdi
+        21ea:	4d 85 c0             	test   %r8,%r8
+        21ed:	0f 84 8d 00 00 00    	je     2280 <rx_search_in+0xa0>
+        21f3:	31 c0                	xor    %eax,%eax
+        21f5:	48 39 d6             	cmp    %rdx,%rsi
+        21f8:	72 3a                	jb     2234 <rx_search_in+0x54>
+        21fa:	4c 8d 52 28          	lea    0x28(%rdx),%r10
+        21fe:	4c 39 d6             	cmp    %r10,%rsi
+        2201:	72 24                	jb     2227 <rx_search_in+0x47>
+        2203:	48 b8 61 62 63 64 65 	movabs $0x6867666564636261,%rax
+        220a:	66 67 68 
+        220d:	49 8d 0c 11          	lea    (%r9,%rdx,1),%rcx
+        2211:	49 b8 69 6a 6b 6c 6d 	movabs $0x706f6e6d6c6b6a69,%r8
+        2218:	6e 6f 70 
+        221b:	48 33 01             	xor    (%rcx),%rax
+        221e:	4c 33 41 08          	xor    0x8(%rcx),%r8
+        2222:	4c 09 c0             	or     %r8,%rax
+        2225:	74 11                	je     2238 <rx_search_in+0x58>
+        2227:	48 39 d6             	cmp    %rdx,%rsi
+        222a:	74 06                	je     2232 <rx_search_in+0x52>
+        222c:	48 83 c2 01          	add    $0x1,%rdx
+        2230:	eb c8                	jmp    21fa <rx_search_in+0x1a>
+        2232:	31 c0                	xor    %eax,%eax
+        2234:	c3                   	ret
+        2235:	0f 1f 00             	nopl   (%rax)
+        2238:	48 b8 71 72 73 74 75 	movabs $0x7877767574737271,%rax
+        223f:	76 77 78 
+        2242:	48 33 41 10          	xor    0x10(%rcx),%rax
+        2246:	49 b8 79 7a 41 42 43 	movabs $0x4645444342417a79,%r8
+        224d:	44 45 46 
+        2250:	4c 33 41 18          	xor    0x18(%rcx),%r8
+        2254:	4c 09 c0             	or     %r8,%rax
+        2257:	75 ce                	jne    2227 <rx_search_in+0x47>
+        2259:	48 b8 47 48 49 4a 4b 	movabs $0x4e4d4c4b4a494847,%rax
+        2260:	4c 4d 4e 
+        2263:	48 39 41 20          	cmp    %rax,0x20(%rcx)
+        2267:	75 be                	jne    2227 <rx_search_in+0x47>
+        2269:	48 85 ff             	test   %rdi,%rdi
+        226c:	74 07                	je     2275 <rx_search_in+0x95>
+        226e:	48 89 17             	mov    %rdx,(%rdi)
+        2271:	4c 89 57 08          	mov    %r10,0x8(%rdi)
+        2275:	b8 01 00 00 00       	mov    $0x1,%eax
+        227a:	c3                   	ret
+        227b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+        2280:	4c 89 cf             	mov    %r9,%rdi
+        2283:	e9 58 fe ff ff       	jmp    20e0 <rx_search@plt>
+
+  L   loop_head   mod16
+  2   0x21f0     0
+  3   0x21f0     0
+  4   0x21f0     0
+  7   0x21f0     0
+  8   0x21fa     10
+  10  0x21fa     10
+  16  0x21f0     0
+  31  0x21f3     3
+  40  0x21fa     10
+
+==============================================================================
+Q7: are the ctx-lazy-64/256/1024 (+ctx-greedy-256) whole-subject match subjects the SAME byte strings across rungs?
+==============================================================================
+  ctx-lazy-64: 49 match-regime subjects
+  ctx-lazy-256: 49 match-regime subjects
+  ctx-lazy-1024: 49 match-regime subjects
+  ctx-greedy-256: 49 match-regime subjects
+  identical subject-id SET across all four: True
+  sample sha256[:16] (first 5, alphabetical): {'d-00001': '4e07408562bedb8b', 'd-00002': 'cd70bea023f752a0', 'd-00005': '47523fab0880013d', 'd-00007': '4c6570f55005fd42', 'd-00008': '8d91d6a19fe1d10c'}
+  (all four patterns' cells read this ONE subjects/ directory, by construction -- subjects_for() applies no filter to the match regime, so the same physical files back every rung)
+
+# load (after): 0.99 0.52 0.42 2/703 1514935
