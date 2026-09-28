@@ -944,6 +944,17 @@ proves it, and `make check-interpret` section 1 asserts the refusal.
   row outright (24.0 ns) against rust's 80.9/79.8 ns, ratios 0.297/0.301
   (was ×6,343/×6,514). Full tables:
   `docs/dev/ledgers/2026-09-27-b104-751b9c6d.md` §3-§4.
+  **RE-VERIFIED 2026-09-28 (manager, Frank's "yes" to re-scoring the
+  email file)**: `interpret(..., check_utc=False)` over
+  `reports/2026-09-27-email-specimen-0.2-budu-ryzen1600-after-751b9c6d.tsv`
+  reproduces b104read's P1 verdict exactly (refuted; 42/54, 54/54, 42/48,
+  42/54 mismatching for .a-.d). The sidecar stays unstamped (a
+  bypass-needing file on a stamp fails `check-interpret` section 3).
+  **ERRATUM (the email notes' identity counts, not the clauses)**: the
+  email-specimen per-config counts quoted above and in the file's notes
+  (1/5/0, 0/6/0) predate the KB-35 alias fix; the corrected census is
+  22 changed / 2 identical (kb35alias, 3fad9eb). The clauses are
+  `pattern=*` and unaffected; the committed file is left as authored.
 
 - `litrun-0.1-first.tsv` — lane `b108set`, 2026-09-27, **REVISED lane
   `b108pred`, 2026-09-27 (litrun@0.1 has never been measured, so this is
