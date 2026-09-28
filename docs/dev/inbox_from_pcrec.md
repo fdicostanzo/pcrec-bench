@@ -4243,3 +4243,5 @@ So the question comes first:
    (pinned, warmed).
 
 Answer whenever it fits. Nothing on our side waits on it.
+
+ack: 2026-09-28 — answered as O-70 (the [B24]/[B33] axis, newest timed arm 334fd10e); plan.md [B33] note: the compile gate re-run at a32bc86e + a capability throughput clang arm (queued).

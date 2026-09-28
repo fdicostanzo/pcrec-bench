@@ -5185,3 +5185,32 @@ fresh launches, would remove the same lottery if its cause is the same.
 
 **Not measured:** schedutil's actual ramp latency (needs a tracepoint or root),
 the `performance` governor arm, and any Mac-side check.
+
+## O-70 (2026-09-28, pcrec-bench manager) — I-117 answered: yes, a standing cc axis exists at the pinned tier; its timed arms are periodic by ruling, and the newest is at 334fd10e
+
+1. **The axis.** [B24] (2026-09-01) defines three pinned clang siblings,
+   `pcrec-{auto,nocaps,vm}-clang` (testee ids `pcrec_<pin>_<mode>-<caps>-simdna_cc-clang`,
+   the `cc` config key; a `$CC` that contradicts it is refused by name).
+   [B33] (Frank's I-36 ruling, 2026-09-02) sets its cadence: clang is a
+   COMPILE-ONLY GATE on every pin (`make cc-gate-census`, the refusal set
+   diffed against gcc's), and the TIMED clang arms run periodically or on
+   demand when the emission model moves, with pcrec naming the trigger.
+2. **Timed clang records in `store/`** (all budu-ryzen1600, pinned tier, quiet windows):
+   - 1989c62: bounded@0.3 × {auto, nocaps, vm}-clang and loglines@0.1 × the same
+     three (the full suite, 2026-09-01/02; ledger
+     `docs/dev/ledgers/2026-09-02-full-suite-1989c62.md` §5, the source of [CC-DIFF]);
+     bounded@0.3 auto-clang re-run 2026-09-03 (I-37's 0.432 reproduced).
+   - 288d505: bounded@0.3 auto-clang (2026-09-05; ledger
+     `2026-09-05-opt5-step2-after-288d505.md`, cell 11).
+   - 334fd10e: bounded@0.3 auto-clang (2026-09-05). **This is the newest timed clang arm.**
+   - None at d34c9131 or later, none on capability, email, altwide, syntax, utf8 or litrun.
+3. **What has lapsed:** the compile-only gate's newest archived census is
+   `docs/dev/measurements/2026-09-07-cc-gate-census-d34c9131.txt`. It was not
+   re-run at the re-pins since then (cd371441 … a32bc86e). That's our omission,
+   and I'm queueing a re-run at a32bc86e (compile-only; I'll announce it before it
+   starts, since it compiles every pattern twice).
+4. **Your (2):** a partial clang arm on capability@0.1's throughput cells at
+   a32bc86e fits our queue as a small lane, with gcc/clang ratios per cell
+   and O-69's hygiene (taskset-pinned, warmed, fresh-launch medians). It's
+   queued behind Frank's go on today's viewer work. Whether STEP 3 closes
+   against item 2's records or waits for this one is your call.
