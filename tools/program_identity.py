@@ -422,18 +422,28 @@ def flags_of(setup):
 
 def build_census(subbench, version, old, new, store_dir, engine="pcrec",
                  log=sys.stderr, normalization=NORMALIZATION_V2):
+    """`subbench` is the bench/ DIRECTORY name (`_sb.find`'s own contract).
+    KB-35: that is NOT always the sidecar's own subbench id --
+    bench/email's directory is `email`, its sidecar `id` is
+    `email-specimen`, and `store/index.tsv`'s `subbench` column (and
+    every census output path, [B79]) is keyed on the ID. Resolved ONCE,
+    here, into `sb_id`, and used for every store/index/output-path
+    reference from this point on; `subbench` (the directory name) is
+    kept only for the bench/<dir> error message below, which is about
+    the directory the caller named."""
     sb = _sb.find(subbench)
     if sb.version != version:
         raise SystemExit(f"bench/{subbench} is at {sb.version}, not {version}")
-    old_recs = newest_records(store_dir, subbench, version, engine, old)
-    new_recs = newest_records(store_dir, subbench, version, engine, new)
+    sb_id = sb.id
+    old_recs = newest_records(store_dir, sb_id, version, engine, old)
+    new_recs = newest_records(store_dir, sb_id, version, engine, new)
     slugs = sorted(set(old_recs) & set(new_recs))
     if not slugs:
         raise SystemExit(f"no config measured at both {old} and {new}")
     bins = {old: pin_binary(old), new: pin_binary(new)}
     v2 = normalization == NORMALIZATION_V2
     meta = [f"# {CENSUS_VERSION_V2 if v2 else CENSUS_VERSION}; "
-            f"subbench={subbench}@{version}; "
+            f"subbench={sb_id}@{version}; "
             f"engine={engine}; old={old}; new={new}",
             f"# binaries: {old}={file_sha256(bins[old])}; "
             f"{new}={file_sha256(bins[new])}",
@@ -564,7 +574,13 @@ def main(argv=None):
                          "version the COMMITTED file's first line names "
                          "(the three [B79] files are v1 and stay v1)")
     a = ap.parse_args(argv)
-    out = a.out or census_path(a.subbench, a.version, a.engine, a.old, a.new)
+    # KB-35: `--subbench` is the bench/ DIRECTORY name (`_sb.find`'s own
+    # contract); the census path (like the store's own `subbench` index
+    # column) is keyed on the sidecar's `id`, which differs for
+    # bench/email (`email` -> `email-specimen`). Resolved once, here, the
+    # same way `build_census` resolves it for the store lookups below.
+    sb_id = _sb.find(a.subbench).id
+    out = a.out or census_path(sb_id, a.version, a.engine, a.old, a.new)
     norm = a.normalization
     if norm is None:
         norm = NORMALIZATION_V2
