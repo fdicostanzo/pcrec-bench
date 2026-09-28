@@ -106,8 +106,10 @@ cleanest case — the biggest excess (11.7%) shrinks the most (to 2.9%,
 inside a band whose own DFA-null spread on THIS window reaches ±3.9%,
 so this ONE cell is now arguably within noise) while lp-removed search
 (8.3%→3.4%) stays outside the search band's own tighter ±2.4% spread.
-aws throughput (3.6%→1.4%) also stays outside its own DFA-null
-population's spread on this window. Read plainly: alignment/placement
+aws throughput (3.6%→1.4%) is INSIDE the same ±3.9% throughput band
+[manager correction 2026-09-28: the lane's draft read it as outside;
+1.44% < 3.9%]. So on this window's own noise only lp-removed's search
+residual stands. Read plainly: alignment/placement
 accounts for MOST but not clearly all of O-64's two headline misses —
 a partial-placement finding, not a clean placement-only or code-only
 one.
