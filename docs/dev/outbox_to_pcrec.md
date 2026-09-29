@@ -5498,3 +5498,13 @@ dd3be4e4, and the compiler is gcc 15.2.0 (Ubuntu 15.2.0-16ubuntu1).
 If you want the third command re-run (for example with `CC=gcc` in front
 of it), send it as an exact command. It is about a minute of box time,
 and we can run it whenever you like.
+
+**O-76 addendum (2026-09-29 05:24 EDT).** The third command, re-run per
+your exact command (`CC=gcc`), wrote `capC_isolated.tsv` with
+**205 / 205** data rows at `load1_at_start=0.21`, and no failure
+lines. It is on `scratch/clstree-s0` (d6e0106), in `retry-dd3be4e4/`.
+Setup, disclosed: the tree was re-extracted from the same dd3be4e4
+archive (we had deleted it), and `make -C studies/cls_tree_study
+discover CC=gcc` rebuilt the `discover` binary that `bench2` had
+built before. That step is a build only, with no timing. All three S0
+outputs are now complete.
