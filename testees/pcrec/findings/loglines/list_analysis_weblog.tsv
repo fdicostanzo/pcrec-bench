@@ -1,0 +1,223 @@
+# testees/pcrec/findings/loglines/list_analysis_weblog.tsv -- pcrec's --list-analysis
+# output for 'weblog' at the [B115] scratch-tier commit f7f5a1432d1d2cf464f3f15fd268cdf11428d0d5
+# (post-[FINDINGS] B6, abi 44; NOT this project's pinned commit, which stays
+# a32bc86e -- this is the commit inbox I-118 named for the four-column build,
+# archived VERBATIM (pcrec D35: stable name, verbatim output, a source header):
+#
+#     build/pcrec-f7f5a143/build/pcrec --list-analysis weblog
+#
+# archived 2026-09-28 by lane b115tiers ([B115], inbox I-118, outbox O-72).
+#
+# pcrec --list-analysis weblog: the chain this invocation resolves, what each (query, encoding) answers from, and the named bundle's own data (docs/spec/findings.md §6).
+#section chain
+# one row per link, in search order; the last is the built-in default (by identity)
+#link	bundle	stop	location	include
+0	weblog	store		
+1	default	store-default		
+#section resolution
+# one row per query x compile encoding; digest is exactly what a <PREFIX>_FINDINGS stamp would carry, or none; dropped counts the code points its derivation dropped
+#query	encoding	link	bundle	kind	via	digest	dropped
+byte-rate	byte	0	weblog	freq	unigram	6b85ed6b33993164	0
+byte-rate	utf8	0	weblog	cpfreq	encode-utf8	6b85ed6b33993164	0
+run-rarity	byte					none	
+run-rarity	utf8					none	
+#section freq
+# the named bundle's own rows: one per nonzero key, ascending; ppm (freq) is the normalized byte-rate (design §2.5)
+#key	count	ppm
+0a	4313	4311
+20	79229	79247
+21	37	36
+22	25878	25869
+23	10	9
+25	1406	1405
+26	1589	1588
+28	5696	5694
+29	5696	5694
+2a	1	2
+2b	6072	6069
+2c	1622	1621
+2d	18621	18614
+2e	47158	47141
+2f	51772	51754
+30	61276	61255
+31	48208	48191
+32	28280	28270
+33	16948	16942
+34	10761	10757
+35	24561	24552
+36	14066	14061
+37	14644	14639
+38	10959	10955
+39	7048	7045
+3a	17746	17739
+3b	7100	7097
+3d	2562	2561
+3f	876	875
+40	91	90
+41	2713	2712
+42	707	706
+43	2517	2516
+44	323	322
+45	5521	5519
+46	2656	2655
+47	7514	7511
+48	6073	6070
+49	1033	1032
+4a	305	304
+4b	3201	3199
+4c	3003	3001
+4d	11302	11298
+4e	1910	1909
+4f	2053	2052
+50	5450	5448
+51	472	471
+52	579	578
+53	3491	3489
+54	16633	16627
+55	1183	1182
+56	535	534
+57	4504	4502
+58	1750	1749
+59	238	237
+5a	113	112
+5b	4314	4312
+5d	4313	4311
+5f	3048	3046
+61	26870	26860
+62	8502	8499
+63	18370	18363
+64	7506	7503
+65	41092	41078
+66	6392	6389
+67	11027	11023
+68	12106	12101
+69	27081	27071
+6a	1841	1840
+6b	5861	5859
+6c	25973	25964
+6d	16231	16225
+6e	14726	14720
+6f	36287	36274
+70	18964	18957
+71	321	320
+72	17974	17967
+73	25306	25297
+74	30009	29998
+75	5409	5407
+76	3951	3949
+77	10284	10280
+78	5649	5647
+79	6728	6725
+7a	3851	3849
+7e	9	8
+#section cpfreq
+# the named bundle's own rows: one per nonzero key, ascending; ppm (freq) is the normalized byte-rate (design §2.5)
+#key	count
+U+000A	4313
+U+0020	79229
+U+0021	37
+U+0022	25878
+U+0023	10
+U+0025	1406
+U+0026	1589
+U+0028	5696
+U+0029	5696
+U+002A	1
+U+002B	6072
+U+002C	1622
+U+002D	18621
+U+002E	47158
+U+002F	51772
+U+0030	61276
+U+0031	48208
+U+0032	28280
+U+0033	16948
+U+0034	10761
+U+0035	24561
+U+0036	14066
+U+0037	14644
+U+0038	10959
+U+0039	7048
+U+003A	17746
+U+003B	7100
+U+003D	2562
+U+003F	876
+U+0040	91
+U+0041	2713
+U+0042	707
+U+0043	2517
+U+0044	323
+U+0045	5521
+U+0046	2656
+U+0047	7514
+U+0048	6073
+U+0049	1033
+U+004A	305
+U+004B	3201
+U+004C	3003
+U+004D	11302
+U+004E	1910
+U+004F	2053
+U+0050	5450
+U+0051	472
+U+0052	579
+U+0053	3491
+U+0054	16633
+U+0055	1183
+U+0056	535
+U+0057	4504
+U+0058	1750
+U+0059	238
+U+005A	113
+U+005B	4314
+U+005D	4313
+U+005F	3048
+U+0061	26870
+U+0062	8502
+U+0063	18370
+U+0064	7506
+U+0065	41092
+U+0066	6392
+U+0067	11027
+U+0068	12106
+U+0069	27081
+U+006A	1841
+U+006B	5861
+U+006C	25973
+U+006D	16231
+U+006E	14726
+U+006F	36287
+U+0070	18964
+U+0071	321
+U+0072	17974
+U+0073	25306
+U+0074	30009
+U+0075	5409
+U+0076	3951
+U+0077	10284
+U+0078	5649
+U+0079	6728
+U+007A	3851
+U+007E	9
+#section declarations
+# one row per block of the named bundle: what its counted data is (encoding, prose) and what it serves
+#kind	encoding	serves	question	reader	analyzer
+freq	ascii	byte-rate when byte via unigram	How often does each byte occur in this exemplar?	byte-rate (docs/spec/findings.md §4)	pcrec-analyze 0.1 --scan freq,cpfreq
+cpfreq	ascii	byte-rate when utf8 via encode-utf8	How often does each Unicode code point occur in this exemplar?	byte-rate (docs/spec/findings.md §4)	pcrec-analyze 0.1 --scan freq,cpfreq
+#section provenance
+# one row per block x provenance field written
+#kind	field	value
+freq	source	elastic-examples-apache-logs-bc53b584
+freq	url	https://github.com/elastic/examples/blob/bc53b584c0f9f574d4373193334bf03541a54936/Common%20Data%20Formats/apache_logs/apache_logs
+freq	ref	bc53b584c0f9f574d4373193334bf03541a54936
+freq	retrieved	2026-09-27
+freq	license	Apache-2.0
+freq	bytes	1000000
+freq	sha256	43cfdc461a4ccecd3e93bbe0e30fd022a416e6fbe0ad2e613b1a13b85bee0e47
+cpfreq	source	elastic-examples-apache-logs-bc53b584
+cpfreq	url	https://github.com/elastic/examples/blob/bc53b584c0f9f574d4373193334bf03541a54936/Common%20Data%20Formats/apache_logs/apache_logs
+cpfreq	ref	bc53b584c0f9f574d4373193334bf03541a54936
+cpfreq	retrieved	2026-09-27
+cpfreq	license	Apache-2.0
+cpfreq	bytes	1000000
+cpfreq	sha256	43cfdc461a4ccecd3e93bbe0e30fd022a416e6fbe0ad2e613b1a13b85bee0e47

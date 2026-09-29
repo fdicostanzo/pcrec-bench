@@ -76,6 +76,75 @@ identical incident (outbox O-64/O-65 -> O-67 item 4); see
 `bench/capability/CLAUDE.md`'s own `[B111]` section for the exact
 procedure and every existing pcrec row's reasoning.
 
+## [B115] FINDINGS-BENCH-TIERS: a scratch-tier pcrec build, NEVER a re-pin
+
+Inbox I-118 / outbox O-72 (2026-09-28): pcrec's [FINDINGS] set (B0-B6,
+`docs/spec/findings.md`) gives four scratch-tier columns — DEFAULT /
+DECLARED / PROFILED / ORACLE-BEST — read by Frank before any ruling on
+whether findings ever touches a published config. **`configs.toml`'s pin
+stays `a32bc86e` (abi 41)** — this commit predates `--analysis`, `-I` and
+`pcrec-analyze` entirely (abi 40/[FINDINGS] B1 only). The named post-B6
+commit, **f7f5a143** (abi 44), is built the way `pin.sh` builds any
+commit (`testees/pcrec/pin.sh f7f5a143`, a `git archive` into
+`build/pcrec-f7f5a143/`, never touching `~/pcrec`) and `pcrec-local` is
+pointed at it via `$PCREC_BIN` — SCRATCH TIER BY CONSTRUCTION ([B10]),
+exactly like any other `pcrec-local` sweep. Nothing here moves
+`configs.toml`, the pinned registries, or any pinned testee's derived id.
+
+**`pcrec-local`'s derived id gained two more tokens** (`effective_tune` /
+`effective_analysis`, `adapter.py`), the SAME shape as `effective_
+encoding`'s: read off the EFFECTIVE flags (so
+`$PCREC_LOCAL_FLAGS="--tune=1 --analysis weblog"` reaches the id),
+refused BY NAME on an unrecognised value or a disagreement, `None` (no
+token) when absent. `--tune=N` (aliases `min-size`/`size`/`balanced`/
+`speed`/`max-speed` all normalise to the SAME slug: `tune-m2`/`tune-m1`/
+`tune-0`/`tune-1`/`tune-2`) and `--analysis NAME` (`an-<name>`, checked
+against pcrec's own `[a-z][a-z0-9_-]*` grammar, never a closed list — a
+caller-authored bundle via `-I` can name anything legal). Both join
+`compose_config_extra`'s parts LAST (after `utf8`, [B77] U2's own last
+part), so the slug stays append-only. `-I DIR` itself needs no
+recognition at all: it is a directory, not an identity, and rides in
+`flags` like any other pcrec argv token, reaching pcrec's argv but never
+`config_extra`. No `configs.toml` row declares either axis, so every
+PRE-EXISTING testee_id is unchanged (`tools/selfcheck.py:
+check_b115_tune_analysis_axis` arm 2 proves it directly: every pinned
+config's `tune_extra`/`analysis_extra` reads `None`).
+
+**Every compile row now carries `findings`** (`engine_metadata`, type
+`string`): the `<PREFIX>_FINDINGS` macro's value (`byte-rate=<bundle>:
+<16-hex digest>`), read from the emitted `.c`/`.h` TEXT
+(`adapter.findings_stamp()`) rather than through `shim.c` — the value is
+a static string fixed at emit time, and [B108]'s own note already found
+no shim getter reads `rx_info.findings` (D77's "no run-time consumer"
+precedent); [B115] needed a consumer at the ADAPTER level, not the shim
+level, so the text this file already opens for `emit_bytes` carries it.
+Present on every artifact this pin emits (abi >= 40); `default` when no
+`--analysis`/`-I` is named. This is the cross-check inbox I-118 §2 asks
+for: a DECLARED/PROFILED cell's `findings` value must be checked against
+`pcrec --list-analysis NAME`'s own printed digest for the same (query,
+encoding) before the cell's number is trusted — done live, on a real
+compile, by `check_b115_tune_analysis_axis` arm 3.
+
+**`testees/pcrec/findings/{loglines,email}/`** holds the DECLARED/
+PROFILED bundles and their provenance (R-BENCH-4: nothing pcrec-shaped
+lives under `bench/`) — see their own CLAUDE.mds and README.mds for the
+exact build recipe, the sha256-level disjointness proof against the
+committed manifests, and the archived `--list-analysis` output for
+`weblog`/`log`/each PROFILED bundle. `bench/{loglines,email}/gen_
+subjects.py` / `gen_throughput_subjects.py` gained `--seed S --out DIR`
+(defaults byte-identical to before, proven by `make check-harness`'s
+manifest gate) — the TRAIN generation a PROFILED bundle is built from,
+written under `/var/tmp/b115/`, never committed.
+
+**`scripts/findings_tiers.sh`** sweeps the four-column product into a
+scratch store under `/var/tmp/b115/store`; **`scripts/
+findings_tiers_matrix.py`** reduces it into one TSV per set (DEFAULT /
+DECLARED-* / PROFILED / ORACLE-BEST + the three deltas, ORACLE-BEST's
+argmin arm named). See `scripts/CLAUDE.md`. Whether any of this earns a
+published config, an ORACLE-BEST-shaped pinned testee, or a re-pin at
+all is Frank's call after reading the numbers (outbox O-72's own
+closing line) — nothing here anticipates that ruling.
+
 ## `pin.sh` never writes inside pcrec
 
 `/home/duxevents/pcrec` is read-only to this project. `pin.sh` extracts a

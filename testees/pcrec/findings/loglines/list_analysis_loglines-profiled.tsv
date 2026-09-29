@@ -1,0 +1,118 @@
+# testees/pcrec/findings/loglines/list_analysis_loglines-profiled.tsv -- pcrec's --list-analysis
+# output for 'loglines-profiled' at the [B115] scratch-tier commit f7f5a1432d1d2cf464f3f15fd268cdf11428d0d5
+# (post-[FINDINGS] B6, abi 44; NOT this project's pinned commit, which stays
+# a32bc86e -- this is the commit inbox I-118 named for the four-column build,
+# archived VERBATIM (pcrec D35: stable name, verbatim output, a source header):
+#
+#     build/pcrec-f7f5a143/build/pcrec --list-analysis loglines-profiled -I testees/pcrec/findings/loglines
+#
+# archived 2026-09-28 by lane b115tiers ([B115], inbox I-118, outbox O-72).
+#
+# pcrec --list-analysis loglines-profiled: the chain this invocation resolves, what each (query, encoding) answers from, and the named bundle's own data (docs/spec/findings.md §6).
+#section chain
+# one row per link, in search order; the last is the built-in default (by identity)
+#link	bundle	stop	location	include
+0	loglines-profiled	-I	testees/pcrec/findings/loglines/loglines-profiled.rxt	
+1	default	store-default		
+#section resolution
+# one row per query x compile encoding; digest is exactly what a <PREFIX>_FINDINGS stamp would carry, or none; dropped counts the code points its derivation dropped
+#query	encoding	link	bundle	kind	via	digest	dropped
+byte-rate	byte	0	loglines-profiled	freq	unigram	b39463706bb39c9e	0
+byte-rate	utf8	0	loglines-profiled	freq	unigram	b39463706bb39c9e	0
+run-rarity	byte					none	
+run-rarity	utf8					none	
+#section freq
+# the named bundle's own rows: one per nonzero key, ascending; ppm (freq) is the normalized byte-rate (design §2.5)
+#key	count	ppm
+09	943	217
+0a	51458	11849
+20	478445	110220
+22	13936	3209
+23	4971	1144
+28	10517	2421
+29	10517	2421
+2a	4971	1144
+2b	785	180
+2c	11950	2751
+2d	77695	17891
+2e	68074	15676
+2f	29039	6687
+30	167997	38686
+31	164392	37856
+32	155929	35907
+33	102298	23557
+34	101315	23330
+35	95793	22059
+36	84578	19476
+37	76802	17685
+38	76169	17540
+39	75642	17418
+3a	159005	36615
+3b	959	220
+3d	27124	6246
+41	8328	1917
+42	7448	1715
+43	7534	1734
+44	13518	3112
+45	8514	1960
+46	7400	1704
+47	2693	620
+48	1584	364
+49	9162	2109
+4a	7117	1638
+4c	2706	623
+4d	11071	2549
+4e	7537	1735
+4f	5046	1161
+50	3607	830
+52	12469	2871
+53	18509	4262
+54	8388	1931
+55	15936	3669
+56	1436	330
+57	3335	767
+58	959	220
+5a	264	60
+5b	33804	7784
+5d	38755	8924
+5f	2424	558
+61	139669	32163
+62	50355	11595
+63	120537	27757
+64	122926	28307
+65	284299	65468
+66	52129	12004
+67	51905	11952
+68	36147	8323
+69	142301	32769
+6a	2143	493
+6b	13943	3210
+6c	72584	16714
+6d	43587	10037
+6e	130872	30137
+6f	146118	33648
+70	63331	14583
+71	4872	1121
+72	151982	34998
+73	128557	29604
+74	125620	28927
+75	61462	14153
+76	33771	7776
+77	29683	6835
+78	6928	1595
+79	32104	7392
+7a	1803	415
+7b	264	60
+7d	264	60
+#section declarations
+# one row per block of the named bundle: what its counted data is (encoding, prose) and what it serves
+#kind	encoding	serves	question	reader	analyzer
+freq	ascii	byte-rate when byte,utf8 via unigram	How often does each byte occur in this exemplar?	byte-rate (docs/spec/findings.md §4)	pcrec-analyze 0.1 --scan freq
+#section provenance
+# one row per block x provenance field written
+#kind	field	value
+freq	source	bench/loglines TRAIN generation (gen_subjects.py --seed 20260930, gen_throughput_subjects.py --seed 20260931)
+freq	retrieved	2026-09-28
+freq	license	N/A (synthetic, generated in-repo)
+freq	bytes	4341004
+freq	sha256	58dff5761d0b2d19170cf2bc31bd4767b8c52fb276fd44c9f9d9a0cd1cd748cb

@@ -1,0 +1,14 @@
+# testees/pcrec/findings/loglines/disjointness.tsv -- [B115] the DISJOINTNESS
+# manifest for the loglines-profiled PROFILED bundle (inbox I-118 S3, outbox
+# O-72 Q1): every TRAIN subject instance vs the COMMITTED (TEST) manifests it
+# must never touch. sha256_overlap is a COUNT of shared digests, not a rate;
+# 0 on both rows is the check this bundle depends on.
+#
+# TRAIN generation (never committed, /var/tmp/b115/loglines-train/):
+#   python3 bench/loglines/gen_subjects.py --seed 20260930 --out DIR/search
+#   python3 bench/loglines/gen_throughput_subjects.py --seed 20260931 --out DIR/throughput
+#
+# regenerated 2026-09-28 by lane b115tiers.
+#kind	committed_manifest	train_manifest	committed_n	train_n	sha256_overlap
+search-band	bench/loglines/manifest.tsv	(scratch, TRAIN search band)	112	112	0
+throughput	bench/loglines/manifest_throughput.tsv	(scratch, TRAIN throughput)	12	12	0

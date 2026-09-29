@@ -50,6 +50,7 @@ MB, so a few hundred insertions is what that gap actually produces.
 Deterministic: no randomness beyond `random.Random(GEN_SEED)` (a fixed,
 recorded seed), no clock, no environment.
 """
+import argparse
 import hashlib
 import os
 import random
@@ -68,6 +69,14 @@ TARGET = 1024 * 1024
 # (the generator the sidecar names) and repeated in each subject's manifest
 # description.
 GEN_SEED = 20260828
+
+#: [B115] the TRAIN seed for PROFILED's train/test split on the prose
+#: throughput regime (outbox O-72 Q1): t-a/t-b/t-c are hand-curated, not
+#: draws from a class (PROFILED is n/a there), so only t-d/t-e's
+#: `random.Random(GEN_SEED)` generator has a train/test split at all.
+#: Distinct from GEN_SEED so a TRAIN corpus never repeats the committed
+#: TEST subjects' own text.
+TRAIN_SEED = 20261001
 
 # A vocabulary of deliberately VARIED word lengths (1..11 bytes) -- ordinary
 # English words, not a rotating small set, so there is no short cycle for
@@ -183,7 +192,8 @@ def build_prose(target_bytes, seed, insert_addrs):
     return bytes(out), addr_count
 
 
-def build():
+def build(gen_seed=GEN_SEED):
+    SUBJECTS.clear()
     # (a) valid addresses separated by spaces
     addr = b"user.name@sub.example.com "
     SUBJECTS.append(("t-a-valid-addrs",
@@ -203,7 +213,7 @@ def build():
 
     # (d) [B17]/I-10: generated prose, sparse addresses -- non-periodic by
     # construction (a seeded PRNG choosing among varied-length words).
-    d_bytes, d_addr_count = build_prose(TARGET, GEN_SEED, insert_addrs=True)
+    d_bytes, d_addr_count = build_prose(TARGET, gen_seed, insert_addrs=True)
     assert d_bytes.count(b"@") == d_addr_count, (
         "t-d: %d '@' byte(s) but %d address token(s) were inserted -- an "
         "'@' appeared somewhere other than an inserted address"
@@ -213,13 +223,13 @@ def build():
                      "1 MB of generated prose (seed %d, vocabulary of %d "
                      "varied-length words), a valid dot-atom address "
                      "inserted every %d-%d words (%d addresses total)"
-                     % (GEN_SEED, len(VOCAB), WORD_GAP_MIN, WORD_GAP_MAX,
+                     % (gen_seed, len(VOCAB), WORD_GAP_MIN, WORD_GAP_MAX,
                         d_addr_count),
                      d_bytes))
 
     # (e) [B17]/I-10: the same generator, no '@' anywhere -- the failing
     # subject: every byte scanned, no match.
-    e_bytes, e_addr_count = build_prose(TARGET, GEN_SEED, insert_addrs=False)
+    e_bytes, e_addr_count = build_prose(TARGET, gen_seed, insert_addrs=False)
     assert e_addr_count == 0 and e_bytes.count(b"@") == 0, (
         "t-e: expected zero '@' bytes, found %d (addr_count=%d)"
         % (e_bytes.count(b"@"), e_addr_count))
@@ -228,24 +238,40 @@ def build():
                      "varied-length words), the same generator as "
                      "t-d-prose-sparse-addrs with address insertion off -- "
                      "no '@' anywhere"
-                     % (GEN_SEED, len(VOCAB)),
+                     % (gen_seed, len(VOCAB)),
                      e_bytes))
 
 
-def main():
-    build()
-    os.makedirs(OUT, exist_ok=True)
+def main(argv=None):
+    # [B115]: --seed/--out. Only t-d/t-e move under --seed (t-a/t-b/t-c are
+    # hand-curated, PROFILED n/a there, O-72 Q1); defaults are BYTE-
+    # IDENTICAL to before this axis existed.
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--seed", type=int, default=GEN_SEED,
+                    help="the t-d/t-e prose generator's seed (default: the "
+                         "committed GEN_SEED, %d)" % GEN_SEED)
+    ap.add_argument("--out", default=None,
+                    help="write subjects + manifest_throughput.tsv under "
+                         "DIR instead of the committed throughput/ + "
+                         "manifest_throughput.tsv beside this script")
+    args = ap.parse_args(argv)
+    out_dir = args.out or OUT
+    manifest_path = (os.path.join(args.out, "manifest_throughput.tsv")
+                     if args.out else MANIFEST)
+
+    build(args.seed)
+    os.makedirs(out_dir, exist_ok=True)
     lines = ["id\tlen\tsha256\tdescription\tperiodic"]
     for sid, desc, buf in SUBJECTS:
-        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+        with open(os.path.join(out_dir, sid + ".bin"), "wb") as f:
             f.write(buf)
         lines.append("%s\t%d\t%s\t%s\t%s"
                      % (sid, len(buf), hashlib.sha256(buf).hexdigest(), desc,
                         periodic_field(buf)))
-    with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(lines) + "\n")
     print("gen_throughput_subjects: %d subjects -> %s, manifest -> %s"
-          % (len(SUBJECTS), OUT, MANIFEST))
+          % (len(SUBJECTS), out_dir, manifest_path))
 
 
 if __name__ == "__main__":

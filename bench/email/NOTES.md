@@ -301,3 +301,27 @@ Copied from pcrec `docs/design/subroutines_measurements/email_specimen/`
 (read-only). The subject bytes are IDENTICAL to that origin's — verified
 by regenerating both and comparing all 88 files — so pcrec's own
 oracle-verified results for this corpus carry over.
+
+## [B115] the TRAIN split (FINDINGS-BENCH-TIERS's PROFILED column) — prose only
+
+`gen_throughput_subjects.py` takes `--seed S --out DIR` (outbox O-72
+Q1); its DEFAULT reproduces the committed `throughput/` +
+`manifest_throughput.tsv` byte for byte. The 85 short subjects are
+HAND-CURATED (copied verbatim from pcrec's srEmail specimen, above) —
+they are not draws from a class, so PROFILED is **n/a** on the short
+regime, and `--seed` cannot move them (they carry no randomness at
+all). Only `t-d-prose-sparse-addrs`/`t-e-prose-no-at` are generated
+(`random.Random(GEN_SEED)`); `t-a-valid-addrs`/`t-b-no-at`/
+`t-c-long-atom-run` are fixed constants and are BYTE-IDENTICAL under
+every `--seed` (confirmed: re-running at the TRAIN seed below leaves
+their three sha256 digests unmoved). `--seed 20261001` (`TRAIN_SEED`,
+recorded beside `GEN_SEED`) is the TRAIN generation for the prose pair,
+disjoint from the committed `GEN_SEED` 20260828.
+
+**Disjointness, MEASURED at TRAIN_SEED 20261001** (2026-09-28): t-d and
+t-e's TRAIN bytes share **0 of 2** sha256 digests with the committed
+`manifest_throughput.tsv` rows for the same ids (the other three ids'
+digests are, as expected, identical — they are not part of the split at
+all). `build_prose` opens no file and draws only from `VOCAB`/
+`VALID_ADDRS`, both fixed in-file lists, so there is no corpus to grep
+for a bench path either.

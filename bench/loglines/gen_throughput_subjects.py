@@ -40,6 +40,7 @@ Deterministic: SEED below, `logtext.Rng`, no clock, no environment. The seed
 differs from `gen_subjects.py`'s so the sweep is not a re-run of the search
 band's first lines at four lengths.
 """
+import argparse
 import hashlib
 import os
 import sys
@@ -52,6 +53,13 @@ import logtext  # noqa: E402
 SEED = 20260829
 OUT = os.path.join(HERE, "throughput")
 MANIFEST = os.path.join(HERE, "manifest_throughput.tsv")
+
+#: [B115]: not used by the PROFILED split (the throughput/search bands are
+#: both TIMED regimes and O-72 Q1 rules out training on one to test the
+#: other) but given its own constant, distinct from both committed seeds and
+#: from gen_subjects.py's TRAIN_SEED, for symmetry and so a future PROFILED
+#: throughput arm has a value ready rather than an ad hoc one.
+TRAIN_SEED = 20260931
 
 SIZES = (("016k", 16 * 1024), ("064k", 64 * 1024),
          ("256k", 256 * 1024), ("1024k", 1024 * 1024))
@@ -84,8 +92,8 @@ def fill(rng, target, features_every=None, line=None):
     return ("\n".join(out) + "\n").encode("latin-1")
 
 
-def build():
-    rng = logtext.Rng(SEED)
+def build(seed=SEED):
+    rng = logtext.Rng(seed)
     subjects = []
     for label, nbytes in SIZES:
         subjects.append(
@@ -110,21 +118,35 @@ def build():
     return subjects
 
 
-def main():
-    subjects = build()
-    os.makedirs(OUT, exist_ok=True)
+def main(argv=None):
+    # [B115]: --seed/--out, same shape and same default-byte-identity
+    # guarantee as gen_subjects.py's.
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--seed", type=int, default=SEED,
+                    help="RNG seed (default: the committed seed, %d)" % SEED)
+    ap.add_argument("--out", default=None,
+                    help="write subjects + manifest_throughput.tsv under "
+                         "DIR instead of the committed throughput/ + "
+                         "manifest_throughput.tsv beside this script")
+    args = ap.parse_args(argv)
+    out_dir = args.out or OUT
+    manifest_path = (os.path.join(args.out, "manifest_throughput.tsv")
+                     if args.out else MANIFEST)
+
+    subjects = build(args.seed)
+    os.makedirs(out_dir, exist_ok=True)
     lines = ["id\tlen\tsha256\tdescription\tperiodic"]
     for sid, desc, buf in subjects:
-        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+        with open(os.path.join(out_dir, sid + ".bin"), "wb") as f:
             f.write(buf)
         lines.append("%s\t%d\t%s\t%s\t%s"
                      % (sid, len(buf), hashlib.sha256(buf).hexdigest(), desc,
                         logtext.periodic_field(buf)))
-    with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(lines) + "\n")
     print("gen_throughput_subjects: %d subjects (%s) -> %s, manifest -> %s"
           % (len(subjects), ", ".join("%d B" % len(b) for _s, _d, b in subjects),
-             OUT, MANIFEST))
+             out_dir, manifest_path))
 
 
 if __name__ == "__main__":

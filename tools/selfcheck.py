@@ -9124,6 +9124,160 @@ def check_encoding_axis():
                                         proc.returncode))
 
 
+def check_b115_tune_analysis_axis():
+    """[B115] THE SPEED-VS-SIZE DIAL AND THE FINDINGS ANALYSIS
+    (`effective_tune`/`effective_analysis`/`findings_stamp`, inbox I-118,
+    outbox O-72 Q3). Three arms: (1) the recognition rules, unit-level,
+    against every accepted and refused spelling; (2) every PINNED config's
+    `tune_extra`/`analysis_extra` read None -- no `configs.toml` row
+    declares either axis, so this is the "pre-existing ids frozen" proof
+    (`config_extra` cannot have moved if the two new parts are always
+    empty); (3) ONE REAL COMPILE under `--analysis weblog` through
+    `pcrec-local` pointed at build/pcrec-f7f5a143 (`--analysis` needs
+    [FINDINGS] B2, which the CONFIGURED pin a32bc86e does not carry --
+    this arm needs the NAMED post-B6 commit inbox I-118 pointed at,
+    fetched by `pin.sh f7f5a143` same as any other pin, never re-pinning
+    `configs.toml`), with the emitted `<PREFIX>_FINDINGS` stamp's digest
+    cross-checked against `pcrec --list-analysis weblog`'s own printed
+    digest for the SAME (query, encoding) row -- the cross-check I-118 S2
+    asks for before any DECLARED/PROFILED number is trusted."""
+    print("-- the tune dial + the findings analysis ([B115], --tune= / "
+          "--analysis) --")
+    mod = _pcrec_adapter_module()
+    adapters = _ad.discover()
+    pcrec = adapters.get("pcrec")
+    if pcrec is None:
+        bad("b115 tune/analysis axis", "no pcrec adapter")
+        return
+
+    # ---- 1. the recognition rules ----------------------------------------
+    probs = []
+    for flags, want in (
+            (["--tune=-2"], "tune-m2"), (["--tune=-1"], "tune-m1"),
+            (["--tune=0"], "tune-0"), (["--tune=1"], "tune-1"),
+            (["--tune=2"], "tune-2"), (["--tune=min-size"], "tune-m2"),
+            (["--tune=size"], "tune-m1"), (["--tune=balanced"], "tune-0"),
+            (["--tune=speed"], "tune-1"), (["--tune=max-speed"], "tune-2"),
+            (["--tune=-2", "--tune=min-size"], "tune-m2"),
+            (["--features", "all"], None)):
+        got = mod.effective_tune("t", flags)
+        if got != want:
+            probs.append("effective_tune(%r) -> %r, want %r"
+                         % (flags, got, want))
+    for flags, needle in ((["--tune=bogus"], "not a dial position"),
+                          (["--tune=-2", "--tune=2"], "more than one")):
+        try:
+            mod.effective_tune("t", flags)
+            probs.append("effective_tune(%r) was ACCEPTED" % (flags,))
+        except _ad.AdapterError as e:
+            if needle not in str(e):
+                probs.append("effective_tune(%r) refused without naming "
+                             "%r: %s" % (flags, needle, str(e)[:120]))
+    for flags, want in (
+            (["--analysis", "weblog"], "an-weblog"),
+            (["--analysis=weblog"], "an-weblog"),
+            (["--analysis", "log", "--analysis=log"], "an-log"),
+            (["--features", "all"], None)):
+        got = mod.effective_analysis("t", flags)
+        if got != want:
+            probs.append("effective_analysis(%r) -> %r, want %r"
+                         % (flags, got, want))
+    for flags, needle in ((["--analysis", "BadName"], "not usable here"),
+                          (["--analysis", "my_bundle"], "admits no underscore"),
+                          (["--analysis", "weblog", "--analysis=log"],
+                           "more than one"),
+                          (["--features", "all", "--analysis"], "last flag")):
+        try:
+            mod.effective_analysis("t", flags)
+            probs.append("effective_analysis(%r) was ACCEPTED" % (flags,))
+        except _ad.AdapterError as e:
+            if needle not in str(e):
+                probs.append("effective_analysis(%r) refused without "
+                             "naming %r: %s" % (flags, needle, str(e)[:120]))
+    comp = mod.compose_config_extra(None, None, None, None, None,
+                                    "tune-1", "an-weblog")
+    if comp != "tune-1-an-weblog":
+        probs.append("composition tune+analysis gives %r" % comp)
+    title = ("b115 axis: effective_tune/effective_analysis recognise every "
+             "spelling (incl. both --tune=/--analysis forms and every "
+             "alias), refuse the bad ones BY NAME, compose LAST")
+    if probs:
+        bad(title, "; ".join(probs)[:700])
+    else:
+        ok(title, "10 tune spellings (5 digits + 5 aliases) + 2 refusals, "
+           "3 analysis spellings + 4 refusals")
+
+    # ---- 2. every pinned config's ids are FROZEN --------------------------
+    offenders = []
+    for tid in sorted(pcrec.testees()):
+        if tid == "pcrec-local":
+            continue
+        cfg = pcrec.config(tid)
+        if cfg.get("tune_extra") is not None or \
+                cfg.get("analysis_extra") is not None:
+            offenders.append("%s: tune_extra=%r analysis_extra=%r"
+                             % (tid, cfg.get("tune_extra"),
+                                cfg.get("analysis_extra")))
+    title = ("b115 axis: every PINNED pcrec config's tune_extra/"
+             "analysis_extra read None -- no configs.toml row declares "
+             "either axis, so config_extra/testee_id cannot have moved")
+    if offenders:
+        bad(title, "; ".join(offenders)[:700])
+    else:
+        ok(title, "%d configs" % (len(pcrec.testees()) - 1))
+
+    # ---- 3. one real compile under --analysis weblog -----------------------
+    proc = run([mod.PIN_SH, "--path", "f7f5a143"], timeout=30)
+    b115_bin = (proc.stdout or "").strip()
+    if not (os.path.isfile(b115_bin) and os.access(b115_bin, os.X_OK)):
+        bad("b115 axis: one real --analysis weblog compile, cross-checked "
+           "against --list-analysis weblog",
+           "%s is not built -- run `testees/pcrec/pin.sh f7f5a143` first "
+           "([B115] part (a); this pin is scratch-tier only, never a "
+           "re-pin of configs.toml)" % b115_bin)
+        return
+    saved = dict(os.environ)
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b115-")
+    try:
+        os.environ["PCREC_BIN"] = b115_bin
+        os.environ["PCREC_LOCAL_FLAGS"] = "--analysis weblog"
+        pcrec.prepare("pcrec-local", tmp)
+        cp = pcrec.compile("pcrec-local", "b115-findings", b"foo", {}, 1, tmp)
+        row = cp.get(_ad.FORM_PLAIN)
+        block = pcrec.describe("pcrec-local", tmp)
+        tid = _rec.derive_testee_id(block)
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+        shutil.rmtree(tmp, ignore_errors=True)
+    title = ("b115 axis: pcrec-local --analysis weblog stamps FINDINGS "
+             "naming weblog (not default), cross-checked against "
+             "`pcrec --list-analysis weblog`")
+    if row.outcome != "compiled":
+        bad(title, "did-not-compile: %s" % row.diagnostic)
+        return
+    findings = (row.engine_metadata or {}).get("findings")
+    if not findings or not findings.startswith("byte-rate=weblog:"):
+        bad(title, "findings=%r, testee_id=%r" % (findings, tid))
+        return
+    digest = findings.split(":", 1)[1]
+    proc = run([b115_bin, "--list-analysis", "weblog"], timeout=30)
+    listed_digests = set(re.findall(r"\tbyte\t0\tweblog\tfreq\tunigram\t"
+                                    r"([0-9a-f]+)\t", proc.stdout or ""))
+    if not listed_digests:
+        bad(title, "could not read weblog's own digest from --list-analysis: "
+                  "%s" % (proc.stdout or "")[:300])
+    elif digest not in listed_digests:
+        bad(title, "compile row stamps digest %s; --list-analysis weblog "
+                  "prints %s" % (digest, sorted(listed_digests)))
+    elif not tid.endswith("_an-weblog") or "_tune-" in tid:
+        bad(title, "testee_id %r does not end in the plain _an-weblog "
+                  "token" % tid)
+    else:
+        ok(title, "findings=%r, digest %s matches --list-analysis weblog, "
+           "testee_id=%r" % (findings, digest, tid))
+
+
 #: [B104] (re-pin to 751b9c6d, abi 39; inbox I-112) the seven `bench/utf8`
 #: lit-* pattern texts I-112 predicted the abi-38 [OPT-REQRUN-ENC] stage-2
 #: pre-check byte / RX_REQ_RUN VALUES for, under `-e utf8`, `pcrec-auto`'s
@@ -13786,6 +13940,7 @@ def main():
     check_noedge_axis()
     check_cflags_axis()
     check_encoding_axis()
+    check_b115_tune_analysis_axis()
     check_b104_reqrunenc_rightmost()
     check_b104_k68_flags_mask()
     check_b108_findings_stamp()
