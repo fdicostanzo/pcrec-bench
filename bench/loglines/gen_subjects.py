@@ -30,6 +30,7 @@ THE MANIFEST carries the harness contract's four columns plus `periodic`
 here is `no` by construction and the column proves it per subject rather than
 this docstring claiming it for all of them.
 """
+import argparse
 import hashlib
 import os
 import sys
@@ -42,6 +43,14 @@ import logtext  # noqa: E402
 SEED = 20260828
 OUT = os.path.join(HERE, "subjects")
 MANIFEST = os.path.join(HERE, "manifest.tsv")
+
+#: [B115] the TRAIN seed for PROFILED's train/test split (outbox O-72 Q1):
+#: a search-band draw disjoint from the committed SEED (20260828) and from
+#: gen_throughput_subjects.py's SEED (20260829) -- neither generator's
+#: subjects may ever be counted by a bundle that is then tested against
+#: them. Recorded here AND in NOTES.md's [B115] paragraph, per the same
+#: convention email's gen_throughput_subjects.py already uses for GEN_SEED.
+TRAIN_SEED = 20260930
 
 # Four size bands x 28 subjects. The band is drawn as a TARGET; lines are
 # appended until the target is reached, so the realised size is the target
@@ -116,8 +125,8 @@ def build_chunk(rng, target, max_bytes=MAX_BYTES, features=()):
     return ("\n".join(lines) + "\n").encode("latin-1")
 
 
-def build():
-    rng = logtext.Rng(SEED)
+def build(seed=SEED):
+    rng = logtext.Rng(seed)
     n = len(BANDS) * PER_BAND
     assigned = [[] for _ in range(n)]
     for name, k in COUNTS:
@@ -137,23 +146,41 @@ def build():
     return subjects
 
 
-def main():
-    subjects = build()
-    os.makedirs(OUT, exist_ok=True)
+def main(argv=None):
+    # [B115]: --seed/--out, defaults BYTE-IDENTICAL to before this axis
+    # existed (checked by make check-harness's manifest gate: the default
+    # invocation writes the same subjects/manifest.tsv it always did).
+    # `--out DIR` is how a TRAIN split (a different seed) is generated
+    # WITHOUT touching the committed tree -- both subjects and manifest.tsv
+    # land under DIR, never beside this script.
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--seed", type=int, default=SEED,
+                    help="RNG seed (default: the committed seed, %d)" % SEED)
+    ap.add_argument("--out", default=None,
+                    help="write subjects + manifest.tsv under DIR instead "
+                         "of the committed subjects/ + manifest.tsv beside "
+                         "this script")
+    args = ap.parse_args(argv)
+    out_dir = args.out or OUT
+    manifest_path = (os.path.join(args.out, "manifest.tsv") if args.out
+                     else MANIFEST)
+
+    subjects = build(args.seed)
+    os.makedirs(out_dir, exist_ok=True)
     lines = ["id\tlen\tsha256\tdescription\tperiodic"]
     for i, (desc, b) in enumerate(subjects):
         sid = "s-%03d" % i
-        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+        with open(os.path.join(out_dir, sid + ".bin"), "wb") as f:
             f.write(b)
         lines.append("%s\t%d\t%s\t%s\t%s"
                      % (sid, len(b), hashlib.sha256(b).hexdigest(), desc,
                         logtext.periodic_field(b)))
-    with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(lines) + "\n")
     total = sum(len(b) for _d, b in subjects)
     print("gen_subjects: %d subjects (%d B, %d..%d) -> %s, manifest -> %s"
           % (len(subjects), total, min(len(b) for _d, b in subjects),
-             max(len(b) for _d, b in subjects), OUT, MANIFEST))
+             max(len(b) for _d, b in subjects), out_dir, manifest_path))
 
 
 if __name__ == "__main__":

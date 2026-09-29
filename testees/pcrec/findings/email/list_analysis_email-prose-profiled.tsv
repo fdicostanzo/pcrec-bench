@@ -1,0 +1,74 @@
+# testees/pcrec/findings/email/list_analysis_email-prose-profiled.tsv -- pcrec's --list-analysis
+# output for 'email-prose-profiled' at the [B115] scratch-tier commit f7f5a1432d1d2cf464f3f15fd268cdf11428d0d5
+# (post-[FINDINGS] B6, abi 44; NOT this project's pinned commit, which stays
+# a32bc86e -- this is the commit inbox I-118 named for the four-column build,
+# archived VERBATIM (pcrec D35: stable name, verbatim output, a source header):
+#
+#     build/pcrec-f7f5a143/build/pcrec --list-analysis email-prose-profiled -I testees/pcrec/findings/email
+#
+# archived 2026-09-28 by lane b115tiers ([B115], inbox I-118, outbox O-72).
+#
+# pcrec --list-analysis email-prose-profiled: the chain this invocation resolves, what each (query, encoding) answers from, and the named bundle's own data (docs/spec/findings.md §6).
+#section chain
+# one row per link, in search order; the last is the built-in default (by identity)
+#link	bundle	stop	location	include
+0	email-prose-profiled	-I	testees/pcrec/findings/email/email-prose-profiled.rxt	
+1	default	store-default		
+#section resolution
+# one row per query x compile encoding; digest is exactly what a <PREFIX>_FINDINGS stamp would carry, or none; dropped counts the code points its derivation dropped
+#query	encoding	link	bundle	kind	via	digest	dropped
+byte-rate	byte	0	email-prose-profiled	freq	unigram	8f0dbb8b882ee447	0
+byte-rate	utf8	0	email-prose-profiled	freq	unigram	8f0dbb8b882ee447	0
+run-rarity	byte					none	
+run-rarity	utf8					none	
+#section freq
+# the named bundle's own rows: one per nonzero key, ascending; ppm (freq) is the normalized byte-rate (design §2.5)
+#key	count	ppm
+0a	3661	1744
+20	298964	142515
+21	6017	2867
+2d	266	126
+2e	19409	9250
+32	70	33
+34	70	33
+39	148	70
+3f	6100	2907
+40	504	240
+61	154678	73723
+62	24391	11625
+63	72158	34392
+64	48976	23343
+65	245309	116920
+66	23080	11000
+67	27470	13092
+68	63186	30116
+69	111916	53342
+6a	4417	2105
+6b	11535	5497
+6c	80243	38246
+6d	39909	19021
+6e	122980	58615
+6f	117018	55773
+70	47536	22656
+71	5819	2773
+72	151101	72018
+73	92959	44306
+74	159506	76024
+75	53561	25528
+76	28472	13570
+77	33008	15732
+78	3347	1595
+79	39305	18733
+7a	63	30
+#section declarations
+# one row per block of the named bundle: what its counted data is (encoding, prose) and what it serves
+#kind	encoding	serves	question	reader	analyzer
+freq	ascii	byte-rate when byte,utf8 via unigram	How often does each byte occur in this exemplar?	byte-rate (docs/spec/findings.md §4)	pcrec-analyze 0.1 --scan freq
+#section provenance
+# one row per block x provenance field written
+#kind	field	value
+freq	source	bench/email TRAIN generation (gen_throughput_subjects.py --seed 20261001, t-d/t-e prose pair only)
+freq	retrieved	2026-09-28
+freq	license	N/A (synthetic, generated in-repo)
+freq	bytes	2097152
+freq	sha256	b1ddc6264720fcf8dcb69fe26d1fbde7978cd84fba49e799c7cc19660333bbf2

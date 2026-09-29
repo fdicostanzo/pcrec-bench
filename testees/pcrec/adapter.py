@@ -1239,6 +1239,27 @@ METADATA_DECL = {
                        "checked). ABSENT means no warning -- never a "
                        "failure either way",
     },
+    # -- [B115] THE FINDINGS STAMP (pcrec [FINDINGS] B1, abi 40;
+    # docs/spec/findings.md 5-7). Read from the emitted TEXT, not through
+    # shim.c (no shim getter reads rx_info.findings -- D77's "no run-time
+    # consumer" precedent, unchanged since [B108] first noted the field's
+    # arrival); the value is a static string fixed at emit time, so the
+    # source already open for `emit_bytes` carries it byte for byte.
+    "findings": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_FINDINGS, read from the emitted .c/.h text by "
+                  "FINDINGS_RE (adapter.findings_stamp()); unconditional on "
+                  "every artifact this pin emits (abi >= 40)",
+        "description": "which FINDINGS bundle and byte-rate digest "
+                       "answered this compile: `byte-rate=<bundle>:<16-hex "
+                       "digest>` (docs/spec/findings.md 5). `default` on "
+                       "every artifact with no --analysis/-I named; the "
+                       "bundle a DECLARED or PROFILED cell claims must be "
+                       "cross-checked against this field before the cell's "
+                       "number is trusted -- `pcrec --list-analysis NAME` "
+                       "prints the identical digest for the same (query, "
+                       "encoding) ([B115], inbox I-118 S2)",
+    },
     # -- [B32] THE SCAN-EDGE COUNT: the covariate the full-suite regression
     # family needs. `dfa_scan_edge` is one token per artifact and cannot
     # separate a pattern with eight edges from one with a single edge;
@@ -2192,6 +2213,47 @@ def scan_edge_counts(paths, prefix=ARTIFACT_PREFIX):
     return search, match
 
 
+# ---------------------------------------------------------------------------
+# [B115] THE FINDINGS STAMP -- `<PREFIX>_FINDINGS` (pcrec [FINDINGS] B1, abi
+# 40; docs/spec/findings.md 5). Unconditional on every artifact this pin
+# emits, byte-mode or utf8 (MEASURED at f7f5a143 on a bare `foo`, no
+# `--analysis`: "byte-rate=default:1822fb973b95a4da"). [B108]'s own re-pin
+# note ("abi 40 adds no claim of any kind: rx_info.findings has no macro
+# pair this adapter reads at all -- D77's reason again -- no consumer needs
+# the analysis-provenance string") is exactly right that no SHIM getter
+# existed; [B115] is the first consumer, and the value is a static string
+# fixed at emit time, so it is read off the emitted TEXT this file already
+# opens for `emit_bytes` -- the same shape as SCAN_EDGE_MARKER above --
+# rather than by adding a live rx_info getter to shim.c for a fact the
+# compile-time text already carries byte for byte.
+FINDINGS_RE = re.compile(
+    r'^#define\s+%s_FINDINGS\s+"([^"]*)"' % re.escape(ARTIFACT_PREFIX.upper()))
+
+
+def findings_stamp(emit_files):
+    """-> the <PREFIX>_FINDINGS macro's VALUE (e.g.
+    "byte-rate=weblog:6b85ed6b33993164") read from the emitted .c/.h text,
+    or None on an artifact too old to carry it (abi < 40). Refuses if the
+    macro appears with two disagreeing values across the files handed to
+    it -- worse than not knowing which bundle answered is claiming the
+    wrong one, which is exactly the cross-check [B115]'s DECLARED/PROFILED
+    arms need against `pcrec --list-analysis NAME` (inbox I-118 S2)."""
+    values = set()
+    for path in emit_files:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            for line in f:
+                m = FINDINGS_RE.match(line)
+                if m:
+                    values.add(m.group(1))
+    if not values:
+        return None
+    if len(values) > 1:
+        raise _ad.AdapterError(
+            "the emitted files disagree about <PREFIX>_FINDINGS: %s"
+            % ", ".join(sorted(values)))
+    return values.pop()
+
+
 def parse_warn_line(stderr_text):
     """-> (warned_total, warned_code, threshold, line) for pcrec's advisory
     large-artifact warning on `stderr_text`, or None when it did not
@@ -2711,6 +2773,115 @@ def effective_encoding(testee_id, flags):
     return enc, ENCODING_TOKENS[enc]
 
 
+# ---------------------------------------------------------------------------
+# [B115] THE SPEED-VS-SIZE DIAL AND THE FINDINGS ANALYSIS -- `--tune=` /
+# `--analysis` (pcrec docs/spec/tuning.md 5, docs/spec/findings.md 6-7;
+# inbox I-118, outbox O-72 Q3). ORACLE-BEST sweeps `--tune=`; DECLARED and
+# PROFILED both name `--analysis`. Neither had a config_extra token before
+# this: `pcrec-local`'s derived id is built ONLY from the flags
+# `effective_caps`/`effective_denies`/`effective_encoding` already know
+# about, so a `$PCREC_LOCAL_FLAGS="--tune=1"` sweep arm and a
+# `--tune=-1` one would derive the SAME testee_id and collide in the
+# scratch store -- exactly the gap O-72 Q3 named. Both axes are read off
+# the EFFECTIVE flags, the same shape as `effective_encoding`, so they
+# reach every testee (`pcrec-local` included) down one code path; no
+# pinned `configs.toml` row declares either today, so ABSENT is every
+# existing testee_id byte for byte.
+#
+# `--tune` is recognised in `--tune=X` form ONLY: pcrec refuses the space
+# form outright at this pin ("--tune takes its value with '='", checked
+# live against build/pcrec-f7f5a143), so a space-form spelling is left for
+# pcrec's own refusal rather than silently accepted here and then refused
+# one process later with a confusing testee_id already computed. `X` is
+# either a signed digit (`-2`..`2`) or one of the five aliases pcrec's own
+# --help documents (`min-size`/`size`/`balanced`/`speed`/`max-speed`);
+# both spellings of one position normalise to the SAME slug so they can
+# never collide.
+TUNE_ALIASES = {
+    "-2": -2, "-1": -1, "0": 0, "1": 1, "2": 2,
+    "min-size": -2, "size": -1, "balanced": 0, "speed": 1, "max-speed": 2,
+}
+#: signed int -> the token's BODY (a leading `-` is not a legal slug byte,
+#: $defs/slug is `[a-z0-9-]`, so a negative position spells `m<n>`).
+TUNE_SLUG = {-2: "m2", -1: "m1", 0: "0", 1: "1", 2: "2"}
+
+
+def effective_tune(testee_id, flags):
+    """-> config_extra_or_None for the --tune= dial an EFFECTIVE flag list
+    selects ([B115]). ABSENT -> None (today's behaviour byte for byte).
+    PRESENT -> "tune-<m2|m1|0|1|2>", an IDENTITY claim exactly like
+    `effective_encoding`'s token: a config or a `$PCREC_LOCAL_FLAGS` naming
+    an unrecognised position, or two that disagree, is refused BY NAME
+    before anything is measured."""
+    seen = [f.split("=", 1)[1] for f in flags if f.startswith("--tune=")]
+    if not seen:
+        return None
+    for v in seen:
+        if v not in TUNE_ALIASES:
+            raise _ad.AdapterError(
+                "%s: --tune=%r is not a dial position this adapter knows "
+                "(%s; docs/spec/tuning.md 5). The value is part of the "
+                "derived testee_id, so it is a closed set on purpose."
+                % (testee_id, v, ", ".join(sorted(TUNE_ALIASES))))
+    values = {TUNE_ALIASES[v] for v in seen}
+    if len(values) > 1:
+        raise _ad.AdapterError(
+            "%s: the effective flags select more than one --tune position "
+            "(%s). The dial is an IDENTITY -- it names the artifact in the "
+            "derived testee_id -- so repeated spellings may agree but "
+            "never disagree." % (testee_id, ", ".join(seen)))
+    return "tune-" + TUNE_SLUG[values.pop()]
+
+
+#: pcrec's analysis-name grammar (docs/spec/findings.md 7: "Names are
+#: lowercase ([a-z][a-z0-9_-]*)"), reused verbatim rather than re-derived --
+#: a name pcrec would refuse should never reach a config_extra token first.
+ANALYSIS_NAME_RE = re.compile(r"^[a-z][a-z0-9_-]*$")
+
+
+def effective_analysis(testee_id, flags):
+    """-> config_extra_or_None for the --analysis NAME an EFFECTIVE flag
+    list names ([B115]). Recognises both `--analysis NAME` and
+    `--analysis=NAME` (both accepted at this pin -- pcrec's `--analysis` is
+    not `--tune`'s exception). The NAME is checked against pcrec's own
+    grammar only, never against a fixed list: a caller-authored bundle
+    reached through `-I DIR` (itself NOT part of the id -- it names a
+    directory, not an identity, docs/spec/findings.md 6) can carry any
+    legal name, so there is no closed set to check against the way
+    TUNE_ALIASES's five positions have. ABSENT -> None."""
+    seen, i, n = [], 0, len(flags)
+    while i < n:
+        f = flags[i]
+        if f == "--analysis":
+            if i + 1 >= n:
+                raise _ad.AdapterError(
+                    "%s: --analysis is the last flag -- pcrec's --analysis "
+                    "takes a bundle NAME" % testee_id)
+            seen.append(flags[i + 1])
+            i += 2
+            continue
+        if f.startswith("--analysis="):
+            seen.append(f.split("=", 1)[1])
+        i += 1
+    if not seen:
+        return None
+    for v in seen:
+        if not ANALYSIS_NAME_RE.match(v):
+            raise _ad.AdapterError(
+                "%s: --analysis %r is not a legal analysis name "
+                "([a-z][a-z0-9_-]*, docs/spec/findings.md 7). The value is "
+                "part of the derived testee_id, so it must be a legal name "
+                "before anything is measured." % (testee_id, v))
+    values = set(seen)
+    if len(values) > 1:
+        raise _ad.AdapterError(
+            "%s: the effective flags name more than one --analysis bundle "
+            "(%s). The bundle is an IDENTITY -- it names the artifact in "
+            "the derived testee_id -- so repeated spellings may agree but "
+            "never disagree." % (testee_id, ", ".join(seen)))
+    return "an-" + values.pop()
+
+
 def cap_values(cfg):
     """-> [(flag, limit_name, value)] for the caps an EFFECTIVE config
     raises, in CAP_KEYS order; empty where it raises neither. Read back off
@@ -2823,7 +2994,8 @@ def compose_config_extra(*parts):
     FIXED order: the axes in the order they were chartered ([B24] `cc`,
     then [B31] the emitted-size caps, then [B32] the denied generation
     axes, then [B35] the compilee flags, then [B77] U2 the engine
-    encoding), joined by `-`.
+    encoding, then [B115] the tune dial and the findings analysis),
+    joined by `-`.
 
     Chartering order is the rule because it makes the slug APPEND-ONLY: a
     testee that already had a token keeps it where it was when a later axis
@@ -3130,6 +3302,11 @@ class Adapter(_ad.Adapter):
         # FIFTH `compose_config_extra` part (F-C1).
         cfg["encoding"], cfg["encoding_extra"] = effective_encoding(
             testee_id, cfg["flags"])
+        # [B115]: the SPEED-VS-SIZE DIAL and the FINDINGS ANALYSIS, derived
+        # from the effective flags the same way -- the SIXTH and SEVENTH
+        # `compose_config_extra` parts.
+        cfg["tune_extra"] = effective_tune(testee_id, cfg["flags"])
+        cfg["analysis_extra"] = effective_analysis(testee_id, cfg["flags"])
         return cfg
 
     def local_binary(self, testee_id):
@@ -3366,7 +3543,9 @@ class Adapter(_ad.Adapter):
         extra = compose_config_extra(cc_extra, cfg.get("cap_extra"),
                                      cfg.get("deny_extra"),
                                      cfg.get("cflags_extra"),
-                                     cfg.get("encoding_extra"))
+                                     cfg.get("encoding_extra"),
+                                     cfg.get("tune_extra"),
+                                     cfg.get("analysis_extra"))
         if extra:
             block["config_extra"] = extra
         if local:
@@ -3597,6 +3776,13 @@ class Adapter(_ad.Adapter):
         # fact, read off the same emitted files the size port reads.
         pairs["program_sha256"] = _pid.program_sha256_of_files(
             emit_files[0], emit_files[1] if len(emit_files) > 1 else None)
+        # [B115] the FINDINGS stamp (pcrec [FINDINGS] B1, abi 40): the bundle
+        # name + digest that answered this compile. None only on an
+        # artifact too old to carry it; every artifact at this pin's floor
+        # (16) and above stamps it, since abi 40 < 44.
+        fnd = findings_stamp(emit_files)
+        if fnd is not None:
+            pairs["findings"] = fnd
         warn = parse_warn_line(stderr_text)
         if warn is None:
             return pairs, None

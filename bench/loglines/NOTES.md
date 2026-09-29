@@ -305,3 +305,31 @@ the `--features` gate), and pcrec's `tests/`, `src/` and corpora were NOT, so
 this set does not inherit pcrec's own alphabet. That is pcrec's D27 lesson
 applied to a bench: tests derived from the code inherit the code author's
 blind spots, and this sub-bench's whole job is to find one.
+
+## [B115] the TRAIN split (FINDINGS-BENCH-TIERS's PROFILED column)
+
+`gen_subjects.py` and `gen_throughput_subjects.py` both take `--seed S
+--out DIR` (outbox O-72 Q1); their DEFAULTS reproduce the committed
+`subjects/`/`throughput/` + manifests byte for byte (`make check-harness`'s
+manifest gate proves it every run). A PROFILED bundle for this set is
+built from a TRAIN generation at a seed distinct from BOTH committed
+seeds — `gen_subjects.py --seed 20260930` (search band; the committed
+`SEED` is 20260828) and `gen_throughput_subjects.py --seed 20260931`
+(throughput; committed `SEED` 20260829) — written under a scratch
+directory (`/var/tmp/b115/…`, never committed: only the resulting `.rxt`
+bundle is). Both TRAIN_SEED constants are recorded in the generators
+themselves, beside SEED.
+
+**Disjointness, MEASURED at these two seeds** (2026-09-28): the TRAIN
+search band's 112 subjects and TRAIN throughput's 12 subjects share
+**0 of 124 sha256 digests** with the committed `manifest.tsv` /
+`manifest_throughput.tsv` — every subject instance is distinct, not
+merely reshuffled. The LINE-level overlap (provenance only, never a
+gate: short syslog-shaped lines from one grammar can repeat by chance,
+and real logs repeat too) is likewise **0 of 1,840 TRAIN search-band
+lines** shared with the 1,846 committed ones, on this seed pair. Both
+throughput generators open no file (`logtext.Rng`, `getrandbits` only,
+no clock, no environment) and count no bench path in their own
+provenance, so the disjointness argument is the same shape pcrec's own
+`pcrec-analyze` provenance-block-plus-grep precedent uses (inbox I-118
+§2): there is no corpus to grep, only two independent PRNG streams.

@@ -1,0 +1,93 @@
+analysis loglines-profiled
+    freq
+        question How often does each byte occur in this exemplar?
+        reader byte-rate (docs/spec/findings.md §4)
+        analyzer pcrec-analyze 0.1 --scan freq
+        encoding ascii
+        serves byte-rate when byte,utf8 via unigram
+        row 09 943
+        row 0a 51458
+        row 20 478445
+        row 22 13936
+        row 23 4971
+        row 28 10517
+        row 29 10517
+        row 2a 4971
+        row 2b 785
+        row 2c 11950
+        row 2d 77695
+        row 2e 68074
+        row 2f 29039
+        row 30 167997
+        row 31 164392
+        row 32 155929
+        row 33 102298
+        row 34 101315
+        row 35 95793
+        row 36 84578
+        row 37 76802
+        row 38 76169
+        row 39 75642
+        row 3a 159005
+        row 3b 959
+        row 3d 27124
+        row 41 8328
+        row 42 7448
+        row 43 7534
+        row 44 13518
+        row 45 8514
+        row 46 7400
+        row 47 2693
+        row 48 1584
+        row 49 9162
+        row 4a 7117
+        row 4c 2706
+        row 4d 11071
+        row 4e 7537
+        row 4f 5046
+        row 50 3607
+        row 52 12469
+        row 53 18509
+        row 54 8388
+        row 55 15936
+        row 56 1436
+        row 57 3335
+        row 58 959
+        row 5a 264
+        row 5b 33804
+        row 5d 38755
+        row 5f 2424
+        row 61 139669
+        row 62 50355
+        row 63 120537
+        row 64 122926
+        row 65 284299
+        row 66 52129
+        row 67 51905
+        row 68 36147
+        row 69 142301
+        row 6a 2143
+        row 6b 13943
+        row 6c 72584
+        row 6d 43587
+        row 6e 130872
+        row 6f 146118
+        row 70 63331
+        row 71 4872
+        row 72 151982
+        row 73 128557
+        row 74 125620
+        row 75 61462
+        row 76 33771
+        row 77 29683
+        row 78 6928
+        row 79 32104
+        row 7a 1803
+        row 7b 264
+        row 7d 264
+        provenance
+            source bench/loglines TRAIN generation (gen_subjects.py --seed 20260930, gen_throughput_subjects.py --seed 20260931)
+            retrieved 2026-09-28
+            bytes 4341004
+            sha256 58dff5761d0b2d19170cf2bc31bd4767b8c52fb276fd44c9f9d9a0cd1cd748cb
+            license N/A (synthetic, generated in-repo)

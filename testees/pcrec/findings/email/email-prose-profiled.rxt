@@ -1,0 +1,49 @@
+analysis email-prose-profiled
+    freq
+        question How often does each byte occur in this exemplar?
+        reader byte-rate (docs/spec/findings.md §4)
+        analyzer pcrec-analyze 0.1 --scan freq
+        encoding ascii
+        serves byte-rate when byte,utf8 via unigram
+        row 0a 3661
+        row 20 298964
+        row 21 6017
+        row 2d 266
+        row 2e 19409
+        row 32 70
+        row 34 70
+        row 39 148
+        row 3f 6100
+        row 40 504
+        row 61 154678
+        row 62 24391
+        row 63 72158
+        row 64 48976
+        row 65 245309
+        row 66 23080
+        row 67 27470
+        row 68 63186
+        row 69 111916
+        row 6a 4417
+        row 6b 11535
+        row 6c 80243
+        row 6d 39909
+        row 6e 122980
+        row 6f 117018
+        row 70 47536
+        row 71 5819
+        row 72 151101
+        row 73 92959
+        row 74 159506
+        row 75 53561
+        row 76 28472
+        row 77 33008
+        row 78 3347
+        row 79 39305
+        row 7a 63
+        provenance
+            source bench/email TRAIN generation (gen_throughput_subjects.py --seed 20261001, t-d/t-e prose pair only)
+            retrieved 2026-09-28
+            bytes 2097152
+            sha256 b1ddc6264720fcf8dcb69fe26d1fbde7978cd84fba49e799c7cc19660333bbf2
+            license N/A (synthetic, generated in-repo)

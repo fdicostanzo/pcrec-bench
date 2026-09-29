@@ -1,0 +1,18 @@
+# testees/pcrec/findings/email/disjointness.tsv -- [B115] the DISJOINTNESS
+# manifest for the email-prose-profiled PROFILED bundle (inbox I-118 S3,
+# outbox O-72 Q1/Q4): only t-d-prose-sparse-addrs / t-e-prose-no-at are
+# eligible -- t-a/t-b/t-c are HAND-CURATED (not draws from a class), so
+# PROFILED is n/a on them and they are listed here only as the CONTROL that
+# --seed leaves them byte-identical (sha256_overlap 1 of 1 is the PASS on
+# those three rows; 0 of 1 is the PASS on t-d/t-e).
+#
+# TRAIN generation (never committed, /var/tmp/b115/email-train/):
+#   python3 bench/email/gen_throughput_subjects.py --seed 20261001 --out DIR
+#
+# regenerated 2026-09-28 by lane b115tiers.
+#subject_id	eligible	committed_sha256	train_sha256	sha256_overlap
+t-a-valid-addrs	no (hand-curated)	e408283db8afef78b119794c8bac5b38bd4fa927279d1e5b14bb29b7dc4cdefc	e408283db8afef78b119794c8bac5b38bd4fa927279d1e5b14bb29b7dc4cdefc	1
+t-b-no-at	no (hand-curated)	543b4587f6c8256d58e3e961ae708f24dc314b60d51359155063647fcc3ef867	543b4587f6c8256d58e3e961ae708f24dc314b60d51359155063647fcc3ef867	1
+t-c-long-atom-run	no (hand-curated)	9bc1b2a288b26af7257a36277ae3816a7d4f16e89c1e7e77d0a5c48bad62b360	9bc1b2a288b26af7257a36277ae3816a7d4f16e89c1e7e77d0a5c48bad62b360	1
+t-d-prose-sparse-addrs	yes	d55c0e8f4270222653652a0b0b26ed3f8d936d24926f8ffd636fcd1ad9d94242	a641d5fd5c15078c15c67dab9e4d26e40c5d342dfd052cd24d356ddacd65b1f8	0
+t-e-prose-no-at	yes	ee92cda733b1ef82fb3cd477e94f668c7f2cdc7b5f7bce6c4dbf54fcbafe2e34	a680942ab69da99fce00aab8ad821d02d502828cd230cbe6630fceb2e9c13be0	0
