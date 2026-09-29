@@ -6265,3 +6265,24 @@ tooling; I reviewed it with two change requests (the slug charset refuses
 The sweep was launched detached at 21:01 EDT on a quiet box. Lesson: my
 stall watcher used `find -newermt '-25 minutes'`, which GNU find does not
 parse, so it fired a false stall twice. Use `-mmin -N`.
+
+## 2026-09-29 early (39th session, cont.) — [B115] read and closed; [B116] refused twice
+
+- **The [B115] sweep.** 36/51 cells measured on the first pass. The 15
+  `--engine=auto --tune` arms were refused by the adapter's ENGINE_SEL
+  agreement check, which treated `--engine=auto` as forced; 8baab6d fixed
+  it and the 15 were re-run. All 51 are measured.
+- **Matrix script bug.** It looked for email's records under `email@*`
+  while the store files them as `email-specimen@0.2`. Fixed.
+- **The read.** Ledger docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md,
+  sent as O-74. DECLARED-weblog is slower on iso-ts/kv-quoted. PROFILED is
+  never measurably slower. Forced VM beats auto on email whole-subject.
+  `--tune` has only two distinct programs per route here.
+- **[B116].** Run from an archive copy, per O-73. It refused mid-run both
+  times (load1 0.61, then 0.52 from a 0.07 start). The artifacts are on
+  scratch/clstree-s0, answered as O-75, and there will be no third
+  attempt.
+- **LESSON.** I ran store-reading analysis on the box while a timed
+  session was starting. Attempt 1's refusal is partly mine. Once a timed
+  run is launched, nothing else runs on the box until it ends: read
+  results before launching the next run, or after it finishes.
