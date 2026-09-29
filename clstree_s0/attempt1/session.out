@@ -1,0 +1,21 @@
+pre-wait load: 0.22 0.48 0.77 1/696 1942247
+pin: da0ae4435c1ab97e7f5ac6cbe59cdece78c84c72
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+/var/tmp/clstree_s0/pcrec/studies/cls_tree_study/kit.py:316: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
+  set free in two bits, and for `\p{Lu}`-over-an-adjacent-pair-block's
+bench: REFUSING mid-run — load1 0.61
+make: *** [Makefile:81: bench2] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+1157 studies/cls_tree_study/results/bench2.tsv
+# cc=gcc rounds=11 load1_at_start=0.22 date=2026-09-29T05:00:06
+CC=gcc python3 bench_bytes.py --ns 4,16,32 --lam 16 --rounds 11 \
+    --out bench2_bytes.tsv
+bench_bytes: REFUSING -- load1 0.61 >= 0.50 (quiet box required; this harness does not caveat a noisy measurement)
+make: *** [Makefile:94: bench2-bytes] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+wc: studies/cls_tree_study/results/bench2_bytes.tsv: No such file or directory
+head: cannot open 'studies/cls_tree_study/results/bench2_bytes.tsv' for reading: No such file or directory
+bench: REFUSING — load1 0.61 >= 0.50 (quiet box required; this harness does not caveat a noisy measurement)
+wc: studies/cls_tree_study/results/capC_isolated.tsv: No such file or directory
+CLS-TREE-S0-TIMING DONE
+EXIT rc=0

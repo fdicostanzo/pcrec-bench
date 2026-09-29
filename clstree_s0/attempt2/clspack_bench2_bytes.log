@@ -1,0 +1,7 @@
+make: Entering directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+gcc -O2 -std=gnu11 -Wall -Wextra discover.c -o discover -lm
+CC=gcc python3 bench_bytes.py --ns 4,16,32 --lam 16 --rounds 11 \
+    --out bench2_bytes.tsv
+bench_bytes: REFUSING -- load1 0.52 >= 0.50 (quiet box required; this harness does not caveat a noisy measurement)
+make: *** [Makefile:94: bench2-bytes] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'

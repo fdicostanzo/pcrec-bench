@@ -1,0 +1,7 @@
+make: Entering directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+gcc -O2 -std=gnu11 -Wall -Wextra discover.c -o discover -lm
+CC=gcc python3 bench.py --population k53 --lams 0,16,256 --rounds 11 \
+    --whole --regimes member,mixed,ascii,full,runs --out bench2.tsv
+bench: REFUSING mid-run — load1 0.52
+make: *** [Makefile:81: bench2] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'

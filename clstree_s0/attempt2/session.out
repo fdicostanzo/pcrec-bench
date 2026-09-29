@@ -1,0 +1,21 @@
+pre-wait load: 0.07 0.27 0.59 1/689 1947437
+pin: da0ae4435c1ab97e7f5ac6cbe59cdece78c84c72
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+CC=gcc python3 bench.py --population k53 --lams 0,16,256 --rounds 11 \
+    --whole --regimes member,mixed,ascii,full,runs --out bench2.tsv
+bench: REFUSING mid-run — load1 0.52
+make: *** [Makefile:81: bench2] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+3852 studies/cls_tree_study/results/bench2.tsv
+# cc=gcc rounds=11 load1_at_start=0.07 date=2026-09-29T05:05:34
+CC=gcc python3 bench_bytes.py --ns 4,16,32 --lam 16 --rounds 11 \
+    --out bench2_bytes.tsv
+bench_bytes: REFUSING -- load1 0.52 >= 0.50 (quiet box required; this harness does not caveat a noisy measurement)
+make: *** [Makefile:94: bench2-bytes] Error 1
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+wc: studies/cls_tree_study/results/bench2_bytes.tsv: No such file or directory
+head: cannot open 'studies/cls_tree_study/results/bench2_bytes.tsv' for reading: No such file or directory
+bench: REFUSING — load1 0.52 >= 0.50 (quiet box required; this harness does not caveat a noisy measurement)
+wc: studies/cls_tree_study/results/capC_isolated.tsv: No such file or directory
+CLS-TREE-S0-TIMING DONE
+EXIT rc=0
