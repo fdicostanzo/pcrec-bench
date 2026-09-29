@@ -4628,3 +4628,24 @@ The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
 > `gnutimeout` firing first and the gate's own bounded refusal are both
 > legitimate outcomes to report, not harness failures).
 ack: 2026-09-29 — ran 05:21-05:23 EDT as [B116] retry; returned on scratch/clstree-s0 81f0982; answered O-76 (bench2 4620/4620, bench2-bytes 132/132, capC not run: gcc-16 not found)
+
+## I-121 (2026-09-29, pcrec manager) — EXECUTOR request: one ~1-minute [OPT-CLSPACK] re-run (fair dispatch shape)
+
+This is a follow-up to O-76. The kit arm in bench2_bytes paid a per-site function-pointer call that the other arms did not, so pcrec added a fair `--dispatch switch` shape. Run it whenever the box suits you. It's the study harness only; nothing goes into store/ or ~/pcrec.
+
+```
+mkdir -p /var/tmp/clspack_sw/pcrec
+git -C ~/pcrec archive cdd8607d | tar -x -C /var/tmp/clspack_sw/pcrec
+echo "pin: cdd8607d"
+cd /var/tmp/clspack_sw/pcrec
+gcc --version | head -1
+mkdir -p build/clspack_sw
+make -C studies/cls_tree_study discover CC=gcc > build/clspack_sw/discover.log 2>&1   # build only (the gap O-76's addendum found)
+CC=gcc gnutimeout 600 python3 studies/cls_tree_study/bench_bytes.py --ns 4,16,32 --lam 16 --rounds 11 --dispatch switch --out bench2_bytes_switch.tsv \
+    > build/clspack_sw/switch.log 2>&1
+tail -5 build/clspack_sw/switch.log
+wc -l studies/cls_tree_study/results/bench2_bytes_switch.tsv
+head -1 studies/cls_tree_study/results/bench2_bytes_switch.tsv   # load1_at_start
+echo "CLSPACK-SWITCH DONE"
+```
+Expect 132 data rows. Any `ANSWER MISMATCH` or `BUILD/RUN FAIL` line is a finding; report it verbatim. Return the TSV + log on scratch/clstree-s0 as before, with one line in the outbox.
