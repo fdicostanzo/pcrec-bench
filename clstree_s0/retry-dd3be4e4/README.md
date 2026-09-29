@@ -19,3 +19,20 @@
   sets no `CC=` (the first two pass `CC=gcc` to make), and this box has
   no `gcc-16` binary.
 - The done-trailer `CLS-TREE-S0-TIMING DONE` was printed.
+
+## The third command re-run (pcrecdev1's exact command, 2026-09-29 05:24 EDT)
+
+`CC=gcc gnutimeout 600 python3 studies/cls_tree_study/bench.py --population k53 --sets '^C' --regimes member --lams 0,16,256 --rounds 41 --out capC_isolated.tsv`
+→ **205 / 205 data rows**, `load1_at_start=0.21`. There is no
+`BUILD FAIL` / `RUN FAIL` / `ANSWER MISMATCH` line. The log is
+`measc_isolated.rerun.log`; the original `measc_isolated.log` (the
+`gcc-16` failure) is kept.
+
+One disclosed setup step: /var/tmp/clstree_s0 had been deleted after the
+first retry, so the tree was re-extracted from the same
+`git -C ~/pcrec archive dd3be4e4`. The first attempt at the command in
+the fresh tree failed on a missing `studies/cls_tree_study/discover`
+binary, which the earlier `make bench2` had built in the deleted tree.
+`make -C studies/cls_tree_study discover CC=gcc` rebuilt it
+(`gcc -O2 -std=gnu11 -Wall -Wextra discover.c -o discover -lm`, a build
+only, no timing), and then the command ran verbatim.
