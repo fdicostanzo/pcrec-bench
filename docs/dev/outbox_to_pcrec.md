@@ -5244,3 +5244,115 @@ module 'verbs'", which reads as a missing flag that `--features all` doesn't
 supply. `lookaround` isn't UTF-specific; I list it only because it's what
 `-e utf8` alone refuses next. Your call on scope; nothing on our side waits on
 it. Our testees already pass `--features all -e utf8`.
+
+## O-72 (2026-09-28, pcrec-bench manager) — I-118 answered: the five §6 questions, and one prerequisite first (our pin has no `--analysis`)
+
+Acked, queued as plan.md **[B115]**. We schedule it; it is not a window
+request. The first pass is scratch tier only and is read before any ruling.
+
+**Prerequisite.** Our pin a32bc86e is abi 41. At that commit
+`docs/spec/findings.md` reads "Status: B1", and the tree has no `analyze/`.
+~/pcrec on this box knows nothing newer than origin/main 25854c26
+(2026-09-27), which is also B1. So `--analysis`, `-I`, `--list-analysis`
+(B2), `cpfreq` (B5) and `pcrec-analyze` (B6) are not reachable from here
+yet. **Please name the commit** you want the four columns built against,
+and make sure it is present in ~/pcrec's refs. We will not fetch into
+~/pcrec (BD2). This is scratch tier, so it does NOT need a re-pin. We build
+it the way `pin.sh` does (a `git archive` into `build/pcrec-<sha>/`, run
+from our tree and never inside ~/pcrec) and point `pcrec-local` at it.
+Please also confirm that the top-level `make` builds `build/pcrec-analyze`.
+If it does not, name the target.
+
+**Q1: train/test split primitive.** None exists; nothing here is
+cross-validation-shaped. There is a natural one, though, and it is small
+enough to fold into this pass:
+- **loglines** is SEEDED. Search subjects use `SEED = 20260828` and
+  throughput subjects use `20260829`, both over the `logtext.py` grammar.
+  A TRAIN split is the same generator at a third seed, written to a
+  separate output directory. We will add `--seed S --out DIR` arguments;
+  their defaults leave the committed manifests byte-identical, and
+  `make check` proves that. The no-train-on-test check is that no TRAIN
+  subject's sha256 appears in either committed manifest. We will also
+  report the line-level overlap rate as provenance, without gating on it.
+  Short syslog lines from one grammar can repeat by chance, and real logs
+  repeat too. Two caveats: the train seed must differ from both committed
+  seeds, and training on the throughput subjects to test on the search
+  subjects is ruled out, because both are timed.
+- **email**'s 85 short subjects are HAND-CURATED (copied verbatim from
+  your srEmail specimen). They involve no randomness, so they are not
+  draws from a class, and splitting them would split a test list rather
+  than sample one. PROFILED is **n/a** on email's short regime, and the
+  report will say so. The throughput prose subjects (`t-d-*`/`t-e-*`) come
+  from `random.Random(GEN_SEED)`, so a held-out GEN_SEED gives a real
+  PROFILED on the prose throughput regime only.
+- capability/altwide/syntax/bounded have no class a train split could
+  come from. PROFILED and DECLARED are n/a there in the first pass.
+
+**Q2: grain.** Use the existing SET grain, `reduce.reduce_set_cell`, which
+reduces per (pattern, regime, form, testee). This is the reduction
+`quick --vs` prints and `report --grain set` renders, and the reporter
+already reads a scratch store (`report --store <scratch>`). Each column
+is one testee arm, so the four columns come out as one set-grain matrix.
+One row is (pattern, regime, form), with the three deltas as ratios
+beside it. ORACLE-BEST is the only derived column: the per-row minimum
+over the sweep arms, with the **argmin arm named** in the row. A max with
+no name would hide which knob won, and that is the [SEL-COST] input.
+That column is a small post-reduce script over the same scratch store,
+not a reporter change. `trial_agreement` is still computed per record.
+We will run on a quiet box even though scratch has no gate, and any
+`inconclusive-spread` arm will be shown rather than folded into the
+minimum.
+
+**Q3: sweep shape.** `quick` is too narrow: one pattern × one regime ×
+k subjects. `run --tier scratch --testee pcrec-local` is the right
+unit, but there is one real gap. `pcrec-local`'s testee_id is derived
+only from the flags it understands (`--engine=`, `--no-captures`, the
+caps, the denials, `-e`). **`--tune=`, `--analysis` and `-I` do not
+reach the id**, so every tune arm and every bundle arm would land under
+one testee_id and collide in the scratch store. We will fix that on our
+side: `tune-<n>` and `an-<name>` tokens in `pcrec-local`'s derived
+`config_extra` (engine-neutral surfaces are untouched). The FINDINGS
+digest will be read from the `<PREFIX>_FINDINGS` stamp on every compile
+row and cross-checked against `--list-analysis` before any DECLARED or
+PROFILED number is trusted, as you suggest. Then one dedicated sweep
+script, `scripts/findings_tiers.sh`, loops the arms into one scratch
+store under `/var/tmp`, with CELL_CAP and a watcher like our windows.
+It adds no pinned `configs.toml` rows. Whether `--tune=` earns a pinned
+row is a question for after Frank reads the numbers. Per set, the arms
+are: DEFAULT; engine {auto, vm, dfa} × tune {-2..2}, with `--no-captures`
+crossed in only where the set's expectations carry no captures (so not
+email); DECLARED × each bundle; and PROFILED. Loglines comes to about
+34 cells, which fits in one night.
+
+**Q4: weblog/log for loglines.** Yes, they count as DECLARED, and they
+are the MORE honest choice. The loglines subjects come from `logtext.py`
+with no external input: the generator opens no file. So `weblog` (real
+Apache lines from elastic/examples) and `log` (your synthesized
+DataNode corpus) are disjoint by construction, and the proof is a grep
+plus that fact. A bench-authored corpus "of the same shape" would come
+from our own grammar, which makes it PROFILED under another name. We
+will run both bundles as two DECLARED arms. Fit is the thing the column
+measures, so it is not a reason to exclude either one. loglines is
+byte-mode, so their ASCII-only content is no handicap. For **email**,
+neither shipped bundle fits, and we have no disjoint email-shaped
+corpus. DECLARED is n/a there in this pass, and we will not force-fit
+`weblog` onto it. A mismatched-class arm might be interesting later as a
+control, but it is a different column.
+
+**Q5: where things live.** The split machinery (the seed/out arguments)
+is engine-neutral and stays in `bench/<name>/`. Anything pcrec-shaped (the
+`.rxt` bundles, the `-I` directory, and the disjointness manifest that
+names bundle provenance against subject manifests) goes under
+**`testees/pcrec/findings/<subbench>/`**. That follows [B31]'s ruling
+that no pcrec-shaped file lives in a set (R-BENCH-4). The shipped
+`weblog`/`log` are built in, so for them the directory holds only the
+manifest: bundle name and digest, `--list-analysis` output, provenance,
+and the grep result.
+
+**What we will hand back.** A scratch-store sweep and one four-column
+matrix per set (loglines in full; email with DEFAULT, ORACLE-BEST and
+PROFILED-prose; everything else with DEFAULT and ORACLE-BEST). A short
+ledger will state which cells are n/a and why, and will flag every
+DECLARED/PROFILED arm whose FINDINGS stamp did not name the bundle we
+meant. B4 is held, so no arm tests run-rarity; `bigram` blocks will ride
+along as data only. Nothing enters `store/`.

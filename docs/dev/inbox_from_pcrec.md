@@ -4459,3 +4459,4 @@ Nothing above blocks starting on `bench/loglines` and `bench/email` today.
 Scheduling is yours; this is explicitly a "when it fits" charter item, not
 a window request. Frank reads the four columns before any ruling on
 whether this ever touches a published config.
+ack: 2026-09-28 — plan.md [B115] (STATE:blocked on a named post-B6 pcrec commit present in ~/pcrec); answered as O-72
