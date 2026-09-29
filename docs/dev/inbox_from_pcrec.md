@@ -4536,3 +4536,94 @@ The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
 > added commands' own timeouts (1800 s, 600 s) are generous relative to their
 > actual size, not a sign they are expected to run long.
 ack: 2026-09-28 — plan.md [B116] (queued after [B115]); O-73 proposes running from a git-archive copy under /var/tmp instead of a ~/pcrec worktree (BD2 + the 2026-09-26 classifier refusal)
+
+## I-120 (2026-09-29, pcrec manager) — EXECUTOR request: [CLS-TREE] S0 timing session, RETRY after O-75 (the refusal was OUR harness's bug, now fixed)
+
+Thanks for refusing honestly and not loosening the gate. Your attempt-2 readings (0.07 at start, refused at 0.52 after 10 of 12 sets) diagnosed it. The study harness checked load once per set and refused on the first high reading, while its own back-to-back compiles and timing runs pushed the 1-minute average up. Fixed in pcrec dd3be4e4 (lane clsgate):
+- Every arm is built before any timing starts.
+- The gate is checked before EACH timed unit, and it WAITS for quiet (polling, every reading logged) for up to 10 minutes before refusing.
+- The threshold is still 0.5.
+
+- **Pin:** pcrec `dd3be4e4`, already fetched into ~/pcrec's refs (fetch only).
+- **Form:** the archive form you worked out. Nothing goes into ~/pcrec.
+- **Return:** the results on scratch/clstree-s0 as before. Answer in the outbox.
+
+If it refuses again at the 10-minute bound, report it with the readings. That would mean genuine outside load, and I'll take it from there.
+
+The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
+
+> **pcrecdev2 — [CLS-TREE] S0 timing session (read-only study run; writes
+> ONLY `studies/cls_tree_study/results/bench2.tsv`,
+> `studies/cls_tree_study/results/bench2_bytes.tsv`,
+> `studies/cls_tree_study/results/capC_isolated.tsv`, and
+> `studies/cls_tree_study/build/`).**
+> Box: ubuntubudu. The harness polls for a quiet box before each timed unit
+> (up to 10 minutes) rather than refusing instantly; a bound-exceeded
+> refusal is still a result — report it with its load readings, do not
+> loosen `--max-load`. Tree: pcrec at `dd3be4e4` (at or
+> after the merge of `lane/clsgate`; nothing in `src/` is read for b1/the
+> isolated re-run — the study reads `src/parse/uprops_tables.inc` and its own
+> committed `results/byteclasses.tsv` only. `bench2-bytes` needs no
+> `build/pcrec` either — same committed-input rule).
+> ```
+> mkdir -p /var/tmp/clstree_s0/pcrec
+> git -C ~/pcrec archive dd3be4e4 | tar -x -C /var/tmp/clstree_s0/pcrec
+> echo "pin: dd3be4e4"                                     # record the pin from THIS command, not git log
+> cd /var/tmp/clstree_s0/pcrec
+> gcc --version | head -1                                 # record the compiler
+> mkdir -p build/clstree_s0
+>
+> # --- b1: kit/whole-set ns/char, the committed 2026-09-11 arm set + whole-set tables ---
+> gnutimeout 7200 make -C studies/cls_tree_study bench2 CC=gcc \
+>     > build/clstree_s0/b1_bench2.log 2>&1
+> tail -5 build/clstree_s0/b1_bench2.log
+> wc -l studies/cls_tree_study/results/bench2.tsv
+> head -1 studies/cls_tree_study/results/bench2.tsv        # load1_at_start
+>
+> # --- CLSPACK: N=4/16/32 live byte-class sites, bitmap vs kit vs shared atom table ---
+> gnutimeout 1800 make -C studies/cls_tree_study bench2-bytes CC=gcc \
+>     > build/clstree_s0/clspack_bench2_bytes.log 2>&1
+> tail -5 build/clstree_s0/clspack_bench2_bytes.log
+> wc -l studies/cls_tree_study/results/bench2_bytes.tsv
+> head -1 studies/cls_tree_study/results/bench2_bytes.tsv  # load1_at_start
+>
+> # --- isolated ^C/member re-run [r1 MEAS-2]: the one bimodal cell, alone, more rounds ---
+> gnutimeout 600 python3 studies/cls_tree_study/bench.py \
+>     --population k53 --sets '^C' --regimes member --lams 0,16,256 \
+>     --rounds 41 --out capC_isolated.tsv \
+>     > build/clstree_s0/measc_isolated.log 2>&1
+> tail -5 build/clstree_s0/measc_isolated.log
+> wc -l studies/cls_tree_study/results/capC_isolated.tsv
+>
+> echo "CLS-TREE-S0-TIMING DONE"
+> ```
+> Expected row counts (fewer only if a build/run fails — a `BUILD FAIL` or
+> `RUN FAIL` line is a finding, report it verbatim; any `ANSWER MISMATCH` line
+> aborts that command's run and is a finding):
+>   - `bench2.tsv`: 4,620 data rows (12 sets × 5 regimes × 7 arms × 11 rounds).
+>   - `bench2_bytes.tsv`: 132 data rows (3 N values {4,16,32} × 4 arms
+>     {refbs,bitmap,kit,atom} × 11 rounds); also report the `n_atoms` column's
+>     three values (expect small integers well under 64 — a refusal naming
+>     ">64 atoms" is itself the finding, not a crash).
+>   - `capC_isolated.tsv`: 205 data rows (1 set × 1 regime × 5 arms {refbs,
+>     bitmap1, lam0, lam16, lam256} × 41 rounds).
+> The `CLS-TREE-S0-TIMING DONE` line is the done-trailer — its absence means
+> the session did not reach the end (report whichever log's `tail` is last).
+> Return all three TSVs (commit on a scratch branch or scp back) plus the
+> `build/clstree_s0/*.log` files, the recorded pin/compiler, and the three
+> `load1_at_start` readings. Wall time: b1 is dominated by 60 set×regime runs
+> of 7 arms × 11 rounds × 1 M probes (the 2026-09-11 run of 5 arms × 4
+> regimes fitted inside the I-65 session); `bench2-bytes` is 3 builds × 11
+> rounds × 4 arms × 2^20 probes, small (well under b1's); the isolated
+> re-run is 1 build × 41 rounds × 5 arms × 2^20 probes, also small. **Expected
+> wall time, gate-quiet case**: a few minutes total — Mac gcc-16 measured
+> ~0.25 s/set to build every arm (including the wholeset ones) and ~2.2 s/set
+> to run all five regimes, so twelve sets is on the order of 30 s of real
+> compute even before any ubuntubudu-vs-Mac speed difference; the fixed
+> gate's own overhead when the box is already quiet is one `os.getloadavg()`
+> call per timed unit, not a sleep. The two added commands' own timeouts
+> (1800 s, 600 s) and b1's 7200 s stay generous relative to that, covering
+> both a slower box and the gate's bounded wait (up to 10 min per timed unit,
+> reached only under genuine external contention — in which case the
+> `gnutimeout` firing first and the gate's own bounded refusal are both
+> legitimate outcomes to report, not harness failures).
