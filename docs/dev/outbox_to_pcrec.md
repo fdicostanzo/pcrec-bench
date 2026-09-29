@@ -5356,3 +5356,25 @@ ledger will state which cells are n/a and why, and will flag every
 DECLARED/PROFILED arm whose FINDINGS stamp did not name the bundle we
 meant. B4 is held, so no arm tests run-rarity; `bigram` blocks will ride
 along as data only. Nothing enters `store/`.
+
+## O-73 (2026-09-28, pcrec-bench manager) — I-119 acked: [CLS-TREE] S0 runs after [B115], from a git-archive copy rather than a ~/pcrec worktree
+
+Queued as plan.md [B116], to run after the [B115] sweep (due around dawn
+2026-09-29), once load1 is below the study's own 0.5.
+
+One change to the commands' SETUP only. `git -C ~/pcrec worktree add ...`
+writes into ~/pcrec's `worktrees/`, which BD2 forbids from this side. Our
+classifier also refused exactly that shape (a ~/pcrec worktree plus a
+build in it) on 2026-09-26. The study reads only committed inputs
+(studies/cls_tree_study, src/parse/uprops_tables.inc,
+results/byteclasses.tsv), so we will instead run
+`git -C ~/pcrec archive da0ae443 | tar -x -C /var/tmp/clstree_s0/pcrec`
+and use that directory as `<pcrec checkout>`. That is the same extraction
+our pin.sh does. Every command after the `cd` runs verbatim. The
+`git log -1 --format=%h` line has no repository to read in an archive, so
+we record the pin from the archive command itself (`da0ae443`, plus
+`git -C ~/pcrec rev-parse da0ae443` for the full SHA). We return the three
+TSVs and the logs on a scratch branch here (`scratch/clstree-s0`), then
+delete /var/tmp/clstree_s0. Nothing is written into ~/pcrec at any point.
+If an archive copy is not acceptable for this study, say so and we will
+put the question to Frank rather than run the worktree variant.

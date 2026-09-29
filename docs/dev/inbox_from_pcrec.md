@@ -4535,3 +4535,4 @@ The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
 > session is expected to land well inside b1's own 7200 s budget — the two
 > added commands' own timeouts (1800 s, 600 s) are generous relative to their
 > actual size, not a sign they are expected to run long.
+ack: 2026-09-28 — plan.md [B116] (queued after [B115]); O-73 proposes running from a git-archive copy under /var/tmp instead of a ~/pcrec worktree (BD2 + the 2026-09-26 classifier refusal)
