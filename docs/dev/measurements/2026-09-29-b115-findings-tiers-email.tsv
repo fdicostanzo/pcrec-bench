@@ -1,0 +1,12 @@
+# source: scripts/findings_tiers_matrix.py --store /var/tmp/b115/store --set email (2026-09-29, pcrecbench 8baab6d); pcrec f7f5a143 via pcrec-local, SCRATCH tier; sweep log build/windows/findings_tiers_20260929T010121Z.log + the auto-arm re-run /var/tmp/b115/rerun.out; values are set-grain median ns (reduce.reduce_set_cell), lower is faster
+# [B115] findings_tiers_matrix.py -- set=email store=/var/tmp/b115/store
+pattern	regime	form	DEFAULT	PROFILED	ORACLE-BEST	oracle_best_arm	ratio_oracle_over_default	ratio_declared_over_default	ratio_oracle_over_declared	flags
+factored	large-subject-throughput	plain	7015443.4	7015804.7	7015103.4	eng-dfa-tune-m1	1.0000	n/a	n/a	
+factored	match-compliance	whole-subject	73234.3	73239.0	73223.3	eng-auto-tune-2	0.9998	n/a	n/a	excluded-from-min:5-arms
+factored	short-subject-search	plain	3942.3	3945.9	3942.9	eng-dfa-tune-m1	1.0002	n/a	n/a	
+floor	large-subject-throughput	plain	698917.9	698651.5	697958.2	eng-auto-tune-0	0.9986	n/a	n/a	
+floor	match-compliance	whole-subject	860.6	861.5	557.8	eng-vm-tune-0	0.6482	n/a	n/a	
+floor	short-subject-search	plain	1361.0	1353.1	1246.3	eng-vm-tune-m2	0.9157	n/a	n/a	
+orig	large-subject-throughput	plain	7046966.7	7051358.2	7043345.8	eng-auto-tune-0	0.9995	n/a	n/a	
+orig	match-compliance	whole-subject	73129.0	73128.2	62631.2	eng-vm-tune-2	0.8564	n/a	n/a	
+orig	short-subject-search	plain	3711.0	3710.1	3707.1	eng-dfa-tune-2	0.9990	n/a	n/a	

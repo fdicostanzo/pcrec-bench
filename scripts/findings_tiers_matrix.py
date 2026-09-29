@@ -70,11 +70,21 @@ def arm_testee_ids(set_name, extra_env=None):
     return out
 
 
+def subbench_id(set_name):
+    """-> the set's record-store id, which is not always its directory name
+    (bench/email is `email-specimen`), from bench/<set>/subbench.toml."""
+    import tomllib
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(here, "bench", set_name, "subbench.toml"), "rb") as f:
+        return tomllib.load(f)["id"]
+
+
 def newest_record_for_testee(store, set_name, testee_id):
     """-> path of the newest .jsonl under records/<set_name>@*/testee_id/,
     or None. Globs the version too (never assumes one) since a set's
     committed `subbench.toml` version is not this script's business."""
-    pattern = os.path.join(store, "records", "%s@*" % set_name, testee_id, "*.jsonl")
+    pattern = os.path.join(store, "records", "%s@*" % subbench_id(set_name),
+                           testee_id, "*.jsonl")
     paths = sorted(glob.glob(pattern))
     return paths[-1] if paths else None
 

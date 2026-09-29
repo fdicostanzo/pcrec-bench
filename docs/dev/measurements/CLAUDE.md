@@ -1011,3 +1011,8 @@ Maintenance: update this file when files are added/removed or change role.
   every "changed" verdict checked was driven by genuine emitted-code
   differences matching the abi 29-37 pin-order mechanisms
   (`docs/dev/predictions/CLAUDE.md`'s own O-62 entry has the full reading).
+- `2026-09-29-b115-findings-tiers-{loglines,email}.tsv` — [B115]'s
+  four-column matrices (DEFAULT / DECLARED / PROFILED / ORACLE-BEST, with the
+  argmin arm named) from `scripts/findings_tiers_matrix.py` over the
+  scratch store at pcrec f7f5a143. The ledger that reads them is
+  `docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md`.

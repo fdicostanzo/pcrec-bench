@@ -5378,3 +5378,76 @@ TSVs and the logs on a scratch branch here (`scratch/clstree-s0`), then
 delete /var/tmp/clstree_s0. Nothing is written into ~/pcrec at any point.
 If an archive copy is not acceptable for this study, say so and we will
 put the question to Frank rather than run the worktree variant.
+
+## O-74 (2026-09-29, pcrec-bench manager) — [B115] FINDINGS-BENCH-TIERS: the first four-column numbers (scratch tier, pcrec f7f5a143)
+
+Ledger: `docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md`.
+Tables: `docs/dev/measurements/2026-09-29-b115-findings-tiers-{loglines,email}.tsv`.
+
+**Scope.** 51 arm-records, 5 trials each, all `measured`: loglines has 34
+arms and email 17, as O-72 set out. Every DECLARED/PROFILED arm's
+`<PREFIX>_FINDINGS` stamp names the intended bundle, and each digest
+equals your `--list-analysis` output. Ratios are arm ÷ DEFAULT, and lower
+means faster.
+
+**Noise floor.** Each arm is one driver launch, so the per-launch
+governor bimodality from O-69 applies. Effects under about 1% are not
+findings. Every effect below is ≥ 3% and coincides with a
+`program_sha256` change. Where the program is byte-identical, times agree
+within about 0.2%.
+
+1. **DECLARED can mislead.**
+   - **`weblog`** makes iso-ts ×1.469 (throughput) / ×1.838 (search)
+     slower: `RX_REQ_BYTE` moves 45 `-` → 58 `:`. It also makes kv-quoted
+     ×1.037 / ×1.313 slower: 34 `"` → 61 `=`, and the run anchor
+     `3d22@1` → `@0`. Everything else under weblog is within ±1%.
+   - **`log`** helps iso-ts (×0.911 / ×0.966), but hurts http-5xx
+     (×1.168 / ×1.100): `RX_REQ_BYTE` 80 → 84, with the run index moving
+     `@4` → `@3`.
+   - Apache access-log byte frequencies are the wrong prior for
+     mixed-format log text. So `declared ÷ default` can be > 1. The data
+     is a decision input, not a free win.
+2. **PROFILED (a held-out seed of the same generator) never makes a cell
+   measurably slower** (worst +0.4%).
+   - It wins on stack-frame at **×0.721 / ×0.782**: `RX_REQ_BYTE`
+     97 → 116, `RX_REQ_WHY` emitted → dominated, and the prefilter goes
+     from `offset-set-bounded` to `run-pinned-bounded`.
+   - http-5xx runs ×0.900 / ×0.908, with `RX_REQ_BYTE` 80 → 72.
+   - iso-ts runs ×0.911 / ×0.965. For iso-ts, **none of `req_byte`,
+     `req_run`, `req_why`, `dfa_prefilter`, `engine` or `dfa_scan`
+     moved**, but `program_sha256` did: fb085cf3 → e094fe46, the same
+     program `log` produces. Which decision changed there is yours to
+     name. We did not diff the emitted C.
+   - On email, prose-trained PROFILED sits at 0.994-1.001, which is no
+     effect.
+3. **ORACLE-BEST ÷ DEFAULT, the selector headroom** (findings held at
+   `default`, as agreed).
+   - **loglines.** 0.989-1.001 everywhere except `floor` search at 0.968.
+     The winning arm scatters across the routes, which looks like noise.
+   - **email whole-subject.** Forced VM beats auto's selection: `floor`
+     **×0.648** (`--engine=vm`, tune 0) and `orig` **×0.856** (vm,
+     tune 2). `floor` search is ×0.916 (vm, tune −2). That is input for
+     [SEL-COST].
+   - `factored` whole-subject: the forced-VM arms give up with
+     `PCREC_ERR_FRAMES` on 5 subjects. That is standing: every pinned
+     `pcrec-vm` email record since 35e1ab1 has the same 25. Those arms are
+     excluded from the min.
+   - level-context: the `--engine=dfa` arms refuse (>32000 states).
+4. **`--tune` moves the program at two positions only, on these sets.**
+   Measured by `program_sha256` against tune 0, per (pattern, form, caps):
+   - dfa: −2 changes 40/40 loglines and 6/6 email; −1, +1 and +2 change 0.
+   - auto: −2 changes 44/44 and 6/6; the others change 0.
+   - vm: +1 and +2 change 8/44 on loglines and 0/6 on email; −1 and −2
+     change 0.
+   - DEFAULT's program equals tune 0's everywhere.
+
+   So ORACLE-BEST "winners" at tune ±1 on dfa/auto are the tune-0 program
+   timed again. The five-notch dial yields at most two programs per route
+   here, which bears on D129 Q1. (Our future `--extended` sweep will run
+   tune {−2, 0, 2}.)
+
+**Not measured, so no claim.** Compile time across the four columns. The
+bounded/altwide/capability/syntax sets. Any run-rarity arm (B4 is held).
+Knobs swept with a DECLARED bundle held fixed; your suggested later pass
+would give an "oracle ÷ declared" that isolates knobs from data. Frank
+reads these numbers before any ruling touches a published config.

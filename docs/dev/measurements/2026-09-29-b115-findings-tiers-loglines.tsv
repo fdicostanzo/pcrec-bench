@@ -1,0 +1,25 @@
+# source: scripts/findings_tiers_matrix.py --store /var/tmp/b115/store --set loglines (2026-09-29, pcrecbench 8baab6d); pcrec f7f5a143 via pcrec-local, SCRATCH tier; sweep log build/windows/findings_tiers_20260929T010121Z.log + the auto-arm re-run /var/tmp/b115/rerun.out; values are set-grain median ns (reduce.reduce_set_cell), lower is faster
+# [B115] findings_tiers_matrix.py -- set=loglines store=/var/tmp/b115/store
+pattern	regime	form	DEFAULT	DECLARED-log	DECLARED-weblog	PROFILED	ORACLE-BEST	oracle_best_arm	ratio_oracle_over_default	ratio_declared_over_default	ratio_oracle_over_declared	flags
+bignum	large-subject-throughput	plain	13195286.0	13167375.0	13186727.1	13177900.6	13165132.6	eng-auto-tune-m1-nocaps	0.9977	0.9994	0.9984	
+bignum	short-subject-search	plain	428459.8	428715.8	431293.6	429142.2	427121.8	eng-auto-tune-1-nocaps	0.9969	1.0066	0.9903	
+floor	large-subject-throughput	plain	2959102.9	2964379.7	2966234.8	2961975.4	2954615.6	eng-auto-tune-1-nocaps	0.9985	1.0024	0.9961	
+floor	short-subject-search	plain	2043.0	2036.3	2044.3	2038.8	1977.7	eng-vm-tune-0	0.9681	1.0007	0.9674	
+hex32-id	large-subject-throughput	plain	13182390.7	13175152.4	13181640.3	13179600.2	13055421.2	eng-auto-tune-1	0.9904	0.9999	0.9904	
+hex32-id	short-subject-search	plain	435596.9	434853.2	433808.6	435866.2	430909.7	eng-dfa-tune-0-nocaps	0.9892	0.9959	0.9933	
+http-5xx	large-subject-throughput	plain	285978.3	334045.0	286662.0	257370.3	285024.3	eng-dfa-tune-2	0.9967	1.0024	0.9943	
+http-5xx	short-subject-search	plain	5003.7	5504.0	5004.0	4544.0	5000.2	eng-auto-tune-1-nocaps	0.9993	1.0001	0.9992	
+ipv4	large-subject-throughput	plain	6966618.2	6960501.9	6940408.3	6964420.2	6944193.2	eng-dfa-tune-m1-nocaps	0.9968	0.9962	1.0005	
+ipv4	short-subject-search	plain	208137.0	208193.8	207402.4	207860.0	207477.8	eng-dfa-tune-1	0.9968	0.9965	1.0004	
+ipv6	large-subject-throughput	plain	10603684.3	10602646.8	10608557.2	10516848.0	10497991.9	eng-dfa-tune-1-nocaps	0.9900	1.0005	0.9896	
+ipv6	short-subject-search	plain	260174.9	259212.6	262315.0	259195.3	258794.1	eng-dfa-tune-1	0.9947	1.0082	0.9866	
+iso-ts	large-subject-throughput	plain	1151403.5	1048670.7	1691936.1	1049149.0	1150230.0	eng-dfa-tune-1	0.9990	1.4695	0.6798	
+iso-ts	short-subject-search	plain	20597.6	19888.1	37850.9	19874.4	20575.8	eng-auto-tune-m1	0.9989	1.8376	0.5436	
+kv-quoted	large-subject-throughput	plain	4987083.2	4991135.8	5172194.9	4986856.9	4983910.8	eng-dfa-tune-2	0.9994	1.0371	0.9636	
+kv-quoted	short-subject-search	plain	18799.3	18798.7	24691.8	18775.8	18784.4	eng-auto-tune-m1	0.9992	1.3134	0.7608	
+level-context	large-subject-throughput	plain	11504050.7	11481865.0	11505624.2	11508790.9	11482489.5	eng-auto-tune-2-nocaps	0.9981	1.0001	0.9980	excluded-from-min:10-arms
+level-context	short-subject-search	plain	341257.7	342314.9	342282.8	342453.5	341751.3	eng-auto-tune-m1-nocaps	1.0014	1.0030	0.9984	excluded-from-min:10-arms
+stack-frame	large-subject-throughput	plain	2296531.1	2298210.1	2297925.9	1655360.3	2295567.8	eng-dfa-tune-2-nocaps	0.9996	1.0006	0.9990	
+stack-frame	short-subject-search	plain	36044.2	36055.1	36021.6	28189.0	36029.9	eng-dfa-tune-1	0.9996	0.9994	1.0002	
+uuid	large-subject-throughput	plain	1080397.2	1079763.3	1079616.8	1081485.1	1079682.2	eng-dfa-tune-1	0.9993	0.9993	1.0001	
+uuid	short-subject-search	plain	21008.3	21019.9	21028.8	21004.9	21002.0	eng-auto-tune-1-nocaps	0.9997	1.0010	0.9987	
