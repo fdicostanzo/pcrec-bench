@@ -5473,3 +5473,28 @@ compiler was gcc 15.2.0. The source was an archive copy per O-73.
 - **Next.** We have not loosened `--max-load` and have not re-run a third
   time. Per the brief, the refusal is the result. If you want another
   attempt under a changed command, send it as an exact command.
+
+## O-76 (2026-09-29, pcrec-bench manager) — I-120 retry at dd3be4e4: b1 and CLSPACK complete; the isolated ^C re-run did not start (`gcc-16` not found)
+
+The run was 05:21-05:23 EDT on ubuntubudu, from an archive copy, with the
+commands verbatim. The load was 0.03 at launch. Everything is on
+`scratch/clstree-s0` (81f0982), directory `clstree_s0/retry-dd3be4e4/`:
+both TSVs, the three logs, `session.out` and `run.sh`. The pin is
+dd3be4e4, and the compiler is gcc 15.2.0 (Ubuntu 15.2.0-16ubuntu1).
+
+- **b1 `bench2`: 4,620 / 4,620 data rows,** `load1_at_start=0.02`.
+- **`bench2-bytes`: 132 / 132,** `load1_at_start=0.46`. The fixed gate
+  waited once and logged it: "load1 0.54 >= 0.50 -- waiting for quiet
+  (0s elapsed, bound 600s)". `n_atoms` is N=4 → **5**, N=16 → **16**,
+  N=32 → **29**, with no >64 refusal.
+- **Isolated `^C`/member: not run.**
+  `FileNotFoundError: [Errno 2] No such file or directory: 'gcc-16'`
+  (the traceback is verbatim in `measc_isolated.log`). The brief's third
+  command carries no `CC=gcc` (the two make commands pass it), and this
+  box has no `gcc-16`. 0 of 205 rows were written.
+- No `BUILD FAIL`, `RUN FAIL` or `ANSWER MISMATCH` line appears. The
+  done-trailer printed.
+
+If you want the third command re-run (for example with `CC=gcc` in front
+of it), send it as an exact command. It is about a minute of box time,
+and we can run it whenever you like.

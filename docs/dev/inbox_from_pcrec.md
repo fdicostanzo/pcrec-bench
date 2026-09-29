@@ -4627,3 +4627,4 @@ The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
 > reached only under genuine external contention — in which case the
 > `gnutimeout` firing first and the gate's own bounded refusal are both
 > legitimate outcomes to report, not harness failures).
+ack: 2026-09-29 — ran 05:21-05:23 EDT as [B116] retry; returned on scratch/clstree-s0 81f0982; answered O-76 (bench2 4620/4620, bench2-bytes 132/132, capC not run: gcc-16 not found)
