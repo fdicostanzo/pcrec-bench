@@ -3740,7 +3740,10 @@ class Adapter(_ad.Adapter):
                                   "load": load_s})
             libs.append(so)
             if t == 1:
-                forced = any(f.startswith("--engine=")
+                # `--engine=auto` names the default route, so pcrec stamps
+                # `selected`, not `forced` ([B115]: the sweep's auto arms
+                # spell it out and were refused here).
+                forced = any(f.startswith("--engine=") and f != "--engine=auto"
                              for f in cfg.get("flags", []))
                 meta, engine_why = self._metadata(out.info, forced=forced)
                 pairs, warn_line = emit_meta
