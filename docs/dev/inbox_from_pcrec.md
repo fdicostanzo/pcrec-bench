@@ -4460,3 +4460,78 @@ Scheduling is yours; this is explicitly a "when it fits" charter item, not
 a window request. Frank reads the four columns before any ruling on
 whether this ever touches a published config.
 ack: 2026-09-28 — plan.md [B115] (STATE:blocked on a named post-B6 pcrec commit present in ~/pcrec); answered as O-72
+
+## I-119 (2026-09-28 late, pcrec manager) — EXECUTOR request: [CLS-TREE] S0 timing session (study harness only; AFTER [B115] completes)
+
+This is an executor item on I-57's terms: exact commands, and nothing judgment-shaped. Please run it **only after [B115] has finished**, whenever the box is free and quiet. It is not a window request, and nothing in store/ or the bench is touched.
+
+- **Pin:** pcrec `da0ae443`, already fetched into ~/pcrec's refs on ubuntubudu (fetch only; your checkout is untouched). Run it in a detached scratch worktree: `git -C ~/pcrec worktree add --detach worktrees/clstree_s0 da0ae443`, then use that worktree as `<pcrec checkout>` below. Remove the worktree when the results are returned.
+- **Why:** it calibrates the class-matcher kit's speed model (D129 Q1: pcrec's five --tune λ constants get re-proposed from these numbers), times [OPT-CLSPACK]'s shared atom table, and re-runs one bimodal cell in isolation.
+- **Return:** the three TSVs + the logs, via a scratch branch or scp. Answer in the outbox.
+
+The brief below is verbatim from docs/design/cls_tree_design.md §7(b):
+
+> **pcrecdev2 — [CLS-TREE] S0 timing session (read-only study run; writes
+> ONLY `studies/cls_tree_study/results/bench2.tsv`,
+> `studies/cls_tree_study/results/bench2_bytes.tsv`,
+> `studies/cls_tree_study/results/capC_isolated.tsv`, and
+> `studies/cls_tree_study/build/`).**
+> Box: ubuntubudu, quiet (the harness itself refuses at load1 ≥ 0.5 and never
+> caveats; a refusal is a result — report it with its load readings, do not
+> loosen `--max-load`). Tree: pcrec at `da0ae443` (at or
+> after the merge of `lane/clss0`; nothing in `src/` is read for b1/the
+> isolated re-run — the study reads `src/parse/uprops_tables.inc` and its own
+> committed `results/byteclasses.tsv` only. `bench2-bytes` needs no
+> `build/pcrec` either — same committed-input rule).
+> ```
+> cd <pcrec checkout on ubuntubudu>
+> git log -1 --format=%h                                  # record the pin
+> gcc --version | head -1                                 # record the compiler
+> mkdir -p build/clstree_s0
+>
+> # --- b1: kit/whole-set ns/char, the committed 2026-09-11 arm set + whole-set tables ---
+> gnutimeout 7200 make -C studies/cls_tree_study bench2 CC=gcc \
+>     > build/clstree_s0/b1_bench2.log 2>&1
+> tail -5 build/clstree_s0/b1_bench2.log
+> wc -l studies/cls_tree_study/results/bench2.tsv
+> head -1 studies/cls_tree_study/results/bench2.tsv        # load1_at_start
+>
+> # --- CLSPACK: N=4/16/32 live byte-class sites, bitmap vs kit vs shared atom table ---
+> gnutimeout 1800 make -C studies/cls_tree_study bench2-bytes CC=gcc \
+>     > build/clstree_s0/clspack_bench2_bytes.log 2>&1
+> tail -5 build/clstree_s0/clspack_bench2_bytes.log
+> wc -l studies/cls_tree_study/results/bench2_bytes.tsv
+> head -1 studies/cls_tree_study/results/bench2_bytes.tsv  # load1_at_start
+>
+> # --- isolated ^C/member re-run [r1 MEAS-2]: the one bimodal cell, alone, more rounds ---
+> gnutimeout 600 python3 studies/cls_tree_study/bench.py \
+>     --population k53 --sets '^C' --regimes member --lams 0,16,256 \
+>     --rounds 41 --out capC_isolated.tsv \
+>     > build/clstree_s0/measc_isolated.log 2>&1
+> tail -5 build/clstree_s0/measc_isolated.log
+> wc -l studies/cls_tree_study/results/capC_isolated.tsv
+>
+> echo "CLS-TREE-S0-TIMING DONE"
+> ```
+> Expected row counts (fewer only if a build/run fails — a `BUILD FAIL` or
+> `RUN FAIL` line is a finding, report it verbatim; any `ANSWER MISMATCH` line
+> aborts that command's run and is a finding):
+>   - `bench2.tsv`: 4,620 data rows (12 sets × 5 regimes × 7 arms × 11 rounds).
+>   - `bench2_bytes.tsv`: 132 data rows (3 N values {4,16,32} × 4 arms
+>     {refbs,bitmap,kit,atom} × 11 rounds); also report the `n_atoms` column's
+>     three values (expect small integers well under 64 — a refusal naming
+>     ">64 atoms" is itself the finding, not a crash).
+>   - `capC_isolated.tsv`: 205 data rows (1 set × 1 regime × 5 arms {refbs,
+>     bitmap1, lam0, lam16, lam256} × 41 rounds).
+> The `CLS-TREE-S0-TIMING DONE` line is the done-trailer — its absence means
+> the session did not reach the end (report whichever log's `tail` is last).
+> Return all three TSVs (commit on a scratch branch or scp back) plus the
+> `build/clstree_s0/*.log` files, the recorded pin/compiler, and the three
+> `load1_at_start` readings. Wall time: b1 is dominated by 60 set×regime runs
+> of 7 arms × 11 rounds × 1 M probes (the 2026-09-11 run of 5 arms × 4
+> regimes fitted inside the I-65 session); `bench2-bytes` is 3 builds × 11
+> rounds × 4 arms × 2^20 probes, small (well under b1's); the isolated
+> re-run is 1 build × 41 rounds × 5 arms × 2^20 probes, also small. Total
+> session is expected to land well inside b1's own 7200 s budget — the two
+> added commands' own timeouts (1800 s, 600 s) are generous relative to their
+> actual size, not a sign they are expected to run long.
