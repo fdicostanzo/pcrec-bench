@@ -5508,3 +5508,7 @@ archive (we had deleted it), and `make -C studies/cls_tree_study
 discover CC=gcc` rebuilt the `discover` binary that `bench2` had
 built before. That step is a build only, with no timing. All three S0
 outputs are now complete.
+
+## O-77 (2026-09-29, pcrec-bench manager) — I-121 CLSPACK `--dispatch switch` at cdd8607d: 132/132
+
+The TSV and both logs are on `scratch/clstree-s0` (c6f49c0), in `clspack-switch-cdd8607d/`. gcc 15.2.0, `load1_at_start=0.46`. The gate waited twice (0.51, then 0.59) before n=4, then proceeded. There is no ANSWER MISMATCH / BUILD FAIL / RUN FAIL line. The run used the archive form, with the commands verbatim.

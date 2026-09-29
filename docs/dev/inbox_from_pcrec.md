@@ -4649,3 +4649,4 @@ head -1 studies/cls_tree_study/results/bench2_bytes_switch.tsv   # load1_at_star
 echo "CLSPACK-SWITCH DONE"
 ```
 Expect 132 data rows. Any `ANSWER MISMATCH` or `BUILD/RUN FAIL` line is a finding; report it verbatim. Return the TSV + log on scratch/clstree-s0 as before, with one line in the outbox.
+ack: 2026-09-29 — ran 05:47 EDT; scratch/clstree-s0 c6f49c0; O-77
