@@ -22,7 +22,7 @@ B6, abi 44) as unblocking the row. Everything below is SCRATCH TIER: no
 | set | arms | shape |
 |---|---|---|
 | loglines | **34** | 1 default + 30 (3 engines × 5 tune positions × 2 caps arms, capture-free) + 2 declared + 1 profiled |
-| email | **32** | 1 default + 30 (3 × 5 × 2, capture-free... **see finding below**) + 0 declared + 1 profiled |
+| email | **17** | 1 default + 15 (3 × 5, NOT capture-free — no `-nocaps` twin, **see finding below**) + 0 declared + 1 profiled |
 | bounded (`--extended`) | 31 | 1 default + 30 (capture-free) |
 | altwide (`--extended`) | 31 | 1 default + 30 (capture-free) |
 | capability (`--extended`) | 16 | 1 default + 15 (3 × 5, NOT capture-free — no `-nocaps` twin) |
@@ -32,15 +32,20 @@ B6, abi 44) as unblocking the row. Everything below is SCRATCH TIER: no
 exactly** — a good cross-check that the arm-generation logic matches what
 was promised.
 
-**A correction to my own arm design, found while writing this table**:
-email's capture census (`viewer_export._pattern_capture_count` over
+**Correction (manager review): the email arm count was wrong in an
+earlier draft of this report (32), corrected here to 17.** email's
+capture census (`viewer_export._pattern_capture_count` over
 `bench/email/patterns/*.rx`) reads **1 of 3 patterns capture-bearing**
 (`orig`/`factored` DO capture; `floor` does not) — so email is NOT
 capture-free at the SET level, and `CAPTURE_FREE_SETS` in
-`findings_tiers.sh` correctly excludes it from the `-nocaps` twin (32
-arms, not 34+). This is by design and confirmed working, not a bug — flagged
-here only because the table above needed the caveat spelled out rather
-than asserting "capture-free (3×5×2)" for email by copy-paste.
+`findings_tiers.sh` correctly excludes it from the `-nocaps` twin: 15
+engine×tune arms (3 engines × 5 tune positions, no `-nocaps` doubling),
+not 30. `SETS=email scripts/findings_tiers.sh --dry-run` prints exactly
+17 lines (1 default + 15 + 1 profiled), reconfirmed directly. This is by
+design and confirmed working, not a bug in the sweep script itself —
+the earlier 32 was an arithmetic error in this report, now fixed
+everywhere it appeared (the arm table, this paragraph, and the duration
+table below).
 
 ## Estimated sweep duration per set, and its basis
 
@@ -56,7 +61,7 @@ artifact and run the same calibrated loop):
 | set | measured per-cell (pcrec, gcc, 5 trials) | arms | **estimated full sweep** |
 |---|---|---|---|
 | loglines@0.1 | 8.8 min (`vm-in`) – 10.6 min (`vm-clang`) | 34 | **~5.0–6.0 hours** |
-| email-specimen@0.2 | 7.2–11.3 min | 32 | **~3.8–6.0 hours** |
+| email-specimen@0.2 | 7.2–11.3 min | 17 | **~2.0–3.2 hours** |
 | bounded@0.3 | **42.3–49.4 min** | 31 (`--extended`, engine×tune only) | **~21.8–25.5 hours** |
 | altwide@0.1/0.2 | 5.0 min (`auto`) – 41.9 min (interp; pcrec route unmeasured at this extreme) | 31 | **~2.6+ hours, plausibly far more at wide rungs** |
 | capability@0.1 | not in that table (a different set); no pcrec-family figure cited there | 16 | not estimated — no basis in hand |
@@ -68,7 +73,7 @@ arms, a full `--extended` engine×tune sweep on `bounded` alone is
 default (5400 s = 1.5 h) tolerates per cell but well within it per
 cell — the RISK is wall-clock budget for the whole sweep, not any single
 cell timing out. **Recommendation**: run loglines + email first (the
-charter's own primary target, ~9–12 h combined worst case, likely less
+charter's own primary target, ~7–9 h combined worst case, likely less
 since `--tune=` and `--no-captures` are answer-preserving and should not
 move compile time much beyond the plain `auto`/`vm`/`dfa` baseline this
 table already has); treat `--extended` (bounded/altwide/capability/syntax)
@@ -176,6 +181,15 @@ marker:  the log's own final line, "DONE rc=<N>" (appended unconditionally
          never a silent failure)
 ```
 
+**Manager review flagged this log's path**: `/tmp/b115_check_harness.log`
+is under `/tmp` ROOT, which the project's own CLAUDE.md rule (BD3) says
+never to use (the 7.6 GB tmpfs quota is per-user and shared) — this run's
+log is not moved because the manager also said not to restart the run
+while it is in flight, and moving the file mid-write is unnecessary risk
+for a text log this small. NEXT TIME this lane (or any lane) launches a
+background log, it goes under `/var/tmp/` or the session scratchpad, not
+`/tmp`.
+
 If this report is read before that marker line exists, the numbers this
 section would otherwise carry (pass/fail counts, whether
 `check_b115_tune_analysis_axis` survives inside the full run the way it
@@ -192,7 +206,7 @@ reboot).
 scripts/findings_tiers.sh
 python3 scripts/findings_tiers_matrix.py --store /var/tmp/b115/store --set loglines --out /tmp/loglines_matrix.tsv
 
-# email, full 32-arm sweep (loglines already swept if run together)
+# email, full 17-arm sweep (loglines already swept if run together)
 SETS="email" scripts/findings_tiers.sh
 python3 scripts/findings_tiers_matrix.py --store /var/tmp/b115/store --set email --out /tmp/email_matrix.tsv
 

@@ -2833,10 +2833,17 @@ def effective_tune(testee_id, flags):
     return "tune-" + TUNE_SLUG[values.pop()]
 
 
-#: pcrec's analysis-name grammar (docs/spec/findings.md 7: "Names are
-#: lowercase ([a-z][a-z0-9_-]*)"), reused verbatim rather than re-derived --
-#: a name pcrec would refuse should never reach a config_extra token first.
-ANALYSIS_NAME_RE = re.compile(r"^[a-z][a-z0-9_-]*$")
+#: pcrec's OWN analysis-name grammar allows `_` (docs/spec/findings.md 7:
+#: "Names are lowercase ([a-z][a-z0-9_-]*)"), but this project's testee_id
+#: SLUG charset is `[a-z0-9-]` (record_schema.md 6.4 `$defs/slug`, no `_`
+#: anywhere) -- an underscore bundle name would be a LEGAL pcrec analysis
+#: that gives an ILLEGAL derived testee_id, refused far from here (at
+#: `derive_testee_id`, or worse, only by the schema validator on write,
+#: long after the compile already ran). So this regex is DELIBERATELY
+#: NARROWER than pcrec's own grammar -- the intersection of the two --
+#: and the refusal below names the slug charset as the reason, not
+#: pcrec's grammar (which this name WOULD satisfy).
+ANALYSIS_NAME_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 
 
 def effective_analysis(testee_id, flags):
@@ -2867,11 +2874,18 @@ def effective_analysis(testee_id, flags):
         return None
     for v in seen:
         if not ANALYSIS_NAME_RE.match(v):
+            reason = ("the testee_id slug charset [a-z0-9-] admits no "
+                     "underscore (record_schema.md 6.4 $defs/slug), though "
+                     "pcrec's own analysis-name grammar would accept it "
+                     "(docs/spec/findings.md 7)"
+                     if re.match(r"^[a-z][a-z0-9_-]*$", v) else
+                     "not a legal analysis name ([a-z][a-z0-9-]*, the "
+                     "intersection of pcrec's own grammar and the slug "
+                     "charset, docs/spec/findings.md 7)")
             raise _ad.AdapterError(
-                "%s: --analysis %r is not a legal analysis name "
-                "([a-z][a-z0-9_-]*, docs/spec/findings.md 7). The value is "
+                "%s: --analysis %r is not usable here: %s. The value is "
                 "part of the derived testee_id, so it must be a legal name "
-                "before anything is measured." % (testee_id, v))
+                "before anything is measured." % (testee_id, v, reason))
     values = set(seen)
     if len(values) > 1:
         raise _ad.AdapterError(

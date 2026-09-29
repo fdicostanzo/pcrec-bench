@@ -9182,7 +9182,8 @@ def check_b115_tune_analysis_axis():
         if got != want:
             probs.append("effective_analysis(%r) -> %r, want %r"
                          % (flags, got, want))
-    for flags, needle in ((["--analysis", "BadName"], "not a legal analysis"),
+    for flags, needle in ((["--analysis", "BadName"], "not usable here"),
+                          (["--analysis", "my_bundle"], "admits no underscore"),
                           (["--analysis", "weblog", "--analysis=log"],
                            "more than one"),
                           (["--features", "all", "--analysis"], "last flag")):
@@ -9204,7 +9205,7 @@ def check_b115_tune_analysis_axis():
         bad(title, "; ".join(probs)[:700])
     else:
         ok(title, "10 tune spellings (5 digits + 5 aliases) + 2 refusals, "
-           "3 analysis spellings + 3 refusals")
+           "3 analysis spellings + 4 refusals")
 
     # ---- 2. every pinned config's ids are FROZEN --------------------------
     offenders = []
