@@ -6252,3 +6252,16 @@ Report: `docs/dev/lanes/b103infra_report.md`.
   under test (the probe printed PARITY over zero compiles); a re-pin's CLI
   change must be grepped across docs/dev/measurements/ probes too, not only the
   adapters and selfcheck.
+
+## 2026-09-28 evening (39th session, Opus 5.5) — [B115] FINDINGS-BENCH-TIERS: answered, unblocked, built, sweep launched
+
+Inbox I-118 (pcrecdev1: four scratch-tier columns DEFAULT / DECLARED /
+PROFILED / ORACLE-BEST) was acked and answered as O-72. The one real
+blocker: our pin and ~/pcrec's newest ref were both [FINDINGS] B1 (no
+--analysis). pcrecdev1 named f7f5a143 (abi 44), fetched it into ~/pcrec's
+refs, and accepted all five §6 answers. Lane b115tiers (sonnet) built the
+tooling; I reviewed it with two change requests (the slug charset refuses
+`_`; email is 17 arms, not 32) and merged 17e44db (check-harness 613/0).
+The sweep was launched detached at 21:01 EDT on a quiet box. Lesson: my
+stall watcher used `find -newermt '-25 minutes'`, which GNU find does not
+parse, so it fired a false stall twice. Use `-mmin -N`.
