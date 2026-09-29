@@ -1,0 +1,8 @@
+make: Entering directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+gcc -O2 -std=gnu11 -Wall -Wextra discover.c -o discover -lm
+CC=gcc python3 bench.py --population k53 --lams 0,16,256 --rounds 11 \
+    --whole --regimes member,mixed,ascii,full,runs --out bench2.tsv
+/var/tmp/clstree_s0/pcrec/studies/cls_tree_study/kit.py:316: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
+  set free in two bits, and for `\p{Lu}`-over-an-adjacent-pair-block's
+wrote /var/tmp/clstree_s0/pcrec/studies/cls_tree_study/results/bench2.tsv
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'

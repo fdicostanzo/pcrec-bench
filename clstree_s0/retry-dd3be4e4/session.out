@@ -1,0 +1,24 @@
+pin: dd3be4e4
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+    --whole --regimes member,mixed,ascii,full,runs --out bench2.tsv
+/var/tmp/clstree_s0/pcrec/studies/cls_tree_study/kit.py:316: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
+  set free in two bits, and for `\p{Lu}`-over-an-adjacent-pair-block's
+wrote /var/tmp/clstree_s0/pcrec/studies/cls_tree_study/results/bench2.tsv
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+4622 studies/cls_tree_study/results/bench2.tsv
+# cc=gcc rounds=11 load1_at_start=0.02 date=2026-09-29T05:22:00
+CC=gcc python3 bench_bytes.py --ns 4,16,32 --lam 16 --rounds 11 \
+    --out bench2_bytes.tsv
+bench_bytes: load1 0.54 >= 0.50 -- waiting for quiet (0s elapsed, bound 600s)
+wrote /var/tmp/clstree_s0/pcrec/studies/cls_tree_study/results/bench2_bytes.tsv
+make: Leaving directory '/var/tmp/clstree_s0/pcrec/studies/cls_tree_study'
+134 studies/cls_tree_study/results/bench2_bytes.tsv
+# cc=gcc rounds=11 nprobe=1048576 smoke=False load1_at_start=0.46 date=2026-09-29T05:22:48
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'gcc-16'
+wc: studies/cls_tree_study/results/capC_isolated.tsv: No such file or directory
+CLS-TREE-S0-TIMING DONE
+EXIT rc=0
