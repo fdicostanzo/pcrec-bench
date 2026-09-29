@@ -1,0 +1,5 @@
+/var/tmp/clspack_sw/pcrec/studies/cls_tree_study/kit.py:316: SyntaxWarning: "\p" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\p"? A raw string is also an option.
+  set free in two bits, and for `\p{Lu}`-over-an-adjacent-pair-block's
+bench_bytes n=4: load1 0.51 >= 0.50 -- waiting for quiet (0s elapsed, bound 600s)
+bench_bytes n=4: load1 0.59 >= 0.50 -- waiting for quiet (10s elapsed, bound 600s)
+wrote /var/tmp/clspack_sw/pcrec/studies/cls_tree_study/results/bench2_bytes_switch.tsv
