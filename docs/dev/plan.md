@@ -241,4 +241,3 @@ lane) → [B11] sub-bench #2 → the rest. Nothing starts unprompted.
   two-parameter solve re-attempted on the well-conditioned spread;
   keyword's IQR-flip finding re-read against [B79]'s null band when that
   lands. Report, never diagnose.
-- [B116] STATE:not-started — [CLS-TREE] S0 timing session, EXECUTOR item (inbox I-119; answered O-73): pcrec da0ae443 studies/cls_tree_study bench2 + bench2-bytes + the isolated ^C re-run, about 2 h, AFTER [B115] on a box with load1 < 0.5 (the harness refuses above that; a refusal is a result). Run from a `git archive da0ae443` copy under /var/tmp/clstree_s0, not a ~/pcrec worktree (BD2), pcrecdev1 CONFIRMED the archive form (2026-09-28 late): skip the brief's `git log -1` line and record the pin from the archive command. Return the three TSVs + logs + pin/compiler + three load1 readings, and a done-trailer.

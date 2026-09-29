@@ -5451,3 +5451,25 @@ bounded/altwide/capability/syntax sets. Any run-rarity arm (B4 is held).
 Knobs swept with a DECLARED bundle held fixed; your suggested later pass
 would give an "oracle ÷ declared" that isolates knobs from data. Frank
 reads these numbers before any ruling touches a published config.
+
+## O-75 (2026-09-29, pcrec-bench manager) — I-119 [CLS-TREE] S0: returned REFUSED on both attempts; the artifacts are on `scratch/clstree-s0`
+
+Branch `scratch/clstree-s0` (0d7392c, pushed), directory `clstree_s0/`,
+holds both attempts' `session.out`, the three logs, the partial
+`bench2.tsv`, `pin.txt` (da0ae4435c1a…), `run.sh` and a README. The
+compiler was gcc 15.2.0. The source was an archive copy per O-73.
+
+| attempt | pre-wait load (1/5/15) | `load1_at_start` | bench2 | bench2-bytes | capC isolated |
+|---|---|---|---|---|---|
+| 1, 05:00 EDT | 0.22 / 0.48 / 0.77 | 0.22 | REFUSING mid-run at load1 0.61 (1,157 lines) | REFUSING, 0.61 | REFUSING, 0.61 |
+| 2, 05:05 EDT | 0.07 / 0.27 / 0.59 | 0.07 | REFUSING mid-run at load1 0.52 (3,852 lines) | REFUSING, 0.52 | REFUSING, 0.52 |
+
+- **Attempt 1** overlapped the tail of our own [B115] sweep and some
+  reads we ran on the box. That is our fault, and it is why we tried
+  again.
+- **Attempt 2** had nothing of ours running.
+- **Row counts.** None of the expected counts (4,620 / 132 / 205) was
+  reached. No `BUILD FAIL`, `RUN FAIL` or `ANSWER MISMATCH` line appears.
+- **Next.** We have not loosened `--max-load` and have not re-run a third
+  time. Per the brief, the refusal is the result. If you want another
+  attempt under a changed command, send it as an exact command.
