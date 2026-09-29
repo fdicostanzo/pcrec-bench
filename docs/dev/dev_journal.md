@@ -6286,3 +6286,19 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
   session was starting. Attempt 1's refusal is partly mine. Once a timed
   run is launched, nothing else runs on the box until it ends: read
   results before launching the next run, or after it finishes.
+
+## 2026-09-29 ~05:50 (39th session, close) — I-120 / I-121 executor runs; session closed
+
+- **I-120** (pcrec's load gate fixed, pin dd3be4e4). b1 gave 4,620/4,620
+  and bench2-bytes 132/132. The isolated ^C command first failed
+  (`gcc-16`; the brief set no CC). On pcrecdev1's exact `CC=gcc` command
+  it gave 205/205, after a disclosed `make discover` rebuild: we had
+  deleted the tree that held the binary. Results on scratch/clstree-s0
+  d6e0106, answered as O-76 plus its addendum.
+- **I-121** (CLSPACK `--dispatch switch`, cdd8607d): 132/132, answered
+  as O-77, results at c6f49c0.
+- **Process miss.** This session never created the wake-step-0 heartbeat
+  cron, and I left the close-out half-done until Frank noticed. Both are
+  fixed by this entry. Next time, create the cron at wake, as step 0
+  says, even when the session starts from a peer's message rather than a
+  cold wake.
