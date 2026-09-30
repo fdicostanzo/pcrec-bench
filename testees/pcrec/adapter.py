@@ -3003,6 +3003,30 @@ def effective_cflags(testee_id, cfg):
     return list(declared), "cf-" + "-".join(cflags_token(f) for f in declared)
 
 
+#: [B117] THE COMPILEE OPTIMIZATION-LEVEL AXIS's own recognizer: which of a
+#: config's `cflags` (if any) is an `-O` flag, so `build_flags` can name the
+#: EFFECTIVE level explicitly rather than leaving "gcc/clang take the LAST
+#: -O flag" to a reader's memory of the toolchain's own precedence rule.
+#: `-Og`/`-Ofast`/`-Oz` are recognised too (gcc/clang's fuller `-O` family)
+#: though this pin's roster only uses 0/1/2(implicit)/3/s.
+_OLEVEL_RE = re.compile(r"^-O(0|1|2|3|s|g|fast|z)?$")
+
+
+def effective_olevel(cflags):
+    """-> the LAST `-O...` flag in `cflags`, or `None` when none is present.
+    Mirrors the ACTUAL precedence rule ([B35]'s own comment: "the LAST `-O`
+    wins on gcc and clang") rather than assuming the caller only ever
+    appends one -- a `cflags` list carrying two `-O` flags (never emitted
+    by this project's own configs.toml, but a `pcrec-local` caller's
+    `$PCREC_LOCAL_FLAGS` has no such guarantee) is exactly the case a
+    reader would get wrong by eye."""
+    last = None
+    for f in cflags or []:
+        if _OLEVEL_RE.match(f):
+            last = f
+    return last
+
+
 def compose_config_extra(*parts):
     """`testee.config_extra` from the axis tokens a config carries, in a
     FIXED order: the axes in the order they were chartered ([B24] `cc`,
@@ -3481,6 +3505,21 @@ class Adapter(_ad.Adapter):
                            "unaffected (run.driver_compiler names the "
                            "driver's own compiler, which never moves)"
                            % " ".join(cfg["cflags"]))
+            # [B117] THE EFFECTIVE OPTIMIZATION LEVEL, named explicitly: the
+            # clause above already shows the fixed -O2 followed by whatever
+            # `cflags` carries, but "the artifact was actually compiled at
+            # -O3" is a fact about gcc/clang's OWN last-flag-wins precedence
+            # that a reader should not have to reconstruct by eye from two
+            # `-O` tokens in one string.
+            _olevel = effective_olevel(cfg["cflags"])
+            if _olevel:
+                cflags_note += ("; EFFECTIVE OPTIMIZATION LEVEL ([B117], "
+                                "Frank 2026-09-29's compilee "
+                                "optimization-level sweep): gcc and clang "
+                                "both take the LAST -O flag on the command "
+                                "line, so the fixed -O2 above is OVERRIDDEN "
+                                "-- this artifact is actually compiled at "
+                                "%s" % _olevel)
         buffer_note = ""
         runtime = runtime_options(cfg.get("flags", []))
         if caps:

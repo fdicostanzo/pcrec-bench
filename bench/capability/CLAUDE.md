@@ -128,6 +128,18 @@ behavioral witnesses (`tre-default`/`vectorscan-block-nosom` flipping a
 raw driver refusal to a clean `unsupported-by-declaration`). No pattern
 was found over-tagged.
 
+**[B117] (lane b117prep, 2026-09-29) adds the eight COMPILEE
+OPTIMIZATION-LEVEL testees to the `ext bench` roster**
+(`pcrec-{auto,vm}-o{0,1,3,s}`; `patterns.rxt` regenerated, `--check`
+clean): each declares EXACTLY its base's (`pcrec-auto`/`pcrec-vm`) own
+token set — the axis is a `cflags`-carried gcc/clang `-O` flag on OUR OWN
+phase-2 compile, never passed to pcrec's own argv, so it cannot move
+what the PARSER accepts (the same [B111] reasoning `pcrec-auto-align64`
+above already states verbatim). No separate witness compile: the
+reasoning is structural, not measured, the same disposition [B111]'s
+own compiler/buffer/cap-axis rows take. See `testees/pcrec/CLAUDE.md`'s
+"[B117]" row and `docs/dev/plan.md`'s [B117] entry.
+
 **[B101] (lane b101repin, 2026-09-26) adds `pcrec-auto-noreqbyte` to the
 `ext bench` roster** (pcrec-auto + `-fno-req-byte`, inbox I-111's
 [OPT-REQBYTE] twin; `patterns.rxt` regenerated, `--check` clean): exactly
