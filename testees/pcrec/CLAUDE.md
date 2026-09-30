@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides thirty-one testees at the commit pinned in `configs.toml`, and
+Provides thirty-nine testees at the commit pinned in `configs.toml`, and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
@@ -10,7 +10,10 @@ more at the a32bc86e re-pin — `pcrec-{auto,vm}-nolitrun`,
 `pcrec-{auto,vm}-noaltclsfactor`, `pcrec-{auto,vm}-noaltclsfactor-
 nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one;
 [B110], 2026-09-28: two more, `pcrec-auto-align64loops` /
-`pcrec-auto-nolitrun-align64loops`, at the same pin — up from twenty-nine):
+`pcrec-auto-nolitrun-align64loops`, at the same pin — up from twenty-nine;
+[B117], 2026-09-29: eight more, `pcrec-{auto,vm}-o{0,1,3,s}` (the
+COMPILEE OPTIMIZATION-LEVEL axis, prep only — not yet measured), at the
+same pin — up from thirty-one):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -32,11 +35,12 @@ nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one;
 | `pcrec-auto-align64` | the same flags as `pcrec-auto`, plus `cflags = ["-falign-functions=64"]` | ([B35]) THE COMPILEE-FLAGS AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim gains one extra flag, never passed to pcrec — pcrec I-39 (v)'s layout probe for the disputed `floor` / match / `auto` cell. See below |
 | `pcrec-auto-align64loops`, `pcrec-auto-nolitrun-align64loops` | the same flags as `pcrec-auto` / `pcrec-auto-nolitrun`, plus `cflags = ["-falign-functions=64", "-falign-loops=64"]` | ([B110], pin a32bc86e, inbox I-115 Q2) THE PLACEMENT-TWIN PAIR: pcrec's own follow-up on O-64/O-65's [OPT-LITSCAN] S2a reading, separating CODE from PLACEMENT for the aws-access-key-id ×1.037 and logparse-atomic-removed +0.7-1.4 ns findings. Both function AND loop-head landing pinned (against `pcrec-auto-align64`'s function-only pin) — b110probe's own objdump probe (I-115 Q6) found the lit-run "attempt" loop's head lands at three different `mod 16` offsets across L=2..40 with NO `.p2align` directive of its own, purely from how much code happens to precede it. `effective_cflags` joins both flags into ONE `cf-align-functions-64-align-loops-64` token; the nolitrun sibling composes it AFTER the `nolitrun` deny word (chartering order: cc, caps, denies, cflags, encoding), deriving `pcrec-auto-nolitrun`'s own id plus the token, never colliding with either single-variable sibling. `check_cflags_axis`'s new arm (2b) proves the composition and the CLI listing; docs/dev/lanes/b110probe_report.md hands back the exact `run_suite.sh` invocation for the manager's window — this lane measures nothing pinned itself |
 | `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
+| `pcrec-{auto,vm}-o0`, `-o1`, `-o3`, `-os` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `cflags = ["-O<n>"]` | ([B117], Frank 2026-09-29, LOW PRIORITY) THE COMPILEE OPTIMIZATION-LEVEL AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim at `-O0`/`-O1`/`-O3`/`-Os` instead of the fixed `-O2` — gcc/clang take the LAST `-O` flag, so `build_flags` NAMES the effective level explicitly (`effective_olevel()`). `pcrec-auto`/`pcrec-vm` ARE this axis's `-O2` arm; no `-o2` testee exists. PREP ONLY — `check_olevel_axis` (`make check-harness`) proves the override reaches real codegen (a hand-chosen forced-VM witness's `.text` bytes differ between `-O0` and `-O3`) and that neither level breaks the libpcre2 oracle agreement; the census over `bench/capability` is OWED to a measurement window (docs/dev/measurements/probe_b117_olevel_census.py). See docs/dev/plan.md [B117] and docs/dev/lanes/b117prep_report.md |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
 |---|---|
-| `adapter.py` | the configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `effective_encoding()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, the engine-encoding rule, and the ONE place `config_extra`'s parts are ordered); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
+| `adapter.py` | the configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `effective_encoding()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, the engine-encoding rule, and the ONE place `config_extra`'s parts are ordered); `effective_olevel()` ([B117]: which of a `cflags` list is the LAST `-O` flag, so `build_flags` names the EFFECTIVE optimization level rather than leaving gcc/clang's last-flag-wins precedence to a reader's memory); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |

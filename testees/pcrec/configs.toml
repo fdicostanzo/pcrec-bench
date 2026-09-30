@@ -450,6 +450,96 @@ flags = ["--features", "all", "-fno-lit-run"]
 description = "pcrec-auto-nolitrun ([OPT-LITSCAN] S2a's VM literal-run compare denied, -fno-lit-run) with the artifact+shim ALSO compiled under -falign-functions=64 -falign-loops=64 ([B110], inbox I-115 Q2): the `auto-nolitrun` arm of the same placement-vs-code pair -- against pcrec-auto-align64loops, one variable moved (S2a on/off); against pcrec-auto-nolitrun, one variable moved (the compilee's own function+loop alignment)"
 
 # ---------------------------------------------------------------------------
+# THE COMPILEE OPTIMIZATION-LEVEL AXIS -- `cflags = ["-Ox"]` ([B117]; Frank,
+# 2026-09-29, LOW PRIORITY -- prep/plan early, execute only in an idle box
+# period). QUESTION: does the `$CC -O` LEVEL our own phase 2 compiles the
+# emitted pattern C at change pcrec's match time (and compile cost / object
+# size) enough to matter? Every other pcrec testee compiles under a FIXED
+# `-O2` (`_compile_one`'s `$CC -O2 -fPIC -shared <cflags> shim.c`); these
+# eight configs are `pcrec-auto` / `pcrec-vm` with ONE `-O<n>` flag appended
+# to `cflags` -- gcc and clang both take the LAST `-O` flag on the command
+# line, so `cflags = ["-O3"]` AFTER the fixed `-O2` is a REAL -O3 build,
+# never a `-O2 -O3` ambiguity a reader has to resolve by hand (see
+# `effective_olevel()` below: `build_flags` NAMES the EFFECTIVE level a
+# `cflags`-carried `-O` flag selects, the same honesty rule [B35]'s own
+# named clauses already give `-falign-functions=64`).
+#
+# `-O0` is the FLOOR arm (no gcc-side inlining, unrolling or vectorization
+# at all -- "what would this cost with none of gcc's own work"); `-O1` is
+# gcc's lightest real optimization tier; `-O3` is the CEILING (every
+# gcc-controlled inlining/unrolling/vectorization pass -- the tier most
+# likely to matter for the VM's own goto-threaded dispatch loop, tuning.md
+# 2.21's entry-shape rungs); `-Os` trades size for speed on the COMPILE
+# side, a different lever from pcrec's own [ART-SIZE] size term on the
+# EMIT side. The pre-existing `pcrec-auto` / `pcrec-vm` ARE this axis's
+# `-O2` arm -- no `pcrec-auto-o2` testee exists (it would derive the SAME
+# artifact and collide with its own sibling in the store).
+#
+# ONE VARIABLE (BD3), `pcrec-auto-align64`'s own shape exactly: same pin,
+# same `--features all`, same engine mode, same captures, gcc like every
+# other config here -- the compilee's OWN optimization level is the one
+# thing that moves. `cflags_token` slugs `-O3` -> `o3` (strip leading
+# dashes -- no leading bare `f`+letter to strip -- lowercase, non-
+# `[a-z0-9]` runs to `-`), so `config_extra` gains `cf-o3` and the derived
+# id is `pcrec-auto`'s plus that token, exactly like every other `cflags`
+# testee.
+[testees.pcrec-auto-o0]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-O0"]
+flags = ["--features", "all"]
+description = "pcrec defaults with the artifact+shim compiled at -O0 ([B117], Frank 2026-09-29's compilee optimization-level sweep): the FLOOR arm -- no gcc-side inlining, unrolling or vectorization at all -- against pcrec-auto, one variable moved"
+
+[testees.pcrec-auto-o1]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-O1"]
+flags = ["--features", "all"]
+description = "pcrec defaults with the artifact+shim compiled at -O1 ([B117]): gcc's lightest real optimization tier, against pcrec-auto -- one variable moved"
+
+[testees.pcrec-auto-o3]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-O3"]
+flags = ["--features", "all"]
+description = "pcrec defaults with the artifact+shim compiled at -O3 ([B117]): the CEILING arm -- every gcc-controlled inlining/unrolling/vectorization pass -- against pcrec-auto, one variable moved"
+
+[testees.pcrec-auto-os]
+engine_mode = "auto"
+captures = "on"
+cflags = ["-Os"]
+flags = ["--features", "all"]
+description = "pcrec defaults with the artifact+shim compiled at -Os ([B117]): gcc's own size-for-speed trade on the COMPILE side (distinct from pcrec's own [ART-SIZE] size term on the EMIT side), against pcrec-auto -- one variable moved"
+
+[testees.pcrec-vm-o0]
+engine_mode = "vm"
+captures = "on"
+cflags = ["-O0"]
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm with the artifact+shim compiled at -O0 ([B117]): the VM route is where code shape should matter most (goto-threaded dispatch, the [OPT-LITSCAN]/[ENG-ISL] lowerings) -- against pcrec-vm, one variable moved"
+
+[testees.pcrec-vm-o1]
+engine_mode = "vm"
+captures = "on"
+cflags = ["-O1"]
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm with the artifact+shim compiled at -O1 ([B117]): against pcrec-vm, one variable moved"
+
+[testees.pcrec-vm-o3]
+engine_mode = "vm"
+captures = "on"
+cflags = ["-O3"]
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm with the artifact+shim compiled at -O3 ([B117]): against pcrec-vm, one variable moved"
+
+[testees.pcrec-vm-os]
+engine_mode = "vm"
+captures = "on"
+cflags = ["-Os"]
+flags = ["--features", "all", "--engine=vm"]
+description = "pcrec --engine=vm with the artifact+shim compiled at -Os ([B117]): against pcrec-vm, one variable moved"
+
+# ---------------------------------------------------------------------------
 # THE ALTERNATION-ISLAND DENY AXIS -- `-fno-alt-island` ([B37]; pcrec
 # [ENG-ISL] STEP 1, docs/spec/tuning.md 2.20, --list-axes `alt-island`
 # bit 23, inbox I-43/I-44; pin 334fd10e = abi 22).

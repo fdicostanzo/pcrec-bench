@@ -8755,6 +8755,237 @@ def check_cflags_axis():
     shutil.rmtree(scratch, ignore_errors=True)
 
 
+#: [B117] THE COMPILEE OPTIMIZATION-LEVEL AXIS -- eight `cflags`-carried
+#: `-O<n>` configs, `pcrec-auto-align64`'s own shape exactly (see the
+#: configs.toml comment above them). The witness is `a(b|c)+d`, the
+#: pre-existing "VM HYBRID" pattern this file already uses as its canonical
+#: small forced-VM witness (`STAMP_CASES`), forced under `--engine=vm` --
+#: the mode this project's own charter names as "where code shape should
+#: matter most (goto-threaded dispatch)".
+_OLEVEL_CONFIGS = ("pcrec-auto-o0", "pcrec-auto-o1", "pcrec-auto-o3",
+                   "pcrec-auto-os", "pcrec-vm-o0", "pcrec-vm-o1",
+                   "pcrec-vm-o3", "pcrec-vm-os")
+_OLEVEL_WITNESS = b"a(b|c)+d"
+
+
+def _text_size(so_path):
+    """-> the ELF `.text` section's byte size, via binutils `size`. Used
+    over a raw file-size comparison because the WHOLE `.so` also carries
+    the shim (identical across every arm here) and .rodata/.data, which a
+    codegen-level optimization does not move the same way."""
+    proc = run(["size", so_path], timeout=30)
+    if proc.returncode != 0:
+        return None
+    lines = [ln for ln in proc.stdout.splitlines() if ln.strip()]
+    if len(lines) < 2:
+        return None
+    try:
+        return int(lines[1].split()[0])
+    except (ValueError, IndexError):
+        return None
+
+
+def check_olevel_axis():
+    """[B117] THE COMPILEE OPTIMIZATION-LEVEL AXIS (Frank, 2026-09-29). Four
+    arms: (1) the eight configs' shape (cflags, derived id, build_flags'
+    named EFFECTIVE-LEVEL clause); (2) `effective_olevel()` itself, incl.
+    the two-`-O`-flags last-wins case a config here never exercises but a
+    `pcrec-local` caller's `$PCREC_LOCAL_FLAGS` could; (3) THE REAL PROOF --
+    a real compile watched at the `subprocess` boundary (the flag reaches
+    gcc's real argv, positioned after the fixed -O2, and is absent from
+    pcrec's own argv -- `pcrec-auto-align64`'s own arm 3+4 shape) whose
+    resulting .so objects differ in `.text` bytes between -O0 and -O3 on a
+    real forced-VM witness (the control that the override is not merely
+    textual); (4) the CLI lists all eight and the -O3 witness still answers
+    the pure-DFA smoke pattern by the libpcre2 oracle (an optimization flag
+    that broke codegen would otherwise pass as a speed change -- the same
+    control `pcrec-auto-align64`'s own arm 4 uses)."""
+    print("-- the compilee optimization-level axis: cflags = [\"-Ox\"] "
+          "([B117], Frank 2026-09-29) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("olevel axis", "no pcrec adapter")
+        return
+
+    saved = dict(os.environ)
+    os.environ["PCREC_BIN"] = adapter.pin_binary()
+    os.environ.pop("PCREC_LOCAL_FLAGS", None)
+    os.environ.pop("CC", None)
+    try:
+        # ---- 1. the eight configs' shape ----------------------------------
+        want_cflags = {"pcrec-auto-o0": ["-O0"], "pcrec-auto-o1": ["-O1"],
+                       "pcrec-auto-o3": ["-O3"], "pcrec-auto-os": ["-Os"],
+                       "pcrec-vm-o0": ["-O0"], "pcrec-vm-o1": ["-O1"],
+                       "pcrec-vm-o3": ["-O3"], "pcrec-vm-os": ["-Os"]}
+        probs = []
+        for tid in _OLEVEL_CONFIGS:
+            cfg = adapter.config(tid)
+            block = adapter.describe(tid)
+            derived = _rec.derive_testee_id(block)
+            base = "pcrec-vm" if tid.startswith("pcrec-vm") else "pcrec-auto"
+            base_derived = _rec.derive_testee_id(adapter.describe(base))
+            lvl = cfg.get("cflags", [None])[0]
+            token = "cf-" + lvl.lstrip("-").lower()
+            if cfg.get("cflags") != want_cflags[tid]:
+                probs.append("%s: cflags is %r" % (tid, cfg.get("cflags")))
+            if derived != base_derived + "_" + token:
+                probs.append("%s: derived id %r is not %r plus `%s`"
+                             % (tid, derived, base_derived, token))
+            if "EFFECTIVE OPTIMIZATION LEVEL" not in block["build_flags"] \
+                    or ("actually compiled at %s" % lvl) not in block["build_flags"]:
+                probs.append("%s: build_flags does not NAME the effective "
+                             "level %s" % (tid, lvl))
+            ro_names = {o["name"] for o in block["runtime_options"]}
+            if lvl in ro_names:
+                probs.append("%s: runtime_options carries the flag -- this "
+                             "is OUR OWN compile flag, never pcrec's own "
+                             "option" % tid)
+        if probs:
+            bad("olevel axis: the eight configs carry their own -O flag, "
+                "derived id and a NAMED effective-level clause",
+                "; ".join(probs)[:800])
+        else:
+            ok("olevel axis: the eight configs carry their own -O flag, "
+               "derived id and a NAMED effective-level clause",
+               "%d configs, each one variable apart from its plain sibling"
+               % len(_OLEVEL_CONFIGS))
+
+        # ---- 2. effective_olevel() itself ---------------------------------
+        mod = _pcrec_adapter_module()
+        cases = [(["-O3"], "-O3"), (["-falign-functions=64"], None),
+                 ([], None), (None, None),
+                 (["-O2", "-O0"], "-O0"),          # LAST wins, not first
+                 (["-falign-functions=64", "-O1"], "-O1")]
+        probs = []
+        for cflags, want in cases:
+            got = mod.effective_olevel(cflags)
+            if got != want:
+                probs.append("effective_olevel(%r) = %r, want %r"
+                             % (cflags, got, want))
+        if probs:
+            bad("olevel axis: effective_olevel() picks the LAST -O flag "
+                "(or None)", "; ".join(probs))
+        else:
+            ok("olevel axis: effective_olevel() picks the LAST -O flag "
+               "(or None)", "%d cases, incl. two -O flags in one list "
+               "(a shape no configs.toml row uses, but $PCREC_LOCAL_FLAGS "
+               "could)" % len(cases))
+
+        # ---- 3. THE REAL PROOF: a real compile, both sides ----------------
+        tmp = tempfile.mkdtemp(prefix="pcrecbench-olevel-")
+        try:
+            sizes, argv_probs = {}, []
+            for tid, tag_o in (("pcrec-vm-o0", "-O0"), ("pcrec-vm-o3", "-O3")):
+                g = type(adapter)._compile_one.__globals__
+                argvs, real_sp = [], g["subprocess"]
+                g["subprocess"] = _ArgvSpy(real_sp, argvs)
+                try:
+                    adapter.prepare(tid, tmp)
+                    cp = adapter.compile(tid, "olevel", _OLEVEL_WITNESS, {},
+                                         1, tmp)
+                finally:
+                    g["subprocess"] = real_sp
+                cr = cp.get(_ad.FORM_PLAIN)
+                if cr is None or cr.outcome != "compiled":
+                    argv_probs.append("%s: %s" % (tid, getattr(cr, "outcome",
+                                                              "no result")))
+                    continue
+                so = cr.handle["lib"]
+                sizes[tid] = _text_size(so)
+                cc_argvs = [a for a in argvs
+                           if a and os.path.basename(a[0]) in ("gcc", "cc")]
+                pcrec_argvs = [a for a in argvs
+                              if a and os.path.basename(a[0]) == "pcrec"]
+                if not cc_argvs:
+                    argv_probs.append("%s: no gcc/clang exec seen" % tid)
+                for a in cc_argvs:
+                    if tag_o not in a:
+                        argv_probs.append("%s missing from %s"
+                                         % (tag_o, " ".join(a[:6])))
+                        continue
+                    i_o2, i_flag = a.index("-O2"), a.index(tag_o)
+                    if not (i_o2 < i_flag):
+                        argv_probs.append("%s does not follow -O2 in %s"
+                                         % (tag_o, " ".join(a[:8])))
+                for a in pcrec_argvs:
+                    if tag_o in a:
+                        argv_probs.append("%s reached pcrec's OWN argv: %s"
+                                         % (tag_o, " ".join(a[:6])))
+            if argv_probs:
+                bad("olevel axis: -O0 and -O3 both reach the REAL gcc argv "
+                    "(after the fixed -O2) and neither reaches pcrec's own",
+                    "; ".join(argv_probs)[:600])
+            else:
+                ok("olevel axis: -O0 and -O3 both reach the REAL gcc argv "
+                   "(after the fixed -O2) and neither reaches pcrec's own",
+                   "pcrec-vm-o0, pcrec-vm-o3 on %r" % _OLEVEL_WITNESS)
+
+            title = ("olevel axis: the -O0 and -O3 .so objects differ in "
+                     "`.text` bytes -- the override reaches real codegen, "
+                     "not just the argv")
+            t0, t3 = sizes.get("pcrec-vm-o0"), sizes.get("pcrec-vm-o3")
+            if t0 is None or t3 is None:
+                bad(title, "`size` could not be read on one or both .so "
+                          "(sizes: %r)" % sizes)
+            elif t0 == t3:
+                bad(title, "-O0 and -O3 .text are BOTH %d bytes on %r -- "
+                          "either gcc collapsed the two levels on this "
+                          "witness, or the override is not reaching "
+                          "codegen at all" % (t0, _OLEVEL_WITNESS))
+            else:
+                ok(title, "-O0 .text=%d B, -O3 .text=%d B (%+d B, %r)"
+                          % (t0, t3, t3 - t0, _OLEVEL_WITNESS))
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+        # ---- 4. the CLI lists all eight, and -O3 still answers the ORACLE -
+        proc = run([sys.executable, "-m", "pcrecbench", "testees"], cwd=ROOT,
+                  timeout=300)
+        missing = [tid for tid in _OLEVEL_CONFIGS
+                  if proc.returncode != 0
+                  or not re.search(r"(?m)^\s*%s\b" % re.escape(tid),
+                                   proc.stdout)]
+        if missing:
+            bad("olevel axis: `pcrecbench testees` lists all eight configs",
+                "missing: %s (exit %d)" % (", ".join(missing), proc.returncode))
+        else:
+            ok("olevel axis: `pcrecbench testees` lists all eight configs",
+               ", ".join(_OLEVEL_CONFIGS))
+
+        tmp2 = tempfile.mkdtemp(prefix="pcrecbench-olevel-oracle-")
+        try:
+            subj = []
+            for i, text in enumerate(_ALIGN64_SUBJECTS):
+                p = os.path.join(tmp2, "olevel-s%d.bin" % i)
+                with open(p, "wb") as f:
+                    f.write(text)
+                subj.append(_CCSubject(i, p, len(text)))
+            out, diag, diffs, nrows, nmatch, meta = _cap_vs_oracle(
+                adapter, "pcrec-auto-o3", _ALIGN64_PATTERN, subj,
+                list(_ALIGN64_SUBJECTS), tmp2, "olevel-o3")
+            title = ("olevel axis: pcrec-auto-o3 answers the pure-DFA smoke "
+                     "pattern by the libpcre2 ORACLE, both forms")
+            if out != "compiled":
+                bad(title, "%s: %s" % (out, " ".join((diag or "").split())[:300]))
+            elif diffs:
+                bad(title, "an optimization flag that broke codegen would "
+                          "otherwise pass as a speed change: %s"
+                          % "; ".join(diffs[:4])[:400])
+            elif nmatch < 4:
+                bad(title, "%d rows agreed but only %d matched"
+                          % (nrows, nmatch))
+            else:
+                ok(title, "%d rows (%d subjects x 2 forms), %d matching; "
+                         "answer + span identical to libpcre2"
+                         % (nrows, len(subj), nmatch))
+        finally:
+            shutil.rmtree(tmp2, ignore_errors=True)
+    finally:
+        os.environ.clear()
+        os.environ.update(saved)
+
+
 #: THE ENGINE-ENCODING AXIS ([B77] U2; docs/design/utf8_set_v1.md 7.1/7.2,
 #: F-C1 -- a MUST per inbox I-94). The utf8 set's roster adds a SECOND,
 #: character-mode config per engine; the encoding is an IDENTITY, so it
@@ -13939,6 +14170,7 @@ def main():
     check_cap_axis()
     check_noedge_axis()
     check_cflags_axis()
+    check_olevel_axis()
     check_encoding_axis()
     check_b115_tune_analysis_axis()
     check_b104_reqrunenc_rightmost()
