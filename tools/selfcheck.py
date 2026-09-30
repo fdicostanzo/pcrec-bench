@@ -6858,12 +6858,21 @@ def check_noreqbyte_testee():
              {"req_byte": ("98", "none"), "req_run": ("626172@0", "none"),
               "req_why": ("emitted", "none"),
               "dfa_prefilter": ("memchr", "memchr")}),
+            # [B118] (pcrec fc719ca4, abi 43-44, [FIND-TIE]): the same
+            # rightmost tie-break move documented on the LEDGER_STAMP_CASES
+            # row above moves this arm's values too -- the scan index
+            # 3 -> 7, `run-pinned-bounded` -> `offset-set-bounded` (now
+            # equal to the denied arm's own value, both reading the
+            # narrower offset-set rung), `req_why` `dominated` ->
+            # `emitted`. `-fno-req-byte` denies the byte/run pre-check
+            # either way, so the denied arm's own three values are
+            # untouched by FIND-TIE.
             ("capability wild-secrets-github-pat",
              _bench_pattern("capability", "wild-secrets-github-pat"),
              {"req_byte": ("95", "none"),
-              "req_run": ("6875625f7061745f@3", "none"),
-              "req_why": ("dominated", "none"),
-              "dfa_prefilter": ("run-pinned-bounded", "offset-set-bounded")}),
+              "req_run": ("6875625f7061745f@7", "none"),
+              "req_why": ("emitted", "none"),
+              "dfa_prefilter": ("offset-set-bounded", "offset-set-bounded")}),
             ("capability wild-validator-uuid-grok",
              _bench_pattern("capability", "wild-validator-uuid-grok"),
              {"req_byte": ("45", "none"), "req_run": ("none", "none"),
@@ -9967,13 +9976,29 @@ def check_b108_acceptance_mover():
     """[B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a; inbox I-113's own
     acceptance mover). `wild-datetime-datefinder-alternation`
     (bench/capability) under `--engine=vm` was REFUSED at 751b9c6d
-    ("pattern too large... (limit 500000)") and COMPILES at a32bc86e --
-    the one refusal-mover the S2a movers manifest names. Asserted here
-    against BOTH pcrec binaries directly (never assumed from the OLD pin's
-    own report), and the new artifact's code bytes are asserted to be
-    under the 500,000-byte default cap and to carry `vm_lit_runs > 0`
-    (the mechanism that rescues it)."""
-    print("-- [B108]/I-113: the acceptance mover, refused at 751b9c6d -> compiles at a32bc86e --")
+    ("pattern too large... (limit 500000)") and COMPILED at a32bc86e --
+    the one refusal-mover the S2a movers manifest names.
+
+    [B118] (pcrec fc719ca4, abi 42->43, [OPT-LITSCAN] F5; inbox I-122)
+    FINDING: the mover RE-REFUSES at this pin, under the SAME default
+    cap. F5 raises the VM literal-run floor 2 -> 3 (D127's own ruling):
+    this witness is a huge alternation dense with 2-byte literal runs
+    (month/weekday abbreviations, timezone codes), and every one of
+    those now falls back to F5's OLD per-byte compare chain instead of
+    S2a's P4 one-compare form. MEASURED directly against the real
+    fc719ca4 binary (`--max-emit-code-bytes` raised to compile it
+    anyway): `vm_lit_runs` 826 -> 155 (671 fewer P4-collapsed runs),
+    `vm_program_bytes` 508,413 -> 605,083 (+96,670, +19%), pushing the
+    default-cap code size from 482,765 B (under 500,000) to 579,863 B
+    (over it) -- confirmed compiling cleanly under a raised cap
+    (`pcrec-auto-bigcap`/`pcrec-vm-bigcap`'s own 8 MiB, or
+    `--max-emit-code-bytes` directly), so this is F5 eating back S2a's
+    win on this SPECIFIC witness, not a new defect. This check now
+    asserts the RE-REFUSAL at the default cap (an ask for pcrec: outbox,
+    the size-cap tug-of-war between S2a and F5 on 2-byte-run-dense
+    alternations) and that it still compiles under a raised cap with
+    `vm_lit_runs` measurably LOWER than at a32bc86e (the F5 signature)."""
+    print("-- [B108]/I-113 + [B118]/[OPT-LITSCAN] F5: the acceptance mover, refused at 751b9c6d -> compiles at a32bc86e -> RE-REFUSES at fc719ca4 --")
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -9982,9 +10007,15 @@ def check_b108_acceptance_mover():
     mod = _pcrec_adapter_module()
     old_proc = run([mod.PIN_SH, "--path", "751b9c6d"], timeout=60)
     old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    mid_proc = run([mod.PIN_SH, "--path", "a32bc86e"], timeout=60)
+    mid_bin = mid_proc.stdout.strip() if mid_proc.returncode == 0 else ""
     if not old_bin or not os.path.isfile(old_bin):
         bad("b108 acceptance mover", "no build for 751b9c6d "
             "(pin.sh 751b9c6d first; --path printed %r)" % old_bin)
+        return
+    if not mid_bin or not os.path.isfile(mid_bin):
+        bad("b108 acceptance mover", "no build for a32bc86e "
+            "(pin.sh a32bc86e first; --path printed %r)" % mid_bin)
         return
     sb = None
     try:
@@ -10002,30 +10033,57 @@ def check_b108_acceptance_mover():
         adapter.prepare("pcrec-local", tmp)
         cr_old = adapter.compile("pcrec-local", "b108-accept-old", pat, {}, 1,
                                  tmp).get(_ad.FORM_PLAIN)
+        os.environ["PCREC_BIN"] = mid_bin
+        adapter.prepare("pcrec-local", tmp)
+        cr_mid = adapter.compile("pcrec-local", "b108-accept-mid", pat, {}, 1,
+                                 tmp).get(_ad.FORM_PLAIN)
         os.environ["PCREC_BIN"] = adapter.pin_binary()
         adapter.prepare("pcrec-local", tmp)
         cr_new = adapter.compile("pcrec-local", "b108-accept-new", pat, {}, 1,
                                  tmp).get(_ad.FORM_PLAIN)
+        # [B118]: the current pin's own DEFAULT-cap arm, asserted to
+        # RE-REFUSE (never silently loosened to "compiles" -- this
+        # witness's status genuinely changed).
+        os.environ["PCREC_LOCAL_FLAGS"] = "--engine=vm --max-emit-code-bytes=2000000"
+        adapter.prepare("pcrec-local", tmp)
+        cr_new_raised = adapter.compile("pcrec-local", "b108-accept-new-raised",
+                                        pat, {}, 1, tmp).get(_ad.FORM_PLAIN)
         old_ok = (cr_old.outcome == "did-not-compile"
                  and "pattern too large" in (cr_old.diagnostic or ""))
-        new_ok = (cr_new.outcome == "compiled")
-        cap_ok = new_ok and cr_new.engine_metadata.get("emit_code_bytes", 10**9) < 500000
-        run_ok = new_ok and (cr_new.engine_metadata.get("vm_lit_runs") or 0) > 0
-        if old_ok and new_ok and cap_ok and run_ok:
-            ok("b108 acceptance mover: refused at 751b9c6d, compiles at "
-               "a32bc86e under the default cap, vm_lit_runs > 0",
-               "old=%s new=%s code_bytes=%s vm_lit_runs=%s"
-               % (cr_old.outcome, cr_new.outcome,
-                  cr_new.engine_metadata.get("emit_code_bytes"),
-                  cr_new.engine_metadata.get("vm_lit_runs")))
+        mid_ok = (cr_mid.outcome == "compiled"
+                 and cr_mid.engine_metadata.get("emit_code_bytes", 10**9) < 500000
+                 and (cr_mid.engine_metadata.get("vm_lit_runs") or 0) > 0)
+        new_refuses = (cr_new.outcome == "did-not-compile"
+                      and "pattern too large" in (cr_new.diagnostic or ""))
+        mid_runs = mid_ok and cr_mid.engine_metadata.get("vm_lit_runs")
+        new_raised_ok = (cr_new_raised.outcome == "compiled"
+                        and cr_new_raised.engine_metadata.get("emit_code_bytes", 0) >= 500000
+                        and mid_runs is not None
+                        and (cr_new_raised.engine_metadata.get("vm_lit_runs") or 10**9) < mid_runs)
+        if old_ok and mid_ok and new_refuses and new_raised_ok:
+            ok("b108/b118 acceptance mover: refused at 751b9c6d, compiled at "
+               "a32bc86e under the default cap, RE-REFUSED at fc719ca4 "
+               "([OPT-LITSCAN] F5 eating back the lit-run collapse)",
+               "old=%s mid=%s(vm_lit_runs=%s, code_bytes=%s) new=%s new_raised=%s"
+               "(vm_lit_runs=%s, code_bytes=%s)"
+               % (cr_old.outcome, cr_mid.outcome, mid_runs,
+                  cr_mid.engine_metadata.get("emit_code_bytes"),
+                  cr_new.outcome, cr_new_raised.outcome,
+                  cr_new_raised.engine_metadata.get("vm_lit_runs"),
+                  cr_new_raised.engine_metadata.get("emit_code_bytes")))
         else:
-            bad("b108 acceptance mover: refused at 751b9c6d, compiles at "
-                "a32bc86e under the default cap, vm_lit_runs > 0",
-                "old outcome=%s diag=%r; new outcome=%s code_bytes=%s "
-                "vm_lit_runs=%s"
-                % (cr_old.outcome, cr_old.diagnostic, cr_new.outcome,
-                   cr_new.engine_metadata.get("emit_code_bytes"),
-                   cr_new.engine_metadata.get("vm_lit_runs")))
+            bad("b108/b118 acceptance mover: refused at 751b9c6d, compiled at "
+                "a32bc86e under the default cap, RE-REFUSED at fc719ca4 "
+                "([OPT-LITSCAN] F5 eating back the lit-run collapse)",
+                "old outcome=%s diag=%r; mid outcome=%s vm_lit_runs=%s "
+                "code_bytes=%s; new outcome=%s diag=%r; new_raised outcome=%s "
+                "vm_lit_runs=%s code_bytes=%s"
+                % (cr_old.outcome, cr_old.diagnostic, cr_mid.outcome,
+                   cr_mid.engine_metadata.get("vm_lit_runs"),
+                   cr_mid.engine_metadata.get("emit_code_bytes"),
+                   cr_new.outcome, cr_new.diagnostic, cr_new_raised.outcome,
+                   cr_new_raised.engine_metadata.get("vm_lit_runs"),
+                   cr_new_raised.engine_metadata.get("emit_code_bytes")))
     finally:
         for k, v in saved.items():
             if v is None:
