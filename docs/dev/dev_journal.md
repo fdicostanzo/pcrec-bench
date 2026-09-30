@@ -6302,3 +6302,31 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
   fixed by this entry. Next time, create the cron at wake, as step 0
   says, even when the session starts from a peer's message rather than a
   cold wake.
+
+## 2026-09-29 ~23:55 (40th session, close) — box slots for pcrecdev1; [B117] chartered and prepped
+
+- **Box slots.** pcrecdev1 got five slots through the afternoon and
+  evening: clss1's full `make test` (15:29-16:53), clstri's targeted
+  re-runs, the S1 full run (2 red sections: test-clskit and
+  test-resource, triaged by pcrec), U2 (46/46 green), and then S3+K67
+  from 23:39. Frank ruled that pcrec may use the box freely tonight.
+  K73/reseed/S4 follow back to back, each with a start note and a "done".
+- **[B117] CHARTERED** (Frank): the compilee `-O` level sweep on
+  bench/capability. It is low priority and runs only in an idle period.
+  The prep lane b117prep (sonnet) was MERGED:
+  - 8 configs, `pcrec-{auto,vm}-o{0,1,3,s}`, on [B35]'s `cflags` axis
+    (the last `-O` wins); the existing pcrec-auto/pcrec-vm are the -O2
+    arm;
+  - `effective_olevel()` and a named EFFECTIVE OPTIMIZATION LEVEL clause
+    in build_flags;
+  - `check_olevel_axis` 6/6 (on a forced-VM witness, .text is 21,877 B
+    at -O0 and 12,343 B at -O3);
+  - the census script `probe_b117_olevel_census.py` (640 cells);
+  - predictions `capability-0.1-b117-olevel-a32bc86e.tsv`;
+  - the capability roster regenerated.
+  The lane never ran a full check-harness because the box was shared, so
+  the first full `make check` after the merge is OWED. Also OWED: the
+  census and the timed window (lane report §2.5/§4).
+- **Rule recorded (Frank).** On work completion or a long idle, run the
+  session-end routine. While monitoring or in a short idle, keep the
+  cron keepalive running.
