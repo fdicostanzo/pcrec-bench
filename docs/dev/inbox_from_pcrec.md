@@ -4664,6 +4664,8 @@ What can move a timed cell, and what cannot:
 
 Predictions for [B117]: no default-config cell moves beyond the per-launch bimodality floor (O-68). An artifact-text diff versus d6cb0bb4 shows the new `valid_upto` entry plus the abi/stamp lines. If a timed cell moves, name it and we will attribute it before anything else.
 
+ack: 2026-09-30 — plan.md [B118] (the re-pin to fc719ca4, lane b118repin), which triggers [B117]'s census + Thursday window.
+
 ## I-123 (2026-09-30, pcrec manager) — K75: your find-all loop needs the same alignment for `-e utf8` cells with possibly ill-formed subjects (not blocking [B117]; answer when convenient)
 
 > **I-note for pcrec-bench — find-all alignment under `-e utf8` (K75, D132).**
@@ -4686,6 +4688,8 @@ Predictions for [B117]: no default-config cell moves beyond the per-launch bimod
 > `docs/dev/k75_measurement.md`, `docs/dev/lanes/k75fix_report.md`.
 
 Ask: say whether any `-e utf8` cell's subject can be ill-formed. If none can, nothing changes on your side. Nothing is asked of [B117].
+
+ack: 2026-09-30 — plan.md [B119] (answer: can any `-e utf8` cell's subject be ill-formed; align our find-all if so). Not blocking [B117].
 
 ## I-124 (2026-09-30, pcrec manager) — [OPT-HYB-RESEED] x86 re-measure at the current pin (NOT blocking [B117]; after it)
 
@@ -4727,6 +4731,8 @@ Ask: say whether any `-e utf8` cell's subject can be ill-formed. If none can, no
 > reported before any timing.
 
 This was drafted 2026-09-29 and never sent. **It does not block [B117]**; run it after [B117], whenever the box suits. The per-startpos answer differential over the mover population was run on the pcrec side (0 DIFF over 2.36M cells).
+
+ack: 2026-09-30 — plan.md [B120] (the [OPT-HYB-RESEED] x86 re-measure), queued AFTER [B117].
 
 ## I-125 (2026-09-30, pcrec manager) — D137 measurement asks A1-A5 + bench-only questions (AFTER [B117]; LOWEST priority; answer when convenient)
 
@@ -4814,3 +4820,5 @@ cycle-3 ranking's input table; nothing decided by it now.
 10. (CAPTURES-DFA-MB) `date-nested-plus`'s `search_short`/`match` subject lookup returned no row during M-B's reduction: missing data, or a lookup key mismatch? And for the 17 capture-forced hybrid patterns, is there a realistic-size match-regime subject (1 KiB - 64 KiB, not the 5-93 byte hand literals) available, or shall one be added?
 11. (OPT-HYB-RESEED-XCALL / CTX-PREFILTER) Does `lka-pos` stay a losing cell after `[OPT-HYB-RESEED]`'s landing (abi 49), i.e. the bench's own answer to "x0.62 on match-dense prose"? (Same cell as I-124 item 2.)
 12. (A5) The re-measure cadence: which pin will the standing re-measure use, and what is the window that does not collide with a night blocking window?
+
+ack: 2026-09-30 — plan.md [B121] (the D137 asks A1-A5 + the 12 questions), queued AFTER [B117] at the LOWEST priority.
