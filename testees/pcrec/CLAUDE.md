@@ -625,6 +625,165 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin at fc719ca4 (abi 41 -> 50) — 2026-09-30, lane b118repin, inbox I-122
+
+**NINE abi steps in one merge, not the one I-122's own text characterised**
+(I-122 said "your last pin was d6cb0bb4" — WRONG; our prior pin was
+`a32bc86e`/abi 41, so this lane absorbs every step 41 -> 50).
+`git log --merges --first-parent a32bc86e..fc719ca4` names them in
+order:
+
+1. **41 -> 42, K69 fix / [PATFACTS] 3.5 close** (`768247ddad`): call
+   nullability moved to a least-fixpoint computation, published before
+   the E1 seal — an internal refactor, answer-identical by construction,
+   ZERO movers on this bench's own corpus (confirmed:
+   `check_b118_findtie_k69_noop_on_bench`). No stamp, no field.
+2. **42 -> 43, [OPT-LITSCAN] F5 (D127)** (`4666ba5481`): the VM
+   literal-run floor raises 2 -> 3 (a two-byte run keeps the OLD
+   per-byte compare chain; S2a's P4 compare now needs three-plus).
+   `RX_VM_LIT_RUNS`'s VALUE narrows on 2-byte-run witnesses; no new
+   axis, no new field.
+3. **43 -> 44, [FIND-TIE]** (`72e3ae41d0`): the necessary run's scanned
+   member, on a byte-frequency DATA TIE, now picks the RIGHTMOST
+   candidate (`pcrec_find_set_pick`'s own rule), not leftmost. No axis,
+   no stamp of its own — CONFIRMED live as a real mover:
+   `wild-secrets-github-pat`'s scan index moves 3 -> 7 ("hub_pat_"'s
+   OWN rightmost byte, `_`), which shortens the DFA's bounded
+   offset-set rung below the whole run, un-dominating it:
+   `dfa_prefilter` `run-pinned-bounded` -> `offset-set-bounded`,
+   `dfa_prefilter_offsets` `0,3,4,5,6*,7,8,9,10` -> `0,6*`, `req_why`
+   `dominated` -> `emitted` (`tools/selfcheck.py`'s LEDGER row, updated
+   in place with the attribution).
+4. **44 -> 45, [UCP] U0+U1** (`68b7dd6ec2`): the `ucp` MODULE lands
+   (`--ucp`, `(*UCP)`, `(?aDSWPT)`; a byte-mode Latin-1 fold table
+   too). A new BIT inside the EXISTING `rx_info.flags` field,
+   `PCREC_UCP` (1u<<34, unmasked — mirrors the CLI flag, reads 0 on
+   every config here since no bench pattern spells `--ucp`/`(*UCP)`),
+   NOT a new field; `PCREC_FEATURE_MODULES` gains `,ucp` (+4 B flat
+   under this project's `--features all` protocol). A new
+   `--list-limits` row. No new stamp macro.
+5. **45 -> 46, [UCP] U2** (`601f2e5e87`): `A_CTX` CONTEXT NODES — a
+   capture-free, assertion-free single-character lookaround (its body's
+   LANGUAGE a set of one-byte members) now folds into the DFA's own
+   context machinery instead of costing a VM sub-match. New deny bit
+   `PCREC_NO_CTX_NODE` (bit 35, masked, `-fno-ctx-node`) — MOVES the
+   EXISTING `RX_ENGINE` stamp's VALUE on qualifying witnesses (no stamp
+   of its own). CONFIRMED live, both directions
+   (`check_b118_ctxnode_engine_flip`, witness `(?<=a)x+`: `dfa`
+   default / `vm` under `-fno-ctx-node`, byte-identical to the a32bc86e
+   reading). **A pre-existing `STAMP_CASES` witness,
+   `(?=x)(?:foo|bar|baz)`, is exactly this shape** (a single-character
+   lookahead) and now compiles as a plain DFA under `auto` where it used
+   to force the VM with an island — the row's pattern is widened to
+   `(?=foo)(?:foo|bar|baz)` (a THREE-byte literal lookahead body, whose
+   language is one three-byte string rather than a set of one-byte
+   members, so ctx-node's predicate does not apply) so the row keeps
+   testing what it always tested — VM hybrid islands under `auto`.
+6. **46 -> 47, K73 ruling (a)** (`04b45c198e`): the default START now
+   skips leading UTF-8 continuation bytes (an unwrapped `_match` gains
+   K50's own guard). Byte encoding PROVABLY unaffected (`enc_byte.c`'s
+   `start_guard = NULL`, confirmed in the pcrec source). No new
+   field/stamp; this project's byte-encoding testees see no change.
+7. **47 -> 48, [CLS-TREE] S4 + [OPT-CLSPACK], ONE abi event**
+   (`e3ce677f2c`): wide classes get a VM decode-and-test KIT form
+   (`-fno-cls-kit` bit 36), and >=11 table-read classes share ONE
+   packed atom table instead of one bitmap apiece (`-fno-cls-pack` bit
+   38 — `-fno-cls-kit` also denies the pack). New stamps
+   `RX_VM_CLS_KIT` / `RX_VM_CLS_ATOMS` (VM-only, no `rx_info` mirror,
+   D77's precedent). **Found and fixed a stale assumption in [B39]'s
+   own cls-fold deny control**: `bench/altwide` ci-256 (26 classes, over
+   the packing threshold) now packs into ONE shared atom table
+   (`vm_cls_atoms 27`) when `-fno-cls-fold` is denied, rather than
+   restoring 26 individual `class_bitmap` declarations — "the classes
+   came back" is now read as bitmaps-OR-atoms, confirmed against both
+   the small control (`(?i)abc`, 3 classes, under the packing
+   threshold: still 3 bitmaps, 0 atoms) and the corpus witness.
+8. **48 -> 49, [OPT-HYB-RESEED]** (`d6cb0bb4f3`): the VM hybrid's
+   post-candidate-failure retry is now ADAPTIVE (step vs re-seed from
+   the prefilter, chosen per call). New stamp `RX_VM_RESEED`, a closed
+   five-token set (`exact`/`clamped`/`adaptive-dense`/`adaptive`/
+   `fixed`), VM-hybrid scope, no `rx_info` mirror; `-fno-hyb-reseed`
+   bit 37 (denies only the two `adaptive*` rows). **Moves REAL VM
+   PROGRAM BYTES, not just a stamp line**, on witnesses whose row is
+   genuinely `adaptive`/`adaptive-dense`: K41 size-cap witness 2 +139 B,
+   the declined-island prefix-bearing chain +140 B, `winpath-near-miss`
+   +139 B, `tag-pair-match` +140 B — individually re-measured against
+   the real binary rather than assumed flat, since the growth is a real
+   retry-code emission, not a comment line.
+9. **49 -> 50, [UTF-VALID]** (`291c579b54`): `<prefix>_valid_upto` — a
+   FUNCTION, not a struct field — ships on EVERY artifact (both
+   engines, both encodings) unconditionally; `-futf-check` (bit 39, a
+   FORCE, default off) and `-fstartpos-guard=align` (bit 40, the
+   startpos-guard axis's third value) are both opt-in and touch nothing
+   here by default; `PCREC_ERR_UTF` (-9) joins the shared error block.
+   New stamp `RX_UTF_CHECK`, unconditional, a closed three-token set
+   (`inert` on byte encoding, `off` on `-e utf8` at the default,
+   `whole` under `-futf-check`) — the one stamp this pin adds a FLAT
+   size term for on every artifact: `B118_UTF_VALID_DFA_TERM` (381),
+   `_VM_TERM` (431, non-hybrid VM), `_VM_HYBRID_TERM` (460, a VM
+   hybrid) — all three confirmed on hand-chosen witnesses and wired
+   into every `STAMP_CASES`/`LEDGER_STAMP_CASES` row this pin touched.
+
+**`struct rx_info` gains NO member across the whole nine-step span**
+(a plain `abc` witness's struct literal differs from the a32bc86e one
+only in the `.abi` digit; [UCP]'s `PCREC_UCP` bit lives inside the
+EXISTING `.flags` field, and `RX_VM_CLS_KIT`/`_CLS_ATOMS`/`_RESEED`/
+`RX_UTF_CHECK` all follow D77's no-rx_info-mirror precedent) — **the
+shim floor STAYS 16**, confirmed at the build (`check_abi_floor_refusal`'s
+two sabotage arms unchanged, abi 50 on every artifact of both engines).
+
+**Registries: `--list-axes` grows the most it ever has in one pin, THREE
+of four surfaces move.** Measured directly against both binaries
+(`$BIN --list-axes/--list-definitions/--list-limits/--list-schema`),
+not assumed from either lane's own report:
+
+| surface | a32bc86e | fc719ca4 | delta |
+|---|---|---|---|
+| `list_axes.tsv` | 93 rows / 33 axes | 108 rows / 38 axes | +15 rows, 5 new axes: `ctx-node`, `cls-kit`, `cls-pack`, `hyb-reseed`, `utf-check` |
+| `list_definitions.tsv` | 50 rows | 75 rows | +25 (ALL [UCP]'s own — the `DEF_UCP_D`/`_S`/`_W`/`_P`/`_T` producers; the first re-pin since cd371441 where this surface is NOT byte-identical) |
+| `list_limits.tsv` | 64 rows | 70 rows | +6 (three [UCP] limits — `PCREC_UCP_NARROW_MAX_INTERVALS`, `PCREC_MAX_CTX_SETS`, `PCREC_MAX_CTX_ATOMS` — plus three unrelated [FINDINGS] B2/B5 rows riding the same commit range) |
+| `list_schema.tsv` | 78 rows | 79 rows | +1 ([FINDINGS] B5's `bundle cpfreq` `.rxt` grammar row, not this re-pin's own) |
+
+**D135 (`4ee4a90a73`, size-cap ladder rework, NO abi event — the
+trigger I-122 named explicitly): CONFIRMED, one bench-relevant flip.**
+The size-cap ladder is now one first-match table with a new LAST rung
+that DROPS the VM hybrid's own prefilter rather than refusing (new
+stamp `RX_VM_PREFILTER_WHY`, wired end to end in this lane's own
+earlier commit); `--fast-or-fail` (bit 41) denies every degrading rung
+for a caller who would rather refuse. I-122's own example,
+`(\p{Xwd})` under `-e utf8`, is CONFIRMED (refused at 1,026,586 B,
+compiles at 31,300 B) but is not itself a bench pattern. **Part B of
+`docs/dev/measurements/probe_b118_census.py` (every `bench/*/patterns/
+*.rx` across all six non-utf8 sets, both pins, pcrec-auto's real argv)
+is the roster-wide flip census I-122 asked for; its run is [owed/
+reported — see the lane report for the executed numbers].**
+
+**Two derived findings re-measured, never silently patched**: the I-43
+altwide island/chain code-byte ratio pair (w-256, pfx3-256) drifts
+slightly outside its prior three-decimal tolerance (1.3105/1.3206 ->
+1.3032/1.3035) because the `-fno-alt-island` CHAIN arm gains real bytes
+beyond the flat UTF-VALID term on these two witnesses specifically
+(w-256 chain 94210 -> 95073, +863) where the island arm does not;
+s-256 stays within tolerance. `capability nested-comment-rec` nets a
+real SHRINK (-1032 B) not traced to one single abi step of the nine
+(candidates: F5's lit-run floor, [FIND-TIE]'s scan-index move) —
+confirmed live and recorded as measured rather than assumed.
+
+**No new pinned testee**: `DENY_FLAGS` gains four entries
+(`-fno-ctx-node`/`noctxnode`, `-fno-cls-kit`/`noclskit`,
+`-fno-cls-pack`/`noclspack`, `-fno-hyb-reseed`/`nohybreseed`) so the
+new axes are reachable through `quick`/`pcrec-local` and the deny
+controls, but I-122 asked only for characterisation and the flip
+census, not new acceptance-review testees — the roster stays at
+thirty-nine pinned pcrec configs. `check_mechanism_stamps` 129/129,
+`check_deny_flag_controls` 18/18, the five `check_b118_*` functions
+(utf_check_stamp, ctxnode_engine_flip, clstree_stamps, hybreseed_stamp,
+findtie_k69_noop_on_bench) all green, the three registry-diff checks
+green. Catalogue **3.13** (`[[pin_order]]` append, minor bump — no rule
+predicate/threshold/inputs/slot moved). No store/reports write, no
+timing of any kind — the measurement window is the manager's ([B117]'s
+own trigger).
+
 ## Re-pin at a32bc86e (abi 39 -> 41) — 2026-09-27, lane b108repin, inbox I-113
 
 **TWO abi steps, one merge (`Merge branch 'lane/s2a'`), against `751b9c6d`

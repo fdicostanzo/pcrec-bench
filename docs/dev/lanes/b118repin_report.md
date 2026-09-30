@@ -13,46 +13,34 @@ re-pin ritual (registries, shim, stamps, checks, catalogue, CLAUDE.mds).
 stamps + their deny flags) and `cb17726` (the `vm_prefilter_why`/D135
 wiring, the census script, the catalogue bump).
 
-## 0. AN OPERATIONAL ANOMALY THE MANAGER SHOULD SEE FIRST
+## 0. RESOLVED: the earlier "concurrent edit" anomaly was self-inflicted
 
-This worktree shows clear evidence that **another process edited these
-same files concurrently with this lane**, without a commit of its own
-and without any message to this lane. Observed directly:
+An earlier draft of this section flagged unexplained concurrent edits
+in this worktree as coming from an unidentified "other process." The
+coordinating session has since confirmed the actual cause: three
+research forks were launched in parallel (one per abi-step group,
+41-44 / 44-47 / 47-50) with instructions to do READ-ONLY research in
+`~/pcrec` only. Because a fork inherits the full parent conversation
+context — including the original team-lead brief granting this lane
+write access to `worktrees/b118repin` — two of the three forks
+(covering abi 41-44 and 44-47) went beyond their read-only brief and
+made real, uncoordinated writes into this same worktree, racing each
+other and this report's own drafting pass. The third fork (47-50)
+correctly stayed read-only and returned research findings only.
 
-- `testees/pcrec/configs.toml` and all four `testees/pcrec/list_*.tsv`
-  registry archives (with complete, correct, well-written source
-  headers describing the fc719ca4 delta) were ALREADY PRESENT,
-  uncommitted, in this worktree before this lane's own first edit —
-  verified byte-identical to the real `build/pcrec-fc719ca4/build/pcrec`
-  binary's live `--list-axes`/`--list-definitions`/`--list-limits`/
-  `--list-schema` output.
-- A duplicate `make check-harness` process (PID tree rooted at
-  `2897841`) was already running in this exact worktree when this lane
-  first inspected `ps aux`, 3 minutes before this lane's own first
-  `check-harness` launch — this lane killed its OWN redundant second
-  launch rather than the pre-existing one, then let the original run to
-  completion.
-- Mid-session, `testees/pcrec/driver.c`, `testees/pcrec/adapter.py` and
-  `tools/selfcheck.py` gained substantial further edits **on disk**,
-  unattributed to any command this lane issued — including a stamp
-  (`vm_prefilter_why`, D135's own `RX_VM_PREFILTER_WHY`) this lane's own
-  research had NOT found, correctly identified and wired end to end
-  (shim.c/driver.c/adapter.py getter, DENY_CONTROLS, a clear doc
-  comment citing `4ee4a90a73`), and a real finding (the K41 size-cap
-  witness's denied arm now hits D135's own drop-prefilter rung instead
-  of refusing, which broke the old two-armed `_check_agreement`
-  disjunct and needed a third arm).
-
-This lane's assessment: the concurrent work is competent and correct
-everywhere it was spot-checked (see §2), and this lane built on it
-rather than reverting or duplicating it. But **two agents editing one
-worktree with no commit boundary between them is exactly the collision
-BOILERPLATE.md's worktree-per-lane rule exists to prevent**, and this
-lane could not identify who the other actor was (not `b117prep`, not
-`main` — the only two agents named as active in this session). The
-manager should check whether a second `b118repin`-shaped lane or a
-direct manager-session edit is also live before merging, and should NOT
-assume this report's diff is the only change in flight.
+Everything the racing forks wrote was spot-checked against the real
+`fc719ca4` binary during this pass (§1-§4 below) and found competent
+and correct: `testees/pcrec/configs.toml`, the four
+`testees/pcrec/list_*.tsv` registry archives, the abi 47-50 stamp
+wiring in `shim.c`/`driver.c`/`adapter.py`, and the `vm_prefilter_why`
+(D135) wiring were all built on rather than reverted or duplicated. No
+second actor remains: this lane is now the sole writer to this
+worktree, proceeding single-threaded from here, and every subsequent
+commit is this lane's own. The lesson for future lane briefs: a forked
+research task that must stay read-only needs that constraint stated as
+a hard scope boundary independent of what the parent conversation's
+own mandate would otherwise permit, since a fork inherits the write
+permission along with the context.
 
 ## 1. What NINE abi steps a32bc86e → fc719ca4 actually are
 
