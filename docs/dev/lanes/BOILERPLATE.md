@@ -143,3 +143,9 @@ moves in the same delivery (readers found by grep). The manager merges;
 never merge yourself. Before a measurement window starts, every lane is
 STOPPED (TaskStop) — a "delivered" lane once resurrected its worktree and
 ran tests on the box mid-window.
+
+## Forks and helper agents (2026-09-30, [B118])
+
+A lane spawns NO forks or helper agents. A fork inherits the lane's full
+write mandate, whatever its brief says: two "read-only" research forks
+edited [B118]'s worktree beside their parent. Do the research inline.

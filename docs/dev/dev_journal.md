@@ -6403,3 +6403,40 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
 - This is the trigger for [B117]'s own census re-run + the Thursday
   2026-10-01 timed window — no store/reports write, no timing, in this
   lane.
+
+## 2026-09-30 ~16:20 (40th session, cont.) — I-122..I-125 acked; [B118] re-pin to fc719ca4 MERGED; [B117] ready for Thursday
+
+- **Frank's rulings on [B117].** Time at WHATEVER PIN IS VALID WHEN THE
+  WINDOW OPENS. Run all 10 cells, either in chunks or all day THURSDAY
+  2026-10-01, when pcrecdev1 is out and the box is ours.
+- **Inbox.** pcrecdev1 committed I-122..I-125 (b0fd162). They are acked
+  as [B118] (the re-pin), [B119] (K75 find-all), [B120] (reseed x86,
+  after [B117]) and [B121] (the D137 asks, lowest priority).
+- **[B118]** (lane b118repin, sonnet). Our pin was a32bc86e, not the
+  d6cb0bb4 I-122 assumed, so the lane absorbed NINE abi steps (41→50).
+  - There are four new stamps: vm_cls_kit, vm_cls_atoms, vm_reseed and
+    utf_check. No new rx_info field, so the shim floor stays 16.
+  - 39 stale stamp numbers were re-measured. Two were real findings: the
+    ctx-node engine-selection flip, and [FIND-TIE] on github-pat.
+  - program_identity v2 gained rule 6, which drops the unreferenced
+    `_valid_upto` entry.
+  - A real regression was found and filed as O-78: I-113's acceptance
+    mover wild-datetime-datefinder-alternation RE-REFUSES under F5's
+    lit-run floor 2→3 (579,863 > 500,000 code bytes).
+  - The D135 flip census found 0 bench-roster flips.
+  - Merged 92e4214. make check is green: check-harness 625/0 and
+    interpret 233/0, after regenerating 59 sidecars for catalogue 3.13
+    (only the version lines changed). cc-gate-census PARITY: 2034 cells,
+    175 pcrec refusals.
+  - The [B117] census at fc719ca4: 620 compiled, 20 refused, 0 mismatches.
+- **LESSONS.**
+  - A lane's research FORKS inherit its write mandate. Two "read-only"
+    forks edited the lane's worktree. Lanes spawn no forks, or state
+    read-only in the fork brief AND check it.
+  - TaskStop on a lane kills processes started from ITS shell, even
+    setsid-chained ones: cc-gate-census died at cell 167 of 2034. Let a
+    lane's detached chain finish before stopping it, or relaunch the run
+    from the manager.
+  - A lane's own background-monitor notification can be lost. The
+    manager's keepalive caught a lane that had sat idle for 20 minutes
+    after its run finished.
