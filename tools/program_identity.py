@@ -194,6 +194,18 @@ def sha(text):
 #      value moved with no code change reads identical under v2 -- by
 #      construction a stamp that names emitted code moves WITH that code,
 #      and the code is compared verbatim.
+#   6. ([B118], pcrec fc719ca4, abi 49->50, [UTF-VALID]) the
+#      `<prefix>_valid_upto(const unsigned char *s, size_t n, size_t
+#      startpos)` entry point's DEFINITION and its header DECLARATION are
+#      dropped together IFF the identifier appears nowhere else: unlike
+#      rule 5, this is a real FUNCTION rather than a macro, so it needs
+#      its own rule, but the evidence is the SAME "nothing reads it" test
+#      rule 3 already uses -- this project's pinned testees never pass
+#      `-futf-check`, so the function ships on every artifact (abi 50's
+#      own unconditional contract) but is never called by anything else
+#      in it. A future artifact whose body is actually exercised (a
+#      `-futf-check` config, none pinned as of this writing) would gain
+#      an external reader and keep both lines.
 # Everything else is compared byte for byte. MEASURED at [B90]: v2's
 # verdict equals v1's on every row of the three committed capability@0.1
 # pairs (docs/dev/lanes/b90repin_report.md).
@@ -214,6 +226,12 @@ _ABI_OPEN = re.compile(r"^#\s*ifndef\s+PCREC_RX_ABI_H\b")
 _PP_IF = re.compile(r"^#\s*if(n?def)?\b")
 _PP_ENDIF = re.compile(r"^#\s*endif\b")
 _INFO_OPEN = re.compile(r"^const struct rx_info ([A-Za-z_][A-Za-z0-9_]*) = \{$")
+_VALID_UPTO_DEF = re.compile(
+    r"^size_t ([A-Za-z_][A-Za-z0-9_]*_valid_upto)\("
+    r"const unsigned char \*s, size_t n, size_t startpos\)$")
+_VALID_UPTO_DECL = re.compile(
+    r"^size_t ([A-Za-z_][A-Za-z0-9_]*_valid_upto)\("
+    r"const unsigned char \*s, size_t n, size_t startpos\);$")
 _OWN_INCLUDE = re.compile(r'^#\s*include\s+"[^"/]+\.h"$')
 _IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
@@ -295,6 +313,46 @@ def normalize_one(text):
         own = sum(_IDENT.findall(lines[k]).count(name) for k in range(a, b))
         if counts.get(name, 0) - own == 0:
             drop.update(range(a, b))
+    # rule 6 ([B118], pcrec fc719ca4, abi 49->50, [UTF-VALID]): the
+    # `<prefix>_valid_upto` entry point -- a genuinely new FUNCTION (not a
+    # macro rule 5 already reaches), unconditional on every artifact
+    # regardless of pattern, engine or encoding. It is dropped on the SAME
+    # "nothing reads it" evidence as rule 3's rx_info initializer, never
+    # by hardcoding its current trivial-stub body: this project's pinned
+    # testees never pass `-futf-check`, so the function is emitted but
+    # never CALLED by anything else in the artifact (confirmed: its own
+    # identifier's total count across the whole file equals its count
+    # inside its own definition + declaration, the same zero-external-
+    # reader test rule 3 uses). A future artifact whose body DOES get
+    # called (a `-futf-check` config, none pinned here) would keep both
+    # lines, since the identifier would then have an external reader.
+    for i, ln in enumerate(lines):
+        m = _VALID_UPTO_DEF.match(ln)
+        if not m or i in drop:
+            continue
+        name = m.group(1)
+        if i + 1 >= len(lines) or lines[i + 1] != "{":
+            continue
+        depth, end = 1, None
+        for j in range(i + 2, len(lines)):
+            depth += lines[j].count("{") - lines[j].count("}")
+            if depth == 0:
+                end = j
+                break
+        if end is None:
+            continue
+        decl_idx = next((k for k, l2 in enumerate(lines)
+                         if k not in range(i, end + 1)
+                         and _VALID_UPTO_DECL.match(l2)
+                         and _VALID_UPTO_DECL.match(l2).group(1) == name),
+                        None)
+        span = set(range(i, end + 1))
+        if decl_idx is not None:
+            span.add(decl_idx)
+        own = sum(_IDENT.findall(lines[k]).count(name) for k in span)
+        if counts.get(name, 0) - own == 0:
+            drop.update(span)
+        break
     return "\n".join(ln for k, ln in enumerate(lines) if k not in drop) + "\n"
 
 

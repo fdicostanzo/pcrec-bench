@@ -466,8 +466,58 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-noaltclsfactor-nolitrun` (the 2x2's fourth corner) and
   `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` (I-113 §7.2's L-sweep rows,
   both whole-window pre-checks denied so a failing subject reaches the
-  VM compare under test; twenty-nine pinned pcrec configs) — at a
-  pinned commit — **a32bc86e, abi 41** (re-pinned from 751b9c6d,
+  VM compare under test; thirty-nine pinned pcrec configs, incl. eight
+  `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
+  axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
+  placement-twin pair ([B110]) since the count below was last stated —
+  at a pinned commit — **fc719ca4, abi 50** (re-pinned from a32bc86e,
+  2026-09-30, lane b118repin, inbox I-122 — NINE abi steps in one merge,
+  not the one step I-122's own text assumed (our prior pin was a32bc86e,
+  not I-122's stated d6cb0bb4): 41→42 K69/[PATFACTS] 3.5 (an internal
+  nullability refactor, answer-identical, no stamp/field), 42→43
+  [OPT-LITSCAN] F5 (the VM literal-run floor 2→3), 43→44 [FIND-TIE] (the
+  necessary run's tied-byte scan pick moves leftmost→rightmost — a real
+  corpus mover, `wild-secrets-github-pat`'s `dfa_prefilter` `run-pinned-
+  bounded`→`offset-set-bounded`, `req_why` `dominated`→`emitted`), 44→45
+  [UCP] U0+U1 (the `ucp` module; `PCREC_UCP` a BIT inside the existing
+  `rx_info.flags`, not a new field — reads 0 everywhere here), 45→46
+  [UCP] U2 (`A_CTX` context nodes: a single-character capture/assertion-
+  free lookaround now folds into the DFA, moving `RX_ENGINE`'s value on
+  qualifying witnesses — `-fno-ctx-node` bit 35 restores it; a
+  pre-existing corpus-shaped `STAMP_CASES` witness,
+  `(?=x)(?:foo|bar|baz)`, is exactly this shape and is widened to
+  `(?=foo)(?:foo|bar|baz)` to keep testing VM islands under `auto`),
+  46→47 K73 (a) (default UTF-8 start skips leading continuation bytes;
+  byte encoding provably unaffected), 47→48 [CLS-TREE] S4 + [OPT-CLSPACK]
+  as ONE abi event (wide-class VM kit form + a shared packed atom table
+  at ≥11 table-read classes — found and fixed a stale assumption in
+  [B39]'s own cls-fold deny control: altwide ci-256's denied arm now
+  packs into ONE atom table instead of 26 bitmaps), 48→49
+  [OPT-HYB-RESEED] (the VM hybrid's adaptive per-call retry, five-token
+  `RX_VM_RESEED`; MOVES REAL VM PROGRAM BYTES on witnesses whose row is
+  genuinely adaptive, not just a stamp line — K41 witness 2 +139 B,
+  `winpath-near-miss` +139 B, `tag-pair-match` +140 B, individually
+  re-measured), 49→50 [UTF-VALID] (`<prefix>_valid_upto`, a FUNCTION not
+  a field, on every artifact; `-futf-check`/`-fstartpos-guard=align`
+  both default off; `RX_UTF_CHECK` the one stamp with a flat size term
+  on every artifact — `B118_UTF_VALID_DFA_TERM`/`_VM_TERM`/
+  `_VM_HYBRID_TERM`, 381/431/460 B). `struct rx_info` gains NO member
+  across the whole span — the shim floor STAYS 16. Registries: the
+  biggest `--list-axes` growth yet (93/33 → 108/38, five new axes —
+  `ctx-node`/`cls-kit`/`cls-pack`/`hyb-reseed`/`utf-check`) and, for the
+  first time since cd371441, `list_definitions.tsv` is NOT
+  byte-identical (50 → 75 rows, all [UCP]'s own producers);
+  `list_limits.tsv` 64 → 70, `list_schema.tsv` 78 → 79. D135
+  (`4ee4a90a73`, size-cap ladder rework, no abi event, I-122's own
+  named trigger) CONFIRMED: a new last rung drops the VM hybrid's
+  prefilter instead of refusing (`RX_VM_PREFILTER_WHY`); I-122's own
+  witness, `(\p{Xwd})` under `-e utf8`, flips 1,026,586 B refused →
+  31,300 B compiled (not itself a bench pattern; the roster-wide flip
+  census is `docs/dev/measurements/probe_b118_census.py` Part B). No new
+  pinned testee (four new `DENY_FLAGS` entries only); catalogue 3.13.
+  `check_mechanism_stamps` 129/129, `check_deny_flag_controls` 18/18. No
+  store/reports write, no timing — [B117]'s own trigger, the manager's
+  window. Before it, **a32bc86e, abi 41** (re-pinned from 751b9c6d,
   2026-09-27, lane b108repin, inbox I-113 — TWO abi steps: 39→40
   [FINDINGS] B1 (the byte-rate accessor + `default.rxt` data tier;
   `<PREFIX>_FINDINGS` + `rx_info.findings` APPENDED at the struct's end

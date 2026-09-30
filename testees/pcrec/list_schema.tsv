@@ -1,22 +1,25 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# eleventh archiving of this surface (first: cd371441; second: a770139e,
+# twelfth archiving of this surface (first: cd371441; second: a770139e,
 # byte-identical; third: cf0962e3, +1 row; fourth: 8d716693, fifth:
 # b1885a83, sixth: 6ef76820, all byte-identical; eighth: ce658cb7, +2
 # rows; ninth: 02902356, +6 rows / -1 row / 5 rows re-worded; tenth:
-# 751b9c6d, byte-identical; this one: byte-identical).
+# 751b9c6d, byte-identical; eleventh: a32bc86e, byte-identical; this
+# one: +1 row).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-a32bc86e/build/pcrec --list-schema
+#     build/pcrec-fc719ca4/build/pcrec --list-schema
 #
-# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
-# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (data-tier
-# only, no `.rxt` grammar move) and [OPT-LITSCAN] S2a (emit-side only).
-# Neither touches src/parse/rxt_schema.def or rxt_source.c.
-# 78 data rows across two sections -- BYTE-IDENTICAL to the 751b9c6d copy
-# below the header (diffed line for line).
+# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50 -- see list_axes.tsv's header),
+# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
+# fc719ca4 -- NINE abi steps absorbed, 41 -> 50, list_axes.tsv's header
+# states each). ONE new row, a `bundle cpfreq` grammar entry -- [FINDINGS]
+# B5's data tier (a byte/code-point frequency table an analysis bundle
+# may declare), which carries no abi event of its own. No step in the
+# range touches src/parse/rxt_schema.def otherwise.
+# 79 data rows across two sections -- +1 row against the a32bc86e archive
+# (78 rows), every other row BYTE-IDENTICAL (diffed line for line).
 # Nothing in this project's adapters or checks reads this file (declared
 # for a future `.rxt`-format check, per docs/design/rxt_needs_v1.md);
 # archived so the registry-surface census stays complete at this pin.
@@ -121,6 +124,7 @@ variant	note	prose	false	prose	at-most-one	forbidden-if unsupported present	form
 bundle	include	token	false	none	at-most-one		format	pcrec	23
 bundle	description	prose	false	prose	at-most-one		format	pcrec	23
 bundle	freq	none	false	data	at-most-one		format	pcrec	23
+bundle	cpfreq	none	false	data	at-most-one		format	pcrec	23
 data	question	line	false	none	one	required	format	pcrec	23
 data	reader	line	false	none	one	required	format	pcrec	23
 data	analyzer	line	false	none	one	required	format	pcrec	23
@@ -142,6 +146,6 @@ subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never r
 pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
 config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
 ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
-# schema-rows: 74
+# schema-rows: 75
 # wave-built: 23
 # wave-reserved: 999

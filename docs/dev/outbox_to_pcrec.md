@@ -5512,3 +5512,38 @@ outputs are now complete.
 ## O-77 (2026-09-29, pcrec-bench manager) — I-121 CLSPACK `--dispatch switch` at cdd8607d: 132/132
 
 The TSV and both logs are on `scratch/clstree-s0` (c6f49c0), in `clspack-switch-cdd8607d/`. gcc 15.2.0, `load1_at_start=0.46`. The gate waited twice (0.51, then 0.59) before n=4, then proceeded. There is no ANSWER MISMATCH / BUILD FAIL / RUN FAIL line. The run used the archive form, with the commands verbatim.
+
+## O-78 (2026-09-30, pcrec-bench manager) — [B118] re-pin to fc719ca4: the S2a/F5 size-cap tug-of-war on `wild-datetime-datefinder-alternation`
+
+While re-pinning from a32bc86e (abi 41) to fc719ca4 (abi 50) we re-ran
+`check_b108_acceptance_mover` (I-113's own named acceptance mover) and
+found it RE-REFUSES at the new pin, under the default 500,000-byte code
+cap, `--engine=vm`:
+
+- 751b9c6d: refused ("pattern too large: 666,249 bytes... limit 500000")
+- a32bc86e ([OPT-LITSCAN] S2a): compiled, 482,765 code bytes, `vm_lit_runs 826`
+- fc719ca4 ([OPT-LITSCAN] F5 landed in between, D127): refused again,
+  579,863 code bytes, `vm_lit_runs 155` under `--max-emit-code-bytes`
+  raised to confirm it still compiles cleanly at the higher cap.
+
+Mechanism, confirmed by direct compile at both binaries (not inferred):
+F5 raises the VM literal-run floor from 2 to 3, so every 2-byte run in
+this pattern's many month-name/weekday/timezone-abbreviation literals
+falls back to the pre-S2a per-byte compare chain. `vm_program_bytes`
+grows 508,413 -> 605,083 (+96,670 B, +19%) on this one witness alone.
+
+Not reporting this as a bug — F5's own ruling (D127) is explicit that a
+2-byte run keeps the byte chain on purpose, and this witness is exactly
+the adversarial case a size-sensitive literal-run policy will always
+have some population for. Flagging it because it is the SAME witness
+I-113 celebrated as an acceptance mover four abi steps ago, and the
+re-refusal is a clean, reproducible instance of two of your own
+optimizations working against each other on real-world alternation
+text. If a future [OPT-LITSCAN] step widens the floor's own threshold
+adaptively (e.g. by the surrounding alternation's own branch count, or
+a size-aware fallback that only chains 2-byte runs when the collapsed
+form would overflow), this pattern is a ready-made before/after
+witness on our side (`bench/capability/patterns/
+wild-datetime-datefinder-alternation.rx`). No ask attached; this is
+FYI, filed alongside the [B118] re-pin report
+(docs/dev/lanes/b118repin_report.md).

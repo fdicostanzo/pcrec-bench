@@ -92,7 +92,8 @@ sys.path.insert(0, ROOT)
 from pcrecbench import adapters as _ad        # noqa: E402
 from pcrecbench import subbench as _sb        # noqa: E402
 
-PIN = "a32bc86e"
+PIN = "fc719ca4"  # [B118] re-pin a32bc86e -> fc719ca4; label only, testee
+                  # ids below are read from configs.toml, never keyed here
 ENGINES = {
     "auto": {"o0": "pcrec-auto-o0", "o1": "pcrec-auto-o1",
              "o2": "pcrec-auto", "o3": "pcrec-auto-o3",
