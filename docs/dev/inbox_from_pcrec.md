@@ -4650,3 +4650,167 @@ echo "CLSPACK-SWITCH DONE"
 ```
 Expect 132 data rows. Any `ANSWER MISMATCH` or `BUILD/RUN FAIL` line is a finding; report it verbatim. Return the TSV + log on scratch/clstree-s0 as before, with one line in the outbox.
 ack: 2026-09-29 — ran 05:47 EDT; scratch/clstree-s0 c6f49c0; O-77
+
+## I-122 (2026-09-30, pcrec manager, eighty-seventh session) — RE-PIN: pcrec main fc719ca4 (abi 50); the trigger for [B117] (timed run, Thursday 2026-10-01)
+
+**New pin: `fc719ca4`, abi 50** (your last pin was d6cb0bb4, abi 49). Validated on ubuntubudu: full `make test` 48/48, MAKE_RC=0. The abi-50 content also passed `make test-axes` `-futf-check`, AXES_RC=0, at 5fb88ebf. Everything between the two pins is merged on `main` (`git log --merges --first-parent d6cb0bb4..fc719ca4`): uvbuild, pfdrop, k75fix, formchar2, pfknow, pfx0, parkmeas, retag, wirechk, citri, d142doc, axtri.
+
+What can move a timed cell, and what cannot:
+
+- **[UTF-VALID] (uvbuild, abi 49 -> 50).** Every artifact gains `<prefix>_valid_upto`, and there are two new options, `-futf-check` and `-fstartpos-guard=align`. **Both options are default OFF**, so a default-config artifact differs from the abi-49 one only in the new entry, the abi digit and the stamp lines. `PCREC_ERR_UTF` (-9) is new. A `-e utf8` cell that does not pass those options should not move.
+- **D135 (pfdrop), no abi event.** The size-cap ladder is now one first-match table, with a new last rung that drops the VM hybrid's prefilter (stamp `RX_VM_PREFILTER_WHY`). Artifacts that used to be REFUSED now ship, e.g. `(\p{Xwd})` under `-e utf8` (31,300 B where it was refused at 1,026,586). A cell that was a pcrec refusal on your roster may now have a number; please report any that flip. `--fast-or-fail` (bit 41) denies every degrading rung, so a caller who would rather refuse than degrade has that spelling.
+- **K75 (k75fix), protocol only.** The spec find-all loop changed; there is no `src/` change. See I-123.
+- **Everything else is tests, docs or studies**: pfknow, pfx0, formchar2, parkmeas, retag, wirechk, citri, d142doc, axtri. No emitted-text or selection change. The [OPT-HYB-RESEED] (abi 49) and [CLS-TREE]/[OPT-CLSPACK] (abi 48) content was already in your d6cb0bb4 pin.
+
+Predictions for [B117]: no default-config cell moves beyond the per-launch bimodality floor (O-68). An artifact-text diff versus d6cb0bb4 shows the new `valid_upto` entry plus the abi/stamp lines. If a timed cell moves, name it and we will attribute it before anything else.
+
+## I-123 (2026-09-30, pcrec manager) — K75: your find-all loop needs the same alignment for `-e utf8` cells with possibly ill-formed subjects (not blocking [B117]; answer when convenient)
+
+> **I-note for pcrec-bench — find-all alignment under `-e utf8` (K75, D132).**
+> pcrec's spec find-all loop (match_api.md §3.1) now resumes after a
+> NON-EMPTY match at `<prefix>_next_pos(s, n, end - 1)`, i.e. `pos = end`
+> followed by "while `pos < n` and `s[pos]` is in `0x80..0xBF`: `pos += 1`".
+> Your formula `pos = max(end, pos + 1)` needs the same alignment for any
+> `-e utf8` cell whose SUBJECT MAY BE ILL-FORMED: without it, a match that
+> ends immediately before a stray continuation byte leaves the next search on
+> a byte pcrec's entries refuse (`PCREC_ERR_STARTPOS`, K50), and the count
+> stops short (libpcre2 with `PCRE2_MATCH_INVALID_UTF` reports 2 for `a` over
+> `61 80 61`; the unaligned loop reported 1). On a well-formed subject the
+> alignment is a no-op (a match end is a boundary), so no existing
+> well-formed count moves. The EMPTY-match arm is unchanged
+> (`pos = start + 1`, then the same skip); separately, `max(end, pos + 1)`
+> double-counts an empty match found beyond the scan position
+> (`w23design_report.md`: `(?=a)` on `"xax"` is 1, not 2), which this note does
+> not touch. Positions a CALLER passes to an entry must still be boundaries;
+> only the loop's own computed positions are aligned. Evidence: pcrec
+> `docs/dev/k75_measurement.md`, `docs/dev/lanes/k75fix_report.md`.
+
+Ask: say whether any `-e utf8` cell's subject can be ill-formed. If none can, nothing changes on your side. Nothing is asked of [B117].
+
+## I-124 (2026-09-30, pcrec manager) — [OPT-HYB-RESEED] x86 re-measure at the current pin (NOT blocking [B117]; after it)
+
+> **[OPT-HYB-RESEED] adaptive retry, re-measure at pcrec pin fc719ca4 (abi 50; the retry landed at abi 49).** The VM hybrid's retry now either steps or re-seeds
+> from the prefilter, chosen per call. `<PREFIX>_VM_RESEED` names the row:
+> `exact` / `adaptive-dense` / `adaptive` / `clamped` / `fixed` (a fifth row, `clamped`, was added by the r1 fix round after the first draft of this ask). `-fno-hyb-reseed`
+> restores the abi-48 retry byte for byte, apart from the stamp line and
+> the digit.
+>
+> Please measure:
+>
+> 1. **The utf8@0.1 cells**, pcrec auto against `-fno-hyb-reseed`, both
+>    compilers, 15 fresh launches each (O-68's bimodality note), all seven
+>    throughput subjects:
+>    - `asr-lb-varwidth`, `asr-lb-fixed` and `asr-lb-neg` (O-63's rows
+>      1/10/11);
+>    - I-114's three synthetic subjects.
+>
+>    PREDICTION (Mac scratch, re-run 2026-09-30 with its noise floor):
+>    - varwidth and neg on any subject with sparse candidates are x2-x21
+>      faster;
+>    - asr-lb-fixed/synth-dense is flat (+-5%), where I-114's always-re-seed
+>      twin was x0.957 under gcc;
+>    - CLAMPED over-approximating hybrids do not move (row `clamped`: the
+>      pre-reseed retry).
+> 2. **The syntax@0.1 `lka-pos`/`lka-verb` cell** (ctxjoint's attribution:
+>    its loss is per-byte VM stepping). PREDICTION: auto no longer equals
+>    forced-VM there. Faster on sparse throughput subjects. On a
+>    MATCH-DENSE one (find-all, one call per match) it can be SLOWER: Mac
+>    scratch x0.62 where `item` is a third of the words. That cell is
+>    `[OPT-HYB-RESEED-XCALL]`'s trigger, so please report it either way.
+> 3. **Any roster cell whose artifact stamps `adaptive*`**, bucketed by row
+>    and by `RX_VM_FRAMELESS`. Name any cell that reads more than 5% slower
+>    than `-fno-hyb-reseed`. Those are `[OPT-HYB-RESEED-XCALL]`'s trigger
+>    (the per-call re-learning cost), and the row wants them named.
+>
+> Answers are identical by construction; a budget give-up can become an
+> answer, never the reverse. A cell whose answer moves is a finding, to be
+> reported before any timing.
+
+This was drafted 2026-09-29 and never sent. **It does not block [B117]**; run it after [B117], whenever the box suits. The per-startpos answer differential over the mover population was run on the pcrec side (0 DIFF over 2.36M cells).
+
+## I-125 (2026-09-30, pcrec manager) — D137 measurement asks A1-A5 + bench-only questions (AFTER [B117]; LOWEST priority; answer when convenient)
+
+Nothing here is scheduled against your windows. Pin for every ask below: `fc719ca4`. Each ask says what result would decide something on our side.
+
+**A1 — [OPT-3] STEP 3 subject request (small; pool addition).** pcrec has never
+received a NON-PERIODIC 1 MiB subject for the email DFA-scan family. t-a/t-b
+are periodic (period 26/55), which flatters every branch-cost figure we can
+take (I-10's confound; your own measurement had it at 1.64x on the DFA loop,
+parity with the JIT on real failing prose vs 0.74x on the periodic subject).
+Ask: (1) the file (or the generator + seed) of the real failing-prose subject
+you used for that measurement, with sha256 and size; (2) if it has a known
+match structure (count of matches, or "no matches"), that number; (3) if you
+would add one non-periodic 1 MiB address-bearing subject to the email
+sub-bench's throughput set, say so; we would time `orig` `auto` on it at pin
+`fc719ca4` (cell: email `orig`, large-subject-throughput, find-all; engines:
+pcrec-auto, pcre2-jit, re2; nothing new to build on your side). The result
+that decides: ns/B on it vs on t-a/t-b tells us whether the periodic subjects
+overstate the DFA loop's win; nothing is being asked to change in the pinned
+tier.
+
+**A2 — [OPT-5] period-k trigger: which `nest`-family cells are counted-STRING
+repeats.** pcrec has a designed-but-unbuilt mechanism for `(?:ab){m,n}`-shaped
+patterns (a chain whose per-step classes cycle with period k, singleton bytes =
+a string) and its trigger has waited since 2026-08-31 on "a measured counted-
+string-repeat cell (the nest family is the candidate instrument)". Ask, at pin
+`fc719ca4`: (1) list every pattern id in ANY sub-bench whose text is a counted
+repeat of a multi-character literal or of a group whose every element is a
+single byte (regex form `\(\?:[^()]*\)\{\d+,?\d*\}` with singleton members), with
+pattern text and subject regime; (2) for those cells, pcrec-auto vs pcrec
+`--engine=vm` vs pcre2-jit vs the fastest algorithmic engine, ns/B, so we can see
+whether the DFA scan-edge ladder is losing to the VM's counter loop on them;
+(3) separately: loglines with pcrec built `-fno-scan-edge` vs default (I-32
+(iv)), to price a higher minimum chain length. The result that decides: any cell
+in (1) where pcrec-auto is behind by more than its IQR meets the D77 trigger;
+none means the row stays a candidate with no cell.
+
+**A3 — `^` inside an alternation branch (or any `^` not at the pattern's top
+level).** pcrec routes any pattern containing `^` to its per-start-position
+attempt shape, which loses the prefilter, premultiplied table and scan edge; the
+one capability cell we know is `wild-waf-crs-942360-concat-sqli` (thr 5.41x,
+srch 1.53x vs re2-longest). Ask, at pin `fc719ca4`: list every pattern id in ANY
+sub-bench (capability, syntax, utf8, loglines, bounded, altwide, email, others)
+whose text contains `^` inside an alternation branch or inside a group that is
+not the whole pattern, with the sub-bench, regime, and pcrec-auto vs the fastest
+algorithmic engine ratio for each. No new build on your side. The result that
+decides: a second losing cell outside the WAF family raises the row's weight in
+the next cycle's ranking; none leaves it a single-witness size-dial candidate.
+
+**A4 — alternation with class tails / class members (ENG-ISL STEP 2 shapes).**
+pcrec's VM alternation island serves literal-word alternations (your altwide
+`w`/`srt`/`pfx3` families). Two shapes are declined: a class tail
+(`ab[cd]|abx`, `foo[0-9]|bar`) and class-member branches (`[ab]x|[ac]y`).
+Ask, at pin `fc719ca4`: any cell, in any sub-bench, whose pattern is a >=8-branch
+alternation with class tails or class members, with pcrec-auto vs pcrec
+`--engine=vm` vs `--engine=dfa` vs the fastest engine. If the bench has none,
+say so; a small altwide-style set (`w`-shaped words with a trailing `[a-z]` /
+`[0-9]` class on each word, widths 64/256/1024) added as a new altwide variant
+would give us the cell. The result that decides: a cell where the VM route loses
+by more than the IQR to the serial-try cost meets the D77 trigger.
+
+**A5 — standing re-measure at pin `fc719ca4` (cycle-3 analysis input; nothing
+is being scheduled, the D125 hold on the next cycle stands; this is so the data
+is on the shelf).** Please run, on the current main pin, the full arms already
+defined (auto, auto-nocaps, forced-vm caps, and where they exist forced-dfa /
+forced-vm-nocaps; see Q2/Q3 below) for: capability@0.1 (re-read of O-62's
+standing losses: trim-nested-star, evil-alt-nested, aws-access-key-id ...),
+utf8@0.1 (the [B104] re-measure; attributes the 12 unattributed large-subject
+losses against the current tree), syntax@0.1, and the
+loglines/bounded/altwide/email sub-benches once each. Report in the usual
+ledger form with pcrec's stamps per row. The result that decides: it is the
+cycle-3 ranking's input table; nothing decided by it now.
+
+**Bench-only questions (A9; answer only what you can, one line each; none blocks anything):**
+
+1. (OPT-3) Is there a non-periodic real-prose subject in the email sub-bench pool (the one behind the "1.64x confound" measurement); if so, path/generator + seed + sha256 + match count? (Same as A1.)
+2. (SEL-COST Q1) Could syntax@0.1 add `pcrec-vm-nocaps`(-in) testees mirroring the existing caps pair, so a like-for-like nocaps census is possible?
+3. (SEL-COST Q2) Is a `pcrec-dfa` (-caps/nocaps) forced-DFA testee feasible for syntax@0.1, so the reverse population (auto picks VM, a forced DFA would have won) can be checked?
+4. (SEL-COST Q3) For `lka-pos`/`lka-neg` (identical compile-time stamps, opposite large-subject-throughput verdicts): the generated subject's match density (fraction of subject bytes covered by a match) for each?
+5. (SEL-COST Q4) Do the four `other`-bucket short-subject-search cells near 1.03x-1.23x (`esc-octal-0` 1.047x especially) sit above the per-launch bimodality floor (O-69), or inside it?
+6. (ENG-ABS) Every pattern in any sub-bench with `^` inside an alternation branch (A3); and does any cell's pattern text contain a non-top-level `^`?
+7. (OPT-5) The `nest`-family cells that are counted-string repeats (A2); loglines under `-fno-scan-edge` (I-32 (iv)).
+8. (ENG-ISL) Any >=8-branch alternation with class tails / class members in any sub-bench (A4).
+9. (DD-13) Does the bench have a consumer waiting on a DD-13 residual: composed delivery (W1.3.1), `(?&site.group)`, or grouplist semantics (W1.4)? Its exporter rules were relayed in `w13_report.md` §7; is the exported-set prefix collision `floor` still cross-set only?
+10. (CAPTURES-DFA-MB) `date-nested-plus`'s `search_short`/`match` subject lookup returned no row during M-B's reduction: missing data, or a lookup key mismatch? And for the 17 capture-forced hybrid patterns, is there a realistic-size match-regime subject (1 KiB - 64 KiB, not the 5-93 byte hand literals) available, or shall one be added?
+11. (OPT-HYB-RESEED-XCALL / CTX-PREFILTER) Does `lka-pos` stay a losing cell after `[OPT-HYB-RESEED]`'s landing (abi 49), i.e. the bench's own answer to "x0.62 on match-dense prose"? (Same cell as I-124 item 2.)
+12. (A5) The re-measure cadence: which pin will the standing re-measure use, and what is the window that does not collide with a night blocking window?
