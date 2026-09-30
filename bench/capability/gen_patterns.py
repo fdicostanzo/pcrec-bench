@@ -575,6 +575,42 @@ EXT_BENCH_ROSTER = [
      [t for t in REQUIRES_VOCAB
       if t not in ("callouts", "conditionals",
                    "control-verbs", "lookbehind-variable")]),
+    # THE EIGHT [B117] COMPILEE OPTIMIZATION-LEVEL TESTEES (2026-09-29,
+    # plan row [B117], lane b117prep): `pcrec-auto` / `pcrec-vm` plus ONE
+    # `cflags`-carried `-O<n>` flag apiece -- the SAME [B111] reasoning as
+    # `pcrec-auto-align64` two rows above states verbatim: `cflags` rides
+    # on THIS PROJECT'S OWN phase-2 `$CC` compile of the artifact+shim
+    # only (testees/pcrec/configs.toml's own words, "THESE ARE NEVER
+    # PASSED TO PCREC"), so which `-O` level that compile runs at is
+    # invisible to pcrec's parser exactly as `-falign-functions=64` is.
+    # Each row is therefore its `auto`/`vm` base's own token set, letter
+    # for letter, unwitnessed by a separate compile census (the SAME
+    # 64-pattern refusal set as the base row, by the base row's own
+    # already-cited reasoning).
+    ("pcrec-auto-o0", [t for t in REQUIRES_VOCAB
+                       if t not in ("callouts", "conditionals",
+                                    "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-o1", [t for t in REQUIRES_VOCAB
+                       if t not in ("callouts", "conditionals",
+                                    "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-o3", [t for t in REQUIRES_VOCAB
+                       if t not in ("callouts", "conditionals",
+                                    "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-os", [t for t in REQUIRES_VOCAB
+                       if t not in ("callouts", "conditionals",
+                                    "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-o0", [t for t in REQUIRES_VOCAB
+                     if t not in ("callouts", "conditionals",
+                                  "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-o1", [t for t in REQUIRES_VOCAB
+                     if t not in ("callouts", "conditionals",
+                                  "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-o3", [t for t in REQUIRES_VOCAB
+                     if t not in ("callouts", "conditionals",
+                                  "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-os", [t for t in REQUIRES_VOCAB
+                     if t not in ("callouts", "conditionals",
+                                  "control-verbs", "lookbehind-variable")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct
