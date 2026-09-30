@@ -117,11 +117,11 @@
  * does not read, so the floor stays 16 across BOTH abi 40 and 41.
  * [B118] (pcrec fc719ca4, abi 41 -> 50, NINE abi steps) adds FOUR more
  * on the same terms, none with an rx_info mirror: `info vm_cls_kit` /
- * `info vm_cls_atoms` (abi 47, [CLS-TREE] S4 + [OPT-CLSPACK] -- VM-only,
- * `vm_cls_folds`'s own scope, both COUNTS), `info vm_reseed` (abi 48,
+ * `info vm_cls_atoms` (abi 48, [CLS-TREE] S4 + [OPT-CLSPACK] -- VM-only,
+ * `vm_cls_folds`'s own scope, both COUNTS), `info vm_reseed` (abi 49,
  * [OPT-HYB-RESEED] -- VM HYBRID only, the SAME iff as
  * `vm_prefilter_lang`, a CLOSED five-token string) and `info utf_check`
- * (abi 49->50, [UTF-VALID] -- the WIDEST scope of any stamp here, EVERY
+ * (abi 50, [UTF-VALID] -- the WIDEST scope of any stamp here, EVERY
  * artifact both engines produce, a CLOSED three-token string:
  * inert/whole/off). `struct rx_info` gains no member across the whole
  * span (MEASURED at the build), so the floor stays 16.
@@ -216,6 +216,8 @@ static const char *(*pb_engine_sel)(void);
 static int       (*pb_has_vm_prefilter_lang)(void);
 static const char *(*pb_vm_prefilter_lang)(void);
 static const char *(*pb_vm_prefilter_lang_why)(void);
+static int       (*pb_has_vm_prefilter_why)(void);
+static const char *(*pb_vm_prefilter_why)(void);
 static int       (*pb_has_fast_tier)(void);
 static long long (*pb_fast_frames)(void);
 static long long (*pb_fast_trail)(void);
@@ -448,6 +450,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_engine_sel); SYM(pb_engine_sel);
     SYM(pb_has_vm_prefilter_lang); SYM(pb_vm_prefilter_lang);
     SYM(pb_vm_prefilter_lang_why);
+    SYM(pb_has_vm_prefilter_why); SYM(pb_vm_prefilter_why);
     SYM(pb_has_fast_tier); SYM(pb_fast_frames); SYM(pb_fast_trail);
     SYM(pb_search); SYM(pb_match_caps);
     SYM(pb_has_in_entries); SYM(pb_buffer_align);
@@ -662,6 +665,14 @@ int main(int argc, char **argv) {
         const char *lwhy = pb_vm_prefilter_lang_why();
         if (lang) printf("info\tvm_prefilter_lang\t%s\n", lang);
         if (lwhy) printf("info\tvm_prefilter_lang_why\t%s\n", lwhy);
+    }
+    /* [B118] (D135, [PF-DROP]): the drop-prefilter rung's OWN reason
+     * line, present only where it fired -- NOT gated on
+     * pb_has_vm_prefilter_lang(), since this is the one hybrid rescue
+     * that drops the prefilter and so never stamps a language pair. */
+    if (pb_has_vm_prefilter_why()) {
+        const char *pwhy = pb_vm_prefilter_why();
+        if (pwhy) printf("info\tvm_prefilter_why\t%s\n", pwhy);
     }
 
     /* [OPT-ANCHOR-VM], abi 29 ([OPTLOOP.1] batch 1): the VM attempt loop's

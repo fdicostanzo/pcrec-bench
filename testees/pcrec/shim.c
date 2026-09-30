@@ -947,6 +947,33 @@ const char *pb_vm_prefilter_lang_why(void) {
 #endif
 }
 
+/* [B118] (D135, pcrec fc719ca4's ancestor 4ee4a90a73). `RX_VM_PREFILTER_WHY`:
+ * the LAST rung of the size-cap ladder's own reason line, written ONLY
+ * where that rung FIRED -- "size cap retry, hybrid N > CAP", N the last
+ * refused attempt's byte count. UNLIKE `RX_VM_PREFILTER_LANG`/`_WHY`
+ * (unconditional on every hybrid), this macro is genuinely absent on
+ * MOST hybrids -- it names one specific rescue, not a fact every hybrid
+ * has. The rung ORs PCREC_NO_PREFILTER into the retry and re-emits, so
+ * the SAME artifact that carries this macro also reads
+ * `RX_VM_PREFILTER "none"` -- the one `"none"` this shim's protocol
+ * ever sees beside a stamp naming why a prefilter would otherwise have
+ * existed. No rx_info mirror. */
+int pb_has_vm_prefilter_why(void) {
+#ifdef RX_VM_PREFILTER_WHY
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_vm_prefilter_why(void) {
+#ifdef RX_VM_PREFILTER_WHY
+    return RX_VM_PREFILTER_WHY;
+#else
+    return (const char *)0;
+#endif
+}
+
 /* ------------------------ the two-tier default entry ([OPT-1], abi 5) */
 
 /* VM-only (6.3 family (b)) and never absent on a VM artifact. They report
@@ -1262,7 +1289,7 @@ long long pb_vm_lit_runs(void) {
 #endif
 }
 
-/* [CLS-TREE] S4, abi 47 ([B118], pcrec lane/land4, merge fc719ca4's
+/* [CLS-TREE] S4, abi 48 ([B118], pcrec lane/land4, merge fc719ca4's
  * ancestor e3ce677f2c). `RX_VM_CLS_KIT`: how many of this artifact's VM
  * wide-class matchers (a class whose members decode deeper than one
  * code unit, more than one member, under an encoding with a
@@ -1298,7 +1325,7 @@ long long pb_vm_cls_kit(void) {
 #endif
 }
 
-/* [OPT-CLSPACK], abi 47 (the SAME merge as `RX_VM_CLS_KIT`, one abi
+/* [OPT-CLSPACK], abi 48 (the SAME merge as `RX_VM_CLS_KIT`, one abi
  * event for both). `RX_VM_CLS_ATOMS`: the shared atom-table atom count
  * when this artifact's byte-class pool has AT LEAST 11 table-read
  * classes (no singleton/range/fold-pair compare covers them) whose
@@ -1334,7 +1361,7 @@ long long pb_vm_cls_atoms(void) {
 #endif
 }
 
-/* [OPT-HYB-RESEED], abi 48 ([B118], pcrec merge d6cb0bb4f3). `RX_VM_RESEED`:
+/* [OPT-HYB-RESEED], abi 49 ([B118], pcrec merge d6cb0bb4f3). `RX_VM_RESEED`:
  * which of five rows (`exact` / `clamped` / `adaptive-dense` / `adaptive`
  * / `fixed`) governs this VM HYBRID's retry after a failed prefilter
  * candidate -- either it STEPS to the next byte or RE-SEEDS from the

@@ -1173,7 +1173,52 @@ METADATA_DECL = {
                        "tuning.md 2.17). The two `retry` prefixes are "
                        "the RESCUES; `-fno-prefilter-collapse` denies both "
                        "rungs (the state-cap one then drops the prefilter, "
-                       "the size-cap one then REFUSES the pattern)",
+                       "the size-cap one then REFUSES the pattern -- "
+                       "[B118]/D135: UNLESS the size-cap ladder's own LAST "
+                       "rung then rescues it a second way, dropping the "
+                       "prefilter rather than refusing; see "
+                       "`vm_prefilter_why` below, which is what that "
+                       "second rescue stamps and this one does not",
+    },
+    # [B118] (D135, [PF-DROP], pcrec fc719ca4's ancestor 4ee4a90a73): the
+    # size-cap ladder's LAST, general rung -- when an emitted-size cap
+    # refuses a VM HYBRID that still carries a prefilter, the rung drops
+    # it (ORs PCREC_NO_PREFILTER into the retry) rather than refusing the
+    # pattern outright. The SAME `engine_sel "size-cap-retry"` token as
+    # the pre-existing [LIM-1]/[OPT-4] rescue, but this one's artifact
+    # reads `prefilter "none"` and carries NO language pair -- a THIRD
+    # shape `_check_agreement`'s size-cap-retry conjunct must accept
+    # beside the two match_api.md 6.3 already names (the VM-hybrid
+    # collapsed-prefilter survivor, the DFA anchored/premultiplied-table
+    # drop).
+    "vm_prefilter_why": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_VM_PREFILTER_WHY ([PF-DROP], pcrec abi "
+                  "unchanged -- D135 ships with NO abi event), read "
+                  "through pb_vm_prefilter_why() behind "
+                  "pb_has_vm_prefilter_why(); no rx_info mirror. PRESENT "
+                  "ONLY WHERE THE RUNG FIRED (not unconditional on every "
+                  "hybrid the way vm_prefilter_lang/_why are), so it "
+                  "carries no STAMP_SCOPE row -- MEASURED: `(\\p{Xwd})` "
+                  "under -e utf8, default settings, stamps it; the same "
+                  "pattern under --engine=vm (no auto retry ladder at "
+                  "all) does not",
+        "description": "the size-cap ladder's LAST rung firing: "
+                       "'size cap retry, hybrid N > CAP' -- N the last "
+                       "REFUSED attempt's emitted byte count, CAP the "
+                       "limit it exceeded. The artifact that carries this "
+                       "line is a VM hybrid whose prefilter was DROPPED "
+                       "to fit (`vm_prefilter \"none\"`, `engine_sel "
+                       "\"size-cap-retry\"`, no language pair) -- the one "
+                       "population where `engine_sel` reads "
+                       "`size-cap-retry` on an artifact with NO surviving "
+                       "prefilter at all. Witness: `(\\p{Xwd})` under "
+                       "`-e utf8`, refused at 1,027,978 B under "
+                       "`--engine=vm`'s non-hybrid form, ships at 31,300 B "
+                       "under `auto`'s default cap via this rung "
+                       "(pcrec's own lane report; the exact byte count is "
+                       "this project's `--features all` protocol's own, "
+                       "not pcrec's bare-default number)",
     },
     # -- the ADAPTER's own two size facts and the warning ([B19], I-18
     # (iv)/(3)): not stamps, measured on the emitted files by pcrec's own
@@ -1574,7 +1619,7 @@ METADATA_DECL = {
     # counts, `vm_lit_runs`'/`vm_cls_folds`'/`vm_alt_islands`' own scope.
     "vm_cls_kit": {
         "type": "integer", "scope": "pattern",
-        "source": "<PREFIX>_VM_CLS_KIT ([CLS-TREE] S4, pcrec abi 47+), "
+        "source": "<PREFIX>_VM_CLS_KIT ([CLS-TREE] S4, pcrec abi 48+), "
                   "read through pb_vm_cls_kit() behind pb_has_vm_cls_kit(); "
                   "no rx_info mirror (D77); scope checked by STAMP_SCOPE "
                   "(every VM artifact, hybrids included, no DFA artifact) "
@@ -1602,7 +1647,7 @@ METADATA_DECL = {
     },
     "vm_cls_atoms": {
         "type": "integer", "scope": "pattern",
-        "source": "<PREFIX>_VM_CLS_ATOMS ([OPT-CLSPACK], pcrec abi 47+, "
+        "source": "<PREFIX>_VM_CLS_ATOMS ([OPT-CLSPACK], pcrec abi 48+, "
                   "the SAME merge as vm_cls_kit), read through "
                   "pb_vm_cls_atoms() behind pb_has_vm_cls_atoms(); no "
                   "rx_info mirror; scope checked by STAMP_SCOPE (every VM "
@@ -1844,7 +1889,13 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              # [B118] (pcrec fc719ca4): `vm_reseed` is a sixth closed-enum
              # pair, `vm_prefilter_lang`'s own vm-hybrid scope; `utf_check`
              # is the widest-scope string pair of all -- every artifact.
-             "vm_reseed", "utf_check")
+             "vm_reseed", "utf_check",
+             # [B118] (D135, [PF-DROP]): the size-cap ladder's LAST rung
+             # own reason line -- present only where that rung fired
+             # (NOT unconditional the way every other pair in this tuple
+             # is), so it carries no STAMP_SCOPE row of its own,
+             # `vm_prefilter_lang_why`'s own "variable value" shape.
+             "vm_prefilter_why")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1940,7 +1991,7 @@ STAMP_SCOPE = {
     # [B118] (pcrec fc719ca4, abi 41 -> 50, NINE abi steps in one re-pin):
     # `vm_cls_kit` / `vm_cls_atoms` are the sixth and seventh VM-only
     # activity counts, on `vm_lit_runs`'/`vm_cls_folds`'/`vm_alt_islands`'
-    # own scope (abi 47, [CLS-TREE] S4 + [OPT-CLSPACK], ONE abi event for
+    # own scope (abi 48, [CLS-TREE] S4 + [OPT-CLSPACK], ONE abi event for
     # both -- MEASURED present, and 0, on a forced-DFA `abc` witness;
     # nonzero on a forced-VM `\p{L}+` / an 11-bracket-class witness
     # respectively). `vm_reseed` is the SECOND `vm-hybrid`-scoped pair
@@ -1951,10 +2002,10 @@ STAMP_SCOPE = {
     # "every", like `engine` -- MEASURED present (`inert`) on a plain
     # BYTE-mode `abc` witness as well as every VM/DFA/hybrid kind, since
     # abi 49->50 stamps it unconditionally on both engines.
-    "vm_cls_kit":            ("vm",       47),
-    "vm_cls_atoms":          ("vm",       47),
-    "vm_reseed":             ("vm-hybrid", 48),
-    "utf_check":             ("every",    49),
+    "vm_cls_kit":            ("vm",       48),
+    "vm_cls_atoms":          ("vm",       48),
+    "vm_reseed":             ("vm-hybrid", 49),
+    "utf_check":             ("every",    50),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -4460,16 +4511,46 @@ class Adapter(_ad.Adapter):
             #    the updated table says, and exactly what the OLD,
             #    single-armed check refused.
             macro_mf = meta.get("dfa_match")
-            vm_arm_ok = (engine == "vm" and macro_vm_pf == "hybrid"
-                         and lang == "count-collapsed")
+            # [B118] (D135, [PF-DROP], pcrec fc719ca4's ancestor
+            # 4ee4a90a73): match_api.md 6.3's table NOW reads (verbatim,
+            # fc719ca4) "on a VM hybrid it is [LIM-1]/[OPT-4]'s rung and
+            # the count-collapsed prefilter survived, OR -- [PF-DROP],
+            # D135 -- the ladder's LAST rung and the prefilter was
+            # DROPPED (legible as <PREFIX>_VM_PREFILTER "none" with
+            # <PREFIX>_VM_PREFILTER_WHY "size cap retry, hybrid N >
+            # CAP", the only "none" that stamp is written beside); on a
+            # DFA artifact it is [K53-SELRETRY]'s optional-contributor
+            # drop ... or [K59-PREMUL]'s premultiplied-table drop
+            # (<PREFIX>_DFA_TABLE off "premultiplied")." So the VM arm
+            # is now a two-armed OR of its own (collapsed-prefilter
+            # SURVIVED, or dropped entirely with its own WHY line), and
+            # the DFA arm gains a second disjunct this project has not
+            # yet witnessed on a real artifact (noted, never asserted,
+            # `overflowed-prefilter`'s own precedent). MEASURED at the
+            # build: `(\p{Xwd})` under `-e utf8`, default settings,
+            # reads engine vm / prefilter none / lang None / why "size
+            # cap retry, hybrid 1027978 > 1000000" -- exactly the new
+            # disjunct, which is what broke the OLD two-armed check the
+            # first time this witness compiled through it.
+            pwhy = meta.get("vm_prefilter_why")
+            vm_arm_survived = (engine == "vm" and macro_vm_pf == "hybrid"
+                               and lang == "count-collapsed")
+            vm_arm_dropped = (engine == "vm" and macro_vm_pf == "none"
+                              and lang is None
+                              and pwhy is not None
+                              and pwhy.startswith("size cap retry"))
+            vm_arm_ok = vm_arm_survived or vm_arm_dropped
+            dfa_table_val = meta.get("dfa_table")
             dfa_arm_ok = (engine == "dfa" and macro_vm_pf is None
-                          and lang is None and macro_mf == "search-filter")
+                          and lang is None
+                          and (macro_mf == "search-filter"
+                               or dfa_table_val != "premultiplied"))
             if sel == "size-cap-retry" and not (vm_arm_ok or dfa_arm_ok):
                 raise _ad.AdapterError(
                     "pcrec artifact stamps <PREFIX>_ENGINE_SEL 'size-cap-retry' "
                     "but reads engine %r, <PREFIX>_VM_PREFILTER %r, "
                     "<PREFIX>_VM_PREFILTER_LANG %r, <PREFIX>_DFA_MATCH %r -- "
-                    "match_api.md 6.3's table (cd371441, [K53-SELRETRY]) says "
+                    "match_api.md 6.3's table (fc719ca4, [PF-DROP]/D135) says "
                     "EITHER vm / hybrid / count-collapsed (the [LIM-1]/[OPT-4] "
                     "rung) OR dfa / no prefilter / no language / "
                     "search-filter (the [K53-SELRETRY] optional-contributor "

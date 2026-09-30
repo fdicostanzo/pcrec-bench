@@ -3036,6 +3036,10 @@ _CAPS_DFA = {"max_emit_bytes": 1000000}
 # and moves with the emitter's own text).
 _SIZE_CAP_RETRY = re.compile(r"size cap retry, exact \d+ > \d+")
 _DFA_OVERFLOW_RETRY = re.compile(r"dfa overflow retry, exact nfa \d+")
+# [B118] (D135, [PF-DROP]): `vm_prefilter_why`'s own phrasing -- "hybrid"
+# rather than "exact", since this rung's artifact carries no surviving
+# prefilter language to name at all.
+_SIZE_CAP_RETRY_HYBRID = re.compile(r"size cap retry, hybrid \d+ > \d+")
 
 # K41's second fuzz-gate witness (pcrec tests/codegen/run_prefilter_collapse.sh,
 # known_issues.md K41): the one pattern in reach whose EXACT artifact the
@@ -3285,6 +3289,32 @@ B101_STEP6_RUN_AT1 = -41      # ... at run index 1 (winpath-near-miss)
 # function, never a shared count) and pays only the 385-B findings term.
 B108_FINDINGS_STAMP_LINE = 385    # `#define RX_FINDINGS "..."` + `.findings = ...,` -- BOTH engines, flat
 B108_VM_LIT_RUNS_STAMP_LINE = 25  # `#define RX_VM_LIT_RUNS <n>` -- VM only, flat AT ANY run-free/denied count
+
+# [B118] (pcrec fc719ca4, abi 41 -> 50): THREE flat terms, MEASURED on a
+# plain DFA witness (`foo[0-9]+bar`, auto), a non-hybrid VM witness
+# (`a(b|c)+d` under `--engine=vm`) and a VM HYBRID witness (`a(b|c)+d`
+# under `auto`) -- old pin a32bc86e vs this pin, both `.c`+`.h` summed,
+# `emit_bytes`/`emit_code_bytes` moving by the SAME amount (the new
+# lines are all code, never comments):
+#   DFA      22541 -> 22922 (+381): RX_UTF_CHECK's stamp line, the shared
+#            PCREC_ERR_UTF macro line, and the new rx_valid_upto ENTRY
+#            (declaration + definition) -- every one of abi 49->50's own
+#            additions, unconditional on both engines.
+#   VM plain 21472 -> 21903 (+431 = 381 + 50): the DFA term's own three
+#            additions PLUS RX_VM_CLS_KIT/RX_VM_CLS_ATOMS's two flat
+#            stamp lines (abi 47, [CLS-TREE] S4 + [OPT-CLSPACK] --
+#            unconditional on every VM artifact, 0 a value on a route
+#            with no wide class and fewer than 11 table-read classes).
+#   VM hybrid 28466 -> 28926 (+460 = 431 + 29): the VM term's own five
+#            additions PLUS RX_VM_RESEED's stamp line (abi 48,
+#            [OPT-HYB-RESEED] -- unconditional on every VM HYBRID only).
+# `vm_program_bytes` does NOT move under any of the three (MEASURED:
+# foo|bar forced-VM's island/chain witness below is unchanged at
+# 1227/641) -- these three abi steps add stamp TEXT and one shared
+# entry point, never VM PROGRAM region bytes.
+B118_UTF_VALID_DFA_TERM = 381        # every artifact, DFA route
+B118_UTF_VALID_VM_TERM = 431         # every VM artifact (hybrid or not)
+B118_UTF_VALID_VM_HYBRID_TERM = 460  # every VM HYBRID specifically
 
 
 class _Draft:
@@ -6344,15 +6374,19 @@ DENY_CONTROLS = (
       # [B108]: DFA route, no VM involvement at all -- the pure findings
       # flat term on both arms, MEASURED (14604 -> 14989, 253884 ->
       # 254269, both exactly +385).
+      # [B118]: DFA route both arms -- the UTF-VALID DFA term, MEASURED
+      # (14989 -> 15370, 254269 -> 254650, both exactly +381).
       "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
+                     + B118_UTF_VALID_DFA_TERM,
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
-                     + B108_FINDINGS_STAMP_LINE),
+                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                            + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE)}, "deny"),
+                            + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
+                            + B118_UTF_VALID_DFA_TERM)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -6398,12 +6432,16 @@ DENY_CONTROLS = (
       # [B108]: DFA route, no VM involvement at all -- the pure findings
       # flat term on both arms, MEASURED (17869 -> 18254, 21509 -> 21894,
       # both exactly +385).
+      # [B118]: DFA route both arms -- the UTF-VALID DFA term, MEASURED
+      # (18254 -> 18635, 21894 -> 22275, both exactly +381).
       "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE,
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
+                     + B118_UTF_VALID_DFA_TERM,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
-                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE),
+                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
+                     + B118_UTF_VALID_DFA_TERM),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -6441,13 +6479,20 @@ DENY_CONTROLS = (
     # still: TWO branches, each a whole-literal compare instead of three
     # per-byte ones), emit_bytes 20237 -> 20074 (net -163: the chain's
     # own saving now EXCEEDS findings' +385).
+    # [B118]: non-hybrid forced VM, both arms -- the UTF-VALID VM term
+    # (both engines' three shared lines PLUS RX_VM_CLS_KIT/_ATOMS, no
+    # RX_VM_RESEED at all -- this artifact is forced `--engine=vm` with
+    # no prefilter, never a hybrid), MEASURED +431 on both arms
+    # (20092 -> 20523, 20074 -> 20505); `vm_program_bytes` UNCHANGED
+    # (1227 / 641 -- neither abi step touches the VM PROGRAM region).
     ("vm_alt_islands + frameless + entry shape: the alternation island denied",
      "alt-island", ("literal", b"foo|bar"), "--engine=vm",
      {"vm_alt_islands": (1, 0),
       "vm_frameless": (1, 0),
       "vm_entry_shape": ("forward", "plain"),
       "vm_program_bytes": (1227, 641),
-      "emit_bytes": (20092, 20074)}, "deny"),
+      "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM,
+                     20074 + B118_UTF_VALID_VM_TERM)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -6535,13 +6580,26 @@ DENY_CONTROLS = (
       "vm_prefilter_lang_why": ("dfa overflow retry, exact nfa 462", None),
       "engine_sel": ("collapsed-prefilter", "overflowed-dfa"),
       "prefilter": ("hybrid", "none")}, "deny"),
-    # ... and denied on the SIZE-CAP rung: the rescue becomes the cap's
-    # REFUSAL, `did-not-compile` by name ("pattern too large: N bytes of
-    # emitted code (limit 500000)").
-    ("vm_prefilter_lang: the size-cap rung denied -> REFUSED",
+    # ... and denied on the SIZE-CAP rung: [B118]/D135 CHANGED this row's
+    # own outcome -- before D135's drop-prefilter rung existed, denying
+    # the collapse here left the cap's REFUSAL as the only fallback
+    # (`did-not-compile`, "pattern too large..."); NOW the ladder's LAST,
+    # general rung fires instead and the artifact COMPILES with its
+    # prefilter DROPPED rather than refusing. `engine_sel` does NOT move
+    # (both arms read `size-cap-retry` -- the SAME token now names TWO
+    # rescues, told apart by `prefilter`/`vm_prefilter_why` rather than
+    # by the route token itself); this is also the witness whose crash
+    # against the OLD two-armed `_check_agreement` check is what this
+    # re-pin's build first surfaced (the denied arm's shape -- vm /
+    # prefilter none / no language pair -- fit neither of the pre-D135
+    # disjuncts).
+    ("vm_prefilter_lang: the size-cap rung denied -> the drop-prefilter rung fires next",
      "prefilter-lang", ("literal", _K41W2), "",
-     {"vm_prefilter_lang": ("count-collapsed", DID_NOT_COMPILE),
-      "vm_prefilter_lang_why": (_SIZE_CAP_RETRY, DID_NOT_COMPILE)}, "deny"),
+     {"vm_prefilter_lang": ("count-collapsed", None),
+      "vm_prefilter_lang_why": (_SIZE_CAP_RETRY, None),
+      "engine_sel": ("size-cap-retry", "size-cap-retry"),
+      "prefilter": ("hybrid", "none"),
+      "vm_prefilter_why": (None, _SIZE_CAP_RETRY_HYBRID)}, "deny"),
     # -fprefilter-collapse (bit 20) on a hybrid that would otherwise be
     # exact: the language moves, its why reads `forced`, the route token
     # does NOT move (nothing overflowed -- `selected` both arms).
@@ -9830,6 +9888,364 @@ def check_b108_acceptance_mover():
                 % (cr_old.outcome, cr_old.diagnostic, cr_new.outcome,
                    cr_new.engine_metadata.get("emit_code_bytes"),
                    cr_new.engine_metadata.get("vm_lit_runs")))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _b118_compile(adapter, tmp, label, extra, pattern):
+    """Shared helper for the [B118] checks below: `pcrec-local` at the
+    pin's own binary, `extra` as `$PCREC_LOCAL_FLAGS` (space-split, the
+    same convention every check_b1xx_* function above uses), form
+    FORM_PLAIN. Returns the CompileResult; the caller reads
+    `.outcome`/`.diagnostic`/`.engine_metadata`."""
+    os.environ["PCREC_LOCAL_FLAGS"] = extra
+    adapter.prepare("pcrec-local", tmp)
+    pid = re.sub(r"[^A-Za-z0-9]+", "-", "b118-%s" % label).strip("-")[:48]
+    return adapter.compile("pcrec-local", pid, pattern, {}, 1,
+                           tmp).get(_ad.FORM_PLAIN)
+
+
+def check_b118_utf_check_stamp():
+    """[B118] (pcrec fc719ca4, abi 49->50, [UTF-VALID]; inbox I-122).
+
+    Asserts `utf_check` BY VALUE on its full three-token closed set
+    (tuning.md 2.36): `inert` on a plain byte-mode artifact (every byte
+    testee this project builds), `off` on the SAME pattern under `-e
+    utf8` with no flag (THIS PROJECT'S DEFAULT on every `-utf8` testee --
+    `-futf-check` is never in any pinned config's flags), and `whole`
+    under `-futf-check` (the force control this project builds no
+    testee with, but the axis must still reach it). Also asserts
+    `PCREC_ERR_UTF` (-9) appears in the emitted `.c`'s shared ABI block
+    on every artifact regardless of the value (§4's "reserved but
+    unreachable" shape -- D60/[ABI-NS]), and that the new per-artifact
+    entry `<prefix>_valid_upto` is declared (grepped, never called: this
+    shim has no consumer for it, testees/pcrec/shim.c's own paragraph)."""
+    print("-- [B118]/[UTF-VALID]: RX_UTF_CHECK by value (inert/off/whole) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b118 utf_check stamp", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b118utfcheck-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    pattern = b"abc"
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        arms = (("byte-default", ""), ("utf8-default", "-e utf8"),
+               ("utf8-forced", "-e utf8 -futf-check"))
+        results = {}
+        texts = {}
+        for label, extra in arms:
+            cr = _b118_compile(adapter, tmp, label, extra, pattern)
+            if cr.outcome != "compiled":
+                bad("b118 utf_check: %s" % label,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                return
+            results[label] = cr.engine_metadata.get("utf_check")
+            # the shared PCREC_RX_ABI_H block (PCREC_ERR_UTF included)
+            # lives in the PAIRED HEADER under this adapter's `-o DIR`
+            # compile shape, never in the .c (MEASURED: grepping
+            # artifact_c for it here found nothing on either file).
+            c_path = cr.handle["artifact_c"]
+            h_path = c_path[:-2] + ".h" if c_path.endswith(".c") else None
+            with open(c_path, encoding="utf-8") as fh:
+                texts[label] = fh.read()
+            if h_path and os.path.isfile(h_path):
+                with open(h_path, encoding="utf-8") as fh:
+                    texts[label] += fh.read()
+        want = {"byte-default": "inert", "utf8-default": "off",
+               "utf8-forced": "whole"}
+        err_ok = all('#define PCREC_ERR_UTF (-9)' in t for t in texts.values())
+        valid_upto_ok = all(re.search(r"\brx_valid_upto\s*\(", t)
+                            for t in texts.values())
+        if results == want and err_ok and valid_upto_ok:
+            ok("b118 utf_check: inert/off/whole, PCREC_ERR_UTF and "
+               "rx_valid_upto on every arm", "%r" % (results,))
+        else:
+            bad("b118 utf_check: inert/off/whole, PCREC_ERR_UTF and "
+                "rx_valid_upto on every arm",
+                "got %r want %r (err_ok=%s valid_upto_ok=%s)"
+                % (results, want, err_ok, valid_upto_ok))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b118_ctxnode_engine_flip():
+    """[B118] (pcrec fc719ca4, abi 45->46, [UCP] U2; inbox I-122). The
+    `ctx-node` axis carries NO stamp macro of its own (tuning.md 2.32:
+    "`<PREFIX>_ENGINE` is the observable consequence") -- so the control
+    IS the assertion here. `(?<=a)x+` (a capture-free, assertion-free,
+    single-BYTE lookbehind body) reads `engine dfa` under `auto`/default
+    and `engine vm` under `-fno-ctx-node` (`PCREC_NO_CTX_NODE`, bit 35),
+    while a WIDER lookbehind body that the axis's own predicate excludes
+    (`(?<=ab)x+`, two characters) reads `vm` on BOTH arms -- the control
+    that the flip is the fold, not merely "any lookbehind moved"."""
+    print("-- [B118]/[UCP] U2: RX_ENGINE flip on a one-character lookbehind, -fno-ctx-node as the control --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b118 ctx-node engine flip", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b118ctxnode-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        cases = (("ctx-default", "--features all", b"(?<=a)x+"),
+                ("ctx-denied", "--features all -fno-ctx-node", b"(?<=a)x+"),
+                ("wide-default", "--features all", b"(?<=ab)x+"),
+                ("wide-denied", "--features all -fno-ctx-node", b"(?<=ab)x+"))
+        got = {}
+        for label, extra, pat in cases:
+            cr = _b118_compile(adapter, tmp, label, extra, pat)
+            if cr.outcome != "compiled":
+                bad("b118 ctx-node: %s" % label,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                return
+            got[label] = cr.engine_metadata.get("engine")
+        want = {"ctx-default": "dfa", "ctx-denied": "vm",
+               "wide-default": "vm", "wide-denied": "vm"}
+        if got == want:
+            ok("b118 ctx-node: (?<=a)x+ dfa->vm under -fno-ctx-node, "
+               "(?<=ab)x+ vm on both (the width control)", "%r" % (got,))
+        else:
+            bad("b118 ctx-node: (?<=a)x+ dfa->vm under -fno-ctx-node, "
+                "(?<=ab)x+ vm on both (the width control)",
+                "got %r want %r" % (got, want))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b118_clstree_stamps():
+    """[B118] (pcrec fc719ca4, abi 47, [CLS-TREE] S4 + [OPT-CLSPACK];
+    inbox I-122). `vm_cls_kit` BY VALUE on a wide-class VM witness
+    (`\\p{L}+` under `-e utf8 --engine=vm`: 1 by default, 0 under
+    `-fno-cls-kit`) WITH THE REFUSAL FLIP the axis itself names (tuning.md
+    2.33): the SAME pattern's emitted CODE crosses the 500,000-byte
+    default cap and is REFUSED under the denial (the K55/K53-family
+    refusal this axis retired, reproduced in reverse). `vm_cls_atoms` BY
+    VALUE on an 11-bracket-class byte-mode witness forced VM (>=11
+    table-read classes, tuning.md 2.34's own threshold: nonzero by
+    default, 0 under `-fno-cls-pack` alone, and ALSO 0 under
+    `-fno-cls-kit`, which denies both rows at once -- pcrec's own
+    ruling)."""
+    print("-- [B118]/[CLS-TREE] S4+[OPT-CLSPACK]: RX_VM_CLS_KIT / RX_VM_CLS_ATOMS by value, the refusal flip --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b118 cls-tree stamps", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b118clstree-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    wide_pat = b"\\p{L}+"
+    atoms_pat = (b"[aoy][bpz][cq0][dr1][es2][ft3][gu4][hv5]"
+                b"[iw6][jx7][k08][l19]")
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        # -- cls-kit: wide class, the value AND the refusal flip --
+        kit_default = _b118_compile(adapter, tmp, "kit-default",
+                                    "-e utf8 --engine=vm", wide_pat)
+        kit_denied = _b118_compile(adapter, tmp, "kit-denied",
+                                   "-e utf8 --engine=vm -fno-cls-kit",
+                                   wide_pat)
+        kit_ok = (kit_default.outcome == "compiled"
+                 and kit_default.engine_metadata.get("vm_cls_kit") == 1
+                 and kit_denied.outcome == "did-not-compile"
+                 and "pattern too large" in (kit_denied.diagnostic or ""))
+        if kit_ok:
+            ok("b118 vm_cls_kit: 1 by default, -fno-cls-kit REFUSES "
+               "(crosses the 500,000-byte cap)",
+               "default=%s(%s) denied=%s(%r)"
+               % (kit_default.outcome,
+                  kit_default.engine_metadata.get("vm_cls_kit"),
+                  kit_denied.outcome, kit_denied.diagnostic))
+        else:
+            bad("b118 vm_cls_kit: 1 by default, -fno-cls-kit REFUSES "
+                "(crosses the 500,000-byte cap)",
+                "default=%s(%s) denied=%s(%r)"
+                % (kit_default.outcome,
+                   kit_default.engine_metadata.get("vm_cls_kit"),
+                   kit_denied.outcome, kit_denied.diagnostic))
+        # -- cls-pack: an 11-bracket-class byte pattern, forced VM --
+        atoms_default = _b118_compile(adapter, tmp, "atoms-default",
+                                      "--engine=vm", atoms_pat)
+        atoms_nopack = _b118_compile(adapter, tmp, "atoms-nopack",
+                                     "--engine=vm -fno-cls-pack",
+                                     atoms_pat)
+        atoms_nokit = _b118_compile(adapter, tmp, "atoms-nokit",
+                                    "--engine=vm -fno-cls-kit",
+                                    atoms_pat)
+        for label, cr in (("atoms-default", atoms_default),
+                         ("atoms-nopack", atoms_nopack),
+                         ("atoms-nokit", atoms_nokit)):
+            if cr.outcome != "compiled":
+                bad("b118 vm_cls_atoms: %s" % label,
+                    "%s: %s" % (cr.outcome, cr.diagnostic))
+                return
+        d = atoms_default.engine_metadata.get("vm_cls_atoms")
+        p = atoms_nopack.engine_metadata.get("vm_cls_atoms")
+        k = atoms_nokit.engine_metadata.get("vm_cls_atoms")
+        atoms_ok = (d is not None and d > 0 and p == 0 and k == 0)
+        if atoms_ok:
+            ok("b118 vm_cls_atoms: nonzero by default, 0 under "
+               "-fno-cls-pack, 0 under -fno-cls-kit (denies both)",
+               "default=%s nopack=%s nokit=%s" % (d, p, k))
+        else:
+            bad("b118 vm_cls_atoms: nonzero by default, 0 under "
+                "-fno-cls-pack, 0 under -fno-cls-kit (denies both)",
+                "default=%s nopack=%s nokit=%s" % (d, p, k))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b118_hybreseed_stamp():
+    """[B118] (pcrec fc719ca4, abi 48, [OPT-HYB-RESEED]; inbox I-122).
+    Asserts `vm_reseed` BY VALUE on a genuine VM HYBRID whose prefilter
+    over-approximates the pattern (an atomic group erased, tuning.md
+    2.35's row 4 predicate: "always, on an over-approximating
+    prefilter"): `(?>ab*)c` under `--features all` reads `adaptive` by
+    default and `fixed` -- the deny's OWN LANDING ROW, not a sixth
+    mechanism -- under `-fno-hyb-reseed` (`PCREC_NO_HYB_RESEED`, bit 37).
+    Also asserts the denied artifact's `emit_bytes` is SMALLER (the
+    step/re-seed dispatch itself removed -- MEASURED: `vm_program_bytes`
+    does NOT move on this witness, 1,295 B both arms; the dispatch
+    change is small enough to sit inside the VM PROGRAM's own emitted
+    bytes without moving the SIZE stamp pcrec derives from a different
+    accounting, so this check reads the whole-file `emit_bytes` instead)
+    and that a NON-hybrid VM artifact (a plain literal, forced
+    `--engine=vm`, no DFA prefilter at all) carries NO `vm_reseed` pair
+    -- the scope iff in the direction a presence-only check would miss."""
+    print("-- [B118]/[OPT-HYB-RESEED]: RX_VM_RESEED by value, -fno-hyb-reseed lands on 'fixed' --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b118 hyb-reseed stamp", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b118reseed-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    hybrid_pat = b"(?>ab*)c"
+    try:
+        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        default_cr = _b118_compile(adapter, tmp, "reseed-default",
+                                   "--features all", hybrid_pat)
+        denied_cr = _b118_compile(adapter, tmp, "reseed-denied",
+                                  "--features all -fno-hyb-reseed",
+                                  hybrid_pat)
+        if default_cr.outcome != "compiled" or denied_cr.outcome != "compiled":
+            bad("b118 vm_reseed", "default=%s denied=%s"
+                % (default_cr.outcome, denied_cr.outcome))
+            return
+        d_em, n_em = default_cr.engine_metadata, denied_cr.engine_metadata
+        prefilter_ok = d_em.get("prefilter") == "hybrid"
+        value_ok = d_em.get("vm_reseed") == "adaptive" and n_em.get("vm_reseed") == "fixed"
+        size_ok = (d_em.get("emit_bytes") is not None
+                  and n_em.get("emit_bytes") is not None
+                  and n_em.get("emit_bytes") < d_em.get("emit_bytes"))
+        # the scope iff: a non-hybrid VM artifact carries no vm_reseed pair
+        nonhybrid_cr = _b118_compile(adapter, tmp, "reseed-nonhybrid",
+                                     "--engine=vm", b"abc")
+        scope_ok = (nonhybrid_cr.outcome == "compiled"
+                   and "vm_reseed" not in nonhybrid_cr.engine_metadata)
+        if prefilter_ok and value_ok and size_ok and scope_ok:
+            ok("b118 vm_reseed: adaptive->fixed, emit_bytes shrinks, absent "
+               "on a non-hybrid VM artifact",
+               "default=%s(%sB) denied=%s(%sB) nonhybrid has pair=%s"
+               % (d_em.get("vm_reseed"), d_em.get("emit_bytes"),
+                  n_em.get("vm_reseed"), n_em.get("emit_bytes"),
+                  "vm_reseed" in nonhybrid_cr.engine_metadata))
+        else:
+            bad("b118 vm_reseed: adaptive->fixed, emit_bytes shrinks, absent "
+                "on a non-hybrid VM artifact",
+                "prefilter_ok=%s value_ok=%s size_ok=%s scope_ok=%s "
+                "(default=%r denied=%r)"
+                % (prefilter_ok, value_ok, size_ok, scope_ok, d_em, n_em))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b118_findtie_k69_noop_on_bench():
+    """[B118] (pcrec fc719ca4, abi 41->44, K69/[PATFACTS] 3.5 + [FIND-TIE];
+    inbox I-122's "characterise the other steps" ask). Neither step has a
+    stamp, a field or an axis of its own, so the check is a NEGATIVE one:
+    the necessary-byte/run pre-check's stamps (`req_byte`/`req_run`) are
+    BYTE-IDENTICAL, under `-e byte` with NO `--analysis` (this project's
+    default on every pinned config), between the OLD pin (a32bc86e) and
+    the NEW one, on a small hand-chosen population that spans the shapes
+    FIND-TIE's own commit message names (a multi-byte necessary run, a
+    single necessary byte, no necessary byte at all) -- reproducing
+    pcrec's own "byte encoding untouched by construction" claim rather
+    than assuming it. K69 (the call-nullability fixpoint) has no witness
+    in this project's corpus at all (no bench pattern contains a
+    quantified `(?&name)`/`(?P>name)` call), so its own "ZERO movers"
+    claim is pcrec's k69fix report's, not re-derived here; this check
+    covers FIND-TIE only and says so in its own name."""
+    print("-- [B118]/K69+[FIND-TIE]: req_byte/req_run byte-identical old vs new pin, byte encoding, no --analysis --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b118 findtie/k69 noop", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "a32bc86e"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b118 findtie/k69 noop", "no build for a32bc86e "
+            "(pin.sh a32bc86e first; --path printed %r)" % old_bin)
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b118findtie-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    patterns = {
+        "run-mover-witness": b"e@",       # commit message's own named witness
+        "single-byte": b"foo[0-9]+bar",   # a lone necessary byte, no run
+        "no-req-byte": b"[a-z]*",         # no necessary byte at all
+    }
+    try:
+        results = {}
+        for pin, binpath in (("old", old_bin), ("new", adapter.pin_binary())):
+            os.environ["PCREC_BIN"] = binpath
+            for label, pat in patterns.items():
+                cr = _b118_compile(adapter, tmp, "findtie-%s-%s" % (pin, label),
+                                   "", pat)
+                if cr.outcome != "compiled":
+                    bad("b118 findtie/k69: %s/%s" % (pin, label),
+                        "%s: %s" % (cr.outcome, cr.diagnostic))
+                    return
+                em = cr.engine_metadata
+                results[(pin, label)] = (em.get("req_byte"), em.get("req_run"))
+        moved = [label for label in patterns
+                if results[("old", label)] != results[("new", label)]]
+        if not moved:
+            ok("b118 findtie/k69: req_byte/req_run unmoved on all three "
+               "byte-encoding witnesses (no --analysis)",
+               "%r" % ({k: v for k, v in results.items()},))
+        else:
+            bad("b118 findtie/k69: req_byte/req_run unmoved on all three "
+                "byte-encoding witnesses (no --analysis)",
+                "moved: %s; %r" % (moved, results))
     finally:
         for k, v in saved.items():
             if v is None:
@@ -14178,6 +14594,11 @@ def main():
     check_b108_findings_stamp()
     check_b108_litrun_stamp()
     check_b108_acceptance_mover()
+    check_b118_utf_check_stamp()
+    check_b118_ctxnode_engine_flip()
+    check_b118_clstree_stamps()
+    check_b118_hybreseed_stamp()
+    check_b118_findtie_k69_noop_on_bench()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
