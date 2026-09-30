@@ -1,0 +1,36 @@
+docs/dev/measurements/2026-09-30-b118-census.txt -- [B118] (lane b118repin,
+2026-09-30, inbox I-122) the compile-only census for the re-pin
+a32bc86e (abi 41) -> fc719ca4 (abi 50).
+
+Script: docs/dev/measurements/probe_b118_census.py (`python3
+docs/dev/measurements/probe_b118_census.py OUT_A.tsv OUT_B.tsv`).
+Box: ubuntubudu, load quiet (pcrecdev1 idle). Compile-only, no gcc, no
+timing, no store write. Binaries: build/pcrec-a32bc86e/build/pcrec and
+build/pcrec-fc719ca4/build/pcrec (pin.sh, never rebuilt by this probe).
+
+SUMMARY:
+  PART A: rows=256 identical=170 changed=79 refused-both=5 refusal-mover=2
+  PART B: rows=249 flips=0
+
+PART A's two refusal-movers are BOTH `wild-datetime-datefinder-
+alternation` (bench/capability), configs vm-caps and vm-nocaps:
+COMPILED at a32bc86e (vm_lit_runs 826), REFUSED at fc719ca4 under the
+default 500,000-byte code cap -- [OPT-LITSCAN] F5 (abi 42->43) raising
+the VM literal-run floor 2->3 eats back S2a's own collapse on this
+2-byte-run-dense alternation (month/weekday/timezone abbreviations).
+See check_b108_acceptance_mover (tools/selfcheck.py) for the full
+mechanism confirmation (vm_lit_runs 826 -> 155, vm_program_bytes
+508,413 -> 605,083 under a raised cap) and outbox O-78
+(docs/dev/outbox_to_pcrec.md) for the FYI sent to pcrec.
+
+PART B (I-122's own ask: every bench/*/patterns/*.rx pattern across all
+SIX non-utf8 sets, plain form, pcrec-auto's real argv, compiled at both
+pins) reports ZERO flips -- the datetime-alternation mover above is
+`--engine=vm`-only (Part A's own configs), so it does not appear here;
+D135's own named witness, `(\p{Xwd})` under `-e utf8`, is not itself a
+bench pattern and is confirmed separately (testees/pcrec/CLAUDE.md's
+re-pin section).
+
+Full data: the two TSVs this file's own header cites are NOT committed
+(regeneratable; see the script). This summary + the two rows quoted
+above are the archived, human-read record.

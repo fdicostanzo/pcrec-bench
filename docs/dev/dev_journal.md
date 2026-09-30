@@ -6345,3 +6345,61 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
   1-1.5 h per cell, so 10 cells come to 10-15 h, which does not fit a
   gap. Frank sizes it: all 10 cells or a reduced arm set. The box is
   back with pcrecdev1.
+
+## 2026-09-30 (forty-first session) — [B118] re-pin to fc719ca4 (abi 50), lane b118repin
+
+- Inbox I-122 asked for a re-pin off d6cb0bb4 (abi 49) as ONE step to
+  fc719ca4 (abi 50). Our actual prior pin was a32bc86e (abi 41) — the
+  lane absorbed all NINE steps 41→50, characterised in full in
+  testees/pcrec/CLAUDE.md's new "Re-pin at fc719ca4" section and the
+  plan.md [B118] row: K69/[PATFACTS] 3.5, [OPT-LITSCAN] F5, [FIND-TIE]
+  (a real corpus mover, `wild-secrets-github-pat`), [UCP] U0+U1, [UCP]
+  U2 (ctx-node — a real engine-selection flip on a pre-existing
+  STAMP_CASES witness, widened to stay immune), K73, [CLS-TREE]
+  S4+[OPT-CLSPACK] (fixed a stale [B39] deny-control assumption re
+  CLSPACK's atom-packing), [OPT-HYB-RESEED] (real VM program-byte
+  growth on adaptive-row witnesses), [UTF-VALID] (a real new function,
+  `<prefix>_valid_upto`, on every artifact — `program_identity.py`'s v2
+  normalization gained rule 6 to keep treating it as pin-constant
+  plumbing). `struct rx_info` gains no member; shim floor stays 16.
+- D135 (I-122's own named trigger, no abi event) confirmed: the
+  size-cap ladder's new last rung drops the VM hybrid's prefilter
+  instead of refusing; I-122's own witness flips as predicted.
+- Roster-wide flip census (`probe_b118_census.py`, I-122's own ask):
+  Part A (capability@0.1, 4 configs) 170 identical / 79 changed / 5
+  refused-both / 2 refusal-mover; Part B (all six non-utf8 sets,
+  pcrec-auto plain form) 0 flips. Both refusal-movers are
+  `wild-datetime-datefinder-alternation` (vm-caps/vm-nocaps) —
+  [OPT-LITSCAN] F5's floor raise RE-REFUSES I-113's own celebrated
+  acceptance mover under the default cap (vm_lit_runs 826→155,
+  +96,670 program bytes); not a bug (F5's own ruling states the
+  tradeoff), filed as outbox O-78 for FYI.
+- The full `make check-harness` run found 3 REAL failures on its first
+  pass (622/3, not stale numbers): `check_program_sha256`'s
+  "email orig: v2 identical" pair verdict (fixed by adding `program_
+  identity.py` v2 normalization rule 6 — [UTF-VALID]'s new function is
+  genuinely unreferenced on every one of our pinned configs, same
+  evidence rule 3 already uses), `check_noreqbyte_testee`'s
+  wild-secrets-github-pat case (updated to the FIND-TIE values already
+  documented on the LEDGER row), and `check_b108_acceptance_mover`
+  (rewritten to assert the re-refusal + a raised-cap confirmation
+  rather than loosened). All three fixed and individually re-verified
+  green; the full check-harness re-run and `make cc-gate-census` are
+  running (see the lane report for final numbers/log paths — both
+  launched detached per DO-THEN-FINISH after two lane-report anomalies
+  earlier: a parallel research-fork mishap the manager caught and
+  stopped, since corrected in the report's §0).
+- Registries: `list_axes.tsv` 93/33→108/38 (5 new axes — the largest
+  single-pin growth yet), `list_definitions.tsv` 50→75 (the first
+  non-byte-identical `--list-definitions` since cd371441, all [UCP]'s
+  own producers), `list_limits.tsv` 64→70, `list_schema.tsv` 78→79. No
+  new pinned testee (four new `DENY_FLAGS` only); catalogue 3.13.
+- Root CLAUDE.md, testees/pcrec/CLAUDE.md, pcrec_references.md and
+  measurements/CLAUDE.md all updated with the re-pin's own narrative.
+  [B117]'s predictions file re-pointed to a `-fc719ca4` copy (the
+  `-a32bc86e` original kept, per convention); the census script's PIN
+  label constant updated (testee ids were already read live, never
+  keyed to it).
+- This is the trigger for [B117]'s own census re-run + the Thursday
+  2026-10-01 timed window — no store/reports write, no timing, in this
+  lane.
