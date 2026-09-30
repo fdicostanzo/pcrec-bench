@@ -1569,6 +1569,125 @@ METADATA_DECL = {
                        "as an emitter function but has its own stamp, "
                        "`RX_REQ_RUN` -- the two counts are never one",
     },
+    # [B118] (pcrec fc719ca4, abi 47, [CLS-TREE] S4 + [OPT-CLSPACK], ONE
+    # abi event for both rows): the sixth and seventh VM-only activity
+    # counts, `vm_lit_runs`'/`vm_cls_folds`'/`vm_alt_islands`' own scope.
+    "vm_cls_kit": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_CLS_KIT ([CLS-TREE] S4, pcrec abi 47+), "
+                  "read through pb_vm_cls_kit() behind pb_has_vm_cls_kit(); "
+                  "no rx_info mirror (D77); scope checked by STAMP_SCOPE "
+                  "(every VM artifact, hybrids included, no DFA artifact) "
+                  "and the VALUE in tools/selfcheck.py on a hand-chosen "
+                  "wide-class witness (`\\p{L}+` under `-e utf8 "
+                  "--engine=vm`, MEASURED 1) with `-fno-cls-kit` "
+                  "(--list-axes `cls-kit`, bit 36) as the deny control "
+                  "that reaches 0 and pushes the artifact's emitted code "
+                  "past the 500,000-byte cap (846,556 B, refused) on the "
+                  "same witness -- the K55/K53-family refusal retirement "
+                  "this axis itself names",
+        "description": "how many of this artifact's VM wide-class "
+                       "matchers (a class whose members decode deeper "
+                       "than one code unit, more than one member, under "
+                       "an encoding with a one-character decode entry) "
+                       "take the KIT decode-and-test shape (src/gen/"
+                       "clskit.c) instead of the byte-alternation form "
+                       "every earlier pin wrote. A COUNT on "
+                       "`vm_alt_islands`'s own precedent (family (b): "
+                       "what the emitted program turned out to CONTAIN). "
+                       "0 is a value: no wide-class matcher took the kit "
+                       "shape, or a `-fno-cls-kit` build. Inert under "
+                       "byte encoding -- no class is wide there (tuning.md "
+                       "2.33), MEASURED 0 on every byte-mode artifact",
+    },
+    "vm_cls_atoms": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_VM_CLS_ATOMS ([OPT-CLSPACK], pcrec abi 47+, "
+                  "the SAME merge as vm_cls_kit), read through "
+                  "pb_vm_cls_atoms() behind pb_has_vm_cls_atoms(); no "
+                  "rx_info mirror; scope checked by STAMP_SCOPE (every VM "
+                  "artifact, hybrids included, no DFA artifact) and the "
+                  "VALUE in tools/selfcheck.py on a hand-built 11-bracket-"
+                  "class byte-mode witness forced VM (MEASURED 12) with "
+                  "`-fno-cls-pack` (--list-axes `cls-pack`, bit 38) as "
+                  "the deny control that reaches 0 (`-fno-cls-kit` "
+                  "denies this row too, its own control)",
+        "description": "the shared atom-table atom count when this "
+                       "artifact's VM byte-class pool has AT LEAST 11 "
+                       "table-read classes (no singleton/range/fold-pair "
+                       "compare covers them) whose combined byte "
+                       "partition fits 64 atoms -- those classes then "
+                       "share ONE 256-byte byte->atom table plus a "
+                       "64-bit mask per class instead of a 32-byte "
+                       "bitmap each (src/gen/clskit.c TAB_ROWS) -- else 0. "
+                       "A COUNT on `vm_cls_kit`'s own scope and shape, "
+                       "but UNLIKE it not wide-class-only: it can fire on "
+                       "a plain byte-mode pattern with enough table-read "
+                       "classes. No pattern in this project's own "
+                       "pre-[B118] corpus reaches the 11-class threshold "
+                       "(MEASURED 0 on every pre-existing witness), so "
+                       "this pair's first nonzero reading in the store "
+                       "is a corpus pattern this axis has not yet been "
+                       "witnessed on, not a regression",
+    },
+    "vm_reseed": {
+        "type": "enum", "scope": "pattern",
+        "values": ["exact", "clamped", "adaptive-dense", "adaptive",
+                   "fixed"],
+        "source": "<PREFIX>_VM_RESEED ([OPT-HYB-RESEED], pcrec abi 48+), "
+                  "read through pb_vm_reseed() behind pb_has_vm_reseed(); "
+                  "no rx_info mirror; scope checked by STAMP_SCOPE "
+                  "(vm-hybrid: the SAME iff as vm_prefilter_lang, "
+                  "EXCLUSIVE) and the VALUE in tools/selfcheck.py against "
+                  "the closed five-token set (exact/clamped/"
+                  "adaptive-dense/adaptive/fixed) on a hand-chosen hybrid "
+                  "witness (`(?<=a|\\xc3\\xa9)x` under `-e utf8`'s "
+                  "default selection, MEASURED `adaptive`) with "
+                  "`-fno-hyb-reseed` (--list-axes `hyb-reseed`, bit 37) "
+                  "as the deny control that lands on `fixed`",
+        "description": "which of five rows governs this VM HYBRID's "
+                       "retry after a failed prefilter candidate: `exact` "
+                       "(the prefilter answers for the pattern's own "
+                       "language, nothing gained), `clamped` (an MRL "
+                       "clamp already re-seeds every failure), "
+                       "`adaptive-dense` / `adaptive` (a calibrated "
+                       "byte-rate crossover chooses between a short step "
+                       "probation and an immediate re-seed), or `fixed` "
+                       "-- the DENY's OWN LANDING ROW (today's pre-abi-48 "
+                       "retry byte for byte), not a sixth independent "
+                       "mechanism. A CLOSED TOKEN, `vm_entry_shape`'s own "
+                       "shape: the five-row set IS the fact. "
+                       "ANSWER-IDENTICAL by construction (the row governs "
+                       "cost, never which candidate is accepted)",
+    },
+    "utf_check": {
+        "type": "enum", "scope": "pattern",
+        "values": ["inert", "whole", "off"],
+        "source": "<PREFIX>_UTF_CHECK ([UTF-VALID], pcrec abi 49->50+), "
+                  "read through pb_utf_check() behind pb_has_utf_check(); "
+                  "no rx_info mirror; scope checked by STAMP_SCOPE (every "
+                  "artifact, both engines -- the widest scope any pair in "
+                  "this table carries, `engine`'s own) and the VALUE in "
+                  "tools/selfcheck.py on a plain byte-mode `abc` witness "
+                  "(MEASURED `inert`) and an `-e utf8` one (MEASURED "
+                  "`off`, this project's default -- `-futf-check` and "
+                  "`-fstartpos-guard=align` are both default OFF on every "
+                  "config this project builds)",
+        "description": "a THREE-token closed set naming what this "
+                       "artifact's entries do about an ILL-FORMED subject "
+                       "sequence: `inert` (this encoding has no "
+                       "ill-formed byte strings -- every byte-mode "
+                       "artifact), `whole` (`-futf-check`: every entry "
+                       "refuses PCREC_ERR_UTF on an ill-formed sequence), "
+                       "`off` (THE DEFAULT under `-e utf8`: invalid-"
+                       "tolerant, PCRE2_MATCH_INVALID_UTF's own "
+                       "semantics). The companion per-artifact FUNCTION "
+                       "`<prefix>_valid_upto(s, n, startpos)` is emitted "
+                       "on every artifact regardless of this value but is "
+                       "NOT called by this shim's protocol (neither flag "
+                       "this project builds needs it -- the [B90] "
+                       "vars/nvars judgement, restated)",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1695,6 +1814,9 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "altcls_merges", "altcls_factored",
              "dfa_uniform_folds", "vm_alt_islands", "vm_program_bytes",
              "vm_cls_folds", "vm_lit_runs",
+             # [B118] (pcrec fc719ca4, abi 47, [CLS-TREE] S4 + [OPT-CLSPACK]):
+             # two more VM-only activity counts, `vm_lit_runs`'s own shape.
+             "vm_cls_kit", "vm_cls_atoms",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -1718,7 +1840,11 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              # [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT]): a fifth,
              # same terms -- a closed enum this time, unlike its three
              # variable-valued siblings.
-             "req_why")
+             "req_why",
+             # [B118] (pcrec fc719ca4): `vm_reseed` is a sixth closed-enum
+             # pair, `vm_prefilter_lang`'s own vm-hybrid scope; `utf_check`
+             # is the widest-scope string pair of all -- every artifact.
+             "vm_reseed", "utf_check")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -1811,6 +1937,24 @@ STAMP_SCOPE = {
     # (a `pcrec-local` binary at the previous pin) records it as "not
     # stamped" without tripping this table.
     "vm_lit_runs":           ("vm",       41),
+    # [B118] (pcrec fc719ca4, abi 41 -> 50, NINE abi steps in one re-pin):
+    # `vm_cls_kit` / `vm_cls_atoms` are the sixth and seventh VM-only
+    # activity counts, on `vm_lit_runs`'/`vm_cls_folds`'/`vm_alt_islands`'
+    # own scope (abi 47, [CLS-TREE] S4 + [OPT-CLSPACK], ONE abi event for
+    # both -- MEASURED present, and 0, on a forced-DFA `abc` witness;
+    # nonzero on a forced-VM `\p{L}+` / an 11-bracket-class witness
+    # respectively). `vm_reseed` is the SECOND `vm-hybrid`-scoped pair
+    # (abi 48, [OPT-HYB-RESEED] -- the SAME iff as `vm_prefilter_lang`,
+    # MEASURED: absent on a forced-VM non-hybrid artifact, present on
+    # `(?<=a|\xc3\xa9)x` under `-e utf8`'s default hybrid selection).
+    # `utf_check` is the WIDEST scope any pair in this table carries --
+    # "every", like `engine` -- MEASURED present (`inert`) on a plain
+    # BYTE-mode `abc` witness as well as every VM/DFA/hybrid kind, since
+    # abi 49->50 stamps it unconditionally on both engines.
+    "vm_cls_kit":            ("vm",       47),
+    "vm_cls_atoms":          ("vm",       47),
+    "vm_reseed":             ("vm-hybrid", 48),
+    "utf_check":             ("every",    49),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -1912,6 +2056,14 @@ REGISTRY_STAMP_PAIRS = {
     # or the window width) on their order-1 candidate and are therefore
     # NOT here, the same shape as `dfa_prefilter_offsets`.
     "RX_VM_START": "vm_start",
+    # [B118] (pcrec fc719ca4, abi 48/49-50): both new closed-enum axes
+    # carry a stamp_value on every row (`hyb-reseed`'s five, `utf-check`'s
+    # three), so both directions of the check run -- unlike
+    # `RX_VM_CLS_KIT`/`RX_VM_CLS_ATOMS`, which are counts with an EMPTY
+    # stamp_value on `cls-kit`/`cls-pack`'s rows, `vm_alt_islands`'s own
+    # precedent, and so are NOT here.
+    "RX_VM_RESEED": "vm_reseed",
+    "RX_UTF_CHECK": "utf_check",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -2685,6 +2837,76 @@ DENY_FLAGS = (
      "program past the one new stamp line (pcrec's own s2a_report.md), "
      "and masked so a run-free pattern is `.flags`-identical to its "
      "sibling"),
+    # [B118] (pcrec fc719ca4, abi 45-46, [UCP] U2; --list-axes `ctx-node`
+    # bit 35). Denied, a capture-free assertion-free single-character
+    # lookaround is lowered as vm_alt's ordinary A_LOOK VM sub-match
+    # instead of being folded into the DFA's context machinery, so the
+    # EXISTING `RX_ENGINE` stamp moves (MEASURED: `(?<=a)x+` reads `dfa` by
+    # default, `vm` denied) -- no stamp of its own. Masked
+    # (`PCREC_NO_CTX_NODE` is in strategy_denials from its own
+    # introduction, ucp_design.md §2.2: "the mask's own reason"), so a
+    # pattern with no context-fold candidate is `.flags`-identical to its
+    # sibling. Answer-identical by construction (ucp_design.md §2.3: the
+    # same subjects accepted either way).
+    ("-fno-ctx-node", "noctxnode",
+     "the [UCP] U2 CONTEXT-NODE fold denied (--list-axes `ctx-node`, bit "
+     "35): a capture-free, assertion-free single-character lookaround "
+     "keeps its ordinary VM sub-match instead of folding into the DFA's "
+     "context machinery, which MOVES THE EXISTING `RX_ENGINE` stamp "
+     "(MEASURED `(?<=a)x+`: dfa -> vm) rather than a stamp of its own -- "
+     "masked, answer-identical to its sibling by construction"),
+    # [B118] (pcrec fc719ca4, abi 47, [CLS-TREE] S4; --list-axes `cls-kit`
+    # bit 36). Denied, every wide-class matcher on the VM route reads its
+    # byte alternation again instead of decoding one character and testing
+    # it with the kit's function (`RX_VM_CLS_KIT` reads 0). ALSO denies
+    # `cls-pack` below (one flag, two `--list-axes` rows -- pcrec's own
+    # ruling, tuning.md 2.33/2.34). Masked (tuning.md: "masked from its
+    # own introduction"), so a byte-mode or narrow-class pattern is
+    # `.flags`-identical to its sibling; MEASURED on `\\p{L}+` (`-e utf8
+    # --engine=vm`): kit 1 -> 0 and the artifact's emitted code crosses
+    # the 500,000-byte cap (846,556 B, refused) -- the K55/K53-family
+    # refusal retirement this axis itself reverses.
+    ("-fno-cls-kit", "noclskit",
+     "the [CLS-TREE] S4 WIDE-CLASS KIT denied (--list-axes `cls-kit`, "
+     "bit 36; also denies `cls-pack`): every wide-class VM matcher reads "
+     "its byte alternation again instead of the kit's decode-and-test "
+     "form (RX_VM_CLS_KIT reads 0), so this artifact is the pre-S4 VM "
+     "program built by the SAME compiler -- MEASURED on `\\p{L}+` (-e "
+     "utf8 --engine=vm): the denied artifact's emitted code crosses the "
+     "500,000-byte cap and REFUSES (846,556 B) where the default 38,915-"
+     "byte one compiles -- masked, answer-identical to its sibling"),
+    # [B118] (pcrec fc719ca4, abi 47, [OPT-CLSPACK], the SAME merge as
+    # `-fno-cls-kit`; --list-axes `cls-pack` bit 38). Denied ALONE, only
+    # the shared atom-table sharing (>=11 table-read classes, <=64 atoms)
+    # is skipped -- each such class reads its own 32-byte bitmap again
+    # (`RX_VM_CLS_ATOMS` reads 0), while a wide class still takes the kit
+    # form if `-fno-cls-kit` is not ALSO given. Masked, answer-identical
+    # by construction; MEASURED 12 -> 0 on an 11-bracket-class byte-mode
+    # witness forced VM.
+    ("-fno-cls-pack", "noclspack",
+     "the [OPT-CLSPACK] shared ATOM-TABLE denied (--list-axes `cls-pack`, "
+     "bit 38): a byte-class pool of 11 or more table-read classes reads "
+     "its own 32-byte bitmap per class again instead of one shared "
+     "256-byte table (RX_VM_CLS_ATOMS reads 0) -- masked, "
+     "answer-identical to its sibling, MEASURED 12 -> 0 on a hand-built "
+     "11-bracket-class witness"),
+    # [B118] (pcrec fc719ca4, abi 48, [OPT-HYB-RESEED]; --list-axes
+    # `hyb-reseed` bit 37 -- deliberately numbered BETWEEN the two
+    # `cls-*` bits above, pcrec's own bit allocation). Denied, every VM
+    # HYBRID's retry after a failed prefilter candidate reverts to the
+    # pre-abi-48 fixed byte-for-byte behaviour (`RX_VM_RESEED` reads
+    # `fixed`, the deny's own landing row, never a sixth mechanism).
+    # Masked, answer-identical by construction (the row governs cost,
+    # never which candidate is accepted); MEASURED on `(?<=a|\\xc3\\xa9)x`
+    # under `-e utf8`'s default hybrid selection: `adaptive` -> `fixed`,
+    # −530 B (the step/re-seed dispatch itself).
+    ("-fno-hyb-reseed", "nohybreseed",
+     "the [OPT-HYB-RESEED] ADAPTIVE RETRY denied (--list-axes "
+     "`hyb-reseed`, bit 37): every VM hybrid's post-candidate-failure "
+     "retry reverts to the pre-abi-48 fixed behaviour (RX_VM_RESEED "
+     "reads `fixed`, its own landing row) -- masked, answer-identical to "
+     "its sibling by construction, MEASURED `adaptive` -> `fixed` on "
+     "`(?<=a|\\xc3\\xa9)x` under `-e utf8`'s default selection"),
 )
 
 

@@ -115,6 +115,16 @@
  * mirror, printed behind its own presence check, `0` a value). abi 40
  * ([FINDINGS] B1) appends ONE `rx_info` member (`findings`) this shim
  * does not read, so the floor stays 16 across BOTH abi 40 and 41.
+ * [B118] (pcrec fc719ca4, abi 41 -> 50, NINE abi steps) adds FOUR more
+ * on the same terms, none with an rx_info mirror: `info vm_cls_kit` /
+ * `info vm_cls_atoms` (abi 47, [CLS-TREE] S4 + [OPT-CLSPACK] -- VM-only,
+ * `vm_cls_folds`'s own scope, both COUNTS), `info vm_reseed` (abi 48,
+ * [OPT-HYB-RESEED] -- VM HYBRID only, the SAME iff as
+ * `vm_prefilter_lang`, a CLOSED five-token string) and `info utf_check`
+ * (abi 49->50, [UTF-VALID] -- the WIDEST scope of any stamp here, EVERY
+ * artifact both engines produce, a CLOSED three-token string:
+ * inert/whole/off). `struct rx_info` gains no member across the whole
+ * span (MEASURED at the build), so the floor stays 16.
  */
 
 #define _GNU_SOURCE
@@ -186,6 +196,14 @@ static int       (*pb_has_vm_cls_folds)(void);
 static long long (*pb_vm_cls_folds)(void);
 static int       (*pb_has_vm_lit_runs)(void);
 static long long (*pb_vm_lit_runs)(void);
+static int       (*pb_has_vm_cls_kit)(void);
+static long long (*pb_vm_cls_kit)(void);
+static int       (*pb_has_vm_cls_atoms)(void);
+static long long (*pb_vm_cls_atoms)(void);
+static int       (*pb_has_vm_reseed)(void);
+static const char *(*pb_vm_reseed)(void);
+static int       (*pb_has_utf_check)(void);
+static const char *(*pb_utf_check)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -420,6 +438,10 @@ int main(int argc, char **argv) {
     SYM(pb_vm_program_bytes);
     SYM(pb_has_vm_cls_folds); SYM(pb_vm_cls_folds);
     SYM(pb_has_vm_lit_runs); SYM(pb_vm_lit_runs);
+    SYM(pb_has_vm_cls_kit); SYM(pb_vm_cls_kit);
+    SYM(pb_has_vm_cls_atoms); SYM(pb_vm_cls_atoms);
+    SYM(pb_has_vm_reseed); SYM(pb_vm_reseed);
+    SYM(pb_has_utf_check); SYM(pb_utf_check);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -699,6 +721,14 @@ int main(int argc, char **argv) {
         printf("info\tvm_cls_folds\t%lld\n", pb_vm_cls_folds());
     if (pb_has_vm_lit_runs())
         printf("info\tvm_lit_runs\t%lld\n", pb_vm_lit_runs());
+    if (pb_has_vm_cls_kit())
+        printf("info\tvm_cls_kit\t%lld\n", pb_vm_cls_kit());
+    if (pb_has_vm_cls_atoms())
+        printf("info\tvm_cls_atoms\t%lld\n", pb_vm_cls_atoms());
+    if (pb_has_vm_reseed())
+        printf("info\tvm_reseed\t%s\n", pb_vm_reseed());
+    if (pb_has_utf_check())
+        printf("info\tutf_check\t%s\n", pb_utf_check());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

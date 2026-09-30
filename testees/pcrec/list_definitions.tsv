@@ -3,39 +3,52 @@
 # 9), archived VERBATIM under a source header. Everything below this header
 # is the unmodified output of:
 #
-#     build/pcrec-a32bc86e/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-fc719ca4/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
-# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (39 -> 40,
-# the byte-rate accessor + default.rxt data tier) and [OPT-LITSCAN] S2a
-# (40 -> 41, the VM literal-run compare). Neither step touches
-# definitions.c or registry.c.
-# 50 data rows / 7 columns: kind, selector, syntax, order, predicate,
-# definition, applies -- BYTE-IDENTICAL to the 751b9c6d copy below the
-# header (diffed line for line): both steps in the range are emit-side --
-# the seventeenth pin running.
-# pcrec definitions table (D85, docs/design/definitions_table.md). Empty field = none.
-# `kind`/`selector`/`syntax` are the SAME three columns --list-syntax prints for the owning row, so the two dumps join on them.
-# `order` is 1-based, dense per row (this row's Nth definitions-array entry).
-# `predicate` is the option-scope tag's OWN NAME (a closed, stable vocabulary a consumer may switch on), never hand-authored prose.
-# `definition` is the core-syntax TEXT for a string-kind entry, or the literal `<builder>` for an operand-taking one — never a live evaluation.
-# `applies` is `active` (this entry substitutes a different construct) or `identity` (restates the row's own primitive form).
-#kind	selector	syntax	order	predicate	definition	applies
-esc	d	\d	1	DEF_ALWAYS	[0-9]	active
-esc	D	\D	1	DEF_ALWAYS	[^0-9]	active
-esc	s	\s	1	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
-esc	S	\S	1	DEF_ALWAYS	[^\t\n\x0b\f\r ]	active
-esc	w	\w	1	DEF_ALWAYS	[A-Za-z0-9_]	active
-esc	W	\W	1	DEF_ALWAYS	[^A-Za-z0-9_]	active
-esc	h	\h	1	DEF_ALWAYS	[\t \xa0]	active
-esc	H	\H	1	DEF_ALWAYS	[^\t \xa0]	active
-esc	v	\v	1	DEF_ALWAYS	[\n\x0b\f\r\x85]	active
-esc	V	\V	1	DEF_ALWAYS	[^\n\x0b\f\r\x85]	active
+# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50 -- see list_axes.tsv's header),
+# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
+# fc719ca4 -- NINE abi steps absorbed, 41 -> 50, list_axes.tsv's header
+# states each). Only [UCP] U0+U1 (44 -> 45) touches this table: every
+# `DEF_UCP` producer named "NO PRODUCER YET" at a32bc86e now has one
+# (`DEF_UCP_D`/`_S`/`_W`/`_P`/`_T`), so `\d \D \s \S \w \W \b \B` and the
+# POSIX classes each gain an order-1 UCP row ahead of their pre-existing
+# DEF_ALWAYS byte row (active only under `(*UCP)`/`--ucp`), and `\h \H
+# \v \V` gain an order-1 DEF_ENCODING_UTF8 row (the wider Unicode
+# whitespace/vertical-space set, active under `-e utf8` alone, no UCP
+# needed -- K72).
+# 75 data rows / 7 columns: kind, selector, syntax, order, predicate,
+# definition, applies -- +25 rows against the a32bc86e archive (50 rows):
+# esc \d\D\s\S\w\W (+1 row each, 6), esc \h\H\v\V (+1 row each, 4), esc
+# \b\B (+1 row each, 2), class-bracket's POSIX-class group (14 -> 27,
+# +13 -- one UCP row per pair except [:ascii:], which has none). Every
+# other row BYTE-IDENTICAL (diffed line for line); no OTHER step in the
+# range touches definitions.c or registry.c.
+esc	d	\d	1	DEF_UCP_D	\p{Nd}	active
+esc	d	\d	2	DEF_ALWAYS	[0-9]	active
+esc	D	\D	1	DEF_UCP_D	\P{Nd}	active
+esc	D	\D	2	DEF_ALWAYS	[^0-9]	active
+esc	s	\s	1	DEF_UCP_S	\p{Xsp}	active
+esc	s	\s	2	DEF_ALWAYS	[\t\n\x0b\f\r ]	active
+esc	S	\S	1	DEF_UCP_S	\P{Xsp}	active
+esc	S	\S	2	DEF_ALWAYS	[^\t\n\x0b\f\r ]	active
+esc	w	\w	1	DEF_UCP_W	\p{Xwd}	active
+esc	w	\w	2	DEF_ALWAYS	[A-Za-z0-9_]	active
+esc	W	\W	1	DEF_UCP_W	\P{Xwd}	active
+esc	W	\W	2	DEF_ALWAYS	[^A-Za-z0-9_]	active
+esc	h	\h	1	DEF_ENCODING_UTF8	[\t \xa0\x{1680}\x{180e}\x{2000}-\x{200a}\x{202f}\x{205f}\x{3000}]	active
+esc	h	\h	2	DEF_ALWAYS	[\t \xa0]	active
+esc	H	\H	1	DEF_ENCODING_UTF8	[^\t \xa0\x{1680}\x{180e}\x{2000}-\x{200a}\x{202f}\x{205f}\x{3000}]	active
+esc	H	\H	2	DEF_ALWAYS	[^\t \xa0]	active
+esc	v	\v	1	DEF_ENCODING_UTF8	[\n\x0b\f\r\x85\x{2028}\x{2029}]	active
+esc	v	\v	2	DEF_ALWAYS	[\n\x0b\f\r\x85]	active
+esc	V	\V	1	DEF_ENCODING_UTF8	[^\n\x0b\f\r\x85\x{2028}\x{2029}]	active
+esc	V	\V	2	DEF_ALWAYS	[^\n\x0b\f\r\x85]	active
 esc	N	\N	1	DEF_ALWAYS	[^\n]	active
 esc	N	\N{U+0041}	1	DEF_ALWAYS	\N{U+HHHH} = code point HHHH -- byte today, a sequence under utf8 (encoding tag's 2nd row)	active
-esc	b	\b	1	DEF_ALWAYS	(?:(?<=\w)(?!\w)|(?<!\w)(?=\w))	active
-esc	B	\B	1	DEF_ALWAYS	(?:(?<=\w)(?=\w)|(?<!\w)(?!\w))	active
+esc	b	\b	1	DEF_UCP_W	(?:(?<=\p{Xwd})(?!\p{Xwd})|(?<!\p{Xwd})(?=\p{Xwd}))	active
+esc	b	\b	2	DEF_ALWAYS	(?:(?<=\w)(?!\w)|(?<!\w)(?=\w))	active
+esc	B	\B	1	DEF_UCP_W	(?:(?<=\p{Xwd})(?=\p{Xwd})|(?<!\p{Xwd})(?!\p{Xwd}))	active
+esc	B	\B	2	DEF_ALWAYS	(?:(?<=\w)(?=\w)|(?<!\w)(?!\w))	active
 esc	Z	\Z	1	DEF_ALWAYS	(?=\n?\z)	active
 esc	R	\R	1	DEF_ALWAYS	(?>\r\n|\n|\x0b|\f|\r|\x85)	active
 esc	c	\cX	1	DEF_ALWAYS	\cX = byte (X uppercased, then xor 0x40)	active
@@ -48,20 +61,33 @@ esc	n	\n	1	DEF_ALWAYS	\x0a	active
 esc	r	\r	1	DEF_ALWAYS	\x0d	active
 esc	t	\t	1	DEF_ALWAYS	\x09	active
 esc	x	\x41	1	DEF_ALWAYS	\xHH or \x{HHHH} = byte HH..HHHH (hex)	active
-class-bracket	:	[[:alpha:]]	1	DEF_ALWAYS	[[:alnum:]] ≡ [0-9A-Za-z]	active
-class-bracket	:	[[:alpha:]]	2	DEF_ALWAYS	[[:alpha:]] ≡ [A-Za-z]	active
-class-bracket	:	[[:alpha:]]	3	DEF_ALWAYS	[[:ascii:]] ≡ [\x00-\x7f]	active
-class-bracket	:	[[:alpha:]]	4	DEF_ALWAYS	[[:blank:]] ≡ [\t ]	active
-class-bracket	:	[[:alpha:]]	5	DEF_ALWAYS	[[:cntrl:]] ≡ [\x00-\x1f\x7f]	active
-class-bracket	:	[[:alpha:]]	6	DEF_ALWAYS	[[:digit:]] ≡ [0-9]	active
-class-bracket	:	[[:alpha:]]	7	DEF_ALWAYS	[[:graph:]] ≡ [!-~]	active
-class-bracket	:	[[:alpha:]]	8	DEF_ALWAYS	[[:lower:]] ≡ [a-z]	active
-class-bracket	:	[[:alpha:]]	9	DEF_ALWAYS	[[:print:]] ≡ [ -~]	active
-class-bracket	:	[[:alpha:]]	10	DEF_ALWAYS	[[:punct:]] ≡ [!-/:-@[-`{-~]	active
-class-bracket	:	[[:alpha:]]	11	DEF_ALWAYS	[[:space:]] ≡ [\t\n\x0b\f\r ]	active
-class-bracket	:	[[:alpha:]]	12	DEF_ALWAYS	[[:upper:]] ≡ [A-Z]	active
-class-bracket	:	[[:alpha:]]	13	DEF_ALWAYS	[[:word:]] ≡ [A-Za-z0-9_]	active
-class-bracket	:	[[:alpha:]]	14	DEF_ALWAYS	[[:xdigit:]] ≡ [0-9A-Fa-f]	active
+class-bracket	:	[[:alpha:]]	1	DEF_UCP_P	[[:alnum:]] ≡ \p{Xan}	active
+class-bracket	:	[[:alpha:]]	2	DEF_ALWAYS	[[:alnum:]] ≡ [0-9A-Za-z]	active
+class-bracket	:	[[:alpha:]]	3	DEF_UCP_P	[[:alpha:]] ≡ \p{L}	active
+class-bracket	:	[[:alpha:]]	4	DEF_ALWAYS	[[:alpha:]] ≡ [A-Za-z]	active
+class-bracket	:	[[:alpha:]]	5	DEF_ALWAYS	[[:ascii:]] ≡ [\x00-\x7f]	active
+class-bracket	:	[[:alpha:]]	6	DEF_UCP_P	[[:blank:]] ≡ [\t \xa0\x{1680}\x{180e}\x{2000}-\x{200a}\x{202f}\x{205f}\x{3000}]	active
+class-bracket	:	[[:alpha:]]	7	DEF_ALWAYS	[[:blank:]] ≡ [\t ]	active
+class-bracket	:	[[:alpha:]]	8	DEF_UCP_P	[[:cntrl:]] ≡ \p{Cc}	active
+class-bracket	:	[[:alpha:]]	9	DEF_ALWAYS	[[:cntrl:]] ≡ [\x00-\x1f\x7f]	active
+class-bracket	:	[[:alpha:]]	10	DEF_UCP_T	[[:digit:]] ≡ \p{Nd}	active
+class-bracket	:	[[:alpha:]]	11	DEF_ALWAYS	[[:digit:]] ≡ [0-9]	active
+class-bracket	:	[[:alpha:]]	12	DEF_UCP_P	[[:graph:]] ≡ [^\p{Z}\p{Cc}\p{Cs}\p{Co}\p{Cn}\x{61c}\x{180e}\x{2066}-\x{2069}]	active
+class-bracket	:	[[:alpha:]]	13	DEF_ALWAYS	[[:graph:]] ≡ [!-~]	active
+class-bracket	:	[[:alpha:]]	14	DEF_UCP_P	[[:lower:]] ≡ \p{Ll} [fold-inert]	active
+class-bracket	:	[[:alpha:]]	15	DEF_ALWAYS	[[:lower:]] ≡ [a-z]	active
+class-bracket	:	[[:alpha:]]	16	DEF_UCP_P	[[:print:]] ≡ [^\p{Zl}\p{Zp}\p{Cc}\p{Cs}\p{Co}\p{Cn}\x{61c}\x{2066}-\x{2069}]	active
+class-bracket	:	[[:alpha:]]	17	DEF_ALWAYS	[[:print:]] ≡ [ -~]	active
+class-bracket	:	[[:alpha:]]	18	DEF_UCP_P	[[:punct:]] ≡ [\p{P}$+<=>^`|~]	active
+class-bracket	:	[[:alpha:]]	19	DEF_ALWAYS	[[:punct:]] ≡ [!-/:-@[-`{-~]	active
+class-bracket	:	[[:alpha:]]	20	DEF_UCP_P	[[:space:]] ≡ \p{Xps}	active
+class-bracket	:	[[:alpha:]]	21	DEF_ALWAYS	[[:space:]] ≡ [\t\n\x0b\f\r ]	active
+class-bracket	:	[[:alpha:]]	22	DEF_UCP_P	[[:upper:]] ≡ \p{Lu} [fold-inert]	active
+class-bracket	:	[[:alpha:]]	23	DEF_ALWAYS	[[:upper:]] ≡ [A-Z]	active
+class-bracket	:	[[:alpha:]]	24	DEF_UCP_P	[[:word:]] ≡ \p{Xwd}	active
+class-bracket	:	[[:alpha:]]	25	DEF_ALWAYS	[[:word:]] ≡ [A-Za-z0-9_]	active
+class-bracket	:	[[:alpha:]]	26	DEF_UCP_T	[[:xdigit:]] ≡ [0-9A-Fa-f\x{ff10}-\x{ff19}\x{ff21}-\x{ff26}\x{ff41}-\x{ff46}]	active
+class-bracket	:	[[:alpha:]]	27	DEF_ALWAYS	[[:xdigit:]] ≡ [0-9A-Fa-f]	active
 quant-suffix	*	a*+	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
 quant-suffix	+	a++	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active
 quant-suffix	?	a?+	1	DEF_ALWAYS	X<quant>+ ≡ (?>X<quant>)	active

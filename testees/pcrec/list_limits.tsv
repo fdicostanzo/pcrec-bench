@@ -3,17 +3,24 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-a32bc86e/build/pcrec --list-limits
+#     build/pcrec-fc719ca4/build/pcrec --list-limits
 #
-# pcrec commit a32bc86eb9426eb0b26cb47c58cd31c75271e4b3 (rx_info.abi 41 -- see list_axes.tsv's header),
-# archived 2026-09-27 by lane b108repin ([B108], inbox I-113: pcrec main
-# a32bc86e -- TWO abi steps absorbed, 39 -> 41: [FINDINGS] B1 (39 -> 40,
-# the byte-rate accessor + default.rxt data tier, TWO new limit rows:
-# PCREC_MAX_FIND_COUNT and PCREC_FIND_FLOOR_PPM) and [OPT-LITSCAN] S2a
-# (40 -> 41, the VM literal-run compare, no limit row of its own).
-# 64 data rows / 7 columns (name, value, unit, kind, override, anchor,
-# desc) -- TWO new rows against the 751b9c6d copy below the header
-# (diffed line for line): every other row BYTE-IDENTICAL.
+# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50 -- see list_axes.tsv's header),
+# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
+# fc719ca4 -- NINE abi steps absorbed, 41 -> 50, list_axes.tsv's header
+# states each). Registry deltas land from TWO sources in this range:
+# [UCP] U1/U2 add three rows (PCREC_UCP_NARROW_MAX_INTERVALS,
+# PCREC_MAX_CTX_SETS, PCREC_MAX_CTX_ATOMS), and [FINDINGS] B2/B5 -- which
+# carry NO abi event of their own, landing as tests/docs in this range's
+# merge list -- add three more (PCREC_MAX_FIND_CPFREQ_ROWS,
+# PCREC_MAX_FIND_CHAIN, PCREC_MAX_FIND_BUNDLE_BYTES). Two pre-existing
+# rows are REWORDED only (PCREC_PREFIX_K_MAX's owning file renamed
+# src/opt/prefix_k.c -> src/facts/kset.c; PCREC_MINW_MAX's desc notes
+# [PATFACTS] 3.6 retired callgraph.c's own duplicate ceiling constant) --
+# neither is a value or override change.
+# 70 data rows / 7 columns (name, value, unit, kind, override, anchor,
+# desc) -- +6 rows against the a32bc86e archive (64 rows), 2 rows
+# reworded, every other row BYTE-IDENTICAL (diffed line for line).
 # pcrec numeric-limits registry (docs/spec/table_contract.md, the
 # SIXTH TSV surface; D90/[LIM-1]). One row per numeric limit in
 # src/core/limits.def, in the table's own order.
@@ -66,7 +73,10 @@ PCREC_MAX_SPLICE_TOTAL	8192	nodes	compile budget	none		[DD-14 wave G]: total add
 PCREC_ANCHORED_MAX_STATES	4096	states	compile budget	-D		[ENG-ABS]: the optional anchored match-here machine's own DFA state ceiling, lower than the mandatory pair's
 PCREC_MAX_VM_EMIT_CODE_BYTES	500000	bytes	size cap	flag+-D	8	[ART-SIZE]/D84: emitted C bytes OUTSIDE table initializers; --max-emit-code-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default (run_size_term.sh's reference-compiler consumer) -- [LIM-OVR] 2026-09-22: override was BUILD_D ('never a caller lever'), false given --max-emit-code-bytes; FLAG_D names the two-lever shape honestly
 PCREC_MAX_FIND_COUNT	1099511627776	count	compile budget	none	3.7	[FINDINGS] B1: the largest count one `row` of an analysis data block may carry (2^40); over it the block is refused by this name at parse, never truncated. Keeps the byte-rate normalization's product (count x 10^6 <= 2^60) and every later derivation inside uint64_t (docs/design/findings/design.md §2.3, §2.5, §9)
+PCREC_MAX_FIND_CPFREQ_ROWS	65536	count	compile budget	none	3.7	[FINDINGS] B5: the most `row` lines one `cpfreq` data block may carry (distinct code points); over it the block is refused by this name at parse, never truncated. With PCREC_MAX_FIND_COUNT it bounds every derived byte count below 2^58, so the encode-utf8 sum cannot wrap before its own ceiling test (docs/design/findings/design.md §8.3, §9)
 PCREC_FIND_FLOOR_PPM	2	ppm	selection knee	none	3.7	[FINDINGS] B1: the byte-rate floor, in parts per million — the rate a byte a data block never counted (or counted too rarely) is given by the normalization, so no rate reader ever believes a byte IMPOSSIBLE and selects on a certainty it does not have. The shipped default's own floor, which is why it normalizes to itself (docs/design/findings/design.md §0.7, §2.5)
+PCREC_MAX_FIND_CHAIN	8	count	compile budget	none	3.7	[FINDINGS] B2: the most bundles an analysis chain may hold before its built-in default terminal (the selected bundle and each `include` it follows); a longer chain is refused by this name, never cut (docs/design/findings/design.md §4.3, §8.3, §9)
+PCREC_MAX_FIND_BUNDLE_BYTES	1048576	bytes	compile budget	none	3.7	[FINDINGS] B2: the largest text an analysis is read from — an -I DIR/<name>.rxt file, or a library caller's analysis_source; over it the text is refused by this name before it is parsed, never truncated (docs/design/findings/design.md §8.3, §9)
 PCREC_DEFAULT_WARN_EMIT_BYTES	250000	bytes	size cap	flag+-D	8	[OPT-4]: the advisory --warn-emit-bytes default (never refuses, 0 disables) ALSO settable per-compile; -D moves the built-in default -- [LIM-OVR] 2026-09-22: override was BUILD_D; --warn-emit-bytes is a real (non-raise-only) caller lever on top of the -D-movable default, the same two-lever shape as the raise-only rows above, now FLAG_D
 PCREC_MAX_EMIT_BYTES	1000000	bytes	size cap	flag+-D	8	[ART-SIZE]/D84: the whole comment-excluded artifact; --max-emit-bytes ALSO raises it per-compile (raise-only); -D moves the built-in default -- [LIM-OVR] 2026-09-22: override was BUILD_D ('never a caller lever'), false given --max-emit-bytes; FLAG_D names the two-lever shape honestly
 PCREC_SIZE_TERM_THRESHOLD	120000	bytes	selection knee	-D		[ART-SIZE]: the emitted-size knee above which the unroll-K size term evaluates the ladder at all
@@ -86,9 +96,9 @@ VM_ISL_BYTES_PER_NODE	180	bytes	selection knee	none		[ENG-ISL]: measured margina
 VM_ISL_BYTES_PER_CHAIN_NODE	98	bytes	selection knee	none		[ENG-ISL]: measured marginal emitted-code bytes per AST node of the subtree vm_alt's serial chain would emit instead
 VM_ISL_SIZE_FACTOR	2	count	selection knee	none		[ENG-ISL]: how many times the chain's estimated emitted size the island may reach before it declines; on the ESTIMATOR the two populations separate at 2.60 against 4.02, and 2 is validated by the random size census (0 refused, max artifact growth 1.03x) rather than argued
 VM_INLINE_CHAIN_MAX_BYTES	4096	bytes	selection knee	flag		[CC-DIFF] STEP 2: emitted VM program bytes at or below which the entry chain is inlined into the three _in entries (rung FORWARD); above it one shared out-of-line body (rung SHARED). --vm-entry-shape=N overrides the decision outright
-PCREC_PREFIX_K_MAX	24	count	compile budget	none		src/opt/prefix_k.c: how many literal-prefix candidates the offset-skip analysis may carry
+PCREC_PREFIX_K_MAX	24	count	compile budget	none		src/facts/kset.c: how many offsets past the candidate start the k-set walk (the kset_walk fact) may carry
 PCREC_OFSK_MAX_SET	4	count	compile budget	none		src/opt/prefix_k.c: how many offsets the selected offset-set prefilter candidate may carry
-PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/callgraph.c: the minimum-width analysis' saturation ceiling (== PCREC_W_UNBOUNDED)
+PCREC_MINW_MAX	1099511627776		compile budget	none		src/opt/mrl.c: the minimum-width analysis' saturation ceiling (== PCREC_W_UNBOUNDED), shared directly by src/opt/callgraph.c's fixpoints since [PATFACTS] step 3.6 retired that file's own CG_EXP_INF re-declaration of the same value
 PCREC_MAX_SCAN_EDGES	4	count	selection knee	none		[OPT-5]: how many scan edges one DFA machine may carry — src/opt/scanedge.c takes the longest chains first, src/gen/emit_dfa.c sizes its array by it; since [OPT-EDGE] STEP 1 an edge costs NO compare on the emitted loop's generic path (the shared sentinel), so this is an emitted-bytes budget awaiting a measured re-choice
 PCREC_STARTPOS_GUARD_TEXT_MAX	1024	bytes	identifier cap	none		[K50]: fixed buffer size for the caller-startpos boundary guard's rendered C expression (src/core/internal.h's pcrec_startpos_guard_text; four call sites in the two emitters). Sized by the ENCODING BACKEND's own guard text, not by the pattern — enc_utf8.c's is 46 bytes with the @-placeholders expanded, so this is K38-precedent margin over the longest a backend could plausibly spell; overflow is a loud internal error, never a truncated half-guard
 PCREC_MIN_SCAN_CHAIN	2	states	selection knee	none		[OPT-5] precondition (5): the SHORTEST bounded counted-class run src/opt/scanedge.c will collapse into a scan edge (the unbounded self-loop is admitted at any length). MEASURED 2026-09-04 against the STEP 1.1 loop -- studies/scan_edge_ladder/run_floor.sh, 3 runs x 15 rounds, edge vs -fno-scan-edge on the same pattern: at m=2, 3 and 4 the two arms are NOT separated by more than the per-round range on either family, so D77 no-gap-no-move keeps this at 2; the only resolvable separation is m=8 nullable, edge/noedge 0.9855 median [IQR 0.0243]. The edge SIZE win is unconditional and is the standing reason to admit m=2. RE-CONFIRMED 2026-09-21 on the fixed harness (I-82, D117): 0 of 16 cells separate, still keeping this at 2
@@ -96,6 +106,9 @@ PCREC_MAX_REQ_RUN_EMIT	8	bytes	selection knee	none		[OPT-REQPOS] tier 2b: the LO
 PCREC_MAX_VAR_NAME_LEN	64	bytes	identifier cap	none	3.6	[VAR]: the longest selector `${name}` may carry. A name is emitted into the artifact as part of an identifier (the internal <PREFIX>_VAR_<NAME> index macro) and into rx_info's names table, so it is bounded for the same reason -p is (PCREC_MAX_PREFIX_LEN); 64 is well above any name a caller would write and well under PCREC_MAX_EMIT_NAME_LEN's own margin
 PCREC_MAX_VAR_NEST_DEPTH	8	levels	compile budget	none	3.6	[VAR]: how deep a `${name:-word}` operator's WORD may nest further `${...}` expansions. variables_common.md §1.7: nesting is permitted in the word position only and the bound is COMPILE-time, so an over-deep template is a compile error and no run-time recursion is introduced in either consumer. 8 is a fallback-chain depth no real caller approaches; the parser recurses once per level, so this also bounds that recursion
 PCREC_MAX_REQ_RUN_SCAN	32	bytes	compile budget	none		[OPT-REQPOS] tier 2b: how much of a necessary literal run the ANALYSIS tracks before truncating it (src/opt/reqbyte.c's RbRun). Bounds the walk's per-frame state on a pattern whose literal is as long as the pattern — this project has segfaulted its own compiler on a 20,000-byte literal — and every truncation is SOUND in the only direction that matters, because a prefix of a necessary contiguous run is itself a necessary contiguous run. Sized at four times PCREC_MAX_REQ_RUN_EMIT so the window choice above is EXACT for every run length the shipped corpus and the bench contain (longest measured 11, docs/dev/optloop/reqpos_census.md §1.1)
+PCREC_UCP_NARROW_MAX_INTERVALS	128	count	selection knee	none	3.8	[UCP] U1 (ucp_design.md §6, D130 Q3): the most code-point INTERVALS a UCP set (\d, \w, a POSIX class under (*UCP)/--ucp) may have, after clamping to the encoding's universe, and still be built today; a wider one is REFUSED by name until a kit-sized route exists ([CLS-TREE] S4 for the VM, [UCP] U3 for the DFA) -- at today's cost `\w+` under UCP utf8 is a 330 KB, 66 s compile. 128 sits between the widest set the ruling ships (\p{Nd}, 71 intervals) and the narrowest it refuses (UCP [:punct:], ~207), so the measured rule reproduces exactly the ruled list; tests/ucp pins the partition. Every set under -e byte clamps far below it
+PCREC_MAX_CTX_SETS	32	count	compile budget	none	3.9	[UCP] U2 (ucp_design.md §2.4): the most DISTINCT context sets one DFA machine may read (the word set of a \b/\B, a one-character lookaround's set, the newline set of (?m)^/$, the encoding's non-start set) -- the width of a context ATOM's membership vector; a machine over it is DECLINED like a state-cap overflow (auto routes it to the VM, --engine=dfa refuses). The corpus's widest machine reads 3
+PCREC_MAX_CTX_ATOMS	16	count	compile budget	none	3.9	[UCP] U2 (ucp_design.md §2.4, H4): the most context ATOMS (realized membership vectors over a machine's context sets, the empty vector included) one DFA machine may carry -- the width of DState.up[], of the seed families and of every per-state class view; a machine over it is DECLINED like a state-cap overflow (auto routes it to the VM, --engine=dfa refuses), never truncated. Every shipped class-axis machine realizes at most 4
 RC_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_recursion.c: saturation ceiling for a (?N)/(?+N)/(?-N) recursion-call number
 BR_NUMBER_MAX	1000000		compile budget	none		src/parse/mod_backrefs.c: saturation ceiling for a \N/\g{N} backreference number
 LA_MSG_MAX	256	bytes	identifier cap	none		src/parse/mod_lookaround.c: fixed buffer size for the §2.5/§2.7 lookaround diagnostic text

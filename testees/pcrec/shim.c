@@ -93,7 +93,79 @@
  * (src/gen/emit_dfa.c, "[FORM-CHAR] STEP 1 abi 22 -> 23") says in so
  * many words "No struct offset moves, no `rx_info` member is added".
  * `search_form` is still the last field. The floor STAYS 16, confirmed
- * at the build by the abi-sabotage arms.
+ * at the build by the abi-sabotage arms. Abi 24-41 (the pins between
+ * d34c9131 and a32bc86e, [B42]/[B45]/[B58]/[B74]/[B77]/[B80]/[B84]/
+ * [B90]/[B101]/[B104]/[B108]) are each documented at their own re-pin in
+ * testees/pcrec/CLAUDE.md; none of them raised the floor either (the one
+ * STRUCT growth in that span, [VAR]'s two appended `rx_ctx`/`rx_info`
+ * members at abi 32, is read by no getter here -- [B90]'s own paragraph).
+ *
+ * Abi 41 -> 50 ([B118], pcrec fc719ca4, NINE abi steps absorbed in one
+ * re-pin -- the lane's own inbox, I-122, undercounted them as "one",
+ * having assumed a stale prior pin): `struct rx_info` GAINS NO MEMBER
+ * across the whole span (MEASURED: a plain `abc` witness's `struct
+ * rx_info` block, match_api.md 6's own table, is byte-identical from abi
+ * 41 through abi 50 but for the `.abi` digit) -- so the floor STAYS 16,
+ * the rule's first direction NINE times running:
+ *
+ *   - abi 41->42 (K69 fix / [PATFACTS] 3.5 close): the call-target
+ *     nullability fixpoint MOVED (`pcrec_callgraph_build`'s own
+ *     `cg_minw_publish` now publishes it before the E1 seal, off `minw`,
+ *     rather than the emitter running a second fixpoint after) -- an
+ *     internal refactor with no new macro and no struct change at all.
+ *   - abi 42->43 ([OPT-LITSCAN] F5, D127): `pcrec_lit_run`'s floor
+ *     narrowed from TWO qualifying one-byte literals to THREE (a
+ *     two-byte pair keeps its own per-byte chain) -- `RX_VM_LIT_RUNS`'
+ *     VALUE narrows on some artifacts (MEASURED: `ab[0-9]` forced-VM
+ *     reads 0 at this pin where `abc[0-9]` still reads 1), never a new
+ *     macro.
+ *   - abi 43->44 ([FIND-TIE]): the necessary RUN's scanned member, on a
+ *     byte-frequency DATA TIE, now picks the RIGHTMOST candidate
+ *     (matching `pcrec_find_set_pick`'s own tie rule) instead of the
+ *     LEFTMOST -- `RX_REQ_RUN`'s `@offset` VALUE can move on a tied
+ *     witness, never a new macro or field.
+ *   - abi 44->45 ([UCP] U0+U1): module `ucp` (`--ucp`, `(*UCP)`,
+ *     `(?aDSWPT)`), a new `rx_info.flags` BIT (`PCREC_UCP`, 1u<<34,
+ *     UNMASKED -- it mirrors the CLI flag, not a strategy denial) and,
+ *     under `--features all` (this project's fixed protocol token,
+ *     testees/pcrec/adapter.py), the `PCREC_FEATURE_MODULES` scaffolding
+ *     string gains `,ucp` on EVERY artifact (+4 B, flat, unconditional --
+ *     see the size-book note below). No new rx_info FIELD, no new
+ *     `RX_<NAME>` stamp macro this shim reads.
+ *   - abi 45->46 ([UCP] U2): a new DENY BIT, `PCREC_NO_CTX_NODE`
+ *     (1u<<35, MASKED from `rx_info.flags`'s strategy_denials -- an
+ *     answer-identity axis), lets a capture-free, assertion-free,
+ *     single-character lookaround be folded into the DFA's own context
+ *     machinery instead of costing a VM sub-match: denying it MOVES the
+ *     EXISTING `RX_ENGINE` stamp (MEASURED: `(?<=a)x+` reads `dfa` by
+ *     default and `vm` under `-fno-ctx-node`) -- no new stamp macro, no
+ *     new field, the control is the pre-existing stamp under the flag.
+ *   - abi 46->47 (K73 ruling (a)): the caller-startpos boundary guard
+ *     (K50) no longer refuses OFFSET 0 as a possibly-mid-character
+ *     start, and one anchored-match entry that had never carried the
+ *     guard at all now does. BYTE encoding is untouched by construction
+ *     (`enc_byte.c` sets `start_guard = NULL`, so the new code paths
+ *     emit nothing there) -- no new field, no new macro.
+ *   - abi 47->48 ([CLS-TREE] S4 + [OPT-CLSPACK]): TWO new VM-scope-only
+ *     stamp macros, `RX_VM_CLS_KIT` and `RX_VM_CLS_ATOMS` (both read
+ *     below), neither with an rx_info mirror (D77's own precedent,
+ *     `RX_VM_ALT_ISLANDS`/`RX_VM_CLS_FOLDS`'s own shape) -- confirmed at
+ *     the build: a forced-DFA artifact carries neither macro at all.
+ *   - abi 48->49 ([OPT-HYB-RESEED]): one new stamp macro on every VM
+ *     HYBRID (the same `job->fit.prefilter` iff as `RX_VM_PREFILTER_LANG`
+ *     -- never on a non-hybrid VM artifact, never on a DFA one),
+ *     `RX_VM_RESEED` (read below), no rx_info mirror.
+ *   - abi 49->50 ([UTF-VALID]): one new stamp macro on EVERY artifact,
+ *     `RX_UTF_CHECK` (read below, a 3-token closed set:
+ *     `inert`/`off`/`whole`), one new PER-ARTIFACT FUNCTION,
+ *     `<prefix>_valid_upto(s, n, startpos)` (a function, not a struct
+ *     field -- it does not move this shim's floor question, and this
+ *     shim's own protocol has no caller for it: `-futf-check` and
+ *     `-fstartpos-guard=align` are both DEFAULT OFF on every config this
+ *     project builds, so `rx_valid_upto` is emitted, callable, and never
+ *     called here), and one new error code, `PCREC_ERR_UTF` (-9, inside
+ *     the give-up range this shim's `pb_err_*` accessors already read
+ *     generically by NUMBER -- no new accessor needed).
  *
  * THE THREE STAMP FAMILIES THIS FILE READS, and the rule for each
  * (match_api.md 6.3's (a)/(b) split, tuning.md 3):
@@ -1187,6 +1259,158 @@ long long pb_vm_lit_runs(void) {
     return (long long)RX_VM_LIT_RUNS;
 #else
     return 0;
+#endif
+}
+
+/* [CLS-TREE] S4, abi 47 ([B118], pcrec lane/land4, merge fc719ca4's
+ * ancestor e3ce677f2c). `RX_VM_CLS_KIT`: how many of this artifact's VM
+ * wide-class matchers (a class whose members decode deeper than one
+ * code unit, more than one member, under an encoding with a
+ * one-character decode entry) take the KIT DECODE-AND-TEST shape
+ * (src/gen/clskit.c) instead of the byte-alternation form every earlier
+ * pin wrote -- a COUNT on `RX_VM_ALT_ISLANDS`' own precedent (family
+ * (b): what the emitted program turned out to CONTAIN). UNCONDITIONAL
+ * on every VM artifact, hybrids included, never on a pure-DFA one
+ * (match_api.md 6.3: the DFA route's own wide-class machinery is a
+ * separate mechanism, [UCP] U3/U4's, not this one). Inert under `-e
+ * byte` (tuning.md 2.33: "no class is wide there"; MEASURED: a plain
+ * byte-mode artifact of any shape reads 0). No rx_info mirror (D77).
+ * `-fno-cls-kit` (`PCREC_NO_CLS_KIT`, bit 36) is the deny control, and
+ * it ALSO denies `cls-pack` below (one flag, two rows -- tuning.md
+ * 2.33/2.34's own ruling): MEASURED on `\p{L}+` (`-e utf8`,
+ * `--engine=vm`), kit 1 -> 0 and the artifact's emitted code GROWS past
+ * the 500,000-byte cap under the denial (846,556 B, refused) -- the
+ * kit route is what makes a wide UCP class fit at all, which is the
+ * K55/K53-family refusal retirement [CLS-TREE] S4 itself names. */
+int pb_has_vm_cls_kit(void) {
+#ifdef RX_VM_CLS_KIT
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_vm_cls_kit(void) {
+#ifdef RX_VM_CLS_KIT
+    return (long long)RX_VM_CLS_KIT;
+#else
+    return 0;
+#endif
+}
+
+/* [OPT-CLSPACK], abi 47 (the SAME merge as `RX_VM_CLS_KIT`, one abi
+ * event for both). `RX_VM_CLS_ATOMS`: the shared atom-table atom count
+ * when this artifact's byte-class pool has AT LEAST 11 table-read
+ * classes (no singleton/range/fold-pair compare covers them) whose
+ * combined byte partition fits 64 atoms -- those classes then share
+ * ONE 256-byte byte->atom table plus a 64-bit mask per class, instead
+ * of a 32-byte bitmap each (src/gen/clskit.c TAB_ROWS) -- else 0. A
+ * COUNT, same shape and same scope as `RX_VM_CLS_KIT`: every VM
+ * artifact, hybrids included, never a DFA one, no rx_info mirror.
+ * UNLIKE `cls-kit`, this row is NOT wide-class-only -- it can fire on a
+ * plain BYTE-mode pattern with enough table-read classes (MEASURED: an
+ * 11-bracket-class byte pattern, each class 5 letters, forced VM, reads
+ * 12 atoms under `auto`/default; no pattern in this project's own
+ * pre-[B118] corpus reaches the 11-class threshold, so every witness
+ * measured before this pin reads 0 -- a FLAT, not a wide-only, absence).
+ * `-fno-cls-pack` (`PCREC_NO_CLS_PACK`, bit 38; bit 37 is
+ * `-fno-hyb-reseed`, abi 48-49, landing between the two `cls-*` bits in
+ * pcrec's own bit allocation) denies it alone, MEASURED 12 -> 0 on the
+ * same witness with the tables restored (`-fno-cls-kit` denies both
+ * together, its own control). */
+int pb_has_vm_cls_atoms(void) {
+#ifdef RX_VM_CLS_ATOMS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_vm_cls_atoms(void) {
+#ifdef RX_VM_CLS_ATOMS
+    return (long long)RX_VM_CLS_ATOMS;
+#else
+    return 0;
+#endif
+}
+
+/* [OPT-HYB-RESEED], abi 48 ([B118], pcrec merge d6cb0bb4f3). `RX_VM_RESEED`:
+ * which of five rows (`exact` / `clamped` / `adaptive-dense` / `adaptive`
+ * / `fixed`) governs this VM HYBRID's retry after a failed prefilter
+ * candidate -- either it STEPS to the next byte or RE-SEEDS from the
+ * prefilter, chosen per candidate rather than fixed at compile time as
+ * every earlier pin's retry was. UNCONDITIONAL on every VM HYBRID and
+ * on NO OTHER artifact -- the SAME iff as `RX_VM_PREFILTER_LANG`
+ * (`job->fit.prefilter` set: emitted inside the identical guarded block,
+ * confirmed at the build), never on a non-hybrid VM artifact (no
+ * prefilter to re-seed from) and never on a DFA one. A TOKEN, not a
+ * count -- the closed five-row set IS the fact, so this shim mirrors
+ * `RX_VM_ENTRY_SHAPE`'s string-getter shape rather than
+ * `RX_VM_ALT_ISLANDS`'s integer one. No rx_info mirror (D77). `fixed`
+ * is the deny's OWN LANDING ROW, not a sixth independent mechanism
+ * (pcrec's own row comment: "always (fallback, the deny's landing
+ * row): today's retry") -- MEASURED on `(?<=a|\xc3\xa9)x` under `-e
+ * utf8` (default engine selection, a genuine hybrid): `adaptive` ->
+ * `fixed` under `-fno-hyb-reseed` (`PCREC_NO_HYB_RESEED`, bit 37), with
+ * the artifact 530 B smaller denied (the step/re-seed dispatch itself).
+ *
+ * Two getters behind one presence question, this shim's standing rule:
+ * a NULL/empty string getter would conflate "not a hybrid" with "the
+ * hybrid stamps a value this shim does not recognise", so the presence
+ * question is asked first, exactly as `pb_has_vm_entry_shape()` does. */
+int pb_has_vm_reseed(void) {
+#ifdef RX_VM_RESEED
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_vm_reseed(void) {
+#ifdef RX_VM_RESEED
+    return RX_VM_RESEED;
+#else
+    return (const char *)0;
+#endif
+}
+
+/* [UTF-VALID], abi 49->50 ([B118], pcrec merge 291c579b54). `RX_UTF_CHECK`:
+ * a THREE-token closed set naming what this artifact's entries do about
+ * an ILL-FORMED subject sequence, UNCONDITIONAL on every artifact both
+ * engines produce (no iff at all -- the widest scope any stamp in this
+ * file has, matching `RX_ENGINE`'s own): `inert` (this encoding has no
+ * ill-formed byte strings -- every byte-mode artifact this project
+ * builds, MEASURED), `whole` (`-futf-check`: every entry taking a
+ * subject refuses PCREC_ERR_UTF on an ill-formed sequence in
+ * `[startpos - LB, n)`), `off` (THE DEFAULT under `-e utf8`: invalid-
+ * tolerant, PCRE2_MATCH_INVALID_UTF's own semantics -- an ill-formed
+ * sequence matches nothing and is not reported). `-futf-check`
+ * (`PCREC_FORCE_UTF_CHECK`, bit 39) and `-fstartpos-guard=align`
+ * (`PCREC_FORCE_STARTPOS_ALIGN`, bit 40, a THIRD value on the
+ * pre-existing `startpos-guard` axis) are both DEFAULT OFF on every
+ * config this project builds, so every `-e utf8` testee here reads
+ * `off` and every byte testee reads `inert` -- MEASURED on the plain
+ * `abc` byte witness (`inert`) and confirmed structurally (tuning.md
+ * 2.35/2.36: masked out of `rx_info.flags` under byte encoding, so a
+ * byte-mode artifact is byte-identical whether or not either flag is
+ * passed). No rx_info mirror; the companion per-artifact FUNCTION
+ * `<prefix>_valid_upto(s, n, startpos)` is NOT read here (this shim's
+ * protocol has no caller for it at either flag's default-off setting --
+ * the same judgement [B90] made for `vars`/`nvars`, restated in this
+ * file's opening ABI-FLOOR paragraph). */
+int pb_has_utf_check(void) {
+#ifdef RX_UTF_CHECK
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_utf_check(void) {
+#ifdef RX_UTF_CHECK
+    return RX_UTF_CHECK;
+#else
+    return (const char *)0;
 #endif
 }
 
