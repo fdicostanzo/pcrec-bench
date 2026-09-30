@@ -6330,3 +6330,18 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
 - **Rule recorded (Frank).** On work completion or a long idle, run the
   session-end routine. While monitoring or in a short idle, keep the
   cron keepalive running.
+
+## 2026-09-30 ~00:35 (40th session, addendum) — [B117] check + census in pcrec's gap
+
+- pcrecdev1 freed the box at ~00:00, with 1-3 h before its next runs.
+  The full `make check` was GREEN (check-harness 619/0, interpret
+  233/0).
+- The census is archived as `2026-09-29-b117-olevel-census.txt`: 625
+  compiled, 15 refused by pcrec (the same at every level), 0 answer
+  mismatches. Median .text against -O2: -O0 ×1.23-1.26, -O1 ×0.97-0.98,
+  -O3 ×1.01-1.03, -Os ×0.92. gcc wall time: -O0 ×0.42, -O1 ×0.68,
+  -O3 ×1.05, -Os ×0.94.
+- The TIMED WINDOW was NOT launched. Capability windows have run about
+  1-1.5 h per cell, so 10 cells come to 10-15 h, which does not fit a
+  gap. Frank sizes it: all 10 cells or a reduced arm set. The box is
+  back with pcrecdev1.
