@@ -401,14 +401,32 @@ already-scored file," since nothing had been scored yet. Scored through
 the NORMAL CLI path (`check_stated_utc` passes: this testee population
 was never measured before this window). **All 7 clauses REFUTED
 (R-PRED-2)** — but the populations behind each verdict differ sharply:
-P1/P3 (DFA route flat at `-O0`/`-Os`) are substantively wrong (50/62 and
-34/62 of 62 patterns exceed ±15%, all slower); P2 (DFA route flat at
+P1/P3 (`pcrec-auto` flat at `-O0`/`-Os`) are substantively wrong (50/62 and
+34/62 of 62 patterns exceed ±15%, all slower); P2 (`pcrec-auto` flat at
 `-O3`) nearly holds (58/62 inside band, the 4 exceptions all faster);
-P4-P6 (VM route direction claims) are directionally right for
+P4-P6 (`pcrec-vm` direction claims) are directionally right for
 48-58 of 62 patterns but fail the strict per-pattern quantifier on
 4-24 exceptions, several moving the OPPOSITE direction (`utf8-lead-
 no-cont` a recurring ×0.47-×0.67 outlier across three levels and both
-routes); P7 (`.so` bytes at `-O0`) mostly holds (56/62). **A sidecar
+testees); P7 (`.so` bytes at `-O0`) mostly holds (56/62). **`pcrec-auto`
+is NOT one route**: 29/62 patterns compile to a pure DFA, 22/62 to a
+VM-hybrid (DFA-side prefilter + VM core), 11/62 to a pure VM program —
+identical across all five `-O` levels (pcrec decides its own route at
+phase 1, before gcc ever sees `-O`) — and re-checking P1-P3 on the
+DFA-stamped subset alone (29/62) does not rescue any of them: the
+DFA-only numbers move almost identically to the whole-testee ones.
+`pcrec-vm` (forced `--engine=vm`) IS one uniform route (62/62 `engine:
+vm`, `prefilter: none`). **The 14 `pcrec-vm`/`-O0` patterns that read
+flat (§1's P4) share one MEASURED trait, not a guess**: every one has an
+`RX_REQ_BYTE` necessary-byte guard whose scanned byte occurs ZERO times
+in the three throughput subjects (confirmed by direct byte-count),
+so pcrec's own pre-check — a single linear (`memchr`-shaped) scan —
+runs to completion and declares no-match WITHOUT the VM's dispatch loop
+ever executing; that scan is glibc's own already-compiled code, not
+pcrec's emitted C, so `-O0` vs `-O2` cannot move it. Every OTHER
+`pcrec-vm` pattern (48/62: 22 whose necessary byte DOES occur, 26 with
+no necessary byte at all) reads a real `-O0` slowdown — a 100% clean
+split over the whole 62-pattern population. **A sidecar
 quirk found while reading the populations**: `_measured_text`'s "worst"
 witness for a `between` op is the violator with the largest ABSOLUTE
 ratio (`interpret.py:2790`), which for a low-side-only violation set
