@@ -105,6 +105,7 @@ sys.path.insert(0, ROOT)
 from pcrecbench.subbench import Subbench          # noqa: E402
 from pcrecbench.record import whole_subject_text  # noqa: E402
 from pcrecbench.driverrun import C_ENV            # noqa: E402
+from testees.pcrec import adapter as pcrec_adapter  # noqa: E402
 
 PIN_SH = os.path.join(ROOT, "testees", "pcrec", "pin.sh")
 CONFIGS_TOML = os.path.join(ROOT, "testees", "pcrec", "configs.toml")
@@ -211,12 +212,31 @@ def census_cell(pcrec_bin, workdir, sb_name, pattern_name, text, mode, form,
           "form": form, "gcc_result": "-", "clang_result": "-",
           "diagnostic": ""}
 
-    emit_argv = ([pcrec_bin, "-p", "rx"] + mode_flags
+    emit_argv = ([pcrec_bin, "-p", "rx", pcrec_adapter.EMIT_COMMENTS_FLAG]
+                + mode_flags
                 + ["-o", art_c, "--pattern", text_bytes.decode("latin-1")])
     # pcrec D118 (abi 29, 8d716693): a literal pattern goes behind
     # --pattern (which takes the next argv token as-is, no `--` needed);
     # a bare positional is an INPUT FILE. The old `-- PATTERN` shape was
     # refused on every cell here, silently, until 2026-09-28.
+    #
+    # `-fcomments` ([B58] EMIT_COMMENTS_FLAG) is the adapter's own FIXED
+    # PROTOCOL TOKEN, passed "alongside -p rx" on every phase-1 exec
+    # (testees/pcrec/adapter.py, never inside cfg["flags"]) -- this probe
+    # built its own `emit_argv` from scratch instead of reusing the
+    # adapter's and had silently dropped it (found 2026-10-01: every
+    # other pcrec invocation in this project carries it). `mode_flags`
+    # itself already carries `--features all` (read live from
+    # configs.toml's pcrec-auto/-nocaps/-vm entries by `load_mode_flags`
+    # below -- confirmed present in this argv by a --dry-run check, not
+    # assumed), so that token was never missing; `-fcomments` was the
+    # real gap. MEASURED a no-op on the quantity this census reads
+    # (compile/refuse, never emit_bytes): the [B58] note already proves
+    # `-fcomments` changes no answer, no object byte and no
+    # comment-excluded size on four artifact kinds, so this fix changes
+    # no cell's gcc/clang outcome -- it only brings the argv back in
+    # line with the protocol for any future reader who diffs this
+    # probe's cells against a real adapter-produced artifact.
     if dry_run:
         argv_sink.append(emit_argv)
     else:
