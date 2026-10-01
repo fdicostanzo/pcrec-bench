@@ -1,0 +1,44 @@
+# docs/dev/measurements/probe_b119k75_utf8_wellformedness_census.py output
+# [B119] / inbox I-123 (K75, D132), lane b119k75, 2026-10-01
+# Run from repo root, subjects already generated via each set's gen_subjects.py /
+# gen_throughput_subjects.py.
+
+== altwide ==
+  manifest.tsv: 40 subject(s) checked, 0 bad
+  manifest_throughput.tsv: 4 subject(s) checked, 0 bad
+== bounded ==
+  manifest.tsv: 49 subject(s) checked, 0 bad
+  manifest_throughput.tsv: 5 subject(s) checked, 0 bad
+== capability ==
+  ILL-FORMED nu-high-byte (2 B) at offset 0: orphan continuation byte 0x81
+  ILL-FORMED nu-mojibake (7 B) at offset 0: orphan continuation byte 0x93
+  ILL-FORMED nu-lead-no-cont (2 B) at offset 0: byte 1 of a 2-byte sequence at offset 0 is 0x58, not a continuation byte (0x80-0xBF)
+  manifest.tsv: 75 subject(s) checked, 3 bad
+  manifest_throughput.tsv: 3 subject(s) checked, 0 bad
+== email ==
+  ILL-FORMED s-019 (18 B) at offset 3: lead byte 0xff out of range
+  manifest.tsv: 85 subject(s) checked, 1 bad
+  manifest_throughput.tsv: 5 subject(s) checked, 0 bad
+== litrun ==
+  manifest.tsv: 27 subject(s) checked, 0 bad
+  manifest_throughput.tsv: 27 subject(s) checked, 0 bad
+== loglines ==
+  manifest.tsv: 112 subject(s) checked, 0 bad
+  manifest_throughput.tsv: 12 subject(s) checked, 0 bad
+== syntax ==
+  ILL-FORMED f-cafe (4 B) at offset 3: truncated 3-byte sequence (only 1 byte(s) left)
+  ILL-FORMED l-latin1 (28 B) at offset 3: byte 1 of a 3-byte sequence at offset 3 is 0x20, not a continuation byte (0x80-0xBF)
+  manifest.tsv: 42 subject(s) checked, 2 bad
+  ILL-FORMED t-64k (65536 B) at offset 1077: lead byte 0xfc out of range
+  ILL-FORMED t-256k (262144 B) at offset 152: byte 1 of a 3-byte sequence at offset 152 is 0x76, not a continuation byte (0x80-0xBF)
+  ILL-FORMED t-1m (1048576 B) at offset 1117: byte 1 of a 3-byte sequence at offset 1117 is 0x20, not a continuation byte (0x80-0xBF)
+  manifest_throughput.tsv: 3 subject(s) checked, 3 bad
+== utf8 ==
+  manifest.tsv: 91 subject(s) checked, 0 bad
+  manifest_throughput.tsv: 7 subject(s) checked, 0 bad
+
+TOTAL: 587 subject(s) checked across all 8 set(s), 9 bad
+
+K75 ANSWER: bench/utf8@0.1 (the only set whose [expectations] encoding = "utf8", the only one our --utf8 driver flag ever fires for) carries 0 ill-formed subject(s) of its own 98.
+  -> NO -e utf8 cell of ours can carry an ill-formed subject today. No alignment fix needed; no code changed.
+  (The 9 bad byte sequence(s) found in OTHER, byte-encoded sets are deliberate/incidental byte-mode witnesses -- see bench/capability/NOTES.md's `nu-*` family -- and are irrelevant here: their sets never set PCRE2_UTF, so --utf8 never reaches a driver on them regardless of which testee runs there.)
