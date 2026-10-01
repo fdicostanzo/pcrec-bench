@@ -6440,3 +6440,11 @@ parse, so it fired a false stall twice. Use `-mmin -N`.
   - A lane's own background-monitor notification can be lost. The
     manager's keepalive caught a lane that had sat idle for 20 minutes
     after its run finished.
+
+## 2026-10-01 ~07:15 (41st session, Opus 5.5) — [B117] window run, read, O-79 filed; [B117] COMPLETE
+
+- **Wake.** I-126 acked (box handed over; keep fc719ca4; K79 noted for the post-Friday re-pin). Upstream: pcre2#1015 gained a JIT label only; recorded.
+- **Window.** Quiet pre-flight (load 0.04, max core 3.8%), launched 2026-09-30 23:32 under setsid; ended 06:22, 10/10 measured. pcrec-vm-o1's first attempt read inconclusive-spread and its one re-measure was clean (the reporter's newest-measured-wins dedup excludes the first). Committed 1b7b495 (store 303 index lines; 59 sidecars regenerated, index hash + R-STATUS-2 only). A mistaken full `--dry-run` (it times every cell at 1 trial into the scratch store) was killed by PID after ~3 min; nothing reached store/.
+- **Read** (lane b117read, sonnet; merged 4744ee8; one change-request round). All 7 predictions REFUTED under the per-pattern quantifier, with different pictures: pcrec-auto -O0 median ×2.25, and it holds on the 29 DFA-stamped patterns alone (×2.24), -Os ×1.25, -O3 flat (DFA-only median ×1.0001; the VM-hybrid-stamped ×0.968 faster). pcrec-vm -O0 median ×3.10; the 14 flat patterns are exactly those whose RX_REQ_BYTE byte is absent from all three throughput subjects (the memchr pre-check ends the call before any dispatch; I spot-checked floor-byte's `~` = 0 occurrences). -O1 costs real time on both. .so bytes: only -O0 grows (median ×1.13-1.14). The P4/P6 lo→hi column fix in the predictions file was a format repair before scoring (`_op_holds` reads one-sided bounds from `hi`).
+- **Lesson.** The report's compile-stamp legend prints one value per testee when its cells agree, so it hides pcrec-auto's per-pattern routing. Split by each record's engine_metadata before saying "route".
+- **Lesson.** The 14 "-O-insensitive" patterns were a property of the subjects, not of the dispatch loop. A flat ratio needs its mechanism read before it is taken as a finding.
