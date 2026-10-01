@@ -611,6 +611,71 @@ EXT_BENCH_ROSTER = [
     ("pcrec-vm-os", [t for t in REQUIRES_VOCAB
                      if t not in ("callouts", "conditionals",
                                   "control-verbs", "lookbehind-variable")]),
+    # THE FORCED-DFA + VM-NOCAPS TESTEES ([B121], pin fc719ca4, inbox
+    # I-125 Q2/Q3; docs/dev/measurements/2026-10-01-b121-dfa-nocaps-
+    # census.txt is the WITNESS CENSUS this row set rests on -- all four
+    # candidates compiled against this corpus's own 64 patterns x 2
+    # forms, never inferred).
+    #
+    # `pcrec-vm-nocaps`(-in): MEASURED (same archive, Part 1) to compile
+    # the IDENTICAL population to `pcrec-auto`/`pcrec-vm` on this corpus
+    # (124/128 cells, byte for byte) -- `--no-captures` never refuses
+    # anything the forced VM route alone accepts, so this row is
+    # `pcrec-vm`'s own token set, letter for letter, minus `captures`
+    # (the SAME exclusion `pcrec-nocaps` already carries above for the
+    # identical reason: the testee does not EMIT capture output, so it
+    # cannot satisfy the token even where it compiles).
+    ("pcrec-vm-nocaps", [t for t in REQUIRES_VOCAB
+                         if t not in ("callouts", "captures", "conditionals",
+                                      "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-nocaps-in", [t for t in REQUIRES_VOCAB
+                            if t not in ("callouts", "captures", "conditionals",
+                                         "control-verbs", "lookbehind-variable")]),
+    # `pcrec-dfa`/`pcrec-dfa-nocaps`: the DFA FORCED, a diagnostic
+    # request pcrec refuses rather than downgrades, each WITNESS-TESTED
+    # per token directly (one isolated construct per token, both
+    # captures settings -- the same discipline the base `pcrec-auto`/
+    # `pcrec-nocaps` rows above cite, never inferred from the corpus
+    # alone, which can confound two tokens on one pattern: e.g.
+    # `bracket-array-define` tags BOTH `recursion` and `named-groups`
+    # on one self-referencing `(?&brackets)` group, and attributing its
+    # refusal to either tag alone without an isolated witness would
+    # have been a guess). `backrefs`/`lookaround`/`lookbehind-variable`/
+    # `k-reset` (`\K`) are VM-only REGARDLESS of `--no-captures`
+    # (witnessed: `\K` alone answers "requires the VM engine, which
+    # --engine=dfa excludes" under BOTH captures settings) -- excluded
+    # from both rows. TRUE (self-referencing) `recursion` is likewise
+    # VM-only under BOTH settings, witnessed on all three real corpus
+    # recursion patterns (`(?R)`, `(?1)`, self-referencing `(?&name)`)
+    # refusing identically caps-on/caps-off with the SAME "requires the
+    # VM engine" diagnostic -- a non-self-referencing subroutine CALL
+    # (`(?&g)(?<g>x)`, no recursion at all) compiles fine under
+    # `--no-captures`, which is why the isolated witness must actually
+    # recurse, not merely call a sibling group, or it answers the wrong
+    # question. `named-groups` on its own (`(?<key>[^"]+)`, no
+    # recursion, witnessed on the real corpus pattern
+    # `codegrammar-xflag`) is a PLAIN CAPTURING GROUP: it refuses under
+    # `pcrec-dfa` (captures on, "this pattern requires captures ...")
+    # exactly like any other capturing-group pattern, but COMPILES
+    # under `pcrec-dfa-nocaps` -- so, UNLIKE every other token here,
+    # `pcrec-dfa`'s and `pcrec-dfa-nocaps`'s declared sets DIFFER by one
+    # token, not merely by compiling population (the way `pcrec-auto`/
+    # `pcrec-nocaps` differ only in `captures` itself). `callouts`/
+    # `conditionals`/`control-verbs` are the same parser-level gates
+    # excluded on every pcrec-* row above, unrelated to the engine
+    # route. Compiling populations: 58/128 cells (`pcrec-dfa`), 93/128
+    # (`pcrec-dfa-nocaps`) -- docs/dev/measurements/2026-10-01-b121-dfa-
+    # nocaps-census.txt Part 1.
+    ("pcrec-dfa", [t for t in REQUIRES_VOCAB
+                  if t not in ("backrefs", "callouts", "captures",
+                               "conditionals", "control-verbs", "k-reset",
+                               "lookaround", "lookbehind-variable",
+                               "named-groups", "recursion")]),
+    ("pcrec-dfa-nocaps", [t for t in REQUIRES_VOCAB
+                          if t not in ("backrefs", "callouts", "captures",
+                                       "conditionals", "control-verbs",
+                                       "k-reset", "lookaround",
+                                       "lookbehind-variable", "recursion")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct
