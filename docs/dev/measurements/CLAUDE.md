@@ -1069,3 +1069,16 @@ Maintenance: update this file when files are added/removed or change role.
   rather than inferred. No second losing cell exists outside the WAF
   family on this corpus as of 2026-10-01; A3's own decision rule reads
   NONE (stays a single-witness candidate).
+- `probe_b121_counted_repeats.py` / `2026-10-01-b121-counted-repeats-census.txt`
+  — ([B121], inbox I-125 A2/Q7) every pattern whose text is a counted
+  `{m,n}` repeat of a flat multi-character literal or an all-singleton
+  alternation, via the same real structural parser A3/Q6 uses. ONE
+  hit corpus-wide: bench/utf8's `qnt-counted-3b`
+  (`(?:日本){2,}`, the UTF-8 bytes of two CJK characters, a
+  MULTI-LITERAL repeat). bench/bounded's `nest2-*`/`nest3-*` family --
+  pcrec's own named "candidate instrument" for the [OPT-5] period-k
+  trigger -- does NOT match either shape: every nest pattern is
+  `(?:CLASS{p,q}){m,n}` (e.g. `(?:\d{1,4}){1,4}`), a counted repeat of
+  a bounded CLASS with its own inner counted repeat, not a literal
+  string or singleton alternation -- a different mechanism shape,
+  confirmed structurally rather than assumed.
