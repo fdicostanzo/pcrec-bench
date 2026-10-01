@@ -1047,14 +1047,29 @@ Maintenance: update this file when files are added/removed or change role.
   `--engine=vm`, gcc, over syntax@0.1's three throughput subjects. 15
   launches x 21 trials, cleared by the manager on a verdict-`quiet` box
   (load1 0.07-0.09). ANSWER IDENTITY: 0/138 cross-arm mismatches (incl.
-  the forced-VM arm). FINDINGS: item 1a CONFIRMED in direction, FAR
-  EXCEEDED in magnitude on real (non-density-tuned) prose -- 11x-99x
-  speedup from the real fix vs the predicted x2-x21 (I-114's own
-  synthetic subjects DO land in the predicted band; ordinary throughput
-  text does not); item 1b (`fixed`/`synth-dense` flat +-5%) CONFIRMED;
-  item 2a (`auto` != forced-VM) CONFIRMED; item 2b (sparse-faster/
-  dense-slower) NOT CLEANLY TESTABLE with a same-grammar size ladder
-  (no controlled density pair); item 3's slice of this probe's own
-  population finds NO cell >5% slower than denied outside the
-  timer-floor noise band (full roster verdict still owed to the
-  manager's real window).
+  the forced-VM arm). MECHANISM, read from pcrec's own `docs/design/
+  hyb_reseed.md` (`git -C ~/pcrec show d6cb0bb4f3:...`, not guessed): on
+  a clamp-free hybrid the OLD (`denied`) behaviour does NOT re-seed --
+  it STEPS every byte to the subject's end once the first candidate
+  fails; the real fix (`default`) is what re-seeds from the DFA
+  prefilter to skip non-candidate stretches. FINDINGS: item 1a
+  CONFIRMED in direction, FAR EXCEEDED in magnitude on ordinary
+  throughput prose -- 11x-99x vs the predicted x2-x21 (I-114's own
+  short synthetic subjects DO land in the predicted band; the "step to
+  the end" cost scales with subject size, which ordinary 1 MB prose
+  shows and short synthetic subjects cannot); item 1b (`asr-lb-fixed`/
+  `synth-dense` flat +-5%, scoped to that one pair) CONFIRMED; item 1d
+  NAMES the `[OPT-HYB-RESEED-XCALL]` trigger population this probe
+  found -- FOUR real cells >5% slower than denied (7.4%/103%/6.7%/6.5%),
+  ALL on I-114's own density-tuned synthetic subjects, never ordinary
+  prose, one of them (`asr-lb-fixed` gcc `synth-64k-asc`) bimodal and
+  flagged for re-measurement; item 2a (`auto` != forced-VM) CONFIRMED;
+  item 2b names a REAL pattern-specific inversion (`lka-pos` auto
+  slower than forced-VM at the two smaller subjects, `lka-verb` never
+  inverts on the identical subjects) but the sparse/dense sub-claim
+  itself is NOT CLEANLY TESTABLE (syntax@0.1's three subjects carry
+  comparable match density at every size, not a controlled pair); item
+  3's slice of this probe's own population is exactly those 1d/2b
+  cells and nothing else outside 26 timer-floor cells (max 3.0 us
+  both arms) -- full roster verdict still owed to the manager's real
+  window.

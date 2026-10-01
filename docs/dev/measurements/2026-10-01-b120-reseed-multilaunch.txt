@@ -13,6 +13,10 @@ ENVIRONMENT. Box: ubuntubudu (12 cores), gcc 15.2.0, clang 21.1.8.
 pcrec-bench commit 5878a95dcbeb00c3c5089d259b22f8c4fad3350a. pcrec pin
 fc719ca4, binary build/pcrec-fc719ca4/build/pcrec, sha256
 e1bb22ffa30d750949848d7b90fca1971ed3d6d0633c8904334e9b7064f75ba7.
+MECHANISM SOURCE (read-only, ~/pcrec): `git -C ~/pcrec show
+d6cb0bb4f3:docs/design/hyb_reseed.md` -- the [OPT-HYB-RESEED] design
+note, read directly rather than inferred, cited in full in the READING
+section below.
 
 QUIET-GATE. `python3 -m pcrecbench quiet --samples 5` -> VERDICT: quiet
 (load1 0.07-0.09, max_busy_pct 1.6-3.41, threshold load1<=2.00
@@ -136,34 +140,55 @@ lka-verb   t-1m          408.941      497.801        948.983         0.4309     
 READING -- each I-124 sub-claim marked CONFIRMED / REFUTED / NOT TESTED
 =====================================================================
 
+THE MECHANISM, read from pcrec's own design note (NOT guessed): `git -C
+~/pcrec show d6cb0bb4f3:docs/design/hyb_reseed.md` section 1 ("The
+defect") and section 4's row table (read-only; d6cb0bb4f3 is the
+[OPT-HYB-RESEED] landing merge). On a clamp-free hybrid (rows `exact`/
+`fixed`), the OLD behaviour is: "When the VM attempt [at the
+prefilter's candidate] fails, the loop advances one character. It asks
+the prefilter again ONLY when an MRL clamp exists... So on a clamp-free
+hybrid, one failed attempt makes the loop STEP EVERY CHARACTER BOUNDARY
+TO THE SUBJECT END, running a VM attempt at each." The row table's own
+words for `exact`/`fixed`: "today's retry, unchanged: the clamp
+recompute where a clamp exists, ELSE STEP." So `denied`
+(`-fno-hyb-reseed`, "today's retry") does NOT re-seed on these three
+clamp-free patterns -- it STEPS, one VM attempt per byte, for the
+REMAINDER of the subject after the first failed attempt. The real fix
+(`default`, rows `adaptive`/`adaptive-dense`) is what RE-SEEDS -- it
+re-asks the DFA prefilter periodically to skip past non-candidate
+stretches instead of attempting every byte. This explains the
+magnitude directly: on a long subject, "step every byte to the end
+once a candidate fails" is O(remaining subject length) VM attempts,
+which is exactly why the ratio GROWS with subject size on the ordinary
+throughput subjects (t-64k -> t-256k -> t-1m) while staying near the
+predicted band on I-114's short, density-tuned synthetic ones.
+
 ITEM 1 predictions:
 
 1a. "varwidth and neg on any subject with sparse candidates are x2-x21
     faster" -- CONFIRMED IN DIRECTION, MAGNITUDE FAR EXCEEDED on the
-    real (non-density-tuned) corpus. I-114's own synthetic subjects
+    real (ordinary) corpus. I-114's own synthetic subjects
     (synth-64k-asc, synth-1m) land roughly IN the predicted x2-x21
-    band on varwidth (1.17-3.95x) and inside-or-near it on `fixed`
-    (0.49-1.04x, near flat). But on `bench/utf8`'s own REAL throughput
-    prose (t-64k/t-256k/t-1m/t-64k-asc/t-64k-lat -- ordinary mixed
-    text, not density-tuned) the speedup is 11x-99x, an order of
-    magnitude past the predicted ceiling. The mechanism is consistent
-    with I-124's own axis-table wording ("the compile's byte-rate
-    prior puts the candidate scan's byte set at a mean gap under the
-    class's calibrated crossover: adaptive... else a step"): I-114's
-    hand-twin subjects were deliberately tuned to one candidate
-    density; ordinary prose has its own uncontrolled, often HIGHER
-    failed-candidate density, and the pre-abi-48 FIXED behaviour
-    re-seeds (re-scans the whole remaining subject from the prefilter)
-    after EVERY failed candidate -- a cost that compounds with
-    candidate count in a way the density-tuned synthetic subjects
-    could not surface at the same scale. **This is the headline
-    finding**: the real fix's win on ordinary text is much larger than
-    I-114's own Mac scratch measurement predicted, not merely in the
-    predicted range.
-1b. "fixed/synth-dense is flat (+-5%)" -- CONFIRMED. gcc: denied/
-    default = 1.042 (4.2% denied slower, i.e. default 4.0% slower than
-    denied read the other way -- within the +-5% band either reading);
-    clang: 0.967 (3.3% inside the band).
+    band on varwidth (1.17-3.95x). But on `bench/utf8`'s own REAL
+    throughput prose (t-64k/t-256k/t-1m/t-64k-asc/t-64k-lat) the
+    speedup is 11x-99x, an order of magnitude past the predicted
+    ceiling -- SEE THE MECHANISM ABOVE: once the first candidate
+    fails, the denied arm steps every remaining byte of the subject
+    running a VM attempt at each, so the cost scales with how much of
+    the subject is LEFT after the first failure, which is far larger
+    on a 1 MB ordinary-prose subject than on I-114's own short,
+    density-tuned ones. **This is the headline finding**: the real
+    fix's win on ordinary text is much larger than I-114's own Mac
+    scratch measurement predicted, not merely in the predicted range.
+
+1b. "fixed/synth-dense is flat (+-5%)" -- CONFIRMED, SCOPED EXACTLY TO
+    `asr-lb-fixed`/`synth-dense` (the only (pattern, subject) pair this
+    claim names). gcc: default 825.032 us [818.453-837.033] vs denied
+    859.813 us [855.603-864.263] -- default 4.0% FASTER. clang: default
+    1046.654 us [1039.974-1212.414] vs denied 1012.353 us
+    [1007.874-1158.874] -- default 3.4% SLOWER. Both inside the +-5%
+    band.
+
 1c. "CLAMPED rows do not move" -- NOT TESTED by this probe (none of
     the five patterns measured here carries the `clamped` row; Phase
     A's own census puts `clamped` on `bounded`'s ctx-*/nest* family,
@@ -171,43 +196,93 @@ ITEM 1 predictions:
     -- all outside this probe's two groups. Item 3's real window, not
     yet run, is where this sub-claim gets tested).
 
-ITEM 2 predictions (syntax@0.1 lka-pos/lka-verb):
+1d. [OPT-HYB-RESEED-XCALL] TRIGGER CELLS -- I-124 asks these be NAMED,
+    not summarized away. Four (pattern, cc, subject) cells read
+    `default` (adaptive) MORE THAN 5% SLOWER than `denied` (fixed),
+    well above this box's timer floor (max 3.0 us across every genuine
+    floor cell, see item 3 below) -- these are real, not noise:
+
+      asr-lb-varwidth  gcc    synth-dense    default 1390.805 us
+        [1374.224-1519.795]  vs  denied 1294.814 us
+        [1291.134-1313.515]  -- default 7.4% SLOWER
+      asr-lb-fixed     gcc    synth-64k-asc  default  333.061 us
+        [134.99-360.562]     vs  denied  163.910 us
+        [163.9-337.471]      -- default 103% SLOWER (median x2.03) --
+        BIMODAL/NOISY: default's own MIN (134.99) is BELOW denied's own
+        MIN (163.9), so the median ratio and the min ratio disagree in
+        DIRECTION; this cell's 15-launch spread does not look like one
+        stable timing state on either arm (cf. [B112]'s own bimodality
+        finding on this exact driver shape) and should be re-measured
+        with more launches before being read as a clean x2 regression.
+      asr-lb-fixed     clang  synth-1m       default 5971.961 us
+        [5396.258-5996.09]   vs  denied 5598.390 us
+        [4955.307-5617.199]  -- default 6.7% SLOWER
+      asr-lb-fixed     clang  synth-64k-asc  default  418.781 us
+        [331.531-727.672]    vs  denied  393.091 us
+        [381.901-518.022]    -- default 6.5% SLOWER
+
+    All four are `synth-64k-asc`/`synth-1m`/`synth-dense` -- I-114's
+    OWN density-tuned synthetic subjects, never the ordinary
+    `bench/utf8` throughput prose (which reads FASTER everywhere, item
+    1a). This is consistent with pcrec's own `hyb_reseed.md` §3 caveat
+    on the `clamped` row ("the measured gain was mixed... x0.46 on a
+    fourth [witness] whose step the class calibration misprices") --
+    the SAME shape here, on the `adaptive` row's own calibration
+    (the per-class gap/block/cap/first table), not the `clamped` row.
+    These four are [OPT-HYB-RESEED-XCALL]'s trigger population from
+    this probe's own data.
+
+ITEM 2 predictions (syntax@0.1 lka-pos/lka-verb). Each subject's real
+match count (`bench/syntax/expectations.tsv`, libpcre2-differential,
+the SAME oracle for both patterns): t-64k 3 matches (~1/21.8 KB),
+t-256k 6 matches (~1/43.7 KB), t-1m 27 matches (~1/38.8 KB) --
+independently-drawn text, density roughly flat across sizes rather
+than a deliberate sparse/dense pair:
 
 2a. "auto no longer equals forced-VM" -- CONFIRMED. Every one of the
     six (pattern, subject) cells reads auto/forced-vm away from 1.0
     (0.33-1.90), in BOTH directions depending on subject size.
-2b. "faster on sparse throughput subjects; slower (SLOWER, the
-    XCALL trigger) on a match-dense one" -- NOT CLEANLY TESTABLE WITH
-    THESE SUBJECTS, recorded as such rather than forced to a verdict.
-    `bench/syntax`'s own t-64k/t-256k/t-1m are the SAME grammar at
-    three independently-drawn sizes, not a sparse/dense CONTROLLED
-    pair the way bounded/utf8 sets carry one -- so "sparse" vs
-    "match-dense" cannot be read off subject choice here. The data
-    itself does not even show a clean size-monotonic trend: `lka-verb`
-    reads auto FASTER than forced-vm at all three sizes (0.75/0.33/
-    0.43); `lka-pos` reads auto SLOWER at the two smaller sizes
-    (1.47/1.90) and FASTER at the largest (0.47). A real test of 2b
-    needs a subject pair with CONTROLLED match/candidate density (the
-    way `bench/bounded`'s short-run family or a purpose-built subject
-    would give), not a size ladder over one grammar.
+2b. A FINDING BEYOND "auto != forced-VM": on `lka-pos` specifically,
+    AUTO IS SLOWER THAN FORCED-VM at the two smaller subjects -- t-64k
+    auto 46.370 us vs forced-vm 31.600 us (auto 46.7% SLOWER, x1.4674)
+    and t-256k auto 236.391 us vs forced-vm 124.290 us (auto 90.2%
+    SLOWER, x1.9019) -- then FASTER at t-1m (auto 409.121 us vs
+    forced-vm 865.233 us, x0.4728). `lka-verb` never inverts: auto
+    reads faster than forced-vm at all three sizes (0.7524/0.3322/
+    0.4309). So the auto-slower-than-forced-vm direction is real on
+    `lka-pos` at the two smaller subjects, not a rounding artifact, but
+    it does not generalise to `lka-verb` on the SAME three subjects --
+    a pattern-specific effect, not a size- or density-driven one by
+    this data (the match counts above show no sparse/dense split that
+    would explain it). "Faster on sparse throughput subjects; slower
+    (the XCALL trigger) on a match-dense one" is therefore NOT CLEANLY
+    TESTABLE AS I-124 STATES IT with these three subjects -- they are
+    one grammar at three independently-drawn sizes with comparable
+    match density throughout, not a sparse/dense CONTROLLED pair -- but
+    the `lka-pos` inversion above is itself a named, real finding
+    pcrec should see, distinct from the untestable sparse/dense claim.
+    A real test of 2b needs a subject pair with deliberately
+    CONTROLLED match/candidate density (the way `bench/bounded`'s
+    short-run family or a purpose-built subject would give).
 
 ITEM 3 (the roster-wide >5%-slower census): this probe's own five
 patterns ARE part of item 3's population (Phase A's census), so their
-cells count. Reading them against the >5%-slower-than-denied rule:
-**no cell with real candidate traffic reads default more than 5%
-SLOWER than denied** -- every such cell reads default FASTER (the
-whole speedup column above, and GROUP S's denied/auto column, all
-exceed 1.05 wherever there is real work). The only cells where default
-reads slower at all are the near-timer-floor ones named above
-(asr-lb-neg on t-64k-lat/cyr/asc, 1.1-3.0 us absolute, ratio 0.46-0.56,
-i.e. default ~1.8-2.2x "slower" by ratio but on a cell doing almost no
-real work) -- flagged, not hidden, and not treated as a genuine
-[OPT-HYB-RESEED-XCALL] trigger per this project's own measurement
-discipline (a ratio at the timer floor is not evidence). **Item 3's
-full roster window (bounded/capability/loglines's own clamped and
-adaptive-dense population, not reachable from this probe's two groups)
-is still owed to the manager's real `run_suite.sh` window** --
-`docs/dev/lanes/b120reseed_report.md`'s six-cell plan.
+cells count. Outside the four 1d cells above (all on I-114's own
+synthetic subjects) and the `lka-pos` inversion (item 2b), **every
+other cell with real candidate traffic reads default FASTER than
+denied** by more than 5% (the bulk of the speedup column, all well
+above 1.05). The ONLY other cells reading default "slower" are at this
+box's TIMER FLOOR -- 26 (pattern, cc, subject) cells (every arm of
+asr-lb-varwidth/asr-lb-fixed on t-64k-cyr/t-64k-cjk, every arm of
+asr-lb-neg on t-64k-lat/t-64k-cyr/t-64k-asc) read a MAXIMUM of 3.0 us
+across BOTH arms (min as low as 1.1 us) -- the pattern's own candidate
+byte/script barely occurs in that subject's text, so there is almost
+no real work on either arm and the ratio is pure measurement noise,
+not evidence of anything. **Item 3's full roster window (bounded/
+capability/loglines's own clamped and adaptive-dense population, not
+reachable from this probe's two groups) is still owed to the manager's
+real `run_suite.sh` window** -- `docs/dev/lanes/b120reseed_report.md`'s
+six-cell plan.
 
 Full raw per-launch data (2,070 process launches, 138 cells): NOT
 committed (regeneratable in under two minutes from the script;
