@@ -9348,7 +9348,10 @@ def check_encoding_axis():
                 blocks[tid] = pcrec.describe(tid, tmp)
             live = blocks[tid].get("config_extra")
             n += 1
-            if tid in _B77U2_NEW:
+            # [B120] (2026-10-01): a LATER `-utf8` config (the nohybreseed
+            # and clang+utf8 siblings) obeys the same rule as the four U2
+            # ones -- `utf8` composed LAST onto the frozen four parts.
+            if tid in _B77U2_NEW or cfg.get("encoding_extra") == "utf8":
                 want = mod.compose_config_extra(frozen, "utf8")
                 if cfg.get("encoding_extra") != "utf8" or live != want:
                     offenders.append("%s: encoding_extra %r, config_extra %r "
