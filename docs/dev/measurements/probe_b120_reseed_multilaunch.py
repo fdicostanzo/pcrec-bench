@@ -37,12 +37,13 @@ EVERY cell before any ratio is trusted -- I-124's own closing
 instruction ("answers are identical by construction; a cell whose
 answer moves is a finding, to be reported before any timing").
 
-PREP STATUS (2026-10-01): written and import-checked; the full 15-launch
-x 21-trial run has NOT been executed -- Phase C is blocked on the
-manager's quiet-box clearance (docs/dev/lanes/b120reseed_report.md).
-`--smoke` runs ONE launch of ONE trial per cell (build + answer-check
-only, no timing claim) to prove the script builds and the cells run
-clean; it is NOT a measurement and prints no ratio table.
+RUN 2026-10-01 (cleared by the manager; box quiet, verdict `quiet`,
+load1 0.07-0.09): `--trials 21 --launches 15`, the real run, archived
+at docs/dev/measurements/2026-10-01-b120-reseed-multilaunch.txt. Zero
+`NONDETERMINISM` anywhere; a separate cross-arm answer check (default
+vs denied vs forced-vm, both compilers) found 0/138 mismatches. `--smoke`
+(one launch, one trial, build + answer-check only, no timing claim)
+remains for a quick correctness re-check before any future re-run.
 
 Run from the repo root (pin.sh must have built fc719ca4 already):
 

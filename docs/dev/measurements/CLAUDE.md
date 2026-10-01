@@ -1036,3 +1036,25 @@ Maintenance: update this file when files are added/removed or change role.
   ONLY `adaptive-dense` cell (byte only -- it reads `clamped` under
   `-e utf8`). No `email`/`altwide`/`bounded`/`litrun` pattern stamps
   `adaptive*` at all (their hybrids are `exact`/`clamped`).
+- `probe_b120_reseed_multilaunch.py` / `2026-10-01-b120-reseed-
+  multilaunch.txt` — ([B120], lane b120reseed, inbox I-124) PHASE C
+  items 1+2, THE TIMING: the b109-style compile-plus-multilaunch
+  protocol against the pin's own real `-fno-hyb-reseed` flag (no
+  source patching). GROUP U: `asr-lb-varwidth`/`-fixed`/`-neg`, `-e
+  utf8`, default vs denied, both compilers, over all seven bench/utf8
+  throughput subjects + I-114's three synthetic ones. GROUP S:
+  `lka-pos`/`lka-verb`, byte encoding, default vs denied vs forced
+  `--engine=vm`, gcc, over syntax@0.1's three throughput subjects. 15
+  launches x 21 trials, cleared by the manager on a verdict-`quiet` box
+  (load1 0.07-0.09). ANSWER IDENTITY: 0/138 cross-arm mismatches (incl.
+  the forced-VM arm). FINDINGS: item 1a CONFIRMED in direction, FAR
+  EXCEEDED in magnitude on real (non-density-tuned) prose -- 11x-99x
+  speedup from the real fix vs the predicted x2-x21 (I-114's own
+  synthetic subjects DO land in the predicted band; ordinary throughput
+  text does not); item 1b (`fixed`/`synth-dense` flat +-5%) CONFIRMED;
+  item 2a (`auto` != forced-VM) CONFIRMED; item 2b (sparse-faster/
+  dense-slower) NOT CLEANLY TESTABLE with a same-grammar size ladder
+  (no controlled density pair); item 3's slice of this probe's own
+  population finds NO cell >5% slower than denied outside the
+  timer-floor noise band (full roster verdict still owed to the
+  manager's real window).

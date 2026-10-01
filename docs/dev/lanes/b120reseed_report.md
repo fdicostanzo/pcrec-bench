@@ -1,4 +1,4 @@
-# Lane `b120reseed` — delivery report (PARTIAL: Phases A+B done, C BLOCKED on the manager's slot)
+# Lane `b120reseed` — delivery report (items 1+2 COMPLETE; item 3's roster window is the manager's)
 
 [B120] (`docs/dev/plan.md`; pcrec inbox I-124,
 `docs/dev/inbox_from_pcrec.md` "## I-124"): the [OPT-HYB-RESEED]
@@ -145,49 +145,50 @@ for `pcrec-auto`/`pcrec-auto-utf8` at fc719ca4 is itself a useful
 same-pin control if one does not already exist — `check` the index
 before running to avoid a redundant cell.
 
-## Phase C (TIMING) — BLOCKED, not started
+## Phase C (TIMING) — items 1+2 DONE; item 3's window handed to the manager
 
-Per `docs/dev/lanes/BOILERPLATE.md` and this brief: timing needs a quiet
-box, and other lanes are compiling right now (confirmed live:
-`capability@0.1`'s own `pcrec_fc719ca4_*_cf-o*` cells are mid-window as
-of this report, 2026-10-01 ~09:41Z — [B117]'s olevel census). **I have
-NOT launched anything in Phase C** and am sending the manager the slot
-request (SendMessage, separate from this file) before doing so, per the
-brief's own stop instruction.
+Cleared by the manager 2026-10-01 (box verdict `quiet`, load1
+0.07-0.09, `b121asks` on a CPU hold — the capability@0.1 cells I had
+seen were [B117]'s own committed window, last written 06:21, not a
+live run). Pre-flight: `python3 -m pcrecbench quiet --samples 5` ->
+**VERDICT: quiet** on all five samples (max_busy_pct 1.6-3.41,
+threshold <=10.00). Per-core `mpstat -P ALL 1 1`: before, every core
+<=1.00% user / 0% busy except one at 1.00%; after, every core <=2.00%
+user, 11/12 cores fully idle — nothing else used the box during the run.
 
-**What Phase C will do once cleared** (restated so a fresh agent or the
-manager can act on this file alone):
+**Items 1+2 ran as the standalone multi-launch probe** (SCRATCH, never
+`store/`): `docs/dev/measurements/probe_b120_reseed_multilaunch.py
+--trials 21 --launches 15 --out /var/tmp/b120reseed-real`, launched in
+the background with a `DONE rc=0` completion marker, ~2,070 process
+launches across 138 cells, completed clean in well under a minute of
+wall time (far under the 60-minute estimate threshold — no upfront
+estimate message was needed). **Answer identity: 0 mismatches
+anywhere.** The driver's own within-process check printed zero
+`NONDETERMINISM` lines across all 138 cells; a SEPARATE cross-arm check
+(re-running every (pattern, subject) once per arm and diffing the
+`matches=.../hash=...` line byte for byte) found 0/120 mismatches in
+GROUP U (default vs denied x gcc vs clang) and 0/18 in GROUP S
+(default vs denied vs forced `--engine=vm`, gcc) — including the
+forced-VM arm against `auto`'s own route, a stronger check than I-124
+asked for. Archived: `docs/dev/measurements/2026-10-01-b120-reseed-
+multilaunch.txt` (full ratio tables, environment, quiet-gate output).
 
-- **Items 1+2 (the b109-style standalone multi-launch probe, SCRATCH,
-  never `store/`)**: `docs/dev/measurements/probe_b120_reseed_
-  multilaunch.py` is WRITTEN and SMOKE-CLEAN (`--smoke`: one launch,
-  one trial per cell, build + answer-check only, no timing claim —
-  18/18 binaries build, every cell runs, zero `NONDETERMINISM`). It
-  follows `probe_b109_reseed_twin.py`'s exact shape (I-114's own `drv.c`
-  reproduced verbatim; its three synthetic-subject generators
-  reproduced verbatim), but against the pin's own REAL `-fno-hyb-reseed`
-  flag rather than a hand-patched twin — no source patching needed at
-  all. GROUP U (item 1): `asr-lb-varwidth`/`-fixed`/`-neg`, `-e utf8`,
-  default vs denied, BOTH gcc and clang, over all seven
-  `bench/utf8/throughput/` subjects plus I-114's three synthetic ones.
-  GROUP S (item 2): `lka-pos`/`lka-verb`, byte encoding, default vs
-  denied vs forced `--engine=vm` (the three-way ask), gcc only, over
-  `bench/syntax`'s own three throughput subjects (t-64k/t-256k/t-1m —
-  item 2's "match-dense, one call per match" reading needs find-all
-  over a subject with real candidate density; these are read off
-  `bench/syntax/manifest_throughput.tsv`, no new subject generation
-  needed). **The real run** is `python3 docs/dev/measurements/
-  probe_b120_reseed_multilaunch.py --trials 21 --launches 15` (default
-  flags already match this — `--smoke` is the only override this lane
-  used). Answer identity (match count + span hash) is checked on EVERY
-  cell inside the driver itself (a `NONDETERMINISM` stderr line), so
-  Phase C's first act once cleared is simply running it for real and
-  reading that line before trusting any ratio — exactly I-124's own
-  closing paragraph.
-- **Item 3's real window**: the six-cell `run_suite.sh` invocation
-  above, launched by the MANAGER per `BOILERPLATE.md`'s "long runs at
-  the end of a lane" rule (~3.7 h, over the ~4-minute DO-THEN-FINISH
-  threshold) — not by this lane.
+**Each I-124 sub-claim, CONFIRMED / REFUTED / NOT TESTED, with numbers:**
+
+| # | claim | verdict | numbers |
+|---|---|---|---|
+| 1a | varwidth/neg sparse-candidate x2-x21 faster | **CONFIRMED in direction, MAGNITUDE FAR EXCEEDED** | I-114's own synthetic subjects (synth-64k-asc/synth-1m) land near the predicted band (1.17-3.95x on varwidth); `bench/utf8`'s own real throughput prose reads **11x-99x** (varwidth: 29-99x on t-64k/t-64k-asc/t-64k-lat/t-1m/t-256k/t-64k, both compilers; neg: 12-41x on the same subjects) — an order of magnitude past the predicted ceiling, because ordinary prose has an uncontrolled, often higher failed-candidate density than I-114's density-tuned synthetic subjects, and the pre-abi-48 FIXED behaviour re-seeds (full prefilter re-scan) after every failed candidate |
+| 1b | fixed/synth-dense flat (+-5%) | **CONFIRMED** | gcc: denied/default = 1.042 (4.2%); clang: 0.967 (3.3%) — both inside the band |
+| 1c | clamped rows do not move | **NOT TESTED** | none of this probe's five patterns carries the `clamped` row (Phase A: it's on bounded/capability/loglines); item 3's own window is where this gets tested |
+| 2a | auto no longer equals forced-VM | **CONFIRMED** | all six (pattern, subject) cells read auto/forced-vm away from 1.0, 0.33-1.90x, in both directions |
+| 2b | faster sparse / slower (XCALL trigger) match-dense | **NOT CLEANLY TESTABLE with these subjects** | `bench/syntax`'s t-64k/t-256k/t-1m are the SAME grammar at three independently-drawn sizes, not a density-controlled sparse/dense pair; `lka-verb` reads auto FASTER than forced-vm at all three sizes (0.75/0.33/0.43) while `lka-pos` flips (1.47/1.90/0.47) — no clean size-monotonic trend either, consistent with "no controlled density axis here" rather than with either verdict |
+| 3 (this probe's slice) | any adaptive* cell >5% slower than denied | **NONE FOUND**, with a caveat | every cell with real candidate traffic reads default FASTER than denied (the whole speedup/denied-over-auto columns exceed 1.05); the only "slower" readings are three asr-lb-neg cells at 1.1-3.0 us absolute (near this box's timer floor, where the pattern's candidate byte barely occurs in that subject) — flagged, not treated as a genuine `[OPT-HYB-RESEED-XCALL]` trigger per this project's own measurement discipline (no conclusion from a floor-level ratio) |
+
+**Item 3's full roster window is NOT run by this lane.** Per the
+manager's explicit instruction ("Do NOT launch the item-3 window: I'll
+run it from master after I merge your branch"), the six-cell plan
+above (syntax/capability/utf8 @0.1 x {auto, nohybreseed-variant}, ~3.7h
+estimated) is handed back for the manager to run from `master` post-merge.
 
 ## Charter-vs-committed checklist
 
@@ -196,25 +197,22 @@ manager can act on this file alone):
 | Phase A: compile-only census, every bench pattern × {auto, auto-utf8} | **DONE**, committed (`probe_b120_census.py`, the 2026-10-01 archive) |
 | Phase B: `pcrec-auto-nohybreseed` + utf8 sibling + clang siblings pinned | **DONE**, committed (configs.toml, capability roster, all checks green) |
 | Phase B: window cell list for item 3 | **DONE**, this file, above |
-| Item 1 (utf8@0.1, both compilers, 15 launches, 10 subjects) | **OWED** — Phase C, blocked on the manager's slot clearance |
-| Item 2 (syntax@0.1 lka-pos/lka-verb, 3-way) | **OWED** — Phase C, same block |
-| Item 3 (roster-wide adaptive* window, >5% slower names) | **OWED** — the six-cell window above, to be LAUNCHED BY THE MANAGER once cleared (DO-THEN-FINISH: this lane's last act is this report + the slot request, not the run itself) |
-| "A cell whose answer moves is reported before any timing" | Not yet applicable — no timing has run. Phase A is compile-only by construction and carries no answer check; the answer-identity check belongs to Phase C and will be reported there, before any ratio |
+| Item 1 (utf8@0.1, both compilers, 15 launches, 10 subjects) | **DONE** — confirmed in direction, magnitude far exceeded (11x-99x vs predicted x2-x21) |
+| Item 2 (syntax@0.1 lka-pos/lka-verb, 3-way) | **DONE** — auto != forced-VM confirmed; the sparse/dense sub-claim not cleanly testable with the available subjects |
+| Item 3 (roster-wide adaptive* window, >5% slower names) | **PARTIAL**: this probe's own five-pattern slice finds none (outside timer-floor noise); the full roster window is OWED to the manager, who runs it from `master` post-merge per their own instruction |
+| "A cell whose answer moves is reported before any timing" | Satisfied: answer identity checked (0/138 driver-internal, 0/138 cross-arm) BEFORE any ratio in this report was read |
 
 ## OWED
 
-- Items 1, 2 and 3's actual TIMING NUMBERS (Phase C), blocked on the
-  manager's slot clearance — see the SendMessage sent alongside this
-  report. The instrument for items 1+2 is written and smoke-clean
-  (`probe_b120_reseed_multilaunch.py`); only the real `--trials 21
-  --launches 15` run is owed.
-- The six-cell item-3 window's launch, log path and `.done` marker —
-  OWED to the manager per BOILERPLATE.md (a run this long is launched
-  by the manager, not this lane).
-- A draft outbox item answering I-124 is NOT yet written (nothing to
-  report to pcrec until Phase C has numbers) — `b120reseed_outbox_draft.md`
-  beside this file states that explicitly rather than guessing ahead of
-  the data.
+- Item 3's full roster window (the six-cell plan above) — the manager
+  runs this from `master` after merging this branch, per their own
+  instruction ("Do NOT launch the item-3 window: I'll run it... after I
+  merge your branch").
+- A draft outbox item answering I-124, now that Phase C has real
+  numbers — `docs/dev/lanes/b120reseed_outbox_draft.md` is UPDATED
+  below with the real findings; the manager drafts the actual O-n from
+  it per this project's usual division of labour (lane reports, manager
+  drafts outbox).
 
 ## Files touched
 
@@ -224,9 +222,10 @@ manager can act on this file alone):
 - `bench/capability/patterns.rxt` (regenerated)
 - `docs/dev/measurements/probe_b120_census.py` (new)
 - `docs/dev/measurements/2026-10-01-b120-reseed-census.txt` (new)
-- `docs/dev/measurements/probe_b120_reseed_multilaunch.py` (new, Phase
-  C's instrument — smoke-clean, not yet run for real numbers)
-- `docs/dev/measurements/CLAUDE.md` (+1 entry)
-- `docs/dev/lanes/b120reseed_report.md` (this file, new)
-- `docs/dev/lanes/b120reseed_outbox_draft.md` (new, placeholder — see
-  its own text)
+- `docs/dev/measurements/probe_b120_reseed_multilaunch.py` (new,
+  Phase C's instrument, RUN for real — see its own archive)
+- `docs/dev/measurements/2026-10-01-b120-reseed-multilaunch.txt` (new,
+  the Phase C archive: full ratio tables, environment, quiet-gate output)
+- `docs/dev/measurements/CLAUDE.md` (+2 entries)
+- `docs/dev/lanes/b120reseed_report.md` (this file)
+- `docs/dev/lanes/b120reseed_outbox_draft.md` (updated with real findings)

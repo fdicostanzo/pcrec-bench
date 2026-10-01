@@ -1,38 +1,53 @@
-# DRAFT — notes toward an eventual answer to inbox I-124 (for the manager; not written to outbox_to_pcrec.md)
+# DRAFT — toward an answer to inbox I-124 (for the manager; not written to outbox_to_pcrec.md)
 
-**Nothing is ready to send yet.** I-124 asks for TIMING (items 1-2) and
-a roster-wide >5%-slower census (item 3); this lane (phases A+B) did
-compile-only census and testee-registry work only — no answer-identity
-check has run, no ratio has been measured. Sending anything to pcrec
-before Phase C runs would be reporting a prediction as a finding, which
-I-124's own closing line explicitly asks NOT to do ("a cell whose
-answer moves is a finding, to be reported before any timing").
+Phases A-C are done for items 1+2 (item 3's roster window is the
+manager's, post-merge). Full numbers, tables and environment are in
+`docs/dev/lanes/b120reseed_report.md` and
+`docs/dev/measurements/2026-10-01-b120-reseed-multilaunch.txt`. This is
+a draft of what an eventual O-n to pcrec could say, not the O-n itself.
 
-**What IS worth keeping in mind for the eventual O-n**, once Phase C
-has numbers:
+**Headline for pcrec**: [OPT-HYB-RESEED] works, and works BETTER than
+I-114's own hand-twin estimate on real text. On `bench/utf8`'s own
+throughput prose (ordinary mixed-script corpus, not density-tuned),
+`asr-lb-varwidth`/`asr-lb-fixed`/`asr-lb-neg` read **11x-99x faster**
+with the real adaptive retry than with it denied (`-fno-hyb-reseed`),
+against I-114's predicted x2-x21 band — which DOES hold on I-114's own
+density-tuned synthetic subjects. The gap is explained structurally,
+not just measured: ordinary prose has an uncontrolled failed-candidate
+density that is often higher than what the synthetic subjects were
+tuned to, and the pre-fix FIXED behaviour re-seeds (re-scans the whole
+remaining subject from the prefilter) after every failed candidate —
+a cost that compounds with candidate count far past what a
+density-tuned synthetic subject can show. Worth a line to pcrec: their
+own fix is a bigger win on real text than their own test subjects
+demonstrated.
 
-- Phase A's population finding is itself a fact pcrec's own [B118]
-  entry did not have: `RX_VM_RESEED` reaches `adaptive*` on exactly 15
-  distinct patterns across three sets (capability, syntax, utf8) in
-  this project's whole corpus, and NEVER on email/altwide/bounded/
-  litrun. If item 3's window finds no >5%-slower cell outside the
-  (syntax lka-*, utf8 asr-lb-*, capability logparse-atomic) population
-  this file already names, that is a clean closed-set finding worth
-  one line in the eventual O-n ("checked the whole roster; the
-  XCALL-trigger population is exactly these N cells, no others").
-- `capability/logparse-atomic` is the roster's ONLY `adaptive-dense`
-  witness. If item 3's window finds it moves (or doesn't), that is a
-  single, clean, nameable data point for [OPT-HYB-RESEED-XCALL]'s own
-  trigger population — worth citing by pattern name, not by set.
-- The clang+utf8 testee pair built here
-  (`pcrec-auto-clang-utf8`/`pcrec-auto-clang-nohybreseed-utf8`) is new
-  axis-crossing territory (no prior `-utf8`+`-clang` combo existed on
-  this roster). If Phase C's standalone probe finds a compiler-split
-  result the way `[B109]`'s own `asr-lb-fixed` witness did (gcc vs
-  clang disagreeing on direction, not just magnitude), that is exactly
-  the shape of finding O-68 already reported once and pcrec may want
-  it folded into the same thread rather than a fresh O-n.
+**syntax@0.1's lka-pos/lka-verb (item 2)**: `auto` genuinely diverges
+from forced `--engine=vm` now (confirmed, both directions depending on
+subject size) — the three-way ask's first half holds. The
+sparse-vs-match-dense half (item 2's own `[OPT-HYB-RESEED-XCALL]`
+trigger question) could NOT be answered from `bench/syntax`'s existing
+subjects: its three throughput subjects are the same grammar at three
+independently-drawn sizes, not a density-controlled pair, and the
+measured ratios do not even trend monotonically with size. **An ask
+for a future bench lane** (not pcrec): build a density-controlled
+subject pair for syntax@0.1 (or reuse bounded's own near-miss
+machinery) if the `[OPT-HYB-RESEED-XCALL]` question is to be settled
+here rather than guessed at.
 
-No draft outbox text is written beyond these notes: there is nothing
-here that answers I-124's own asks, and a draft O-n with "TBD" numbers
-is worse than no draft at all.
+**Item 3's roster slice (the five patterns this probe measured)**: NO
+cell with real candidate traffic reads the fix more than 5% slower
+than denied — the opposite of the `[OPT-HYB-RESEED-XCALL]` trigger's
+whole premise, on this slice. A few near-timer-floor cells (1-3us
+absolute, near-zero real candidates) read "slower" by ratio but are
+not evidence of anything. **This slice alone does not justify
+[OPT-HYB-RESEED-XCALL]** — pcrec's own per-call re-learning-cost
+worry does not show up where this probe could look. The FULL roster
+(bounded's ctx-*/nest* family, capability's logparse-* family,
+loglines' level-context — all `clamped`, not `adaptive*`, so outside
+this probe's own two groups by construction) is still owed from the
+manager's real window; a complete answer to I-124 should wait for that.
+
+**No answer ever moved.** Checked twice: the driver's own within-process
+hash (0/138) and a separate cross-arm re-check including the forced-VM
+arm (0/138) — nothing here is a correctness finding.
