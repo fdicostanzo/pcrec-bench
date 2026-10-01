@@ -1018,3 +1018,24 @@ Maintenance: update this file when files are added/removed or change role.
   argmin arm named) from `scripts/findings_tiers_matrix.py` over the
   scratch store at pcrec f7f5a143. The ledger that reads them is
   `docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md`.
+- `probe_b121_dfa_nocaps_census.py` / `probe_b121_reverse_population.py` /
+  `probe_b121_dfa_nocaps_identity.py` / `2026-10-01-b121-dfa-nocaps-census.txt`
+  — ([B121], lane b121asks, inbox I-125 Q2/Q3) compile-only census (no
+  timing) at pin fc719ca4 for four candidate pcrec configs
+  (`pcrec-auto`, `pcrec-vm-nocaps`, `pcrec-dfa`, `pcrec-dfa-nocaps`) over
+  bench/capability@0.1 and bench/syntax@0.1: per-(pattern,form) compile
+  outcome (Part 1), the REVERSE POPULATION Q3 asks for -- every pattern
+  where `auto` (no-captures) selects the VM and a forced `--engine=dfa
+  --no-captures` still compiles (Part 2: ZERO on both corpora, both
+  forms), and whether `pcrec-nocaps`/forced `pcrec-dfa-nocaps` are the
+  SAME ARTIFACT wherever both compile (Part 3, `tools/
+  program_identity.py` v2: 93/93 and 64/64 program-identical, 0
+  changed). Reading: `pcrec-dfa` (captures on) refuses every
+  capturing-group pattern outright ("this pattern requires captures ...
+  pass --no-captures ... or omit --engine=dfa" -- a forced request is
+  refused, never silently downgraded, unlike `auto`); `pcrec-vm-nocaps`'s
+  compiling population is cell-for-cell identical to `pcrec-auto`'s on
+  both corpora; the reverse population Q3 is built to find is empty on
+  these two corpora today, which does not mean the testee is
+  unnecessary (altwide or a future pcrec heuristic change could populate
+  it) -- see the archive's own closing "READING" section.
