@@ -1075,3 +1075,83 @@ Maintenance: update this file when files are added/removed or change role.
   cells and nothing else outside 26 timer-floor cells (max 3.0 us
   both arms) -- full roster verdict still owed to the manager's real
   window.
+- `probe_b121_dfa_nocaps_census.py` / `probe_b121_reverse_population.py` /
+  `probe_b121_dfa_nocaps_identity.py` / `2026-10-01-b121-dfa-nocaps-census.txt`
+  — ([B121], lane b121asks, inbox I-125 Q2/Q3) compile-only census (no
+  timing) at pin fc719ca4 for four candidate pcrec configs
+  (`pcrec-auto`, `pcrec-vm-nocaps`, `pcrec-dfa`, `pcrec-dfa-nocaps`) over
+  bench/capability@0.1 and bench/syntax@0.1: per-(pattern,form) compile
+  outcome (Part 1), the REVERSE POPULATION Q3 asks for -- every pattern
+  where `auto` (no-captures) selects the VM and a forced `--engine=dfa
+  --no-captures` still compiles (Part 2: ZERO on both corpora, both
+  forms), and whether `pcrec-nocaps`/forced `pcrec-dfa-nocaps` are the
+  SAME ARTIFACT wherever both compile (Part 3, `tools/
+  program_identity.py` v2: 93/93 and 64/64 program-identical, 0
+  changed). Reading: `pcrec-dfa` (captures on) refuses every
+  capturing-group pattern outright ("this pattern requires captures ...
+  pass --no-captures ... or omit --engine=dfa" -- a forced request is
+  refused, never silently downgraded, unlike `auto`); `pcrec-vm-nocaps`'s
+  compiling population is cell-for-cell identical to `pcrec-auto`'s on
+  both corpora; the reverse population Q3 is built to find is empty on
+  these two corpora today, which does not mean the testee is
+  unnecessary (altwide or a future pcrec heuristic change could populate
+  it) -- see the archive's own closing "READING" section.
+- `pcre_mini_parser.py` — ([B121], shared helper) a minimal recursive-
+  descent STRUCTURAL parser for a PCRE-shaped pattern (group nesting,
+  alternation branches, `(?...)` prefix consumption -- `?:`/`?=`/`?!`/
+  `?<=`/`?<!`/`?<name>`/`?P<name>`/`?'name'`/`?>`/inline flags/
+  conditionals, `\Q...\E` quoting, escape pairs, `[...]` class extents),
+  built because A3/Q6 below needs real nesting, not a flat `[^()]*`
+  text regex. Any construct it does not give real structure to
+  (recursion, subroutine calls, branch-reset, callouts, extended
+  classes) is skipped OPAQUELY via a balanced paren/escape/class scan
+  — `check_no_caret_in_opaque` then FAILS LOUDLY if a `^` byte is ever
+  found inside one of those opaque spans, rather than silently
+  under-reporting A3. Used by `probe_b121_parser_selftest.py` and
+  `probe_b121_nontop_caret.py`.
+- `probe_b121_parser_selftest.py` / `2026-10-01-b121-nontop-caret-census.txt`
+  (Part 1) — ([B121]) validates the parser above over EVERY
+  `bench/*/patterns/*.rx` pattern (339, all 7 sub-benches): 0 parse
+  failures, 0 opaque-caret misses, 0 cross-check mismatches against an
+  independent dumb text scan (the one documented exception,
+  `\Q...\E` quoting and the PCRE2 `(?^...)` flags-reset directive,
+  both named explicitly).
+- `probe_b121_nontop_caret.py` / `2026-10-01-b121-nontop-caret-census.txt`
+  (Part 2) — ([B121], inbox I-125 A3/Q6) every pattern with a `^`
+  outside its structural top level (inside an alternation branch at
+  any depth, or inside a group not spanning the whole pattern):
+  EXACTLY ONE across the whole corpus,
+  `wild-waf-crs-942360-concat-sqli` (capability@0.1) — the same single
+  witness A3's own text already names, confirmed by real parsing
+  rather than inferred. No second losing cell exists outside the WAF
+  family on this corpus as of 2026-10-01; A3's own decision rule reads
+  NONE (stays a single-witness candidate).
+- `probe_b121_counted_repeats.py` / `2026-10-01-b121-counted-repeats-census.txt`
+  — ([B121], inbox I-125 A2/Q7) every pattern whose text is a counted
+  `{m,n}` repeat of a flat multi-character literal or an all-singleton
+  alternation, via the same real structural parser A3/Q6 uses. ONE
+  hit corpus-wide: bench/utf8's `qnt-counted-3b`
+  (`(?:日本){2,}`, the UTF-8 bytes of two CJK characters, a
+  MULTI-LITERAL repeat). bench/bounded's `nest2-*`/`nest3-*` family --
+  pcrec's own named "candidate instrument" for the [OPT-5] period-k
+  trigger -- does NOT match either shape: every nest pattern is
+  `(?:CLASS{p,q}){m,n}` (e.g. `(?:\d{1,4}){1,4}`), a counted repeat of
+  a bounded CLASS with its own inner counted repeat, not a literal
+  string or singleton alternation -- a different mechanism shape,
+  confirmed structurally rather than assumed.
+- `probe_b121_altwide_class_branches.py` / `2026-10-01-b121-altwide-class-branches-census.txt`
+  — ([B121], inbox I-125 A4/Q8) every >=8-branch alternation with a
+  class-tail or class-member branch, via the real structural parser.
+  Five hits (three distinct real-world corpus patterns), none
+  matching the CLEAN, isolated [ENG-ISL] STEP 2 shape pcrec's ask
+  describes (`ab[cd]|abx`) -- class branches are always a minority
+  among many differently-shaped branches in these hand-authored
+  patterns. Per A4's own fallback instruction, altwide@0.3 was
+  designed and built (bench/altwide/NOTES.md, CLAUDE.md).
+- `probe_b121_altwide_clstail_compile.py` / `2026-10-01-b121-altwide-clstail-compile.txt`
+  — ([B121], altwide@0.3 prep) a compile-only (no timing) check of the
+  six new class-tail patterns against the pinned pcrec: `RX_VM_ALT_ISLANDS
+  "0"` / `RX_VM_ENTRY_SHAPE "plain"` on every forced-VM member (the
+  [ENG-ISL] STEP 2 decline, confirmed directly) and the auto/vm refusal
+  diagnostics for the two 1024-wide members (both caps, within 2.2% of
+  the limit). Grounds NOTES.md's P19-P22.

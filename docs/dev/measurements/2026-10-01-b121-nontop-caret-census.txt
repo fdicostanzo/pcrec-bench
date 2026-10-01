@@ -1,0 +1,62 @@
+# docs/dev/measurements/2026-10-01-b121-nontop-caret-census.txt
+#
+# [B121], inbox I-125 A3/Q6: every pattern in any bench/*/ whose text
+# contains a `^` that is NOT at the pattern's structural top level
+# (inside an alternation branch at any depth, or inside a group that
+# does not span the whole pattern). PROPERLY PARSED via
+# docs/dev/measurements/pcre_mini_parser.py's own recursive-descent
+# structure, never a flat `[^()]*`-shaped text regex -- see that
+# module's docstring for the exact rule, and
+# probe_b121_parser_selftest.py (run first, archived below) for the
+# corpus-wide validation that the parser is not silently missing or
+# miscounting anything.
+#
+# Scripts: pcre_mini_parser.py (the shared parser),
+# probe_b121_parser_selftest.py (the validation pass),
+# probe_b121_nontop_caret.py (this ask). Read-only over
+# bench/*/patterns via pcrecbench.subbench -- no compile, no timing.
+# Run at `nice -n 19`, no -j.
+#
+# ---------------------------------------------------------------------
+# PART 1: the parser self-test (339 patterns across all 7 sub-benches
+# at the time of this run -- email, loglines, bounded, altwide,
+# syntax, utf8, capability).
+# ---------------------------------------------------------------------
+$ python3 docs/dev/measurements/probe_b121_parser_selftest.py
+patterns examined: 339
+parse failures: 0
+opaque-caret failures (a '^' hidden from find_carets): 0
+cross-check mismatches: 0
+RESULT: ALL CLEAN
+
+# ---------------------------------------------------------------------
+# PART 2: the A3/Q6 census itself.
+# ---------------------------------------------------------------------
+patterns examined (all bench/*/): 339
+patterns with >=1 non-top-level '^': 1
+
+sub-bench: capability
+pattern:   wild-waf-crs-942360-concat-sqli
+text:      b'(?i)\\b(?:(?:alter|(?:(?:cre|trunc|upd)at|renam)e|de(?:lete|sc)|(?:inser|selec)t|load)[\\s\\x0b]+(?:char|group_concat|load_file)\\b[\\s\\x0b]*\\(?|end[\\s\\x0b]*?\\);)|[\\s\\x0b\\(]load_file[\\s\\x0b]*?\\(|[\\"\'`][\\s\\x0b]+regexp[^0-9A-Z_a-z]|[\\"\'0-9A-Z_-z][\\s\\x0b]+as\\b[\\s\\x0b]*[\\"\'0-9A-Z_-z]+[\\s\\x0b]*\\bfrom|^(?:json\\.)?[^A-Z_a-z]+[\\s\\x0b]*?(?:(?:(?:(?:cre|trunc)at|renam)e|d(?:e(?:lete|sc)|rop)|(?:inser|selec)t|load)[\\s\\x0b]+[0-9A-Z_a-z]+|u(?:pdate[\\s\\x0b]+[0-9A-Z_a-z]+|nion[\\s\\x0b]*(?:all|(?:sele|distin)ct)\\b)|alter[\\s\\x0b]*(?:a(?:(?:ggregat|pplication[\\s\\x0b]*rol)e|s(?:sembl|ymmetric[\\s\\x0b]*ke)y|u(?:dit|thorization)|vailability[\\s\\x0b]*group)|b(?:roker[\\s\\x0b]*priority|ufferpool)|c(?:ertificate|luster|o(?:l(?:latio|um)|nversio)n|r(?:edential|yptographic[\\s\\x0b]*provider))|d(?:atabase|efault|i(?:mension|skgroup)|omain)|e(?:(?:ndpoi|ve)nt|xte(?:nsion|rnal))|f(?:lashback|oreign|u(?:lltext|nction))|hi(?:erarchy|stogram)|group|in(?:dex(?:type)?|memory|stance)|java|l(?:a(?:ngua|r)ge|ibrary|o(?:ckdown|g(?:file[\\s\\x0b]*group|in)))|m(?:a(?:s(?:k|ter[\\s\\x0b]*key)|terialized)|e(?:ssage[\\s\\x0b]*type|thod)|odule)|(?:nicknam|queu)e|o(?:perator|utline)|p(?:a(?:ckage|rtition)|ermission|ro(?:cedur|fil)e)|r(?:e(?:mot|sourc)e|o(?:l(?:e|lback)|ute))|s(?:chema|e(?:arch|curity|rv(?:er|ice)|quence|ssion)|y(?:mmetric[\\s\\x0b]*key|nonym)|togroup)|t(?:able(?:space)?|ext|hreshold|r(?:igger|usted)|ype)|us(?:age|er)|view|w(?:ork(?:load)?|rapper)|x(?:ml[\\s\\x0b]*schema|srobject))\\b)'
+flagged offset(s): [292]
+regimes:   ['search_short', 'throughput']
+
+
+# ---------------------------------------------------------------------
+# READING. Exactly ONE pattern in the whole corpus (339 patterns, all
+# 7 sub-benches) has a `^` outside its structural top level:
+# capability@0.1's `wild-waf-crs-942360-concat-sqli` -- the SAME pattern
+# A3's own text names as "the one capability cell we know". Its
+# flagged `^` (offset 292) sits in the LAST branch of a top-level
+# alternation (`...|^(?:json\.)?[^A-Z_a-z]+...`), so it is "inside an
+# alternation branch" by the ask's own first clause: every other branch
+# of that same top-level alternation is UNANCHORED, so only this one
+# branch's own candidate-start set is position-0-pinned -- exactly the
+# per-branch anchoring asymmetry [ENG-ABS] forces pcrec's per-start-
+# position attempt shape over.
+#
+# No second losing cell exists outside the WAF family on this corpus
+# as it stands today (2026-10-01, all 7 sub-benches) -- A3's own
+# stated decision rule ("a second losing cell outside the WAF family
+# raises the row's weight ... none leaves it a single-witness size-dial
+# candidate") reads NONE: this row stays a single-witness candidate.

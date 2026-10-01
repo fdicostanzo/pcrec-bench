@@ -1,0 +1,70 @@
+# docs/dev/measurements/2026-10-01-b121-counted-repeats-census.txt
+#
+# [B121], inbox I-125 A2/Q7: every pattern in any bench/*/ whose text
+# contains a COUNTED {m,n}/{m,}/{m} repeat of a group whose body is
+# either a flat multi-character literal (2+ plain characters, no
+# escapes/classes/subgroups/alternation -- the `(?:ab){m,n}` shape) or
+# an all-singleton alternation (2+ branches, each exactly one literal
+# byte -- the `(?:a|b){m,n}` shape). PARSED with the same real
+# structural parser A3/Q6 uses (docs/dev/measurements/
+# pcre_mini_parser.py), never the flat `\(\?:[^()]*\)\{\d+,?\d*\}` text
+# regex I-125's own text quotes as the shape (that form cannot see
+# past one level of group nesting -- the bounded `nest3-*` family
+# below is nested TWO levels deep and would be invisible to it, though
+# it still turns out not to match the SHAPE either way, see READING).
+#
+# Script: probe_b121_counted_repeats.py. Read-only over
+# bench/*/patterns via pcrecbench.subbench -- no compile, no timing.
+# Run at `nice -n 19`, no -j.
+#
+# ---------------------------------------------------------------------
+patterns examined (all bench/*/): 339
+counted-repeat (multi-literal / all-singleton) hits: 1
+
+sub-bench: utf8
+pattern:   qnt-counted-3b
+full text: b'(?:\xe6\x97\xa5\xe6\x9c\xac){2,}'
+kind:      multi-literal
+matched:   '(?:æ\x97¥æ\x9c¬){2,}'  (span (0, 10))
+regimes:   ['search_short', 'throughput']
+
+
+# ---------------------------------------------------------------------
+# READING.
+#
+# ONE hit, `bench/utf8`'s `qnt-counted-3b`: `(?:\xe6\x97\xa5\xe6\x9c\xac){2,}`
+# -- the UTF-8 bytes of "日本" (two 3-byte characters) wrapped in a
+# counted repeat with no upper bound. Each byte is a separate literal
+# atom to this byte-level parser, so the 6-byte run classifies as
+# MULTI-LITERAL (>=2 flat literal atoms, no escapes/classes/subgroups)
+# -- exactly the `(?:ab){m,n}` shape I-125 describes, just over
+# multi-byte text rather than ASCII.
+#
+# bench/bounded's `nest2-*`/`nest3-*` family -- the one I-125 itself
+# names as "the candidate instrument" for the [OPT-5] period-k
+# trigger -- does NOT match either shape, confirmed structurally
+# rather than assumed: every nest pattern is `(?:CLASS{p,q}){m,n}`
+# (e.g. `(?:\d{1,4}){1,4}`, `(?:[a-z]{1,6}){1,6}`, the 3-level
+# `(?:(?:\d{1,16}){1,16}){1,16}`) -- a counted repeat of a BOUNDED
+# CLASS that itself carries its own inner counted repeat, not a flat
+# multi-character literal and not an all-singleton alternation. Its
+# OWN body is one Literal escape atom (`\d`) immediately followed by
+# `{p,q}` INSIDE the group -- `classify_group_body` correctly reads
+# this as neither shape (a single escape atom fails the >=2-atoms
+# MULTI-LITERAL test, and there is no alternation to read as
+# ALL-SINGLETON). So the nest family, despite being the row's named
+# candidate, is a DIFFERENT mechanism shape from what A2/Q7 is asking
+# about -- it is `(?:class){m,n}{p,q}` (one class, two nested counted
+# repeats), not `(?:ab){m,n}` (one literal STRING, one counted
+# repeat). Whether pcrec's [OPT-5] period-k mechanism is meant to
+# trigger on the nest family's own shape or specifically on a literal-
+# string repeat is a question for pcrec, not settled by this census
+# (an ask, not answered here).
+#
+# No OTHER pattern in the 339-pattern corpus (all 7 sub-benches)
+# matches either shape. A2's own decision rule ("any cell in (1)
+# where pcrec-auto is behind by more than its IQR meets the D77
+# trigger; none means the row stays a candidate with no cell") now
+# has exactly ONE candidate cell to time -- `qnt-counted-3b`, NOT a
+# nest-family pattern -- queued into the A5 window plan (see
+# docs/dev/lanes/b121asks_report.md).

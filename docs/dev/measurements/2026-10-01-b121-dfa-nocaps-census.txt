@@ -1,0 +1,333 @@
+# docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt
+#
+# [B121], inbox I-125 Q2/Q3. Compile-only census (NO timing, NO quiet-box
+# gate -- not a ranking input) deciding the real REQUIRES-token population
+# and the match-against-forced-DFA question for four candidate pcrec
+# configs: pcrec-auto (baseline), pcrec-vm-nocaps (--engine=vm
+# --no-captures), pcrec-dfa (--engine=dfa, captures on), pcrec-dfa-nocaps
+# (--engine=dfa --no-captures).
+#
+# pcrec pin: fc719ca4 (abi 50), binary build/pcrec-fc719ca4/build/pcrec,
+# sha256 e1bb22ffa30d750949848d7b90fca1971ed3d6d0633c8904334e9b7064f75ba7
+# (see build/pcrec-fc719ca4/PIN.tsv: commit
+# fc719ca4234478ee003f26d2142ad5179d4b27f1, archived 2026-09-30T16:57:23Z).
+# Box: ubuntubudu, 12 cores; load average at run time ~2.05 1.09 0.52
+# (other sessions' lanes active -- IRRELEVANT here, compile-only, no
+# timing taken or reported).
+# Scripts (committed beside this file): probe_b121_dfa_nocaps_census.py
+# (Part 1), probe_b121_reverse_population.py (Part 2),
+# probe_b121_dfa_nocaps_identity.py (Part 3). Run at `nice -n 19`, one
+# process, no -j.
+#
+# ---------------------------------------------------------------------
+# PART 1: per-(pattern,form) compile outcome over bench/capability@0.1
+# (64 patterns x plain + whole-subject) and bench/syntax@0.1 (95
+# patterns, plain only -- the set has no whole-subject form), all four
+# candidates, verbatim.
+# ---------------------------------------------------------------------
+== capability: 64 patterns x 2 form(s) ==
+ipv4-near-miss	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+ipv4-near-miss	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+uuid-near-miss	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+uuid-near-miss	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-validator-email-owasp	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-validator-email-owasp	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-validator-ipv4-owasp	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+wild-validator-ipv4-owasp	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+wild-validator-us-zip-owasp	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 6)) | pcrec-dfa-nocaps=OK
+wild-validator-us-zip-owasp	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 9)) | pcrec-dfa-nocaps=OK
+wild-validator-uuid-grok	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-validator-uuid-grok	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+base10num-near-miss	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+base10num-near-miss	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+logparse-atomic	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 1)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 1))
+logparse-atomic	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+logparse-atomic-removed	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 101)) | pcrec-dfa-nocaps=OK
+logparse-atomic-removed	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 104)) | pcrec-dfa-nocaps=OK
+wild-logparse-base10num-grok	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 13)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 13))
+wild-logparse-base10num-grok	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 16)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 16))
+wild-logparse-base10num-noatomic	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-logparse-base10num-noatomic	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-logparse-quotedstring-grok	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 14)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 14))
+wild-logparse-quotedstring-grok	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 17)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 17))
+wild-logparse-quotedstring-noatomic	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-logparse-quotedstring-noatomic	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-logparse-syslogbase-expanded	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 298)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 298))
+wild-logparse-syslogbase-expanded	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 301)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 301))
+wild-logparse-winpath-grok	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 0))
+wild-logparse-winpath-grok	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 3)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 3))
+winpath-near-miss	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+winpath-near-miss	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942140-dbnames	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942140-dbnames	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942160-sleep-benchmark	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942160-sleep-benchmark	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942270-union-select	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942270-union-select	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942360-concat-sqli	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942360-concat-sqli	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942500-comment-obfuscation	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-waf-crs-942500-comment-obfuscation	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-secrets-aws-access-key-id	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 2)) | pcrec-dfa-nocaps=OK
+wild-secrets-aws-access-key-id	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 5)) | pcrec-dfa-nocaps=OK
+wild-secrets-github-pat	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 2)) | pcrec-dfa-nocaps=OK
+wild-secrets-github-pat	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 5)) | pcrec-dfa-nocaps=OK
+wild-secrets-slack-webhook-url	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 37)) | pcrec-dfa-nocaps=OK
+wild-secrets-slack-webhook-url	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 40)) | pcrec-dfa-nocaps=OK
+wild-secrets-username-password-pair	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 48)) | pcrec-dfa-nocaps=OK
+wild-secrets-username-password-pair	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 51)) | pcrec-dfa-nocaps=OK
+wild-datetime-datefinder-alternation	plain	pcrec-auto=REFUSED (pcrec: pattern too large: 579936 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: pattern too large: 568885 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+wild-datetime-datefinder-alternation	whole-subject	pcrec-auto=REFUSED (pcrec: pattern too large: 579990 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: pattern too large: 569002 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 3)) | pcrec-dfa-nocaps=REFUSED (pcrec: pattern too complex for the DFA engine (>28169 states; try --engine=vm) (pattern offset 0))
+wild-datetime-moment-iso8601	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+wild-datetime-moment-iso8601	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 7)) | pcrec-dfa-nocaps=OK
+codegrammar-flat	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+codegrammar-flat	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+codegrammar-xflag	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 47)) | pcrec-dfa-nocaps=OK
+codegrammar-xflag	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 50)) | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-array-begin	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-array-begin	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-constant	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-constant	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-number-extended	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-number-extended	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-object-begin	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-object-begin	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-stringcontent-escape	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-codegrammar-json-stringcontent-escape	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+doubled-word	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12))
+doubled-word	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15))
+dup-param-detect	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 25)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 25))
+dup-param-detect	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 28)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 28))
+phone-palindrome-6	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12))
+phone-palindrome-6	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15))
+quoted-delim-match	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 12))
+quoted-delim-match	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 15))
+tag-pair-match	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 36)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 36))
+tag-pair-match	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 39)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 39))
+currency-lookbehind-fixed	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+currency-lookbehind-fixed	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+email-local-nodup	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 1)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 1))
+email-local-nodup	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+float-literal-bound	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+float-literal-bound	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+negation-scope-lookbehind-var	plain	pcrec-auto=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 0))
+negation-scope-lookbehind-var	whole-subject	pcrec-auto=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 3)) | pcrec-vm-nocaps=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 3)) | pcrec-dfa=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 3)) | pcrec-dfa-nocaps=REFUSED (pcrec: variable-length lookbehind is not implemented: every alternative of a lookbehind must have a fixed length (this one can match 4..51 characters) (pattern offset 3))
+pwd-strength-chain	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 1)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 1))
+pwd-strength-chain	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+balanced-parens-rec	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 11)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 11))
+balanced-parens-rec	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 14)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 14))
+bracket-array-define	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 58)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 58))
+bracket-array-define	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 61)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 61))
+nested-comment-rec	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 29)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 29))
+nested-comment-rec	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 32)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 32))
+tag-depth3-bound	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 44)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 44))
+tag-depth3-bound	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 47)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 47))
+date-nested-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+date-nested-plus	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+email-nested-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+email-nested-plus	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+evil-alt-nested	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+evil-alt-nested	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+numeric-id-nested-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+numeric-id-nested-plus	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+phone-list-nested-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+phone-list-nested-plus	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+trim-nested-star	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 1)) | pcrec-dfa-nocaps=OK
+trim-nested-star	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 4)) | pcrec-dfa-nocaps=OK
+file-ext-order	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+file-ext-order	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+keyword-prefix-order	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+keyword-prefix-order	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+router-prefix-order	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+router-prefix-order	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-semdiv-altorder-foo-foobar-rustregex	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-semdiv-altorder-foo-foobar-rustregex	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-semdiv-dollar-trailing-newline-pcre2	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-semdiv-dollar-trailing-newline-pcre2	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+wild-semdiv-empty-alt-repeat-pcre2	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+wild-semdiv-empty-alt-repeat-pcre2	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 3)) | pcrec-dfa-nocaps=OK
+high-byte-run	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+high-byte-run	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mojibake-curly-quote	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mojibake-curly-quote	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+utf8-lead-no-cont	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+utf8-lead-no-cont	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+floor-byte	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+floor-byte	whole-subject	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+-- capability totals (of 128 cells): pcrec-auto=124, pcrec-vm-nocaps=124, pcrec-dfa=58, pcrec-dfa-nocaps=93 --
+== syntax: 95 patterns x 1 form(s) ==
+lit-cat	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-caret	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-dollar	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-a-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-z-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-z-lc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-g-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-m-caret	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+anc-m-dollar	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+asr-wb	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+asr-nwb	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+asr-k-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \K requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: \K requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+cls-d	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-s-lc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-s-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-w	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-h	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-v	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-n-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-posix	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-negset	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-range	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-dot	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-fold-pair	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-pair-ctl	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-mixed-case	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+cls-i-class	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-star	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-quest	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-lazy	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-poss-star	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-poss-plus	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: possessive quantifier requires the VM engine, which --engine=dfa excludes (pattern offset 2)) | pcrec-dfa-nocaps=REFUSED (pcrec: possessive quantifier requires the VM engine, which --engine=dfa excludes (pattern offset 2))
+qnt-plus-ctl	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+qnt-poss-quest	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: possessive quantifier requires the VM engine, which --engine=dfa excludes (pattern offset 2)) | pcrec-dfa-nocaps=REFUSED (pcrec: possessive quantifier requires the VM engine, which --engine=dfa excludes (pattern offset 2))
+qnt-poss-brace	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+grp-cap	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+grp-noncap	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+grp-named	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+grp-named-quote	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+grp-atomic-rep	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+grp-atomic-alt	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?>...) requires the VM engine, which --engine=dfa excludes (pattern offset 0))
+grp-comment	plain	pcrec-auto=REFUSED (pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)) | pcrec-dfa=REFUSED (pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'comments' is enabled but (?#...) is not implemented yet (pattern offset 2))
+grp-branch-reset	plain	pcrec-auto=REFUSED (pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'branch-reset' is enabled but (?|...) is not implemented yet (pattern offset 0))
+grp-callout	plain	pcrec-auto=REFUSED (pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)) | pcrec-dfa=REFUSED (pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'callouts' is enabled but (?C...) is not implemented yet (pattern offset 2))
+alt-two	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+alt-nested	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+bak-1	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 6)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 6))
+bak-2	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 8)) | pcrec-dfa-nocaps=REFUSED (pcrec: \1 requires the VM engine, which --engine=dfa excludes (pattern offset 8))
+bak-g-rel	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \g{-1} requires the VM engine, which --engine=dfa excludes (pattern offset 6)) | pcrec-dfa-nocaps=REFUSED (pcrec: \g{-1} requires the VM engine, which --engine=dfa excludes (pattern offset 6))
+bak-k-named	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \k<name> requires the VM engine, which --engine=dfa excludes (pattern offset 18)) | pcrec-dfa-nocaps=REFUSED (pcrec: \k<name> requires the VM engine, which --engine=dfa excludes (pattern offset 18))
+bak-py	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?P=n) requires the VM engine, which --engine=dfa excludes (pattern offset 11)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?P=n) requires the VM engine, which --engine=dfa excludes (pattern offset 11))
+lka-pos	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?=...) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+lka-neg	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?!...) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+lkb-pos	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?<=...) requires the VM engine, which --engine=dfa excludes (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?<=...) requires the VM engine, which --engine=dfa excludes (pattern offset 0))
+lkb-neg	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?<!...) requires the VM engine, which --engine=dfa excludes (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?<!...) requires the VM engine, which --engine=dfa excludes (pattern offset 0))
+lka-nonatomic	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?*a) requires the VM engine, which --engine=dfa excludes (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?*a) requires the VM engine, which --engine=dfa excludes (pattern offset 0))
+lka-verb	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (*pla:a) requires the VM engine, which --engine=dfa excludes (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (*pla:a) requires the VM engine, which --engine=dfa excludes (pattern offset 4))
+cnd-group	plain	pcrec-auto=REFUSED (pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)) | pcrec-dfa=REFUSED (pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'conditionals' is enabled but (?(...) is not implemented yet (pattern offset 8))
+rec-r-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 11)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?R) requires the VM engine, which --engine=dfa excludes (pattern offset 11))
+rec-1	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 12)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?1) requires the VM engine, which --engine=dfa excludes (pattern offset 12))
+rec-name	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 16)) | pcrec-dfa-nocaps=REFUSED (pcrec: (?&name) requires the VM engine, which --engine=dfa excludes (pattern offset 16))
+rec-define	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+rec-g-angle	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+rec-py	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+rec-fwd	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 5)) | pcrec-dfa-nocaps=OK
+rec-back	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: this pattern requires captures (on by default); pass --no-captures for a DFA-only artifact, or omit --engine=dfa (pattern offset 0)) | pcrec-dfa-nocaps=OK
+mod-i	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-s	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-x	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-n	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-u-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-j-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=REFUSED (pcrec: \k<name> requires the VM engine, which --engine=dfa excludes (pattern offset 28)) | pcrec-dfa-nocaps=REFUSED (pcrec: \k<name> requires the VM engine, which --engine=dfa excludes (pattern offset 28))
+mod-a	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-r	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-reset	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+mod-unset	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-tab	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-nl	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-cr	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-hex	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-hex-braced	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-ctrl	plain	pcrec-auto=REFUSED (pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)) | pcrec-dfa=REFUSED (pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'misc' is enabled but \c is not implemented yet (pattern offset 4))
+esc-octal-o	plain	pcrec-auto=REFUSED (pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'misc' is enabled but \o is not implemented yet (pattern offset 0))
+esc-octal-0	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+esc-quote	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+msc-r-uc	plain	pcrec-auto=REFUSED (pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)) | pcrec-dfa=REFUSED (pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'misc' is enabled but \R is not implemented yet (pattern offset 4))
+msc-x-uc	plain	pcrec-auto=REFUSED (pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)) | pcrec-dfa=REFUSED (pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'misc' is enabled but \X is not implemented yet (pattern offset 1))
+msc-c-uc	plain	pcrec-auto=REFUSED (pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)) | pcrec-dfa=REFUSED (pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'misc' is enabled but \C is not implemented yet (pattern offset 1))
+unp-p-lc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+unp-p-uc	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+vrb-accept	plain	pcrec-auto=REFUSED (pcrec: (*...) requires module 'verbs' (pattern offset 4)) | pcrec-vm-nocaps=REFUSED (pcrec: (*...) requires module 'verbs' (pattern offset 4)) | pcrec-dfa=REFUSED (pcrec: (*...) requires module 'verbs' (pattern offset 4)) | pcrec-dfa-nocaps=REFUSED (pcrec: (*...) requires module 'verbs' (pattern offset 4))
+vrb-skip	plain	pcrec-auto=REFUSED (pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)) | pcrec-vm-nocaps=REFUSED (pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)) | pcrec-dfa=REFUSED (pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2)) | pcrec-dfa-nocaps=REFUSED (pcrec: (*SKIP) is outside pcrec's scope and no module will implement it (see docs/pcre2_compliance.md) (pattern offset 2))
+xcl-minus	plain	pcrec-auto=REFUSED (pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)) | pcrec-vm-nocaps=REFUSED (pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)) | pcrec-dfa=REFUSED (pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0)) | pcrec-dfa-nocaps=REFUSED (pcrec: module 'extended-classes' is enabled but (?[...) is not implemented yet (pattern offset 0))
+floor	plain	pcrec-auto=OK | pcrec-vm-nocaps=OK | pcrec-dfa=OK | pcrec-dfa-nocaps=OK
+-- syntax totals (of 95 cells): pcrec-auto=83, pcrec-vm-nocaps=83, pcrec-dfa=57, pcrec-dfa-nocaps=64 --
+
+# ---------------------------------------------------------------------
+# PART 2: THE REVERSE POPULATION (Q3's own question): every pattern
+# where pcrec-nocaps (auto, no-captures) selects the VM (RX_ENGINE
+# "vm") AND a forced --engine=dfa --no-captures STILL COMPILES -- the
+# only population where a pinned pcrec-dfa-nocaps testee could ever
+# read a DIFFERENT number than pcrec-nocaps on an artifact auto chose
+# the VM for. Both plain and whole-subject forms, both corpora.
+# ---------------------------------------------------------------------
+-- capability: 0 (pattern,form) pair(s) in the reverse population: [] --
+-- syntax: 0 (pattern,form) pair(s) in the reverse population: [] --
+
+# ---------------------------------------------------------------------
+# PART 3: PROGRAM IDENTITY wherever pcrec-nocaps and forced
+# pcrec-dfa-nocaps BOTH compile (tools/program_identity.py v2
+# normalization, unmodified) -- settles whether the two configs are
+# actually the SAME ARTIFACT on this corpus's compiling population, or
+# merely agree in engine selection without being byte-identical.
+# ---------------------------------------------------------------------
+-- capability: identical=93 changed=0 refused-either=35 --
+-- syntax: identical=64 changed=0 refused-either=31 --
+
+# ---------------------------------------------------------------------
+# READING (not re-derived by the archived scripts; stated here once).
+#
+# Part 1 totals: capability@0.1 (128 cells) pcrec-auto=124,
+# pcrec-vm-nocaps=124, pcrec-dfa=58, pcrec-dfa-nocaps=93;
+# bench/syntax@0.1 (95 cells, plain only) pcrec-auto=83,
+# pcrec-vm-nocaps=83, pcrec-dfa=57, pcrec-dfa-nocaps=64.
+# pcrec-vm-nocaps's population is IDENTICAL to pcrec-auto's cell for
+# cell on both corpora (124/124, 83/83): --no-captures never refuses a
+# pattern --engine=vm alone would accept, since the VM never needed
+# the capture data to begin with on these two corpora's own
+# constructs -- consistent with pcrec-vm's own existing roster
+# comment ("the VM forced ... derives the whole span independently").
+# pcrec-dfa (captures ON, forced DFA) refuses EVERY pattern containing
+# a real capturing group outright (confirmed directly: `--engine=dfa`
+# on `foo(bar)` is REFUSED "this pattern requires captures ... pass
+# --no-captures for a DFA-only artifact, or omit --engine=dfa" --
+# `auto` falls back to the VM silently on the identical pattern,
+# `--engine=dfa` as an explicit request is REFUSED rather than
+# downgraded, matching --help's own stated diagnostic philosophy).
+# pcrec-dfa-nocaps's broader population (93, 64) is exactly the
+# patterns neither backrefs nor lookaround (both VM-only, REFUSED
+# under --engine=dfa with "requires the VM engine, which --engine=dfa
+# excludes") nor any parser-level gate (conditionals, control-verbs,
+# callouts, branch-reset, ...) touches.
+#
+# Part 2: ZERO (pattern, form) pairs in the reverse population on
+# EITHER corpus, either form. pcrec's `auto` selector already prefers
+# the DFA whenever the DFA can represent the pattern at all (under
+# --no-captures) on both bench/capability@0.1 and bench/syntax@0.1 --
+# it only ever falls to the VM for a construct a forced DFA refuses
+# outright (backrefs, lookaround). This is itself the answer to Q3's
+# framing ("the reverse population: auto picks VM, a forced DFA would
+# have won") for TODAY'S two corpora: there is no such cell yet.
+#
+# Part 3 confirms Part 2 is not an artifact of the engine-selection
+# read alone: wherever pcrec-nocaps and a forced pcrec-dfa-nocaps BOTH
+# compile, their emitted programs are PROGRAM-IDENTICAL by v2
+# normalization on every row (93/93 capability, 64/64 syntax, 0
+# changed in either). pcrec-dfa-nocaps is, on this corpus, the exact
+# same artifact as pcrec-nocaps wherever both exist, and a strict
+# subset elsewhere (backrefs/lookaround refuse under forced DFA, and
+# captures refuse too on plain pcrec-dfa).
+#
+# WHAT THIS MEANS for the Q2/Q3 testee additions ([B121]): adding
+# pcrec-vm-nocaps(-in) and pcrec-dfa(-nocaps) as pinned testees is
+# still useful protocol symmetry (Q2's "like-for-like nocaps census",
+# Q3's reverse-population instrument) and costs nothing measured here
+# -- but on bench/capability@0.1 and bench/syntax@0.1 AS THEY STAND
+# TODAY, pcrec-dfa-nocaps will read IDENTICAL numbers to pcrec-nocaps
+# on every cell both compile (same artifact), and pcrec-dfa will
+# refuse strictly more than pcrec-nocaps (every capturing-group
+# pattern). The reverse population Q3 is built to find is EMPTY here;
+# it may not stay empty on a different corpus (altwide's wide
+# alternations, or a future pcrec heuristic change), which is why the
+# testee is still worth having on the roster rather than withheld for
+# a null result on two corpora.

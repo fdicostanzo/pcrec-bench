@@ -71,6 +71,11 @@ SKELETONS = (
     ("ci",   "main",  "caseless",  "256,512",                8),
     ("cnt",  "main",  "count13",   "64",                     8),
     ("wb",   "main",  "wordbound", "256,512",                8),
+    # 0.3 ([B121]): each branch gains a trailing `[a-z]`/`[0-9]` (5 extra
+    # bytes), so the probe finds this skeleton's OWN refusal boundary --
+    # expected lower than `w`'s, never assumed.
+    ("clsa", "main",  "classtail-az", "64,256,1024",         8),
+    ("clsd", "main",  "classtail-09", "64,256,1024",         8),
 )
 
 

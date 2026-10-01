@@ -95,9 +95,18 @@ def branches_of(text):
         raise ValueError("unparsed pattern: %r" % s[:40])
     body = s[3:-1]
     parts = body.split("|")
+    letters = "abcdefghijklmnopqrstuvwxyz"
     for p in parts:
-        if not p or not all(c in "abcdefghijklmnopqrstuvwxyz" for c in p):
+        if not p:
             raise ValueError("unparsed branch %r" % p[:40])
+        if all(c in letters for c in p):
+            continue
+        # 0.3 ([B121]): a CLASS-TAIL branch, `word[a-z]` or `word[0-9]` --
+        # the one other branch shape this set builds.
+        if (p.endswith("[a-z]") or p.endswith("[0-9]")) and \
+                all(c in letters for c in p[:-5]):
+            continue
+        raise ValueError("unparsed branch %r" % p[:40])
     return parts
 
 

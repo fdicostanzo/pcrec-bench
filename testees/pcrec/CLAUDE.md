@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides thirty-nine testees at the commit pinned in `configs.toml`, and
+Provides forty-three testees at the commit pinned in `configs.toml`, and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
@@ -13,7 +13,15 @@ nolitrun`, `pcrec-vm-noreqbyte-noreqrun[-nolitrun]` — up from twenty-one;
 `pcrec-auto-nolitrun-align64loops`, at the same pin — up from twenty-nine;
 [B117], 2026-09-29: eight more, `pcrec-{auto,vm}-o{0,1,3,s}` (the
 COMPILEE OPTIMIZATION-LEVEL axis, prep only — not yet measured), at the
-same pin — up from thirty-one):
+same pin — up from thirty-one; [B121], 2026-10-01: four more,
+`pcrec-vm-nocaps`/`-in` (inbox I-125 Q2: a like-for-like nocaps census
+against the existing `pcrec-vm`/`pcrec-vm-in` caps pair) and
+`pcrec-dfa`/`pcrec-dfa-nocaps` (I-125 Q3: the forced-DFA route, a
+diagnostic request refused rather than downgraded — MEASURED: the
+"reverse population" Q3 asks about, auto picking VM where a forced DFA
+would have won, is EMPTY on bench/capability@0.1 and bench/syntax@0.1 as
+of this pin, docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt),
+at the same pin — up from thirty-nine):
 
 | config id | pcrec flags | what it is for |
 |---|---|---|
@@ -36,6 +44,8 @@ same pin — up from thirty-one):
 | `pcrec-auto-align64loops`, `pcrec-auto-nolitrun-align64loops` | the same flags as `pcrec-auto` / `pcrec-auto-nolitrun`, plus `cflags = ["-falign-functions=64", "-falign-loops=64"]` | ([B110], pin a32bc86e, inbox I-115 Q2) THE PLACEMENT-TWIN PAIR: pcrec's own follow-up on O-64/O-65's [OPT-LITSCAN] S2a reading, separating CODE from PLACEMENT for the aws-access-key-id ×1.037 and logparse-atomic-removed +0.7-1.4 ns findings. Both function AND loop-head landing pinned (against `pcrec-auto-align64`'s function-only pin) — b110probe's own objdump probe (I-115 Q6) found the lit-run "attempt" loop's head lands at three different `mod 16` offsets across L=2..40 with NO `.p2align` directive of its own, purely from how much code happens to precede it. `effective_cflags` joins both flags into ONE `cf-align-functions-64-align-loops-64` token; the nolitrun sibling composes it AFTER the `nolitrun` deny word (chartering order: cc, caps, denies, cflags, encoding), deriving `pcrec-auto-nolitrun`'s own id plus the token, never colliding with either single-variable sibling. `check_cflags_axis`'s new arm (2b) proves the composition and the CLI listing; docs/dev/lanes/b110probe_report.md hands back the exact `run_suite.sh` invocation for the manager's window — this lane measures nothing pinned itself |
 | `pcrec-auto-utf8`, `pcrec-nocaps-utf8`, `pcrec-vm-utf8`, `pcrec-vm-in-utf8` | the same flags as `pcrec-auto` / `-nocaps` / `-vm` / `-vm-in` (and the `-in` capacities), plus `-e utf8` | ([B77] U2, 2026-09-25) THE ENGINE-ENCODING AXIS: the usual four compiled `-e utf8` (UD §9.2 stage 2) for `bench/utf8` — same pin, the encoding the one variable moved. `effective_encoding` puts `utf8` in `config_extra` (the FIFTH `compose_config_extra` part), so each derives its sibling's id plus `_utf8`. See below |
 | `pcrec-{auto,vm}-o0`, `-o1`, `-o3`, `-os` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `cflags = ["-O<n>"]` | ([B117], Frank 2026-09-29, LOW PRIORITY) THE COMPILEE OPTIMIZATION-LEVEL AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim at `-O0`/`-O1`/`-O3`/`-Os` instead of the fixed `-O2` — gcc/clang take the LAST `-O` flag, so `build_flags` NAMES the effective level explicitly (`effective_olevel()`). `pcrec-auto`/`pcrec-vm` ARE this axis's `-O2` arm; no `-o2` testee exists. PREP ONLY — `check_olevel_axis` (`make check-harness`) proves the override reaches real codegen (a hand-chosen forced-VM witness's `.text` bytes differ between `-O0` and `-O3`) and that neither level breaks the libpcre2 oracle agreement; the census over `bench/capability` is OWED to a measurement window (docs/dev/measurements/probe_b117_olevel_census.py). See docs/dev/plan.md [B117] and docs/dev/lanes/b117prep_report.md |
+| `pcrec-vm-nocaps`, `pcrec-vm-nocaps-in` | the same flags as `pcrec-vm` / `pcrec-vm-in`, plus `--no-captures` | ([B121], inbox I-125 Q2) THE FORCED-VM NOCAPS PAIR: mirrors `pcrec-nocaps`'s relationship to `pcrec-auto`, on the forced VM route — a like-for-like nocaps census against the existing caps pair. MEASURED: the compiling population is cell-for-cell IDENTICAL to `pcrec-vm`/`pcrec-auto`'s own on bench/capability@0.1 and bench/syntax@0.1 (124/128, 83/83) — `--no-captures` never refuses anything the forced VM route alone accepts |
+| `pcrec-dfa`, `pcrec-dfa-nocaps` | `--engine=dfa`[`, --no-captures`] | ([B121], inbox I-125 Q3) THE FORCED-DFA PAIR: the DFA route forced — a DIAGNOSTIC REQUEST, REFUSED rather than downgraded (unlike `auto`'s silent VM fallback). `pcrec-dfa` (captures on, the default) refuses every capturing-group pattern outright ("this pattern requires captures ... pass --no-captures for a DFA-only artifact, or omit --engine=dfa"), plus every backrefs/lookaround/k-reset/true-recursion pattern (VM-only regardless of captures). `pcrec-dfa-nocaps` additionally compiles every capturing-group pattern that carries none of those VM-only constructs (93/128 capability, 64/95 syntax vs 58/128, 57/95 for `pcrec-dfa`). THE REVERSE-POPULATION FINDING (Q3's own framing: "auto picks VM, a forced DFA would have won"): MEASURED EMPTY on bench/capability@0.1 and bench/syntax@0.1 at this pin, both forms — `auto` already prefers the DFA whenever it can represent the pattern under `--no-captures`, confirmed structurally too (`pcrec-nocaps` and forced `pcrec-dfa-nocaps` are PROGRAM-IDENTICAL, `tools/program_identity.py` v2, wherever both compile: 93/93 + 64/64, 0 changed). docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |

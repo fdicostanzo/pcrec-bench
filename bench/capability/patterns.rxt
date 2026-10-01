@@ -13,7 +13,7 @@ vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifie
 vocabulary convention perl-leftmost-first posix-leftmost-longest
 tag set=capability, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcrec-auto-noreqbyte pcrec-auto-nolitrun pcrec-auto-clang pcrec-nocaps-clang pcrec-vm-clang pcrec-auto-in pcrec-auto-bigcap pcrec-vm-bigcap pcrec-auto-noedge pcrec-auto-align64 pcrec-auto-align64loops pcrec-auto-nolitrun-align64loops pcrec-auto-noisland pcrec-auto-noclsfold pcrec-vm-noclsfold pcrec-vm-nolitrun pcrec-auto-noaltclsfactor pcrec-vm-noaltclsfactor pcrec-auto-noaltclsfactor-nolitrun pcrec-vm-noaltclsfactor-nolitrun pcrec-vm-noreqbyte-noreqrun pcrec-vm-noreqbyte-noreqrun-nolitrun pcrec-auto-o0 pcrec-auto-o1 pcrec-auto-o3 pcrec-auto-os pcrec-vm-o0 pcrec-vm-o1 pcrec-vm-o3 pcrec-vm-os pcrec-auto-nohybreseed pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom vectorscan-block-som tre-default rust-default
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcrec-auto-noreqbyte pcrec-auto-nolitrun pcrec-auto-clang pcrec-nocaps-clang pcrec-vm-clang pcrec-auto-in pcrec-auto-bigcap pcrec-vm-bigcap pcrec-auto-noedge pcrec-auto-align64 pcrec-auto-align64loops pcrec-auto-nolitrun-align64loops pcrec-auto-noisland pcrec-auto-noclsfold pcrec-vm-noclsfold pcrec-vm-nolitrun pcrec-auto-noaltclsfactor pcrec-vm-noaltclsfactor pcrec-auto-noaltclsfactor-nolitrun pcrec-vm-noaltclsfactor-nolitrun pcrec-vm-noreqbyte-noreqrun pcrec-vm-noreqbyte-noreqrun-nolitrun pcrec-auto-o0 pcrec-auto-o1 pcrec-auto-o3 pcrec-auto-os pcrec-vm-o0 pcrec-vm-o1 pcrec-vm-o3 pcrec-vm-os pcrec-auto-nohybreseed pcrec-vm-nocaps pcrec-vm-nocaps-in pcrec-dfa pcrec-dfa-nocaps pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom vectorscan-block-som tre-default rust-default
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -537,6 +537,49 @@ ext bench
     span-reporting
     non-utf8-subject
     captures
+    true-end-anchor
+  capabilities pcrec-vm-nocaps
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities pcrec-vm-nocaps-in
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities pcrec-dfa
+    possessive-quantifier
+    atomic-group
+    unicode-properties
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities pcrec-dfa-nocaps
+    possessive-quantifier
+    atomic-group
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
     true-end-anchor
   capabilities pcre2-dfa
     lookaround

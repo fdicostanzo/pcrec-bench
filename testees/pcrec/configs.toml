@@ -771,6 +771,82 @@ captures = "on"
 flags = ["--features", "all", "--engine=vm", "-fno-req-byte", "-fno-req-run", "-fno-lit-run"]
 description = "pcrec-vm-noreqbyte-noreqrun plus the [OPT-LITSCAN] S2a literal-run compare DENIED (-fno-lit-run, bit 33): I-113 §7.2's L-SWEEP second row -- against its sibling above, S2a's own BEFORE/AFTER with both pre-checks already out of the way on every subject kind (matching, first-byte-mismatch, last-byte-mismatch, length L-1) ([B108], pcrec I-113 §7.2)"
 
+# ---------------------------------------------------------------------------
+# THE FORCED-DFA + VM-NOCAPS TESTEES ([B121], pin fc719ca4, inbox I-125 Q2/Q3).
+#
+# `pcrec-vm-nocaps`(-in) mirror `pcrec-nocaps`'s own relationship to
+# `pcrec-auto` but on the forced VM route (Q2: "a like-for-like nocaps
+# census" against the EXISTING `pcrec-vm`/`pcrec-vm-in` caps pair).
+# MEASURED (docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt,
+# Part 1): `--no-captures` never refuses anything `--engine=vm` alone
+# accepts on bench/capability@0.1 or bench/syntax@0.1 -- the compiling
+# population is cell-for-cell IDENTICAL to `pcrec-auto`'s own (124/124,
+# 83/83) on both corpora, since the VM never needed the capture data in
+# the first place (`--engine=vm` "disables the DFA prefilter, so the VM
+# derives the whole span independently", `pcrec-vm`'s own description
+# above).
+#
+# `pcrec-dfa`/`pcrec-dfa-nocaps` force the OTHER route -- a DIAGNOSTIC
+# request pcrec refuses rather than downgrades (--help: "a request the
+# pattern cannot honour is REFUSED, never silently downgraded"), unlike
+# `auto`, which falls back to the VM silently. `pcrec-dfa` (captures ON,
+# the default) REFUSES EVERY capturing-group pattern outright --
+# witnessed live: `--engine=dfa` on `foo(bar)` answers "this pattern
+# requires captures (on by default); pass --no-captures for a DFA-only
+# artifact, or omit --engine=dfa" -- so it satisfies strictly less than
+# `pcrec-dfa-nocaps`, exactly as `pcrec-nocaps` recovers the DFA artifact
+# `pcrec-auto` cannot for a group-bearing pattern (this file's own first
+# comment block), just on the forced route instead of the chosen one.
+# `--engine=dfa` additionally refuses backrefs and lookaround BY NAME
+# ("requires the VM engine, which --engine=dfa excludes") regardless of
+# `--no-captures` -- these are VM-only constructs, not a captures
+# question, so `pcrec-dfa-nocaps`'s population (93/128 capability,
+# 64/95 syntax -- docs/dev/measurements/2026-10-01-b121-dfa-nocaps-
+# census.txt Part 1) is still a strict subset of `pcrec-nocaps`'s.
+#
+# Q3's own "REVERSE POPULATION" (auto picks VM, a forced DFA would have
+# won) is MEASURED EMPTY on bench/capability@0.1 and bench/syntax@0.1,
+# both forms, as of this pin (same archive, Part 2: 0 of 223
+# (pattern,form) pairs where `pcrec-nocaps` selects `RX_ENGINE "vm"`
+# AND `--engine=dfa --no-captures` still compiles) -- `auto` already
+# prefers the DFA whenever it can represent the pattern at all under
+# `--no-captures`, only falling to the VM for a construct a forced DFA
+# refuses outright. Part 3 of the same archive confirms this
+# structurally, not just by engine-selection reading: wherever
+# `pcrec-nocaps` and forced `pcrec-dfa-nocaps` BOTH compile, their
+# emitted programs are PROGRAM-IDENTICAL (`tools/program_identity.py`
+# v2, 93/93 capability + 64/64 syntax, 0 changed) -- the SAME artifact,
+# not merely the same answer. The testee is kept on the roster anyway:
+# an empty reverse population on two corpora is not a proof it stays
+# empty everywhere (bench/altwide's wide alternations, or a future
+# pcrec heuristic change, could populate it), and the instrument costs
+# nothing once built.
+[testees.pcrec-vm-nocaps]
+engine_mode = "vm"
+captures = "off"
+flags = ["--features", "all", "--engine=vm", "--no-captures"]
+description = "pcrec --engine=vm --no-captures: the forced-VM route's own captures-off sibling, mirroring pcrec-nocaps's relationship to pcrec-auto -- a like-for-like nocaps census against pcrec-vm/pcrec-vm-in ([B121], inbox I-125 Q2)"
+
+[testees.pcrec-vm-nocaps-in]
+engine_mode = "vm-in"
+captures = "off"
+flags = ["--features", "all", "--engine=vm", "--no-captures"]
+buffer_frames = 32768
+buffer_trail = 131072
+description = "pcrec-vm-nocaps with the caller-provided frame buffer (32768 resume frames / 131072 trail entries, pcrec-vm-in's capacities): pcrec-vm-in's own captures-off sibling ([B121], inbox I-125 Q2)"
+
+[testees.pcrec-dfa]
+engine_mode = "dfa"
+captures = "on"
+flags = ["--features", "all", "--engine=dfa"]
+description = "pcrec --engine=dfa, captures on (the default): the DFA FORCED -- a diagnostic request, REFUSED rather than downgraded on any pattern the DFA cannot represent, unlike auto's silent VM fallback. Refuses every capturing-group pattern outright (pass --no-captures for a DFA-only artifact) as well as every backrefs/lookaround pattern (VM-only, excluded by --engine=dfa regardless of captures) ([B121], inbox I-125 Q3)"
+
+[testees.pcrec-dfa-nocaps]
+engine_mode = "dfa"
+captures = "off"
+flags = ["--features", "all", "--engine=dfa", "--no-captures"]
+description = "pcrec --engine=dfa --no-captures: the DFA forced with captures off, pcrec-dfa's own broader sibling -- the REVERSE-POPULATION instrument (auto picks VM, a forced DFA would have won): MEASURED EMPTY on bench/capability@0.1 and bench/syntax@0.1 at this pin, and program-IDENTICAL to pcrec-nocaps wherever both compile (docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt) ([B121], inbox I-125 Q3)"
+
 # [B77] U2 (docs/design/utf8_set_v1.md 7.1/7.2, F-C1 -- a MUST per inbox
 # I-94): the usual four, all compiled `-e utf8` (I-90 clause 4). The
 # encoding rides in `flags` -- VISIBLE, never a hidden protocol token like
