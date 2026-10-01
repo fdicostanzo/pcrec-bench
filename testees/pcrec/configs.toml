@@ -810,3 +810,48 @@ flags = ["--features", "all", "--engine=vm", "-e", "utf8"]
 buffer_frames = 32768
 buffer_trail = 131072
 description = "pcrec --engine=vm with the caller-provided frame buffer (32768 resume frames / 131072 trail entries, pcrec-vm-in's capacities) compiled -e utf8: pcrec-vm-in's character-mode sibling ([B77] U2, utf8_set_v1.md 7.2)"
+
+# ---------------------------------------------------------------------------
+# THE ADAPTIVE-RETRY DENY AXIS -- `-fno-hyb-reseed` ([B120], pin fc719ca4 /
+# abi 50; pcrec [OPT-HYB-RESEED]; inbox I-124). Denied, every VM HYBRID's
+# post-candidate-failure retry reverts to the pre-abi-48 fixed byte-for-byte
+# behaviour (RX_VM_RESEED reads `fixed`, the deny's own landing row) --
+# masked, answer-identical by construction (the row governs RETRY COST,
+# never which candidate is accepted; testees/pcrec/CLAUDE.md's DENY_FLAGS
+# entry, [B118]). `pcrec-auto-nohybreseed` is the BEFORE/AFTER twin for
+# I-124 item 3 (the roster-wide census of every `adaptive*`-stamped cell)
+# and its `-utf8` sibling is item 1's own (the utf8@0.1 asr-lb-* throughput
+# cells, where the row is reachable by construction -- the hybrid's own
+# candidate-failure retry on sparse-candidate subjects). The two `-clang`
+# siblings are item 1's "both compilers" ask (O-68's bimodality note): no
+# `-utf8`+`-clang` cross exists on this roster before this pin, so
+# `pcrec-auto-clang-utf8` is ALSO new here, as the undenied baseline the
+# denied clang+utf8 arm needs -- composed in chartering order (cc first,
+# then the denial, then the encoding last), so each derives its plain
+# sibling's id plus the expected tokens with nothing inserted ahead of an
+# existing part.
+[testees.pcrec-auto-nohybreseed]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-hyb-reseed"]
+description = "pcrec defaults with the [OPT-HYB-RESEED] ADAPTIVE RETRY DENIED (-fno-hyb-reseed, --list-axes bit 37): every VM hybrid's post-candidate-failure retry reverts to the pre-abi-48 fixed behaviour at the SAME pin -- against pcrec-auto this is the retry's BEFORE/AFTER wherever auto selects a VM hybrid stamping `adaptive*` ([B120], pcrec I-124 item 3)"
+
+[testees.pcrec-auto-nohybreseed-utf8]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-hyb-reseed", "-e", "utf8"]
+description = "pcrec-auto-nohybreseed compiled -e utf8: the character-mode sibling against pcrec-auto-utf8, for I-124 item 1's utf8@0.1 asr-lb-* throughput cells ([B120])"
+
+[testees.pcrec-auto-clang-utf8]
+engine_mode = "auto"
+captures = "on"
+cc = "clang"
+flags = ["--features", "all", "-e", "utf8"]
+description = "pcrec-auto-utf8 compiled by clang instead of gcc ([B24]'s compilee-toolchain axis crossed with [B77] U2's engine-encoding axis for the first time on this roster, [B120]): the undenied baseline I-124 item 1's clang arm needs (O-68's bimodality note asks for both compilers)"
+
+[testees.pcrec-auto-clang-nohybreseed-utf8]
+engine_mode = "auto"
+captures = "on"
+cc = "clang"
+flags = ["--features", "all", "-fno-hyb-reseed", "-e", "utf8"]
+description = "pcrec-auto-clang-utf8 with the [OPT-HYB-RESEED] ADAPTIVE RETRY DENIED (-fno-hyb-reseed): I-124 item 1's clang+denied arm, against pcrec-auto-clang-utf8 the retry's own BEFORE/AFTER under clang ([B120])"
