@@ -370,6 +370,60 @@ into a NEW ledger file (not an addendum to `2026-09-28-b108-a32bc86e.md`
 edited again per `docs/dev/ledgers/CLAUDE.md`):
 `docs/dev/ledgers/2026-09-28-capability-0.1-i115q2-align64loops-a32bc86e.md`.
 
+**[B117] reading (2026-10-01, lane b117read) ADDED ONE report group —
+the compilee `$CC -O` level sweep's window, `2026-10-01-capability-0.1-
+budu-ryzen1600-olevel-fc719ca4.*`** (`.tsv`/`.md`/`.matrix.tsv`/
+`.subject-grain.tsv` slice/`.interpretation.md`; `.matrix.html` not
+generated, per [B114]'s retirement). Ten testees at pcrec **fc719ca4**
+(abi 50): `pcrec-{auto,vm}-caps-simdna` (the same-window `-O2` controls)
+and their `_cf-{o0,o1,o3,os}` siblings ([B117] prep, `testees/pcrec/
+configs.toml`). Query: `report --subbench capability --version 0.1
+--machine budu-ryzen1600` plus the ten `--testee` values — **11
+record(s) matching this query, 10 included, 1 superseded** (the
+`vm-caps-simdna_cf-o1` cell's first attempt landed `inconclusive-
+spread`; `scripts/run_window.sh`'s one-retry rule re-measured it
+`measured`, `agree` — the reporter's own newest-measured-wins dedup
+picks it automatically, no `--since`/`--until` needed since no OTHER
+pcrec testee at this pin exists yet). `worst_other_core_busy: 55.47%`
+(`pcrec_fc719ca4_vm-caps-simdna_cf-o1` / `wild-codegrammar-json-array-
+begin` / `large-subject-throughput`, an AFTER-sample provenance
+reading; the record's own pre-flight passed, `status: measured`). All
+ten kept records read `agree` (0 of 124 ranking groups disagree, 5
+trials each).
+
+Predictions `docs/dev/predictions/capability-0.1-b117-olevel-fc719ca4.tsv`
+(P1-P7): **a column-swap authoring defect on P4/P6** (`op=gt` with the
+threshold in `lo` instead of `hi` — `_op_holds` reads its threshold from
+`hi` for every op but `between`) was found and fixed BEFORE any score
+existed (same precedent as `syntax-0.1-rust-first.tsv`'s own P1 fix,
+documented in `docs/dev/predictions/CLAUDE.md`); not "revising an
+already-scored file," since nothing had been scored yet. Scored through
+the NORMAL CLI path (`check_stated_utc` passes: this testee population
+was never measured before this window). **All 7 clauses REFUTED
+(R-PRED-2)** — but the populations behind each verdict differ sharply:
+P1/P3 (DFA route flat at `-O0`/`-Os`) are substantively wrong (50/62 and
+34/62 of 62 patterns exceed ±15%, all slower); P2 (DFA route flat at
+`-O3`) nearly holds (58/62 inside band, the 4 exceptions all faster);
+P4-P6 (VM route direction claims) are directionally right for
+48-58 of 62 patterns but fail the strict per-pattern quantifier on
+4-24 exceptions, several moving the OPPOSITE direction (`utf8-lead-
+no-cont` a recurring ×0.47-×0.67 outlier across three levels and both
+routes); P7 (`.so` bytes at `-O0`) mostly holds (56/62). **A sidecar
+quirk found while reading the populations**: `_measured_text`'s "worst"
+witness for a `between` op is the violator with the largest ABSOLUTE
+ratio (`interpret.py:2790`), which for a low-side-only violation set
+names the LEAST extreme case, not the most (P2's named witness, 0.830,
+is NOT the most extreme violator, 0.662 — read directly from the TSV,
+not a tool bug, a documented-now quirk of the "worst" definition on an
+asymmetric violation population). Compile-side: `-O0` is the one level
+with a real across-the-board `.so`-size cost on both routes (median
+×1.13-1.14); `-O1`/`-O3`/`-Os` all read flat at the median. `-O1`,
+named by no clause, costs real time on both routes (median ×1.04-×1.16).
+Full distribution tables (median/Q1/Q3/extremes by route × regime ×
+level) and the compile-side tables are in the ledger. Read into
+`docs/dev/ledgers/2026-10-01-b117-olevel-fc719ca4.md`; outbox draft
+`docs/dev/lanes/b117read_outbox_draft.md` (O-79, findings only, no ask).
+
 ## `.subject-grain.tsv` siblings ([B47], 2026-09-17)
 
 A group may also carry `<name>.subject-grain.tsv` beside its
