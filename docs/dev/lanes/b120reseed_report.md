@@ -159,25 +159,31 @@ brief's own stop instruction.
 manager can act on this file alone):
 
 - **Items 1+2 (the b109-style standalone multi-launch probe, SCRATCH,
-  never `store/`)**: a new `docs/dev/measurements/probe_b120_reseed_
-  multilaunch.py`, following `probe_b109_reseed_twin.py`'s exact shape
-  (compile both arms — default vs `-fno-hyb-reseed` — via the pinned
-  fc719ca4 binary's own CLI, under BOTH gcc and clang, build a drv.c
-  reusing I-114's own best-of-N + answer-hash shape, 15 FRESH launches
-  per cell via `probe_b109_multilaunch.sh`'s own harness), over:
-  - utf8@0.1's `asr-lb-varwidth`/`-fixed`/`-neg` × all seven throughput
-    subjects (`bench/utf8/throughput/`, regenerated) + I-114's three
-    synthetic subjects (its own embedded generator, seed 20260927,
-    reproduced verbatim as `probe_b109_reseed_twin.py` already does);
-  - syntax@0.1's `lka-pos`/`lka-verb` × a THIRD arm, forced `--engine=vm`
-    (I-124 item 2's own three-way ask), over whichever subjects give
-    both a sparse-candidate and a match-dense (find-all) reading — the
-    syntax@0.1 search_short/throughput subjects, read from
-    `bench/syntax/subjects/`+`manifest.tsv`, is the natural source; no
-    new subject generation needed.
-  - Answer identity (match count + span hash) checked on every cell
-    BEFORE any ratio is trusted, exactly as I-124's own closing
-    paragraph requires.
+  never `store/`)**: `docs/dev/measurements/probe_b120_reseed_
+  multilaunch.py` is WRITTEN and SMOKE-CLEAN (`--smoke`: one launch,
+  one trial per cell, build + answer-check only, no timing claim —
+  18/18 binaries build, every cell runs, zero `NONDETERMINISM`). It
+  follows `probe_b109_reseed_twin.py`'s exact shape (I-114's own `drv.c`
+  reproduced verbatim; its three synthetic-subject generators
+  reproduced verbatim), but against the pin's own REAL `-fno-hyb-reseed`
+  flag rather than a hand-patched twin — no source patching needed at
+  all. GROUP U (item 1): `asr-lb-varwidth`/`-fixed`/`-neg`, `-e utf8`,
+  default vs denied, BOTH gcc and clang, over all seven
+  `bench/utf8/throughput/` subjects plus I-114's three synthetic ones.
+  GROUP S (item 2): `lka-pos`/`lka-verb`, byte encoding, default vs
+  denied vs forced `--engine=vm` (the three-way ask), gcc only, over
+  `bench/syntax`'s own three throughput subjects (t-64k/t-256k/t-1m —
+  item 2's "match-dense, one call per match" reading needs find-all
+  over a subject with real candidate density; these are read off
+  `bench/syntax/manifest_throughput.tsv`, no new subject generation
+  needed). **The real run** is `python3 docs/dev/measurements/
+  probe_b120_reseed_multilaunch.py --trials 21 --launches 15` (default
+  flags already match this — `--smoke` is the only override this lane
+  used). Answer identity (match count + span hash) is checked on EVERY
+  cell inside the driver itself (a `NONDETERMINISM` stderr line), so
+  Phase C's first act once cleared is simply running it for real and
+  reading that line before trusting any ratio — exactly I-124's own
+  closing paragraph.
 - **Item 3's real window**: the six-cell `run_suite.sh` invocation
   above, launched by the MANAGER per `BOILERPLATE.md`'s "long runs at
   the end of a lane" rule (~3.7 h, over the ~4-minute DO-THEN-FINISH
@@ -199,9 +205,9 @@ manager can act on this file alone):
 
 - Items 1, 2 and 3's actual TIMING NUMBERS (Phase C), blocked on the
   manager's slot clearance — see the SendMessage sent alongside this
-  report.
-- `probe_b120_reseed_multilaunch.py` (items 1+2's reproducing script) —
-  not yet written; Phase C's first act once cleared.
+  report. The instrument for items 1+2 is written and smoke-clean
+  (`probe_b120_reseed_multilaunch.py`); only the real `--trials 21
+  --launches 15` run is owed.
 - The six-cell item-3 window's launch, log path and `.done` marker —
   OWED to the manager per BOILERPLATE.md (a run this long is launched
   by the manager, not this lane).
@@ -218,6 +224,8 @@ manager can act on this file alone):
 - `bench/capability/patterns.rxt` (regenerated)
 - `docs/dev/measurements/probe_b120_census.py` (new)
 - `docs/dev/measurements/2026-10-01-b120-reseed-census.txt` (new)
+- `docs/dev/measurements/probe_b120_reseed_multilaunch.py` (new, Phase
+  C's instrument — smoke-clean, not yet run for real numbers)
 - `docs/dev/measurements/CLAUDE.md` (+1 entry)
 - `docs/dev/lanes/b120reseed_report.md` (this file, new)
 - `docs/dev/lanes/b120reseed_outbox_draft.md` (new, placeholder — see
