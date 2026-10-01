@@ -1020,3 +1020,58 @@ Maintenance: update this file when files are added/removed or change role.
   argmin arm named) from `scripts/findings_tiers_matrix.py` over the
   scratch store at pcrec f7f5a143. The ledger that reads them is
   `docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md`.
+- `probe_b120_census.py` / `2026-10-01-b120-reseed-census.txt` — ([B120],
+  lane b120reseed, inbox I-124) PHASE A, no timing: the compile-only
+  `RX_VM_RESEED`/`RX_VM_FRAMELESS` census over EVERY bench pattern (all
+  eight sub-benches, by enumeration) under `pcrec-auto` and
+  `pcrec-auto-utf8` at fc719ca4 -- item 3's own POPULATION. 678 rows
+  (339 patterns x 2 configs): 487 DFA / 142 VM / 49 refused; zero
+  `fixed` reads under default compile anywhere (expected: the deny's
+  own landing row); 27 `adaptive*` cells across 15 distinct patterns in
+  THREE sets only (capability, syntax, utf8 -- none in email, altwide,
+  bounded, litrun or loglines). I-124 item 1's three named utf8@0.1
+  patterns (asr-lb-varwidth/fixed/neg) confirmed `adaptive` under both
+  encoding configs; item 2's two named syntax patterns (lka-pos/
+  lka-verb) confirmed `adaptive`/frameless=1 under both (the whole
+  nine-pattern `lka-*`/`lkb-*`/`grp-atomic-alt`/`qnt-poss-*` family is
+  encoding-invariant); `capability/logparse-atomic` is the roster's
+  ONLY `adaptive-dense` cell (byte only -- it reads `clamped` under
+  `-e utf8`). No `email`/`altwide`/`bounded`/`litrun` pattern stamps
+  `adaptive*` at all (their hybrids are `exact`/`clamped`).
+- `probe_b120_reseed_multilaunch.py` / `2026-10-01-b120-reseed-
+  multilaunch.txt` — ([B120], lane b120reseed, inbox I-124) PHASE C
+  items 1+2, THE TIMING: the b109-style compile-plus-multilaunch
+  protocol against the pin's own real `-fno-hyb-reseed` flag (no
+  source patching). GROUP U: `asr-lb-varwidth`/`-fixed`/`-neg`, `-e
+  utf8`, default vs denied, both compilers, over all seven bench/utf8
+  throughput subjects + I-114's three synthetic ones. GROUP S:
+  `lka-pos`/`lka-verb`, byte encoding, default vs denied vs forced
+  `--engine=vm`, gcc, over syntax@0.1's three throughput subjects. 15
+  launches x 21 trials, cleared by the manager on a verdict-`quiet` box
+  (load1 0.07-0.09). ANSWER IDENTITY: 0/138 cross-arm mismatches (incl.
+  the forced-VM arm). MECHANISM, read from pcrec's own `docs/design/
+  hyb_reseed.md` (`git -C ~/pcrec show d6cb0bb4f3:...`, not guessed): on
+  a clamp-free hybrid the OLD (`denied`) behaviour does NOT re-seed --
+  it STEPS every byte to the subject's end once the first candidate
+  fails; the real fix (`default`) is what re-seeds from the DFA
+  prefilter to skip non-candidate stretches. FINDINGS: item 1a
+  CONFIRMED in direction, FAR EXCEEDED in magnitude on ordinary
+  throughput prose -- 11x-99x vs the predicted x2-x21 (I-114's own
+  short synthetic subjects DO land in the predicted band; the "step to
+  the end" cost scales with subject size, which ordinary 1 MB prose
+  shows and short synthetic subjects cannot); item 1b (`asr-lb-fixed`/
+  `synth-dense` flat +-5%, scoped to that one pair) CONFIRMED; item 1d
+  NAMES the `[OPT-HYB-RESEED-XCALL]` trigger population this probe
+  found -- FOUR real cells >5% slower than denied (7.4%/103%/6.7%/6.5%),
+  ALL on I-114's own density-tuned synthetic subjects, never ordinary
+  prose, one of them (`asr-lb-fixed` gcc `synth-64k-asc`) bimodal and
+  flagged for re-measurement; item 2a (`auto` != forced-VM) CONFIRMED;
+  item 2b names a REAL pattern-specific inversion (`lka-pos` auto
+  slower than forced-VM at the two smaller subjects, `lka-verb` never
+  inverts on the identical subjects) but the sparse/dense sub-claim
+  itself is NOT CLEANLY TESTABLE (syntax@0.1's three subjects carry
+  comparable match density at every size, not a controlled pair); item
+  3's slice of this probe's own population is exactly those 1d/2b
+  cells and nothing else outside 26 timer-floor cells (max 3.0 us
+  both arms) -- full roster verdict still owed to the manager's real
+  window.

@@ -1,0 +1,87 @@
+docs/dev/measurements/2026-10-01-b120-reseed-census.txt -- [B120] (lane
+b120reseed, inbox I-124) PHASE A, no timing: the compile-only
+RX_VM_RESEED / RX_VM_FRAMELESS census over EVERY bench pattern (all
+eight sub-benches, by enumeration: altwide, bounded, capability, email,
+litrun, loglines, syntax, utf8) under `pcrec-auto` (byte) and
+`pcrec-auto-utf8` (-e utf8), at the pinned fc719ca4 (abi 50).
+
+Script: docs/dev/measurements/probe_b120_census.py (`python3
+docs/dev/measurements/probe_b120_census.py OUT.tsv`).
+Box: ubuntubudu (12 cores), /proc/loadavg 1.47/1.21/0.73 before the run
+(other lanes compiling per the manager's brief) -- compile-only, no
+gcc, no timing, no store write, so the box's load does not enter it
+(the same exemption docs/dev/measurements/CLAUDE.md states for every
+prior probe_bNNN_census.py). Binary: build/pcrec-fc719ca4/build/pcrec
+(pin.sh, never rebuilt by this probe), sha256
+e1bb22ffa30d750949848d7b90fca1971ed3d6d0633c8904334e9b7064f75ba7.
+pcrec-bench commit ad81addb36d8f833336c9cebd3ea2368fc07a6e2.
+
+SUMMARY: 678 rows (339 patterns x 2 configs). 487 DFA, 142 VM, 49
+refused (altwide's size-cap rungs, same as every other pin). Zero
+RX_VM_RESEED value reads "fixed" under default compile anywhere on the
+roster (expected: "fixed" is the deny's own landing row, never a sixth
+mechanism pcrec's own [B118] entry already states). Every other value
+is reached on real artifacts:
+
+    (engine, vm_reseed)        count
+    (dfa, -)                     487
+    (vm, -)                       42   (non-hybrid VM: no DFA scan, no reseed row)
+    (vm, exact)                    50
+    (vm, clamped)                  23
+    (vm, adaptive)                 26
+    (vm, adaptive-dense)            1
+    refused                        49
+
+THE ITEM-3 POPULATION (every cell stamping `adaptive*`, bucketed by row
+x RX_VM_FRAMELESS): 27 cells, 15 distinct patterns across three sets.
+No bench/email, bench/altwide, bench/bounded or bench/litrun pattern
+stamps adaptive* under either config (bounded's `ctx-*`/`nest*` hybrids
+and capability's `logparse-*` family land in `clamped`, not
+`adaptive*` -- the MRL-clamp population I-124's own text calls out as
+"over-approximating hybrids [that] do not move").
+
+  set          config      row             frameless  patterns
+  -----------  ----------  --------------  ---------  --------
+  capability   auto        adaptive-dense  1          logparse-atomic
+  capability   auto-utf8   adaptive        0          utf8-lead-no-cont
+  syntax       auto        adaptive        0          grp-atomic-alt, lka-neg, lkb-neg
+  syntax       auto        adaptive        1          lka-nonatomic, lka-pos, lka-verb,
+                                                       lkb-pos, qnt-poss-plus, qnt-poss-quest
+  syntax       auto-utf8   adaptive        0          grp-atomic-alt, lka-neg, lkb-neg
+  syntax       auto-utf8   adaptive        1          lka-nonatomic, lka-pos, lka-verb,
+                                                       lkb-pos, qnt-poss-plus, qnt-poss-quest
+  utf8         auto        adaptive        0          asr-lb-neg, asr-lb-varwidth
+  utf8         auto        adaptive        1          asr-lb-fixed
+  utf8         auto-utf8   adaptive        0          asr-lb-neg, asr-lb-varwidth
+  utf8         auto-utf8   adaptive        1          asr-lb-class, asr-lb-fixed
+
+Three findings beyond the item-3 inventory itself:
+
+1. **I-124 item 1's three named patterns (asr-lb-varwidth/fixed/neg)
+   are confirmed `adaptive` under BOTH `-e utf8` encoding configs** --
+   the ask's own premise holds structurally before any timing. A
+   fourth utf8@0.1 pattern, `asr-lb-class`, ALSO stamps `adaptive`, but
+   ONLY under `auto-utf8` (frameless=1) -- it reads `-` (no reseed
+   row: non-hybrid VM or DFA) under plain `auto`. Not one of I-124's
+   three named patterns; noted for completeness, not folded into the
+   item-1 window.
+
+2. **I-124 item 2's two named patterns (lka-pos/lka-verb) are
+   confirmed `adaptive`, frameless=1, under BOTH configs** -- syntax's
+   whole `lka-*`/`lkb-*`/`grp-atomic-alt`/`qnt-poss-*` family (9
+   distinct patterns) is identical under byte and utf8 encoding (no
+   multi-byte-sensitive construct in any of these nine), so the item-2
+   cell's own population does not need an `-utf8` arm.
+
+3. **`capability/logparse-atomic` is the ONLY `adaptive-dense` cell on
+   the entire roster** (byte encoding, frameless=1) -- the roster's
+   one witness for the "compile's byte-rate prior puts the candidate
+   scan's byte set at a mean gap under the class's calibrated
+   crossover" row I-124's own axis table names. It does not appear
+   under `auto-utf8` (reads `clamped` there instead -- the MRL clamp
+   wins once the pattern is compiled against the utf8 byte-rate
+   prior).
+
+Full data (678 rows): NOT committed (regeneratable in ~2 minutes from
+the script; `/var/tmp/b120scratch/census.tsv` on this box). The summary
+and the two tables above are the archived, human-read record.

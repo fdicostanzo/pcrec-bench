@@ -611,6 +611,18 @@ EXT_BENCH_ROSTER = [
     ("pcrec-vm-os", [t for t in REQUIRES_VOCAB
                      if t not in ("callouts", "conditionals",
                                   "control-verbs", "lookbehind-variable")]),
+    # [B120] (pin fc719ca4, inbox I-124): the [OPT-HYB-RESEED] adaptive
+    # retry twin, `pcrec-auto` plus `-fno-hyb-reseed` -- an EMIT-side
+    # denial on the VM hybrid's post-candidate-failure retry (the row
+    # governs RETRY COST, never which candidate is accepted), the SAME
+    # [B101]/[B108] reasoning stated verbatim on `pcrec-auto-noreqbyte` /
+    # `pcrec-auto-nolitrun` above: it satisfies exactly `pcrec-auto`'s own
+    # tokens. `pcrec-auto-nohybreseed-utf8` and the two `-clang` siblings
+    # ([B120]'s own item 1 arms) are `-utf8` configs and go to
+    # `EXCLUDED_TESTEES` below, with every other engine-encoding sibling.
+    ("pcrec-auto-nohybreseed", [t for t in REQUIRES_VOCAB
+                                if t not in ("callouts", "conditionals",
+                                             "control-verbs", "lookbehind-variable")]),
     # pcre2-dfa ([B42] L6a, testees/pcre2/adapter.py; the SAME library and
     # version as pcre2-interp/pcre2-jit above, via `pcre2_dfa_match`
     # instead): man `pcre2matching`'s own eight-item restricted-construct
@@ -1045,6 +1057,13 @@ for _utf8_id in (
     "pcrec-vm-in-utf8", "pcre2-utf-interp", "pcre2-utf-jit",
     "pcre2-utf-dfa", "onig-utf8", "re2-utf8",
     "vectorscan-block-nosom-utf8", "vectorscan-block-som-utf8",
+    # [B120]: pcrec-auto-nohybreseed's own -utf8 sibling, plus the two
+    # new clang+utf8 configs (pcrec-auto-clang-utf8 is a clang SIBLING
+    # of pcrec-auto-utf8, crossing [B24]'s cc axis with [B77] U2's
+    # engine-encoding axis for the first time on this roster -- still a
+    # `-utf8` config by the SAME one reason as every row in this loop).
+    "pcrec-auto-nohybreseed-utf8", "pcrec-auto-clang-utf8",
+    "pcrec-auto-clang-nohybreseed-utf8",
 ):
     EXCLUDED_TESTEES[_utf8_id] = _UTF8_SIBLING_REASON
 del _utf8_id
