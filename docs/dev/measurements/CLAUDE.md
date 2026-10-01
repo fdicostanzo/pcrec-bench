@@ -1082,3 +1082,12 @@ Maintenance: update this file when files are added/removed or change role.
   a bounded CLASS with its own inner counted repeat, not a literal
   string or singleton alternation -- a different mechanism shape,
   confirmed structurally rather than assumed.
+- `probe_b121_altwide_class_branches.py` / `2026-10-01-b121-altwide-class-branches-census.txt`
+  — ([B121], inbox I-125 A4/Q8) every >=8-branch alternation with a
+  class-tail or class-member branch, via the real structural parser.
+  Five hits (three distinct real-world corpus patterns), none
+  matching the CLEAN, isolated [ENG-ISL] STEP 2 shape pcrec's ask
+  describes (`ab[cd]|abx`) -- class branches are always a minority
+  among many differently-shaped branches in these hand-authored
+  patterns. Per A4's own fallback instruction, altwide@0.3 was
+  designed and built (bench/altwide/NOTES.md, CLAUDE.md).
