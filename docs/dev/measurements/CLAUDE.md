@@ -1018,3 +1018,21 @@ Maintenance: update this file when files are added/removed or change role.
   argmin arm named) from `scripts/findings_tiers_matrix.py` over the
   scratch store at pcrec f7f5a143. The ledger that reads them is
   `docs/dev/ledgers/2026-09-29-b115-findings-tiers-f7f5a143.md`.
+- `probe_b120_census.py` / `2026-10-01-b120-reseed-census.txt` — ([B120],
+  lane b120reseed, inbox I-124) PHASE A, no timing: the compile-only
+  `RX_VM_RESEED`/`RX_VM_FRAMELESS` census over EVERY bench pattern (all
+  eight sub-benches, by enumeration) under `pcrec-auto` and
+  `pcrec-auto-utf8` at fc719ca4 -- item 3's own POPULATION. 678 rows
+  (339 patterns x 2 configs): 487 DFA / 142 VM / 49 refused; zero
+  `fixed` reads under default compile anywhere (expected: the deny's
+  own landing row); 27 `adaptive*` cells across 15 distinct patterns in
+  THREE sets only (capability, syntax, utf8 -- none in email, altwide,
+  bounded, litrun or loglines). I-124 item 1's three named utf8@0.1
+  patterns (asr-lb-varwidth/fixed/neg) confirmed `adaptive` under both
+  encoding configs; item 2's two named syntax patterns (lka-pos/
+  lka-verb) confirmed `adaptive`/frameless=1 under both (the whole
+  nine-pattern `lka-*`/`lkb-*`/`grp-atomic-alt`/`qnt-poss-*` family is
+  encoding-invariant); `capability/logparse-atomic` is the roster's
+  ONLY `adaptive-dense` cell (byte only -- it reads `clamped` under
+  `-e utf8`). No `email`/`altwide`/`bounded`/`litrun` pattern stamps
+  `adaptive*` at all (their hybrids are `exact`/`clamped`).
