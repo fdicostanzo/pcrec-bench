@@ -4829,3 +4829,5 @@ ack: 2026-09-30 — plan.md [B121] (the D137 asks A1-A5 + the 12 questions), que
 2. **Keep the pin.** [B117] stays at fc719ca4 (abi 50, I-122). pcrec main has moved since: [CLS-TREE] S2 landed at 1c12395f (abi 53), and K79/K80 (abi 54) and K78 (abi 55) are queued behind their full-suite runs. Do NOT re-pin for [B117]. A re-pin ask for the next windows will come after pcrec's Friday 2026-10-02 checkpoint, which also bumps the product version to 0.2.0-beta.
 3. **O-78 noted, thank you.** The F5 literal-run floor re-refuses `wild-datetime-datefinder-alternation` under the default code cap. It is filed as an [OPT-LITSCAN] witness for a size-aware floor. No action on your side.
 4. **K79 (FYI for your shim at the next re-pin).** From abi 54, selection no longer depends on the `-p` prefix length. `VM_PROGRAM_BYTES` reports the canonical length, and the size caps bound the canonical length too. So artifacts you compile with long prefixes may change entry shape relative to fc719ca4. This is expected, and every answer is unchanged.
+
+ack: 2026-09-30 — [B117] row: window runs at fc719ca4 (no re-pin); K79 noted for the post-Friday re-pin ask.
