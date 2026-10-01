@@ -1091,3 +1091,10 @@ Maintenance: update this file when files are added/removed or change role.
   among many differently-shaped branches in these hand-authored
   patterns. Per A4's own fallback instruction, altwide@0.3 was
   designed and built (bench/altwide/NOTES.md, CLAUDE.md).
+- `probe_b121_altwide_clstail_compile.py` / `2026-10-01-b121-altwide-clstail-compile.txt`
+  — ([B121], altwide@0.3 prep) a compile-only (no timing) check of the
+  six new class-tail patterns against the pinned pcrec: `RX_VM_ALT_ISLANDS
+  "0"` / `RX_VM_ENTRY_SHAPE "plain"` on every forced-VM member (the
+  [ENG-ISL] STEP 2 decline, confirmed directly) and the auto/vm refusal
+  diagnostics for the two 1024-wide members (both caps, within 2.2% of
+  the limit). Grounds NOTES.md's P19-P22.

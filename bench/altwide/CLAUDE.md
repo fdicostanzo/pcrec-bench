@@ -1,4 +1,4 @@
-# bench/altwide/ — the wide-alternation sub-bench (`altwide@0.2`)
+# bench/altwide/ — the wide-alternation sub-bench (`altwide@0.3`)
 
 WHAT IT IS FOR. Alternations of MANY literal branches, on both axes (plan
 row [B11.2]): what an engine pays to COMPILE one as the branch count grows —
@@ -38,17 +38,37 @@ ladder had three points below the refusal. 0.2's author kept 0.1's pcrec
 blinding but was handed five measured facts, which NOTES.md names one by one
 ("How blind this author was").
 
+**0.3** ([B121], 2026-10-01, inbox I-125 A4) EXTENDED it again: six
+CLASS-TAIL patterns (`clsa-{64,256,1024}` trailing `[a-z]`, `clsd-{64,256,
+1024}` trailing `[0-9]`) — the one isolated witness this bench had for
+pcrec's own [ENG-ISL] STEP 2 "class tail" decline, built after a corpus
+census (`docs/dev/measurements/2026-10-01-b121-altwide-class-branches-
+census.txt`) found no clean one. `gen_patterns.py`'s `wrap()` gained a
+PER-BRANCH transform (`classtail-az`/`classtail-09`) applied before the
+`|`-join, unlike every other wrapper here. ZERO new subjects — 0.3 reuses
+every 0.1/0.2 subject unchanged, which is why `clsd-*` reads `nomatch`
+everywhere and `clsa-*` only picks up four incidental `search_short` hits
+(two 0.1 "near-miss" subjects happen to glue a letter right after the
+branch). A compile-only census against the pinned pcrec
+(`docs/dev/measurements/2026-10-01-b121-altwide-clstail-compile.txt`)
+confirms the mechanism directly: `RX_VM_ALT_ISLANDS "0"` on every forced-VM
+member -- the island is DECLINED, exactly as pcrec's own ask predicted.
+`gen_oracle_limits.py` gained two skeleton rows (`clsa`, `clsd`): both
+refuse at 2048 branches, half `w`'s own 4096-branch ceiling, because each
+branch carries 5 extra bytes (`[a-z]`/`[0-9]`). See NOTES.md, "What 0.3
+added" and P19-P22.
+
 | file | role |
 |---|---|
 | `subbench.toml` | the SIDECAR: fields only, no grammar ([DD-13] untouched). Declares `match` + `search_short` + `throughput` and `short_search_max_bytes = 512` |
 | `altwidetext.py` | the GRAMMAR every generator draws from: `Rng` (the one randomness primitive), the six branch word POOLS and the four properties they hold (distinct, globally SUBSTRING-free, nested, first bytes per the arm), the branch-free background guard, `BranchIndex` (substring search for any branch, used as the guard AND as the per-subject assertion); re-exports `pcrecbench.periodic` |
-| `gen_patterns.py` | writes `patterns/*.rx` — the thirty-three patterns are DERIVED, not typed, because `w-2048` is 17 KB and `s-4096` is 24 KB of alternation. `SPECS` is the set: (name, pool, width, wrapper). `--check` re-derives and diffs |
-| `patterns/*.rx` | the 32 members + `floor.rx`, raw bytes, no trailing newline, committed. Every group is `(?:…)`: no capture participates anywhere |
+| `gen_patterns.py` | writes `patterns/*.rx` — the thirty-nine patterns are DERIVED, not typed, because `w-2048` is 17 KB and `s-4096` is 24 KB of alternation. `SPECS` is the set: (name, pool, width, wrapper); `wrap()` also carries the 0.3 PER-BRANCH transform (`classtail-az`/`classtail-09`, [B121]). `--check` re-derives and diffs |
+| `patterns/*.rx` | the 38 members + `floor.rx`, raw bytes, no trailing newline, committed. Every group is `(?:…)`: no capture participates anywhere |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 18 fields + 22 lines, 4-244 B, seed 20260901. Each carrying line's occurrence list is ASSERTED to be exactly the one branch the file placed. `extras()` holds 0.2's two carriers and is called LAST, which is what keeps every 0.1 subject byte-identical |
 | `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: four prose subjects crossing hit DENSITY (0 / 1 per 8 KB / 1 per 128 B) with SIZE (128 KB, 512 KB), seed 20260902; the planted occurrences are exact, not expected, and re-asserted per subject |
 | `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description (family and ARM in a fixed spelling: `field/hit`, `field/near-miss`, `line/carry-early`, `line/background`, `run/prose`), **periodic** (`no` on all 42) |
 | `gen_expectations.py` | the entry point; the derivation is shared (`pcrecbench/expectations.py`). `--check` re-derives and diffs |
-| `expectations.tsv` | 2772 rows: 33 patterns × (40 match + 40 search_short + 4 throughput). The 1600 rows of 0.1 are all present byte-identically, checked triple by triple — 0.2's two subjects interleave rows into every pattern's block, so the file extends by ROW, not by line |
+| `expectations.tsv` | 3276 rows: 39 patterns × (40 match + 40 search_short + 4 throughput). The 2772 rows of 0.1/0.2 are all present byte-identically (0.3 adds six new PATTERN blocks over the UNCHANGED subject set, a pure row append, not an interleave — the first time this set's own extension added no subject at all); 0.2's own two subjects interleaved rows into every 0.1 pattern's block |
 | `gen_pattern_facts.py` | derives `pattern_facts.tsv`: the STRUCTURE facts parsed from each committed `.rx` (branch count, branch bytes, distinct first bytes, the longest run of adjacent branches sharing a first byte, shared prefix/suffix, trie nodes) + PCRE2's own analysis (first / required code unit, min length) + m/n per regime |
 | `pattern_facts.tsv` | one row per pattern; the table NOTES.md's pattern tables are read from |
 | `gen_oracle_limits.py` | probes each skeleton BEYOND the set's rungs on the oracle (compile only, doubling) and derives `oracle_limits.tsv` |
@@ -122,3 +142,11 @@ that `git` reports no modified `.rx`, that `manifest.tsv` is a pure append,
 and that every old (pattern, subject, regime) expectation row is present
 byte-identically in the new file. Records still never pool across the bump;
 what stays comparable is a cell whose pattern id and subject id are in both.
+
+0.2 → 0.3 ([B121]) is the SAME rule's limit case: new patterns, a new
+PER-BRANCH wrapper transform, but `manifest.tsv` and
+`manifest_throughput.tsv` are UNTOUCHED (zero new subjects at all) — the
+extension costs the new family a real, predicted reading (every `clsd-*`
+cell and all but four `clsa-*` cells read `nomatch`, NOTES.md's P19),
+which is the honest price of reusing rather than building a dedicated
+hit-bearing subject for one family.

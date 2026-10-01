@@ -135,6 +135,31 @@ the set. Since 0.2 the order, caseless and word-boundary arms each exist at
 BOTH 256 and 512, which is what lets a reading at the anchor width be
 checked against the same lever one octave up.
 
+### The class-tail arm (0.3, [B121])
+
+Each branch of `w-64`/`w-256`/`w-1024` with a trailing `[a-z]` (`clsa-*`)
+or `[0-9]` (`clsd-*`) — a PER-BRANCH transform, not a wrapper over the
+whole alternation. The [ENG-ISL] STEP 2 "class tail" shape inbox I-125
+asks whether this set has an isolated witness for; it did not, so this
+arm is it (see "What 0.3 added" below).
+
+| pattern | branches | branch B | bytes | trie | shared suffix | m/n |
+|---|---|---|---|---|---|---|
+| `clsa-64` | 64 | 8-17 | 846 | 733 | `[a-z]` (5 B) | 0/40 · 4/40 · 0/4 |
+| `clsa-256` | 256 | 8-17 | 3381 | 2855 | `[a-z]` (5 B) | 0/40 · 4/40 · 0/4 |
+| `clsa-1024` | 1024 | 8-17 | REFUSED (both routes) | -- | `[a-z]` (5 B) | -- |
+| `clsd-64` | 64 | 8-17 | 846 | 733 | `[0-9]` (5 B) | 0/40 · 0/40 · 0/4 |
+| `clsd-256` | 256 | 8-17 | 3381 | 2855 | `[0-9]` (5 B) | 0/40 · 0/40 · 0/4 |
+| `clsd-1024` | 1024 | 8-17 | REFUSED (both routes) | -- | `[0-9]` (5 B) | -- |
+
+Every branch is `w`'s own word plus 5 bytes (`[a-z]`/`[0-9]`), so the
+oracle's own refusal boundary for this skeleton is HALF `w`'s (2048
+branches against 4096: `oracle_limits.tsv`'s `clsa`/`clsd` rows). The
+`clsa` family's 4 search-band hits (`f-cnt2`/`f-glued`/`l-cnt2`/`l-glued`)
+are an INCIDENTAL consequence of two 0.1 subjects designed for a different
+control (a branch followed by another letter), not a hit this arm
+planted — see "What 0.3 added"'s own account of why no new subject exists.
+
 ## What the ladder brackets: the 0.1 predictions (P1-P8)
 
 Every prediction below was written from pcrec's `docs/spec/` alone, before any
@@ -551,6 +576,128 @@ order of magnitude**, for the reason `limits.md` §8 gives: 5.37 ms of gcc
 per VM node against 0.905 µs per data-table entry, a factor of about 5,900.
 The estimate below turns that into minutes, and says what to measure first
 rather than committing a cell on it.
+
+## What 0.3 added ([B121]): the class-tail arm
+
+Inbox I-125 A4 asks whether the bench has an isolated witness for pcrec's
+own [ENG-ISL] STEP 2 "two shapes are declined" claim: the VM alternation
+island serves plain literal-word alternations (this set's own `w`/`srt`/
+`pfx3` families), but declines a CLASS TAIL (`ab[cd]|abx`) and a
+CLASS-MEMBER branch (`[ab]x|[ac]y`). A census over every pattern in every
+sub-bench (`docs/dev/measurements/2026-10-01-b121-altwide-class-branches-
+census.txt`) found no clean, isolated witness — every real corpus
+>=8-branch alternation with a class-tail/member branch is a complex,
+hand-authored real-world pattern where the class shape is a minority among
+many differently-structured branches. So the clean witness is built here.
+
+**Six patterns, one new variable, the existing pools.** `clsa-64` /
+`clsa-256` / `clsa-1024` are `w`'s own first 64/256/1024 `main` words, EACH
+with a trailing `[a-z]`; `clsd-64` / `clsd-256` / `clsd-1024` are the same
+with `[0-9]`. `gen_patterns.py`'s `wrap()` gained the one new per-branch
+transform this needs (`classtail-az`/`classtail-09`, applied to EACH word
+before the `|`-join, unlike every existing wrapper here which wraps the
+WHOLE alternation) — everything else (the pools, the seed, every 0.1/0.2
+`.rx` file) is untouched; `git` reports zero modified `.rx` files.
+
+**NO NEW SUBJECT.** 0.3 reuses every 0.1/0.2 subject UNCHANGED — the first
+time this set's own byte-identical-extension rule has been exercised with
+ZERO new subjects rather than a handful of carriers. This has a real,
+predicted cost (P19 below): the FIELD "whole-string hit" subjects and the
+throughput `HIT_WORDS` placement both plant a bare branch word with no
+guaranteed trailing class-match byte (fields ARE the bare word; throughput
+plants a WHOLE TOKEN, always followed by a space in the join), so neither
+regime can show a designed hit for this family. What the existing subjects
+DO give, for free and unplanned until the oracle was asked: `f-cnt2`/
+`f-glued` (two `main` branches concatenated; `main` word 0 glued inside a
+longer letter run) are followed by another LETTER, so the `clsa` (not
+`clsd`) family picks up four genuine `search_short` hits (`f-cnt2`,
+`f-glued`, `l-cnt2`, `l-glued`) — confirmed in `pattern_facts.tsv`
+(`clsa-*` search_m_n = `4/40`; `clsd-*` = `0/40` everywhere, `match_m_n`/
+`tput_m_n` = `0/40`/`0/4` for both families). This is DOCUMENTED, not
+hidden: the family is built to answer the COMPILE-side mechanism question
+(does the VM build an island at all?) and the SEARCH/THROUGHPUT scan cost
+over mostly-failing text, not a match-regime hit census — a dedicated
+hit-bearing subject for this one family is left to a follow-up if a later
+cycle wants one.
+
+**The oracle's own refusal boundary moved, as predicted it would.** Each
+branch is 5 bytes longer than `w`'s own (`[a-z]`/`[0-9]`), so
+`gen_oracle_limits.py` gained two new skeleton rows (`clsa`, `clsd`) rather
+than assuming the plain `w` skeleton's 4096-branch ceiling still applies:
+both refuse at 2048 (`oracle_limits.tsv`: last accepted 1024, first refused
+2048, "regular expression is too large") — HALF `w`'s own 4096-branch
+ceiling, consistent with LINK_SIZE 2 costing roughly two code units per
+literal byte. 1024 is therefore both A4's own named width and this
+skeleton's own ceiling rung, kept for the same reason `w-2048`/`s-4096` are
+kept elsewhere in this set: the refusal IS the measurement.
+
+## The 0.3 predictions (P19-P22)
+
+Stated from a COMPILE-ONLY census against the real pinned pcrec at fc719ca4
+(`docs/dev/measurements/probe_b121_altwide_clstail_compile.py`; no timing,
+per this lane's own box rule) — the same discipline P9-P18 ground
+themselves in real `pattern_facts.tsv`/`oracle_limits.tsv` numbers rather
+than a blind guess, extended here to a real compiled artifact's own
+stamps.
+
+**P19 — the match/search/throughput regimes read overwhelmingly nomatch,
+and that is itself the confirmed design, not a defeat of the objective.**
+Every `clsd-*` cell reads `nomatch` (0/40 match, 0/40 search, 0/4
+throughput) and every `clsa-*` cell reads `nomatch` EXCEPT four
+`search_short` rows (`f-cnt2`, `f-glued`, `l-cnt2`, `l-glued`) — CONFIRMED
+already in `expectations.tsv`/`pattern_facts.tsv`, since the oracle derivation
+already ran. **Predict every pcrec/pcre2/testee answers these cells
+IDENTICALLY to the oracle** (nomatch is nomatch regardless of engine; the
+four `clsa` hits are plain single-byte-class extensions no engine's
+leftmost-first semantics can disagree on) — a Frank finding here would be a
+genuine engine bug, not a measurement surprise.
+
+**P20 — the VM alternation island DECLINES every member of this family, on
+both class kinds, at both widths it compiles.** CONFIRMED already by the
+compile-only census: `RX_VM_ALT_ISLANDS "0"` and `RX_VM_ENTRY_SHAPE
+"plain"` on `clsa-64`, `clsa-256`, `clsd-64`, `clsd-256` forced-VM, where
+`w-64`/`w-256` (plain literal branches, no class tail) stamp a REAL island
+(`vm_alt_islands` 1) at the identical widths. **Predict this is a
+MECHANISM finding for pcrec, not a bench finding**: the class-tail shape
+A4 asks about is confirmed DECLINED by direct compiled evidence from this
+bench's own patterns (not merely pcrec's own say-so), which is exactly the
+cell outbox O-19 and inbox A4 were waiting on. The predicted CONSEQUENCE
+is a timing one: **predict the VM route on `clsa-256`/`clsd-256` pays the
+chain cost `-fno-alt-island` already measures on plain `w-256` (NOTES.md's
+own I-43 ratios), not the island cost `w-256`'s own default VM artifact
+gets** — the class-tail family's forced-VM numbers should land close to
+`w-256`'s DENIED-island arm, not its default one.
+
+**P21 — `auto` selects the DFA on every compiling rung of both class
+kinds, with the SAME prefilter the plain ladder gets.** CONFIRMED already:
+`clsa-64`/`clsa-256`/`clsd-64` stamp `RX_ENGINE "dfa"`,
+`RX_ENGINE_SEL "selected"`, `RX_DFA_PREFILTER "byte-class"`,
+`RX_DFA_TABLE "premultiplied"` — structurally identical to `w-64`/`w-256`'s
+own stamps, because a trailing `[a-z]`/`[0-9]` is one more DFA state per
+branch, not a new engine-selection question. The one exception is
+`clsd-256`, which reads `RX_ENGINE_SEL "size-cap-retry"` rather than
+`"selected"` — **predict this is the SAME size-cap rescue rung
+`wild-datetime-datefinder-alternation` and the altwide `w` ladder's own
+"size-cap-retry" witnesses already show elsewhere in this bench, not a
+new mechanism**, and that `clsa-256`'s own `"selected"` (not
+`"size-cap-retry"`) is a close-call a byte or two from flipping the same
+way (both patterns are byte-IDENTICAL in width and structure, differing
+only in `[a-z]` vs `[0-9]`'s own one-byte-longer-or-shorter table
+encoding).
+
+**P22 — `clsa-1024`/`clsd-1024` refuse on BOTH routes, a first-class
+outcome at this pin.** CONFIRMED already: `clsa-1024`/`clsd-1024` under
+`auto` refuse at the 1,000,000 B emitted-SOURCE cap (1,250,536 /
+1,360,088 B); under forced `--engine=vm` they refuse at the 500,000 B
+emitted-CODE cap (510,627 / 509,603 B — both WITHIN 2.2% of the cap, a
+knife-edge rung in the P13 sense). **Predict a raised-cap sibling
+(`pcrec-auto-bigcap`/`pcrec-vm-bigcap`, [B31]) compiles both at 1024** —
+the same raise-only mechanism that turns `w-512`+ from refusals into
+artifacts — **and that under the raise, `RX_VM_ALT_ISLANDS` stays 0** (P20's
+finding is about the SHAPE, not the size cap). No prediction is made about
+`clsa-1024`/`clsd-1024`'s timed numbers themselves: refused cells carry no
+match/search/throughput reading at this pin, by this set's own "give-ups
+and refusals are results" rule.
 
 ## The oracle's own ceiling, and what it forced
 

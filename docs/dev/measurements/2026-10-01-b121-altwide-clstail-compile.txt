@@ -1,0 +1,34 @@
+# docs/dev/measurements/2026-10-01-b121-altwide-clstail-compile.txt
+#
+# [B121], altwide@0.3 prep: a COMPILE-ONLY (no timing) check of the six
+# new class-tail patterns (clsa-{64,256,1024}, clsd-{64,256,1024})
+# against the real pinned pcrec at fc719ca4, under `--features all`
+# (auto) and `--features all --engine=vm` (forced VM). Grounds
+# NOTES.md's P19-P22 predictions in real compiled-artifact stamps
+# rather than a blind guess. Script: probe_b121_altwide_clstail_compile.py.
+# Run at `nice -n 19`, single process, no -j (lane rule: no timing slot
+# in this window -- this is compile-only, never a run_cell/driver call).
+#
+# pcrec pin: fc719ca4, build/pcrec-fc719ca4/build/pcrec.
+# ---------------------------------------------------------------------
+clsa-64/auto: OK {'RX_ENGINE': 'dfa', 'RX_ENGINE_SEL': 'selected', 'RX_DFA_PREFILTER': 'byte-class', 'RX_DFA_TABLE': 'premultiplied'}
+clsa-64/vm: OK {'RX_ENGINE': 'vm', 'RX_ENGINE_SEL': 'forced', 'RX_VM_ALT_ISLANDS': '0', 'RX_VM_ENTRY_SHAPE': 'plain'}
+clsa-256/auto: OK {'RX_ENGINE': 'dfa', 'RX_ENGINE_SEL': 'selected', 'RX_DFA_PREFILTER': 'byte-class', 'RX_DFA_TABLE': 'premultiplied'}
+clsa-256/vm: OK {'RX_ENGINE': 'vm', 'RX_ENGINE_SEL': 'forced', 'RX_VM_ALT_ISLANDS': '0', 'RX_VM_ENTRY_SHAPE': 'plain'}
+clsa-1024/auto: REFUSED (pcrec: pattern too large: 1250536 bytes of emitted C source (limit 1000000, ~207 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0))
+clsa-1024/vm: REFUSED (pcrec: pattern too large: 510627 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+clsd-64/auto: OK {'RX_ENGINE': 'dfa', 'RX_ENGINE_SEL': 'selected', 'RX_DFA_PREFILTER': 'byte-class', 'RX_DFA_TABLE': 'premultiplied'}
+clsd-64/vm: OK {'RX_ENGINE': 'vm', 'RX_ENGINE_SEL': 'forced', 'RX_VM_ALT_ISLANDS': '0', 'RX_VM_ENTRY_SHAPE': 'plain'}
+clsd-256/auto: OK {'RX_ENGINE': 'dfa', 'RX_ENGINE_SEL': 'size-cap-retry', 'RX_DFA_PREFILTER': 'byte-class', 'RX_DFA_TABLE': 'premultiplied'}
+clsd-256/vm: OK {'RX_ENGINE': 'vm', 'RX_ENGINE_SEL': 'forced', 'RX_VM_ALT_ISLANDS': '0', 'RX_VM_ENTRY_SHAPE': 'plain'}
+clsd-1024/auto: REFUSED (pcrec: pattern too large: 1360088 bytes of emitted C source (limit 1000000, ~225 KB .o). Lower a repeat count, try --unroll=1, or raise --max-emit-bytes; see limits.md "Handling an oversized artifact" (pattern offset 0))
+clsd-1024/vm: REFUSED (pcrec: pattern too large: 509603 bytes of emitted code (limit 500000), which gcc cannot compile in reasonable time. A repeat's body is replicated and counts MULTIPLY through nesting -- lower a count, try --unroll=1, or raise --max-emit-code-bytes (pattern offset 0))
+
+# ---------------------------------------------------------------------
+# READING. See bench/altwide/NOTES.md "What 0.3 added"/P19-P22 for the
+# full derivation. Headline: RX_VM_ALT_ISLANDS=0 / RX_VM_ENTRY_SHAPE=
+# plain on EVERY compiling class-tail pattern under forced VM -- the
+# [ENG-ISL] STEP 2 decline A4 asks about, confirmed by direct compiled
+# evidence from this bench's own patterns. clsa-1024/clsd-1024 refuse
+# on BOTH routes (auto: 1,000,000 B source cap; vm: 500,000 B code cap,
+# both within 2.2% of the cap -- a knife-edge rung).

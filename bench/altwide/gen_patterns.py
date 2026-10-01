@@ -123,10 +123,27 @@ SPECS = (
     ("cnt-64",    "main",  64,   "count13"),
     ("wb-256",    "main",  256,  "wordbound"),
     ("wb-512",    "main",  512,  "wordbound"),
+    # ---- 0.3: CLASS TAILS ([B121], inbox I-125 A4) ----
+    # Every branch gets a trailing character class instead of being a bare
+    # literal: `(?:w1[a-z]|w2[a-z]|...)` / `(?:w1[0-9]|w2[0-9]|...)` -- the
+    # [ENG-ISL] STEP 2 "class tail" shape (`ab[cd]|abx`), isolated the way
+    # every other arm here isolates its own one variable, at the SAME three
+    # widths every other arm since 0.2 reads at (64, the 256 anchor, and a
+    # fourth point, 1024, since A4's own text names that width). See
+    # NOTES.md, "0.3: the class-tail arm".
+    ("clsa-64",   "main",  64,   "classtail-az"),
+    ("clsa-256",  "main",  256,  "classtail-az"),
+    ("clsa-1024", "main",  1024, "classtail-az"),
+    ("clsd-64",   "main",  64,   "classtail-09"),
+    ("clsd-256",  "main",  256,  "classtail-09"),
+    ("clsd-1024", "main",  1024, "classtail-09"),
 )
 
 FLOOR_NAME = "floor"
 FLOOR_TEXT = "#"
+
+
+CLASSTAIL_SUFFIX = {"classtail-az": "[a-z]", "classtail-09": "[0-9]"}
 
 
 def wrap(words, wrapper):
@@ -136,6 +153,14 @@ def wrap(words, wrapper):
     actually build."""
     if wrapper == "sorted":
         words = sorted(words)
+    if wrapper in CLASSTAIL_SUFFIX:
+        # 0.3 ([B121]): a PER-BRANCH transform, applied before the join,
+        # unlike every other wrapper here (which wraps the WHOLE
+        # alternation) -- each branch becomes `word` + the one trailing
+        # class, so the alternation itself is built unwrapped below.
+        suffix = CLASSTAIL_SUFFIX[wrapper]
+        words = [w + suffix for w in words]
+        wrapper = None
     alt = "(?:" + "|".join(words) + ")"
     if wrapper == "caseless":
         return "(?i)" + alt
