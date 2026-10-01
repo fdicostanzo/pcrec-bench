@@ -1039,3 +1039,33 @@ Maintenance: update this file when files are added/removed or change role.
   these two corpora today, which does not mean the testee is
   unnecessary (altwide or a future pcrec heuristic change could populate
   it) -- see the archive's own closing "READING" section.
+- `pcre_mini_parser.py` — ([B121], shared helper) a minimal recursive-
+  descent STRUCTURAL parser for a PCRE-shaped pattern (group nesting,
+  alternation branches, `(?...)` prefix consumption -- `?:`/`?=`/`?!`/
+  `?<=`/`?<!`/`?<name>`/`?P<name>`/`?'name'`/`?>`/inline flags/
+  conditionals, `\Q...\E` quoting, escape pairs, `[...]` class extents),
+  built because A3/Q6 below needs real nesting, not a flat `[^()]*`
+  text regex. Any construct it does not give real structure to
+  (recursion, subroutine calls, branch-reset, callouts, extended
+  classes) is skipped OPAQUELY via a balanced paren/escape/class scan
+  — `check_no_caret_in_opaque` then FAILS LOUDLY if a `^` byte is ever
+  found inside one of those opaque spans, rather than silently
+  under-reporting A3. Used by `probe_b121_parser_selftest.py` and
+  `probe_b121_nontop_caret.py`.
+- `probe_b121_parser_selftest.py` / `2026-10-01-b121-nontop-caret-census.txt`
+  (Part 1) — ([B121]) validates the parser above over EVERY
+  `bench/*/patterns/*.rx` pattern (339, all 7 sub-benches): 0 parse
+  failures, 0 opaque-caret misses, 0 cross-check mismatches against an
+  independent dumb text scan (the one documented exception,
+  `\Q...\E` quoting and the PCRE2 `(?^...)` flags-reset directive,
+  both named explicitly).
+- `probe_b121_nontop_caret.py` / `2026-10-01-b121-nontop-caret-census.txt`
+  (Part 2) — ([B121], inbox I-125 A3/Q6) every pattern with a `^`
+  outside its structural top level (inside an alternation branch at
+  any depth, or inside a group not spanning the whole pattern):
+  EXACTLY ONE across the whole corpus,
+  `wild-waf-crs-942360-concat-sqli` (capability@0.1) — the same single
+  witness A3's own text already names, confirmed by real parsing
+  rather than inferred. No second losing cell exists outside the WAF
+  family on this corpus as of 2026-10-01; A3's own decision rule reads
+  NONE (stays a single-witness candidate).
