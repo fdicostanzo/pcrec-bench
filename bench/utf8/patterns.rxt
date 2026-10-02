@@ -11,7 +11,7 @@ vocabulary hazard none
 vocabulary requires utf8-encoding ascii-class-scope unicode-class-scope lookaround true-end-anchor unicode-properties
 tag set=utf8, version=0.1
 ext bench
-  roster pcre2-utf-interp pcre2-utf-jit pcre2-utf-dfa pcrec-auto-utf8 pcrec-nocaps-utf8 pcrec-vm-utf8 pcrec-vm-in-utf8 re2-utf8 onig-utf8 vectorscan-block-nosom-utf8 rust-default tre-default
+  roster pcre2-utf-interp pcre2-utf-jit pcre2-utf-dfa pcrec-auto-utf8 pcrec-auto-nohybreseed-utf8 pcrec-auto-clang-utf8 pcrec-auto-clang-nohybreseed-utf8 pcrec-nocaps-utf8 pcrec-vm-utf8 pcrec-vm-in-utf8 re2-utf8 onig-utf8 vectorscan-block-nosom-utf8 rust-default tre-default
   capabilities pcre2-utf-interp
     utf8-encoding
     ascii-class-scope
@@ -34,6 +34,24 @@ ext bench
     true-end-anchor
     unicode-properties
   capabilities pcrec-auto-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-auto-nohybreseed-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-auto-clang-utf8
+    utf8-encoding
+    ascii-class-scope
+    lookaround
+    true-end-anchor
+    unicode-properties
+  capabilities pcrec-auto-clang-nohybreseed-utf8
     utf8-encoding
     ascii-class-scope
     lookaround

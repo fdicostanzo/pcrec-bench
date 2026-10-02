@@ -287,6 +287,14 @@ Maintenance: update this file when files are added/removed or change role.
   current pin: see the file's own header/footer for the exact cell count,
   wall-clock and parity verdict (filled in by the real run this lane
   performed; docs/dev/lanes/b33cc_report.md states the numbers inline).
+- `2026-10-02-cc-gate-census-fc719ca4.txt` — (lane b120b121read, step 4)
+  the re-run verifying the smallfix lane's `-fcomments` protocol-token
+  fix to this probe (commit 44de677): **2,070 cell(s), 187 refused
+  (pcrec emit-c), gcc refused 0, clang refused 0, wall 1691.1s — PARITY
+  (gcc and clang refusal sets byte-identical, 0 cells each)**; the cell
+  count is 36 more than the 2026-09-30 archive at the same pin (2034),
+  entirely altwide@0.3's new `clsa-*`/`clsd-*` class-tail family
+  ([B121]) added since.
 - `probe_rxt_format.py` — ([B42], lane b42rxtneeds) TWENTY PARSE-ONLY
   probes of pcrec's `.rxt` SOURCE GRAMMAR at the pinned binary, written
   for `docs/design/rxt_needs_v1.md` §1.9 (the `.rxt` capability feedback
@@ -1155,3 +1163,34 @@ Maintenance: update this file when files are added/removed or change role.
   [ENG-ISL] STEP 2 decline, confirmed directly) and the auto/vm refusal
   diagnostics for the two 1024-wide members (both caps, within 2.2% of
   the limit). Grounds NOTES.md's P19-P22.
+- `probe_b120b121read_step0_pin_control.py` / `2026-10-02-b120b121read-step0-pin-control.txt`
+  — (lane b120b121read, manager's step 0) does lane b120reseed's own
+  flagged BIMODAL cell (`asr-lb-fixed` gcc `synth-64k-asc`, default vs
+  `-fno-hyb-reseed`, x2.03/x0.49-ish) survive `taskset -c N` pinning
+  (O-69/[B112])? 45 fresh unpinned launches/arm + 15 `taskset -c 3`
+  launches/arm, 21 trials each, quiet-gated. FINDING: NO -- unpinned,
+  both arms draw from the SAME two governor states (~135/~296-337 us,
+  min/min ratio 0.9996) with different LOTTERY WEIGHTS (default draws
+  the fast state 71% of launches, denied 7%), which alone produces the
+  whole x2-ish median spread in either direction; pinned to one core,
+  the bimodality vanishes on both arms (0/15 slow outliers each) and
+  the two medians agree to four figures (ratio 0.9999). This cell is a
+  governor-lottery artifact, not a real [OPT-HYB-RESEED-XCALL] trigger;
+  drop it from that population (the lane's own four named cells become
+  three real ones plus this one artifact). Answers never moved (1
+  distinct hash across all 120 launches, both arms, both pin states).
+- `probe_b120b121read_resecompat_bucket.py` — (lane b120b121read, step 1)
+  reads a `(default, denied)` pcrec record JSONL pair DIRECTLY for the
+  per-(pattern,form) `vm_reseed`/`vm_frameless` compile stamp (the
+  report's own `compile_stamp` TSV section prints only ONE sample per
+  testee, wrong for a per-pattern-routing config), joins against a
+  committed report TSV's `rank`/`rank_yes`/`rank_no` `median_ns` rows
+  for both testees, and prints every `adaptive*`-stamped cell's ratio
+  plus every `clamped`-stamped cell's own 1c check. `--default-record`/
+  `--denied-record`/`--report-tsv`/`--default-testee`/`--denied-testee`;
+  runs from the repo root. Used on syntax@0.1, capability@0.1 and
+  utf8@0.1's `auto`/`auto-nohybreseed` pairs at fc719ca4 — see the
+  ledger `docs/dev/ledgers/2026-10-02-b120-b121-fc719ca4.md` §1 for the
+  full per-set reading (the utf8@0.1 pair reads EMPTY because of a
+  roster-declaration gap found while running it, not a script defect
+  — confirmed separately against `bench/utf8/gen_patterns.py`'s source).
