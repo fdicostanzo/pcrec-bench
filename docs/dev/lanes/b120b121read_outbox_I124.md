@@ -49,32 +49,50 @@ you). Bucketed per pattern by the record's OWN `vm_reseed`×
 `compile_stamp` legend, which cannot see a per-pattern-routing config):
 
 - **syntax@0.1**: 27 `adaptive*` (pattern,regime,form) cells across 9
-  patterns. The reporter's own 20-microsecond timer-floor convention
-  splits this cleanly: every `short-subject-search`/`match-compliance`
-  cell (hundreds to ~2,500 ns total) is under that floor; only
-  `large-subject-throughput` cells clear it. **Two REAL, above-floor
-  >5%-slower cells your own item-3 ask ("name any cell >5% slower")
-  is owed, beyond the three above**: `grp-atomic-alt` (×1.0536,
-  `adaptive`/frameless=0) and `qnt-poss-quest` (×1.1939, `adaptive`/
-  frameless=1), both `large-subject-throughput`. Both are statistically
-  solid (the gap is 7-227× the larger side's own stddev).
+  patterns. Using the records' own spread (`gap > 2×max(stddev)`, the
+  same shape our R8 `unchanged (within spread)` rule uses) as the noise
+  criterion per cell — NOT a flat ns threshold, which would have wrongly
+  dropped most of this table — **every one of the 10 cells reading >5%
+  slower is REAL**, named in full: `qnt-poss-quest`/short-subject-search
+  (×1.2281) and /large-subject-throughput (×1.1939), `lka-verb`/
+  short-subject-search (×1.0974) and /match-compliance (×1.0770),
+  `lka-pos`/short-subject-search (×1.0949) and /match-compliance
+  (×1.0897), `lka-neg`/short-subject-search (×1.0874), `grp-atomic-alt`/
+  short-subject-search (×1.0640) and /large-subject-throughput
+  (×1.0536), `lka-nonatomic`/short-subject-search (×1.0566). Every gap
+  clears its own 2×stddev floor, several by one to two orders of
+  magnitude.
 - **capability@0.1**: only ONE `adaptive*` cell exists on the whole
   roster (`logparse-atomic`, the roster's only `adaptive-dense`
-  witness) and it never clears the timer floor at either regime
-  (32.7 ns / 857.8 ns). **All six `clamped`-row cells read UNMOVED**
-  (ratios 0.978-1.002) — **your own 1c prediction ("clamped
-  over-approximating hybrids do not move") is CONFIRMED cleanly** on
-  the real population, not merely plausible.
-- **utf8@0.1**: a bench-side gap, not a pcrec finding — the new
-  `pcrec-auto-nohybreseed-utf8` testee has no entry in `bench/utf8/
-  gen_patterns.py`'s `EXT_BENCH_ROSTER`, so 73 of its 76 patterns render
-  `unsupported-by-declaration` in the real window's report and only 3
-  DFA-routed (non-hybrid) patterns rank. Item 1's own evidence (the
-  11×-99× wins, the 3 real triggers) stands — it came from a standalone
-  probe that bypasses this roster mechanism — but the real window adds
-  no NEW per-pattern confirmation on utf8@0.1. We are fixing the gap
-  bench-side (same class as two prior roster-declaration fixes); not
-  something to action on your end.
+  witness). Its large-subject-throughput reading (32.7 ns, flat) is
+  genuinely NOISE but for a STRUCTURAL reason, checked per your own
+  instruction before calling it anything: `logparse-atomic`'s necessary
+  run (`": "`, `req_byte=58`) occurs 547-9,070 times in the throughput
+  subjects (NOT [B117]'s own zero-occurrence mechanism) — the real
+  reason is `vm_start=anchored`: the pattern is top-level `^`-anchored
+  with no MULTILINE, so only offset 0 is ever attempted regardless of
+  subject length, and all three throughput subjects are `nomatch`
+  there — both arms pay the identical O(1) cost, never reaching
+  [OPT-HYB-RESEED] at all. Its short-subject-search reading IS real
+  (×1.0690, 6.6× its own noise floor) — this is capability@0.1's one
+  genuine XCALL trigger. **All six `clamped`-row cells read UNMOVED**
+  by the same gap-vs-stddev criterion — **your own 1c prediction
+  ("clamped over-approximating hybrids do not move") is CONFIRMED
+  cleanly** on the real population, now on a real statistical basis.
+- **utf8@0.1**: a bench-side gap, FIXED in this lane — the new
+  `pcrec-auto-nohybreseed-utf8` testee (plus the two untested clang
+  siblings) had no entry in `bench/utf8/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER`, so 73 of its 76 patterns rendered `unsupported-
+  by-declaration` in the real window's report and only 3 DFA-routed
+  (non-hybrid) patterns ranked. All three now carry `pcrec-auto-utf8`'s
+  own declaration (verified: `missing_capabilities()` now reads 5/76,
+  matching the other three `-utf8` siblings' documented gap).
+  **utf8@0.1's own per-pattern bucket is OWED** — we are re-running
+  that one cell and regenerating the utf8 report ourselves after
+  merging this fix, not asking you for anything here. Item 1's own
+  evidence (the 11×-99× wins, the 3 real triggers) is unaffected — it
+  came from a standalone probe that bypasses this roster mechanism
+  entirely.
 
 **Item 2 (`lka-pos`/`lka-verb`)**: `auto` genuinely diverges from
 forced `--engine=vm` (confirmed, now on the real window's full roster
@@ -96,4 +114,5 @@ pre-existing divergence unrelated to this fix, confirming "answers
 identical by construction" at the real-window scale.
 
 Nothing here is a pcrec ask beyond what is already stated. The
-utf8@0.1 roster gap is bench-side housekeeping, noted for completeness.
+utf8@0.1 roster gap is bench-side housekeeping, fixed here and
+re-measured on our own side after merge, noted for completeness only.
