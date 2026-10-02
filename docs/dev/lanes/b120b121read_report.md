@@ -108,7 +108,7 @@ read-and-fix-what-broke scope).
 | Step 1: report group for {syntax,capability,utf8}@0.1 × {auto, nohybreseed}; bucket per pattern by RX_VM_RESEED × RX_VM_FRAMELESS; name every adaptive* cell >5% slower; test 1c; Q11/lka-pos answer; confirm answers identical before timing | **COMMITTED** — `reports/2026-10-02-{syntax,capability,utf8}-0.1-...-fc719ca4.{tsv,md}`; the bucket probe + its findings in `docs/dev/ledgers/2026-10-02-b120-b121-fc719ca4.md` §1 (corrected per the manager's review — every real cell named, the noise criterion is the records' own spread, not a timer floor); 1c CONFIRMED on capability@0.1 on the same basis; Q11 answered; answer identity checked at the FULL population level before any ratio was trusted |
 | Step 2: report groups for every set the window touched; ledger with pcrec's stamps per row; A2(2)/A2(3)/A4/Q3/the syntax inconclusive-spread diagnosis; regenerate sidecars | **COMMITTED** — `reports/2026-10-02-{loglines-0.1,bounded-0.3,email-specimen-0.2,altwide-0.3}-...-fc719ca4.{tsv,md}`; ledger §2-§3; all seven new sidecars generated via the `/pcrec-bench-interpret` skill's exact procedure, determinism-checked |
 | Step 3: two outbox DRAFTS (not written to outbox_to_pcrec.md) | **COMMITTED** — `docs/dev/lanes/b120b121read_outbox_I124.md`, `..._I125.md`, both whole answers superseding the two predecessor-lane drafts, with the manager's corrections applied (Step 1's redo, the utf8 fix-not-dead-end, Q5/Q12) |
-| Step 4: re-run `make cc-gate-census`, report parity/divergence, archive it | see §5 below — run to completion in this lane per the manager's explicit instruction to finish it before ending |
+| Step 4: re-run `make cc-gate-census`, report parity/divergence, archive it | **COMMITTED** — `docs/dev/measurements/2026-10-02-cc-gate-census-fc719ca4.txt`: 2,070 cells, 187 refused (pcrec emit-c), gcc refused 0, clang refused 0, wall 1691.1s, **PARITY** (gcc/clang refusal sets byte-identical) — the smallfix lane's `-fcomments` protocol-token fix verified clean |
 | Manager review item (1): redo item 3's bucketing without the timer-floor exclusion; name every adaptive* cell >5% slower using the records' own spread; check logparse-atomic's RX_REQ_BYTE before calling anything flat | **COMMITTED** — see finding 2/3 above and the ledger's corrected §1 |
 | Manager review item (2): fix the utf8 roster gap bench-side (same declaration as pcrec-auto-utf8); check the clang siblings; check gen_patterns.py --check and roster-coverage; do NOT re-run the cell or regenerate the report; mark it OWED; add the lesson line | **COMMITTED** — `bench/utf8/gen_patterns.py`/`patterns.rxt` fixed and verified green; utf8 item 3 marked OWED (manager, post-merge) in the ledger and both drafts; the lesson line is above |
 | Deliverables: committed reports, sidecars, ledger, the two drafts, archives, `docs/dev/lanes/b120b121read_report.md` with a charter-vs-committed checklist; keep CLAUDE.md files current | **COMMITTED** — `docs/dev/ledgers/CLAUDE.md`, `reports/CLAUDE.md`, `docs/dev/measurements/CLAUDE.md` all updated; `docs/dev/plan.md`'s [B120]/[B121] rows marked `STATE:completed` (plan.md's own summary text there still reads the PRE-correction numbers from before the manager's review — see OWED below) |
@@ -187,11 +187,12 @@ read-and-fix-what-broke scope).
   nohybreseed-utf8` (now that the roster fix is merged) and
   regenerates `reports/2026-10-02-utf8-0.1-...-fc719ca4.{tsv,md,
   interpretation.md}` after merge.
-- **`make cc-gate-census`'s own archive**: run to completion in this
-  lane (the manager's explicit instruction to finish Step 4 before
-  ending, checking its DONE marker directly rather than relying on a
-  notification) — see the commit that lands beside this report for
-  the final parity verdict and the archived `.txt` file; if this
-  sentence is still here unedited, the run had not yet finished when
-  this report was last written and the marker (`/tmp/ccgate.log`'s
-  trailing `DONE rc=<N>` line) should be checked directly.
+
+Nothing else is OWED. `make cc-gate-census` ran to completion in this
+lane (checked via its `/tmp/ccgate.log` DONE marker directly, per the
+manager's instruction, rather than relying on a notification — two
+Monitor-based notifications on this lane's own earlier renders arrived
+severely delayed or not at all): **2,070 cells, 187 refused (pcrec
+emit-c), gcc/clang refused 0 each, wall 1691.1s, PARITY** — archived at
+`docs/dev/measurements/2026-10-02-cc-gate-census-fc719ca4.txt`
+(2,079 lines), verifying the smallfix lane's `-fcomments` fix clean.

@@ -287,6 +287,14 @@ Maintenance: update this file when files are added/removed or change role.
   current pin: see the file's own header/footer for the exact cell count,
   wall-clock and parity verdict (filled in by the real run this lane
   performed; docs/dev/lanes/b33cc_report.md states the numbers inline).
+- `2026-10-02-cc-gate-census-fc719ca4.txt` — (lane b120b121read, step 4)
+  the re-run verifying the smallfix lane's `-fcomments` protocol-token
+  fix to this probe (commit 44de677): **2,070 cell(s), 187 refused
+  (pcrec emit-c), gcc refused 0, clang refused 0, wall 1691.1s — PARITY
+  (gcc and clang refusal sets byte-identical, 0 cells each)**; the cell
+  count is 36 more than the 2026-09-30 archive at the same pin (2034),
+  entirely altwide@0.3's new `clsa-*`/`clsd-*` class-tail family
+  ([B121]) added since.
 - `probe_rxt_format.py` — ([B42], lane b42rxtneeds) TWENTY PARSE-ONLY
   probes of pcrec's `.rxt` SOURCE GRAMMAR at the pinned binary, written
   for `docs/design/rxt_needs_v1.md` §1.9 (the `.rxt` capability feedback
