@@ -3385,3 +3385,26 @@ re-measure's production confirmation:**
   is claimed. R-STATUS-14 correctly does NOT fire on this report
   (its own no-matching-rows sentence names the reason). This group
   discharges the [B70] OWED re-measure line entirely.
+
+**[B120]+[B121] reports (2026-10-02, lane b120b121read) ADDED seven file
+groups**, reading the window commit `fa5ba8c` (25 cells at pcrec
+fc719ca4, 23 measured at attempt 1): `2026-10-02-syntax-0.1-...
+-b120b121-fc719ca4.{tsv,md}` (auto/auto-nohybreseed/nocaps/vm/
+vm-nocaps/dfa/dfa-nocaps + pcre2-interp/jit + rust, `--include-
+unmeasured` for the vm-nocaps `inconclusive-spread` cell),
+`2026-10-02-capability-0.1-...-b120b121-fc719ca4.{tsv,md}` (same pcrec
+arms + the full ext-bench roster), `2026-10-02-utf8-0.1-...-b120b121-
+fc719ca4.{tsv,md}` (the four -utf8 pcrec siblings + their comparison
+engines — found a roster-declaration gap: `pcrec-auto-nohybreseed-utf8`
+has no `EXT_BENCH_ROSTER` row, so 73/76 patterns render `unsupported-
+by-declaration` on it), `2026-10-02-loglines-0.1-...-b120b121-
+fc719ca4.{tsv,md}` (auto/noedge + comparison), `2026-10-02-bounded-0.3-
+...-b120b121-fc719ca4.{tsv,md}` and `2026-10-02-email-specimen-0.2-...
+-b120b121-fc719ca4.{tsv,md}` (auto + comparison, A5's standing
+re-measure), `2026-10-02-altwide-0.3-...-b120b121-fc719ca4.{tsv,md}`
+(auto/vm/auto-noisland/pcre2-jit/rust-default, A4's class-tail ratios —
+the forced-VM route is ×25-229 slower than the plain ladder's own
+island arm on the `clsa-*`/`clsd-*` family). `.matrix.tsv`/`.subject-
+grain.tsv` siblings were NOT rendered (not needed for this lane's own
+asks). Full derivation: `docs/dev/ledgers/2026-10-02-b120-b121-
+fc719ca4.md`.
