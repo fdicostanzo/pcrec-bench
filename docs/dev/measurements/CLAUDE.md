@@ -1155,3 +1155,19 @@ Maintenance: update this file when files are added/removed or change role.
   [ENG-ISL] STEP 2 decline, confirmed directly) and the auto/vm refusal
   diagnostics for the two 1024-wide members (both caps, within 2.2% of
   the limit). Grounds NOTES.md's P19-P22.
+- `probe_b120b121read_step0_pin_control.py` / `2026-10-02-b120b121read-step0-pin-control.txt`
+  — (lane b120b121read, manager's step 0) does lane b120reseed's own
+  flagged BIMODAL cell (`asr-lb-fixed` gcc `synth-64k-asc`, default vs
+  `-fno-hyb-reseed`, x2.03/x0.49-ish) survive `taskset -c N` pinning
+  (O-69/[B112])? 45 fresh unpinned launches/arm + 15 `taskset -c 3`
+  launches/arm, 21 trials each, quiet-gated. FINDING: NO -- unpinned,
+  both arms draw from the SAME two governor states (~135/~296-337 us,
+  min/min ratio 0.9996) with different LOTTERY WEIGHTS (default draws
+  the fast state 71% of launches, denied 7%), which alone produces the
+  whole x2-ish median spread in either direction; pinned to one core,
+  the bimodality vanishes on both arms (0/15 slow outliers each) and
+  the two medians agree to four figures (ratio 0.9999). This cell is a
+  governor-lottery artifact, not a real [OPT-HYB-RESEED-XCALL] trigger;
+  drop it from that population (the lane's own four named cells become
+  three real ones plus this one artifact). Answers never moved (1
+  distinct hash across all 120 launches, both arms, both pin states).

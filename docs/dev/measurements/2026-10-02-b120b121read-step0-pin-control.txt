@@ -1,0 +1,112 @@
+SOURCE: docs/dev/measurements/probe_b120b121read_step0_pin_control.py
+LANE: b120b121read, step 0 (manager's brief for the [B120]/[B121] read)
+DATE: 2026-10-02
+BENCH COMMIT (worktree HEAD at run time): lane/b120b121read, base 3032122
+PCREC PIN: fc719ca4 (abi 50), build/pcrec-fc719ca4/build/pcrec
+BOX: ubuntubudu, AMD Ryzen 5 1600, 12 logical CPUs, governor schedutil
+      (acpi-cpufreq), gcc 15.2.0, Linux 7.0.0-29-generic. Not gated by
+      another session's lanes (this project has the box alone per the
+      manager's brief). gnutimeout on every launch.
+CELL UNDER TEST: utf8@0.1 `asr-lb-fixed` (`(?<=é)x`), compiled -e utf8
+  --features all, pcrec-auto vs -fno-hyb-reseed, subject synth-64k-asc
+  (I-114's own 65536-byte seeded ASCII generator, byte-identical to
+  probe_b120_reseed_multilaunch.py's gen_64k_ascii), gcc only.
+  This is the ONE cell lane b120reseed's report flagged as bimodal:
+  "default 333.1 us [135.0-360.6] vs denied 163.9 us [163.9-337.5] --
+  103% slower (x2.03), but BIMODAL (default's own min is BELOW denied's
+  own min -- the 15-launch spread does not look like one stable state
+  on either arm; re-measure with more launches before trusting the
+  median)."
+QUESTION: does the inversion survive `taskset -c N` pinning (O-69/
+  [B112]'s own finding: a single unpinned launch has ~13-20% odds of
+  running on a cold core at ~0.40x clock; pinning to one core removed
+  0/40 slow launches in that probe's own experiment)?
+PROTOCOL: 45 FRESH launches per arm unpinned, 15 FRESH launches per arm
+  under `taskset -c 3` (core 3, matching [B112]'s own pinned core),
+  21 trials per launch (keeping only the best, same convention as
+  probe_b120_reseed_multilaunch.py). `pcrecbench quiet --samples 5`
+  run immediately before; mpstat -P ALL 1 1 before and after.
+
+=== VERBATIM OUTPUT ===
+
+=== source: docs/dev/measurements/probe_b120b121read_step0_pin_control.py ===
+=== lane b120b121read, step 0 -- the manager's [B120] bimodal-cell re-measure ===
+=== date: 2026-10-02 ===
+=== pin: fc719ca4 ===
+=== workdir: /var/tmp/b120b121read-step0-042angdy ===
++ /home/duxevents/pcrec-bench/testees/pcrec/pin.sh --path fc719ca4
+=== pcrec binary: /home/duxevents/pcrec-bench/build/pcrec-fc719ca4/build/pcrec ===
+=== quiet gate ===
+load1 0.11  occupancy pass  max_busy_pct 1.0  target_busy_pct n/a (unpinned)  (5 s average)
+load1 0.10  occupancy pass  max_busy_pct 2.41  target_busy_pct n/a (unpinned)  (5 s average)
+load1 0.17  occupancy pass  max_busy_pct 1.6  target_busy_pct n/a (unpinned)  (5 s average)
+load1 0.16  occupancy pass  max_busy_pct 2.2  target_busy_pct n/a (unpinned)  (5 s average)
+load1 0.15  occupancy pass  max_busy_pct 0.8  target_busy_pct n/a (unpinned)  (5 s average)
+
+thresholds in force: load1 <= 2.00, max_busy_pct <= 10.00, target_busy_pct <= 10.00
+derivation: docs/design/quiet_baseline.md; the gate: docs/design/gate_shape_v14.md 1
+VERDICT: quiet
+
+=== load before: ['0.13', '0.44', '0.72'] ===
+=== mpstat before: all cores <=1.00% user / <=0.99% sys, 1 core at 1.00% user (idle box) ===
+=== binaries built: 2/2 ===
+=== subject: synth-64k-asc.bin, 65536 bytes ===
+=== UNPINNED: 45 fresh launches per arm ===
+raw unpinned default bests_us=[134.941, 134.95, 134.921, 134.941, 135.001, 134.951, 134.971, 134.931, 134.951, 134.93, 134.931, 134.97, 134.94, 134.92, 134.98, 134.97, 333.102, 333.082, 333.071, 134.95, 134.941, 134.981, 134.94, 134.941, 296.022, 163.971, 337.422, 134.98, 337.442, 134.95, 337.372, 134.94, 337.402, 134.941, 337.352, 135.001, 134.951, 337.382, 134.991, 337.422, 134.971, 337.441, 135.03, 337.402, 134.951]
+raw unpinned denied bests_us=[337.471, 134.98, 337.461, 296.101, 296.101, 296.111, 296.122, 296.091, 296.091, 296.101, 296.092, 296.101, 296.101, 296.101, 296.101, 296.092, 296.101, 296.082, 296.092, 296.101, 296.101, 296.091, 296.101, 296.082, 296.101, 296.101, 296.101, 296.101, 296.101, 296.101, 296.101, 296.091, 296.101, 296.101, 296.091, 296.092, 296.092, 163.9, 360.591, 163.911, 337.462, 134.98, 337.471, 134.981, 337.451]
+=== PINNED (taskset -c 3): 15 fresh launches per arm ===
+raw pinned default bests_us=[337.372, 337.351, 337.412, 337.341, 296.042, 296.082, 296.012, 296.061, 296.311, 296.041, 296.031, 295.942, 296.042, 296.002, 296.091]
+raw pinned denied bests_us=[296.092, 296.101, 296.101, 296.081, 296.081, 296.101, 296.101, 296.101, 296.101, 296.101, 296.091, 296.101, 296.111, 296.101, 296.092]
+=== load after: ['0.20', '0.45', '0.72'] ===
+=== mpstat after: all cores <=1.00% sys, core 2 at 9.90% user (the python harness itself), core 3 (pin target) 0.00% idle-else (idle box, no competitor) ===
+
+=== ANSWER IDENTITY ===
+('unpinned', 'default') -> {('0', '14650fb0739d0383')}
+('unpinned', 'denied') -> {('0', '14650fb0739d0383')}
+('pinned', 'default') -> {('0', '14650fb0739d0383')}
+('pinned', 'denied') -> {('0', '14650fb0739d0383')}
+distinct answers across all arms: 1 (1 == no answer movement)
+
+=== SUMMARY ===
+arm_group	variant	n	min_us	median_us	max_us	n_slow_gt_1.5x_min
+unpinned	default	45	134.9	135.0	337.4	13
+unpinned	denied	45	135.0	296.1	360.6	40
+pinned	default	15	295.9	296.1	337.4	0
+pinned	denied	15	296.1	296.1	296.1	0
+unpinned ratio (default/denied) median: 0.4558  min/min: 0.9996
+pinned ratio (default/denied) median: 0.9999  min/min: 0.9995
+
+=== READING ===
+
+The x0.49-ish inversion (lane b120reseed's own x2.03, this re-run's
+unpinned x0.4558 -- the DIRECTION of which arm looks "faster" varies
+run to run, as expected for a bimodal draw) does NOT survive pinning.
+
+1. Unpinned, BOTH arms draw from the SAME two governor states (~135 us
+   "fast" and ~296-337 us "slow/mid" -- the floor-level MIN of both arms
+   agrees to four significant figures: 134.9 vs 135.0 us, ratio 0.9996).
+   What differs between arms is purely WHICH STATE A GIVEN LAUNCH HAPPENS
+   TO DRAW: default drew the fast state on 32/45 launches (71%, n_slow
+   13), denied drew it on only 3/45 (7%, n_slow 40) -- a lottery-weight
+   difference, not a real cost difference. That lottery alone produces
+   the whole x2-ish median spread reported in both directions across the
+   two independent runs.
+2. Pinned to one core (`taskset -c 3`), the bimodality VANISHES on both
+   arms (0/15 slow outliers each, by this probe's own >1.5x-min rule)
+   and the two arms' medians AGREE to four significant figures (296.1 vs
+   296.1 us, ratio 0.9999) -- the SAME agreement the unpinned min/min
+   ratio already showed. The pinned core's own steady-state here happens
+   to be the ~296 us state, not the ~135 us one (core 3 was cold/idle
+   before this run started, consistent with O-69's finding that a
+   governor sees a `taskset`-pinned, previously-idle core as a fresh
+   ramp target, not a free pass to the top frequency bin) -- the
+   STEADY-STATE VALUE pinning lands on is itself immaterial here; what
+   matters is that it is the SAME value on both arms.
+3. VERDICT: the "x2.03 slower"/"x0.49 faster" readings in both runs are
+   O-69's governor lottery, not a real [OPT-HYB-RESEED-XCALL] effect on
+   this (pattern, subject, cc) cell. `asr-lb-fixed`/`synth-64k-asc`/gcc
+   should be DROPPED from the [OPT-HYB-RESEED-XCALL] trigger population
+   lane b120reseed's report named -- it is 1 (not 4) real trigger cells;
+   see the ledger and the I-124 outbox draft for the corrected count.
+   Answers never moved (1 distinct (matches,hash) pair across all 120
+   launches, both arms, both pin states).
