@@ -1171,3 +1171,18 @@ Maintenance: update this file when files are added/removed or change role.
   drop it from that population (the lane's own four named cells become
   three real ones plus this one artifact). Answers never moved (1
   distinct hash across all 120 launches, both arms, both pin states).
+- `probe_b120b121read_resecompat_bucket.py` — (lane b120b121read, step 1)
+  reads a `(default, denied)` pcrec record JSONL pair DIRECTLY for the
+  per-(pattern,form) `vm_reseed`/`vm_frameless` compile stamp (the
+  report's own `compile_stamp` TSV section prints only ONE sample per
+  testee, wrong for a per-pattern-routing config), joins against a
+  committed report TSV's `rank`/`rank_yes`/`rank_no` `median_ns` rows
+  for both testees, and prints every `adaptive*`-stamped cell's ratio
+  plus every `clamped`-stamped cell's own 1c check. `--default-record`/
+  `--denied-record`/`--report-tsv`/`--default-testee`/`--denied-testee`;
+  runs from the repo root. Used on syntax@0.1, capability@0.1 and
+  utf8@0.1's `auto`/`auto-nohybreseed` pairs at fc719ca4 — see the
+  ledger `docs/dev/ledgers/2026-10-02-b120-b121-fc719ca4.md` §1 for the
+  full per-set reading (the utf8@0.1 pair reads EMPTY because of a
+  roster-declaration gap found while running it, not a script defect
+  — confirmed separately against `bench/utf8/gen_patterns.py`'s source).
