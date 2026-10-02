@@ -87,9 +87,15 @@ you). Bucketed per pattern by the record's OWN `vm_reseed`×
   (non-hybrid) patterns ranked. All three now carry `pcrec-auto-utf8`'s
   own declaration (verified: `missing_capabilities()` now reads 5/76,
   matching the other three `-utf8` siblings' documented gap).
-  **utf8@0.1's own per-pattern bucket is OWED** — we are re-running
-  that one cell and regenerating the utf8 report ourselves after
-  merging this fix, not asking you for anything here. Item 1's own
+  **RESULT (manager re-run, 2026-10-02 06:12-07:31 EDT, both arms in one
+  window, 2/2 measured at attempt 1; docs/dev/measurements/2026-10-02-b120-
+  utf8-rerun-bucket.txt):** the four `adaptive` patterns (asr-lb-class/
+  fixed/neg/varwidth; frameless 1/1/0/0; denied arm reads `fixed` on all)
+  read **0 of 8 cells >5% slower**. large-subject-throughput, default ÷
+  denied median ns: asr-lb-varwidth 0.0050, asr-lb-fixed 0.0115,
+  asr-lb-neg 0.0325 (×31-×200 faster), asr-lb-class 0.8749;
+  short-subject-search 0.968-1.036 (flat). No `clamped` row exists on
+  this set. Item 1's own
   evidence (the 11×-99× wins, the 3 real triggers) is unaffected — it
   came from a standalone probe that bypasses this roster mechanism
   entirely.

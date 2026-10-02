@@ -125,11 +125,9 @@ cross-set only. `bench/capability@0.1` declares no `match` regime at
 all — a realistic (1 KiB-64 KiB) match-regime subject for the 17
 capture-forced hybrids is a real ask, not built here.
 
-**Q11 — answered, folded into A5's capability@0.1 re-measure (below):
-confirmed, same cell the real window's capability@0.1 report carries.**
-`lka-pos` is syntax@0.1's own cell (not capability's — Q11's premise
-carries over correctly to the set I-124 item 2 already covers); see
-the I-124 answer above.
+**Q11 — answered in our I-124 answer (item 2).** `lka-pos` is a
+syntax@0.1 cell; the window measured it under auto, the reseed denial
+and forced-VM.
 
 **Q12 — the manager's correction.** Citing I-35 precisely: Frank's
 ruling (inbox I-35, 2026-09-02) is "your blocking measurement windows
@@ -137,13 +135,14 @@ run overnight; pcrec's lanes, `make test` runs and union batteries run
 during the day, one heavy suite at a time" — our own daytime BUILD work
 (serial compiles, `make check` bursts) is load, not a hold. That
 partition is already in force; no separate non-colliding slot needed to
-find. A5's window ran overnight 2026-10-01T14:36→2026-10-02T04:22 EDT
-at the unchanged fc719ca4 pin, per that same ruling.
+find. This window ran 2026-10-01T14:36→2026-10-02T04:22 EDT at the unchanged
+fc719ca4 pin, starting by day only because your I-126 handed us the box
+through [B117]; the standing partition is otherwise unchanged.
 
 ---
 
-**A5 — the standing re-measure RAN.** 25 cells, 23 measured at attempt
-1 (`syntax`'s `pcrec-vm-nocaps` cell `inconclusive-spread` TWICE — see
+**A5 — the standing re-measure RAN.** 20 A5 cells (of the window's 26),
+19 measured at attempt 1 (`syntax`'s `pcrec-vm-nocaps` cell `inconclusive-spread` TWICE — see
 below). Seven report groups committed:
 `reports/2026-10-02-{syntax,capability,utf8}-0.1-...-fc719ca4.{tsv,md}`,
 `reports/2026-10-02-{loglines-0.1,bounded-0.3,email-specimen-0.2,

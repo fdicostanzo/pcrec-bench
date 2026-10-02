@@ -1,0 +1,173 @@
+docs/dev/measurements/2026-10-02-b120-utf8-rerun-bucket.txt -- [B120] item 3, utf8@0.1 pcrec-auto-utf8 vs pcrec-auto-nohybreseed-utf8 at fc719ca4, re-run 2026-10-02 06:12-07:31 EDT after the bench/utf8 roster fix (lane b120b121read f85f4a4); both cells measured at attempt 1, quiet pre-flight. Produced by docs/dev/measurements/probe_b120b121read_resecompat_bucket.py (no --regime flag: all regimes), manager session 2026-10-02. ratio = default/denied median ns (<1 = the reseed is faster).
+
+=== source: docs/dev/measurements/probe_b120b121read_resecompat_bucket.py ===
+=== default record: store/records/utf8@0.1/pcrec_fc719ca4_auto-caps-simdna_utf8/utf8@0.1__pcrec_fc719ca4_auto-caps-simdna_utf8__budu-ryzen1600__20261002T101313Z.jsonl ===
+=== denied record: store/records/utf8@0.1/pcrec_fc719ca4_auto-caps-simdna_nohybreseed-utf8/utf8@0.1__pcrec_fc719ca4_auto-caps-simdna_nohybreseed-utf8__budu-ryzen1600__20261002T105147Z.jsonl ===
+=== report tsv: reports/2026-10-02-utf8-0.1-budu-ryzen1600-b120b121-fc719ca4.tsv ===
+=== PER-PATTERN COMPILE STAMPS (default vs denied) ===
+pattern	form	dflt_reseed	dflt_frameless	den_reseed	den_frameless	agree
+alt-cyr-64	plain	None	None	None	None	yes
+alt-cyr-64	whole-subject	None	None	None	None	yes
+alt-distinct-lead	plain	None	None	None	None	yes
+alt-distinct-lead	whole-subject	None	None	None	None	yes
+alt-mixed-width	plain	None	None	None	None	yes
+alt-mixed-width	whole-subject	None	None	None	None	yes
+alt-nearmiss	plain	None	None	None	None	yes
+alt-nearmiss	whole-subject	None	None	None	None	yes
+alt-shared-char	plain	None	None	None	None	yes
+alt-shared-char	whole-subject	None	None	None	None	yes
+alt-shared-lead	plain	None	None	None	None	yes
+alt-shared-lead	whole-subject	None	None	None	None	yes
+asr-a-z	plain	None	None	None	None	yes
+asr-a-z	whole-subject	None	None	None	None	yes
+asr-b-ascii	plain	None	None	None	None	yes
+asr-b-ascii	whole-subject	None	None	None	None	yes
+asr-b-cyr	plain	None	None	None	None	yes
+asr-b-cyr	whole-subject	None	None	None	None	yes
+asr-b-cyr-ucp	plain	None	None	None	None	yes
+asr-b-midchar	plain	None	None	None	None	yes
+asr-b-midchar	whole-subject	None	None	None	None	yes
+asr-caret-ml	plain	None	None	None	None	yes
+asr-caret-ml	whole-subject	None	None	None	None	yes
+asr-dollar-ml	plain	None	None	None	None	yes
+asr-dollar-ml	whole-subject	None	None	None	None	yes
+asr-lb-class	plain	adaptive	1	fixed	1	yes
+asr-lb-class	whole-subject	adaptive	1	fixed	1	yes
+asr-lb-fixed	plain	adaptive	1	fixed	1	yes
+asr-lb-fixed	whole-subject	adaptive	1	fixed	1	yes
+asr-lb-neg	plain	adaptive	0	fixed	0	yes
+asr-lb-neg	whole-subject	adaptive	0	fixed	0	yes
+asr-lb-varwidth	plain	adaptive	0	fixed	0	yes
+asr-lb-varwidth	whole-subject	adaptive	0	fixed	0	yes
+ci-ascii-control	plain	None	None	None	None	yes
+ci-ascii-control	whole-subject	None	None	None	None	yes
+ci-class-range	plain	None	None	None	None	yes
+ci-class-range	whole-subject	None	None	None	None	yes
+ci-e-acute	plain	None	None	None	None	yes
+ci-e-acute	whole-subject	None	None	None	None	yes
+ci-greek-run	plain	None	None	None	None	yes
+ci-greek-run	whole-subject	None	None	None	None	yes
+ci-kelvin	plain	None	None	None	None	yes
+ci-kelvin	whole-subject	None	None	None	None	yes
+ci-long-s	plain	None	None	None	None	yes
+ci-long-s	whole-subject	None	None	None	None	yes
+ci-moskva	plain	None	None	None	None	yes
+ci-moskva	whole-subject	None	None	None	None	yes
+ci-neg-fold	plain	None	None	None	None	yes
+ci-neg-fold	whole-subject	None	None	None	None	yes
+ci-sigma	plain	None	None	None	None	yes
+ci-sigma	whole-subject	None	None	None	None	yes
+ci-strasse	plain	None	None	None	None	yes
+ci-strasse	whole-subject	None	None	None	None	yes
+ci-turkish-i	plain	None	None	None	None	yes
+ci-turkish-i	whole-subject	None	None	None	None	yes
+ci-ucp-invariance	plain	None	None	None	None	yes
+cls-boundary-range	plain	None	None	None	None	yes
+cls-boundary-range	whole-subject	None	None	None	None	yes
+cls-d-ascii	plain	None	None	None	None	yes
+cls-d-ascii	whole-subject	None	None	None	None	yes
+cls-d-ucp	plain	None	None	None	None	yes
+cls-dot	plain	None	None	None	None	yes
+cls-dot	whole-subject	None	None	None	None	yes
+cls-dot-rep	plain	None	None	None	None	yes
+cls-dot-rep	whole-subject	None	None	None	None	yes
+cls-high-range	plain	None	None	None	None	yes
+cls-high-range	whole-subject	None	None	None	None	yes
+cls-lead-pair	plain	None	None	None	None	yes
+cls-lead-pair	whole-subject	None	None	None	None	yes
+cls-mixed	plain	None	None	None	None	yes
+cls-mixed	whole-subject	None	None	None	None	yes
+cls-neg-allhigh	plain	None	None	None	None	yes
+cls-neg-allhigh	whole-subject	None	None	None	None	yes
+cls-neg-cjk	plain	None	None	None	None	yes
+cls-neg-cjk	whole-subject	None	None	None	None	yes
+cls-neg-single	plain	None	None	None	None	yes
+cls-neg-single	whole-subject	None	None	None	None	yes
+cls-posix-alpha	plain	None	None	None	None	yes
+cls-posix-alpha	whole-subject	None	None	None	None	yes
+cls-s-nbsp	plain	None	None	None	None	yes
+cls-s-nbsp	whole-subject	None	None	None	None	yes
+cls-s-ucp	plain	None	None	None	None	yes
+cls-w-ascii	plain	None	None	None	None	yes
+cls-w-ascii	whole-subject	None	None	None	None	yes
+cls-w-ucp	plain	None	None	None	None	yes
+floor	plain	None	None	None	None	yes
+floor	whole-subject	None	None	None	None	yes
+lit-1ch-2b	plain	None	None	None	None	yes
+lit-1ch-2b	whole-subject	None	None	None	None	yes
+lit-1ch-3b	plain	None	None	None	None	yes
+lit-1ch-3b	whole-subject	None	None	None	None	yes
+lit-1ch-4b	plain	None	None	None	None	yes
+lit-1ch-4b	whole-subject	None	None	None	None	yes
+lit-anchored-run	plain	None	None	None	None	yes
+lit-anchored-run	whole-subject	None	None	None	None	yes
+lit-cyr-run	plain	None	None	None	None	yes
+lit-cyr-run	whole-subject	None	None	None	None	yes
+lit-mixed-ascii	plain	None	None	None	None	yes
+lit-mixed-ascii	whole-subject	None	None	None	None	yes
+lit-nearmiss-run	plain	None	None	None	None	yes
+lit-nearmiss-run	whole-subject	None	None	None	None	yes
+lit-nfc-pair	plain	None	None	None	None	yes
+lit-nfc-pair	whole-subject	None	None	None	None	yes
+lit-offset-at-head	plain	None	None	None	None	yes
+lit-offset-at-head	whole-subject	None	None	None	None	yes
+lit-offset-at-tail	plain	None	None	None	None	yes
+lit-offset-at-tail	whole-subject	None	None	None	None	yes
+lit-run-3	plain	None	None	None	None	yes
+lit-run-3	whole-subject	None	None	None	None	yes
+lit-sharp-s	plain	None	None	None	None	yes
+lit-sharp-s	whole-subject	None	None	None	None	yes
+prp-cyrillic	plain	None	None	None	None	yes
+prp-cyrillic	whole-subject	None	None	None	None	yes
+prp-greek	plain	None	None	None	None	yes
+prp-greek	whole-subject	None	None	None	None	yes
+prp-greek-sc	plain	None	None	None	None	yes
+prp-greek-sc	whole-subject	None	None	None	None	yes
+prp-han	plain	None	None	None	None	yes
+prp-han	whole-subject	None	None	None	None	yes
+prp-ingreek	plain	None	None	None	None	yes
+prp-ingreek	whole-subject	None	None	None	None	yes
+prp-l	plain	None	None	None	None	yes
+prp-l	whole-subject	None	None	None	None	yes
+prp-l-anchored	plain	None	None	None	None	yes
+prp-l-anchored	whole-subject	None	None	None	None	yes
+prp-latin	plain	None	None	None	None	yes
+prp-latin	whole-subject	None	None	None	None	yes
+prp-lu	plain	None	None	None	None	yes
+prp-lu	whole-subject	None	None	None	None	yes
+prp-n	plain	None	None	None	None	yes
+prp-n	whole-subject	None	None	None	None	yes
+prp-notl	plain	None	None	None	None	yes
+prp-notl	whole-subject	None	None	None	None	yes
+prp-zs	plain	None	None	None	None	yes
+prp-zs	whole-subject	None	None	None	None	yes
+qnt-bounded-4b	plain	None	None	None	None	yes
+qnt-bounded-4b	whole-subject	None	None	None	None	yes
+qnt-class-run	plain	None	None	None	None	yes
+qnt-class-run	whole-subject	None	None	None	None	yes
+qnt-counted-3b	plain	None	None	None	None	yes
+qnt-counted-3b	whole-subject	None	None	None	None	yes
+qnt-dot-bounded	plain	None	None	None	None	yes
+qnt-dot-bounded	whole-subject	None	None	None	None	yes
+qnt-lazy-2b	plain	None	None	None	None	yes
+qnt-lazy-2b	whole-subject	None	None	None	None	yes
+qnt-plus-2b	plain	None	None	None	None	yes
+qnt-plus-2b	whole-subject	None	None	None	None	yes
+
+=== ADAPTIVE* CELLS, TIMING RATIO (default/denied), BUCKETED by (vm_reseed, vm_frameless) ===
+pattern	regime	form	vm_reseed	vm_frameless	dflt_median_ns	den_median_ns	ratio	flag
+asr-lb-class	large-subject-throughput	plain	adaptive	1	6983177.981	7981609.593	0.8749	faster
+asr-lb-class	short-subject-search	plain	adaptive	1	1623.044	1671.056	0.9713	flat
+asr-lb-fixed	large-subject-throughput	plain	adaptive	1	90424.864	7835390.099	0.0115	faster
+asr-lb-fixed	short-subject-search	plain	adaptive	1	1228.762	1247.713	0.9848	flat
+asr-lb-neg	large-subject-throughput	plain	adaptive	0	200457.291	6164971.173	0.0325	faster
+asr-lb-neg	short-subject-search	plain	adaptive	0	1883.071	1944.902	0.9682	flat
+asr-lb-varwidth	large-subject-throughput	plain	adaptive	0	108054.801	21779169.196	0.0050	faster
+asr-lb-varwidth	short-subject-search	plain	adaptive	0	1706.483	1647.164	1.0360	flat
+
+=== CLAMPED CELLS: does the timing move at all? (1c prediction) ===
+pattern	regime	form	vm_reseed	ratio	flag
+
+=== SUMMARY ===
+adaptive* cells total: 8
+>5% slower under default: 0

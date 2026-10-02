@@ -5702,3 +5702,284 @@ independent of anything pcrec itself changes.
 > `docs/dev/measurements/2026-10-01-b119k75-utf8-wellformedness-census.txt`
 > (the from-scratch scan, all eight `bench/*/` sets) and the two
 > `make check-harness` PASS transcripts cited above.
+
+## O-81 (2026-10-02, pcrec-bench manager; read by lane b120b121read) — I-124 answered whole: [OPT-HYB-RESEED] at fc719ca4, items 1-3 (the reseed wins ×11-×200 on real text; the ×0.49 cell was the governor lottery; 3 synthetic + 10 syntax cells >5% slower, named)
+
+Ledger: docs/dev/ledgers/2026-10-02-b120-b121-fc719ca4.md. Probe archives: docs/dev/measurements/2026-10-01-b120-reseed-multilaunch.txt, 2026-10-02-b120b121read-step0-pin-control.txt, 2026-10-02-b120-utf8-rerun-bucket.txt.
+
+**Headline, confirmed and sharpened**: [OPT-HYB-RESEED] works, and
+works far better than I-114's own hand-twin estimate on real text —
+item 1's own real `bench/utf8` throughput prose reads **11×-99×
+faster** (not the predicted ×2-×21). The mechanism, read from pcrec's
+own `docs/design/hyb_reseed.md` §1: the OLD (denied) behaviour does not
+re-seed at all on a clamp-free hybrid — it steps one byte at a time to
+the subject's end once the first candidate fails; the fix re-seeds from
+the DFA prefilter instead. The win grows with subject size on ordinary
+prose (the step-to-end cost scales with what's left after the first
+failure), which short synthetic subjects cannot show.
+
+**Item 3's own named trigger population is THREE cells, not four —
+one correction, found by this read.** Lane b120reseed's own probe
+flagged `asr-lb-fixed`/gcc/`synth-64k-asc` as a possible ×2.03 trigger
+but called it bimodal and asked for a re-measure before trusting it.
+We ran that re-measure with CPU pinning (45 fresh unpinned launches/arm
++ 15 `taskset -c 3` launches/arm, 21 trials each, quiet box throughout):
+**the inversion does not survive pinning.** Unpinned, both arms draw
+from the SAME two governor states (~135 µs / ~296-337 µs; the two arms'
+own fastest launches agree to four significant figures, ratio 0.9996)
+at different LOTTERY WEIGHTS — default drew the fast state on 71% of
+its 45 launches, denied on only 7% — which alone produces a ×2-ish
+median spread in either direction (this probe's own independent draw
+found ×0.4558 the OPPOSITE way lane b120reseed's did). Pinned to one
+core, the bimodality vanishes on both arms (0/15 slow launches each)
+and the medians agree to four figures (ratio 0.9999). This matches your
+own [B112]/O-69 finding on this exact box (a single launch has ~13-20%
+odds of landing on a cold-core ~0.40× clock) applied to a NEW cell.
+**The real trigger population is three cells**, all on I-114's own
+density-tuned synthetic subjects (never ordinary prose): `asr-lb-
+varwidth`/gcc/`synth-dense` (7.4% slower), `asr-lb-fixed`/clang/
+`synth-1m` (6.7%), `asr-lb-fixed`/clang/`synth-64k-asc` (6.5%).
+
+**Item 3's real roster window ran** (syntax/capability/utf8@0.1 ×
+{auto, nohybreseed-variant}, the plan this lane's predecessor handed
+you). Bucketed per pattern by the record's OWN `vm_reseed`×
+`vm_frameless` stamp (never the report's one-sample-per-testee
+`compile_stamp` legend, which cannot see a per-pattern-routing config):
+
+- **syntax@0.1**: 27 `adaptive*` (pattern,regime,form) cells across 9
+  patterns. Using the records' own spread (`gap > 2×max(stddev)`, the
+  same shape our R8 `unchanged (within spread)` rule uses) as the noise
+  criterion per cell — NOT a flat ns threshold, which would have wrongly
+  dropped most of this table — **every one of the 10 cells reading >5%
+  slower is REAL**, named in full: `qnt-poss-quest`/short-subject-search
+  (×1.2281) and /large-subject-throughput (×1.1939), `lka-verb`/
+  short-subject-search (×1.0974) and /match-compliance (×1.0770),
+  `lka-pos`/short-subject-search (×1.0949) and /match-compliance
+  (×1.0897), `lka-neg`/short-subject-search (×1.0874), `grp-atomic-alt`/
+  short-subject-search (×1.0640) and /large-subject-throughput
+  (×1.0536), `lka-nonatomic`/short-subject-search (×1.0566). Every gap
+  clears its own 2×stddev floor, several by one to two orders of
+  magnitude.
+- **capability@0.1**: only ONE `adaptive*` cell exists on the whole
+  roster (`logparse-atomic`, the roster's only `adaptive-dense`
+  witness). Its large-subject-throughput reading (32.7 ns, flat) is
+  genuinely NOISE but for a STRUCTURAL reason, checked per your own
+  instruction before calling it anything: `logparse-atomic`'s necessary
+  run (`": "`, `req_byte=58`) occurs 547-9,070 times in the throughput
+  subjects (NOT [B117]'s own zero-occurrence mechanism) — the real
+  reason is `vm_start=anchored`: the pattern is top-level `^`-anchored
+  with no MULTILINE, so only offset 0 is ever attempted regardless of
+  subject length, and all three throughput subjects are `nomatch`
+  there — both arms pay the identical O(1) cost, never reaching
+  [OPT-HYB-RESEED] at all. Its short-subject-search reading IS real
+  (×1.0690, 6.6× its own noise floor) — this is capability@0.1's one
+  genuine XCALL trigger. **All six `clamped`-row cells read UNMOVED**
+  by the same gap-vs-stddev criterion — **your own 1c prediction
+  ("clamped over-approximating hybrids do not move") is CONFIRMED
+  cleanly** on the real population, now on a real statistical basis.
+- **utf8@0.1**: a bench-side gap, FIXED in this lane — the new
+  `pcrec-auto-nohybreseed-utf8` testee (plus the two untested clang
+  siblings) had no entry in `bench/utf8/gen_patterns.py`'s
+  `EXT_BENCH_ROSTER`, so 73 of its 76 patterns rendered `unsupported-
+  by-declaration` in the real window's report and only 3 DFA-routed
+  (non-hybrid) patterns ranked. All three now carry `pcrec-auto-utf8`'s
+  own declaration (verified: `missing_capabilities()` now reads 5/76,
+  matching the other three `-utf8` siblings' documented gap).
+  **RESULT (manager re-run, 2026-10-02 06:12-07:31 EDT, both arms in one
+  window, 2/2 measured at attempt 1; docs/dev/measurements/2026-10-02-b120-
+  utf8-rerun-bucket.txt):** the four `adaptive` patterns (asr-lb-class/
+  fixed/neg/varwidth; frameless 1/1/0/0; denied arm reads `fixed` on all)
+  read **0 of 8 cells >5% slower**. large-subject-throughput, default ÷
+  denied median ns: asr-lb-varwidth 0.0050, asr-lb-fixed 0.0115,
+  asr-lb-neg 0.0325 (×31-×200 faster), asr-lb-class 0.8749;
+  short-subject-search 0.968-1.036 (flat). No `clamped` row exists on
+  this set. Item 1's own
+  evidence (the 11×-99× wins, the 3 real triggers) is unaffected — it
+  came from a standalone probe that bypasses this roster mechanism
+  entirely.
+
+**Item 2 (`lka-pos`/`lka-verb`)**: `auto` genuinely diverges from
+forced `--engine=vm` (confirmed, now on the real window's full roster
+too). `lka-pos` reads auto SLOWER than forced-VM at the two smaller
+throughput subjects then faster at the largest; `lka-verb` on the
+identical subjects never inverts. We still cannot cleanly test the
+sparse-vs-match-dense half of your own framing — `bench/syntax`'s three
+throughput subjects carry comparable match density at every size (3/6/27
+matches on 64 KB/256 KB/1 MB, ~1 per 22-44 KB regardless of size), not a
+density-controlled pair. A density-controlled subject pair is a future
+bench ask, not something built here.
+
+**Answers never moved anywhere in this window.** Checked at the full
+population level this time, not only on the probe's own five-pattern
+slice: the only nonzero-`n_wrong` population across all three sets
+(syntax's `asr-k-uc`/`rec-r-uc`, 5 of 42 subjects) is IDENTICAL across
+all five pcrec configs including `auto` and `auto-nohybreseed` — a
+pre-existing divergence unrelated to this fix, confirming "answers
+identical by construction" at the real-window scale.
+
+Nothing here is a pcrec ask beyond what is already stated. The
+utf8@0.1 roster gap is bench-side housekeeping, fixed here and
+re-measured on our own side after merge, noted for completeness only.
+
+## O-82 (2026-10-02, pcrec-bench manager; lanes b121asks + b120b121read) — I-125 answered: A1-A5 and Q1-Q12 at fc719ca4 (A5 re-measured; altwide@0.3 class tails built; forced-DFA never beats auto; one counted-string cell; one non-top-level ^)
+
+Ledger: docs/dev/ledgers/2026-10-02-b120-b121-fc719ca4.md; censuses under docs/dev/measurements/2026-10-01-b121-*.
+
+**A1/Q1 — unchanged, already satisfied.** `bench/email`'s
+`t-d-prose-sparse-addrs` ([B17], email-specimen@0.2) is the non-periodic
+1 MiB address-bearing subject: 496 matches on `orig`, generator
+`gen_throughput_subjects.py`'s `build_prose`, seed 20260828, sha256
+`d55c0e8f...9d94242`. The timed cell is now IN HAND (email-specimen
+@0.2's own A5 re-measure, below) — `orig`/`pcrec-auto`/find-all against
+`pcre2-jit`/`rust` at this pin, same report.
+
+**A2(1)/Q7 — unchanged.** One real `(?:ab){m,n}`-shaped counted repeat
+corpus-wide: `bench/utf8`'s `qnt-counted-3b`, `(?:日本){2,}`.
+`bench/bounded`'s `nest2-*`/`nest3-*` family is a DIFFERENT mechanism
+shape (`(?:CLASS{p,q}){m,n}`), confirmed by a real structural parse.
+Ask stands: is [OPT-5]'s period-k trigger meant for the nest family's
+own shape, or specifically the literal-string repeat?
+
+**A2(2) — the timed ratio is now IN HAND, and it INVERTS your own
+framing.** `qnt-counted-3b`, large-subject-throughput, ns/B (1,638,400 B
+total across the seven throughput subjects):
+
+| testee | ns/B |
+|---|---|
+| `pcrec-auto`/`pcrec-nocaps` (DFA) | **0.0890** |
+| `pcrec-vm` (forced) | 2.6407 |
+| `pcre2-jit` | 1.4858 |
+| `re2-utf8` | 1.6200 |
+| `oniguruma-utf8` | 0.2792 |
+| `vectorscan-block-nosom-utf8` | 0.0457 |
+| `rust-default` | **0.0407 (fastest)** |
+
+Your own question was "is the DFA scan-edge ladder losing to the VM's
+counter loop on this shape?" — **no: `auto`'s DFA route is already
+×29.7 faster than forced VM** on this one witness, and only ×2.19/×1.95
+behind the two fastest algorithmic engines (rust, vectorscan). If
+[OPT-5]'s period-k mechanism is built, it needs to beat your OWN
+already-dominant DFA route here, not rescue a losing position.
+
+**A2(3) — the timed ratio is now IN HAND: flat, confirms the standing
+reading.** All eleven loglines@0.1 patterns, both regimes, default vs
+`-fno-scan-edge`: max move 1.44% (on `iso-ts`, the one pattern with a
+real 8-search/4-match scan-edge stamp), inside this project's own
+same-pin repeatability floor (~1.32%, measured previously). No cost,
+no win, at this pin — confirms this repo's standing reading ("the scan
+edge is a spelling-not-count decision with no measured win").
+
+**A3/Q6 — unchanged, confirmed, one witness.** `wild-waf-crs-942360-
+concat-sqli` is still the only non-top-level-`^` pattern corpus-wide
+(real structural parse, zero parse failures). Stays a single-witness
+candidate.
+
+**A4/Q8 — the timed ratio is now IN HAND, and it is far larger than the
+compile-only census alone implied.** `altwide@0.3`'s class-tail family
+vs the plain ladder at the same width, forced-VM route:
+
+| width | regime | plain ladder (VM) | class-tail (VM) | ratio |
+|---|---|---|---|---|
+| 64 | thr | 13,402,239 ns | 338,564,367-339,074,641 ns | **×25.3** |
+| 256 | thr | 16,570,802 ns | 2,089,207,567-2,091,659,410 ns | **×126** |
+| 64 | match-compliance | 365.5 ns | 12,567.7 ns | **×34.4** |
+| 256 | match-compliance | 408.6 ns | 93,634.3 ns | **×229** |
+
+**Your own P20 prediction is confirmed, at a far larger margin than
+the compile-only stamps alone suggested**: the class-tail shape pays
+the VM's serial-try chain cost, not the shared-trie island cost — at
+width 256 the forced-VM route is two orders of magnitude slower than
+the plain ladder's own island arm. `auto` routes identically to the
+plain ladder (DFA, same prefilter, ≤0.5% apart in timing — P21
+confirmed) and 0/all cells read a wrong answer (P19 confirmed). We did
+not have a `pcrec-vm-noisland`-on-altwide@0.3 arm in this window's own
+roster, so the EXACT control your ask names (class-tail forced-VM vs
+`w-256`'s own DENIED-island VM arm) is not directly measured — the
+comparison above is against `w-256`'s real DEFAULT VM arm, which
+already HAS the island, so the ×126-229 figure is a LOWER bound on the
+island's own contribution. Say if you want that exact control built
+next.
+
+**Q2/Q3 — unchanged in substance; Q3's "reverse population" is now
+CONFIRMED empty in TIMING too, not only in compile identity.** Direct
+timing comparison on every (pattern,regime,form) cell where BOTH
+`pcrec-dfa-nocaps` and `pcrec-auto-nocaps` rank: 191 common cells on
+syntax@0.1 (ZERO movers >5%), 83 on capability@0.1 (2 movers, both at
+the ~20-30 ns timer-floor scale on program-identical artifacts — noise,
+not a real difference). **Nowhere does forced-DFA beat `auto`, on
+either corpus, in real timing** — `auto` already picks the DFA
+whenever it can represent the pattern, and the two are the same
+artifact wherever both compile.
+
+**Q4 — unchanged.** `lka-neg` is match-dense, `lka-pos` match-sparse,
+by ~60-110×.
+
+**Q5 — the manager's correction, replacing our own earlier reasoning.**
+The citation `esc-octal-0 1.047×` still could not be located verbatim;
+asking you to name the report/date/testee. **The SUBSTANCE is
+different from what we first wrote**: it is not the v1.4 trial-
+agreement gate that puts a pinned record's small ratios above O-69's
+floor — it is that a PINNED cell runs under `taskset` on its OWN target
+core with each measured loop calibrated to >= 50 ms (`pcrecbench/
+harness.py`'s Contract 3, `TARGET_LOOP_SECONDS`; `quiet.taskset_
+prefix(pinning)` sets the CPU affinity before the driver launches), so
+it is structurally NEVER exposed to O-69's single-process-LAUNCH
+governor lottery the way a one-shot scratch probe is — this lane's own
+Step 0 measurement proved exactly this mechanism directly (pinning a
+launch to one core removes the bimodal split entirely, 0/15 slow
+launches either arm, where unpinned launches split 71%/7% fast-state
+draws). A ratio in the 1.03-1.23× range on a `measured` pinned record
+is therefore not comparable to a raw single-launch artifact at all,
+for a structural reason (CPU pinning + long calibrated loops), not
+because the statistical gate happens to catch contamination after the
+fact.
+
+**Q9/Q10 — unchanged.** No DD-13 consumer; `floor` still collides
+cross-set only. `bench/capability@0.1` declares no `match` regime at
+all — a realistic (1 KiB-64 KiB) match-regime subject for the 17
+capture-forced hybrids is a real ask, not built here.
+
+**Q11 — answered in our I-124 answer (item 2).** `lka-pos` is a
+syntax@0.1 cell; the window measured it under auto, the reseed denial
+and forced-VM.
+
+**Q12 — the manager's correction.** Citing I-35 precisely: Frank's
+ruling (inbox I-35, 2026-09-02) is "your blocking measurement windows
+run overnight; pcrec's lanes, `make test` runs and union batteries run
+during the day, one heavy suite at a time" — our own daytime BUILD work
+(serial compiles, `make check` bursts) is load, not a hold. That
+partition is already in force; no separate non-colliding slot needed to
+find. This window ran 2026-10-01T14:36→2026-10-02T04:22 EDT at the unchanged
+fc719ca4 pin, starting by day only because your I-126 handed us the box
+through [B117]; the standing partition is otherwise unchanged.
+
+---
+
+**A5 — the standing re-measure RAN.** 20 A5 cells (of the window's 26),
+19 measured at attempt 1 (`syntax`'s `pcrec-vm-nocaps` cell `inconclusive-spread` TWICE — see
+below). Seven report groups committed:
+`reports/2026-10-02-{syntax,capability,utf8}-0.1-...-fc719ca4.{tsv,md}`,
+`reports/2026-10-02-{loglines-0.1,bounded-0.3,email-specimen-0.2,
+altwide-0.3}-...-fc719ca4.{tsv,md}`, each with an interpreted sidecar.
+Full per-cell numbers in the ledger.
+
+**One real finding beyond the ask: `syntax`'s `pcrec-vm-nocaps` has NO
+`measured` record at this pin**, and the ONE re-measure `run_window.sh`'s
+own rule allows did not fix it. Re-derived directly from both record
+JSONLs (not merely the report's "worst group" summary): the SAME TWO
+groups disagree both times — `cls-h` (`key\h*=\h*value`, match-
+compliance/whole-subject, a sub-microsecond-per-call VM class scan
+likely susceptible to ordinary trial noise at that scale: d went
+28→39 of 42 on the retry, i.e. WORSE) and `rec-define`
+(`(?(DEFINE)(?<d>\d{2}))(?&d):(?&d)`, large-subject-throughput/plain —
+a genuine recursion/subroutine-call pattern on three multi-millisecond
+subjects, median 13.24 ms with an 11.44-13.26 ms per-trial RANGE, a
+real ~14% run-to-run coefficient of variation that is not a timer-floor
+artifact: d stayed 2-3 of 3 both times). If you want `pcrec-vm-nocaps`
+at `measured` status on syntax@0.1, this cell needs more trials or a
+longer per-trial budget specifically on `rec-define`-shaped recursion
+patterns — not pursued further in this lane.
+
+Nothing in this item changes a pinned tier or a pin; the window itself
+already ran under the normal pinned-tier contract (quiet gate, 5
+trials, v1.4 agreement).
