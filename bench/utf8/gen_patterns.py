@@ -443,6 +443,25 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-utf8", ("utf8-encoding", "ascii-class-scope",
                          "lookaround", "true-end-anchor",
                          "unicode-properties")),
+    # [B120]/[B121read] fix (2026-10-02): three new pcrec-*-utf8 testees
+    # ([B120], lane b120reseed) landed on this set's own real roster
+    # with NO entry here -- the SAME gap class [B111] closed for
+    # bench/capability (outbox O-64/O-67), unfixed because bench/utf8
+    # carries no equivalent automated roster-coverage check. All three
+    # are `pcrec-auto-utf8` itself (an emit-side flag denial / a
+    # different phase-2 compiler, neither of which can change what
+    # REQUIRES tokens the ENGINE satisfies) -- same declaration,
+    # verbatim, by the same emit-side-denial reasoning [B101]/[B108]
+    # already state for their own byte-mode deny-flag siblings.
+    ("pcrec-auto-nohybreseed-utf8", ("utf8-encoding", "ascii-class-scope",
+                                     "lookaround", "true-end-anchor",
+                                     "unicode-properties")),
+    ("pcrec-auto-clang-utf8", ("utf8-encoding", "ascii-class-scope",
+                               "lookaround", "true-end-anchor",
+                               "unicode-properties")),
+    ("pcrec-auto-clang-nohybreseed-utf8", ("utf8-encoding", "ascii-class-scope",
+                                           "lookaround", "true-end-anchor",
+                                           "unicode-properties")),
     ("pcrec-nocaps-utf8", ("utf8-encoding", "ascii-class-scope",
                            "lookaround", "true-end-anchor",
                            "unicode-properties")),
