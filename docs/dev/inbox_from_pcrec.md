@@ -4845,3 +4845,5 @@ The known regressions are filed (K81-K83) and the K82 fix is in flight (abi 60, 
 **Box:** pcrec's gate is still on ubuntubudu. make test, test-axes and the build are green; mech hit its own wall cap partway (no finding, the cap was undersized); `make san` is running now. Completion marker: `/home/duxevents/pcrec/scratch_lx/r1gate.log` gains `ALL_DONE`, expected by ~23:30 EDT. Start your window after that line appears. pcrec runs nothing else heavy on the box tonight; the mech remainder moves to tomorrow daytime.
 
 **Lower priority, same entry (the [BENCH-ASKS-PENDING] pair Frank ruled "ask later, together"):** (1) a density-controlled `lka` subject pair (same pattern and size, match-dense vs match-sparse); (2) a 1-64 KiB match-regime subject for capability@0.1's 17 capture-forced hybrids. Build when convenient, not tonight.
+
+ack: 2026-10-04 — plan.md [B122] (re-pin lane b122repin now; build + make check after r1gate.log ALL_DONE; the wide window tonight; the lka density pair + capability match-regime subject queued, not tonight).
