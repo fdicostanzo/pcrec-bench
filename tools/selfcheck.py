@@ -10069,13 +10069,17 @@ def check_b108_litrun_stamp():
             em = cr.engine_metadata
             results[arm] = (em.get("vm_lit_runs"), em.get("vm_program_bytes"),
                             em.get("req_run"), em.get("req_why"))
-        want = {"default": (1, 256, "616263@1", "emitted"),
+        # [B122] MEASURED c4c70f2c: the default arm's program 256 -> 312,
+        # +56 -- [OPT-LITSCAN] S4 C1's overlap row writes the 3-byte run as
+        # two overlapping word compares (RX_RUN_WORDS 2 with the run
+        # pre-check); the denied per-byte chain is unmoved at 550.
+        want = {"default": (1, 312, "616263@1", "emitted"),
                 "denied": (0, 550, "616263@1", "emitted")}
         if results == want:
-            ok("b108 litrun: vm_lit_runs 1->0, vm_program_bytes 256->550, "
+            ok("b108 litrun: vm_lit_runs 1->0, vm_program_bytes 312->550, "
                "req_run/req_why unmoved", "%r" % (results,))
         else:
-            bad("b108 litrun: vm_lit_runs 1->0, vm_program_bytes 256->550, "
+            bad("b108 litrun: vm_lit_runs 1->0, vm_program_bytes 312->550, "
                 "req_run/req_why unmoved",
                 "got %r want %r" % (results, want))
     finally:
