@@ -4364,6 +4364,11 @@ class Adapter(_ad.Adapter):
             further neighbour to imply -- they are readable only against
             req_byte/req_run's own value, which this rule already covers,
             and by name in tools/selfcheck.py's by-value witnesses.
+            [B122] (abi 59, [OPT-LITSCAN] S4 C3): the iff WIDENS to
+            "none iff req_byte AND req_run are both none" -- a caseless
+            necessary run (`/mask`) can ship with req_byte "none" and
+            req_why "emitted" (MEASURED on `(?i)abc`); below abi 59 the
+            byte alone decides, as before.
 
         [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a) adds no numbered
         claim, on `vm_cls_folds`'s own precedent: `vm_lit_runs` is a count

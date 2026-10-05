@@ -319,7 +319,9 @@ ratified) and PARKED the same day as a DRIVER of pcrec's `.rxt` format:
 docs/design/rxt_needs_v1.md (50 needs, 12 productions, 41 acceptance
 checks, six roadblocks; 20 archived parse probes found a NUL silently
 truncating a pattern line) went to pcrecdev1 as outbox O-26; the restart
-procedure is in plan.md's [B42] row. Manager sessions start with the
+procedure is in plan.md's [B42] row. 2026-10-04: [B122] RE-PINNED to
+**c4c70f2c (abi 59)**, pcrec's [OPTLOOP] round 1 (inbox I-127; see the
+testees line below and testees/pcrec/CLAUDE.md). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -470,7 +472,27 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **fc719ca4, abi 50** (re-pinned from a32bc86e,
+  at a pinned commit — **c4c70f2c, abi 59** (re-pinned from fc719ca4,
+  2026-10-04, lane b122repin, inbox I-127 — pcrec's [OPTLOOP] round 1, NINE
+  abi steps: 50→53 [CLS-TREE] S2 (VM byte classes through the kit's ROWS;
+  scan-edge `kit`/`fold` bodies at --tune=-2/-1 only; the range test
+  respelled, -4 B per site), 53→54 K79+K80 (canonical-prefix selection, a
+  no-op at our `-p rx`; the abi-valued mixed-abi guard, dropped by
+  program_identity v2), 54→55 K78 (DFA dead-group fill on success paths),
+  55→56 [OPT-HYB-RESEED-FORM] A1 (`RX_VM_RESEED "anchored"`), 56→57
+  [OPT-VEDGE] (`-fno-view-edge` bit 42; the `\z` whole form takes the scan
+  edge), 57→58 [OPT-LITSCAN] S4 C1 (`-fno-run-overlap` bit 43; NEW stamp
+  `RX_RUN_WORDS`, every artifact), 58→59 S4 C3 (`-fno-req-run-fold` bit 44;
+  `RX_REQ_RUN`'s `/mask`, the adapter's req_why iff widened). `struct
+  rx_info` byte-identical, shim floor STAYS 16. Registries axes 108/38 →
+  119/41, limits 70 → 72, definitions/schema byte-identical. Size books:
+  `B122_FLAT_TERM` 224 + `B122_RANGE_SITE` -4/site + per-witness C1/C3
+  residuals, measured. `check_b122_round1_stamps` (each deny arm == the
+  fc719ca4 program by v2 identity), three DENY_FLAGS/DENY_CONTROLS, no new
+  testee; catalogue 3.14. Census (docs/dev/measurements/
+  2026-10-04-b122-census.txt): 1,380 rows, 815 identical / 462 changed /
+  103 refused-both / 0 refusal movers, every change attributed). Before
+  it, **fc719ca4, abi 50** (re-pinned from a32bc86e,
   2026-09-30, lane b118repin, inbox I-122 — NINE abi steps in one merge,
   not the one step I-122's own text assumed (our prior pin was a32bc86e,
   not I-122's stated d6cb0bb4): 41→42 K69/[PATFACTS] 3.5 (an internal
