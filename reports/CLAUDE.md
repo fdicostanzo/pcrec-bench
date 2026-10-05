@@ -3408,3 +3408,37 @@ island arm on the `clsa-*`/`clsd-*` family). `.matrix.tsv`/`.subject-
 grain.tsv` siblings were NOT rendered (not needed for this lane's own
 asks). Full derivation: `docs/dev/ledgers/2026-10-02-b120-b121-
 fc719ca4.md`.
+
+**[B122] round-1 wide reports (2026-10-05, lane b122read) ADDED eight
+file groups**, reading the window commit (16 cells at pcrec c4c70f2c,
+all measured at attempt 1):
+`2026-10-05-{capability-0.1,syntax-0.1,utf8-0.1}-...-round1-
+c4c70f2c.{tsv,md}` (3 pcrec configs each — auto/auto-nocaps/vm-caps —
+plus each set's full comparator roster),
+`2026-10-05-{loglines-0.1,bounded-0.3,email-specimen-0.2}-...-round1-
+c4c70f2c.{tsv,md}` (auto + comparator),
+`2026-10-05-altwide-0.3-...-round1-c4c70f2c.{tsv,md}` (auto/vm +
+comparator), `2026-10-05-litrun-0.1-...-round1-c4c70f2c.{tsv,md}`
+(auto/vm + libpcre2-jit, cross-pin against **a32bc86e** two re-pins
+back — every other set's cross-pin BEFORE is fc719ca4, one re-pin
+back). **Every query explicitly names the prior-pin same-(engine,
+config) testee alongside the new one** — the first render omitted
+this and every row read "no null band (no cross-pin pair in this
+report)", because R8's cross-pin detection
+(`pcrecbench/report.py:_previous_pin_testee`) searches only testees
+PRESENT IN THE QUERY, not the whole store; re-rendered with the prior
+pin added, the Δ column fires throughout. K82 ([OPT-LITSCAN] S4 C3)
+confirms closely on its two named cells (userpass ×55.66 vs the filed
+~57×, union-select −0.3861 ns/B vs the filed −0.40..−0.52) and finds a
+real two-sided regime split on its five named fold-family patterns
+(slower large-subject-throughput ×1.10-×2.29, faster short-subject-
+search on the forced-VM route ×1.36-×1.68) larger than anything the
+inbox text states by magnitude; K81 ([OPT-VEDGE]) does NOT confirm as
+a real mover on either of its two named patterns (both clear the
+predicted band but read `unchanged (within spread)` on this project's
+own R8 criterion); K83 is unscored (no clang arm this window). pcrec's
+one nonzero wrong-answer population (`syntax` `asr-k-uc`/`rec-r-uc`)
+is confirmed BYTE-IDENTICAL to its fc719ca4 reading — the pre-existing
+2026-09-07 whole-subject anchored-branch limitation, not a round-1
+regression. Full derivation: `docs/dev/ledgers/2026-10-05-b122-
+round1-wide-c4c70f2c.md`.
