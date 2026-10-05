@@ -1,27 +1,18 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# twelfth archiving of this surface (first: cd371441; second: a770139e,
-# byte-identical; third: cf0962e3, +1 row; fourth: 8d716693, fifth:
-# b1885a83, sixth: 6ef76820, all byte-identical; eighth: ce658cb7, +2
-# rows; ninth: 02902356, +6 rows / -1 row / 5 rows re-worded; tenth:
-# 751b9c6d, byte-identical; eleventh: a32bc86e, byte-identical; this
-# one: +1 row).
+# thirteenth archiving of this surface (twelfth: fc719ca4, +1 row; this
+# one: BYTE-IDENTICAL).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-fc719ca4/build/pcrec --list-schema
+#     build/pcrec-c4c70f2c/build/pcrec --list-schema
 #
-# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50 -- see list_axes.tsv's header),
-# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
-# fc719ca4 -- NINE abi steps absorbed, 41 -> 50, list_axes.tsv's header
-# states each). ONE new row, a `bundle cpfreq` grammar entry -- [FINDINGS]
-# B5's data tier (a byte/code-point frequency table an analysis bundle
-# may declare), which carries no abi event of its own. No step in the
-# range touches src/parse/rxt_schema.def otherwise.
-# 79 data rows across two sections -- +1 row against the a32bc86e archive
-# (78 rows), every other row BYTE-IDENTICAL (diffed line for line).
-# Nothing in this project's adapters or checks reads this file (declared
-# for a future `.rxt`-format check, per docs/design/rxt_needs_v1.md);
+# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59 -- see list_axes.tsv's header),
+# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
+# c4c70f2c -- NINE abi steps absorbed, 50 -> 59, list_axes.tsv's header
+# states each).
+# 79 data rows -- BYTE-IDENTICAL to the fc719ca4 archive (diffed line for
+# line). Nothing in this project's adapters or checks reads this file;
 # archived so the registry-surface census stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,

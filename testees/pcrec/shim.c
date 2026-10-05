@@ -1441,6 +1441,32 @@ const char *pb_utf_check(void) {
 #endif
 }
 
+/* [OPT-LITSCAN] S4 C1, abi 57->58 ([B122], pcrec merge 414f80d7 renumbered
+ * at a588c668). `RX_RUN_WORDS`: how many literal-run compares this artifact
+ * wrote through the run compare's WORD rows (`overlap`: an exact run of
+ * length 3, 5-7 or 9-15 as two overlapping natural-width word compares;
+ * and since abi 59, [OPT-LITSCAN] S4 C3, `words`: a MASKED -- caseless --
+ * run). UNCONDITIONAL on every artifact both engines produce (match_api.md
+ * 6.3: the run compare writes the DFA scan's run term and run pre-check as
+ * well as the VM's literal runs and island chains), `0` on an artifact that
+ * writes none and under `-fno-run-overlap` (bit 43). A COUNT, no rx_info
+ * mirror (D77), `utf_check`'s widest scope. */
+int pb_has_run_words(void) {
+#ifdef RX_RUN_WORDS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+long long pb_run_words(void) {
+#ifdef RX_RUN_WORDS
+    return (long long)RX_RUN_WORDS;
+#else
+    return -1;
+#endif
+}
+
 /* ------------------------------------------------------------- matching */
 
 /* Unanchored search from `pos`; `caps` is `pb_ncaps()` pairs.

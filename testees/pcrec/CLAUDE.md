@@ -1,6 +1,7 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides forty-three testees at the commit pinned in `configs.toml`, and
+Provides forty-six testees at the commit pinned in `configs.toml` (counted
+by `adapter.testees()` at the [B122] re-pin to c4c70f2c, which adds none), and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
@@ -634,6 +635,93 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin at c4c70f2c (abi 50 -> 59) — 2026-10-04, lane b122repin, inbox I-127
+
+pcrec's [OPTLOOP] round 1 pin. I-127 named FOUR changes; the span is NINE
+abi steps, every one read in pcrec's own source and `docs/spec/match_api.md`
+§6 change log (not only the four):
+
+1. **50 -> 51 -> 52 -> 53, [CLS-TREE] S2** (three abi events, merged as
+   1c12395f): VM byte classes chosen by the kit's class-form ROWS (at the
+   default positions only a wide class whose set is ONE interval at or below
+   U+00FF moves -- bench utf8 `cls-boundary-range`/`cls-neg-allhigh`
+   forced-VM); the scan edge's `kit`/`fold` bodies (`RX_DFA_SCAN_EDGE` gains
+   both values, `--tune=-2/-1` ONLY -- never at this project's default
+   position); and the scan edge's RANGE test respelled
+   `(unsigned)(b - lo) <= span u` (-4 B per test site,
+   `B122_RANGE_SITE`; 56 census movers).
+2. **53 -> 54, K79 + K80**: selection decided at a canonical two-byte
+   prefix (a NO-OP here: every pcrec exec in this project is `-p rx`,
+   two bytes, checked by grep); the shared ABI block's guard carries the
+   abi (`#define PCREC_RX_ABI_H 59`) behind a mixed-abi `#error` -- the
+   shim compiles ONE artifact per TU, so it never trips it, and
+   `tools/program_identity.py`'s v2 rule 2 now drops the three-line guard
+   with the block (or every v2 hash would read "changed" across any abi
+   step).
+3. **54 -> 55, K78**: a DFA artifact's dead-group fill moves from the
+   search entry to its success paths (answers unchanged; census mover:
+   email `factored` auto).
+4. **55 -> 56, [OPT-HYB-RESEED-FORM] A1**: `RX_VM_RESEED` gains
+   `anchored` (a start-anchored hybrid; no flag; the artifact equals its
+   `-fno-hyb-reseed` one byte for byte, and the deny arm's stamp ALSO
+   reads `anchored`). Census mover: capability `logparse-atomic` auto
+   (`adaptive-dense` -> `anchored`). pcrec K83 files its clang cost.
+5. **56 -> 57, [OPT-VEDGE]** (`view-edge`, bit 42, `-fno-view-edge`): a
+   counted chain touching an END (`\z`) view takes the scan edge -- the
+   whole-subject `(?:[a-z]{0,n})\z` form reads `range` where it read
+   `none`. No stamp of its own. 62 census movers. pcrec K81.
+6. **57 -> 58, [OPT-LITSCAN] S4 C1** (`run-overlap`, bit 43,
+   `-fno-run-overlap`): an exact literal run of length 3, 5-7 or 9-15 is
+   compared as two overlapping word loads instead of one memcmp, on BOTH
+   engines; NEW STAMP `RX_RUN_WORDS` (every artifact, a count) -- read by
+   `pb_run_words()`, the `run_words` pair (STAMP_SCOPE "every", 58). 291
+   census movers; the altwide island chains grow +4.5-12 KB.
+7. **58 -> 59, [OPT-LITSCAN] S4 C3** (`req-run-fold`, bit 44,
+   `-fno-req-run-fold`): the necessary run admits two-member CUBE
+   positions (a caseless letter, a one-bit hull) -- `RX_REQ_RUN` gains a
+   `/mask` suffix (`(?i)abc` -> `414243@1/dfdfdf`), `RX_REQ_BYTE` may read
+   `none` beside `RX_REQ_WHY "emitted"`, so the adapter's rule 12 (the
+   req_why iff) WIDENS at abi >= 59 to "none iff byte AND run are none"
+   -- without that edit every caseless pattern would have raised an
+   AdapterError. 30 census movers. pcrec K82 (fix in flight at abi 60).
+
+**`struct rx_info` gains NO member across the span** (MEASURED: the
+struct block of a plain `abc` artifact byte-identical to fc719ca4's) --
+**the shim floor STAYS 16**.
+
+Registries: `list_axes.tsv` 108/38 -> 119/41 (`run-overlap` 4 rows,
+`req-run-fold` 2, `view-edge` 2; `scan-body` 4 -> 6 with `fold`/`kit`;
+`hyb-reseed` 5 -> 6 with `anchored`; `lit-run`/`req-run` order-1 text
+re-worded); `list_limits.tsv` 70 -> 72 (`PCREC_MIN_REQ_RUN_BITS` 16,
+`PCREC_MAX_REQ_RUN_POS_SET` 2; `PCREC_MAX_REQ_RUN_EMIT` unit
+bytes -> positions); `list_definitions.tsv` 75 and `list_schema.tsv` 79
+BYTE-IDENTICAL.
+
+Size books (`tools/selfcheck.py`): ONE flat term on every artifact,
+`B122_FLAT_TERM = 224` (K80's guard lines 201 + the `RX_RUN_WORDS 0` line
+23), MEASURED on DFA / VM / hybrid witnesses; `B122_RANGE_SITE` (-4 per
+range site) on every scan-edge DFA; and real code where C1/C3 fire,
+MEASURED per witness (`(?i)abc` forced-VM +1106, `x[ac]y` +321,
+`x[@`]y` +704, router-prefix-order +138, github-pat +148, the altwide
+islands +4,626-12,186 with their `vm_program_bytes`). I-43's island/chain
+ratio pair re-derived: 1.3032/1.3035/1.3561 -> 1.2344/1.2375/1.2649.
+
+Controls: `check_b122_round1_stamps` (7 checks: each round-1 mechanism by
+value through the adapter, each deny arm's v2 program identity EQUAL to
+the fc719ca4 artifact -- A1's default equal to fc719ca4's
+`-fno-hyb-reseed` -- plus the K80 guard emitted and dropped by v2) and
+three `DENY_CONTROLS` rows; three new `DENY_FLAGS` entries (`noviewedge`,
+`norunoverlap`, `noreqrunfold`), NO new pinned testee.
+
+Census (`docs/dev/measurements/2026-10-04-b122-census.txt`, every set x
+auto/vm x plain/whole, 1,380 rows): 815 identical / 462 changed / 103
+refused-both / **0 refusal movers**; every `changed` row attributed (398
+restored to fc719ca4's program by the round-1 denials; the other 64 are
+[CLS-TREE] S2 range spelling 56, A1 2, K78 2, S2's wide-class interval
+4). The capability/utf8 roster gates are keyed by config NAME, so the
+re-pin moves no declaration (verified: 37 byte configs block 1/64 on
+capability as before, the `-utf8` configs 5/76 on utf8).
 
 ## Re-pin at fc719ca4 (abi 41 -> 50) — 2026-09-30, lane b118repin, inbox I-122
 

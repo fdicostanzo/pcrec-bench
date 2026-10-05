@@ -125,6 +125,12 @@
  * artifact both engines produce, a CLOSED three-token string:
  * inert/whole/off). `struct rx_info` gains no member across the whole
  * span (MEASURED at the build), so the floor stays 16.
+ * [B122] (pcrec c4c70f2c, abi 50 -> 59, NINE abi steps) adds ONE more,
+ * `info run_words` (abi 58, [OPT-LITSCAN] S4 C1 -- EVERY artifact, both
+ * engines, `utf_check`'s scope; a COUNT, `0` a value); abi 56 widens
+ * `vm_reseed`'s closed set to SIX tokens (`anchored`) and abi 52/53 widen
+ * `dfa_scan_edge`'s to six (`kit`/`fold`, size-leaning --tune positions
+ * only). `struct rx_info` gains no member across the span, floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -204,6 +210,8 @@ static int       (*pb_has_vm_reseed)(void);
 static const char *(*pb_vm_reseed)(void);
 static int       (*pb_has_utf_check)(void);
 static const char *(*pb_utf_check)(void);
+static int       (*pb_has_run_words)(void);
+static long long (*pb_run_words)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -444,6 +452,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_cls_atoms); SYM(pb_vm_cls_atoms);
     SYM(pb_has_vm_reseed); SYM(pb_vm_reseed);
     SYM(pb_has_utf_check); SYM(pb_utf_check);
+    SYM(pb_has_run_words); SYM(pb_run_words);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -740,6 +749,8 @@ int main(int argc, char **argv) {
         printf("info\tvm_reseed\t%s\n", pb_vm_reseed());
     if (pb_has_utf_check())
         printf("info\tutf_check\t%s\n", pb_utf_check());
+    if (pb_has_run_words())
+        printf("info\trun_words\t%lld\n", pb_run_words());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

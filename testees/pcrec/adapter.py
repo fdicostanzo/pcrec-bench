@@ -757,7 +757,7 @@ METADATA_DECL = {
     },
     "dfa_scan_edge": {
         "type": "enum", "scope": "pattern",
-        "values": ["none", "range", "bitmap", "mixed"],
+        "values": ["none", "range", "fold", "kit", "bitmap", "mixed"],
         "source": "<PREFIX>_DFA_SCAN_EDGE ([OPT-5] STEP 1, pcrec abi 13+), "
                   "read through pb_dfa_scan_edge(); same scope as dfa_scan "
                   "(every artifact that CONTAINS a DFA scan, VM hybrids "
@@ -775,7 +775,13 @@ METADATA_DECL = {
                        "`bitmap` (at least one edge's class is not "
                        "contiguous: a 256-byte membership read, addressed "
                        "by the byte just read, never by a previous load's "
-                       "result), `mixed` (an artifact-level composition: "
+                       "result), `fold` / `kit` (pcrec abi 52/53, "
+                       "[CLS-TREE] S2: at the size-leaning --tune=-2/-1 "
+                       "positions only, an ASCII case pair tested as "
+                       "`(byte | 0x20) == x` / a class tested by its "
+                       "static inline kit matcher where that is smaller "
+                       "than the table -- never at this project's default "
+                       "position), `mixed` (an artifact-level composition: "
                        "its machines took both forms), `none` (no machine "
                        "carries a collapsible run, an `attempt`/`empty` "
                        "scan, or -fno-scan-edge). The stamp reports the "
@@ -1677,31 +1683,37 @@ METADATA_DECL = {
     },
     "vm_reseed": {
         "type": "enum", "scope": "pattern",
-        "values": ["exact", "clamped", "adaptive-dense", "adaptive",
-                   "fixed"],
+        "values": ["exact", "clamped", "anchored", "adaptive-dense",
+                   "adaptive", "fixed"],
         "source": "<PREFIX>_VM_RESEED ([OPT-HYB-RESEED], pcrec abi 48+), "
                   "read through pb_vm_reseed() behind pb_has_vm_reseed(); "
                   "no rx_info mirror; scope checked by STAMP_SCOPE "
                   "(vm-hybrid: the SAME iff as vm_prefilter_lang, "
                   "EXCLUSIVE) and the VALUE in tools/selfcheck.py against "
-                  "the closed five-token set (exact/clamped/"
-                  "adaptive-dense/adaptive/fixed) on a hand-chosen hybrid "
+                  "the closed six-token set (exact/clamped/anchored/"
+                  "adaptive-dense/adaptive/fixed; `anchored` since pcrec "
+                  "abi 56, [OPT-HYB-RESEED-FORM] A1) on a hand-chosen hybrid "
                   "witness (`(?<=a|\\xc3\\xa9)x` under `-e utf8`'s "
                   "default selection, MEASURED `adaptive`) with "
                   "`-fno-hyb-reseed` (--list-axes `hyb-reseed`, bit 37) "
                   "as the deny control that lands on `fixed`",
-        "description": "which of five rows governs this VM HYBRID's "
+        "description": "which of six rows governs this VM HYBRID's "
                        "retry after a failed prefilter candidate: `exact` "
                        "(the prefilter answers for the pattern's own "
                        "language, nothing gained), `clamped` (an MRL "
-                       "clamp already re-seeds every failure), "
+                       "clamp already re-seeds every failure), `anchored` "
+                       "(abi 56: a start-anchored hybrid -- vm_start not "
+                       "`unanchored` -- whose attempt loop stops after "
+                       "one attempt, so no retry runs and the pre-abi-49 "
+                       "retry text is emitted; the artifact equals its "
+                       "-fno-hyb-reseed sibling byte for byte), "
                        "`adaptive-dense` / `adaptive` (a calibrated "
                        "byte-rate crossover chooses between a short step "
                        "probation and an immediate re-seed), or `fixed` "
                        "-- the DENY's OWN LANDING ROW (today's pre-abi-48 "
                        "retry byte for byte), not a sixth independent "
                        "mechanism. A CLOSED TOKEN, `vm_entry_shape`'s own "
-                       "shape: the five-row set IS the fact. "
+                       "shape: the six-row set IS the fact. "
                        "ANSWER-IDENTICAL by construction (the row governs "
                        "cost, never which candidate is accepted)",
     },
@@ -1732,6 +1744,35 @@ METADATA_DECL = {
                        "NOT called by this shim's protocol (neither flag "
                        "this project builds needs it -- the [B90] "
                        "vars/nvars judgement, restated)",
+    },
+    # [B122] (pcrec c4c70f2c, abi 57->58, [OPT-LITSCAN] S4 C1; widened at
+    # abi 59 by S4 C3): `utf_check`'s widest "every" scope, `vm_lit_runs`'
+    # COUNT shape -- the run compare is ONE emitter for both engines
+    # (src/gen/runcmp.c), so its activity count is not VM-only.
+    "run_words": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_RUN_WORDS ([OPT-LITSCAN] S4 C1, pcrec abi "
+                  "58+), read through pb_run_words() behind "
+                  "pb_has_run_words(); no rx_info mirror (D77); scope "
+                  "checked by STAMP_SCOPE (every artifact, both engines) "
+                  "and the VALUE in tools/selfcheck.py on a hand-chosen "
+                  "overlap-length literal run with `-fno-run-overlap` "
+                  "(--list-axes `run-overlap`, bit 43) as the deny "
+                  "control that reaches 0",
+        "description": "how many literal-run compares this artifact "
+                       "wrote through the run compare's WORD rows "
+                       "(match_api.md 6.3): `overlap` -- an exact run of "
+                       "length 3, 5-7 or 9-15, which a constant memcmp "
+                       "decomposes into 2-4 pieces, compared as two "
+                       "overlapping natural-width word loads -- and, "
+                       "since abi 59, `words` -- a MASKED (caseless) "
+                       "necessary run compared word-wise under its mask. "
+                       "Counted once per compare whichever engine wrote it "
+                       "(the DFA scan's run term and run pre-check, the "
+                       "VM's literal runs and island chains); every other "
+                       "run compare is a memcmp and is not counted. `0` "
+                       "where none is written and under -fno-run-overlap. "
+                       "ANSWER-IDENTICAL by construction",
     },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
@@ -1862,6 +1903,9 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              # [B118] (pcrec fc719ca4, abi 47, [CLS-TREE] S4 + [OPT-CLSPACK]):
              # two more VM-only activity counts, `vm_lit_runs`'s own shape.
              "vm_cls_kit", "vm_cls_atoms",
+             # [B122] (pcrec c4c70f2c, abi 58, [OPT-LITSCAN] S4 C1): the
+             # run compare's word-row count, BOTH engines.
+             "run_words",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
              "scan_edges", "scan_edges_match")
@@ -2006,6 +2050,13 @@ STAMP_SCOPE = {
     "vm_cls_atoms":          ("vm",       48),
     "vm_reseed":             ("vm-hybrid", 49),
     "utf_check":             ("every",    50),
+    # [B122] (pcrec c4c70f2c, abi 50 -> 59, NINE abi steps): ONE new pair.
+    # `run_words` (abi 58, [OPT-LITSCAN] S4 C1) is "every" like
+    # `utf_check` -- the run compare is one emitter for both engines, so
+    # the count is stamped unconditionally on DFA and VM artifacts alike
+    # (MEASURED at the build: present, 0, on a plain DFA witness with no
+    # overlap-length run; nonzero on both routes on an overlap-length one).
+    "run_words":             ("every",    58),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -2958,6 +3009,51 @@ DENY_FLAGS = (
      "reads `fixed`, its own landing row) -- masked, answer-identical to "
      "its sibling by construction, MEASURED `adaptive` -> `fixed` on "
      "`(?<=a|\\xc3\\xa9)x` under `-e utf8`'s default selection"),
+    # [B122] (pcrec c4c70f2c, abi 56->57, [OPT-VEDGE]; --list-axes
+    # `view-edge` bit 42). The view-tolerant half of the [OPT-5] scan
+    # edge: denied, a counted chain that touches a position view (an END
+    # `\z` view on a forward/anchored machine, or a chain whose head is
+    # another state's view target) is refused an edge again, as before
+    # abi 57. No stamp of its own -- the EXISTING `RX_DFA_SCAN_EDGE` (and
+    # the `scan_edges` covariate) is its observable consequence (the
+    # registry row's own words). Masked; answer-identical by construction.
+    # pcrec K81 files the regression it carries.
+    ("-fno-view-edge", "noviewedge",
+     "the [OPT-VEDGE] VIEW-TOLERANT SCAN EDGE denied (--list-axes "
+     "`view-edge`, bit 42): a counted chain touching a position view (the "
+     "`(?:[a-z]{0,n})\\z` whole-subject form's END view) is refused an "
+     "edge again and walks its table once per byte, so this artifact is "
+     "the pre-abi-57 DFA built by the SAME compiler -- moves the existing "
+     "RX_DFA_SCAN_EDGE / scan_edges, no stamp of its own; masked, "
+     "answer-identical to its sibling by construction"),
+    # [B122] (pcrec c4c70f2c, abi 57->58, [OPT-LITSCAN] S4 C1;
+    # --list-axes `run-overlap` bit 43). Denied, every exact literal-run
+    # compare is the constant-length memcmp again (`RX_RUN_WORDS` reads
+    # 0): pcrec's own landing note says the denied artifact is the abi-55
+    # program "apart from those two" (the abi digits and the RUN_WORDS
+    # line). Masked; answer-identical by construction.
+    ("-fno-run-overlap", "norunoverlap",
+     "the [OPT-LITSCAN] S4 C1 OVERLAPPING-WORD RUN COMPARE denied "
+     "(--list-axes `run-overlap`, bit 43): an exact literal run of length "
+     "3, 5-7 or 9-15 is compared by the constant-length memcmp again "
+     "instead of two overlapping natural-width word loads (RX_RUN_WORDS "
+     "reads 0), on both engines -- S4 C1's BEFORE at the SAME pin; "
+     "masked, answer-identical to its sibling by construction"),
+    # [B122] (pcrec c4c70f2c, abi 58->59, [OPT-LITSCAN] S4 C3;
+    # --list-axes `req-run-fold` bit 44). A FACT-LEVEL deny: the necessary
+    # run's walk takes single bytes only, as before abi 59, so no masked
+    # (caseless) position joins a run and `RX_REQ_RUN` loses its `/mask`
+    # suffix (or reads `none`) -- pcrec: "restores the abi-58 program apart
+    # from those digits". Masked; answer-identical by construction (the
+    # pre-check only answers NOMATCH where no match can be). pcrec K82
+    # files the regressions it carries (the fix is in flight at abi 60).
+    ("-fno-req-run-fold", "noreqrunfold",
+     "the [OPT-LITSCAN] S4 C3 CASELESS NECESSARY RUN denied (--list-axes "
+     "`req-run-fold`, bit 44): the necessary-run analysis admits single "
+     "exact bytes only, so no two-member cube (a caseless letter) joins "
+     "a run and RX_REQ_RUN carries no `/mask` suffix -- the abi-58 "
+     "program at the SAME pin; masked, answer-identical to its sibling "
+     "by construction"),
 )
 
 
@@ -4268,6 +4364,11 @@ class Adapter(_ad.Adapter):
             further neighbour to imply -- they are readable only against
             req_byte/req_run's own value, which this rule already covers,
             and by name in tools/selfcheck.py's by-value witnesses.
+            [B122] (abi 59, [OPT-LITSCAN] S4 C3): the iff WIDENS to
+            "none iff req_byte AND req_run are both none" -- a caseless
+            necessary run (`/mask`) can ship with req_byte "none" and
+            req_why "emitted" (MEASURED on `(?i)abc`); below abi 59 the
+            byte alone decides, as before.
 
         [B108] (pin a32bc86e, abi 41, [OPT-LITSCAN] S2a) adds no numbered
         claim, on `vm_cls_folds`'s own precedent: `vm_lit_runs` is a count
@@ -4579,8 +4680,20 @@ class Adapter(_ad.Adapter):
         #     (pcrec's own doc comment: "none" holds iff REQ_BYTE is
         #     "none", which is the pair's cross-check"; "found nothing"
         #     and "never ran" are one state under -fno-req-byte).
+        #     [B122] (pcrec abi 59, [OPT-LITSCAN] S4 C3): the iff WIDENS
+        #     -- "none" holds iff REQ_BYTE AND REQ_RUN are both "none"
+        #     (match_api.md 6.3: "since abi 59; before it the byte alone
+        #     decided, every run byte being a set member"), and REQ_WHY
+        #     "may read emitted with REQ_BYTE none" where a masked run's
+        #     scan member is a pair whose necessary set is empty. So at
+        #     abi >= 59 the `rb_val` this rule reads is the pair's JOINT
+        #     "nothing derived" state; below 59 it is the byte alone.
         rw = meta.get("req_why")
         rb_val = meta.get("req_byte")
+        _abi = meta.get("abi")
+        if (rb_val is not None and isinstance(_abi, int) and _abi >= 59
+                and meta.get("req_run") not in (None, "none")):
+            rb_val = "<run %s>" % meta.get("req_run")
         if rw is not None and rb_val is not None:
             if rw == "none" and rb_val != "none":
                 raise _ad.AdapterError(
@@ -4590,7 +4703,8 @@ class Adapter(_ad.Adapter):
                     % (rb_val,))
             if rw != "none" and rb_val == "none":
                 raise _ad.AdapterError(
-                    "pcrec artifact stamps <PREFIX>_REQ_BYTE \"none\" but "
+                    "pcrec artifact stamps <PREFIX>_REQ_BYTE \"none\" "
+                    "(and, at abi >= 59, <PREFIX>_REQ_RUN \"none\") but "
                     "<PREFIX>_REQ_WHY %r (not \"none\") -- pcrec's own "
                     "contract says the two must agree." % (rw,))
 

@@ -2,50 +2,34 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-fc719ca4/build/pcrec --list-axes
+#     build/pcrec-c4c70f2c/build/pcrec --list-axes
 #
-# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50, read off a plain `abc` witness at this build),
-# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
-# fc719ca4 -- NINE abi steps absorbed, 41 -> 50 (I-122 assumed our prior
-# pin was d6cb0bb4/abi49, one step; it was actually a32bc86e/abi41, so
-# this re-pin absorbs the whole range): [PATFACTS] 3.5/K69 (41 -> 42, the
-# call-nullability fixpoint unified -- ZERO movers on pcrec's own corpus
-# AND this bench's, per pcrec's own k69fix report; no axis, no macro),
-# [OPT-LITSCAN] F5 (42 -> 43, the VM one-compare literal run's floor
-# raised 2 -> 3 bytes -- `lit-run`'s `run` row text changed, no row
-# added), [FIND-TIE] (43 -> 44, the run-scan data tie now follows the
-# SAME rightmost rule as its NONE order -- a stamp-VALUE-only move on
-# ties, no axis, no macro; the bench witness `e@` did not move under
-# `-e byte` with no analysis, matching pcrec's own "answer-identical,
-# speed only" characterisation), [UCP] U0+U1 (44 -> 45, module `ucp`:
-# `--ucp`/`(*UCP)`, PCREC_UCP bit 34 -- a SEMANTIC axis, so no
-# `--list-axes` row of its own; opt-in, IMPLIED by `-e utf8` for the
-# MODULE only, not for UCP semantics), [UCP] U2 (45 -> 46, `ctx-node`
-# TWO NEW ROWS below: a one-character lookaround body now reads as a
-# context node on the DFA's class axis rather than the VM's sub-match,
-# no stamp macro of its own -- `RX_ENGINE` is the observable consequence,
-# MEASURED: `(?<=a)b` moves dfa (default) / vm (`-fno-ctx-node`)), K73
-# ruling (a) (46 -> 47, the default search start now skips leading
-# continuation bytes under `-e utf8` -- no flag, no row, an ANSWER move
-# at subject offset 0 only), [CLS-TREE] S4 + [OPT-CLSPACK] (47 -> 48,
-# `cls-kit`/`cls-pack` FOUR NEW ROWS below), [OPT-HYB-RESEED] (48 -> 49,
-# `hyb-reseed` FIVE NEW ROWS below), [UTF-VALID] (49 -> 50, `utf-check`
-# THREE NEW ROWS below plus `startpos-guard` gaining its `align` row;
-# `<prefix>_valid_upto` is a new ENTRY POINT, not a struct field -- see
-# shim.c). `struct rx_info` gains NO member across the whole range
-# (MEASURED: a plain `abc` byte witness's struct literal differs from
-# the a32bc86e one in exactly the abi digit, one new stamp line
-# (`RX_UTF_CHECK "inert"`), one new macro (`PCREC_ERR_UTF`) and the new
-# `rx_valid_upto` entry -- diffed field for field, zero struct offsets
-# move), so the shim floor STAYS 16 (testees/pcrec/shim.c's new
-# paragraph -- no field this range adds is read here, same judgement as
-# [B90]/[B108]).
-# 108 data rows / 38 axes / 12 columns against the a32bc86e archive (93
-# rows / 33 axes): +15 rows / +5 axes (cls-kit 2, cls-pack 2, ctx-node 2,
-# hyb-reseed 5, utf-check 3), +1 row on the pre-existing `startpos-guard`
-# axis (`align`), one row's TEXT changed (`lit-run` order-1 `run`'s "two
-# or more" -> "three or more", F5's floor), every other row
-# BYTE-IDENTICAL (diffed line for line).
+# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59, read off a plain `abc` witness at this build),
+# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
+# fc719ca4 (abi 50) -> c4c70f2c (abi 59), NINE abi steps absorbed:
+# [CLS-TREE] S2 (50 -> 51 -> 52 -> 53, three events: VM byte classes
+# chosen by the kit's class-form ROWS; the scan edge's `kit` body; the
+# scan edge's run test through the shared class emitters + the `fold`
+# body -- `kit`/`fold` at the size-leaning --tune=-2/-1 positions only),
+# K79+K80 (53 -> 54: every selection decided at a canonical two-byte
+# prefix -- a no-op at this project's `-p rx`; the shared ABI block's
+# guard carries the abi and refuses a mixed-abi TU), K78 (54 -> 55: a
+# DFA artifact's dead-group fill moves to its success paths),
+# [OPT-HYB-RESEED-FORM] A1 (55 -> 56: `hyb-reseed` row `anchored`),
+# [OPT-VEDGE] (56 -> 57: `view-edge`, bit 42, `-fno-view-edge`),
+# [OPT-LITSCAN] S4 C1 (57 -> 58: `run-overlap`, bit 43,
+# `-fno-run-overlap`, the new RX_RUN_WORDS stamp) and S4 C3 (58 -> 59:
+# `req-run-fold`, bit 44, `-fno-req-run-fold`, RX_REQ_RUN's `/mask`).
+# 119 data rows / 41 axes (was 108 rows / 38 axes at fc719ca4): +11 rows /
+# +3 axes -- `run-overlap` 4 (words/overlap deny-able, bytes/memcmp
+# fallbacks), `req-run-fold` 2 (cube/exact), `view-edge` 2
+# (view-tolerant/view-free); `scan-body` 4 -> 6 rows (`fold` and `kit`
+# inserted at orders 2/3, carrying `-fno-cls-fold`/`-fno-cls-kit` as
+# their denies; every row's text re-worded to the class-form table);
+# `hyb-reseed` 5 -> 6 rows (`anchored` inserted at order 3); `lit-run`'s
+# and `req-run`'s order-1 text re-worded (the run compare's rows; the
+# information-ranked run). Every other row BYTE-IDENTICAL (diffed line
+# for line).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -100,10 +84,12 @@ match	1	unwrapped	list	RX_DFA_MATCH	unwrapped	PCREC_NO_ANCHORED_DFA	17			-fno-an
 match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, the empty engine, an anchored machine over a cap, or the deny flag
 scan-edge	1	scan-edge	list			PCREC_NO_SCAN_EDGE	21			-fno-scan-edge	per STATE: src/opt/scanedge.c found a maximal run of states differing only in how many bytes of ONE class have been counted, rooted here, and DELETED the run's interior from the table -- so this state's edge is mandatory, not an accelerator ([OPT-5])
 scan-edge	2	table-walk	list								always (fallback) -- this state counts nothing, or the axis is denied and the pass left every state where it was
-scan-body	1	range	list	RX_DFA_SCAN_EDGE	range						the edge's class is a CONTIGUOUS byte set: subtract-and-compare against two immediates, no memory touched but the subject ([OPT-5])
-scan-body	2	bitmap	list	RX_DFA_SCAN_EDGE	bitmap						always (fallback) -- any other byte set, tested by a 256-byte membership table. The load is VALUE-addressed, not result-addressed, so the cursor is still the only loop-carried register. A per-ISA SIMD run-extension form would sit ABOVE these two ([OPT-SIMD]; ISA-neutral by ruling, scalar forms always the fallback)
-scan-body	3	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no scan edge, so there is no body to name: no machine has a collapsible counted run, or the engine is ENG_ATTEMPT (label dispatch, no table walk to shorten) or provably empty -- and it is also what every artifact stamps under -fno-scan-edge, which denies the scan-edge axis above rather than this one
-scan-body	4	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table) -- a per-artifact composition, never a single edge's own selection
+scan-body	1	range	list	RX_DFA_SCAN_EDGE	range						the class-form table (src/gen/clskit.c ROWS, site scan) answers byte-range: the edge's class is ONE interval, tested inline against immediates (the same spelling a VM class read uses), no memory touched but the subject ([OPT-5]; D139)
+scan-body	2	fold	list	RX_DFA_SCAN_EDGE	fold	PCREC_NO_CLS_FOLD	24			-fno-cls-fold	size-leaning --tune positions only (-2/-1): the class-form table answers byte-fold, an ASCII case pair {X, x}, tested inline as (byte | 0x20) == x; at the default positions the scan edge's pair keeps its table until D138 Q1's measurement rules the default fold for both sites; -fno-cls-fold denies it ([CLS-TREE] S2 review fixes, D139)
+scan-body	3	kit	list	RX_DFA_SCAN_EDGE	kit	PCREC_NO_CLS_KIT	36			-fno-cls-kit	size-leaning --tune positions only (-2/-1): the class-form table answers byte-kit, i.e. the class's kit matcher written at the edge's two test sites is smaller than its 256-byte table, tested by a static inline kit matcher <prefix>_<machine>_scankit<N>; -fno-cls-kit denies it ([CLS-TREE] S2, D131 item 5, D139 item 1)
+scan-body	4	bitmap	list	RX_DFA_SCAN_EDGE	bitmap						always (fallback) -- the class-form table answers byte-table and the table selection (TAB_ROWS, site scan) picks the scan-table row: one 256-byte membership table per edge. The load is VALUE-addressed, not result-addressed, so the cursor is still the only loop-carried register. A per-ISA SIMD run-extension form would be a form of the edge's LOOP ([OPT-SIMD]; ISA-neutral by ruling, scalar forms always the fallback)
+scan-body	5	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no scan edge, so there is no body to name: no machine has a collapsible counted run, or the engine is ENG_ATTEMPT (label dispatch, no table walk to shorten) or provably empty -- and it is also what every artifact stamps under -fno-scan-edge, which denies the scan-edge axis above rather than this one
+scan-body	6	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table, calls a kit matcher or compares a fold pair) -- a per-artifact composition, never a single edge's own selection
 search-start	1	pinned	list	RX_DFA_START	pinned	PCREC_NO_START_PINNED	22			-fno-start-pinned	ENG_UNANCH, a non-empty engine, and the forward machine's start state accepts under the PLAIN view with an accept that is invariant in position and in class context -- and, where mechanism 4 seeds, every live seed state does too. The match then provably begins at search_from and no reverse machine is emitted ([OPT-5] STEP 2)
 search-start	2	reverse-pass	list	RX_DFA_START	reverse-pass						always (fallback) -- the backwards scan over the artifact's own reverse machine recovers the match start
 possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
@@ -137,8 +123,12 @@ cls-kit	1	kit	predicate	RX_VM_CLS_KIT		PCREC_NO_CLS_KIT	36			-fno-cls-kit	per wi
 cls-kit	2	denied	predicate	RX_VM_CLS_KIT							always (fallback) — the class's byte alternation, and every one-member class (a literal) keeps its bytes
 cls-pack	1	atom	predicate	RX_VM_CLS_ATOMS		PCREC_NO_CLS_PACK	38			-fno-cls-pack	per VM artifact: at least 11 of its byte classes read a table (no singleton/range/fold compare covers them) and their byte partition has at most 64 atoms, so they share ONE 256-byte byte->atom table with a 64-bit mask per class instead of a 32-byte bitmap each (src/gen/clskit.c TAB_ROWS); -fno-cls-kit denies this row too
 cls-pack	2	denied	predicate	RX_VM_CLS_ATOMS							always (fallback) — a 32-byte bitmap per table-read class
-lit-run	1	run	predicate	RX_VM_LIT_RUNS		PCREC_NO_LIT_RUN	33			-fno-lit-run	per VM literal run: three or more consecutive one-byte literals on one concatenation (pcrec_lit_run; a two-byte pair keeps its own byte chain), or an island's single-child trie chain, compared as one bounds check and one constant-length memcmp
+lit-run	1	run	predicate	RX_VM_LIT_RUNS		PCREC_NO_LIT_RUN	33			-fno-lit-run	per VM literal run: three or more consecutive one-byte literals on one concatenation (pcrec_lit_run; a two-byte pair keeps its own byte chain), or an island's single-child trie chain, compared as one bounds check and one run compare (run-overlap's rows)
 lit-run	2	denied	predicate	RX_VM_LIT_RUNS							always (fallback) — one per-byte compare per literal
+run-overlap	1	words	predicate	RX_RUN_WORDS		PCREC_NO_RUN_OVERLAP	43			-fno-run-overlap	per MASKED literal-run compare (some position a two-member cube, e.g. a caseless letter) of length 2 or more: the natural-width words of the run, the last at offset L - W, each loaded by memcpy, ANDed with the same load of the mask's string literal and compared against the same load of T's, joined by && in offset order; an all-0xFF word compares unmasked
+run-overlap	2	overlap	predicate	RX_RUN_WORDS		PCREC_NO_RUN_OVERLAP	43			-fno-run-overlap	per exact literal-run compare of length 3, 5-7 or 9-15 (where gcc's constant memcmp decomposes into 2-4 non-overlapping pieces): two overlapping natural-width words, the last at offset L - W, each loaded by memcpy and compared against the same load of a string literal, joined by && in offset order
+run-overlap	3	bytes	predicate	RX_RUN_WORDS							per masked compare (fallback): one (byte & K) == T test per position, joined by &&
+run-overlap	4	memcmp	predicate	RX_RUN_WORDS							per exact compare (fallback): one constant-length !memcmp, which gcc lowers to one load at L in {1, 2, 4, 8} and to a vector compare at L >= 16
 vm-anchor-bound	1	anchored	predicate	RX_VM_START	anchored	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative of the whole pattern begins with ^ (outside multiline) or \A, so only offset 0 can start a match and the attempt loop stops after one pass
 vm-anchor-bound	2	gstart	predicate	RX_VM_START	gstart	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative begins with \G, so only the caller's own search_from can start a match and the attempt loop stops after one pass
 vm-anchor-bound	3	unanchored	predicate	RX_VM_START	unanchored						always (fallback) — nothing was proved about where a match begins, or the deny flag; the loop runs to subject_length as it always has
@@ -146,8 +136,10 @@ end-window	1	window	predicate	RX_END_WINDOW		PCREC_NO_END_WINDOW	29			-fno-end-w
 end-window	2	none	predicate	RX_END_WINDOW	none						always (fallback) — the pattern is not end-anchored, its width is unbounded, it contains \G (which reads the parameter the clamp would move), the encoding has non-boundary positions, or the deny flag
 req-byte	1	byte	predicate	RX_REQ_BYTE		PCREC_NO_REQ_BYTE	30			-fno-req-byte	per artifact, both engines: every match of the pattern must contain some literal byte (a bottom-up AST walk — concatenation unions, alternation intersects, a min-0 quantifier contributes nothing, a one-byte class is a singleton, a backreference/call/assertion is empty), so ONE memchr over [search_from, subject_length) answers NOMATCH for the whole call; the stamp carries the byte, the RIGHTMOST member like PCRE2's own LASTCODEUNIT
 req-byte	2	none	predicate	RX_REQ_BYTE	none						always (fallback) — no byte is necessary on every path (an alternation with no common literal, a caselessly folded literal, a nullable quantifier), or the deny flag
-req-run	1	run	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN	31			-fno-req-run	per artifact, both engines: every match of the pattern must contain a RUN of two or more contiguous literal bytes (the same bottom-up walk as req-byte with a second accumulator — a concatenation joins the left factor's guaranteed suffix to the right factor's guaranteed prefix, an alternation keeps only its branches' common prefix and suffix, nothing is joined across a repeat's iterations), so one memchr for the run's rarest member plus one constant-length memcmp per hit answers NOMATCH for the whole call where the byte alone could not; the stamp carries the run's bytes in lowercase hex and the scanned member's index
+req-run	1	run	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN	31			-fno-req-run	per artifact, both engines: every match of the pattern must contain a RUN of contiguous positions carrying at least 16 bits of information, each position a literal byte or (req-run-fold) a two-member cube such as a caseless letter (the same bottom-up walk as req-byte with a second accumulator — a concatenation joins the left factor's guaranteed suffix to the right factor's guaranteed prefix, an alternation keeps only its branches' common prefix and suffix, nothing is joined across a repeat's iterations), so one memchr for the run's rarest member plus one run compare per hit answers NOMATCH for the whole call where the byte alone could not; the stamp carries the run's bytes in lowercase hex and the scanned member's index
 req-run	2	none	predicate	RX_REQ_RUN	none						always (fallback) — no run of two or more bytes is necessary (a single literal between non-literals, a caselessly folded literal, an alternation with no common affix), or either this axis's deny flag or -fno-req-byte's
+req-run-fold	1	cube	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN_FOLD	44			-fno-req-run-fold	per necessary-run position, both engines: a class that is one two-member cube (a caseless letter [Ss], [jk], an alternation's one-bit hull fr[ae]) joins the run as a masked position; runs are ranked by information (popcount of each position's mask, 8 per byte, 7 per pair), an alternation's common head and tail are the cube hull of its branches, and the pre-check compares a masked run masked and scans a two-member position as two memchr streams; the stamp's run carries a /mask suffix
+req-run-fold	2	exact	predicate	RX_REQ_RUN							always (fallback) — single bytes only, the pre-row walk, ranked by length; the deny flag
 startpos-guard	1	align	predicate	RX_STARTPOS_GUARD	align			PCREC_FORCE_STARTPOS_ALIGN	40	-fstartpos-guard=align	per artifact, -fstartpos-guard=align: this encoding has positions that are not character boundaries, so a mid-character caller startpos other than 0 is advanced to the next character start ONCE, at entry (a search runs from there; an anchored match-here entry answers -1). For a misaligned pointer into valid text (D133); -futf-check then validates from the aligned position
 startpos-guard	2	guarded	predicate	RX_STARTPOS_GUARD	guarded	PCREC_NO_STARTPOS_GUARD	25			-fno-startpos-guard	per artifact: this encoding has positions that are not character boundaries (PcrecEnc.start_cls), so the entries refuse a mid-character caller startpos with PCREC_ERR_STARTPOS — libpcre2's own PCRE2_UTF behaviour (BADUTFOFFSET)
 startpos-guard	3	permissive	predicate	RX_STARTPOS_GUARD	permissive						always (fallback) — the artifact answers at whatever position the caller named (utf8_design.md §2.6.1.1's ruled semantics), and on a byte artifact this row is the ONLY one reachable: every position is a boundary there and no setting emits a guard
@@ -162,13 +154,16 @@ ctx-node	1	ctx-node	predicate			PCREC_NO_CTX_NODE	35			-fno-ctx-node	the body is
 ctx-node	2	lookaround	predicate								always (fallback) — today's A_LOOK lowering: a VM sub-match
 hyb-reseed	1	exact	predicate	RX_VM_RESEED	exact						the prefilter answers for the pattern's own language (no cut, no lookaround, no count collapse — Vm.mrl_win), so nothing is gained: today's retry, the clamp recompute where an MRL clamp exists, else a step
 hyb-reseed	2	clamped	predicate	RX_VM_RESEED	clamped						an MRL clamp exists, so today's retry already re-seeds after every failed attempt: kept, because a step block would add attempts it skips (an answer could become a give-up) for a gain measured mixed
-hyb-reseed	3	adaptive-dense	predicate	RX_VM_RESEED	adaptive-dense	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	the compile's byte-rate prior (the built-in default under -e byte, cardinality where the prior is NONE) puts the candidate scan's byte set at a mean gap under the class's calibrated crossover: adaptive, starting inside an armed step block
-hyb-reseed	4	adaptive	predicate	RX_VM_RESEED	adaptive	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	always, on an over-approximating prefilter: adaptive, starting with a short step probation, then re-seed mode
-hyb-reseed	5	fixed	predicate	RX_VM_RESEED	fixed						always (fallback, the deny's landing row): today's retry
+hyb-reseed	3	anchored	predicate	RX_VM_RESEED	anchored						every match begins at one position (`^`, `\A`, `\G` — the start_anchor fact), so the attempt loop stops after its first attempt and no retry runs: today's retry, whose text is never reached
+hyb-reseed	4	adaptive-dense	predicate	RX_VM_RESEED	adaptive-dense	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	the compile's byte-rate prior (the built-in default under -e byte, cardinality where the prior is NONE) puts the candidate scan's byte set at a mean gap under the class's calibrated crossover: adaptive, starting inside an armed step block
+hyb-reseed	5	adaptive	predicate	RX_VM_RESEED	adaptive	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	always, on an over-approximating prefilter: adaptive, starting with a short step probation, then re-seed mode
+hyb-reseed	6	fixed	predicate	RX_VM_RESEED	fixed						always (fallback, the deny's landing row): today's retry
 splice-calls	1	spliced	predicate	RX_VM_CALL_SPLICED		PCREC_NO_SPLICE_CALLS	13			-fno-splice-calls	the callee is not in a call-graph cycle and its expansion fits the splice size budget (PCREC_MAX_SPLICE_NODES/_TOTAL)
 splice-calls	2	linked	predicate	RX_VM_CALL_LINKED							always (fallback) — ENGINE-SELECTING: a linked call is structurally VM-only
 tiered-entry	1	tiered	predicate	RX_FAST_FRAMES		PCREC_NO_TIERED_ENTRY	14			-fno-tiered-entry	the stamped default resume/trail storage does not fit one 4KB page (docs/spec/match_api.md §10.9)
 tiered-entry	2	single-tier	predicate	RX_FAST_FRAMES							always (fallback) — FAST_FRAMES==RESUME_FRAMES, FAST_TRAIL==TRAIL_FRAMES
+view-edge	1	view-tolerant	predicate	RX_DFA_SCAN_EDGE		PCREC_NO_VIEW_EDGE	42			-fno-view-edge	per CHAIN: on a machine whose walk ends at the subject's end, a member may carry an END (\z) view the scan's pos == n exit evaluates; and on any machine a chain whose head is another state's view target starts one link later instead of being refused
+view-edge	2	view-free	predicate	RX_DFA_SCAN_EDGE							always (fallback) -- a chain touching a position view is refused, as before [OPT-VEDGE]; changes no answer
 engine	1	vm	predicate	RX_ENGINE	vm					--engine=vm	auto: any construct select_engine.c decides is VM-only (captures, possessive quantifiers, \K, backreferences, calls, ...); forced by --engine=vm (also disables the DFA hybrid prefilter, R21 E-6)
 engine	2	dfa	predicate	RX_ENGINE	dfa					--engine=dfa	auto: always, when no construct forces the VM; --engine=dfa REFUSES a pattern needing VM-only machinery (do-or-die)
 engine-route	1	forced	predicate	RX_ENGINE_SEL	forced					--engine=vm / --engine=dfa	the caller named the engine, so auto selected nothing

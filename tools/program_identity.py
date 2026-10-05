@@ -177,6 +177,12 @@ def sha(text):
 #      `rx_var` / `rx_ctx.vars` additions did to v1 (every artifact
 #      6ef76820 -> ce658cb7 differs in this block and nowhere else). Like
 #      the shim, it is a PIN covariate and lands inside the null band.
+#      ([B122], pcrec abi 54, K80) the block is now PRECEDED by a three-line
+#      mixed-abi guard, `#if defined(PCREC_RX_ABI_H) && (PCREC_RX_ABI_H +
+#      0) != <abi>` / `#error "..."` / `#endif`, carrying the abi as a
+#      literal; it is dropped with the block on the same reasoning (pin-
+#      constant, identical in every artifact of a pin), or every v2 hash
+#      would read "changed" across any abi step.
 #   3. The `rx_info` reflection initializer (`const struct rx_info <name> =
 #      { ... };`) is dropped IFF no other line names `<name>` except its
 #      `extern` declaration: the emitted program never reads it (v1 rule 2,
@@ -223,6 +229,8 @@ _C_TOKENS = re.compile(
     r"|[ \t\f\v]+",                 # a blank run: one space
     re.S)
 _ABI_OPEN = re.compile(r"^#\s*ifndef\s+PCREC_RX_ABI_H\b")
+_ABI_K80_GUARD = re.compile(
+    r"^#\s*if defined\(PCREC_RX_ABI_H\) && \(PCREC_RX_ABI_H \+ 0\) != \d+$")
 _PP_IF = re.compile(r"^#\s*if(n?def)?\b")
 _PP_ENDIF = re.compile(r"^#\s*endif\b")
 _INFO_OPEN = re.compile(r"^const struct rx_info ([A-Za-z_][A-Za-z0-9_]*) = \{$")
@@ -256,6 +264,18 @@ def normalize_one(text):
     lines = [ln for ln in lines if ln]
     # rule 2: the ABI declaration block (nesting-aware)
     out, depth = [], 0
+    # rule 2's K80 half ([B122]): the three-line mixed-abi guard
+    k80 = []
+    i = 0
+    while i < len(lines):
+        if (_ABI_K80_GUARD.match(lines[i]) and i + 2 < len(lines)
+                and lines[i + 1].startswith("#error ")
+                and _PP_ENDIF.match(lines[i + 2])):
+            i += 3
+            continue
+        k80.append(lines[i])
+        i += 1
+    lines = k80
     for ln in lines:
         if depth:
             if _PP_IF.match(ln):
