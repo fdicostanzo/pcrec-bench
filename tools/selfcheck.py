@@ -6668,6 +6668,24 @@ DENY_CONTROLS = (
       "vm_program_bytes": (256, 550),
       "vm_frameless": (1, 1),
       "vm_entry_shape": ("forward", "forward")}, "deny"),
+    # [B122] (pin c4c70f2c, abi 57-59, pcrec's [OPTLOOP] round 1): the
+    # three new deny flags, each read off its own axis's `-f` row in the
+    # registry (none carries a stamp_value: RX_RUN_WORDS is a COUNT, and
+    # `view-edge`/`req-run-fold` move EXISTING stamps -- the "no
+    # stamp_value" note path). MEASURED at the build; the same witnesses
+    # carry check_b122_round1_stamps' program-identity proof that each
+    # denied artifact IS the fc719ca4 one.
+    ("run_words: the overlapping-word run compare denied",
+     "run-overlap", ("literal", b"abcde"), "--engine=vm",
+     {"run_words": (2, 0), "vm_program_bytes": (316, 258),
+      "vm_lit_runs": (1, 1)}, "deny"),
+    ("req_run's /mask: the caseless necessary run denied",
+     "req-run-fold", ("literal", b"(?i)abc"), "",
+     {"req_run": ("414243@1/dfdfdf", "none"), "req_why": ("emitted", "none"),
+      "run_words": (1, 0)}, "deny"),
+    ("dfa_scan_edge on the END view: the view-tolerant edge denied",
+     "view-edge", ("literal", b"(?:[a-z]{0,64})\\z"), "",
+     {"dfa_scan_edge": ("range", "none")}, "deny"),
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
      {"dfa_prefilter": ("offset-set-bounded", "byte-class-bounded"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
@@ -10445,6 +10463,147 @@ def check_b118_findtie_k69_noop_on_bench():
             bad("b118 findtie/k69: req_byte/req_run unmoved on all three "
                 "byte-encoding witnesses (no --analysis)",
                 "moved: %s; %r" % (moved, results))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+#: [B122] (pcrec c4c70f2c, abi 50 -> 59): the round-1 witnesses, each a
+#: (label, extra flags, pattern, {pair: value} at the pin, the deny flag,
+#: {pair: value} under it). Every value MEASURED at the c4c70f2c build
+#: (2026-10-04, lane b122repin) by a direct emit before being typed.
+B122_ROUND1_CASES = (
+    # [OPT-LITSCAN] S4 C1 (abi 58): the overlap row on a 3-byte run on the
+    # DFA route (the run-pinned prefilter's run term), and on a 5-byte VM
+    # literal run (the VM compare + the run pre-check: two word compares,
+    # the VM program 258 -> 316 B).
+    ("run-overlap: DFA run term", "", b"abc",
+     {"run_words": 1, "req_run": "616263@1", "dfa_prefilter": "run-pinned"},
+     "-fno-run-overlap", {"run_words": 0}),
+    ("run-overlap: VM literal run", "--engine=vm", b"abcde",
+     {"run_words": 2, "vm_lit_runs": 1, "vm_program_bytes": 316},
+     "-fno-run-overlap", {"run_words": 0, "vm_program_bytes": 258}),
+    # [OPT-LITSCAN] S4 C3 (abi 59): the caseless necessary run -- `/mask`,
+    # REQ_BYTE "none" beside REQ_WHY "emitted" (the adapter's rule 12,
+    # widened at abi 59), and the masked compare is a `words` row.
+    ("req-run-fold: caseless run, DFA", "", b"(?i)abc",
+     {"req_run": "414243@1/dfdfdf", "req_byte": "none", "req_why": "emitted",
+      "run_words": 1},
+     "-fno-req-run-fold", {"req_run": "none", "req_why": "none",
+                           "run_words": 0}),
+    ("req-run-fold: caseless run, VM", "--engine=vm", b"(?i)abc",
+     {"req_run": "414243@1/dfdfdf", "req_byte": "none", "req_why": "emitted",
+      "vm_cls_folds": 3},
+     "-fno-req-run-fold", {"req_run": "none", "req_why": "none"}),
+    # [OPT-HYB-RESEED-FORM] A1 (abi 56, no flag of its own): a
+    # start-anchored hybrid reads `anchored` (it read `adaptive-dense` at
+    # fc719ca4), and its artifact IS the -fno-hyb-reseed one -- whose
+    # stamp ALSO reads `anchored` (the row is undeniable and precedes the
+    # deny-able ones).
+    ("hyb-reseed: anchored row", "", b"^(?>ab*)c",
+     {"vm_reseed": "anchored", "vm_start": "anchored", "prefilter": "hybrid"},
+     "-fno-hyb-reseed", {"vm_reseed": "anchored"}),
+    # [OPT-VEDGE] (abi 57): the whole-subject `(?:[a-z]{0,n})\z` form
+    # takes the scan edge through its END view.
+    ("view-edge: END-view chain", "", b"(?:[a-z]{0,64})\\z",
+     {"dfa_scan_edge": "range"},
+     "-fno-view-edge", {"dfa_scan_edge": "none"}),
+)
+
+
+def check_b122_round1_stamps():
+    """[B122] (pcrec c4c70f2c, abi 50 -> 59; inbox I-127, pcrec's [OPTLOOP]
+    round 1). For every row of B122_ROUND1_CASES: the default artifact's
+    pairs BY VALUE through the adapter (so the shim's new `run_words`
+    reader and the widened enum sets are exercised end to end), the deny
+    arm's pairs by value, and -- the strongest control available -- the
+    deny arm's v2 PROGRAM IDENTITY (`tools/program_identity.py`) EQUAL to
+    the fc719ca4 artifact of the same pattern and flags (pcrec's own
+    landing claim for each of the three flags: "restores the abi-N
+    program apart from the abi digits"), while the default artifact's
+    identity DIFFERS from it (the mechanism moved the program). For A1,
+    which ships with no flag, the default artifact's identity equals the
+    fc719ca4 `-fno-hyb-reseed` artifact's. Also asserts K80's guard is
+    emitted (`#define PCREC_RX_ABI_H 59` + the mixed-abi `#error`) and
+    that the v2 normalization drops it."""
+    print("-- [B122]/round 1: run_words, the /mask run, the anchored reseed row, the view edge; each deny restores fc719ca4's program --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b122 round-1 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "fc719ca4"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b122 round-1 stamps", "no build for fc719ca4 "
+            "(pin.sh fc719ca4 first; --path printed %r)" % old_bin)
+        return
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import program_identity as _pi
+    new_bin = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b122r1-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+
+    def ident(binary, flags, pat, tag):
+        t = _pi.emit(binary, "--pattern", ["--features", "all"] + flags,
+                     pat, os.path.join(tmp, tag))
+        return (_pi.program_sha256_of_text(t) if t else None), t
+
+    try:
+        os.environ["PCREC_BIN"] = new_bin
+        for i, (label, extra, pat, want, deny, want_deny) in enumerate(B122_ROUND1_CASES):
+            flags = extra.split()
+            d_cr = _b118_compile(adapter, tmp, "b122-%d-d" % i,
+                                 " ".join(["--features", "all"] + flags), pat)
+            n_cr = _b118_compile(adapter, tmp, "b122-%d-n" % i,
+                                 " ".join(["--features", "all"] + flags + [deny]),
+                                 pat)
+            if d_cr.outcome != "compiled" or n_cr.outcome != "compiled":
+                bad("b122 %s" % label, "default=%s denied=%s"
+                    % (d_cr.outcome, n_cr.outcome))
+                continue
+            d_em, n_em = d_cr.engine_metadata, n_cr.engine_metadata
+            miss = ["default %s=%r (want %r)" % (k, d_em.get(k), v)
+                    for k, v in want.items() if d_em.get(k) != v]
+            miss += ["denied %s=%r (want %r)" % (k, n_em.get(k), v)
+                     for k, v in want_deny.items() if n_em.get(k) != v]
+            h_new, _t = ident(new_bin, flags, pat, "n%d" % i)
+            h_deny, _t = ident(new_bin, flags + [deny], pat, "d%d" % i)
+            if label.startswith("hyb-reseed"):
+                h_old, _t = ident(old_bin, flags + [deny], pat, "o%d" % i)
+                id_ok = h_new is not None and h_new == h_old == h_deny
+                id_why = "default == denied == fc719ca4's -fno-hyb-reseed"
+            else:
+                h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
+                id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
+                id_why = "denied == fc719ca4, default != fc719ca4"
+            if not id_ok:
+                miss.append("identity (%s) new=%s deny=%s old=%s"
+                            % (id_why, (h_new or "-")[:12],
+                               (h_deny or "-")[:12], (h_old or "-")[:12]))
+            name = "b122 %s: by value, %s restores the old program" % (label, deny)
+            if miss:
+                bad(name, "; ".join(miss))
+            else:
+                ok(name, "%s; %s" % (", ".join("%s=%r" % kv for kv in want.items()),
+                                     id_why))
+        # K80 (abi 54): the guard is emitted, and v2 drops it
+        _h, text = ident(new_bin, [], b"abc", "k80")
+        text = text or ""
+        guard = ("#if defined(PCREC_RX_ABI_H) && (PCREC_RX_ABI_H + 0) != 59" in text
+                 and "#define PCREC_RX_ABI_H 59" in text)
+        norm = _pi.normalize_one(text)
+        name = ("b122 K80: the abi-valued guard + mixed-abi #error emitted, "
+                "dropped by v2 normalization")
+        if guard and "PCREC_RX_ABI_H" not in norm and "#error" not in norm:
+            ok(name, "abi 59")
+        else:
+            bad(name, "guard=%s left-in-v2=%s" % (guard, "PCREC_RX_ABI_H" in norm))
     finally:
         for k, v in saved.items():
             if v is None:
@@ -14798,6 +14957,7 @@ def main():
     check_b118_clstree_stamps()
     check_b118_hybreseed_stamp()
     check_b118_findtie_k69_noop_on_bench()
+    check_b122_round1_stamps()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
