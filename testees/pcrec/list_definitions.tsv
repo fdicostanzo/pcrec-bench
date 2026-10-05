@@ -1,28 +1,16 @@
 # testees/pcrec/list_definitions.tsv -- pcrec's DEFINITIONS TABLE at the pin
 # (the FIFTH registry surface, [DD-11] / pcrec D85, docs/spec/registry.md
-# 9), archived VERBATIM under a source header. Everything below this header
-# is the unmodified output of:
+# 9), archived VERBATIM under a source header.
+# Everything below this header is the unmodified output of:
 #
-#     build/pcrec-fc719ca4/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-c4c70f2c/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit fc719ca4234478ee003f26d2142ad5179d4b27f1 (rx_info.abi 50 -- see list_axes.tsv's header),
-# archived 2026-09-30 by lane b118repin ([B118], inbox I-122: pcrec main
-# fc719ca4 -- NINE abi steps absorbed, 41 -> 50, list_axes.tsv's header
-# states each). Only [UCP] U0+U1 (44 -> 45) touches this table: every
-# `DEF_UCP` producer named "NO PRODUCER YET" at a32bc86e now has one
-# (`DEF_UCP_D`/`_S`/`_W`/`_P`/`_T`), so `\d \D \s \S \w \W \b \B` and the
-# POSIX classes each gain an order-1 UCP row ahead of their pre-existing
-# DEF_ALWAYS byte row (active only under `(*UCP)`/`--ucp`), and `\h \H
-# \v \V` gain an order-1 DEF_ENCODING_UTF8 row (the wider Unicode
-# whitespace/vertical-space set, active under `-e utf8` alone, no UCP
-# needed -- K72).
-# 75 data rows / 7 columns: kind, selector, syntax, order, predicate,
-# definition, applies -- +25 rows against the a32bc86e archive (50 rows):
-# esc \d\D\s\S\w\W (+1 row each, 6), esc \h\H\v\V (+1 row each, 4), esc
-# \b\B (+1 row each, 2), class-bracket's POSIX-class group (14 -> 27,
-# +13 -- one UCP row per pair except [:ascii:], which has none). Every
-# other row BYTE-IDENTICAL (diffed line for line); no OTHER step in the
-# range touches definitions.c or registry.c.
+# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59 -- see list_axes.tsv's header),
+# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
+# c4c70f2c -- NINE abi steps absorbed, 50 -> 59, list_axes.tsv's header
+# states each).
+# 75 data rows / 7 columns -- BYTE-IDENTICAL to the fc719ca4 archive
+# (diffed line for line): no step in the range touches definitions.c.
 esc	d	\d	1	DEF_UCP_D	\p{Nd}	active
 esc	d	\d	2	DEF_ALWAYS	[0-9]	active
 esc	D	\D	1	DEF_UCP_D	\P{Nd}	active
