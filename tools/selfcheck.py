@@ -3316,6 +3316,25 @@ B118_UTF_VALID_DFA_TERM = 381        # every artifact, DFA route
 B118_UTF_VALID_VM_TERM = 431         # every VM artifact (hybrid or not)
 B118_UTF_VALID_VM_HYBRID_TERM = 460  # every VM HYBRID specifically
 
+# [B122] (pcrec c4c70f2c, abi 50 -> 59): ONE flat term on EVERY artifact,
+# both engines, MEASURED on a DFA (`[a-z]+@[a-z]+`), a non-hybrid VM
+# (`a(b|c)+d` / `(a+)+b` under `--engine=vm`) and a VM hybrid (`a(b|c)+d`
+# under auto) against fc719ca4, the `.c` + `.h` diffed line by line:
+#   +201  K80 (abi 54): the shared ABI block's guard gains the mixed-abi
+#         `#if defined(PCREC_RX_ABI_H) && (PCREC_RX_ABI_H + 0) != 59` /
+#         `#error "..."` / `#endif` lines and the guard's value (` 59`);
+#   +23   [OPT-LITSCAN] S4 C1 (abi 58): `#define RX_RUN_WORDS 0`.
+# = 224 exactly on all three VM witnesses. Two things ride on top where
+# they fire, never folded into this constant:
+#   B122_RANGE_SITE (-4 per scan-edge RANGE test site, [CLS-TREE] S2 abi
+#     53's spelling `(unsigned)(b - lo) <= span u` where it read
+#     `(unsigned char)(b - lo) <= span`; an edge has two sites, the `if`
+#     and its `while`) -- `[a-z]+@[a-z]+` reads +200 = 224 - 6 * 4;
+#   real code where S4 C1's overlap row / C3's masked run fire (RX_RUN_WORDS
+#     > 0) -- MEASURED per witness below, never derived.
+B122_FLAT_TERM = 224
+B122_RANGE_SITE = 4
+
 
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
@@ -3418,7 +3437,9 @@ STAMP_CASES = (
       # program that WRITES its storage (the lookahead's RX_SET), so the
       # forward rungs are illegal and AUTO takes `inline` below the term.
       "vm_alt_islands": 0, "vm_entry_shape": "inline",
-      "vm_program_bytes": 1317,  # [B108] MEASURED a32bc86e (was 1611; S2a
+      # [B122] MEASURED c4c70f2c (was 1317): +56, [OPT-LITSCAN] S4 C1's
+      # overlap row on the lookahead body's 3-byte run `abc` (run_words 1).
+      "vm_program_bytes": 1373,  # [B108] MEASURED a32bc86e (was 1611; S2a
                                  # collapses the `(?:abc)` lookahead body)
       **_CAPS_VM}),
     # THE CONTROL, one character apart: `x+` is NOT nullable, so the same
@@ -3438,7 +3459,8 @@ STAMP_CASES = (
       # (1,611 -- `x*` vs `x+` differ in a jump, not in size) and the
       # same `inline`; the hybrid's DFA scan folds nothing.
       "dfa_uniform_folds": 0, "vm_alt_islands": 0,
-      "vm_entry_shape": "inline", "vm_program_bytes": 1317,  # [B108] MEASURED (was 1611)
+      # [B122] MEASURED c4c70f2c (was 1317): +56, the same S4 C1 overlap.
+      "vm_entry_shape": "inline", "vm_program_bytes": 1373,  # [B108] MEASURED (was 1611)
       **_CAPS_VM}),
     ("VM hybrid", "pcrec-auto", b"a(b|c)+d",
      # [B34] ([OPT-ALTCLS]): `(b|c)` is a run of TWO single-character
@@ -3697,7 +3719,10 @@ STAMP_CASES = (
                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM,  # [B108] DFA route, flat +385
+                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM  # [B108] DFA route, flat +385
+                    # [B122] MEASURED c4c70f2c: +208 = the flat term less
+                    # four [CLS-TREE] S2 range-spelling sites (two edges).
+                    - 4 * B122_RANGE_SITE,
       **_CAPS_DFA}),
     # ... and its ONE-CHARACTER CONTROL. `{4096,}` is a LOWER bound, so
     # the start state does not accept and the predicate declines: the same
@@ -3749,7 +3774,7 @@ STAMP_CASES = (
       # witness to confirm the count and the size against `-fno-lit-run`.
       "vm_lit_runs": 2,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 20092 + B118_UTF_VALID_VM_TERM, **_CAPS_VM}),
+      "emit_bytes": 20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM, **_CAPS_VM}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE HAND-CHOSEN
     # FOLD WITNESS AND ITS ONE-CHARACTER CONTROLS (predicted from source
     # 2026-09-05, MEASURED at the d34c9131 build 2026-09-06: every
@@ -3778,7 +3803,15 @@ STAMP_CASES = (
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE
                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
+                    # [B122] MEASURED c4c70f2c: +1106 beyond the flat term
+                    # -- [OPT-LITSCAN] S4 C3's CASELESS necessary run
+                    # (`RX_REQ_RUN "414243@1/dfdfdf"`, req_why none ->
+                    # emitted): the masked run pre-check block on the
+                    # no-DFA-scan VM route (`rx_reqrun_whole`, a pair scan
+                    # plus the masked `words` compare, run_words 1) where
+                    # fc719ca4 emitted no pre-check at all.
+                    + 1106,
       **_CAPS_VM}),
     # CONTROL 1 (tuning.md 2.22's own decline table, row 2): `[ac]` is a
     # two-member set NOT differing only in bit 0x20 -- the or-mask would
@@ -3809,7 +3842,13 @@ STAMP_CASES = (
                     + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
                     + B101_K65_SET_REST_121
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
+                    # [B122] MEASURED c4c70f2c: +321 beyond the flat term --
+                    # S4 C3: `[ac]` is a one-bit HULL (0x61/0x63, K 0xfd), so
+                    # the necessary run widens to the masked "786179@0/fffdff"
+                    # (scanned on the exact 'x') and its compare is a masked
+                    # `words` row (run_words 1).
+                    + 321,
       "vm_lit_runs": 0, **_CAPS_VM}),
     # CONTROL 2 (row 3): `[@\x60]` IS a 0x20 pair (0x40 / 0x60) but of
     # NON-letters -- the compare would be exact, yet the recognizer names
@@ -3832,7 +3871,13 @@ STAMP_CASES = (
                     + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
                     + B101_K65_SET_REST_121
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
+                    # [B122] MEASURED c4c70f2c: +704 beyond the flat term --
+                    # S4 C3 again ("784079@1/ffdfff"), but here the run's
+                    # SCAN member is the pair itself (position 1), so the
+                    # block scans both members as two leapfrogged memchr
+                    # streams -- the larger residual of the two controls.
+                    + 704,
       "vm_lit_runs": 0, **_CAPS_VM}),
     # CONTROL 3 (the scope's other side): the same three caseless letters
     # under `auto` select the DFA, and the DFA route never consults
@@ -3881,7 +3926,9 @@ STAMP_CASES = (
      {"engine": "vm", "prefilter": "none", "engine_sel": "forced",
       "vm_frameless": 1, "vm_alt_islands": 0,
       "vm_entry_shape": "inline",
-      "vm_program_bytes": 931,  # [B108] MEASURED a32bc86e (was 1524)
+      # [B122] MEASURED c4c70f2c (was 931): +112, S4 C1's overlap row on
+      # BOTH 3-byte runs `abc`/`def` (run_words 3 with the run pre-check).
+      "vm_program_bytes": 1043,  # [B108] MEASURED a32bc86e (was 1524)
       "altcls_merges": 0, "altcls_factored": 0, **_CAPS_VM}),
     # `plain`: a FRAMED program (the nested repeat pushes) -- claim 11's
     # second witness, below the term this time, so `plain` here has ONE
@@ -3924,7 +3971,9 @@ STAMP_CASES = (
       "dfa_scan": "unanchored", "dfa_uniform_folds": 0,
       "vm_frameless": 1, "vm_alt_islands": 1,
       "vm_entry_shape": "inline",
-      "vm_program_bytes": 2443,  # [B118] MEASURED fc719ca4 (new witness)
+      # [B122] MEASURED c4c70f2c (was 2443): +56, S4 C1's overlap row on
+      # the 3-byte lookahead body `foo` (run_words 1).
+      "vm_program_bytes": 2499,  # [B118] MEASURED fc719ca4 (new witness)
       "altcls_merges": 0, "altcls_factored": 1, **_CAPS_VM}),
 )
 
@@ -4035,7 +4084,9 @@ LEDGER_STAMP_CASES = (
       "vm_entry_shape": "plain",
       # [B108] MEASURED a32bc86e (was 12026): two islanded level-word
       # sets, each now a run of P4 compares instead of per-byte chains.
-      "vm_program_bytes": 6805,
+      # [B122] MEASURED c4c70f2c (was 6805): +287, S4 C1's overlap row on
+      # the islanded level words' 3/5-7-byte chains.
+      "vm_program_bytes": 7092,
       # [B39] (MEASURED 2026-09-06): level-context carries no caseless
       # letter and no two-letter class (the corpus census), so the [SEL-1]
       # hybrid reads folds 0 -- the loglines `auto` vs `auto-noclsfold`
@@ -4091,11 +4142,11 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
       "emit_code_bytes": 18254 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
       **_CAPS_VM}),
     # [B19] (e) -> [B25]: until a7e0bdf the 16384 rung was THE DFA THAT
     # WARNS (724,699 B of source, over `--warn-emit-bytes` 250,000 --
@@ -4151,11 +4202,13 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM,
+                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
+                    - 2 * B122_RANGE_SITE,  # [B122] MEASURED: one edge, two sites
       "emit_code_bytes": 11828 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                     + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM,
+                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
+                    - 2 * B122_RANGE_SITE,
       **_CAPS_DFA}),
     # ------ [B22] THE DECLINE/KEEP SETS at 263b013 (the I-21 CORRECTION's
     # code-derived minw analysis, stamped 11/11 as predicted -- inbox
@@ -4203,11 +4256,11 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
       "emit_code_bytes": 18459 + B39_VM_STAMP_LINE + 4 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE  # +4: the N1 _WHY prose
                     + 217 + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
       **_CAPS_VM}, "whole-subject"),
     ("bounded cls-upto-16384 whole: declined", "pcrec-auto",
      "bounded", "cls-upto-16384",
@@ -4323,7 +4376,7 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
-                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM}),
+                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM}),
     ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)",
      "pcrec-auto", "altwide", "srt-256",
      {"engine": "dfa", "altcls_merges": 0, "altcls_factored": 57,
@@ -4335,7 +4388,7 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 977922 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
-                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM}),
+                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM}),
     # ------ [B37] / pcrec abi 18 ([ENG-ISL] STEP 1) -- THE ORDER PAIR ON
     # THE VM ROUTE, where the x8.87 (256) / x20.1 (512) branch-ORDER
     # effect of the 2026-09-03 ledger LIVED. Inbox I-43's prediction for
@@ -4358,9 +4411,13 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       # [B108] MEASURED a32bc86e: S2a collapses the island's 256
       # single-child chains, each now one P4 compare (was 305686/292043).
-      "vm_program_bytes": 135319,
+      # [B122] MEASURED c4c70f2c (was 135319 / 123895): +8151 program,
+      # +8642 emitted -- [OPT-LITSCAN] S4 C1's overlap row writes each
+      # island chain run of length 3/5-7/9-15 as two overlapping word
+      # compares where it read one memcmp (more TEXT, fewer pieces).
+      "vm_program_bytes": 143470,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 123464 + B118_UTF_VALID_VM_TERM,
+      "emit_bytes": 123464 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 8418,
       "vm_cls_folds": 0,   # [B39] MEASURED: lowercase words, no class
       "altcls_merges": 0, "altcls_factored": 11}),
     # ------ [B39] / pcrec abi 23 ([FORM-CHAR] STEP 1) -- THE CORPUS FOLD
@@ -4397,7 +4454,7 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 359502 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM}),
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM}),
     # ... and under `auto` the same pattern is a DFA (989,963 B at
     # 334fd10e, `edge=bitmap` -- the `(?i)` scan class is two ranges): no
     # `vm_cls_folds` pair at all (the scope check), which is why the
@@ -4414,9 +4471,13 @@ LEDGER_STAMP_CASES = (
       # [B108] MEASURED a32bc86e: identical to w-256's own S2a collapse
       # (was 305686/292043) -- subset construction still canonicalises
       # regardless of source order.
-      "vm_program_bytes": 135319,
+      # [B122] MEASURED c4c70f2c (was 135319 / 123895): +8151 program,
+      # +8642 emitted -- [OPT-LITSCAN] S4 C1's overlap row writes each
+      # island chain run of length 3/5-7/9-15 as two overlapping word
+      # compares where it read one memcmp (more TEXT, fewer pieces).
+      "vm_program_bytes": 143470,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 123464 + B118_UTF_VALID_VM_TERM,
+      "emit_bytes": 123464 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 8418,
       "altcls_merges": 0, "altcls_factored": 57}),
     # The prefix-3 and suffix arms island too (the shared literal is
     # factored OUT by [OPT-ALTCLS] stage 2 first, and the island asks
@@ -4453,9 +4514,11 @@ LEDGER_STAMP_CASES = (
       # per-branch literal tails behind the factored "qux" prefix -- the
       # first witness in this table where the VM PROGRAM region itself
       # (not just the search prologue) moves under this axis.
-      "vm_program_bytes": 136754,
+      # [B122] MEASURED c4c70f2c (was 136754 / 126412): +6919 program,
+      # +7369 emitted -- S4 C1's overlap row on the island chains.
+      "vm_program_bytes": 143673,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 125981 + B118_UTF_VALID_VM_TERM,
+      "emit_bytes": 125981 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 7145,
       "req_byte": "113", "req_run": "717578@0"}),
     ("altwide s-256 under --engine=vm: the island before a shared suffix",
      "pcrec-vm", "altwide", "s-256",
@@ -4463,9 +4526,11 @@ LEDGER_STAMP_CASES = (
       "vm_alt_islands": 1, "vm_entry_shape": "shared",
       # [B108] MEASURED a32bc86e (was 199152/185044): S2a collapses the
       # island's per-branch literal tails behind the shared suffix.
-      "vm_program_bytes": 136093,
+      # [B122] MEASURED c4c70f2c (was 136093 / 124204): +4536 program,
+      # +4850 emitted -- S4 C1's overlap row on the island chains.
+      "vm_program_bytes": 140629,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 123773 + B118_UTF_VALID_VM_TERM}),
+      "emit_bytes": 123773 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 4626}),
     # THE VM REFUSAL WALL MOVED: `w-384`'s forced-VM form REFUSED at
     # 288d505 (508,607 B of emitted code > the 500,000 code cap) and
     # COMPILES at this pin as an island at 427,824 B -- I-43's "the wall
@@ -4480,9 +4545,11 @@ LEDGER_STAMP_CASES = (
       # [B108] MEASURED a32bc86e (was 456975/427824): S2a collapses the
       # island's per-branch literal chains, same mechanism as w-256/
       # srt-256/pfx3-256/s-256 above.
-      "vm_program_bytes": 204952,
+      # [B122] MEASURED c4c70f2c (was 204952 / 178020): +11919 program,
+      # +12410 emitted -- S4 C1's overlap row; still under the code cap.
+      "vm_program_bytes": 216871,
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
-      "emit_bytes": 177589 + B118_UTF_VALID_VM_TERM,
+      "emit_bytes": 177589 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 12186,
       "altcls_merges": 0, "altcls_factored": 17}),
     # ... and the floor: a single literal byte, no alternation, so
     # islands 0 -- the VM route's zero control -- and `forward` at 236
@@ -4508,7 +4575,7 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 17623 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + 240 + B80_STAMP_LINE + B84_STAMP_LINE_EMITTED + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM,
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
       "altcls_merges": 0, "altcls_factored": 0}),
     # `sh1-64`: every one of its 64 branches starts with the byte `k` --
     # factoring IS expected (bench/altwide/NOTES.md), and MEASURED it
@@ -4553,7 +4620,8 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 16553 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                     + B118_UTF_VALID_DFA_TERM}),
+                     + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
+                     - 4 * B122_RANGE_SITE}),  # [B122] MEASURED: two edges
     # `dig-upto-16` forced VM: the [B33] (3) .text witness -- a
     # frameless program with no capture write, so the abi-17
     # always_inline (now the abi-22 `forward` rung) is what the cell
@@ -4569,7 +4637,7 @@ LEDGER_STAMP_CASES = (
       "emit_bytes": 18157 + B39_VM_STAMP_LINE + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                     + B74_STAMP_LINES_VM + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM}),
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM}),
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
@@ -4586,7 +4654,8 @@ LEDGER_STAMP_CASES = (
       # [B118] MEASURED fc719ca4: +381, the flat DFA term.
       "emit_bytes": 22654 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE + 3
                     + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
-                    + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM}),
+                    + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
+                    - 6 * B122_RANGE_SITE}),  # [B122] MEASURED: three edges
 ) + tuple(
     # [B90] (pin ce658cb7, abi 33, inbox I-108) -- K64 FIX A BY VALUE. The
     # SIX forced-VM one-attempt artifacts of bench/capability@0.1 with
@@ -4626,17 +4695,17 @@ LEDGER_STAMP_CASES = (
     #  binary), so its own emit term is 431 + 139 = 570)
     for name, rb, rr, prog, old, check, b101, b108, b118 in (
         ("email-nested-plus", "64", "none", 3299, 23896, B90_K64_BYTE_CHECK, 0, 410,
-         B118_UTF_VALID_VM_TERM),
+         B118_UTF_VALID_VM_TERM + B122_FLAT_TERM),
         ("ipv4-near-miss", "46", "none", 13695, 31205, B90_K64_BYTE_CHECK, 0, 410,
-         B118_UTF_VALID_VM_TERM),
+         B118_UTF_VALID_VM_TERM + B122_FLAT_TERM),
         ("wild-datetime-moment-iso8601", "45", "none", 15575, 33908, B90_K64_BYTE_CHECK, 0, 410,
-         B118_UTF_VALID_VM_TERM),
+         B118_UTF_VALID_VM_TERM + B122_FLAT_TERM),
         ("wild-validator-email-owasp", "64", "none", 5616, 26328, B90_K64_BYTE_CHECK,
-         B101_K65_SET_REST_46, 410, B118_UTF_VALID_VM_TERM),
+         B101_K65_SET_REST_46, 410, B118_UTF_VALID_VM_TERM + B122_FLAT_TERM),
         ("wild-validator-ipv4-owasp", "46", "none", 14007, 31862, B90_K64_BYTE_CHECK, 0, 410,
-         B118_UTF_VALID_VM_TERM),
+         B118_UTF_VALID_VM_TERM + B122_FLAT_TERM),
         ("winpath-near-miss", "92", "3a5c@1", 2925, 23821, B90_K64_RUN_CHECK,
-         B101_STEP6_RUN_AT1, 271, B118_UTF_VALID_VM_TERM + 139))
+         B101_STEP6_RUN_AT1, 271, B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 139))
 ) + (
     # ... and the TWO arms of fix A's new conjunct, each KEEPING
     # `one-attempt` -- the controls that the fix NARROWED G2 rather than
@@ -4657,7 +4726,7 @@ LEDGER_STAMP_CASES = (
       # utf_check/reseed stamp lines beside the plain VM ones).
       "emit_bytes": 27825 + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_HYBRID_TERM}),
+                    + B118_UTF_VALID_VM_HYBRID_TERM + B122_FLAT_TERM}),
     ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt",
      "pcrec-vm", "capability", "uuid-near-miss",
      {"engine": "vm", "engine_sel": "forced", "prefilter": "none",
@@ -4666,7 +4735,7 @@ LEDGER_STAMP_CASES = (
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
       "emit_bytes": 23286 + B90_VAR_ABI_BLOCK
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM}),
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM}),
     # [B101] (pin 02902356, inbox I-111) -- THE MOVERS BY VALUE, on I-111's
     # own landing-bar patterns (capability@0.1, `pcrec-auto`), each size
     # the ce658cb7 value plus the ONE step that moved it, MEASURED at all
@@ -4700,7 +4769,9 @@ LEDGER_STAMP_CASES = (
       # [B118] MEASURED fc719ca4 (was 56824): [FIND-TIE]'s rightmost
       # tie-break (above) moves the scan index and un-dominates the
       # run, which now re-emits its own separate check.
-      "emit_bytes": 57732}),
+      # [B122] MEASURED c4c70f2c (was 57732): +372 = B122_FLAT_TERM + 148,
+      # S4 C1's overlap row on the run-pinned compare.
+      "emit_bytes": 57732 + B122_FLAT_TERM + 148}),
     ("capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set",
      "pcrec-auto", "capability", "wild-validator-uuid-grok",
      {"engine": "dfa", "engine_sel": "selected", "dfa_prefilter": "offset-set",
@@ -4708,7 +4779,7 @@ LEDGER_STAMP_CASES = (
       "req_byte": "45", "req_run": "none",
       # [B118] MEASURED fc719ca4: +381, the flat DFA term.
       "emit_bytes": 47701 - 131 + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM}),  # [B108] DFA route, flat +385
+                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM}),  # [B108] DFA route, flat +385
     ("capability router-prefix-order under auto: S1 run-pinned, scan at offset 0",
      "pcrec-auto", "capability", "router-prefix-order",
      {"engine": "dfa", "engine_sel": "selected", "dfa_prefilter": "run-pinned",
@@ -4716,7 +4787,10 @@ LEDGER_STAMP_CASES = (
       "req_byte": "47", "req_run": "2f75736572@0",
       # [B118] MEASURED fc719ca4: +381, the flat DFA term.
       "emit_bytes": 20935 - 184 + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM}),  # [B108] DFA route, flat +385
+                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM  # [B108] DFA route, flat +385
+                    # [B122] MEASURED c4c70f2c: +138 beyond the flat term --
+                    # S4 C1's overlap row on the 5-byte run-pinned "/user".
+                    + 138}),
     # K65 (abi 34) on the VM route with no DFA scan (a backreference
     # declines the hybrid): the rest of the necessary set gets its rq_set[]
     # block, +244 (one two-digit member); S1 step 6 (abi 37) extracts the
@@ -4732,7 +4806,7 @@ LEDGER_STAMP_CASES = (
       # flat non-hybrid VM term) + 140 ([OPT-HYB-RESEED]'s adaptive retry
       # emitting real VM bytecode for this backtracking tag matcher, the
       # same real-code-growth shape as winpath-near-miss above).
-      "emit_bytes": 27621 + B118_UTF_VALID_VM_TERM + 140}),
+      "emit_bytes": 27621 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 140}),
     ("capability dup-param-detect under auto: K65 alone",
      "pcrec-auto", "capability", "dup-param-detect",
      {"engine": "vm", "engine_sel": "selected", "prefilter": "none",
@@ -4740,7 +4814,7 @@ LEDGER_STAMP_CASES = (
       # [B118] MEASURED fc719ca4: +431, the flat non-hybrid VM term.
       "emit_bytes": 27081 + 244
                     + B108_FINDINGS_STAMP_LINE + B108_VM_LIT_RUNS_STAMP_LINE
-                    + B118_UTF_VALID_VM_TERM}),
+                    + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM}),
     ("capability nested-comment-rec under auto: S1 step 6 alone",
      "pcrec-auto", "capability", "nested-comment-rec",
      {"engine": "vm", "engine_sel": "selected", "prefilter": "none",
@@ -4756,7 +4830,8 @@ LEDGER_STAMP_CASES = (
       # both of which touch this recursive pattern's literal/req-run
       # handling) -- recorded as measured, an ask for pcrec if the
       # mechanism matters later.
-      "emit_bytes": 30335}),
+      # [B122] MEASURED c4c70f2c: +224, B122_FLAT_TERM alone.
+      "emit_bytes": 30335 + B122_FLAT_TERM}),
 )
 
 
@@ -6059,7 +6134,14 @@ def check_mechanism_stamps():
         # fixed -- a real, asymmetric effect of this pin's span, not
         # residue to silently absorb. s-256 stays within tolerance
         # (91274-ish chain, no material move) and is left at 1.3561.
-        ratios_want = (("w-256", 1.3032), ("pfx3-256", 1.3035), ("s-256", 1.3561))
+        # [B122] MEASURED c4c70f2c: 1.3032 -> 1.2344, 1.3035 -> 1.2375,
+        # 1.3561 -> 1.2649 -- [OPT-LITSCAN] S4 C1's overlap row grows BOTH
+        # arms (a 3/5-7/9-15-byte run is now two word compares, more text
+        # than one memcmp), the serial CHAIN arm proportionally more than
+        # the island (w-256 code bytes at c4c70f2c: island 132537 / chain
+        # 107366), so the ratio falls back toward 1 -- the island is
+        # still the LARGER arm, re-measured live below, never assumed.
+        ratios_want = (("w-256", 1.2344), ("pfx3-256", 1.2375), ("s-256", 1.2649))
         ratio_dir = os.path.join(tmp, "ratio")
         os.makedirs(ratio_dir, exist_ok=True)
         got_ratios, ratio_problems = {}, []
@@ -6517,14 +6599,15 @@ DENY_CONTROLS = (
       "emit_bytes": (13305 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                     + B118_UTF_VALID_DFA_TERM,
+                     + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
+                     - 2 * B122_RANGE_SITE,  # [B122] the one edge; denied: no edge
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
-                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM),
+                     + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                             + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                            + B118_UTF_VALID_DFA_TERM)}, "deny"),
+                            + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -6572,14 +6655,17 @@ DENY_CONTROLS = (
       # both exactly +385).
       # [B118]: DFA route both arms -- the UTF-VALID DFA term, MEASURED
       # (18254 -> 18635, 21894 -> 22275, both exactly +381).
+      # [B122] MEASURED c4c70f2c: the flat term less the [CLS-TREE] S2
+      # range-spelling sites -- 4 on the pinned arm (two edges), 6 on the
+      # reverse-pass arm (three).
       "emit_bytes": (16568 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                     + B118_UTF_VALID_DFA_TERM,
+                     + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 4 * B122_RANGE_SITE,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
-                     + B118_UTF_VALID_DFA_TERM),
+                     + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 6 * B122_RANGE_SITE),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -6628,9 +6714,14 @@ DENY_CONTROLS = (
      {"vm_alt_islands": (1, 0),
       "vm_frameless": (1, 0),
       "vm_entry_shape": ("forward", "plain"),
-      "vm_program_bytes": (1227, 641),
-      "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM,
-                     20074 + B118_UTF_VALID_VM_TERM)}, "deny"),
+      # [B122] MEASURED c4c70f2c: the denied CHAIN arm 641 -> 753, +112 --
+      # S4 C1's overlap row on each branch's 3-byte literal (run_words 2);
+      # the island arm (one shared trie compare) unmoved at 1227.
+      "vm_program_bytes": (1227, 753),
+      "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM,
+                     # [B122] MEASURED c4c70f2c: the chain arm +201 beyond
+                     # the flat term -- S4 C1's overlap row on `foo`/`bar`.
+                     20074 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 201)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -6665,7 +6756,10 @@ DENY_CONTROLS = (
     ("vm_lit_runs: the VM literal-run compare denied",
      "lit-run", ("literal", b"abc"), "--engine=vm",
      {"vm_lit_runs": (1, 0),             # [B108] MEASURED 2026-09-27
-      "vm_program_bytes": (256, 550),
+      # [B122] MEASURED c4c70f2c: the default arm 256 -> 312, +56 -- S4
+      # C1's overlap row writes the 3-byte run as two word compares; the
+      # denied (per-byte chain) arm is unmoved.
+      "vm_program_bytes": (312, 550),
       "vm_frameless": (1, 1),
       "vm_entry_shape": ("forward", "forward")}, "deny"),
     # [B122] (pin c4c70f2c, abi 57-59, pcrec's [OPTLOOP] round 1): the
