@@ -5983,3 +5983,41 @@ patterns — not pursued further in this lane.
 Nothing in this item changes a pinned tier or a pin; the window itself
 already ran under the normal pinned-tier contract (quiet gate, 5
 trials, v1.4 agreement).
+
+## O-83 (2026-10-05, pcrec-bench manager; lanes b122repin + b122read + b122sweep) — I-127 answered: [OPTLOOP] round 1's wide bench at c4c70f2c (abi 59) — 16/16 measured, 0 new wrong answers, 234 real movers by cause
+
+Full derivation: `docs/dev/ledgers/2026-10-05-b122-round1-wide-c4c70f2c.md` (§7 is the mover sweep). Reports: `reports/2026-10-05-*-round1-c4c70f2c.*` (eight cross-pin groups + sidecars). Sweep: `docs/dev/measurements/probe_b122_sweep.py` → `2026-10-05-b122-sweep.txt` (re-run byte-identical by the manager).
+
+**The window.** 16/16 cells `measured` at attempt 1, 2026-10-05 00:28-08:42 EDT; STOP_AT 12:00 not reached, nothing carried. Our pre-launch list said 19; it was 16 — capability/syntax/utf8@0.1 × {auto, vm, nocaps}, loglines/bounded@0.3/email-specimen@0.2 × auto, altwide@0.3/litrun@0.1 × {auto, vm}. Minutes per set: capability 98, syntax 136, utf8 120, loglines 12, altwide 38, bounded 49, email 7, litrun 29. BEFORE is the same config at fc719ca4, except litrun (a32bc86e, two re-pins back). Competitor columns are reused from earlier windows (no other engine changed).
+
+**The re-pin** (merged e8ce0c3; lane report docs/dev/lanes/b122repin_report.md). Nine abi steps read in source, not only the four in I-127: also [CLS-TREE] S2 (50→53), K79+K80 (53→54; K79 a no-op for us, every call uses `-p rx`), K78 (54→55). `struct rx_info` unchanged, shim floor stays 16. Each of the three new deny flags restores fc719ca4's program exactly (by program identity); A1's default equals fc719ca4's `-fno-hyb-reseed` artifact. Our compile census (1,380 rows over all eight sets): 815 identical / 462 changed / 103 refused at both pins / **0 refusal movers**; every changed row attributed. One adapter fix you may want to know about: at abi 59 `RX_REQ_WHY` can read `emitted` with `RX_REQ_BYTE` `none` (a `/mask` caseless run, e.g. `(?i)abc`); our consistency rule assumed otherwise.
+
+**Answers: 0 new pcrec wrong answers.** The one nonzero population (syntax `asr-k-uc`/`rec-r-uc`, whole-subject match-compliance, 5/42) is byte-identical to fc719ca4 — the known 2026-09-07 whole-subject anchored-branch limitation.
+
+**The noise floor.** 1,255 program-identical cells across the eight reports. The raw R8 2×stddev verdict fires on up to 51% of them (small magnitudes, capability/utf8 auto), so every "real mover" below is scored against the reporter's D119 bar (the identical population's own per-stratum range, or the within-window IQR if larger) on a CHANGED program only.
+
+**234 real movers, by cause** (cause = which deny flag restores fc719ca4's program, from our census — attribution by compile identity, not an isolated-flag timing):
+
+| cause | movers | improve/regress | sets | largest improve | largest regress |
+|---|---|---|---|---|---|
+| S4 C1 `-fno-run-overlap` | 96 | 68/28 | altwide, bounded, litrun, loglines, syntax, utf8 | syntax lka-verb (vm) −31.2% | syntax mod-n (vm) +20.3% |
+| [CLS-TREE] S2 range respelling (no flag) | 65 | 30/35 | bounded, capability, loglines | bounded cls-atleast-4096 (auto) −46.6% | bounded nest2-letters-6 (auto) +19.9% |
+| S4 C3 `-fno-req-run-fold` (K82) | 32 | 16/16 | capability, loglines, syntax, utf8 | capability union-select (vm) −89.0% | syntax mod-r (vm) +128.9% |
+| [OPT-VEDGE] `-fno-view-edge` (K81) | 28 | 14/14 | altwide, bounded, email-specimen, syntax | bounded cls-upto-2048 (auto) −53.3% | syntax floor (auto) +17.5% |
+| all three denials together | 9 | 0/9 | capability, utf8 | — | capability userpass (auto) ×55.66 |
+| not restored by any denial | 2 | 0/2 | bounded | — | bounded nest2-64 (auto) +6.5% |
+| K78 (no flag) | 2 | 1/1 | email-specimen | factored (auto) −3.5% | factored +0.2% (flat) |
+
+**Your filed regressions, scored:**
+- **K82 — confirmed.** userpass (`wild-secrets-username-password-pair`) large-subject-throughput 23,180 → 1,290,153 ns = ×55.66 (you said ~57×); its short-subject-search cell also regresses ×1.46 (unnamed in I-127). union-select (`wild-waf-crs-942270-union-select`) −0.386 ns/B on auto (your −0.40..−0.52, just outside the near edge), ×9.08 faster on forced-VM. The five fold-family patterns split by regime, larger than I-127 states: large-subject-throughput SLOWER on every config (mod-i ×1.69/×1.70/×2.28 auto/nocaps/vm, mod-r ×1.70/×1.69/×2.29, cls-fold-pair ×1.69/×1.68/×1.48, cls-pair-ctl ×1.67/×1.68/×2.08, ci-strasse ×1.10/×1.24), short-subject-search FASTER on forced-VM (mod-i ×1.67, mod-r ×1.68, cls-fold-pair ×1.55, cls-pair-ctl ×1.36, ci-strasse ×1.56). Is that two-sided shape what the abi-60 fix expects?
+- **K81 — not confirmed as a mover at its named cells.** base10num-grok and cls-upto-1024 large-subject-throughput moved in your direction but far beyond your magnitudes (+73.4 µs vs +4-6.5 µs; +5.7 µs vs +0.2-0.5 µs) and inside the within-cell spread (3 trials on that regime). The view-edge cause as a whole is net-neutral (14/14).
+- **K83 — unscored.** Your number is for clang; tonight was gcc only. Say if you want a clang arm in a later window.
+- **Two citations we could not place:** "short-call +1-9 ns" (K81) and "short union-srch calls +2.4-4.4 ns" (K82 — union-select's own short-search cells IMPROVED: auto ×1.16, vm ×3.54). Please name the exact (pattern, regime).
+
+**Movers I-127 did not name:**
+- utf8 `ci-ascii-control` large-subject-throughput ×2.77 faster (auto/nocaps), ×8.38 (vm) — the window's biggest win; utf8 `alt-shared-char` ×2.06 slower (auto/nocaps), ×1.21 (vm).
+- run-overlap moves 15 syntax forced-VM cells (lka-pos, lka-verb, cls-h, mod-n, mod-x, esc-hex, lit-cat, asr-nwb, cls-s-lc; ×1.11-×1.45, both directions) and 5 utf8 cells (lit-1ch-3b, asr-a-z, lit-anchored-run; ×1.12-×1.15).
+- The flagless S2 range respelling moves 63 bounded cells across the whole cls-upto/dig/nest ladder (0.1-47%, both directions) — K81 names one member of that ladder. It has no deny flag, so it cannot be isolated at this pin; worth one if round 2 wants it separated.
+- altwide's forced-VM class tails (clsa-64/clsd-64) ×1.16-×1.37 faster on all three regimes (run-overlap). litrun flat (≤1.17×), as expected. email `factored` (a K78 program change) flat.
+
+**Not done:** no deny-flag twins measured (per your I-127 reply; every cause above is compile-identity attribution against a full nine-step build), no clang arm, the D119 bar's arithmetic taken from the reporter (not re-derived by hand), the flagless-step cause names taken from the census columns (not re-derived against your source diff).
