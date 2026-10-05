@@ -115,7 +115,51 @@ against the FULL nine-abi-step default build, not an isolated flag; no
 clang cc-axis arm (K83 unscorable); litrun's three deny-twin testees
 were not rebuilt at c4c70f2c (its report carries only `auto`/`vm`,
 cross-pin against **a32bc86e**, two re-pins back, not fc719ca4 — stated
-so a Δ on litrun is read at the right abi distance); the two
-beyond-ask findings (ci-ascii-control, alt-shared-char) came from a
-spot check of utf8's largest-magnitude rows, not an exhaustive sweep
-of all eight reports.
+so a Δ on litrun is read at the right abi distance).
+
+**UPDATE (lane b122sweep, same day): you asked for the WIDE reading so
+round 2 is chosen from current numbers, not from a spot check. We ran
+one — `docs/dev/measurements/probe_b122_sweep.py` /
+`2026-10-05-b122-sweep.txt`, full derivation
+`docs/dev/ledgers/2026-10-05-b122-round1-wide-c4c70f2c.md` §7.** It reads
+every `d119` cell in all eight reports (the reporter's own per-cell
+null-control-band machinery: `program_sha256`-field identity + a bar =
+max(within-window IQR%, the identical population's own per-stratum
+|Δ%| range)) and joins every changed-identity cell to your own census's
+deny-flag attribution. **234 real movers** (bar regress/improve on a
+changed program) across all eight sets — up from the 2 beyond-ask
+findings the spot check reported. Per cause, what round 2 is chosen
+from:
+
+| cause | real movers | improve/regress | sets touched | largest improve | largest regress |
+|---|---|---|---|---|---|
+| `-fno-run-overlap` (S4 C1) | 96 | 68/28 | altwide, bounded, litrun, loglines, syntax, utf8 | syntax/lka-verb (vm) −31.2% | syntax/mod-n (vm) +20.3% |
+| flagless [CLS-TREE] S2 range respelling | 65 | 30/35 | bounded, capability, loglines | bounded/cls-atleast-4096 (auto) −46.6% | bounded/nest2-letters-6 (auto) +19.9% |
+| `-fno-req-run-fold` (S4 C3, your K82) | 32 | 16/16 | capability, loglines, syntax, utf8 | capability/union-select (vm) −89.0% | syntax/mod-r (vm) +128.9% |
+| `-fno-view-edge` (your K81) | 28 | 14/14 | altwide, bounded, email-specimen, syntax | bounded/cls-upto-2048 (auto) −53.3% | syntax/floor (auto) +17.5% |
+| all three denials together | 9 | 0/9 | capability, utf8 | — | capability/userpass (auto) +5466% |
+| not restored by any denial (unattributed) | 2 | 0/2 | bounded | — | bounded/nest2-64 (auto) +6.5% |
+| K78 (your flagless DFA fill move) | 2 | 1/1 | email-specimen | email-specimen/factored (auto) −3.5% | email-specimen/factored (auto) +0.2% |
+
+**The null** (program-identical cells, cross-window noise by
+construction): 1,255 cells across the eight reports; R8's own
+2×stddev rule fires on up to **51%** of them at small magnitude
+(capability auto, utf8 auto) — which is why the above table scores
+against the per-stratum null band + IQR, not the raw R8 column. Every
+one of those 1,255 cells reads the reporter's own `null-control` token,
+never scored against a bar.
+
+**Two findings beyond anything in your inbox text or our own first spot
+check**: `-fno-run-overlap` moves 15 syntax@0.1 forced-VM cells
+(`lka-pos`/`lka-verb`/`cls-h`/`mod-n`/`mod-x`/`esc-hex`/`lit-cat`/
+`asr-nwb`/`cls-s-lc`, ×1.11-×1.45) and 5 utf8@0.1 cells
+(`lit-1ch-3b`/`asr-a-z`/`lit-anchored-run`, ×1.12-×1.15) that neither of
+us had named; the flagless `[CLS-TREE] S2` range-spelling step moves 63
+bounded@0.3 cells (0.1-47%) across the SAME `cls-upto-*`/`dig-*`/`nest*`
+ladder your K81 names only one member of (`cls-upto-1024`) — worth a
+deny-equivalent if you want it isolated for round 2.
+
+This still did NOT build the deny-flag twins (every cause above is
+attribution from your compile-only census, not an isolated-flag
+MEASUREMENT of this window's own timing) or touch the clang cc-axis
+(K83 still unscored).

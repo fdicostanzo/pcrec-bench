@@ -1,0 +1,559 @@
+==============================================================================
+probe_b122_sweep.py -- [B122] round-1 WIDE MOVER SWEEP, lane b122sweep
+Read-only: no compile, no run, no timing, no store load.
+Inputs (sha256):
+  11ea5485ae10349038718a04bc6fcac7f8d309bef2d2db96f91a6582366f0b3d  reports/2026-10-05-altwide-0.3-budu-ryzen1600-round1-c4c70f2c.tsv
+  f616ca8e1db261ef011f237a810a94c34f68a67f934e98a3261c17f71d111d4e  reports/2026-10-05-bounded-0.3-budu-ryzen1600-round1-c4c70f2c.tsv
+  3705b8d76cd15571009f7eac4cc92ae0ff70094747a9113fac5f716820f577c2  reports/2026-10-05-capability-0.1-budu-ryzen1600-round1-c4c70f2c.tsv
+  c602ff9196a058fe9668e4e6adaae3130cada2a3a222d898fa9f6e4e1e62bbb8  reports/2026-10-05-email-specimen-0.2-budu-ryzen1600-round1-c4c70f2c.tsv
+  395a2dfa1ac985333f1762cfd725d8e0bb534b63d95fc9864f967b77e41beb4e  reports/2026-10-05-litrun-0.1-budu-ryzen1600-round1-c4c70f2c.tsv
+  d5382d10c97b9a39c1fce58204f3dc3fa47aab8a919e68c8e60eb01907976891  reports/2026-10-05-loglines-0.1-budu-ryzen1600-round1-c4c70f2c.tsv
+  2eb9141da56c9d587f87d3a6fbc5d149e90c269ae79c2e154f83c202ae6d2430  reports/2026-10-05-syntax-0.1-budu-ryzen1600-round1-c4c70f2c.tsv
+  4793f2a5201e7be04519b418a4a1937fe841eca9a3123dc2e813c880ae2bd910  reports/2026-10-05-utf8-0.1-budu-ryzen1600-round1-c4c70f2c.tsv
+  978e26bc0b457d62d65a8e90b4cd89b7dde5a74b03fd56d9462ec84da1a0bfd6  docs/dev/measurements/2026-10-04-b122-census.txt  (1380 rows)
+==============================================================================
+
+probe_b122_sweep.py -- [B122] lane b122sweep, THE ROUND-1 WIDE MOVER
+SWEEP pcrec asked for (round 2 is chosen from this, not from b122read's
+spot checks).
+
+READ-ONLY, over two already-committed inputs -- NO compile, NO run, NO
+timing, NO store load:
+
+  1. the eight `reports/2026-10-05-*-round1-c4c70f2c.tsv` groups (the
+     [B122] round-1 wide window, lane b122read): this script reads their
+     `d119` rows (the reporter's OWN per-cell null-control-band
+     machinery, `docs/design/null_band_v1.md`/`pcrecbench/nullband.py`)
+     and their `null_band` stratum rows -- never `rank`'s raw
+     `median_ns` rows, so the arithmetic (medians, IQR, the band) is
+     never re-derived, only read back.
+  2. `docs/dev/measurements/2026-10-04-b122-census.txt` (lane b122repin):
+     the compile-only program-identity + deny-flag ATTRIBUTION census
+     fc719ca4 -> c4c70f2c (litrun's own pair is a32bc86e -> c4c70f2c; the
+     d119 rows carry the SAME pair per report, read from the report's own
+     header, not assumed).
+
+WHY d119, NOT A HAND-ROLLED RULE. The reporter already computes, per set
+cross-pin cell, exactly the two things this sweep needs: (a) IDENTITY
+(`program_sha256`, schema v1.7, FIELD-first -- `nullband.field_identity`)
+and (b) a MOVER THRESHOLD bar = max(IQR%, null-band half-width), where
+the null-band half-width over a (regime, baseline-scale) stratum IS the
+identical-population's own observed |Delta%| range (`null_band_v1.md`
+S3-4). Re-deriving that by hand from `rank` rows would be a second,
+weaker implementation of arithmetic this project keeps in exactly one
+place (`pcrecbench/CLAUDE.md`'s "Derivations are imported, never
+reimplemented" rule) -- and the bar is STRICTLY the brief's own suggested
+rule (a changed-program mover must clear the identical population's own
+observed range) PLUS the within-window IQR, which the brief did not ask
+for but the reporter already carries for free. Both are stated below (THE
+RULE) and shown to agree on an outright majority of cells; disagreements
+are a REPORTED fact, not swept aside.
+
+THE RULE (stated here, before any table below applies it):
+  - THE NULL population per report = every d119 cell whose identity
+    (program_sha256 FIELD) reads "identical". Its own R8 verdict
+    (`delta_verdict`, the SAME column the brief names as column 18,
+    `faster x r` / `slower x r` / `unchanged (within spread)`) may still
+    fire faster/slower -- that is cross-window noise BY CONSTRUCTION
+    (the program did not change), and its |Delta%| range is the
+    threshold.
+  - A changed-program cell is a REAL mover iff the reporter's own D119
+    bar fires (`value` in {regress, improve}) -- which already requires
+    |Delta%| to exceed max(within-window IQR%, the null band's
+    half-width for that (regime, scale) stratum). A changed-program cell
+    whose bar reads "within" is NOT counted as a real mover even if its
+    plain R8 verdict (column 18) says faster/slower -- the null
+    population (and the IQR) already explain that much movement.
+  - As a SEPARATE, looser cross-check (the brief's own literal wording:
+    "outside the identical-program population's ratio range for that
+    set/config"), this script also computes, per (set, pcrec-route),
+    the identical population's own max |Delta%| and asks whether a
+    changed+bar-fired row's |Delta%| exceeds it -- reported as
+    `bar_only_real_but_outside_null_range = False` is the interesting
+    disagreement case (none expected, since the bar's band term IS that
+    quantity restricted to the cell's own stratum; a WIDER, pooled-across
+    -strata version of the same test can legitimately disagree, and the
+    sweep says how often it does).
+
+## 1. null_band strata per set (the reporter's own per-stratum
+   identical-population range -- NOT re-derived, read verbatim)
+
+--- altwide ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n=  0  status=empty
+  large-subject-throughput     >=1us      n= 31  min=-0.463153%  median= 0.026893%  max(half-width)= 1.678457%
+  match-compliance             100ns-1us  n= 18  min=-1.528395%  median= 3.224426%  max(half-width)= 9.517236%
+  match-compliance             <100ns     n=  0  status=empty
+  match-compliance             >=1us      n= 11  min=-0.231569%  median= 0.143216%  max(half-width)= 0.274393%
+  short-subject-search         100ns-1us  n=  2  status=insufficient
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n= 29  min=-1.478699%  median=-0.066169%  max(half-width)= 1.028077%
+--- bounded ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n=  0  status=empty
+  large-subject-throughput     >=1us      n=  8  status=insufficient
+  match-compliance             100ns-1us  n=  1  status=insufficient
+  match-compliance             <100ns     n=  0  status=empty
+  match-compliance             >=1us      n=  5  status=insufficient
+  short-subject-search         100ns-1us  n=  3  status=insufficient
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n=  5  status=insufficient
+--- capability ---
+  large-subject-throughput     100ns-1us  n=  3  status=insufficient
+  large-subject-throughput     <100ns     n= 43  min=-19.483287%  median=-5.893814%  max(half-width)=34.867327%
+  large-subject-throughput     >=1us      n=103  min=-1.889292%  median= 0.069197%  max(half-width)= 4.312479%
+  short-subject-search         100ns-1us  n= 72  min=-9.088629%  median=-0.929224%  max(half-width)=51.288328%
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n= 74  min=-3.906322%  median=-0.388520%  max(half-width)= 3.617724%
+--- email-specimen ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n=  0  status=empty
+  large-subject-throughput     >=1us      n=  2  status=insufficient
+  match-compliance             100ns-1us  n=  0  status=empty
+  match-compliance             <100ns     n=  0  status=empty
+  match-compliance             >=1us      n=  1  status=insufficient
+  short-subject-search         100ns-1us  n=  0  status=empty
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n=  2  status=insufficient
+--- litrun ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n=  0  status=empty
+  large-subject-throughput     >=1us      n= 14  min=-0.511580%  median= 0.166814%  max(half-width)= 3.856075%
+  match-compliance             100ns-1us  n= 13  min=-8.700857%  median=-2.402008%  max(half-width)=-0.091140%
+  match-compliance             <100ns     n=  0  status=empty
+  match-compliance             >=1us      n=  0  status=empty
+  short-subject-search         100ns-1us  n= 14  min=-4.979269%  median=-1.134289%  max(half-width)=15.468238%
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n=  0  status=empty
+--- loglines ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n=  0  status=empty
+  large-subject-throughput     >=1us      n=  7  status=insufficient
+  short-subject-search         100ns-1us  n=  0  status=empty
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n=  7  status=insufficient
+--- syntax ---
+  large-subject-throughput     100ns-1us  n=  0  status=empty
+  large-subject-throughput     <100ns     n= 18  min=-21.586317%  median=-2.902847%  max(half-width)= 0.731891%
+  large-subject-throughput     >=1us      n=143  min=-19.472259%  median= 0.041541%  max(half-width)= 6.998333%
+  match-compliance             100ns-1us  n=149  min=-12.129017%  median= 2.790552%  max(half-width)=13.783074%
+  match-compliance             <100ns     n=  0  status=empty
+  match-compliance             >=1us      n=  1  status=insufficient
+  short-subject-search         100ns-1us  n=140  min=-9.716491%  median=-0.555836%  max(half-width)= 4.008029%
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n= 30  min=-3.777109%  median=-0.371855%  max(half-width)= 2.356423%
+--- utf8 ---
+  large-subject-throughput     100ns-1us  n=  2  status=insufficient
+  large-subject-throughput     <100ns     n=  6  status=insufficient
+  large-subject-throughput     >=1us      n=145  min=-10.805729%  median= 0.101669%  max(half-width)= 6.170364%
+  short-subject-search         100ns-1us  n= 47  min=-7.779512%  median=-0.839442%  max(half-width)=50.246386%
+  short-subject-search         <100ns     n=  0  status=empty
+  short-subject-search         >=1us      n=106  min=-8.823402%  median=-2.301044%  max(half-width)=10.748967%
+
+## 2. THE NULL: R8 verdict distribution over identity=identical cells
+   (R8 = column 18 delta_verdict, 2x max(stddev) bar; identical =
+   program_sha256 FIELD match both sides -- these movers are
+   cross-window noise BY CONSTRUCTION, never a real pcrec effect)
+
+set            cfg   n_identical r8_unchanged r8_faster r8_slower  max|delta%| of fired cells
+altwide        auto           85           70         6         9  9.517%
+altwide        vm              6            3         2         1  6.091%
+bounded        auto           22           12         7         3  15.825%
+capability     auto          198          111        63        24  51.288%
+capability     vm             97           57        24        16  41.820%
+email-specimen auto            5            4         0         1  0.013%
+litrun         auto           23           19         3         1  15.468%
+litrun         vm             18            3        10         5  8.701%
+loglines       auto           14           14         0         0  n/a
+syntax         auto          312          160        58        94  14.644%
+syntax         vm            169           79        69        21  21.586%
+utf8           auto          216          118        67        31  50.246%
+utf8           vm             90           52        27        11  14.168%
+
+   Sanity check: every identity=identical d119 row's own D119 bar
+   verdict (column 'value') reads 'null-control' -- confirming the
+   reporter never scores an identical cell against its own band.
+   1255 of 1255 identical rows read null-control (OK).
+
+## 3. REAL MOVERS -- ranked, per set, joined to the census cause
+   Rule (stated in the module docstring, applied here verbatim):
+   REAL = identity==changed AND D119 bar in {regress, improve}.
+   (bar = max(within-window IQR%, this cell's own stratum's null
+   half-width from section 1) -- the brief's own suggested test,
+   PLUS the within-window IQR the reporter already carries for
+   free.) Sorted by |delta_pct| descending within each set.
+
+--- altwide: 59 real mover(s) ---
+  clsd-64                      large-subject-throughput   plain          vm-caps-simdna       d=  -27.238%  bar=improve  r8=faster x1.37  cause: run-overlap
+  clsd-64                      short-subject-search       plain          vm-caps-simdna       d=  -27.099%  bar=improve  r8=faster x1.37  cause: run-overlap
+  clsa-64                      large-subject-throughput   plain          vm-caps-simdna       d=  -26.796%  bar=improve  r8=faster x1.37  cause: run-overlap
+  clsa-256                     short-subject-search       plain          vm-caps-simdna       d=  -26.386%  bar=improve  r8=faster x1.36  cause: run-overlap
+  clsd-256                     short-subject-search       plain          vm-caps-simdna       d=  -26.088%  bar=improve  r8=faster x1.35  cause: run-overlap
+  clsd-256                     match-compliance           whole-subject  vm-caps-simdna       d=  -26.009%  bar=improve  r8=faster x1.35  cause: run-overlap
+  clsa-64                      short-subject-search       plain          vm-caps-simdna       d=  -25.787%  bar=improve  r8=faster x1.35  cause: run-overlap
+  clsa-256                     match-compliance           whole-subject  vm-caps-simdna       d=  -25.347%  bar=improve  r8=faster x1.34  cause: run-overlap
+  clsa-256                     large-subject-throughput   plain          vm-caps-simdna       d=  -22.638%  bar=improve  r8=faster x1.29  cause: run-overlap
+  clsd-256                     large-subject-throughput   plain          vm-caps-simdna       d=  -22.395%  bar=improve  r8=faster x1.29  cause: run-overlap
+  sh1-512                      short-subject-search       plain          vm-caps-simdna       d=  -18.534%  bar=improve  r8=faster x1.23  cause: run-overlap
+  nar4-256                     match-compliance           whole-subject  vm-caps-simdna       d=  +18.409%  bar=regress  r8=slower x1.18  cause: run-overlap
+  sh1-512                      large-subject-throughput   plain          vm-caps-simdna       d=  -18.227%  bar=improve  r8=faster x1.22  cause: run-overlap
+  clsd-64                      match-compliance           whole-subject  vm-caps-simdna       d=  -14.731%  bar=improve  r8=faster x1.17  cause: run-overlap
+  sh1-256                      short-subject-search       plain          vm-caps-simdna       d=  -14.296%  bar=improve  r8=faster x1.17  cause: run-overlap
+  clsa-64                      match-compliance           whole-subject  vm-caps-simdna       d=  -14.136%  bar=improve  r8=faster x1.16  cause: run-overlap
+  floor                        match-compliance           whole-subject  auto-caps-simdna     d=  +13.687%  bar=regress  r8=slower x1.14  cause: view-edge
+  w-128                        match-compliance           whole-subject  vm-caps-simdna       d=  -13.010%  bar=improve  r8=faster x1.15  cause: run-overlap
+  w-1024                       large-subject-throughput   plain          vm-caps-simdna       d=  -11.895%  bar=improve  r8=faster x1.14  cause: run-overlap
+  pfx3-512                     large-subject-throughput   plain          vm-caps-simdna       d=  -11.794%  bar=improve  r8=unchanged  cause: run-overlap
+  pfx3-256                     large-subject-throughput   plain          vm-caps-simdna       d=  -11.778%  bar=improve  r8=faster x1.13  cause: run-overlap
+  cnt-64                       large-subject-throughput   plain          vm-caps-simdna       d=  -10.634%  bar=improve  r8=faster x1.12  cause: run-overlap
+  w-1024                       short-subject-search       plain          vm-caps-simdna       d=   -9.909%  bar=improve  r8=faster x1.11  cause: run-overlap
+  cnt-64                       short-subject-search       plain          vm-caps-simdna       d=   -9.750%  bar=improve  r8=faster x1.11  cause: run-overlap
+  sfx-512                      match-compliance           whole-subject  vm-caps-simdna       d=   -9.555%  bar=improve  r8=faster x1.11  cause: run-overlap
+  wb-256                       short-subject-search       plain          vm-caps-simdna       d=   -8.711%  bar=improve  r8=faster x1.1  cause: run-overlap
+  pfx3-512                     short-subject-search       plain          vm-caps-simdna       d=   -8.316%  bar=improve  r8=faster x1.09  cause: run-overlap
+  s-512                        short-subject-search       plain          vm-caps-simdna       d=   +8.110%  bar=regress  r8=slower x1.08  cause: run-overlap
+  w-384                        short-subject-search       plain          vm-caps-simdna       d=   +7.686%  bar=regress  r8=slower x1.08  cause: run-overlap
+  sh1-64                       short-subject-search       plain          vm-caps-simdna       d=   +7.605%  bar=regress  r8=unchanged  cause: run-overlap
+  srt-512                      short-subject-search       plain          vm-caps-simdna       d=   +7.036%  bar=regress  r8=slower x1.07  cause: run-overlap
+  w-512                        short-subject-search       plain          vm-caps-simdna       d=   +6.786%  bar=regress  r8=slower x1.07  cause: run-overlap
+  nar4-512                     short-subject-search       plain          vm-caps-simdna       d=   -6.675%  bar=improve  r8=faster x1.07  cause: run-overlap
+  sh1-64                       large-subject-throughput   plain          vm-caps-simdna       d=   +5.943%  bar=regress  r8=slower x1.06  cause: run-overlap
+  wb-256                       large-subject-throughput   plain          vm-caps-simdna       d=   -5.777%  bar=improve  r8=faster x1.06  cause: run-overlap
+  srt-512                      large-subject-throughput   plain          vm-caps-simdna       d=   -5.708%  bar=improve  r8=faster x1.06  cause: run-overlap
+  nar4-64                      short-subject-search       plain          vm-caps-simdna       d=   -5.705%  bar=improve  r8=faster x1.06  cause: run-overlap
+  w-128                        short-subject-search       plain          vm-caps-simdna       d=   +5.414%  bar=regress  r8=slower x1.05  cause: run-overlap
+  w-512                        large-subject-throughput   plain          vm-caps-simdna       d=   -5.196%  bar=improve  r8=faster x1.05  cause: run-overlap
+  sfx-512                      large-subject-throughput   plain          vm-caps-simdna       d=   -4.997%  bar=improve  r8=faster x1.05  cause: run-overlap
+  pfx3-256                     short-subject-search       plain          vm-caps-simdna       d=   -4.694%  bar=improve  r8=faster x1.05  cause: run-overlap
+  nar4-256                     large-subject-throughput   plain          vm-caps-simdna       d=   -4.405%  bar=improve  r8=faster x1.05  cause: run-overlap
+  srt-256                      large-subject-throughput   plain          vm-caps-simdna       d=   -4.213%  bar=improve  r8=faster x1.04  cause: run-overlap
+  w-384                        large-subject-throughput   plain          vm-caps-simdna       d=   -4.130%  bar=improve  r8=faster x1.04  cause: run-overlap
+  sfx-64                       short-subject-search       plain          vm-caps-simdna       d=   +3.970%  bar=regress  r8=slower x1.04  cause: run-overlap
+  w-64                         short-subject-search       plain          vm-caps-simdna       d=   +3.101%  bar=regress  r8=unchanged  cause: run-overlap
+  nar4-64                      large-subject-throughput   plain          vm-caps-simdna       d=   +2.782%  bar=regress  r8=slower x1.03  cause: run-overlap
+  sfx-512                      short-subject-search       plain          vm-caps-simdna       d=   -2.746%  bar=improve  r8=faster x1.03  cause: run-overlap
+  w-192                        short-subject-search       plain          vm-caps-simdna       d=   +2.641%  bar=regress  r8=unchanged  cause: run-overlap
+  w-192                        large-subject-throughput   plain          vm-caps-simdna       d=   -2.620%  bar=improve  r8=faster x1.03  cause: run-overlap
+  w-96                         short-subject-search       plain          vm-caps-simdna       d=   +2.573%  bar=regress  r8=unchanged  cause: run-overlap
+  sh1-256                      large-subject-throughput   plain          vm-caps-simdna       d=   -2.538%  bar=improve  r8=faster x1.03  cause: run-overlap
+  w-8                          short-subject-search       plain          vm-caps-simdna       d=   -2.367%  bar=improve  r8=unchanged  cause: run-overlap
+  w-256                        short-subject-search       plain          vm-caps-simdna       d=   -2.182%  bar=improve  r8=unchanged  cause: run-overlap
+  s-256                        large-subject-throughput   plain          vm-caps-simdna       d=   -2.170%  bar=improve  r8=faster x1.02  cause: run-overlap
+  w-96                         large-subject-throughput   plain          vm-caps-simdna       d=   +1.993%  bar=regress  r8=slower x1.02  cause: run-overlap
+  w-256                        large-subject-throughput   plain          vm-caps-simdna       d=   -1.983%  bar=improve  r8=faster x1.02  cause: run-overlap
+  nar4-512                     large-subject-throughput   plain          vm-caps-simdna       d=   -1.947%  bar=improve  r8=faster x1.02  cause: run-overlap
+  wb-512                       short-subject-search       plain          vm-caps-simdna       d=   +1.855%  bar=regress  r8=unchanged  cause: run-overlap
+--- bounded: 92 real mover(s) ---
+  cls-upto-2048                match-compliance           whole-subject  auto-caps-simdna     d=  -53.307%  bar=improve  r8=faster x2.14  cause: view-edge
+  cls-upto-4096                match-compliance           whole-subject  auto-caps-simdna     d=  -52.858%  bar=improve  r8=faster x2.12  cause: view-edge
+  cls-atleast-4096             match-compliance           whole-subject  auto-caps-simdna     d=  -46.640%  bar=improve  r8=faster x1.87  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-32                 match-compliance           whole-subject  auto-caps-simdna     d=  -36.279%  bar=improve  r8=faster x1.57  cause: view-edge
+  hex32                        match-compliance           whole-subject  auto-caps-simdna     d=  -36.075%  bar=improve  r8=faster x1.56  cause: view-edge
+  line-80                      match-compliance           whole-subject  auto-caps-simdna     d=  -33.684%  bar=improve  r8=faster x1.51  cause: view-edge
+  dig-exact-8                  match-compliance           whole-subject  auto-caps-simdna     d=  -24.396%  bar=improve  r8=faster x1.32  cause: view-edge
+  dig-exact-16                 match-compliance           whole-subject  auto-caps-simdna     d=  -23.566%  bar=improve  r8=faster x1.31  cause: view-edge
+  dig-exact-2                  match-compliance           whole-subject  auto-caps-simdna     d=  -22.457%  bar=improve  r8=faster x1.29  cause: view-edge
+  year4                        match-compliance           whole-subject  auto-caps-simdna     d=  -21.854%  bar=improve  r8=faster x1.28  cause: view-edge
+  nest2-letters-6              large-subject-throughput   plain          auto-caps-simdna     d=  +19.871%  bar=regress  r8=slower x1.2  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  floor                        match-compliance           whole-subject  auto-caps-simdna     d=  +12.717%  bar=regress  r8=slower x1.13  cause: view-edge
+  cls-upto-4                   short-subject-search       plain          auto-caps-simdna     d=   -8.716%  bar=improve  r8=faster x1.1  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-16                  large-subject-throughput   plain          auto-caps-simdna     d=   +8.118%  bar=regress  r8=slower x1.08  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-8                   short-subject-search       plain          auto-caps-simdna     d=   -8.070%  bar=improve  r8=faster x1.09  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-4                   match-compliance           whole-subject  auto-caps-simdna     d=   +7.885%  bar=regress  r8=slower x1.08  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  pw-8-64                      match-compliance           whole-subject  auto-caps-simdna     d=   -7.348%  bar=improve  r8=faster x1.08  cause: view-edge
+  cls-upto-4                   large-subject-throughput   plain          auto-caps-simdna     d=   +7.020%  bar=regress  r8=slower x1.07  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-32                  short-subject-search       plain          auto-caps-simdna     d=   -6.639%  bar=improve  r8=faster x1.07  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-8                   large-subject-throughput   plain          auto-caps-simdna     d=   +6.604%  bar=regress  r8=slower x1.07  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-64                     match-compliance           whole-subject  auto-caps-simdna     d=   +6.476%  bar=regress  r8=slower x1.06  cause: not-restored-by-round1-denials (unattributed in the census narrative)
+  year4                        large-subject-throughput   plain          auto-caps-simdna     d=   +5.763%  bar=regress  r8=slower x1.06  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-8                   match-compliance           whole-subject  auto-caps-simdna     d=   +5.326%  bar=regress  r8=slower x1.05  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dotted4                      match-compliance           whole-subject  auto-caps-simdna     d=   +4.903%  bar=regress  r8=slower x1.05  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-16                  short-subject-search       plain          auto-caps-simdna     d=   -4.856%  bar=improve  r8=faster x1.05  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-16                  match-compliance           whole-subject  auto-caps-simdna     d=   +4.764%  bar=regress  r8=slower x1.05  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-4                      match-compliance           whole-subject  auto-caps-simdna     d=   +4.706%  bar=regress  r8=slower x1.05  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-32                 large-subject-throughput   plain          auto-caps-simdna     d=   +4.600%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  grp-upto-1024                large-subject-throughput   plain          auto-caps-simdna     d=   +4.581%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-32                  large-subject-throughput   plain          auto-caps-simdna     d=   +4.451%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-512                 large-subject-throughput   plain          auto-caps-simdna     d=   +4.387%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-16384               large-subject-throughput   plain          auto-caps-simdna     d=   +4.365%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-4096                large-subject-throughput   plain          auto-caps-simdna     d=   +4.359%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest3-3                      match-compliance           whole-subject  auto-caps-simdna     d=   +4.332%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-letters-6              match-compliance           whole-subject  auto-caps-simdna     d=   +4.230%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-2048                large-subject-throughput   plain          auto-caps-simdna     d=   +4.213%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-1024                large-subject-throughput   plain          auto-caps-simdna     d=   +4.152%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-letters-6              short-subject-search       plain          auto-caps-simdna     d=   +4.091%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-8192                large-subject-throughput   plain          auto-caps-simdna     d=   +4.090%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-256                 large-subject-throughput   plain          auto-caps-simdna     d=   +3.964%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-64                  short-subject-search       plain          auto-caps-simdna     d=   -3.957%  bar=improve  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-256                 short-subject-search       plain          auto-caps-simdna     d=   -3.950%  bar=improve  r8=faster x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-128                 large-subject-throughput   plain          auto-caps-simdna     d=   +3.916%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-64                  large-subject-throughput   plain          auto-caps-simdna     d=   +3.906%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-4                   match-compliance           whole-subject  auto-caps-simdna     d=   +3.843%  bar=regress  r8=slower x1.04  cause: view-edge
+  nest3-16                     match-compliance           whole-subject  auto-caps-simdna     d=   +3.787%  bar=regress  r8=unchanged  cause: not-restored-by-round1-denials (unattributed in the census narrative)
+  dig-upto-4                   large-subject-throughput   plain          auto-caps-simdna     d=   +3.610%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-8                   short-subject-search       plain          auto-caps-simdna     d=   -3.583%  bar=improve  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-16                  large-subject-throughput   plain          auto-caps-simdna     d=   +3.508%  bar=regress  r8=slower x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  grp-upto-1024                short-subject-search       plain          auto-caps-simdna     d=   -3.477%  bar=improve  r8=faster x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest3-3                      short-subject-search       plain          auto-caps-simdna     d=   -3.449%  bar=improve  r8=faster x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-128                 short-subject-search       plain          auto-caps-simdna     d=   -3.282%  bar=improve  r8=faster x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-2                  large-subject-throughput   plain          auto-caps-simdna     d=   +3.219%  bar=regress  r8=slower x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-8                  large-subject-throughput   plain          auto-caps-simdna     d=   +3.156%  bar=regress  r8=slower x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-32                  match-compliance           whole-subject  auto-caps-simdna     d=   +3.043%  bar=regress  r8=slower x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-4                      large-subject-throughput   plain          auto-caps-simdna     d=   +2.817%  bar=regress  r8=slower x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-2048                short-subject-search       plain          auto-caps-simdna     d=   -2.813%  bar=improve  r8=faster x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-1024                short-subject-search       plain          auto-caps-simdna     d=   -2.715%  bar=improve  r8=faster x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  ctx-lazy-1024                match-compliance           whole-subject  auto-caps-simdna     d=   -2.684%  bar=improve  r8=faster x1.03  cause: run-overlap
+  ctx-lazy-256                 match-compliance           whole-subject  auto-caps-simdna     d=   -2.605%  bar=improve  r8=faster x1.03  cause: run-overlap
+  cls-upto-512                 short-subject-search       plain          auto-caps-simdna     d=   -2.577%  bar=improve  r8=faster x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-8192                short-subject-search       plain          auto-caps-simdna     d=   -2.458%  bar=improve  r8=faster x1.03  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-16                  match-compliance           whole-subject  auto-caps-simdna     d=   +2.343%  bar=regress  r8=slower x1.02  cause: view-edge
+  nest2-64                     short-subject-search       plain          auto-caps-simdna     d=   -2.242%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-8                   match-compliance           whole-subject  auto-caps-simdna     d=   +2.236%  bar=regress  r8=slower x1.02  cause: view-edge
+  nest3-16                     short-subject-search       plain          auto-caps-simdna     d=   -2.202%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  nest2-4                      short-subject-search       plain          auto-caps-simdna     d=   -2.181%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-4                   short-subject-search       plain          auto-caps-simdna     d=   -2.144%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-16                  short-subject-search       plain          auto-caps-simdna     d=   -2.120%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-2                  short-subject-search       plain          auto-caps-simdna     d=   -1.990%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  ctx-lazy-64                  short-subject-search       plain          auto-caps-simdna     d=   +1.986%  bar=regress  r8=slower x1.02  cause: run-overlap
+  cls-upto-4096                short-subject-search       plain          auto-caps-simdna     d=   -1.957%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-32                  match-compliance           whole-subject  auto-caps-simdna     d=   +1.952%  bar=regress  r8=slower x1.02  cause: view-edge
+  dig-upto-32                  short-subject-search       plain          auto-caps-simdna     d=   -1.845%  bar=improve  r8=faster x1.02  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  ctx-lazy-1024                large-subject-throughput   plain          auto-caps-simdna     d=   -1.497%  bar=improve  r8=faster x1.02  cause: run-overlap
+  ctx-lazy-256                 large-subject-throughput   plain          auto-caps-simdna     d=   -1.471%  bar=improve  r8=faster x1.01  cause: run-overlap
+  dig-exact-16                 short-subject-search       plain          auto-caps-simdna     d=   -1.437%  bar=improve  r8=faster x1.01  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  ctx-lazy-64                  large-subject-throughput   plain          auto-caps-simdna     d=   -1.422%  bar=improve  r8=faster x1.01  cause: run-overlap
+  dig-exact-16                 large-subject-throughput   plain          auto-caps-simdna     d=   +1.378%  bar=regress  r8=slower x1.01  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-8                  short-subject-search       plain          auto-caps-simdna     d=   -1.268%  bar=improve  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-16384               short-subject-search       plain          auto-caps-simdna     d=   -1.206%  bar=improve  r8=faster x1.01  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-256                 match-compliance           whole-subject  auto-caps-simdna     d=   +0.905%  bar=regress  r8=slower x1.01  cause: view-edge
+  dig-upto-32                  large-subject-throughput   plain          auto-caps-simdna     d=   +0.879%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-exact-32                 short-subject-search       plain          auto-caps-simdna     d=   -0.824%  bar=improve  r8=faster x1.01  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  dig-upto-8                   large-subject-throughput   plain          auto-caps-simdna     d=   +0.682%  bar=regress  r8=slower x1.01  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  year4                        short-subject-search       plain          auto-caps-simdna     d=   -0.615%  bar=improve  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  cls-upto-512                 match-compliance           whole-subject  auto-caps-simdna     d=   +0.606%  bar=regress  r8=slower x1.01  cause: view-edge
+  ctx-lazy-256                 short-subject-search       plain          auto-caps-simdna     d=   -0.527%  bar=improve  r8=faster x1.01  cause: run-overlap
+  ctx-greedy-256               short-subject-search       plain          auto-caps-simdna     d=   +0.490%  bar=regress  r8=slower x1.0  cause: run-overlap
+  grp-upto-1024                match-compliance           whole-subject  auto-caps-simdna     d=   +0.486%  bar=regress  r8=slower x1.0  cause: view-edge
+  cls-upto-1024                match-compliance           whole-subject  auto-caps-simdna     d=   +0.378%  bar=regress  r8=slower x1.0  cause: view-edge
+  nest2-64                     large-subject-throughput   plain          auto-caps-simdna     d=   -0.125%  bar=improve  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+--- capability: 12 real mover(s) ---
+  wild-secrets-username-password-pair large-subject-throughput   plain          auto-caps-simdna     d=+5465.870%  bar=regress  r8=slower x55.66  cause: all-three
+  wild-secrets-username-password-pair large-subject-throughput   plain          auto-nocaps-simdna   d=+5280.985%  bar=regress  r8=slower x53.81  cause: all-three
+  wild-waf-crs-942270-union-select large-subject-throughput   plain          vm-caps-simdna       d=  -88.986%  bar=improve  r8=faster x9.08  cause: req-run-fold
+  wild-secrets-username-password-pair short-subject-search       plain          auto-nocaps-simdna   d=  +73.138%  bar=regress  r8=slower x1.73  cause: all-three
+  wild-waf-crs-942270-union-select short-subject-search       plain          vm-caps-simdna       d=  -71.775%  bar=improve  r8=faster x3.54  cause: req-run-fold
+  wild-waf-crs-942270-union-select large-subject-throughput   plain          auto-nocaps-simdna   d=  -53.654%  bar=improve  r8=faster x2.16  cause: req-run-fold
+  wild-waf-crs-942270-union-select large-subject-throughput   plain          auto-caps-simdna     d=  -53.293%  bar=improve  r8=faster x2.14  cause: req-run-fold
+  wild-secrets-username-password-pair short-subject-search       plain          auto-caps-simdna     d=  +46.124%  bar=regress  r8=slower x1.46  cause: all-three
+  wild-secrets-username-password-pair short-subject-search       plain          vm-caps-simdna       d=  +18.842%  bar=regress  r8=slower x1.19  cause: all-three
+  wild-waf-crs-942270-union-select short-subject-search       plain          auto-caps-simdna     d=  -14.067%  bar=improve  r8=faster x1.16  cause: req-run-fold
+  wild-waf-crs-942270-union-select short-subject-search       plain          auto-nocaps-simdna   d=  -13.528%  bar=improve  r8=faster x1.16  cause: req-run-fold
+  high-byte-run                short-subject-search       plain          auto-caps-simdna     d=   -3.948%  bar=improve  r8=faster x1.04  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+--- email-specimen: 3 real mover(s) ---
+  floor                        match-compliance           whole-subject  auto-caps-simdna     d=  +13.470%  bar=regress  r8=slower x1.13  cause: view-edge
+  factored                     short-subject-search       plain          auto-caps-simdna     d=   -3.483%  bar=improve  r8=faster x1.04  cause: K78 (DFA dead-group fill relocated search-entry -> success-path)
+  factored                     large-subject-throughput   plain          auto-caps-simdna     d=   +0.161%  bar=regress  r8=slower x1.0  cause: K78 (DFA dead-group fill relocated search-entry -> success-path)
+--- litrun: 7 real mover(s) ---
+  wild-secrets-github-pat      short-subject-search       plain          auto-caps-simdna     d=  -14.158%  bar=improve  r8=faster x1.16  cause: run-overlap
+  ctrl-abc-dollar              large-subject-throughput   plain          auto-caps-simdna     d=  +11.542%  bar=regress  r8=slower x1.12  cause: run-overlap
+  lit-l10                      large-subject-throughput   plain          vm-caps-simdna       d=   +6.987%  bar=regress  r8=slower x1.07  cause: run-overlap
+  wild-secrets-aws-access-key-id large-subject-throughput   plain          vm-caps-simdna       d=   +6.381%  bar=regress  r8=slower x1.06  cause: run-overlap
+  wild-secrets-aws-access-key-id large-subject-throughput   plain          auto-caps-simdna     d=   +5.875%  bar=regress  r8=slower x1.06  cause: run-overlap
+  wild-secrets-aws-access-key-id short-subject-search       plain          vm-caps-simdna       d=   +5.657%  bar=regress  r8=slower x1.06  cause: run-overlap
+  ctrl-abc-dollar              large-subject-throughput   plain          vm-caps-simdna       d=   +1.736%  bar=regress  r8=slower x1.02  cause: run-overlap
+--- loglines: 5 real mover(s) ---
+  http-5xx                     large-subject-throughput   plain          auto-caps-simdna     d=   -1.665%  bar=improve  r8=faster x1.02  cause: req-run-fold
+  stack-frame                  large-subject-throughput   plain          auto-caps-simdna     d=   +0.420%  bar=regress  r8=slower x1.0  cause: run-overlap
+  iso-ts                       large-subject-throughput   plain          auto-caps-simdna     d=   +0.188%  bar=regress  r8=unchanged  cause: [CLS-TREE] S2 (range spelling, -4 B/test site)
+  level-context                short-subject-search       plain          auto-caps-simdna     d=   +0.121%  bar=regress  r8=unchanged  cause: run-overlap
+  stack-frame                  short-subject-search       plain          auto-caps-simdna     d=   +0.093%  bar=regress  r8=slower x1.0  cause: run-overlap
+--- syntax: 38 real mover(s) ---
+  mod-r                        large-subject-throughput   plain          vm-caps-simdna       d= +128.926%  bar=regress  r8=slower x2.29  cause: req-run-fold
+  mod-i                        large-subject-throughput   plain          vm-caps-simdna       d= +128.115%  bar=regress  r8=slower x2.28  cause: req-run-fold
+  cls-pair-ctl                 large-subject-throughput   plain          vm-caps-simdna       d= +108.090%  bar=regress  r8=slower x2.08  cause: req-run-fold
+  mod-r                        large-subject-throughput   plain          auto-caps-simdna     d=  +70.421%  bar=regress  r8=slower x1.7  cause: req-run-fold
+  mod-i                        large-subject-throughput   plain          auto-nocaps-simdna   d=  +69.803%  bar=regress  r8=slower x1.7  cause: req-run-fold
+  mod-i                        large-subject-throughput   plain          auto-caps-simdna     d=  +69.227%  bar=regress  r8=slower x1.69  cause: req-run-fold
+  mod-r                        large-subject-throughput   plain          auto-nocaps-simdna   d=  +69.130%  bar=regress  r8=slower x1.69  cause: req-run-fold
+  cls-fold-pair                large-subject-throughput   plain          auto-caps-simdna     d=  +68.986%  bar=regress  r8=slower x1.69  cause: req-run-fold
+  cls-fold-pair                large-subject-throughput   plain          auto-nocaps-simdna   d=  +68.412%  bar=regress  r8=slower x1.68  cause: req-run-fold
+  cls-pair-ctl                 large-subject-throughput   plain          auto-nocaps-simdna   d=  +67.952%  bar=regress  r8=slower x1.68  cause: req-run-fold
+  cls-pair-ctl                 large-subject-throughput   plain          auto-caps-simdna     d=  +67.417%  bar=regress  r8=slower x1.67  cause: req-run-fold
+  cls-fold-pair                large-subject-throughput   plain          vm-caps-simdna       d=  +47.758%  bar=regress  r8=slower x1.48  cause: req-run-fold
+  mod-r                        short-subject-search       plain          vm-caps-simdna       d=  -40.305%  bar=improve  r8=faster x1.68  cause: req-run-fold
+  mod-i                        short-subject-search       plain          vm-caps-simdna       d=  -40.276%  bar=improve  r8=faster x1.67  cause: req-run-fold
+  cls-fold-pair                short-subject-search       plain          vm-caps-simdna       d=  -35.464%  bar=improve  r8=faster x1.55  cause: req-run-fold
+  lka-verb                     large-subject-throughput   plain          vm-caps-simdna       d=  -31.202%  bar=improve  r8=faster x1.45  cause: run-overlap
+  lka-pos                      large-subject-throughput   plain          vm-caps-simdna       d=  -31.072%  bar=improve  r8=faster x1.45  cause: run-overlap
+  cls-h                        large-subject-throughput   plain          vm-caps-simdna       d=  -30.309%  bar=improve  r8=faster x1.43  cause: run-overlap
+  cls-pair-ctl                 short-subject-search       plain          vm-caps-simdna       d=  -26.522%  bar=improve  r8=faster x1.36  cause: req-run-fold
+  rec-g-angle                  match-compliance           whole-subject  auto-nocaps-simdna   d=  -26.082%  bar=improve  r8=faster x1.35  cause: view-edge
+  rec-py                       match-compliance           whole-subject  auto-nocaps-simdna   d=  -25.772%  bar=improve  r8=faster x1.35  cause: view-edge
+  rec-back                     match-compliance           whole-subject  auto-nocaps-simdna   d=  -25.645%  bar=improve  r8=faster x1.34  cause: view-edge
+  rec-fwd                      match-compliance           whole-subject  auto-nocaps-simdna   d=  -24.904%  bar=improve  r8=faster x1.33  cause: view-edge
+  mod-n                        large-subject-throughput   plain          vm-caps-simdna       d=  +20.320%  bar=regress  r8=slower x1.2  cause: run-overlap
+  mod-x                        large-subject-throughput   plain          vm-caps-simdna       d=  -20.225%  bar=improve  r8=faster x1.25  cause: run-overlap
+  esc-hex                      large-subject-throughput   plain          vm-caps-simdna       d=  -20.114%  bar=improve  r8=faster x1.25  cause: run-overlap
+  lit-cat                      large-subject-throughput   plain          vm-caps-simdna       d=  -20.010%  bar=improve  r8=faster x1.25  cause: run-overlap
+  floor                        match-compliance           whole-subject  auto-nocaps-simdna   d=  +17.530%  bar=regress  r8=slower x1.18  cause: view-edge
+  floor                        match-compliance           whole-subject  auto-caps-simdna     d=  +16.504%  bar=regress  r8=slower x1.17  cause: view-edge
+  rec-fwd                      match-compliance           whole-subject  auto-caps-simdna     d=  +14.015%  bar=regress  r8=slower x1.14  cause: view-edge
+  lit-cat                      match-compliance           whole-subject  auto-caps-simdna     d=  +13.822%  bar=regress  r8=slower x1.14  cause: run-overlap
+  cls-s-lc                     short-subject-search       plain          vm-caps-simdna       d=  -12.469%  bar=improve  r8=faster x1.14  cause: run-overlap
+  esc-hex                      short-subject-search       plain          vm-caps-simdna       d=  -11.897%  bar=improve  r8=faster x1.14  cause: run-overlap
+  mod-x                        short-subject-search       plain          vm-caps-simdna       d=  -11.736%  bar=improve  r8=faster x1.13  cause: run-overlap
+  asr-nwb                      short-subject-search       plain          vm-caps-simdna       d=  -11.413%  bar=improve  r8=faster x1.13  cause: run-overlap
+  lit-cat                      short-subject-search       plain          vm-caps-simdna       d=  -11.320%  bar=improve  r8=faster x1.13  cause: run-overlap
+  lka-pos                      short-subject-search       plain          vm-caps-simdna       d=  -10.559%  bar=improve  r8=faster x1.12  cause: run-overlap
+  lka-verb                     short-subject-search       plain          vm-caps-simdna       d=   -9.976%  bar=improve  r8=faster x1.11  cause: run-overlap
+--- utf8: 18 real mover(s) ---
+  alt-shared-char              large-subject-throughput   plain          auto-nocaps-simdna_utf8 d= +106.473%  bar=regress  r8=slower x2.06  cause: all-three
+  alt-shared-char              large-subject-throughput   plain          auto-caps-simdna_utf8 d= +106.265%  bar=regress  r8=slower x2.06  cause: all-three
+  ci-ascii-control             large-subject-throughput   plain          vm-caps-simdna_utf8  d=  -88.066%  bar=improve  r8=faster x8.38  cause: req-run-fold
+  ci-ascii-control             large-subject-throughput   plain          auto-caps-simdna_utf8 d=  -63.888%  bar=improve  r8=faster x2.77  cause: req-run-fold
+  ci-ascii-control             large-subject-throughput   plain          auto-nocaps-simdna_utf8 d=  -63.851%  bar=improve  r8=faster x2.77  cause: req-run-fold
+  ci-strasse                   short-subject-search       plain          vm-caps-simdna_utf8  d=  -36.036%  bar=improve  r8=faster x1.56  cause: req-run-fold
+  ci-strasse                   short-subject-search       plain          auto-nocaps-simdna_utf8 d=  +23.212%  bar=regress  r8=slower x1.23  cause: req-run-fold
+  alt-shared-char              large-subject-throughput   plain          vm-caps-simdna_utf8  d=  +20.557%  bar=regress  r8=slower x1.21  cause: all-three
+  ci-ascii-control             short-subject-search       plain          vm-caps-simdna_utf8  d=  -20.434%  bar=improve  r8=faster x1.26  cause: req-run-fold
+  alt-shared-char              short-subject-search       plain          vm-caps-simdna_utf8  d=  +17.367%  bar=regress  r8=slower x1.17  cause: all-three
+  lit-1ch-3b                   short-subject-search       plain          auto-nocaps-simdna_utf8 d=  -13.243%  bar=improve  r8=faster x1.15  cause: run-overlap
+  lit-1ch-3b                   short-subject-search       plain          auto-caps-simdna_utf8 d=  -12.660%  bar=improve  r8=unchanged  cause: run-overlap
+  lit-1ch-3b                   short-subject-search       plain          vm-caps-simdna_utf8  d=  -12.197%  bar=improve  r8=faster x1.14  cause: run-overlap
+  ci-strasse                   large-subject-throughput   plain          auto-nocaps-simdna_utf8 d=  +11.952%  bar=regress  r8=slower x1.12  cause: req-run-fold
+  ci-ascii-control             short-subject-search       plain          auto-caps-simdna_utf8 d=  +11.779%  bar=regress  r8=slower x1.12  cause: req-run-fold
+  ci-ascii-control             short-subject-search       plain          auto-nocaps-simdna_utf8 d=  +11.308%  bar=regress  r8=slower x1.11  cause: req-run-fold
+  asr-a-z                      large-subject-throughput   plain          vm-caps-simdna_utf8  d=  -10.820%  bar=improve  r8=faster x1.12  cause: run-overlap
+  lit-anchored-run             large-subject-throughput   plain          vm-caps-simdna_utf8  d=  -10.487%  bar=improve  r8=faster x1.12  cause: run-overlap
+
+TOTAL real movers across all 8 sets: 234
+
+## 3b. cross-check: the brief's OWN literal rule (|delta_pct| vs the
+    identity=identical population's observed max|delta_pct| for the
+    same (set, route), POOLED across regimes/strata -- a wider,
+    cruder version of the per-stratum band the D119 bar already uses)
+
+  agree: 548   D119-bar-only-real (pooled rule says noise): 141   pooled-rule-only-real (bar says within): 13
+  (a 'pooled-rule-only-real' cell is one whose own stratum's null
+  band is wider than the set/route's pooled max -- i.e. the
+  per-stratum reading is the more conservative one on that cell.)
+
+## 4. REAL MOVERS PER CAUSE -- what round 2 is chosen from
+
+--- cause: run-overlap --- (96 real mover row(s); 68 improve / 28 regress; sets: altwide, bounded, litrun, loglines, syntax, utf8)
+    largest IMPROVE: syntax/lka-verb/large-subject-throughput/vm-caps-simdna d=-31.202% (r8 faster x1.45)
+    largest REGRESS: syntax/mod-n/large-subject-throughput/vm-caps-simdna d=+20.320% (r8 slower x1.2)
+
+--- cause: [CLS-TREE] S2 (range spelling, -4 B/test site) --- (65 real mover row(s); 30 improve / 35 regress; sets: bounded, capability, loglines)
+    largest IMPROVE: bounded/cls-atleast-4096/match-compliance/auto-caps-simdna d=-46.640% (r8 faster x1.87)
+    largest REGRESS: bounded/nest2-letters-6/large-subject-throughput/auto-caps-simdna d=+19.871% (r8 slower x1.2)
+
+--- cause: req-run-fold --- (32 real mover row(s); 16 improve / 16 regress; sets: capability, loglines, syntax, utf8)
+    largest IMPROVE: capability/wild-waf-crs-942270-union-select/large-subject-throughput/vm-caps-simdna d=-88.986% (r8 faster x9.08)
+    largest REGRESS: syntax/mod-r/large-subject-throughput/vm-caps-simdna d=+128.926% (r8 slower x2.29)
+
+--- cause: view-edge --- (28 real mover row(s); 14 improve / 14 regress; sets: altwide, bounded, email-specimen, syntax)
+    largest IMPROVE: bounded/cls-upto-2048/match-compliance/auto-caps-simdna d=-53.307% (r8 faster x2.14)
+    largest REGRESS: syntax/floor/match-compliance/auto-nocaps-simdna d=+17.530% (r8 slower x1.18)
+
+--- cause: all-three --- (9 real mover row(s); 0 improve / 9 regress; sets: capability, utf8)
+    largest REGRESS: capability/wild-secrets-username-password-pair/large-subject-throughput/auto-caps-simdna d=+5465.870% (r8 slower x55.66)
+
+--- cause: not-restored-by-round1-denials (unattributed in the census narrative) --- (2 real mover row(s); 0 improve / 2 regress; sets: bounded)
+    largest REGRESS: bounded/nest2-64/match-compliance/auto-caps-simdna d=+6.476% (r8 slower x1.06)
+
+--- cause: K78 (DFA dead-group fill relocated search-entry -> success-path) --- (2 real mover row(s); 1 improve / 1 regress; sets: email-specimen)
+    largest IMPROVE: email-specimen/factored/short-subject-search/auto-caps-simdna d=-3.483% (r8 faster x1.04)
+    largest REGRESS: email-specimen/factored/large-subject-throughput/auto-caps-simdna d=+0.161% (r8 slower x1.0)
+
+## 5. unjoined d119 rows (changed-identity, no matching census row)
+   0 of 702 changed-identity d119 rows have no (set, pattern, cfg, form) match in the census.
+
+## 6. reconciliation with b122read's spot claims (ledger 2026-10-05-b122-round1-wide-c4c70f2c.md SS5-6)
+
+  [utf8/ci-ascii-control] claim: x2.77 (auto/auto-nocaps)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna_utf8: identity=changed r8=faster x2.77 bar=improve d=-63.888%
+      large-subject-throughput/auto-nocaps-simdna_utf8: identity=changed r8=faster x2.77 bar=improve d=-63.851%
+  [utf8/ci-ascii-control] claim: x8.38 (forced vm)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/vm-caps-simdna_utf8: identity=changed r8=faster x8.38 bar=improve d=-88.066%
+  [utf8/alt-shared-char] claim: x2.06 (both DFA configs)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna_utf8: identity=changed r8=slower x2.06 bar=regress d=+106.265%
+      large-subject-throughput/auto-nocaps-simdna_utf8: identity=changed r8=slower x2.06 bar=regress d=+106.473%
+  [utf8/alt-shared-char] claim: x1.21 (forced vm)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/vm-caps-simdna_utf8: identity=changed r8=slower x1.21 bar=regress d=+20.557%
+  [altwide/clsa-64] claim: x1.16-x1.37 faster, all 3 regimes
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=faster x1.37 bar=improve d=-26.796%
+      match-compliance/vm-caps-simdna: identity=changed r8=faster x1.16 bar=improve d=-14.136%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.35 bar=improve d=-25.787%
+  [altwide/clsd-64] claim: x1.16-x1.37 faster, all 3 regimes
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=faster x1.37 bar=improve d=-27.238%
+      match-compliance/vm-caps-simdna: identity=changed r8=faster x1.17 bar=improve d=-14.731%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.37 bar=improve d=-27.099%
+  [litrun] claim: no mover beyond +-1.17x on any pattern/regime
+      84 d119 rows matched; 7 real mover(s) (bar regress/improve); max r8 ratio over ALL matched rows (fired or not): 1.16
+      real movers (top 5 by |delta_pct|):
+        wild-secrets-github-pat/short-subject-search/auto-caps-simdna: r8=faster x1.16 bar=improve d=-14.158%
+        ctrl-abc-dollar/large-subject-throughput/auto-caps-simdna: r8=slower x1.12 bar=regress d=+11.542%
+        lit-l10/large-subject-throughput/vm-caps-simdna: r8=slower x1.07 bar=regress d=+6.987%
+        wild-secrets-aws-access-key-id/large-subject-throughput/vm-caps-simdna: r8=slower x1.06 bar=regress d=+6.381%
+        wild-secrets-aws-access-key-id/large-subject-throughput/auto-caps-simdna: r8=slower x1.06 bar=regress d=+5.875%
+      -> CONFIRMED (max fired ratio stays within the stated bound)
+  [syntax/mod-i] claim: K82 fold-family split (slower thr, faster srch on vm)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna: identity=changed r8=slower x1.69 bar=regress d=+69.227%
+      match-compliance/auto-caps-simdna: identity=changed r8=slower x1.04 bar=within d=+4.285%
+      short-subject-search/auto-caps-simdna: identity=changed r8=unchanged bar=within d=+1.513%
+      large-subject-throughput/auto-nocaps-simdna: identity=changed r8=slower x1.7 bar=regress d=+69.803%
+      match-compliance/auto-nocaps-simdna: identity=changed r8=unchanged bar=within d=-0.113%
+      short-subject-search/auto-nocaps-simdna: identity=changed r8=unchanged bar=within d=+1.355%
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=slower x2.28 bar=regress d=+128.115%
+      match-compliance/vm-caps-simdna: identity=changed r8=slower x1.06 bar=within d=+5.986%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.67 bar=improve d=-40.276%
+  [syntax/mod-r] claim: K82 fold-family split
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna: identity=changed r8=slower x1.7 bar=regress d=+70.421%
+      match-compliance/auto-caps-simdna: identity=changed r8=unchanged bar=within d=-0.327%
+      short-subject-search/auto-caps-simdna: identity=changed r8=slower x1.04 bar=within d=+4.292%
+      large-subject-throughput/auto-nocaps-simdna: identity=changed r8=slower x1.69 bar=regress d=+69.130%
+      match-compliance/auto-nocaps-simdna: identity=changed r8=slower x1.02 bar=within d=+2.289%
+      short-subject-search/auto-nocaps-simdna: identity=changed r8=slower x1.02 bar=within d=+1.717%
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=slower x2.29 bar=regress d=+128.926%
+      match-compliance/vm-caps-simdna: identity=changed r8=slower x1.06 bar=within d=+5.957%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.68 bar=improve d=-40.305%
+  [syntax/cls-fold-pair] claim: K82 fold-family split
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna: identity=changed r8=slower x1.69 bar=regress d=+68.986%
+      match-compliance/auto-caps-simdna: identity=changed r8=slower x1.12 bar=within d=+12.117%
+      short-subject-search/auto-caps-simdna: identity=changed r8=faster x1.09 bar=within d=-8.462%
+      large-subject-throughput/auto-nocaps-simdna: identity=changed r8=slower x1.68 bar=regress d=+68.412%
+      match-compliance/auto-nocaps-simdna: identity=changed r8=slower x1.11 bar=within d=+10.663%
+      short-subject-search/auto-nocaps-simdna: identity=changed r8=faster x1.09 bar=within d=-7.895%
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=slower x1.48 bar=regress d=+47.758%
+      match-compliance/vm-caps-simdna: identity=changed r8=unchanged bar=within d=-0.214%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.55 bar=improve d=-35.464%
+  [syntax/cls-pair-ctl] claim: K82 fold-family split
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna: identity=changed r8=slower x1.67 bar=regress d=+67.417%
+      match-compliance/auto-caps-simdna: identity=changed r8=slower x1.14 bar=within d=+13.609%
+      short-subject-search/auto-caps-simdna: identity=changed r8=faster x1.1 bar=within d=-9.349%
+      large-subject-throughput/auto-nocaps-simdna: identity=changed r8=slower x1.68 bar=regress d=+67.952%
+      match-compliance/auto-nocaps-simdna: identity=changed r8=slower x1.12 bar=within d=+11.582%
+      short-subject-search/auto-nocaps-simdna: identity=changed r8=faster x1.09 bar=within d=-8.195%
+      large-subject-throughput/vm-caps-simdna: identity=changed r8=slower x2.08 bar=regress d=+108.090%
+      match-compliance/vm-caps-simdna: identity=changed r8=slower x1.04 bar=within d=+4.303%
+      short-subject-search/vm-caps-simdna: identity=changed r8=faster x1.36 bar=improve d=-26.522%
+  [utf8/ci-strasse] claim: K82 fold-family split (auto/auto-nocaps only)
+      -> CONFIRMED (real mover(s) present)
+      large-subject-throughput/auto-caps-simdna_utf8: identity=changed r8=slower x1.1 bar=within d=+10.439%
+      short-subject-search/auto-caps-simdna_utf8: identity=changed r8=slower x1.24 bar=within d=+23.734%
+      large-subject-throughput/auto-nocaps-simdna_utf8: identity=changed r8=slower x1.12 bar=regress d=+11.952%
+      short-subject-search/auto-nocaps-simdna_utf8: identity=changed r8=slower x1.23 bar=regress d=+23.212%
+      large-subject-throughput/vm-caps-simdna_utf8: identity=changed r8=faster x1.04 bar=within d=-3.915%
+      short-subject-search/vm-caps-simdna_utf8: identity=changed r8=faster x1.56 bar=improve d=-36.036%
+
