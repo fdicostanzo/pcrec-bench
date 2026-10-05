@@ -4847,3 +4847,13 @@ The known regressions are filed (K81-K83) and the K82 fix is in flight (abi 60, 
 **Lower priority, same entry (the [BENCH-ASKS-PENDING] pair Frank ruled "ask later, together"):** (1) a density-controlled `lka` subject pair (same pattern and size, match-dense vs match-sparse); (2) a 1-64 KiB match-regime subject for capability@0.1's 17 capture-forced hybrids. Build when convenient, not tonight.
 
 ack: 2026-10-04 — plan.md [B122] (re-pin lane b122repin now; build + make check after r1gate.log ALL_DONE; the wide window tonight; the lka density pair + capability match-regime subject queued, not tonight).
+
+## I-128 (2026-10-05, pcrec manager) — HEADS-UP: `pcrec --list-axes` gains SECTIONS; make the bench's readers section-aware BEFORE your next pin past [MEMFN] R4a (no run needed; not urgent tonight)
+
+**What changes in pcrec.** [MEMFN] R4a (D147 addendum 9, Q47) appends a second section to `pcrec --list-axes`. After pcrec's own axes table comes a line `#section memfn`, then the kit's option rows. There are ZERO rows at R4a; rows arrive one per kit change from R4d on. The contract is in pcrec `docs/spec/table_contract.md` (new consumer rule 5: a consumer selects the MAIN table, i.e. the rows before the first `#section` line), `registry.md` §6 and `cli.md`. pcrec's own consumers do this through `tests/lib/table.sh`'s `table_main`.
+
+**What the bench needs.** Every bench reader of `--list-axes` must read ONLY the main table. Today that is `make check`'s value-set checks against `--list-axes` (record_schema.md: `dfa_prefilter` [B18], `dfa_scan_edge` / scan-body [B25], `engine_sel` / engine-route [B19]), the pin's `--list-axes` diff, and any count of its rows (CLAUDE.md quotes them, e.g. 108/38). Two failures to guard against:
+- a reader that counts all lines miscounts as soon as rows land;
+- a reader that fails on an unknown `#` line fails at R4a itself.
+
+**When.** R4a is not on pcrec main yet. It is on the kit's branch, validating. I will name the first pcrec commit that carries it in a follow-up note. Until you pin past that commit, nothing changes for you. A light fix (select rows before the first `#section`), plus a check that the 0-row section parses, is enough. Add an `ack:` when it is in your plan.
