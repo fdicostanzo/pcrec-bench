@@ -51,6 +51,11 @@
 #              settable per set as $CELL_CAP_<set> (and per labelled pass
 #              as $CELL_CAP_<set>_<label>). The cap and the rc are printed
 #              on EVERY attempt line, so a log says which cap killed a cell.
+#   STOP_AT    ""                    -- [B122] a `date -d` time (e.g. "2026-10-05 12:00");
+#              no cell STARTS at or after it: the remaining cells are named
+#              in the log as `STOP_AT reached` and skipped (a cell already
+#              running finishes). Empty = no deadline. run_suite.sh applies
+#              the same check between sets.
 #   NOTE       "quiet window run, $(date -Is)"
 #   LOG        build/windows/window_${SUBBENCH}_$(date +%Y%m%dT%H%M%SZ).log
 #              (gitignored -- `build/` is in .gitignore already)
@@ -194,7 +199,16 @@ gnutimeout 120 python3 -m pcrecbench quiet --samples 6 --pin "$PIN" 2>&1 | tail 
 first=1
 cells_attempted=0
 cells_written=0
+stop_epoch=""
+if [ -n "${STOP_AT:-}" ]; then
+  stop_epoch=$(date -d "$STOP_AT" +%s) || { echo "run_window.sh: unparseable STOP_AT='$STOP_AT'" >&2; exit 2; }
+fi
+skipped=""
 for t in $TESTEES; do
+  if [ -n "$stop_epoch" ] && [ "$(date +%s)" -ge "$stop_epoch" ]; then
+    skipped="$skipped $t"
+    continue
+  fi
   if [ "$first" -eq 0 ]; then
     sleep 15
   fi
@@ -240,6 +254,10 @@ for t in $TESTEES; do
     cells_written=$((cells_written + 1))
   fi
 done
+
+if [ -n "$skipped" ]; then
+  echo "-- STOP_AT reached ($STOP_AT): cells NOT started:$skipped $(date -Is)" | tee -a "$LOG"
+fi
 
 gnutimeout 120 python3 -m pcrecbench index --store "$STORE" 2>&1 | tail -3 | tee -a "$LOG"
 

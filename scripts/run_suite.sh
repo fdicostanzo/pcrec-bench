@@ -28,6 +28,9 @@
 #              before match and throughput). scripts/CLAUDE.md carries the
 #              measured cell-length table.
 #   STORE, PIN, TRIALS, NOTE, EXTRA -- passed through to run_window.sh
+#   STOP_AT    "" -- [B122] a `date -d` time; no SET starts at or after it
+#              (named in the log and the summary as `skipped`), and it is
+#              passed through so run_window.sh starts no CELL after it.
 #   SUITE_LOG  build/windows/suite_$(date +%Y%m%dT%H%M%SZ).log
 #   --dry-run  passed through (every set rehearsed synthetic into a scratch
 #              store; refused if STORE is the canonical store/)
@@ -57,8 +60,18 @@ SUITE_LOG=${SUITE_LOG:-build/windows/suite_$(date -u +%Y%m%dT%H%M%SZ).log}
 mkdir -p "$(dirname "$SUITE_LOG")" || exit 9
 
 echo "== suite start $(date -Is) suite='$SUITE' dry_run='${DRY:-no}' load=$(cat /proc/loadavg)" | tee -a "$SUITE_LOG"
+stop_epoch=""
+if [ -n "${STOP_AT:-}" ]; then
+  stop_epoch=$(date -d "$STOP_AT" +%s) || { echo "run_suite.sh: unparseable STOP_AT='$STOP_AT'" >&2; exit 2; }
+fi
 summary=""
 for entry in $SUITE; do
+  if [ -n "$stop_epoch" ] && [ "$(date +%s)" -ge "$stop_epoch" ]; then
+    line="set $entry skipped (STOP_AT $STOP_AT)"
+    echo "-- $line $(date -Is)" | tee -a "$SUITE_LOG"
+    summary="$summary$line"$'\n'
+    continue
+  fi
   set_name=${entry%%:*}
   label=""
   [ "$entry" != "$set_name" ] && label=${entry#*:}
