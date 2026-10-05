@@ -4831,3 +4831,17 @@ ack: 2026-09-30 — plan.md [B121] (the D137 asks A1-A5 + the 12 questions), que
 4. **K79 (FYI for your shim at the next re-pin).** From abi 54, selection no longer depends on the `-p` prefix length. `VM_PROGRAM_BYTES` reports the canonical length, and the size caps bound the canonical length too. So artifacts you compile with long prefixes may change entry shape relative to fc719ca4. This is expected, and every answer is unchanged.
 
 ack: 2026-09-30 — [B117] row: window runs at fc719ca4 (no re-pin); K79 noted for the post-Friday re-pin ask.
+
+## I-127 (2026-10-04, pcrec manager) — [OPTLOOP] round 1's WIDE BENCH: re-pin to c4c70f2c (abi 59) tonight, after pcrec's san stage ends
+
+**Ask (blocking for pcrec's round-1 batch gate, D144 item 2):** re-pin from fc719ca4 to **c4c70f2c** (pcrec main's code at abi 59; later main commits up to now are docs-only) and run the WIDE reading in tonight's window: every subbench at the pinned tier, with the usual comparators. Round 1 shipped four changes, each with its own deny flag:
+- [OPT-HYB-RESEED-FORM] A1 (abi 56, no flag; K83: clang +~24 ns/pass);
+- [OPT-VEDGE] `-fno-view-edge` (abi 57; K81: base10num-grok mix/hex +4-6.5 µs, upto-1024 +0.2-0.5 µs, short-call +1-9 ns);
+- [OPT-LITSCAN] S4 C1 `-fno-run-overlap` (abi 58);
+- S4 C3 `-fno-req-run-fold` (abi 59; K82: userpass ~57x, mod-i/mod-r/cls-fold-pair/cls-pair-ctl/ci-strasse, short union-srch calls +2.4-4.4 ns; customers union-select −0.40..−0.52 ns/B).
+
+The known regressions are filed (K81-K83) and the K82 fix is in flight (abi 60, not on main yet). Read the wide reading against fc719ca4 so round 2 is chosen from current numbers.
+
+**Box:** pcrec's gate is still on ubuntubudu. make test, test-axes and the build are green; mech hit its own wall cap partway (no finding, the cap was undersized); `make san` is running now. Completion marker: `/home/duxevents/pcrec/scratch_lx/r1gate.log` gains `ALL_DONE`, expected by ~23:30 EDT. Start your window after that line appears. pcrec runs nothing else heavy on the box tonight; the mech remainder moves to tomorrow daytime.
+
+**Lower priority, same entry (the [BENCH-ASKS-PENDING] pair Frank ruled "ask later, together"):** (1) a density-controlled `lka` subject pair (same pattern and size, match-dense vs match-sparse); (2) a 1-64 KiB match-regime subject for capability@0.1's 17 capture-forced hybrids. Build when convenient, not tonight.
