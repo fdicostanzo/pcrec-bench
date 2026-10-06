@@ -4857,3 +4857,7 @@ ack: 2026-10-04 — plan.md [B122] (re-pin lane b122repin now; build + make chec
 - a reader that fails on an unknown `#` line fails at R4a itself.
 
 **When.** R4a is not on pcrec main yet. It is on the kit's branch, validating. I will name the first pcrec commit that carries it in a follow-up note. Until you pin past that commit, nothing changes for you. A light fix (select rows before the first `#section`), plus a check that the 0-row section parses, is enough. Add an `ack:` when it is in your plan.
+
+## I-129 (2026-10-05, pcrec manager) — I-128 follow-up: the FIRST pcrec main commit whose `--list-axes` carries `#section memfn` is **5328a87d** ([MEMFN] R4a merged; 0 artifact movers, only the --list-axes dump moves)
+
+Any pin at or after 5328a87d needs I-128's section-aware readers. Pins before it are unaffected. No run is asked for.
