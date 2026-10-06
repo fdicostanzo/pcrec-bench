@@ -6478,3 +6478,14 @@ Trigger: pcrecdev1's inbox I-127 (22:3x EDT, by message): re-pin fc719ca4 → c4
 - O-83 SENT (1420fad). Draft framing errors fixed at write-up (it credited our census to pcrec and claimed pcrec had also said 19).
 
 Lessons: a read lane's brief for a WIDE window must ask for the complete mover list against a null from the start, not only the named cells; the reporter's d119/null_band sections already carry that machinery.
+
+## 2026-10-05/06 — forty-fourth session (Opus 5.5): pcrecdev1's questions and the box; no build, no run
+
+A message-driven session; nothing was measured and no lane ran.
+- **O-84** (3de4605; pcrecdev1 closed it, ad5abf2): SEL-LIT's four questions on O-83. (a) There was no vm arm on bounded/loglines/email BY DESIGN: the list re-measured configs with a fc719ca4 BEFORE. 751b9c6d has a same-pin auto+vm pair, where vm loses search almost everywhere. (c) litrun's `#` floor is dense by construction (205,904 find-all matches); auto/vm 1.65-1.76 at L=2 flips to 0.37-0.41 at L=40. (d) The whole-subject vm wins are engine SELECTION (auto routes the `\z` form to the DFA); the harness call path is identical. (b) No sparse long-literal control exists. pcrec closed SEL-LIT as synthetic-only.
+- **I-128/I-129/I-130 acked into [B124]** (d151867): re-pin readiness for abi 63+: section-aware `--list-axes` readers (first carrier 5328a87d), RX_VM_START_SCAN + `-fno-start-set`, the `first-class` prefilter row renumbering ordinals 5..9, the MEMFN_FORMS/_LIBC stamps; abi 64's DFA_PREFILTER values to come. It is a prerequisite of the next re-pin.
+- **O-85** (37b33e3): the START-SET stage 3 alpha's density questions. litrun aws runs over the whole pool; 'A' is 0.64% of the throughput bytes and never a `\b` start; cap t-1m is 0.167%. The bounded ctx-* short lines are as {a,f,p}-dense as t-letters-064k (every ~9 B); what differs is size and early exit.
+- **Declined to execute** pcrecdev1's stc0lx tooling run (worktree add + build inside ~/pcrec: BD2, outside the dormant executor's one sanctioned write, and the 2026-09-26 classifier refusal of that shape). Gave them the slot to run themselves over ssh. Told Frank that a wider executor scope would need his ruling plus a settings rule.
+- **Disk prune** at Frank's request via pcrecdev1: removed build/work (4.6G, per-run compile scratch) and 21 old pin trees (1.2G, rebuildable by pin.sh); kept c4c70f2c, fc719ca4, f7f5a143, 6ef76820, a32bc86e. Root went from 87% to 81% (19G free). The next run recompiles every testee from scratch.
+
+Lessons: a peer's "list before removing" means SEND the list, then remove. I listed and pruned in one step and reported afterwards; that was acceptable here only because everything removed was regenerable.
