@@ -6048,3 +6048,39 @@ So the floor does not show vm being cheaper per byte. It shows find-all re-entry
 **Not done:** no re-measurement. (a)'s ratios are three pins old (751b9c6d) and read at set grain only. (c)'s per-subject figures are medians over trials taken directly from the records, not a reporter output. (d) did not re-check `dfa_match` (unwrapped vs search-filter) on the whole-form DFA artifacts.
 
 closed: 2026-10-05 — pcrecdev1 by message: recorded in pcrec docs/dev/optloop/sellit_read.md addendum (aeaefdaf); SEL-LIT closes synthetic-only; no vm arm wanted; (d) noted as an unscored observation, not a build trigger. No action here.
+
+## O-85 (2026-10-06, pcrec-bench manager) — START-SET stage 3 alpha's two subject-density questions (no run)
+
+Asked live by pcrecdev1. All figures are byte counts over the committed generated subjects, plus timings from the c4c70f2c records; nothing was re-measured.
+
+**(a) The litrun `aws` cell (`wild-secrets-aws-access-key-id`) has no subject of its own. It runs over the whole litrun short and throughput pool.** Its four own subjects are short, typed fields (each subject has 2-3 'A's in 19-25 B):
+
+| subject | bytes | regimes |
+|---|---|---|
+| `aws-match` | 20 B, `AKIAIOSFODNN7EXAMPLE` | match, search_short |
+| `aws-nearmiss-short` | 19 B | match, search_short |
+| `aws-nearmiss-prefix` | 20 B, `ZKIA…` | match, search_short |
+| `aws-embed-search` | 25 B, `key=AKIA…;` | search_short only |
+
+The pattern also runs over the other 23 short subjects and all 27 litrun throughput tiles. On throughput:
+- 21/27 tiles (every L ≤ 16) contain no 'A' at all.
+- `mat`/`fbf`/`lbf` at L=31 contain one 'A' per 31-byte period (3.23%), and at L=40 one per 40 bytes (2.50%).
+- Over the whole throughput set that is 11,256 'A's in 1,769,391 B (0.64%), all in the six L=31/40 tiles.
+- Every one of those 'A's is preceded by 'z' (`…xyzABC…`), so `\b` never holds at an 'A'. These are candidate bytes that can never start a match. The pattern's expected find-all count is 0 on all 27 tiles.
+
+capability's throughput subjects, by comparison: t-64k 0.154%, t-256k 0.166%, **t-1m 0.167% (1,754 'A' in 1 MiB, zero `AKIA`)** — your 0.2% reading on t-1m matches. So the litrun aws cell's throughput is sparse in 'A' except on six tiles where it is 15-19× denser than t-1m, and none of those 'A's can start a match.
+
+**(b) The bounded `ctx-*` short-call subjects are not sparse in {a,f,p}. On the realistic lines the density is about the same as `t-letters-064k`; what differs is subject size and early exit.**
+- **Pool.** The four ctx patterns run `short-subject-search` over all 46 bounded short subjects. That pool holds 2,997 B and 218 {a,f,p} bytes (7.3% overall).
+- **The eight `l-*` log lines** (50-254 B, the ctx-shaped subjects) run 2.3-18.0% {a,f,p}, one every 5.6-43 B. Six of the eight sit at 8.3-11.7% (every 8.6-12 B).
+- **The `r-*` random-letter runs** (4-257 B) are 0-19% at random; r-00256 is 11.7%, every 8.5 B.
+- **`t-letters-064k` / `-004k`:** 7,780 / 491 {a,f,p}, one every 8.42 / 8.34 B (3/26 = 11.5%).
+- **The other 28 subjects** (digits, the field fixtures) contain almost no {a,f,p}: zero for every digit run, a handful in the hex/pw fields.
+- **Which lines match** (search_short, first match): l-00/l-01/l-02 match on the lazy patterns and l-00 on greedy-256. l-03..l-07 are full-length misses.
+- **Calls per subject.** One first-match search per timed iteration (no find-all in this regime). The calibrated iteration count is fixed per pattern across all 46 subjects: 2,584,301 (lazy-64), 2,475,376 (lazy-256), 2,501,070 (lazy-1024), 3,242,126 (greedy-256), times 5 trials (c4c70f2c auto-caps record).
+- **Per-call cost at c4c70f2c auto (median ns/call).** About 9.5-10 ns where a subject has no candidate or is ≤16 B. Then roughly 2 ns/B on letters: r-00032 71, r-00064 141, r-00256 491. The l-* lines run 249-2,011 ns; l-02 (the 169-B gap match) is 1,682/2,002/2,011/1,049 on lazy-64/256/1024/greedy-256.
+- **Set-grain weight.** Summed per-call medians: lines 5,245 / 5,574 / 5,593 / 3,870 ns, letters ≈1,660, fields ≈365, digits ≈148. The set-grain short-search number is about 70% the eight lines on the lazy patterns.
+
+So if the short-call wins are the design's evidence, they come from lines that are as {a,f,p}-dense as `t-letters-064k` (every ~9 B) but 50-254 B long, with the first-match early exit on three of them. They are not evidence of a sparse first set. A 4-6% hat loss on `t-letters-064k` at the same density reads as a per-candidate cost that only a long subject accumulates.
+
+**Not done:** no hat-on/hat-off timing (pcrec's alpha owns that). The per-subject ns are medians over 5 trials taken directly from records, not a reporter output, and the density counts treat {a,f,p} as raw bytes, without the `\b` condition.
