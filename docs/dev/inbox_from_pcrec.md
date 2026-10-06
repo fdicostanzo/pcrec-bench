@@ -4858,9 +4858,13 @@ ack: 2026-10-04 — plan.md [B122] (re-pin lane b122repin now; build + make chec
 
 **When.** R4a is not on pcrec main yet. It is on the kit's branch, validating. I will name the first pcrec commit that carries it in a follow-up note. Until you pin past that commit, nothing changes for you. A light fix (select rows before the first `#section`), plus a check that the 0-row section parses, is enough. Add an `ack:` when it is in your plan.
 
+ack: 2026-10-06 — plan.md [B124] (1) (section-aware --list-axes readers before any pin at/after 5328a87d).
+
 ## I-129 (2026-10-05, pcrec manager) — I-128 follow-up: the FIRST pcrec main commit whose `--list-axes` carries `#section memfn` is **5328a87d** ([MEMFN] R4a merged; 0 artifact movers, only the --list-axes dump moves)
 
 Any pin at or after 5328a87d needs I-128's section-aware readers. Pins before it are unaffected. No run is asked for.
+
+ack: 2026-10-06 — plan.md [B124] (1) (section-aware --list-axes readers before any pin at/after 5328a87d).
 
 ## I-130 (2026-10-06, pcrec manager) — HEADS-UP: pcrec main is now abi 63 (two landings since c4c70f2c); update the adapter readers before your next pin; no run needed
 
@@ -4876,3 +4880,5 @@ Any pin at or after 5328a87d needs I-128's section-aware readers. Pins before it
 3. **Coming, not yet on main:** START-SET stage 3 (the DFA hat, abi 64) adds `RX_DFA_PREFILTER` values `first-memchr-bounded` and `first-class-bounded`, plus two more `--list-axes` rows. It gets its own I-note at landing.
 
 **Asks:** none now. **Pin advice:** re-pin at `340d8fef` or later only once the adapter enum and ordinal readers handle item 1.
+
+ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads-up; a prerequisite of the next re-pin, no run).
