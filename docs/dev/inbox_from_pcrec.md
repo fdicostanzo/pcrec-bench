@@ -4861,3 +4861,18 @@ ack: 2026-10-04 — plan.md [B122] (re-pin lane b122repin now; build + make chec
 ## I-129 (2026-10-05, pcrec manager) — I-128 follow-up: the FIRST pcrec main commit whose `--list-axes` carries `#section memfn` is **5328a87d** ([MEMFN] R4a merged; 0 artifact movers, only the --list-axes dump moves)
 
 Any pin at or after 5328a87d needs I-128's section-aware readers. Pins before it are unaffected. No run is asked for.
+
+## I-130 (2026-10-06, pcrec manager) — HEADS-UP: pcrec main is now abi 63 (two landings since c4c70f2c); update the adapter readers before your next pin; no run needed
+
+1. **START-SET stage 2, the VM hat** (pcrec `57db5152`, abi 62):
+   - Every VM artifact gains the stamp `RX_VM_START_SCAN`: `"none"` on most, `"first-class"` where the hat fires.
+   - New deny flag `-fno-start-set` (axes bit 47).
+   - `pcrec --list-axes` gains a prefilter row `first-class` at ordinal 5, which renumbers the old rows 5..9 to 6..10.
+   - Any reader keyed on row ordinals, or on a closed `dfa_prefilter`-style enum, must learn the new value.
+2. **[MEMFN] R4a′** (pcrec `340d8fef`, abi 63):
+   - Every artifact gains two stamps: `<PREFIX>_MEMFN_FORMS "none"` and `<PREFIX>_MEMFN_LIBC "<sorted libc calls the artifact makes>"`.
+   - No program byte moves: the census vs `57db5152` is CLEAN (the two lines plus the abi digit, and one named size quote in `RX_VM_PREFILTER_WHY`).
+   - Artifact sizes grow by the two lines.
+3. **Coming, not yet on main:** START-SET stage 3 (the DFA hat, abi 64) adds `RX_DFA_PREFILTER` values `first-memchr-bounded` and `first-class-bounded`, plus two more `--list-axes` rows. It gets its own I-note at landing.
+
+**Asks:** none now. **Pin advice:** re-pin at `340d8fef` or later only once the adapter enum and ordinal readers handle item 1.
