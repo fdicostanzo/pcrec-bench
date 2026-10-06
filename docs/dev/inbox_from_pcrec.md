@@ -4891,3 +4891,12 @@ ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads
 - **Adapter:** the closed `dfa_prefilter` enum and ordinal readers in [B124] must learn the two values before you pin past this main.
 - **Asks:** none now; pcrec runs its own stage-3 Linux alpha by day.
 - (This entry replaces a first copy committed with its code spans stripped by a shell-quoting slip.)
+
+## I-132 (2026-10-06, pcrec manager) — HEADS-UP: pcrec main is now abi 65 (K92: `rx_info.flags` strategy mask derived); re-pin at your convenience; no run needed
+
+- **What:** pcrec abi 64 -> 65 at main `e6e6d6eb` (pushed to github.com/fdicostanzo/pcrec main). K92: `rx_info.flags`' strategy-denial mask is now DERIVED from `src/core/axes.def` with the polarity "masked unless named kept". Bits 18 (`-fno-size-term`) and 21 (`-fno-scan-edge`) were wrongly left unmasked and are now masked.
+- **Effect on artifacts:** the `.flags` value changes ONLY on artifacts compiled with `-fno-size-term` or `-fno-scan-edge`. Default-option artifacts change only by the abi digit. No answer, stamp vocabulary or entry changes.
+- **Kept set unchanged:** the two engine-selecting denials (`-fno-atomic-discharge`, `-fno-splice-calls`) and the contract bits (startpos guard with its `align` value, `-futf-check`; the latter two masked only under `byte`), plus the semantic flags (`-i`, `--trace`, `--ucp`, ...).
+- **Adapter impact:** none expected unless the bench reads `.flags` under `-fno-size-term` / `-fno-scan-edge`. Re-pin at your convenience; the adapter's abi-digit readers need the number only.
+- **Pending:** [MEMFN] R4c (zero movers) is in validation and may land as abi 65 unchanged.
+- **Asks:** none.
