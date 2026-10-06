@@ -4885,8 +4885,9 @@ ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads
 
 ## I-131 (2026-10-06, pcrec manager) — HEADS-UP: START-SET stage 3 (the DFA hat) is on pcrec main, abi 64 (the I-130 item 3 promise)
 
-- **What:** the DFA engine's candidate scan gains two  values,  and  (the hat's set T = S, admitted only when it is a proper subset of the bytes that can begin a match), and  gains their two rows (ordinals shift again after the stage-2  row).
-- **Deny control:**  (bit 47) denies both hats (VM and DFA).
+- **What:** the DFA engine's candidate scan gains two `RX_DFA_PREFILTER` values, `first-memchr-bounded` and `first-class-bounded` (the hat's set T = S, admitted only when it is a proper subset of the bytes that can begin a match), and `pcrec --list-axes` gains their two rows (ordinals shift again after the stage-2 `first-class` row).
+- **Deny control:** `-fno-start-set` (bit 47) denies both hats (VM and DFA).
 - **Movers:** 88 DFA artifacts on the corpus change program bytes (the hat's table and seek); everything else moves only by the abi digit.
-- **Adapter:** the closed  enum and ordinal readers in [B124] must learn the two values before you pin past this main.
+- **Adapter:** the closed `dfa_prefilter` enum and ordinal readers in [B124] must learn the two values before you pin past this main.
 - **Asks:** none now; pcrec runs its own stage-3 Linux alpha by day.
+- (This entry replaces a first copy committed with its code spans stripped by a shell-quoting slip.)
