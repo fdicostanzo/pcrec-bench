@@ -315,4 +315,8 @@ same-pin, read against auto/vm.
     - **check-interpret 249/0**, **check-upstream OK**.
     - **check-report OK** (`CHECKREPORT_RC=0`, run detached,
       `/var/tmp/b124_checkreport.log`).
+- **Overlap**: run 2 (13:06-13:29Z) overlapped pcrecdev1's light
+  `make test-memfn-g2` (started ~13:0xZ). No load-sensitive check went red
+  under it: the email quick cell read `measured`, and there was no
+  timeout-shaped failure. So no re-run was needed.
 - **Verdict**: green except the four accepted environmental reds.
