@@ -1,0 +1,35 @@
+# U14 expected PRESENT output
+# box: ubuntubudu; libpcre2 10.46-1build1 (system package); pcre2test
+# date: 2026-10-07; command: UPSTREAM_SCRATCH=<scratch> bash run.sh
+# U14 repro: pcre2test 10.46
+# --- (?:b(?R)a|a+) on baa / bbaaa / baaa, default ---
+#   /(?:b(?R)a|a+)/
+#   baa
+#    0: aa
+#   bbaaa
+#    0: aaa
+#   baaa
+#    0: aaa
+# --- (?:b(?R)a|a+) on baa / bbaaa / baaa, no_auto_possess ---
+#   /(?:b(?R)a|a+)/,no_auto_possess
+#   baa
+#    0: baa
+#   bbaaa
+#    0: bbaaa
+#   baaa
+#    0: baaa
+# --- control: ^(b(?1)a|a+)$ on baa, default ---
+#   /^(b(?1)a|a+)$/
+#   baa
+#    0: baa
+#    1: baa
+# --- control: ^(b(?1)a|a+)$ on baa, no_auto_possess ---
+#   /^(b(?1)a|a+)$/,no_auto_possess
+#   baa
+#    0: baa
+#    1: baa
+# default   :  0: aa| 0: aaa| 0: aaa|
+# no_auto_possess:  0: baa| 0: bbaaa| 0: baaa|
+# control default:  0: baa|
+# control no_auto_possess:  0: baa|
+U14 PRESENT pcre2 10.46 baa:0:aa-vs-0:baa

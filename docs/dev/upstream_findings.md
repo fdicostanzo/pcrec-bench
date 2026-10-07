@@ -373,3 +373,120 @@ the byte-safe control pattern, and this cost is intrinsic to what
 `PCRE2_UTF` validation does, not to anything this project's driver or
 harness chooses. `docs/dev/measurements/probe_libpcre2_floor_cyr.c` /
 `2026-09-26-libpcre2-floor-cyr-probe.txt`.
+
+## U14 — libpcre2 10.46 auto-possessification wrongly possessifies a top-level iterator reached via (?R) whole-pattern recursion, changing the match (not just the backtracking it skips) (OBSERVED 2026-10-07, REPRODUCED+UNDERSTOOD 2026-10-07)
+
+**Source.** pcrec inbox I-133 (`docs/dev/inbox_from_pcrec.md`, [B124]):
+Frank ruled pcrec follows the SOUND answer for `(?R)` after pcrec's own
+K93 fix (possessify verdicts inside a subroutine-call target now hold
+under every call site's context), and asked this project to report the
+PCRE2 default's disagreement upstream. pcrec's own record is
+`docs/dev/upstream_issues.md` U18 on pcrec main (read read-only via
+`git -C ~/pcrec show refs/pins/i133:docs/dev/upstream_issues.md`, pcrec
+being out of scope for this repo to write to). A prior probe,
+`docs/dev/measurements/2026-10-07-recursion-auto-possess-oracle-probe.txt`,
+ran libpcre2 10.46 default vs `PCRE2_NO_AUTO_POSSESS` over all 1,097
+committed expectation rows of this bench's twelve subroutine/recursion-
+call patterns and found **zero answer flips** — this finding has no
+measured stakes for pcrec-bench's own rankings; it is filed purely as a
+correctness report for the upstream maintainer.
+
+**The finding.** `pcre2_compile()`'s auto-possessification pass turns a
+greedy iterator into a possessive one wherever the optimization is
+documented to be safe (`man pcre2api`, `PCRE2_NO_AUTO_POSSESS`: "disables
+... an optimization that ... avoid[s] backtracks ... that can never be
+successful"). For `/(?:b(?R)a|a+)/` — a top-level non-capturing group
+whose second branch is a bare `a+`, with a `(?R)` call in the first
+branch that recursively re-enters the WHOLE PATTERN — the pass
+possessifies that top-level `a+` without noticing the pattern contains
+a recursion that re-enters that very position with a different
+continuation. Measured on the system libpcre2 10.46 (10.46-1build1) via
+`pcre2test`:
+
+| subject | default | `PCRE2_NO_AUTO_POSSESS` |
+|---|---|---|
+| `baa`   | `(1,3)` = `"aa"`   | `(0,3)` = `"baa"`   |
+| `bbaaa` | `(2,5)` = `"aaa"`  | `(0,5)` = `"bbaaa"` |
+| `baaa`  | `(1,4)` = `"aaa"`  | `(0,4)` = `"baaa"`  |
+
+Perl 5.40.1 (unanchored `/(?:b(?R)a|a+)/`, identical `(?R)` syntax)
+agrees with the `NO_AUTO_POSSESS` answer on all three subjects
+(`(0,3)`/`(0,5)`/`(0,4)`) — a second, independent witness that the
+default answer is the wrong one, not merely a documented semantics
+choice.
+
+**Why this is a bug, checked against the docs first**: the
+`NO_AUTO_POSSESS` documentation's own framing ("avoid backtracks ...
+that can never be successful") states the optimization is only ever
+supposed to prune paths that were always going to fail. Here the pruned
+path is not always going to fail — full backtracking recovers a real
+match. An optimization changing which strings match is outside what
+either its documentation or its name ("auto-**possessification**", not
+"backtracking removal") describes.
+
+**Not a new mechanism — a known gap in an existing fix.** PCRE2's own
+ChangeLog (10.31, 2018, item 31, Bugzilla #2232) already fixed the
+identical class of bug for a narrower case: *"Auto-possessification at
+the end of a capturing group was dependent on what follows the group
+... but this caused incorrect behaviour when the group was called
+recursively from elsewhere in the pattern ... Iterators at the ends of
+capturing groups are no longer considered for auto-possessification if
+the pattern contains any recursions."* That fix is alive today and
+covers numbered-group recursion: `^(b(?1)a|a+)$` on `"baa"` answers
+`(0,3)` identically under BOTH options (the isolation control in the
+repro). The gap: **`(?R)` recurses into the whole pattern, which has no
+enclosing capturing-group bracket at all**, so the 10.31 fix's guard
+(scoped to `OP_CBRA`/`OP_SCBRA`/`OP_CBRAPOS`/`OP_SCBRAPOS` in
+`pcre2_auto_possess.c`'s `OP_KET`/`OP_KETRPOS` case) never applies to
+it. The `OP_END` case (reached when "what follows this iterator" runs
+off the end of the compiled program — exactly where a top-level
+non-capturing group lands, and where `(?R)` re-enters) has **no such
+check at all**:
+
+```c
+case OP_END:
+return base_list[1] != 0;          /* no cb->had_recurse check */
+
+case OP_KET:
+case OP_KETRPOS:
+...
+  case OP_CBRA: case OP_SCBRA: case OP_CBRAPOS: case OP_SCBRAPOS:
+  if (cb->had_recurse) return FALSE;   /* the 10.31 fix, capturing-group-only */
+```
+
+Confirmed by reading `src/pcre2_auto_possess.c` directly at both the
+system version (10.46) and the current GitHub release (10.49,
+2026-09-28, built in `$UPSTREAM_SCRATCH` from the official tarball) —
+the two files diff as byte-identical in this region (modulo
+comment/fallthrough-annotation reformatting), and both reproduce the
+finding identically. `git log -- src/pcre2_auto_possess.c` on the
+PCRE2Project/pcre2 repository shows no commit touching this `OP_END`
+path since; the only post-10.31 auto-possess/recursion fixes
+(`1415565`/`0820852`, 10.43) concern variable-length *lookbehinds*, a
+different code path.
+
+**Triage.**
+- Documented semantics checked first (above) — this is a correctness
+  bug against `NO_AUTO_POSSESS`'s own stated contract, not an intended
+  difference.
+- Latest release: libpcre2 **10.49** (2026-09-28), built from the
+  official release tarball (`./configure --disable-shared --enable-jit
+  && make pcre2test`, ~2 minutes, no special dependencies). PRESENT,
+  identical match reports to 10.46; the relevant source region is
+  unchanged between the two.
+- Tracker search (`gh search issues --repo PCRE2Project/pcre2 ...`,
+  terms: `possessif`, `recursion`, `auto-possess`, `NO_AUTO_POSSESS`,
+  `(?R) auto`, `2232`): no open or closed issue covers this shape.
+  `#367` ("Another recursion inconsistency corner case") and `#334`
+  ("Incorrect fix for `(?0)` with endanchored") are both about the
+  UNRELATED nested-recursion-detection error (-52), not
+  auto-possessification. `searched:2026-10-07:none-found`.
+
+**Status: UNDERSTOOD** (REPRODUCED on 10.46 and 10.49; root cause
+confirmed from source, not just from behaviour). Not yet DRAFTED —
+awaiting Frank's batching decision for the pcre2 note (the existing
+`notes/pcre2-2026-09-27.md` batch is already REPORTED as U1/U2/U4; a
+second pcre2 note would carry U14 alone or with any other
+not-yet-reported pcre2 finding).
+
+Repro: `docs/dev/upstream/repro/U14/`.
