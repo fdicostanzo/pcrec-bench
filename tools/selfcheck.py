@@ -5093,8 +5093,14 @@ def check_kb35_email_alias_resolution():
 
     # the CLI's own --check path (main()), non-destructively, against the
     # census this lane committed.
-    rc = PI.main(["--subbench", "email", "--version", sb.version,
-                 "--old", "25b1984f", "--new", "751b9c6d", "--check"])
+    # [B124]: a missing old-pin build makes main() raise SystemExit; caught
+    # here so an ENVIRONMENTAL red (a pruned build/pcrec-<pin>) is one FAIL
+    # line, not an abort of every check-harness function after this one.
+    try:
+        rc = PI.main(["--subbench", "email", "--version", sb.version,
+                     "--old", "25b1984f", "--new", "751b9c6d", "--check"])
+    except SystemExit as e:
+        rc = "SystemExit: %s" % (e,)
     if rc == 0:
         ok("KB-35: `program_identity.py --subbench email ... --check` exits 0", "")
     else:
