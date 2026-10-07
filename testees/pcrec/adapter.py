@@ -1790,7 +1790,7 @@ METADATA_DECL = {
     # family, never by presence within one; 'does not apply' is a value"),
     # none with an rx_info mirror (D77).
     "req_handoff": {
-        "type": "string\", \"scope\": \"pattern",
+        "type": "string", "scope": "pattern",
         "source": "<PREFIX>_REQ_HANDOFF ([K82] (B), pcrec abi 61+), read "
                   "through pb_req_handoff() behind pb_has_req_handoff(); "
                   "no rx_info mirror; scope checked by STAMP_SCOPE (every "
@@ -1813,7 +1813,7 @@ METADATA_DECL = {
                        "cannot begin a match)",
     },
     "vm_start_scan": {
-        "type": "enum\", \"scope\": \"pattern",
+        "type": "enum", "scope": "pattern",
         "values": ["none", "first-class"],
         "source": "<PREFIX>_VM_START_SCAN ([START-SET] stage 2, pcrec abi "
                   "62+), read through pb_vm_start_scan() behind "
@@ -1841,7 +1841,7 @@ METADATA_DECL = {
                        "become the answer (match_api.md 3.1)",
     },
     "memfn_forms": {
-        "type": "string\", \"scope\": \"pattern",
+        "type": "string", "scope": "pattern",
         "source": "<PREFIX>_MEMFN_FORMS ([MEMFN] R4a', pcrec abi 63+, "
                   "written by pcrec-memory-functions), read through "
                   "pb_memfn_forms() behind pb_has_memfn_forms(); no "
@@ -1856,7 +1856,7 @@ METADATA_DECL = {
                        "-- MEASURED \"none\" on every artifact at this pin",
     },
     "memfn_libc": {
-        "type": "string\", \"scope\": \"pattern",
+        "type": "string", "scope": "pattern",
         "source": "<PREFIX>_MEMFN_LIBC ([MEMFN] R4a', pcrec abi 63+), "
                   "read through pb_memfn_libc() behind "
                   "pb_has_memfn_libc(); no rx_info mirror; scope checked "
