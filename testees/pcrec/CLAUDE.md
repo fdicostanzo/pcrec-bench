@@ -639,6 +639,81 @@ broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
 
+## Re-pin PREP at 5ff21faca (abi 59 -> 65) — 2026-10-07, lane b124prep, inbox I-128..I-132
+
+A PREP: 5ff21faca is lane/k93tri's tip (pcrec main 445f2ffc1 + the K93/K95
+fixes); the FINAL [B124] pin is named by inbox I-133 (very likely a main
+carrying 5ff21faca plus `lane/axtri`, which touches no `src/`/`lib/`/`cli/`/
+`memfn/` file -- so it is program-identical to this one; see
+docs/dev/lanes/b124prep_report.md for the delta checklist). SIX abi steps,
+each read in pcrec's `docs/spec/match_api.md` §6 change log:
+
+1. **59 -> 60, [K82] (A)+(C)**: the whole-window pre-check admission is a
+   first-match table, `--list-axes` axis `req-admit` (none / one-attempt /
+   dominated / `set-leads` / emitted -- `RX_REQ_WHY`'s four tokens in the
+   registry for the first time; `RX_REQ_WHY` now gets `registry_check`'s
+   one-way check); `set-leads` (bit 45, `-fno-req-set-lead`) puts the
+   rarer necessary-set byte's memchr in FRONT of the run search and moves
+   NO stamp (its control is program identity). (C): pick's NONE answer
+   prices size -- under `-e utf8` it moves `RX_REQ_RUN`'s `@idx` (utf8
+   `alt-shared-char`, no flag).
+2. **60 -> 61, [K82] (B)**: `RX_REQ_HANDOFF` on EVERY artifact (a decimal
+   K or `none`; axis `req-use`, bit 46, `-fno-req-handoff`).
+3. **61 -> 62, [START-SET] stage 2, the VM hat**: `RX_VM_START_SCAN` on
+   EVERY artifact (`first-class` / `none` -- "none" on DFA artifacts too,
+   MEASURED: I-130's "on every VM artifact" is the narrower half), a
+   256-entry seek table before each VM attempt; `prefilter` axis row
+   `first-class` (bit 47, `-fno-start-set`).
+4. **62 -> 63, [MEMFN] R4a'**: `RX_MEMFN_FORMS` (`none` everywhere) and
+   `RX_MEMFN_LIBC` (sorted libc inventory) on EVERY artifact.
+5. **63 -> 64, [START-SET] stage 3, the DFA hat**: `RX_DFA_PREFILTER`
+   gains `first-memchr-bounded` / `first-class-bounded` (two more
+   `prefilter` rows; the old orders 5..9 are now 8..12). The same bit 47.
+6. **64 -> 65, K92**: `rx_info.flags`' strategy mask DERIVED -- only the
+   `.flags` literal of a `-fno-size-term` / `-fno-scan-edge` artifact
+   moves (MEASURED 262144 / 2097152 -> 0 on `abc`; -6 B on the scan-edge
+   deny row).
+
+Plus [MEMFN] R4c at abi 65 (`memfn-simd` axis, bits 48/49,
+`-fno-memfn-simd` the stated default -- MEASURED inert) and K93/K95 (no
+abi event; MEASURED zero bench movers, pcrec's own §5 claim).
+
+**`struct rx_info` gains no member: the shim floor STAYS 16.** The shim
+reads the four new stamps (`pb_req_handoff`, `pb_vm_start_scan`,
+`pb_memfn_forms`, `pb_memfn_libc`; driver `info` lines), all STAMP_SCOPE
+"every".
+
+**`--list-axes` gains a `#section memfn` block** (0 rows) after pcrec's
+table -- the first pin past 5328a87d. Every reader selects the MAIN table
+(`registry_main_lines`); `make check-harness` parses every section and a
+synthetic 0-row and 1-row section. Registries: axes 119/41 -> **131/44
+(main)** (+3 `prefilter` rows, `req-admit` 5, `req-use` 2, `memfn-simd`
+2); definitions 75, limits 72, schema 79 BYTE-IDENTICAL. The deny-control
+row lookup is now SPELLING-keyed (the first row CARRYING the row's named
+flag), because `prefilter` carries two different flags on different rows.
+
+Size books (`tools/selfcheck.py`): `B124_STAMP_LINES` 121 (the four lines
+at `none`) + the `RX_MEMFN_LIBC` token (`B124_LIBC_ONE_CALL` 2 /
+`_TWO_CALLS` 9) on every artifact; `B124_VM_START_SET` 1,811 (token +7,
+table 1,468 -- excluded from code bytes -- and seek loops 336) on every
+`first-class` VM artifact; K92's -6 on the scan-edge deny arm;
+github-pat's handoff +178. `vm_program_bytes` unmoved (the seek sits in the
+search prologue).
+
+Controls: `check_b124_stamps` (each new deny arm == the c4c70f2c program
+by v2 identity; memfn inert; K92 by value) and three `DENY_CONTROLS` rows;
+`check_b122_round1_stamps`' identity arm now also denies `-fno-start-set`
+(`B124_LATER_DENIES`) and reads K80's guard abi off the artifact. Ledger
+movers: loglines kv-quoted / bignum `first-class-bounded` (the DFA hat),
+uuid's `-fno-offset-skip` arm lands on `first-class-bounded`. New pinned
+pair `pcrec-{auto,vm}-nostartset` (the table above).
+
+Census (`docs/dev/measurements/2026-10-07-b124prep-census.txt`, 1,380
+rows): 561 identical / 716 changed / 103 refused-both / **0 refusal
+movers**, 0 K93-layer movers; 712 restored to c4c70f2c's program by the
+three denials (start-set 596, req-handoff 86, req-set-lead 6, all three
+24), the other 4 = [K82] (C) on utf8 alt-shared-char.
+
 ## Re-pin at c4c70f2c (abi 50 -> 59) — 2026-10-04, lane b122repin, inbox I-127
 
 pcrec's [OPTLOOP] round 1 pin. I-127 named FOUR changes; the span is NINE
