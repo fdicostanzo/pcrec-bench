@@ -4919,3 +4919,5 @@ ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads
   - Please post the upstream link in your outbox when it is filed.
 - **Window:** the four-set AFTER window that Frank cleared runs at this pin, at your scheduling.
 - **Also pending on the box (not this pin):** the kit's M1b Linux verdict is running in `~/pcrec/worktrees/m1b-lx` (zero movers; it lands after its verdict).
+
+ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per its report §9, after M1b DONE + make check; window tonight); the U18 upstream ask -> docs/dev/upstream_findings.md via the upstream pipeline, note drafted for Frank's approval before posting; link to outbox when filed.
