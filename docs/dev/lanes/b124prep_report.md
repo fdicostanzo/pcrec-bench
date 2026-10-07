@@ -201,3 +201,92 @@ should be program-identical, and the delta is mechanical:
 - plan.md / dev_journal.md / wake.md: the manager's.
 - Reporter clauses for the new stamps (`start=`-style for vm_start_scan /
   handoff): not asked for, not done.
+
+## 11. The FINAL pin: 60366d747 (inbox I-133, resumed 2026-10-07 ~08:45 EDT)
+
+I-133 named pcrec main **60366d747** (`refs/pins/i133`; `lane/k93tri`
+merged into main: K93/K95 + [MEMFN] R4c′ + C1's `#ifdef` trace). The §9
+delta was applied after merging master into the lane (daeab64):
+
+- **Build**: `pin.sh 60366d747` → `build/pcrec-60366d747/` (binary sha256
+  `980a82097d403dc15aa4052dae3850035097a3399ca15459075faa33817ab9a9`).
+- **abi**: 65 on `abc`, unchanged.
+- **Registries**: `--list-axes` / `--list-definitions` / `--list-limits` /
+  `--list-schema` / `--list-syntax` are all **byte-identical** to 5ff21faca.
+  Only the four archive headers' pin/commit lines moved.
+- **Program identity**: same 1,380-row population, v2 hash, 5ff21faca vs
+  60366d747. Result: **1,277 identical / 103 refused-both / 0 changed / 0
+  refusal movers**. Recorded in the census archive's header block. The
+  `src/` diff (emit_dfa.c +108, emit_vm.c +7, internal.h, pcrec.h) moves
+  no emitted program byte on this bench, as I-133 said.
+- **Pin swap**: `configs.toml pin = "60366d747"`, so testee ids are now
+  `pcrec_60366d747_*`. Catalogue `[[pin_order]]`: `5ff21faca` REPLACED by
+  `60366d747` (3.15 kept; same merge, no sidecar churn beyond be078fa).
+  Pin lines updated in root CLAUDE.md, testees/pcrec/CLAUDE.md (section
+  renamed "Re-pin at 60366d747"), catalogue/CLAUDE.md,
+  measurements/CLAUDE.md and pcrec_references.md. Code comments say
+  "pin 60366d747"; the "MEASURED 5ff21faca" comments keep the build they
+  were measured on, which is now proven program-identical.
+- **Checks at the final pin** (load 1-3): manifests + the three registry
+  checks + mechanism stamps + deny controls + b122 + b124 = **209 PASS / 1
+  FAIL**. The fail is the accepted environmental one
+  (`gen_patterns --check` needs the pruned cd371441 build).
+- **Deleted**: `build/pcrec-5ff21faca`, `/var/tmp/b124scratch`, the census
+  scratch. `/` went 88% → 81%.
+
+### 11a. Full `make check` at the final pin
+
+Launched 08:52 EDT detached (load 1.04):
+`setsid gnutimeout 5400 sh -c 'make check > /var/tmp/b124_makecheck.log
+2>&1; echo "MAKECHECK_RC=$?" >> ...'`. Result: see §11c.
+
+### 11b. Tonight's window: estimate and invocation (NOT launched)
+
+Per-cell durations are taken from the gaps between consecutive records in
+`store/index.tsv`, the scripts/CLAUDE.md method. Each gap includes the
+`sleep 15` and the quiet warm-up, so it errs long. Sources: the [B122]
+c4c70f2c window (2026-10-05) for capability, syntax and litrun; the
+loglines `vm` history (8.4-12.9 min, 751b9c6d the latest) and the
+2026-10-05 `auto` cell (12.1 min) for loglines.
+
+- **Default arms**: assumed to cost what they did at c4c70f2c. The census
+  shows no engine or refusal moves.
+- **Deny arms**: given the same plus a margin.
+  - `-fno-start-set` gives up the VM seek, so a forced-VM deny cell attempts
+    at every position. That is the c4c70f2c behaviour, so roughly its time.
+  - The DFA-hat deny arm is c4c70f2c's DFA, so the same.
+- **Per-cell estimate (min)**:
+
+  | set | auto | vm | auto-nostartset | vm-nostartset | set total |
+  |---|---|---|---|---|---|
+  | capability | 30 | 41 | 30 | 41-45 | ~145 |
+  | syntax | 41 | 50 | 41 | 50-55 | ~185 |
+  | loglines | 12 | 9-13 | 12 | 9-13 | ~45 |
+  | litrun | 17 | 10 | 17 | 10 | ~55 |
+
+  Totals include the per-set sidecar regeneration: the 2026-10-05 set
+  totals equal their cell-gap sums.
+- **Window total**: ~430 min, about **7.2 h**; plan 7-8 h.
+- **Longest cell**: syntax `pcrec-vm-nostartset`, ≤ ~55 min, under the
+  default 90-min `CELL_CAP`. A per-set cap of 7200 on syntax/capability is
+  a cheap margin against a slower-than-predicted deny arm.
+- **Order**: Q1's own sets first. If the window is cut short, the sets
+  that answer pcrecdev1's D153 round-3 Q1 should survive. I put the shorter
+  litrun/loglines last only if the manager wants capability/syntax first;
+  the default below is the brief's order.
+
+```
+cd /home/duxevents/pcrec-bench
+SUITE="litrun capability loglines syntax" \
+TESTEES="pcrec-auto pcrec-vm pcrec-auto-nostartset pcrec-vm-nostartset" \
+CELL_CAP_capability=7200 CELL_CAP_syntax=7200 \
+setsid scripts/run_suite.sh > /dev/null 2>&1 &
+# progress: build/windows/suite_<ts>.log ; done when SUITE_RUN_COMPLETE appears
+# optional: STOP_AT="<date -d time>" to stop starting new sets/cells at a cutoff
+```
+
+This assumes lane/b124prep is MERGED to master first: the window runs from
+the main tree and needs `configs.toml pin = "60366d747"` and the
+nostartset testees. The cross-pin report then reads c4c70f2c (store,
+2026-10-05) against 60366d747 for auto/vm. The nostartset pair is
+same-pin, read against auto/vm.
