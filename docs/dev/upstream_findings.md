@@ -374,7 +374,7 @@ the byte-safe control pattern, and this cost is intrinsic to what
 harness chooses. `docs/dev/measurements/probe_libpcre2_floor_cyr.c` /
 `2026-09-26-libpcre2-floor-cyr-probe.txt`.
 
-## U14 — libpcre2 10.46 auto-possessification wrongly possessifies a top-level iterator reached via (?R) whole-pattern recursion, changing the match (not just the backtracking it skips) (OBSERVED 2026-10-07, REPRODUCED+UNDERSTOOD 2026-10-07)
+## U14 — libpcre2 10.46 auto-possessification wrongly possessifies a top-level iterator reached via (?R) whole-pattern recursion, changing the match (not just the backtracking it skips) (OBSERVED 2026-10-07, REPRODUCED+UNDERSTOOD 2026-10-07, APPROVED + REPORTED 2026-10-07 as PCRE2Project/pcre2#1034)
 
 **Source.** pcrec inbox I-133 (`docs/dev/inbox_from_pcrec.md`, [B124]):
 Frank ruled pcrec follows the SOUND answer for `(?R)` after pcrec's own
@@ -490,3 +490,5 @@ second pcre2 note would carry U14 alone or with any other
 not-yet-reported pcre2 finding).
 
 Repro: `docs/dev/upstream/repro/U14/`.
+
+- **Sent 2026-10-07**: Frank approved ("Write a new GitHub issue. Approved") — a NEW issue, not folded into the perf-only #1015: https://github.com/PCRE2Project/pcre2/issues/1034. Watched via threads.tsv.

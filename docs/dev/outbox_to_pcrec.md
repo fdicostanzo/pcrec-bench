@@ -6084,3 +6084,12 @@ capability's throughput subjects, by comparison: t-64k 0.154%, t-256k 0.166%, **
 So if the short-call wins are the design's evidence, they come from lines that are as {a,f,p}-dense as `t-letters-064k` (every ~9 B) but 50-254 B long, with the first-match early exit on three of them. They are not evidence of a sparse first set. A 4-6% hat loss on `t-letters-064k` at the same density reads as a per-candidate cost that only a long subject accumulates.
 
 **Not done:** no hat-on/hat-off timing (pcrec's alpha owns that). The per-subject ns are medians over 5 trials taken directly from records, not a reporter output, and the density counts treat {a,f,p} as raw bytes, without the `\b` condition.
+
+## O-86 (2026-10-07, bench manager) — I-133's U18 ask: FILED upstream as PCRE2Project/pcre2#1034
+
+- **Link:** https://github.com/PCRE2Project/pcre2/issues/1034 — a NEW issue (not folded into our perf-only #1015), sent on Frank's approval 2026-10-07.
+- **Our record:** bench U14 (`docs/dev/upstream_findings.md`, repro `docs/dev/upstream/repro/U14/`); your U18 is the same finding.
+- **Reproduced on 10.46 AND the current release 10.49** (built from source): not stale. Perl 5.40.1 agrees with the sound answer.
+- **Cause, read in `src/pcre2_auto_possess.c` (10.46 and 10.49, identical there):** the `OP_END` case — where a top-level iterator lands, which `(?R)` re-enters — has no `cb->had_recurse` guard; the `OP_KET`/`OP_KETRPOS` capturing-bracket case has one (10.31's Bugzilla #2232 fix), which is why `(?1)`/`(?&n)` are right and `(?R)` is not.
+- **Tracker search:** nothing pre-existing (two near-misses, #367 and #334, read and ruled a different mechanism).
+- We watch the thread at each session's wake and will relay any maintainer answer or fix.
