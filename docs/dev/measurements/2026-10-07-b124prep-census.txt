@@ -85,6 +85,13 @@ READING (counts derived from the TSV below, nothing else):
     (match_api.md §6 entries 60-65; [START-SET]: a give-up the hat's skipped
     VM attempts would have hit may become an answer) and the window's oracle.
 
+FINAL-PIN RE-DIFF (inbox I-133, 2026-10-07 ~08:46 EDT): the same 1,380-row
+population emitted by the prep pin 5ff21faca and by the FINAL pin
+60366d747 (build/pcrec-60366d747, sha256 of the binary in the lane
+report), v2 identity per row: **1,277 identical / 103 refused-both / 0
+changed / 0 refusal movers** -- every row above holds at the final pin.
+(Lane scratch script; the TSV below is the prep pin's, unchanged.)
+
 TSV (v2 shas truncated to 16 hex):
 set	pattern_id	config	form	verdict	layer	attribution	req_handoff	vm_start_scan	dfa_prefilter	req_run	req_why	memfn_libc	engine	engine_sel	vm_prefilter	v2_old	v2_new
 altwide	w-8	auto	plain	identical	-	-	->"none"	->"none"	"byte-class"	"none"	"none"	->"none"	"dfa"	"selected"	-	7c02f1836804cdf4	7c02f1836804cdf4

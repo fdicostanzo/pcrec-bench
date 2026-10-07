@@ -1784,7 +1784,7 @@ METADATA_DECL = {
                        "where none is written and under -fno-run-overlap. "
                        "ANSWER-IDENTICAL by construction",
     },
-    # [B124] (pcrec 5ff21faca, abi 59 -> 65): FOUR more unconditional
+    # [B124] (pin 60366d747, abi 59 -> 65): FOUR more unconditional
     # stamps, all `run_words`' "every" scope (match_api.md 6.3 family (a),
     # Frank's 2026-10-05 ruling quoted there: "a stamp varies by engine
     # family, never by presence within one; 'does not apply' is a value"),
@@ -2037,7 +2037,7 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              # is), so it carries no STAMP_SCOPE row of its own,
              # `vm_prefilter_lang_why`'s own "variable value" shape.
              "vm_prefilter_why",
-             # [B124] (pcrec 5ff21faca, abi 61-63): four more, all
+             # [B124] (pin 60366d747, abi 61-63): four more, all
              # unconditional on every artifact -- a variable K, a closed
              # two-token enum and the kit's two inventory strings.
              "req_handoff", "vm_start_scan", "memfn_forms", "memfn_libc")
@@ -2158,7 +2158,7 @@ STAMP_SCOPE = {
     # (MEASURED at the build: present, 0, on a plain DFA witness with no
     # overlap-length run; nonzero on both routes on an overlap-length one).
     "run_words":             ("every",    58),
-    # [B124] (pcrec 5ff21faca, abi 59 -> 65): four more, all "every"
+    # [B124] (pin 60366d747, abi 59 -> 65): four more, all "every"
     # (match_api.md 6.3 family (a)). MEASURED at the build on a plain DFA
     # (`abc`), a forced VM (`abc --engine=vm`) and a VM hybrid
     # (`a(b|c)+d`): all four present on all three -- `vm_start_scan`
@@ -3183,7 +3183,7 @@ DENY_FLAGS = (
      "a run and RX_REQ_RUN carries no `/mask` suffix -- the abi-58 "
      "program at the SAME pin; masked, answer-identical to its sibling "
      "by construction"),
-    # [B124] (pcrec 5ff21faca, abi 59 -> 65): three more, appended in abi
+    # [B124] (pin 60366d747, abi 59 -> 65): three more, appended in abi
     # order so no existing id's parts move. `-fno-req-set-lead` (abi 60,
     # [K82] (A), --list-axes `req-admit` row `set-leads`, bit 45) moves NO
     # stamp -- a `set-leads` artifact reads `req_why "emitted"` either way

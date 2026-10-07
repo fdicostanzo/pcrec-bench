@@ -1467,7 +1467,7 @@ long long pb_run_words(void) {
 #endif
 }
 
-/* [B124] (pcrec 5ff21faca, abi 59 -> 65): FOUR more unconditional string
+/* [B124] (pin 60366d747, abi 59 -> 65): FOUR more unconditional string
  * stamps, every one on EVERY artifact both engines produce (match_api.md
  * 6.3 family (a); MEASURED at the build on a DFA, a VM hybrid and a
  * forced-VM witness), none with an rx_info mirror (D77) -- `struct

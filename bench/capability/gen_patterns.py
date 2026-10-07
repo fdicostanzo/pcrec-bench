@@ -623,7 +623,7 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-nohybreseed", [t for t in REQUIRES_VOCAB
                                 if t not in ("callouts", "conditionals",
                                              "control-verbs", "lookbehind-variable")]),
-    # [B124] (pin 5ff21faca, abi 65): the [START-SET] hat twins,
+    # [B124] (pin 60366d747, abi 65): the [START-SET] hat twins,
     # `pcrec-auto` / `pcrec-vm` plus `-fno-start-set` -- an EMIT-side
     # denial (the VM attempt loop's start-set seek, the seeded DFA's
     # start-set skip), the SAME [B101]/[B108]/[B120] reasoning stated on

@@ -3335,7 +3335,7 @@ B118_UTF_VALID_VM_HYBRID_TERM = 460  # every VM HYBRID specifically
 B122_FLAT_TERM = 224
 B122_RANGE_SITE = 4
 
-# [B124] (pcrec 5ff21faca, abi 59 -> 65): FOUR new stamp lines on EVERY
+# [B124] (pin 60366d747, abi 59 -> 65): FOUR new stamp lines on EVERY
 # artifact, both engines, MEASURED against c4c70f2c on every STAMP/LEDGER
 # witness (the `.c` + `.h` diffed; the abi digits keep their width):
 #   `#define RX_REQ_HANDOFF "none"`   30 B (abi 61, [K82] (B))
@@ -6969,7 +6969,7 @@ DENY_CONTROLS = (
      "req-run", ("literal", b"foo[0-9]+bar"), "",
      {"req_run": ("626172@0", "none"),
       "req_byte": ("98", "98")}, "deny"),
-    # [B124] (pcrec 5ff21faca, abi 61/62/64): the three new deny flags'
+    # [B124] (pin 60366d747, abi 61/62/64): the three new deny flags'
     # stamp-moving rows (`-fno-req-set-lead` moves no stamp -- its control
     # is check_b124_stamps' program identity). `-fno-start-set` sits on
     # THREE `prefilter` rows below the offset-skip/run-prefilter ones, so
@@ -10679,7 +10679,7 @@ def check_b118_findtie_k69_noop_on_bench():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-#: [B124] (pin 5ff21faca): denials of mechanisms that landed after
+#: [B124] (pin 60366d747): denials of mechanisms that landed after
 #: c4c70f2c, added to check_b122_round1_stamps' identity arm only.
 B124_LATER_DENIES = ["-fno-start-set"]
 
@@ -10784,7 +10784,7 @@ def check_b122_round1_stamps():
             miss += ["denied %s=%r (want %r)" % (k, n_em.get(k), v)
                      for k, v in want_deny.items() if n_em.get(k) != v]
             h_new, _t = ident(new_bin, flags, pat, "n%d" % i)
-            # [B124] (pin 5ff21faca): mechanisms that landed AFTER
+            # [B124] (pin 60366d747): mechanisms that landed AFTER
             # c4c70f2c and reach these witnesses are denied too on the
             # identity arm, so the comparison still isolates round 1's own
             # flag: [START-SET] stage 2's VM seek is on every forced-VM row
@@ -10833,7 +10833,7 @@ def check_b122_round1_stamps():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-#: [B124] (pcrec 5ff21faca, abi 59 -> 65): the abi 60-65 witnesses, each a
+#: [B124] (pin 60366d747, abi 59 -> 65): the abi 60-65 witnesses, each a
 #: (label, extra flags, pattern, {pair: value} at the pin, the deny flags,
 #: {pair: value} under them, identity mode). Identity mode "old": the
 #: deny arm's v2 program equals the c4c70f2c artifact of the same pattern
@@ -10901,7 +10901,7 @@ B124_CASES = (
 
 
 def check_b124_stamps():
-    """[B124] (pcrec 5ff21faca, abi 59 -> 65; inbox I-130/I-131/I-132). For
+    """[B124] (pin 60366d747, abi 59 -> 65; inbox I-130/I-131/I-132). For
     every row of B124_CASES: the default artifact's pairs BY VALUE through
     the adapter (the shim's four new readers and the widened
     `dfa_prefilter` enum exercised end to end), the deny arm's pairs, and

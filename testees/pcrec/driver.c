@@ -131,7 +131,7 @@
  * `vm_reseed`'s closed set to SIX tokens (`anchored`) and abi 52/53 widen
  * `dfa_scan_edge`'s to six (`kit`/`fold`, size-leaning --tune positions
  * only). `struct rx_info` gains no member across the span, floor still 16.
- * [B124] (pcrec 5ff21faca, abi 59 -> 65) adds FOUR, all `run_words`'
+ * [B124] (pin 60366d747, abi 59 -> 65) adds FOUR, all `run_words`'
  * every-artifact scope, all strings: `info req_handoff` (abi 61, a
  * decimal K or `none`), `info vm_start_scan` (abi 62, `first-class` /
  * `none`), `info memfn_forms` / `info memfn_libc` (abi 63, the kit's

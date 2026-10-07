@@ -3,14 +3,15 @@
 # 9), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-5ff21faca/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-60366d747/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 5ff21faca9e8fa0d82eb35a6c0a333ec84c904c3 (rx_info.abi 65, read off a plain `abc` witness at this build),
-# archived 2026-10-07 by lane b124prep ([B124] RE-PIN PREP: pcrec
-# c4c70f2c (abi 59) -> 5ff21faca (abi 65), lane/k93tri's tip -- the K93/K95
-# fixes over main e6e6d6eb + [MEMFN] R4c; SIX abi steps, list_axes.tsv's
-# header states each. A PREP pin: the final [B124] pin is named by inbox
-# I-133).
+# pcrec commit 60366d747af20517d095fc3cdee12d0a04afe41b (rx_info.abi 65, read off a plain `abc` witness at this build),
+# archived 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
+# pcrec main 60366d747 = lane/k93tri merged into main (K93/K95 + [MEMFN]
+# R4c' + C1's #ifdef trace), compiler-identical to the prep pin 5ff21faca;
+# c4c70f2c (abi 59) -> 60366d747 (abi 65), SIX abi steps, list_axes.tsv's
+# header states each. All four surfaces re-diffed: BYTE-IDENTICAL to the
+# 5ff21faca prep archive below this header).
 # 75 data rows / 7 columns -- BYTE-IDENTICAL to the c4c70f2c archive
 # (diffed line for line): no step in the range touches definitions.c.
 esc	d	\d	1	DEF_UCP_D	\p{Nd}	active

@@ -31,16 +31,17 @@ catalogue_version = "3.15"
 # INSTANCE of MINOR, not its definition.
 #
 # 3.15 (2026-10-07, lane b124prep, [B124] RE-PIN PREP, inbox
-# I-128..I-132): MINOR, a `[[pin_order]]` append only -- `5ff21faca` (abi
+# I-128..I-133): MINOR, a `[[pin_order]]` append only -- `60366d747` (abi
 # 65: SIX abi steps, 59 -> 60 [K82] (A)+(C) (the `req-admit` table's
 # `set-leads` row; pick's NONE answer prices size), 60 -> 61 [K82] (B)
 # (`RX_REQ_HANDOFF`), 61 -> 62 [START-SET] stage 2 (`RX_VM_START_SCAN`,
 # the VM hat), 62 -> 63 [MEMFN] R4a' (`RX_MEMFN_FORMS`/`_LIBC`), 63 -> 64
 # [START-SET] stage 3 (the DFA hat, `first-*-bounded`), 64 -> 65 K92
 # (`rx_info.flags`' derived strategy mask); plus [MEMFN] R4c and the
-# K93/K95 fixes at abi 65) joins after `c4c70f2c`. A PREP pin: if the
-# final [B124] pin (inbox I-133) differs, this entry is REPLACED by it,
-# not kept beside it. No rule predicate/threshold/inputs/slots moved.
+# K93/K95 fixes at abi 65) joins after `c4c70f2c` -- inbox I-133's FINAL
+# pin, which REPLACED the prep pin `5ff21faca` (compiler-identical; never
+# measured, so never in this table). No rule predicate/threshold/inputs/
+# slots moved.
 #
 # 3.14 (2026-10-04, lane b122repin, [B122]/inbox I-127): MINOR, a
 # `[[pin_order]]` append only -- `c4c70f2c` (abi 59: NINE abi steps, 50
@@ -257,7 +258,7 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
-          "5ff21faca"]
+          "60366d747"]
 
 # ===================================================== class R-STATUS ==
 

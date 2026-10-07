@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "5ff21faca"
+pin = "60366d747"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -933,7 +933,7 @@ flags = ["--features", "all", "-fno-hyb-reseed", "-e", "utf8"]
 description = "pcrec-auto-clang-utf8 with the [OPT-HYB-RESEED] ADAPTIVE RETRY DENIED (-fno-hyb-reseed): I-124 item 1's clang+denied arm, against pcrec-auto-clang-utf8 the retry's own BEFORE/AFTER under clang ([B120])"
 
 # ---------------------------------------------------------------------------
-# THE START-SET DENY AXIS -- `-fno-start-set` ([B124], pin 5ff21faca / abi
+# THE START-SET DENY AXIS -- `-fno-start-set` ([B124], pin 60366d747 / abi
 # 65; pcrec [START-SET] stages 2+3, docs/spec/tuning.md 2.42, --list-axes
 # `prefilter` rows `first-class` / `first-memchr-bounded` /
 # `first-class-bounded`, bit 47). Denied, BOTH hats go: a VM artifact's
