@@ -1,0 +1,26 @@
+# 2026-10-07 — libpcre2 default vs PCRE2_NO_AUTO_POSSESS on the bench's subroutine-call patterns
+# Source: docs/dev/measurements/probe_noautopossess.py (same oracle calls as each set's
+#   gen_expectations.py: match / search / find_all), master 8ef23c8, libpcre2 10.46 2025-08-27.
+# Asked by pcrecdev1 (live, 2026-10-07): the real stakes of Frank's open (?R) ruling
+#   (pcrec K93 related item 2 / upstream U18).
+# Population: the 12 patterns grep'd for subroutine calls ((?N) (?+-N) (?R) (?&n) (?P>n) \g<..>):
+#   capability balanced-parens-rec nested-comment-rec bracket-array-define;
+#   syntax rec-1 rec-name rec-r-uc rec-back rec-fwd rec-define rec-g-angle rec-py; email factored.
+#   x every committed expectation row of each (all regimes, incl. the 1 MB throughput subjects).
+# Controls: (1) ARGOPTIONS asserted per pattern (the bit is set on the NAP arm, clear on default);
+#   (2) POSITIVE: U18's own repro through the same oracle module flips as pcrec recorded:
+#       (?:b(?R)a|a+)  baa   default (1,3)  NAP (0,3)
+#                      bbaaa default (2,5)  NAP (0,5)
+#                      baaa  default (1,4)  NAP (0,4)
+# Wall 6m09s, one core, on a box running pcrec's K93 make test (answers only; nothing timed).
+# Two earlier attempts died on probe bugs (a property called as a method; 0x2000 = NO_AUTO_CAPTURE,
+#   not NO_AUTO_POSSESS = 0x4000) — neither produced a result.
+
+libpcre2 10.46 2025-08-27
+rows 1097  answer-flips 0  capture-only 0  errors 0
+
+# READING: ZERO answer flips and ZERO capture differences across all 1,097 rows. On this bench,
+# the (?R) ruling has NO stakes: a pcrec that follows either convention matches every committed
+# expectation on these 12 patterns. (U18's shape — a top-level quantifier followed only by the
+# pattern's end, re-entered through (?R) — is not present in our two (?R) patterns, whose
+# recursion sits inside \( ... \).)
