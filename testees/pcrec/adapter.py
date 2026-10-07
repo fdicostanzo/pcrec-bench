@@ -713,7 +713,8 @@ METADATA_DECL = {
         "type": "enum", "scope": "pattern",
         "values": ["none", "memchr", "byte-class", "memchr-bounded",
                    "byte-class-bounded", "offset-set", "offset-set-bounded",
-                   "run-pinned", "run-pinned-bounded"],
+                   "run-pinned", "run-pinned-bounded",
+                   "first-memchr-bounded", "first-class-bounded"],
         "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
                   "CHECKED against rx_info.prefilter (pb_info_prefilter()); "
                   "the value set is CHECKED against `pcrec --list-axes` "
@@ -736,7 +737,16 @@ METADATA_DECL = {
                        "start, verified as one memcmp per candidate -- the "
                        "run pre-check is then not emitted (`req_why` "
                        "`dominated`); removed by -fno-run-prefilter OR "
-                       "-fno-offset-skip",
+                       "-fno-offset-skip. The two `first-*-bounded` "
+                       "values ([START-SET] stage 3, THE DFA HAT, pcrec "
+                       "abi 64) are a SEEDED machine's (a `\\b`, a "
+                       "lookbehind, a `(?m)` context) bounded skip testing "
+                       "the pattern's START SET where it is a proper "
+                       "subset of the start state's escape set -- one byte "
+                       "by memchr, several by a 256-entry table -- and "
+                       "re-seeding the scan state where the skip moved; "
+                       "always `-bounded` (a seeded machine carries the "
+                       "D11 bound); removed by -fno-start-set",
     },
     "dfa_prefilter_offsets": {
         "type": "string", "scope": "pattern",
@@ -1774,6 +1784,93 @@ METADATA_DECL = {
                        "where none is written and under -fno-run-overlap. "
                        "ANSWER-IDENTICAL by construction",
     },
+    # [B124] (pcrec 5ff21faca, abi 59 -> 65): FOUR more unconditional
+    # stamps, all `run_words`' "every" scope (match_api.md 6.3 family (a),
+    # Frank's 2026-10-05 ruling quoted there: "a stamp varies by engine
+    # family, never by presence within one; 'does not apply' is a value"),
+    # none with an rx_info mirror (D77).
+    "req_handoff": {
+        "type": "string\", \"scope\": \"pattern",
+        "source": "<PREFIX>_REQ_HANDOFF ([K82] (B), pcrec abi 61+), read "
+                  "through pb_req_handoff() behind pb_has_req_handoff(); "
+                  "no rx_info mirror; scope checked by STAMP_SCOPE (every "
+                  "artifact, both engines) and the VALUE in "
+                  "tools/selfcheck.py on a hand-chosen run-bearing DFA "
+                  "(`\\bfoo`, MEASURED \"0\") with `-fno-req-handoff` "
+                  "(--list-axes `req-use`, bit 46) as the deny control "
+                  "that lands on \"none\"",
+        "description": "where the search body's scan begins relative to "
+                       "the emitted run pre-check's first window hit c: a "
+                       "decimal K (the `req-use` table's `handoff` row -- "
+                       "the scan starts at max(startpos, c - K), K the "
+                       "window's maximum BYTE offset from the attempt "
+                       "start) or \"none\" (the scan starts at startpos: "
+                       "no run pre-check, no DFA scan to move, a "
+                       "count-collapsed prefilter, or -fno-req-handoff). A "
+                       "VARIABLE value (`req_byte`'s shape), not a closed "
+                       "enum. ANSWER- and GIVE-UP-IDENTICAL by construction "
+                       "(it skips positions a necessary literal proved "
+                       "cannot begin a match)",
+    },
+    "vm_start_scan": {
+        "type": "enum\", \"scope\": \"pattern",
+        "values": ["none", "first-class"],
+        "source": "<PREFIX>_VM_START_SCAN ([START-SET] stage 2, pcrec abi "
+                  "62+), read through pb_vm_start_scan() behind "
+                  "pb_has_vm_start_scan(); no rx_info mirror; scope "
+                  "checked by STAMP_SCOPE (EVERY artifact, both engines -- "
+                  "MEASURED \"none\" on DFA artifacts, not absent: I-130's "
+                  "\"every VM artifact\" is the narrower half of match_api.md "
+                  "6.3's \"on EVERY artifact pcrec emits\"); the value set "
+                  "CHECKED against `pcrec --list-axes` (axis `prefilter`, "
+                  "the `first-class` row; `none` an outcome value, "
+                  "REGISTRY_OUTCOME_VALUES) and by value in "
+                  "tools/selfcheck.py with `-fno-start-set` (bit 47) as the "
+                  "deny control",
+        "description": "whether a VM attempt loop SEEKS the next start-set "
+                       "byte before each attempt: `first-class` (a VM "
+                       "artifact with no DFA prefilter, an unanchored "
+                       "pattern, and a start set that cannot match empty "
+                       "with fewer than 256 members -- one 256-entry table "
+                       "walk before the first attempt and after each "
+                       "failed one) or `none` (every DFA artifact, every "
+                       "VM hybrid -- whose prefilter is its start test -- "
+                       "every anchored or \\G-start pattern, and "
+                       "-fno-start-set). ANSWER-IDENTICAL by construction; "
+                       "a give-up the skipped attempts would have hit may "
+                       "become the answer (match_api.md 3.1)",
+    },
+    "memfn_forms": {
+        "type": "string\", \"scope\": \"pattern",
+        "source": "<PREFIX>_MEMFN_FORMS ([MEMFN] R4a', pcrec abi 63+, "
+                  "written by pcrec-memory-functions), read through "
+                  "pb_memfn_forms() behind pb_has_memfn_forms(); no "
+                  "rx_info mirror; scope checked by STAMP_SCOPE (every "
+                  "artifact, both engines)",
+        "description": "the search-code kit's SIMD-on form ids that make "
+                       "this artifact differ from its -fno-memfn-simd "
+                       "compile, comma-joined in site order, or \"none\". "
+                       "OPAQUE ids (bucket on none / not-none, never parse "
+                       "one); \"none\" on every artifact until the kit's "
+                       "first SIMD-on form ships (D147 addendum 10, Q55) "
+                       "-- MEASURED \"none\" on every artifact at this pin",
+    },
+    "memfn_libc": {
+        "type": "string\", \"scope\": \"pattern",
+        "source": "<PREFIX>_MEMFN_LIBC ([MEMFN] R4a', pcrec abi 63+), "
+                  "read through pb_memfn_libc() behind "
+                  "pb_has_memfn_libc(); no rx_info mirror; scope checked "
+                  "by STAMP_SCOPE (every artifact, both engines)",
+        "description": "the C library functions the artifact's source "
+                       "calls, sorted (byte order), distinct, comma-joined "
+                       "with no space, or \"none\": a SOURCE-LEVEL "
+                       "INVENTORY of the whole artifact, not a promise of a "
+                       "dispatched call (a name is listed where the "
+                       "compiler later inlines it), a constant 1-8 byte "
+                       "memcpy excluded. A SIMD-off artifact listing "
+                       "`memchr` delegates that search to the C library's "
+                       "own dispatch",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1939,7 +2036,11 @@ STR_PAIRS = ("engine", "prefilter", "dfa_scan", "dfa_prefilter", "dfa_table",
              # (NOT unconditional the way every other pair in this tuple
              # is), so it carries no STAMP_SCOPE row of its own,
              # `vm_prefilter_lang_why`'s own "variable value" shape.
-             "vm_prefilter_why")
+             "vm_prefilter_why",
+             # [B124] (pcrec 5ff21faca, abi 61-63): four more, all
+             # unconditional on every artifact -- a variable K, a closed
+             # two-token enum and the kit's two inventory strings.
+             "req_handoff", "vm_start_scan", "memfn_forms", "memfn_libc")
 
 #: THE SCOPE TABLE ([B18]): for every stamp pcrec emits UNCONDITIONALLY
 #: (its D81 -- a selection fact is stamped whether or not it fired), the abi
@@ -2057,6 +2158,17 @@ STAMP_SCOPE = {
     # (MEASURED at the build: present, 0, on a plain DFA witness with no
     # overlap-length run; nonzero on both routes on an overlap-length one).
     "run_words":             ("every",    58),
+    # [B124] (pcrec 5ff21faca, abi 59 -> 65): four more, all "every"
+    # (match_api.md 6.3 family (a)). MEASURED at the build on a plain DFA
+    # (`abc`), a forced VM (`abc --engine=vm`) and a VM hybrid
+    # (`a(b|c)+d`): all four present on all three -- `vm_start_scan`
+    # included, which reads "none" on the DFA and the hybrid ("does not
+    # apply" is a value), so it is NOT a `vm`-scoped pair despite its name
+    # and I-130's "on every VM artifact".
+    "req_handoff":           ("every",    61),
+    "vm_start_scan":         ("every",    62),
+    "memfn_forms":           ("every",    63),
+    "memfn_libc":            ("every",    63),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -2166,6 +2278,19 @@ REGISTRY_STAMP_PAIRS = {
     # precedent, and so are NOT here.
     "RX_VM_RESEED": "vm_reseed",
     "RX_UTF_CHECK": "utf_check",
+    # [B124] (pcrec abi 62, [START-SET] stage 2): the `prefilter` axis's
+    # `first-class` row is the one row whose stamp_macro is
+    # RX_VM_START_SCAN -- a `list` row, so both directions run, and the
+    # stamp's other value `none` is an OUTCOME the candidate list does not
+    # enumerate (REGISTRY_OUTCOME_VALUES). And (pcrec abi 60, [K82] (A))
+    # the new `req-admit` axis puts RX_REQ_WHY's four tokens in the
+    # registry for the first time ([B84]: "not an axis" -- it is now a
+    # `predicate` first-match table, still with no flag of its own but
+    # `set-leads`' `-fno-req-set-lead`), so the closed enum gets the
+    # one-way check. RX_REQ_HANDOFF (a decimal K) and RX_MEMFN_FORMS (an
+    # opaque id list) carry variable values, `req_byte`'s shape: NOT here.
+    "RX_VM_START_SCAN": "vm_start_scan",
+    "RX_REQ_WHY": "req_why",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -2203,14 +2328,18 @@ LIST_DEFINITIONS_TSV = os.path.join(HERE, "list_definitions.tsv")
 LIST_LIMITS_TSV = os.path.join(HERE, "list_limits.tsv")
 
 #: Declared values the registry's candidate lists do NOT enumerate because
-#: they are OUTCOMES rather than candidates the selector walks. EMPTY since
-#: pin 263b013: the `table` axis gained `none` / `mixed` OUTCOME rows (kind
-#: `predicate` beside the two `list` candidates -- I-18 (iii), pcrec
-#: [REG-SV]), so [B18]'s two entries here are now ordinary registry rows
-#: and the reverse direction of `registry_check` covers them directly. The
-#: mechanism stays for the next outcome value a stamp grows before its
-#: registry row does.
-REGISTRY_OUTCOME_VALUES = {}
+#: they are OUTCOMES rather than candidates the selector walks. EMPTY from
+#: pin 263b013 (the `table` axis gained `none` / `mixed` OUTCOME rows -- kind
+#: `predicate` beside the two `list` candidates, I-18 (iii), pcrec [REG-SV]
+#: -- so [B18]'s two entries became ordinary registry rows) until [B124]:
+#: `vm_start_scan`'s `none` is the next outcome value a stamp carries with
+#: no registry row of its own.
+REGISTRY_OUTCOME_VALUES = {
+    # [B124] (pcrec abi 62): `vm_start_scan`'s only registry row is the
+    # `prefilter` axis's `first-class` candidate; `none` is what every
+    # other artifact stamps, an outcome no candidate list carries.
+    "vm_start_scan": {"none"},
+}
 
 #: The driver's refusal token for an artifact below shim.c's PB_SHIM_MIN_ABI.
 #: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
@@ -3054,6 +3183,40 @@ DENY_FLAGS = (
      "a run and RX_REQ_RUN carries no `/mask` suffix -- the abi-58 "
      "program at the SAME pin; masked, answer-identical to its sibling "
      "by construction"),
+    # [B124] (pcrec 5ff21faca, abi 59 -> 65): three more, appended in abi
+    # order so no existing id's parts move. `-fno-req-set-lead` (abi 60,
+    # [K82] (A), --list-axes `req-admit` row `set-leads`, bit 45) moves NO
+    # stamp -- a `set-leads` artifact reads `req_why "emitted"` either way
+    # (match_api.md 6.3: "the stamp says whether, not in which shape"), so
+    # its control is program identity, not a value. `-fno-req-handoff`
+    # (abi 61, `req-use` row `handoff`, bit 46) moves RX_REQ_HANDOFF to
+    # "none". `-fno-start-set` (abi 62/64, the `prefilter` axis's three
+    # [START-SET] rows, bit 47) denies BOTH hats: RX_VM_START_SCAN
+    # `first-class` -> "none" on a VM artifact, RX_DFA_PREFILTER
+    # `first-*-bounded` -> the plain bounded skip on a seeded DFA. All
+    # three masked out of rx_info.flags.
+    ("-fno-req-set-lead", "noreqsetlead",
+     "the [K82] (A) RARER-SET-BYTE LEAD denied (--list-axes `req-admit` "
+     "row `set-leads`, bit 45): an emitted run pre-check is never led by "
+     "the necessary set's rarer one-byte check, so this artifact is the "
+     "abi-59 admission at the SAME pin -- no stamp moves (`req_why` reads "
+     "`emitted` either way); masked, answer-identical by construction"),
+    ("-fno-req-handoff", "noreqhandoff",
+     "the [K82] (B) RUN-PRE-CHECK HANDOFF denied (--list-axes `req-use` "
+     "row `handoff`, bit 46): the search body's scan starts at startpos "
+     "again rather than K bytes before the pre-check's first window hit "
+     "(RX_REQ_HANDOFF reads `none`) -- the abi-60 program at the SAME "
+     "pin; masked, answer- and give-up-identical by construction"),
+    ("-fno-start-set", "nostartset",
+     "the [START-SET] HATS denied (--list-axes `prefilter` rows "
+     "`first-class` / `first-memchr-bounded` / `first-class-bounded`, bit "
+     "47): a VM attempt loop attempts at every position again "
+     "(RX_VM_START_SCAN `none`) and a seeded DFA's bounded skip tests the "
+     "start state's escape set again instead of the start set "
+     "(RX_DFA_PREFILTER back to its pre-abi-64 value) -- the abi-61 "
+     "program at the SAME pin; masked, answer-identical by construction "
+     "(a give-up the skipped VM attempts would have hit may become the "
+     "denied arm's answer, never the reverse: match_api.md 3.1)"),
 )
 
 
@@ -3498,30 +3661,86 @@ def _mask_names(name, value):
     return out
 
 
+def registry_main_lines(text):
+    """The MAIN table of a `--list-axes` dump: every line before the first
+    `#section ` line ([B124], pcrec inbox I-128/I-129, table_contract.md
+    consumer rule 5). From pcrec 5328a87d on, the dump appends a
+    `#section memfn` block (pcrec-memory-functions' own option rows, a
+    DIFFERENT column set -- `#name kind budget layer spelling doc`) after
+    pcrec's axes table; those rows are NOT pcrec axes, so every bench
+    reader of the dump (`registry_rows`, the row/axis counts in
+    `make check-harness`) selects the main table through this one
+    function. A dump with no `#section` line is returned whole."""
+    out = []
+    for line in text.splitlines(True):
+        if line.startswith("#section "):
+            break
+        out.append(line)
+    return out
+
+
+def registry_sections(text):
+    """`{name: [row dicts]}` for every `#section <name>` block of a
+    `--list-axes` dump ([B124], I-128): each block's own `#`-prefixed
+    header line (the first `#` line whose fields are tab-separated)
+    names its columns, comment lines are skipped, and a block with ZERO
+    data rows -- `#section memfn` at pcrec R4a..R4c -- parses to `[]`.
+    Nothing the adapter declares reads these rows; `make check-harness`
+    parses them only to prove a 0-row (and any later) section is
+    well-formed and stays out of the main table."""
+    sections, name, cols = {}, None, None
+    for raw in text.splitlines():
+        if raw.startswith("#section "):
+            name, cols = raw[len("#section "):].strip(), None
+            sections[name] = []
+            continue
+        if name is None:
+            continue
+        if raw.startswith("#"):
+            if cols is None and "\t" in raw:
+                cols = raw[1:].split("\t")
+            continue
+        if not raw:
+            continue
+        if cols is None:
+            raise _ad.AdapterError(
+                "--list-axes: a #section %s row before its header" % name)
+        vals = raw.split("\t")
+        if len(vals) != len(cols):
+            raise _ad.AdapterError(
+                "--list-axes: a #section %s row has %d fields, its header %d"
+                % (name, len(vals), len(cols)))
+        sections[name].append(dict(zip(cols, vals)))
+    return sections
+
+
 def registry_rows(path=LIST_AXES_TSV):
-    """The committed `--list-axes` TSV as a list of dicts (the `#axis ...`
-    line is the header; every other `#` line is pcrec's own comment and
-    is kept verbatim in the file but skipped here). The bench's own source
-    header at the top of the file is `#`-prefixed too and is skipped the
-    same way."""
+    """The committed `--list-axes` TSV's MAIN table as a list of dicts (the
+    `#axis ...` line is the header; every other `#` line is pcrec's own
+    comment and is kept verbatim in the file but skipped here). The bench's
+    own source header at the top of the file is `#`-prefixed too and is
+    skipped the same way. ([B124], I-128) Reading STOPS at the first
+    `#section` line: what follows is another registry's table
+    (`registry_main_lines`)."""
     rows, cols = [], None
     with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.rstrip("\n")
-            if line.startswith("#axis\t"):
-                cols = line[1:].split("\t")
-                continue
-            if not line or line.startswith("#"):
-                continue
-            if cols is None:
-                raise _ad.AdapterError(
-                    "%s: a data row before the `#axis` header" % path)
-            vals = line.split("\t")
-            if len(vals) != len(cols):
-                raise _ad.AdapterError(
-                    "%s: row has %d columns, header %d: %r"
-                    % (path, len(vals), len(cols), line))
-            rows.append(dict(zip(cols, vals)))
+        text = f.read()
+    for line in registry_main_lines(text):
+        line = line.rstrip("\n")
+        if line.startswith("#axis\t"):
+            cols = line[1:].split("\t")
+            continue
+        if not line or line.startswith("#"):
+            continue
+        if cols is None:
+            raise _ad.AdapterError(
+                "%s: a data row before the `#axis` header" % path)
+        vals = line.split("\t")
+        if len(vals) != len(cols):
+            raise _ad.AdapterError(
+                "%s: row has %d columns, header %d: %r"
+                % (path, len(vals), len(cols), line))
+        rows.append(dict(zip(cols, vals)))
     return rows
 
 

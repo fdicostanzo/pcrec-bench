@@ -131,6 +131,13 @@
  * `vm_reseed`'s closed set to SIX tokens (`anchored`) and abi 52/53 widen
  * `dfa_scan_edge`'s to six (`kit`/`fold`, size-leaning --tune positions
  * only). `struct rx_info` gains no member across the span, floor still 16.
+ * [B124] (pcrec 5ff21faca, abi 59 -> 65) adds FOUR, all `run_words`'
+ * every-artifact scope, all strings: `info req_handoff` (abi 61, a
+ * decimal K or `none`), `info vm_start_scan` (abi 62, `first-class` /
+ * `none`), `info memfn_forms` / `info memfn_libc` (abi 63, the kit's
+ * opaque form ids / the sorted libc call inventory, `none` either);
+ * abi 64 widens `dfa_prefilter`'s closed set by `first-memchr-bounded` /
+ * `first-class-bounded`. No rx_info member across 60-65, floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -212,6 +219,14 @@ static int       (*pb_has_utf_check)(void);
 static const char *(*pb_utf_check)(void);
 static int       (*pb_has_run_words)(void);
 static long long (*pb_run_words)(void);
+static int       (*pb_has_req_handoff)(void);
+static const char *(*pb_req_handoff)(void);
+static int       (*pb_has_vm_start_scan)(void);
+static const char *(*pb_vm_start_scan)(void);
+static int       (*pb_has_memfn_forms)(void);
+static const char *(*pb_memfn_forms)(void);
+static int       (*pb_has_memfn_libc)(void);
+static const char *(*pb_memfn_libc)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -453,6 +468,10 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_reseed); SYM(pb_vm_reseed);
     SYM(pb_has_utf_check); SYM(pb_utf_check);
     SYM(pb_has_run_words); SYM(pb_run_words);
+    SYM(pb_has_req_handoff); SYM(pb_req_handoff);
+    SYM(pb_has_vm_start_scan); SYM(pb_vm_start_scan);
+    SYM(pb_has_memfn_forms); SYM(pb_memfn_forms);
+    SYM(pb_has_memfn_libc); SYM(pb_memfn_libc);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -751,6 +770,14 @@ int main(int argc, char **argv) {
         printf("info\tutf_check\t%s\n", pb_utf_check());
     if (pb_has_run_words())
         printf("info\trun_words\t%lld\n", pb_run_words());
+    if (pb_has_req_handoff())
+        printf("info\treq_handoff\t%s\n", pb_req_handoff());
+    if (pb_has_vm_start_scan())
+        printf("info\tvm_start_scan\t%s\n", pb_vm_start_scan());
+    if (pb_has_memfn_forms())
+        printf("info\tmemfn_forms\t%s\n", pb_memfn_forms());
+    if (pb_has_memfn_libc())
+        printf("info\tmemfn_libc\t%s\n", pb_memfn_libc());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

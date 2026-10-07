@@ -3,13 +3,15 @@
 # 9), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-c4c70f2c/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-5ff21faca/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59 -- see list_axes.tsv's header),
-# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
-# c4c70f2c -- NINE abi steps absorbed, 50 -> 59, list_axes.tsv's header
-# states each).
-# 75 data rows / 7 columns -- BYTE-IDENTICAL to the fc719ca4 archive
+# pcrec commit 5ff21faca9e8fa0d82eb35a6c0a333ec84c904c3 (rx_info.abi 65, read off a plain `abc` witness at this build),
+# archived 2026-10-07 by lane b124prep ([B124] RE-PIN PREP: pcrec
+# c4c70f2c (abi 59) -> 5ff21faca (abi 65), lane/k93tri's tip -- the K93/K95
+# fixes over main e6e6d6eb + [MEMFN] R4c; SIX abi steps, list_axes.tsv's
+# header states each. A PREP pin: the final [B124] pin is named by inbox
+# I-133).
+# 75 data rows / 7 columns -- BYTE-IDENTICAL to the c4c70f2c archive
 # (diffed line for line): no step in the range touches definitions.c.
 esc	d	\d	1	DEF_UCP_D	\p{Nd}	active
 esc	d	\d	2	DEF_ALWAYS	[0-9]	active

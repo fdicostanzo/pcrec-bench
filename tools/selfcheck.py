@@ -10751,12 +10751,59 @@ def check_list_axes_registry():
             % (first_live.strip()[:60], mod.LIST_AXES_TSV))
         return
     body = committed[idx:]
-    n_rows = sum(1 for l in live.splitlines() if l and not l.startswith("#"))
-    n_axes = len({l.split("\t")[0] for l in live.splitlines() if l and not l.startswith("#")})
+    # [B124] (pcrec I-128/I-129, table_contract.md consumer rule 5): the
+    # counts are of the MAIN table only -- the rows before the first
+    # `#section` line. From pcrec 5328a87d on, a `#section memfn` block
+    # (pcrec-memory-functions' own option rows, another column set)
+    # follows it; counting every non-`#` line would miscount the moment
+    # that section gains a row.
+    main = [l for l in mod.registry_main_lines(live)
+            if l.strip() and not l.startswith("#")]
+    n_rows = len(main)
+    n_axes = len({l.split("\t")[0] for l in main})
+    try:
+        sections = mod.registry_sections(live)
+    except Exception as e:                       # noqa: BLE001
+        sections = None
+        bad("list-axes: every #section block parses and stays out of the "
+            "main table", str(e))
+    if sections is not None:
+        n_all = sum(1 for l in live.splitlines() if l and not l.startswith("#"))
+        n_sec = sum(len(v) for v in sections.values())
+        if n_all == n_rows + n_sec and len(mod.registry_rows()) == n_rows:
+            ok("list-axes: every #section block parses and stays out of the "
+               "main table",
+               "%s; main %d rows (registry_rows agrees) + section rows %d "
+               "= %d data lines"
+               % (", ".join("#section %s: %d row(s)" % (k, len(v))
+                            for k, v in sorted(sections.items()))
+                  or "no #section block at this pin",
+                  n_rows, n_sec, n_all))
+        else:
+            bad("list-axes: every #section block parses and stays out of the "
+                "main table",
+                "main %d + sections %d != %d data lines, or registry_rows() "
+                "read %d" % (n_rows, n_sec, n_all, len(mod.registry_rows())))
+    # ... and the 0-row case parses on its own, whatever this pin prints
+    # (I-128: "a check that the 0-row section parses").
+    try:
+        synth = ("#axis\torder\n" "a\t1\n" "#section memfn\n"
+                 "# comment\n" "#name\tkind\n")
+        got = mod.registry_sections(synth)
+        main_synth = [l for l in mod.registry_main_lines(synth)
+                      if not l.startswith("#")]
+        if got == {"memfn": []} and main_synth == ["a\t1\n"]:
+            ok("list-axes: a 0-row #section parses (synthetic)",
+               "{'memfn': []}, main table 1 row")
+        else:
+            bad("list-axes: a 0-row #section parses (synthetic)",
+                "sections %r, main %r" % (got, main_synth))
+    except Exception as e:                       # noqa: BLE001
+        bad("list-axes: a 0-row #section parses (synthetic)", str(e))
     if body == live:
         ok("list-axes: the archived copy matches the pin's live output",
-           "%d rows / %d axes, byte-identical below the source header"
-           % (n_rows, n_axes))
+           "%d rows / %d axes (main table), byte-identical below the "
+           "source header" % (n_rows, n_axes))
     else:
         import difflib
         diff = list(difflib.unified_diff(body.splitlines(), live.splitlines(),
