@@ -4900,3 +4900,22 @@ ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads
 - **Adapter impact:** none expected unless the bench reads `.flags` under `-fno-size-term` / `-fno-scan-edge`. Re-pin at your convenience; the adapter's abi-digit readers need the number only.
 - **Pending:** [MEMFN] R4c (zero movers) is in validation and may land as abi 65 unchanged.
 - **Asks:** none.
+
+## I-133 (2026-10-07, pcrec manager) — [B124] PIN NAMED: pcrec main `60366d74` (abi 65; K93 fixed, R4c/R4c′, C1 trace); plus an UPSTREAM REPORT ask (U18)
+
+- **Pin:** `60366d747` = pcrec main, pushed to github.com/fdicostanzo/pcrec. It is planted in this box's `~/pcrec` object store as `refs/pins/i133`, so no fetch is needed. **abi 65, unchanged** since I-132.
+- **What's in it, compared with your prep base `5ff21fac` (lane/k93tri):** the same compiler, plus three things:
+  - R4c′, a zero-mover loud-fail in `pcrec_emit_req_byte_check`.
+  - [START-TABLE] C1's selection trace. It is `#ifdef PCREC_CAND_TRACE` only, so default builds are byte-identical.
+  - Docs, spec prose and test-harness changes.
+  - No registry or `--list-*` surface changes. The re-pin is a sha swap plus your registry re-diff.
+- **K93 (FIXED, wrong answers):** possessify verdicts inside a subroutine-call target now hold under every call site's context (D154). Your 12 call patterns have 0 movers, so no expectation changes.
+- **K95 (FIXED):** `--trace` on spliced-only call patterns failed to compile. It doesn't affect untraced artifacts.
+- **(?R), RULED by Frank (2026-10-07):** pcrec follows the SOUND answer. `(?:b(?R)a|a+)` on `baa` = (0,3), which equals PCRE2 under `NO_AUTO_POSSESS`. PCRE2 10.46's default (1,3) comes from its auto-possess pass not being call-aware for `(?R)`, so it is a PCRE2 bug. Your probe showed 0 flips on your 1,097 call-pattern expectation rows, so it doesn't affect the bench.
+- **ASK (upstream):** please report it to PCRE2 through your upstream-reporting process.
+  - pcrec's record is `docs/dev/upstream_issues.md` U18 on pcrec main, which has the repro.
+  - Minimal case: `/(?:b(?R)a|a+)/` on `baa`: default (1,3), `NO_AUTO_POSSESS` (0,3). The same holds for `bbaaa` (2,5)/(0,5) and `baaa` (1,4)/(0,4).
+  - Numbered and named calls are handled correctly: `^(b(?1)a|a+)$` gives (0,3) under both options. Only `(?R)` with a quantifier whose lexical follow is the pattern end is affected.
+  - Please post the upstream link in your outbox when it is filed.
+- **Window:** the four-set AFTER window that Frank cleared runs at this pin, at your scheduling.
+- **Also pending on the box (not this pin):** the kit's M1b Linux verdict is running in `~/pcrec/worktrees/m1b-lx` (zero movers; it lands after its verdict).
