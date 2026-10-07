@@ -290,3 +290,29 @@ the main tree and needs `configs.toml pin = "60366d747"` and the
 nostartset testees. The cross-pin report then reads c4c70f2c (store,
 2026-10-05) against 60366d747 for auto/vm. The nostartset pair is
 same-pin, read against auto/vm.
+
+### 11c. The full `make check` result at 60366d747
+
+- **Run 1** (08:52, `/var/tmp/b124_makecheck_run1.log`): ABORTED inside
+  check-harness at 316 passes, `MAKECHECK_RC=2`.
+  - Cause: `check_kb35_email_alias_resolution`'s last arm calls
+    `program_identity.main(... --check)`. With `build/pcrec-25b1984f`
+    pruned, that raises an uncaught SystemExit, so one environmental red
+    killed every check after it.
+  - FIXED in selfcheck.py: the arm now catches SystemExit and reports one
+    FAIL line.
+- **Run 2** (09:06-09:29 EDT, load ≤ 3, `/var/tmp/b124_makecheck.log`):
+  - check-schema: 6/74/0.
+  - **check-harness: 648 passed, 4 FAILED.** All four are the ACCEPTED
+    environmental reds, the pruned old-pin builds:
+    - `gen_patterns --check` needs cd371441.
+    - KB-35 `build_census` needs 25b1984f.
+    - KB-35 `--check` needs 25b1984f.
+    - `b108 acceptance mover` needs 751b9c6d.
+  - No other red. check_expectations ran in full and passed.
+  - Because check-harness exits non-zero, make stopped there, so the
+    remaining three targets were run directly:
+    - **check-interpret 249/0**, **check-upstream OK**.
+    - **check-report OK** (`CHECKREPORT_RC=0`, run detached,
+      `/var/tmp/b124_checkreport.log`).
+- **Verdict**: green except the four accepted environmental reds.
