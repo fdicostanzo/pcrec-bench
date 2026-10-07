@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "c4c70f2c"
+pin = "60366d747"
 
 [testees.pcrec-auto]
 engine_mode = "auto"
@@ -931,3 +931,42 @@ captures = "on"
 cc = "clang"
 flags = ["--features", "all", "-fno-hyb-reseed", "-e", "utf8"]
 description = "pcrec-auto-clang-utf8 with the [OPT-HYB-RESEED] ADAPTIVE RETRY DENIED (-fno-hyb-reseed): I-124 item 1's clang+denied arm, against pcrec-auto-clang-utf8 the retry's own BEFORE/AFTER under clang ([B120])"
+
+# ---------------------------------------------------------------------------
+# THE START-SET DENY AXIS -- `-fno-start-set` ([B124], pin 60366d747 / abi
+# 65; pcrec [START-SET] stages 2+3, docs/spec/tuning.md 2.42, --list-axes
+# `prefilter` rows `first-class` / `first-memchr-bounded` /
+# `first-class-bounded`, bit 47). Denied, BOTH hats go: a VM artifact's
+# attempt loop attempts at every position again (RX_VM_START_SCAN
+# `first-class` -> `none`, the 256-entry `rx_start_set` table and its two
+# seek loops gone) and a seeded DFA's bounded skip tests the start state's
+# escape set again (RX_DFA_PREFILTER `first-*-bounded` -> its pre-abi-64
+# value, `byte-class-bounded` on `\bq\w*z` / `\b\d+x`) -- pcrec: "restores
+# the abi-62 `-fno-start-set` program apart from the abi digits". The
+# [B108]/[B120] shape exactly: the flag rides in `flags`, the adapter
+# DERIVES the axis (`effective_denies`, the `nostartset` DENY_FLAGS row,
+# appended last), and `config_extra` gains `nostartset`. TWO siblings
+# because the hats split by route: the VM hat (stage 2) fires only where
+# the VM has no DFA prefilter -- every unanchored FORCED-VM artifact whose
+# start set is not nullable (`abc --engine=vm`: `first-class`) -- so
+# `pcrec-vm-nostartset` against `pcrec-vm` is stage 2's BEFORE/AFTER; the
+# DFA hat (stage 3) fires only on SEEDED DFA scans (and a VM hybrid's
+# inlined prefilter), which `auto` reaches, so `pcrec-auto-nostartset`
+# against `pcrec-auto` is stage 3's. Both are the deny arm of the [B124]
+# AFTER window (litrun / capability / loglines / syntax x {pcrec-auto,
+# pcrec-vm, this pair}), answering pcrecdev1's D153 round-3 Q1.
+# Answer-identical by construction; a give-up the hat's skipped VM attempts
+# would have hit may be the DENIED arm's answer where the default answers
+# (match_api.md 3.1 -- pcrec's own witness `(?=(?:a|b|x)*c)x` under
+# `budget frames=8`), never the reverse.
+[testees.pcrec-auto-nostartset]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-start-set"]
+description = "pcrec defaults with the [START-SET] HATS DENIED (-fno-start-set, --list-axes bit 47): a seeded DFA's bounded skip tests the start state's escape set again instead of the start set (first-*-bounded -> the pre-abi-64 prefilter) at the SAME pin -- against pcrec-auto the DFA hat's (stage 3's) BEFORE/AFTER ([B124], pcrec I-130/I-131)"
+
+[testees.pcrec-vm-nostartset]
+engine_mode = "vm"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "-fno-start-set"]
+description = "pcrec --engine=vm with the [START-SET] VM HAT DENIED (-fno-start-set, bit 47): every position is attempted again (RX_VM_START_SCAN first-class -> none) at the SAME pin -- against pcrec-vm the VM hat's (stage 2's) BEFORE/AFTER, on the route where it fires ([B124], pcrec I-130)"

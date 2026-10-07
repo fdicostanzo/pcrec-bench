@@ -321,7 +321,9 @@ checks, six roadblocks; 20 archived parse probes found a NUL silently
 truncating a pattern line) went to pcrecdev1 as outbox O-26; the restart
 procedure is in plan.md's [B42] row. 2026-10-04: [B122] RE-PINNED to
 **c4c70f2c (abi 59)**, pcrec's [OPTLOOP] round 1 (inbox I-127; see the
-testees line below and testees/pcrec/CLAUDE.md). Manager sessions start with the
+testees line below and testees/pcrec/CLAUDE.md). 2026-10-07: [B124] RE-PINNED
+(lane b124prep) to **60366d747 (abi 65)**, inbox I-133's final pin (see the
+testees line below). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -472,7 +474,27 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **c4c70f2c, abi 59** (re-pinned from fc719ca4,
+  at a pinned commit — **60366d747, abi 65** ([B124], 2026-10-07, lane
+  b124prep, inbox I-128..I-133 -- pcrec main with lane/k93tri merged:
+  K93/K95 + [MEMFN] R4c′; prepared at the compiler-identical 5ff21faca
+  (k93tri's tip) and re-diffed at the final pin: registries byte-identical,
+  every census row program-identical; docs/dev/lanes/b124prep_report.md.
+  SIX abi steps: 59→60 [K82] (A)+(C)
+  (`req-admit` table, `-fno-req-set-lead` bit 45), 60→61 [K82] (B)
+  (`RX_REQ_HANDOFF`, `-fno-req-handoff` bit 46), 61→62 [START-SET] stage 2
+  (`RX_VM_START_SCAN`, the VM hat, `-fno-start-set` bit 47), 62→63 [MEMFN]
+  R4a′ (`RX_MEMFN_FORMS`/`_LIBC`), 63→64 [START-SET] stage 3 (the DFA hat,
+  `first-memchr-bounded`/`first-class-bounded`), 64→65 K92 (derived
+  `.flags` mask); `struct rx_info` unchanged, shim floor STAYS 16. FIRST pin
+  whose `--list-axes` carries a `#section` block (`#section memfn`, 0 rows):
+  every reader selects the MAIN table. Registries axes 119/41 → 131/44
+  (main), definitions/limits/schema byte-identical. New pinned pair
+  `pcrec-{auto,vm}-nostartset`; `check_b124_stamps`; catalogue 3.15.
+  Census (docs/dev/measurements/2026-10-07-b124prep-census.txt, at the
+  prep pin 5ff21faca, program-identical to the final one): 1,380
+  rows, 561 identical / 716 changed / 103 refused-both / 0 refusal movers /
+  0 K93 movers; 712 restored by the three denials, 4 = [K82] (C)). Before
+  it, **c4c70f2c, abi 59** (re-pinned from fc719ca4,
   2026-10-04, lane b122repin, inbox I-127 — pcrec's [OPTLOOP] round 1, NINE
   abi steps: 50→53 [CLS-TREE] S2 (VM byte classes through the kit's ROWS;
   scan-edge `kit`/`fold` bodies at --tune=-2/-1 only; the range test

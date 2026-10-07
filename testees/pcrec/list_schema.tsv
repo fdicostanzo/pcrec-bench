@@ -1,18 +1,22 @@
 # testees/pcrec/list_schema.tsv -- pcrec's .rxt FORMAT SCHEMA (the SEVENTH
 # registry surface, [DD-13b.W23.1], docs/spec/rxt_format.md /
 # docs/spec/table_contract.md), archived VERBATIM under a source header --
-# thirteenth archiving of this surface (twelfth: fc719ca4, +1 row; this
-# one: BYTE-IDENTICAL).
+# fourteenth archiving of this surface (thirteenth: c4c70f2c, byte-
+# identical; this one: BYTE-IDENTICAL again).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-c4c70f2c/build/pcrec --list-schema
+#     build/pcrec-60366d747/build/pcrec --list-schema
 #
-# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59 -- see list_axes.tsv's header),
-# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
-# c4c70f2c -- NINE abi steps absorbed, 50 -> 59, list_axes.tsv's header
-# states each).
-# 79 data rows -- BYTE-IDENTICAL to the fc719ca4 archive (diffed line for
-# line). Nothing in this project's adapters or checks reads this file;
+# pcrec commit 60366d747af20517d095fc3cdee12d0a04afe41b (rx_info.abi 65, read off a plain `abc` witness at this build),
+# archived 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
+# pcrec main 60366d747 = lane/k93tri merged into main (K93/K95 + [MEMFN]
+# R4c' + C1's #ifdef trace), compiler-identical to the prep pin 5ff21faca;
+# c4c70f2c (abi 59) -> 60366d747 (abi 65), SIX abi steps, list_axes.tsv's
+# header states each. All four surfaces re-diffed: BYTE-IDENTICAL to the
+# 5ff21faca prep archive below this header).
+# 79 data rows -- BYTE-IDENTICAL to the c4c70f2c archive
+# (diffed line for line): no step 60-65 touches the .rxt grammar.
+# Nothing in this project's adapters or checks reads this file;
 # archived so the registry-surface census stays complete at this pin.
 # pcrec .rxt FORMAT SCHEMA (docs/spec/rxt_format.md,
 # docs/spec/table_contract.md; the SEVENTH registry dump,

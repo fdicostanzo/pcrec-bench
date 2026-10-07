@@ -623,6 +623,21 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-nohybreseed", [t for t in REQUIRES_VOCAB
                                 if t not in ("callouts", "conditionals",
                                              "control-verbs", "lookbehind-variable")]),
+    # [B124] (pin 60366d747, abi 65): the [START-SET] hat twins,
+    # `pcrec-auto` / `pcrec-vm` plus `-fno-start-set` -- an EMIT-side
+    # denial (the VM attempt loop's start-set seek, the seeded DFA's
+    # start-set skip), the SAME [B101]/[B108]/[B120] reasoning stated on
+    # `pcrec-auto-noreqbyte` / `pcrec-auto-nolitrun` /
+    # `pcrec-auto-nohybreseed` above: each satisfies exactly its base
+    # row's own tokens. Refusal sets MEASURED identical to the base rows
+    # over this set's 64 patterns x both forms (lane b124prep's census,
+    # docs/dev/measurements/2026-10-07-b124prep-census.txt).
+    ("pcrec-auto-nostartset", [t for t in REQUIRES_VOCAB
+                               if t not in ("callouts", "conditionals",
+                                            "control-verbs", "lookbehind-variable")]),
+    ("pcrec-vm-nostartset", [t for t in REQUIRES_VOCAB
+                             if t not in ("callouts", "conditionals",
+                                          "control-verbs", "lookbehind-variable")]),
     # THE FORCED-DFA + VM-NOCAPS TESTEES ([B121], pin fc719ca4, inbox
     # I-125 Q2/Q3; docs/dev/measurements/2026-10-01-b121-dfa-nocaps-
     # census.txt is the WITNESS CENSUS this row set rests on -- all four

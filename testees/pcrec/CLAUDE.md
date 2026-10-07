@@ -1,7 +1,9 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides forty-six testees at the commit pinned in `configs.toml` (counted
-by `adapter.testees()` at the [B122] re-pin to c4c70f2c, which adds none), and
+Provides forty-eight testees at the commit pinned in `configs.toml` (counted
+by `adapter.testees()` at the [B124] re-pin to 60366d747, which adds
+two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`; [B122]'s c4c70f2c
+added none), and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
 re-pin, up from fourteen; [B77] U2, 2026-09-25: four more, the `-utf8`
@@ -47,6 +49,7 @@ at the same pin — up from thirty-nine):
 | `pcrec-{auto,vm}-o0`, `-o1`, `-o3`, `-os` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `cflags = ["-O<n>"]` | ([B117], Frank 2026-09-29, LOW PRIORITY) THE COMPILEE OPTIMIZATION-LEVEL AXIS: OUR OWN phase-2 `$CC` compile of the artifact+shim at `-O0`/`-O1`/`-O3`/`-Os` instead of the fixed `-O2` — gcc/clang take the LAST `-O` flag, so `build_flags` NAMES the effective level explicitly (`effective_olevel()`). `pcrec-auto`/`pcrec-vm` ARE this axis's `-O2` arm; no `-o2` testee exists. PREP ONLY — `check_olevel_axis` (`make check-harness`) proves the override reaches real codegen (a hand-chosen forced-VM witness's `.text` bytes differ between `-O0` and `-O3`) and that neither level breaks the libpcre2 oracle agreement; the census over `bench/capability` is OWED to a measurement window (docs/dev/measurements/probe_b117_olevel_census.py). See docs/dev/plan.md [B117] and docs/dev/lanes/b117prep_report.md |
 | `pcrec-vm-nocaps`, `pcrec-vm-nocaps-in` | the same flags as `pcrec-vm` / `pcrec-vm-in`, plus `--no-captures` | ([B121], inbox I-125 Q2) THE FORCED-VM NOCAPS PAIR: mirrors `pcrec-nocaps`'s relationship to `pcrec-auto`, on the forced VM route — a like-for-like nocaps census against the existing caps pair. MEASURED: the compiling population is cell-for-cell IDENTICAL to `pcrec-vm`/`pcrec-auto`'s own on bench/capability@0.1 and bench/syntax@0.1 (124/128, 83/83) — `--no-captures` never refuses anything the forced VM route alone accepts |
 | `pcrec-dfa`, `pcrec-dfa-nocaps` | `--engine=dfa`[`, --no-captures`] | ([B121], inbox I-125 Q3) THE FORCED-DFA PAIR: the DFA route forced — a DIAGNOSTIC REQUEST, REFUSED rather than downgraded (unlike `auto`'s silent VM fallback). `pcrec-dfa` (captures on, the default) refuses every capturing-group pattern outright ("this pattern requires captures ... pass --no-captures for a DFA-only artifact, or omit --engine=dfa"), plus every backrefs/lookaround/k-reset/true-recursion pattern (VM-only regardless of captures). `pcrec-dfa-nocaps` additionally compiles every capturing-group pattern that carries none of those VM-only constructs (93/128 capability, 64/95 syntax vs 58/128, 57/95 for `pcrec-dfa`). THE REVERSE-POPULATION FINDING (Q3's own framing: "auto picks VM, a forced DFA would have won"): MEASURED EMPTY on bench/capability@0.1 and bench/syntax@0.1 at this pin, both forms — `auto` already prefers the DFA whenever it can represent the pattern under `--no-captures`, confirmed structurally too (`pcrec-nocaps` and forced `pcrec-dfa-nocaps` are PROGRAM-IDENTICAL, `tools/program_identity.py` v2, wherever both compile: 93/93 + 64/64, 0 changed). docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt |
+| `pcrec-auto-nostartset`, `pcrec-vm-nostartset` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-start-set` | ([B124], pin 60366d747 / abi 65) THE [START-SET] DENY AXIS: both hats denied at the SAME pin (`--list-axes` `prefilter` rows `first-class` / `first-memchr-bounded` / `first-class-bounded`, bit 47) -- a VM attempt loop attempts at every position again (`vm_start_scan` `first-class` -> `none`, the 256-entry seek table gone) and a seeded DFA's bounded skip tests the escape set again (`first-*-bounded` -> the pre-abi-64 value). TWO siblings because the hats split by route: the VM hat fires on forced-VM unanchored artifacts with a non-nullable start set (`pcrec-vm-nostartset` vs `pcrec-vm` = stage 2's BEFORE/AFTER), the DFA hat on seeded DFA scans and hybrid prefilters `auto` reaches (`pcrec-auto-nostartset` vs `pcrec-auto` = stage 3's). The deny arm of the [B124] AFTER window. `config_extra` word `nostartset`, LAST in `DENY_FLAGS` order. See "Re-pin at 60366d747" |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
@@ -56,7 +59,7 @@ at the same pin — up from thirty-nine):
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
 | `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
-| `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved |
+| `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved. **Since the [B124] pin ([B124], pcrec I-128/I-129; first carrier 5328a87d) the dump carries a `#section memfn` block AFTER pcrec's own table** (pcrec-memory-functions' option rows, another column set; 0 rows at this pin): every reader selects the MAIN table, the rows before the first `#section` line (`adapter.registry_main_lines` / `registry_sections`), and every row/axis count quoted in this repo is the main table's |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
 | `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf, 57 at cd371441 — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` and [K50]'s `PCREC_STARTPOS_GUARD_TEXT_MAX` joined in turn), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
 | `list_schema.tsv` | ([B42] restart step (4)/b42repin, 2026-09-16) pcrec's `--list-schema` output at the pin, VERBATIM under a source header — the SEVENTH registry surface ([DD-13b.W23.1], docs/spec/rxt_format.md / table_contract.md), archived for the FIRST TIME at cd371441 (the pin that shipped the query itself): one row per (scope, line-kind) the `.rxt` parser enforces, plus a `surface` section naming what it deliberately does NOT validate. Nothing in this project's adapters or checks reads it yet — archived now so the registry-surface census stays complete at this pin, and against the day `docs/design/rxt_needs_v1.md` needs it. NOT diffed by `make check-harness` (no `check_list_schema_registry` exists) |
@@ -635,6 +638,84 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin at 60366d747 (abi 59 -> 65) — 2026-10-07, lane b124prep, inbox I-128..I-133
+
+The FINAL pin is inbox I-133's 60366d747: pcrec main with lane/k93tri
+merged (K93/K95, [MEMFN] R4c′'s loud internal error, C1's `#ifdef` trace).
+The lane PREPARED everything at the compiler-identical k93tri tip
+5ff21faca and re-diffed at the final pin: all five registry surfaces
+(axes/definitions/limits/schema/syntax) byte-identical, abi 65, and every
+one of the census's 1,380 artifacts v2-PROGRAM-IDENTICAL between the two
+(docs/dev/lanes/b124prep_report.md §11). So every number below measured
+at 5ff21faca holds at the pin. SIX abi steps,
+each read in pcrec's `docs/spec/match_api.md` §6 change log:
+
+1. **59 -> 60, [K82] (A)+(C)**: the whole-window pre-check admission is a
+   first-match table, `--list-axes` axis `req-admit` (none / one-attempt /
+   dominated / `set-leads` / emitted -- `RX_REQ_WHY`'s four tokens in the
+   registry for the first time; `RX_REQ_WHY` now gets `registry_check`'s
+   one-way check); `set-leads` (bit 45, `-fno-req-set-lead`) puts the
+   rarer necessary-set byte's memchr in FRONT of the run search and moves
+   NO stamp (its control is program identity). (C): pick's NONE answer
+   prices size -- under `-e utf8` it moves `RX_REQ_RUN`'s `@idx` (utf8
+   `alt-shared-char`, no flag).
+2. **60 -> 61, [K82] (B)**: `RX_REQ_HANDOFF` on EVERY artifact (a decimal
+   K or `none`; axis `req-use`, bit 46, `-fno-req-handoff`).
+3. **61 -> 62, [START-SET] stage 2, the VM hat**: `RX_VM_START_SCAN` on
+   EVERY artifact (`first-class` / `none` -- "none" on DFA artifacts too,
+   MEASURED: I-130's "on every VM artifact" is the narrower half), a
+   256-entry seek table before each VM attempt; `prefilter` axis row
+   `first-class` (bit 47, `-fno-start-set`).
+4. **62 -> 63, [MEMFN] R4a'**: `RX_MEMFN_FORMS` (`none` everywhere) and
+   `RX_MEMFN_LIBC` (sorted libc inventory) on EVERY artifact.
+5. **63 -> 64, [START-SET] stage 3, the DFA hat**: `RX_DFA_PREFILTER`
+   gains `first-memchr-bounded` / `first-class-bounded` (two more
+   `prefilter` rows; the old orders 5..9 are now 8..12). The same bit 47.
+6. **64 -> 65, K92**: `rx_info.flags`' strategy mask DERIVED -- only the
+   `.flags` literal of a `-fno-size-term` / `-fno-scan-edge` artifact
+   moves (MEASURED 262144 / 2097152 -> 0 on `abc`; -6 B on the scan-edge
+   deny row).
+
+Plus [MEMFN] R4c at abi 65 (`memfn-simd` axis, bits 48/49,
+`-fno-memfn-simd` the stated default -- MEASURED inert) and K93/K95 (no
+abi event; MEASURED zero bench movers, pcrec's own §5 claim).
+
+**`struct rx_info` gains no member: the shim floor STAYS 16.** The shim
+reads the four new stamps (`pb_req_handoff`, `pb_vm_start_scan`,
+`pb_memfn_forms`, `pb_memfn_libc`; driver `info` lines), all STAMP_SCOPE
+"every".
+
+**`--list-axes` gains a `#section memfn` block** (0 rows) after pcrec's
+table -- the first pin past 5328a87d. Every reader selects the MAIN table
+(`registry_main_lines`); `make check-harness` parses every section and a
+synthetic 0-row and 1-row section. Registries: axes 119/41 -> **131/44
+(main)** (+3 `prefilter` rows, `req-admit` 5, `req-use` 2, `memfn-simd`
+2); definitions 75, limits 72, schema 79 BYTE-IDENTICAL. The deny-control
+row lookup is now SPELLING-keyed (the first row CARRYING the row's named
+flag), because `prefilter` carries two different flags on different rows.
+
+Size books (`tools/selfcheck.py`): `B124_STAMP_LINES` 121 (the four lines
+at `none`) + the `RX_MEMFN_LIBC` token (`B124_LIBC_ONE_CALL` 2 /
+`_TWO_CALLS` 9) on every artifact; `B124_VM_START_SET` 1,811 (token +7,
+table 1,468 -- excluded from code bytes -- and seek loops 336) on every
+`first-class` VM artifact; K92's -6 on the scan-edge deny arm;
+github-pat's handoff +178. `vm_program_bytes` unmoved (the seek sits in the
+search prologue).
+
+Controls: `check_b124_stamps` (each new deny arm == the c4c70f2c program
+by v2 identity; memfn inert; K92 by value) and three `DENY_CONTROLS` rows;
+`check_b122_round1_stamps`' identity arm now also denies `-fno-start-set`
+(`B124_LATER_DENIES`) and reads K80's guard abi off the artifact. Ledger
+movers: loglines kv-quoted / bignum `first-class-bounded` (the DFA hat),
+uuid's `-fno-offset-skip` arm lands on `first-class-bounded`. New pinned
+pair `pcrec-{auto,vm}-nostartset` (the table above).
+
+Census (`docs/dev/measurements/2026-10-07-b124prep-census.txt`, 1,380
+rows): 561 identical / 716 changed / 103 refused-both / **0 refusal
+movers**, 0 K93-layer movers; 712 restored to c4c70f2c's program by the
+three denials (start-set 596, req-handoff 86, req-set-lead 6, all three
+24), the other 4 = [K82] (C) on utf8 alt-shared-char.
 
 ## Re-pin at c4c70f2c (abi 50 -> 59) — 2026-10-04, lane b122repin, inbox I-127
 

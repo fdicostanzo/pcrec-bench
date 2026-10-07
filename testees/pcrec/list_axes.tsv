@@ -2,34 +2,35 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-c4c70f2c/build/pcrec --list-axes
+#     build/pcrec-60366d747/build/pcrec --list-axes
 #
-# pcrec commit c4c70f2c6f2bc64a52e7c36967ebff359e584a09 (rx_info.abi 59, read off a plain `abc` witness at this build),
-# archived 2026-10-04 by lane b122repin ([B122], inbox I-127: pcrec main
-# fc719ca4 (abi 50) -> c4c70f2c (abi 59), NINE abi steps absorbed:
-# [CLS-TREE] S2 (50 -> 51 -> 52 -> 53, three events: VM byte classes
-# chosen by the kit's class-form ROWS; the scan edge's `kit` body; the
-# scan edge's run test through the shared class emitters + the `fold`
-# body -- `kit`/`fold` at the size-leaning --tune=-2/-1 positions only),
-# K79+K80 (53 -> 54: every selection decided at a canonical two-byte
-# prefix -- a no-op at this project's `-p rx`; the shared ABI block's
-# guard carries the abi and refuses a mixed-abi TU), K78 (54 -> 55: a
-# DFA artifact's dead-group fill moves to its success paths),
-# [OPT-HYB-RESEED-FORM] A1 (55 -> 56: `hyb-reseed` row `anchored`),
-# [OPT-VEDGE] (56 -> 57: `view-edge`, bit 42, `-fno-view-edge`),
-# [OPT-LITSCAN] S4 C1 (57 -> 58: `run-overlap`, bit 43,
-# `-fno-run-overlap`, the new RX_RUN_WORDS stamp) and S4 C3 (58 -> 59:
-# `req-run-fold`, bit 44, `-fno-req-run-fold`, RX_REQ_RUN's `/mask`).
-# 119 data rows / 41 axes (was 108 rows / 38 axes at fc719ca4): +11 rows /
-# +3 axes -- `run-overlap` 4 (words/overlap deny-able, bytes/memcmp
-# fallbacks), `req-run-fold` 2 (cube/exact), `view-edge` 2
-# (view-tolerant/view-free); `scan-body` 4 -> 6 rows (`fold` and `kit`
-# inserted at orders 2/3, carrying `-fno-cls-fold`/`-fno-cls-kit` as
-# their denies; every row's text re-worded to the class-form table);
-# `hyb-reseed` 5 -> 6 rows (`anchored` inserted at order 3); `lit-run`'s
-# and `req-run`'s order-1 text re-worded (the run compare's rows; the
-# information-ranked run). Every other row BYTE-IDENTICAL (diffed line
-# for line).
+# pcrec commit 60366d747af20517d095fc3cdee12d0a04afe41b (rx_info.abi 65, read off a plain `abc` witness at this build),
+# archived 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
+# pcrec main 60366d747 = lane/k93tri merged into main (K93/K95 + [MEMFN]
+# R4c' + C1's #ifdef trace), compiler-identical to the prep pin 5ff21faca;
+# c4c70f2c (abi 59) -> 60366d747 (abi 65), SIX abi steps, list_axes.tsv's
+# header states each. All four surfaces re-diffed: BYTE-IDENTICAL to the
+# 5ff21faca prep archive below this header).
+# SIX abi steps absorbed: [K82] (A)+(C) (59 -> 60: the `req-admit`
+# first-match table, `set-leads` row, bit 45 `-fno-req-set-lead`), [K82]
+# (B) (60 -> 61: `req-use` axis, `handoff` row, bit 46 `-fno-req-handoff`,
+# the new RX_REQ_HANDOFF stamp), [START-SET] stage 2 (61 -> 62: the
+# `prefilter` axis's `first-class` row, stamp RX_VM_START_SCAN, bit 47
+# `-fno-start-set`), [MEMFN] R4a' (62 -> 63: RX_MEMFN_FORMS/_LIBC, no axis
+# row), [START-SET] stage 3 (63 -> 64: `first-memchr-bounded` /
+# `first-class-bounded` on `prefilter`, the same bit 47) and K92 (64 -> 65:
+# rx_info.flags' strategy mask derived, no row). [MEMFN] R4c rides at abi 65
+# (the `memfn-simd` axis, bits 48/49, `-fno-memfn-simd`/`-fmemfn-simd`).
+# MAIN TABLE 131 data rows / 44 axes (was 119 rows / 41 axes at
+# c4c70f2c): +12 rows / +3 axes -- `prefilter` 9 -> 12 rows (the three
+# [START-SET] rows inserted at orders 5-7, the old 5..9 renumbered 8..12),
+# `req-admit` 5 (none/one-attempt/dominated/set-leads/emitted: RX_REQ_WHY's
+# four tokens in the registry for the first time), `req-use` 2
+# (handoff/scan-from-startpos), `memfn-simd` 2 (portable/simd). Every other
+# row BYTE-IDENTICAL (diffed line for line). FIRST PIN WITH A `#section`
+# BLOCK (pcrec I-128/I-129, first carrier 5328a87d): `#section memfn`
+# follows the main table with ZERO data rows at this pin -- every bench
+# reader selects the MAIN table (adapter.registry_main_lines).
 # pcrec optimization-axis registry (docs/spec/registry.md, the FOURTH
 # TSV surface; [CHK-2] piece 1). One row per (axis, candidate), in
 # PREFERENCE order within the axis (order 1 is tried first).
@@ -63,11 +64,14 @@ prefilter	1	run-pinned-bounded	list	RX_DFA_PREFILTER	run-pinned-bounded	PCREC_NO
 prefilter	2	run-pinned	list	RX_DFA_PREFILTER	run-pinned	PCREC_NO_OFFSET_SKIP|PCREC_NO_RUN_PREFILTER	16|32			-fno-offset-skip|-fno-run-prefilter	forward scan, the necessary run is pinned at a fixed offset and the scan already runs on its scan member there: the whole run verified as one compare per candidate, the run pre-check then dominated ([OPT-LITSCAN] S1)
 prefilter	3	offset-set-bounded	list	RX_DFA_PREFILTER	offset-set-bounded	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected, under a $/\Z/\z view or a word-context accept ([OPT-K])
 prefilter	4	offset-set	list	RX_DFA_PREFILTER	offset-set	PCREC_NO_OFFSET_SKIP	16			-fno-offset-skip	forward scan, an offset-k candidate SET was selected: one memchr at the chosen offset k*, the other offsets verified per candidate ([OPT-K])
-prefilter	5	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
-prefilter	6	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
-prefilter	7	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
-prefilter	8	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
-prefilter	9	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
+prefilter	5	first-memchr-bounded	list	RX_DFA_PREFILTER	first-memchr-bounded	PCREC_NO_START_SET	47			-fno-start-set	[START-SET] the DFA hat: the unanchored forward scan of a SEEDED machine with a plain skip, a start set S (the start_set fact) not nullable with fewer than 256 members, and T = S & E* (E* every seed state's escape set; T == S) a non-empty proper subset of the start state's escape set E, one byte: memchr for it, stopped at n-1, re-seeding the state from the byte before the landing where the skip moved
+prefilter	6	first-class-bounded	list	RX_DFA_PREFILTER	first-class-bounded	PCREC_NO_START_SET	47			-fno-start-set	[START-SET] the DFA hat, as first-memchr-bounded with T of several bytes: a 256-entry start_bytes table walk stopped at n-1, re-seeding where the skip moved
+prefilter	7	first-class	list	RX_VM_START_SCAN	first-class	PCREC_NO_START_SET	47			-fno-start-set	vm: [START-SET] a VM artifact with no DFA prefilter, an unanchored pattern, and a start set S (the start_set fact) that is not nullable and has fewer than 256 members: the attempt loop seeks the next byte of S, as a 256-entry table, before its first attempt and after each failed one; dfa: never (the DFA hat is -bounded only: a seeded machine always carries the D11 bound)
+prefilter	8	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward scan, one candidate byte, under a $/\Z/\z view or a word-context accept
+prefilter	9	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
+prefilter	10	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
+prefilter	11	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
+prefilter	12	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
 view	1	end+eol	list								both a \z view and a $/\Z view exist on this machine
 view	2	end	list								a \z view exists and no $/\Z view does
 view	3	eol	list								a $/\Z view exists and no \z view does
@@ -140,6 +144,13 @@ req-run	1	run	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN	31			-fno-req-run	per artif
 req-run	2	none	predicate	RX_REQ_RUN	none						always (fallback) — no run of two or more bytes is necessary (a single literal between non-literals, a caselessly folded literal, an alternation with no common affix), or either this axis's deny flag or -fno-req-byte's
 req-run-fold	1	cube	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN_FOLD	44			-fno-req-run-fold	per necessary-run position, both engines: a class that is one two-member cube (a caseless letter [Ss], [jk], an alternation's one-bit hull fr[ae]) joins the run as a masked position; runs are ranked by information (popcount of each position's mask, 8 per byte, 7 per pair), an alternation's common head and tail are the cube hull of its branches, and the pre-check compares a masked run masked and scans a two-member position as two memchr streams; the stamp's run carries a /mask suffix
 req-run-fold	2	exact	predicate	RX_REQ_RUN							always (fallback) — single bytes only, the pre-row walk, ranked by length; the deny flag
+req-admit	1	none	predicate	RX_REQ_WHY	none						no necessary byte and no necessary run: nothing to pre-check
+req-admit	2	one-attempt	predicate	RX_REQ_WHY	one-attempt						G2: the route tries exactly one start position, and on the VM that one attempt is linear (an exact hybrid DFA in front, or a frameless program), so the check would scan the window the attempt reads anyway
+req-admit	3	dominated	predicate	RX_REQ_WHY	dominated						G1: the candidate-start scan already tests the same byte (and, for a run, verifies the run), or under a byte-rate a one-byte memchr scan of a byte no commoner than the necessary byte
+req-admit	4	set-leads	predicate	RX_REQ_WHY	emitted	PCREC_NO_REQ_SET_LEAD	45			-fno-req-set-lead	a run pre-check is admitted and the necessary set's pick is strictly rarer than the run's scan member (one PICK over the two guards, the run first, so a tie keeps the run alone; under no byte-rate a byte against a two-member pair): the set pick's memchr first, then the run search
+req-admit	5	emitted	predicate	RX_REQ_WHY	emitted						always (fallback): the pre-check on the req_byte fact, or the run search where a run shipped
+req-use	1	handoff	predicate	RX_REQ_HANDOFF		PCREC_NO_REQ_HANDOFF	46			-fno-req-handoff	a run pre-check is emitted (req-admit `emitted` or `set-leads`), the artifact has a DFA scan to move (a DFA body or the VM hybrid's prefilter, not the empty machine), the window's maximum byte offset K from the attempt start is finite, the prefilter is not count-collapsed, and no VM hybrid with a \G start family reads its prefilter-window ceiling: the gate's first window hit c becomes the scan start max(startpos, c - K), rounded up to a character start under a multibyte encoding
+req-use	2	scan-from-startpos	predicate	RX_REQ_HANDOFF	none						always (fallback): the scan starts at the startpos; a run pre-check, where one is emitted, only discards
 startpos-guard	1	align	predicate	RX_STARTPOS_GUARD	align			PCREC_FORCE_STARTPOS_ALIGN	40	-fstartpos-guard=align	per artifact, -fstartpos-guard=align: this encoding has positions that are not character boundaries, so a mid-character caller startpos other than 0 is advanced to the next character start ONCE, at entry (a search runs from there; an anchored match-here entry answers -1). For a misaligned pointer into valid text (D133); -futf-check then validates from the aligned position
 startpos-guard	2	guarded	predicate	RX_STARTPOS_GUARD	guarded	PCREC_NO_STARTPOS_GUARD	25			-fno-startpos-guard	per artifact: this encoding has positions that are not character boundaries (PcrecEnc.start_cls), so the entries refuse a mid-character caller startpos with PCREC_ERR_STARTPOS — libpcre2's own PCRE2_UTF behaviour (BADUTFOFFSET)
 startpos-guard	3	permissive	predicate	RX_STARTPOS_GUARD	permissive						always (fallback) — the artifact answers at whatever position the caller named (utf8_design.md §2.6.1.1's ruled semantics), and on a byte artifact this row is the ONLY one reachable: every position is a boundary there and no setting emits a guard
@@ -148,6 +159,8 @@ utf-check	2	whole	predicate	RX_UTF_CHECK	whole			PCREC_FORCE_UTF_CHECK	39	-futf-
 utf-check	3	off	predicate	RX_UTF_CHECK	off						always (fallback, THE DEFAULT) — the artifact is invalid-tolerant: an ill-formed sequence matches nothing and is not reported (PCRE2_MATCH_INVALID_UTF's semantics); <prefix>_valid_upto is still emitted, the find-all escape (match_api.md §3.1.2)
 comments	1	essential-only	predicate			PCREC_NO_COMMENTS	26			-fno-comments	THE DEFAULT (D112): the artifact keeps only its ESSENTIAL comments — the generated-by/pattern-echo provenance line and the emitted rx_ctx/rx_matchfn/rx_info ABI block docs/spec/match_api.md names as the embedder's contract — and drops the rest; -fno-comments states it explicitly and overrides a config/target row that asked for the full set
 comments	2	full	predicate					PCREC_FORCE_COMMENTS	27	-fcomments	-fcomments: every comment the emitter has to offer (the orientation block, the table legends, the per-label role text). Changes no answer and no object byte — the C compiler discards comments — so it is a SOURCE-readability axis and never a performance one ([ART-SIZE]: comments vs .o size r=0.43)
+memfn-simd	1	portable	predicate	RX_MEMFN_FORMS	none	PCREC_NO_MEMFN_SIMD	48			-fno-memfn-simd	THE DEFAULT: the kit renders portable C only (plain C, SWAR, libc calls, loop-free forms); runs on any target. -fno-memfn-simd states it explicitly and overrides a config/target row that asked for the SIMD forms
+memfn-simd	2	simd	predicate	RX_MEMFN_FORMS				PCREC_FORCE_MEMFN_SIMD	49	-fmemfn-simd	-fmemfn-simd: the kit may render hardware-optimized forms that MAY NOT EXECUTE ON ANOTHER CPU. Inert until a SIMD form exists (R4e'): today both settings render the same artifact
 atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-atomic-discharge	possessify's own verdict proves the A_ATOMIC node's cut is a no-op (docs/design/atomic_groups_design.md §5.3)
 atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
 ctx-node	1	ctx-node	predicate			PCREC_NO_CTX_NODE	35			-fno-ctx-node	the body is capture-free and assertion-free, its LANGUAGE is a set of single characters, and every member is one byte of the encoding (ucp_design.md §2.3)
@@ -174,3 +187,11 @@ engine-route	5	overflowed-dfa	predicate	RX_ENGINE_SEL	overflowed-dfa						auto, 
 engine-route	6	overflowed-prefilter	predicate	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
 engine-route	7	size-cap-retry	predicate	RX_ENGINE_SEL	size-cap-retry						auto, an emitted-size cap (--max-emit-code-bytes/--max-emit-bytes) REFUSED the exact artifact, and compile_driver's [OPT-4] size rung rebuilt a smaller one with a prefilter from the count-collapsed language that SURVIVED (docs/spec/tuning.md §2.17; distinct from collapsed-prefilter above, which is the [SEL-1] DFA-state-cap rung's own success)
 engine-route	8	selected	predicate	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed
+#section memfn
+# pcrec-memory-functions' own option registry (memfn/src/options.def;
+# docs/spec/registry.md §6). NOT pcrec axes: each row is reached as
+# --memfn=no-NAME (a `pair` row also as --memfn=NAME), a string pcrec
+# passes to the kit uninterpreted. budget: D91's scan/loop/any; layer:
+# the acceptance reading that owns the row (a simd row is inert at
+# -fno-memfn-simd).
+#name	kind	budget	layer	spelling	doc

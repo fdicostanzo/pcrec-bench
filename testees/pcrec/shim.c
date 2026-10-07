@@ -1467,6 +1467,85 @@ long long pb_run_words(void) {
 #endif
 }
 
+/* [B124] (pin 60366d747, abi 59 -> 65): FOUR more unconditional string
+ * stamps, every one on EVERY artifact both engines produce (match_api.md
+ * 6.3 family (a); MEASURED at the build on a DFA, a VM hybrid and a
+ * forced-VM witness), none with an rx_info mirror (D77) -- `struct
+ * rx_info` gains no member across abi 60-65, so the floor stays 16.
+ *   `RX_REQ_HANDOFF` (abi 61, [K82] (B)): the decimal K bytes the search
+ *     body's scan begins before the run pre-check's first window hit, or
+ *     "none" (`-fno-req-handoff`, bit 46).
+ *   `RX_VM_START_SCAN` (abi 62, [START-SET] stage 2): "first-class" where
+ *     a VM attempt loop seeks the next start-set byte, "none" on every DFA
+ *     artifact, every hybrid and under `-fno-start-set` (bit 47).
+ *   `RX_MEMFN_FORMS` / `RX_MEMFN_LIBC` (abi 63, [MEMFN] R4a'): the kit's
+ *     SIMD-form ids ("none" until one ships; OPAQUE, bucket on none/not)
+ *     and the sorted libc calls the artifact's source makes ("none" or
+ *     e.g. "memchr,memcmp"). */
+int pb_has_req_handoff(void) {
+#ifdef RX_REQ_HANDOFF
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_req_handoff(void) {
+#ifdef RX_REQ_HANDOFF
+    return RX_REQ_HANDOFF;
+#else
+    return (const char *)0;
+#endif
+}
+
+int pb_has_vm_start_scan(void) {
+#ifdef RX_VM_START_SCAN
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_vm_start_scan(void) {
+#ifdef RX_VM_START_SCAN
+    return RX_VM_START_SCAN;
+#else
+    return (const char *)0;
+#endif
+}
+
+int pb_has_memfn_forms(void) {
+#ifdef RX_MEMFN_FORMS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_memfn_forms(void) {
+#ifdef RX_MEMFN_FORMS
+    return RX_MEMFN_FORMS;
+#else
+    return (const char *)0;
+#endif
+}
+
+int pb_has_memfn_libc(void) {
+#ifdef RX_MEMFN_LIBC
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+const char *pb_memfn_libc(void) {
+#ifdef RX_MEMFN_LIBC
+    return RX_MEMFN_LIBC;
+#else
+    return (const char *)0;
+#endif
+}
+
 /* ------------------------------------------------------------- matching */
 
 /* Unanchored search from `pos`; `caps` is `pb_ncaps()` pairs.
