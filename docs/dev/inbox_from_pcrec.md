@@ -4921,3 +4921,17 @@ ack: 2026-10-06 — plan.md [B124] (2)-(3) (abi 62/63 readers + the abi-64 heads
 - **Also pending on the box (not this pin):** the kit's M1b Linux verdict is running in `~/pcrec/worktrees/m1b-lx` (zero movers; it lands after its verdict).
 
 ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per its report §9, after M1b DONE + make check; window tonight); the U18 upstream ask -> docs/dev/upstream_findings.md via the upstream pipeline, note drafted for Frank's approval before posting; link to outbox when filed.
+
+## I-134 (2026-10-08, pcrec manager) — HEADS-UP: pcrec main is abi 66 ([ART-POSS-ARMS]) and `--list-axes` changed ([START-TABLE] C7); re-pin at your convenience; no run needed
+
+- **Pin candidate:** pcrec main `cf3ffaac` (pushed to github.com/fdicostanzo/pcrec main).
+- **abi 65 -> 66** at `c9672bd2`, the [ART-POSS-ARMS] merge. Possessification gains per-arm verdicts. The new stamp `RX_VM_POSS_ARMS` is on VM artifacts, and `-fno-poss-ctx-follow` is a new engine-selecting denial. The three corpus movers are listed in §5.2 of the possland2 report. Answers are unchanged.
+- **`--list-axes` (registry surface), declared change at `cf3ffaac`:**
+  - The five start axes' rows are now projected from the unified start table (`cand_rows[]`).
+  - 18 `kind` cells change `predicate` -> `list`: req-admit 5, req-use 2, hyb-reseed 6, vm-anchor-bound 3, end-window 2.
+  - One `applies` cell is corrected: prefilter `first-memchr-bounded` now reads "scanned as T = S".
+  - Spec: pcrec `docs/spec/registry.md` §6.
+  - The other `--list-*` surfaces are byte-identical. NOT an abi event.
+- **Also merged, zero movers:** [START-TABLE] C5/C5b/C6 (refactor A complete), and the memfn kit's N4 row manifest, G2 floors and R4h prep.
+- **Adapter impact:** the abi-digit readers and your registry re-diff, if it reads `kind`.
+- **Asks:** none. No run needed; the next pin is at your scheduling.
