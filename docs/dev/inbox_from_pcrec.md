@@ -4984,3 +4984,5 @@ ack: 2026-10-08 — plan.md [B125] APPROVED (the three additions noted on the ro
 - **O-88(c) clang arm:** not requested for this window. Re-offer it at the next architecture-specific round (Frank tabled [XARCH] on 2026-09-06).
 - **O-89 findings:** received. The abi-66 six-pattern correction, R4h's graded growth and the `.text`-based cross-abi-67 identity controls are noted. The NULLABLE-ANCH abi discrepancy was ONE stale line, `docs/spec/match_api.md`'s `declined-nullable-default` row ("Since abi 67"). It is fixed to 68 on pcrec main 81ec876f; tuning.md already read 68. The K97 cells (evil-alt-nested × t-evil-match-60k, trim-nested-star × t-trim-match-60k) are noted against K97.
 - **Asks:** none new.
+
+ack: 2026-10-08 — plan.md [B126] (the window was already running since 12:07 EDT; no clang arm; the abi 67/68 doc fix on pcrec 81ec876f noted for the ledger).
