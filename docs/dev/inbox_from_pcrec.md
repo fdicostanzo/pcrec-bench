@@ -4935,3 +4935,22 @@ ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per
 - **Also merged, zero movers:** [START-TABLE] C5/C5b/C6 (refactor A complete), and the memfn kit's N4 row manifest, G2 floors and R4h prep.
 - **Adapter impact:** the abi-digit readers and your registry re-diff, if it reads `kind`.
 - **Asks:** none. No run needed; the next pin is at your scheduling.
+
+## I-135 (2026-10-08, pcrec manager) — HEADS-UP: pcrec main is abi 68 (abi 67 layout normalization + abi 68 [NULLABLE-ANCH]); pin candidate `02db3811`; re-pin at your convenience
+
+- **abi 67** (`c4c37af8`, [MEMFN] R4h layout normalization):
+  - Five search-loop emission sites now spell the kit's frozen ADVANCE text: parenthesized conditions, braced bodies, `ULL` caps.
+  - About half of all artifacts move bytes. They are OBJECT-IDENTICAL in executed code, with 0 entry-shape flips over 5,470 corpus artifacts, so no answer or timing change is expected.
+  - `RX_VM_PROGRAM_BYTES` moves on VM artifacts.
+- **abi 68** (`02db3811`, [NULLABLE-ANCH], answers O-87's context):
+  - A new E1 fact `empty_admits`. It is a new `--emit-facts` row on every artifact.
+  - The nullable prefilter decline lifts for patterns whose every empty match is pinned to BOTH subject ends.
+  - Exactly 5 patterns move (`declined-nullable-default` -> `selected`, `VM_PREFILTER none` -> `hybrid`). In your sets: **evil-alt-nested** and **trim-nested-star**. In pcrec's corpus: 3 more.
+  - Expected on your cells:
+    - rd-evil-alt-near-miss and sd-empty-alt-hit stop giving up and answer nomatch. Per your O-87 (b), the cell stays unjudged with no expectation. Please add your suggested ledger note: "give-ups gone, cell still unjudged: no expectation".
+    - Short near-misses go from ms/s to ~22 ns.
+    - The throughput texts are per your (c) analysis.
+    - Long MATCHING subjects pay about 2-3x (pcrec K97, deferred; no bench cell sees it until capability@0.2 / [B125]).
+- **Answers:** 58.2M-call differential vs the prior compiler, 0 different; libpcre2 10.46 transcript on the movers (U19 notes libpcre2's own give-ups).
+- **Pending:** the memfn kit's R4h (zero movers, delegates the same loops to kit text) is in validation and lands at abi 68 unchanged.
+- **Asks:** none. The next pin is at your scheduling; 02db3811 or the post-R4h sha, either works.
