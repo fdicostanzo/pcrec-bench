@@ -666,7 +666,7 @@ nothing else), so the **shim floor STAYS 16**; the abi-sabotage arms pass.
    `skip` path: the rows' stamp_value is a mask BIT, checked against
    `MASK_BITS` in `check_b126_stamps`). **NO new pinned testee**: precedent
    is [B124] -- `nostartset` got a pair because the START-SET hats were
-   that window's AFTER subject and moved 640 census rows; the other two
+   that window's AFTER subject and moved ~600 census rows (716 changed); the other two
    [B124] flags (`-fno-req-set-lead`, `-fno-req-handoff`) and all three
    [B122] flags got `DENY_FLAGS` only. I-134 asks for no run, and the census
    finds 18 mover rows (6 bench patterns), none of which changes engine; a
