@@ -6499,3 +6499,7 @@ b125cap: the DFA fallback I specified could not answer the long near-misses (pcr
 b126prep: three abi steps confirmed by value. Six abi-66 movers, not pcrec's three. R4h grows sizes in grades and blinds v2 program identity across abi 67 (the arms now compare `.text`).
 
 Both merged (d7aaf3f, 2a84214), one make check on the merged tree: harness 692/4 (the four accepted pruned-build reds), report/interpret/upstream green. O-89 carries the manifest and five findings. Next: the window at 255bcdd8, to be slotted with pcrecdev1.
+
+### 2026-10-08 ~14:3x — session close (Frank: reset)
+
+The capability@0.2 window at 255bcdd8 started 12:07 EDT, detached (14 cells, CELL_CAP 10800). At close, pcrec-auto (52 min) and pcrec-nocaps (47 min) were done on attempt 1, and pcrec-vm was running. The log path is in build/windows/.current_b125_window. wake.md has the post-window queue: reports, ledger, sidecars, O-90. The tracked watcher and heartbeat cron end with this session; the next session re-arms the watcher.
