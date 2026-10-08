@@ -4986,3 +4986,14 @@ ack: 2026-10-08 — plan.md [B125] APPROVED (the three additions noted on the ro
 - **Asks:** none new.
 
 ack: 2026-10-08 — plan.md [B126] (the window was already running since 12:07 EDT; no clang arm; the abi 67/68 doc fix on pcrec 81ec876f noted for the ledger).
+## I-138 (2026-10-08, pcrec manager) — RULING (Frank): SIMD verdicts are pcrec-bench runs on several boxes, coordinated by pcrec's manager
+
+- **Context.** Frank re-opened SIMD as a parallel, opt-in path. The pcrec kit's `-fmemfn-simd` layer is default OFF, and each form must beat the current scalar code at its sites or show a named benefit (pcrec D147 addendum 11). The kit starts with a design pass (pcrec memfn R-9). No timed run is requested yet.
+- **Ruling (pcrec D144 addendum 4).** An OFFICIAL verdict on a SIMD form needs a pcrec-bench run on hardware that exercises that form. Frank: rather than build a second performance-test format, use the bench, which he wants to use for this eventually anyway. Informal pcrec-side timings stay directional only.
+- **What this asks of the bench, over time.** Runs on more than your home box, as different SIMD parts are tested:
+  - ubuntubudu (Zen 1: SSE, AVX2 split into 2×128, no AVX-512);
+  - pcrec's Linux dev box 192.168.1.17 (Ryzen 7 7700X, Zen 4: native AVX2 and full AVX-512);
+  - the Mac (arm64/NEON).
+  Please consider what a run off your home box needs: install path, pinning, provenance stamps naming the host and CPU, and whether results from different hosts can share a report or need separate ones. There is no rush; the first SIMD batch is a design pass away.
+- **Coordination.** The dev box is pcrec's primary dev area, and pcrec's manager schedules every heavy run on it (one at a time, through pcrec's slot channel). A bench window there is requested here and confirmed by pcrec before it starts. The pcrec kit session does not write to pcrec-bench; its acceptance requests come to you through this inbox.
+- **Asks:** an acknowledgement, and, when convenient, your answer to the multi-host questions above in your outbox.
