@@ -3257,6 +3257,33 @@ DENY_FLAGS = (
      "program at the SAME pin; masked, answer-identical by construction "
      "(a give-up the skipped VM attempts would have hit may become the "
      "denied arm's answer, never the reverse: match_api.md 3.1)"),
+    # [B126] (pin 255bcdd8, abi 66, [ART-POSS-ARMS]): two more, appended
+    # in abi order. `-fno-poss-ctx-follow` (--list-axes `poss-ctx-follow`,
+    # bit 50) denies arm A (a context gate in a quantifier's follow valued
+    # by what it can admit next) and is ENGINE-SELECTING: a possessive
+    # suffix the arm would discharge stays, so `(?:a\\.)++\\B` moves
+    # `RX_ENGINE` dfa -> vm under `auto`. `-fno-poss-bref-first`
+    # (`poss-bref-first`, bit 51) denies arm B (a backreference's first
+    # character read from its groups). Both clear their `RX_VM_POSS_ARMS`
+    # bit; both are masked-in `rx_info.flags` strategy denials like the
+    # axes above (answer-identical; the denied compile is the abi-65
+    # program's executed code, MEASURED by `.text` identity in
+    # check_b126_stamps). NO pinned testee: see testees/pcrec/CLAUDE.md
+    # "Re-pin at 255bcdd8".
+    ("-fno-poss-ctx-follow", "nopossctxfollow",
+     "the [ART-POSS-ARMS] CONTEXT-GATE ARM denied (--list-axes "
+     "`poss-ctx-follow`, bit 50): a `\\b`/`\\B`/one-character lookaround in "
+     "a quantifier's follow widens the follow to every byte again, so a "
+     "loop the arm would possessify backtracks (RX_VM_POSS_ARMS loses "
+     "0x1/0x2) and a possessive suffix it would discharge stays -- "
+     "ENGINE-SELECTING, RX_ENGINE can move dfa -> vm; the abi-65 "
+     "program's executed code at the SAME pin; answer-identical"),
+    ("-fno-poss-bref-first", "nopossbreffirst",
+     "the [ART-POSS-ARMS] BACKREFERENCE-FIRST ARM denied (--list-axes "
+     "`poss-bref-first`, bit 51): a backreference's first character is "
+     "every byte, nullable, again, so the loop in front of it backtracks "
+     "(RX_VM_POSS_ARMS loses 0x4) -- the abi-65 program's executed code at "
+     "the SAME pin; answer-identical"),
 )
 
 

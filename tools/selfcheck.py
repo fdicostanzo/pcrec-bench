@@ -6995,6 +6995,23 @@ DENY_CONTROLS = (
       "vm_start_scan": ("none", "none")}, "deny", "default", "-fno-start-set"),
     # `req-use`'s `handoff` row carries no stamp_value (the value is a
     # decimal K), so the registry note takes the "no stamp_value" path.
+    # [B126] (pin 255bcdd8, abi 66): the two [ART-POSS-ARMS] arms. The
+    # registry rows' stamp_value is a MASK BIT (0x1/0x2/0x4) while the
+    # pair is the bit-NAME list, so the registry agreement is the
+    # deliberate-mismatch "skip" path (check_b126_stamps asserts the
+    # stamp_values against MASK_BITS instead). Witnesses MEASURED at the
+    # build: `a+(?=b)b` forced VM (A0 -> frameless possessive loop vs the
+    # backtracking one) and `\\b(\\w+)\\s+\\1\\b` (B).
+    ("vm_poss_arms: the [ART-POSS-ARMS] context-gate arm denied",
+     "poss-ctx-follow", ("literal", b"a+(?=b)b"), "--engine=vm",
+     {"vm_poss_arms": (["POSS_ARM_A0"], []),
+      "vm_strats": (["PCREC_VM_STRAT_POSSESSIVE"],
+                    ["PCREC_VM_STRAT_BACKTRACKING"]),
+      "vm_frameless": (1, 0)}, "deny", "skip"),
+    ("vm_poss_arms: the [ART-POSS-ARMS] backreference-first arm denied",
+     "poss-bref-first", ("literal", b"\\b(\\w+)\\s+\\1\\b"), "--engine=vm",
+     {"vm_poss_arms": (["POSS_ARM_B"], []),
+      "vm_frameless": (1, 0)}, "deny", "skip"),
     ("req_handoff: the [K82] (B) handoff denied",
      "req-use", ("literal", b"\\bfoo"), "",
      {"req_handoff": ("0", "none"),
