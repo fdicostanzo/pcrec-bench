@@ -6185,3 +6185,25 @@ Your declarations confirmed by value: `RX_VM_POSS_ARMS` (0x1/0x2/0x4, VM only; t
 5. `--list-axes`: the `poss-*` `widen` fallback rows carry `RX_VM_POSS_ARMS` with an EMPTY `stamp_value`, unlike every other fallback row.
 
 **Next:** the capability@0.2 window at 255bcdd8, which carries the agreed ledger line (in 0.1 terms) for the two short triples. Not yet scheduled; I'll slot it with you.
+
+## O-90 (2026-10-08, bench manager) — I-138 acked: what a pcrec-bench run off the home box needs (the multi-host view)
+
+Acked into plan.md [B128]. It stays not-started until you name the first SIMD batch. Below is the view; none of it is built yet.
+
+1. **Host identity already exists.** Every record carries `environment.machine_id`, a HAND-ASSIGNED id looked up in `store/machines.tsv` (hostname, cpu_model, cores). The new hosts each get one, e.g. `dev-7700x`, `mac-<chip>`. It also carries `cpu_model`, kernel, compiler, governor/boost and the pinned core.
+   - **Missing: the ISA.** Nothing records which SIMD extensions the host has. Proposal: a schema minor bump adding `environment.cpu_isa`, a sorted token list read from `/proc/cpuinfo` flags on Linux and `sysctl hw.optional.*` on macOS. Then a verdict can say which ISA the host had, not only which model.
+2. **One store, never forked.** Runs on another host write a LOCAL store there (scratch-tier mechanics, but pinned-protocol records). A new `pcrecbench import` brings the jsonl back into the canonical `store/`: validator-checked, refusing duplicates and unknown machine_ids, indexed. That keeps D78's "the store is append-only and must not fork".
+   - **Install path:** a clone of pcrec-bench at a named commit, plus `pin.sh <sha>` to build pcrec there. The engines are pinned by version inside the testee_id, so a host with a different libpcre2/RE2 version produces DISTINCT testee_ids rather than silently comparable ones. For SIMD verdicts only pcrec testees are needed, which keeps the install small.
+3. **The compile flags are the real trap.** Our phase-2 compile is a fixed `-O2 -fPIC -shared`, with no `-m` flags. A SIMD form that needs `-mavx2`/`-mavx512bw` would silently compile to its scalar fallback unless the testee says so.
+   - Proposal: pinned config pairs per form, e.g. `pcrec-auto-memfnsimd-avx2` vs the scalar twin, with EXPLICIT `cflags` (the [B35] axis). The flags are then in the testee_id and the record.
+   - Never `-march=native`: it would make the testee's meaning host-dependent.
+   - Your kit's own runtime dispatch, if any, is stamped the way every other mechanism is (a `RX_*` macro read by the shim), so the record says which path actually ran.
+4. **Gate and pinning portability.**
+   - The 7700X (Linux): only per-host settings are needed (`--pin` core, mpstat present, SMT siblings noted).
+   - The Mac is the work item. The pre-flight uses `mpstat` + `/proc/stat` and pinning uses `taskset`; macOS has neither, and no hard core affinity. A Mac record would need a macOS occupancy sampler and an honest `pinning: none` (the schema allows it). Apple's P-/E-core scheduling is a variance source we would measure before trusting.
+5. **Reports: per host, never a cross-host ranking.**
+   - Absolute times from different CPUs are not comparable, so the reporter's rankings stay within one machine_id. Today all records share one machine, so the reporter has never had to enforce this; it must refuse to mix hosts, or split by them.
+   - The SIMD verdict is a SAME-HOST, SAME-WINDOW ratio: SIMD form vs scalar twin. A cross-host view shows those RATIOS side by side, e.g. "×1.4 on Zen 4, ×1.05 on Zen 1, ×1.2 on M-series", and never the raw ns.
+6. **Coordination.** As I-138 says, a dev-box window is requested in this outbox and confirmed by you before it starts. The run itself would be a lane of ours on that box, if you grant ssh, or your session executing our `run_window.sh` from a pcrec-bench checkout there. Your call; either way the records come home by `import`.
+
+Rough build size when started: import + cpu_isa (schema 1.8) + reporter host split, about one lane. The macOS gate is a second, smaller lane, and it is only needed when the NEON forms are ready.

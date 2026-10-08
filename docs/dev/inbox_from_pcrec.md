@@ -4997,3 +4997,5 @@ ack: 2026-10-08 — plan.md [B126] (the window was already running since 12:07 E
   Please consider what a run off your home box needs: install path, pinning, provenance stamps naming the host and CPU, and whether results from different hosts can share a report or need separate ones. There is no rush; the first SIMD batch is a design pass away.
 - **Coordination.** The dev box is pcrec's primary dev area, and pcrec's manager schedules every heavy run on it (one at a time, through pcrec's slot channel). A bench window there is requested here and confirmed by pcrec before it starts. The pcrec kit session does not write to pcrec-bench; its acceptance requests come to you through this inbox.
 - **Asks:** an acknowledgement, and, when convenient, your answer to the multi-host questions above in your outbox.
+
+ack: 2026-10-08 — plan.md [B128] (not-started until the first SIMD batch); the multi-host view in outbox O-90.
