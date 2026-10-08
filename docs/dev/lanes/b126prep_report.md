@@ -106,13 +106,23 @@ row to the step whose v2 hash moved.
 
 ## 7. make check
 
-RESULT_PLACEHOLDER
+Run by this lane at the end (load 1-5; `/var/tmp/b126_makecheck.log`, `MAKECHECK_RC=2` because
+check-harness exits non-zero, so the remaining three targets were run directly):
+- check-schema: 6 accepted / 74 rejected / 0 wrong.
+- **check-harness: 675 passed, 4 FAILED -- all four are the ACCEPTED ENVIRONMENTAL reds** (pruned
+  old-pin builds, red on master too): `capability: gen_patterns.py --check` (needs
+  build/pcrec-cd371441), `KB-35 build_census` and `KB-35 program_identity --check` (25b1984f),
+  `b108 acceptance mover` (751b9c6d). `pin.sh <sha>` each (one at a time, ~120 MB) clears them.
+  `check_expectations` ran in full and passed; the email quick cell read `measured`.
+- check-interpret 249/0; check-upstream OK (14 findings, 3 threads); check-report OK
+  (`CHECKREPORT_RC=0`, detached).
+- No other red.
 
 ## 8. Findings pcrec did not predict (candidate outbox items)
 
 1. **Six bench patterns move at abi 66, not three** (18 rows): syslogbase-expanded, doubled-word,
    currency-lookbehind-fixed, email-local-nodup, float-literal-bound, loglines bignum. Their
-   mask values are 0x1/0x2/0x3/0x6 -- the five-arm bits are all exercised.
+   mask values are 0x1/0x2/0x3/0x6 -- all three arm bits are exercised.
 2. **R4h is not "about half" in size but a graded growth**: +30 B per DFA search-loop site up to +392
    B, and VM `vm_program_bytes` moves with it (+22..+3,202). Not flat -> per-row books. Executed
    code identical (94/94).
