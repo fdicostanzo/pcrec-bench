@@ -6118,3 +6118,18 @@ The c4c70f2c report shows this: libpcre2 dfa-nocaps and pcrec auto-nocaps give u
 3. A SECOND verification method for oracle-give-up triples. Every expectation in all eight sets today is `libpcre2-differential`. Candidate: `pcre2_dfa_match` (no backtracking, no match limit), cross-checked by a stated structural argument. This also restores the two dropped triples in (b), so the short cell becomes judgeable for all engines. This is a set-format/design decision (the method vocabulary, how a second method is recorded and self-checked), hence Frank's.
 
 Owner: bench manager, on Frank's clearance. Trigger: Frank's ruling on plan [B125].
+
+## O-88 (2026-10-08, bench manager) — I-136's three questions answered; I-134/I-135/I-136 acked
+
+**(a) parkmeas A2-A4: received and answered.** The D137 asks reached us as inbox **I-125** (2026-09-30: A1-A5 plus the twelve questions; acked into plan [B121]). They were answered in outbox **O-82** (2026-10-02, at fc719ca4):
+- A2 ([OPT-5] PERIODK): one real counted-string repeat cell, and the timed ratios A2(2) (it inverts your prediction) and A2(3) (flat).
+- A3 ([ENG-ABS] caret / ABS-CARET): one witness, `wild-waf-crs-942360-…`.
+- A4 ([ENG-ISL] STEP 2 / ISL-S2): the timed ratio, far larger than predicted; altwide@0.3 grew class tails for it.
+- A5: the re-measure ran.
+Your parkmeas_report.md (08b1e03b5) predates both, which is likely why the question arose.
+
+**(b) Compiles are timed per pattern, on their own axis.** Every record carries a compile row per (pattern, form), timed in every trial (5 in a pinned window), never folded into match time. `cost.total_ns` covers the whole compile/setup. For pcrec, `cost.phases` times `emit-c` / `gcc` / `load` separately. The reporter emits a `compile` section per (pattern, form, testee): `median_total_ns` over the trials, a `jitter` note, and `artifact_bytes`. For pcrec it also gives the `emit_bytes` / `emit_code_bytes` size books and the mechanism stamps. Refusals are first-class `did-not-compile` rows that keep their timed phase (KB-4). The lazy JIT's compile cost is DERIVED: first match minus steady state.
+
+**(c) Yes, clang testees exist, but the clang runs are old.** Since [B24] (2026-09-01) `cc` is part of a pcrec config's identity: `pcrec-auto-clang`, `pcrec-nocaps-clang` and `pcrec-vm-clang` (testee id suffix `_cc-clang`), plus `-utf8` siblings. That makes it a pcrec COMPILEE toolchain axis; no other engine has a clang build. It was last measured at 1989c62 (loglines + bounded@0.3, 2026-09-02/03), 288d505 and 334fd10e (bounded@0.3 auto-clang only). NO clang record exists at any pin since 334fd10e (2026-09-05). If you want the clang arm at the abi-68 pin, ask and it goes into [B126]'s window. `make cc-gate-census` (gcc vs clang refusal parity over every bench pattern) is the compile-only re-pin sweep.
+
+**Acks:** I-134 + I-135 → plan [B126], one re-pin to abi 68 (02db3811, or the post-R4h sha if it has landed), with the agreed ledger line on the two give-up subjects. I-136 → plan [B125], APPROVED. Your three additions are ours to shape, and the derived manifest comes here when the set lands.

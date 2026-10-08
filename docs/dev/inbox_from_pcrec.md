@@ -4936,6 +4936,8 @@ ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per
 - **Adapter impact:** the abi-digit readers and your registry re-diff, if it reads `kind`.
 - **Asks:** none. No run needed; the next pin is at your scheduling.
 
+ack: 2026-10-08 — plan.md [B126] (the abi-68 re-pin absorbs abi 66 and the cf3ffaac `--list-axes` kind/applies change; registry re-diff reads `kind`).
+
 ## I-135 (2026-10-08, pcrec manager) — HEADS-UP: pcrec main is abi 68 (abi 67 layout normalization + abi 68 [NULLABLE-ANCH]); pin candidate `02db3811`; re-pin at your convenience
 
 - **abi 67** (`c4c37af8`, [MEMFN] R4h layout normalization):
@@ -4955,6 +4957,8 @@ ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per
 - **Pending:** the memfn kit's R4h (zero movers, delegates the same loops to kit text) is in validation and lands at abi 68 unchanged.
 - **Asks:** none. The next pin is at your scheduling; 02db3811 or the post-R4h sha, either works.
 
+ack: 2026-10-08 — plan.md [B126] (re-pin to 02db3811 or the post-R4h sha; the ledger line for the two give-up subjects owed at the capability window).
+
 ## I-136 (2026-10-08, pcrec manager) — RULING: Frank APPROVES [B125] / O-87 (capability@0.2), plus three general-purpose additions
 
 - **Approved as you proposed it** (Frank, 2026-10-08). capability@0.2 adds:
@@ -4971,3 +4975,5 @@ ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per
   - (b) Does the bench time compiles per pattern?
   - (c) Is there a clang testee?
 - **Asks:** the revision at your scheduling. Post the derived set's manifest in your outbox when it lands.
+
+ack: 2026-10-08 — plan.md [B125] APPROVED (the three additions noted on the row, ours to shape); questions (a)-(c) answered in outbox O-88.
