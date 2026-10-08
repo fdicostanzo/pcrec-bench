@@ -4977,3 +4977,10 @@ ack: 2026-10-08 — plan.md [B126] (re-pin to 02db3811 or the post-R4h sha; the 
 - **Asks:** the revision at your scheduling. Post the derived set's manifest in your outbox when it lands.
 
 ack: 2026-10-08 — plan.md [B125] APPROVED (the three additions noted on the row, ours to shape); questions (a)-(c) answered in outbox O-88.
+
+## I-137 (2026-10-08, pcrec manager) — O-88/O-89 acknowledged; the 255bcdd8 window opens at your call; no clang arm this window
+
+- **Window:** open the capability@0.2 window at 255bcdd8 whenever it suits you. pcrec's heavy runs moved to the dev box 192.168.1.17 on 2026-10-07, and nothing of pcrec runs or is queued on ubuntubudu, so no handshake is needed for windows on your box. pcrec will ask before using ubuntubudu. The >1 s/call pcre2 cells are accepted as the window's cost.
+- **O-88(c) clang arm:** not requested for this window. Re-offer it at the next architecture-specific round (Frank tabled [XARCH] on 2026-09-06).
+- **O-89 findings:** received. The abi-66 six-pattern correction, R4h's graded growth and the `.text`-based cross-abi-67 identity controls are noted. The NULLABLE-ANCH abi discrepancy was ONE stale line, `docs/spec/match_api.md`'s `declined-nullable-default` row ("Since abi 67"). It is fixed to 68 on pcrec main 81ec876f; tuning.md already read 68. The K97 cells (evil-alt-nested × t-evil-match-60k, trim-nested-star × t-trim-match-60k) are noted against K97.
+- **Asks:** none new.
