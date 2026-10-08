@@ -1,8 +1,8 @@
 # testees/pcrec/ — the pcrec adapter
 
 Provides forty-eight testees at the commit pinned in `configs.toml` (counted
-by `adapter.testees()` at the [B124] re-pin to 60366d747, which adds
-two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`; [B122]'s c4c70f2c
+by `adapter.testees()` at the [B126] re-pin to 255bcdd8 (adds none; [B124]'s 60366d747 added
+two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`); [B122]'s c4c70f2c
 added none), and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
 `pcrec-auto-noclsfold` / `pcrec-vm-noclsfold`, joined at the d34c9131
@@ -638,6 +638,76 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin at 255bcdd8 (abi 65 -> 68) — 2026-10-08, lane b126prep, inbox I-134/I-135
+
+The pin is 255bcdd8: pcrec main with [NULLABLE-ANCH] (02db3811) and [MEMFN]
+R4h's kit-text delegation (33186bc0), docs-only after -- compiler-identical
+to 02db3811 (census step `final`: 0 of 1,380 rows move). THREE abi steps and
+one registry change that is not an abi event. `struct rx_info` is unchanged
+(the emitted `.h` of `abc` differs from 60366d747's by the abi digits and
+nothing else), so the **shim floor STAYS 16**; the abi-sabotage arms pass.
+
+1. **65 -> 66, [ART-POSS-ARMS]**: ONE new stamp, `RX_VM_POSS_ARMS`, an
+   unsigned mask literal (`0x0u`) -- which possessify ARM a positive verdict
+   needed: 0x1 A0 (lookahead-born gate valued with nothing known on its
+   left), 0x2 A1 (gate valued by the loop's last characters' polarity), 0x4 B
+   (a backreference's first character from its groups). Read through
+   `pb_has_vm_poss_arms()`/`pb_vm_poss_arms()` (shim.c), `info vm_poss_arms`
+   (driver.c), declared in `METADATA_DECL` as a `mask` (bit NAMES
+   `POSS_ARM_A0/A1/B` are this adapter's -- pcrec names no constants),
+   scope `vm` in `STAMP_SCOPE` (MEASURED both ways: present, `[]` included,
+   on every forced-VM artifact and every hybrid, absent on every DFA
+   artifact -- enforced at compile time by `_check_agreement` rule 7). Two
+   new flags, `-fno-poss-ctx-follow` (bit 50; ENGINE-SELECTING: a possessive
+   suffix arm A would discharge stays, so `(?:a\.)++\B` goes dfa -> vm under
+   `auto`) and `-fno-poss-bref-first` (bit 51), both `DENY_FLAGS` entries and
+   `DENY_CONTROLS` rows (registry agreement on the deliberate-mismatch
+   `skip` path: the rows' stamp_value is a mask BIT, checked against
+   `MASK_BITS` in `check_b126_stamps`). **NO new pinned testee**: precedent
+   is [B124] -- `nostartset` got a pair because the START-SET hats were
+   that window's AFTER subject and moved ~600 census rows (716 changed); the other two
+   [B124] flags (`-fno-req-set-lead`, `-fno-req-handoff`) and all three
+   [B122] flags got `DENY_FLAGS` only. I-134 asks for no run, and the census
+   finds 18 mover rows (6 bench patterns), none of which changes engine; a
+   pair costs ~2 h of window per set and the capability roster rows. Adding
+   one later is two `configs.toml` entries plus `DENY_FLAGS` order (already
+   in place: `nopossctxfollow`, `nopossbreffirst`, appended LAST).
+   Predicted three bench movers; MEASURED six patterns (capability
+   wild-logparse-syslogbase-expanded, doubled-word, currency-lookbehind-
+   fixed, email-local-nodup, float-literal-bound; loglines bignum) -- a
+   finding, see the lane report. In all 18 rows the two denials reproduce
+   60366d747's v2 identity at the abi-66 build.
+2. **66 -> 67, [MEMFN] R4h layout normalization**: five search-loop sites
+   respelled. 564 census rows change v2 TEXT at this step alone; the
+   compiled `.text` is identical on a 94-row stratified sample (94/94,
+   docs/dev/measurements/2026-10-08-b126prep-r4h-text-identity.txt). Size
+   books: NOT flat -- `B126_R4H` holds 96 per-row measured moves (DFA +30
+   to +392 B, VM +22 to +3,202 B in `emit_bytes` AND `vm_program_bytes`).
+   `v2` program identity is therefore blind to executed-code equality across
+   abi 67: the [B122]/[B124] identity arms fall back to the compiled `.text`
+   (`_b126_text_eq`) when the v2 hash differs, and `check_b126_stamps`
+   uses `.text` identity throughout.
+3. **67 -> 68, [NULLABLE-ANCH]**: the E1 fact `empty_admits` (a new
+   `--emit-facts` row; NOTHING in this repo parses `--emit-facts`, so no
+   reader changes -- asserted by value in `check_b126_stamps`). The nullable
+   prefilter decline lifts where every empty match crosses a non-multiline
+   start AND end anchor: capability evil-alt-nested and trim-nested-star
+   (4 census rows, step 68 only) go `declined-nullable-default` -> `selected`,
+   prefilter `none` -> `hybrid`, language pair `exact`, and grow by the
+   hybrid pair (+3,934 B each). Controls still declined: `^(\s+)*`,
+   `(\s+)*$`, `(?m)^(\s+)*$`, `(x){0,5}`, `(?=abc)x*`.
+   `declined-nullable-default` is still reachable, so the
+   opt42/[B26] checks stand unchanged.
+4. **Registries** (not an abi event for the cf3ffaac part): `--list-axes`
+   MAIN 131/44 -> 136/46 (+`poss-ctx-follow` 3 rows, `poss-bref-first` 2;
+   18 `kind` cells predicate -> list, one `applies` cell corrected --
+   `registry_check` reads `kind` only to decide the reverse check, and
+   passes with the five start axes now `list`); `#section memfn` still 0
+   rows; `--list-limits` 72 -> 73 (`PCREC_MAX_POSS_REF_DEPTH`);
+   `--list-definitions`/`--list-schema`/`--list-syntax` byte-identical.
+5. **Size books**: +29 B on every VM artifact (the stamp line), 0 on DFA;
+   abi 68 and the final step 0 B on every asserted row.
 
 ## Re-pin at 60366d747 (abi 59 -> 65) — 2026-10-07, lane b124prep, inbox I-128..I-133
 

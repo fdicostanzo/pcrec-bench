@@ -1871,6 +1871,37 @@ METADATA_DECL = {
                        "`memchr` delegates that search to the C library's "
                        "own dispatch",
     },
+    # [B126] (pin 255bcdd8, abi 66, [ART-POSS-ARMS]): ONE new stamp, a
+    # MASK like `vm_strats` -- the per-ARM half of its POSSESSIVE bit.
+    "vm_poss_arms": {
+        "type": "mask", "scope": "pattern",
+        "bits": ["POSS_ARM_A0", "POSS_ARM_A1", "POSS_ARM_B"],
+        "source": "<PREFIX>_VM_POSS_ARMS ([ART-POSS-ARMS], pcrec abi "
+                  "66+), read through pb_vm_poss_arms() behind "
+                  "pb_has_vm_poss_arms(); no rx_info mirror; scope checked "
+                  "by STAMP_SCOPE (VM artifacts, hybrids included, never a "
+                  "DFA-only one); the bit values are match_api.md 6.3's "
+                  "paragraph, NOT named constants, so the bit NAMES here "
+                  "are this adapter's; the registry's stamp_values "
+                  "(`poss-ctx-follow` a0 0x1 / a1 0x2, `poss-bref-first` "
+                  "group-text 0x4) CHECKED against MASK_BITS in "
+                  "tools/selfcheck.py, with -fno-poss-ctx-follow (bit 50) "
+                  "and -fno-poss-bref-first (bit 51) as the deny controls "
+                  "that reach 0",
+        "description": "which possessify ARM a positive verdict needed: "
+                       "A0 (a lookahead-born context gate in a "
+                       "quantifier's follow valued with nothing known on "
+                       "its left), A1 (a gate valued by the polarity of "
+                       "the loop's LAST characters; the verdict was decided "
+                       "by A1 alone), B (a backreference's first character "
+                       "read from its groups). For A0 and B the same "
+                       "compile with that arm denied counts fewer positive "
+                       "verdicts. `[]` where no arm was needed, including "
+                       "every artifact built with both arms denied. "
+                       "-fno-poss-ctx-follow is ENGINE-SELECTING (a "
+                       "discharged possessive suffix stays, so RX_ENGINE can "
+                       "move to vm); answers are unchanged",
+    },
     # -- the ALTERNATION -> CLASS NORMALIZATION stamps ([OPT-ALTCLS], pcrec
     # inbox I-39; [B34], pin 288d505). COMMON scope: on EVERY artifact,
     # BOTH engines, unconditionally -- a family of its own beside
@@ -1988,6 +2019,10 @@ MASK_BITS = {
                   ("PCREC_VM_STRAT_BACKTRACKING", 0x2)],
     "vm_prunes": [("PCREC_VM_PRUNE_CLAMPED", 0x1),
                   ("PCREC_VM_PRUNE_UNCLAMPED", 0x2)],
+    # [B126] (abi 66): match_api.md 6.3's own paragraph, not a named
+    # constant block -- 0x1 A0, 0x2 A1, 0x4 B.
+    "vm_poss_arms": [("POSS_ARM_A0", 0x1), ("POSS_ARM_A1", 0x2),
+                     ("POSS_ARM_B", 0x4)],
 }
 INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "work_budget", "frame_capacity", "subject_ceiling",
@@ -2169,6 +2204,11 @@ STAMP_SCOPE = {
     "vm_start_scan":         ("every",    62),
     "memfn_forms":           ("every",    63),
     "memfn_libc":            ("every",    63),
+    # [B126] (pin 255bcdd8, abi 66, [ART-POSS-ARMS]): "vm" -- match_api.md
+    # 6.3 "emitted on every VM artifact, never on a DFA-only one"; the
+    # scope iff (both ways, hybrids included) MEASURED in tools/selfcheck.py
+    # check_b126_stamps, not assumed from the sentence.
+    "vm_poss_arms":          ("vm",       66),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -3217,6 +3257,33 @@ DENY_FLAGS = (
      "program at the SAME pin; masked, answer-identical by construction "
      "(a give-up the skipped VM attempts would have hit may become the "
      "denied arm's answer, never the reverse: match_api.md 3.1)"),
+    # [B126] (pin 255bcdd8, abi 66, [ART-POSS-ARMS]): two more, appended
+    # in abi order. `-fno-poss-ctx-follow` (--list-axes `poss-ctx-follow`,
+    # bit 50) denies arm A (a context gate in a quantifier's follow valued
+    # by what it can admit next) and is ENGINE-SELECTING: a possessive
+    # suffix the arm would discharge stays, so `(?:a\\.)++\\B` moves
+    # `RX_ENGINE` dfa -> vm under `auto`. `-fno-poss-bref-first`
+    # (`poss-bref-first`, bit 51) denies arm B (a backreference's first
+    # character read from its groups). Both clear their `RX_VM_POSS_ARMS`
+    # bit; both are masked-in `rx_info.flags` strategy denials like the
+    # axes above (answer-identical; the denied compile is the abi-65
+    # program's executed code, MEASURED by `.text` identity in
+    # check_b126_stamps). NO pinned testee: see testees/pcrec/CLAUDE.md
+    # "Re-pin at 255bcdd8".
+    ("-fno-poss-ctx-follow", "nopossctxfollow",
+     "the [ART-POSS-ARMS] CONTEXT-GATE ARM denied (--list-axes "
+     "`poss-ctx-follow`, bit 50): a `\\b`/`\\B`/one-character lookaround in "
+     "a quantifier's follow widens the follow to every byte again, so a "
+     "loop the arm would possessify backtracks (RX_VM_POSS_ARMS loses "
+     "0x1/0x2) and a possessive suffix it would discharge stays -- "
+     "ENGINE-SELECTING, RX_ENGINE can move dfa -> vm; the abi-65 "
+     "program's executed code at the SAME pin; answer-identical"),
+    ("-fno-poss-bref-first", "nopossbreffirst",
+     "the [ART-POSS-ARMS] BACKREFERENCE-FIRST ARM denied (--list-axes "
+     "`poss-bref-first`, bit 51): a backreference's first character is "
+     "every byte, nullable, again, so the loop in front of it backtracks "
+     "(RX_VM_POSS_ARMS loses 0x4) -- the abi-65 program's executed code at "
+     "the SAME pin; answer-identical"),
 )
 
 

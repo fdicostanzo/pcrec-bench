@@ -3365,6 +3365,146 @@ B124_VM_START_SET_CODE = 7 + 336
 B124_K92_FLAGS_SCAN_EDGE = -6
 
 
+# [B126] (pin 255bcdd8, abi 65 -> 68): the size books, MEASURED per witness
+# at all five builds (60366d747, abi 66 c9672bd2, abi 67 c4c37af8, abi 68
+# 02db3811, the pin 255bcdd8) -- docs/dev/lanes/b126prep_report.md section 5.
+#   abi 66 [ART-POSS-ARMS]: `#define RX_VM_POSS_ARMS 0x0u` is ONE stamp line
+#     on EVERY VM artifact (hybrids included), +29 B exactly in emit_bytes
+#     and emit_code_bytes, 0 in vm_program_bytes; a DFA artifact does not
+#     carry it. (A mover's loop text and program change on top of that, and
+#     is measured per row where one is asserted.)
+#   abi 67 [MEMFN] R4h: the search loops' ADVANCE text is respelled
+#     (parenthesised conditions, braced bodies, `ULL` caps) -- about half of
+#     all artifacts GROW, by an amount that depends on how many loop sites
+#     the artifact has (DFA +30..+392, VM +22..+3,202 in vm_program_bytes
+#     too), executed code unchanged (94/94 `.text` identical). NOT a flat
+#     term: B126_R4H holds each asserted row's measured move
+#     (emit, code, program), keyed (label, form).
+#   abi 68 [NULLABLE-ANCH] and the 02db3811 -> 255bcdd8 step: 0 B on every
+#     asserted row (the engine-route movers evil-alt-nested / trim-nested-star
+#     are asserted by value, not by size).
+B126_VM_POSS_ARMS_LINE = 29
+# The three DENY_CONTROLS rows' R4h moves (MEASURED, emit_bytes, DFA route
+# so no poss line): the scan-edge row's default arm (one edge) +30, its denied
+# arm (no edge machinery, no loops respelled) 0; the start-pinned row's
+# pinned arm +60 and reverse-pass arm +98; the alt-island row takes the
+# VM stamp line only (+29 both arms, R4h respells no loop on either).
+B126_R4H_SCAN_EDGE_DEFAULT = 30
+B126_R4H_START_PINNED = (60, 98)
+B126_R4H = {
+    ('pure DFA', 'plain'): (30, 30, 0),
+    ('pure DFA', 'whole-subject'): (30, 30, 0),
+    ('VM hybrid, nullable language DECLINED ([OPT-4.2])', 'plain'): (22, 22, 22),
+    ('VM hybrid, nullable language DECLINED ([OPT-4.2])', 'whole-subject'): (22, 22, 22),
+    ('VM hybrid, non-nullable language KEPT: the [OPT-4.2] control', 'plain'): (102, 102, 22),
+    ('VM hybrid, non-nullable language KEPT: the [OPT-4.2] control', 'whole-subject'): (138, 138, 22),
+    ('VM hybrid', 'plain'): (22, 22, 22),
+    ('VM hybrid', 'whole-subject'): (22, 22, 22),
+    ('VM, no DFA scan', 'plain'): (22, 22, 22),
+    ('VM, no DFA scan', 'whole-subject'): (22, 22, 22),
+    ('dominated DFA (G1 identity)', 'whole-subject'): (36, 36, 0),
+    ('VM hybrid, counted repeat, exact', 'plain'): (73, 73, 35),
+    ('VM hybrid, counted repeat, exact', 'whole-subject'): (73, 73, 35),
+    ('size-cap rung rescue (K41 witness 2)', 'plain'): (3202, 3202, 3202),
+    ('size-cap rung rescue (K41 witness 2)', 'whole-subject'): (3202, 3202, 3202),
+    ("start-PINNED DFA ([OPT-5] STEP 2's own population)", 'plain'): (60, 60, 0),
+    ("start-PINNED DFA ([OPT-5] STEP 2's own population)", 'whole-subject'): (68, 68, 0),
+    ('start-pinned DECLINED: the lower-bound control', 'plain'): (148, 148, 0),
+    ('start-pinned DECLINED: the lower-bound control', 'whole-subject'): (184, 184, 0),
+    ('entry shape PLAIN: a framed program below the term', 'plain'): (44, 44, 44),
+    ('entry shape PLAIN: a framed program below the term', 'whole-subject'): (44, 44, 44),
+    ('iso-ts: the k-set skip, scanned at 4', 'plain'): (392, 392, 0),
+    ('iso-ts: the k-set skip, scanned at 4', 'whole-subject'): (392, 392, 0),
+    ('ipv6: declined', 'plain'): (38, 38, 0),
+    ('ipv6: declined', 'whole-subject'): (38, 38, 0),
+    ('kv-quoted: declined', 'plain'): (116, 116, 0),
+    ('kv-quoted: declined', 'whole-subject'): (80, 80, 0),
+    ('bignum: declined', 'whole-subject'): (30, 30, 0),
+    ('hex32-id: control, declined', 'whole-subject'): (30, 30, 0),
+    ('http-5xx: control, declined', 'plain'): (184, 184, 0),
+    ('http-5xx: control, declined', 'whole-subject'): (184, 184, 0),
+    ('email orig under --engine=vm: K=8/default', 'plain'): (412, 412, 412),
+    ('email orig under --engine=vm: K=8/default', 'whole-subject'): (412, 412, 412),
+    ('level-context under auto: the [SEL-1] VM fallback', 'plain'): (80, 80, 0),
+    ('level-context under auto: the [SEL-1] VM fallback', 'whole-subject'): (80, 80, 0),
+    ('bounded cls-upto-32768: the rescue declined (nullable)', 'plain'): (35, 35, 35),
+    ('bounded cls-upto-32768: the rescue declined (nullable)', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-16384: the DFA that warned, collapsed and now PINNED', 'plain'): (30, 30, 0),
+    ('bounded cls-upto-16384: the DFA that warned, collapsed and now PINNED', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)', 'plain'): (35, 35, 35),
+    ('bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-16384 whole: declined', 'plain'): (30, 30, 0),
+    ('bounded cls-upto-16384 whole: declined', 'whole-subject'): (35, 35, 35),
+    ('bounded ctx-greedy-256: the rescue kept', 'plain'): (151, 151, 35),
+    ('bounded ctx-greedy-256: the rescue kept', 'whole-subject'): (151, 151, 35),
+    ('bounded ctx-lazy-64: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-64: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded ctx-lazy-256: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-256: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded ctx-lazy-1024: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-1024: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded nest2-64 whole: the rescue kept (non-nullable)', 'plain'): (68, 68, 0),
+    ('bounded nest2-64 whole: the rescue kept (non-nullable)', 'whole-subject'): (676, 676, 560),
+    ('bounded nest3-16 whole: the rescue kept (non-nullable)', 'plain'): (68, 68, 0),
+    ('bounded nest3-16 whole: the rescue kept (non-nullable)', 'whole-subject'): (256, 256, 140),
+    ('bounded nest2-64 plain: an ordinary selected DFA', 'plain'): (68, 68, 0),
+    ('bounded nest2-64 plain: an ordinary selected DFA', 'whole-subject'): (676, 676, 560),
+    ('altwide w-256: the ORIGINAL branch order', 'plain'): (272, 272, 0),
+    ('altwide w-256: the ORIGINAL branch order', 'whole-subject'): (152, 152, 0),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'plain'): (272, 272, 0),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'whole-subject'): (152, 152, 0),
+    ('altwide ci-256 under auto: the DFA route, no fold pair (edge=bitmap)', 'plain'): (272, 272, 0),
+    ('altwide ci-256 under auto: the DFA route, no fold pair (edge=bitmap)', 'whole-subject'): (152, 152, 0),
+    ("altwide sh1-64: every branch shares byte 0 ('k')", 'plain'): (136, 136, 0),
+    ("altwide sh1-64: every branch shares byte 0 ('k')", 'whole-subject'): (136, 136, 0),
+    ('altwide floor: no alternation at all', 'whole-subject'): (36, 36, 0),
+    ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'plain'): (60, 60, 0),
+    ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'whole-subject'): (68, 68, 0),
+    ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'plain'): (35, 35, 35),
+    ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'whole-subject'): (35, 35, 35),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'plain'): (98, 98, 0),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'whole-subject'): (68, 68, 0),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'plain'): (44, 44, 44),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (44, 44, 44),
+    ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (140, 140, 140),
+    ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (140, 140, 140),
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'plain'): (171, 171, 171),
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (171, 171, 171),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (110, 110, 110),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (110, 110, 110),
+    ('capability wild-validator-ipv4-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (280, 280, 280),
+    ('capability wild-validator-ipv4-owasp under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (280, 280, 280),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (44, 44, 44),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (44, 44, 44),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'plain'): (44, 44, 44),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'whole-subject'): (44, 44, 44),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt", 'plain'): (175, 175, 175),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt", 'whole-subject'): (175, 175, 175),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): (35, 35, 35),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'whole-subject'): (35, 35, 35),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): (392, 392, 0),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'whole-subject'): (392, 392, 0),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'plain'): (66, 66, 66),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'whole-subject'): (66, 66, 66),
+    ('capability dup-param-detect under auto: K65 alone', 'plain'): (66, 66, 66),
+    ('capability dup-param-detect under auto: K65 alone', 'whole-subject'): (66, 66, 66),
+}
+
+
+def _b126_moved(expected, label, form, em):
+    """`expected` with the size keys moved by the [B126] books: +29 on a VM
+    artifact (the RX_VM_POSS_ARMS line) and the row's B126_R4H residual."""
+    out = dict(expected)
+    r = B126_R4H.get((label, form), (0, 0, 0))
+    vm = em.get("engine") == "vm"
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + (B126_VM_POSS_ARMS_LINE if vm and i < 2 else 0) + r[i]
+    return out
+
+
+
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
     __slots__ = ("want",)
@@ -4763,6 +4903,24 @@ LEDGER_STAMP_CASES = (
     # else. (2) THE FRAMELESS arm: uuid-near-miss forced-VM is framed-free
     # (`vm_frameless 1`), cannot backtrack, and keeps `one-attempt` --
     # +1001 exactly.
+    # [B126] (pin 255bcdd8, abi 68, [NULLABLE-ANCH]; pcrec I-135, O-87):
+    # the two capability@0.1 patterns whose every empty match crosses BOTH a
+    # non-multiline start and end anchor. At 60366d747 both read
+    # `declined-nullable-default` / prefilter `none`; at the pin the decline
+    # LIFTS -- `selected` / `hybrid` with an `exact` language pair -- and
+    # the plain artifact grows by the hybrid's DFA pair (MEASURED
+    # 30,143 -> 34,077 and 28,342 -> 32,276). The CONTROL (a nullable shape
+    # NOT confined to both ends still reads `declined-nullable-default`)
+    # is the hand-chosen `(?=abc)x*` row plus check_b126_stamps' one-sided
+    # / multiline / unanchored arms.
+    ("capability evil-alt-nested under auto: [NULLABLE-ANCH] lifts the decline",
+     "pcrec-auto", "capability", "evil-alt-nested",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact", "vm_poss_arms": []}),
+    ("capability trim-nested-star under auto: [NULLABLE-ANCH] lifts the decline",
+     "pcrec-auto", "capability", "trim-nested-star",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact", "vm_poss_arms": []}),
     ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt",
      "pcrec-auto", "capability", "email-nested-plus",
      {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
@@ -5368,6 +5526,7 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
+            expected = _b126_moved(expected, label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -6660,7 +6819,8 @@ DENY_CONTROLS = (
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
                      - 2 * B122_RANGE_SITE  # [B122] the one edge; denied: no edge
-                     + B124_STAMP_LINES,
+                     + B124_STAMP_LINES
+                     + B126_R4H_SCAN_EDGE_DEFAULT,
                      # [B124]: the denied arm is the K92 witness -- its
                      # `.flags` literal loses bit 21 (2097152 -> 0).
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
@@ -6726,12 +6886,12 @@ DENY_CONTROLS = (
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 4 * B122_RANGE_SITE
-                     + B124_STAMP_LINES,
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[0],
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 6 * B122_RANGE_SITE
-                     + B124_STAMP_LINES),
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[1]),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -6789,11 +6949,13 @@ DENY_CONTROLS = (
       # both carry the seek; the island arm's RX_MEMFN_LIBC reads
       # "memcmp", the chain arm's (word compares only) "none".
       "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
-                     + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET,
+                     + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET
+                     + B126_VM_POSS_ARMS_LINE,
                      # [B122] MEASURED c4c70f2c: the chain arm +201 beyond
                      # the flat term -- S4 C1's overlap row on `foo`/`bar`.
                      20074 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 201
-                     + B124_STAMP_LINES + B124_VM_START_SET)}, "deny"),
+                     + B124_STAMP_LINES + B124_VM_START_SET
+                     + B126_VM_POSS_ARMS_LINE)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -6995,6 +7157,23 @@ DENY_CONTROLS = (
       "vm_start_scan": ("none", "none")}, "deny", "default", "-fno-start-set"),
     # `req-use`'s `handoff` row carries no stamp_value (the value is a
     # decimal K), so the registry note takes the "no stamp_value" path.
+    # [B126] (pin 255bcdd8, abi 66): the two [ART-POSS-ARMS] arms. The
+    # registry rows' stamp_value is a MASK BIT (0x1/0x2/0x4) while the
+    # pair is the bit-NAME list, so the registry agreement is the
+    # deliberate-mismatch "skip" path (check_b126_stamps asserts the
+    # stamp_values against MASK_BITS instead). Witnesses MEASURED at the
+    # build: `a+(?=b)b` forced VM (A0 -> frameless possessive loop vs the
+    # backtracking one) and `\\b(\\w+)\\s+\\1\\b` (B).
+    ("vm_poss_arms: the [ART-POSS-ARMS] context-gate arm denied",
+     "poss-ctx-follow", ("literal", b"a+(?=b)b"), "--engine=vm",
+     {"vm_poss_arms": (["POSS_ARM_A0"], []),
+      "vm_strats": (["PCREC_VM_STRAT_POSSESSIVE"],
+                    ["PCREC_VM_STRAT_BACKTRACKING"]),
+      "vm_frameless": (1, 0)}, "deny", "skip"),
+    ("vm_poss_arms: the [ART-POSS-ARMS] backreference-first arm denied",
+     "poss-bref-first", ("literal", b"\\b(\\w+)\\s+\\1\\b"), "--engine=vm",
+     {"vm_poss_arms": (["POSS_ARM_B"], []),
+      "vm_frameless": (1, 0)}, "deny", "skip"),
     ("req_handoff: the [K82] (B) handoff denied",
      "req-use", ("literal", b"\\bfoo"), "",
      {"req_handoff": ("0", "none"),
@@ -10732,6 +10911,20 @@ B122_ROUND1_CASES = (
 )
 
 
+def _b126_text_eq(tmp, tag, specs):
+    """[B126] (abi 67, [MEMFN] R4h): the v2 text hash is blind to comments
+    and the abi block but NOT to the search loops' SPELLING, which R4h
+    rewrote on about half of all artifacts while leaving the EXECUTED CODE
+    untouched (94/94 `.text` identical, docs/dev/measurements/
+    2026-10-08-b126prep-r4h-text-identity.txt). The identity arms of the
+    [B122]/[B124] checks therefore fall back to the compiled `.text` when
+    the v2 hash differs. `specs` is [(binary, flags, pattern)]; -> the list
+    of `.text` hashes (None on a refusal)."""
+    return [_b126_text_hash(b, ["--features", "all"] + list(f), p, tmp,
+                            "%s%d" % (tag, i))
+            for i, (b, f, p) in enumerate(specs)]
+
+
 def check_b122_round1_stamps():
     """[B122] (pcrec c4c70f2c, abi 50 -> 59; inbox I-127, pcrec's [OPTLOOP]
     round 1). For every row of B122_ROUND1_CASES: the default artifact's
@@ -10801,10 +10994,23 @@ def check_b122_round1_stamps():
                 h_old, _t = ident(old_bin, flags + [deny], pat, "o%d" % i)
                 id_ok = h_new is not None and h_new == h_old == h_deny
                 id_why = "default == denied == fc719ca4's -fno-hyb-reseed"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "r1h%d" % i, [
+                        (new_bin, flags, pat),
+                        (old_bin, flags + [deny], pat),
+                        (new_bin, flags + [deny] + B124_LATER_DENIES, pat)])
+                    id_ok = tn is not None and tn == to == td
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             else:
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == fc719ca4, default != fc719ca4"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "r1e%d" % i, [
+                        (new_bin, flags, pat), (old_bin, flags, pat),
+                        (new_bin, flags + [deny] + B124_LATER_DENIES, pat)])
+                    id_ok = td is not None and td == to and tn != to
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             if not id_ok:
                 miss.append("identity (%s) new=%s deny=%s old=%s"
                             % (id_why, (h_new or "-")[:12],
@@ -10968,6 +11174,12 @@ def check_b124_stamps():
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == c4c70f2c, default != c4c70f2c"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "b124e%d" % i, [
+                        (new_bin, flags, pat), (old_bin, flags, pat),
+                        (new_bin, flags + dflags, pat)])
+                    id_ok = td is not None and td == to and tn != to
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             if not id_ok:
                 miss.append("identity (%s) new=%s deny=%s"
                             % (id_why, (h_new or "-")[:12], (h_deny or "-")[:12]))
@@ -10990,6 +11202,253 @@ def check_b124_stamps():
                 bad(name, "new has .flags = 0ULL: %s; old has %s: %s"
                     % (".flags = 0ULL," in (t_new or ""), old_val,
                        (".flags = %sULL," % old_val) in (t_old or "")))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+#: [B126] (pin 255bcdd8, abi 65 -> 68): the abi 66-68 witnesses. A row is
+#: (label, extra flags, pattern, {pair: value} at the pin, the deny flags,
+#: {pair: value} under them, identity mode). Identity is on the compiled
+#: `.text` (gcc -O2 -c, `objcopy -O binary -j .text`), NOT the v2 text hash:
+#: abi 67's layout normalization (R4h) rewrites the search loops' SPELLING
+#: on about half of all artifacts, so a denied arm can no longer equal the
+#: 60366d747 artifact's text, only its EXECUTED CODE (pcrec I-135: "object-
+#: identical in executed code"; MEASURED here on every row below).
+#: Mode "old-text": the deny arm's `.text` equals 60366d747's DEFAULT
+#: `.text` while the pin's default differs (pcrec's "restores the abi-65
+#: program" for [ART-POSS-ARMS]'s flags). Mode "same-text": default `.text`
+#: equals 60366d747's -- a witness NO abi 66-68 step moves (R4h inert on
+#: executed code). Every value MEASURED at the 255bcdd8 build (2026-10-08,
+#: lane b126prep) by a direct emit before being typed.
+B126_CASES = (
+    # [ART-POSS-ARMS] arm A0 (abi 66): a lookahead-born gate in the follow,
+    # valued with nothing known on its left. Forced VM (auto folds the
+    # one-character lookahead into the DFA, [UCP] U2).
+    ("poss A0: a+(?=b)b", "--engine=vm", b"a+(?=b)b",
+     {"vm_poss_arms": ["POSS_ARM_A0"], "vm_strats": ["PCREC_VM_STRAT_POSSESSIVE"],
+      "vm_frameless": 1},
+     "-fno-poss-ctx-follow",
+     {"vm_poss_arms": [], "vm_strats": ["PCREC_VM_STRAT_BACKTRACKING"],
+      "vm_frameless": 0}, "old-text"),
+    # arm A1 (a gate valued by the loop's last characters' polarity), on
+    # the VM hybrid `auto` selects (hybrids stamp it) ...
+    ("poss A1: (\\b\\w+\\b) under auto (a hybrid)", "", b"(\\b\\w+\\b)",
+     {"engine": "vm", "prefilter": "hybrid", "vm_poss_arms": ["POSS_ARM_A1"],
+      "vm_frameless": 1},
+     "-fno-poss-ctx-follow",
+     {"vm_poss_arms": [], "vm_strats": ["PCREC_VM_STRAT_BACKTRACKING"],
+      "vm_frameless": 0}, "old-text"),
+    # ... and on the forced-VM plain artifact (pcrec's possland2 mover).
+    ("poss A1: \\B(x|ab){1,2}\\b forced VM", "--engine=vm",
+     b"\\B(x|ab){1,2}\\b",
+     {"vm_poss_arms": ["POSS_ARM_A1"], "prefilter": "none"},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": []}, "old-text"),
+    # arm B (a backreference's first character read from its groups): the
+    # OTHER flag denies it, the first flag leaves it (the arms are
+    # independent), and `doubled-word`'s shape becomes frameless.
+    ("poss B: \\b(\\w+)\\s+\\1\\b", "", b"\\b(\\w+)\\s+\\1\\b",
+     {"engine": "vm", "vm_poss_arms": ["POSS_ARM_B"], "vm_frameless": 1},
+     "-fno-poss-bref-first",
+     {"vm_poss_arms": [], "vm_frameless": 0}, "old-text"),
+    # THE ENGINE-SELECTING DENIAL: a possessive suffix the arm discharges
+    # is DFA-routed under `auto`; denied it stays and the VM compiles it
+    # (a hybrid, `RX_ENGINE_SEL` still `selected`).
+    ("poss A engine-selecting: (?:a\\.)++\\B under auto", "", b"(?:a\\.)++\\B",
+     {"engine": "dfa", "engine_sel": "selected", "vm_poss_arms": None},
+     "-fno-poss-ctx-follow",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_poss_arms": []}, "old-text"),
+    # SCOPE, both directions: `abc` under auto is a DFA artifact (the stamp
+    # ABSENT), forced VM carries it as the empty mask.
+    ("poss scope: abc forced VM carries [] (0x0u)", "--engine=vm", b"abc",
+     {"vm_poss_arms": [], "vm_strats": []},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": []}, "same-text"),
+    ("poss scope: abc under auto is a DFA artifact (no stamp)", "", b"abc",
+     {"engine": "dfa", "vm_poss_arms": None},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": None}, "same-text"),
+    # [MEMFN] R4h (abi 67): the executed code does not move.
+    ("R4h inert: foo|bar forced VM island", "--engine=vm", b"foo|bar",
+     {"vm_alt_islands": 1}, "-fno-poss-bref-first", {"vm_alt_islands": 1},
+     "same-text"),
+    # [NULLABLE-ANCH] (abi 68): the decline lifts where every empty match
+    # crosses BOTH a non-multiline start and end anchor ...
+    ("nullable-anch: ^(\\s+)*$ lifted", "", b"^(\\s+)*$",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact"},
+     "", {}, "none"),
+    ("nullable-anch: ^(([a-z]+)*)+$ lifted", "", b"^(([a-z]+)*)+$",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact"},
+     "", {}, "none"),
+    # ... and stays DECLINED where it does not: one-sided, multiline, or no
+    # anchor at all (the CONTROLS -- `declined-nullable-default` is still
+    # reachable at this pin).
+    ("nullable-anch control: ^(\\s+)* (start only) declined", "",
+     b"^(\\s+)*",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none", "vm_prefilter_lang": None}, "", {}, "none"),
+    ("nullable-anch control: (\\s+)*$ (end only) declined", "",
+     b"(\\s+)*$",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+    ("nullable-anch control: (?m)^(\\s+)*$ (multiline) declined", "",
+     b"(?m)^(\\s+)*$",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+    ("nullable-anch control: (x){0,5} (no anchor) declined", "",
+     b"(x){0,5}",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+)
+
+#: [B126] the E1 fact `empty_admits` (abi 68, `--emit-facts`' new row on
+#: every artifact): (pattern, nullable, empty_admits). NOT read by the
+#: adapter (nothing here parses `--emit-facts`; the listing is a DEBUG
+#: surface whose fact names are advisory, facts_listing.md) -- asserted
+#: BY VALUE so a pcrec that changes the fact's meaning is noticed.
+B126_EMPTY_ADMITS = (
+    (b"abc", "no", "no"),
+    (b"x*", "yes", "yes"),
+    (b"^(\\s+)*$", "yes", "no"),
+    (b"^(([a-z]+)*)+$", "yes", "no"),
+    (b"\\A(a*)*\\z", "yes", "no"),
+    (b"^(\\s+)*", "yes", "yes"),
+    (b"(\\s+)*$", "yes", "yes"),
+    (b"(?m)^(\\s+)*$", "yes", "yes"),
+)
+
+
+def _b126_text_hash(binary, flags, pat, tmp, tag):
+    """sha256 of the compiled `.text` of the artifact `binary` emits for
+    `pat` (gcc -O2 -c, no link): the executed code, blind to the spelling
+    of the source that produced it. None on a refusal."""
+    out = os.path.join(tmp, tag + ".c")
+    argv = ([binary, "-p", "rx"] + list(flags) + ["-o", out, "--pattern",
+                                                    pat.decode("latin-1")])
+    r = subprocess.run(argv, capture_output=True, env=C_ENV, timeout=600)
+    if r.returncode != 0:
+        return None
+    obj = os.path.join(tmp, tag + ".o")
+    g = subprocess.run(["gcc", "-O2", "-c", out, "-o", obj],
+                       capture_output=True, env=C_ENV, timeout=600)
+    if g.returncode != 0:
+        return None
+    raw = os.path.join(tmp, tag + ".text")
+    o = subprocess.run(["objcopy", "-O", "binary", "-j", ".text", obj, raw],
+                       capture_output=True, env=C_ENV, timeout=120)
+    if o.returncode != 0:
+        return None
+    import hashlib
+    with open(raw, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()[:16]
+
+
+def check_b126_stamps():
+    """[B126] (pin 255bcdd8, abi 65 -> 68; inbox I-134/I-135). For every
+    row of B126_CASES: the default artifact's pairs BY VALUE through the
+    adapter (the shim's `vm_poss_arms` reader exercised end to end, both
+    scope directions), the deny arm's pairs, and the identity of the
+    compiled `.text` against 60366d747's. Then the registry's own
+    `stamp_value`s for RX_VM_POSS_ARMS against MASK_BITS (the mask bits
+    are match_api.md's paragraph, not named constants), and the E1 fact
+    `empty_admits` by value through `--emit-facts`."""
+    print("-- [B126]: [ART-POSS-ARMS] arms, [MEMFN] R4h inert on executed code, "
+          "[NULLABLE-ANCH] --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b126 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "60366d747"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b126 stamps", "no build for 60366d747 "
+            "(pin.sh 60366d747 first; --path printed %r)" % old_bin)
+        return
+    new_bin = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b126-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    try:
+        os.environ["PCREC_BIN"] = new_bin
+        for i, (label, extra, pat, want, deny, want_deny, mode) in enumerate(B126_CASES):
+            flags, dflags = extra.split(), deny.split()
+            d_cr = _b118_compile(adapter, tmp, "b126-%d-d" % i,
+                                 " ".join(["--features", "all"] + flags), pat)
+            if d_cr.outcome != "compiled":
+                bad("b126 %s" % label, "default=%s: %s"
+                    % (d_cr.outcome, d_cr.diagnostic))
+                continue
+            d_em = d_cr.engine_metadata
+            miss = ["default %s=%r (want %r)" % (k, d_em.get(k), v)
+                    for k, v in want.items() if d_em.get(k) != v]
+            id_why = "by value only"
+            if dflags:
+                n_cr = _b118_compile(adapter, tmp, "b126-%d-n" % i,
+                                     " ".join(["--features", "all"] + flags
+                                               + dflags), pat)
+                if n_cr.outcome != "compiled":
+                    bad("b126 %s" % label, "denied=%s" % n_cr.outcome)
+                    continue
+                n_em = n_cr.engine_metadata
+                miss += ["denied %s=%r (want %r)" % (k, n_em.get(k), v)
+                         for k, v in want_deny.items() if n_em.get(k) != v]
+                base = ["--features", "all"] + flags
+                h_old = _b126_text_hash(old_bin, base, pat, tmp, "o%d" % i)
+                h_new = _b126_text_hash(new_bin, base, pat, tmp, "n%d" % i)
+                h_deny = _b126_text_hash(new_bin, base + dflags, pat, tmp,
+                                         "d%d" % i)
+                if mode == "old-text":
+                    id_ok = (h_deny is not None and h_deny == h_old
+                             and h_new != h_old)
+                    id_why = ".text: denied == 60366d747, default != 60366d747"
+                else:
+                    id_ok = h_old is not None and h_old == h_new
+                    id_why = ".text: pin == 60366d747"
+                if not id_ok:
+                    miss.append("identity (%s) old=%s new=%s deny=%s"
+                                % (id_why, h_old, h_new, h_deny))
+            name = "b126 %s: by value%s" % (label, ", " + deny if deny else "")
+            if miss:
+                bad(name, "; ".join(miss))
+            else:
+                ok(name, "%s; %s" % (", ".join("%s=%r" % kv for kv in want.items()),
+                                     id_why))
+        # the registry's stamp_values for RX_VM_POSS_ARMS == MASK_BITS
+        regs = {}
+        for r in mod.registry_rows():
+            if r.get("stamp_macro") == "RX_VM_POSS_ARMS" and r.get("stamp_value"):
+                regs[(r["axis"], r["candidate"])] = int(r["stamp_value"], 0)
+        want_bits = dict(mod.MASK_BITS["vm_poss_arms"])
+        if sorted(regs.values()) == sorted(want_bits.values()):
+            ok("b126 registry: RX_VM_POSS_ARMS stamp_values == MASK_BITS",
+               "%s" % sorted(regs.items()))
+        else:
+            bad("b126 registry: RX_VM_POSS_ARMS stamp_values == MASK_BITS",
+                "registry %r vs adapter %r" % (sorted(regs.items()), want_bits))
+        # E1 `empty_admits` by value
+        for pat, nullable, admits in B126_EMPTY_ADMITS:
+            p = subprocess.run([new_bin, "-p", "rx", "--features", "all",
+                                "--emit-facts", "--pattern", pat.decode()],
+                               capture_output=True, text=True, env=C_ENV,
+                               timeout=120)
+            rows = {}
+            for ln in p.stdout.splitlines():
+                c = ln.split("\t")
+                if len(c) > 6 and c[0] == "byte":
+                    rows[c[1]] = c[6]
+            name = "b126 emit-facts: empty_admits on %s" % pat.decode()
+            if (rows.get("nullable"), rows.get("empty_admits")) == (nullable, admits):
+                ok(name, "nullable=%s empty_admits=%s" % (nullable, admits))
+            else:
+                bad(name, "got nullable=%r empty_admits=%r, want %s/%s"
+                    % (rows.get("nullable"), rows.get("empty_admits"),
+                       nullable, admits))
     finally:
         for k, v in saved.items():
             if v is None:
@@ -15402,6 +15861,7 @@ def main():
     check_b118_findtie_k69_noop_on_bench()
     check_b122_round1_stamps()
     check_b124_stamps()
+    check_b126_stamps()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
