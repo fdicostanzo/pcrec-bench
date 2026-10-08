@@ -1,0 +1,3 @@
+# pattern_id	engine	regime	cite	quote
+# Causes for the front page's loss list. A row is used only if `quote` is found verbatim (whitespace-normalised) in the committed file `cite`. engine is the record's engine_name or *.
+pattern_id	engine	regime	cite	quote
