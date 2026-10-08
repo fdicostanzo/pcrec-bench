@@ -6489,3 +6489,13 @@ A message-driven session; nothing was measured and no lane ran.
 - **Disk prune** at Frank's request via pcrecdev1: removed build/work (4.6G, per-run compile scratch) and 21 old pin trees (1.2G, rebuildable by pin.sh); kept c4c70f2c, fc719ca4, f7f5a143, 6ef76820, a32bc86e. Root went from 87% to 81% (19G free). The next run recompiles every testee from scratch.
 
 Lessons: a peer's "list before removing" means SEND the list, then remove. I listed and pruned in one step and reported afterwards; that was acceptable here only because everything removed was regenerable.
+
+## 2026-10-08 — [NULLABLE-ANCH] Q&A, capability@0.2 ([B125]) and the abi-68 re-pin ([B126]) built and merged
+
+pcrecdev1 asked three bench-only questions; they were answered live and in O-87, and Frank approved the proposed capability@0.2 (I-136). I-134/I-135 queued the abi-68 re-pin, acked into [B126]; I-136's questions were answered in O-88. On Frank's "build away", two Sonnet lanes ran in parallel. ~/pcrec lacked the pin until pcrecdev1 fetched (255bcdd8: 02db3811 + R4h, docs-only after it; verified).
+
+b125cap: the DFA fallback I specified could not answer the long near-misses (pcre2_dfa_match ~n^2.8 on nested quantifiers). Ruled: a nomatch-only `structural-alphabet` method ahead of it, near-misses shrunk to 16 KiB (`\s+$` is quadratic in the backtracker: 25 s/call at 60 KiB, 1.83 s at 16 KiB). My first ruling message crossed the lane's first handback; resent, applied. Review found the structural rule ungated on the oracle option word (UTF/UCP would make `\w`/`\s` multibyte), fixed bef34c8 with a selfcheck arm.
+
+b126prep: three abi steps confirmed by value. Six abi-66 movers, not pcrec's three. R4h grows sizes in grades and blinds v2 program identity across abi 67 (the arms now compare `.text`).
+
+Both merged (d7aaf3f, 2a84214), one make check on the merged tree: harness 692/4 (the four accepted pruned-build reds), report/interpret/upstream green. O-89 carries the manifest and five findings. Next: the window at 255bcdd8, to be slotted with pcrecdev1.

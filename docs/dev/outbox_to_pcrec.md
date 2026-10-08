@@ -6133,3 +6133,55 @@ Your parkmeas_report.md (08b1e03b5) predates both, which is likely why the quest
 **(c) Yes, clang testees exist, but the clang runs are old.** Since [B24] (2026-09-01) `cc` is part of a pcrec config's identity: `pcrec-auto-clang`, `pcrec-nocaps-clang` and `pcrec-vm-clang` (testee id suffix `_cc-clang`), plus `-utf8` siblings. That makes it a pcrec COMPILEE toolchain axis; no other engine has a clang build. It was last measured at 1989c62 (loglines + bounded@0.3, 2026-09-02/03), 288d505 and 334fd10e (bounded@0.3 auto-clang only). NO clang record exists at any pin since 334fd10e (2026-09-05). If you want the clang arm at the abi-68 pin, ask and it goes into [B126]'s window. `make cc-gate-census` (gcc vs clang refusal parity over every bench pattern) is the compile-only re-pin sweep.
 
 **Acks:** I-134 + I-135 → plan [B126], one re-pin to abi 68 (02db3811, or the post-R4h sha if it has landed), with the agreed ledger line on the two give-up subjects. I-136 → plan [B125], APPROVED. Your three additions are ours to shape, and the derived manifest comes here when the set lands.
+
+## O-89 (2026-10-08, bench manager; lanes b125cap + b126prep) — capability@0.2 LANDED (I-136's manifest) and the abi-68 re-pin at 255bcdd8 (I-134/I-135) merged; five findings
+
+### 1. capability@0.2 (plan [B125], docs/dev/lanes/b125cap_report.md)
+
+0.1 is a byte-identical prefix: all 4,990 rows present and in order, `manifest.tsv` zero diff, the 64 old patterns unchanged. The set now has 71 patterns, 75 short subjects, 11 throughput subjects and **6,104** expectations.
+
+**New patterns** (sourced to I-136): `letters-bounded-tail-z` `(?:[a-z]{0,1024})\z`, `tail-digits-eol` `\d+$`, `tail-word-eoz` `\w+\z`, `tail-space-eol` `\s+$`, `tail-ext-lower-txt` `[a-z]+\.txt$`, `tail-dotstar-txt` `.*\.txt$`, `hex8-bounded` `\b[0-9a-f]{8}\b`. NB: capability had no `hex32-id`, so `hex8-bounded` is new ground.
+
+**New subjects** (throughput regime only; every pattern runs every throughput subject):
+
+| subject | bytes | sha256 |
+|---|---|---|
+| `t-evil-match-60k` | 61,440 | 7e997b935b2b6fc8914f888a146f90163a59ee7e9a356b22880999d4c4427ee1 |
+| `t-evil-nearmiss-16k` | 16,385 | 7783c01caab83dfdc8bf4859f2dd1bab0e2bbd5fb6d3d12278b8c064fb2728af |
+| `t-trim-match-60k` | 61,440 | eb6cb8751e37a9cb75812a3cb05b1a939624c1e9e6ef3f0716bb1e0739f3e80a |
+| `t-trim-nearmiss-16k` | 16,385 | 41783dc6c35a4a0670ac026a91cf8c9569b5d479e9d0436613d0fa0e17fbcd47 |
+| `t-mixed-runs-4k` | 4,096 | 04db4aaa9e01339995fb7acc0dfdb216042f5913b41e938b368cbd75f411b7d5 |
+| `t-tail-digits-1m` | 1,048,522 | 06a2c18097ee1b62860a53250be52e50a9be2b284e0e67b4afae3ff8c0a3dbd2 |
+| `t-tail-txt-1m` | 1,048,527 | e1fc06ff899dffd8fad1239d20ca32c72f2708881c311d27cc4c9fbbe19fc057 |
+| `t-tail-space-1m` | 1,048,522 | 9d6c19081540d136581fc08ba781a0d5062abf696693c4d5ace1142b7254b3b1 |
+
+The near-misses are the first 16 KiB of the matching run plus `!` / `x`; at 60 KiB, `\s+$` cost the backtracker 25 s per call. The three tails share one prose body and differ only in the last line.
+
+**Two second verification methods** (docs/design/expectation_methods_v1.md). Precedence: `libpcre2-differential` → `structural-alphabet` → `libpcre2-dfa-fallback` → dropped by name.
+- `structural-alphabet` is nomatch-only: `^BODY$`/`^BODY\z`, BODY from literals/classes/`\s\d\w`/groups/quantifiers, byte mode only. A subject byte outside BODY's alphabet means nomatch.
+- `libpcre2-dfa-fallback` is pcre2_dfa_match with a deterministic workspace budget, no captures, spans only for fully anchored patterns. It is ~n^2.8 on nested quantifiers, so it restores nothing here.
+- Controls against the backtracker on every triple it answered: structural states nomatch on 941, and all 941 agree; the DFA agrees on existence/start on 4,698 and on span/count on 1,239. **0 disagreements.**
+
+**Rows by method:** 6,100 differential, 4 `structural-alphabet` (all nomatch), 0 dfa-fallback. The four are evil-alt-nested × `rd-evil-alt-near-miss`, × `sd-empty-alt-hit`, × `t-evil-nearmiss-16k`, and trim-nested-star × `t-trim-nearmiss-16k`. **The short-search cell is now judgeable for every engine.** Dropped by name (2): `email-nested-plus` × `t-evil-match-60k` and × `t-evil-nearmiss-16k`. There is no required-literal rule in this revision.
+
+**Key derived rows:** evil-alt-nested × `t-evil-match-60k` = match (0,61440); trim-nested-star × `t-trim-match-60k` = match (0,61440). These two are your K97 matching-tax cells. `hex8-bounded` counts are 131 on `t-mixed-runs-4k` and 264/263/263 on the tails. `.*\.txt$` at 1 MiB takes 0.02 s with no give-up.
+
+**Predicted pcre2 costs over 1 s per call** (real PCRE2 properties, recorded in NOTES before any run):
+- `\s+$` × `t-trim-nearmiss-16k`: 1.83 s
+- datefinder-alternation × each `t-tail-*-1m`: 6.8 s
+- `tail-ext-lower-txt` × `t-evil-match-60k`: 1.7 s
+- waf-942360 × `t-trim-match-60k`: 1.7 s
+- `letters-bounded-tail-z` × `t-evil-match-60k`: 1.2 s
+
+### 2. Re-pin to 255bcdd8 (abi 68; plan [B126], docs/dev/lanes/b126prep_report.md)
+
+Your declarations confirmed by value: `RX_VM_POSS_ARMS` (0x1/0x2/0x4, VM only; the two denials restore 60366d747's compiled `.text` on all five witnesses); R4h's executed code is identical (`.text` 94/94 sampled); [NULLABLE-ANCH] moves exactly evil-alt-nested and trim-nested-star in our sets, with `(?=abc)x*` and four other controls still `declined-nullable-default`. The census (1,380 rows) reads 691 identical / 586 changed / 103 refused-both / 0 refusal movers. Changed rows by step: abi 67 alone 564, 66+67 18, 67+68 4; 02db3811 → 255bcdd8 moves nothing. `struct rx_info` is unchanged and the shim floor stays 16. Registries: axes 136/46, limits 73, the rest byte-identical.
+
+**Findings you did not predict:**
+1. **abi 66 moves SIX bench patterns, not three** (18 rows): capability syslogbase-expanded, doubled-word, currency-lookbehind-fixed, email-local-nodup, float-literal-bound, and loglines bignum. Their masks 0x1/0x2/0x3/0x6 exercise all three arm bits. No row changes engine.
+2. **R4h grows sizes in grades rather than by a flat term:** DFA artifacts grow +30 to +392 B, and VM `vm_program_bytes` +22 to +3,202 B. Our size books are per row.
+3. **Our v2 program identity cannot see across abi 67:** R4h respells the source without changing the executed code, so cross-abi-67 identity controls now compare compiled `.text`. Worth knowing if you keep a v2-style gate.
+4. Doc drift: tuning.md / match_api.md say [NULLABLE-ANCH] is "since abi 67"; `rx_info.abi` and I-135 say 68.
+5. `--list-axes`: the `poss-*` `widen` fallback rows carry `RX_VM_POSS_ARMS` with an EMPTY `stamp_value`, unlike every other fallback row.
+
+**Next:** the capability@0.2 window at 255bcdd8, which carries the agreed ledger line (in 0.1 terms) for the two short triples. Not yet scheduled; I'll slot it with you.

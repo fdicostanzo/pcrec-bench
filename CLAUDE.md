@@ -323,7 +323,14 @@ procedure is in plan.md's [B42] row. 2026-10-04: [B122] RE-PINNED to
 **c4c70f2c (abi 59)**, pcrec's [OPTLOOP] round 1 (inbox I-127; see the
 testees line below and testees/pcrec/CLAUDE.md). 2026-10-07: [B124] RE-PINNED
 (lane b124prep) to **60366d747 (abi 65)**, inbox I-133's final pin (see the
-testees line below). Manager sessions start with the
+testees line below). 2026-10-08: [B126] RE-PINNED (lane b126prep) to
+**255bcdd8 (abi 68)**, inbox I-134/I-135 (see the testees line below), and
+[B125] built **capability@0.2** (lane b125cap, inbox I-136): long matching /
+16 KiB near-miss subjects for evil-alt-nested and trim-nested-star, I-136's
+three additions (+7 patterns, +8 throughput subjects, 6,104 expectations), and
+two SECOND EXPECTATION METHODS for oracle-give-up triples,
+`structural-alphabet` (nomatch-only) and `libpcre2-dfa-fallback`, each with a
+whole-set agreement control (docs/design/expectation_methods_v1.md). Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -474,7 +481,27 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **60366d747, abi 65** ([B124], 2026-10-07, lane
+  at a pinned commit — **255bcdd8, abi 68** ([B126], 2026-10-08, lane
+  b126prep, inbox I-134/I-135; pcrec main with [NULLABLE-ANCH] 02db3811 +
+  [MEMFN] R4h, compiler-identical to 02db3811; docs/dev/lanes/
+  b126prep_report.md. THREE abi steps: 65->66 [ART-POSS-ARMS]
+  (`RX_VM_POSS_ARMS`, a mask on every VM artifact -- 0x1 A0 / 0x2 A1 / 0x4
+  B; `-fno-poss-ctx-follow` bit 50, ENGINE-SELECTING, and
+  `-fno-poss-bref-first` bit 51 as DENY_FLAGS + DENY_CONTROLS, no pinned
+  testee), 66->67 [MEMFN] R4h layout normalization (564 census rows change
+  text, compiled `.text` identical 94/94 on a sample; sizes per row,
+  `B126_R4H`; v2 program identity is blind across abi 67, so the
+  cross-abi-67 identity arms compare compiled `.text`), 67->68
+  [NULLABLE-ANCH] (`empty_admits`, an `--emit-facts` row nothing here
+  reads; evil-alt-nested and trim-nested-star go `declined-nullable-default`
+  -> `selected`, prefilter none -> hybrid). `struct rx_info` unchanged,
+  shim floor STAYS 16. Registries: axes 131/44 -> 136/46 (the two poss
+  axes + cf3ffaac's 18 `kind` cells predicate->list and one `applies`
+  correction), limits 72 -> 73, definitions/schema/syntax byte-identical.
+  Census (docs/dev/measurements/2026-10-08-b126prep-census.txt): 1,380
+  rows, 691 identical / 586 changed / 103 refused-both / 0 refusal movers;
+  step 66 moves six bench patterns, not pcrec's three. Catalogue 3.16).
+  Before it, **60366d747, abi 65** ([B124], 2026-10-07, lane
   b124prep, inbox I-128..I-133 -- pcrec main with lane/k93tri merged:
   K93/K95 + [MEMFN] R4c′; prepared at the compiler-identical 5ff21faca
   (k93tri's tip) and re-diffed at the final pin: registries byte-identical,
