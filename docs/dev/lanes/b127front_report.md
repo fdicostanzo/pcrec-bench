@@ -28,7 +28,7 @@ README.md, docs/methodology.md, docs/img/speedup_distribution.svg and docs/front
 | tools/frontpage.py, `--check`, `make frontpage` | done (+ `make frontpage-check`, `make check-frontpage`) |
 | Unit test | tools/tests/test_frontpage.py, 16 checks pass (not wired into `make check`; manager's call) |
 | .github/workflows/pages.yml | done: push to master touching viewer/** (and the workflow), workflow_dispatch; upload-pages-artifact@v3 + deploy-pages@v4 |
-| LICENSE | NOT added. Frank's call. |
+| LICENSE | RULED by Frank: MIT, committed on master (c135813); merged in, one-line License note at README foot. |
 | CLAUDE.md updates | root, tools/, docs/, viewer/ |
 | Provenance file | docs/frontpage_provenance.tsv (section, set, testee, record path, timestamp, version, machine, content hash) |
 

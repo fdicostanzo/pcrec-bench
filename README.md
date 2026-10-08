@@ -154,3 +154,5 @@ pcrec is at 0.2.0-beta; the pinned commit measured here is main after that tag, 
 ## How it was built
 
 pcrec-bench was built by directed AI agents (Claude) as a sibling project of pcrec; see pcrec's [APPROACH.md](https://github.com/fdicostanzo/pcrec/blob/main/APPROACH.md). The design record is in [APPROACH.md](APPROACH.md) and `docs/`.
+
+License: MIT ([LICENSE](LICENSE)).
