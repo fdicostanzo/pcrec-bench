@@ -244,12 +244,64 @@ def excl_text(excl):
     return "; ".join(parts) if parts else "none"
 
 
+PCREC_BASE_VERSION = "0.2.0-beta"   # lib/pcrec.h PCREC_VERSION at the pin (checked by hand)
+
+# (engine_name, engine_mode) -> (label template, kind, kind source). {v} = the
+# record's engine_version; a "_utf8" testee gets " UTF-8" appended. An unmapped
+# testee is a hard error (label_entry), never a fallback.
+ENGINES = {
+    ("libpcre2", "interp"): ("PCRE2 {v} interpreter", "interpreter (backtracking)",
+        "testees/pcre2/CLAUDE.md; record automaton_class backtracking"),
+    ("libpcre2", "jit"): ("PCRE2 {v} JIT", "JIT",
+        "testees/pcre2/CLAUDE.md; record execution_model eager-jit"),
+    ("libpcre2", "dfa"): ("PCRE2 {v} DFA", "DFA",
+        "testees/pcre2/CLAUDE.md pcre2-dfa section (pcre2_dfa_match, breadth-first scan)"),
+    ("re2", "default"): ("RE2 {v}", "automata (lazy DFA etc.)",
+        "testees/re2/CLAUDE.md line 44: RE2's DFA is built lazily at first match"),
+    ("re2", "longest"): ("RE2 {v} (longest-match)", "automata (lazy DFA etc.)",
+        "testees/re2/CLAUDE.md line 44; mode longest = set_longest_match(true)"),
+    ("rust", "default"): ("Rust regex {v}", "automata (lazy DFA etc.)",
+        "testees/rust/CLAUDE.md line 104: the crate's lazy DFA"),
+    ("oniguruma", "default"): ("Oniguruma {v}", "interpreter (backtracking)",
+        "testees/onig/CLAUDE.md (a): interpretive backtracking engine"),
+    ("tre", "default"): ("TRE {v}", "interpreter (POSIX matcher, backtracking fallback)",
+        "testees/tre/CLAUDE.md: TNFA / backtracking form built in one call; record automaton_class hybrid"),
+    ("vectorscan", "block-nosom"): ("Vectorscan {v} (no SOM)", "automata (SIMD multi-pattern)",
+        "record automaton_class simd-multipattern; testees/vectorscan/CLAUDE.md"),
+    ("vectorscan", "block-som"): ("Vectorscan {v} (SOM)", "automata (SIMD multi-pattern)",
+        "record automaton_class simd-multipattern; testees/vectorscan/CLAUDE.md"),
+    ("pcrec", "auto"): ("pcrec " + PCREC_BASE_VERSION + "+{v}", "AOT",
+        "record execution_model compiled-aot"),
+}
+
+
+def label_entry(s):
+    key = (s.te["engine_name"], s.te["engine_mode"])
+    ent = ENGINES.get(key)
+    if ent is None:
+        raise SystemExit(f"frontpage: no ENGINES entry for testee {s.testee_id} "
+                         f"(engine_name={key[0]}, engine_mode={key[1]}); add one "
+                         f"with a kind source")
+    return ent
+
+
 def label(s):
-    te = s.te
-    mode = te["engine_mode"]
-    name = {"libpcre2": "libpcre2"}.get(te["engine_name"], te["engine_name"])
-    ver = te["engine_version"]
-    return f"{name} {ver} ({mode})"
+    return (label_entry(s)[0].format(v=s.te["engine_version"]) +
+            (" UTF-8" if s.testee_id.endswith("_utf8") else ""))
+
+
+def kind(s):
+    return label_entry(s)[1]
+
+
+def big(x, n=3):
+    """n significant digits, half-even, thousands separators."""
+    ip, dot, fp = sig(x, n).partition(".")
+    return f"{int(ip):,}" + dot + fp
+
+
+def slower_by(speedup):
+    return "×" + big(1.0 / speedup)
 
 
 class Analysis:
@@ -311,7 +363,7 @@ def render_headline(an):
     excluded = sum(sum(v.values()) for _, _, ex, _ in an.per for v in ex.values())
     return (
         f"On `{an.setid}` ({len(an.universe)} pattern-regime cells), "
-        f"pcrec `{pc.te['engine_version']}` (config `pcrec-auto`, measured "
+        f"{label(pc)} (config `pcrec-auto`, measured "
         f"{date_of(pc)}) is faster in {t['win']} of {pairs} compared cases "
         f"({pct(t['win'], pairs)}), tied in {t['tie']} ({pct(t['tie'], pairs)}) "
         f"and slower in {t['loss']} ({pct(t['loss'], pairs)}); a further "
@@ -330,20 +382,20 @@ def render_headline(an):
 
 
 def render_table(an):
-    head = ["Competitor", "Cases", "pcrec wins", "Losses", "Ties",
+    head = ["Competitor", "Kind", "Cases", "pcrec wins", "Losses", "Ties",
             "Median speedup", "Geo-mean speedup", "Excluded"]
     body = []
     for c, cases, excl, st in an.per:
         ex = sum(sum(v.values()) for v in excl.values())
-        body.append([f"`{c.testee_id}`", st["n"], st["win"], st["loss"],
+        body.append([label(c), kind(c), st["n"], st["win"], st["loss"],
                      st["tie"], times(st["median"]) if st["n"] else "n/a",
                      times(st["geo"]) if st["n"] else "n/a",
                      f"{ex} ({excl_text(excl)})" if ex else "0"])
     t = an.total
-    body.append(["**all pairs**", t["n"], t["win"], t["loss"], t["tie"],
+    body.append(["**all pairs**", "", t["n"], t["win"], t["loss"], t["tie"],
                  times(t["median"]), times(t["geo"]), ""])
-    return (md_table(head, body, ["---", "--:", "--:", "--:", "--:", "--:",
-                                  "--:", "---"]) +
+    return (md_table(head, body, ["---", "---", "--:", "--:", "--:", "--:",
+                                  "--:", "--:", "---"]) +
             "\n\nSpeedup = competitor median ÷ pcrec median, per case "
             "(> 1 means pcrec is faster); the median and geometric mean run "
             "over all of that engine's cases, ties included. Excluded cases "
@@ -370,6 +422,7 @@ def render_svg(an):
     px = lambda v: left + (math.log10(v) - lo) / (hi - lo) * (W - left - right)
     bg, fg, grid = "#ffffff", "#1f2328", "#d0d7de"
     cw, cl, ct = "#0b66b2", "#c4510a", "#6e7781"
+    ref = "#8250df"   # the 1x line and the median bars
     o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
          f'viewBox="0 0 {W} {H}" role="img" aria-label="Distribution of '
          f'per-case speedup of pcrec over each competitor engine, log scale">',
@@ -389,13 +442,13 @@ def render_svg(an):
                  f'font-size="12" fill="{fg}">{lab}</text>')
     x1 = px(1.0)
     o.append(f'<line x1="{x1:.1f}" y1="{top - 8}" x2="{x1:.1f}" '
-             f'y2="{top + rowh * len(rows)}" stroke="{fg}" stroke-width="2" '
-             f'stroke-dasharray="5 3"/>')
+             f'y2="{top + rowh * len(rows)}" stroke="{ref}" stroke-width="2.5" '
+             f'stroke-dasharray="6 3"/>')
     for i, (c, cases) in enumerate(rows):
         cy = top + rowh * i + rowh / 2
         o.append(f'<text x="{left - 12}" y="{cy + 4:.1f}" text-anchor="end" '
                  f'font-family="sans-serif" font-size="12" fill="{fg}">'
-                 f'{esc(label(c))} · n={len(cases)}</text>')
+                 f'{esc(label(c))} (n={len(cases)})</text>')
         sps = sorted(x["speedup"] for x in cases)
         if len(sps) >= 2:
             q = statistics.quantiles(sps, n=4, method="inclusive")
@@ -404,8 +457,8 @@ def render_svg(an):
                      f'fill="none" stroke="{fg}" stroke-width="1.2"/>')
         med = statistics.median(sps)
         o.append(f'<line x1="{px(med):.1f}" y1="{cy - 14:.1f}" '
-                 f'x2="{px(med):.1f}" y2="{cy + 14:.1f}" stroke="{fg}" '
-                 f'stroke-width="3"/>')
+                 f'x2="{px(med):.1f}" y2="{cy + 14:.1f}" stroke="{ref}" '
+                 f'stroke-width="3.5"/>')
         for j, x in enumerate(cases):
             h = int(hashlib.sha256(f"{c.testee_id}{x['key']}".encode())
                     .hexdigest()[:4], 16)
@@ -421,7 +474,7 @@ def render_svg(an):
                  f'<text x="{lx + 10}" y="{ly}" font-family="sans-serif" '
                  f'font-size="12" fill="{fg}">{txt}</text>')
     o.append(f'<text x="16" y="{ly}" font-family="sans-serif" font-size="12" '
-             f'fill="{fg}">box = quartiles, bar = median</text>')
+             f'fill="{ref}">purple = 1×, median; box = quartiles</text>')
     o.append("</svg>")
     return "\n".join(o) + "\n"
 
@@ -480,15 +533,16 @@ def render_losses(an, why, top=20):
                 "it does less work than an engine that reports a span; read "
                 "its rows with that in mind.")
     out = [f"The {len(worst)} worst of {n_loss} losing cases across all "
-           f"competitors (speedup < 1: pcrec slower, trial ranges disjoint), "
+           f"competitors (pcrec slower, trial ranges disjoint; \"slower by\" is "
+           f"pcrec median ÷ competitor median), "
            f"grouped by pattern family; families ordered by their worst case." + note]
     for f_, items in sorted(byfam.items(), key=lambda kv: kv[1][0][0]):
         out.append(f"\n**{f_}**\n")
-        body = [[f"`{x['key'][0]}`", x["key"][1], f"`{c.testee_id}`",
-                 times(sp), why_for(why, x["key"][0], c.te["engine_name"],
+        body = [[f"`{x['key'][0]}`", x["key"][1], label(c),
+                 slower_by(sp), why_for(why, x["key"][0], c.te["engine_name"],
                                     x["key"][1])]
                 for sp, c, x in items]
-        out.append(md_table(["Pattern", "Regime", "Engine", "Speedup", "Why"],
+        out.append(md_table(["Pattern", "Regime", "Engine", "pcrec slower by", "Why"],
                             body, ["---", "---", "---", "--:", "---"]))
     # losses per family, all losses
     agg = {}
@@ -540,12 +594,12 @@ def render_engines(an):
     for s in an.summaries():
         te = s.te
         ta = s.ta
-        body.append([f"`{s.testee_id}`", te["engine_version"], te["engine_mode"],
+        body.append([label(s), f"`{s.testee_id}`", te["engine_version"], te["engine_mode"],
                      te["execution_model"], te["automaton_class"],
                      ", ".join(te.get("conventions") or []),
                      te.get("captures", ""), date_of(s),
                      ta.get("verdict", "n/a")])
-    return md_table(["Testee", "Version", "Mode", "Execution model",
+    return md_table(["Engine", "Testee", "Version", "Mode", "Execution model",
                      "Automaton class", "Match semantics", "Captures",
                      "Measured", "Trial agreement"], body)
 
@@ -568,11 +622,11 @@ def render_compile(an):
         ns = list(s.compile_ns.values())
         common = [pc.compile_ns[p] / s.compile_ns[p]
                   for p in s.compile_ns if p in pc.compile_ns and s is not pc]
-        body.append([f"`{s.testee_id}`", s.compile_class or "", len(ns),
+        body.append([label(s), s.compile_class or "", len(ns),
                      dur(statistics.median(ns)) if ns else "n/a",
                      (times(statistics.median(common)) if common else
                       ("—" if s is pc else "n/a"))])
-    return (md_table(["Testee", "Cost class", "Patterns compiled",
+    return (md_table(["Engine", "Cost class", "Patterns compiled",
                       "Median compile cost", "pcrec compile ÷ this engine (median over common patterns)"],
                      body, ["---", "---", "--:", "--:", "--:"]) +
             "\n\nMedian over patterns of each pattern's median `cost.total_ns` "
@@ -598,7 +652,7 @@ def render_other(store, rows, setids, prov):
             prov.append(("other-set", sid, s))
         for c, cases, excl, st in an.per:
             ex = sum(sum(v.values()) for v in excl.values())
-            body.append([f"`{sid}`", f"`{c.testee_id}`",
+            body.append([f"`{sid}`", label(c),
                          f"{an.pcrec.te['engine_version']} ({date_of(an.pcrec)})",
                          date_of(c), st["n"], st["win"], st["loss"], st["tie"],
                          times(st["median"]) if st["n"] else "n/a",

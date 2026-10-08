@@ -57,3 +57,13 @@ The committed ledger statements about these patterns concern older pins and the 
 - The SVG's appearance in GitHub light and dark (no renderer on this box; colours chosen for an opaque white plate).
 - That GitHub Pages serves viewer/ correctly (no API calls allowed); the relative-path claim is from reading viewer.html for absolute URLs/fetch (none).
 - Hand-written methodology statements about engines were taken from testees/*/CLAUDE.md greps (re2/rust lack backrefs/lookaround; vectorscan nosom stops at first match; pcre2-dfa is nfa-simulation); the re2-longest "excluded as wrong answer" sentence rests on the slice showing 3 wrong-answer cells for that config, not on a per-pattern audit.
+
+## Round 1 (review change requests)
+
+1. Labels: `ENGINES` table in tools/frontpage.py keyed on (engine_name, engine_mode); a `_utf8` testee gets " UTF-8"; an unmapped testee is `SystemExit` (unit-tested). Used in the summary, loss, other-sets and compile tables, the headline and the chart. Raw testee_id kept in docs/frontpage_provenance.tsv and as a column of methodology.md's engine table. The pcrec label is "pcrec 0.2.0-beta+<pin>"; the "0.2.0-beta" is the constant `PCREC_BASE_VERSION` (verified at 255bcdd8; not re-verified for c4c70f2c, so the placeholder slice's label presumes it).
+2. Kind column in the summary table; each `ENGINES` entry carries its source in a comment-style field. Judgement calls: PCRE2 DFA = "DFA"; TRE = "interpreter (POSIX matcher, backtracking fallback)" (the brief's list had no TRE kind); Vectorscan = "automata (SIMD multi-pattern)" from the record's automaton_class. RE2/Rust "automata (lazy DFA etc.)" per the lazy-DFA lines in their CLAUDE.md.
+3. Loss table: "pcrec slower by" = pcrec median ÷ competitor median, thousands separators, 3 s.f. half-even (`big`). Summary table keeps speedup, footnoted once under it; the loss list defines its own column.
+4. Concentration sentence: LEFT OUT, no committed source states it.
+5. check-frontpage (unit test, no store) added to `make check`'s prerequisites; frontpage-check stays out.
+6. Chart: purple (#8250df) dashed 1x line and median bars, "label (n=N)" row labels, opaque white card kept. Still not viewed in a renderer.
+Master merged first (LICENSE, README foot). Slice only; `--check` clean after regeneration.

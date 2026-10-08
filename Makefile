@@ -77,7 +77,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream
+check: check-schema check-harness check-report check-interpret check-upstream check-frontpage
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:

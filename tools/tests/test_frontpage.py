@@ -67,6 +67,22 @@ def main():
     ok("sig keeps magnitude", F.sig(78412.0, 3) == "78400" and F.sig(1.0, 3) == "1.00")
     ok("pct rounds half to even", F.pct(1, 8) == "12.5%" and F.pct(1, 16) == "6.2%")
 
+    ok("big: thousands separators, 3 s.f.", F.big(28512.3) == "28,500" and F.big(1234567) == "1,230,000")
+    ok("slower_by inverts", F.slower_by(1 / 28512.3) == "×28,500")
+
+    class T:  # a minimal summary
+        def __init__(self, name, mode, ver, tid):
+            self.te = dict(engine_name=name, engine_mode=mode, engine_version=ver)
+            self.testee_id = tid
+    ok("label JIT", F.label(T("libpcre2", "jit", "10.46", "x")) == "PCRE2 10.46 JIT")
+    ok("label pcrec", F.label(T("pcrec", "auto", "abc123", "x")) == "pcrec 0.2.0-beta+abc123")
+    ok("label utf8 suffix", F.label(T("re2", "default", "11.0.0", "re2_x_default-caps-simdna_utf8")).endswith("UTF-8"))
+    try:
+        F.label(T("newengine", "m", "1", "newengine_1_m"))
+        ok("unmapped testee fails loudly", False)
+    except SystemExit:
+        ok("unmapped testee fails loudly", True)
+
     text = "intro\n<!-- frontpage:x:begin -->\nOLD\n<!-- frontpage:x:end -->\noutro\n"
     new = F.splice(text, {"x": "NEW"}, "t")
     ok("splice replaces only the region",
