@@ -6093,3 +6093,28 @@ So if the short-call wins are the design's evidence, they come from lines that a
 - **Cause, read in `src/pcre2_auto_possess.c` (10.46 and 10.49, identical there):** the `OP_END` case — where a top-level iterator lands, which `(?R)` re-enters — has no `cb->had_recurse` guard; the `OP_KET`/`OP_KETRPOS` capturing-bracket case has one (10.31's Bugzilla #2232 fix), which is why `(?1)`/`(?&n)` are right and `(?R)` is not.
 - **Tracker search:** nothing pre-existing (two near-misses, #367 and #334, read and ruled a different mechanism).
 - We watch the thread at each session's wake and will relay any maintainer answer or fix.
+
+## O-87 (2026-10-08, bench manager) — [NULLABLE-ANCH]: three bench questions answered (live), and a PROPOSED capability@0.2 row (Frank's ruling, plan [B125])
+
+Asked live by pcrecdev1 (pcrec main e6b6c25f, docs/dev/lanes/nullanch0_report.md); answered live the same day; filed here at pcrecdev1's request so the proposal survives the session boundary. No run.
+
+**(c) Throughput text heads** (sha256 match `bench/capability/manifest_throughput.tsv`; no option sets MULTILINE, so offset 0 is the only live start; all three end in `\n`):
+
+| text | first bytes | `[a-z]` run | `\s` run |
+|---|---|---|---|
+| t-64k | `cache03 sshd[9525]: ` | 5 (`cache`, then `0`) | 0 |
+| t-256k | `Queue field cache so` | 0 (`Q`) | 0 |
+| t-1m | `log.info("status_255` | 3 (`log`, then `.`) | 0 |
+
+The evil-alt-nested throughput spread (10.4 µs / 45 ns / 1.2 µs) is exactly 5 / 0 / 3 letters. trim-nested-star sees a run of 0 on all three, so its cells should be flat. Expectations: nomatch, count 0, both patterns, all three texts.
+
+**(b) The short-search cell stays excluded for EVERY engine.** At derivation the oracle (libpcre2 10.46, backtracker) hit its match limit on TWO triples: evil-alt-nested × `rd-evil-alt-near-miss` (17 `a` + `!`, 18 B) and × `sd-empty-alt-hit` (60 `a` + `5`, 61 B). Both were dropped from `expectations.tsv` (NOTES.md, "A second, smaller finding"). Since KB-27, a row with no expectation reduces as `n_no_expectation`: never wrong, never matched. The subject therefore fails, and the set cell is excluded at 73/75 = 0.9733.
+
+The c4c70f2c report shows this: libpcre2 dfa-nocaps and pcrec auto-nocaps give up 0 times and answer `matched=false` in every trial, and are still EXCLUDED. When [NULLABLE-ANCH] lands, pcrec's give-ups go 10 → 0 and the cell stays unjudged. No pin note is needed; the ledger line agreed with pcrecdev1 is "give-ups gone, cell still unjudged: no expectation".
+
+**(a) PROPOSED — capability@0.2 (Frank's ruling; NOT started).** One set revision closes (a) and (b):
+1. A long MATCHING subject per pattern (e.g. ~60 KB `[a-z]` for evil-alt-nested; ~60 KB mixed `\s` for trim-nested-star). The backtracker should match these on its first greedy path, so `libpcre2-differential` derives them; confirm at derivation. This gives [NULLABLE-ANCH]'s 2-3× matching tax a cell.
+2. A long NEAR-MISS per pattern (the same run plus one terminating non-member byte). The oracle cannot derive this: 18 B already exceeds the match limit.
+3. A SECOND verification method for oracle-give-up triples. Every expectation in all eight sets today is `libpcre2-differential`. Candidate: `pcre2_dfa_match` (no backtracking, no match limit), cross-checked by a stated structural argument. This also restores the two dropped triples in (b), so the short cell becomes judgeable for all engines. This is a set-format/design decision (the method vocabulary, how a second method is recorded and self-checked), hence Frank's.
+
+Owner: bench manager, on Frank's clearance. Trigger: Frank's ruling on plan [B125].
