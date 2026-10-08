@@ -138,6 +138,9 @@
  * opaque form ids / the sorted libc call inventory, `none` either);
  * abi 64 widens `dfa_prefilter`'s closed set by `first-memchr-bounded` /
  * `first-class-bounded`. No rx_info member across 60-65, floor still 16.
+ * [B126] (pin 255bcdd8, abi 65 -> 68) adds ONE, `info vm_poss_arms`
+ * (abi 66, [ART-POSS-ARMS]: a hex bitmask, VM artifacts only). Abi 67 and
+ * 68 add none; no rx_info member across 66-68, floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -227,6 +230,8 @@ static int       (*pb_has_memfn_forms)(void);
 static const char *(*pb_memfn_forms)(void);
 static int       (*pb_has_memfn_libc)(void);
 static const char *(*pb_memfn_libc)(void);
+static int       (*pb_has_vm_poss_arms)(void);
+static unsigned  (*pb_vm_poss_arms)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -472,6 +477,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_vm_start_scan); SYM(pb_vm_start_scan);
     SYM(pb_has_memfn_forms); SYM(pb_memfn_forms);
     SYM(pb_has_memfn_libc); SYM(pb_memfn_libc);
+    SYM(pb_has_vm_poss_arms); SYM(pb_vm_poss_arms);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -778,6 +784,10 @@ int main(int argc, char **argv) {
         printf("info\tmemfn_forms\t%s\n", pb_memfn_forms());
     if (pb_has_memfn_libc())
         printf("info\tmemfn_libc\t%s\n", pb_memfn_libc());
+    /* [B126] (abi 66, [ART-POSS-ARMS]): a bitmask, printed like vm_strats
+     * (0x%x), on every VM artifact and no DFA-only one. */
+    if (pb_has_vm_poss_arms())
+        printf("info\tvm_poss_arms\t0x%x\n", pb_vm_poss_arms());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

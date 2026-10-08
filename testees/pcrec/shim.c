@@ -1546,6 +1546,34 @@ const char *pb_memfn_libc(void) {
 #endif
 }
 
+/* [B126] (pin 255bcdd8, abi 65 -> 68): ONE new stamp, `RX_VM_POSS_ARMS`
+ * (abi 66, [ART-POSS-ARMS]) -- an unsigned bitmask literal (`0x0u`), which
+ * possessify ARM a positive verdict NEEDED: 0x1 A0 (a lookahead-born gate
+ * valued with nothing known on its left), 0x2 A1 (a gate valued by the
+ * loop's last characters' polarity), 0x4 B (a backreference's first
+ * character read from its groups). Emitted on every VM artifact, hybrids
+ * included, and on no DFA-only one (match_api.md 6.3); no rx_info mirror
+ * (`struct rx_info` gains no member across abi 66-68, MEASURED), so the
+ * floor stays 16. A denied arm's bit is 0 by construction
+ * (`-fno-poss-ctx-follow` bit 50, `-fno-poss-bref-first` bit 51). The
+ * R4h layout normalization (abi 67) and [NULLABLE-ANCH] (abi 68) add no
+ * stamp the shim reads. */
+int pb_has_vm_poss_arms(void) {
+#ifdef RX_VM_POSS_ARMS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+unsigned pb_vm_poss_arms(void) {
+#ifdef RX_VM_POSS_ARMS
+    return (unsigned)RX_VM_POSS_ARMS;
+#else
+    return 0u;
+#endif
+}
+
 /* ------------------------------------------------------------- matching */
 
 /* Unanchored search from `pos`; `caps` is `pb_ncaps()` pairs.

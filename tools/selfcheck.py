@@ -10999,6 +10999,253 @@ def check_b124_stamps():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+#: [B126] (pin 255bcdd8, abi 65 -> 68): the abi 66-68 witnesses. A row is
+#: (label, extra flags, pattern, {pair: value} at the pin, the deny flags,
+#: {pair: value} under them, identity mode). Identity is on the compiled
+#: `.text` (gcc -O2 -c, `objcopy -O binary -j .text`), NOT the v2 text hash:
+#: abi 67's layout normalization (R4h) rewrites the search loops' SPELLING
+#: on about half of all artifacts, so a denied arm can no longer equal the
+#: 60366d747 artifact's text, only its EXECUTED CODE (pcrec I-135: "object-
+#: identical in executed code"; MEASURED here on every row below).
+#: Mode "old-text": the deny arm's `.text` equals 60366d747's DEFAULT
+#: `.text` while the pin's default differs (pcrec's "restores the abi-65
+#: program" for [ART-POSS-ARMS]'s flags). Mode "same-text": default `.text`
+#: equals 60366d747's -- a witness NO abi 66-68 step moves (R4h inert on
+#: executed code). Every value MEASURED at the 255bcdd8 build (2026-10-08,
+#: lane b126prep) by a direct emit before being typed.
+B126_CASES = (
+    # [ART-POSS-ARMS] arm A0 (abi 66): a lookahead-born gate in the follow,
+    # valued with nothing known on its left. Forced VM (auto folds the
+    # one-character lookahead into the DFA, [UCP] U2).
+    ("poss A0: a+(?=b)b", "--engine=vm", b"a+(?=b)b",
+     {"vm_poss_arms": ["POSS_ARM_A0"], "vm_strats": ["PCREC_VM_STRAT_POSSESSIVE"],
+      "vm_frameless": 1},
+     "-fno-poss-ctx-follow",
+     {"vm_poss_arms": [], "vm_strats": ["PCREC_VM_STRAT_BACKTRACKING"],
+      "vm_frameless": 0}, "old-text"),
+    # arm A1 (a gate valued by the loop's last characters' polarity), on
+    # the VM hybrid `auto` selects (hybrids stamp it) ...
+    ("poss A1: (\\b\\w+\\b) under auto (a hybrid)", "", b"(\\b\\w+\\b)",
+     {"engine": "vm", "prefilter": "hybrid", "vm_poss_arms": ["POSS_ARM_A1"],
+      "vm_frameless": 1},
+     "-fno-poss-ctx-follow",
+     {"vm_poss_arms": [], "vm_strats": ["PCREC_VM_STRAT_BACKTRACKING"],
+      "vm_frameless": 0}, "old-text"),
+    # ... and on the forced-VM plain artifact (pcrec's possland2 mover).
+    ("poss A1: \\B(x|ab){1,2}\\b forced VM", "--engine=vm",
+     b"\\B(x|ab){1,2}\\b",
+     {"vm_poss_arms": ["POSS_ARM_A1"], "prefilter": "none"},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": []}, "old-text"),
+    # arm B (a backreference's first character read from its groups): the
+    # OTHER flag denies it, the first flag leaves it (the arms are
+    # independent), and `doubled-word`'s shape becomes frameless.
+    ("poss B: \\b(\\w+)\\s+\\1\\b", "", b"\\b(\\w+)\\s+\\1\\b",
+     {"engine": "vm", "vm_poss_arms": ["POSS_ARM_B"], "vm_frameless": 1},
+     "-fno-poss-bref-first",
+     {"vm_poss_arms": [], "vm_frameless": 0}, "old-text"),
+    # THE ENGINE-SELECTING DENIAL: a possessive suffix the arm discharges
+    # is DFA-routed under `auto`; denied it stays and the VM compiles it
+    # (a hybrid, `RX_ENGINE_SEL` still `selected`).
+    ("poss A engine-selecting: (?:a\\.)++\\B under auto", "", b"(?:a\\.)++\\B",
+     {"engine": "dfa", "engine_sel": "selected", "vm_poss_arms": None},
+     "-fno-poss-ctx-follow",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_poss_arms": []}, "old-text"),
+    # SCOPE, both directions: `abc` under auto is a DFA artifact (the stamp
+    # ABSENT), forced VM carries it as the empty mask.
+    ("poss scope: abc forced VM carries [] (0x0u)", "--engine=vm", b"abc",
+     {"vm_poss_arms": [], "vm_strats": []},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": []}, "same-text"),
+    ("poss scope: abc under auto is a DFA artifact (no stamp)", "", b"abc",
+     {"engine": "dfa", "vm_poss_arms": None},
+     "-fno-poss-ctx-follow", {"vm_poss_arms": None}, "same-text"),
+    # [MEMFN] R4h (abi 67): the executed code does not move.
+    ("R4h inert: foo|bar forced VM island", "--engine=vm", b"foo|bar",
+     {"vm_alt_islands": 1}, "-fno-poss-bref-first", {"vm_alt_islands": 1},
+     "same-text"),
+    # [NULLABLE-ANCH] (abi 68): the decline lifts where every empty match
+    # crosses BOTH a non-multiline start and end anchor ...
+    ("nullable-anch: ^(\\s+)*$ lifted", "", b"^(\\s+)*$",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact"},
+     "", {}, "none"),
+    ("nullable-anch: ^(([a-z]+)*)+$ lifted", "", b"^(([a-z]+)*)+$",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact"},
+     "", {}, "none"),
+    # ... and stays DECLINED where it does not: one-sided, multiline, or no
+    # anchor at all (the CONTROLS -- `declined-nullable-default` is still
+    # reachable at this pin).
+    ("nullable-anch control: ^(\\s+)* (start only) declined", "",
+     b"^(\\s+)*",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none", "vm_prefilter_lang": None}, "", {}, "none"),
+    ("nullable-anch control: (\\s+)*$ (end only) declined", "",
+     b"(\\s+)*$",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+    ("nullable-anch control: (?m)^(\\s+)*$ (multiline) declined", "",
+     b"(?m)^(\\s+)*$",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+    ("nullable-anch control: (x){0,5} (no anchor) declined", "",
+     b"(x){0,5}",
+     {"engine": "vm", "engine_sel": "declined-nullable-default",
+      "prefilter": "none"}, "", {}, "none"),
+)
+
+#: [B126] the E1 fact `empty_admits` (abi 68, `--emit-facts`' new row on
+#: every artifact): (pattern, nullable, empty_admits). NOT read by the
+#: adapter (nothing here parses `--emit-facts`; the listing is a DEBUG
+#: surface whose fact names are advisory, facts_listing.md) -- asserted
+#: BY VALUE so a pcrec that changes the fact's meaning is noticed.
+B126_EMPTY_ADMITS = (
+    (b"abc", "no", "no"),
+    (b"x*", "yes", "yes"),
+    (b"^(\\s+)*$", "yes", "no"),
+    (b"^(([a-z]+)*)+$", "yes", "no"),
+    (b"\\A(a*)*\\z", "yes", "no"),
+    (b"^(\\s+)*", "yes", "yes"),
+    (b"(\\s+)*$", "yes", "yes"),
+    (b"(?m)^(\\s+)*$", "yes", "yes"),
+)
+
+
+def _b126_text_hash(binary, flags, pat, tmp, tag):
+    """sha256 of the compiled `.text` of the artifact `binary` emits for
+    `pat` (gcc -O2 -c, no link): the executed code, blind to the spelling
+    of the source that produced it. None on a refusal."""
+    out = os.path.join(tmp, tag + ".c")
+    argv = ([binary, "-p", "rx"] + list(flags) + ["-o", out, "--pattern",
+                                                    pat.decode("latin-1")])
+    r = subprocess.run(argv, capture_output=True, env=C_ENV, timeout=600)
+    if r.returncode != 0:
+        return None
+    obj = os.path.join(tmp, tag + ".o")
+    g = subprocess.run(["gcc", "-O2", "-c", out, "-o", obj],
+                       capture_output=True, env=C_ENV, timeout=600)
+    if g.returncode != 0:
+        return None
+    raw = os.path.join(tmp, tag + ".text")
+    o = subprocess.run(["objcopy", "-O", "binary", "-j", ".text", obj, raw],
+                       capture_output=True, env=C_ENV, timeout=120)
+    if o.returncode != 0:
+        return None
+    import hashlib
+    with open(raw, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()[:16]
+
+
+def check_b126_stamps():
+    """[B126] (pin 255bcdd8, abi 65 -> 68; inbox I-134/I-135). For every
+    row of B126_CASES: the default artifact's pairs BY VALUE through the
+    adapter (the shim's `vm_poss_arms` reader exercised end to end, both
+    scope directions), the deny arm's pairs, and the identity of the
+    compiled `.text` against 60366d747's. Then the registry's own
+    `stamp_value`s for RX_VM_POSS_ARMS against MASK_BITS (the mask bits
+    are match_api.md's paragraph, not named constants), and the E1 fact
+    `empty_admits` by value through `--emit-facts`."""
+    print("-- [B126]: [ART-POSS-ARMS] arms, [MEMFN] R4h inert on executed code, "
+          "[NULLABLE-ANCH] --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b126 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "60366d747"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b126 stamps", "no build for 60366d747 "
+            "(pin.sh 60366d747 first; --path printed %r)" % old_bin)
+        return
+    new_bin = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b126-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    try:
+        os.environ["PCREC_BIN"] = new_bin
+        for i, (label, extra, pat, want, deny, want_deny, mode) in enumerate(B126_CASES):
+            flags, dflags = extra.split(), deny.split()
+            d_cr = _b118_compile(adapter, tmp, "b126-%d-d" % i,
+                                 " ".join(["--features", "all"] + flags), pat)
+            if d_cr.outcome != "compiled":
+                bad("b126 %s" % label, "default=%s: %s"
+                    % (d_cr.outcome, d_cr.diagnostic))
+                continue
+            d_em = d_cr.engine_metadata
+            miss = ["default %s=%r (want %r)" % (k, d_em.get(k), v)
+                    for k, v in want.items() if d_em.get(k) != v]
+            id_why = "by value only"
+            if dflags:
+                n_cr = _b118_compile(adapter, tmp, "b126-%d-n" % i,
+                                     " ".join(["--features", "all"] + flags
+                                               + dflags), pat)
+                if n_cr.outcome != "compiled":
+                    bad("b126 %s" % label, "denied=%s" % n_cr.outcome)
+                    continue
+                n_em = n_cr.engine_metadata
+                miss += ["denied %s=%r (want %r)" % (k, n_em.get(k), v)
+                         for k, v in want_deny.items() if n_em.get(k) != v]
+                base = ["--features", "all"] + flags
+                h_old = _b126_text_hash(old_bin, base, pat, tmp, "o%d" % i)
+                h_new = _b126_text_hash(new_bin, base, pat, tmp, "n%d" % i)
+                h_deny = _b126_text_hash(new_bin, base + dflags, pat, tmp,
+                                         "d%d" % i)
+                if mode == "old-text":
+                    id_ok = (h_deny is not None and h_deny == h_old
+                             and h_new != h_old)
+                    id_why = ".text: denied == 60366d747, default != 60366d747"
+                else:
+                    id_ok = h_old is not None and h_old == h_new
+                    id_why = ".text: pin == 60366d747"
+                if not id_ok:
+                    miss.append("identity (%s) old=%s new=%s deny=%s"
+                                % (id_why, h_old, h_new, h_deny))
+            name = "b126 %s: by value%s" % (label, ", " + deny if deny else "")
+            if miss:
+                bad(name, "; ".join(miss))
+            else:
+                ok(name, "%s; %s" % (", ".join("%s=%r" % kv for kv in want.items()),
+                                     id_why))
+        # the registry's stamp_values for RX_VM_POSS_ARMS == MASK_BITS
+        regs = {}
+        for r in mod.registry_rows():
+            if r.get("stamp_macro") == "RX_VM_POSS_ARMS" and r.get("stamp_value"):
+                regs[(r["axis"], r["candidate"])] = int(r["stamp_value"], 0)
+        want_bits = dict(mod.MASK_BITS["vm_poss_arms"])
+        if sorted(regs.values()) == sorted(want_bits.values()):
+            ok("b126 registry: RX_VM_POSS_ARMS stamp_values == MASK_BITS",
+               "%s" % sorted(regs.items()))
+        else:
+            bad("b126 registry: RX_VM_POSS_ARMS stamp_values == MASK_BITS",
+                "registry %r vs adapter %r" % (sorted(regs.items()), want_bits))
+        # E1 `empty_admits` by value
+        for pat, nullable, admits in B126_EMPTY_ADMITS:
+            p = subprocess.run([new_bin, "-p", "rx", "--features", "all",
+                                "--emit-facts", "--pattern", pat.decode()],
+                               capture_output=True, text=True, env=C_ENV,
+                               timeout=120)
+            rows = {}
+            for ln in p.stdout.splitlines():
+                c = ln.split("\t")
+                if len(c) > 6 and c[0] == "byte":
+                    rows[c[1]] = c[6]
+            name = "b126 emit-facts: empty_admits on %s" % pat.decode()
+            if (rows.get("nullable"), rows.get("empty_admits")) == (nullable, admits):
+                ok(name, "nullable=%s empty_admits=%s" % (nullable, admits))
+            else:
+                bad(name, "got nullable=%r empty_admits=%r, want %s/%s"
+                    % (rows.get("nullable"), rows.get("empty_admits"),
+                       nullable, admits))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -15402,6 +15649,7 @@ def main():
     check_b118_findtie_k69_noop_on_bench()
     check_b122_round1_stamps()
     check_b124_stamps()
+    check_b126_stamps()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
