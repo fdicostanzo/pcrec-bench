@@ -3365,6 +3365,146 @@ B124_VM_START_SET_CODE = 7 + 336
 B124_K92_FLAGS_SCAN_EDGE = -6
 
 
+# [B126] (pin 255bcdd8, abi 65 -> 68): the size books, MEASURED per witness
+# at all five builds (60366d747, abi 66 c9672bd2, abi 67 c4c37af8, abi 68
+# 02db3811, the pin 255bcdd8) -- docs/dev/lanes/b126prep_report.md section 5.
+#   abi 66 [ART-POSS-ARMS]: `#define RX_VM_POSS_ARMS 0x0u` is ONE stamp line
+#     on EVERY VM artifact (hybrids included), +29 B exactly in emit_bytes
+#     and emit_code_bytes, 0 in vm_program_bytes; a DFA artifact does not
+#     carry it. (A mover's loop text and program change on top of that, and
+#     is measured per row where one is asserted.)
+#   abi 67 [MEMFN] R4h: the search loops' ADVANCE text is respelled
+#     (parenthesised conditions, braced bodies, `ULL` caps) -- about half of
+#     all artifacts GROW, by an amount that depends on how many loop sites
+#     the artifact has (DFA +30..+392, VM +22..+3,202 in vm_program_bytes
+#     too), executed code unchanged (94/94 `.text` identical). NOT a flat
+#     term: B126_R4H holds each asserted row's measured move
+#     (emit, code, program), keyed (label, form).
+#   abi 68 [NULLABLE-ANCH] and the 02db3811 -> 255bcdd8 step: 0 B on every
+#     asserted row (the engine-route movers evil-alt-nested / trim-nested-star
+#     are asserted by value, not by size).
+B126_VM_POSS_ARMS_LINE = 29
+# The three DENY_CONTROLS rows' R4h moves (MEASURED, emit_bytes, DFA route
+# so no poss line): the scan-edge row's default arm (one edge) +30, its denied
+# arm (no edge machinery, no loops respelled) 0; the start-pinned row's
+# pinned arm +60 and reverse-pass arm +98; the alt-island row takes the
+# VM stamp line only (+29 both arms, R4h respells no loop on either).
+B126_R4H_SCAN_EDGE_DEFAULT = 30
+B126_R4H_START_PINNED = (60, 98)
+B126_R4H = {
+    ('pure DFA', 'plain'): (30, 30, 0),
+    ('pure DFA', 'whole-subject'): (30, 30, 0),
+    ('VM hybrid, nullable language DECLINED ([OPT-4.2])', 'plain'): (22, 22, 22),
+    ('VM hybrid, nullable language DECLINED ([OPT-4.2])', 'whole-subject'): (22, 22, 22),
+    ('VM hybrid, non-nullable language KEPT: the [OPT-4.2] control', 'plain'): (102, 102, 22),
+    ('VM hybrid, non-nullable language KEPT: the [OPT-4.2] control', 'whole-subject'): (138, 138, 22),
+    ('VM hybrid', 'plain'): (22, 22, 22),
+    ('VM hybrid', 'whole-subject'): (22, 22, 22),
+    ('VM, no DFA scan', 'plain'): (22, 22, 22),
+    ('VM, no DFA scan', 'whole-subject'): (22, 22, 22),
+    ('dominated DFA (G1 identity)', 'whole-subject'): (36, 36, 0),
+    ('VM hybrid, counted repeat, exact', 'plain'): (73, 73, 35),
+    ('VM hybrid, counted repeat, exact', 'whole-subject'): (73, 73, 35),
+    ('size-cap rung rescue (K41 witness 2)', 'plain'): (3202, 3202, 3202),
+    ('size-cap rung rescue (K41 witness 2)', 'whole-subject'): (3202, 3202, 3202),
+    ("start-PINNED DFA ([OPT-5] STEP 2's own population)", 'plain'): (60, 60, 0),
+    ("start-PINNED DFA ([OPT-5] STEP 2's own population)", 'whole-subject'): (68, 68, 0),
+    ('start-pinned DECLINED: the lower-bound control', 'plain'): (148, 148, 0),
+    ('start-pinned DECLINED: the lower-bound control', 'whole-subject'): (184, 184, 0),
+    ('entry shape PLAIN: a framed program below the term', 'plain'): (44, 44, 44),
+    ('entry shape PLAIN: a framed program below the term', 'whole-subject'): (44, 44, 44),
+    ('iso-ts: the k-set skip, scanned at 4', 'plain'): (392, 392, 0),
+    ('iso-ts: the k-set skip, scanned at 4', 'whole-subject'): (392, 392, 0),
+    ('ipv6: declined', 'plain'): (38, 38, 0),
+    ('ipv6: declined', 'whole-subject'): (38, 38, 0),
+    ('kv-quoted: declined', 'plain'): (116, 116, 0),
+    ('kv-quoted: declined', 'whole-subject'): (80, 80, 0),
+    ('bignum: declined', 'whole-subject'): (30, 30, 0),
+    ('hex32-id: control, declined', 'whole-subject'): (30, 30, 0),
+    ('http-5xx: control, declined', 'plain'): (184, 184, 0),
+    ('http-5xx: control, declined', 'whole-subject'): (184, 184, 0),
+    ('email orig under --engine=vm: K=8/default', 'plain'): (412, 412, 412),
+    ('email orig under --engine=vm: K=8/default', 'whole-subject'): (412, 412, 412),
+    ('level-context under auto: the [SEL-1] VM fallback', 'plain'): (80, 80, 0),
+    ('level-context under auto: the [SEL-1] VM fallback', 'whole-subject'): (80, 80, 0),
+    ('bounded cls-upto-32768: the rescue declined (nullable)', 'plain'): (35, 35, 35),
+    ('bounded cls-upto-32768: the rescue declined (nullable)', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-16384: the DFA that warned, collapsed and now PINNED', 'plain'): (30, 30, 0),
+    ('bounded cls-upto-16384: the DFA that warned, collapsed and now PINNED', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)', 'plain'): (35, 35, 35),
+    ('bounded cls-upto-32768 whole: declined, the N1 budget route (K7 until 334fd10e)', 'whole-subject'): (35, 35, 35),
+    ('bounded cls-upto-16384 whole: declined', 'plain'): (30, 30, 0),
+    ('bounded cls-upto-16384 whole: declined', 'whole-subject'): (35, 35, 35),
+    ('bounded ctx-greedy-256: the rescue kept', 'plain'): (151, 151, 35),
+    ('bounded ctx-greedy-256: the rescue kept', 'whole-subject'): (151, 151, 35),
+    ('bounded ctx-lazy-64: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-64: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded ctx-lazy-256: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-256: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded ctx-lazy-1024: the rescue kept', 'plain'): (80, 80, 0),
+    ('bounded ctx-lazy-1024: the rescue kept', 'whole-subject'): (80, 80, 0),
+    ('bounded nest2-64 whole: the rescue kept (non-nullable)', 'plain'): (68, 68, 0),
+    ('bounded nest2-64 whole: the rescue kept (non-nullable)', 'whole-subject'): (676, 676, 560),
+    ('bounded nest3-16 whole: the rescue kept (non-nullable)', 'plain'): (68, 68, 0),
+    ('bounded nest3-16 whole: the rescue kept (non-nullable)', 'whole-subject'): (256, 256, 140),
+    ('bounded nest2-64 plain: an ordinary selected DFA', 'plain'): (68, 68, 0),
+    ('bounded nest2-64 plain: an ordinary selected DFA', 'whole-subject'): (676, 676, 560),
+    ('altwide w-256: the ORIGINAL branch order', 'plain'): (272, 272, 0),
+    ('altwide w-256: the ORIGINAL branch order', 'whole-subject'): (152, 152, 0),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'plain'): (272, 272, 0),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'whole-subject'): (152, 152, 0),
+    ('altwide ci-256 under auto: the DFA route, no fold pair (edge=bitmap)', 'plain'): (272, 272, 0),
+    ('altwide ci-256 under auto: the DFA route, no fold pair (edge=bitmap)', 'whole-subject'): (152, 152, 0),
+    ("altwide sh1-64: every branch shares byte 0 ('k')", 'plain'): (136, 136, 0),
+    ("altwide sh1-64: every branch shares byte 0 ('k')", 'whole-subject'): (136, 136, 0),
+    ('altwide floor: no alternation at all', 'whole-subject'): (36, 36, 0),
+    ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'plain'): (60, 60, 0),
+    ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'whole-subject'): (68, 68, 0),
+    ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'plain'): (35, 35, 35),
+    ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'whole-subject'): (35, 35, 35),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'plain'): (98, 98, 0),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'whole-subject'): (68, 68, 0),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'plain'): (44, 44, 44),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (44, 44, 44),
+    ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (140, 140, 140),
+    ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (140, 140, 140),
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'plain'): (171, 171, 171),
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (171, 171, 171),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (110, 110, 110),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (110, 110, 110),
+    ('capability wild-validator-ipv4-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (280, 280, 280),
+    ('capability wild-validator-ipv4-owasp under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (280, 280, 280),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (44, 44, 44),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (44, 44, 44),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'plain'): (44, 44, 44),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'whole-subject'): (44, 44, 44),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt", 'plain'): (175, 175, 175),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt", 'whole-subject'): (175, 175, 175),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): (35, 35, 35),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'whole-subject'): (35, 35, 35),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): (392, 392, 0),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'whole-subject'): (392, 392, 0),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'plain'): (66, 66, 66),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'whole-subject'): (66, 66, 66),
+    ('capability dup-param-detect under auto: K65 alone', 'plain'): (66, 66, 66),
+    ('capability dup-param-detect under auto: K65 alone', 'whole-subject'): (66, 66, 66),
+}
+
+
+def _b126_moved(expected, label, form, em):
+    """`expected` with the size keys moved by the [B126] books: +29 on a VM
+    artifact (the RX_VM_POSS_ARMS line) and the row's B126_R4H residual."""
+    out = dict(expected)
+    r = B126_R4H.get((label, form), (0, 0, 0))
+    vm = em.get("engine") == "vm"
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + (B126_VM_POSS_ARMS_LINE if vm and i < 2 else 0) + r[i]
+    return out
+
+
+
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
     __slots__ = ("want",)
@@ -4763,6 +4903,24 @@ LEDGER_STAMP_CASES = (
     # else. (2) THE FRAMELESS arm: uuid-near-miss forced-VM is framed-free
     # (`vm_frameless 1`), cannot backtrack, and keeps `one-attempt` --
     # +1001 exactly.
+    # [B126] (pin 255bcdd8, abi 68, [NULLABLE-ANCH]; pcrec I-135, O-87):
+    # the two capability@0.1 patterns whose every empty match crosses BOTH a
+    # non-multiline start and end anchor. At 60366d747 both read
+    # `declined-nullable-default` / prefilter `none`; at the pin the decline
+    # LIFTS -- `selected` / `hybrid` with an `exact` language pair -- and
+    # the plain artifact grows by the hybrid's DFA pair (MEASURED
+    # 30,143 -> 34,077 and 28,342 -> 32,276). The CONTROL (a nullable shape
+    # NOT confined to both ends still reads `declined-nullable-default`)
+    # is the hand-chosen `(?=abc)x*` row plus check_b126_stamps' one-sided
+    # / multiline / unanchored arms.
+    ("capability evil-alt-nested under auto: [NULLABLE-ANCH] lifts the decline",
+     "pcrec-auto", "capability", "evil-alt-nested",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact", "vm_poss_arms": []}),
+    ("capability trim-nested-star under auto: [NULLABLE-ANCH] lifts the decline",
+     "pcrec-auto", "capability", "trim-nested-star",
+     {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
+      "vm_prefilter_lang": "exact", "vm_poss_arms": []}),
     ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt",
      "pcrec-auto", "capability", "email-nested-plus",
      {"engine": "vm", "engine_sel": "selected", "prefilter": "hybrid",
@@ -5368,6 +5526,7 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
+            expected = _b126_moved(expected, label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -6660,7 +6819,8 @@ DENY_CONTROLS = (
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
                      - 2 * B122_RANGE_SITE  # [B122] the one edge; denied: no edge
-                     + B124_STAMP_LINES,
+                     + B124_STAMP_LINES
+                     + B126_R4H_SCAN_EDGE_DEFAULT,
                      # [B124]: the denied arm is the K92 witness -- its
                      # `.flags` literal loses bit 21 (2097152 -> 0).
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
@@ -6726,12 +6886,12 @@ DENY_CONTROLS = (
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 4 * B122_RANGE_SITE
-                     + B124_STAMP_LINES,
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[0],
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 6 * B122_RANGE_SITE
-                     + B124_STAMP_LINES),
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[1]),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -6789,11 +6949,13 @@ DENY_CONTROLS = (
       # both carry the seek; the island arm's RX_MEMFN_LIBC reads
       # "memcmp", the chain arm's (word compares only) "none".
       "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
-                     + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET,
+                     + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET
+                     + B126_VM_POSS_ARMS_LINE,
                      # [B122] MEASURED c4c70f2c: the chain arm +201 beyond
                      # the flat term -- S4 C1's overlap row on `foo`/`bar`.
                      20074 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 201
-                     + B124_STAMP_LINES + B124_VM_START_SET)}, "deny"),
+                     + B124_STAMP_LINES + B124_VM_START_SET
+                     + B126_VM_POSS_ARMS_LINE)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
