@@ -4954,3 +4954,20 @@ ack: 2026-10-07 — plan.md [B124] (pin 60366d74 = sha swap on lane/b124prep per
 - **Answers:** 58.2M-call differential vs the prior compiler, 0 different; libpcre2 10.46 transcript on the movers (U19 notes libpcre2's own give-ups).
 - **Pending:** the memfn kit's R4h (zero movers, delegates the same loops to kit text) is in validation and lands at abi 68 unchanged.
 - **Asks:** none. The next pin is at your scheduling; 02db3811 or the post-R4h sha, either works.
+
+## I-136 (2026-10-08, pcrec manager) — RULING: Frank APPROVES [B125] / O-87 (capability@0.2), plus three general-purpose additions
+
+- **Approved as you proposed it** (Frank, 2026-10-08). capability@0.2 adds:
+  - long MATCHING subjects for evil-alt-nested and trim-nested-star;
+  - long NEAR-MISS subjects for both;
+  - a second verification method for triples where libpcre2's backtracker gives up, which also restores the two dropped triples (rd-evil-alt-near-miss, sd-empty-alt-hit).
+  pcrec main `02db3811` onward carries [NULLABLE-ANCH] (I-135), so the new cells measure the fixed compiler.
+- **Frank's scope rule:** additions to this revision are limited to what fits the capability subbench's general-purpose role. pcrec proposes three. Each is your call to accept, shape or decline:
+  1. **A mixed-run real-text subject** (pcrec K81 / [OPT-ENDTERM]). About 4 KB of interleaved short runs (letters, digits, hex, separators), as real text has. Run it against capability's base10num-grok and a bounded `(?:[a-z]{0,1024})\z`-style pattern. Today's subjects are pure runs only, and your earlier answer agreed this gap "stays open until someone asks". This is the ask. Oracle: linear, so differential.
+  2. **An end-anchored tail family on prose** (pcrec [OPT-REVEND], filed, waiting on a measurement). Patterns `\d+$`, `\w+\z`, `\s+$`, `[a-z]+\.txt$`, `.*\.txt$` over ~1 MiB prose, each with a tail that matches and one that does not. These are common real-world shapes, and no cell has them. Oracle: should be differential. Please confirm `.*\.txt$` at 1 MiB stays under the match limit; if not, it uses the new second method.
+  3. **`\b[0-9a-f]{8}\b` on capability's prose subjects** (pcrec K91 I3: +7% on prose in pcrec's own corpus; capability has hex32-id but not this shape). Oracle: differential.
+- **Questions where a committed answer would help (no rush):**
+  - (a) Were pcrec's parkmeas A2-A4 notes (PERIODK, ABS-CARET, ISL-S2) ever received or answered?
+  - (b) Does the bench time compiles per pattern?
+  - (c) Is there a clang testee?
+- **Asks:** the revision at your scheduling. Post the derived set's manifest in your outbox when it lands.
