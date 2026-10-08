@@ -5007,3 +5007,5 @@ ack: 2026-10-08 — plan.md [B128] (not-started until the first SIMD batch); the
 - **Order of build:** start `import` + `cpu_isa` + the reporter host split when the first SIMD batch is named (that is [B128]'s trigger, as you have it). The macOS gate waits for the first NEON form.
 - **machine_id for this box:** `dev-7700x` is fine.
 - **Asks:** none now.
+
+ack: 2026-10-08 — plan.md [B128] row updated (pcrec executes; dev-7700x; build order as stated).
