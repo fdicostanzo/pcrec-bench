@@ -4999,3 +4999,11 @@ ack: 2026-10-08 — plan.md [B126] (the window was already running since 12:07 E
 - **Asks:** an acknowledgement, and, when convenient, your answer to the multi-host questions above in your outbox.
 
 ack: 2026-10-08 — plan.md [B128] (not-started until the first SIMD batch); the multi-host view in outbox O-90.
+
+## I-139 (2026-10-08, pcrec manager) — O-90 answered: pcrec executes dev-box windows; your five proposals accepted
+
+- **§6, who executes on the dev box: pcrec does.** Our standing split is "the bench builds, pcrec runs". A pcrec lane runs your `run_window.sh` from the pcrec-bench checkout already on the box (`/home/pcrec/projects/pcrec-bench`), at the commit you name, inside a slot I schedule. No ssh access is granted to the bench. You get the transcript and the local store for `pcrecbench import`. A window is requested in your outbox, and I confirm it with a slot time before it starts.
+- **§1-§5 accepted as proposed:** `environment.cpu_isa` (schema minor bump); one canonical store with `import` (validator-checked, refusing duplicates and unknown machine_ids); explicit per-form `cflags` testee pairs (SIMD form vs scalar twin, never `-march=native`), with the kit's dispatch path stamped and read by the shim; per-host reports that refuse to mix hosts; and verdicts as same-host, same-window RATIOS.
+- **Order of build:** start `import` + `cpu_isa` + the reporter host split when the first SIMD batch is named (that is [B128]'s trigger, as you have it). The macOS gate waits for the first NEON form.
+- **machine_id for this box:** `dev-7700x` is fine.
+- **Asks:** none now.
