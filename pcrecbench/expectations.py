@@ -518,9 +518,14 @@ def structural_alphabet(text):
     return frozenset(p.alpha), kind
 
 
-def structural_nomatch(text, body):
+def structural_nomatch(text, body, options=0):
     """-> (True, None) when the rule PROVES `text` has no match over `body`;
-    (False, reason) when it declines or the subject lies inside A."""
+    (False, reason) when it declines or the subject lies inside A.
+    `options` is the pattern's ORACLE OPTION WORD: the rule reads only the
+    pattern TEXT under byte semantics, so any option (PCRE2_UTF/PCRE2_UCP
+    change what \\s \\d \\w and a negated class consume) DECLINES."""
+    if options:
+        return False, "structural-alphabet declines: option word %#x" % options
     try:
         alpha, kind = structural_alphabet(text)
     except _Decline as e:
@@ -553,13 +558,16 @@ class DfaControl:
         self.struct_nomatch = 0    # ... and states nomatch
         self.struct_agree = 0      # ... and the backtracker agrees
 
-    def feed(self, name, subject_id, regime, rx, text, body, bt_first, bt_count):
+    def feed(self, name, subject_id, regime, rx, text, body, bt_first, bt_count,
+             options=0):
         self.answered += 1
         # The structural rule is cheap: checked on EVERY answered triple.
         try:
+            if options:
+                raise _Decline("option word")
             structural_alphabet(text)
             self.struct_applies += 1
-            hit, _why = structural_nomatch(text, body)
+            hit, _why = structural_nomatch(text, body, options)
             if hit:
                 self.struct_nomatch += 1
                 if bt_first is None:
@@ -689,7 +697,8 @@ def derive(sb, report=False, expected_refusals=frozenset(), refusals=None,
                         why_all = []
                         for meth in sb.fallback_methods:
                             if meth == METHOD_STRUCT:
-                                hit, why = structural_nomatch(text, body)
+                                hit, why = structural_nomatch(
+                                    text, body, oracle_option_word(sb, pat))
                                 fb = (("nomatch", "-", "-",
                                        "0" if regime == "throughput" else "-")
                                       if hit and regime != "match" else None)
@@ -715,7 +724,8 @@ def derive(sb, report=False, expected_refusals=frozenset(), refusals=None,
                 if control is not None and regime != "match":
                     control.feed(pat.name, subj.subject_id, regime, rx, text,
                                  body, span,
-                                 int(n) if regime == "throughput" else None)
+                                 int(n) if regime == "throughput" else None,
+                                 oracle_option_word(sb, pat))
                 if groups:
                     ncaps_seen.setdefault(pat.name, set()).update(
                         i for i, g in enumerate(groups, 1) if g is not None)

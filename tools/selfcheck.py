@@ -13933,6 +13933,15 @@ def check_expectation_second_method():
     ]
     wrong = [(t, b, sn(t, b)[0], want) for t, b, want in arms if sn(t, b)[0] != want]
     (ok if not wrong else bad)("structural-alphabet: positive and every decline arm", repr(wrong) if wrong else "%d arms" % len(arms))
+    # the option-word gate: under PCRE2_UCP `\w` consumes multibyte letters
+    # whose bytes lie outside the byte alphabet, so ANY option word declines
+    # (the byte-mode verdict on the same triple is a claim, the control arm).
+    t, subj = rb"^\w+$", "caf\u00e9".encode("utf-8")
+    byte_v = sn(t, subj)[0]
+    ucp_v = sn(t, subj, o.option_word(utf=True, ucp=True))[0]
+    (ok if (byte_v, ucp_v) == (True, False) else bad)(
+        "structural-alphabet: any oracle option word declines",
+        "byte=%s utf+ucp=%s" % (byte_v, ucp_v))
     # every positive verdict agrees with the oracle (no sharing of algorithm)
     wrong = []
     for t, b, want in arms:
