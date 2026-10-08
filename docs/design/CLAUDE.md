@@ -316,6 +316,17 @@ docs/dev/'s append-only records.
   numbered questions to Frank**, each with a recommendation; §7 states
   what the note deliberately does not decide.
 
+- `expectation_methods_v1.md` — **[B125] (2026-10-08) the expectation
+  verification METHOD vocabulary**: `libpcre2-differential` (every set,
+  unchanged) plus two fallbacks for backtracker give-ups,
+  `structural-alphabet` (nomatch only, a soundness argument) and
+  `libpcre2-dfa-fallback`
+  (`pcre2_dfa_match` of the same libpcre2, declared per set by
+  `[expectations] fallback_methods`, used only for a triple the backtracker
+  gave up on, restricted IN CODE to nomatch and to the fully-anchored span,
+  with a deterministic workspace budget and a standing control over every
+  answered triple). First user: capability@0.2.
+
 - `quiet_baseline.md` — **[B3]'s answer to OD-B8, MEASURED 2026-08-25**:
   what "quiet" means numerically on this box, the 12 samples behind it,
   and the two thresholds `pcrecbench/quiet.py` defaults to. It carries a

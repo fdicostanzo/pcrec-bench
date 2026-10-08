@@ -438,7 +438,71 @@ def _find_all_impl(self, subject, limit=None, validate_once=True):
     return first, count
 
 
+# [B125] THE SECOND EXPECTATION METHOD's engine: `pcre2_dfa_match` from the
+# SAME loaded libpcre2 (method `libpcre2-dfa-fallback`, expectations.py). It
+# shares no matching algorithm with `pcre2_match` -- a state-set simulation,
+# no backtracking, no match limit -- which is why it can answer a triple the
+# backtracker gave up on, and why its agreement with the backtracker over the
+# triples the backtracker DID answer is a control (expectations.py
+# `control_dfa_agreement`). Semantics differ from `search`: it reports the
+# LONGEST match at the leftmost start (not leftmost-first) and records no
+# captures; atomic groups and possessive quantifiers are treated as plain
+# ones, and backreferences/recursion are errors. Which patterns it may speak
+# for is decided in expectations.py, not here -- this is the raw binding.
+# [measured] on this box's 10.46: the workspace-too-small error is -43.
+PCRE2_ERROR_DFA_WSSIZE = -43
+_DFA_WS_START = 1000
+# THE DFA's WORK BUDGET, deterministic: the workspace is the DFA's live-thread
+# table, and its need grows with the work (nested quantifiers are ~n^2.8 --
+# measured: 0.26 s at n=1000, 14 s at n=4000 for `^(([a-z]+)*)+$`, hours at
+# 60 KB). A triple whose workspace would exceed the cap is DECLINED (a raised
+# Pcre2Error, never an answer), identically on every box -- a wall-clock
+# budget would make the derivation irreproducible. 16000 ints admits n~1000 of
+# the worst nested shape (0.26 s) and every linear pattern at 1 MiB.
+_DFA_WS_MAX = 16000
+
+_lib.pcre2_dfa_match_8.restype = ctypes.c_int
+_lib.pcre2_dfa_match_8.argtypes = [
+    ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t, ctypes.c_size_t,
+    ctypes.c_uint32, ctypes.c_void_p, ctypes.c_void_p,
+    ctypes.POINTER(ctypes.c_int), ctypes.c_int]
+_lib.pcre2_match_data_create_8.restype = ctypes.c_void_p
+_lib.pcre2_match_data_create_8.argtypes = [ctypes.c_uint32, ctypes.c_void_p]
+
+
+def _dfa_search_impl(self, subject, start=0, options=0):
+    """-> (start, end) of the longest match at the leftmost start, or None
+    on NOMATCH; any other negative rc (incl. a match-limit or a workspace
+    that would not fit under the cap) is RAISED, never folded into None."""
+    if isinstance(subject, str):
+        subject = subject.encode("latin-1")
+    md = _lib.pcre2_match_data_create_8(8, None)
+    if not md:
+        raise MemoryError("pcre2_match_data_create failed")
+    try:
+        wscount = _DFA_WS_START
+        while True:
+            ws = (ctypes.c_int * wscount)()
+            rc = _lib.pcre2_dfa_match_8(self._code, subject, len(subject),
+                                        start, options, md, None, ws, wscount)
+            if rc == PCRE2_ERROR_DFA_WSSIZE and wscount < _DFA_WS_MAX:
+                wscount = min(wscount * 4, _DFA_WS_MAX)
+                continue
+            break
+        if rc == PCRE2_ERROR_NOMATCH:
+            return None
+        if rc < 0:
+            raise Pcre2Error("pcre2_dfa_match error %d: %s" % (rc, _errmsg(rc)))
+        # rc 0 = more matches than ovector pairs; pair 0 is still the
+        # longest match, which is all this method ever reads.
+        ov = _lib.pcre2_get_ovector_pointer_8(md)
+        return (ov[0], ov[1])
+    finally:
+        _lib.pcre2_match_data_free_8(md)
+
+
 Compiled.match = _match_impl
+Compiled.dfa_search = _dfa_search_impl
 Compiled.find_all = _find_all_impl
 Compiled.pattern_info = _pattern_info_impl
 
@@ -464,6 +528,20 @@ if __name__ == "__main__":
     assert rx3.match("aaa") == ((0, 3), ()), rx3.match("aaa")
     assert rx3.find_all("aa b aaa") == ((0, 2), 2), rx3.find_all("aa b aaa")
     print("anchoring bits + find_all: OK")
+
+    # [B125] dfa_search: LONGEST at the leftmost start (search() is
+    # leftmost-FIRST), NOMATCH is None, and the nested-quantifier ReDoS
+    # shape the backtracker gives up on answers without a limit.
+    assert compile(r"a|ab").search("xab") == ((1, 2), ())
+    assert compile(r"a|ab").dfa_search("xab") == (1, 3)
+    assert compile(r"a|ab").dfa_search("xyz") is None
+    assert compile(r"^(([a-z]+)*)+$").dfa_search(b"a" * 18 + b"!") is None
+    try:
+        compile(r"^(([a-z]+)*)+$").search(b"a" * 18 + b"!")
+        raise AssertionError("the backtracker no longer gives up here")
+    except Pcre2Error as e:
+        assert "-47" in str(e), e
+    print("dfa_search (longest-at-leftmost, nomatch, no limit): OK")
 
     # pattern_info: the PCRE2_INFO_* codes, on two patterns whose analysis is
     # known by construction. `abc` must report a first unit 'a' AND a required

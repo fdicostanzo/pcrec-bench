@@ -93,7 +93,8 @@ objective is calls-as-factoring (a testee may not run the inlined
 original in its place)". Expectations via the libpcre2 oracle (pcrec's
 ctypes binding docs/design/eng_brep_measurements/probes/pcre2_ctypes.py,
 copied into `pcrecbench/oracle_pcre2.py` with attribution), method
-`libpcre2-differential`, oracle version recorded.
+`libpcre2-differential`, oracle version recorded. ([B125]: a set may also
+declare a second method for oracle give-ups -- `expectation_methods_v1.md`.)
 
 ## 3. The adapter interface: `testees/<name>/`
 

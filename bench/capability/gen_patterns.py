@@ -252,6 +252,14 @@ def _load_designed_sha256sums():
     return out
 
 
+# [B125] capability@0.2's seven additions were authored 2026-10-08; every
+# 0.1 designed member keeps the 0.1 authoring date (byte-identical blocks).
+RETRIEVED_OVERRIDE = {pid: "2026-10-08" for pid in (
+    "letters-bounded-tail-z", "tail-digits-eol", "tail-word-eoz",
+    "tail-space-eol", "tail-ext-lower-txt", "tail-dotstar-txt",
+    "hex8-bounded")}
+
+
 def load_designed():
     rows = _read_tsv(DESIGNED_TSV)
     sums = _load_designed_sha256sums()
@@ -282,7 +290,8 @@ def load_designed():
             requires=requires, role="member",
             source=dict(source="authored", url="", ref="",
                         license="n-a", license_note="",
-                        retrieved="2026-09-16", fidelity="synthesized",
+                        retrieved=RETRIEVED_OVERRIDE.get(pid, "2026-09-16"),
+                        fidelity="synthesized",
                         adaptation=r["inspiration"], attribution=""),
             twin_of=TWIN_OF_RESOLVED.get(pid, r["twin_of"]
                                           if r["twin_of"] != "-" else None),
@@ -1162,8 +1171,8 @@ def render_ext_bench():
 def render_rxt(pats):
     out = []
     out.append("description |")
-    out.append("  bench/capability@0.1 -- the capability survey set")
-    out.append("  ([B42]). Sixty-four patterns in twelve capability/")
+    out.append("  bench/capability@0.2 -- the capability survey set")
+    out.append("  ([B42], [B125]). Seventy-one patterns in twelve capability/")
     out.append("  provenance families plus the floor, BUILT ON this")
     out.append("  format as its pattern source of truth. See")
     out.append("  docs/design/capability_set_v1.md and")
@@ -1174,7 +1183,7 @@ def render_rxt(pats):
     out.append("vocabulary hazard " + " ".join(HAZARD_VOCAB))
     out.append("vocabulary requires " + " ".join(REQUIRES_VOCAB))
     out.append("vocabulary convention " + " ".join(CONVENTION_VOCAB))
-    out.append("tag set=capability, version=0.1")
+    out.append("tag set=capability, version=0.2")
     out.append(render_ext_bench_head())
     out.append("")
     for p in pats:
