@@ -73,11 +73,12 @@ short_search_max_bytes = 512
 [expectations]
 file = "expectations.tsv"
 default_method = "libpcre2-differential"
-# [B125] (capability@0.2): the SECOND method, for a triple the backtracker
-# gave up on only -- pcre2_dfa_match from the same libpcre2, restricted in
-# code (pcrecbench/expectations.py dfa_fallback) to nomatch and to the
-# fully-anchored span, with a standing control over every answered triple.
-fallback_method = "libpcre2-dfa-fallback"
+# [B125] (capability@0.2): the fallback methods, in precedence order, for a
+# triple the backtracker gave up on only (pcrecbench/expectations.py): the
+# structural alphabet rule (nomatch only), then pcre2_dfa_match from the same
+# libpcre2 (nomatch, and the fully-anchored span), each restricted in code and
+# each with a standing control over every answered triple.
+fallback_methods = ["structural-alphabet", "libpcre2-dfa-fallback"]
 
 [[patterns]]
 name = "ipv4-near-miss"

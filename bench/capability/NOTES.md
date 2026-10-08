@@ -448,26 +448,42 @@ roster rows declare it; TRE via the adapter's own wrap). Engine-neutral
 NB I-136 says capability "has hex32-id"; it has no such pattern (the UUID pair is
 hyphen-delimited, the secrets are prefixed), so `hex8-bounded` fills a real gap.
 
-New subjects (8, all throughput): `t-evil-match-60k` / `t-evil-nearmiss-60k`
-(61,440 B of random [a-z]; the same plus `!`), `t-trim-match-60k` /
-`t-trim-nearmiss-60k` (61,440 B of mixed `\s`, ending in a space; the same plus
+New subjects (8, all throughput): `t-evil-match-60k` (61,440 B of random [a-z]) /
+`t-evil-nearmiss-16k` (its first 16 KiB plus `!`), `t-trim-match-60k` (61,440 B
+of mixed `\s`, ending in a space) / `t-trim-nearmiss-16k` (its first 16 KiB plus
 `x`), `t-mixed-runs-4k` (4,096 B of interleaved short letter/digit/hex/decimal/
 separator runs, ending in a letter -- the first non-pure-run subject here), and
 `t-tail-{digits,txt,space}-1m` (~1 MiB of generated prose with digits, `name.ext`
 mentions and 8-hex ids, one body, three different last lines). The tail truth
 table (a match and a non-match per pattern) is in each manifest description.
 
-**The second expectation method** is `docs/design/expectation_methods_v1.md`.
-Findings of this lane, stated here because they bound the set: the DFA restores
-the two SHORT dropped triples (both `nomatch`); on nested quantifiers the DFA is
-itself ~n^2.8, so it CANNOT restore the long near-misses -- the triples the
-backtracker gives up on at 60 KiB stay DROPPED BY NAME (the derivation lists
-them), by a deterministic workspace budget. `.*\.txt$` over 1 MiB is NOT a
-give-up for the backtracker (0.02 s per find-all, measured at derivation), so the
-tail family is all `libpcre2-differential`. `\s+$` against `t-trim-nearmiss-60k`
-is genuinely QUADRATIC for the backtracker (25 s in the oracle, no give-up: the
-repeat is auto-possessified, so it is slow, not limited) -- the trailing-whitespace
-shape CVE-2022-25927 was about; pcre2 cells pay it.
+**The expectation methods** are `docs/design/expectation_methods_v1.md`
+(precedence: differential -> `structural-alphabet` -> `libpcre2-dfa-fallback`
+-> dropped by name; the soundness argument for the structural rule is there).
+Findings of this lane, stated here because they bound the set: the DFA is
+itself ~n^2.8 on nested quantifiers (0.26 s at n=1000, 14 s at n=4000), so it
+cannot answer the long near-misses; the structural rule can, because
+`!` is not in `[a-z]` and `x` is not in `\s`. Result: the two short dropped
+triples and the two long near-misses (`evil-alt-nested` x `t-evil-nearmiss-16k`,
+`trim-nested-star` x `t-trim-nearmiss-16k`) carry method `structural-alphabet`;
+the DFA fallback is declared and tested but, by precedence, restores nothing in
+this set. Two triples stay DROPPED BY NAME (no required-literal rule this
+revision): `email-nested-plus` x `t-evil-match-60k` and x `t-evil-nearmiss-16k`.
+`.*\.txt$` over 1 MiB is NOT a give-up for the backtracker (0.02 s per
+find-all), so the tail family is all `libpcre2-differential`.
+
+**Predicted pcre2 cell cost, recorded not avoided.** `\s+$` against a long
+whitespace run plus one non-space is QUADRATIC for the backtracker (the repeat
+is auto-possessified, so it is slow rather than limited): MEASURED at the oracle,
+1.83 s per find-all on `t-trim-nearmiss-16k` (25 s at the original 60 KiB, why
+the near-misses were cut to 16 KiB); pcre2-interp and pcre2-jit cells for
+`tail-space-eol` x `t-trim-nearmiss-16k` should be predicted at order seconds
+per call, a real PCRE2 property (the CVE-2022-25927 shape). Other new triples
+over 1 s per oracle call: `tail-ext-lower-txt` x `t-evil-match-60k` 1.7 s,
+`letters-bounded-tail-z` x `t-evil-match-60k` 1.2 s, and `wild-waf-crs-942360-
+concat-sqli` x `t-trim-match-60k` 1.7 s (an existing pattern on a new subject);
+`wild-datetime-datefinder-alternation` x each `t-tail-*-1m` 6.8 s (existing
+pattern, 1 MiB like `t-1m`).
 
 ### Predictions (stated before any run; scored by the window, not here)
 
@@ -475,13 +491,14 @@ shape CVE-2022-25927 was about; pcre2 cells pay it.
   gives up and every row is the whole-subject match / count 1; backtrackers take
   the first greedy path (linear). pcrec-auto at a pin >= 02db3811 ([NULLABLE-ANCH])
   is within 3x of pcre2-jit there.
-- P12 (the near-miss split). On `t-evil-nearmiss-60k` and `t-trim-nearmiss-60k`
+- P12 (the near-miss split). On `t-evil-nearmiss-16k` and `t-trim-nearmiss-16k`
   pcre2-interp and pcre2-jit GIVE UP (match limit) -- their rows are `gave up`,
   not wrong -- while pcre2-dfa, the re2 rows, vectorscan and pcrec's DFA route
-  answer `nomatch`. Those cells have NO expectation for the triples the second
-  method cannot restore (named in the lane report), so they cannot be scored
-  correct/incorrect: they read `n_no_expectation`, and that is the finding.
-- P13 (design-quadratic). `tail-space-eol` x `t-trim-nearmiss-60k`: pcre2-interp
+  answer `nomatch`. The two ReDoS patterns' triples HAVE expectations now (method
+  `structural-alphabet`), so those cells are judged: a give-up is `gave up`, not
+  wrong. Only `email-nested-plus` x the two evil subjects has none
+  (`n_no_expectation`).
+- P13 (design-quadratic). `tail-space-eol` x `t-trim-nearmiss-16k` (1.83 s per oracle call): pcre2-interp
   and pcre2-jit are >= 100x any linear engine (re2, vectorscan, pcrec DFA) on that
   cell, and the pcre2 per-call time is seconds, not microseconds.
 - P14 (the end-anchored tails, I-136 item 2). `tail-*` x `t-tail-*-1m` agree with
@@ -503,8 +520,8 @@ shape CVE-2022-25927 was about; pcre2 cells pay it.
 - R9. A cell at a 0.2 subject is compared across engines at 0.2 only; the 0.1
   cells are untouched and a cross-version delta is not a ranking.
 - R10. A cell whose whole point is a backtracker's give-up or quadratic cost
-  (the four near-miss triples, `tail-space-eol` x `t-trim-nearmiss-60k`) is
+  (the near-miss triples, `tail-space-eol` x `t-trim-nearmiss-16k`) is
   reported as that cell's finding, never as an outlier engine.
 - R11. A throughput subject with a dropped (no-expectation) triple for a pattern
   excludes that pattern's cell at that subject's set-grain pass rate; the number
-  of such triples is stated on the report (it is 4 by the derivation below).
+  of such triples is stated on the report (it is 2 by the derivation).

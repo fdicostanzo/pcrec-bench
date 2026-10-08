@@ -13885,7 +13885,7 @@ def check_expectation_second_method():
         return ex.dfa_fallback(o.compile(pat), pat, body, regime)
 
     r, why = fb(rb"^(([a-z]+)*)+$", b"a" * 17 + b"!")
-    (ok if r == ("nomatch", "-", "-", "-") else bad)("fallback states NOMATCH for the evil near-miss", repr((r, why)))
+    (ok if r == ("nomatch", "-", "-", "-") else bad)("dfa fallback states NOMATCH for the evil near-miss", repr((r, why)))
     r, why = fb(rb"^(([a-z]+)*)+$", b"a" * 17 + b"!", "throughput")
     (ok if r == ("nomatch", "-", "-", "0") else bad)("fallback nomatch carries count 0 in throughput", repr((r, why)))
     r, why = fb(rb"^[a-z]+$", b"abc", "throughput")
@@ -13909,17 +13909,66 @@ def check_expectation_second_method():
         "CONTROL: a doctored backtracker answer is a DISAGREEMENT",
         "%d agree, %d disagreements" % (c.exist_agree, len(c.disagreements)))
 
-    # The committed census: exactly the two restored triples are dfa rows.
+    # structural-alphabet (nomatch only): positive arms, every decline arm,
+    # and the control that a doctored oracle answer is a disagreement.
+    sn = ex.structural_nomatch
+    arms = [
+        (rb"^(([a-z]+)*)+$", b"a" * 17 + b"!", True),
+        (rb"^(\s+)*$", b" \t\n x", True),
+        (rb"^[^a]+\z", b"ab", True),
+        (rb"^\d+\.\d+$", b"12.5x", True),
+        (rb"^(([a-z]+)*)+$", b"aaa", False),              # inside A: no claim
+        (rb"^a$", b"a\n", False),                         # one final \n excused
+        (rb"^a\z", b"a\n", True),                         # ...but not under \z
+        (rb"^a|b$", b"zzz", False),                        # top-level alternation
+        (rb"a$", b"zzz", False),                           # no leading ^
+        (rb"^(?=a)a$", b"zzz", False),                     # lookaround
+        (rb"^(a)\1$", b"zzz", False),                      # backreference
+        (rb"^a.$", b"zzz", False),                         # dot: dotall-dependent
+        (rb"^a\b$", b"zzz", False),                        # \b assertion
+        (rb"^a++$", b"zzz", False),                        # possessive
+        (rb"(?m)^a$", b"zzz", False),                      # flag group
+        (rb"^\x41$", b"zzz", False),                       # unknown escape
+        (rb"^[[:alpha:]]+$", b"1", False),                 # posix class
+    ]
+    wrong = [(t, b, sn(t, b)[0], want) for t, b, want in arms if sn(t, b)[0] != want]
+    (ok if not wrong else bad)("structural-alphabet: positive and every decline arm", repr(wrong) if wrong else "%d arms" % len(arms))
+    # every positive verdict agrees with the oracle (no sharing of algorithm)
+    wrong = []
+    for t, b, want in arms:
+        if want:
+            if o.compile(t).dfa_search(b) is not None or _bt_search(o, t, b) not in (None, "gave-up"):
+                wrong.append((t, b))
+    (ok if not wrong else bad)("structural-alphabet: oracle agrees on every positive arm", repr(wrong) if wrong else "ok")
+    c = ex.DfaControl()
+    rxm = o.compile(rb"^a$")
+    c.feed("p", "s", "search_short", rxm, rb"^a$", b"ab", None, None)   # honest
+    c.feed("p", "s", "search_short", rxm, rb"^a$", b"ab", (0, 1), None)  # doctored
+    (ok if c.struct_agree == 1 and len(c.disagreements) >= 1 else bad)(
+        "CONTROL: a doctored oracle answer against structural-alphabet is a DISAGREEMENT",
+        "%d agree, %d disagreements" % (c.struct_agree, len(c.disagreements)))
+
+    # The committed census: the four restored triples are structural rows.
     sb = _find_sb("capability")
     rows = list(sb.expectations.values())
-    dfa_rows = sorted((e.pattern, e.subject) for e in rows
-                      if e.method == ex.METHOD_DFA)
+    by = {}
+    for e in rows:
+        by.setdefault(e.method, []).append((e.pattern, e.subject))
     want = [("evil-alt-nested", "rd-evil-alt-near-miss"),
-            ("evil-alt-nested", "sd-empty-alt-hit")]
-    (ok if dfa_rows == want else bad)("capability: the dfa rows are exactly the two restored triples", repr(dfa_rows))
-    other = {e.method for e in rows} - {ex.METHOD_DFA}
-    (ok if other == {ex.METHOD} else bad)("capability: every other row is libpcre2-differential", repr(sorted(other)))
-    (ok if sb.fallback_method == ex.METHOD_DFA else bad)("capability declares fallback_method", repr(sb.fallback_method))
+            ("evil-alt-nested", "sd-empty-alt-hit"),
+            ("evil-alt-nested", "t-evil-nearmiss-16k"),
+            ("trim-nested-star", "t-trim-nearmiss-16k")]
+    got = sorted(by.get(ex.METHOD_STRUCT, []))
+    (ok if got == sorted(want) else bad)("capability: the structural-alphabet rows are exactly the four restored triples", repr(got))
+    (ok if set(by) <= {ex.METHOD, ex.METHOD_STRUCT, ex.METHOD_DFA} else bad)("capability: only the three declared methods appear", repr(sorted(by)))
+    (ok if sb.fallback_methods == (ex.METHOD_STRUCT, ex.METHOD_DFA) else bad)("capability declares fallback_methods in precedence order", repr(sb.fallback_methods))
+
+
+def _bt_search(o, pat, body):
+    try:
+        return o.compile(pat).search(body)
+    except o.Pcre2Error:
+        return "gave-up"
 
 
 def check_capability_roster_coverage():

@@ -59,12 +59,13 @@ _TAILS = (
      "`.*\\.txt$` do not"),
 )
 _LONG = 60 * 1024
+_NEAR = 16 * 1024      # the near-misses: a 16 KiB prefix of the matching run + 1 byte
 
 
 def extra_subjects():
-    """-> [(id, bytes, description)] in manifest order. The two long
-    ReDoS-family subjects pair a MATCHING run with its NEAR-MISS (the SAME
-    run plus one terminating non-member byte), for `^(([a-z]+)*)+$` and
+    """-> [(id, bytes, description)] in manifest order. The long
+    ReDoS-family subjects pair a 60 KiB MATCHING run with a 16 KiB NEAR-MISS (a
+    prefix of the SAME run plus one terminating non-member byte), for `^(([a-z]+)*)+$` and
     `^(\\s+)*$`; the mixed-run subject is ~4 KB of interleaved short runs;
     the three tail subjects share one ~1 MiB prose body and differ only in
     their last line."""
@@ -75,15 +76,17 @@ def extra_subjects():
          "throughput/[B125] 60 KiB of random [a-z], nothing else: the "
          "long MATCHING subject of `^(([a-z]+)*)+$` (whole subject; the "
          "backtracker's first greedy path)"),
-        ("t-evil-nearmiss-60k", letters + b"!",
-         "throughput/[B125] t-evil-match-60k + one '!': the long NEAR-MISS "
-         "(the same run plus one terminating non-member byte) -- exponential "
-         "for a backtracker, the oracle's second method answers it"),
+        ("t-evil-nearmiss-16k", letters[:_NEAR] + b"!",
+         "throughput/[B125] the first 16 KiB of t-evil-match-60k + one '!': the "
+         "long NEAR-MISS (the same run plus one terminating non-member byte) "
+         "-- exponential for a backtracker; the oracle's structural-alphabet "
+         "rule answers it"),
         ("t-trim-match-60k", spaces,
          "throughput/[B125] 60 KiB of mixed \\s bytes (space/tab/LF/CR/FF/VT), "
          "ending in a space: the long MATCHING subject of `^(\\s+)*$`"),
-        ("t-trim-nearmiss-60k", spaces + b"x",
-         "throughput/[B125] t-trim-match-60k + one 'x': the long NEAR-MISS"),
+        ("t-trim-nearmiss-16k", spaces[:_NEAR] + b"x",
+         "throughput/[B125] the first 16 KiB of t-trim-match-60k + one 'x': the "
+         "long NEAR-MISS"),
         ("t-mixed-runs-4k", ct.mixed_runs(4096, 0xC0FFEE13),
          "throughput/[B125] 4096 B of interleaved SHORT runs (letters, "
          "digits, hex, signed decimals, separators, standalone 8-hex ids), "

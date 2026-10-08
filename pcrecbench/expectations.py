@@ -46,7 +46,7 @@ stderr, because an expectation derived from a give-up is a wrong answer
 recorded as ground truth.
 
 THE SECOND METHOD ([B125], capability@0.2; docs/design/expectation_methods_v1.md).
-A set that declares `[expectations] fallback_method = "libpcre2-dfa-fallback"`
+A set that declares `[expectations] fallback_methods = ["structural-alphabet", "libpcre2-dfa-fallback"]`
 gets a second chance for exactly the triples the backtracker GAVE UP on:
 `pcre2_dfa_match` from the same pinned libpcre2 (no backtracking, no match
 limit). It is not the backtracker's equal. It reports the longest match at
@@ -326,6 +326,218 @@ def dfa_fallback(rx, text, body, regime):
     return ("match", "0", str(len(body)), n), None
 
 
+# --------------------------------------------------------------------------
+# [B125] THE STRUCTURAL ALPHABET RULE (method `structural-alphabet`), NOMATCH
+# ONLY. SOUNDNESS ARGUMENT. Take a pattern `^BODY$` or `^BODY\z` (no flag
+# group, so no multiline) in which BODY is built ONLY from literals, bracket
+# classes, \s \d \w, groups, alternation inside groups and quantifiers. Every
+# byte a match consumes is consumed by one atom of BODY, so it lies in the
+# union alphabet A of BODY's atoms. The `^` pins the match start to 0 and
+# there is no top-level alternation to escape it; `\z` pins the end to N,
+# `$` pins it to N, or to N-1 when the subject ends in a newline (the
+# default newline convention is LF; a trailing CR or CRLF is excluded as
+# well, conservatively). So every byte of the subject, minus that one
+# optional trailing newline under `$`, MUST be in A for a match to exist; a
+# single byte outside A means NO match. The rule never states a match, and
+# anything the parser does not fully understand DECLINES -- the parser is a
+# whitelist, not a filter. It shares no matching algorithm with the oracle
+# (set membership against a byte set), and `DfaControl` checks its verdict
+# against the backtracker's on every triple the backtracker answered.
+# --------------------------------------------------------------------------
+METHOD_STRUCT = "structural-alphabet"
+
+_SET_S = frozenset(b"\t\n\x0b\x0c\r ")
+_SET_D = frozenset(b"0123456789")
+_SET_W = frozenset(b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
+_ALL = frozenset(range(256))
+_CLASS_ESC = {ord("s"): _SET_S, ord("d"): _SET_D, ord("w"): _SET_W}
+_CTRL_ESC = {ord("t"): 9, ord("n"): 10, ord("r"): 13, ord("f"): 12}
+_PLAIN_SPECIAL = frozenset(b"\\^$.|?*+()[]{}")
+
+
+class _Decline(Exception):
+    pass
+
+
+class _AlphaParser:
+    def __init__(self, t):
+        self.t = t
+        self.i = 0
+        self.alpha = set()
+
+    def peek(self):
+        return self.t[self.i] if self.i < len(self.t) else None
+
+    def alt(self, depth):
+        self.seq(depth)
+        while self.peek() == ord("|"):
+            if depth == 0:
+                raise _Decline("top-level alternation")
+            self.i += 1
+            self.seq(depth)
+
+    def seq(self, depth):
+        while True:
+            c = self.peek()
+            if c is None or c == ord("|") or c == ord(")"):
+                return
+            self.atom(depth)
+            self.quant()
+
+    def esc(self, in_class):
+        # at a backslash
+        self.i += 1
+        d = self.peek()
+        if d is None:
+            raise _Decline("trailing backslash")
+        self.i += 1
+        if d in _CLASS_ESC:
+            return _CLASS_ESC[d], None
+        if d in _CTRL_ESC:
+            return None, _CTRL_ESC[d]
+        if d < 128 and not chr(d).isalnum() and chr(d) != "_":
+            return None, d                  # an escaped punctuation literal
+        raise _Decline("escape \\%s" % chr(d))
+
+    def atom(self, depth):
+        c = self.peek()
+        if c == ord("("):
+            self.i += 1
+            if self.peek() == ord("?"):
+                if self.t[self.i:self.i + 2] != b"?:":
+                    raise _Decline("group kind")
+                self.i += 2
+            self.alt(depth + 1)
+            if self.peek() != ord(")"):
+                raise _Decline("unbalanced")
+            self.i += 1
+        elif c == ord("["):
+            self.cls()
+        elif c == ord("\\"):
+            st, lit = self.esc(False)
+            self.alpha |= st if st is not None else {lit}
+        elif c in _PLAIN_SPECIAL:
+            raise _Decline("special %s" % chr(c))
+        else:
+            self.alpha.add(c)
+            self.i += 1
+
+    def cls(self):
+        self.i += 1
+        neg = False
+        if self.peek() == ord("^"):
+            neg = True
+            self.i += 1
+        if self.peek() == ord("]"):
+            raise _Decline("leading ] in class")
+        members = set()
+        prev = None                          # last single byte (range start)
+        while True:
+            c = self.peek()
+            if c is None:
+                raise _Decline("unterminated class")
+            if c == ord("]"):
+                self.i += 1
+                break
+            if c == ord("["):
+                raise _Decline("posix class / nested [")
+            if c == ord("\\"):
+                st, lit = self.esc(True)
+                if st is not None:
+                    members |= st
+                    prev = None
+                    continue
+                cur = lit
+            else:
+                cur = c
+                self.i += 1
+            # a range `prev-cur2`?
+            if self.peek() == ord("-") and self.t[self.i + 1:self.i + 2] not in (b"]", b""):
+                self.i += 1
+                hi = self.peek()
+                if hi == ord("\\"):
+                    st, hlit = self.esc(True)
+                    if st is not None:
+                        raise _Decline("class escape as range end")
+                    hi = hlit
+                else:
+                    if hi in (ord("["),):
+                        raise _Decline("range end [")
+                    self.i += 1
+                if hi < cur:
+                    raise _Decline("reversed range")
+                members |= set(range(cur, hi + 1))
+                prev = None
+            else:
+                members.add(cur)
+                prev = cur
+        self.alpha |= (_ALL - members) if neg else members
+
+    def quant(self):
+        c = self.peek()
+        if c in (ord("*"), ord("+"), ord("?")):
+            self.i += 1
+        elif c == ord("{"):
+            import re as _re
+            m = _QUANT_RE.match(self.t, self.i)
+            if not m:
+                raise _Decline("bare {")
+            self.i = m.end()
+        else:
+            return
+        if self.peek() == ord("?"):
+            self.i += 1                      # lazy marker
+        elif self.peek() == ord("+"):
+            raise _Decline("possessive")
+        if self.peek() in (ord("*"), ord("+"), ord("?"), ord("{")):
+            raise _Decline("stacked quantifier")
+
+
+def structural_alphabet(text):
+    """-> (alphabet frozenset, end_kind "$"|"\\z") for a pattern in the rule's
+    scope, or raises _Decline(reason)."""
+    t = bytes(text)
+    if not t.startswith(b"^"):
+        raise _Decline("no leading ^")
+    def _bs_before(n):          # backslashes immediately before index n
+        k = 0
+        while n - 1 - k >= 0 and t[n - 1 - k] == ord("\\"):
+            k += 1
+        return k
+
+    if t.endswith(b"\\z") and _bs_before(len(t) - 2) % 2 == 0:
+        kind, body = "\\z", t[1:-2]
+    elif t.endswith(b"$") and _bs_before(len(t) - 1) % 2 == 0:
+        kind, body = "$", t[1:-1]
+    else:
+        raise _Decline("no trailing $ or \\z")
+    p = _AlphaParser(body)
+    p.alt(0)
+    if p.i != len(body):
+        raise _Decline("unparsed tail at %d" % p.i)
+    return frozenset(p.alpha), kind
+
+
+def structural_nomatch(text, body):
+    """-> (True, None) when the rule PROVES `text` has no match over `body`;
+    (False, reason) when it declines or the subject lies inside A."""
+    try:
+        alpha, kind = structural_alphabet(text)
+    except _Decline as e:
+        return False, "structural-alphabet declines: %s" % e
+    covered = bytes(body)
+    if kind == "$":
+        for tail in (b"\r\n", b"\n", b"\r"):
+            if covered.endswith(tail):
+                covered = covered[:-len(tail)]
+                break
+    if not covered:
+        return False, "structural-alphabet: nothing to refute"
+    if covered.translate(None, bytes(sorted(alpha))):
+        return True, None
+    return False, "structural-alphabet: every subject byte is inside the alphabet"
+
+
 class DfaControl:
     """The control's tally. `disagreements` non-empty fails the run."""
 
@@ -337,9 +549,27 @@ class DfaControl:
         self.span_checked = 0      # fully anchored: span (and count) agree
         self.dfa_errors = []       # the dfa raised (not a disagreement)
         self.disagreements = []
+        self.struct_applies = 0    # triples where structural-alphabet PARSES
+        self.struct_nomatch = 0    # ... and states nomatch
+        self.struct_agree = 0      # ... and the backtracker agrees
 
     def feed(self, name, subject_id, regime, rx, text, body, bt_first, bt_count):
         self.answered += 1
+        # The structural rule is cheap: checked on EVERY answered triple.
+        try:
+            structural_alphabet(text)
+            self.struct_applies += 1
+            hit, _why = structural_nomatch(text, body)
+            if hit:
+                self.struct_nomatch += 1
+                if bt_first is None:
+                    self.struct_agree += 1
+                else:
+                    self.disagreements.append(
+                        (name, subject_id, regime, bt_first,
+                         "structural-alphabet said nomatch"))
+        except _Decline:
+            pass
         bad = dfa_features(text)
         if bad:
             for f in bad:
@@ -369,11 +599,14 @@ class DfaControl:
         return ("dfa control: %d backtracker-answered triple(s); %d on "
                 "DFA-readable patterns, %d skipped (%s); existence+start "
                 "agree on %d; span+count agree on %d anchored; dfa errors "
-                "%d; DISAGREEMENTS %d"
+                "%d; structural-alphabet: parses on %d, states nomatch on %d, "
+                "oracle agrees on %d; DISAGREEMENTS %d"
                 % (self.answered, self.compat, self.answered - self.compat,
                    ", ".join("%s %d" % kv for kv in sorted(self.incompat.items()))
                    or "none", self.exist_agree, self.span_checked,
-                   len(self.dfa_errors), len(self.disagreements)))
+                   len(self.dfa_errors), self.struct_applies,
+                   self.struct_nomatch, self.struct_agree,
+                   len(self.disagreements)))
 
 
 class OracleRefusalError(Exception):
@@ -397,13 +630,13 @@ def derive(sb, report=False, expected_refusals=frozenset(), refusals=None,
     refusal is appended to `refusals` (when given) as `(pattern, message)`
     so the caller can print it.
 
-    THE SECOND METHOD ([B125]). When the set declares `fallback_method`, a
+    THE SECOND METHOD ([B125]). When the set declares `fallback_methods` (tried in order), a
     triple the backtracker gave up on goes to `dfa_fallback`; a row it can
     state is written with method `libpcre2-dfa-fallback` and appended to
-    `fallbacks` (when given) as `(pattern, subject, regime, expected)`; one it
+    `fallbacks` (when given) as `(pattern, subject, regime, expected, method, why-it-gave-up)`; one it
     cannot stays in `giveups`, now as `(pattern, subject, regime, message)`
     with the reason appended. `control` (a `DfaControl`, when given) is fed
-    every triple the backtracker ANSWERED. A set without `fallback_method`
+    every triple the backtracker ANSWERED. A set without `fallback_methods`
     is derived exactly as it was."""
     version = oracle.version()
     rows = []
@@ -452,18 +685,30 @@ def derive(sb, report=False, expected_refusals=frozenset(), refusals=None,
                         groups = ()
                         n = str(count)
                 except oracle.Pcre2Error as e:
-                    if sb.fallback_method:
-                        fb, why = dfa_fallback(rx, text, body, regime)
-                        if fb is not None:
-                            rows.append((pat.name, subj.subject_id, regime,
-                                         fb[0], fb[1], fb[2], fb[3],
-                                         METHOD_DFA, version))
-                            if fallbacks is not None:
-                                fallbacks.append((pat.name, subj.subject_id,
-                                                  regime, fb[0], str(e)))
-                            continue
-                        giveups.append((pat.name, subj.subject_id, regime,
-                                        "%s; fallback declined: %s" % (e, why)))
+                    if sb.fallback_methods:
+                        why_all = []
+                        for meth in sb.fallback_methods:
+                            if meth == METHOD_STRUCT:
+                                hit, why = structural_nomatch(text, body)
+                                fb = (("nomatch", "-", "-",
+                                       "0" if regime == "throughput" else "-")
+                                      if hit and regime != "match" else None)
+                            else:
+                                fb, why = dfa_fallback(rx, text, body, regime)
+                            if fb is not None:
+                                rows.append((pat.name, subj.subject_id,
+                                             regime, fb[0], fb[1], fb[2],
+                                             fb[3], meth, version))
+                                if fallbacks is not None:
+                                    fallbacks.append((pat.name, subj.subject_id,
+                                                      regime, fb[0], meth,
+                                                      str(e)))
+                                break
+                            why_all.append(why)
+                        else:
+                            giveups.append((pat.name, subj.subject_id, regime,
+                                            "%s; fallbacks declined: %s"
+                                            % (e, " | ".join(why_all))))
                         continue
                     giveups.append((pat.name, subj.subject_id, regime, str(e)))
                     continue
@@ -506,21 +751,21 @@ def main(here, argv=None, doc=None, expected_refusals=frozenset()):
                          "instead of writing it (the `make check` mode)")
     ap.add_argument("--report", action="store_true", default=True)
     ap.add_argument("--no-control", action="store_true",
-                    help="skip the dfa control (a set with `fallback_method` "
+                    help="skip the dfa control (a set with `fallback_methods` "
                          "runs it on every derivation otherwise)")
     args = ap.parse_args(argv)
 
     sb = load_subbench(here)
     refusals = []
     fallbacks = []
-    control = DfaControl() if sb.fallback_method and not args.no_control else None
+    control = DfaControl() if sb.fallback_methods and not args.no_control else None
     rows, giveups, version = derive(sb, report=args.report,
                                     expected_refusals=expected_refusals,
                                     refusals=refusals, fallbacks=fallbacks,
                                     control=control)
-    for p, s_, r, x, msg in fallbacks:
+    for p, s_, r, x, meth, msg in fallbacks:
         print("ORACLE GAVE UP, RESTORED by %s: %s / %s / %s -> %s (%s)"
-              % (METHOD_DFA, p, s_, r, x, msg), file=sys.stderr)
+              % (meth, p, s_, r, x, msg), file=sys.stderr)
     if control is not None:
         print(control.summary())
         for d in control.dfa_errors:

@@ -318,9 +318,11 @@ docs/dev/'s append-only records.
 
 - `expectation_methods_v1.md` — **[B125] (2026-10-08) the expectation
   verification METHOD vocabulary**: `libpcre2-differential` (every set,
-  unchanged) and the second method `libpcre2-dfa-fallback`
+  unchanged) plus two fallbacks for backtracker give-ups,
+  `structural-alphabet` (nomatch only, a soundness argument) and
+  `libpcre2-dfa-fallback`
   (`pcre2_dfa_match` of the same libpcre2, declared per set by
-  `[expectations] fallback_method`, used only for a triple the backtracker
+  `[expectations] fallback_methods`, used only for a triple the backtracker
   gave up on, restricted IN CODE to nomatch and to the fully-anchored span,
   with a deterministic workspace budget and a standing control over every
   answered triple). First user: capability@0.2.
