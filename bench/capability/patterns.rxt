@@ -1,6 +1,6 @@
 description |
-  bench/capability@0.1 -- the capability survey set
-  ([B42]). Sixty-four patterns in twelve capability/
+  bench/capability@0.2 -- the capability survey set
+  ([B42], [B125]). Seventy-one patterns in twelve capability/
   provenance families plus the floor, BUILT ON this
   format as its pattern source of truth. See
   docs/design/capability_set_v1.md and
@@ -11,7 +11,7 @@ vocabulary family wild-validator wild-logparse wild-waf wild-secrets wild-dateti
 vocabulary hazard none exponential-backtracking ambiguous-decomposition
 vocabulary requires backrefs lookaround lookbehind-variable possessive-quantifier atomic-group recursion conditionals k-reset control-verbs unicode-properties named-groups free-spacing callouts span-reporting non-utf8-subject captures true-end-anchor
 vocabulary convention perl-leftmost-first posix-leftmost-longest
-tag set=capability, version=0.1
+tag set=capability, version=0.2
 ext bench
   roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in pcrec-auto-noreqbyte pcrec-auto-nolitrun pcrec-auto-clang pcrec-nocaps-clang pcrec-vm-clang pcrec-auto-in pcrec-auto-bigcap pcrec-vm-bigcap pcrec-auto-noedge pcrec-auto-align64 pcrec-auto-align64loops pcrec-auto-nolitrun-align64loops pcrec-auto-noisland pcrec-auto-noclsfold pcrec-vm-noclsfold pcrec-vm-nolitrun pcrec-auto-noaltclsfactor pcrec-vm-noaltclsfactor pcrec-auto-noaltclsfactor-nolitrun pcrec-vm-noaltclsfactor-nolitrun pcrec-vm-noreqbyte-noreqrun pcrec-vm-noreqbyte-noreqrun-nolitrun pcrec-auto-o0 pcrec-auto-o1 pcrec-auto-o3 pcrec-auto-os pcrec-vm-o0 pcrec-vm-o1 pcrec-vm-o3 pcrec-vm-os pcrec-auto-nohybreseed pcrec-auto-nostartset pcrec-vm-nostartset pcrec-vm-nocaps pcrec-vm-nocaps-in pcrec-dfa pcrec-dfa-nocaps pcre2-dfa re2-default re2-longest onig-default vectorscan-block-nosom vectorscan-block-som tre-default rust-default
   capabilities pcre2-interp
@@ -758,6 +758,28 @@ provenance
   adaptation |
     the JSON-number grammar's leading-zero/bare-sign strictness (RFC 8259 §6); pairs against L1's imported grok BASE10NUM pattern named in capability_set_v1.md §3.1 family 1
 
+pattern \b[0-9a-f]{8}\b
+name hex8-bounded
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a bare 8-hex-digit id between word boundaries (a short commit hash, a request id, a CRC); authored as the counted-class-between-boundaries shape no existing capability pattern covers (the UUID pair is hyphen-delimited, the secrets are prefixed; there is no hex32-id pattern, I-136's wording notwithstanding) (pcrec inbox I-136 item 3, Frank-approved general-purpose addition, plan [B125])
+
+pattern (?:[a-z]{0,1024})\z
+name letters-bounded-tail-z
+tag family=wild-logparse, hazard=none, requires=true-end-anchor
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a bounded lowercase run pinned to the TRUE end of the subject -- the shape of an end-anchored token extractor capped at a field-length limit (a trailing identifier, slug or hostname label read off the end of a line); authored for the bounded end-anchored family (pcrec inbox I-136 item 1, Frank-approved general-purpose addition, plan [B125]); the nullable body means it matches at the subject end on every subject
+
 pattern ^(?>(?:kern|user|mail|daemon|auth|syslog|cron)\.(?:emerg|alert|crit|err|warning|notice|info|debug)): (.*)$
 name logparse-atomic
 tag family=wild-logparse, hazard=exponential-backtracking, requires=atomic-group
@@ -779,6 +801,61 @@ provenance
   fidelity synthesized
   adaptation |
     the family's own designed-member spec verbatim: "the same pattern with the atomic groups REMOVED -- the author's own fix as a control pair" (capability_set_v1.md §3.1 family 2)
+
+pattern \d+$
+name tail-digits-eol
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a trailing-number extractor (a count, an id or a status code read off the end of a log line); authored for the end-anchored tail family (pcrec inbox I-136 item 2, Frank-approved general-purpose addition, plan [B125])
+
+pattern .*\.txt$
+name tail-dotstar-txt
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    the lazy-programmer file-extension check (anything, then .txt, at the end); authored for the end-anchored tail family (pcrec inbox I-136 item 2, Frank-approved general-purpose addition, plan [B125])
+
+pattern [a-z]+\.txt$
+name tail-ext-lower-txt
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a file-extension check on a lowercase base name (does this path end in .txt); authored for the end-anchored tail family (pcrec inbox I-136 item 2, Frank-approved general-purpose addition, plan [B125])
+
+pattern \s+$
+name tail-space-eol
+tag family=wild-logparse, hazard=none
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a trailing-whitespace detector (the trim-trailing-spaces lint, minus the nested quantifier trim-nested-star carries); authored for the end-anchored tail family (pcrec inbox I-136 item 2, Frank-approved general-purpose addition, plan [B125])
+
+pattern \w+\z
+name tail-word-eoz
+tag family=wild-logparse, hazard=none, requires=true-end-anchor
+provenance
+  source authored
+  retrieved 2026-10-08
+  license n-a
+  fidelity synthesized
+  adaptation |
+    a trailing-word extractor pinned to the TRUE end of the subject by `\z` (the last token of a line or file); authored for the end-anchored tail family (pcrec inbox I-136 item 2, Frank-approved general-purpose addition, plan [B125])
 
 pattern (?<![0-9.+-])(?>[+-]?(?:(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)))
 name wild-logparse-base10num-grok

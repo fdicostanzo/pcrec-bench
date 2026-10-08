@@ -1,4 +1,18 @@
-# bench/capability/ — the capability survey set (`capability@0.1`)
+# bench/capability/ — the capability survey set (`capability@0.2`)
+
+**@0.2 ([B125], 2026-10-08, lane b125cap; Frank's I-136).** Built in place, the
+altwide@0.1 -> 0.2 way: the 64 patterns, 75 short subjects, 3 throughput texts
+and 4,990 expectation rows of 0.1 are byte-identical; 0.2 appends SEVEN
+patterns (family wild-logparse: the end-anchored tail family `tail-*`,
+`letters-bounded-tail-z`, `hex8-bounded`), EIGHT throughput subjects
+(`t-evil-*-60k`, `t-trim-*-60k`, `t-mixed-runs-4k`, `t-tail-*-1m`; see
+`gen_throughput_subjects.extra_subjects`, `captext.letter_run/ws_run/
+mixed_runs/prose`) and a SECOND EXPECTATION METHOD,
+`libpcre2-dfa-fallback` (`[expectations] fallback_method` in `subbench.toml`;
+`docs/design/expectation_methods_v1.md`; `pcrecbench/expectations.py`
+`dfa_fallback`/`DfaControl`). NOTES.md's last section is the 0.2 text, with
+P11-P16 and R9-R11. The counts below this paragraph that say sixty-four
+describe 0.1's first 64 patterns; 0.2 has 71.
 
 WHAT IT IS FOR. A CAPABILITY CONTRAST across the [B7] engine roster: what
 each engine can EXPRESS, what it REFUSES, and what the expressible

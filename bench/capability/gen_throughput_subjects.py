@@ -37,6 +37,63 @@ SIZES = (
     ("t-1m", 1024 * 1024, 0xC0FFEE3),
 )
 
+# [B125] capability@0.2: the subjects APPENDED after the three 0.1 texts
+# (manifest rows 4..; the 0.1 rows and files are untouched, asserted by
+# main()). All are > short_search_max_bytes, so they enter the THROUGHPUT
+# regime only -- and, because the throughput regime is "every pattern x every
+# throughput subject", every pattern of the set is run on each of them.
+#   (id, generator-call, description)
+_PROSE_BYTES = 1024 * 1024 - 64
+_TAILS = (
+    ("t-tail-digits-1m", b"total 20250614",
+     "throughput/[B125] ~1 MiB generated prose (seed 0xC0FFEE21), last line "
+     "'total 20250614': the tail `\\d+$` and `\\w+\\z` MATCH, `\\s+$`, "
+     "`[a-z]+\\.txt$` and `.*\\.txt$` do not"),
+    ("t-tail-txt-1m", b"saved to report.txt",
+     "throughput/[B125] the SAME prose, last line 'saved to report.txt': "
+     "`[a-z]+\\.txt$`, `.*\\.txt$` and `\\w+\\z` ('txt') MATCH, `\\d+$` and "
+     "`\\s+$` do not"),
+    ("t-tail-space-1m", b"end of file   ",
+     "throughput/[B125] the SAME prose, last line 'end of file' + three "
+     "spaces: `\\s+$` MATCHES, `\\d+$`, `\\w+\\z`, `[a-z]+\\.txt$` and "
+     "`.*\\.txt$` do not"),
+)
+_LONG = 60 * 1024
+
+
+def extra_subjects():
+    """-> [(id, bytes, description)] in manifest order. The two long
+    ReDoS-family subjects pair a MATCHING run with its NEAR-MISS (the SAME
+    run plus one terminating non-member byte), for `^(([a-z]+)*)+$` and
+    `^(\\s+)*$`; the mixed-run subject is ~4 KB of interleaved short runs;
+    the three tail subjects share one ~1 MiB prose body and differ only in
+    their last line."""
+    letters = ct.letter_run(_LONG, 0xC0FFEE11)
+    spaces = ct.ws_run(_LONG, 0xC0FFEE12)
+    out = [
+        ("t-evil-match-60k", letters,
+         "throughput/[B125] 60 KiB of random [a-z], nothing else: the "
+         "long MATCHING subject of `^(([a-z]+)*)+$` (whole subject; the "
+         "backtracker's first greedy path)"),
+        ("t-evil-nearmiss-60k", letters + b"!",
+         "throughput/[B125] t-evil-match-60k + one '!': the long NEAR-MISS "
+         "(the same run plus one terminating non-member byte) -- exponential "
+         "for a backtracker, the oracle's second method answers it"),
+        ("t-trim-match-60k", spaces,
+         "throughput/[B125] 60 KiB of mixed \\s bytes (space/tab/LF/CR/FF/VT), "
+         "ending in a space: the long MATCHING subject of `^(\\s+)*$`"),
+        ("t-trim-nearmiss-60k", spaces + b"x",
+         "throughput/[B125] t-trim-match-60k + one 'x': the long NEAR-MISS"),
+        ("t-mixed-runs-4k", ct.mixed_runs(4096, 0xC0FFEE13),
+         "throughput/[B125] 4096 B of interleaved SHORT runs (letters, "
+         "digits, hex, signed decimals, separators, standalone 8-hex ids), "
+         "ending in a letter: the real-text shape no pure-run subject has"),
+    ]
+    for sid, tail, desc in _TAILS:
+        out.append((sid, ct.prose(_PROSE_BYTES, 0xC0FFEE21, tail), desc))
+    return out
+
+
 _REDOS_PATTERNS = (
     r"^([a-zA-Z0-9._%+-]+)+@",
     r"^(\s+)*$",
@@ -66,6 +123,16 @@ def _redos_safety_check(texts):
                     "hold for this text" % (pat, name, dt))
 
 
+# The 0.1 rows, byte for byte: capability@0.2 EXTENDS the manifest, it never
+# re-draws it. A change to captext.text() that moved a 0.1 text would fail
+# here before it reached a manifest.
+_0_1_SHA256 = {
+    "t-64k": "d2e4f134473cc40a9a4e7df7a30e0efa11f566d96ee990c62cd663a2439c8524",
+    "t-256k": "3cf7b248873da164518b74e039cc2380f39e233b2899716c82c8eb4b7b49b5a7",
+    "t-1m": "ccbdf7eb97f15776a68b8bbb9d6387870cd01d4796207fb20032958caf9754ee",
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     rows = ["id\tlen\tsha256\tdescription\tperiodic"]
@@ -73,17 +140,27 @@ def main():
     for sid, nbytes, seed in SIZES:
         body = ct.text(nbytes, seed)
         texts.append((sid, body))
+        assert hashlib.sha256(body).hexdigest() == _0_1_SHA256[sid], (
+            "capability@0.2 moved a 0.1 throughput text: %s" % sid)
         with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
             f.write(body)
         rows.append("%s\t%d\t%s\t%s\t%s" % (
             sid, len(body), hashlib.sha256(body).hexdigest(),
             "throughput/mixed log+http+source+prose grammar, seed 0x%x"
             % seed, ct.periodic_field(body)))
+    for sid, body, desc in extra_subjects():
+        assert len(body) > 512, sid       # throughput-only, by size
+        texts.append((sid, body))
+        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+            f.write(body)
+        rows.append("%s\t%d\t%s\t%s\t%s" % (
+            sid, len(body), hashlib.sha256(body).hexdigest(), desc,
+            ct.periodic_field(body)))
     _redos_safety_check(texts)
     with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(rows) + "\n")
     print("gen_throughput_subjects: %d text(s) -> %s, manifest -> %s "
-          "(redos safety check: OK)" % (len(SIZES), OUT, MANIFEST))
+          "(redos safety check: OK)" % (len(texts), OUT, MANIFEST))
     return 0
 
 

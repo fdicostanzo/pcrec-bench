@@ -116,3 +116,108 @@ def text(nbytes, seed):
         out.append(line)
         total += len(line) + 1
     return ("\n".join(out) + "\n").encode("ascii", "replace")
+
+
+# ---------------------------------------------------------------------------
+# [B125] capability@0.2 -- the additions. EVERYTHING BELOW IS NEW CODE: the
+# four functions above (Rng, text and its line kinds) are untouched, and every
+# function here seeds a FRESH Rng, so no 0.1 subject's bytes can move
+# (gen_throughput_subjects.py asserts the three 0.1 sha256s). They draw their
+# randomness AFTER 0.1's, in the only sense that matters for a set whose
+# subjects are independent files: new seeds, new streams, appended manifest
+# rows.
+# ---------------------------------------------------------------------------
+
+_HEX = "0123456789abcdef"
+_SEPS = " -_.:/,;="
+_FILE_EXT = ("txt", "log", "json", "csv")
+
+
+def letter_run(nbytes, seed):
+    """`nbytes` of uniformly random [a-z] -- the long MATCHING subject of
+    `^(([a-z]+)*)+$` (and, plus one terminating `!`, its near-miss)."""
+    rng = Rng(seed)
+    return bytes(97 + rng.randrange(26) for _ in range(nbytes))
+
+
+def ws_run(nbytes, seed):
+    """`nbytes` of mixed \\s bytes (space 70%, tab 15%, LF 10%, CR 2%, FF 2%,
+    VT 1%), ending in a SPACE so `$`'s before-a-final-newline
+    allowance never decides the span. The long MATCHING subject of
+    `^(\\s+)*$` (plus one terminating `x`, its near-miss)."""
+    rng = Rng(seed)
+    out = bytearray()
+    for _ in range(nbytes):
+        r = rng.randrange(100)
+        out.append(32 if r < 70 else 9 if r < 85 else 10 if r < 95
+                   else 13 if r < 97 else 12 if r < 99 else 11)
+    out[-1] = 32
+    return bytes(out)
+
+
+def mixed_runs(nbytes, seed):
+    """`nbytes` of interleaved SHORT runs -- letters (1-6), digits (1-4),
+    hex (2-8), a signed decimal, a lone separator, now and then a standalone
+    8-hex id -- the way real identifiers, versions and log fields interleave,
+    in place of the pure single-class runs every other subject here is. The
+    last byte is a letter (an end-anchored `[a-z]{0,N}\\z` ends non-empty)."""
+    rng = Rng(seed)
+    out = []
+    total = 0
+    while total < nbytes:
+        k = rng.randrange(14)
+        if k < 4:
+            tok = "".join(chr(97 + rng.randrange(26))
+                          for _ in range(1 + rng.randrange(6)))
+        elif k < 6:
+            tok = "".join(str(rng.randrange(10))
+                          for _ in range(1 + rng.randrange(4)))
+        elif k < 8:
+            tok = "".join(_HEX[rng.randrange(16)]
+                          for _ in range(2 + rng.randrange(7)))
+        elif k < 10:
+            tok = _SEPS[rng.randrange(len(_SEPS))]
+        elif k < 12:
+            tok = (rng.choice(("", "-", "+"))
+                   + "".join(str(rng.randrange(10))
+                             for _ in range(1 + rng.randrange(4)))
+                   + ("." + "".join(str(rng.randrange(10))
+                                    for _ in range(1 + rng.randrange(3)))
+                      if rng.randrange(2) else ""))
+        else:
+            tok = " " + "".join(_HEX[rng.randrange(16)] for _ in range(8)) + " "
+        out.append(tok)
+        total += len(tok)
+    body = "".join(out)[:nbytes]
+    return (body[:-1] + "z").encode("ascii")
+
+
+def prose(nbytes, seed, tail):
+    """~`nbytes` of generated prose (whole lines of 6-13 words, the 0.1
+    grammar's `_WORDS`), with, per line, a 1-in-8 chance of a number in place
+    of a word, 1-in-40 of a `name.ext` file mention and 1-in-60 of a lone
+    8-hex id -- real prose is not digit-free, and an end-anchored `\\d+$` or
+    `.*\\.txt$` must be able to start somewhere and fail. The prose is the
+    SAME bytes for every `tail` (same seed); the subject is
+    `prose + "\\n" + tail`, `tail` a bytes line with no trailing newline."""
+    rng = Rng(seed)
+    lines = []
+    total = 0
+    while True:
+        n = 6 + rng.randrange(8)
+        words = [rng.choice(_WORDS) for _ in range(n)]
+        for j in range(n):
+            if rng.randrange(8) == 0:
+                words[j] = str(rng.randrange(100000))
+        if rng.randrange(40) == 0:
+            words[rng.randrange(n)] = "%s.%s" % (rng.choice(_WORDS),
+                                                 rng.choice(_FILE_EXT))
+        if rng.randrange(60) == 0:
+            words[rng.randrange(n)] = "%08x" % rng.randrange(1 << 32)
+        words[0] = words[0].capitalize()
+        line = " ".join(words) + "."
+        if total + len(line) + 1 > nbytes:
+            break
+        lines.append(line)
+        total += len(line) + 1
+    return ("\n".join(lines) + "\n").encode("ascii") + tail

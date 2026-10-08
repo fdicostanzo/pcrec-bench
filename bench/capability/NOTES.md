@@ -1,4 +1,8 @@
-# bench/capability@0.1 — the capability survey set: objective, families, predictions
+# bench/capability@0.2 — the capability survey set: objective, families, predictions
+
+(@0.2, [B125], 2026-10-08: read the section "capability@0.2" at the END of this file first for what
+changed; everything above it is the @0.1 text, still true of the first 64 patterns, 75 short subjects
+and 3 throughput texts, all byte-identical in 0.2.)
 
 Read this before touching a pattern, a subject or a generator. Design
 authority: `docs/design/capability_set_v1.md` (v0.2, the family taxonomy,
@@ -417,3 +421,90 @@ real, measured match cell, not a refusal.
   both.
 - The six [B7] non-pcre2/pcrec adapters (RE2, Rust `regex`, Oniguruma,
   TRE, Vectorscan, python/perl) — R7 above is dormant until they land.
+
+## capability@0.2 ([B125], 2026-10-08) -- the additions, the second method, the predictions
+
+Origin: outbox O-87/O-88 and inbox I-136 (Frank-approved, plan [B125]). The
+revision is in place, in the altwide@0.1 -> 0.2 manner: every 0.1 pattern keeps
+its exact bytes, every 0.1 short subject and throughput text reproduces byte for
+byte (`gen_throughput_subjects.py` asserts the three 0.1 sha256s), and every 0.1
+expectation row survives unchanged (checked: the 0.1 file is a subset of the 0.2
+file, plus the two restored triples). The new subjects draw from fresh `Rng`
+seeds (`0xC0FFEE11`...`0xC0FFEE21`) and are APPENDED to the throughput manifest.
+
+**Which regime.** Every new subject is longer than `short_search_max_bytes`
+(512), so it belongs to the THROUGHPUT regime only, and the throughput regime is
+"every pattern x every throughput subject": all 71 patterns run on each new
+subject (the oracle derivation proves none hangs; cost below). No new subject
+enters `search_short`. The two restored triples ARE `search_short`.
+
+New patterns (7, family `wild-logparse`, provenance `authored`/`synthesized`, sourced to I-136):
+`letters-bounded-tail-z` `(?:[a-z]{0,1024})\z`, `tail-digits-eol` `\d+$`,
+`tail-word-eoz` `\w+\z`, `tail-space-eol` `\s+$`, `tail-ext-lower-txt`
+`[a-z]+\.txt$`, `tail-dotstar-txt` `.*\.txt$`, `hex8-bounded`
+`\b[0-9a-f]{8}\b`. The two `\z` ones carry `requires=true-end-anchor` (all 51
+roster rows declare it; TRE via the adapter's own wrap). Engine-neutral
+(R-BENCH-4): none is a pcrec-shaped pattern, each is a deployed-shape check.
+NB I-136 says capability "has hex32-id"; it has no such pattern (the UUID pair is
+hyphen-delimited, the secrets are prefixed), so `hex8-bounded` fills a real gap.
+
+New subjects (8, all throughput): `t-evil-match-60k` / `t-evil-nearmiss-60k`
+(61,440 B of random [a-z]; the same plus `!`), `t-trim-match-60k` /
+`t-trim-nearmiss-60k` (61,440 B of mixed `\s`, ending in a space; the same plus
+`x`), `t-mixed-runs-4k` (4,096 B of interleaved short letter/digit/hex/decimal/
+separator runs, ending in a letter -- the first non-pure-run subject here), and
+`t-tail-{digits,txt,space}-1m` (~1 MiB of generated prose with digits, `name.ext`
+mentions and 8-hex ids, one body, three different last lines). The tail truth
+table (a match and a non-match per pattern) is in each manifest description.
+
+**The second expectation method** is `docs/design/expectation_methods_v1.md`.
+Findings of this lane, stated here because they bound the set: the DFA restores
+the two SHORT dropped triples (both `nomatch`); on nested quantifiers the DFA is
+itself ~n^2.8, so it CANNOT restore the long near-misses -- the triples the
+backtracker gives up on at 60 KiB stay DROPPED BY NAME (the derivation lists
+them), by a deterministic workspace budget. `.*\.txt$` over 1 MiB is NOT a
+give-up for the backtracker (0.02 s per find-all, measured at derivation), so the
+tail family is all `libpcre2-differential`. `\s+$` against `t-trim-nearmiss-60k`
+is genuinely QUADRATIC for the backtracker (25 s in the oracle, no give-up: the
+repeat is auto-possessified, so it is slow, not limited) -- the trailing-whitespace
+shape CVE-2022-25927 was about; pcre2 cells pay it.
+
+### Predictions (stated before any run; scored by the window, not here)
+
+- P11 (the matching tax). On `t-evil-match-60k` and `t-trim-match-60k` no engine
+  gives up and every row is the whole-subject match / count 1; backtrackers take
+  the first greedy path (linear). pcrec-auto at a pin >= 02db3811 ([NULLABLE-ANCH])
+  is within 3x of pcre2-jit there.
+- P12 (the near-miss split). On `t-evil-nearmiss-60k` and `t-trim-nearmiss-60k`
+  pcre2-interp and pcre2-jit GIVE UP (match limit) -- their rows are `gave up`,
+  not wrong -- while pcre2-dfa, the re2 rows, vectorscan and pcrec's DFA route
+  answer `nomatch`. Those cells have NO expectation for the triples the second
+  method cannot restore (named in the lane report), so they cannot be scored
+  correct/incorrect: they read `n_no_expectation`, and that is the finding.
+- P13 (design-quadratic). `tail-space-eol` x `t-trim-nearmiss-60k`: pcre2-interp
+  and pcre2-jit are >= 100x any linear engine (re2, vectorscan, pcrec DFA) on that
+  cell, and the pcre2 per-call time is seconds, not microseconds.
+- P14 (the end-anchored tails, I-136 item 2). `tail-*` x `t-tail-*-1m` agree with
+  the truth table; for the five patterns the cross-engine spread is the
+  reverse-/end-anchored-search story: engines that scan forward pay the megabyte,
+  an engine that can anchor at the end pays the tail. No claim about which pcrec
+  route is faster is made here (the pcrec manager owns that prediction).
+- P15 (hex8). `hex8-bounded` finds counts 131 (`t-mixed-runs-4k`) and 264/263/263
+  (the three tails), 0 on the four 60 KiB runs; a `\b` pair costs nothing on the
+  pure-letter runs (no hex-only 8-run).
+- P16 (bounded end-anchor, I-136 item 1). `letters-bounded-tail-z` costs a
+  backtracker ~1024 steps per start offset on the 60 KiB letter runs (oracle:
+  ~1.3 s per find-all, count 2: the 1024-byte tail and the empty match at the
+  end) and almost nothing on `t-mixed-runs-4k` (short runs bound the per-start
+  work): per byte, the pure-letter subjects cost >= 50x the mixed one.
+
+### Outlier-rule additions
+
+- R9. A cell at a 0.2 subject is compared across engines at 0.2 only; the 0.1
+  cells are untouched and a cross-version delta is not a ranking.
+- R10. A cell whose whole point is a backtracker's give-up or quadratic cost
+  (the four near-miss triples, `tail-space-eol` x `t-trim-nearmiss-60k`) is
+  reported as that cell's finding, never as an outlier engine.
+- R11. A throughput subject with a dropped (no-expectation) triple for a pattern
+  excludes that pattern's cell at that subject's set-grain pass rate; the number
+  of such triples is stated on the report (it is 4 by the derivation below).

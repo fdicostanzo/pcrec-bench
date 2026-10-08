@@ -219,6 +219,11 @@ class Expectation:
         return self.expected == "match"
 
 
+# [B125]: the closed set of `[expectations] fallback_method` values. The
+# method's logic lives in expectations.py; the NAME lives here so the loader
+# (which every harness run imports) never has to import the libpcre2 binding.
+FALLBACK_METHODS = ("libpcre2-dfa-fallback",)
+
 # [B77] U1: the closed set of `[expectations] encoding` values, spelled as
 # pcrec spells its own `-e` values.
 SET_ENCODINGS = ("byte", "utf8")
@@ -283,6 +288,15 @@ class Subbench:
         exp = self.cfg.get("expectations", {})
         self.expectation_file = exp.get("file", "expectations.tsv")
         self.default_method = exp.get("default_method", "")
+        # [B125]: the OPTIONAL second verification method, used only for a
+        # triple the backtracker gave up on (expectations.py). Absent -> ""
+        # and the set is derived exactly as before.
+        self.fallback_method = exp.get("fallback_method", "")
+        if self.fallback_method and self.fallback_method not in FALLBACK_METHODS:
+            raise SubbenchError(
+                "%s: [expectations] fallback_method = %r; expected one of %s"
+                % (sidecar, self.fallback_method,
+                   ", ".join(FALLBACK_METHODS)))
         # [B77] U1 (docs/design/utf8_set_v1.md 8.1): the SET's encoding --
         # `[expectations] encoding = "utf8"` puts PCRE2_UTF in the oracle
         # option word of EVERY pattern (never per subject or per regime:

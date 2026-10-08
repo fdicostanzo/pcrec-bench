@@ -8,7 +8,7 @@
 # prints it, `--check` compares it entry for entry).
 
 id = "capability"
-version = "0.1"
+version = "0.2"
 objective_kind = "feature"
 objective = """\
 A CAPABILITY CONTRAST across the [B7] engine roster: what each engine can \
@@ -25,8 +25,10 @@ this set's pattern source of truth (Frank's Q3 ruling), the first \
 pcrec-bench set authored that way. See docs/design/capability_set_v1.md \
 and NOTES.md."""
 description = """\
-Sixty-four patterns (63 members + the floor) across twelve provenance/ \
-capability families: six WILD families built from imported, \
+Seventy-one patterns (70 members + the floor) across twelve provenance/ \
+capability families (@0.2, [B125]: seven end-anchored / bounded / boundary \
+additions in wild-logparse, eight throughput subjects added after the three \
+0.1 texts, and a second expectation method): six WILD families built from imported, \
 provenance-tracked patterns (wild-validator, wild-logparse, wild-waf, \
 wild-secrets, wild-datetime, wild-codegrammar) and six \
 CAPABILITY/HAZARD families of designed members probing one closed \
@@ -71,6 +73,11 @@ short_search_max_bytes = 512
 [expectations]
 file = "expectations.tsv"
 default_method = "libpcre2-differential"
+# [B125] (capability@0.2): the SECOND method, for a triple the backtracker
+# gave up on only -- pcre2_dfa_match from the same libpcre2, restricted in
+# code (pcrecbench/expectations.py dfa_fallback) to nomatch and to the
+# fully-anchored span, with a standing control over every answered triple.
+fallback_method = "libpcre2-dfa-fallback"
 
 [[patterns]]
 name = "ipv4-near-miss"
@@ -143,6 +150,26 @@ tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-
 role = "member"
 
 [[patterns]]
+name = "hex8-bounded"
+file = "patterns/hex8-bounded.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "letters-bounded-tail-z"
+file = "patterns/letters-bounded-tail-z.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-true-end-anchor"]
+role = "member"
+
+[[patterns]]
 name = "logparse-atomic"
 file = "patterns/logparse-atomic.rx"
 feature_tier = "base"
@@ -160,6 +187,56 @@ hazard_class = "exponential-backtracking"
 size_class = "small"
 convention = "perl-leftmost-first"
 tags = ["family-wild-logparse", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "tail-digits-eol"
+file = "patterns/tail-digits-eol.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "tail-dotstar-txt"
+file = "patterns/tail-dotstar-txt.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "tail-ext-lower-txt"
+file = "patterns/tail-ext-lower-txt.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "tail-space-eol"
+file = "patterns/tail-space-eol.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "tail-word-eoz"
+file = "patterns/tail-word-eoz.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-true-end-anchor"]
 role = "member"
 
 [[patterns]]
@@ -359,7 +436,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-wild-codegrammar", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-free-spacing"]
+tags = ["family-wild-codegrammar", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-free-spacing", "requires-named-groups"]
 role = "member"
 
 [[patterns]]
@@ -449,7 +526,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
+tags = ["family-cap-backref", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs", "requires-lookaround"]
 role = "member"
 
 [[patterns]]
@@ -529,7 +606,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion", "requires-free-spacing"]
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion", "requires-free-spacing", "requires-named-groups"]
 role = "member"
 
 [[patterns]]
@@ -539,7 +616,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion"]
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-recursion", "requires-lookaround"]
 role = "member"
 
 [[patterns]]
@@ -549,7 +626,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+tags = ["family-cap-recursion", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-backrefs"]
 role = "member"
 
 [[patterns]]
@@ -699,7 +776,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-binary-nonutf8", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-non-utf8-subject"]
+tags = ["family-binary-nonutf8", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-non-utf8-subject", "requires-lookaround"]
 role = "member"
 
 [[patterns]]
@@ -711,4 +788,3 @@ size_class = "tiny"
 convention = "perl-leftmost-first"
 tags = ["family-floor", "hazard-none", "provenance-authored", "fidelity-synthesized"]
 role = "floor"
-
