@@ -3,10 +3,14 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-60366d747/build/pcrec --list-limits
+#     build/pcrec-255bcdd8/build/pcrec --list-limits
 #
-# pcrec commit 60366d747af20517d095fc3cdee12d0a04afe41b (rx_info.abi 65, read off a plain `abc` witness at this build),
-# archived 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
+# pcrec commit 255bcdd8f73bcb7401550134b30413f68229a936 (rx_info.abi 68, read off a plain `abc` witness at this build),
+# archived 2026-10-08 by lane b126prep ([B126], pcrec 255bcdd8, abi 68; three
+# abi steps 66-68 absorbed): 73 data rows / 7 columns (was 72): ONE new row,
+# PCREC_MAX_POSS_REF_DEPTH 64 levels ([ART-POSS-ARMS] arm B's backreference
+# resolution depth), inserted after row 39; every other row BYTE-IDENTICAL.
+# PREVIOUS archiving (60366d747), 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
 # pcrec main 60366d747 = lane/k93tri merged into main (K93/K95 + [MEMFN]
 # R4c' + C1's #ifdef trace), compiler-identical to the prep pin 5ff21faca;
 # c4c70f2c (abi 59) -> 60366d747 (abi 65), SIX abi steps, list_axes.tsv's
@@ -53,6 +57,7 @@ PCREC_MAX_VM_REPEAT_COPIES	64	copies	compile budget	none		[M4.5c]: how many time
 PCREC_MAX_VM_REPLICATION_PRODUCT	131072	nodes	compile budget	none		[K22]: total replication product along a chain of nested bounded repeats — a literal alias of PCREC_MAX_VM_NODES, not tuned separately
 PCREC_DEFAULT_UNROLL_K	8	count	selection knee	flag		[ENG-BREP]: the counter rung's default unroll factor K, overridden by --unroll=N
 PCREC_MAX_POSSESS_POSITIONS	256	positions	compile budget	none		[ENG-BREP]: byte-consuming positions a quantifier body may have before possessify.c declines it
+PCREC_MAX_POSS_REF_DEPTH	64	levels	compile budget	none		[ART-POSS-ARMS]: how deep possessify.c's arm B may resolve a backreference through referenced groups that themselves hold references before it widens (the sound direction); a pattern controls this chain's length, so it bounds pcrec's own C stack (D10/K20). The value is a stack bound, not a measured knee
 PCREC_MAX_REVDET_BODY_GROUPS	64	groups	compile budget	none		[ENG-BREP]: capturing groups a quantifier body may contain before revdet.c declines the reverse-deterministic rung
 PCREC_MAX_ALTCLS_FACTOR_DEPTH	64	levels	compile budget	none		[OPT-ALTCLS] stage 2: how deep prefix factoring may recurse into a group that just split
 PCREC_MAX_REPEAT	65535	count	compile budget	none		FIX-1/K5: the largest {n,m} quantifier count PCRE2 accepts (measured against libpcre2 10.46)

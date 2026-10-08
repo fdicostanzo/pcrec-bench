@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.15"
+catalogue_version = "3.16"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,16 @@ catalogue_version = "3.15"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.16 (2026-10-08, lane b126prep, [B126], inbox I-134/I-135): MINOR, a
+# `[[pin_order]]` append only -- `255bcdd8` (abi 68: THREE abi steps, 65 ->
+# 66 [ART-POSS-ARMS] (`RX_VM_POSS_ARMS`; `-fno-poss-ctx-follow`, which
+# selects the engine, and `-fno-poss-bref-first`), 66 -> 67 [MEMFN] R4h
+# layout normalization (bytes move, executed code does not), 67 -> 68
+# [NULLABLE-ANCH] (the E1 fact `empty_admits`; the nullable prefilter decline
+# lifts where every empty match is pinned to both subject ends); plus the
+# cf3ffaac `--list-axes` kind/applies projection, not an abi event) joins
+# after `60366d747`. No rule predicate/threshold/inputs/slots moved.
 #
 # 3.15 (2026-10-07, lane b124prep, [B124] RE-PIN PREP, inbox
 # I-128..I-133): MINOR, a `[[pin_order]]` append only -- `60366d747` (abi
@@ -258,7 +268,7 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
-          "60366d747"]
+          "60366d747", "255bcdd8"]
 
 # ===================================================== class R-STATUS ==
 

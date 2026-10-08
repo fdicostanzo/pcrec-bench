@@ -3,10 +3,13 @@
 # 9), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-60366d747/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-255bcdd8/build/pcrec --list-definitions | grep -v '^#'
 #
-# pcrec commit 60366d747af20517d095fc3cdee12d0a04afe41b (rx_info.abi 65, read off a plain `abc` witness at this build),
-# archived 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
+# pcrec commit 255bcdd8f73bcb7401550134b30413f68229a936 (rx_info.abi 68, read off a plain `abc` witness at this build),
+# archived 2026-10-08 by lane b126prep ([B126], pcrec 255bcdd8, abi 68; three
+# abi steps 66-68 absorbed): 75 data rows / 7 columns -- BYTE-IDENTICAL to
+# the 60366d747 archive (diffed line for line, the grep -v '^#' bodies).
+# PREVIOUS archiving (60366d747), 2026-10-07 by lane b124prep ([B124], inbox I-133's FINAL pin:
 # pcrec main 60366d747 = lane/k93tri merged into main (K93/K95 + [MEMFN]
 # R4c' + C1's #ifdef trace), compiler-identical to the prep pin 5ff21faca;
 # c4c70f2c (abi 59) -> 60366d747 (abi 65), SIX abi steps, list_axes.tsv's
