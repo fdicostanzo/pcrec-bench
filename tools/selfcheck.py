@@ -10749,6 +10749,20 @@ B122_ROUND1_CASES = (
 )
 
 
+def _b126_text_eq(tmp, tag, specs):
+    """[B126] (abi 67, [MEMFN] R4h): the v2 text hash is blind to comments
+    and the abi block but NOT to the search loops' SPELLING, which R4h
+    rewrote on about half of all artifacts while leaving the EXECUTED CODE
+    untouched (94/94 `.text` identical, docs/dev/measurements/
+    2026-10-08-b126prep-r4h-text-identity.txt). The identity arms of the
+    [B122]/[B124] checks therefore fall back to the compiled `.text` when
+    the v2 hash differs. `specs` is [(binary, flags, pattern)]; -> the list
+    of `.text` hashes (None on a refusal)."""
+    return [_b126_text_hash(b, ["--features", "all"] + list(f), p, tmp,
+                            "%s%d" % (tag, i))
+            for i, (b, f, p) in enumerate(specs)]
+
+
 def check_b122_round1_stamps():
     """[B122] (pcrec c4c70f2c, abi 50 -> 59; inbox I-127, pcrec's [OPTLOOP]
     round 1). For every row of B122_ROUND1_CASES: the default artifact's
@@ -10818,10 +10832,23 @@ def check_b122_round1_stamps():
                 h_old, _t = ident(old_bin, flags + [deny], pat, "o%d" % i)
                 id_ok = h_new is not None and h_new == h_old == h_deny
                 id_why = "default == denied == fc719ca4's -fno-hyb-reseed"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "r1h%d" % i, [
+                        (new_bin, flags, pat),
+                        (old_bin, flags + [deny], pat),
+                        (new_bin, flags + [deny] + B124_LATER_DENIES, pat)])
+                    id_ok = tn is not None and tn == to == td
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             else:
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == fc719ca4, default != fc719ca4"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "r1e%d" % i, [
+                        (new_bin, flags, pat), (old_bin, flags, pat),
+                        (new_bin, flags + [deny] + B124_LATER_DENIES, pat)])
+                    id_ok = td is not None and td == to and tn != to
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             if not id_ok:
                 miss.append("identity (%s) new=%s deny=%s old=%s"
                             % (id_why, (h_new or "-")[:12],
@@ -10985,6 +11012,12 @@ def check_b124_stamps():
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == c4c70f2c, default != c4c70f2c"
+                if not id_ok:       # [B126] R4h moved the spelling, not the code
+                    tn, to, td = _b126_text_eq(tmp, "b124e%d" % i, [
+                        (new_bin, flags, pat), (old_bin, flags, pat),
+                        (new_bin, flags + dflags, pat)])
+                    id_ok = td is not None and td == to and tn != to
+                    id_why += " (compiled .text; v2 spelling moved at abi 67)"
             if not id_ok:
                 miss.append("identity (%s) new=%s deny=%s"
                             % (id_why, (h_new or "-")[:12], (h_deny or "-")[:12]))

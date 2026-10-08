@@ -1,4 +1,4 @@
-# probe_b126_r4h_text_identity.py, STRIDE=6 over the census' 564 step-67-only rows + 4/18 mixed; .text of gcc -O2 -c, 60366d747 vs 255bcdd8: 94 rows, 94 same, 0 different
+# probe_b126_r4h_text_identity.py, STRIDE=6 over the census 564 step-67-only rows; .text of gcc -O2 -c, 60366d747 vs 255bcdd8: 94 rows, 94 same, 0 different
 set	pattern_id	config	form	text_old	text_new	verdict
 altwide	w-8	auto	plain	9a6ad76df4c1f901	9a6ad76df4c1f901	same
 altwide	w-128	auto	plain	fb55dc455b472c45	fb55dc455b472c45	same
