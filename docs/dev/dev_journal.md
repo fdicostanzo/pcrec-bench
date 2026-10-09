@@ -6503,3 +6503,12 @@ Both merged (d7aaf3f, 2a84214), one make check on the merged tree: harness 692/4
 ### 2026-10-08 ~14:3x — session close (Frank: reset)
 
 The capability@0.2 window at 255bcdd8 started 12:07 EDT, detached (14 cells, CELL_CAP 10800). At close, pcrec-auto (52 min) and pcrec-nocaps (47 min) were done on attempt 1, and pcrec-vm was running. The log path is in build/windows/.current_b125_window. wake.md has the post-window queue: reports, ledger, sidecars, O-90. The tracked watcher and heartbeat cron end with this session; the next session re-arms the watcher.
+
+## 2026-10-08/09 — 46th session (Opus 5.5): the capability@0.2 window closed; [B127] public front page live; I-138/I-139 multi-host
+
+- Window [B125]/[B126]: capability@0.2 x 14 at 255bcdd8, 12:07 -> 00:09 EDT, 14/14 written (13 attempt 1; pcrec-vm-in rc=3 busy core, rc=4 spread, clean on attempt 3; the desktop screen locker was a CPU user around then). Records committed 6c5088c with 75 sidecars re-stamped.
+- [B127] (Frank's job-search side project): lane b127front built tools/frontpage.py + README + docs/methodology.md + SVG + Pages workflow; round 1 review; manager fixes at merge (match regime on whole-subject form, no-expectation label, compile-cost-class column, Fairness accuracy, no hand-typed numbers, cited tail-* causes). Repo description/topics set, LICENSE MIT (Frank: pcrec's), Pages enabled and serving. Headline: 919/1019 (90.2%) faster, 99 slower, 1 tie.
+- I-138 (SIMD verdicts as multi-host bench runs) -> [B128] + O-90; I-139 accepted all five, pcrec executes dev-box windows, machine_id dev-7700x.
+- pcrecdev3 asked for CPU facts (answered: Zen 1, AVX2, no AVX-512).
+- MISTAKE: two `git commit -am` plan commits swept the live window's partial store/index.tsv into master; fixed forward 433b1ed; memory feedback-no-commit-a-mid-window.
+- NEXT: capability@0.2 reports + ledger + interpretation sidecars + O-91 (wake.md queue items 2-5), then [B125]/[B126] archived.
