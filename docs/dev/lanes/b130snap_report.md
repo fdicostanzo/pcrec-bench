@@ -33,7 +33,7 @@ Branch lane/b130snap (worktree worktrees/b130snap). Charter-vs-committed checkli
    `make trend-check` 106 files, 0 drifted; every snapshot passes `verify_snapshot`.
 5. SKILL -- DONE. `.claude/skills/pcrec-bench-report-trend/SKILL.md` (window-close procedure; no interpretation
    written, per Frank), listed in `.claude/skills/CLAUDE.md`; trend_interpretation_v0.md now names it.
-6. TESTS/DOCS -- DONE. `tools/tests/test_trend.py`: 63 checks, ALL PASS (snapshot round trip/verify, per-subject
+6. TESTS/DOCS -- DONE. `tools/tests/test_trend.py`: 64 checks, ALL PASS (snapshot round trip/verify, per-subject
    rows, ref storage, deterministic gzip, immutability, store-free open trace with the store deleted, links-only
    incl. unlinked/config-rename/proposals, headers). `make check-trend` green. Docs: reports/trend/CLAUDE.md,
    reports/trend/snapshots/CLAUDE.md, tools/CLAUDE.md row, design note section 8, Makefile targets
