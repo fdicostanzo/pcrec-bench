@@ -1,0 +1,52 @@
+# reports/trend/config.toml -- the trend report's declared constants ([B130]).
+# Every constant the generator uses that is not derived from the store lives
+# here and is hashed into every output's header (config_sha256).
+
+machine = "budu-ryzen1600"
+
+# R5/Q3: the drift control (pcre2-jit by default; same engine both windows).
+control_globs = ["libpcre2_*_jit-caps-simdna"]
+
+# R12: "the fastest automata engine measured in that set" is the max over
+# these competitors present in the set@version (pcrec / competitor, common
+# subjects only).
+competitor_globs = [
+  "re2_*_default-caps-simdna",
+  "rust_*_default-caps-simdna",
+  "vectorscan_*_block-nosom-nocaps-simd",
+  "libpcre2_*_dfa-nocaps-simdna",
+]
+
+# Q1/Q5: the two headline classes. auto-caps and auto-nocaps are ALWAYS
+# separate; `vm` is a third table in the full-table section.
+headline_configs = ["auto-caps-simdna", "auto-nocaps-simdna"]
+extra_configs    = ["vm-caps-simdna"]
+
+# R18: abi bumps between two pins beyond which the pair is `wide-pin-gap`.
+# 8 = one fewer than the nine-step [OPTLOOP] round 1 (50 -> 59), the widest
+# single pin step the project has re-pinned through; anything wider is flagged.
+wide_gap_abi = 8
+
+# R4+: a cross-window move must clear the identical-program band of its
+# pair+regime: q95 of |ratio-1| over program-identical cells when there are
+# at least `band_min_cells` of them, else this fallback = pcrec's cycle-1 null
+# control (identical programs moved up to +8.46% a day apart, I-141).
+fallback_band  = 0.0846
+band_min_cells = 10
+
+# R5: the pair is `drift-suspect` when the control's median ratio leaves this
+# band; a single cell is a drift-suspect cell outside the wider cell band
+# (O-92: balanced-parens-rec x1.17 inside a 0.999 median).
+drift_band      = [0.97, 1.03]
+cell_drift_band = [0.90, 1.10]
+
+# Q2: size / compile highlights past these relative changes (emit_code_bytes;
+# compile total_ns additionally requires disjoint trial ranges).
+size_threshold    = 0.10
+compile_threshold = 0.25
+
+# R17: a deny twin measured within this many hours of its base is same-window.
+same_window_hours = 24
+
+# HTML highlights: rows per list.
+highlight_top = 8

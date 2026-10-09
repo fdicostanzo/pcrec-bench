@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
+.PHONY: trend trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -77,7 +77,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream check-frontpage
+check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -287,6 +287,26 @@ frontpage-check:
 ## check-frontpage: tools/frontpage.py's unit test (synthetic fixture, no store)
 check-frontpage:
 	$(PYTHON) tools/tests/test_frontpage.py
+
+## trend: regenerate the pcrec TREND REPORT under reports/trend/ ([B130],
+## docs/design/pcrec_trend_report_v0.md). Reads the store record by record
+## (digest cache under build/trend-cache): minutes, ~1 GB peak at most; run it
+## DETACHED at a window's close (the manager's routine), never mid-measurement:
+##   setsid gnutimeout 3600 make trend > build/trend.log 2>&1 ; echo "DONE rc=$?" >> build/trend.log
+trend:
+	$(PYTHON) tools/trend.py $(ARGS)
+
+## trend-check: regenerate in memory, exit 1 on drift from the committed reports/trend/
+trend-check:
+	$(PYTHON) tools/trend.py --check $(ARGS)
+
+## check-trend: the trend report's self-tests (synthetic store, never the real
+## one) + every committed interpretation sidecar's citations against the
+## committed TSVs (seconds)
+check-trend:
+	@echo "== check-trend =="
+	@$(PYTHON) tools/tests/test_trend.py
+	@for f in reports/trend/interpretation/*.md; do [ -e "$$f" ] || continue; $(PYTHON) tools/trend_cite_check.py $$f || exit 1; done
 
 ## help: list the targets
 help:
