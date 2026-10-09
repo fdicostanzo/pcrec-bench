@@ -114,3 +114,18 @@ pcrec   wild-datetime-moment-iso8601       large-subject-throughput      69162.5
 re2     tail-dotstar-txt                   large-subject-throughput      1479.57      1210.15       1446.2  0.8179 (DISJOINT) | 0.9774 (overlap) | 0.8368 (DISJOINT)   [measured,measured,measured]
 re2     tail-ext-lower-txt                 large-subject-throughput      1437.89       1191.4      1476.01  0.8286 (DISJOINT) | 1.027 (overlap) | 0.8072 (DISJOINT)   [measured,measured,measured]
 re2     wild-datetime-moment-iso8601       large-subject-throughput      1944.18      1717.73      1970.75  0.8835 (DISJOINT) | 1.014 (overlap) | 0.8716 (DISJOINT)   [measured,measured,measured]
+
+== 'unprimed behaviour unchanged' control after moving the prime pass OUTSIDE the timed loop (2026-10-09-b129-prime-unchanged-analysis.py; runner 2026-10-09-b129-prime-unchanged-run.sh; master = pristine 957edd2 checkout, fixed = lane tip; both WITHOUT --prime) -- verbatim ==
+testee  pattern            regime                   rep   master med    fixed med      F/M ranges
+pcrec   tail-dotstar-txt   large-subject-throughput   1       856882       857917   1.0012 DISJOINT  [measured,measured]
+pcrec   tail-dotstar-txt   large-subject-throughput   2       857538       858087   1.0006 overlap  [measured,measured]
+pcrec   tail-dotstar-txt   large-subject-throughput pooled ranges: master [855718, 859272] fixed [857600, 858421] -> OVERLAP
+pcrec   tail-ext-lower-txt short-subject-search       1      276.148      275.108   0.9962 overlap  [measured,inconclusive-load]
+pcrec   tail-ext-lower-txt short-subject-search       2      274.934      275.719   1.0029 overlap  [measured,measured]
+pcrec   tail-ext-lower-txt short-subject-search     pooled ranges: master [273.224, 279.254] fixed [273.179, 287.583] -> OVERLAP
+re2     tail-dotstar-txt   large-subject-throughput   1      1428.69      1432.27   1.0025 overlap  [measured,measured]
+re2     tail-dotstar-txt   large-subject-throughput   2      1433.47      1443.36   1.0069 overlap  [measured,measured]
+re2     tail-dotstar-txt   large-subject-throughput pooled ranges: master [1418.33, 1439.82] fixed [1422.87, 1455.37] -> OVERLAP
+re2     tail-ext-lower-txt short-subject-search       1      1951.88      1937.21   0.9925 DISJOINT  [measured,measured]
+re2     tail-ext-lower-txt short-subject-search       2      1948.38      1936.13   0.9937 overlap  [measured,measured]
+re2     tail-ext-lower-txt short-subject-search     pooled ranges: master [1948.12, 1953.72] fixed [1935.44, 1953.93] -> OVERLAP

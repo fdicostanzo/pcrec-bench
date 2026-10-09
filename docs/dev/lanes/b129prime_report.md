@@ -112,6 +112,28 @@ repeat unprimed run, which differed by under 3%); RE2 already leads pcrec on
 those cells by orders of magnitude. Elsewhere differences were within the
 ~5% run-to-run spread. The published numbers are unprimed."
 
+## Manager change request: prime pass OUTSIDE the timed loop (done)
+The first implementation put `if (prime && it == 0) t0 = now();` inside the
+timed loop. Now, on all seven drivers, the timed inner loop and its body are
+exactly master's (C: `for (long it = 0; it < n_it; it++)` with a `volatile
+long n_it`, the same volatile bound load as master's `iters`; Rust: `for _ in
+0..n_it`); the only new code is an OUTER two-pass loop (`pass` 0 = the single
+untimed call, only with the flag) and one `t0 = now()` per subject outside the
+loop. The body is not re-indented (diff kept to the wrapper lines).
+- `check_prime_flag` re-run on the restructured drivers: 16 PASS, 0 FAIL
+  (build/b129-primecheck2.log; it builds fresh drivers in a temp dir).
+- Unchanged-behaviour proof: pcrec-auto and re2-default, one search cell
+  (tail-ext-lower-txt, 20 subjects) and one throughput cell (tail-dotstar-txt),
+  master driver vs fixed driver, both WITHOUT `--prime`, M,F,M,F, 5 trials:
+  F/M medians 0.9925-1.0069 over the eight pairs; the pooled min-max ranges
+  overlap in all four cells (three single repetitions had disjoint ranges at
+  <= 0.75% apart). One fixed-arm record is `inconclusive-load` (kept). Appended
+  verbatim to the sample archive.
+- The A/B/A and sample numbers above were measured with the FIRST (in-loop)
+  implementation. The primed arm is the same single untimed call followed by
+  the same timed loop, so the primed semantics are unchanged; they were not
+  re-measured (no full re-run requested).
+
 ## OWED
 Nothing for the sample or the A/B/A. The full-cell A/B is not run (manager's go required).
 `--prime` stays scratch-tier only until the schema records it.
