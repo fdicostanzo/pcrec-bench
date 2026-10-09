@@ -64,20 +64,11 @@
 #include <string>
 #include <vector>
 
+#include "timed.h"
+
 using absl::string_view;
 
 // ------------------------------------------------------------- clock/io
-
-/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
- * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
- * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
- * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
- * that range or at n. Without --utf8 the advance stays start + 1. */
-static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
-    size_t p = pos + 1;
-    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
-    return p;
-}
 
 static double now(void) {
     struct timespec ts;
@@ -310,60 +301,17 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-             * timed loop below is the original one, its bounds and body untouched. */
-            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                volatile long n_it = pass ? iters : 1;
-                if (pass && prime) t0 = now();
-                for (long it = 0; it < n_it; it++) {
-                first_s = first_e = -1;
-                nsub_out = 0;
-                if (find_all) {
-                    size_t pos = 0;
-                    long count = 0;
-                    for (;;) {
-                        if (pos > text.size()) break;
-                        bool m = re->Match(text, pos, text.size(),
-                                          RE2::UNANCHORED, submatch.data(),
-                                          nsub);
-                        if (!m) break;
-                        size_t start = (size_t)(submatch[0].data() - text.data());
-                        size_t end = start + submatch[0].size();
-                        if (first_s < 0) {
-                            first_s = (long)start;
-                            first_e = (long)end;
-                            nsub_out = nsub;
-                            matched_final = 1;
-                        }
-                        count++;
-                        // pcrec match_api.md S3.1's find-all advance rule
-                        // (adopted by reference, KB-17, testees/pcre2/
-                        // driver.c's own comment): off the match's own
-                        // reported START, never off the scan position.
-                        // Under --utf8 ([B77] U1): the next CHARACTER
-                        // boundary, not start + 1.
-                        pos = (end > start) ? end
-                            : utf8_adv ? utf8_next_start(
-                                  reinterpret_cast<const unsigned char *>(text.data()),
-                                  text.size(), start)
-                                       : start + 1;
-                    }
-                    nmatch = count;
-                    matched_final = (count > 0);
-                } else {
-                    bool m = re->Match(text, 0, text.size(), anchor,
-                                      submatch.data(), nsub);
-                    matched_final = m ? 1 : 0;
-                    if (m) {
-                        first_s = (long)(submatch[0].data() - text.data());
-                        first_e = first_s + (long)submatch[0].size();
-                        nsub_out = nsub;
-                    }
-                }
-                }
-            }
-            elapsed = now() - t0;
+            // [B133] the timed loop is timed_run() in timed.cc (its own
+            // translation unit; see that file's header).
+            struct timed_in tin = {};
+            tin.text = text; tin.iters = iters; tin.prime = (int)prime;
+            tin.find_all = find_all; tin.utf8_adv = utf8_adv; tin.nsub = nsub;
+            tin.re = re; tin.anchor = anchor; tin.submatch = submatch.data();
+            struct timed_out tout = { -1, -1, -1, 0, 0 };
+            elapsed = timed_run(&tin, &tout);
+            first_s = tout.first_s; first_e = tout.first_e;
+            nmatch = tout.nmatch; matched_final = tout.matched_final;
+            nsub_out = tout.nsub_out;
             if (subject_timeout > 0) alarm(0);
         }
 

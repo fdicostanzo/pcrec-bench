@@ -48,6 +48,8 @@ path = "src/main.rs"
 # to -- no JSON/TOML crate, no clap; the protocol's own TSV/argv shape
 # needs none of them).
 regex = "1"
+# [B133]: the timed loop, a crate of its own (timed/Cargo.toml).
+rust-timed = { path = "timed" }
 
 [profile.release]
 # opt-level 3 is cargo's own release default; stated explicitly so a

@@ -210,6 +210,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timed.h"
+
 /* The DEFAULT hs_compile flags word. [B77] U2 (utf8_set_v1.md 7.1/7.6):
  * `--encoding utf8` ORs in HS_FLAG_UTF8 -- the `vectorscan-block-nosom-
  * utf8` config only -- and NEVER HS_FLAG_UCP (the measured A/B below: UCP
@@ -247,29 +249,6 @@ static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
  * for ONE hs_scan() call -- see the file header's "SOM MODE" section for
  * why nothing here stops early. Reused across `iters` passes via
  * `vs_reset()` rather than freed and reallocated each time. */
-typedef struct { unsigned long long from, to; } vs_match;
-
-typedef struct {
-    vs_match *v;
-    size_t    n, cap;
-} vs_match_list;
-
-static void vs_reset(vs_match_list *m) { m->n = 0; }
-
-static void vs_push(vs_match_list *m, unsigned long long from,
-                    unsigned long long to) {
-    if (m->n == m->cap) {
-        size_t newcap = m->cap ? m->cap * 2 : 64;
-        vs_match *nv = realloc(m->v, newcap * sizeof *nv);
-        if (!nv) die("out of memory accumulating SOM matches");
-        m->v = nv;
-        m->cap = newcap;
-    }
-    m->v[m->n].from = from;
-    m->v[m->n].to = to;
-    m->n++;
-}
-
 /* qsort comparator: `from` ASCENDING, `to` DESCENDING on a tie -- so the
  * FIRST entry at any given `from` is already that start's own LONGEST
  * completion (the file header's reduction rule (1)/(2), used identically
@@ -278,17 +257,6 @@ static int vs_cmp_match(const void *ap, const void *bp) {
     const vs_match *a = ap, *b = bp;
     if (a->from != b->from) return (a->from < b->from) ? -1 : 1;
     if (a->to != b->to) return (a->to > b->to) ? -1 : 1;
-    return 0;
-}
-
-/* `--som`'s callback: NEVER requests early termination (always returns 0)
- * -- see the file header's "SOM MODE" section for why. `context` is a
- * `vs_match_list *`. */
-static int HS_CDECL on_match_som(unsigned int id, unsigned long long from,
-                                 unsigned long long to, unsigned int flags,
-                                 void *context) {
-    (void)id; (void)flags;
-    vs_push((vs_match_list *)context, from, to);
     return 0;
 }
 
@@ -380,22 +348,6 @@ static subject *load_list(const char *path, size_t *n_out) {
     fclose(f);
     *n_out = n;
     return v;
-}
-
-/* ------------------------------------------------------------ the callback
- *
- * Always requests early termination (return 1): this config never reports
- * a span or a count, so nothing is gained by letting hs_scan keep finding
- * matches past the first -- see this file's header, "MATCHING". */
-typedef struct { volatile int matched; } match_ctx;
-
-static int HS_CDECL on_match(unsigned int id, unsigned long long from,
-                             unsigned long long to, unsigned int flags,
-                             void *context) {
-    (void)id; (void)from; (void)to; (void)flags;
-    match_ctx *ctx = (match_ctx *)context;
-    ctx->matched = 1;
-    return 1;
 }
 
 /* ------------------------------------------------------------------- main */
@@ -607,61 +559,16 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            if (som_mode) {
-                /* [B92], SOM MODE: the callback never stops early (see the
-                 * file header) -- every `iters` pass re-scans and
-                 * re-accumulates the WHOLE subject, which is `--som`'s own
-                 * real, documented cost. */
-                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-                 * timed loop below is the original one, its bounds and body untouched. */
-                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                    volatile long n_it = pass ? iters : 1;
-                    if (pass && prime) t0 = now();
-                    for (long it = 0; it < n_it; it++) {
-                    vs_reset(&ml);
-                    hs_error_t rc = hs_scan(db, (const char *)s->buf,
-                                            (unsigned int)s->len, 0, scratch,
-                                            on_match_som, &ml);
-                    if (rc != HS_SUCCESS) {
-                        /* Same reasoning as the `nosom` arm below (see
-                         * header, "GAVE-UP CODES: NONE") -- `on_match_som`
-                         * never requests early termination, so there is no
-                         * HS_SCAN_TERMINATED to except here either. */
-                        matched = -1;
-                        (void)rc;
-                        break;
-                    }
-                    matched = ml.n > 0 ? 1 : 0;
-                    }
-                }
-            } else {
-                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-                 * timed loop below is the original one, its bounds and body untouched. */
-                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                    volatile long n_it = pass ? iters : 1;
-                    if (pass && prime) t0 = now();
-                    for (long it = 0; it < n_it; it++) {
-                    match_ctx ctx = { 0 };
-                    hs_error_t rc = hs_scan(db, (const char *)s->buf,
-                                            (unsigned int)s->len, 0, scratch,
-                                            on_match, &ctx);
-                    if (rc != HS_SUCCESS && rc != HS_SCAN_TERMINATED) {
-                        /* No documented resource-limit refusal on this route
-                         * (see header, "GAVE-UP CODES: NONE") -- an
-                         * unexpected negative return is a driver/API-level
-                         * problem, reported via the ANSWER column so the
-                         * harness's crashed path (never a gave-up range,
-                         * empty by construction) picks it up. */
-                        matched = -1;
-                        (void)rc;
-                        break;
-                    }
-                    matched = ctx.matched ? 1 : 0;
-                    }
-                }
-            }
-            elapsed = now() - t0;
+            /* [B133] the timed loop is timed_run() in timed.c (its own
+             * translation unit; see that file's header). */
+            struct timed_in tin = {
+                .buf = s->buf, .len = s->len, .iters = iters,
+                .prime = (int)prime, .som_mode = som_mode,
+                .db = db, .scratch = scratch, .ml = &ml,
+            };
+            struct timed_out tout = { 0 };
+            elapsed = timed_run(&tin, &tout);
+            matched = tout.matched;
             if (subject_timeout > 0) alarm(0);
         }
 

@@ -152,18 +152,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#define TRE_DRIVER_CFLAGS REG_EXTENDED
+#include "timed.h"
 
-/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
- * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
- * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
- * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
- * that range or at n. Without --utf8 the advance stays start + 1. */
-static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
-    size_t p = pos + 1;
-    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
-    return p;
-}
+#define TRE_DRIVER_CFLAGS REG_EXTENDED
 
 static double now(void) {
     struct timespec ts;
@@ -246,21 +237,6 @@ static subject *load_list(const char *path, size_t *n_out) {
 /* ------------------------------------------------------------------- main */
 
 #define MAX_CAPS 64
-
-static void emit_caps(regmatch_t *pmatch, size_t nmatch, char *out,
-                      size_t outcap) {
-    size_t off = 0;
-    out[0] = 0;
-    for (size_t i = 1; i < nmatch; i++) {
-        long s = (pmatch[i].rm_so < 0) ? -1 : (long)pmatch[i].rm_so;
-        long e = (pmatch[i].rm_eo < 0) ? -1 : (long)pmatch[i].rm_eo;
-        int k = snprintf(out + off, outcap - off, "%s%ld:%ld",
-                         i > 1 ? "," : "", s, e);
-        if (k < 0 || (size_t)k >= outcap - off) break;
-        off += (size_t)k;
-    }
-    if (!out[0]) { out[0] = '-'; out[1] = 0; }
-}
 
 int main(int argc, char **argv) {
     const char *pattern_path = NULL, *list_path = NULL, *mode = "search";
@@ -393,112 +369,20 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-             * timed loop below is the original one, its bounds and body untouched. */
-            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                volatile long n_it = pass ? iters : 1;
-                if (pass && prime) t0 = now();
-                for (long it = 0; it < n_it; it++) {
-                first_s = first_e = -1;
-                if (find_all) {
-                    size_t pos = 0;
-                    long   count = 0;
-                    for (;;) {
-                        int eflags = (pos > 0) ? REG_NOTBOL : 0;
-                        int rc = tre_regnexecb(&re, (const char *)s->buf + pos,
-                                               s->len - pos, nmatch_cap,
-                                               pmatch, eflags);
-                        /* KB-29 (docs/dev/known_issues.md): rc_final is now
-                         * ALWAYS the loop's own terminal code -- not only
-                         * when count == 0 -- so a genuine give-up (any code
-                         * other than REG_OK/REG_NOMATCH) AFTER at least one
-                         * match is never silently discarded in favour of
-                         * the LAST successful match's own REG_OK. Mirrors
-                         * testees/{pcre2,onig,pcrec}/driver.c's own fix
-                         * exactly. See this driver's own reachability note
-                         * below: on the pinned libtre build, tre_regnexecb
-                         * is EMPIRICALLY shown to make zero heap
-                         * allocations for any pattern/subject this project
-                         * could construct (docs/dev/measurements/2026-09-26-
-                         * kb29-tre-giveup-reachability.txt), so REG_ESPACE
-                         * -- the only code besides REG_OK/REG_NOMATCH TRE's
-                         * own source can return from an exec call -- has
-                         * never been observed to fire here; this fix is
-                         * therefore DEFENSIVE (correct if a future libtre
-                         * build or an exotic pattern this project has not
-                         * tried ever does allocate mid-match), not a fix
-                         * for a witnessed truncation on this engine. */
-                        if (rc != REG_OK) { rc_final = rc; break; }
-                        long m_s = (long)pmatch[0].rm_so + (long)pos;
-                        long m_e = (long)pmatch[0].rm_eo + (long)pos;
-                        if (first_s < 0) {
-                            first_s = m_s; first_e = m_e;
-                            rc_final = rc;
-                            ncaps_final = (int)nmatch_cap - 1;
-                            /* pmatch[] is relative to the RE-SLICED buffer
-                             * (s->buf + pos); the emitted caps must be
-                             * absolute against the true subject, exactly
-                             * like first_s/first_e above -- offset every
-                             * entry by pos before rendering. */
-                            if (pos > 0) {
-                                for (size_t ci = 0; ci < nmatch_cap; ci++) {
-                                    if (pmatch[ci].rm_so >= 0) pmatch[ci].rm_so += (regoff_t)pos;
-                                    if (pmatch[ci].rm_eo >= 0) pmatch[ci].rm_eo += (regoff_t)pos;
-                                }
-                            }
-                            emit_caps(pmatch, nmatch_cap, caps_final, sizeof caps_final);
-                        }
-                        count++;
-                        /* pcrec match_api.md S3.1's find-all advance: off the
-                         * match's own reported START, never off the scan
-                         * position -- KB-17, the same rule testees/pcre2/
-                         * driver.c and testees/onig/driver.c both apply.
-                         * Under --utf8 ([B77] U1): the next CHARACTER
-                         * boundary of the TRUE subject (pmatch[] is
-                         * slice-relative, so the absolute start is
-                         * pos + start), not start + 1. TRE itself stays
-                         * byte-literal (utf8_set_v1.md 7.3); the flag moves
-                         * the harness's advance, never the engine. */
-                        size_t start = (size_t)pmatch[0].rm_so;
-                        size_t end = (size_t)pmatch[0].rm_eo;
-                        if (end > start || !utf8_adv)
-                            pos += (end > start) ? end : start + 1;
-                        else
-                            pos = utf8_next_start(s->buf, s->len, pos + start);
-                        if (whole_subject) break; /* one anchored position only */
-                        if (pos > s->len) break;
-                    }
-                    nmatches = count;
-                    /* KB-29: a MID-loop give-up (any code other than
-                     * REG_OK/REG_NOMATCH, POSIX's own ordinary "no further
-                     * matches" terminator for these functions) must
-                     * propagate as the whole subject's give-up -- discard
-                     * any match already found THIS call so the
-                     * classification below falls through to the SAME
-                     * giveup:<code>:<message> branch a first-call give-up
-                     * already takes. Mirrors testees/{pcre2,onig,pcrec}/
-                     * driver.c's own discard exactly. */
-                    if (rc_final != REG_OK && rc_final != REG_NOMATCH) {
-                        first_s = first_e = -1;
-                        nmatches = -1;
-                        ncaps_final = 0;
-                        caps_final[0] = '-'; caps_final[1] = 0;
-                    }
-                } else {
-                    int rc = tre_regnexecb(&re, (const char *)s->buf, s->len,
-                                           nmatch_cap, pmatch, 0);
-                    rc_final = rc;
-                    if (rc == REG_OK) {
-                        first_s = (long)pmatch[0].rm_so;
-                        first_e = (long)pmatch[0].rm_eo;
-                        ncaps_final = (int)nmatch_cap - 1;
-                        emit_caps(pmatch, nmatch_cap, caps_final, sizeof caps_final);
-                    }
-                }
-                }
-            }
-            elapsed = now() - t0;
+            /* [B133] the timed loop is timed_run() in timed.c (its own
+             * translation unit; see that file's header). */
+            struct timed_in tin = {
+                .buf = s->buf, .len = s->len, .iters = iters,
+                .prime = (int)prime, .find_all = find_all,
+                .utf8_adv = utf8_adv, .whole_subject = whole_subject,
+                .re = &re, .nmatch_cap = nmatch_cap, .pmatch = pmatch,
+                .caps_final = caps_final, .caps_final_cap = sizeof caps_final,
+            };
+            struct timed_out tout = { -1, -1, -1, REG_NOMATCH, 0 };
+            elapsed = timed_run(&tin, &tout);
+            first_s = tout.first_s; first_e = tout.first_e;
+            nmatches = tout.nmatches; rc_final = tout.rc_final;
+            ncaps_final = tout.ncaps_final;
             if (subject_timeout > 0) alarm(0);
         }
 

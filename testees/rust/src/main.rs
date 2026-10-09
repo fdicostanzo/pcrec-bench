@@ -108,6 +108,9 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
+// [B133] the timed loop lives in the `rust-timed` crate (timed/).
+use rust_timed::{run_subject, SubjectResult};
+
 // RegexBuilder's own documented defaults, as of the `regex` crate version
 // this project's research cited (docs/design/capability_set_v1.md 5's
 // wild-datetime row: "RE2's max_mem and Rust's size_limit are the ones
@@ -216,121 +219,6 @@ fn caps_string(n_groups: usize, spans: &[(i64, i64)]) -> String {
         parts.push(format!("{}:{}", s, e));
     }
     parts.join(",")
-}
-
-/// One subject's worth of work: `iters` repeats of the SAME operation
-/// (find, or find-all in `--find-all` mode), only the FINAL iteration's
-/// answer is reported -- the same convention every other driver in this
-/// project holds to (the timed loop is deliberately homogeneous; what
-/// varies is only how long it took).
-struct SubjectResult {
-    matched: bool,
-    start: i64,
-    end: i64,
-    nmatches: i64, // -1 == "-" (not --find-all)
-    caps: Vec<(i64, i64)>, // 1-based groups 1..n, empty when ncaps == 0
-    elapsed: f64,
-}
-
-/// [B77] U1: the find-all EMPTY-MATCH advance under `--utf8` -- pcrec
-/// match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
-/// pcrecbench/oracle_pcre2.py's `next_start()` and every other driver apply:
-/// from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte
-/// outside that range or at n. Without `--utf8` the advance stays start + 1.
-fn utf8_next_start(buf: &[u8], pos: usize) -> usize {
-    let mut p = pos + 1;
-    while p < buf.len() && (buf[p] & 0xC0) == 0x80 {
-        p += 1;
-    }
-    p
-}
-
-fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: bool, prime: bool) -> SubjectResult {
-    let ncap = re.captures_len().saturating_sub(1); // group 0 excluded, RE2/onig convention
-    let mut matched = false;
-    let mut start: i64 = -1;
-    let mut end: i64 = -1;
-    let mut nmatches: i64 = -1;
-    let mut caps: Vec<(i64, i64)> = Vec::new();
-
-    let mut t0 = now();
-    // [B129] --prime: pass 0 (only with the flag) is ONE untimed call of the
-    // same body, then the clock restarts; the timed loop is the original one.
-    for pass in (if prime { 0 } else { 1 })..2 {
-        let n_it = if pass == 0 { 1 } else { iters.max(1) };
-        if pass == 1 && prime {
-            t0 = now();
-        }
-    for _ in 0..n_it {
-        start = -1;
-        end = -1;
-        caps.clear();
-        if find_all {
-            let mut pos = 0usize;
-            let mut count: i64 = 0;
-            loop {
-                if pos > buf.len() {
-                    break;
-                }
-                let m = match re.find_at(buf, pos) {
-                    Some(m) => m,
-                    None => break,
-                };
-                let (ms, me) = (m.start(), m.end());
-                if start < 0 {
-                    start = ms as i64;
-                    end = me as i64;
-                    if let Some(c) = re.captures_at(buf, ms) {
-                        caps = group_spans(&c, ncap);
-                    }
-                }
-                count += 1;
-                // pcrec match_api.md S3.1's find-all advance rule (adopted
-                // by reference, KB-17, testees/pcre2/driver.c's own
-                // comment): off the match's own reported START, never off
-                // the scan position.
-                // Under --utf8 ([B77] U1): the next CHARACTER boundary.
-                pos = if me > ms {
-                    me
-                } else if utf8_adv {
-                    utf8_next_start(buf, ms)
-                } else {
-                    ms + 1
-                };
-            }
-            nmatches = count;
-            matched = count > 0;
-        } else {
-            match re.find(buf) {
-                Some(m) => {
-                    matched = true;
-                    start = m.start() as i64;
-                    end = m.end() as i64;
-                    if let Some(c) = re.captures(buf) {
-                        caps = group_spans(&c, ncap);
-                    }
-                }
-                None => {
-                    matched = false;
-                }
-            }
-        }
-    }
-    }
-    let elapsed = t0.elapsed().as_secs_f64();
-
-    SubjectResult { matched, start, end, nmatches, caps, elapsed }
-}
-
-fn group_spans(c: &regex::bytes::Captures, ncap: usize) -> Vec<(i64, i64)> {
-    let mut out = Vec::with_capacity(ncap);
-    for g in 1..=ncap {
-        match c.get(g) {
-            Some(m) => out.push((m.start() as i64, m.end() as i64)),
-            None => out.push((-1, -1)),
-        }
-    }
-    out
 }
 
 struct Args {

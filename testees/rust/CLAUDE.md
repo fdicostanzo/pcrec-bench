@@ -25,6 +25,7 @@ prediction.
 | `Cargo.toml` | the driver crate manifest; `regex = "1"` (a semver requirement — the PIN is `Cargo.lock`, generated at the first build and committed) |
 | `Cargo.lock` | GENERATED and COMMITTED (the first `cargo build --release`, 2026-09-19): `regex 1.13.1`, `regex-automata 0.4.18`, `regex-syntax 0.8.11`, `aho-corasick 1.1.5`, `memchr 2.8.3` |
 | `src/main.rs` | the native Rust driver (the protocol is in `pcrecbench/adapters.py`) |
+| `timed/` (crate `rust-timed`: `Cargo.toml`, `src/lib.rs`) | ([B133], BD16) THE TIMED LOOP, ISOLATED: `run_subject()` (everything between a subject's two clock reads, `group_spans`, the find-all advance) in a CRATE of its own, `#[inline(never)]`, so no edit to `src/main.rs` can change its code generation. ALIGNMENT, what stable Rust allows: no per-function alignment (`fn_align` is nightly), so `lib.rs` gives the function its own section and a `global_asm!` re-declares that section `.balign 64` — verified 0 mod 64 by the isolation proof, and the proof is the check, not the trick. What could NOT be pinned: the crate's code placement relative to the rest of the link beyond that (the section start is 64-aligned, the neighbours are not ours). `Cargo.lock` gained the `rust-timed` package entry; the `regex` version is unchanged. An INSTRUMENT: decisions.md BD16 |
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; version probing from the committed `Cargo.lock` + a live `rustc --version`; the `\A(?:...)\z` whole-subject wrap |
 | `configs.toml` | the one config id, `rust-default` |
 

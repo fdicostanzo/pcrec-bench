@@ -120,7 +120,16 @@ def build_driver(source, output, extra=None, cflags=None):
     thing (record_schema.md 6.7)."""
     cc = os.environ.get("CC", "gcc")
     flags = (cflags or os.environ.get("CFLAGS", "-O2 -std=gnu11")).split()
-    argv = [cc] + flags + ["-o", output, source] + list(extra or [])
+    # [B133]: a driver's TIMED LOOP lives in a sibling `timed.c` (its own
+    # translation unit, so unrelated driver/shim edits cannot move it) -- if
+    # one sits beside the source, it is compiled and linked in, and it and
+    # `timed.h` join the staleness check.
+    here = os.path.dirname(os.path.abspath(source))
+    timed = [os.path.join(here, "timed.c")] if os.path.exists(
+        os.path.join(here, "timed.c")) else []
+    deps = [source] + timed + [p for p in (os.path.join(here, "timed.h"),)
+                               if os.path.exists(p)]
+    argv = [cc] + flags + ["-o", output, source] + timed + list(extra or [])
     # Registered even on the cached path: the record must state how the
     # driver that produced its numbers was built, not only how one that
     # happened to be rebuilt this run was.
@@ -129,7 +138,8 @@ def build_driver(source, output, extra=None, cflags=None):
         "compiler": cc,
     }
     if (os.path.exists(output)
-            and os.path.getmtime(output) >= os.path.getmtime(source)):
+            and os.path.getmtime(output) >= max(os.path.getmtime(d)
+                                                for d in deps)):
         return output
     os.makedirs(os.path.dirname(output) or ".", exist_ok=True)
     proc = subprocess.run(argv, capture_output=True, text=True, env=C_ENV,

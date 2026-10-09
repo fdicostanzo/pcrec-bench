@@ -1,0 +1,196 @@
+# The SENTINEL set's SIDECAR (harness contract 2, requirements 5). Fields
+# only, no grammar -- [DD-13]'s territory is untouched. Every pattern block
+# below is DERIVED from bench/capability/subbench.toml by gen_patterns.py
+# (--check compares them); nothing is authored here.
+
+id = "sentinel"
+version = "0.1"
+objective_kind = "hazard"
+objective = """\
+An INSTRUMENT sentinel, not a survey: a small, FIXED set of short-call cells \
+whose per-call time (tens of ns) is sensitive to the bench's OWN timing \
+code, measured in EVERY window beside pcre2-jit as the flat control. [B133] \
+(after [B132]): adding stamp getters to testees/pcrec/driver.c moved short \
+calls +10-17% on program-identical cells, which looked like a pcrec \
+regression for three weeks (O-92). If the sentinel shifts while pcre2-jit \
+stays flat, the INSTRUMENT moved; if a pcrec cross-pin Delta on these cells \
+is not echoed by the sentinel's own shift, it is the engine's."""
+description = """\
+Fourteen capability@0.2 members plus capability's floor, copied byte for byte \
+(gen_patterns.py): eleven short-call MOVERS of [B132]'s tables (winpath-\
+near-miss +25%, trim-nested-star, numeric-id, phone-list, us-zip, base10num, \
+ipv4, uuid, semdiv, router-prefix-order, validator-email) and three CONTROLS \
+that stayed flat in every [B132] arm (waf-942360, keyword-prefix-order, \
+file-ext-order). The 75 short subjects are \
+capability@0.2's own (gen_subjects.py regenerates them through capability's \
+builder: same bytes, same manifest). search_short ONLY: the sentinel reads \
+the per-call cost of a failing/short search, nothing else. See NOTES.md for \
+how a window report must read it."""
+
+regimes = ["search_short"]
+
+[[patterns]]
+name = "winpath-near-miss"
+file = "patterns/winpath-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "trim-nested-star"
+file = "patterns/trim-nested-star.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "numeric-id-nested-plus"
+file = "patterns/numeric-id-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "phone-list-nested-plus"
+file = "patterns/phone-list-nested-plus.rx"
+feature_tier = "base"
+hazard_class = "exponential-backtracking"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-redos-nested", "hazard-exponential-backtracking", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-us-zip-owasp"
+file = "patterns/wild-validator-us-zip-owasp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-validator", "hazard-none", "provenance-owasp-validation", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "base10num-near-miss"
+file = "patterns/base10num-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-logparse", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "ipv4-near-miss"
+file = "patterns/ipv4-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-validator", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "uuid-near-miss"
+file = "patterns/uuid-near-miss.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-validator", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-semdiv-dollar-trailing-newline-pcre2"
+file = "patterns/wild-semdiv-dollar-trailing-newline-pcre2.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-semantics-divergence", "hazard-none", "provenance-pcre2-testdata", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "router-prefix-order"
+file = "patterns/router-prefix-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "wild-validator-email-owasp"
+file = "patterns/wild-validator-email-owasp.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-validator", "hazard-none", "provenance-owasp-validation", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "wild-waf-crs-942360-concat-sqli"
+file = "patterns/wild-waf-crs-942360-concat-sqli.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "medium"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-wild-waf", "hazard-none", "provenance-crs", "fidelity-verbatim"]
+role = "member"
+
+[[patterns]]
+name = "keyword-prefix-order"
+file = "patterns/keyword-prefix-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "file-ext-order"
+file = "patterns/file-ext-order.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-semantics-divergence", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "member"
+
+[[patterns]]
+name = "floor-byte"
+file = "patterns/floor-byte.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "tiny"
+convention = "perl-leftmost-first"
+tags = ["sentinel", "family-floor", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+role = "floor"
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+short_search_max_bytes = 512
+
+[expectations]
+file = "expectations.tsv"
+default_method = "libpcre2-differential"
+fallback_methods = ["structural-alphabet", "libpcre2-dfa-fallback"]
+
+[testees.pcre2]
+options = {}
+
+[testees.pcrec]
+options = {}

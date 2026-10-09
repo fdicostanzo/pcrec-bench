@@ -1,0 +1,27 @@
+# [B133] the instrument A/B cell list: [B132]'s movers + controls (pcrec-auto,
+# pcrec-nocaps) and pcre2-jit as the cross-engine control. `testee:pattern`.
+pcrec-auto:winpath-near-miss
+pcrec-auto:base10num-near-miss
+pcrec-auto:ipv4-near-miss
+pcrec-auto:wild-semdiv-dollar-trailing-newline-pcre2
+pcrec-auto:uuid-near-miss
+pcrec-auto:router-prefix-order
+pcrec-auto:wild-validator-email-owasp
+pcrec-auto:wild-waf-crs-942360-concat-sqli
+pcrec-auto:keyword-prefix-order
+pcrec-auto:file-ext-order
+pcrec-nocaps:winpath-near-miss
+pcrec-nocaps:trim-nested-star
+pcrec-nocaps:numeric-id-nested-plus
+pcrec-nocaps:phone-list-nested-plus
+pcrec-nocaps:wild-validator-us-zip-owasp
+pcrec-nocaps:base10num-near-miss
+pcrec-nocaps:ipv4-near-miss
+pcrec-nocaps:wild-semdiv-dollar-trailing-newline-pcre2
+pcrec-nocaps:wild-waf-crs-942360-concat-sqli
+pcrec-nocaps:keyword-prefix-order
+pcre2-jit:winpath-near-miss
+pcre2-jit:ipv4-near-miss
+pcre2-jit:uuid-near-miss
+pcre2-jit:trim-nested-star
+pcre2-jit:keyword-prefix-order

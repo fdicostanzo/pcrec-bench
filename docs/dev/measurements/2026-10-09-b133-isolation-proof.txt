@@ -1,0 +1,36 @@
+# [B133] isolation proof, run 2026-10-09T13:00:12-04:00 at c705c5c (+uncommitted), pin 255bcdd8
+# script: docs/dev/measurements/2026-10-09-b133-isolation-proof.py
+pcrec      timed fn: base addr=0x4c40 mod64=0 ninsn=261 sha=4a2e2d849cf44ae9 | variant addr=0x5040 mod64=0 ninsn=261 sha=4a2e2d849cf44ae9 | IDENTICAL
+             control: main() insns base=2718 variant=2958 (main changed: yes)
+pcre2      timed fn: base addr=0x2b40 mod64=0 ninsn=323 sha=0fa7c4ef42d8cbfb | variant addr=0x2f80 mod64=0 ninsn=323 sha=0fa7c4ef42d8cbfb | IDENTICAL
+             control: main() insns base=924 variant=1166 (main changed: yes)
+onig       timed fn: base addr=0x3740 mod64=0 ninsn=237 sha=53824060fcd8ce1b | variant addr=0x3b40 mod64=0 ninsn=237 sha=53824060fcd8ce1b | IDENTICAL
+             control: main() insns base=712 variant=946 (main changed: yes)
+tre        timed fn: base addr=0x2740 mod64=0 ninsn=271 sha=7a317a5b17ea918a | variant addr=0x2b40 mod64=0 ninsn=271 sha=7a317a5b17ea918a | IDENTICAL
+             control: main() insns base=674 variant=911 (main changed: yes)
+vectorscan timed fn: base addr=0x2b00 mod64=0 ninsn=177 sha=4a27d8a6ea7a502c | variant addr=0x2f40 mod64=0 ninsn=177 sha=4a27d8a6ea7a502c | IDENTICAL
+             control: main() insns base=874 variant=1116 (main changed: yes)
+re2        timed fn: base addr=0x4080 mod64=0 ninsn=227 sha=d442b4a1f49a6268 | variant addr=0x4480 mod64=0 ninsn=227 sha=d442b4a1f49a6268 | IDENTICAL
+             control: main() insns base=976 variant=1212 (main changed: yes)
+rust       timed fn: base addr=0xd5c40 mod64=0 ninsn=341 sha=cee097a619eb342e | variant addr=0xd7880 mod64=0 ninsn=341 sha=cee097a619eb342e | IDENTICAL
+             control: main() insns base=3645 variant=4993 (main changed: yes)
+shim winpath-near-miss    caps    post     pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim winpath-near-miss    caps    post+40  pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim winpath-near-miss    caps    pre      pb_search:mod64=48,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=16,sha=dff65de8 pb_match_caps_in:mod64=32,sha=da437167
+shim winpath-near-miss    caps    pre+40   pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=16,sha=67866d7f pb_search_in:mod64=32,sha=dff65de8 pb_match_caps_in:mod64=48,sha=da437167
+shim winpath-near-miss caps: post vs post+40 wrappers identical & 64-aligned: True ; positive control (pre-B133 shim, +40 getters) moves a wrapper mod 64: True
+shim winpath-near-miss    nocaps  post     pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim winpath-near-miss    nocaps  post+40  pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim winpath-near-miss    nocaps  pre      pb_search:mod64=48,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=16,sha=dff65de8 pb_match_caps_in:mod64=32,sha=da437167
+shim winpath-near-miss    nocaps  pre+40   pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=16,sha=67866d7f pb_search_in:mod64=32,sha=dff65de8 pb_match_caps_in:mod64=48,sha=da437167
+shim winpath-near-miss nocaps: post vs post+40 wrappers identical & 64-aligned: True ; positive control (pre-B133 shim, +40 getters) moves a wrapper mod 64: True
+shim keyword-prefix-order caps    post     pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order caps    post+40  pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order caps    pre      pb_search:mod64=16,sha=7c6275b2 pb_match_caps:mod64=32,sha=67866d7f pb_search_in:mod64=48,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order caps    pre+40   pb_search:mod64=32,sha=7c6275b2 pb_match_caps:mod64=48,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=16,sha=da437167
+shim keyword-prefix-order caps: post vs post+40 wrappers identical & 64-aligned: True ; positive control (pre-B133 shim, +40 getters) moves a wrapper mod 64: True
+shim keyword-prefix-order nocaps  post     pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order nocaps  post+40  pb_search:mod64=0,sha=7c6275b2 pb_match_caps:mod64=0,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order nocaps  pre      pb_search:mod64=16,sha=7c6275b2 pb_match_caps:mod64=32,sha=67866d7f pb_search_in:mod64=48,sha=dff65de8 pb_match_caps_in:mod64=0,sha=da437167
+shim keyword-prefix-order nocaps  pre+40   pb_search:mod64=32,sha=7c6275b2 pb_match_caps:mod64=48,sha=67866d7f pb_search_in:mod64=0,sha=dff65de8 pb_match_caps_in:mod64=16,sha=da437167
+shim keyword-prefix-order nocaps: post vs post+40 wrappers identical & 64-aligned: True ; positive control (pre-B133 shim, +40 getters) moves a wrapper mod 64: True

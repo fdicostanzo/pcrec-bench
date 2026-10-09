@@ -51,4 +51,12 @@ name = "rust-regex-driver"
 version = "0.1.0"
 dependencies = [
  "regex",
+ "rust-timed",
+]
+
+[[package]]
+name = "rust-timed"
+version = "0.1.0"
+dependencies = [
+ "regex",
 ]
