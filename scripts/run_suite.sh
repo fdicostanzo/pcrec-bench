@@ -12,6 +12,8 @@
 # ENV-OVERRIDABLE (defaults shown):
 #
 #   SUITE      "bounded loglines email"   -- sub-benches, in RUN ORDER
+#              ([B133]: `sentinel` is PREPENDED unless SENTINEL=0 or the
+#              SUITE already names it -- see THE SENTINEL below)
 #   TESTEES    run_window.sh's default    -- the testee list for EVERY set,
 #              unless TESTEES_<set> (e.g. TESTEES_bounded) overrides it for
 #              one set (a second pass of the same set with other testees is
@@ -49,6 +51,21 @@ REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd) || exit 9
 cd "$REPO" || exit 9
 
 SUITE=${SUITE:-"bounded loglines email"}
+# [B133] THE SENTINEL: bench/sentinel (short-call cells whose time is
+# sensitive to the bench's own timing code) is measured FIRST in EVERY suite,
+# for pcrec-auto, pcrec-nocaps and the flat control pcre2-jit, so a window
+# report can tell "the instrument moved" (sentinel shifts, pcre2-jit flat)
+# from "the engine moved". SENTINEL=0 skips it (rehearsals, a re-run of one
+# set); a SUITE that already names `sentinel` (or `sentinel:<label>`, e.g. a
+# closing `sentinel:end` pass) keeps its own position; the testees are
+# $TESTEES_sentinel (and $TESTEES_sentinel_<label>), default below.
+SENTINEL=${SENTINEL:-1}
+TESTEES_sentinel=${TESTEES_sentinel:-"pcrec-auto pcrec-nocaps pcre2-jit"}
+TESTEES_sentinel_end=${TESTEES_sentinel_end:-$TESTEES_sentinel}
+case " $SUITE " in
+  *" sentinel "*|*" sentinel:"*) ;;
+  *) [ "$SENTINEL" = 1 ] && SUITE="sentinel $SUITE" ;;
+esac
 DRY=""
 for arg in "$@"; do
   case "$arg" in

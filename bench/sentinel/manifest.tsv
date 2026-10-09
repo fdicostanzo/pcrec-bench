@@ -1,0 +1,76 @@
+id	len	sha256	description	periodic
+v-email	24	4fefd3a4dba68183f57929938b4c62198e458a10de290c190dd19357cfe161b9	field/hit a plausible email address: the OWASP validator and every real mail-address consumer's common case	no
+v-ipv4	11	c5eb5a4cc76a5cdb16e79864b9ccd26c3553f0c396d0a21bafb7be71c1efcd8c	field/hit a valid dotted-quad: OWASP's IPv4 validator and its designed twin (answer-identical -- both octet-range-bound)	10
+v-ipv4-oor	9	fec4ccb74c28f406f7b7a770c3d7ab9c381db9c0c19cde1794d15278d0855d0d	field/miss an out-of-range octet: both the OWASP IPv4 validator and its twin correctly reject it (the naive \d{1,3}-per-octet gotcha the twin was modeled on does NOT apply to either -- see v-ipv4's own description)	no
+v-us-zip	5	b83c588da0c6931625f42e0948054a3ade722bfd02c27816305742ed7390ac6c	field/hit a plain 5-digit ZIP	no
+v-us-zip-plus4	10	1fd794e670cc4ea27fbfce9bcdd7d3d0068a8a022aaa57de85456e9450e145b2	field/hit the ZIP+4 extended form	no
+v-uuid-valid	36	ae6cdcce5bf2eb369c355f9bddd88db6aa2b0061726480eb3315ecaeb6d16af8	field/hit a version-1/variant-8 UUID: the grok class-heavy import AND its RFC-4122-strict twin both accept it	no
+v-uuid-badnibble	36	b6f511bbf7098c20e8d997e15b316547cc2ab581d1895956d970e7d8e1b9baef	field/edge a UUID-shaped string with an out-of-range version nibble ('0') and variant nibble ('1'): the grok import (pure hex-range classes) still HITS; the RFC-4122-strict twin MISSES -- the pair's whole point	no
+lp-num-neg-dec	7	bcf594d2e58b1c4055d7d7916df6ad975906b839f0956f97bd0eda405c605859	field/hit a signed decimal: grok BASE10NUM (atomic and non-atomic) and the near-miss twin all accept it	no
+lp-num-leadzero	4	1be2e452b46d7a0d9656bbb1f768e8248eba1b75baed65f5d99eafa948899a6a	field/edge a leading-zero integer: grok's BASE10NUM (unanchored SEARCH, no leading-zero rule) still HITS; the near-miss twin (anchored, JSON-strict '0'|'[1-9]\d*') MISSES	no
+lp-quoted	13	c544418000753a16990ccb2a54ab06b07534806228e661a2d71745f2ee810cae	field/hit a double-quoted string, no escapes	12
+lp-quoted-escaped	16	05cade54cb45afff31f5ac0dd4d9af69171ecf401fd5b16ea4a042694fced26a	field/edge a double-quoted string with an escaped quote inside: the atomic QUOTEDSTRING's own `\\.|[^\\"]+` alternation	15
+lp-winpath	22	e07e7aec2c4353056eef4c58f472be785729f3cf1312e6d42743bcd9df11fd33	field/hit a Windows path: grok WINPATH and its near-miss twin both accept it (no reserved character)	no
+lp-winpath-reserved	24	cb38583948d63986defc8643fb1e7fe0a4db2b02facb731988e57d44af842238	field/edge a Windows path with a reserved character ('<') in a segment: grok WINPATH (permissive `[^\\?*]*`) still HITS; the near-miss twin (rejects all nine reserved characters) MISSES	no
+lp-syslog	56	ea894c6393d3d913572d8711f10ad71bfd8571a7e517c9b9c767cdebc9b69913	field/hit a realistic syslog line: facility.priority prefix, timestamp, host, program[pid]:	no
+lp-atomic-hit	31	93e5173763cbc3c1f14b95c68f0a697bb2eb2bdb93b6984969f9c403d506acc5	field/hit a valid facility.severity tag: both the atomic and non-atomic authored control pair accept it	no
+lp-atomic-nonmatch	23	2fa9febff4a9bc2857e3de5df316de6927dd0a939ef8ac4354b4b8d4f0f80387	field/miss a facility-shaped but invalid token (no such facility): both members of the control pair reject it identically -- only their COST differs on a line built to make the atomic form fail fast	no
+waf-dbnames	39	b6de14ad9763d30883631e795bcd02d04715ddcda66f22c284fdd2f06694270b	field/hit an information_schema reference	no
+waf-sleep	16	fb8c66e0fc35dce0a65920c867ba134c7c9965cfee0d62edd9f5dca71778bc0e	field/hit a time-based blind SQLi payload	no
+waf-union	43	3e09db5dac0b265547e36f53fb2fb06d511fa673743e05535c7ab696fcca1aa0	field/hit a UNION SELECT payload	no
+waf-concat	48	009cdae95ec9ac442e75264e35b996dc13f57876730077cab93b166e1d2ff24a	field/hit a CONCAT-based exfiltration payload	no
+waf-comment-obfuscation	18	9408b998fb23510d62585f17b4c5e66220edcddd2dd4278fc842b6029ece0e2b	field/hit a MySQL versioned-comment obfuscated payload	no
+waf-benign	39	055a13e13e2078405d85bc7e5b5e9de8434cdd07a6de5c4ed6fecd637de44503	line/miss an ordinary request body with none of the five CRS SQLi shapes	no
+sec-aws-key	20	1a5d44a2dca19669d72edf4c4f1c27c4c1ca4b4408fbb17f6ce4ad452d78ddb3	field/hit an AWS access key id (the documented AKIA... exemplar shape)	no
+sec-github-pat	93	8fac9e498b33ae24c9d435575e1ea4e739baadaf1ccc159aa4954ceed25090ef	field/hit a fine-grained GitHub PAT (82 hex/alnum characters after the prefix, exact length)	no
+sec-slack-webhook	81	f3ebab74d2194e9badcdd5900995db75660073be88f153c14074d64a11671390	field/hit a Slack incoming-webhook URL (exact per-segment lengths: T+8, B+8..12, +24)	no
+sec-userpass	33	84278e9fb658e918ef29fe613ffa10b7d69f57ba3041b44d5b58f8e0cfcc8834	line/hit a username=...password=... pair, the HTTP-Parameter-Pollution-style shape	no
+dt-iso8601	20	184aa5d346371b54acbfe029ef40e9478e97d1fab5bde477f6fa9c5a40d8363c	field/hit a full ISO-8601 UTC timestamp	no
+dt-prose-month	13	0b464eb60a3a17e54654ec64aa1a503f55ece348ccd006b8dd5241e8530b2226	field/hit a spelled-month date: the datefinder alternation's month-name branch	no
+cg-array-begin	1	245843abef9e72e7efac30138a994bf6301e7e1d7d7042a33d42e863d2638811	field/hit a JSON array opener	no
+cg-constant	4	b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b	field/hit a JSON boolean constant	no
+cg-object-begin	1	021fb596db81e6d02bf3d2586ee3981fe519f275c0ac9ca76bbcf2ebb4097d96	field/hit a JSON object opener	no
+cg-number	10	e07f52d1f57f85b38be4a68cbbb708463c66df16586fa51b5a0f13a8311b8699	field/hit a signed float in exponential form	no
+cg-string-escape	2	a80e516bfb196e1c48a9acbe39da8fceb6bc82e0d991b8a990b8f3239c7efaed	field/hit a JSON string escape sequence (backslash + n, two literal bytes, not a real newline)	no
+cg-key-colon	7	d0ec2a149b3ca8f28072caa75535e98d7301b632623acbfb47d689862102ab07	field/hit a quoted object key followed by its colon: both the (?x) and flattened control-pair members	no
+br-doubled-word	15	28e9f8b63662b32f8fdefd9cf8faa741f3f75b1fe7f696b82e32a2c113ce314e	field/hit a doubled word	14
+br-tag-pair	18	30a16130020a56ec8a061372ba54e72275b0e52d8aef2c685a05080cc5adc943	field/hit a matching open/close tag pair	no
+br-tag-mismatch	19	ddc67c303c96a870b546aa79dc589a930902aa4ddfea771798afea925ea4744e	field/miss a MISMATCHED tag pair	no
+br-palindrome	6	a320480f534776bddb5cdb54b1e93d210a3c7d199e80a23c1b2178497b184c76	field/hit a 6-digit palindrome number	5
+br-quoted-delim	15	d8d73c4ed99bf6a836a75c5af81d617bbc70dabf39b48d6df81d6003612844d3	field/hit a single-quoted string	14
+br-dup-param	11	488df7180c24d26c3a806965864507e1374f219e92e8441f45f91e94c465863c	field/hit a query string repeating one key (HTTP Parameter Pollution shape)	no
+la-pwd-strong	8	d841e6891df01feabe99b67f00fe346b2099317d6761eeb0111551b8d2b6270f	field/hit a password meeting all four lookahead classes (lower/upper/digit/symbol, >=8)	no
+la-pwd-weak	10	dfbfca34ae512bc32ec8ecb7851a2dcc62c1855d70f041d1e00c1981c65e7d79	field/miss a password missing the symbol class	no
+la-float-bound	13	1362042425de1b56afc7abcc8e3fa37d867481bbb204757b92525c6bd2372d76	field/hit a standalone float literal	no
+la-float-dotted	9	0cf6b6a1e56a43b3bbc7e07b2b324fca5db7bc9baa7c68bd4404ffab8f49d647	field/miss a float-shaped substring inside a longer dotted token (a version string)	no
+la-email-nodup	9	c03b1e763a965cbc75a8d0b2b517fd3da0f7d1750ed6ab25502cb18fec2484cb	field/hit an email local-part with no consecutive dots	no
+la-email-dotdot	10	0484b2357a630f02ee614b0d600a12554b7caf9579360869ef71112402f60a81	field/miss an email local-part WITH consecutive dots	no
+la-currency	10	3b361290ad76f163b78173e87da472e496a82e857a0c89ea191d408fe3cfd993	field/hit a dollar-prefixed amount	no
+la-negation-hit	19	d8ed227c2b736dfa902d287b09edf225d3ae55f94530c4536f560413c93b481a	field/hit 'available' with no negation window before it	no
+la-negation-miss	23	8c43a7a32a07778e580bf7b2835e0ab4335ad3b0984ae30be68cc7c65486746e	field/miss 'available' preceded by a short negation phrase within the bounded lookbehind window	no
+rec-parens-balanced	7	b15f626a1eb193ed7af80f65fae3bdee2f4bd4e71c922fee384f308de43594b8	field/hit balanced nested parens	no
+rec-parens-unbalanced	5	4b71394c4ee7c7fee8a3124a421edefec17af024d8f91712cfb1a1c0bcff7e61	field/miss an unbalanced opener	no
+rec-array-define	11	2b3cb84fa40a3e1b191143612345721b05a2f8523053e5ce5afa759bf499f56a	field/hit a nested bracket array	no
+rec-comment-nested	34	141d6607b0c063ac21bbd03a320da4788805fe174f3fb5a31197d401350d3c9e	field/hit a nested block comment	33
+rec-tag-depth3	22	e9ffada11442d0ca265dbf63a834ead3a860d459056cf84a1d0314584bf8a716	field/hit three levels of nested tags	no
+rd-email-hit	10	0ec8cc1672b05df618deaefb6daaf0bb9b60c8f5e9c4b683869d1d20ff7ea04d	field/hit a normal email local-part	no
+rd-email-near-miss	20	42492da06234ad0ac76f5d5debdb6d1ae027cffbe746a1c13b89bb8bc0139137	field/near-miss SHORT nested-quantifier trigger with no terminating '@' (20 bytes, bounded)	1
+rd-trim-hit	4	1a0f564ddc6039457b2fb26b3d6a316c15eba20a886449847c3210c35821a693	field/hit an all-whitespace line	1
+rd-trim-near-miss	20	5ca5ce9ed770b7176d99832fea21a4610ac8234151358fe2b74276ef85cff014	field/near-miss SHORT whitespace run with a non-whitespace tail (20 bytes)	no
+rd-evil-alt-hit	4	61be55a8e2f6b4e172338bddf184d6dbee29c98853e0a0485ecee7f27b9af0b4	field/hit the evil-alternation shape's simplest accept	1
+rd-evil-alt-near-miss	18	147839b97957eaee9929f3a2a82c116aae3b5fceff97e6670eed60cd054609d5	field/near-miss SHORT nested-alternation trigger with a trailing non-letter (18 bytes)	no
+rd-numeric-id-hit	4	03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4	field/hit a plain digit run	no
+rd-numeric-id-near-miss	20	90126f192e7c94b13313ac47f5cf24aa819a156eeea463006bd96dabb8216c42	field/near-miss SHORT nested-plus digit trigger (20 bytes)	no
+rd-phone-list-hit	7	4981aa0a50d563040519e9032b5d74367b1d129e239a1ba82667a57333866494	field/hit a space-separated digit run	no
+rd-date-hit	5	5da4db82f8690762ccb52bb53e7b9771d88ceb9181a305aa7cde4aadc47db524	field/hit a simple delimited numeric token	no
+sd-router-short	6	954dac294d87c9529d601c4e99625428008e5f8293fea2ba728b6d87895ec963	field/edge 'user' vs 'users': leftmost-first reports the 5-byte 'user' branch; leftmost-longest would report the 6-byte 'users' branch (under posix-leftmost-longest)	no
+sd-fileext-short	14	d772471210e0028b6bf64193fe490913abc974d550ec343e0eb403dbf49f6749	field/edge '.tar' vs '.tar.gz': same leftmost-first/longest divergence	no
+sd-keyword-short	10	10ed7283622d2051d6194ecd573cfb1e8a87d42a5429a1923465985ee480f55a	field/edge 'in' vs 'instanceof': same divergence, the classic hand-rolled-lexer bug	no
+sd-empty-alt-hit	61	827c5dba8bb1f2de9410fe62abb1a9e736d3f1591376702138b82f3f455fdc37	field/hit `(a|)*\d`'s PCRE2 testdata case: 60 a's then a digit	no
+sd-empty-alt-miss	60	11ee391211c6256460b6ed375957fadd8061cafbb31daf967db875aebd5aaad4	field/miss the same case with NO trailing digit -- PCRE2's own testdata 'Expect no match'	1
+sd-dollar-nl	7	d53d6b91af7caf8fe3d8021f116270137c0079d579a1e16965da80c2ed138ffb	field/edge `abc$` against 'abc\n' vs 'abc\ndef' (the PCRE2 testdata pair, joined as one subject via the search regime's own scan -- see NOTES.md)	no
+nu-high-byte	2	64acb77ed4ace36fc5b55c0dea2686af8dfbacee0b170cd02125e61f457619e1	field/hit two consecutive high bytes (0x81 0x82)	no
+nu-mojibake	7	9eed1f435744322acdabd9ed03abfdfc21e613b9fd59c025210ee1dd9e0354b6	field/hit a curly-quote byte pair (0x93/0x94) around printable ASCII -- the mojibake-repair shape	no
+nu-lead-no-cont	2	a6103249d671b9050a8375d0b4d27db4c5c3190aa43eb0804430fb187cba20e8	field/hit a UTF-8 lead byte (0xc2) NOT followed by a valid continuation byte	no
+nu-lead-with-cont	2	4a99557e4033c3539de2eb65472017cad5f9557f7a0625a09f1c3f6e2ba69c4c	field/miss a well-formed two-byte UTF-8 sequence (0xc3 0xa9, 'e' with acute) -- the lead byte IS followed by a valid continuation, so utf8-lead-no-cont must NOT hit here	no
+floor-hit	1	7ace431cb61584cb9b8dc7ec08cf38ac0a2d649660be86d349fb43108b542fa4	field/hit the floor byte '~', per-call overhead control	no

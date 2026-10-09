@@ -12,7 +12,7 @@
  * modulo 64: noinline + aligned(64) fix the function's own start, and being
  * the only function in its object, the object's .text layout cannot shift
  * under it. It is an INSTRUMENT: editing this file moves every record's
- * numbers, and the edit must say so (docs/dev/decisions.md BD-B133; records
+ * numbers, and the edit must say so (docs/dev/decisions.md BD16; records
  * before/after are told apart by run.harness_commit). Do NOT add anything
  * to this file that is not the timed loop; the info getters stay in
  * driver.c (they are not timed).

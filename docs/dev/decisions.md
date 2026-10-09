@@ -413,3 +413,40 @@ pcre2 times, so I want it removed after the first." The driver's first call
 checks; later calls on the same buffer pass the flag, the same shape as BD14's
 oracle. Built as [B94], with a control that the answers are identical to the
 always-check path.
+
+## BD16 — 2026-10-09 — the TIMED LOOP of every driver is an isolated, versioned INSTRUMENT ([B133]; Frank's go after [B132])
+
+[B132] found that adding 37 stamp-getter lines to `testees/pcrec/driver.c`
+grew `main()`, which held the timed loop, and moved short-call timings
++10-17% (~40-50 ns/call) on program-identical cells; three weeks of pcrec
+cross-pin Deltas (O-92/O-93) carried that bench-side shift. RULING: every
+timed loop — all code between a subject's two clock reads, for every mode and
+regime — lives in a translation unit of its own, `testees/<engine>/timed.c`
+(`timed.cc` for RE2; the `rust-timed` crate for rust-regex), holding ONLY the
+timed function (`timed_run`; `run_subject`), `noinline` + `aligned(64)`
+(Rust: `#[inline(never)]` in its own crate, section-aligned through
+`global_asm!` because stable Rust has no per-function alignment), its callbacks
+and the helpers it calls. The driver passes in already-resolved entry points
+and receives the elapsed seconds. For pcrec the four shim wrappers the loop
+calls (`pb_search`, `pb_match_caps`, `pb_search_in`, `pb_match_caps_in`) are
+`aligned(64)` too (a getter above them used to shift them mod 64).
+`driverrun.build_driver` links a sibling `timed.c` automatically; the clock
+source, iteration counts and call shapes are unchanged.
+
+CONSEQUENCES. (1) It is an INSTRUMENT CHANGE: records written before and after
+differ in `run.harness_commit` (R19 in docs/design/pcrec_trend_report_v0.md
+derives the driver shas from it; NO schema change), and the first-window
+before/after is quantified by the lane's A/B/A/B at one pin
+(docs/dev/lanes/b133loop_report.md). Cross-pin Deltas that straddle the change
+carry that step and must say so. (2) Editing a `timed.*` file is an instrument
+change by definition and requires a plan row, this decision's name in the
+commit and a re-pin-control run; adding getters/stamps to driver.c or shim.c
+no longer is. (3) `bench/sentinel` (14 program-identical short-call cells +
+floor, run FIRST in every suite for pcrec-auto, pcrec-nocaps and pcre2-jit)
+reads the instrument in every window: a sentinel shift with pcre2-jit flat =
+the instrument moved. (4) Every re-pin times a winpath-style cell under the
+previous and current driver (testees/pcrec/CLAUDE.md, "Re-pin control").
+(5) PROOF the isolation holds is archived and re-runnable:
+docs/dev/measurements/2026-10-09-b133-isolation-proof.py (+ .txt): 40 dummy
+getters appended to each driver and to the shim leave the timed function's
+normalised instruction stream identical and its address 0 mod 64.

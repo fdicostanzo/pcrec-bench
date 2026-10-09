@@ -10,7 +10,7 @@
 //! nightly) -- see the `global_asm!` section-alignment note below and
 //! testees/rust/CLAUDE.md for what was and was not achievable. It is an
 //! INSTRUMENT -- an edit here must be recorded as an instrument change
-//! (docs/dev/decisions.md BD-B133). The body is the pre-[B133] loop moved
+//! (docs/dev/decisions.md BD16). The body is the pre-[B133] loop moved
 //! verbatim.
 
 use regex::bytes::Regex;

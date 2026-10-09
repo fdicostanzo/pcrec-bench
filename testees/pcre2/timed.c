@@ -7,7 +7,7 @@
  * same fix for this engine: its own translation unit, noinline +
  * aligned(64), nothing else in the object. It is an INSTRUMENT -- an edit
  * here must be recorded as an instrument change (docs/dev/decisions.md
- * BD-B133). The body is the pre-[B133] loop with the driver's locals turned
+ * BD16). The body is the pre-[B133] loop with the driver's locals turned
  * into fields of *in / *out. */
 #include <stdint.h>
 #include <stdlib.h>

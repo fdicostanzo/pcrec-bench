@@ -5,7 +5,7 @@
  * testees/pcrec/timed.c's header for the why ([B132]); the same fix for this
  * engine: its own translation unit, the timed function noinline +
  * aligned(64). It is an INSTRUMENT -- an edit here must be recorded as an
- * instrument change (docs/dev/decisions.md BD-B133). The body is the
+ * instrument change (docs/dev/decisions.md BD16). The body is the
  * pre-[B133] loop with the driver's locals turned into fields of *in / *out;
  * the SOM match list (vs_match_list) and its push/reset live here because
  * the callback pushes inside the timed scan, and driver.c reads the list

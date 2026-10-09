@@ -1583,7 +1583,7 @@ unsigned pb_vm_poss_arms(void) {
  * five [B126] getter pairs, +15% on that cell alone). aligned(64) pins each
  * wrapper's start to a cache-line boundary whatever precedes it, so adding or
  * removing getters cannot change their placement relative to a line. It is an
- * INSTRUMENT property (docs/dev/decisions.md BD-B133). */
+ * INSTRUMENT property (docs/dev/decisions.md BD16). */
 #define PB_TIMED __attribute__((aligned(64)))
 
 /* Unanchored search from `pos`; `caps` is `pb_ncaps()` pairs.
