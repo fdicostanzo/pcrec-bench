@@ -164,6 +164,17 @@ bucketing and the carve-out judgement):**
 - **R18.** "Pin gap too wide" when the abi span between two pins exceeds N
   bumps (N to be set at build time).
 
+- **R19 (pcrecdev1, live, 2026-10-09).** INSTRUMENT version per pin.
+  - Every cell row carries the sha256 of each bench source that enters the
+    timed artifact or loop: `testees/<engine>/shim.c` and `driver.c` (or
+    `driver.cc` / `src/main.rs`). Derive them from the record's own
+    `run.harness_commit` via `git show <commit>:<path>`; no schema change.
+  - A pair whose instrument shas differ is flagged `instrument-changed`,
+    the way a wide abi span is, so a harness edit never reads as a pcrec
+    move.
+  - Prompted by [B132]: O-92's short-search slowdown sits in
+    program-identical cells across a window pair where our shim grew.
+
 **Q1-Q5 ruled by pcrec:**
 - Q1: configs auto-caps, auto-nocaps and vm, plus the deny twins of the
   current acceptance item. The two auto classes are always separate.
