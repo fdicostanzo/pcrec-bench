@@ -6513,3 +6513,17 @@ The capability@0.2 window at 255bcdd8 started 12:07 EDT, detached (14 cells, CEL
 - MISTAKE: two `git commit -am` plan commits swept the live window's partial store/index.tsv into master; fixed forward 433b1ed; memory feedback-no-commit-a-mid-window.
 - NEXT: capability@0.2 reports + ledger + interpretation sidecars + O-91 (wake.md queue items 2-5), then [B125]/[B126] archived.
 - 01:0x-01:4x: read lane b125read merged (32f299e): capability@0.2 first-sample reports, ledger docs/dev/ledgers/2026-10-09-capability-0.2-255bcdd8.md, sidecar. O-91 sent (509e3a1): [NULLABLE-ANCH] holds on auto only; K97 tax 2.2-3.6x vs JIT, caps default slower than forced VM on matching; the tail family a flat reverse-pass DFA at JIT parity but 824x-127,710x behind RE2/rust ([OPT-REVEND] acceptance cells). KB-36 (reporter omits the dropped-triple count). [B125]/[B126] completed; /var/tmp/b126scratch deleted. frontpage's pcrec version now read from lib/pcrec.h at the pin (37ea352). pcrecdev1's bridge was stale at send time; O-91 waits in the outbox.
+
+## 2026-10-09 ~09:00-12:10 (47th session, Opus 5.5) — [B129] priming, [B130] RFC, [B132] the short-search slowdown is ours
+
+Reconstructed from git by the 48th session: this session left no journal entry and did not rewrite wake.md.
+- [B129] (lane b129prime, merged 2556c2a): a scratch-only `--prime` driver flag. On the sample, no win/loss/tie class changed. RE2 throughput warms 12-19% on three cells. Published numbers stay unprimed, and docs/methodology.md gained a Warm-up paragraph.
+- [B130] (Frank's trend-report ask): requirements v0.1 sent as RFC O-93. I-141 answered it, and v0.2 folds that answer in (R12-R19).
+- O-92: the capability cross-pin c4c70f2c -> 255bcdd8 showed a broad ~2% short-search slowdown on program-identical cells. [B132] (lane b132shim, merged fc98312) traced it to OUR driver.c: stamp-getter lines grew main(), which holds the timed loop. O-94 withdrew the finding, and O-95 named the one affected window (capability@0.2 at 255bcdd8) and accepted the sentinel set into [B133].
+- I-140 (`--list-axes` change at 09ce1b36) -> [B131], no action before the next re-pin.
+
+## 2026-10-09 ~12:45- (48th session, Opus 5.5) — wake; Frank's go on [B133] and [B130]
+
+- Wake: no unacked inbox. Upstream: pcre2#1034 (U14) has a maintainer comment and fix PR #1036; recorded in 566dc58, and no reply is needed.
+- Frank: "proceed on b133 and b130". Two sonnet lanes launched: b133loop (timed-loop isolation in all seven drivers, the object-level proof, the before/after instrument A/B, the sentinel set, the re-pin control) and b130trend (the trend generator + A-form TSVs + the HTML page + the interpretation design note and check). Both briefs carry the one-heavy-suite rule between the A/B timing and the whole-store load. A stall watcher script is armed, and the heartbeat cron 17,47.
+- Frank's standing note (memory updated): close out before any expected idle; keep the heartbeat only while monitoring.
