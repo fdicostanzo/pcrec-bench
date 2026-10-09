@@ -343,14 +343,27 @@ def main():
         ok("per-subject trial rows are in the snapshot (common-subject rule)",
            set(used["dg"]["cells"]["p1\tshort\tplain"]) == {"s1", "s2"}
            and len(used["dg"]["cells"]["p1\tshort\tplain"]["s1"]) == 5)
-        sm1 = [c for c in (ln.split("\t") for ln in
-                           TS.read_lines(os.path.join(sdir, "bbbb222.tsv.gz")))
-               if c[0] == "SUBJ" and c[2] == "p1" and c[5] == "s1"
-               and "_nolitrun" not in c[1] and "pcrec_bbbb222_auto-caps-simdna__" not in c[1]
-               or (c[0] == "SUBJ" and c[2] == "p1" and c[5] == "s1"
-                   and "pcrec_bbbb222_auto-caps-simdna/" in c[1] and "nolitrun" not in c[1])]
-        ok("per-subject median stored (hand: p1 at B = 50.0 ns/call)",
-           any(c[7] == "50.0" for c in sm1), [c[:8] for c in sm1])
+        ok("per-subject median derivable from the stored trials (hand: p1 at B = 50.0)",
+           TS.subject_median(used["dg"]["cells"]["p1\tshort\tplain"]["s1"]) == 50.0)
+        # lossless trial codec: diag with every separator, float repr, int, None
+        oc = {"matched-as-expected": 0, "gave-up": 1}
+        tr = [[1, "matched-as-expected", 34529916.5, ""], [2, "gave-up", None,
+              "giveup:-3,a%b\tc\nd"], [3, "matched-as-expected", 7, ""],
+              [4, "matched-as-expected", 0.1 + 0.2, ""]]
+        raws = [[69059833, 2], None, None, [3000, 7]]   # 1 exact; 4 exact (3000/7 != .3), so f-path
+        raws[3] = None
+        tr.append([5, "matched-as-expected", 1234567890123 / 1000, ""])
+        raws.append([1234567890123, 1000])
+        tr.append([6, "matched-as-expected", 1234567890124 / 1000, ""])
+        raws.append([1234567890124, 1000])
+        enc = TS.enc_trials(tr, oc, raws, 1000)
+        back = TS.dec_trials(enc, ["matched-as-expected", "gave-up"], 1000)
+        ok("trial codec round-trips exactly (exact elapsed/iters, f-path, None, escaped diag)",
+           back == tr and [type(t[2]) for t in back] == [type(t[2]) for t in tr]
+           and "/2" in enc and "f0.30000000000000004" in enc and ":1234567890123," in enc, enc)
+        ok("snapshot text carries no JSON trial lists and no per-row path",
+           not any(ln.startswith("SUBJ\t") and ("[[" in ln or "records/" in ln)
+                   for ln in TS.read_lines(os.path.join(sdir, "bbbb222.tsv.gz"))))
         # immutability + determinism of the writer
         refused = False
         try:

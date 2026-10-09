@@ -280,20 +280,27 @@ comparison, `reports/trend/snapshots/`, `reports/trend/links.tsv`,
 
 - **One immutable file per pinned pcrec version**,
   `reports/trend/snapshots/<pin>.tsv.gz`: deterministic gzip (mtime 0, no
-  filename, level 9), UTF-8 text, tagged rows. Header: schema
-  (`trend-snapshot-1`), pin, generator, the store index sha and config sha at
-  snapshot time (provenance; no clock). `REC` = one row per index record
-  considered at that pin (used / superseded / excluded-*, with machine,
+  filename, level 9), UTF-8 text, tagged rows; schema `trend-snapshot-2`, the
+  LOSSLESSLY COMPACT encoding (v1 was 81 MB; v2 is 29.9 MB, same content, no
+  rounding). Header: schema, pin, generator, the store index sha and config sha
+  at snapshot time (provenance; no clock). `OUT` = the file's outcome-code
+  table. `REC` = one row per index record considered at that pin (used /
+  superseded / excluded-*, keyed by a short integer `rid`, with machine,
   timestamp, record path, harness commit, **era-aware instrument string** (R19),
-  abi, and `data` = `inline` | `ref:<pin>` | `none`). Inline records carry
-  `PAT` (pattern sha), `CMP` (the compile row: outcome, compile ns per
-  measurement, and the R13 stamps / `program_sha256` / emit bytes / `engine_sel`
-  / abi), `CEL` (the set-grain row per cell over all its subjects: median,
-  trial min/max, wrong / gave-up / no-expectation counts, pattern sha, subject-set
-  sha) and `SUBJ` (**per-subject**: sha, median ns/call, and the full per-trial
-  list). The per-subject rows are what keep a pair's common-subject rule valid
-  when a set version adds or drops subjects (Frank's choice); `CEL` is derived
-  from them and `trend_snapshot.verify_snapshot` recomputes it.
+  abi, and `data` = `inline` | `ref:<pin>` | `none`). `SB` = the subject table
+  (subject id + sha256, stored once per file). Inline records carry `PAT`
+  (pattern sha), `CMP` (the compile row: outcome, compile ns, the R13 stamps /
+  `program_sha256` / emit bytes / `engine_sel` / abi), `CEL` (the set-grain row
+  per cell over all its subjects, keyed `cid`: median, trial min/max, wrong /
+  gave-up / no-expectation counts, pattern sha, subject-set sha) and `SUBJ`
+  (**per-subject**, `cid sbid iters trials`: the full per-trial list as
+  `trial:outcome-code:elapsed_ns` items, `:diag` only when non-empty; ns/call is
+  recomputed as elapsed/iters, bit-identical to the original float, checked at
+  write time, with an `f<float>` escape). The subject's median is derived
+  (`subject_median`), not stored. The per-subject rows keep a pair's
+  common-subject rule valid when a set version adds or drops subjects (Frank's
+  choice); `CEL` is a self-check that `trend_snapshot.verify_snapshot`
+  recomputes.
 - **The same window's controls.** A snapshot also holds, for every set@version
   it has a used pcrec record in, the control record(s) nearest in time to those
   records (pcre2-jit by `control_globs`) and every competitor record

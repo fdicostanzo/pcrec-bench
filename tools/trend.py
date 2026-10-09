@@ -71,6 +71,7 @@ from pcrecbench import reduce as R  # noqa: E402
 import trend_snapshot as TS  # noqa: E402
 
 GEN_VERSION = "trend-v1"
+DIGEST_VERSION = "d2"   # cache key part: bump when build_digest changes
 TSV_SCHEMA = "trend-tsv-1"
 IDENTITY_CRITERION = ("program_sha256 (compile row engine_metadata, "
                       "tools/program_identity.py normalization v2); equal = "
@@ -152,7 +153,7 @@ def build_digest(path):
     setup, rows = R.read_record(path)
     t = setup.get("testee", {})
     run = setup.get("run", {})
-    cells = {}
+    cells, rawt = {}, {}
     for r in rows:
         if r.get("kind") != "match":
             continue
@@ -162,6 +163,9 @@ def build_digest(path):
         diag = "" if o == R.MATCHED else str(r.get("diagnostic") or "")[:200]
         cells.setdefault(key, {}).setdefault(r.get("subject_id"), []).append(
             [r.get("trial"), o, R.ns_per_call(r), diag])
+        tm = r.get("timing") or {}
+        rawt.setdefault(key, {}).setdefault(r.get("subject_id"), []).append(
+            [tm.get("elapsed_ns"), tm.get("iterations")])
     comp = {}
     for r in rows:
         if r.get("kind") != "compile":
@@ -189,13 +193,13 @@ def build_digest(path):
                      for p in setup.get("patterns", [])},
         "subjects": {s["subject_id"]: s.get("sha256")
                      for s in setup.get("subjects", [])},
-        "cells": cells, "compile": comp,
+        "cells": cells, "compile": comp, "rawt": rawt,
     }
 
 
 def get_digest(path, cache_dir):
     st = os.stat(path)
-    key = hashlib.sha1(f"{GEN_VERSION}|{os.path.abspath(path)}|{st.st_size}|"
+    key = hashlib.sha1(f"{GEN_VERSION}|{DIGEST_VERSION}|{os.path.abspath(path)}|{st.st_size}|"
                        f"{st.st_mtime_ns}".encode()).hexdigest()
     cp = os.path.join(cache_dir, key + ".json.gz") if cache_dir else None
     if cp and os.path.exists(cp):
