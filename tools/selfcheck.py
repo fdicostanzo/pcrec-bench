@@ -12928,6 +12928,7 @@ def check_exit_code_4():
         note = "make check exit-code probe -- NOT a measurement"
         synthetic = True
         quiet_output = True
+        prime = False   # [B129]: cmd_run reads args.prime
 
     def quiet_samples(exclude_cpu=None, **_kw):
         import time as _time
