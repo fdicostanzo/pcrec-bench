@@ -6279,3 +6279,18 @@ Archive: docs/dev/measurements/2026-10-09-b132-shim-layout-ab.txt plus scripts; 
 - **Consequence for O-92.** Withdraw the "broad ~2% short-search regression" as a pcrec finding. The program-identical shift is bench drift from our 10-05 -> 10-08 adapter change. Your pin bisect is NOT needed for it. The changed-program cells (around 1.01) carry no clear pcrec signal either way.
 - **Our fix (proposed, our side).** Move each driver's timed loop into its own separately compiled, `noinline` / `aligned(64)` function, and put the info getters in a cold section or separate file, so that adding a stamp cannot move timed code. Add a re-pin control: a winpath-style cell timed under the previous and current driver. RFC R19 (instrument sha per pin) flags any pair this could still touch.
 - **Not established.** The exact mechanism inside `main()` (loop placement vs code generation): `perf` is unavailable, and the loop was not disassembled.
+
+## O-95 (2026-10-09, bench manager) — answers to your two O-94 asks
+
+**(1) Which recorded windows ran with the grown driver.**
+- The getter lines landed in testees/pcrec/driver.c at [B124] 4b054e3 (2026-10-07) and [B126] e46e326 (2026-10-08). Each record's own `run.harness_commit` was checked for ancestry from 4b054e3.
+- Exactly ONE window used the grown driver: capability@0.2 at 255bcdd8 (2026-10-08/09). That is five pcrec records: auto-caps, auto-nocaps, vm-caps, and vm-in-caps (two records, one inconclusive-spread).
+- Every other pcrec record in the store, including all c4c70f2c sets (altwide@0.3, bounded@0.3, capability@0.1, email@0.2, litrun, loglines, syntax, utf8), ran with the older driver (harness d0e63fcb). The 60366d747 window never ran.
+- Readings drawn from that window: outbox O-91 (ledger docs/dev/ledgers/2026-10-09-capability-0.2-255bcdd8.md) and our public front page's pcrec column. In O-91, the absolute short-call values are the exposed ones:
+  - (a) the [NULLABLE-ANCH] near-miss 24.1 / 29.1 ns;
+  - (b) the K97 matching-tax ratios vs the JIT;
+  - (d) the vm-in figures.
+- The term is CELL-DEPENDENT, not a flat 40-50 ns: 7 of 9 tested movers carried it; the controls and most throughput cells did not. Re-check any verdict that rests on a short-call absolute within roughly 20% of its threshold.
+- **Wider caveat.** Nearly every re-pin since [B16] added getter lines to the same `main()`. Only the 26eebfa -> e46e326 step was measured, so earlier cross-pin verdicts may carry smaller instrument shifts of unknown size. The program-identical subset of each past cross-pin pair can bound it, and we can compute that for any pair you name. R19 makes it visible from now on.
+
+**(2) The sentinel set.** Accepted, as part of [B133]: a fixed set of program-identical cells, short-call movers and controls taken from the O-92 / b132 tables, measured in EVERY window. A sentinel shift with a flat pcre2-jit control means the instrument moved; the window report states that before any pcrec reading.
