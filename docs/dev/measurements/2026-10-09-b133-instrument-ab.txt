@@ -1,0 +1,34 @@
+# [B133] instrument A/B: BEFORE = master ec62878 driver (grown main()), AFTER = lane/b133loop isolated timed.c; pcrec pin 255bcdd8; scratch tier, taskset core 11, A/B/A/B, 5 trials each
+# source: docs/dev/measurements/2026-10-09-b133-instrument-ab-analysis.py over worktrees/b133loop/build/b133/ab (run 2026-10-09 13:14-13:49 EDT, quiet confirmed 13:14:15 load 0.47); output verbatim below
+# chain: CHAIN_DONE ab_rc=0 check_rc=2 2026-10-09T14:12:55-04:00
+# check-harness on lane/b133loop: 715 passed, 6 FAILED = the 4 known pruned-build reds (cd371441, 25b1984f x2, 751b9c6d) + check_exit_code_4 x2 (a [B129] stub regression on master, fixed 2a2e134, re-run PASS)
+config        pattern                                      | AFT1/BEF1    AFT2/BEF2    | BEF2/BEF1    AFT2/AFT1    | median ns [trial min..max]: BEF1 AFT1 BEF2 AFT2
+pcre2-jit     ipv4-near-miss                               | 1.004 ov     1.042 DISJ   | 1.002 ov     1.040 ov     | 2971.5[2917.4..3050.8] 2984.6[2857.9..3256.2] 2978.6[2913.0..3009.0] 3102.6[3100.8..3350.0]
+pcre2-jit     keyword-prefix-order                         | 0.986 ov     0.928 ov     | 1.009 ov     0.950 ov     | 2976.9[2844.2..3035.8] 2934.2[2786.9..3166.6] 3003.2[2874.6..3285.5] 2787.5[2767.6..2935.6]
+pcre2-jit     trim-nested-star                             | 0.996 ov     1.010 DISJ   | 0.993 ov     1.007 ov     | 3418318.5[3361556.8..3433168.2] 3403598.2[3359022.5..3427859.8] 3395086.4[3342976.1..3405973.8] 3427853.4[3424502.9..3437431.2]
+pcre2-jit     uuid-near-miss                               | 1.079 DISJ   1.060 DISJ   | 1.017 ov     0.999 ov     | 2850.8[2828.2..2988.7] 3077.0[3023.1..3155.2] 2898.6[2826.6..3025.0] 3072.4[3066.4..3093.5]
+pcre2-jit     winpath-near-miss                            | 1.044 ov     0.991 ov     | 1.045 ov     0.992 ov     | 2796.4[2786.3..2958.4] 2918.5[2905.3..2987.3] 2923.2[2876.5..3235.5] 2895.4[2857.9..2910.5]
+pcrec-auto    base10num-near-miss                          | 0.990 ov     0.999 ov     | 1.004 ov     1.012 ov     | 554.3[550.7..558.6] 549.0[546.9..557.3] 556.4[552.2..564.6] 555.8[547.9..559.9]
+pcrec-auto    file-ext-order                               | 1.028 DISJ   1.028 DISJ   | 0.997 DISJ   0.997 ov     | 694.4[693.8..699.9] 714.0[710.6..718.4] 692.4[692.3..693.4] 711.7[710.7..714.3]
+pcrec-auto    ipv4-near-miss                               | 0.986 ov     0.988 ov     | 1.002 ov     1.003 ov     | 448.1[446.2..449.7] 441.7[438.9..456.0] 448.8[446.1..450.0] 443.2[440.4..448.2]
+pcrec-auto    keyword-prefix-order                         | 1.009 DISJ   1.003 ov     | 1.003 ov     0.996 ov     | 783.5[779.5..785.6] 790.8[785.8..792.5] 786.0[785.6..794.2] 788.0[786.1..789.3]
+pcrec-auto    router-prefix-order                          | 0.991 ov     0.986 ov     | 1.003 DISJ   0.999 ov     | 700.9[699.7..701.5] 694.5[692.7..703.5] 703.2[701.6..705.3] 693.5[693.1..707.3]
+pcrec-auto    uuid-near-miss                               | 0.961 DISJ   0.967 DISJ   | 0.994 ov     1.001 ov     | 570.2[567.2..609.2] 547.7[545.9..549.9] 567.0[564.7..574.1] 548.2[546.8..552.0]
+pcrec-auto    wild-semdiv-dollar-trailing-newline-pcre2    | 0.929 DISJ   0.929 DISJ   | 1.001 ov     1.000 ov     | 1041.8[1034.5..1057.5] 968.2[964.5..969.6] 1042.6[1041.6..1049.4] 968.5[966.1..975.8]
+pcrec-auto    wild-validator-email-owasp                   | 1.042 DISJ   1.042 DISJ   | 0.997 ov     0.997 ov     | 1055.0[1047.7..1058.5] 1099.7[1094.5..1104.6] 1052.1[1045.3..1054.7] 1096.3[1094.4..1106.0]
+pcrec-auto    wild-waf-crs-942360-concat-sqli              | 1.004 ov     0.988 ov     | 1.009 ov     0.992 ov     | 7388.0[7338.4..7419.8] 7416.6[7337.8..7452.3] 7451.4[7382.7..7478.1] 7360.0[7337.8..7438.2]
+pcrec-auto    winpath-near-miss                            | 0.925 ov     0.921 DISJ   | 0.995 ov     0.991 ov     | 542.3[540.1..554.2] 501.6[497.0..593.7] 539.6[539.4..548.6] 497.1[494.8..509.8]
+pcrec-nocaps  base10num-near-miss                          | 0.969 DISJ   1.007 ov     | 0.983 ov     1.022 ov     | 554.3[549.4..560.2] 537.3[532.7..547.5] 545.0[535.6..554.2] 548.9[546.4..556.4]
+pcrec-nocaps  ipv4-near-miss                               | 0.978 DISJ   0.979 DISJ   | 0.999 ov     1.000 ov     | 449.2[447.7..454.6] 439.2[437.8..440.2] 448.6[447.9..458.8] 439.2[438.3..439.9]
+pcrec-nocaps  keyword-prefix-order                         | 0.992 ov     0.996 ov     | 0.991 ov     0.995 ov     | 797.2[791.6..798.9] 791.1[787.5..797.0] 789.7[787.3..793.1] 786.8[784.5..792.9]
+pcrec-nocaps  numeric-id-nested-plus                       | 0.989 DISJ   0.985 DISJ   | 1.001 ov     0.997 ov     | 468.8[468.6..473.1] 463.4[461.8..464.6] 469.0[466.8..474.7] 461.8[459.9..463.5]
+pcrec-nocaps  phone-list-nested-plus                       | 0.992 ov     0.989 ov     | 1.001 ov     0.998 ov     | 480.6[477.5..482.8] 476.6[474.0..531.4] 480.9[478.9..483.1] 475.6[473.9..480.1]
+pcrec-nocaps  trim-nested-star                             | 1.008 ov     1.006 ov     | 0.997 ov     0.995 ov     | 425.4[423.9..446.0] 428.7[424.3..456.3] 423.9[422.0..424.3] 426.5[421.7..437.6]
+pcrec-nocaps  wild-semdiv-dollar-trailing-newline-pcre2    | 0.922 DISJ   0.913 DISJ   | 1.007 ov     0.997 ov     | 1050.5[1045.5..1088.5] 968.6[966.2..973.2] 1057.5[1047.7..1088.0] 965.9[964.8..975.1]
+pcrec-nocaps  wild-validator-us-zip-owasp                  | 0.968 DISJ   0.971 DISJ   | 0.994 ov     0.997 ov     | 454.8[451.9..456.2] 440.1[438.4..440.9] 452.2[451.3..454.8] 438.9[437.8..440.2]
+pcrec-nocaps  wild-waf-crs-942360-concat-sqli              | 1.006 DISJ   0.997 ov     | 1.011 ov     1.002 ov     | 7357.1[7345.8..7358.8] 7401.5[7359.6..7430.8] 7439.9[7330.0..8079.2] 7415.9[7329.3..7437.7]
+pcrec-nocaps  winpath-near-miss                            | 0.916 DISJ   0.924 DISJ   | 0.998 ov     1.007 ov     | 540.6[539.6..550.5] 495.1[494.4..497.0] 539.7[539.0..541.1] 498.5[495.7..510.9]
+
+pcre2-jit      5 cells, AFTER/BEFORE geomean-of-reps: min 0.957 median 1.017 max 1.070
+pcrec-auto    10 cells, AFTER/BEFORE geomean-of-reps: min 0.923 median 0.995 max 1.042
+pcrec-nocaps  10 cells, AFTER/BEFORE geomean-of-reps: min 0.918 median 0.988 max 1.007
