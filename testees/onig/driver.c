@@ -89,22 +89,13 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timed.h"
+
 #define ONIG_DRIVER_SYNTAX  ONIG_SYNTAX_PERL_NG
 /* [B77] U2 (utf8_set_v1.md 7.1): the DEFAULT encoding. `--encoding utf8`
  * selects ONIG_ENCODING_UTF8 at RUNTIME instead -- the `onig-utf8` config
  * only; every other config passes nothing and gets exactly this. */
 #define ONIG_DRIVER_ENCODING ONIG_ENCODING_ASCII
-
-/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
- * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
- * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
- * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
- * that range or at n. Without --utf8 the advance stays start + 1. */
-static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
-    size_t p = pos + 1;
-    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
-    return p;
-}
 
 static double now(void) {
     struct timespec ts;
@@ -325,78 +316,18 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-             * timed loop below is the original one, its bounds and body untouched. */
-            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                volatile long n_it = pass ? iters : 1;
-                if (pass && prime) t0 = now();
-                for (long it = 0; it < n_it; it++) {
-                first_s = first_e = -1;
-                if (find_all) {
-                    size_t pos = 0;
-                    long   count = 0;
-                    for (;;) {
-                        int rc = whole_subject
-                            ? onig_match(reg, s->buf, s->buf + s->len,
-                                        s->buf + pos, region, ONIG_OPTION_NONE)
-                            : onig_search(reg, s->buf, s->buf + s->len,
-                                         s->buf + pos, s->buf + s->len,
-                                         region, ONIG_OPTION_NONE);
-                        /* KB-29 (docs/dev/known_issues.md): ALWAYS track
-                         * the loop's own terminal code, not only when
-                         * `count == 0` -- so a genuine give-up (any code
-                         * other than ONIG_MISMATCH, the ordinary "no more
-                         * matches" terminator) is never silently
-                         * discarded in favour of an earlier successful
-                         * match's own non-negative rc. */
-                        if (rc < 0) { rc_final = rc; break; }
-                        if (first_s < 0) {
-                            first_s = (long)region->beg[0];
-                            first_e = (long)region->end[0];
-                            rc_final = rc;
-                        }
-                        count++;
-                        /* pcrec match_api.md S3.1's find-all advance: off the
-                         * match's own reported START, never off the scan
-                         * position -- KB-17, the same rule testees/pcre2/
-                         * driver.c applies. Under --utf8 ([B77] U1): the
-                         * next CHARACTER boundary, not start + 1. */
-                        size_t start = (size_t)region->beg[0];
-                        size_t end = (size_t)region->end[0];
-                        pos = (end > start) ? end
-                            : utf8_adv ? utf8_next_start(s->buf, s->len, start)
-                                       : start + 1;
-                        if (whole_subject) break; /* onig_match: one position only */
-                        if (pos > s->len) break;
-                    }
-                    nmatch = count;
-                    /* KB-29: a genuine mid-loop give-up (any terminal
-                     * code other than ONIG_MISMATCH) must propagate as
-                     * the whole subject's give-up, discarding any
-                     * matches already accumulated this call -- falls
-                     * through to the ordinary `giveup:<code>:<message>`
-                     * branch below exactly as a first-call give-up
-                     * already does. */
-                    if (rc_final < 0 && rc_final != ONIG_MISMATCH) {
-                        first_s = first_e = -1;
-                        nmatch = -1;
-                    }
-                } else {
-                    int rc = whole_subject
-                        ? onig_match(reg, s->buf, s->buf + s->len, s->buf,
-                                    region, ONIG_OPTION_NONE)
-                        : onig_search(reg, s->buf, s->buf + s->len, s->buf,
-                                     s->buf + s->len, region, ONIG_OPTION_NONE);
-                    rc_final = rc;
-                    if (rc >= 0) {
-                        first_s = (long)region->beg[0];
-                        first_e = (long)region->end[0];
-                    }
-                }
-                }
-            }
-            elapsed = now() - t0;
+            /* [B133] the timed loop is timed_run() in timed.c (its own
+             * translation unit; see that file's header). */
+            struct timed_in tin = {
+                .buf = s->buf, .len = s->len, .iters = iters,
+                .prime = (int)prime, .find_all = find_all,
+                .utf8_adv = utf8_adv, .whole_subject = whole_subject,
+                .reg = reg, .region = region,
+            };
+            struct timed_out tout = { -1, -1, -1, ONIG_MISMATCH };
+            elapsed = timed_run(&tin, &tout);
+            first_s = tout.first_s; first_e = tout.first_e;
+            nmatch = tout.nmatch; rc_final = tout.rc_final;
             if (subject_timeout > 0) alarm(0);
         }
 
