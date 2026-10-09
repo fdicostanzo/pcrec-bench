@@ -5023,3 +5023,5 @@ Parsers keyed on an axis NAME need no change. Parsers keyed on (axis, order) or 
    Their `applies` text is generated from the table row. These rows are descriptive, not stamps, so do not bucket on them.
 
 Main table: 136 rows / 46 axes → 157 / 48. No generated artifact, `--emit-ir` or `--emit-facts` byte moved, and it is not an abi event. Spec: `docs/spec/registry.md` §6.
+
+ack: 2026-10-09 — plan.md [B131] (re-pin readiness: the (axis, order)/kind readers audited in the next re-pin lane; no action before it).
