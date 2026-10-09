@@ -235,12 +235,19 @@ roles: `reports/trend/CLAUDE.md`. Deviations and decisions:
 - **R18: N = 8 abi bumps** (`wide_gap_abi`): `wide-pin-gap` above it. 8 is one
   below the nine-step [OPTLOOP] round 1 (50 -> 59), so that pin step flags and
   routine re-pins do not.
-- **R19.** `instrument` per record = `shim.c`/`driver.c`/`driver.cc`/
-  `src/main.rs` sha256 (12 hex) at `run.harness_commit` via `git show`;
-  `instrument_changed` when prev and new differ. It fires on most pcrec
-  pairs because the adapter shim grows at nearly every re-pin: that is the
-  rule working, not noise to suppress. Verified on capability c4c70f2c ->
-  255bcdd8: flagged `instrument-changed` and `wide-pin-gap` (span 9).
+- **R19 (era-aware, manager ruling 2026-10-09).** `instrument` per record is
+  `era=N|file:sha12,...` at `run.harness_commit` (`git show`). Era 2 = a
+  `testees/<engine>/timed.c`/`timed.cc`/`timed/src/lib.rs` exists at that
+  commit ([B133], lane b133loop moves every timed loop into `timed.*`): the
+  hashed set is {timed.*, shim.c where present}. Era 1 (every earlier
+  commit): {driver.c / driver.cc / src/main.rs, shim.c}. `instrument_changed`
+  (boolean, kept) is true when the strings differ; `instrument_changed_files`
+  (deltas.tsv, summary.tsv) names the files that differ, plus `era` when the
+  two records sit in different eras (a straddling pair is instrument-changed
+  by definition). The historical flag stays ~always on (the shim grew at
+  nearly every re-pin: 450 of 466 summary rows); it is expected to quiet down
+  after [B133], when timed code lives in its own file. Verified on capability
+  c4c70f2c -> 255bcdd8: flagged `instrument-changed` and `wide-pin-gap`.
 - **Q2** thresholds: emit_code_bytes +-10%, compile total +-25% with disjoint
   ranges (`compile_deltas.tsv`, HTML section). **Q5**: headline tables for
   `auto-caps-simdna` and `auto-nocaps-simdna`, plus the all-config table.
@@ -255,3 +262,9 @@ roles: `reports/trend/CLAUDE.md`. Deviations and decisions:
   update and the [B41] sidecars): `make trend` detached with a DONE marker,
   then `make trend-check`, then write `interpretation/<pin>.md` for the new
   pin and `make check-trend`.
+- **R18 N = 8** is accepted (manager, 2026-10-09); it stays the
+  `wide_gap_abi` constant in `reports/trend/config.toml`.
+- **cells.tsv is untracked** (gitignored); `make trend` writes it,
+  `trend.py --check` exempts it (`UNTRACKED`) and stays deterministic over the
+  tracked outputs. `history/` is the other derivable output (a projection of
+  cells.tsv + deltas.tsv); nothing else is untracked.

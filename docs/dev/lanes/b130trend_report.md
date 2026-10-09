@@ -18,3 +18,9 @@
 
 ## Regeneration at window close
 Detached: `cd <repo>; setsid nice -n 19 gnutimeout 3600 make trend > build/trend.log 2>&1; echo "DONE rc=$?" >> build/trend.log` (cold ~4-5 min, warm ~1.5 min, single core, <1 GB), then `make trend-check`, then the interpretation sidecar and `make check-trend`. Not run by this lane in a window.
+
+## Update after the manager's rulings (same day)
+1. R19 era-aware: DONE (`Instrument`, `instr_diff`; deltas.tsv/summary.tsv gain `instrument_changed_files`; HTML banner names the files; boolean kept). Era 2 paths read from lane/b133loop: `timed.c`, `timed.cc`, `timed.h`, `timed/Cargo.toml`, `timed/src/lib.rs` (+ `shim.c`). Tested on a real tiny git repo (era 1, era 2, straddling pair). Design note §7 says the flag stays ~always on and should quiet after [B133].
+2. cells.tsv untracked: DONE (.gitignore, `git rm --cached`, `--check` exempts it). `history/` is derivable from cells.tsv + deltas.tsv; nothing else untracked.
+3. N=8: kept as `wide_gap_abi` in config.toml.
+OWED (manager, after merge, once b133's quiet-box chain ends): `make trend` detached, then `make trend-check` and commit: the committed deltas/summary TSVs and HTML in reports/trend/ still carry the pre-ruling columns and instrument strings, so `make trend-check` fails until that regeneration (expected). Not run here by order (box). `make check-trend` ALL PASS.

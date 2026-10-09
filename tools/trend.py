@@ -203,12 +203,51 @@ def get_digest(path, cache_dir):
 
 # ---------------------------------------------------------------- instrument
 
+ERA1_FILES = ("driver.c", "driver.cc", "src/main.rs", "shim.c")
+ERA2_FILES = ("timed.c", "timed.cc", "timed.h", "timed/Cargo.toml",
+              "timed/src/lib.rs", "shim.c")
+ERA2_MARK = ("timed.c", "timed.cc", "timed/src/lib.rs")
+
+
+def instr_parse(s):
+    """'era=2|shim.c:ab,timed.c:cd' -> (era, {file: sha}); an unstructured
+    string (tests, 'unavailable') -> (None, {'': s})."""
+    if not s.startswith("era="):
+        return None, {"": s}
+    era, _, rest = s.partition("|")
+    return era[4:], dict(x.split(":", 1) for x in rest.split(",") if x)
+
+
+def instr_diff(a, b):
+    """Names of the hashed files that differ between two instrument strings
+    ('era' when the eras differ: a pair straddling the [B133] boundary is
+    instrument-changed by definition)."""
+    ea, fa = instr_parse(a)
+    eb, fb = instr_parse(b)
+    out = []
+    if ea != eb:
+        out.append("era")
+    for k in sorted(set(fa) | set(fb)):
+        if fa.get(k) != fb.get(k):
+            out.append(k or "instrument")
+    return out
+
+
 class Instrument:
-    """R19: sha256 of the bench sources entering the timed loop, at a commit."""
+    """R19, ERA-AWARE: sha256 of the bench sources entering the timed loop,
+    at a commit. Era 2 (testees/<engine>/timed.* exists at the commit, lane
+    b133loop / [B133]): {timed.*, shim.c where present}; era 1 (every earlier
+    commit): {driver.c / driver.cc / src/main.rs, shim.c}."""
 
     def __init__(self, repo, enabled=True, override=None):
         self.repo, self.enabled, self.override = repo, enabled, override
         self._c = {}
+
+    def _show(self, commit, d, fn):
+        p = subprocess.run(["git", "-C", self.repo, "show",
+                            f"{commit}:testees/{d}/{fn}"], capture_output=True)
+        return (hashlib.sha256(p.stdout).hexdigest()[:12]
+                if p.returncode == 0 else None)
 
     def of(self, commit, engine_name):
         if self.override is not None:
@@ -218,14 +257,14 @@ class Instrument:
         d = ENGINE_DIR.get(engine_name, engine_name)
         k = (commit, d)
         if k not in self._c:
+            era2 = any(self._show(commit, d, fn) for fn in ERA2_MARK)
+            files = ERA2_FILES if era2 else ERA1_FILES
             parts = []
-            for fn in INSTR_FILES:
-                p = subprocess.run(
-                    ["git", "-C", self.repo, "show", f"{commit}:testees/{d}/{fn}"],
-                    capture_output=True)
-                if p.returncode == 0:
-                    parts.append(f"{fn}:{hashlib.sha256(p.stdout).hexdigest()[:12]}")
-            self._c[k] = ",".join(parts) if parts else "absent"
+            for fn in files:
+                h = self._show(commit, d, fn)
+                if h:
+                    parts.append(f"{fn}:{h}")
+            self._c[k] = f"era={2 if era2 else 1}|" + ",".join(parts)
         return self._c[k]
 
 
@@ -645,6 +684,7 @@ def finish_deltas(raw, cfg, pin_order, out, ctrls):
                          else None)
         d["wide_gap"] = d["abi_span"] is not None and d["abi_span"] > cfg["wide_gap_abi"]
         d["instrument_changed"] = new.instr != prev.instr
+        d["instrument_files"] = ";".join(instr_diff(prev.instr, new.instr))
         if d["verdict"] == "not-comparable":
             continue
         a, b = d["a"], d["b"]
@@ -753,6 +793,7 @@ def delta_row(d):
     row["abi_span"] = clean(d.get("abi_span"))
     row["wide_gap"] = int(d.get("wide_gap", False))
     row["instrument_changed"] = int(d.get("instrument_changed", False))
+    row["instrument_changed_files"] = d.get("instrument_files", "")
     if d["verdict"] == "not-comparable":
         return row
     a, b = d["a"], d["b"]
@@ -835,6 +876,7 @@ def summarize(groups, cfg, out):
             "abi_span": clean(first.get("abi_span")),
             "wide_gap": int(bool(first.get("wide_gap"))),
             "instrument_changed": int(bool(first.get("instrument_changed"))),
+            "instrument_changed_files": first.get("instrument_files", ""),
             "n_correctness_changes": len(trans),
             "top_movers": ";".join(d["row_id"] for d in top),
             "identity_criterion": "program_sha256-v2",
@@ -1033,8 +1075,8 @@ DELTA_COLS = ["row_id", "set_ver", "prev_set_ver", "config", "pin", "prev_pin",
               "n_common_subjects", "n_subjects_prev", "n_subjects_new",
               "identical", "prog_prev", "prog_new", "abi_prev", "abi_new",
               "abi_span", "band", "band_src", "control_ratio", "control_windows",
-              "cell_drift_suspect", "instrument_changed", "wide_gap",
-              "stamp_changes"] + [k + "_new" for k in STAMP_KEYS] + [
+              "cell_drift_suspect", "instrument_changed",
+              "instrument_changed_files", "wide_gap", "stamp_changes"] + [k + "_new" for k in STAMP_KEYS] + [
               "record_prev", "record_new"]
 SUMMARY_COLS = ["row_id", "set_ver", "prev_set_ver", "config", "pin", "prev_pin",
                 "regime", "n_cells", "n_numeric", "n_faster", "n_slower",
@@ -1043,7 +1085,8 @@ SUMMARY_COLS = ["row_id", "set_ver", "prev_set_ver", "config", "pin", "prev_pin"
                 "identical_median_abs_dev", "identical_max_abs_dev", "band",
                 "band_src", "control_median_ratio", "n_control_cells",
                 "drift_suspect", "n_drift_suspect_cells", "abi_span", "wide_gap",
-                "instrument_changed", "n_correctness_changes", "top_movers",
+                "instrument_changed", "instrument_changed_files",
+                "n_correctness_changes", "top_movers",
                 "identity_criterion"]
 MOVER_COLS = ["set_ver", "config", "pin", "prev_pin", "regime", "stamp",
               "prev_value", "new_value", "changed", "n_movers", "n_faster",
@@ -1225,9 +1268,14 @@ def write_files(root, files, extra_stale_dirs=("history",)):
         os.replace(tmp, p)
 
 
+UNTRACKED = ("cells.tsv",)   # gitignored, regenerated by `make trend`
+
+
 def check_files(root, files):
     bad = []
     for rel, text in sorted(files.items()):
+        if rel in UNTRACKED:
+            continue
         p = os.path.join(root, rel)
         if not os.path.exists(p):
             bad.append((rel, "missing"))

@@ -222,7 +222,7 @@ def page(cfg, meta, out, pin, pins_with_pages, outdir, files_ids, depth, is_inde
             k = (s["set_ver"], s["prev_set_ver"], s["prev_pin"])
             f = seen.setdefault(k, set())
             if on(s["instrument_changed"]):
-                f.add("instrument-changed")
+                f.add("instrument-changed (" + e(s["instrument_changed_files"]) + ")")
             if on(s["wide_gap"]):
                 f.add(f'wide-pin-gap (abi span {s["abi_span"]} &gt; {cfg["wide_gap_abi"]})')
             if on(s["drift_suspect"]):

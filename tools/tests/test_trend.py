@@ -249,6 +249,41 @@ def main():
         with open(os.path.join(outd, "deltas.tsv"), "a") as f:
             f.write("x\n")
         ok("--check detects drift", any(r == "deltas.tsv" for r, _ in T.check_files(outd, files)))
+        # R19 era-aware instrument + changed files (a tiny real git repo)
+        import subprocess
+        gr = os.path.join(tmp, "gitrepo")
+        os.makedirs(os.path.join(gr, "testees", "pcrec"))
+        run = lambda *c: subprocess.run(("git", "-C", gr) + c, check=True,
+                                        capture_output=True, text=True).stdout.strip()
+        run("init", "-q")
+        run("config", "user.email", "t@t")
+        run("config", "user.name", "t")
+        wf = lambda n, t: open(os.path.join(gr, "testees", "pcrec", n), "w").write(t)
+        wf("driver.c", "d1")
+        wf("shim.c", "s1")
+        run("add", "-A")
+        run("commit", "-qm", "c1")
+        c1 = run("rev-parse", "HEAD")
+        wf("shim.c", "s2")
+        run("commit", "-qam", "c2")
+        c2 = run("rev-parse", "HEAD")
+        wf("timed.c", "t1")
+        wf("driver.c", "d2")
+        run("add", "-A")
+        run("commit", "-qm", "c3")
+        c3 = run("rev-parse", "HEAD")
+        ins = T.Instrument(gr)
+        i1, i2, i3 = (ins.of(c, "pcrec") for c in (c1, c2, c3))
+        ok("era 1 instrument = driver.c + shim.c", i1.startswith("era=1|") and "driver.c:" in i1
+           and "timed.c" not in i1, i1)
+        ok("era 2 instrument = timed.c + shim.c (driver.c no longer hashed)",
+           i3.startswith("era=2|") and "timed.c:" in i3 and "driver.c" not in i3, i3)
+        ok("changed files: shim only within era 1", T.instr_diff(i1, i2) == ["shim.c"], T.instr_diff(i1, i2))
+        ok("a pair straddling the eras is changed by definition, era named",
+           "era" in T.instr_diff(i2, i3))
+        ok("identical instrument -> no changed file", T.instr_diff(i3, i3) == [])
+        ok("delta rows carry instrument_changed_files", g("p1")["instrument_changed_files"] != "")
+        ok("cells.tsv is exempt from --check (untracked)", "cells.tsv" in T.UNTRACKED)
         # unknown pin is excluded, named
         # citation check (independent module)
         ids = CC.ids_from_texts(files)

@@ -46,3 +46,4 @@ dist/
 
 # [B114] retired 2026-09-28: matrix pages render on demand only (scripts/matrix_page.py)
 reports/*.matrix.html
+/reports/trend/cells.tsv

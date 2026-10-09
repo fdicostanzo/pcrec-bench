@@ -8,7 +8,7 @@ interpretation design: `docs/design/trend_interpretation_v0.md`.
 |---|---|
 | `config.toml` | HAND-WRITTEN constants (control/competitor globs, headline configs, N for R18, noise bands, Q2 thresholds); hashed into every output header |
 | `cells_of_interest.tsv` | pcrec's INPUT (R17): `mechanism, role, set, pattern, regime, form, note`; created empty (header only) |
-| `cells.tsv` | A-form: one row per (set@ver, config, pin, pattern, regime, form): set-grain median/min/max, per-call ns, correctness state, compile + size, stamps, jit and best-automata ratios (R12), instrument sha (R19) |
+| `cells.tsv` | UNTRACKED (gitignored, written by `make trend`, exempt from `--check`) A-form: one row per (set@ver, config, pin, pattern, regime, form): set-grain median/min/max, per-call ns, correctness state, compile + size, stamps, jit and best-automata ratios (R12), instrument sha (R19) |
 | `deltas.tsv` | A-form: one row per cell vs the newest EARLIER pin with a comparable record; ratio = new/old; verdict; absolute ns both sides; identity; abi span; band; control ratio; flags |
 | `summary.tsv` | A-form: per (set@ver, config, pin, prev pin, regime): counts, geomean/median, identical-and-moved, band, control median, drift-suspect cells, flags, top movers |
 | `movers_by_stamp.tsv` | R13: beyond-noise non-identical movers grouped by stamp value (prev > new) |
@@ -27,4 +27,4 @@ what the interpretation cites. Regenerate at every window close (DETACHED):
 `setsid gnutimeout 3600 make trend > build/trend.log 2>&1; echo "DONE rc=$?" >> build/trend.log`;
 `make trend-check` diffs in memory (exit 1 on drift). Weight: ~36 MB of TSV per
 regeneration (git packs deltas well since new pins append); `cells.tsv` is fully
-derivable from `history/` and a candidate to untrack if the repo grows too fast.
+untracked for that reason; `history/` is also derivable (cells.tsv + deltas.tsv) but stays tracked (append-only record). `instrument` is era-aware (`era=N|file:sha`), `instrument_changed_files` names what differs.
