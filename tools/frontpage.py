@@ -610,9 +610,15 @@ def render_engines(an):
                      ", ".join(te.get("conventions") or []),
                      te.get("captures", ""), date_of(s),
                      ta.get("verdict", "n/a")])
-    return md_table(["Engine", "Testee", "Version", "Mode", "Execution model",
+    return md_table(["Engine", "Testee", "Version", "Mode", "Compile-cost class",
                      "Automaton class", "Match semantics", "Captures",
-                     "Measured", "Trial agreement"], body)
+                     "Measured", "Trial agreement"], body) + (
+        "\n\nCompile-cost class is the record's `execution_model` field: WHEN "
+        "the engine builds its matcher, not how. `eager-jit` means the matcher "
+        "is built in full at compile time; only PCRE2 JIT emits machine code at "
+        "runtime, while RE2, Rust regex and Vectorscan build automata. "
+        "`compiled-aot` means the matcher is C source compiled before the "
+        "program runs.")
 
 
 def render_trials(an):
@@ -635,7 +641,7 @@ def render_compile(an):
                   for p in s.compile_ns if p in pc.compile_ns and s is not pc]
         body.append([label(s), s.compile_class or "", len(ns),
                      dur(statistics.median(ns)) if ns else "n/a",
-                     (times(statistics.median(common)) if common else
+                     ("×" + big(statistics.median(common)) if common else
                       ("—" if s is pc else "n/a"))])
     return (md_table(["Engine", "Cost class", "Patterns compiled",
                       "Median compile cost", "pcrec compile ÷ this engine (median over common patterns)"],

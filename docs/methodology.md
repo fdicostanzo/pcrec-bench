@@ -21,7 +21,7 @@ How the numbers on the [front page](../README.md) are produced. Tables marked ge
 Kind and match semantics are the records' own `testee` fields. Per-engine adapter notes: `testees/<engine>/CLAUDE.md`.
 
 <!-- frontpage:engines:begin -->
-| Engine | Testee | Version | Mode | Execution model | Automaton class | Match semantics | Captures | Measured | Trial agreement |
+| Engine | Testee | Version | Mode | Compile-cost class | Automaton class | Match semantics | Captures | Measured | Trial agreement |
 |---|---|---|---|---|---|---|---|---|---|
 | pcrec 0.2.0-beta+255bcdd8 | `pcrec_255bcdd8_auto-caps-simdna` | 255bcdd8 | auto | compiled-aot | hybrid | perl-leftmost-first | on | 2026-10-08 | agree |
 | PCRE2 10.46 DFA | `libpcre2_10.46_dfa-nocaps-simdna` | 10.46 | dfa | interpretive | nfa-simulation | perl-leftmost-first | off | 2026-10-08 | agree |
@@ -34,6 +34,8 @@ Kind and match semantics are the records' own `testee` fields. Per-engine adapte
 | TRE 0.9.0 | `tre_0.9.0_default-caps-simdna` | 0.9.0 | default | interpretive | hybrid | posix-leftmost-longest | on | 2026-10-09 | agree |
 | Vectorscan 5.4.11 (no SOM) | `vectorscan_5.4.11_block-nosom-nocaps-simd` | 5.4.11 | block-nosom | eager-jit | simd-multipattern | all-ends | off | 2026-10-09 | agree |
 | Vectorscan 5.4.11 (SOM) | `vectorscan_5.4.11_block-som-nocaps-simd` | 5.4.11 | block-som | eager-jit | simd-multipattern | all-ends | off | 2026-10-09 | agree |
+
+Compile-cost class is the record's `execution_model` field: WHEN the engine builds its matcher, not how. `eager-jit` means the matcher is built in full at compile time; only PCRE2 JIT emits machine code at runtime, while RE2, Rust regex and Vectorscan build automata. `compiled-aot` means the matcher is C source compiled before the program runs.
 <!-- frontpage:engines:end -->
 
 Semantic caveats that affect what a "match" means:
@@ -60,14 +62,14 @@ Trials per cell in these records: 5. Per-row calibration target (ns of timed wor
 | Engine | Cost class | Patterns compiled | Median compile cost | pcrec compile ÷ this engine (median over common patterns) |
 |---|---|--:|--:|--:|
 | pcrec 0.2.0-beta+255bcdd8 | compiled-aot | 69 | 224 ms | — |
-| PCRE2 10.46 DFA | interpretive | 65 | 2.04 µs | ×111000 |
-| PCRE2 10.46 interpreter | interpretive | 71 | 2.45 µs | ×101000 |
-| PCRE2 10.46 JIT | eager-jit | 71 | 16.7 µs | ×13100 |
-| Oniguruma 6.9.10 | interpretive | 69 | 6.03 µs | ×38300 |
-| RE2 11.0.0 | eager-jit | 45 | 21.7 µs | ×10500 |
-| RE2 11.0.0 (longest-match) | eager-jit | 45 | 23.2 µs | ×10800 |
-| Rust regex 1.13.1 | eager-jit | 48 | 105 µs | ×2710 |
-| TRE 0.9.0 | interpretive | 41 | 10.8 µs | ×20200 |
+| PCRE2 10.46 DFA | interpretive | 65 | 2.04 µs | ×111,000 |
+| PCRE2 10.46 interpreter | interpretive | 71 | 2.45 µs | ×101,000 |
+| PCRE2 10.46 JIT | eager-jit | 71 | 16.7 µs | ×13,100 |
+| Oniguruma 6.9.10 | interpretive | 69 | 6.03 µs | ×38,300 |
+| RE2 11.0.0 | eager-jit | 45 | 21.7 µs | ×10,500 |
+| RE2 11.0.0 (longest-match) | eager-jit | 45 | 23.2 µs | ×10,800 |
+| Rust regex 1.13.1 | eager-jit | 48 | 105 µs | ×2,710 |
+| TRE 0.9.0 | interpretive | 41 | 10.8 µs | ×20,200 |
 | Vectorscan 5.4.11 (no SOM) | eager-jit | 47 | 660 µs | ×327 |
 | Vectorscan 5.4.11 (SOM) | eager-jit | 44 | 743 µs | ×251 |
 
