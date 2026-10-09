@@ -83,16 +83,34 @@ cheap strengthening that is not the full run: re-run only those three RE2
 cells with A/B/A order to separate warming from order drift. Do not start
 anything without the manager's go.
 
+## A/B/A follow-up (approved by the manager; appended verbatim to the sample archive)
+Three RE2 throughput cells + pcrec-auto as the drift control, A1 / B(primed) /
+A2, back to back, 5 trials, 18 `quick` calls, all rc 0, all `measured`.
+- RE2 is REAL WARMING, not drift: B/A1 0.8179 / 0.8286 / 0.8835 and B/A2
+  0.8368 / 0.8072 / 0.8716 (tail-dotstar-txt / tail-ext-lower-txt /
+  wild-datetime-moment-iso8601), every one with disjoint trial ranges, while
+  the unprimed repeat A2/A1 is 0.9774 / 1.027 / 1.014 (ranges overlap).
+- pcrec-auto control: all nine ratios within 0.9992-1.001; no drift to
+  explain it.
+- Size: 12-19% of an RE2 median that is 1.2-2.0 microseconds for the
+  whole 11-subject set, i.e. tens of ns per subject, the first-call state
+  building of the lazy DFA. These cells are RE2 wins over pcrec by a
+  factor of hundreds, so no class can move.
+Correction to the earlier reading: the 2-5% pcrec drift in the sample was
+between-call-group noise; the back-to-back A/B/A shows none.
+
 ## Methodology-page wording (either outcome)
 "Each engine is timed on a loop of repeated calls after its pattern is
 compiled; lazy-cache engines (RE2, Rust regex) build part of their automaton
 on the first call. We checked whether an untimed warm-up call per subject
 changes results by re-measuring a 10-pattern sample both ways: no
-win/loss/tie classification changed, and the differences were within the
-~5% drift seen for pcrec on the same runs, apart from three RE2 throughput
-cells that were 12-17% faster with warm-up and where RE2 already leads by
-orders of magnitude. The published numbers are unprimed."
+win/loss/tie classification changed. The one measurable effect is on RE2's
+large-subject throughput cells whose whole-set time is only a few
+microseconds, where warm-up makes RE2 12-19% faster (confirmed by a
+repeat unprimed run, which differed by under 3%); RE2 already leads pcrec on
+those cells by orders of magnitude. Elsewhere differences were within the
+~5% run-to-run spread. The published numbers are unprimed."
 
 ## OWED
-Nothing for the sample. The full-cell A/B is not run (manager's go required).
+Nothing for the sample or the A/B/A. The full-cell A/B is not run (manager's go required).
 `--prime` stays scratch-tier only until the schema records it.
