@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: trend trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
+.PHONY: trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -289,12 +289,23 @@ check-frontpage:
 	$(PYTHON) tools/tests/test_frontpage.py
 
 ## trend: regenerate the pcrec TREND REPORT under reports/trend/ ([B130],
-## docs/design/pcrec_trend_report_v0.md). Reads the store record by record
-## (digest cache under build/trend-cache): minutes, ~1 GB peak at most; run it
-## DETACHED at a window's close (the manager's routine), never mid-measurement:
+## [B130.2], docs/design/pcrec_trend_report_v0.md section 8). Compares the
+## per-pin SNAPSHOTS (reports/trend/snapshots/*.tsv.gz) under links.tsv and
+## config.toml; it NEVER opens store/. Minutes at most; run it detached:
 ##   setsid gnutimeout 3600 make trend > build/trend.log 2>&1 ; echo "DONE rc=$?" >> build/trend.log
 trend:
 	$(PYTHON) tools/trend.py $(ARGS)
+
+## trend-snapshot: write the immutable snapshot of one pcrec pin (the ONE step
+## that reads store/; refuses to overwrite). make trend-snapshot PIN=<pin>
+## Detached at a window's close; nice -n 19.
+trend-snapshot:
+	$(PYTHON) tools/trend.py snapshot --pin $(PIN) $(ARGS)
+
+## trend-links: print the links.tsv rows the comparison would need but lacks
+## (add ARGS=--write to append them as source=inferred)
+trend-links:
+	$(PYTHON) tools/trend.py links $(ARGS)
 
 ## trend-check: regenerate in memory, exit 1 on drift from the committed reports/trend/
 trend-check:
