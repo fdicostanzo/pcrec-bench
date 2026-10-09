@@ -1,0 +1,78 @@
+# capability cross-pin, pcrec c4c70f2c (capability@0.1, 2026-10-05) -> 255bcdd8 (capability@0.2, 2026-10-08)
+# source: docs/dev/measurements/2026-10-09-capability-xpin-c4c70f2c-255bcdd8.py (pcrecbench.reduce set cells over the byte-identical 0.1 subjects only; plain form)
+# control: libpcre2 10.46 jit, same engine both windows (2026-09-17 vs 2026-10-08); machine budu-ryzen1600; generated 2026-10-09 by the manager session
+
+== pcrec-auto (caps): 123 comparable cells (common subjects only), 1 without a number on one side
+  short-subject-search: n=61 median new/old=1.023 geomean=0.812 | moved faster (ranges disjoint)=14 slower=34 within-noise=13
+     faster trim-nested-star                              x0.000  10184249 -> 839 ns
+     faster quoted-delim-match                            x0.196  10756 -> 2111 ns
+     faster doubled-word                                  x0.282  20717 -> 5848 ns
+     faster phone-palindrome-6                            x0.420  6876 -> 2885 ns
+     faster wild-secrets-username-password-pair           x0.677  1562 -> 1058 ns
+     faster wild-codegrammar-json-constant                x0.692  2418 -> 1674 ns
+     slower wild-secrets-aws-access-key-id                x1.215  1164 -> 1414 ns
+     slower winpath-near-miss                             x1.205  433 -> 522 ns
+     slower base10num-near-miss                           x1.118  506 -> 566 ns
+     slower currency-lookbehind-fixed                     x1.104  793 -> 876 ns
+     slower ipv4-near-miss                                x1.098  407 -> 447 ns
+     slower wild-semdiv-dollar-trailing-newline-pcre2     x1.089  984 -> 1072 ns
+  large-subject-throughput: n=62 median new/old=0.998 geomean=0.725 | moved faster (ranges disjoint)=25 slower=9 within-noise=28
+     faster evil-alt-nested                               x0.004  11656 -> 43 ns
+     faster wild-secrets-aws-access-key-id                x0.017  4006995 -> 68924 ns
+     faster wild-secrets-username-password-pair           x0.018  1290153 -> 23118 ns
+     faster quoted-delim-match                            x0.110  9928533 -> 1092794 ns
+     faster balanced-parens-rec                           x0.222  5123678 -> 1138718 ns
+     faster doubled-word                                  x0.379  25346095 -> 9604295 ns
+     slower wild-logparse-base10num-grok                  x1.075  4014587 -> 4317071 ns
+     slower wild-semdiv-empty-alt-repeat-pcre2            x1.065  6935112 -> 7387644 ns
+     slower wild-logparse-syslogbase-expanded             x1.053  3987740 -> 4199291 ns
+     slower base10num-near-miss                           x1.048  16 -> 17 ns
+     slower keyword-prefix-order                          x1.045  686504 -> 717724 ns
+     slower logparse-atomic-removed                       x1.035  31 -> 32 ns
+  no-number: evil-alt-nested short-subject-search old_missing=True new_missing=False
+== pcrec-auto-nocaps: 125 comparable cells (common subjects only), 1 without a number on one side
+  short-subject-search: n=62 median new/old=1.021 geomean=0.949 | moved faster (ranges disjoint)=13 slower=40 within-noise=9
+     faster quoted-delim-match                            x0.191  10860 -> 2073 ns
+     faster doubled-word                                  x0.286  20674 -> 5913 ns
+     faster phone-palindrome-6                            x0.395  7271 -> 2869 ns
+     faster wild-secrets-username-password-pair           x0.622  1249 -> 777 ns
+     faster wild-codegrammar-json-constant                x0.686  2418 -> 1660 ns
+     faster wild-validator-ipv4-owasp                     x0.735  615 -> 452 ns
+     slower winpath-near-miss                             x1.201  434 -> 521 ns
+     slower wild-secrets-aws-access-key-id                x1.179  996 -> 1174 ns
+     slower trim-nested-star                              x1.170  382 -> 447 ns
+     slower numeric-id-nested-plus                        x1.145  427 -> 489 ns
+     slower phone-list-nested-plus                        x1.145  436 -> 499 ns
+     slower wild-validator-us-zip-owasp                   x1.136  396 -> 450 ns
+  large-subject-throughput: n=63 median new/old=1.000 geomean=0.805 | moved faster (ranges disjoint)=18 slower=13 within-noise=32
+     faster wild-secrets-aws-access-key-id                x0.017  3981907 -> 68444 ns
+     faster wild-secrets-username-password-pair           x0.019  1245514 -> 23140 ns
+     faster quoted-delim-match                            x0.108  10040678 -> 1082672 ns
+     faster balanced-parens-rec                           x0.223  5113323 -> 1138083 ns
+     faster doubled-word                                  x0.377  25285715 -> 9529505 ns
+     faster phone-palindrome-6                            x0.497  7469909 -> 3713867 ns
+     slower evil-alt-nested                               x1.128  25 -> 28 ns
+     slower winpath-near-miss                             x1.102  18 -> 20 ns
+     slower wild-validator-email-owasp                    x1.078  36 -> 39 ns
+     slower wild-logparse-base10num-grok                  x1.070  4033483 -> 4315585 ns
+     slower numeric-id-nested-plus                        x1.065  14 -> 15 ns
+     slower trim-nested-star                              x1.058  14 -> 15 ns
+  no-number: evil-alt-nested short-subject-search old_missing=True new_missing=False
+== CONTROL pcre2-jit: 127 comparable cells (common subjects only), 1 without a number on one side
+  short-subject-search: n=63 median new/old=0.999 geomean=0.994 | moved faster (ranges disjoint)=2 slower=3 within-noise=58
+     faster logparse-atomic                               x0.937  3219 -> 3017 ns
+     faster wild-waf-crs-942360-concat-sqli               x0.998  17073 -> 17036 ns
+     slower high-byte-run                                 x1.033  3365 -> 3476 ns
+     slower doubled-word                                  x1.005  13186 -> 13251 ns
+     slower wild-logparse-quotedstring-noatomic           x1.003  104871 -> 105221 ns
+  large-subject-throughput: n=64 median new/old=1.002 geomean=1.011 | moved faster (ranges disjoint)=3 slower=7 within-noise=54
+     faster dup-param-detect                              x0.997  3301140 -> 3291543 ns
+     faster wild-codegrammar-json-constant                x0.998  1983449 -> 1980199 ns
+     faster wild-waf-crs-942160-sleep-benchmark           x0.999  1051200 -> 1050371 ns
+     slower balanced-parens-rec                           x1.168  562266 -> 656562 ns
+     slower ipv4-near-miss                                x1.118  144 -> 161 ns
+     slower base10num-near-miss                           x1.073  119 -> 128 ns
+     slower bracket-array-define                          x1.061  128 -> 136 ns
+     slower wild-validator-email-owasp                    x1.044  164 -> 172 ns
+     slower wild-logparse-quotedstring-noatomic           x1.022  1442084 -> 1474530 ns
+  no-number: evil-alt-nested short-subject-search old_missing=True new_missing=True

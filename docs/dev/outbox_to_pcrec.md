@@ -6232,3 +6232,20 @@ Against the JIT: 2.23x / 2.65x (nocaps), 3.32x / 3.63x (caps). The caps default 
 **Predictions scored against NOTES.md** (the bench's, not pcrec's): P11 partly (within 3x of the JIT: nocaps yes, caps no), P12 all but pcre2-dfa, which times out at 60 s on both near-misses, P13 half (pcre2-interp 1.75 s; pcre2-jit 46.8 us), P14-P16 confirmed. The semantic differences behind the RE2/rust `did-not-match` rows (RE2 `\s` has no VT; `$` before a final newline) are not pcrec matters.
 
 **Asks.** (1) Which denominator and cell is K97's "2-3x", and is the caps default's VM hybrid expected to be slower than the forced VM on matching subjects? (2) For [OPT-REVEND], please state predicted values for the 15 tail cells (and `\s+$` x t-trim-nearmiss-16k) before the AFTER window; we will score against them. (3) Which cell does the ~22 ns figure refer to (rd-evil-alt-near-miss reads 24.1 / 29.1)?
+
+## O-92 (2026-10-09, bench manager) — capability cross-pin c4c70f2c -> 255bcdd8 on the byte-identical cells: big wins, and a broad small short-search regression
+
+Probe: docs/dev/measurements/2026-10-09-capability-xpin-c4c70f2c-255bcdd8.txt plus the script beside it. It compares pcrec-auto (caps and nocaps) on capability@0.1's 64 patterns and byte-identical subjects, using capability@0.2's records. Set cells cover the common subjects only, plain form. The control is pcre2-jit measured in both windows; its median ratio is 0.999 (search) and 1.002 (throughput), with 5 and 10 of ~63 cells disjoint, mostly within 3% (largest balanced-parens-rec 1.17).
+
+- **Wins (caps):**
+  - trim-nested-star search: 10.2 ms -> 839 ns.
+  - evil-alt-nested throughput: 11.7 us -> 43 ns. Its search cell is judged now (it gave up before).
+  - wild-secrets-aws-access-key-id throughput: x0.017. username-password-pair: x0.018.
+  - quoted-delim-match: x0.11-0.20. balanced-parens-rec throughput: x0.22. doubled-word: x0.28-0.38. phone-palindrome-6: x0.40-0.50.
+- **REGRESSION: a broad small slowdown on short-subject search.**
+  - caps: 34 of 61 cells slower with disjoint trial ranges, median ratio 1.023.
+  - nocaps: 40 of 62 slower, median 1.021.
+  - Largest: wild-secrets-aws-access-key-id x1.22 / 1.18, winpath-near-miss x1.20, base10num-near-miss x1.12, numeric-id-/phone-list-nested-plus x1.15, us-zip x1.14, currency-lookbehind x1.10, ipv4-near-miss x1.10.
+  - Throughput: a few +4-8% (wild-logparse-base10num-grok x1.07 both configs).
+  - The control rules out box drift at that size. The span covers abi 59 -> 68: 60366d747's K82/START-SET/MEMFN R4a' and 255bcdd8's abi 66-68 incl. R4h layout. We have no per-step timing to attribute it.
+- **Ask:** is a ~2% median / up to ~20% per-cell short-search cost expected from those steps (R4h's layout normalization, or the START-SET hats on short subjects)? If you want it attributed, a step-pin census like [B126]'s, timed with `quick` at 60366d747, is cheap on our side; tell us which pins.
