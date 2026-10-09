@@ -23,7 +23,7 @@ import statistics
 import sys
 from collections import defaultdict
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import frontpage as fp                      # noqa: E402
@@ -78,7 +78,7 @@ def main(store):
 
     print("\n== per-testee / per-regime summary ==")
     for t in sorted(res):
-        for reg in ("search_short", "throughput", "(all)"):
+        for reg in ("short-subject-search", "large-subject-throughput", "(all)"):
             sub = [o for o in res[t] if reg == "(all)" or o["key"][2] == reg]
             rs = [o["ratio"] for o in sub]
             mv = [o for o in sub if not o["overlap"]]
@@ -98,7 +98,7 @@ def main(store):
     print("\n== competitor vs pcrec-auto: win/loss/tie, A pairs vs B pairs "
           "(sample cells only; frontpage.classify) ==")
     for comp in sorted(t for t in res if t != "pcrec-auto"):
-        for scope in ("(all)", "search_short", "throughput"):
+        for scope in ("(all)", "short-subject-search", "large-subject-throughput"):
             tally = {}
             flips = []
             for arm in "AB":

@@ -1,0 +1,107 @@
+== records: 120 in build/scratch-store-b129s ==
+NO NUMBER re2_11.0.0_default-caps-simdna tail-digits-eol large-subject-throughput arm A status measured (wrong=5 gaveup=0)
+NO NUMBER rust_1.13.1_default-caps-simdna tail-digits-eol large-subject-throughput arm A status measured (wrong=5 gaveup=0)
+NO NUMBER re2_11.0.0_default-caps-simdna tail-digits-eol large-subject-throughput arm B status measured (wrong=5 gaveup=0)
+NO NUMBER rust_1.13.1_default-caps-simdna tail-digits-eol large-subject-throughput arm B status measured (wrong=5 gaveup=0)
+NO NUMBER re2_11.0.0_default-caps-simdna email-nested-plus large-subject-throughput arm A status measured (wrong=0 gaveup=0)
+NO NUMBER rust_1.13.1_default-caps-simdna email-nested-plus large-subject-throughput arm A status measured (wrong=0 gaveup=0)
+NO NUMBER re2_11.0.0_default-caps-simdna email-nested-plus large-subject-throughput arm B status measured (wrong=0 gaveup=0)
+NO NUMBER rust_1.13.1_default-caps-simdna email-nested-plus large-subject-throughput arm B status measured (wrong=0 gaveup=0)
+NO NUMBER pcrec_255bcdd8_auto-caps-simdna email-nested-plus large-subject-throughput arm A status measured (wrong=0 gaveup=0)
+NO NUMBER pcrec_255bcdd8_auto-caps-simdna email-nested-plus large-subject-throughput arm B status measured (wrong=0 gaveup=0)
+non-measured records (status): [(('pcrec-auto', 'email-nested-plus', 'short-subject-search'), 'inconclusive-load')]
+pairs complete: 55 of 55 keys
+
+== B/A per (testee, pattern, regime) ==
+testee       pattern                              regime            A median     B median      B/A ranges
+pcrec-auto   email-nested-plus                    short-subject-search      393.168      388.405   0.9879 DISJOINT-faster
+pcrec-auto   tail-digits-eol                      large-subject-throughput  3.74564e+06  3.71246e+06   0.9911 overlap
+pcrec-auto   tail-digits-eol                      short-subject-search      552.053      549.168   0.9948 DISJOINT-faster
+pcrec-auto   tail-dotstar-txt                     large-subject-throughput       858084       858046        1 overlap
+pcrec-auto   tail-dotstar-txt                     short-subject-search      255.479      246.343   0.9642 DISJOINT-faster
+pcrec-auto   tail-ext-lower-txt                   large-subject-throughput  8.77992e+06  8.81937e+06    1.004 DISJOINT-slower
+pcrec-auto   tail-ext-lower-txt                   short-subject-search      281.016      275.044   0.9787 DISJOINT-faster
+pcrec-auto   tail-word-eoz                        large-subject-throughput  9.80406e+06  9.87106e+06    1.007 overlap
+pcrec-auto   tail-word-eoz                        short-subject-search      961.835      931.239   0.9682 overlap
+pcrec-auto   wild-datetime-moment-iso8601         large-subject-throughput      69148.4      69128.1   0.9997 DISJOINT-faster
+pcrec-auto   wild-datetime-moment-iso8601         short-subject-search      246.495      235.511   0.9554 DISJOINT-faster
+pcrec-auto   wild-secrets-aws-access-key-id       large-subject-throughput       158921       158657   0.9983 overlap
+pcrec-auto   wild-secrets-aws-access-key-id       short-subject-search       343.08      339.236   0.9888 overlap
+pcrec-auto   wild-secrets-github-pat              large-subject-throughput       180159       180195        1 overlap
+pcrec-auto   wild-secrets-github-pat              short-subject-search      176.011      167.129   0.9495 DISJOINT-faster
+pcrec-auto   wild-validator-email-owasp           large-subject-throughput      46117.2      46114.1   0.9999 overlap
+pcrec-auto   wild-validator-email-owasp           short-subject-search      310.809      303.439   0.9763 overlap
+pcrec-auto   wild-waf-crs-942140-dbnames          large-subject-throughput  1.24897e+07  1.24901e+07        1 overlap
+pcrec-auto   wild-waf-crs-942140-dbnames          short-subject-search      659.373      656.455   0.9956 overlap
+re2          email-nested-plus                    short-subject-search      11340.1      11513.3    1.015 overlap
+re2          tail-digits-eol                      short-subject-search      2006.99      2022.25    1.008 overlap
+re2          tail-dotstar-txt                     large-subject-throughput      1446.71      1206.75   0.8341 DISJOINT-faster
+re2          tail-dotstar-txt                     short-subject-search      2036.77      2036.78        1 overlap
+re2          tail-ext-lower-txt                   large-subject-throughput      1421.59      1194.66   0.8404 DISJOINT-faster
+re2          tail-ext-lower-txt                   short-subject-search      1968.09      1978.11    1.005 overlap
+re2          tail-word-eoz                        large-subject-throughput       126696       126290   0.9968 overlap
+re2          tail-word-eoz                        short-subject-search      2314.25       2317.7    1.001 overlap
+re2          wild-datetime-moment-iso8601         large-subject-throughput      1958.25      1712.75   0.8746 DISJOINT-faster
+re2          wild-datetime-moment-iso8601         short-subject-search      2410.77      2416.05    1.002 overlap
+re2          wild-secrets-aws-access-key-id       large-subject-throughput  7.60923e+06  7.59958e+06   0.9987 overlap
+re2          wild-secrets-aws-access-key-id       short-subject-search      2789.03      2784.13   0.9982 overlap
+re2          wild-secrets-github-pat              large-subject-throughput  7.59464e+06  7.58805e+06   0.9991 overlap
+re2          wild-secrets-github-pat              short-subject-search      2778.52      2782.29    1.001 overlap
+re2          wild-validator-email-owasp           large-subject-throughput       127108       127226    1.001 overlap
+re2          wild-validator-email-owasp           short-subject-search      2173.48      2171.58   0.9991 overlap
+re2          wild-waf-crs-942140-dbnames          large-subject-throughput  7.60013e+06   7.5925e+06    0.999 overlap
+re2          wild-waf-crs-942140-dbnames          short-subject-search       2939.1      2922.63   0.9944 overlap
+rust         email-nested-plus                    short-subject-search      1104.81      1105.55    1.001 overlap
+rust         tail-digits-eol                      short-subject-search      1025.17      1049.09    1.023 overlap
+rust         tail-dotstar-txt                     large-subject-throughput      464.592      448.117   0.9645 DISJOINT-faster
+rust         tail-dotstar-txt                     short-subject-search       838.62      842.869    1.005 overlap
+rust         tail-ext-lower-txt                   large-subject-throughput      421.306      390.743   0.9275 DISJOINT-faster
+rust         tail-ext-lower-txt                   short-subject-search      643.299      652.487    1.014 DISJOINT-slower
+rust         tail-word-eoz                        large-subject-throughput       319586       317091   0.9922 overlap
+rust         tail-word-eoz                        short-subject-search      2320.67      2474.05    1.066 DISJOINT-slower
+rust         wild-datetime-moment-iso8601         large-subject-throughput       138341       138206    0.999 DISJOINT-faster
+rust         wild-datetime-moment-iso8601         short-subject-search      458.472      455.669   0.9939 overlap
+rust         wild-secrets-aws-access-key-id       large-subject-throughput       239169       238004   0.9951 DISJOINT-faster
+rust         wild-secrets-aws-access-key-id       short-subject-search      479.775      475.443    0.991 DISJOINT-faster
+rust         wild-secrets-github-pat              large-subject-throughput       162544       161894    0.996 DISJOINT-faster
+rust         wild-secrets-github-pat              short-subject-search      118.244      112.329     0.95 DISJOINT-faster
+rust         wild-validator-email-owasp           large-subject-throughput       138336       138256   0.9994 overlap
+rust         wild-validator-email-owasp           short-subject-search      861.183      838.311   0.9734 overlap
+rust         wild-waf-crs-942140-dbnames          large-subject-throughput  8.31126e+06  8.31426e+06        1 overlap
+rust         wild-waf-crs-942140-dbnames          short-subject-search      1459.78      1454.01    0.996 DISJOINT-faster
+
+== per-testee / per-regime summary ==
+pcrec-auto   short-subject-search cells=10 B/A median=0.9775 geomean=0.9758 min=0.9495 max=0.9956 moved=6 (faster 6, slower 0)
+pcrec-auto   large-subject-throughput cells= 9 B/A median=1 geomean=1 min=0.9911 max=1.007 moved=2 (faster 1, slower 1)
+pcrec-auto   (all)         cells=19 B/A median=0.9948 geomean=0.9872 min=0.9495 max=1.007 moved=8 (faster 7, slower 1)
+re2          short-subject-search cells=10 B/A median=1.001 geomean=1.002 min=0.9944 max=1.015 moved=0 (faster 0, slower 0)
+re2          large-subject-throughput cells= 8 B/A median=0.9978 geomean=0.94 min=0.8341 max=1.001 moved=3 (faster 3, slower 0)
+re2          (all)         cells=18 B/A median=0.9991 geomean=0.9742 min=0.8341 max=1.015 moved=3 (faster 3, slower 0)
+rust         short-subject-search cells=10 B/A median=0.9984 geomean=1.001 min=0.95 max=1.066 moved=5 (faster 3, slower 2)
+rust         large-subject-throughput cells= 8 B/A median=0.9956 geomean=0.984 min=0.9275 max=1 moved=5 (faster 5, slower 0)
+rust         (all)         cells=18 B/A median=0.996 geomean=0.9934 min=0.9275 max=1.066 moved=10 (faster 8, slower 2)
+
+== largest movers per testee (by |log B/A|, 5 each) ==
+pcrec-auto   wild-secrets-github-pat              short-subject-search B/A=0.9495 DISJOINT
+pcrec-auto   wild-datetime-moment-iso8601         short-subject-search B/A=0.9554 DISJOINT
+pcrec-auto   tail-dotstar-txt                     short-subject-search B/A=0.9642 DISJOINT
+pcrec-auto   tail-word-eoz                        short-subject-search B/A=0.9682 overlap
+pcrec-auto   wild-validator-email-owasp           short-subject-search B/A=0.9763 overlap
+re2          tail-dotstar-txt                     large-subject-throughput B/A=0.8341 DISJOINT
+re2          tail-ext-lower-txt                   large-subject-throughput B/A=0.8404 DISJOINT
+re2          wild-datetime-moment-iso8601         large-subject-throughput B/A=0.8746 DISJOINT
+re2          email-nested-plus                    short-subject-search B/A=1.015 overlap
+re2          tail-digits-eol                      short-subject-search B/A=1.008 overlap
+rust         tail-ext-lower-txt                   large-subject-throughput B/A=0.9275 DISJOINT
+rust         tail-word-eoz                        short-subject-search B/A=1.066 DISJOINT
+rust         wild-secrets-github-pat              short-subject-search B/A=0.95 DISJOINT
+rust         tail-dotstar-txt                     large-subject-throughput B/A=0.9645 DISJOINT
+rust         wild-validator-email-owasp           short-subject-search B/A=0.9734 overlap
+
+== competitor vs pcrec-auto: win/loss/tie, A pairs vs B pairs (sample cells only; frontpage.classify) ==
+re2          (all)         A: win 13 loss 5 tie 0   |   B: win 13 loss 5 tie 0
+re2          short-subject-search A: win 10 loss 0 tie 0   |   B: win 10 loss 0 tie 0
+re2          large-subject-throughput A: win 3 loss 5 tie 0   |   B: win 3 loss 5 tie 0
+rust         (all)         A: win 12 loss 6 tie 0   |   B: win 12 loss 6 tie 0
+rust         short-subject-search A: win 9 loss 1 tie 0   |   B: win 9 loss 1 tie 0
+rust         large-subject-throughput A: win 3 loss 5 tie 0   |   B: win 3 loss 5 tie 0
