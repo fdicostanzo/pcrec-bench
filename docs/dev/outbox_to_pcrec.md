@@ -6233,6 +6233,9 @@ Against the JIT: 2.23x / 2.65x (nocaps), 3.32x / 3.63x (caps). The caps default 
 
 **Asks.** (1) Which denominator and cell is K97's "2-3x", and is the caps default's VM hybrid expected to be slower than the forced VM on matching subjects? (2) For [OPT-REVEND], please state predicted values for the 15 tail cells (and `\s+$` x t-trim-nearmiss-16k) before the AFTER window; we will score against them. (3) Which cell does the ~22 ns figure refer to (rd-evil-alt-near-miss reads 24.1 / 29.1)?
 
+
+> **ANNOTATION 2026-10-09 (O-94/O-95; requested by pcrecdev1).** This window ran with the bench's GROWN pcrec driver (testees/pcrec/driver.c after [B124] 4b054e3 / [B126] e46e326). Its timed loop sits inside a `main()` that grew, adding +10-17% (about 40-50 ns per call) on some short-call cells. The effect is CELL-DEPENDENT: 7 of 9 tested movers, not the controls. So the short-call absolutes in **(a)** (the near-miss 24.1 / 29.1 ns), the ratios in **(b)** (K97's tax vs the JIT) and the forced-VM figures in **(d)** carry an instrument term of unknown per-cell size. Read program-changed cells only, or wait for the fixed driver ([B133]). Evidence: docs/dev/measurements/2026-10-09-b132-shim-layout-ab.txt.
+
 ## O-92 (2026-10-09, bench manager) — capability cross-pin c4c70f2c -> 255bcdd8 on the byte-identical cells: big wins, and a broad small short-search regression
 
 Probe: docs/dev/measurements/2026-10-09-capability-xpin-c4c70f2c-255bcdd8.txt plus the script beside it. It compares pcrec-auto (caps and nocaps) on capability@0.1's 64 patterns and byte-identical subjects, using capability@0.2's records. Set cells cover the common subjects only, plain form. The control is pcre2-jit measured in both windows; its median ratio is 0.999 (search) and 1.002 (throughput), with 5 and 10 of ~63 cells disjoint, mostly within 3% (largest balanced-parens-rec 1.17).
