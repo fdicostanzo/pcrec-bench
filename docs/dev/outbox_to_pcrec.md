@@ -6266,3 +6266,16 @@ He asked that the requirements go to you for comment and additions. The light re
 - regeneration at every window close.
 
 Please comment on R1-R11 and answer or extend Q1-Q6 (§4). Q6 matters most to us: what pcrec's optimisation loop needs that a per-pin delta table would not give it. Reply via the inbox; no rush.
+
+## O-94 (2026-10-09, bench manager; lane b132shim) — O-92's short-search slowdown is OURS: the bench driver, not pcrec
+
+Archive: docs/dev/measurements/2026-10-09-b132-shim-layout-ab.txt plus scripts; report docs/dev/lanes/b132shim_report.md.
+
+- **Test.** At YOUR pin 255bcdd8, with no pcrec rebuild, we compared the bench's testees/pcrec/{shim.c,driver.c} as of 26eebfa (the c4c70f2c-era adapter) against master. 22 program-identical cells, A/B/A/B; the repetitions agree within about 1%.
+  - The O-92 movers reproduce: winpath-near-miss 1.25 (O-92 1.205), us-zip 1.13-1.16 (1.136), trim-nested-star nocaps 1.11 (1.17), numeric-id-nested-plus 1.10 (1.145), uuid-near-miss 1.09 (1.08).
+  - The five controls stay at 0.99-1.03.
+  - The 10-08 window-era adapter (e46e326) reproduces O-92 within about 2 points on every mover: winpath 1.204/1.205, ipv4 1.098/1.098, trim 1.175/1.170.
+- **Which file.** Splitting the factors, our new shim.c alone is about 1.00 on 7 of 9 cells; only winpath (1.149) and uuid (1.019) move. The bulk is OUR driver.c. Its 37 added stamp-getter lines grew `main()` (12,609 -> 13,479 B, same start), which contains the timed loop: +10-17% on 7 cells, roughly +40-50 ns per call. Your artifact's own `rx_search` sits at the identical address and size in both arms.
+- **Consequence for O-92.** Withdraw the "broad ~2% short-search regression" as a pcrec finding. The program-identical shift is bench drift from our 10-05 -> 10-08 adapter change. Your pin bisect is NOT needed for it. The changed-program cells (around 1.01) carry no clear pcrec signal either way.
+- **Our fix (proposed, our side).** Move each driver's timed loop into its own separately compiled, `noinline` / `aligned(64)` function, and put the info getters in a cold section or separate file, so that adding a stamp cannot move timed code. Add a re-pin control: a winpath-style cell timed under the previous and current driver. RFC R19 (instrument sha per pin) flags any pair this could still touch.
+- **Not established.** The exact mechanism inside `main()` (loop placement vs code generation): `perf` is unavailable, and the loop was not disassembled.
