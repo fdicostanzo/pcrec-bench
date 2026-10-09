@@ -268,3 +268,64 @@ roles: `reports/trend/CLAUDE.md`. Deviations and decisions:
   `trend.py --check` exempts it (`UNTRACKED`) and stays deterministic over the
   tracked outputs. `history/` is the other derivable output (a projection of
   cells.tsv + deltas.tsv); nothing else is untracked.
+
+## 8. Per-version snapshots (2026-10-09, lane b130snap, [B130.2])
+
+Frank's design (approved 2026-10-09): the report compares SNAPSHOT FILES, not
+the store, so records become deletable ([B96]) and a regeneration is
+deterministic from committed inputs. Built: `tools/trend_snapshot.py` (format,
+reader, writer, verifier), `trend.py snapshot` / `links` / the store-free
+comparison, `reports/trend/snapshots/`, `reports/trend/links.tsv`,
+`make trend-snapshot` / `trend-links`, the skill `/pcrec-bench-report-trend`.
+
+- **One immutable file per pinned pcrec version**,
+  `reports/trend/snapshots/<pin>.tsv.gz`: deterministic gzip (mtime 0, no
+  filename, level 9), UTF-8 text, tagged rows; schema `trend-snapshot-2`, the
+  LOSSLESSLY COMPACT encoding (v1 was 81 MB; v2 is 29.9 MB, same content, no
+  rounding). Header: schema, pin, generator, the store index sha and config sha
+  at snapshot time (provenance; no clock). `OUT` = the file's outcome-code
+  table. `REC` = one row per index record considered at that pin (used /
+  superseded / excluded-*, keyed by a short integer `rid`, with machine,
+  timestamp, record path, harness commit, **era-aware instrument string** (R19),
+  abi, and `data` = `inline` | `ref:<pin>` | `none`). `SB` = the subject table
+  (subject id + sha256, stored once per file). Inline records carry `PAT`
+  (pattern sha), `CMP` (the compile row: outcome, compile ns, the R13 stamps /
+  `program_sha256` / emit bytes / `engine_sel` / abi), `CEL` (the set-grain row
+  per cell over all its subjects, keyed `cid`: median, trial min/max, wrong /
+  gave-up / no-expectation counts, pattern sha, subject-set sha) and `SUBJ`
+  (**per-subject**, `cid sbid iters trials`: the full per-trial list as
+  `trial:outcome-code:elapsed_ns` items, `:diag` only when non-empty; ns/call is
+  recomputed as elapsed/iters, bit-identical to the original float, checked at
+  write time, with an `f<float>` escape). The subject's median is derived
+  (`subject_median`), not stored. The per-subject rows keep a pair's
+  common-subject rule valid when a set version adds or drops subjects (Frank's
+  choice); `CEL` is a self-check that `trend_snapshot.verify_snapshot`
+  recomputes.
+- **The same window's controls.** A snapshot also holds, for every set@version
+  it has a used pcrec record in, the control record(s) nearest in time to those
+  records (pcre2-jit by `control_globs`) and every competitor record
+  (`competitor_globs`, so R12's fastest automata engine is computable per cell).
+  A control/competitor record already stored inline in an earlier snapshot is
+  `ref:<pin>`, not repeated (size). The comparison resolves a ref across the
+  committed snapshots; the R5 drift control of a pair is the control of each
+  side's OWN snapshot.
+- **Immutability.** `snapshot` refuses to overwrite (`--force` only on the
+  manager's word). `--all-pins` is resumable (existing pins are skipped).
+- **The comparison reads snapshots + links.tsv + config.toml only** (plus
+  `catalogue/rules.toml` for the pin order). `tools/tests/test_trend.py` deletes
+  the synthetic store before comparing and traces every `open()`.
+- **links.tsv** replaces what the generator used to infer silently. The old code
+  paired a cell with the newest earlier record of the same config and set NAME
+  across set versions (capability@0.1 -> @0.2): that is now a `set-version` row
+  (an undirected pair of versions). A `config-rename` row (from -> to) reads the
+  records of an old config name as the new one (none needed today). A pair that
+  would need an unlisted link is `unlinked` in `deltas.tsv` (verdict, `why`
+  naming the missing pair, no ratio; `# unlinked_cells: N` in the header; a
+  compile/size delta across an unlinked pair is simply not produced). `source`
+  is `inferred` (proposed by `trend.py links`, in force, awaiting confirmation)
+  or `confirmed`. The skill proposes; the manager/Frank confirms.
+- **Headers.** `index_sha256` is replaced by `snapshots_sha256` (over the file
+  names + sha256 of every snapshot), `links_sha256` and `links` (count,
+  confirmed/inferred). Row ids are unchanged.
+- **Differences from the pre-snapshot committed output** (backfill check):
+  see docs/dev/lanes/b130snap_report.md.

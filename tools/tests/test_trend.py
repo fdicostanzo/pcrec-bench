@@ -18,14 +18,18 @@ store), hand-computed expectations:
 Run: python3 tools/tests/test_trend.py
 """
 import argparse
+import builtins
+import gzip
 import json
 import os
+import shutil
 import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 import trend as T  # noqa: E402
+import trend_snapshot as TS  # noqa: E402
 import trend_cite_check as CC  # noqa: E402
 
 PINS = ["aaaa111", "bbbb222", "cccc333"]
@@ -135,12 +139,35 @@ def make_store(tmp, with_c=True):
     return store, rules, cfgp
 
 
-def args_for(tmp, store, rules, cfgp):
+LINKS = ("kind\tfrom\tto\tsource\treason\n"
+         "set-version\tdemo@1\tdemo@2\tconfirmed\ttest: byte-identical subjects\n")
+
+
+def snapshot_all(tmp, store, rules, cfgp, snap_dir, pins=PINS, force=False):
+    """The store-reading half: one snapshot per pin, in pin order."""
+    cfg = T.load_config(cfgp)
+    pin_order = T.load_pin_order(rules)
+    import csv
+    with open(os.path.join(store, "index.tsv"), newline="") as f:
+        idx = list(csv.DictReader(f, delimiter="\t"))
+    instr = T.Instrument(tmp, override=lambda commit, eng: "instr:" + str(commit))
+    out = []
+    for pin in pins:
+        out.append(T.write_pin_snapshot(pin, store, cfg, pin_order, idx, snap_dir,
+                                        instr, None, force, cfgp))
+    return out
+
+
+def args_for(tmp, snap_dir, rules, cfgp, links=None):
+    """The comparison's args: NO store (it must not need one)."""
+    lp = os.path.join(tmp, "links.tsv")
+    if links is not None or not os.path.exists(lp):
+        with open(lp, "w") as f:
+            f.write(LINKS if links is None else links)
     return argparse.Namespace(
-        store=store, out=os.path.join(tmp, "out"), config=cfgp, rules=rules,
-        interest=os.path.join(tmp, "interest.tsv"), repo=tmp, sets=None,
-        cache=None, no_cache=True, no_git=True, check=False, no_html=True,
-        instr_override=lambda commit, eng: "instr:" + str(commit))
+        out=os.path.join(tmp, "out"), snapshots=snap_dir, links=lp, config=cfgp,
+        rules=rules, interest=os.path.join(tmp, "interest.tsv"), sets=None,
+        check=False, no_html=True)
 
 
 def rows_of(files, name):
@@ -170,7 +197,11 @@ def main():
             f.write("# t\nmechanism\trole\tset\tpattern\tregime\tform\tnote\n"
                     "mech-x\ttarget\tdemo\tp1\t\t\tn\n")
         store, rules, cfgp = make_store(tmp)
-        a = args_for(tmp, store, rules, cfgp)
+        snaps = os.path.join(tmp, "snaps")
+        snapshot_all(tmp, store, rules, cfgp, snaps)
+        # THE STORE IS GONE from here on: the comparison must not need it
+        shutil.rmtree(store)
+        a = args_for(tmp, snaps, rules, cfgp)
         cfg, meta, files, out = T.render_files(a)
         dl = {(r["pattern"], r["pin"]): r for r in rows_of(files, "deltas.tsv")
               if r["config"] == "auto-caps-simdna"}
@@ -227,7 +258,7 @@ def main():
         mv = rows_of(files, "movers_by_stamp.tsv")
         ok("movers grouped by stamp value", any(m["stamp"] == "engine" for m in mv))
         # determinism
-        cfg2, meta2, files2, _ = T.render_files(args_for(tmp, store, rules, cfgp))
+        cfg2, meta2, files2, _ = T.render_files(args_for(tmp, snaps, rules, cfgp))
         ok("regenerate twice: byte-identical", files == files2)
         # history append-only: drop pin C, regenerate, the shorter must be a prefix
         store2 = os.path.join(tmp, "s2")
@@ -235,7 +266,9 @@ def main():
         tmp2 = os.path.join(tmp, "t2")
         os.makedirs(tmp2)
         st2, ru2, cf2 = make_store(tmp2, with_c=False)
-        _, _, f_no_c, _ = T.render_files(args_for(tmp2, st2, ru2, cf2))
+        sn2 = os.path.join(tmp2, "snaps")
+        snapshot_all(tmp2, st2, ru2, cf2, sn2, pins=PINS[:2])
+        _, _, f_no_c, _ = T.render_files(args_for(tmp2, sn2, ru2, cf2))
         h_old = f_no_c["history/demo/auto-caps-simdna.tsv"].split("\n")
         h_new = files["history/demo/auto-caps-simdna.tsv"].split("\n")
         body_old = [l for l in h_old if not l.startswith("#")][:-1]
@@ -285,6 +318,121 @@ def main():
         ok("delta rows carry instrument_changed_files", g("p1")["instrument_changed_files"] != "")
         ok("cells.tsv is exempt from --check (untracked)", "cells.tsv" in T.UNTRACKED)
         # unknown pin is excluded, named
+        # ---- [B130.2] snapshots, links, store-free compare
+        sdir = os.path.join(tmp, "snaps")
+        sfiles = sorted(os.listdir(sdir))
+        ok("one snapshot file per pin", sfiles == [p + ".tsv.gz" for p in PINS], sfiles)
+        raw = open(os.path.join(sdir, "aaaa111.tsv.gz"), "rb").read()
+        ok("deterministic gzip: mtime field 0, no filename", raw[4:8] == b"\0\0\0\0"
+           and not (raw[3] & 8), raw[:10])
+        hdr, recs = TS.read_header_recs(os.path.join(sdir, "bbbb222.tsv.gz"))
+        ok("header carries the schema version and pin",
+           hdr["schema"] == TS.SNAPSHOT_SCHEMA and hdr["pin"] == "bbbb222", hdr)
+        ok("snapshot lists superseded + excluded records too (R11)",
+           {"superseded", "used"} <= {r["disposition"] for r in recs}
+           and any(r["disposition"].startswith("excluded-status") for r in recs))
+        ok("a control stored once: pin C's copy is a ref to the first snapshot",
+           any(r["role"] == "control" and r["data"].startswith("ref:")
+               for r in TS.read_header_recs(os.path.join(sdir, "cccc333.tsv.gz"))[1]))
+        ok("every CEL row recomputes from its SUBJ rows (verify)",
+           all(TS.verify_snapshot(os.path.join(sdir, f)) == [] for f in sfiles))
+        # round trip: the stored digest equals a fresh digest of the same record
+        _h, rs = TS.read_snapshot(os.path.join(sdir, "bbbb222.tsv.gz"))
+        used = [r for r in rs if r["disposition"] == "used" and r["role"] == "pcrec"
+                and "nolitrun" not in r["testee_id"]][0]
+        ok("per-subject trial rows are in the snapshot (common-subject rule)",
+           set(used["dg"]["cells"]["p1\tshort\tplain"]) == {"s1", "s2"}
+           and len(used["dg"]["cells"]["p1\tshort\tplain"]["s1"]) == 5)
+        ok("per-subject median derivable from the stored trials (hand: p1 at B = 50.0)",
+           TS.subject_median(used["dg"]["cells"]["p1\tshort\tplain"]["s1"]) == 50.0)
+        # lossless trial codec: diag with every separator, float repr, int, None
+        oc = {"matched-as-expected": 0, "gave-up": 1}
+        tr = [[1, "matched-as-expected", 34529916.5, ""], [2, "gave-up", None,
+              "giveup:-3,a%b\tc\nd"], [3, "matched-as-expected", 7, ""],
+              [4, "matched-as-expected", 0.1 + 0.2, ""]]
+        raws = [[69059833, 2], None, None, [3000, 7]]   # 1 exact; 4 exact (3000/7 != .3), so f-path
+        raws[3] = None
+        tr.append([5, "matched-as-expected", 1234567890123 / 1000, ""])
+        raws.append([1234567890123, 1000])
+        tr.append([6, "matched-as-expected", 1234567890124 / 1000, ""])
+        raws.append([1234567890124, 1000])
+        enc = TS.enc_trials(tr, oc, raws, 1000)
+        back = TS.dec_trials(enc, ["matched-as-expected", "gave-up"], 1000)
+        ok("trial codec round-trips exactly (exact elapsed/iters, f-path, None, escaped diag)",
+           back == tr and [type(t[2]) for t in back] == [type(t[2]) for t in tr]
+           and "/2" in enc and "f0.30000000000000004" in enc and ":1234567890123," in enc, enc)
+        ok("snapshot text carries no JSON trial lists and no per-row path",
+           not any(ln.startswith("SUBJ\t") and ("[[" in ln or "records/" in ln)
+                   for ln in TS.read_lines(os.path.join(sdir, "bbbb222.tsv.gz"))))
+        # immutability + determinism of the writer
+        refused = False
+        try:
+            snapshot_all(tmp, os.path.join(tmp, "nostore"), rules, cfgp, sdir,
+                         pins=["aaaa111"])
+        except (SystemExit, OSError):
+            refused = True
+        ok("an existing snapshot is NOT overwritten without --force", refused)
+        before = open(os.path.join(sdir, "aaaa111.tsv.gz"), "rb").read()
+        ok("the refused write left the file byte-identical",
+           before == open(os.path.join(sdir, "aaaa111.tsv.gz"), "rb").read())
+        # store-free proof: trace every open() during a compare
+        opened = []
+        real_open, real_gz = builtins.open, gzip.open
+
+        def traced(path, *a, **k):
+            opened.append(str(path))
+            return real_open(path, *a, **k)
+
+        def traced_gz(path, *a, **k):
+            opened.append(str(path))
+            return real_gz(path, *a, **k)
+        builtins.open, gzip.open = traced, traced_gz
+        try:
+            T.render_files(args_for(tmp, snaps, rules, cfgp))
+        finally:
+            builtins.open, gzip.open = real_open, real_gz
+        ok("compare opened no path under store/ (store dir does not even exist)",
+           opened and not any("/store" in o for o in opened)
+           and not os.path.exists(os.path.join(tmp, "store")), [o for o in opened if "store" in o])
+        # links-only: without the set-version link the pair is reported, not guessed
+        _c, _m, f_nl, _o = T.render_files(args_for(
+            tmp, snaps, rules, cfgp,
+            links="kind\tfrom\tto\tsource\treason\n"))
+        dnl = {(r["pattern"], r["pin"]): r for r in rows_of(f_nl, "deltas.tsv")
+               if r["config"] == "auto-caps-simdna"}
+        ok("unlinked set-version pair reported as `unlinked`, no ratio",
+           dnl[("p1", "bbbb222")]["verdict"] == "unlinked"
+           and dnl[("p1", "bbbb222")]["ratio"] == ""
+           and "demo@1 ~ demo@2" in dnl[("p1", "bbbb222")]["why"], dnl[("p1", "bbbb222")])
+        ok("same-version pairs need no link (C vs B unaffected)",
+           dnl[("p1", "cccc333")]["verdict"] != "unlinked"
+           and dnl[("p1", "cccc333")]["ratio"] != "")
+        ok("deltas header counts the unlinked cells",
+           "# unlinked_cells: 0" in files["deltas.tsv"]
+           and "# unlinked_cells: 0" not in f_nl["deltas.tsv"])
+        ok("the linked run equals the no-guess run everywhere a link is not needed",
+           dl[("p1", "cccc333")]["ratio"] == dnl[("p1", "cccc333")]["ratio"])
+        # config-rename link: records of the old name are read as the new
+        _c, _m, f_rn, _o = T.render_files(args_for(
+            tmp, snaps, rules, cfgp,
+            links=LINKS + "config-rename\tauto-caps-simdna_nolitrun\tauto-caps-x\t"
+                          "confirmed\ttest rename\n"))
+        ok("config-rename link applies (new config name in deltas)",
+           any(r["config"] == "auto-caps-x" for r in rows_of(f_rn, "deltas.tsv")))
+        # proposals: the walk's pair is proposed when links.tsv lacks it
+        import io
+        import contextlib
+        lp0 = os.path.join(tmp, "links_empty.tsv")
+        real_open(lp0, "w").write("kind\tfrom\tto\tsource\treason\n")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            T.cmd_links(["--snapshots", snaps, "--links", lp0, "--config", cfgp,
+                         "--rules", rules, "--interest", os.path.join(tmp, "interest.tsv")])
+        ok("`links` proposes the demo@1~demo@2 pair as inferred",
+           "set-version\tdemo@1\tdemo@2\tinferred" in buf.getvalue(), buf.getvalue())
+        ok("headers carry the snapshot/links identity, not an index sha",
+           "# snapshots_sha256:" in files["deltas.tsv"]
+           and "# links:" in files["deltas.tsv"] and "index_sha256" not in files["deltas.tsv"])
         # citation check (independent module)
         ids = CC.ids_from_texts(files)
         good = "- p1 got faster [#%s].\n\nNOT KNOWN: why.\n" % g("p1")["row_id"]

@@ -1,0 +1,11 @@
+# links.tsv -- the explicit cross-version links the trend comparison may use ([B130.2]).
+# kind: set-version (an UNDIRECTED pair of versions of one set whose records a
+# delta may span) | config-rename (from -> to). source: inferred (proposed by
+# `trend.py links`, in force, awaiting confirmation) | confirmed (manager/Frank).
+# A pair that would need a link not listed here is reported `unlinked`, never guessed.
+kind	from	to	source	reason
+set-version	altwide@0.2	altwide@0.3	inferred	delta walk pairs altwide@0.2 with altwide@0.3 (463 cell lookups, 265 comparable cells); proposed by trend.py links, to be confirmed
+set-version	bounded@0.1	bounded@0.2	inferred	delta walk pairs bounded@0.1 with bounded@0.2 (474 cell lookups, 282 comparable cells); proposed by trend.py links, to be confirmed
+set-version	bounded@0.2	bounded@0.3	inferred	delta walk pairs bounded@0.2 with bounded@0.3 (594 cell lookups, 354 comparable cells); proposed by trend.py links, to be confirmed
+set-version	capability@0.1	capability@0.2	inferred	delta walk pairs capability@0.1 with capability@0.2 (1006 cell lookups, 498 comparable cells); proposed by trend.py links, to be confirmed
+set-version	email-specimen@0.1	email-specimen@0.2	inferred	delta walk pairs email-specimen@0.1 with email-specimen@0.2 (40 cell lookups, 24 comparable cells); proposed by trend.py links, to be confirmed

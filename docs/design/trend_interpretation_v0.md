@@ -9,10 +9,9 @@ and the page SLOT are built (`tools/trend_cite_check.py`,
 ## 1. Who writes it, and from what
 
 - **Writer:** a Claude session in the manager's role, once per pin that has
-  a trend page, after the window-close regeneration (`make trend`). A
-  skill, `/pcrec-bench-trend-interpret <pin>` (OWED: to be written by the
-  manager when the first interpretation is commissioned; it should mirror
-  `/pcrec-bench-interpret`'s shape), runs the steps below. Model tier: the
+  a trend page, after the window-close regeneration (`make trend`). The
+  skill `/pcrec-bench-report-trend` ([B130.2], Frank's name; it GENERATES the
+  whole report, interpretation included) runs the steps below. Model tier: the
   manager's own; no subagent is needed.
 - **Inputs it may read:** `reports/trend/{summary,deltas,cells,compile_deltas,
   deny_twins,movers_by_stamp,interest,records}.tsv`, `config.toml`, and the

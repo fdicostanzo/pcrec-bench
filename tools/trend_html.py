@@ -201,8 +201,8 @@ def page(cfg, meta, out, pin, pins_with_pages, outdir, files_ids, depth, is_inde
     body.append(f'<h1>pcrec trend report &mdash; pin <code>{e(pin)}</code></h1>')
     home = "" if is_index else '<a href="' + pre + 'index.html">index</a> '
     body.append('<nav>' + home + 'pins: ' + nav + '</nav>')
-    body.append(f'<p class="muted">as of {e(meta["as_of"])} &middot; index sha '
-                f'<code>{e(meta["index_sha256"][:12])}</code> &middot; config sha '
+    body.append(f'<p class="muted">as of {e(meta["as_of"])} &middot; snapshots sha '
+                f'<code>{e(meta["snapshots_sha256"][:12])}</code> &middot; config sha '
                 f'<code>{e(meta["config_sha256"][:12])}</code> &middot; {e(meta["direction"])}. '
                 f'Machine data: <a href="{pre}summary.tsv">summary.tsv</a>, '
                 f'<a href="{pre}deltas.tsv">deltas.tsv</a>, <a href="{pre}cells.tsv">cells.tsv</a>, '
@@ -447,7 +447,7 @@ def interpretation_block(outdir, pin, files_ids):
 
 def markdown_copy(cfg, meta, out, pin):
     L = [f"# pcrec trend report: pin {pin}", "",
-         f"as of {meta['as_of']}; index sha {meta['index_sha256'][:12]}; {meta['direction']}.", ""]
+         f"as of {meta['as_of']}; snapshots sha {meta['snapshots_sha256'][:12]}; {meta['direction']}.", ""]
     for config in cfg["headline_configs"]:
         L += [f"## {config}", "",
               "| pair | regime | cells | faster | slower | noise | geomean | ident. moved | flags |",

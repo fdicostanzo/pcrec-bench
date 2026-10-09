@@ -1,7 +1,9 @@
 # trend_report: deltas
 # schema: trend-tsv-1
 # generator: trend-v1
-# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# snapshots_sha256: 0434e3a4e8fee00275c33f2d2ba4d5f2e14cca48336bd2decacfcce51e9e7422
+# links_sha256: 3c94fe70eae4d5458dea935ebdcb2e5cfb927f13d84ea6158950269a955f3e6d
+# links: 5 (0 confirmed, 5 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
 # pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
 # as_of: 2026-10-08T19:51:06Z
@@ -9,6 +11,7 @@
 # wide_gap_abi: 8
 # fallback_band: 0.0846
 # direction: ratio = new/old of the set-grain median (>1 slower)
+# unlinked_cells: 0
 row_id	set_ver	prev_set_ver	config	pin	prev_pin	pattern	regime	form	verdict	why	ratio	state_prev	state_new	transition	ns_prev	ns_new	min_prev	max_prev	min_new	max_new	percall_prev	percall_new	n_common_subjects	n_subjects_prev	n_subjects_new	identical	prog_prev	prog_new	abi_prev	abi_new	abi_span	band	band_src	control_ratio	control_windows	cell_drift_suspect	instrument_changed	instrument_changed_files	wide_gap	stamp_changes	engine_new	dfa_prefilter_new	dfa_start_new	req_why_new	vm_start_scan_new	record_prev	record_new
 D:altwide@0.1:auto-caps-simdna:1989c62:cnt-64:large-subject-throughput:plain	altwide@0.1		auto-caps-simdna	1989c62		cnt-64	large-subject-throughput	plain	new				judged			4788748.5																															records/altwide@0.1/pcrec_1989c62_auto-caps-simdna/altwide@0.1__pcrec_1989c62_auto-caps-simdna__budu-ryzen1600__20260902T094922Z.jsonl
 D:altwide@0.1:auto-caps-simdna:1989c62:cnt-64:short-subject-search:plain	altwide@0.1		auto-caps-simdna	1989c62		cnt-64	short-subject-search	plain	new				judged			22131.7																															records/altwide@0.1/pcrec_1989c62_auto-caps-simdna/altwide@0.1__pcrec_1989c62_auto-caps-simdna__budu-ryzen1600__20260902T094922Z.jsonl

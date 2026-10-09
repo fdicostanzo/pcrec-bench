@@ -13,3 +13,9 @@
   upstream-findings pipeline's session procedure (file, reproduce, triage,
   draft, approve/send, re-verify) over `docs/dev/upstream/` and
   `tools/upstream.py`; spec `docs/design/upstream_pipeline_v1.md`.
+- `pcrec-bench-report-trend/SKILL.md` — `/pcrec-bench-report-trend [<pin>]`
+  ([B130.2]): the window-close procedure of the pcrec trend report --
+  snapshot the new pin(s) from the store (`make trend-snapshot`), propose
+  `links.tsv` rows, `make trend` / `trend-check`, write the grounded
+  `reports/trend/interpretation/<pin>.md`, `make check-trend`, commit with
+  explicit paths. The first of the `pcrec-bench-report-<kind>` family.
