@@ -11,7 +11,7 @@ canonical store; none is typed anywhere.
 THE METRIC (manager's ruling, [B127]):
   * pcrec's representative is `pcrec-auto` (config tail `auto-caps-simdna`,
     or `..._utf8` on the utf8 set) at the pin named on the command line.
-  * A CASE = one (pattern, regime) PLAIN-form set-grain cell where BOTH
+  * A CASE = one (pattern, regime) set-grain cell (plain form; whole-subject form for the match regime) where BOTH
     sides have a numeric set-grain median. The cell arithmetic is
     `pcrecbench.reduce.cells_from_record` / `reduce_set_cell`, the
     reporter's own; nothing is reimplemented here.
@@ -47,9 +47,13 @@ sys.path.insert(0, ROOT)
 from pcrecbench import reduce as R  # noqa: E402
 
 PCREC_TAILS = ("auto-caps-simdna", "auto-caps-simdna_utf8")
-REASONS = ("wrong", "gave-up", "unsupported", "not-measured")
+REASONS = ("wrong", "gave-up", "unsupported", "no-expectation", "not-measured")
+
+#: the form each regime is compared on (see Summary)
+FORM_FOR_REGIME = {"match-compliance": "whole-subject"}
 REASON_TEXT = {"wrong": "wrong answer", "gave-up": "gave up",
                "unsupported": "unsupported or refused",
+               "no-expectation": "no oracle expectation to judge against",
                "not-measured": "not measured"}
 
 
@@ -135,7 +139,7 @@ def pick_testees(rows, setid, pin):
 
 
 class Summary:
-    """One record, reduced: plain-form set cells + compile outcomes."""
+    """One record, reduced: set cells (plain form; whole-subject for the match regime) + compile outcomes."""
 
     def __init__(self, store, row):
         self.row = row
@@ -152,13 +156,18 @@ class Summary:
         self.regimes = setup["subbench"].get("regimes", [])
         self.cells = {}
         self.max_trials = 0
+        # The form compared per regime: the match regime is measured on the
+        # whole-subject form (the anchored artifact the harness builds for
+        # it), the search regimes on the plain form. The same rule applies to
+        # every testee, so a case is always like-for-like in form.
         for (pid, regime, form), by_subj in R.cells_from_record(rows).items():
-            if form != "plain":
+            if form != FORM_FOR_REGIME.get(regime, "plain"):
                 continue
             c = R.reduce_set_cell(by_subj)
             self.cells[(pid, regime)] = dict(
                 median=c.median_ns, lo=c.min_ns, hi=c.max_ns,
                 n_wrong=c.n_wrong, n_gave_up=c.n_gave_up,
+                n_no_expectation=c.n_no_expectation,
                 n_trials=c.n_trials, n_subjects=c.n_subjects)
             self.max_trials = max(self.max_trials, c.n_trials)
         self.calibration_target_ns = None
@@ -191,6 +200,8 @@ class Summary:
                 return "wrong"
             if c["n_gave_up"] > 0:
                 return "gave-up"
+            if c.get("n_no_expectation", 0) > 0:
+                return "no-expectation"
             return "not-measured"
         out = self.compile_outcome.get(key[0])
         if out in ("unsupported-by-declaration", "did-not-compile"):
@@ -256,11 +267,11 @@ ENGINES = {
         "testees/pcre2/CLAUDE.md; record execution_model eager-jit"),
     ("libpcre2", "dfa"): ("PCRE2 {v} DFA", "DFA",
         "testees/pcre2/CLAUDE.md pcre2-dfa section (pcre2_dfa_match, breadth-first scan)"),
-    ("re2", "default"): ("RE2 {v}", "automata (lazy DFA etc.)",
+    ("re2", "default"): ("RE2 {v}", "automata (lazy DFA, NFA fallback)",
         "testees/re2/CLAUDE.md line 44: RE2's DFA is built lazily at first match"),
-    ("re2", "longest"): ("RE2 {v} (longest-match)", "automata (lazy DFA etc.)",
+    ("re2", "longest"): ("RE2 {v} (longest-match)", "automata (lazy DFA, NFA fallback)",
         "testees/re2/CLAUDE.md line 44; mode longest = set_longest_match(true)"),
-    ("rust", "default"): ("Rust regex {v}", "automata (lazy DFA etc.)",
+    ("rust", "default"): ("Rust regex {v}", "automata (lazy DFA, PikeVM, bounded backtracker)",
         "testees/rust/CLAUDE.md line 104: the crate's lazy DFA"),
     ("oniguruma", "default"): ("Oniguruma {v}", "interpreter (backtracking)",
         "testees/onig/CLAUDE.md (a): interpretive backtracking engine"),

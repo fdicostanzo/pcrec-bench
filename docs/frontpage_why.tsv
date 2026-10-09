@@ -1,3 +1,8 @@
 # pattern_id	engine	regime	cite	quote
 # Causes for the front page's loss list. A row is used only if `quote` is found verbatim (whitespace-normalised) in the committed file `cite`. engine is the record's engine_name or *.
 pattern_id	engine	regime	cite	quote
+tail-word-eoz	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
+tail-ext-lower-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
+tail-space-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
+tail-digits-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
+tail-dotstar-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
