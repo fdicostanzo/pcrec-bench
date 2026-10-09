@@ -2,26 +2,33 @@
 """tools/trend.py -- THE pcrec TREND REPORT's generator ([B130],
 docs/design/pcrec_trend_report_v0.md R1-R19, implementation note at its end).
 
-    python3 tools/trend.py [--sets a,b] [--out reports/trend] [--check]
+    python3 tools/trend.py [--sets a,b] [--out reports/trend] [--check]   # COMPARE
+    python3 tools/trend.py snapshot --pin <pin> [--force]   # reads store/, once per pin
+    python3 tools/trend.py links [--write]                  # propose links.tsv rows
 
-Reads `store/index.tsv` and the records it names, writes under
-`reports/trend/`: the A-form TSVs (cells, deltas, summary, movers_by_stamp,
-compile_deltas, deny_twins, interest, records, history/<set>/<config>.tsv)
-and the B-form (index.html, pins/<pin>.html, index.md; tools/trend_html.py).
-Every number is computed here from the store through `pcrecbench.reduce`
-(the reporter's own set-grain arithmetic: per-trial sum over subjects, median
-and [min, max] over trials). Nothing is typed by hand.
+THE COMPARISON NEVER OPENS store/ ([B130.2], design note section 8): it reads
+`reports/trend/snapshots/<pin>.tsv.gz` (one immutable file per pinned pcrec
+version, tools/trend_snapshot.py), `links.tsv` (the explicit cross-version
+links) and `config.toml`, and writes `reports/trend/`: the A-form TSVs (cells,
+deltas, summary, movers_by_stamp, compile_deltas, deny_twins, interest,
+records, history/<set>/<config>.tsv) and the B-form (index.html,
+pins/<pin>.html, index.md; tools/trend_html.py). `snapshot` is the only
+command that reads the store. Every number is computed here from the snapshots
+through `pcrecbench.reduce` (the reporter's own set-grain arithmetic: per-trial
+sum over subjects, median and [min, max] over trials). Nothing is typed by hand.
 
 THE ARITHMETIC IN ONE PLACE
-  * A record is READ once into a DIGEST (per cell, per subject, per trial:
-    outcome and ns/call; per compile row: outcome and stamps). Digests are
-    cached under build/trend-cache/ (a speed cache, never a source of truth).
-    A cell is rebuilt from a digest as synthetic match rows and handed to
+  * A record is a DIGEST (per cell, per subject, per trial: outcome and
+    ns/call; per compile row: outcome and stamps): built once from the store
+    by `snapshot` (cached under build/trend-cache/, a speed cache only) and
+    stored in the snapshot; the comparison rebuilds it from the snapshot. A
+    cell is rebuilt from a digest as synthetic match rows and handed to
     `reduce.reduce_set_cell`, so the number IS the reporter's.
   * ratio = NEW / OLD of the set-grain median (> 1: slower), as in O-92.
   * Like for like (R3): a delta needs equal pattern sha and is computed over
     the subjects present in BOTH records with equal sha. Otherwise `new` /
-    `not-comparable`.
+    `not-comparable`. A pair spanning two versions of a set needs a
+    `set-version` row in links.tsv, else `unlinked` (never guessed).
   * Within-window noise (R4): trial [min, max] ranges overlap -> `within-noise`.
     Cross-window (R4+): disjoint ranges must also clear the identical-program
     band of that pair+regime (q95 of |ratio-1| over program-identical cells,
@@ -56,9 +63,12 @@ import sys
 import tomllib
 from collections import defaultdict
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
+sys.path.insert(0, HERE)
 from pcrecbench import reduce as R  # noqa: E402
+import trend_snapshot as TS  # noqa: E402
 
 GEN_VERSION = "trend-v1"
 TSV_SCHEMA = "trend-tsv-1"
@@ -71,6 +81,9 @@ ENGINE_DIR = {"libpcre2": "pcre2", "oniguruma": "onig"}
 INSTR_FILES = ("shim.c", "driver.c", "driver.cc", "src/main.rs")
 ABI_BLIND = 67
 DEFAULT_CONFIG = os.path.join(ROOT, "reports", "trend", "config.toml")
+DEFAULT_OUT = os.path.join(ROOT, "reports", "trend")
+LINK_KINDS = ("set-version", "config-rename")
+LINK_COLS = ["kind", "from", "to", "source", "reason"]
 
 
 # ------------------------------------------------------------------ helpers
@@ -489,26 +502,14 @@ class Out:
         self.interest = []
 
 
-def process_set(setname, chosen_meta, cfg, pin_order, store, cache_dir, instr, out,
+def process_set(setname, pc, ctrl, comp, links, cfg, pin_order, out,
                 interest_spec):
+    """pc: the pcrec Recs of this set name; ctrl / comp: {(pin, set_ver):
+    [Rec]} -- the control and competitor records stored in that pin's
+    SNAPSHOT (the same window's), never looked up anywhere else."""
     pidx = {p: i for i, p in enumerate(pin_order)}
-    recs = []  # all chosen Recs of this set name
-    for (sv, tid), m in sorted(chosen_meta.items()):
-        if sv.split("@")[0] != setname:
-            continue
-        dg = get_digest(os.path.join(store, m["path"]), cache_dir)
-        recs.append(Rec(m["role"], sv, tid, m["pin"], m["config"], m["path"], dg,
-                        instr.of(dg["harness_commit"], dg["engine_name"])))
-    pc = [r for r in recs if r.role == "pcrec"]
     if not pc:
         return
-    ctrl = defaultdict(list)
-    comp = defaultdict(list)
-    for r in recs:
-        if r.role == "control":
-            ctrl[r.set_ver].append(r)
-        elif r.role == "competitor":
-            comp[r.set_ver].append(r)
 
     # ---- cells.tsv rows (R7, R12, R16)
     for r in sorted(pc, key=lambda r: (pidx[r.pin], r.set_ver, r.config)):
@@ -519,8 +520,9 @@ def process_set(setname, chosen_meta, cfg, pin_order, store, cache_dir, instr, o
             st, red = cell_state(r, key, subs)
             row = cell_row(r, key, st, red, subs)
             if red and red["median"] is not None:
-                fill_competitors(row, r, key, subs, red, ctrl[r.set_ver],
-                                 comp[r.set_ver], cfg)
+                fill_competitors(row, r, key, subs, red,
+                                 ctrl.get((r.pin, r.set_ver), []),
+                                 comp.get((r.pin, r.set_ver), []), cfg)
             out.cells.append(row)
         for ck in sorted(r.dg["compile"]):
             pid, form = ck.split("\t")
@@ -544,12 +546,12 @@ def process_set(setname, chosen_meta, cfg, pin_order, store, cache_dir, instr, o
                 keys |= set(p.dg["cells"])
             for key in sorted(keys):
                 d = make_delta(new, [x for x in rs[:j] if pidx[x.pin] < pidx[new.pin]],
-                               key, ctrl, cfg, pidx)
+                               key, ctrl, cfg, pidx, links)
                 if d:
                     raw.append(d)
     finish_deltas(raw, cfg, pin_order, out, ctrl)
     # compile/size deltas (Q2)
-    compile_deltas(byconf, pidx, cfg, out)
+    compile_deltas(byconf, pidx, cfg, out, links)
     # deny twins (R17)
     deny_twins(pc, cfg, out)
     # cells of interest (R17)
@@ -621,7 +623,7 @@ def fill_competitors(row, r, key, subs, red, ctrls, comps, cfg):
         row["auto_best_engine"], row["auto_best_ratio"] = best[1], frat(best[0])
 
 
-def make_delta(new, earlier, key, ctrls, cfg, pidx):
+def make_delta(new, earlier, key, ctrls, cfg, pidx, links):
     pid, rg, form = key.split("\t")
     # newest earlier record with this cell comparable (R2)
     prev = None
@@ -646,6 +648,11 @@ def make_delta(new, earlier, key, ctrls, cfg, pidx):
     base.update(prev_pin=prev.pin, prev_set_ver=prev.set_ver,
                 record_prev=prev.path, rec_new=new, rec_prev=prev,
                 verdict="pending")
+    if not links.set_ok(prev.set_ver, new.set_ver):
+        base.update(verdict="unlinked",
+                    why=f"no set-version link {prev.set_ver} ~ {new.set_ver} "
+                        f"in links.tsv")
+        return base
     pn, pp = new.dg["patterns"].get(pid), prev.dg["patterns"].get(pid)
     if pn is None or pp is None or pn != pp:
         base.update(verdict="not-comparable",
@@ -685,7 +692,7 @@ def finish_deltas(raw, cfg, pin_order, out, ctrls):
         d["wide_gap"] = d["abi_span"] is not None and d["abi_span"] > cfg["wide_gap_abi"]
         d["instrument_changed"] = new.instr != prev.instr
         d["instrument_files"] = ";".join(instr_diff(prev.instr, new.instr))
-        if d["verdict"] == "not-comparable":
+        if d["verdict"] in ("not-comparable", "unlinked"):
             continue
         a, b = d["a"], d["b"]
         d["ratio"] = None
@@ -737,12 +744,13 @@ def finish_deltas(raw, cfg, pin_order, out, ctrls):
         out.deltas.append(delta_row(d))
     summarize(groups, cfg, out)
     out.raw_deltas = raw
+    out.raw_deltas_all = getattr(out, "raw_deltas_all", []) + raw
 
 
 def control_ratio(d, ctrls, cache):
     new, prev = d["rec_new"], d["rec_prev"]
-    cn = nearest(ctrls.get(new.set_ver, []), new.ts)
-    cp = nearest(ctrls.get(prev.set_ver, []), prev.ts)
+    cn = nearest(ctrls.get((new.pin, new.set_ver), []), new.ts)
+    cp = nearest(ctrls.get((prev.pin, prev.set_ver), []), prev.ts)
     if cn is None or cp is None:
         return None, "no-control"
     key = f"{d['pattern']}\t{d['regime']}\t{d['form']}"
@@ -794,7 +802,7 @@ def delta_row(d):
     row["wide_gap"] = int(d.get("wide_gap", False))
     row["instrument_changed"] = int(d.get("instrument_changed", False))
     row["instrument_changed_files"] = d.get("instrument_files", "")
-    if d["verdict"] == "not-comparable":
+    if d["verdict"] in ("not-comparable", "unlinked"):
         return row
     a, b = d["a"], d["b"]
     row["ratio"] = frat(d.get("ratio"))
@@ -904,7 +912,7 @@ def summarize(groups, cfg, out):
             })
 
 
-def compile_deltas(byconf, pidx, cfg, out):
+def compile_deltas(byconf, pidx, cfg, out, links):
     ts, tc = cfg["size_threshold"], cfg["compile_threshold"]
     for config, rs in sorted(byconf.items()):
         for j, new in enumerate(rs):
@@ -916,7 +924,7 @@ def compile_deltas(byconf, pidx, cfg, out):
                             p.dg["patterns"].get(pid) == new.dg["patterns"].get(pid):
                         prev = p
                         break
-                if prev is None:
+                if prev is None or not links.set_ok(prev.set_ver, new.set_ver):
                     continue
                 o, n = prev.dg["compile"][ck], new.dg["compile"][ck]
                 om, nm = o.get("meta") or {}, n.get("meta") or {}
@@ -1045,7 +1053,8 @@ def interest_rows(out, spec):
 def header_lines(name, meta, extra=()):
     h = [f"# trend_report: {name}", f"# schema: {TSV_SCHEMA}",
          f"# generator: {GEN_VERSION}"]
-    for k in ("index_sha256", "config_sha256", "pin_order_sha256", "as_of",
+    for k in ("snapshots_sha256", "links_sha256", "links", "config_sha256",
+              "pin_order_sha256", "as_of",
               "identity_criterion", "wide_gap_abi", "fallback_band",
               "direction"):
         h.append(f"# {k}: {meta[k]}")
@@ -1123,45 +1132,149 @@ mechanism\trole\tset\tpattern\tregime\tform\tnote
 """
 
 
-def build_outputs(args):
+# ------------------------------------------------------------------- links
+
+class Links:
+    """The explicit cross-version links the comparison may use
+    (reports/trend/links.tsv). Kinds: `set-version` (an UNDIRECTED pair of
+    versions of one set whose records a delta may span) and `config-rename`
+    (from -> to: records of `from` are read as config `to`). A pair that would
+    need an unlisted link is `unlinked`, never guessed. `allow_all` is the
+    proposal mode only (`trend.py links`): it permits every pair and counts
+    the ones it used in `seen`."""
+
+    def __init__(self, rows=(), allow_all=False):
+        self.rows = list(rows)
+        self.allow_all = allow_all
+        self.sv = {frozenset((r["from"], r["to"])) for r in self.rows
+                   if r["kind"] == "set-version"}
+        self.rename = {r["from"]: r["to"] for r in self.rows
+                       if r["kind"] == "config-rename"}
+        self.seen = defaultdict(int)
+
+    def set_ok(self, a, b):
+        if a == b:
+            return True
+        self.seen[tuple(sorted((a, b)))] += 1
+        return self.allow_all or frozenset((a, b)) in self.sv
+
+    def config(self, c):
+        return self.rename.get(c, c)
+
+    def counts(self):
+        conf = sum(1 for r in self.rows if r["source"] == "confirmed")
+        return f"{len(self.rows)} ({conf} confirmed, {len(self.rows) - conf} inferred)"
+
+
+def load_links(path):
+    """Rows of links.tsv (validated: closed kinds, closed sources, no
+    duplicates); a missing file is an empty link set."""
+    if not path or not os.path.exists(path):
+        return Links()
+    rows = read_tsv(path)
+    seen = set()
+    for r in rows:
+        if r.get("kind") not in LINK_KINDS:
+            raise SystemExit(f"trend: {path}: unknown link kind {r.get('kind')!r}")
+        if r.get("source") not in ("inferred", "confirmed"):
+            raise SystemExit(f"trend: {path}: source must be inferred|confirmed: {r}")
+        k = (r["kind"], frozenset((r["from"], r["to"])) if r["kind"] == "set-version"
+             else (r["from"], r["to"]))
+        if k in seen:
+            raise SystemExit(f"trend: {path}: duplicate link {r['kind']} {r['from']} {r['to']}")
+        seen.add(k)
+    return Links(rows)
+
+
+# --------------------------------------------------------- snapshot loading
+
+def load_snapshots(snap_dir, links, sets_filter=None):
+    """Read every snapshot under snap_dir. -> (metas, pcrec Recs, ctrl pool,
+    comp pool, pins_present). The ONLY inputs of the comparison; store/ is
+    never touched. A record stored `ref:<pin>` is resolved to the snapshot
+    holding it inline; control/competitor Recs are shared objects across the
+    pins that reference them (so `control-same-record` is an identity test)."""
+    files = sorted(fn for fn in os.listdir(snap_dir) if fn.endswith(".tsv.gz")) \
+        if os.path.isdir(snap_dir) else []
+    loaded = []
+    for fn in files:
+        header, recs = TS.read_snapshot(os.path.join(snap_dir, fn))
+        loaded.append((fn[:-len(".tsv.gz")], header, recs))
+    dg_of = {}
+    for _pin, _h, recs in loaded:
+        for r in recs:
+            if r.get("dg") is not None:
+                dg_of.setdefault(r["path"], r["dg"])
+    rec_obj = {}
+    metas_by_path = {}
+    pcrec, ctrl, comp = [], defaultdict(list), defaultdict(list)
+    for pin, _h, recs in loaded:
+        for r in recs:
+            role = r["role"]
+            m = {"role": role, "set_ver": r["set_ver"], "testee_id": r["testee_id"],
+                 "config": links.config(r["config"]) if role == "pcrec" else r["config"],
+                 "pin": r["pin"], "machine": r["machine"],
+                 "timestamp": r["timestamp"], "status": r["status"],
+                 "disposition": r["disposition"],
+                 "superseded_by": r["superseded_by"], "path": r["path"],
+                 "harness_commit": r["harness_commit"], "instrument": r["instrument"],
+                 "abi": r["abi"]}
+            old = metas_by_path.get(r["path"])
+            if old is None or (m["disposition"] == "used"
+                               and old["disposition"] != "used"):
+                metas_by_path[r["path"]] = m
+            if r["data"] == "none":
+                continue
+            dg = dg_of.get(r["path"])
+            if dg is None:
+                raise SystemExit(f"trend: snapshot {pin}: {r['path']} is stored "
+                                 f"{r['data']} but no snapshot holds it inline")
+            if sets_filter and r["set_ver"].split("@")[0] not in sets_filter:
+                continue
+            rec = rec_obj.get(r["path"])
+            if rec is None:
+                rec = rec_obj[r["path"]] = Rec(role, r["set_ver"], r["testee_id"],
+                                               r["pin"], m["config"], r["path"], dg,
+                                               r["instrument"])
+            if role == "pcrec":
+                pcrec.append(rec)
+            elif role == "control":
+                ctrl[(pin, r["set_ver"])].append(rec)
+            elif role == "competitor":
+                comp[(pin, r["set_ver"])].append(rec)
+    for pool in (ctrl, comp):
+        for k in pool:
+            pool[k].sort(key=lambda x: x.tid)
+    metas = sorted(metas_by_path.values(), key=lambda m: m["path"])
+    return metas, pcrec, ctrl, comp, sorted(p for p, _h, _r in loaded)
+
+
+def build_outputs(args, links=None):
+    """The comparison, from snapshot files + links + config ONLY."""
     cfg = load_config(args.config)
     pin_order = load_pin_order(args.rules)
-    idx_path = os.path.join(args.store, "index.tsv")
-    with open(idx_path, newline="", encoding="utf-8") as f:
-        index_rows = list(csv.DictReader(f, delimiter="\t"))
+    links = links if links is not None else load_links(args.links)
     sets_f = set(args.sets.split(",")) if args.sets else None
+    metas, pcrec, ctrl, comp, snap_pins = load_snapshots(args.snapshots, links, sets_f)
     if sets_f:
-        index_rows = [r for r in index_rows if r["subbench"] in sets_f]
-    metas, chosen = select_records(index_rows, cfg, pin_order)
-    instr = Instrument(args.repo, enabled=not args.no_git,
-                       override=getattr(args, "instr_override", None))
+        metas = [m for m in metas if m["set_ver"].split("@")[0] in sets_f]
     out = Out()
     interest_spec = load_interest(args.interest)
-    names = sorted({m["set_ver"].split("@")[0] for m in chosen.values()
-                    if m["role"] == "pcrec"})
-    cache = None if args.no_cache else args.cache
-    digests_info = {}
+    names = sorted({r.set_ver.split("@")[0] for r in pcrec})
     for nm in names:
-        process_set(nm, chosen, cfg, pin_order, args.store, cache, instr, out,
-                    interest_spec)
+        process_set(nm, [r for r in pcrec if r.set_ver.split("@")[0] == nm],
+                    ctrl, comp, links, cfg, pin_order, out, interest_spec)
         sys.stderr.write(f"trend: {nm} done ({len(out.cells)} cells, "
                          f"{len(out.deltas)} deltas)\n")
-    # records.tsv enrichments need digests' harness commit/instrument: recompute
-    # cheaply from the chosen digests (cached)
-    for m in metas:
-        m["harness_commit"], m["instrument"], m["abi"] = "", "", ""
-        if m["disposition"] in ("used", "superseded"):
-            dg = get_digest(os.path.join(args.store, m["path"]), cache)
-            m["harness_commit"] = dg["harness_commit"] or ""
-            m["instrument"] = instr.of(dg["harness_commit"], dg["engine_name"])
-            m["abi"] = dg["abi"] if dg["abi"] is not None else ""
     used_ts = [m["timestamp"] for m in metas if m["disposition"] == "used"
                and m["role"] == "pcrec"]
     pins_used = {m["pin"] for m in metas if m["role"] == "pcrec"
                  and m["disposition"] == "used"}
     skipped = [p for p in pin_order if p not in pins_used]
     meta = {
-        "index_sha256": sha_file(idx_path),
+        "snapshots_sha256": TS.snapshots_digest(args.snapshots),
+        "links_sha256": sha_file(args.links) if os.path.exists(args.links) else "none",
+        "links": links.counts(),
         "config_sha256": sha_file(args.config),
         "pin_order_sha256": hashlib.sha256("\n".join(pin_order).encode()).hexdigest(),
         "as_of": max(used_ts) if used_ts else "",
@@ -1220,7 +1333,9 @@ def render_files(args):
     ex = ["# pins_without_records: " + meta["pins_without_records"]]
     files["records.tsv"] = tsv_text("records", meta, RECORD_COLS, metas, ex)
     files["cells.tsv"] = tsv_text("cells", meta, CELL_COLS, out.cells)
-    files["deltas.tsv"] = tsv_text("deltas", meta, DELTA_COLS, out.deltas)
+    n_unl = sum(1 for d in out.deltas if d["verdict"] == "unlinked")
+    files["deltas.tsv"] = tsv_text("deltas", meta, DELTA_COLS, out.deltas,
+                                   [f"# unlinked_cells: {n_unl}"])
     files["summary.tsv"] = tsv_text("summary", meta, SUMMARY_COLS, out.summary)
     files["movers_by_stamp.tsv"] = tsv_text("movers_by_stamp", meta, MOVER_COLS,
                                             out.movers)
@@ -1292,23 +1407,205 @@ def check_files(root, files):
     return bad
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+# ------------------------------------------------------------- snapshot cmd
+
+def write_pin_snapshot(pin, store, cfg, pin_order, index_rows, snap_dir, instr,
+                       cache_dir, force=False, config_path=None):
+    """Write <snap_dir>/<pin>.tsv.gz from the store (the only reader of
+    store/ in this module). Returns (path, n_records, n_inline)."""
+    if pin not in pin_order:
+        raise SystemExit(f"trend snapshot: {pin} is not in [[pin_order]] "
+                         f"(catalogue/rules.toml)")
+    dest = TS.snapshot_path(snap_dir, pin)
+    if os.path.exists(dest) and not force:
+        raise SystemExit(f"trend snapshot: {dest} exists: snapshots are immutable "
+                         f"(--force to overwrite)")
+    metas, chosen = select_records(index_rows, cfg, pin_order)
+    mine = [m for m in metas if m["role"] == "pcrec" and m["pin"] == pin]
+    used = [m for m in mine if m["disposition"] == "used"]
+    if not used:
+        raise SystemExit(f"trend snapshot: no used (measured, machine "
+                         f"{cfg['machine']}) pcrec record at pin {pin}")
+    svs = {m["set_ver"] for m in used}
+    owners = TS.inline_owners(snap_dir, skip_pin=pin)
+    # control: the used record(s) nearest in time to each used pcrec record of
+    # the set@version; competitors: every used one (R12)
+    want_ctrl = set()
+    for sv in svs:
+        cs = [m for m in metas if m["role"] == "control" and m["set_ver"] == sv
+              and m["disposition"] == "used"]
+        for u in [x for x in used if x["set_ver"] == sv]:
+            if cs:
+                want_ctrl.add(min(cs, key=lambda c: (
+                    abs(iso_s(c["timestamp"]) - iso_s(u["timestamp"])),
+                    c["timestamp"], c["testee_id"]))["path"])
+    entries = []
+    n_inline = 0
+    for m in metas:
+        role = m["role"]
+        if role == "pcrec":
+            if m["pin"] != pin:
+                continue
+        elif m["set_ver"] not in svs:
+            continue
+        m = dict(m)
+        m["harness_commit"], m["instrument"], m["abi"] = "", "", ""
+        m["schema_version"], m["engine_name"] = "", ""
+        dg, data = None, "none"
+        if m["disposition"] in ("used", "superseded"):
+            dg = get_digest(os.path.join(store, m["path"]), cache_dir)
+            m["harness_commit"] = dg["harness_commit"] or ""
+            m["instrument"] = instr.of(dg["harness_commit"], dg["engine_name"])
+            m["abi"] = dg["abi"] if dg["abi"] is not None else ""
+            m["schema_version"] = dg.get("schema_version") or ""
+            m["engine_name"] = dg.get("engine_name") or ""
+        if m["disposition"] == "used" and (
+                role in ("pcrec", "competitor")
+                or (role == "control" and m["path"] in want_ctrl)):
+            if m["path"] in owners:
+                data = "ref:" + owners[m["path"]]
+            else:
+                data = "inline"
+                n_inline += 1
+        entries.append((m, dg if data == "inline" else None, data))
+    header = [("generator", GEN_VERSION),
+              ("index_sha256", sha_file(os.path.join(store, "index.tsv"))),
+              ("config_sha256", sha_file(config_path) if config_path else ""),
+              ("machine", cfg["machine"]),
+              ("n_records", len(entries)), ("n_inline", n_inline)]
+    TS.write_snapshot(pin, entries, header, snap_dir, force=force)
+    return dest, len(entries), n_inline
+
+
+def cmd_snapshot(argv):
+    ap = argparse.ArgumentParser(
+        prog="trend.py snapshot",
+        description="write the immutable per-pin snapshot (reads the store)")
+    ap.add_argument("--pin", action="append", default=[],
+                    help="pcrec pin (repeatable)")
+    ap.add_argument("--all-pins", action="store_true",
+                    help="every pin of [[pin_order]] with a used record in the store")
     ap.add_argument("--store", default=os.path.join(ROOT, "store"))
-    ap.add_argument("--out", default=os.path.join(ROOT, "reports", "trend"))
+    ap.add_argument("--snapshots", default=os.path.join(DEFAULT_OUT, "snapshots"))
+    ap.add_argument("--config", default=DEFAULT_CONFIG)
+    ap.add_argument("--rules", default=os.path.join(ROOT, "catalogue", "rules.toml"))
+    ap.add_argument("--repo", default=ROOT, help="git repo for instrument shas")
+    ap.add_argument("--cache", default=os.path.join(ROOT, "build", "trend-cache"))
+    ap.add_argument("--no-cache", action="store_true")
+    ap.add_argument("--no-git", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite an existing snapshot (snapshots are immutable)")
+    args = ap.parse_args(argv)
+    cfg = load_config(args.config)
+    pin_order = load_pin_order(args.rules)
+    with open(os.path.join(args.store, "index.tsv"), newline="", encoding="utf-8") as f:
+        index_rows = list(csv.DictReader(f, delimiter="\t"))
+    pins = list(args.pin)
+    if args.all_pins:
+        have = {split_pcrec_id(r["testee_id"])[0] for r in index_rows
+                if split_pcrec_id(r["testee_id"])}
+        pins += [p for p in pin_order if p in have and p not in pins]
+    if not pins:
+        ap.error("--pin or --all-pins required")
+    instr = Instrument(args.repo, enabled=not args.no_git)
+    cache = None if args.no_cache else args.cache
+    rc = 0
+    for pin in pins:
+        try:
+            dest, n, ni = write_pin_snapshot(pin, args.store, cfg, pin_order,
+                                             index_rows, args.snapshots, instr,
+                                             cache, args.force, args.config)
+        except SystemExit as e:
+            print(e)
+            if args.all_pins and "exists" in str(e):
+                continue        # backfill is resumable: existing = skipped
+            rc = 1
+            continue
+        print(f"trend snapshot: {pin}: {n} records ({ni} inline) -> {dest} "
+              f"({os.path.getsize(dest)} bytes)")
+    return rc
+
+
+# ----------------------------------------------------------------- links cmd
+
+def cmd_links(argv):
+    ap = argparse.ArgumentParser(
+        prog="trend.py links",
+        description="propose cross-version links the walk would use but "
+                    "links.tsv lacks (as `inferred` rows); reads snapshots only")
+    ap.add_argument("--snapshots", default=os.path.join(DEFAULT_OUT, "snapshots"))
+    ap.add_argument("--links", default=os.path.join(DEFAULT_OUT, "links.tsv"))
+    ap.add_argument("--config", default=DEFAULT_CONFIG)
+    ap.add_argument("--rules", default=os.path.join(ROOT, "catalogue", "rules.toml"))
+    ap.add_argument("--interest", default=None)
+    ap.add_argument("--sets", default=None)
+    ap.add_argument("--write", action="store_true",
+                    help="append the proposals to links.tsv as source=inferred")
+    args = ap.parse_args(argv)
+    args.interest = args.interest or os.path.join(DEFAULT_OUT, "cells_of_interest.tsv")
+    have = load_links(args.links)
+    probe = Links(have.rows, allow_all=True)
+    _cfg, _meta, _metas, out, _po, _spec = build_outputs(args, probe)
+    comparable = defaultdict(int)
+    for d in out.raw_deltas_all:
+        if d.get("prev_set_ver") and d["prev_set_ver"] != d["set_ver"] \
+                and d["verdict"] not in ("new", "not-comparable", "unlinked"):
+            comparable[tuple(sorted((d["prev_set_ver"], d["set_ver"])))] += 1
+    props = []
+    for pair in sorted(probe.seen):
+        if frozenset(pair) in have.sv:
+            continue
+        a, b = pair
+        props.append({"kind": "set-version", "from": a, "to": b,
+                      "source": "inferred",
+                      "reason": f"delta walk pairs {a} with {b} "
+                                f"({probe.seen[pair]} cell lookups, "
+                                f"{comparable.get(pair, 0)} comparable cells); "
+                                f"proposed by trend.py links, to be confirmed"})
+    for r in props:
+        print("\t".join(r[c] for c in LINK_COLS))
+    print(f"trend links: {len(props)} proposed, {len(have.rows)} already listed")
+    if args.write and props:
+        new = not os.path.exists(args.links)
+        with open(args.links, "a", encoding="utf-8", newline="") as f:
+            if new:
+                f.write(LINKS_HEADER)
+                f.write("\t".join(LINK_COLS) + "\n")
+            for r in props:
+                f.write("\t".join(r[c] for c in LINK_COLS) + "\n")
+    return 0
+
+
+LINKS_HEADER = """# links.tsv -- the explicit cross-version links the trend comparison may use ([B130.2]).
+# kind: set-version (an UNDIRECTED pair of versions of one set whose records a
+# delta may span) | config-rename (from -> to). source: inferred (proposed by
+# `trend.py links`, in force, awaiting confirmation) | confirmed (manager/Frank).
+# A pair that would need a link not listed here is reported `unlinked`, never guessed.
+"""
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "snapshot":
+        return cmd_snapshot(argv[1:])
+    if argv and argv[0] == "links":
+        return cmd_links(argv[1:])
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("--out", default=DEFAULT_OUT)
+    ap.add_argument("--snapshots", default=None,
+                    help="snapshot directory (default <out>/snapshots)")
+    ap.add_argument("--links", default=None, help="default <out>/links.tsv")
     ap.add_argument("--config", default=DEFAULT_CONFIG)
     ap.add_argument("--rules", default=os.path.join(ROOT, "catalogue", "rules.toml"))
     ap.add_argument("--interest", default=None,
                     help="cells-of-interest file (default <out>/cells_of_interest.tsv)")
-    ap.add_argument("--repo", default=ROOT, help="git repo for instrument shas")
     ap.add_argument("--sets", default=None, help="comma list of set names (dev slice)")
-    ap.add_argument("--cache", default=os.path.join(ROOT, "build", "trend-cache"))
-    ap.add_argument("--no-cache", action="store_true")
-    ap.add_argument("--no-git", action="store_true")
     ap.add_argument("--check", action="store_true",
                     help="regenerate in memory, exit 1 on drift from --out")
     ap.add_argument("--no-html", action="store_true")
     args = ap.parse_args(argv)
+    args.snapshots = args.snapshots or os.path.join(args.out, "snapshots")
+    args.links = args.links or os.path.join(args.out, "links.tsv")
     if args.interest is None:
         args.interest = os.path.join(args.out, "cells_of_interest.tsv")
     cfg, meta, files, out = render_files(args)
@@ -1329,5 +1626,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     sys.exit(main())
