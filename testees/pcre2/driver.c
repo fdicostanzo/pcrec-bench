@@ -115,6 +115,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timed.h"
+
 /* ---- the hand-declared 8-bit ABI slice (pcrec tests/fuzz/pcre2_abi.h) ---- */
 
 typedef size_t PCRE2_SIZE;
@@ -210,17 +212,6 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
 
 /* --------------------------------------------------------------- helpers */
 
-/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
- * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
- * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
- * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
- * that range or at n. Without --utf8 the advance stays start + 1. */
-static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
-    size_t p = pos + 1;
-    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
-    return p;
-}
-
 static double now(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -311,16 +302,6 @@ static void emit_caps(size_t *ov, uint32_t npairs, char *out, size_t outcap) {
         off += (size_t)k;
     }
     if (!out[0]) { out[0] = '-'; out[1] = 0; }
-}
-
-/* ONE call site for both matchers ([B42] L6a): the rc>=0-is-a-match /
- * ov[0..1]-is-the-span reading downstream is IDENTICAL either way (this
- * file's header comment says why), so only the CALL itself branches. */
-static int do_match(int dfa, void *code, const unsigned char *buf, size_t len,
-                    size_t pos, uint32_t opts, void *md,
-                    int *ws, size_t wsn) {
-    if (dfa) return p_dfa_match(code, buf, len, pos, opts, md, NULL, ws, wsn);
-    return p_match(code, buf, len, pos, opts, md, NULL);
 }
 
 int main(int argc, char **argv) {
@@ -508,127 +489,22 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-             * timed loop below is the original one, its bounds and body untouched. */
-            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                volatile long n_it = pass ? iters : 1;
-                if (pass && prime) t0 = now();
-                for (long it = 0; it < n_it; it++) {
-                first_s = first_e = -1;
-                npairs = 0;
-                if (find_all) {
-                    size_t pos = 0;
-                    long   count = 0;
-                    /* [B94]/BD15: VALIDATE-ONCE. `utf_once` is true only
-                     * under PCRE2_UTF and only when the control has not
-                     * disabled it; `validated` tracks whether call 1 (offset
-                     * 0, always without the flag) has completed. See this
-                     * file's header comment for the full rule and its man
-                     * pcre2api citations. */
-                    int utf_once = (copts & PCRE2_UTF) && !utf_always_check;
-                    int validated = 0;
-                    for (;;) {
-                        uint32_t call_opts = opts;
-                        if (utf_once && validated) {
-                            /* NEVER trusted silently: assert pos is a
-                             * character boundary before passing the flag --
-                             * the same discipline oracle_pcre2.py's
-                             * `_find_all_impl` uses (an AssertionError there,
-                             * a loud die() here). A continuation byte here
-                             * would mean --utf8's advance rule broke, not
-                             * that this control should look away. */
-                            if (pos < s->len && (s->buf[pos] & 0xC0u) == 0x80u)
-                                die("validate-once: find-all start offset is "
-                                    "not a character boundary -- refusing to "
-                                    "pass PCRE2_NO_UTF_CHECK");
-                            call_opts |= PCRE2_NO_UTF_CHECK;
-                        }
-                        int rc = do_match(dfa, code, s->buf, s->len, pos,
-                                          call_opts, md, dfa_ws, dfa_ws_n);
-                        /* Call 1 (pos == 0) just RAN: whether it matched,
-                         * found no match, or gave up on something other than
-                         * UTF validity, libpcre2 has by now checked the
-                         * whole subject from offset 0 to its end (this
-                         * file's header comment). A call that genuinely
-                         * failed UTF validation is reported below through
-                         * the ordinary `giveup:<code>:<message>` protocol
-                         * and the loop breaks (rc < 0) before any call 2
-                         * happens, so marking `validated` here is never
-                         * reached by an unvalidated subject in practice. */
-                        if (utf_once && pos == 0 && !validated) validated = 1;
-                        /* KB-29 (docs/dev/known_issues.md): `rc_final` is
-                         * now ALWAYS the loop's own terminal code -- not
-                         * only when `count == 0` -- so a genuine give-up
-                         * AFTER at least one match is never silently
-                         * discarded in favour of the LAST successful
-                         * match's own (non-negative) `rc`. */
-                        if (rc < 0) { rc_final = rc; break; }
-                        if (first_s < 0) {
-                            first_s = (long)ov[0];
-                            first_e = (long)ov[1];
-                            /* DFA: `rc` is the SIMULTANEOUS-match count at
-                             * this start point, not a capture-pair count
-                             * (man pcre2_dfa_match item 2: "no captured
-                             * substrings are available") -- forced to 0,
-                             * never read as if it were one. */
-                            npairs = dfa ? 0 : (uint32_t)(rc > 0 ? rc : 1);
-                            if (npairs > ovn) npairs = ovn;
-                            if (npairs > 256) npairs = 256;
-                            memcpy(firstov, ov, (size_t)npairs * 2 * sizeof *ov);
-                            rc_final = rc;
-                        }
-                        count++;
-                        /* pcrec match_api.md S3.1's find-all advance: off the
-                         * match's own reported START (ov[0]), never off the
-                         * scan position -- an empty match can be found AHEAD
-                         * of pos, and advancing pos itself re-finds the same
-                         * empty match next call (KB-17). Byte encoding: the
-                         * S3.1.1 `next_pos` residual is start+1; under
-                         * --utf8 ([B77] U1) it is the next CHARACTER
-                         * boundary -- a mid-character start offset under
-                         * PCRE2_UTF is PCRE2_ERROR_BADUTFOFFSET. */
-                        size_t start = ov[0];
-                        size_t end = ov[1];
-                        pos = (end > start) ? end
-                            : utf8_adv ? utf8_next_start(s->buf, s->len, start)
-                                       : start + 1;
-                        if (pos > s->len) break;
-                    }
-                    nmatch = count;
-                    /* KB-29: a MID-loop give-up (any negative terminal
-                     * code OTHER than PCRE2_ERROR_NOMATCH, which is the
-                     * ORDINARY "no further matches" termination every
-                     * find-all call ends on) must propagate as the whole
-                     * subject's give-up, with its own code -- never
-                     * silently absorbed into a truncated "match" answer
-                     * just because count > 0 by the time the engine gave
-                     * up. Discarding the partial match/count here is what
-                     * makes the classification below (`first_s >= 0` ->
-                     * "match") fall through correctly to the SAME
-                     * `giveup:<code>:<message>` branch a first-call
-                     * give-up already takes. */
-                    if (rc_final < 0 && rc_final != PCRE2_ERROR_NOMATCH) {
-                        first_s = first_e = -1;
-                        npairs = 0;
-                        nmatch = -1;
-                    }
-                } else {
-                    int rc = do_match(dfa, code, s->buf, s->len, 0, opts,
-                                      md, dfa_ws, dfa_ws_n);
-                    rc_final = rc;
-                    if (rc >= 0) {
-                        first_s = (long)ov[0];
-                        first_e = (long)ov[1];
-                        npairs = dfa ? 0 : (uint32_t)(rc > 0 ? rc : 1);
-                        if (npairs > ovn) npairs = ovn;
-                        if (npairs > 256) npairs = 256;
-                        memcpy(firstov, ov, (size_t)npairs * 2 * sizeof *ov);
-                    }
-                }
-                }
-            }
-            elapsed = now() - t0;
+            /* [B133] the timed loop is timed_run() in timed.c (its own
+             * translation unit; see that file's header). */
+            struct timed_in tin = {
+                .buf = s->buf, .len = s->len, .iters = iters,
+                .prime = (int)prime, .find_all = find_all,
+                .utf8_adv = utf8_adv, .utf_always_check = utf_always_check,
+                .dfa = dfa, .opts = opts, .copts = copts, .ovn = ovn,
+                .code = code, .md = md, .ov = ov, .firstov = firstov,
+                .dfa_ws = dfa_ws, .dfa_ws_n = dfa_ws_n,
+                .match = p_match, .dfa_match = p_dfa_match, .die = die,
+            };
+            struct timed_out tout = { -1, -1, -1, PCRE2_ERROR_NOMATCH, 0 };
+            elapsed = timed_run(&tin, &tout);
+            first_s = tout.first_s; first_e = tout.first_e;
+            nmatch = tout.nmatch; rc_final = tout.rc_final;
+            npairs = tout.npairs;
             if (subject_timeout > 0) alarm(0);
         }
 

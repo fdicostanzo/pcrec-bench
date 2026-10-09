@@ -156,6 +156,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timed.h"
+
 static int       (*pb_abi)(void);
 static int       (*pb_ncaps)(void);
 static int       (*pb_ngroups)(void);
@@ -271,24 +273,6 @@ static void  *buf_frames, *buf_trail;
 static size_t buf_nframes, buf_ntrail;
 static int    use_buffers;
 
-/* One call site per entry, so the three mode loops below read the same
- * whether the buffers are in use or not. */
-static inline int do_search(const unsigned char *s, size_t n, size_t pos,
-                            ptrdiff_t (*caps)[2]) {
-    return use_buffers
-        ? pb_search_in(s, n, pos, caps, buf_frames, buf_nframes,
-                       buf_trail, buf_ntrail)
-        : pb_search(s, n, pos, caps);
-}
-
-static inline long long do_match_caps(const unsigned char *s, size_t n,
-                                      size_t pos, ptrdiff_t (*caps)[2]) {
-    return use_buffers
-        ? pb_match_caps_in(s, n, pos, caps, buf_frames, buf_nframes,
-                           buf_trail, buf_ntrail)
-        : pb_match_caps(s, n, pos, caps);
-}
-
 static void *alloc_region(size_t align, size_t bytes) {
     void *p = NULL;
     if (align < sizeof(void *)) align = sizeof(void *);
@@ -384,17 +368,6 @@ static void emit_caps(const ptrdiff_t (*caps)[2], int ncaps,
         off += (size_t)k;
     }
     if (!out[0]) { out[0] = '-'; out[1] = 0; }
-}
-
-/* [B77] U1: the find-all EMPTY-MATCH advance under --utf8 -- pcrec
- * match_api.md S3.1.1's NORMATIVE utf8 rule, the same one
- * pcrecbench/oracle_pcre2.py's next_start() and every other driver apply:
- * from pos + 1, skip every byte in 0x80-0xBF, stop at the first byte outside
- * that range or at n. Without --utf8 the advance stays start + 1. */
-static size_t utf8_next_start(const unsigned char *b, size_t n, size_t pos) {
-    size_t p = pos + 1;
-    while (p < n && (b[p] & 0xC0u) == 0x80u) p++;
-    return p;
 }
 
 int main(int argc, char **argv) {
@@ -872,88 +845,24 @@ int main(int argc, char **argv) {
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-            double t0 = now();
-            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
-             * timed loop below is the original one, its bounds and body untouched. */
-            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
-                volatile long n_it = pass ? iters : 1;
-                if (pass && prime) t0 = now();
-                for (long it = 0; it < n_it; it++) {
-                first_s = first_e = -1;
-                giveup = 0;
-                if (anchored) {
-                    /* whole-subject: anchored at 0 AND ending at n. See
-                     * shim.c's pb_match_caps comment for the asymmetry this
-                     * carries against PCRE2_ENDANCHORED. */
-                    long long r = do_match_caps(s->buf, s->len, 0, caps);
-                    if (r < 0) {
-                        if (r < -1) giveup = (int)r;
-                    } else if ((size_t)r == s->len) {
-                        first_s = 0;
-                        first_e = (long)r;
-                        memcpy(firstcaps, caps, (size_t)ncaps * sizeof *caps);
-                    }
-                } else if (find_all) {
-                    size_t pos = 0;
-                    long count = 0;
-                    for (;;) {
-                        int r = do_search(s->buf, s->len, pos, caps);
-                        if (r == 0) break;
-                        /* KB-29 (docs/dev/known_issues.md): ALWAYS track a
-                         * genuine give-up (r < 0 is never "no more matches"
-                         * on this engine -- r == 0 already owns that,
-                         * above), not only when `count == 0`, so a
-                         * mid-loop give-up after count > 0 is never
-                         * silently discarded in favour of the last
-                         * successful match. */
-                        if (r < 0) { giveup = r; break; }
-                        if (first_s < 0) {
-                            first_s = (long)caps[0][0];
-                            first_e = (long)caps[0][1];
-                            memcpy(firstcaps, caps, (size_t)ncaps * sizeof *caps);
-                        }
-                        count++;
-                        /* pcrec match_api.md S3.1's find-all advance: off the
-                         * match's own reported START (caps[0][0]), never off
-                         * the scan position -- an empty match can be found
-                         * AHEAD of pos, and advancing pos itself re-finds the
-                         * same empty match next call (KB-17). Byte encoding:
-                         * S3.1.1's `<prefix>_next_pos` residual is start+1
-                         * (every position is a character boundary). Under
-                         * --utf8 ([B77] U1) the next CHARACTER boundary --
-                         * the rule a `-e utf8` artifact's own
-                         * `<prefix>_next_pos` implements (S3.1.1), coded
-                         * here once for every engine rather than called. */
-                        size_t start = (size_t)caps[0][0];
-                        size_t end = (size_t)caps[0][1];
-                        pos = (end > start) ? end
-                            : utf8_adv ? utf8_next_start(s->buf, s->len, start)
-                                       : start + 1;
-                        if (pos > s->len) break;
-                    }
-                    nmatch = count;
-                    /* KB-29: a genuine mid-loop give-up (any nonzero
-                     * `giveup`) must propagate as the WHOLE subject's
-                     * give-up, discarding any matches already
-                     * accumulated this call -- the same reason
-                     * `first_s`/`nmatch` are reset in testees/pcre2/
-                     * driver.c's own fix. Falls through to the ordinary
-                     * `giveup:<code>:<NAME>` branch below exactly as a
-                     * first-call give-up already does. */
-                    if (giveup) { first_s = first_e = -1; nmatch = -1; }
-                } else {
-                    int r = do_search(s->buf, s->len, 0, caps);
-                    if (r == 1) {
-                        first_s = (long)caps[0][0];
-                        first_e = (long)caps[0][1];
-                        memcpy(firstcaps, caps, (size_t)ncaps * sizeof *caps);
-                    } else if (r < 0) {
-                        giveup = r;
-                    }
-                }
-                }
-            }
-            elapsed = now() - t0;
+            /* [B133] the timed loop is timed_run() in timed.c (its own
+             * translation unit; see that file's header). Everything between
+             * the two clock reads of a subject is there. */
+            struct timed_in tin = {
+                .buf = s->buf, .len = s->len, .iters = iters,
+                .prime = (int)prime, .anchored = anchored,
+                .find_all = find_all, .utf8_adv = utf8_adv, .ncaps = ncaps,
+                .caps = caps, .firstcaps = firstcaps,
+                .use_buffers = use_buffers,
+                .buf_frames = buf_frames, .buf_trail = buf_trail,
+                .buf_nframes = buf_nframes, .buf_ntrail = buf_ntrail,
+                .search = pb_search, .match_caps = pb_match_caps,
+                .search_in = pb_search_in, .match_caps_in = pb_match_caps_in,
+            };
+            struct timed_out tout = { -1, -1, -1, 0 };
+            elapsed = timed_run(&tin, &tout);
+            first_s = tout.first_s; first_e = tout.first_e;
+            nmatch = tout.nmatch; giveup = tout.giveup;
             if (subject_timeout > 0) alarm(0);
         }
 
