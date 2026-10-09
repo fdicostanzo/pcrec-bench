@@ -334,6 +334,7 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;
+    volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     /* [B94]: the CONTROL-ONLY escape hatch back to the always-check path
      * (this file's header comment, "VALIDATE-ONCE"). Never set by
      * testees/pcre2/adapter.py; `make check-harness`'s control invokes the
@@ -361,6 +362,7 @@ int main(int argc, char **argv) {
          * --ucp are this ENGINE's compile options (PCRE2_UTF / PCRE2_UCP),
          * the driver's half of the oracle's per-pattern option word. */
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--prime"))                      prime = 1;
         else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
         else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
         else if (!strcmp(a, "--utf-always-check"))          utf_always_check = 1;
@@ -507,7 +509,8 @@ int main(int argc, char **argv) {
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
             double t0 = now();
-            for (long it = 0; it < iters; it++) {
+            for (long it = -prime; it < iters; it++) {
+                if (prime && it == 0) t0 = now();   /* [B129] --prime: the untimed call(s) above ran; the clock starts here */
                 first_s = first_e = -1;
                 npairs = 0;
                 if (find_all) {

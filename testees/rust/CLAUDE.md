@@ -590,3 +590,8 @@ name reads Script_Extensions) -- an answer divergence on `prp-greek`, not
 a capability one. `\B` over `é` answers `nomatch` (Unicode `\w`), where
 the oracle answers `match [0,0)`. Declares 8/20 on the utf8 set (its
 committed 17-token row plus `utf8-encoding`).
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

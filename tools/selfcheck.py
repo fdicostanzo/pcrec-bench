@@ -13121,6 +13121,121 @@ def check_kb17_find_all_advance():
 
 # ------------------------- 46b [B77] U1: the UTF-8 find-all advance
 
+def check_prime_flag():
+    """[B129] the `--prime` driver flag, on EVERY discovered driver.
+
+    One untimed execution of the timed loop's own operation per subject,
+    immediately before the first clock reading; its answer discarded;
+    scratch tier only until the schema records it. For one witness (pattern
+    `b` over `xxabxbx`: spans (3,4), two non-overlapping matches) on every
+    adapter's first testee, in the search_short and throughput regimes,
+    with vs without the flag:
+
+      1. identical answer, span and find-all count (both arms);
+      2. the flag reaches argv (captured at the driver-run seam) iff the
+         handle carries `prime`, and never otherwise;
+      3. `harness.run_cell(prime=True)` at the pinned tier is refused BY
+         NAME (before the store rule would fire);
+      4. CONTROL: the same call without the flag at the pinned tier is NOT
+         refused by that rule (it meets the store's own rule instead).
+    """
+    import tempfile
+    from pcrecbench import adapters as _ad, driverrun as _dr
+    from pcrecbench import harness as _h
+
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b129-prime-")
+    seen = []
+    real = _dr._run_list_with_resume
+
+    def spy(argv, *a, **k):
+        seen.append(list(argv))
+        return real(argv, *a, **k)
+
+    try:
+        subj = os.path.join(tmp, "s.bin")
+        with open(subj, "wb") as f:
+            f.write(b"xxabxbx")
+
+        class S:
+            subject_id, path, length = "s-prime", subj, 7
+
+        _dr._run_list_with_resume = spy
+        for engine, adapter in sorted(_ad.discover().items()):
+            tid = sorted(adapter.testees())[0]
+            try:
+                adapter.prepare(tid, tmp)
+                cr = adapter.compile(tid, "prime", b"b", {}, 1,
+                                     tmp).get(_ad.FORM_PLAIN)
+            except Exception as e:                        # noqa: BLE001
+                bad("%s: --prime" % engine, "prepare/compile: %s" % e)
+                continue
+            if cr.outcome != "compiled":
+                bad("%s: --prime" % engine,
+                    "witness did not compile: %s" % cr.diagnostic)
+                continue
+            for regime in ("search_short", "throughput"):
+                got = {}
+                for arm in ("plain", "primed"):
+                    h = dict(cr.handle)
+                    if arm == "primed":
+                        h["prime"] = True
+                    del seen[:]
+                    rbt, _i, _n = adapter.measure(h, regime, [S()], 1, 1,
+                                                  timeout=120)
+                    rows = rbt[0] if rbt else []
+                    got[arm] = (rows[0] if len(rows) == 1 else None,
+                                any("--prime" in a for a in seen))
+                (rp, fp), (rq, fq) = got["plain"], got["primed"]
+                what = "%s (%s) %s: --prime" % (engine, tid, regime)
+                if rp is None or rq is None:
+                    bad(what, "no row: %r" % got)
+                    continue
+                key = lambda r: (r.answer, r.start, r.end, r.nmatches)  # noqa: E731
+                if key(rp) != key(rq) or not rp.matched:
+                    bad(what + " answers identical",
+                        "plain %r primed %r" % (key(rp), key(rq)))
+                elif fp or not fq:
+                    bad(what + " reaches argv",
+                        "flag in argv: plain=%s primed=%s" % (fp, fq))
+                else:
+                    ok(what + ": identical answer/span/count; flag in argv "
+                       "only when asked", "%r" % (key(rq),))
+    finally:
+        _dr._run_list_with_resume = real
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- 3/4. the pinned-tier refusal by name, and its control
+    sink = tempfile.mkdtemp(prefix="pcrecbench-b129-store-")
+    try:
+        try:
+            _h.run_cell("email", "pcre2-jit", tier="pinned", prime=True,
+                        store_root=sink, synthetic=True)
+            bad("--prime at the pinned tier is refused", "it ran")
+        except _h.HarnessError as e:
+            if str(e) == "--prime is scratch-tier only until the schema " \
+                    "records it":
+                ok("--prime at the pinned tier is refused BY NAME", str(e))
+            else:
+                bad("--prime at the pinned tier is refused BY NAME", str(e))
+        except Exception as e:                            # noqa: BLE001
+            bad("--prime at the pinned tier is refused BY NAME",
+                "other error: %s" % e)
+        try:
+            _h.run_cell("email", "pcre2-jit", tier="pinned", prime=False,
+                        store_root=sink, synthetic=True)
+            bad("CONTROL pinned without --prime", "ran into a bare dir")
+        except Exception as e:                            # noqa: BLE001
+            if "--prime" in str(e):
+                bad("CONTROL pinned without --prime is not refused by the "
+                    "prime rule", str(e))
+            else:
+                ok("CONTROL pinned without --prime is not refused by the "
+                   "prime rule", "met the store's own rule: %s"
+                   % str(e).splitlines()[0][:100])
+    finally:
+        shutil.rmtree(sink, ignore_errors=True)
+
+
 def check_utf8_find_all_advance():
     """[B77] U1 (docs/design/utf8_set_v1.md 8.4, 13, 15 R1): the ORACLE
     OPTION WORD and the CHARACTER-BOUNDARY find-all advance, in the oracle
@@ -16015,6 +16130,7 @@ def main():
     check_timeline_provenance()
     check_kb17_find_all_advance()
     check_utf8_find_all_advance()
+    check_prime_flag()
     check_utf8_validate_once()
     check_pcre2_utf_validate_once()
     check_capability_policy()

@@ -404,6 +404,10 @@ class Adapter(_ad.Adapter):
             # driver protocol, pcrecbench/adapters.py), set by the harness
             # from the SAME fact as the oracle word's PCRE2_UTF.
             argv.append("--utf8")
+        if handle.get("prime"):
+            # [B129] --prime: one untimed call per subject before each timed
+            # loop (driver protocol, pcrecbench/adapters.py); scratch tier only.
+            argv.append("--prime")
         return per_trial(argv, subjects, trials, timeout=timeout,
                          pin=handle.get("pin"),
                          subject_timeout=handle.get("subject_timeout"))
