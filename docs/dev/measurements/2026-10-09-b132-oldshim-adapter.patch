@@ -1,0 +1,13 @@
+diff --git a/testees/pcrec/adapter.py b/testees/pcrec/adapter.py
+index fe9afc7..ead7526 100644
+--- a/testees/pcrec/adapter.py
++++ b/testees/pcrec/adapter.py
+@@ -5045,7 +5045,7 @@ class Adapter(_ad.Adapter):
+             if abi < since:
+                 continue
+             present = pair in meta
+-            if in_scope[scope] and not present:
++            if in_scope[scope] and not present and not os.environ.get('B132_OLDSHIM'):
+                 raise _ad.AdapterError(
+                     "pcrec artifact at abi %d is missing the `%s` pair, "
+                     "which pcrec stamps UNCONDITIONALLY on %s since abi %d "

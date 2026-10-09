@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """[B132] factor-split analysis over OUT/store-{OLD,MID,NEW,MID2} from
 2026-10-09-b132-shim-vs-driver-run.sh. MID/OLD = shim.c alone; NEW/MID = driver.c
-alone; MID2/MID = drift. Same set-grain reduction as the A/B analysis.
+alone; MID2/MID = drift. WIN = shim+driver exactly as of e46e326 (window-era, pre-B129); NEW/WIN = B129 prime change alone; WIN/MID = the driver's 37 getter lines. Same set-grain reduction as the A/B analysis.
 Run: python3 this.py OUTDIR"""
 import glob, os, sys
 sys.path.insert(0, "/home/duxevents/pcrec-bench")
 from pcrecbench import reduce as R
 out = sys.argv[1]; cells = {}
-for step in ("OLD", "MID", "NEW", "MID2"):
+for step in ("OLD", "MID", "NEW", "MID2", "WIN", "WIN2"):
     for f in glob.glob("%s/store-%s/records/capability@0.2/*/*.jsonl" % (out, step)):
         tid = os.path.basename(os.path.dirname(f)); cfg = "pcrec-auto" if "auto-caps" in tid else "pcrec-nocaps"
         for key, subs in R.cells_from_record(R.read_record(f)[1]).items():
@@ -16,5 +16,5 @@ def rel(a, b):
     return "%.3f %s" % (b.median_ns / a.median_ns, "ov" if not (b.max_ns < a.min_ns or b.min_ns > a.max_ns) else "DISJ")
 print("%-13s %-36s | MID/OLD (shim) | NEW/MID (driver) | NEW/OLD | MID2/MID (drift) | medians ns OLD MID NEW MID2" % ("config", "pattern"))
 for (c, p) in sorted({(c, p) for c, p, s in cells}):
-    g = [cells[(c, p, s)] for s in ("OLD", "MID", "NEW", "MID2")]
-    print("%-13s %-36s | %-14s | %-16s | %-13s | %-16s | %s" % (c, p, rel(g[0], g[1]), rel(g[1], g[2]), rel(g[0], g[2]), rel(g[1], g[3]), " ".join("%.0f" % x.median_ns for x in g)))
+    g = [cells[(c, p, s)] for s in ("OLD", "MID", "NEW", "MID2", "WIN", "WIN2")]
+    print("%-13s %-36s | %-14s | %-16s | %-13s | %-16s | %s" % (c, p, rel(g[0], g[1]), rel(g[1], g[2]), rel(g[0], g[2]), rel(g[1], g[3]), " ".join("%.0f" % x.median_ns for x in g[:4])) + "\n%s | WIN/OLD %s | WIN/MID %s | NEW/WIN %s | WIN2/WIN %s | WIN WIN2 %s" % (" " * 51, rel(g[0], g[4]), rel(g[1], g[4]), rel(g[4], g[2]), rel(g[4], g[5]), " ".join("%.0f" % x.median_ns for x in g[4:])))

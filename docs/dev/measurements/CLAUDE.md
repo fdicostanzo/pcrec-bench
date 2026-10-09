@@ -1203,3 +1203,9 @@ Maintenance: update this file when files are added/removed or change role.
   full per-set reading (the utf8@0.1 pair reads EMPTY because of a
   roster-declaration gap found while running it, not a script defect
   — confirmed separately against `bench/utf8/gen_patterns.py`'s source).
+
+- `2026-10-09-b132-shim-layout-ab.txt` (+ `-layout-raw.txt`, ten `2026-10-09-b132-*`
+  scripts/patch beside it) — [B132]: O-92's pcrec-auto short-search slowdown on
+  program-identical cells reproduced by swapping ONLY the bench's own
+  `testees/pcrec/{shim.c,driver.c}` (26eebfa vs e46e326/master) at pin 255bcdd8;
+  the artifact's `rx_search` address is identical in both arms. Scratch tier.
