@@ -1,0 +1,12 @@
+# testees/rust/timed/Cargo.toml -- [B133] the rust driver's TIMED LOOP, a
+# crate of its own so no edit to the driver's main.rs can move its code
+# (see src/lib.rs's header). Same `regex` requirement as the driver; the
+# resolved version is the one Cargo.lock pins for both.
+[package]
+name = "rust-timed"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+regex = "1"

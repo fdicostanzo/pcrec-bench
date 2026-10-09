@@ -340,7 +340,10 @@ class Adapter(_ad.Adapter):
         }
         src_mtime = max(
             os.path.getmtime(os.path.join(HERE, "src", "main.rs")),
-            os.path.getmtime(CARGO_TOML), os.path.getmtime(CARGO_LOCK))
+            os.path.getmtime(CARGO_TOML), os.path.getmtime(CARGO_LOCK),
+            # [B133]: the timed loop is the `rust-timed` crate.
+            os.path.getmtime(os.path.join(HERE, "timed", "src", "lib.rs")),
+            os.path.getmtime(os.path.join(HERE, "timed", "Cargo.toml")))
         if os.path.exists(drv) and os.path.getmtime(drv) >= src_mtime:
             return drv
         os.makedirs(out_dir, exist_ok=True)
