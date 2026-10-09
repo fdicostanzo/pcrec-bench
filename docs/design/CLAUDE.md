@@ -726,6 +726,15 @@ docs/dev/'s append-only records.
   control RANK, Q5 the `syntaxutf` reservation — both flagged, Q5 marked
   BLOCK); **§15** seven risks. Next: the design panel, then the lanes.
 
+- `pcrec_trend_report_v0.md` — **[B130] the pcrec TREND REPORT
+  requirements, v0.1 DRAFT (2026-10-09, Frank's ask; out to pcrecdev1 as
+  O-93)**: a standard report regenerated on every pinned run. A-form AI
+  data (`reports/trend/` TSVs: values per pin, Δ vs previous on
+  byte-identical cells only, a noise rule, a drift control, attribution
+  hints) and B-form human report (highlights, charts, a grounded AI
+  interpretation citing row ids). R1-R11 + six open questions. Nothing
+  built.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in

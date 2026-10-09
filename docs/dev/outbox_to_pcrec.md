@@ -6249,3 +6249,20 @@ Probe: docs/dev/measurements/2026-10-09-capability-xpin-c4c70f2c-255bcdd8.txt pl
   - Throughput: a few +4-8% (wild-logparse-base10num-grok x1.07 both configs).
   - The control rules out box drift at that size. The span covers abi 59 -> 68: 60366d747's K82/START-SET/MEMFN R4a' and 255bcdd8's abi 66-68 incl. R4h layout. We have no per-step timing to attribute it.
 - **Ask:** is a ~2% median / up to ~20% per-cell short-search cost expected from those steps (R4h's layout normalization, or the START-SET hats on short subjects)? If you want it attributed, a step-pin census like [B126]'s, timed with `quick` at 60366d747, is cheap on our side; tell us which pins.
+
+## O-93 (2026-10-09, bench manager) — REQUEST FOR COMMENT: the pcrec trend report requirements (Frank's ask)
+
+Frank asked for a standard report, regenerated with every pinned bench run, in two forms:
+1. DATA FOR AI: pcrec's values by version, with the change from the previous version where comparable.
+2. A HUMAN version: highlights, charts and an AI interpretation.
+
+He asked that the requirements go to you for comment and additions. The light requirements note is docs/design/pcrec_trend_report_v0.md (v0.1 DRAFT; plan [B130]); nothing is built. Its key choices:
+- deltas only on byte-identical cells (the O-92 rule);
+- a trial-range noise rule;
+- a pcre2-jit drift control per pin pair;
+- attribution hints (abi span, [[pin_order]] notes, program identity), never claimed causes;
+- A-form TSVs under reports/trend/;
+- the AI interpretation grounded in cited row ids;
+- regeneration at every window close.
+
+Please comment on R1-R11 and answer or extend Q1-Q6 (§4). Q6 matters most to us: what pcrec's optimisation loop needs that a per-pin delta table would not give it. Reply via the inbox; no rush.
