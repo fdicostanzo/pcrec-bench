@@ -245,7 +245,7 @@ fn utf8_next_start(buf: &[u8], pos: usize) -> usize {
     p
 }
 
-fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: bool) -> SubjectResult {
+fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: bool, prime: bool) -> SubjectResult {
     let ncap = re.captures_len().saturating_sub(1); // group 0 excluded, RE2/onig convention
     let mut matched = false;
     let mut start: i64 = -1;
@@ -253,8 +253,15 @@ fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: boo
     let mut nmatches: i64 = -1;
     let mut caps: Vec<(i64, i64)> = Vec::new();
 
-    let t0 = now();
-    for _ in 0..iters.max(1) {
+    let mut t0 = now();
+    // [B129] --prime: pass 0 (only with the flag) is ONE untimed call of the
+    // same body, then the clock restarts; the timed loop is the original one.
+    for pass in (if prime { 0 } else { 1 })..2 {
+        let n_it = if pass == 0 { 1 } else { iters.max(1) };
+        if pass == 1 && prime {
+            t0 = now();
+        }
+    for _ in 0..n_it {
         start = -1;
         end = -1;
         caps.clear();
@@ -309,6 +316,7 @@ fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: boo
             }
         }
     }
+    }
     let elapsed = t0.elapsed().as_secs_f64();
 
     SubjectResult { matched, start, end, nmatches, caps, elapsed }
@@ -336,6 +344,7 @@ struct Args {
     skip: usize,
     find_all: bool,
     utf8_adv: bool,
+    prime: bool,
     size_limit: usize,
     dfa_size_limit: usize,
 }
@@ -353,6 +362,7 @@ fn parse_args() -> Args {
         skip: 0,
         find_all: false,
         utf8_adv: false,
+        prime: false,
         size_limit: DEFAULT_SIZE_LIMIT,
         dfa_size_limit: DEFAULT_DFA_SIZE_LIMIT,
     };
@@ -379,6 +389,7 @@ fn parse_args() -> Args {
             "--skip" => a.skip = next!().parse().unwrap_or(0),
             "--find-all" => a.find_all = true,
             "--utf8" => a.utf8_adv = true,
+            "--prime" => a.prime = true,
             "--size-limit" => a.size_limit = next!().parse().unwrap_or(DEFAULT_SIZE_LIMIT),
             "--dfa-size-limit" => {
                 a.dfa_size_limit = next!().parse().unwrap_or(DEFAULT_DFA_SIZE_LIMIT)
@@ -520,9 +531,10 @@ fn main() {
             let iters = iters;
             let find_all = args.find_all;
             let utf8_adv = args.utf8_adv;
+            let prime = args.prime;
             let (tx, rx) = mpsc::channel();
             thread::spawn(move || {
-                let r = run_subject(&re2, &buf, iters, find_all, utf8_adv);
+                let r = run_subject(&re2, &buf, iters, find_all, utf8_adv, prime);
                 let _ = tx.send(r); // Err is fine: the receiver may be gone (timed out)
             });
             match rx.recv_timeout(Duration::from_secs(args.subject_timeout)) {
@@ -541,7 +553,7 @@ fn main() {
                 Err(mpsc::RecvTimeoutError::Disconnected) => None,
             }
         } else {
-            Some(run_subject(&re, &s.buf, iters, args.find_all, args.utf8_adv))
+            Some(run_subject(&re, &s.buf, iters, args.find_all, args.utf8_adv, args.prime))
         };
 
         let r = match result {

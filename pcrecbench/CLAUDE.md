@@ -1373,3 +1373,9 @@ program hash of their own" (the owed [B90] fix). Tests:
 `test_unsupported_by_pattern_section_b91`,
 `test_matrix_class_pure_best_columns_b91`, `test_identity_bullet_per_side_b91`,
 `test_b88_...` amended; `test_matrix_page.py` +3.
+
+[B129] (2026-10-09, lane b129prime): `run_cell(prime=)` / `run`+`quick` `--prime`
+-- sets `handle["prime"]` (every adapter appends the driver protocol's
+`--prime`), appends the fixed `PRIME_NOTE` sentence to the record's note,
+and REFUSES the pinned tier BY NAME (`PRIME_PINNED_REFUSAL`) before the store
+rule, until the schema records it. `check_prime_flag` (tools/selfcheck.py).

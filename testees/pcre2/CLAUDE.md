@@ -538,3 +538,8 @@ rc 2); (iii) a real byte-mode invocation byte-identical with and without
 `--utf-always-check` appended, plus `pcre2-interp`'s `build_flags`
 carrying NO `[B94]`/`BD15` note against `pcre2-utf-interp`'s CONTROL that
 DOES, and both testees' `testee_id` SHAPES unchanged.
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

@@ -378,3 +378,8 @@ THE RE-CENSUS this file's ASCII-encoding paragraph predicted, WITNESSED
 Declares 14/20 (the byte sibling's withholds carried over;
 `non-utf8-subject` NOT by rule -- Oniguruma documents invalid UTF-8
 input as undefined).
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

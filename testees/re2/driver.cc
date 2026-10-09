@@ -189,6 +189,7 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   // [B77] U1: --utf8, the protocol flag
+    volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     int longest = 0;
     int enc_utf8 = 0;            // [B77] U2: --encoding utf8 (the ENGINE's)
     int64_t max_mem = RE2::Options::kDefaultMaxMem;
@@ -204,6 +205,7 @@ int main(int argc, char **argv) {
         else if (!std::strcmp(a, "--skip") && i + 1 < argc) skip = std::strtol(argv[++i], NULL, 10);
         else if (!std::strcmp(a, "--find-all")) find_all = 1;
         else if (!std::strcmp(a, "--utf8")) utf8_adv = 1;
+        else if (!std::strcmp(a, "--prime")) prime = 1;
         else if (!std::strcmp(a, "--longest")) longest = 1;
         else if (!std::strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
@@ -309,7 +311,12 @@ int main(int argc, char **argv) {
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
             double t0 = now();
-            for (long it = 0; it < iters; it++) {
+            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+             * timed loop below is the original one, its bounds and body untouched. */
+            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                volatile long n_it = pass ? iters : 1;
+                if (pass && prime) t0 = now();
+                for (long it = 0; it < n_it; it++) {
                 first_s = first_e = -1;
                 nsub_out = 0;
                 if (find_all) {
@@ -353,6 +360,7 @@ int main(int argc, char **argv) {
                         first_e = first_s + (long)submatch[0].size();
                         nsub_out = nsub;
                     }
+                }
                 }
             }
             elapsed = now() - t0;

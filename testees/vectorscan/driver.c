@@ -421,6 +421,7 @@ int main(int argc, char **argv) {
      * way, since the engine's ENCODING is a config's choice (utf8_set_v1.md
      * 7.1, lane U2), not the protocol's. */
     volatile int utf8_adv = 0;
+    volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     /* [B92]: HS_FLAG_SOM_LEFTMOST, `vectorscan-block-som` only -- see the
      * file header's "SOM MODE" section. `vectorscan-block-nosom`'s own
      * argv never carries this flag (testees/vectorscan/adapter.py), so its
@@ -441,6 +442,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--free-spacing"))               free_spacing = 1;
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--prime"))                      prime = 1;
         else if (!strcmp(a, "--som"))                       som_mode = 1;
         else if (!strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
@@ -611,7 +613,12 @@ int main(int argc, char **argv) {
                  * file header) -- every `iters` pass re-scans and
                  * re-accumulates the WHOLE subject, which is `--som`'s own
                  * real, documented cost. */
-                for (long it = 0; it < iters; it++) {
+                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+                 * timed loop below is the original one, its bounds and body untouched. */
+                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                    volatile long n_it = pass ? iters : 1;
+                    if (pass && prime) t0 = now();
+                    for (long it = 0; it < n_it; it++) {
                     vs_reset(&ml);
                     hs_error_t rc = hs_scan(db, (const char *)s->buf,
                                             (unsigned int)s->len, 0, scratch,
@@ -626,9 +633,15 @@ int main(int argc, char **argv) {
                         break;
                     }
                     matched = ml.n > 0 ? 1 : 0;
+                    }
                 }
             } else {
-                for (long it = 0; it < iters; it++) {
+                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+                 * timed loop below is the original one, its bounds and body untouched. */
+                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                    volatile long n_it = pass ? iters : 1;
+                    if (pass && prime) t0 = now();
+                    for (long it = 0; it < n_it; it++) {
                     match_ctx ctx = { 0 };
                     hs_error_t rc = hs_scan(db, (const char *)s->buf,
                                             (unsigned int)s->len, 0, scratch,
@@ -645,6 +658,7 @@ int main(int argc, char **argv) {
                         break;
                     }
                     matched = ctx.matched ? 1 : 0;
+                    }
                 }
             }
             elapsed = now() - t0;

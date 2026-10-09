@@ -634,12 +634,19 @@ def derive_status(reasons, agreement, tier):
 
 # ----------------------------------------------------------------- the run
 
+#: [B129] `--prime` (driver protocol, pcrecbench/adapters.py): one untimed
+#: call per subject before each timed loop. SCRATCH tier only until the
+#: schema records it; the fixed note sentence is how a record says so.
+PRIME_PINNED_REFUSAL = "--prime is scratch-tier only until the schema records it"
+PRIME_NOTE = "primed: one untimed call per subject before each timed loop"
+
+
 def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
              force_unquiet=False, store_root=None, machine_id=None,
              pin_cpu=None, subject_timeout=60, driver_timeout=900,
              command_line=None, note=None, synthetic=False, workdir=None,
              progress=None, tier=store.TIER_PINNED, patterns=None,
-             subject_limit=None, budget=None):
+             subject_limit=None, budget=None, prime=False):
     """The whole of contract 4. Returns a `RunResult`.
 
     It carries BOTH the record as written and the FULL pre-projection one, so
@@ -700,6 +707,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if tier not in store.TIERS:
         raise HarnessError("unknown tier %r (the tiers are %s)"
                            % (tier, ", ".join(store.TIERS)))
+    if prime and tier != store.TIER_SCRATCH:
+        # [B129] BEFORE the store rule, so the refusal names ITS rule
+        raise HarnessError(PRIME_PINNED_REFUSAL)
     if store_root is None:
         store_root = store.default_store_for(tier)
     store.check_tier_allowed(store_root, tier)
@@ -798,6 +808,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # NOT among them -- they are status-deciding and go first, via
     # `derive_status` (v1.4).
     notes = []
+    if prime:
+        notes.append(PRIME_NOTE)
     if scratch:
         notes.append("tier scratch: the quiet GATE was not applied "
                      "(record_schema.md 6.8); the box was still sampled and "
@@ -892,6 +904,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             handle = dict(cr.handle)
             handle["pin"] = quiet.taskset_prefix(pinning)
             handle["subject_timeout"] = subject_timeout
+            if prime:
+                handle["prime"] = True   # [B129] adapters append `--prime`
             # [B77] U1 (docs/design/utf8_set_v1.md 8.4): the character-
             # boundary find-all advance is keyed on the SAME fact that puts
             # PCRE2_UTF in this pattern's oracle option word

@@ -743,3 +743,8 @@ exactly `nosom-utf8`'s own 7 (`ascii-class-scope`, `free-spacing`,
 PLUS `span-reporting` (SOM's own execution-model gain, the same token
 plain `vectorscan-block-som` gained over `vectorscan-block-nosom`) --
 the union of both parents' own changes, nothing else moved.
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

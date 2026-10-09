@@ -334,6 +334,7 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;
+    volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     /* [B94]: the CONTROL-ONLY escape hatch back to the always-check path
      * (this file's header comment, "VALIDATE-ONCE"). Never set by
      * testees/pcre2/adapter.py; `make check-harness`'s control invokes the
@@ -361,6 +362,7 @@ int main(int argc, char **argv) {
          * --ucp are this ENGINE's compile options (PCRE2_UTF / PCRE2_UCP),
          * the driver's half of the oracle's per-pattern option word. */
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--prime"))                      prime = 1;
         else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
         else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
         else if (!strcmp(a, "--utf-always-check"))          utf_always_check = 1;
@@ -507,7 +509,12 @@ int main(int argc, char **argv) {
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
             double t0 = now();
-            for (long it = 0; it < iters; it++) {
+            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+             * timed loop below is the original one, its bounds and body untouched. */
+            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                volatile long n_it = pass ? iters : 1;
+                if (pass && prime) t0 = now();
+                for (long it = 0; it < n_it; it++) {
                 first_s = first_e = -1;
                 npairs = 0;
                 if (find_all) {
@@ -618,6 +625,7 @@ int main(int argc, char **argv) {
                         if (npairs > 256) npairs = 256;
                         memcpy(firstov, ov, (size_t)npairs * 2 * sizeof *ov);
                     }
+                }
                 }
             }
             elapsed = now() - t0;

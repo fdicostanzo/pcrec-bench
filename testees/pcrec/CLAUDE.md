@@ -3352,3 +3352,8 @@ at compile time (`-e utf8` configs are lane U2's, `utf8_set_v1.md` 7.2).
 The rule coded in `driver.c` is the one a `-e utf8` artifact's own
 `<prefix>_next_pos` implements; it is coded once per driver rather than
 called, so every engine steps by the same code shape.
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

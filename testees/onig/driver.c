@@ -209,6 +209,7 @@ int main(int argc, char **argv) {
     long compile_trials = 1;
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   /* [B77] U1: --utf8, the protocol flag */
+    volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     OnigEncoding enc = ONIG_DRIVER_ENCODING;   /* [B77] U2: --encoding */
     const char *enc_name = "ASCII";
 
@@ -224,6 +225,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--skip") && i + 1 < argc)      skip = strtol(argv[++i], NULL, 10);
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
+        else if (!strcmp(a, "--prime"))                      prime = 1;
         else if (!strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
             if (!strcmp(e, "utf8"))       { enc = ONIG_ENCODING_UTF8;  enc_name = "UTF8"; }
@@ -324,7 +326,12 @@ int main(int argc, char **argv) {
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
             double t0 = now();
-            for (long it = 0; it < iters; it++) {
+            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+             * timed loop below is the original one, its bounds and body untouched. */
+            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                volatile long n_it = pass ? iters : 1;
+                if (pass && prime) t0 = now();
+                for (long it = 0; it < n_it; it++) {
                 first_s = first_e = -1;
                 if (find_all) {
                     size_t pos = 0;
@@ -386,6 +393,7 @@ int main(int argc, char **argv) {
                         first_s = (long)region->beg[0];
                         first_e = (long)region->end[0];
                     }
+                }
                 }
             }
             elapsed = now() - t0;

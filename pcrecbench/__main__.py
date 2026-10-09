@@ -31,7 +31,7 @@ def cmd_run(args):
             driver_timeout=args.driver_timeout,
             command_line=["python3", "-m", "pcrecbench"] + sys.argv[1:],
             note=args.note, synthetic=args.synthetic,
-            tier=args.tier,
+            tier=args.tier, prime=args.prime,
             progress=(lambda *a: print(*a, file=sys.stderr)) if not args.quiet_output else None)
     except quiet.QuietRefusal as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
@@ -162,7 +162,7 @@ def cmd_quick(args):
                         args.budget, " -- vs %s" % args.vs if args.vs else ""),
                 synthetic=args.synthetic, tier=store.TIER_SCRATCH,
                 patterns=[args.pattern], subject_limit=args.subjects,
-                budget=args.budget, progress=say)
+                prime=args.prime, budget=args.budget, progress=say)
         except quiet.QuietRefusal as e:       # cannot happen at scratch
             print("pcrecbench quick: %s" % e, file=sys.stderr)
             return 3
@@ -377,6 +377,10 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
                    help="measure on a box that failed the quiet gate. The "
                         "record's status becomes `inconclusive-load` and the "
                         "reasons go in `status_detail`")
+    r.add_argument("--prime", action="store_true",
+                   help="[B129] one UNTIMED call per subject before each timed loop, "
+                        "the same operation, answer discarded. Scratch tier "
+                        "only (refused at the pinned tier by name)")
     r.add_argument("--tier", choices=list(store.TIERS), default=store.TIER_PINNED,
                    help="the record's TIER (record_schema.md 6.8). `pinned` "
                         "(default): a committed engine revision under the "
@@ -455,6 +459,10 @@ primary `--testee` arm is unaffected (a refusal there still errors).
     q.add_argument("--subjects", type=int, default=None, metavar="K",
                    help="the FIRST k subjects of the regime's set "
                         "(default: all of them)")
+    q.add_argument("--prime", action="store_true",
+                   help="[B129] one UNTIMED call per subject before each timed loop, "
+                        "the same operation, answer discarded. Scratch tier "
+                        "only (refused at the pinned tier by name)")
     q.add_argument("--budget", type=float, default=2.0, metavar="SECS",
                    help="per-trial calibration cap; the loop count is cut "
                         "so one trial's predicted sweep stays inside it, "

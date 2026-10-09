@@ -347,3 +347,8 @@ capability gap); every prefixed spelling (`sc=`, `Script=`, `scx=`,
 `Script_Extensions=`) and `\p{InGreek}` refuse (`ErrorBadCharRange`).
 Declares 7/20 (`non-utf8-subject` NOT by rule: the config's subject
 contract is valid UTF-8).
+
+[B129] (2026-10-09): the driver takes `--prime` (driver protocol,
+pcrecbench/adapters.py): one untimed execution of the timed loop's own
+operation per subject, immediately before the first clock reading; absent,
+byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.

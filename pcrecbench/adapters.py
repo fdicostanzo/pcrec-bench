@@ -51,6 +51,16 @@ INVOCATION
                                    no find-all loop (vectorscan, boolean
                                    grain). Absent, every driver is
                                    byte-for-byte what it was.
+           [--prime]               ([B129]) before each subject's timed loop,
+                                   ONE untimed execution of the loop body's
+                                   own operation (a single match, or the
+                                   whole find-all pass), answer discarded,
+                                   then the first clock reading. Warms
+                                   lazy-cache engines (RE2, Rust regex)
+                                   symmetrically. Passed iff the handle
+                                   carries `prime`; harness-side scratch
+                                   tier only. Absent, every driver is
+                                   byte-for-byte what it was.
            [--compile-trials T]    compile T times, timing every phase; T-1
                                    of them are thrown away except for their
                                    timings (default 1)
