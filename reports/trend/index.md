@@ -1,6 +1,6 @@
 # pcrec trend report: pin 255bcdd8
 
-as of 2026-10-08T19:51:06Z; index sha 07f5f0002020; ratio = new/old of the set-grain median (>1 slower).
+as of 2026-10-08T19:51:06Z; snapshots sha 11897d1c8208; ratio = new/old of the set-grain median (>1 slower).
 
 ## auto-caps-simdna
 

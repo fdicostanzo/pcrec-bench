@@ -1,7 +1,9 @@
 # trend_report: history loglines auto-nocaps-simdna
 # schema: trend-tsv-1
 # generator: trend-v1
-# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# snapshots_sha256: 11897d1c82089d45e42dbaf27a087cb3f5bc9d2713e56ee05e3f511db3a8320d
+# links_sha256: 3c94fe70eae4d5458dea935ebdcb2e5cfb927f13d84ea6158950269a955f3e6d
+# links: 5 (0 confirmed, 5 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
 # pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
 # as_of: 2026-10-08T19:51:06Z
