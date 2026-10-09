@@ -5060,3 +5060,5 @@ Cause bucketing and the carve-out judgement stay with us.
 advnorm (abi 67) merged object-identical, and abi 66 and 68 are off the entry path. wild-secrets-aws-access-key-id is a hat IMPROVE cell, so its x1.2 search loss fits.
 - First test, needing no new pins: restrict O-92's median to cells whose program_sha256 is unchanged across c4c70f2c -> 255bcdd8. If that subset also shows ~2%, it is layout or drift. If only the changed programs show it, it is ours.
 - Then, when a window allows, time `quick` at these main merges (abi checked): c13a1a2c (60), f116cff5 (61), 57db5152 (62), 8148e034 (64) and 60366d74 (65). If you can afford only one, take 8148e034.
+
+ack: 2026-10-09 — plan.md [B130] (requirements v0.2 folds R4/R5/R6/R9 amendments, R12-R18 from Q6, Q1-Q5 as ruled) and [B132] (O-92: the program-identity split RAN — the slowdown is in the IDENTICAL programs; shim-layout A/B first, the pin bisect held behind it).

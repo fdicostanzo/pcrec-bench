@@ -1,7 +1,8 @@
-# pcrec trend report — requirements (v0.1, DRAFT for comment)
+# pcrec trend report — requirements (v0.2)
 
-Status: DRAFT, 2026-10-09. Asked for by Frank. Sent to pcrecdev1 for comment as
-outbox O-93. Nothing is built yet. Plan row [B130].
+Status: v0.2, 2026-10-09. Asked for by Frank. v0.1 went to pcrecdev1 as
+outbox O-93; v0.2 folds in their answer, inbox I-141 (§6 below). Nothing
+is built yet. Plan row [B130].
 
 ## 1. Purpose
 
@@ -125,6 +126,53 @@ superseding record and says so. It never silently mixes the two.
 - **Q6.** Anything pcrec's optimisation loop needs that a per-pin delta table
   does not give? For example, a per-pattern history across many pins, or
   movers grouped by mechanism stamp.
+
+## 6. v0.2: pcrecdev1's answer folded in (inbox I-141)
+
+**Amendments to R1-R11 (all accepted):**
+- **R4+.** A disjoint trial range is a WITHIN-window rule. A cross-window
+  pair must also clear the identical-program band (R6+); otherwise it is
+  flagged.
+- **R5+.** Carry the control ratio PER CELL and a drift-suspect cell count,
+  not only a median verdict. O-92's control had balanced-parens-rec at
+  x1.17 inside a 0.999 median.
+- **R6+.** Name the program-identity criterion in the header. Two criteria
+  have given 15 vs 16 identical cells; ours is program_sha256 v2, which is
+  blind across abi 67's text normalization. Report the count of cells that
+  are program-identical AND moved: that is the per-pair noise estimate.
+  pcrec's cycle-1 null control saw identical programs move by up to +8.46%
+  a day apart.
+- **R9+.** The interpretation check draws the cited ids from the TSV, not
+  from the generator's own list, so that it shares no source with what it
+  checks.
+
+**Q6, additions to the A-form (all accepted; pcrec keeps the cause
+bucketing and the carve-out judgement):**
+- **R12.** A per-cell competitor ratio at each pin, against the fastest
+  automata engine measured in that set and against pcre2-jit.
+- **R13.** Movers GROUPED by stamp value (engine, dfa_prefilter, dfa_start,
+  req_why, vm_start_scan). The report groups; it never names a cause.
+- **R14.** `history/<set>/<config>.tsv`: one append-only row per (cell,
+  pin) across all pins.
+- **R15.** Regime split everywhere: short-call and throughput medians are
+  always separate, never pooled.
+- **R16.** Absolute ns on both sides of every delta, plus per-call ns.
+- **R17.** A pcrec-supplied cells-of-interest file (mechanism, target
+  cells, carve-out cells), rendered as one section per mechanism, plus a
+  deny-twin delta (NEW vs DENY at one pin) wherever the deny config is
+  pinned.
+- **R18.** "Pin gap too wide" when the abi span between two pins exceeds N
+  bumps (N to be set at build time).
+
+**Q1-Q5 ruled by pcrec:**
+- Q1: configs auto-caps, auto-nocaps and vm, plus the deny twins of the
+  current acceptance item. The two auto classes are always separate.
+- Q2: size and compile time get a highlights section past a stated
+  threshold.
+- Q3: pcre2-jit by default; a set may name a second control.
+- Q4: commit only, plus an O-n pointer when a pair is drift-suspect or has a
+  correctness change.
+- Q5: an auto-caps headline and a nocaps headline, plus the full table.
 
 ## 5. Not decided here
 
