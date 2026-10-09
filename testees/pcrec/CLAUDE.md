@@ -58,6 +58,7 @@ at the same pin — up from thirty-nine):
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
+| `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: `timed_run()` holds everything between a subject's two clock reads (search / find-all / whole-subject, the [B129] `--prime` pass, the `_in` buffer variants) in a translation unit of its own, `noinline` + `aligned(64)`; `driver.c` keeps only argv, loading, the stamp getters and output, and hands `timed_run()` the resolved entry points. The four shim wrappers the loop calls (`pb_search`, `pb_match_caps`, `pb_search_in`, `pb_match_caps_in`) are `aligned(64)` in `shim.c` (`PB_TIMED`) — [B132] found a getter above them shifting them mod 64. Adding stamps/getters to `driver.c` or `shim.c` is therefore NOT an instrument change any more; editing `timed.*` or `PB_TIMED` is. See "Re-pin control" below |
 | `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved. **Since the [B124] pin ([B124], pcrec I-128/I-129; first carrier 5328a87d) the dump carries a `#section memfn` block AFTER pcrec's own table** (pcrec-memory-functions' option rows, another column set; 0 rows at this pin): every reader selects the MAIN table, the rows before the first `#section` line (`adapter.registry_main_lines` / `registry_sections`), and every row/axis count quoted in this repo is the main table's |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
@@ -638,6 +639,34 @@ exactly as the libpcre2 oracle does (the control — an alignment flag that
 broke codegen would otherwise pass as a speed change); one whole cell into
 a scratch store with the token reaching the written record; and
 `python3 -m pcrecbench testees` listing the new config.
+
+## Re-pin control: the instrument must not move between pins ([B133], BD16)
+
+The driver's timed loop is an isolated unit (`timed.c`; the shim's four timed
+wrappers are `aligned(64)`), so a re-pin that only adds stamps changes no
+timed code. That is a claim; at EVERY re-pin the lane proves it once, in two
+steps, and records both in its report:
+
+1. **Object-level**: `python3 docs/dev/measurements/2026-10-09-b133-isolation-proof.py WORKDIR`
+   (needs the pin built): the timed function's normalised instruction stream
+   is identical with ~40 dummy getters added, its address is 0 mod 64, the
+   shim's four wrappers likewise on a winpath-near-miss and a
+   keyword-prefix-order artifact. Seconds, no timing; any `*** DIFFERS ***` is
+   a regression of the isolation itself.
+2. **Timing**: `scripts/instrument_ab.sh PREV_REV OUTDIR CELLS` with
+   `PREV_REV` = the commit the PREVIOUS re-pin landed at (its driver/shim),
+   at the NEW pin, on a quiet box, with a winpath-style cell list
+   (`scripts/instrument_cells.txt` carries one: pcrec-auto + pcrec-nocaps
+   `winpath-near-miss` and the other short movers, pcre2-jit as the control;
+   the minimum is `pcrec-auto:winpath-near-miss pcrec-nocaps:winpath-near-miss
+   pcre2-jit:winpath-near-miss`). Read it with
+   `docs/dev/measurements/2026-10-09-b133-instrument-ab-analysis.py OUTDIR`:
+   AFTER/BEFORE on the pcrec cells inside the cells' own BEFORE2/BEFORE1
+   repeat band and the pcre2-jit control flat = the instrument did not move
+   across this re-pin. A shift that survives A/B/A/B is an instrument change
+   to be named in the re-pin's report and the next window's ledger (the
+   sentinel set, `bench/sentinel`, then reads it in the window itself).
+
 
 ## Re-pin at 255bcdd8 (abi 65 -> 68) — 2026-10-08, lane b126prep, inbox I-134/I-135
 

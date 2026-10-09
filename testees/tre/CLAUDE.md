@@ -13,6 +13,7 @@ before this lane started).
 |---|---|
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION (`capturecount`, `has_backrefs`, `refusal_class`); the `refusal_class`/`_REFUSAL_SYNTAX_CODES` derivation; ([B105]) `_find_bracket_spans`/`_bracket_backslash_content`, the pre-compile bracket-escape declaration `compile()` checks before ever calling `tre_regncompb` (item 4's FIXED note below) |
 | `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libtre.so.5` (`#include <tre/tre.h>`, `-ltre`); the `^(?:...)$` whole-subject wrap |
+| `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: everything between a subject's two clock reads (including the first match's `emit_caps`) in `timed_run()`, a translation unit of its own, `noinline` + `aligned(64)`, linked beside `driver.c` by `build_driver()` (a sibling `timed.c` is picked up automatically and joins the staleness check). Unrelated driver edits (stamp getters, protocol lines) cannot move it: proven by `docs/dev/measurements/2026-10-09-b133-isolation-proof.py`. An INSTRUMENT: editing it needs a plan row and a re-pin-control run (decisions.md BD16) |
 | `configs.toml` | the one config id, `tre-default` |
 | `_probe.rx` | one byte, `a` — the version-probe pattern (`testees/pcre2/_probe.rx`'s own convention) |
 

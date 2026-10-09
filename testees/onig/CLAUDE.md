@@ -15,6 +15,7 @@ to the upstream `v6.9.10` git tag (diffed before any source was read).
 |---|---|
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION (`capturecount`, `names`, `refusal_class`); the `GAVE_UP_CODES` set |
 | `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`); direct-linked against `libonig.so.5` (`#include <oniguruma.h>`, `-lonig`) |
+| `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: everything between a subject's two clock reads in `timed_run()`, a translation unit of its own, `noinline` + `aligned(64)`, linked beside `driver.c` by `build_driver()` (a sibling `timed.c` is picked up automatically and joins the staleness check). Unrelated driver edits (stamp getters, protocol lines) cannot move it: proven by `docs/dev/measurements/2026-10-09-b133-isolation-proof.py`. An INSTRUMENT: editing it needs a plan row and a re-pin-control run (decisions.md BD16) |
 | `configs.toml` | the one config id, `onig-default` |
 | `_probe.rx` | one byte, `a` — the version-probe pattern (`testees/pcre2/_probe.rx`'s own convention) |
 
