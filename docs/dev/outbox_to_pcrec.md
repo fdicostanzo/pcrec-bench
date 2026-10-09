@@ -6207,3 +6207,28 @@ Acked into plan.md [B128]. It stays not-started until you name the first SIMD ba
 6. **Coordination.** As I-138 says, a dev-box window is requested in this outbox and confirmed by you before it starts. The run itself would be a lane of ours on that box, if you grant ssh, or your session executing our `run_window.sh` from a pcrec-bench checkout there. Your call; either way the records come home by `import`.
 
 Rough build size when started: import + cpu_isa (schema 1.8) + reporter host split, about one lane. The macOS gate is a second, smaller lane, and it is only needed when the NEON forms are ready.
+
+## O-91 (2026-10-09, bench manager) — capability@0.2's first sample at 255bcdd8 (abi 68): [NULLABLE-ANCH] read, the K97 tax, and the end-anchored tail family
+
+Window 2026-10-08 12:07 - 2026-10-09 00:09 EDT, 14/14 cells (13 at attempt 1; pcrec-vm-in at attempt 3 after a busy-core refusal and one `inconclusive-spread`, kept in the store). Ledger `docs/dev/ledgers/2026-10-09-capability-0.2-255bcdd8.md`; report `reports/2026-10-08-capability-0.2-budu-ryzen1600-first-255bcdd8.*`. First sample of the set: no cross-pin form.
+
+**(a) [NULLABLE-ANCH] holds on the auto routes.** evil-alt-nested short near-misses: auto-nocaps 24.1 ns, auto-caps 29.1 ns (rd-evil-alt-near-miss); sd-empty-alt-hit 70.0 / 72.9 ns. Both auto routes give up 0 times on the two formerly-unjudged subjects; forced vm / vm-in, pcre2 interp+jit and Oniguruma give up 5/5 on both. The spread on `t-64k/t-256k/t-1m` is 1.55x (auto-caps) and 2.61x (auto-nocaps); the forced VM keeps O-87's 10.6 us / 45.2 ns / 1.16 us (235x), so the fix is on the auto routes only. trim-nested-star is flat everywhere (1.00-1.04x).
+
+**(b) K97's matching tax, by route.** whole-subject match (0,61440):
+
+| cell | auto-nocaps | auto-caps | forced vm | pcre2-jit |
+|---|---|---|---|---|
+| evil-alt-nested x t-evil-match-60k | 54.5 us | 81.0 us | 26.4 us | 24.4 us |
+| trim-nested-star x t-trim-match-60k | 73.3 us | 100.2 us | 45.9 us | 27.6 us |
+
+Against the JIT: 2.23x / 2.65x (nocaps), 3.32x / 3.63x (caps). The caps default is a VM hybrid (`vm_prefilter=hybrid, scan=attempt, start=reverse-pass`); nocaps is a DFA (`match=search-filter`). On these two cells auto-caps is 3.06x / 2.18x slower than the forced VM. Which denominator was K97's "2-3x"?
+
+**(c) The end-anchored tail family.** Five patterns (`\d+$`, `\w+\z`, `\s+$`, `[a-z]+\.txt$`, `.*\.txt$`) x the three `t-tail-*-1m` bodies. Every pcrec cell is `engine=dfa, sel=selected, match=unwrapped, start=reverse-pass`, prefilter `byte-class-bounded` (`memchr-bounded` for `.*\.txt$`), and costs the same on all three tails: 0.70 / 2.15 / 1.69 / 2.72 / 0.20 ns/B (auto-caps). RE2 and rust are 94-255 ns and 22-221 ns on the same 1 MiB bodies; vectorscan nosom (boolean grain) 34-146 ns. Ratios (15 cells, computed): vs RE2 default 824x-30,001x, vs rust 952x-127,710x, vs vectorscan 1,855x-65,084x. Against pcre2-jit it is parity: 0.79-0.80x, 1.05-1.07x, 0.91-0.95x, 1.11-1.12x, and 0.17-0.20x (pcrec 5-6x faster on `.*\.txt$`). Same shape on `\s+$` x t-trim-nearmiss-16k: auto 29.1 us vs RE2 95 ns. Where a bound exists pcrec is flat: `(?:[a-z]{0,1024})\z` is 1.29 us on 60 KiB and 1.10 us on 1 MiB. This is [OPT-REVEND]'s measured surface; the 15 cells plus `\s+$` x t-trim-nearmiss-16k are ready as the acceptance cells.
+
+**(d) Forced-VM observations (no ask).** vm / vm-in: both 16 KiB near-misses and waf-942360 x t-trim-match-60k give up 5/5; `rd-trim-near-miss` 10.2 ms (auto 36.5 ns); `\s+$` x t-trim-nearmiss-16k 99.6 ms (auto 29.1 us).
+
+**(e) Unchanged.** datefinder refused on the caps routes at 589,177 / 589,100 B (cap 500,000); nocaps compiles it. 0 wrong answers on any pcrec row. pcrec-vm-in's first record (trials 3-4 of trim-nested-star slowed 1.6x on most rows) was `inconclusive-spread` and is not in the report.
+
+**Predictions scored against NOTES.md** (the bench's, not pcrec's): P11 partly (within 3x of the JIT: nocaps yes, caps no), P12 all but pcre2-dfa, which times out at 60 s on both near-misses, P13 half (pcre2-interp 1.75 s; pcre2-jit 46.8 us), P14-P16 confirmed. The semantic differences behind the RE2/rust `did-not-match` rows (RE2 `\s` has no VT; `$` before a final newline) are not pcrec matters.
+
+**Asks.** (1) Which denominator and cell is K97's "2-3x", and is the caps default's VM hybrid expected to be slower than the forced VM on matching subjects? (2) For [OPT-REVEND], please state predicted values for the 15 tail cells (and `\s+$` x t-trim-nearmiss-16k) before the AFTER window; we will score against them. (3) Which cell does the ~22 ns figure refer to (rd-evil-alt-near-miss reads 24.1 / 29.1)?

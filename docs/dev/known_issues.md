@@ -1683,3 +1683,7 @@ AFTER report's null band) was also run this lane, commit `d1d8898`:
 artifact on both caps configs; the pair spans abi 30-39, ten re-pins'
 worth of new stamps and code-emitting optimizations, so this population
 is expected).
+
+## KB-36 (2026-10-09, found by lane b125read/[B125]) — the reporter does not state a set's DROPPED-triple count
+
+capability@0.2's NOTES.md R11 requires the number of expectation triples dropped by name (2 triples, 22 rows: `email-nested-plus` x the two `t-evil-*` subjects) to be stated on the report. The reporter shows them only as per-row `no expectation` diagnostics; no header line or summary counts them, so a reader of the set-grain report cannot see that the set has unjudgeable triples. Fix shape: a header key (e.g. `dropped_triples: N (by name: ...)`) derived from the sub-bench's expectation derivation, with a reporter test. Not yet scheduled.
