@@ -52,6 +52,8 @@ Compile and match are separate axes in every record. The front-page headline use
 
 A cell's number is the sum over all subjects of the regime of the per-subject time per call, taken per trial; the cell reports the median over trials with min and max. Each subject's iteration count is calibrated per engine toward a fixed timed-work target so engines with very different speeds are timed over comparable durations.
 
+**Warm-up.** Each trial compiles the pattern once, then times a loop of repeated calls to the same compiled matcher, so an engine's match-time caches stay warm across calls. RE2 and Rust `regex` build part of their automaton lazily on the first call, and that first call falls inside the timed loop. We tested whether an untimed priming call per subject changes any result, applying it symmetrically to every engine. On a 10-pattern sample, re-measured primed and unprimed back to back, no win/loss/tie classification changed. The one measurable effect was on three RE2 large-subject cells where RE2 already leads pcrec by orders of magnitude; there priming made RE2 faster, and a repeated unprimed run confirmed it as warming rather than drift. pcrec, which has nothing to warm, did not move. The published numbers are unprimed. Measurements and scripts: [docs/dev/measurements/2026-10-09-b129-prime-sample.txt](dev/measurements/2026-10-09-b129-prime-sample.txt).
+
 <!-- frontpage:trials:begin -->
 Trials per cell in these records: 5. Per-row calibration target (ns of timed work per trial): 50000000. Trial-agreement rule in these records: v1.4-group (k=1.5, d_min=2, share_c=3).
 <!-- frontpage:trials:end -->
