@@ -1,0 +1,7 @@
+# cells_of_interest.tsv -- pcrec's INPUT to the trend report (R17).
+# One row per cell of a mechanism under study; the report renders one section
+# per mechanism and joins each row to deltas.tsv (every config, every pin pair).
+# Columns (tab-separated): mechanism, role (target|carveout), set (name or
+# name@version), pattern, regime (optional), form (optional), note.
+# Lines starting with '#' are ignored. Fill below the header row.
+mechanism	role	set	pattern	regime	form	note

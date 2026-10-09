@@ -1,0 +1,79 @@
+# trend_report: history altwide vm-caps-simdna_noclsfold
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+10	d34c9131	altwide@0.2	ci-256	large-subject-throughput	plain	judged	1974655094.0	1967642041.0	2051390862.0	493663773.50	451076		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:ci-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	ci-256	match-compliance	whole-subject	judged	100595.4	100222.6	100917.1	2514.88	451193		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:ci-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	ci-256	short-subject-search	plain	judged	9516681.1	9447521.4	10779618.9	237917.03	451076		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:ci-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	cnt-64	large-subject-throughput	plain	judged	13554056.2	13256668.9	13589817.1	3388514.04	234297		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:cnt-64:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	cnt-64	match-compliance	whole-subject	judged	404.3	403.3	405.5	10.11	234414		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:cnt-64:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	cnt-64	short-subject-search	plain	judged	54891.7	54537.1	56473.3	1372.29	234297		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:cnt-64:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	floor	large-subject-throughput	plain	judged	543602.1	542669.2	543863.1	135900.52	17649		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:floor:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	floor	match-compliance	whole-subject	judged	237.8	237.7	238.1	5.94	17760		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:floor:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	floor	short-subject-search	plain	judged	388.6	387.5	389.8	9.72	17649		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:floor:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	nar4-256	large-subject-throughput	plain	judged	8443121.2	8425557.8	8491586.7	2110780.30	298250		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	nar4-256	match-compliance	whole-subject	judged	349.4	349.1	361.0	8.74	298367		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	nar4-256	short-subject-search	plain	judged	26554.8	24470.4	27291.4	663.87	298250		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	nar4-64	large-subject-throughput	plain	judged	8066609.7	8058826.2	8135550.1	2016652.43	91257		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-64:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	nar4-64	match-compliance	whole-subject	judged	339.3	338.0	339.8	8.48	91372		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-64:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	nar4-64	short-subject-search	plain	judged	24461.7	22920.6	25760.7	611.54	91257		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:nar4-64:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	pfx3-256	large-subject-throughput	plain	judged	3043610.5	3000638.7	3053981.6	760902.62	231685		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	pfx3-256	match-compliance	whole-subject	judged	337.9	337.2	340.3	8.45	231802		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	pfx3-256	short-subject-search	plain	judged	15321.7	14278.9	16960.4	383.04	231685		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	pfx3-512	large-subject-throughput	plain	judged	2702885.3	2676128.1	2959134.1	675721.32	440213		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-512:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	pfx3-512	match-compliance	whole-subject	judged	326.6	325.9	338.4	8.16	440330		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-512:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	pfx3-512	short-subject-search	plain	judged	14355.5	13346.2	15554.0	358.89	440213		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:pfx3-512:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	s-256	large-subject-throughput	plain	judged	16087548.1	16037085.5	16123386.5	4021887.02	185070		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	s-256	match-compliance	whole-subject	judged	370.5	370.2	374.7	9.26	185187		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	s-256	short-subject-search	plain	judged	51173.0	50370.6	51700.0	1279.32	185070		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	s-512	large-subject-throughput	plain	judged	17246192.6	17218493.3	17250219.7	4311548.14	348078		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-512:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	s-512	match-compliance	whole-subject	judged	380.6	380.0	383.7	9.51	348195		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-512:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	s-512	short-subject-search	plain	judged	60526.8	59746.1	62259.8	1513.17	348078		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:s-512:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	sfx-256	large-subject-throughput	plain	judged	16387400.7	16325517.1	16585273.1	4096850.17	366480		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	sfx-256	match-compliance	whole-subject	judged	361.6	361.1	368.7	9.04	366597		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	sfx-256	short-subject-search	plain	judged	52413.1	51166.6	53285.4	1310.33	366480		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	sfx-64	large-subject-throughput	plain	judged	13778498.2	13640414.3	13798607.1	3444624.54	110513		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-64:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	sfx-64	match-compliance	whole-subject	judged	356.2	355.2	358.8	8.90	110628		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-64:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	sfx-64	short-subject-search	plain	judged	56059.3	55854.3	56688.0	1401.48	110513		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sfx-64:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	sh1-256	large-subject-throughput	plain	judged	2633780.2	2631585.2	2636124.2	658445.06	283833		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	sh1-256	match-compliance	whole-subject	judged	339.2	338.2	352.0	8.48	283950		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	sh1-256	short-subject-search	plain	judged	14221.7	14199.1	14227.1	355.54	283833		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	sh1-64	large-subject-throughput	plain	judged	2679889.6	2678131.7	2744514.1	669972.41	82754		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-64:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	sh1-64	match-compliance	whole-subject	judged	339.5	339.4	340.3	8.49	82869		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-64:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	sh1-64	short-subject-search	plain	judged	13559.3	13021.1	14725.6	338.98	82754		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:sh1-64:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	srt-256	large-subject-throughput	plain	judged	15911102.9	15905452.9	15952036.3	3977775.73	292069		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:srt-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	srt-256	match-compliance	whole-subject	judged	382.8	380.3	384.7	9.57	292186		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:srt-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	srt-256	short-subject-search	plain	judged	44341.3	44303.7	44470.4	1108.53	292069		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:srt-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-128	large-subject-throughput	plain	judged	14499123.7	14440506.5	15018102.8	3624780.92	157717		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-128:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-128	match-compliance	whole-subject	judged	370.7	368.3	406.8	9.27	157832		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-128:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-128	short-subject-search	plain	judged	42392.0	42297.2	42414.0	1059.80	157717		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-128:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-192	large-subject-throughput	plain	judged	15910713.0	15890102.9	15959137.8	3977678.25	224261		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-192:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-192	match-compliance	whole-subject	judged	386.2	383.6	386.9	9.65	224378		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-192:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-192	short-subject-search	plain	judged	45199.7	44945.5	45573.3	1129.99	224261		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-192:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-256	large-subject-throughput	plain	judged	15915153.0	15901474.8	15927968.1	3978788.25	292069		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-256	match-compliance	whole-subject	judged	380.5	380.1	387.3	9.51	292186		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-256	short-subject-search	plain	judged	44372.6	44227.1	44426.2	1109.31	292069		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-256:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-384	large-subject-throughput	plain	judged	16529526.2	16515123.7	16764270.8	4132381.55	427850		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-384:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-384	match-compliance	whole-subject	judged	391.7	390.7	393.2	9.79	427967		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-384:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-384	short-subject-search	plain	judged	52554.4	52175.2	53744.0	1313.86	427850		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-384:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-64	large-subject-throughput	plain	judged	13185743.0	13167034.7	13208589.5	3296435.75	89156		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-64:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-64	match-compliance	whole-subject	judged	410.8	408.9	412.6	10.27	89271		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-64:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-64	short-subject-search	plain	judged	46765.5	46639.4	46769.6	1169.14	89156		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-64:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-8	large-subject-throughput	plain	judged	9183862.0	9134239.8	9229697.5	2295965.51	24949		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-8:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-8	match-compliance	whole-subject	judged	559.5	559.1	562.8	13.99	25062		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-8:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-8	short-subject-search	plain	judged	31816.0	31772.5	32053.2	795.40	24949		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-8:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	w-96	large-subject-throughput	plain	judged	14143726.9	14128087.6	14165967.9	3535931.72	125698		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-96:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	w-96	match-compliance	whole-subject	judged	397.3	396.5	411.2	9.93	125813		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-96:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	w-96	short-subject-search	plain	judged	49687.7	49637.2	49836.1	1242.19	125698		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:w-96:short-subject-search:plain			new
+10	d34c9131	altwide@0.2	wb-256	large-subject-throughput	plain	judged	7162101.4	7143918.3	7183212.0	1790525.36	292726		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:wb-256:large-subject-throughput:plain			new
+10	d34c9131	altwide@0.2	wb-256	match-compliance	whole-subject	judged	420.5	413.5	441.2	10.51	292843		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:wb-256:match-compliance:whole-subject			new
+10	d34c9131	altwide@0.2	wb-256	short-subject-search	plain	judged	33308.6	33240.3	33395.9	832.72	292726		D:altwide@0.2:vm-caps-simdna_noclsfold:d34c9131:wb-256:short-subject-search:plain			new

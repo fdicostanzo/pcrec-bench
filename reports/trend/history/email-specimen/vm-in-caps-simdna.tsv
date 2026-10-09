@@ -1,0 +1,73 @@
+# trend_report: history email-specimen vm-in-caps-simdna
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+1	692c2e8	email-specimen@0.1	factored	large-subject-throughput	plain	gave-up							D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:factored:large-subject-throughput:plain			new
+1	692c2e8	email-specimen@0.1	factored	match-compliance	whole-subject	judged	464407.8	462303.1	474574.6	5463.62			D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:factored:match-compliance:whole-subject			new
+1	692c2e8	email-specimen@0.1	factored	short-subject-search	plain	judged	54117.6	53402.9	54412.7	702.83			D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:factored:short-subject-search:plain			new
+1	692c2e8	email-specimen@0.1	orig	large-subject-throughput	plain	gave-up							D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:orig:large-subject-throughput:plain			new
+1	692c2e8	email-specimen@0.1	orig	match-compliance	whole-subject	judged	62732.3	62494.7	62927.9	738.03			D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:orig:match-compliance:whole-subject			new
+1	692c2e8	email-specimen@0.1	orig	short-subject-search	plain	judged	12546.2	12511.8	12629.5	162.94			D:email-specimen@0.1:vm-in-caps-simdna:692c2e8:orig:short-subject-search:plain			new
+2	35e1ab1	email-specimen@0.2	factored	large-subject-throughput	plain	gave-up							D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:factored:large-subject-throughput:plain	692c2e8		same-state
+2	35e1ab1	email-specimen@0.2	factored	match-compliance	whole-subject	judged	456277.5	454029.4	463699.5	5367.97			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:factored:match-compliance:whole-subject	692c2e8	0.9825	within-noise
+2	35e1ab1	email-specimen@0.2	factored	short-subject-search	plain	judged	54151.3	53905.1	54258.7	703.26			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:factored:short-subject-search:plain	692c2e8	1.0006	within-noise
+2	35e1ab1	email-specimen@0.2	floor	large-subject-throughput	plain	judged	15827138.2	15789874.1	15846666.6	3165427.63			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:floor:large-subject-throughput:plain			new
+2	35e1ab1	email-specimen@0.2	floor	match-compliance	whole-subject	judged	781.4	780.9	792.2	9.19			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:floor:match-compliance:whole-subject			new
+2	35e1ab1	email-specimen@0.2	floor	short-subject-search	plain	judged	2530.6	2529.2	2579.4	32.87			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:floor:short-subject-search:plain			new
+2	35e1ab1	email-specimen@0.2	orig	large-subject-throughput	plain	gave-up							D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:orig:large-subject-throughput:plain	692c2e8		same-state
+2	35e1ab1	email-specimen@0.2	orig	match-compliance	whole-subject	judged	62129.7	62020.5	62288.3	730.94			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:orig:match-compliance:whole-subject	692c2e8	0.9904	within-identical-band
+2	35e1ab1	email-specimen@0.2	orig	short-subject-search	plain	judged	12632.4	12600.2	12687.0	164.06			D:email-specimen@0.2:vm-in-caps-simdna:35e1ab1:orig:short-subject-search:plain	692c2e8	1.0069	within-noise
+3	36d5963	email-specimen@0.2	factored	large-subject-throughput	plain	gave-up							D:email-specimen@0.2:vm-in-caps-simdna:36d5963:factored:large-subject-throughput:plain	35e1ab1		same-state
+3	36d5963	email-specimen@0.2	factored	match-compliance	whole-subject	judged	464104.4	460234.7	464676.6	5460.05			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:factored:match-compliance:whole-subject	35e1ab1	1.0172	within-noise
+3	36d5963	email-specimen@0.2	factored	short-subject-search	plain	judged	53872.8	53373.3	54711.3	699.65			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:factored:short-subject-search:plain	35e1ab1	0.9949	within-noise
+3	36d5963	email-specimen@0.2	floor	large-subject-throughput	plain	judged	16289983.3	16020151.8	16947474.1	3257996.67			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:floor:large-subject-throughput:plain	35e1ab1	1.0292	within-identical-band
+3	36d5963	email-specimen@0.2	floor	match-compliance	whole-subject	judged	783.3	782.0	785.0	9.22			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:floor:match-compliance:whole-subject	35e1ab1	1.0025	within-noise
+3	36d5963	email-specimen@0.2	floor	short-subject-search	plain	judged	2466.5	2459.9	2487.0	32.03			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:floor:short-subject-search:plain	35e1ab1	0.9746	within-identical-band
+3	36d5963	email-specimen@0.2	orig	large-subject-throughput	plain	gave-up							D:email-specimen@0.2:vm-in-caps-simdna:36d5963:orig:large-subject-throughput:plain	35e1ab1		same-state
+3	36d5963	email-specimen@0.2	orig	match-compliance	whole-subject	judged	62713.6	62618.4	62834.9	737.81			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:orig:match-compliance:whole-subject	35e1ab1	1.0094	within-identical-band
+3	36d5963	email-specimen@0.2	orig	short-subject-search	plain	judged	13146.2	13106.0	13170.9	170.73			D:email-specimen@0.2:vm-in-caps-simdna:36d5963:orig:short-subject-search:plain	35e1ab1	1.0407	within-identical-band
+4	96e44c2	email-specimen@0.2	factored	large-subject-throughput	plain	gave-up					56700		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:factored:large-subject-throughput:plain	36d5963		same-state
+4	96e44c2	email-specimen@0.2	factored	match-compliance	whole-subject	judged	462186.8	461060.9	465355.0	5437.49	56816		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:factored:match-compliance:whole-subject	36d5963	0.9959	within-noise
+4	96e44c2	email-specimen@0.2	factored	short-subject-search	plain	judged	54069.3	53491.4	54216.1	702.20	56700		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:factored:short-subject-search:plain	36d5963	1.0036	within-noise
+4	96e44c2	email-specimen@0.2	floor	large-subject-throughput	plain	judged	16371986.6	16299110.1	16640133.5	3274397.32	17660		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:floor:large-subject-throughput:plain	36d5963	1.0050	within-noise
+4	96e44c2	email-specimen@0.2	floor	match-compliance	whole-subject	judged	782.6	781.7	786.7	9.21	17771		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:floor:match-compliance:whole-subject	36d5963	0.9990	within-noise
+4	96e44c2	email-specimen@0.2	floor	short-subject-search	plain	judged	2438.3	2435.6	2451.1	31.67	17660		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:floor:short-subject-search:plain	36d5963	0.9886	within-identical-band
+4	96e44c2	email-specimen@0.2	orig	large-subject-throughput	plain	gave-up					45696		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:orig:large-subject-throughput:plain	36d5963		same-state
+4	96e44c2	email-specimen@0.2	orig	match-compliance	whole-subject	judged	62301.2	62260.8	63740.2	732.96	45814		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:orig:match-compliance:whole-subject	36d5963	0.9934	within-noise
+4	96e44c2	email-specimen@0.2	orig	short-subject-search	plain	judged	12826.9	12818.1	12870.4	166.58	45696		D:email-specimen@0.2:vm-in-caps-simdna:96e44c2:orig:short-subject-search:plain	36d5963	0.9757	within-identical-band
+7	1989c62	email-specimen@0.2	factored	large-subject-throughput	plain	gave-up					56805		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:factored:large-subject-throughput:plain	96e44c2		same-state
+7	1989c62	email-specimen@0.2	factored	match-compliance	whole-subject	judged	461165.2	455738.7	466627.4	5425.47	56921		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:factored:match-compliance:whole-subject	96e44c2	0.9978	within-noise
+7	1989c62	email-specimen@0.2	factored	short-subject-search	plain	judged	53902.2	53519.5	54707.0	700.03	56805		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:factored:short-subject-search:plain	96e44c2	0.9969	within-noise
+7	1989c62	email-specimen@0.2	floor	large-subject-throughput	plain	judged	1920640.2	1905569.9	1965206.8	384128.04	17258		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:floor:large-subject-throughput:plain	96e44c2	0.1173	faster
+7	1989c62	email-specimen@0.2	floor	match-compliance	whole-subject	judged	516.6	516.4	517.7	6.08	17369		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:floor:match-compliance:whole-subject	96e44c2	0.6601	faster
+7	1989c62	email-specimen@0.2	floor	short-subject-search	plain	judged	1045.1	1043.2	1047.9	13.57	17258		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:floor:short-subject-search:plain	96e44c2	0.4286	faster
+7	1989c62	email-specimen@0.2	orig	large-subject-throughput	plain	gave-up					45801		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:orig:large-subject-throughput:plain	96e44c2		same-state
+7	1989c62	email-specimen@0.2	orig	match-compliance	whole-subject	judged	62176.3	62132.6	62239.1	731.49	45919		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:orig:match-compliance:whole-subject	96e44c2	0.9980	within-identical-band
+7	1989c62	email-specimen@0.2	orig	short-subject-search	plain	judged	12893.3	12802.8	13527.0	167.45	45801		D:email-specimen@0.2:vm-in-caps-simdna:1989c62:orig:short-subject-search:plain	96e44c2	1.0052	within-noise
+14	25b1984f	email-specimen@0.2	factored	large-subject-throughput	plain	gave-up					57208		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:factored:large-subject-throughput:plain	1989c62		same-state
+14	25b1984f	email-specimen@0.2	factored	match-compliance	whole-subject	judged	457848.2	455596.2	489129.2	5386.45	57324		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:factored:match-compliance:whole-subject	1989c62	0.9928	within-noise
+14	25b1984f	email-specimen@0.2	factored	short-subject-search	plain	judged	54809.4	53700.0	55505.3	711.81	57208		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:factored:short-subject-search:plain	1989c62	1.0168	within-noise
+14	25b1984f	email-specimen@0.2	floor	large-subject-throughput	plain	judged	3351449.5	3340220.9	3389538.2	670289.90	17837		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:floor:large-subject-throughput:plain	1989c62	1.7450	slower
+14	25b1984f	email-specimen@0.2	floor	match-compliance	whole-subject	judged	505.8	505.7	507.1	5.95	17948		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:floor:match-compliance:whole-subject	1989c62	0.9792	within-identical-band
+14	25b1984f	email-specimen@0.2	floor	short-subject-search	plain	judged	961.4	954.9	967.1	12.49	17837		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:floor:short-subject-search:plain	1989c62	0.9199	within-identical-band
+14	25b1984f	email-specimen@0.2	orig	large-subject-throughput	plain	gave-up					46204		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:orig:large-subject-throughput:plain	1989c62		same-state
+14	25b1984f	email-specimen@0.2	orig	match-compliance	whole-subject	judged	62071.9	62030.4	62228.5	730.26	46322		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:orig:match-compliance:whole-subject	1989c62	0.9983	within-noise
+14	25b1984f	email-specimen@0.2	orig	short-subject-search	plain	judged	12831.4	12810.0	12886.0	166.64	46204		D:email-specimen@0.2:vm-in-caps-simdna:25b1984f:orig:short-subject-search:plain	1989c62	0.9952	within-noise
+20	751b9c6d	email-specimen@0.2	factored	large-subject-throughput	plain	judged	112681436.2	111572780.4	113150910.4	22536287.23	58694	86de3360d0436284	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:factored:large-subject-throughput:plain	25b1984f		no-number
+20	751b9c6d	email-specimen@0.2	factored	match-compliance	whole-subject	judged	460693.1	454617.7	461859.2	5419.92	58810	aec9e1e545b251d3	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:factored:match-compliance:whole-subject	25b1984f	1.0062	within-noise
+20	751b9c6d	email-specimen@0.2	factored	short-subject-search	plain	judged	34899.4	34419.4	35025.6	453.24	58694	86de3360d0436284	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:factored:short-subject-search:plain	25b1984f	0.6367	faster
+20	751b9c6d	email-specimen@0.2	floor	large-subject-throughput	plain	judged	1685511.1	1685101.9	1692377.6	337102.21	19133	de296ca27a8f5ff1	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:floor:large-subject-throughput:plain	25b1984f	0.5029	faster
+20	751b9c6d	email-specimen@0.2	floor	match-compliance	whole-subject	judged	529.4	529.3	530.5	6.23	19356	1cdb83412ea39410	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:floor:match-compliance:whole-subject	25b1984f	1.0467	within-identical-band
+20	751b9c6d	email-specimen@0.2	floor	short-subject-search	plain	judged	1160.6	1158.8	1164.6	15.07	19133	de296ca27a8f5ff1	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:floor:short-subject-search:plain	25b1984f	1.2072	slower
+20	751b9c6d	email-specimen@0.2	orig	large-subject-throughput	plain	judged	23621686.4	23337194.8	23931857.4	4724337.29	47690	9f7a93c44d99f86a	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:orig:large-subject-throughput:plain	25b1984f		no-number
+20	751b9c6d	email-specimen@0.2	orig	match-compliance	whole-subject	judged	61998.6	61887.2	62467.7	729.40	47808	d74256d537f64554	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:orig:match-compliance:whole-subject	25b1984f	0.9988	within-noise
+20	751b9c6d	email-specimen@0.2	orig	short-subject-search	plain	judged	9421.3	9367.8	9446.5	122.35	47690	9f7a93c44d99f86a	D:email-specimen@0.2:vm-in-caps-simdna:751b9c6d:orig:short-subject-search:plain	25b1984f	0.7342	faster
