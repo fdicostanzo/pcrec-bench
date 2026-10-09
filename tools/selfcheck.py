@@ -13220,18 +13220,29 @@ def check_prime_flag():
         except Exception as e:                            # noqa: BLE001
             bad("--prime at the pinned tier is refused BY NAME",
                 "other error: %s" % e)
+        # the control must stop cheaply: a sentinel at the quiet gate (the
+        # first thing after the prime rule) proves the call got PAST it
+        # without ever running a cell on a quiet box.
+        class Past(Exception):
+            pass
+
+        def gate_sentinel(*a, **k):
+            raise Past()
+
+        real_check = _h.quiet.check
+        _h.quiet.check = gate_sentinel
         try:
             _h.run_cell("email", "pcre2-jit", tier="pinned", prime=False,
                         store_root=sink, synthetic=True)
-            bad("CONTROL pinned without --prime", "ran into a bare dir")
+            bad("CONTROL pinned without --prime", "ran")
+        except Past:
+            ok("CONTROL pinned without --prime is not refused by the prime "
+               "rule", "reached the quiet gate (sentinel)")
         except Exception as e:                            # noqa: BLE001
-            if "--prime" in str(e):
-                bad("CONTROL pinned without --prime is not refused by the "
-                    "prime rule", str(e))
-            else:
-                ok("CONTROL pinned without --prime is not refused by the "
-                   "prime rule", "met the store's own rule: %s"
-                   % str(e).splitlines()[0][:100])
+            bad("CONTROL pinned without --prime is not refused by the prime "
+                "rule", "other refusal: %s" % str(e).splitlines()[0][:120])
+        finally:
+            _h.quiet.check = real_check
     finally:
         shutil.rmtree(sink, ignore_errors=True)
 
