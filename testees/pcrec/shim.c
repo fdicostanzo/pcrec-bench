@@ -1576,11 +1576,21 @@ unsigned pb_vm_poss_arms(void) {
 
 /* ------------------------------------------------------------- matching */
 
+/* [B133] The four wrappers below are what the driver's timed loop CALLS
+ * (timed.c's timed_run -> pb_search / pb_match_caps / the `_in` pair): their
+ * code is timed code, one call frame deep. A getter added above them used to
+ * shift them mod 64 ([B132]: winpath-near-miss pb_search 16 -> 48 with the
+ * five [B126] getter pairs, +15% on that cell alone). aligned(64) pins each
+ * wrapper's start to a cache-line boundary whatever precedes it, so adding or
+ * removing getters cannot change their placement relative to a line. It is an
+ * INSTRUMENT property (docs/dev/decisions.md BD-B133). */
+#define PB_TIMED __attribute__((aligned(64)))
+
 /* Unanchored search from `pos`; `caps` is `pb_ncaps()` pairs.
  * Returns 1 = match, 0 = no match, negative = a typed give-up (D49: the
  * codes PROPAGATE and are NOT collapsed to -1, so the driver reports the
  * number it got). */
-int pb_search(const unsigned char *s, size_t n, size_t pos,
+PB_TIMED int pb_search(const unsigned char *s, size_t n, size_t pos,
               ptrdiff_t (*caps)[2]) {
     return PB_SEARCH(s, n, pos, caps);
 }
@@ -1596,7 +1606,7 @@ int pb_search(const unsigned char *s, size_t n, size_t pos,
  * here where PCRE2_ANCHORED|PCRE2_ENDANCHORED answers `yes`. The asymmetry
  * is real, it is documented in testees/pcrec/CLAUDE.md, and on this
  * sub-bench it was MEASURED not to bite (85/85 agreement, both patterns). */
-long long pb_match_caps(const unsigned char *s, size_t n, size_t pos,
+PB_TIMED long long pb_match_caps(const unsigned char *s, size_t n, size_t pos,
                         ptrdiff_t (*caps)[2]) {
     rx_ctx ctx;
     ctx.subject = s;
@@ -1681,7 +1691,7 @@ long long pb_trail_frame_size(void) {
  * a NULL descriptor is exactly the plain call; a give-up is retryable; the
  * regions are pure scratch; PCREC_ERR_FRAMES does not say whose buffer ran
  * out. Both regions are required when either is given. */
-int pb_search_in(const unsigned char *s, size_t n, size_t pos,
+PB_TIMED int pb_search_in(const unsigned char *s, size_t n, size_t pos,
                  ptrdiff_t (*caps)[2],
                  void *frames, size_t nframes, void *trail, size_t ntrail) {
 #ifdef RX_BUFFER_ALIGN
@@ -1699,7 +1709,7 @@ int pb_search_in(const unsigned char *s, size_t n, size_t pos,
 
 /* `<prefix>_match_caps_in`: pb_match_caps() with the descriptor. Same
  * whole-subject caveat as pb_match_caps(). */
-long long pb_match_caps_in(const unsigned char *s, size_t n, size_t pos,
+PB_TIMED long long pb_match_caps_in(const unsigned char *s, size_t n, size_t pos,
                            ptrdiff_t (*caps)[2],
                            void *frames, size_t nframes,
                            void *trail, size_t ntrail) {
