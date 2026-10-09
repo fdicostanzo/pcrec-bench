@@ -79,6 +79,13 @@ package this section and §4/§6 below only summarize.
    minimal-action prompt (act only on an arrived result / notification /
    completed run, else one line and nothing else); session-only, so
    create it every start and `CronDelete` it in §7's close routine.
+   Keep it ONLY while monitoring lanes/runs/watchers; with nothing to
+   monitor, close out (§7) and `CronDelete` it (Frank, 2026-10-09).
+   DEADLOCK CHECK (Frank, 2026-10-09, relayed by pcrecdev1): only while
+   WAITING ON ANOTHER SESSION, and as the SAME cron as this heartbeat at
+   the same timing (dual-purpose; no separate hourly check-in). Never
+   ping a session you are not waiting on — a ping wakes an idle session
+   for a full turn.
    Manager session only — lanes never self-keepalive.
 1a. **Read `docs/dev/inbox_from_pcrec.md`** — the pcrec manager's durable
    rulings/priorities/pins (§0). Every item without an `ack:` line is
