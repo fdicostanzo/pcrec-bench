@@ -96,8 +96,9 @@ A2, back to back, 5 trials, 18 `quick` calls, all rc 0, all `measured`.
   whole 11-subject set, i.e. tens of ns per subject, the first-call state
   building of the lazy DFA. These cells are RE2 wins over pcrec by a
   factor of hundreds, so no class can move.
-Correction to the earlier reading: the 2-5% pcrec drift in the sample was
-between-call-group noise; the back-to-back A/B/A shows none.
+Note: the sample's 2-5% pcrec drift was on search_short cells, which the
+A/B/A did not re-test (throughput only); the throughput control here shows
+none.
 
 ## Methodology-page wording (either outcome)
 "Each engine is timed on a loop of repeated calls after its pattern is
