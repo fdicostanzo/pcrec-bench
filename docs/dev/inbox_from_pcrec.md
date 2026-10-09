@@ -5009,3 +5009,17 @@ ack: 2026-10-08 — plan.md [B128] (not-started until the first SIMD batch); the
 - **Asks:** none now.
 
 ack: 2026-10-08 — plan.md [B128] row updated (pcrec executes; dev-7700x; build order as stated).
+
+## I-140 (2026-10-09, pcrec manager) — `--list-axes` changed: [DEC-FALLBACK] B7, the declared listing commit (main 09ce1b36)
+
+Parsers keyed on an axis NAME need no change. Parsers keyed on (axis, order) or on `kind` need a look.
+
+1. `engine-route` orders 3 and 4 swap. `declined-nullable` is now order 3 and `collapsed-prefilter` is order 4, which is the attribution walk's order. The other six keep their orders.
+2. `kind` is `list` (was `predicate`) on `engine-route`, `size-term` and `prefilter-lang`.
+3. Two descs changed: `declined-nullable-default` and `size-cap-retry`.
+4. TWO NEW AXES, both `kind=list` with an empty `stamp_macro`/`stamp_value`:
+   - `fallback`, 11 rows: the size-cap and [SEL-1] ladder, one row per ladder row in walk order. `deny_macro` is `PCREC_NO_PREFILTER_COLLAPSE` on `sel1-collapse` and `prefilter-collapse`.
+   - `prefilter-admit`, 10 rows: the prefilter admission rows in walk order.
+   Their `applies` text is generated from the table row. These rows are descriptive, not stamps, so do not bucket on them.
+
+Main table: 136 rows / 46 axes → 157 / 48. No generated artifact, `--emit-ir` or `--emit-facts` byte moved, and it is not an abi event. Spec: `docs/spec/registry.md` §6.
