@@ -75,7 +75,8 @@ def main():
             self.te = dict(engine_name=name, engine_mode=mode, engine_version=ver)
             self.testee_id = tid
     ok("label JIT", F.label(T("libpcre2", "jit", "10.46", "x")) == "PCRE2 10.46 JIT")
-    ok("label pcrec", F.label(T("pcrec", "auto", "abc123", "x")) == "pcrec 0.2.0-beta+abc123")
+    F._PCREC_VERSION_CACHE["abc123"] = "9.9.9-test"  # the pin is fake; the real path reads lib/pcrec.h at the pin
+    ok("label pcrec", F.label(T("pcrec", "auto", "abc123", "x")) == "pcrec 9.9.9-test+abc123")
     ok("label utf8 suffix", F.label(T("re2", "default", "11.0.0", "re2_x_default-caps-simdna_utf8")).endswith("UTF-8"))
     try:
         F.label(T("newengine", "m", "1", "newengine_1_m"))

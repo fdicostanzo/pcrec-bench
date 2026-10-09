@@ -255,7 +255,27 @@ def excl_text(excl):
     return "; ".join(parts) if parts else "none"
 
 
-PCREC_BASE_VERSION = "0.2.0-beta"   # lib/pcrec.h PCREC_VERSION at the pin (checked by hand)
+PCREC_REPO = os.environ.get("PCREC_REPO", os.path.expanduser("~/pcrec"))
+_PCREC_VERSION_CACHE = {}
+
+
+def pcrec_version(pin):
+    """PCREC_VERSION from lib/pcrec.h AT the pin (read-only `git show`), so
+    the label never goes stale at a pcrec release. Fails loudly, never guesses."""
+    if pin not in _PCREC_VERSION_CACHE:
+        import subprocess
+        try:
+            src = subprocess.run(["git", "-C", PCREC_REPO, "show", f"{pin}:lib/pcrec.h"],
+                                 check=True, capture_output=True, text=True).stdout
+        except (OSError, subprocess.CalledProcessError) as e:
+            raise SystemExit(f"frontpage: cannot read PCREC_VERSION at pcrec {pin} "
+                             f"from {PCREC_REPO}: {e}")
+        m = re.search(r'#define\s+PCREC_VERSION\s+"([^"]+)"', src)
+        if not m:
+            raise SystemExit(f"frontpage: no PCREC_VERSION in lib/pcrec.h at {pin}")
+        _PCREC_VERSION_CACHE[pin] = m.group(1)
+    return _PCREC_VERSION_CACHE[pin]
+
 
 # (engine_name, engine_mode) -> (label template, kind, kind source). {v} = the
 # record's engine_version; a "_utf8" testee gets " UTF-8" appended. An unmapped
@@ -281,7 +301,7 @@ ENGINES = {
         "record automaton_class simd-multipattern; testees/vectorscan/CLAUDE.md"),
     ("vectorscan", "block-som"): ("Vectorscan {v} (SOM)", "automata (SIMD multi-pattern)",
         "record automaton_class simd-multipattern; testees/vectorscan/CLAUDE.md"),
-    ("pcrec", "auto"): ("pcrec " + PCREC_BASE_VERSION + "+{v}", "AOT",
+    ("pcrec", "auto"): ("pcrec {base}+{v}", "AOT",
         "record execution_model compiled-aot"),
 }
 
@@ -297,7 +317,10 @@ def label_entry(s):
 
 
 def label(s):
-    return (label_entry(s)[0].format(v=s.te["engine_version"]) +
+    tmpl = label_entry(s)[0]
+    v = s.te["engine_version"]
+    base = pcrec_version(v) if "{base}" in tmpl else ""
+    return (tmpl.format(v=v, base=base) +
             (" UTF-8" if s.testee_id.endswith("_utf8") else ""))
 
 
