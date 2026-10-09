@@ -278,12 +278,15 @@ class Adapter(_ad.Adapter):
         prepare() may run its own g++ step" route docs/dev/research/
         2026-09-12-b42-engine-landscape.md (2) recommends."""
         src = os.path.join(HERE, "driver.cc")
+        # [B133]: the timed loop is its own translation unit.
+        timed_src = os.path.join(HERE, "timed.cc")
+        deps = [src, timed_src, os.path.join(HERE, "timed.h")]
         out = os.path.join(workdir, "re2_driver")
         cxx = os.environ.get("CXX", "g++")
         cflags = _pkg_config("--cflags", "re2")
         libs = _pkg_config("--libs", "re2")
         argv = ([cxx, "-O2", "-std=c++17"] + cflags
-               + ["-o", out, src] + libs)
+               + ["-o", out, src, timed_src] + libs)
         # Registered even on the cached path (pcrecbench.driverrun.
         # build_driver's own discipline, quoted): the record must state
         # how the driver that produced its numbers was built, not only
@@ -294,7 +297,8 @@ class Adapter(_ad.Adapter):
             "compiler": _env.canon_compiler(_env.compiler_raw(cxx)),
         }
         if (os.path.exists(out)
-                and os.path.getmtime(out) >= os.path.getmtime(src)):
+                and os.path.getmtime(out) >= max(os.path.getmtime(d)
+                                                 for d in deps)):
             return out
         os.makedirs(workdir, exist_ok=True)
         proc = subprocess.run(argv, capture_output=True, text=True,
