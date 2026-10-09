@@ -10,7 +10,7 @@ W=/home/duxevents/pcrec-bench/worktrees
 OLDD=$W/b132shim-old/testees/pcrec; NEWD=$W/b132shim/testees/pcrec
 PCREC=$(/home/duxevents/pcrec-bench/testees/pcrec/pin.sh --path 255bcdd8)
 PAT=$W/b132shim/bench/capability/patterns
-OUT=${1:?outdir}; mkdir -p "$OUT"
+OUT=$(realpath -m "${1:?outdir}"); mkdir -p "$OUT"
 for cfg in auto:"" nocaps:"--no-captures"; do
  name=${cfg%%:*}; fl=${cfg#*:}
  for p in winpath-near-miss base10num-near-miss ipv4-near-miss uuid-near-miss trim-nested-star keyword-prefix-order wild-waf-crs-942360-concat-sqli; do
