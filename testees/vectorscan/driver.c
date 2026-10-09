@@ -613,8 +613,12 @@ int main(int argc, char **argv) {
                  * file header) -- every `iters` pass re-scans and
                  * re-accumulates the WHOLE subject, which is `--som`'s own
                  * real, documented cost. */
-                for (long it = -prime; it < iters; it++) {
-                    if (prime && it == 0) t0 = now();   /* [B129] --prime: the untimed call(s) above ran; the clock starts here */
+                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+                 * timed loop below is the original one, its bounds and body untouched. */
+                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                    volatile long n_it = pass ? iters : 1;
+                    if (pass && prime) t0 = now();
+                    for (long it = 0; it < n_it; it++) {
                     vs_reset(&ml);
                     hs_error_t rc = hs_scan(db, (const char *)s->buf,
                                             (unsigned int)s->len, 0, scratch,
@@ -629,10 +633,15 @@ int main(int argc, char **argv) {
                         break;
                     }
                     matched = ml.n > 0 ? 1 : 0;
+                    }
                 }
             } else {
-                for (long it = -prime; it < iters; it++) {
-                    if (prime && it == 0) t0 = now();   /* [B129] --prime: the untimed call(s) above ran; the clock starts here */
+                /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+                 * timed loop below is the original one, its bounds and body untouched. */
+                for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                    volatile long n_it = pass ? iters : 1;
+                    if (pass && prime) t0 = now();
+                    for (long it = 0; it < n_it; it++) {
                     match_ctx ctx = { 0 };
                     hs_error_t rc = hs_scan(db, (const char *)s->buf,
                                             (unsigned int)s->len, 0, scratch,
@@ -649,6 +658,7 @@ int main(int argc, char **argv) {
                         break;
                     }
                     matched = ctx.matched ? 1 : 0;
+                    }
                 }
             }
             elapsed = now() - t0;

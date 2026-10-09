@@ -254,11 +254,14 @@ fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: boo
     let mut caps: Vec<(i64, i64)> = Vec::new();
 
     let mut t0 = now();
-    // [B129] --prime: one untimed pass of the same body, the clock restarts after it.
-    for k in -(prime as i64)..iters.max(1) {
-        if prime && k == 0 {
+    // [B129] --prime: pass 0 (only with the flag) is ONE untimed call of the
+    // same body, then the clock restarts; the timed loop is the original one.
+    for pass in (if prime { 0 } else { 1 })..2 {
+        let n_it = if pass == 0 { 1 } else { iters.max(1) };
+        if pass == 1 && prime {
             t0 = now();
         }
+    for _ in 0..n_it {
         start = -1;
         end = -1;
         caps.clear();
@@ -312,6 +315,7 @@ fn run_subject(re: &Regex, buf: &[u8], iters: i64, find_all: bool, utf8_adv: boo
                 }
             }
         }
+    }
     }
     let elapsed = t0.elapsed().as_secs_f64();
 

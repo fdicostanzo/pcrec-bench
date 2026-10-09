@@ -311,8 +311,12 @@ int main(int argc, char **argv) {
         if (sigsetjmp(timeout_jmp, 1) == 0) {
             if (subject_timeout > 0) alarm((unsigned)subject_timeout);
             double t0 = now();
-            for (long it = -prime; it < iters; it++) {
-                if (prime && it == 0) t0 = now();   /* [B129] --prime: the untimed call(s) above ran; the clock starts here */
+            /* [B129] --prime: pass 0 (only with the flag) is the UNTIMED call; the
+             * timed loop below is the original one, its bounds and body untouched. */
+            for (int pass = prime ? 0 : 1; pass < 2; pass++) {
+                volatile long n_it = pass ? iters : 1;
+                if (pass && prime) t0 = now();
+                for (long it = 0; it < n_it; it++) {
                 first_s = first_e = -1;
                 nsub_out = 0;
                 if (find_all) {
@@ -356,6 +360,7 @@ int main(int argc, char **argv) {
                         first_e = first_s + (long)submatch[0].size();
                         nsub_out = nsub;
                     }
+                }
                 }
             }
             elapsed = now() - t0;
