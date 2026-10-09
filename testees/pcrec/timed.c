@@ -40,8 +40,16 @@ static inline size_t utf8_next_start(const unsigned char *b, size_t n, size_t po
     return p;
 }
 
-#define do_search(s, n, pos, caps)     (in->use_buffers         ? in->search_in(s, n, pos, caps, in->buf_frames, in->buf_nframes,                         in->buf_trail, in->buf_ntrail)         : in->search(s, n, pos, caps))
-#define do_match_caps(s, n, pos, caps)     (in->use_buffers         ? in->match_caps_in(s, n, pos, caps, in->buf_frames, in->buf_nframes,                             in->buf_trail, in->buf_ntrail)         : in->match_caps(s, n, pos, caps))
+#define do_search(s, n, pos, caps) \
+    (in->use_buffers \
+        ? in->search_in(s, n, pos, caps, in->buf_frames, in->buf_nframes, \
+                        in->buf_trail, in->buf_ntrail) \
+        : in->search(s, n, pos, caps))
+#define do_match_caps(s, n, pos, caps) \
+    (in->use_buffers \
+        ? in->match_caps_in(s, n, pos, caps, in->buf_frames, in->buf_nframes, \
+                            in->buf_trail, in->buf_ntrail) \
+        : in->match_caps(s, n, pos, caps))
 
 __attribute__((noinline, aligned(64)))
 double timed_run(const struct timed_in *in, struct timed_out *out) {
