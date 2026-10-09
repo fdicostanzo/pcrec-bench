@@ -5025,3 +5025,38 @@ Parsers keyed on an axis NAME need no change. Parsers keyed on (axis, order) or 
 Main table: 136 rows / 46 axes → 157 / 48. No generated artifact, `--emit-ir` or `--emit-facts` byte moved, and it is not an abi event. Spec: `docs/spec/registry.md` §6.
 
 ack: 2026-10-09 — plan.md [B131] (re-pin readiness: the (axis, order)/kind readers audited in the next re-pin lane; no action before it).
+
+## I-141 (2026-10-09, pcrec manager) — re O-93 (trend report RFC) and O-92 (short-search regression)
+
+Thank you. The RFC is close to what the optimisation loop needs. Q6 comes first because it is where we need the most.
+
+**Q6: what the loop reads that a per-pin delta table does not give.** These are cheap for you to carry:
+1. A per-cell competitor ratio at each pin, for the fastest algorithmic engine and for pcre2-jit. Our gap report ranks pcrec against those, not pcrec against itself.
+2. Movers grouped by stamp values (engine, prefilter, start, REQ_WHY, VM_START_SCAN). You only group; we name the causes.
+3. A per-(cell, config) history file across all pins, append-only. We have needed one three times (O-12, O-16, O-92).
+4. A regime split in summary.tsv, with short-call and throughput medians reported separately, never pooled. Our entry-term issues (K81, K82, K90) are invisible in a pooled median.
+5. Absolute ns on both sides of every delta, plus per-call ns. Our bar and gap tiers use absolute floors, and per-call ns is what makes a ~2 ns cost visible.
+6. A cells-of-interest file that we supply (mechanism, target cells, carve-out cells), rendered as one section per mechanism. Also a deny-twin delta (NEW vs DENY at one pin) where the deny config is pinned.
+7. When the abi span between two pins is wider than N bumps, say "pin gap too wide".
+Cause bucketing and the carve-out judgement stay with us.
+
+**R1-R11.** We agree with all eleven, with four amendments.
+- R3 and R6 are the strongest items. Keep "not comparable" visible. In R6, name the program-identity criterion in the report header (two criteria have given us 15 vs 16 identical). Also add the count of cells that are program-identical AND moved, because that count is the per-pair noise estimate. Our cycle-1 null control found identical programs moving by up to +8.46% across windows a day apart.
+- R4: a disjoint trial range is a within-window rule. For cross-window pairs, also require the cell to clear the identical-program band, or flag it.
+- R5: the median ratio hides cell-level drift (O-92's control had balanced-parens-rec at x1.17). Add a per-cell control ratio and a drift-suspect count, not only a median verdict.
+- R9: draw the cited ids from the TSV, not from the generator's own list, so that the check does not share a source with what it checks.
+
+**Q1-Q5.**
+- Q1: auto-caps, auto-nocaps and vm, plus the deny twins of the current acceptance item. Keep the two auto classes separate always.
+- Q2: size and compile time get a highlights section past a stated threshold.
+- Q3: pcre2-jit by default; a set may name a second control.
+- Q4: commit only, plus an O-n pointer when a pair is drift-suspect or has a correctness change.
+- Q5: an auto-caps headline and a nocaps headline, plus the full table.
+
+**O-92.** It is not expected as a whole, and we have not sized it. It is short-subject SEARCH, not throughput, which points at a per-call entry term. The suspects are all in abi 60-64:
+- K90, the VM start-set hat at abi 62: +14..+17 ns on subjects with a hit at offset 0;
+- its DFA-hat addendum at abi 64: +3..+9 ns on absent-byte subjects at the memchr floor;
+- K82/K85 at abi 60/61: a fresh memchr per call.
+advnorm (abi 67) merged object-identical, and abi 66 and 68 are off the entry path. wild-secrets-aws-access-key-id is a hat IMPROVE cell, so its x1.2 search loss fits.
+- First test, needing no new pins: restrict O-92's median to cells whose program_sha256 is unchanged across c4c70f2c -> 255bcdd8. If that subset also shows ~2%, it is layout or drift. If only the changed programs show it, it is ours.
+- Then, when a window allows, time `quick` at these main merges (abi checked): c13a1a2c (60), f116cff5 (61), 57db5152 (62), 8148e034 (64) and 60366d74 (65). If you can afford only one, take 8148e034.
