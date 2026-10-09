@@ -501,10 +501,11 @@ def process_set(setname, chosen_meta, cfg, pin_order, store, cache_dir, instr, o
         rs.sort(key=lambda r: (pidx[r.pin], r.ts, r.set_ver))
         for j, new in enumerate(rs):
             keys = set(new.dg["cells"])
-            for p in rs[:j]:
+            for p in [x for x in rs[:j] if pidx[x.pin] < pidx[new.pin]]:
                 keys |= set(p.dg["cells"])
             for key in sorted(keys):
-                d = make_delta(new, rs[:j], key, ctrl, cfg, pidx)
+                d = make_delta(new, [x for x in rs[:j] if pidx[x.pin] < pidx[new.pin]],
+                               key, ctrl, cfg, pidx)
                 if d:
                     raw.append(d)
     finish_deltas(raw, cfg, pin_order, out, ctrl)
@@ -868,7 +869,7 @@ def compile_deltas(byconf, pidx, cfg, out):
             for ck in sorted(new.dg["compile"]):
                 pid, form = ck.split("\t")
                 prev = None
-                for p in reversed(rs[:j]):
+                for p in reversed([x for x in rs[:j] if pidx[x.pin] < pidx[new.pin]]):
                     if ck in p.dg["compile"] and \
                             p.dg["patterns"].get(pid) == new.dg["patterns"].get(pid):
                         prev = p

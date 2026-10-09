@@ -198,6 +198,7 @@ def main():
         ok("control ratio 1.0 on p1, 1.5 on p2 (cell drift flagged)",
            g("p1")["control_ratio"] == "1.0000" and g("p2")["control_ratio"] == "1.5000"
            and g("p2")["cell_drift_suspect"] == "1" and g("p1")["cell_drift_suspect"] == "0", g("p2"))
+        ok("R2: no delta pairs a pin with itself", all(r["pin"] != r["prev_pin"] for r in dl.values()))
         ok("previous = newest earlier pin (C's prev is B)", g("p1", "cccc333")["prev_pin"] == "bbbb222")
         sm = [r for r in rows_of(files, "summary.tsv")
               if r["pin"] == "bbbb222" and r["config"] == "auto-caps-simdna"]

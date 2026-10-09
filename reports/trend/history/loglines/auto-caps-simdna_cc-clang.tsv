@@ -1,0 +1,35 @@
+# trend_report: history loglines auto-caps-simdna_cc-clang
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+7	1989c62	loglines@0.1	bignum	large-subject-throughput	plain	judged	13648591.5	13639436.0	13677187.8	1137382.63	14648		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:bignum:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	bignum	short-subject-search	plain	judged	465368.7	465115.5	466453.4	4155.08	14648		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:bignum:short-subject-search:plain			new
+7	1989c62	loglines@0.1	floor	large-subject-throughput	plain	judged	2832993.0	2832296.3	2838615.3	236082.75	12968		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:floor:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	floor	short-subject-search	plain	judged	1942.1	1939.7	1947.2	17.34	12968		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:floor:short-subject-search:plain			new
+7	1989c62	loglines@0.1	hex32-id	large-subject-throughput	plain	judged	13677426.1	13655131.9	13698253.5	1139785.51	14648		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:hex32-id:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	hex32-id	short-subject-search	plain	judged	472358.1	472154.3	472944.7	4217.48	14648		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:hex32-id:short-subject-search:plain			new
+7	1989c62	loglines@0.1	http-5xx	large-subject-throughput	plain	judged	268445.5	267742.6	268574.9	22370.46	15556		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:http-5xx:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	http-5xx	short-subject-search	plain	judged	7584.3	7517.4	7985.6	67.72	15556		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:http-5xx:short-subject-search:plain			new
+7	1989c62	loglines@0.1	ipv4	large-subject-throughput	plain	judged	7559386.9	7540788.4	7575921.8	629948.91	13000		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:ipv4:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	ipv4	short-subject-search	plain	judged	240913.0	240774.5	241562.4	2151.01	13000		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:ipv4:short-subject-search:plain			new
+7	1989c62	loglines@0.1	ipv6	large-subject-throughput	plain	judged	10717518.1	10663326.6	10742819.0	893126.51	13679		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:ipv6:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	ipv6	short-subject-search	plain	judged	292436.7	292186.1	292748.3	2611.04	13679		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:ipv6:short-subject-search:plain			new
+7	1989c62	loglines@0.1	iso-ts	large-subject-throughput	plain	judged	1111070.5	1109976.0	1112098.0	92589.20	19564		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:iso-ts:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	iso-ts	short-subject-search	plain	judged	20833.6	20803.9	20978.2	186.01	19564		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:iso-ts:short-subject-search:plain			new
+7	1989c62	loglines@0.1	kv-quoted	large-subject-throughput	plain	judged	16085845.7	16079738.0	16116844.5	1340487.15	14277		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:kv-quoted:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	kv-quoted	short-subject-search	plain	judged	590389.6	589988.5	595118.6	5271.34	14277		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:kv-quoted:short-subject-search:plain			new
+7	1989c62	loglines@0.1	level-context	large-subject-throughput	plain	judged	15712593.3	15690848.0	15733652.5	1309382.77	34217		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:level-context:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	level-context	short-subject-search	plain	judged	566479.5	566153.6	569039.8	5057.85	34217		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:level-context:short-subject-search:plain			new
+7	1989c62	loglines@0.1	stack-frame	large-subject-throughput	plain	judged	1781711.0	1778081.4	1799051.0	148475.92	14657		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:stack-frame:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	stack-frame	short-subject-search	plain	judged	30421.9	30375.4	30440.8	271.62	14657		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:stack-frame:short-subject-search:plain			new
+7	1989c62	loglines@0.1	uuid	large-subject-throughput	plain	judged	1100272.2	1099102.2	1109585.5	91689.35	15639		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:uuid:large-subject-throughput:plain			new
+7	1989c62	loglines@0.1	uuid	short-subject-search	plain	judged	21105.2	21090.7	21142.4	188.44	15639		D:loglines@0.1:auto-caps-simdna_cc-clang:1989c62:uuid:short-subject-search:plain			new

@@ -190,3 +190,68 @@ bucketing and the carve-out judgement):**
 The TSV column lists, the chart forms and the HTML layout come at build time.
 The interpretation's model and prompt get their own short design note before
 they are built.
+
+## 7. Implementation note (2026-10-09, lane b130trend, [B130])
+
+Built: `tools/trend.py` (generator), `tools/trend_html.py` (human form),
+`tools/trend_cite_check.py` (R9+), `reports/trend/config.toml`,
+`make trend` / `trend-check` / `check-trend` (in `make check`),
+`tools/tests/test_trend.py` (synthetic store, hand-computed). Outputs and
+roles: `reports/trend/CLAUDE.md`. Deviations and decisions:
+
+- **Header.** "Generation time" is replaced by `as_of` (newest record
+  timestamp used) so regeneration is byte-identical; the index sha, config
+  sha and pin-order sha are in every header.
+- **Delta definition.** ratio = new/old of the set-grain median over the
+  subjects present in both records with equal subject sha (R3), pattern sha
+  equal; "previous" = newest record at a strictly EARLIER pin in
+  `[[pin_order]]` (R2) for the same config. Cells whose pattern changed read
+  `not-comparable`; first appearances `new`; a state change (gave-up ->
+  judged, judged -> wrong, ...) is the `transition` column.
+- **Noise (R4/R4+).** `within-noise` when trial [min, max] ranges overlap.
+  Disjoint ranges must also exceed the pair+regime band: q95 of |ratio-1|
+  over program-identical cells when there are >= 10, else the declared
+  fallback 0.0846 (pcrec's cycle-1 null control); else `within-identical-band`.
+  A band measured on a pair whose instrument changed inherits the instrument
+  bias (it is the bias estimate); the flag says so.
+- **Identity (R6+).** `program_sha256` equal -> `yes`; unequal across abi 67
+  -> `unknown-abi67`; unequal otherwise -> `no`; missing -> `unknown`.
+  Summary carries `n_identical` and `n_identical_moved` (the per-pair noise
+  estimate). Highlights list only non-`yes` movers.
+- **Drift (R5/R5+).** Control = the pcre2-jit record nearest in time in each
+  side's set@version (config `control_globs`); per-cell control ratio on the
+  subjects common to all four records; pair `drift_suspect` when the median
+  leaves 0.97-1.03; `cell_drift_suspect` outside 0.90-1.10; both counted.
+  Same control record on both sides reads `control-same-record` (no ratio).
+- **R12.** `jit_ratio` and `auto_best_*` in `cells.tsv` (pcrec / competitor on
+  common subjects; best = largest ratio among `competitor_globs` present in
+  the set@version).
+- **R13/R15/R16.** `movers_by_stamp.tsv` (engine, dfa_prefilter, dfa_start,
+  req_why, vm_start_scan; prev > new); every aggregate is per regime; every
+  delta carries ns both sides and per-call ns.
+- **R17.** `cells_of_interest.tsv` (empty template) -> `interest.tsv` and one
+  HTML section per mechanism; `deny_twins.tsv` for every `_no*` config at a
+  pin where its base exists (window gap in hours, `cross_window` beyond 24 h).
+- **R18: N = 8 abi bumps** (`wide_gap_abi`): `wide-pin-gap` above it. 8 is one
+  below the nine-step [OPTLOOP] round 1 (50 -> 59), so that pin step flags and
+  routine re-pins do not.
+- **R19.** `instrument` per record = `shim.c`/`driver.c`/`driver.cc`/
+  `src/main.rs` sha256 (12 hex) at `run.harness_commit` via `git show`;
+  `instrument_changed` when prev and new differ. It fires on most pcrec
+  pairs because the adapter shim grows at nearly every re-pin: that is the
+  rule working, not noise to suppress. Verified on capability c4c70f2c ->
+  255bcdd8: flagged `instrument-changed` and `wide-pin-gap` (span 9).
+- **Q2** thresholds: emit_code_bytes +-10%, compile total +-25% with disjoint
+  ranges (`compile_deltas.tsv`, HTML section). **Q5**: headline tables for
+  `auto-caps-simdna` and `auto-nocaps-simdna`, plus the all-config table.
+- **Charts:** a dot strip of log ratio per set-regime (circle faster,
+  triangle slower, hollow noise; color never alone) and a chained-geomean
+  timeline per (config, set) with direct labels. Inline SVG, light/dark.
+- **Not built / owed:** `pin_order` notes between pins (R6: only the abi span
+  and the pin list are carried; `[[pin_order]]` has no per-pin note field);
+  Q4's O-n pointer is the manager's act; the interpretation text and its
+  skill (trend_interpretation_v0.md).
+- **Regeneration at window close** (manager's routine, after the index
+  update and the [B41] sidecars): `make trend` detached with a DONE marker,
+  then `make trend-check`, then write `interpretation/<pin>.md` for the new
+  pin and `make check-trend`.

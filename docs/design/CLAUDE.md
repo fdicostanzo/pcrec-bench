@@ -735,6 +735,12 @@ docs/dev/'s append-only records.
   interpretation citing row ids). R1-R11 + six open questions. Nothing
   built.
 
+- `trend_interpretation_v0.md` — **[B130] the AI interpretation's design (v0,
+  2026-10-09)**: who writes it (a Claude session via a skill, OWED), the
+  grounding rules (every block cites `[#row_id]` or says `NOT KNOWN:`), the
+  independent citation check (`tools/trend_cite_check.py`), the sidecar
+  template. `pcrec_trend_report_v0.md` §7 carries the implementation note.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in

@@ -1,0 +1,55 @@
+# trend_report: history litrun vm-caps-simdna_noreqbyte-noreqrun
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+21	a32bc86e	litrun@0.1	alt-foo-tails	large-subject-throughput	plain	judged	5037679.1	5036931.9	5041986.7	186580.71	20694	f3e57fb4c41521ab	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:alt-foo-tails:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	alt-foo-tails	match-compliance	whole-subject	judged	259.0	258.2	333.3	9.59	20917	4ee87ffad93f3bdc	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:alt-foo-tails:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	alt-foo-tails	short-subject-search	plain	judged	2170.8	2168.7	2181.0	80.40	20694	f3e57fb4c41521ab	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:alt-foo-tails:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	ctrl-abc-dollar	large-subject-throughput	plain	judged	286.5	274.0	287.4	10.61	19654	d1eeca86fb5b3c97	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:ctrl-abc-dollar:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	ctrl-abc-dollar	match-compliance	whole-subject	judged	168.7	168.6	169.7	6.25	19766	4bc0bc75519c5a42	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:ctrl-abc-dollar:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	ctrl-abc-dollar	short-subject-search	plain	judged	247.0	246.2	248.5	9.15	19654	d1eeca86fb5b3c97	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:ctrl-abc-dollar:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	floor	large-subject-throughput	plain	judged	1862175.4	1851086.9	1935963.1	68969.46	19321	c74044afdd411c93	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:floor:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	floor	match-compliance	whole-subject	judged	159.5	159.4	159.6	5.91	19544	772d12b89a8bc123	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:floor:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	floor	short-subject-search	plain	judged	580.4	579.9	581.3	21.50	19321	c74044afdd411c93	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:floor:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l10	large-subject-throughput	plain	judged	1447345.6	1418210.5	1481748.7	53605.39	19381	5dca340a2939f245	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l10:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l10	match-compliance	whole-subject	judged	172.9	172.7	173.5	6.40	19608	ddfe51aebd4ab261	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l10:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l10	short-subject-search	plain	judged	417.7	411.7	458.4	15.47	19381	5dca340a2939f245	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l10:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l16	large-subject-throughput	plain	judged	1456463.5	1456027.5	1457062.6	53943.09	19393	2f8a83edabea8ff6	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l16:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l16	match-compliance	whole-subject	judged	162.5	162.4	162.9	6.02	19620	bf15c77a2327dd4f	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l16:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l16	short-subject-search	plain	judged	394.7	391.0	403.3	14.62	19393	2f8a83edabea8ff6	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l16:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l2	large-subject-throughput	plain	judged	2143703.2	2111869.2	2239407.3	79396.41	19361	edc7046871fb9943	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l2:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l2	match-compliance	whole-subject	judged	174.3	174.0	174.3	6.45	19584	24f46e5e146d6202	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l2:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l2	short-subject-search	plain	judged	466.5	466.0	468.6	17.28	19361	edc7046871fb9943	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l2:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l3	large-subject-throughput	plain	judged	1538755.0	1528768.2	1552297.1	56990.93	19363	e4633c148250d88b	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l3:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l3	match-compliance	whole-subject	judged	183.1	172.0	191.2	6.78	19586	646bcab6fae31c90	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l3:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l3	short-subject-search	plain	judged	375.1	374.8	378.0	13.89	19363	e4633c148250d88b	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l3:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l31	large-subject-throughput	plain	judged	1544474.3	1542174.9	1548043.1	57202.75	19423	00e357d342d247cb	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l31:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l31	match-compliance	whole-subject	judged	177.4	177.0	178.3	6.57	19650	ee3e969f08dd83e8	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l31:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l31	short-subject-search	plain	judged	423.8	421.9	426.4	15.70	19423	00e357d342d247cb	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l31:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l4	large-subject-throughput	plain	judged	1738055.7	1732570.1	1770156.7	64372.43	19365	c30ac0e003c5242b	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l4:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l4	match-compliance	whole-subject	judged	163.2	163.0	165.0	6.04	19589	41c2c799311b69d6	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l4:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l4	short-subject-search	plain	judged	449.0	443.6	450.2	16.63	19365	c30ac0e003c5242b	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l4:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l40	large-subject-throughput	plain	judged	1751740.4	1749953.0	1753062.2	64879.27	19441	0e6768dee9097393	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l40:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l40	match-compliance	whole-subject	judged	168.6	168.6	169.0	6.25	19668	156b78c8c82d41d3	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l40:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l40	short-subject-search	plain	judged	580.0	547.5	581.6	21.48	19441	0e6768dee9097393	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l40:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l7	large-subject-throughput	plain	judged	1127774.7	1124082.0	1134538.7	41769.43	19371	ea5555c355de2aac	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l7:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l7	match-compliance	whole-subject	judged	167.3	165.7	169.7	6.19	19595	59cc0b6e15acce61	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l7:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l7	short-subject-search	plain	judged	365.1	362.0	368.9	13.52	19371	ea5555c355de2aac	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l7:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	lit-l8	large-subject-throughput	plain	judged	1580357.9	1567479.7	1589018.2	58531.78	19373	a290b10309259005	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l8:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	lit-l8	match-compliance	whole-subject	judged	163.3	163.3	163.3	6.05	19597	ec09ecc862a38bc7	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l8:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	lit-l8	short-subject-search	plain	judged	477.6	474.1	484.0	17.69	19373	a290b10309259005	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:lit-l8:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	wild-secrets-aws-access-key-id	large-subject-throughput	plain	judged	7759758.4	7742418.9	7774869.4	287398.46	24551	4081150bfb8cc34f	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-aws-access-key-id:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	wild-secrets-aws-access-key-id	match-compliance	whole-subject	judged	327.9	327.7	328.7	12.15	24780	2b63d871d9528a3b	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-aws-access-key-id:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	wild-secrets-aws-access-key-id	short-subject-search	plain	judged	2700.7	2688.8	2705.0	100.02	24551	4081150bfb8cc34f	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-aws-access-key-id:short-subject-search:plain			new
+21	a32bc86e	litrun@0.1	wild-secrets-github-pat	large-subject-throughput	plain	judged	3158776.2	3153758.6	3160452.5	116991.71	21239	cd8e4c29ea8e9401	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-github-pat:large-subject-throughput:plain			new
+21	a32bc86e	litrun@0.1	wild-secrets-github-pat	match-compliance	whole-subject	judged	329.5	326.1	332.9	12.21	21466	42d716e41bed7e6d	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-github-pat:match-compliance:whole-subject			new
+21	a32bc86e	litrun@0.1	wild-secrets-github-pat	short-subject-search	plain	judged	1187.7	1187.2	1194.0	43.99	21239	cd8e4c29ea8e9401	D:litrun@0.1:vm-caps-simdna_noreqbyte-noreqrun:a32bc86e:wild-secrets-github-pat:short-subject-search:plain			new

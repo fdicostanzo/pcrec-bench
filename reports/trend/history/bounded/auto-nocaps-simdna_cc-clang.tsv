@@ -1,0 +1,139 @@
+# trend_report: history bounded auto-nocaps-simdna_cc-clang
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+7	1989c62	bounded@0.3	cls-atleast-4096	large-subject-throughput	plain	judged	102080.8	101934.7	102189.1	20416.16	14030		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-atleast-4096:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-atleast-4096	match-compliance	whole-subject	judged	8139.1	8127.5	8146.9	166.10	13764		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-atleast-4096:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-atleast-4096	short-subject-search	plain	judged	2797.2	2697.9	2886.4	60.81	14030		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-atleast-4096:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-lazy-16384	large-subject-throughput	plain	judged	332292.2	331958.6	333935.1	66458.44	13367		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-lazy-16384:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-lazy-16384	match-compliance	whole-subject	judged	8806.6	8764.3	8903.8	179.73	18720		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-lazy-16384:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-lazy-16384	short-subject-search	plain	judged	421.2	421.1	421.5	9.16	13367		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-lazy-16384:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-1024	large-subject-throughput	plain	judged	171489.4	171441.5	172038.4	34297.87	14684		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-1024:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-1024	match-compliance	whole-subject	judged	4487.4	4485.7	4489.8	91.58	14815		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-1024:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-1024	short-subject-search	plain	judged	1553.6	1547.2	1557.0	33.77	14684		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-1024:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-128	large-subject-throughput	plain	judged	205627.1	205215.8	206048.1	41125.43	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-128:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-128	match-compliance	whole-subject	judged	1748.3	1747.9	1751.7	35.68	14814		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-128:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-128	short-subject-search	plain	judged	1354.2	1333.1	1357.3	29.44	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-128:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-16	large-subject-throughput	plain	judged	208237.8	207395.0	209131.1	41647.57	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-16	match-compliance	whole-subject	judged	439.2	438.7	440.1	8.96	14813		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-16	short-subject-search	plain	judged	613.3	612.3	615.1	13.33	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-16384	large-subject-throughput	plain	judged	169016.1	168825.7	169398.5	33803.21	13214		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16384:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-16384	match-compliance	whole-subject	judged	2023.3	2012.4	2074.8	41.29	18094		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16384:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-16384	short-subject-search	plain	judged	1553.3	1548.4	1556.4	33.77	13214		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-16384:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-2048	large-subject-throughput	plain	judged	169933.2	169673.6	170259.7	33986.65	14684		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-2048:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-2048	match-compliance	whole-subject	judged	12978.9	12968.1	13008.3	264.87	13349		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-2048:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-2048	short-subject-search	plain	judged	1554.2	1550.2	1559.0	33.79	14684		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-2048:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-256	large-subject-throughput	plain	judged	179826.1	179312.6	181453.0	35965.22	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-256:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-256	match-compliance	whole-subject	judged	2668.9	2666.9	2670.9	54.47	14814		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-256:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-256	short-subject-search	plain	judged	1552.6	1549.9	1556.9	33.75	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-256:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-32	large-subject-throughput	plain	judged	218777.9	218533.7	220668.3	43755.58	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-32	match-compliance	whole-subject	judged	684.6	683.8	690.0	13.97	14813		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-32	short-subject-search	plain	judged	835.3	832.2	836.5	18.16	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-32768	large-subject-throughput	plain	judged	147046.6	146968.4	147278.5	29409.31	17889		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32768:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-32768	match-compliance	whole-subject	judged	2023.3	2001.3	2082.8	41.29	18094		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32768:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-32768	short-subject-search	plain	judged	1114.0	1105.6	1117.4	24.22	17889		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-32768:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-4	large-subject-throughput	plain	judged	195001.4	194487.1	195410.6	39000.29	14663		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-4	match-compliance	whole-subject	judged	262.9	262.8	263.4	5.37	14812		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-4	short-subject-search	plain	judged	417.7	415.0	431.6	9.08	14663		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-4096	large-subject-throughput	plain	judged	169330.4	169242.7	169814.1	33866.09	13209		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4096:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-4096	match-compliance	whole-subject	judged	12970.6	12953.4	12973.6	264.71	13349		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4096:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-4096	short-subject-search	plain	judged	1554.5	1550.2	1560.9	33.79	13209		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-4096:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-512	large-subject-throughput	plain	judged	174623.6	173767.2	176030.0	34924.72	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-512:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-512	match-compliance	whole-subject	judged	3572.2	3571.5	3580.3	72.90	14814		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-512:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-512	short-subject-search	plain	judged	1553.2	1548.9	1559.4	33.76	14677		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-512:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-64	large-subject-throughput	plain	judged	220283.0	220049.2	220810.6	44056.61	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-64:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-64	match-compliance	whole-subject	judged	1179.9	1179.3	1253.3	24.08	14813		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-64:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-64	short-subject-search	plain	judged	1071.3	1067.7	1072.3	23.29	14670		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-64:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-8	large-subject-throughput	plain	judged	155252.5	154765.2	155791.6	31050.49	14663		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-8	match-compliance	whole-subject	judged	322.6	322.0	322.7	6.58	14812		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-8	short-subject-search	plain	judged	451.6	451.4	452.1	9.82	14663		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8:short-subject-search:plain			new
+7	1989c62	bounded@0.3	cls-upto-8192	large-subject-throughput	plain	judged	169150.9	169009.8	169500.9	33830.19	13209		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8192:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	cls-upto-8192	match-compliance	whole-subject	judged	12982.7	12967.4	12995.6	264.95	13349		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8192:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	cls-upto-8192	short-subject-search	plain	judged	1556.0	1554.1	1556.4	33.83	13209		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:cls-upto-8192:short-subject-search:plain			new
+7	1989c62	bounded@0.3	csv5	large-subject-throughput	plain	judged	1669.2	1668.9	1669.6	333.84	14998		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:csv5:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	csv5	match-compliance	whole-subject	judged	1774.8	1773.2	1778.0	36.22	15729		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:csv5:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	csv5	short-subject-search	plain	judged	999.8	995.7	1001.8	21.73	14998		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:csv5:short-subject-search:plain			new
+7	1989c62	bounded@0.3	ctx-greedy-256	large-subject-throughput	plain	judged	222209.4	222105.4	222301.6	44441.87	32051		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-greedy-256:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	ctx-greedy-256	match-compliance	whole-subject	judged	938.2	937.2	940.3	19.15	33472		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-greedy-256:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	ctx-greedy-256	short-subject-search	plain	judged	9539.3	9527.1	9625.0	207.38	32051		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-greedy-256:short-subject-search:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-1024	large-subject-throughput	plain	judged	225169.1	223908.1	225721.6	45033.82	31674		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-1024:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-1024	match-compliance	whole-subject	judged	2433.8	2430.3	2435.5	49.67	33095		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-1024:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	ctx-lazy-1024	short-subject-search	plain	judged	12620.5	12614.7	12645.3	274.36	31674		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-1024:short-subject-search:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-256	large-subject-throughput	plain	judged	225301.3	224709.1	225705.0	45060.27	31671		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-256:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-256	match-compliance	whole-subject	judged	2436.2	2432.4	2452.4	49.72	33092		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-256:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	ctx-lazy-256	short-subject-search	plain	judged	12598.3	12578.2	12608.1	273.88	31671		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-256:short-subject-search:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-64	large-subject-throughput	plain	judged	224886.4	224725.5	225592.5	44977.28	31669		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-64:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	ctx-lazy-64	match-compliance	whole-subject	judged	2056.1	2055.5	2057.8	41.96	33090		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-64:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	ctx-lazy-64	short-subject-search	plain	judged	12423.3	12384.8	12453.7	270.07	31669		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:ctx-lazy-64:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-exact-16	large-subject-throughput	plain	judged	86599.7	86459.3	87506.7	17319.95	14581		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-16:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-exact-16	match-compliance	whole-subject	judged	464.2	464.1	465.9	9.47	14809		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-16:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-exact-16	short-subject-search	plain	judged	2445.9	2398.1	2486.4	53.17	14581		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-16:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-exact-2	large-subject-throughput	plain	judged	123598.4	123530.1	124083.1	24719.68	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-2:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-exact-2	match-compliance	whole-subject	judged	260.4	259.6	263.5	5.31	14808		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-2:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-exact-2	short-subject-search	plain	judged	1136.2	1133.9	1138.3	24.70	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-2:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-exact-32	large-subject-throughput	plain	judged	88580.8	88412.9	89582.5	17716.16	14581		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-32:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-exact-32	match-compliance	whole-subject	judged	637.7	636.4	638.6	13.01	14809		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-32:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-exact-32	short-subject-search	plain	judged	2452.7	2442.3	2539.2	53.32	14581		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-32:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-exact-8	large-subject-throughput	plain	judged	82040.1	81964.1	82204.5	16408.03	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-8:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-exact-8	match-compliance	whole-subject	judged	350.2	349.6	350.6	7.15	14808		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-8:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-exact-8	short-subject-search	plain	judged	2069.0	2057.3	2075.2	44.98	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-exact-8:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-upto-16	large-subject-throughput	plain	judged	89868.5	89622.3	91796.2	17973.71	14929		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-16:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-upto-16	match-compliance	whole-subject	judged	498.6	498.2	499.0	10.18	15532		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-16:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-upto-16	short-subject-search	plain	judged	1479.3	1473.3	1495.3	32.16	14929		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-16:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-upto-2	large-subject-throughput	plain	judged	147662.9	147580.6	148391.7	29532.59	12897		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-2:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-upto-2	match-compliance	whole-subject	judged	264.7	262.7	502.6	5.40	14810		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-2:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-upto-2	short-subject-search	plain	judged	921.4	912.9	925.2	20.03	12897		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-2:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-upto-32	large-subject-throughput	plain	judged	85577.3	85437.2	86011.0	17115.46	14929		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-32:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-upto-32	match-compliance	whole-subject	judged	691.7	691.2	716.0	14.12	15532		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-32:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-upto-32	short-subject-search	plain	judged	1621.0	1611.0	1663.2	35.24	14929		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-32:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-upto-4	large-subject-throughput	plain	judged	104038.4	104034.8	104571.0	20807.68	14922		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-4:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-upto-4	match-compliance	whole-subject	judged	296.5	295.7	298.0	6.05	15529		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-4:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-upto-4	short-subject-search	plain	judged	1259.9	1240.8	1277.3	27.39	14922		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-4:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dig-upto-8	large-subject-throughput	plain	judged	64320.5	64164.1	64348.4	12864.09	14922		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-8:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dig-upto-8	match-compliance	whole-subject	judged	373.1	370.9	374.8	7.61	15529		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-8:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dig-upto-8	short-subject-search	plain	judged	1091.9	1070.3	1093.2	23.74	14922		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dig-upto-8:short-subject-search:plain			new
+7	1989c62	bounded@0.3	dotted4	large-subject-throughput	plain	judged	87393.0	87339.7	87496.5	17478.60	14948		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dotted4:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	dotted4	match-compliance	whole-subject	judged	312.4	311.8	312.6	6.38	15550		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dotted4:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	dotted4	short-subject-search	plain	judged	4043.8	4017.8	4046.8	87.91	14948		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:dotted4:short-subject-search:plain			new
+7	1989c62	bounded@0.3	floor	large-subject-throughput	plain	judged	1670.9	1667.4	1672.6	334.19	12968		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:floor:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	floor	match-compliance	whole-subject	judged	217.2	217.2	217.4	4.43	14985		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:floor:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	floor	short-subject-search	plain	judged	441.1	440.1	442.7	9.59	12968		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:floor:short-subject-search:plain			new
+7	1989c62	bounded@0.3	grp-upto-1024	large-subject-throughput	plain	judged	171654.4	171387.6	174826.9	34330.88	14691		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:grp-upto-1024:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	grp-upto-1024	match-compliance	whole-subject	judged	4487.4	4481.8	4494.9	91.58	14822		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:grp-upto-1024:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	grp-upto-1024	short-subject-search	plain	judged	1557.6	1554.4	1576.7	33.86	14691		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:grp-upto-1024:short-subject-search:plain			new
+7	1989c62	bounded@0.3	hex32	large-subject-throughput	plain	judged	255520.7	253121.9	255961.7	51104.13	14536		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:hex32:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	hex32	match-compliance	whole-subject	judged	732.2	731.8	733.2	14.94	14814		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:hex32:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	hex32	short-subject-search	plain	judged	2563.2	2511.4	2595.4	55.72	14536		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:hex32:short-subject-search:plain			new
+7	1989c62	bounded@0.3	line-80	large-subject-throughput	plain	judged	88569.5	88499.2	88810.1	17713.90	15636		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:line-80:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	line-80	match-compliance	whole-subject	judged	5787.9	5783.6	5804.7	118.12	15707		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:line-80:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	line-80	short-subject-search	plain	judged	3428.7	3425.0	3436.7	74.54	15636		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:line-80:short-subject-search:plain			new
+7	1989c62	bounded@0.3	nest2-4	large-subject-throughput	plain	judged	89732.2	89579.1	89982.1	17946.44	14939		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-4:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	nest2-4	match-compliance	whole-subject	judged	499.1	498.6	500.0	10.18	15541		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-4:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	nest2-4	short-subject-search	plain	judged	1496.2	1474.1	1541.7	32.53	14939		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-4:short-subject-search:plain			new
+7	1989c62	bounded@0.3	nest2-64	large-subject-throughput	plain	judged	75353.5	75306.3	75561.0	15070.70	13480		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-64:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	nest2-64	match-compliance	whole-subject	judged	2242.3	2230.0	2256.0	45.76	41064		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-64:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	nest2-64	short-subject-search	plain	judged	1881.9	1872.4	1949.2	40.91	13480		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-64:short-subject-search:plain			new
+7	1989c62	bounded@0.3	nest2-letters-6	large-subject-throughput	plain	judged	155249.4	155192.1	155676.0	31049.89	14947		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-letters-6:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	nest2-letters-6	match-compliance	whole-subject	judged	923.2	918.1	925.8	18.84	15545		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-letters-6:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	nest2-letters-6	short-subject-search	plain	judged	1335.6	1329.2	1412.0	29.03	14947		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest2-letters-6:short-subject-search:plain			new
+7	1989c62	bounded@0.3	nest3-16	large-subject-throughput	plain	judged	75386.3	75365.2	75449.8	15077.25	13491		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-16:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	nest3-16	match-compliance	whole-subject	judged	3777.9	3762.5	3789.2	77.10	32652		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-16:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	nest3-16	short-subject-search	plain	judged	1886.9	1880.2	1901.4	41.02	13491		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-16:short-subject-search:plain			new
+7	1989c62	bounded@0.3	nest3-3	large-subject-throughput	plain	judged	86307.3	86214.8	86447.4	17261.47	14949		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-3:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	nest3-3	match-compliance	whole-subject	judged	635.6	635.3	639.1	12.97	15551		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-3:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	nest3-3	short-subject-search	plain	judged	1585.3	1579.5	1595.3	34.46	14949		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:nest3-3:short-subject-search:plain			new
+7	1989c62	bounded@0.3	pw-8-64	large-subject-throughput	plain	judged	166122.7	165384.2	166220.1	33224.53	16502		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:pw-8-64:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	pw-8-64	match-compliance	whole-subject	judged	3253.7	3251.8	3255.6	66.40	15684		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:pw-8-64:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	pw-8-64	short-subject-search	plain	judged	2452.4	2449.8	2492.9	53.31	16502		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:pw-8-64:short-subject-search:plain			new
+7	1989c62	bounded@0.3	year4	large-subject-throughput	plain	judged	96361.9	96309.7	96383.6	19272.38	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:year4:large-subject-throughput:plain			new
+7	1989c62	bounded@0.3	year4	match-compliance	whole-subject	judged	285.0	284.1	286.4	5.82	14808		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:year4:match-compliance:whole-subject			new
+7	1989c62	bounded@0.3	year4	short-subject-search	plain	judged	1885.1	1871.2	1921.3	40.98	14574		D:bounded@0.3:auto-nocaps-simdna_cc-clang:1989c62:year4:short-subject-search:plain			new

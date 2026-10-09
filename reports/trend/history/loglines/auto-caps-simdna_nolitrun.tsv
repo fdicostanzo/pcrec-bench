@@ -1,0 +1,35 @@
+# trend_report: history loglines auto-caps-simdna_nolitrun
+# schema: trend-tsv-1
+# generator: trend-v1
+# index_sha256: 07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+# config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
+# pin_order_sha256: e8987e1b4eecafca65268461e7725af2b8fc1b2a757d9d3e02ea75065e06565f
+# as_of: 2026-10-08T19:51:06Z
+# identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
+# wide_gap_abi: 8
+# fallback_band: 0.0846
+# direction: ratio = new/old of the set-grain median (>1 slower)
+# append-only: rows ordered pin-major (pin_order); a new pin appends
+pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns	emit_code_bytes	program_sha256	delta_row_id	prev_pin	ratio_vs_prev	verdict
+21	a32bc86e	loglines@0.1	bignum	large-subject-throughput	plain	judged	13200169.0	13183137.1	13209800.5	1100014.08	16471	d538590ca30c845e	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:bignum:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	bignum	short-subject-search	plain	judged	432293.0	429712.9	433555.7	3859.76	16471	d538590ca30c845e	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:bignum:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	floor	large-subject-throughput	plain	judged	2958011.0	2954369.5	2968759.5	246500.91	14794	ba0384e4dedc35ab	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:floor:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	floor	short-subject-search	plain	judged	2038.4	2027.1	2045.7	18.20	14794	ba0384e4dedc35ab	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:floor:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	hex32-id	large-subject-throughput	plain	judged	13179869.0	13177484.0	13180926.7	1098322.42	16471	3bfb9afa49d12540	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:hex32-id:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	hex32-id	short-subject-search	plain	judged	437312.6	431908.1	439166.8	3904.58	16471	3bfb9afa49d12540	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:hex32-id:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	http-5xx	large-subject-throughput	plain	judged	286435.8	285387.0	287468.4	23869.65	18407	e93e15f5ea428e2b	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:http-5xx:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	http-5xx	short-subject-search	plain	judged	5047.5	5038.2	5063.4	45.07	18407	e93e15f5ea428e2b	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:http-5xx:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	ipv4	large-subject-throughput	plain	judged	6953627.1	6948014.2	6964703.6	579468.93	14957	23cdec2767f0e97c	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:ipv4:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	ipv4	short-subject-search	plain	judged	207797.5	206296.6	208087.4	1855.33	14957	23cdec2767f0e97c	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:ipv4:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	ipv6	large-subject-throughput	plain	judged	10508943.5	10477243.5	10627440.8	875745.30	15999	40dfc528af4cc515	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:ipv6:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	ipv6	short-subject-search	plain	judged	259570.8	257620.5	261989.3	2317.60	15999	40dfc528af4cc515	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:ipv6:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	iso-ts	large-subject-throughput	plain	judged	1150850.4	1148534.2	1152085.8	95904.20	22673	fb085cf3dd725f58	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:iso-ts:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	iso-ts	short-subject-search	plain	judged	20603.5	20591.1	20674.4	183.96	22673	fb085cf3dd725f58	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:iso-ts:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	kv-quoted	large-subject-throughput	plain	judged	5175674.1	5172252.4	5180345.7	431306.18	16611	7fff8f5eb29829a9	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:kv-quoted:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	kv-quoted	short-subject-search	plain	judged	24770.6	24748.1	24782.7	221.17	16611	7fff8f5eb29829a9	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:kv-quoted:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	level-context	large-subject-throughput	plain	judged	11516150.5	11501856.4	11522945.7	959679.21	36458	2c4c9d60ce723117	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:level-context:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	level-context	short-subject-search	plain	judged	341899.1	341073.5	343091.9	3052.67	36458	2c4c9d60ce723117	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:level-context:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	stack-frame	large-subject-throughput	plain	judged	2297757.2	2294362.4	2298902.4	191479.77	16993	28cd3dc252bfa21c	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:stack-frame:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	stack-frame	short-subject-search	plain	judged	36044.3	35951.5	36055.4	321.82	16993	28cd3dc252bfa21c	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:stack-frame:short-subject-search:plain			new
+21	a32bc86e	loglines@0.1	uuid	large-subject-throughput	plain	judged	1081751.0	1078519.7	1083494.4	90145.92	17465	4cb52a5f3288fc4d	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:uuid:large-subject-throughput:plain			new
+21	a32bc86e	loglines@0.1	uuid	short-subject-search	plain	judged	21065.9	21032.9	21084.5	188.09	17465	4cb52a5f3288fc4d	D:loglines@0.1:auto-caps-simdna_nolitrun:a32bc86e:uuid:short-subject-search:plain			new
