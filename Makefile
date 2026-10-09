@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data
+.PHONY: check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -77,7 +77,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream
+check: check-schema check-harness check-report check-interpret check-upstream check-frontpage
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -266,6 +266,27 @@ archive-inbox:
 ## newest-pin-only export.
 viewer-data:
 	$(PYTHON) tools/viewer_export.py --all-pins $(ARGS)
+
+## frontpage: regenerate README.md's and docs/methodology.md's generated
+## regions, docs/img/speedup_distribution.svg and docs/frontpage_provenance.tsv
+## from store/ ([B127], tools/frontpage.py). Loads ~11 records per set
+## (hundreds of MB): not part of `make check`, never during a measurement
+## window. Override the set or pin on the command line, e.g.
+## `make frontpage FRONT_SET=capability@0.2 FRONT_PIN=255bcdd8`.
+FRONT_SET   ?= capability@0.2
+FRONT_PIN   ?= 255bcdd8
+FRONT_OTHER ?= email-specimen@0.2 loglines@0.1 bounded@0.3 altwide@0.2 syntax@0.1 utf8@0.1 litrun@0.1
+frontpage:
+	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER)
+
+## frontpage-check: regenerate in memory, diff against the committed files,
+## exit 1 on drift (the generated regions are stale against store/)
+frontpage-check:
+	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER) --check
+
+## check-frontpage: tools/frontpage.py's unit test (synthetic fixture, no store)
+check-frontpage:
+	$(PYTHON) tools/tests/test_frontpage.py
 
 ## help: list the targets
 help:
