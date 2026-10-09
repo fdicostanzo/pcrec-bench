@@ -1,0 +1,79 @@
+# [B132] shim/driver layout A/B at pin 255bcdd8 (pcrec-auto caps + nocaps), capability@0.2 short-subject search, plain form
+# generated 2026-10-09 by lane b132shim; scratch tier (quick, 5 trials, core 11, all 75 short subjects); never a ranking input
+# scripts (this directory): 2026-10-09-b132-select-cells.py, -shim-layout-ab-run.sh, -shim-layout-ab-analysis.py, -layout-facts.sh, -layout-summary.py, -shim-vs-driver-run.sh, -window-era-run.sh, -shim-vs-driver-analysis.py, -driver-layout.sh, -oldshim-adapter.patch
+# arms: OLD = testees/pcrec/{shim.c,driver.c} @26eebfa (c4c70f2c-era); NEW = master 49409c3 (incl. B129 prime change); MID = shim @master + driver @26eebfa; WIN = both @e46e326 (2026-10-08 window-era, pre-B129).
+# OLD/MID/WIN trees = 49409c3 + those files + ONE adapter.py line (the STAMP_SCOPE missing-stamp raise gated on $B132_OLDSHIM; see the .patch) because 26eebfa's shim cannot stamp abi 61-66 pairs. WIN needs no patch.
+
+## 1. A/B/A/B, OLD vs NEW (O-92 column = ratio from the committed records, program-identical cells only)
+config        pattern                                         O-92       | NEW1/OLD1      NEW2/OLD2      | OLD2/OLD1      NEW2/NEW1      | medians ns O1 N1 O2 N2
+pcrec-auto    base10num-near-miss                            1.118 DIS   |  1.085 DISJ     1.077 DISJ    |  1.004 ov       0.997 ov      | 509 552 511 550
+pcrec-auto    file-ext-order                                 1.008 DIS   |  1.008 ov       1.013 DISJ    |  0.997 ov       1.002 ov      | 690 696 688 697
+pcrec-auto    ipv4-near-miss                                 1.098 DIS   |  1.126 DISJ     1.086 DISJ    |  1.010 ov       0.974 DISJ    | 407 458 411 446
+pcrec-auto    keyword-prefix-order                           1.007 DIS   |  1.011 ov       1.011 DISJ    |  0.999 ov       0.999 ov      | 782 791 782 791
+pcrec-auto    router-prefix-order                            1.034 DIS   |  1.041 DISJ     1.040 DISJ    |  0.999 ov       0.999 ov      | 672 699 671 698
+pcrec-auto    uuid-near-miss                                 1.080 DIS   |  1.085 DISJ     1.096 ov      |  1.000 ov       1.010 ov      | 523 567 523 573
+pcrec-auto    wild-codegrammar-json-stringcontent-escape     1.029 ove   |  1.062 DISJ     1.061 ov      |  0.999 ov       0.998 ov      | 727 772 726 771
+pcrec-auto    wild-semdiv-dollar-trailing-newline-pcre2      1.089 DIS   |  1.065 DISJ     1.064 DISJ    |  1.005 ov       1.003 ov      | 981 1045 985 1048
+pcrec-auto    wild-validator-email-owasp                     1.032 DIS   |  1.026 DISJ     1.015 ov      |  1.009 ov       0.998 ov      | 1033 1060 1043 1058
+pcrec-auto    wild-waf-crs-942360-concat-sqli                0.992 ove   |  0.992 ov       0.993 ov      |  1.000 ov       1.001 ov      | 7444 7383 7442 7392
+pcrec-auto    winpath-near-miss                              1.205 DIS   |  1.248 DISJ     1.254 DISJ    |  1.002 ov       1.007 DISJ    | 433 540 433 544
+pcrec-nocaps  base10num-near-miss                            1.127 DIS   |  1.075 DISJ     1.083 DISJ    |  1.009 ov       1.017 ov      | 511 549 516 559
+pcrec-nocaps  bracket-array-define                           1.008 DIS   |  1.026 DISJ     1.006 DISJ    |  1.000 ov       0.980 ov      | 1880 1929 1880 1891
+pcrec-nocaps  ipv4-near-miss                                 1.104 DIS   |  1.097 DISJ     1.098 DISJ    |  1.002 ov       1.003 ov      | 408 447 409 449
+pcrec-nocaps  keyword-prefix-order                           1.006 ove   |  1.013 ov       1.003 DISJ    |  0.995 DISJ     0.985 DISJ    | 784 795 781 783
+pcrec-nocaps  numeric-id-nested-plus                         1.145 DIS   |  1.098 DISJ     1.095 DISJ    |  1.001 ov       0.998 ov      | 429 471 429 470
+pcrec-nocaps  phone-list-nested-plus                         1.145 DIS   |  1.100 DISJ     1.110 DISJ    |  0.997 ov       1.005 ov      | 436 480 435 482
+pcrec-nocaps  trim-nested-star                               1.170 DIS   |  1.108 DISJ     1.108 DISJ    |  0.998 ov       0.998 ov      | 383 425 383 424
+pcrec-nocaps  wild-semdiv-dollar-trailing-newline-pcre2      1.103 DIS   |  1.066 DISJ     1.070 DISJ    |  0.998 ov       1.002 ov      | 983 1048 982 1050
+pcrec-nocaps  wild-validator-us-zip-owasp                    1.136 DIS   |  1.131 DISJ     1.159 DISJ    |  0.987 ov       1.012 ov      | 403 455 398 461
+pcrec-nocaps  wild-waf-crs-942360-concat-sqli                0.990 ove   |  0.991 ov       0.993 ov      |  0.994 ov       0.996 ov      | 7477 7412 7435 7383
+pcrec-nocaps  winpath-near-miss                              1.200 DIS   |  1.247 DISJ     1.253 DISJ    |  0.997 ov       1.002 ov      | 432 539 431 540
+
+## 2. factor split (MID/OLD = shim alone; NEW/MID = driver alone) and the window-era arm WIN
+config        pattern                              | MID/OLD (shim) | NEW/MID (driver) | NEW/OLD | MID2/MID (drift) | medians ns OLD MID NEW MID2
+pcrec-auto    base10num-near-miss                  | 0.999 ov       | 1.081 DISJ       | 1.079 DISJ    | 0.986 ov         | 512 511 552 504
+                                                    | WIN/OLD 1.125 DISJ | WIN/MID 1.126 DISJ | NEW/WIN 0.959 DISJ | WIN2/WIN 1.004 ov | WIN WIN2 576 578
+pcrec-auto    ipv4-near-miss                       | 0.993 ov       | 1.101 DISJ       | 1.093 DISJ    | 1.008 ov         | 409 407 447 410
+                                                    | WIN/OLD 1.098 DISJ | WIN/MID 1.105 DISJ | NEW/WIN 0.996 ov | WIN2/WIN 0.997 ov | WIN WIN2 449 448
+pcrec-auto    uuid-near-miss                       | 1.019 DISJ     | 1.061 DISJ       | 1.081 DISJ    | 0.998 ov         | 523 533 566 532
+                                                    | WIN/OLD 1.082 DISJ | WIN/MID 1.062 DISJ | NEW/WIN 0.999 ov | WIN2/WIN 1.008 ov | WIN WIN2 567 571
+pcrec-auto    wild-waf-crs-942360-concat-sqli      | 0.986 DISJ     | 1.007 ov         | 0.992 ov      | 0.998 ov         | 7430 7325 7374 7311
+                                                    | WIN/OLD 0.995 ov | WIN/MID 1.009 ov | NEW/WIN 0.997 ov | WIN2/WIN 1.009 ov | WIN WIN2 7393 7457
+pcrec-auto    winpath-near-miss                    | 1.149 DISJ     | 1.089 DISJ       | 1.251 DISJ    | 1.003 ov         | 431 496 540 497
+                                                    | WIN/OLD 1.204 DISJ | WIN/MID 1.047 DISJ | NEW/WIN 1.039 DISJ | WIN2/WIN 1.003 DISJ | WIN WIN2 519 521
+pcrec-nocaps  keyword-prefix-order                 | 0.996 ov       | 1.009 ov         | 1.005 ov      | 1.001 ov         | 784 781 788 781
+                                                    | WIN/OLD 1.005 ov | WIN/MID 1.008 DISJ | NEW/WIN 1.001 ov | WIN2/WIN 1.001 ov | WIN WIN2 787 788
+pcrec-nocaps  numeric-id-nested-plus               | 0.998 ov       | 1.102 DISJ       | 1.100 DISJ    | 1.001 ov         | 430 429 473 429
+                                                    | WIN/OLD 1.148 DISJ | WIN/MID 1.150 DISJ | NEW/WIN 0.959 DISJ | WIN2/WIN 1.000 ov | WIN WIN2 493 493
+pcrec-nocaps  trim-nested-star                     | 1.004 ov       | 1.115 DISJ       | 1.119 DISJ    | 0.996 ov         | 382 383 428 382
+                                                    | WIN/OLD 1.175 DISJ | WIN/MID 1.171 DISJ | NEW/WIN 0.953 DISJ | WIN2/WIN 0.998 ov | WIN WIN2 449 448
+pcrec-nocaps  wild-validator-us-zip-owasp          | 1.018 ov       | 1.121 ov         | 1.142 DISJ    | 1.017 ov         | 398 405 454 412
+                                                    | WIN/OLD 1.134 DISJ | WIN/MID 1.113 ov | NEW/WIN 1.007 ov | WIN2/WIN 1.009 ov | WIN WIN2 451 455
+
+## 3. artifact layout (gcc -O2 -fPIC -shared, as adapter phase 2), OLD vs NEW shim
+cfg     pattern                                      | .text O->N | rx_search addr (O==N?) mod64 | pb_search O: addr mod64 mod4096 -> N | pb_match_caps O -> N
+auto    winpath-near-miss                            | 2934->3094 (+160) | 0x21c0 same mod64=0 | 0x2a50 m64=16 m4096=2640 -> 0x2af0 m64=48 m4096=2800 | m64=32 -> 0
+auto    base10num-near-miss                          | 3126->3286 (+160) | 0x21c0 same mod64=0 | 0x2b10 m64=16 m4096=2832 -> 0x2bb0 m64=48 m4096=2992 | m64=32 -> 0
+auto    ipv4-near-miss                               | 3894->4054 (+160) | 0x31c0 same mod64=0 | 0x3e10 m64=16 m4096=3600 -> 0x3eb0 m64=48 m4096=3760 | m64=32 -> 0
+auto    uuid-near-miss                               | 4422->4582 (+160) | 0x31c0 same mod64=0 | 0x4020 m64=32 m4096=32 -> 0x40c0 m64=0 m4096=192 | m64=48 -> 16
+auto    trim-nested-star                             | 5382->5542 (+160) | 0x2970 same mod64=48 | 0x33e0 m64=32 m4096=992 -> 0x3480 m64=0 m4096=1152 | m64=48 -> 16
+auto    keyword-prefix-order                         | 2902->3062 (+160) | 0x2200 same mod64=0 | 0x2a70 m64=48 m4096=2672 -> 0x2b10 m64=16 m4096=2832 | m64=0 -> 32
+auto    wild-waf-crs-942360-concat-sqli              | 28454->28614 (+160) | 0x6d1c0 same mod64=0 | 0x73e00 m64=0 m4096=3584 -> 0x73ea0 m64=32 m4096=3744 | m64=16 -> 48
+nocaps  winpath-near-miss                            | 2934->3094 (+160) | 0x21c0 same mod64=0 | 0x2a50 m64=16 m4096=2640 -> 0x2af0 m64=48 m4096=2800 | m64=32 -> 0
+nocaps  base10num-near-miss                          | 3126->3286 (+160) | 0x21c0 same mod64=0 | 0x2b10 m64=16 m4096=2832 -> 0x2bb0 m64=48 m4096=2992 | m64=32 -> 0
+nocaps  ipv4-near-miss                               | 3894->4054 (+160) | 0x31c0 same mod64=0 | 0x3e10 m64=16 m4096=3600 -> 0x3eb0 m64=48 m4096=3760 | m64=32 -> 0
+nocaps  uuid-near-miss                               | 4422->4582 (+160) | 0x31c0 same mod64=0 | 0x4020 m64=32 m4096=32 -> 0x40c0 m64=0 m4096=192 | m64=48 -> 16
+nocaps  trim-nested-star                             | 2710->2870 (+160) | 0x21c0 same mod64=0 | 0x2970 m64=48 m4096=2416 -> 0x2a10 m64=16 m4096=2576 | m64=0 -> 32
+nocaps  keyword-prefix-order                         | 2902->3062 (+160) | 0x2200 same mod64=0 | 0x2a70 m64=48 m4096=2672 -> 0x2b10 m64=16 m4096=2832 | m64=0 -> 32
+nocaps  wild-waf-crs-942360-concat-sqli              | 28454->28614 (+160) | 0x6d1c0 same mod64=0 | 0x73e00 m64=0 m4096=3584 -> 0x73ea0 m64=32 m4096=3744 | m64=16 -> 48
+
+## 4. driver layout
+### driver @26eebfa  .text: 13745
+   main   addr=0x1460 size=12609 mod64=32 mod4096=1120
+   now    addr=0x4740 size=90 mod64=0 mod4096=1856
+### driver @e46e326  .text: 14609
+   main   addr=0x1460 size=13479 mod64=32 mod4096=1120
+   now    addr=0x4aa0 size=90 mod64=32 mod4096=2720
+### driver @master  .text: 14817
+   main   addr=0x1460 size=13686 mod64=32 mod4096=1120
+   now    addr=0x4b70 size=90 mod64=48 mod4096=2928
