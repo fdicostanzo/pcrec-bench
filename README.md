@@ -153,7 +153,9 @@ Short version; the full text, with the engine, hardware and compile-cost tables,
 
 ### Fairness
 
-pcrec compiles a known pattern ahead of time, which is an inherent advantage when the pattern is fixed before the program runs; a runtime engine pays its compile cost at startup or per pattern. The like-for-like rows are the other engines that also compile a pattern into specialised code or automata before matching: libpcre2 with JIT, Vectorscan, RE2 and Rust `regex` (each builds its automata at runtime). The compile-time table in the methodology page shows what pcrec pays for its approach.
+Ahead-of-time compilation has an inherent advantage on these numbers. pcrec turns a pattern that is known before the program runs into C that a C compiler then optimises with the pattern's structure fixed; an engine that receives its pattern at runtime cannot specialise that far. Because the headline excludes compile time, that specialisation counts in pcrec's favour, and the cost of getting it (a C compiler run per pattern) is shown separately in the [compile-cost table](docs/methodology.md#compile-cost), where pcrec is the slowest engine in the table by a wide margin.
+
+The closest like-for-like rows are the engines that also build a specialised matcher before matching: PCRE2 JIT, which emits machine code at runtime, and RE2, Rust `regex` and Vectorscan, which build automata at runtime. The interpreters (PCRE2's interpreter and DFA matcher, Oniguruma, TRE) are in the table for reference; pcrec's margin over them is the larger and less informative one.
 
 ## Reproduce
 
