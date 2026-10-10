@@ -2,7 +2,7 @@
 report:          reports/2026-09-27-email-specimen-0.2-budu-ryzen1600-fullroster-751b9c6d.tsv
 report_sha256:   17f3c6f3c4a2bd33fe11c5cf770a6401240362a667fb43031aa5c9a27eaf1914
 index:           store/index.tsv
-index_sha256:    07f5f0002020e15dbe855f317dd6ad377bdc2357c41dc4ad4090772e3f7af30f
+index_sha256:    8520b6ea7b32873ac765e103ed329e1b4d090553d0bfcd99c2fdcbf193b8d808
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   (none)
