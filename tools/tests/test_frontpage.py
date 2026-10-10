@@ -111,6 +111,65 @@ def main():
             ok("unfound quote refused", False)
         except SystemExit:
             ok("unfound quote refused", True)
+
+    # [B134] simple headline: win rate to the nearest tenth as "N of 10"
+    h = F.simple_headline(dict(win=919, loss=99, tie=1, median=4.59))
+    ok("simple headline rounds 919/1019 to 9 of 10",
+       "9 of 10" in h and "(919 of 1,019)" in h and "4.6×" in h)
+    ok("simple headline: 0.95 -> 9.5 -> 10 (half to even)",
+       "10 of 10" in F.simple_headline(dict(win=95, loss=5, tie=0, median=2.0)))
+    ok("simple headline: 0.85 -> 8.5 -> 8 (half to even)",
+       "8 of 10" in F.simple_headline(dict(win=85, loss=15, tie=0, median=2.0)))
+
+    # [B134] competitor classification: ordered, and an unclassified one fails loudly
+    def S(name, mode):
+        o = T(name, mode, "1", f"{name}_1_{mode}")
+        return o
+    per = [(S(n, m), [], {}, {}) for n, m in (
+        ("tre", "default"), ("libpcre2", "interp"), ("vectorscan", "block-nosom"),
+        ("libpcre2", "jit"), ("rust", "default"), ("oniguruma", "default"),
+        ("re2", "longest"), ("re2", "default"), ("vectorscan", "block-som"),
+        ("libpcre2", "dfa"))]
+    order = [(c.te["engine_name"], c.te["engine_mode"]) for c, *_ in F.ordered(per)]
+    ok("ordered: like-for-like first, then interpreters", order == [
+        ("libpcre2", "jit"), ("re2", "default"), ("re2", "longest"),
+        ("rust", "default"), ("vectorscan", "block-som"),
+        ("vectorscan", "block-nosom"), ("libpcre2", "interp"),
+        ("libpcre2", "dfa"), ("oniguruma", "default"), ("tre", "default")])
+    try:
+        F.ordered([(S("newengine", "m"), [], {}, {})])
+        ok("unclassified competitor fails loudly", False)
+    except SystemExit:
+        ok("unclassified competitor fails loudly", True)
+    ok("every ENGINES entry except pcrec is classified",
+       set(F.ENGINES) - {("pcrec", "auto")} == set(F.GROUPS))
+
+    # [B134] collapse: 2+ losses sharing one documented cause become one line
+    with tempfile.TemporaryDirectory() as d:
+        src = os.path.join(d, "n.md")
+        open(src, "w").write("scan forward pay the tail")
+        rel = os.path.relpath(src, F.ROOT)
+        mk = lambda pid: dict(pattern_id=pid, engine="*", regime="*", cite=rel,
+                              quote="pay the tail", item="ITEM", item_url="http://x/")
+        why = [mk("p1"), mk("p2"), mk("p3")]
+        eng = S("rust", "default")
+        loss = lambda pid, sp: (sp, eng, dict(key=(pid, "short")))
+        ls = [loss("p1", 0.001), loss("p2", 0.01), loss("zz", 0.02)]
+        g = F.cause_groups(why, ls)
+        ok("two losses sharing a cause collapse; undocumented stays out",
+           len(g) == 1 and [t[2]["key"][0] for t in list(g.values())[0][1]] == ["p1", "p2"])
+        line = F.render_cause_group(*list(g.values())[0])
+        ok("summary: count, worst case, work-item link",
+           line.startswith("**2 of the losing cases") and "`p1`" in line
+           and "[ITEM](http://x/)" in line and "×1,000" in line)
+        ok("a single documented loss is not collapsed",
+           F.cause_groups(why, ls[:1]) == {} and F.cause_groups(why, ls[2:]) == {})
+        why[1]["item"] = "OTHER"
+        try:
+            F.cause_groups(why, ls)
+            ok("rows disagreeing on the work item refused", False)
+        except SystemExit:
+            ok("rows disagreeing on the work item refused", True)
     return 1 if fails else 0
 
 

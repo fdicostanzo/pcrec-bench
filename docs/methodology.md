@@ -2,6 +2,13 @@
 
 How the numbers on the [front page](../README.md) are produced. Tables marked generated are written by `tools/frontpage.py` from the records in `store/`; every record used is listed in [frontpage_provenance.tsv](frontpage_provenance.tsv).
 
+## Excluded cases by side and reason
+
+The front-page table shows one count per competitor in its Excluded column; this is the breakdown.
+
+<!-- frontpage:excluded:begin -->
+<!-- frontpage:excluded:end -->
+
 ## Hardware and software
 
 <!-- frontpage:env:begin -->

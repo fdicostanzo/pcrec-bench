@@ -1,6 +1,6 @@
 # pcrec-bench
 
-A benchmark harness that compares [pcrec](https://github.com/fdicostanzo/pcrec), an ahead-of-time PCRE-to-C regex compiler, against major regex engines: libpcre2 (interpreter, JIT, DFA), RE2, Rust `regex`, Oniguruma, TRE and Vectorscan.
+pcrec-bench measures how fast regex engines really are on hard, realistic patterns: log parsing, input validation, security rules, backreferences, recursion, and inputs designed to make engines backtrack catastrophically. It compares [pcrec](https://github.com/fdicostanzo/pcrec), an ahead-of-time compiler that turns a regex into standalone C, against six widely used engines: PCRE2, RE2, Rust regex, Oniguruma, TRE and Vectorscan. A result only counts if the engine returned the correct answer, and compile time is reported separately rather than hidden.
 
 ## Headline
 
@@ -101,7 +101,8 @@ Losses by family, over every case:
 | floor | 20 | 0 | 0.0% |
 <!-- frontpage:losses:end -->
 
-## Second look: the other sets
+<details>
+<summary><strong>Second look: the other sets</strong> (click to expand)</summary>
 
 The same metric, for the latest `pcrec-auto` record against each competitor's latest record on each other set in the store. Pin and date are shown per row because these records were not all measured in one window.
 
@@ -140,6 +141,8 @@ The same metric, for the latest `pcrec-auto` record against each competitor's la
 - `utf8@0.1`: competitors measured: libpcre2, oniguruma, re2, rust, vectorscan.
 - `litrun@0.1`: competitors measured: libpcre2.
 <!-- frontpage:othersets:end -->
+
+</details>
 
 ## Methodology
 

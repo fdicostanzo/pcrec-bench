@@ -306,6 +306,44 @@ ENGINES = {
 }
 
 
+# (engine_name, engine_mode) -> (group, rank). The README's "### Fairness"
+# section is the authority: "like" = engines that also build a specialised
+# matcher before matching (PCRE2 JIT, RE2, Rust regex, Vectorscan); "reference"
+# = the interpreters (PCRE2 interpreter and DFA matcher, Oniguruma, TRE), in the
+# table for reference. Rank orders rows within the table. An unclassified
+# competitor is a hard error (group_of), never a silent default.
+GROUPS = {
+    ("libpcre2", "jit"): ("like", 1),
+    ("re2", "default"): ("like", 2),
+    ("re2", "longest"): ("like", 3),
+    ("rust", "default"): ("like", 4),
+    ("vectorscan", "block-som"): ("like", 5),
+    ("vectorscan", "block-nosom"): ("like", 6),
+    ("libpcre2", "interp"): ("reference", 7),
+    ("libpcre2", "dfa"): ("reference", 8),
+    ("oniguruma", "default"): ("reference", 9),
+    ("tre", "default"): ("reference", 10),
+}
+GROUP_TITLE = {"like": "Like-for-like engines",
+               "reference": "Interpreters, for reference"}
+
+
+def group_of(s):
+    key = (s.te["engine_name"], s.te["engine_mode"])
+    g = GROUPS.get(key)
+    if g is None:
+        raise SystemExit(f"frontpage: no GROUPS entry for testee {s.testee_id} "
+                         f"(engine_name={key[0]}, engine_mode={key[1]}); classify "
+                         f"it as 'like' or 'reference' per the README's Fairness section")
+    return g
+
+
+def ordered(per):
+    """per entries (c, cases, excl, st) in table order: like-for-like first,
+    then the reference interpreters, by GROUPS rank."""
+    return sorted(per, key=lambda e: group_of(e[0])[1])
+
+
 def label_entry(s):
     key = (s.te["engine_name"], s.te["engine_mode"])
     ent = ENGINES.get(key)
@@ -388,6 +426,16 @@ def date_of(s):
     return s.timestamp[:10]
 
 
+def simple_headline(t):
+    """One plain line: win rate to the nearest tenth as 'N of 10', all-pairs median."""
+    pairs = t["win"] + t["loss"] + t["tie"]
+    tenths = (Decimal(t["win"]) * 10 / Decimal(pairs)).quantize(
+        Decimal(1), rounding=ROUND_HALF_EVEN)
+    return (f"**Latest run: pcrec was faster in {tenths} of 10 head-to-head "
+            f"comparisons ({t['win']:,} of {pairs:,}), with a median speedup "
+            f"of {sig(t['median'], 2)}×.**")
+
+
 def render_headline(an):
     t = an.total
     pairs = t["win"] + t["loss"] + t["tie"]
@@ -395,7 +443,7 @@ def render_headline(an):
     ds = sorted(date_of(c) for c in an.comps)
     names = ", ".join(sorted({c.te["engine_name"] for c in an.comps}))
     excluded = sum(sum(v.values()) for _, _, ex, _ in an.per for v in ex.values())
-    return (
+    return (simple_headline(t) + "\n\n" +
         f"On `{an.setid}` ({len(an.universe)} pattern-regime cells), "
         f"{label(pc)} (config `pcrec-auto`, measured "
         f"{date_of(pc)}) is faster in {t['win']} of {pairs} compared cases "
@@ -417,24 +465,49 @@ def render_headline(an):
 
 def render_table(an):
     head = ["Competitor", "Kind", "Cases", "pcrec wins", "Losses", "Ties",
-            "Median speedup", "Geo-mean speedup", "Excluded"]
-    body = []
-    for c, cases, excl, st in an.per:
+            "Median speedup", "Geo-mean speedup",
+            "[Excluded](docs/methodology.md#excluded-cases-by-side-and-reason)"]
+    body, last = [], None
+    for c, cases, excl, st in ordered(an.per):
+        g = group_of(c)[0]
+        if g != last and last is not None:
+            body.append([f"**{GROUP_TITLE[g]}**"] + [""] * (len(head) - 1))
+        last = g
         ex = sum(sum(v.values()) for v in excl.values())
         body.append([label(c), kind(c), st["n"], st["win"], st["loss"],
                      st["tie"], times(st["median"]) if st["n"] else "n/a",
-                     times(st["geo"]) if st["n"] else "n/a",
-                     f"{ex} ({excl_text(excl)})" if ex else "0"])
+                     times(st["geo"]) if st["n"] else "n/a", ex])
     t = an.total
     body.append(["**all pairs**", "", t["n"], t["win"], t["loss"], t["tie"],
                  times(t["median"]), times(t["geo"]), ""])
     return (md_table(head, body, ["---", "---", "--:", "--:", "--:", "--:",
-                                  "--:", "--:", "---"]) +
+                                  "--:", "--:", "--:"]) +
             "\n\nSpeedup = competitor median ÷ pcrec median, per case "
             "(> 1 means pcrec is faster); the median and geometric mean run "
             "over all of that engine's cases, ties included. Excluded cases "
             "are counted, never dropped silently; a pair failing on both "
-            "sides is attributed to the pcrec side.")
+            "sides is attributed to the pcrec side. The first group is the "
+            "like-for-like engines, the second the interpreters, for "
+            "reference (see Fairness below). The breakdown of the Excluded "
+            "count by side and reason is in the "
+            "[methodology](docs/methodology.md#excluded-cases-by-side-and-reason).")
+
+
+def render_excluded(an):
+    body = []
+    for c, cases, excl, st in ordered(an.per):
+        ex = sum(sum(v.values()) for v in excl.values())
+        sides = {}
+        for side in ("pcrec", "engine"):
+            sides[side] = ", ".join(f"{excl[side][k]} {REASON_TEXT[k]}"
+                                    for k in REASONS if excl[side][k]) or "none"
+        body.append([label(c), ex, sides["pcrec"], sides["engine"]])
+    return (md_table(["Competitor", "Excluded", "pcrec side", "Engine side"],
+                     body, ["---", "--:", "---", "---"]) +
+            "\n\nA pair is excluded when one side has no verified number; "
+            "it is attributed to the pcrec side first, else to the engine's. "
+            "\"Unsupported or refused\" covers a pattern the engine does not "
+            "support or declined to compile.")
 
 
 # ------------------------------------------------------------------- SVG
@@ -446,7 +519,7 @@ def esc(s):
 def render_svg(an):
     W, left, right, top = 880, 300, 30, 46
     rowh = 44
-    rows = [(c, cases) for c, cases, _, _ in an.per if cases]
+    rows = [(c, cases) for c, cases, _, _ in ordered(an.per) if cases]
     H = top + rowh * len(rows) + 62
     vals = [x["speedup"] for _, cs in rows for x in cs]
     lo = math.floor(math.log10(min(vals + [1.0])))
@@ -480,6 +553,13 @@ def render_svg(an):
              f'stroke-dasharray="6 3"/>')
     for i, (c, cases) in enumerate(rows):
         cy = top + rowh * i + rowh / 2
+        if i and group_of(c)[0] != group_of(rows[i - 1][0])[0]:
+            yy = top + rowh * i
+            o.append(f'<line x1="16" y1="{yy}" x2="{W - right}" y2="{yy}" '
+                     f'stroke="{grid}" stroke-width="1.5" stroke-dasharray="2 3"/>')
+            o.append(f'<text x="16" y="{yy + 12}" font-family="sans-serif" '
+                     f'font-size="10" font-style="italic" fill="{ct}">'
+                     f'{GROUP_TITLE[group_of(c)[0]]}</text>')
         o.append(f'<text x="{left - 12}" y="{cy + 4:.1f}" text-anchor="end" '
                  f'font-family="sans-serif" font-size="12" fill="{fg}">'
                  f'{esc(label(c))} (n={len(cases)})</text>')
@@ -530,7 +610,10 @@ def norm(s):
     return re.sub(r"\s+", " ", s)
 
 
-def why_for(why, pattern, engine, regime):
+def why_row(why, pattern, engine, regime):
+    """The first matching why row whose quote is found verbatim in its cite
+    (whitespace-normalised), or None. A matching row whose quote is not found
+    is a hard error."""
     for w in why:
         if w["pattern_id"] not in (pattern, "*"):
             continue
@@ -542,10 +625,52 @@ def why_for(why, pattern, engine, regime):
         if os.path.exists(p):
             with open(p, encoding="utf-8") as f:
                 if norm(w["quote"]) in norm(f.read()):
-                    return f'"{w["quote"]}" ([{w["cite"]}]({w["cite"]}))'
+                    return w
         raise SystemExit(f"frontpage: why row for {pattern}/{engine} cites "
                          f"{w['cite']} but the quote is not found there")
-    return "cause not yet analysed"
+    return None
+
+
+def why_text(w):
+    return f'"{w["quote"]}" ([{w["cite"]}]({w["cite"]}))'
+
+
+def why_for(why, pattern, engine, regime):
+    w = why_row(why, pattern, engine, regime)
+    return why_text(w) if w else "cause not yet analysed"
+
+
+def cause_groups(why, losses):
+    """Group the losing cases that share one DOCUMENTED cause (same cite +
+    verbatim quote). -> {(cite, quote): (why row, [loss tuples])} for groups of
+    two or more; a group whose rows disagree on the work item is an error."""
+    groups = {}
+    for t in losses:
+        sp, c, x = t
+        w = why_row(why, x["key"][0], c.te["engine_name"], x["key"][1])
+        if w:
+            groups.setdefault((w["cite"], norm(w["quote"])), (w, []))[1].append(t)
+    out = {}
+    for k, (w, ts) in groups.items():
+        if len(ts) < 2:
+            continue
+        items = {(r.get("item") or "", r.get("item_url") or "") for r in why
+                 if (r["cite"], norm(r["quote"])) == k}
+        if len(items) > 1:
+            raise SystemExit(f"frontpage: why rows sharing the cause {k[1]!r} "
+                             f"disagree on the work item: {sorted(items)}")
+        out[k] = (w, ts)
+    return out
+
+
+def render_cause_group(w, ts):
+    sp, c, x = ts[0]   # losses are sorted worst-first
+    line = (f"**{len(ts)} of the losing cases share one documented cause:** "
+            f"{why_text(w)}. Worst: `{x['key'][0]}` ({x['key'][1]}) against "
+            f"{label(c)}, pcrec slower by {slower_by(sp)}.")
+    if w.get("item") and w.get("item_url"):
+        line += f" Work item: [{w['item']}]({w['item_url']})."
+    return line
 
 
 def render_losses(an, why, top=20):
@@ -554,22 +679,31 @@ def render_losses(an, why, top=20):
               for x in cases if x["cls"] == "loss"]
     losses.sort(key=lambda t: (t[0], t[1].testee_id, t[2]["key"]))
     n_loss = len(losses)
-    worst = losses[:top]
+    groups = cause_groups(why, losses)
+    grouped = {id(t) for _, ts in groups.values() for t in ts}
+    rest = [t for t in losses if id(t) not in grouped]
+    worst = rest[:top]
     byfam = {}
     for sp, c, x in worst:
         byfam.setdefault(fam.get(x["key"][0], "(no family metadata)"),
                          []).append((sp, c, x))
     note = ""
-    if any("block-nosom" in c.testee_id for _, c, _ in worst):
+    if any("block-nosom" in c.testee_id for _, c, _ in worst + [t for _, ts in groups.values() for t in ts]):
         note = (" Vectorscan's `nosom` configuration reports only match or no "
                 "match and its driver stops at the first match "
                 "(testees/vectorscan/CLAUDE.md), so on a subject that matches "
                 "it does less work than an engine that reports a span; read "
                 "its rows with that in mind.")
-    out = [f"The {len(worst)} worst of {n_loss} losing cases across all "
-           f"competitors (pcrec slower, trial ranges disjoint; \"slower by\" is "
-           f"pcrec median ÷ competitor median), "
-           f"grouped by pattern family; families ordered by their worst case." + note]
+    out = []
+    for k in sorted(groups, key=lambda k: groups[k][1][0][0]):
+        out.append(render_cause_group(*groups[k]) + "\n")
+    out.append(f"Of {n_loss} losing cases across all competitors (pcrec slower, "
+               f"trial ranges disjoint; \"slower by\" is pcrec median ÷ "
+               f"competitor median), {len(grouped)} are summarised above"
+               f"{'' if grouped else ' (none share a documented cause)'}; the "
+               f"{len(worst)} worst of the remaining {len(rest)} are listed "
+               f"here, grouped by pattern family, families ordered by their "
+               f"worst case." + note)
     for f_, items in sorted(byfam.items(), key=lambda kv: kv[1][0][0]):
         out.append(f"\n**{f_}**\n")
         body = [[f"`{x['key'][0]}`", x["key"][1], label(c),
@@ -752,7 +886,7 @@ def build(args):
                  f"scale]({img})",
         "losses": render_losses(an, why),
     }
-    method = {"env": render_env(an), "engines": render_engines(an),
+    method = {"excluded": render_excluded(an), "env": render_env(an), "engines": render_engines(an),
               "trials": render_trials(an), "compile": render_compile(an)}
     other_set = None
     if args.other_sets:
