@@ -197,6 +197,15 @@ sub-ns to +2.5 ns on ~10 ns calls, 8 patterns), and the program-identical `quote
 The size of every one is a few ns per call on cells that do not exceed 2.6 us; none is a correctness change: 0 wrong answers and 0 give-ups on every ranked row of the four reports. The one excluded cell is
 `email-nested-plus` x large-subject (pass-rate 0.8182, 0 wrong, 0 give-ups) at all four testees, the same at both pins.
 
+### 4.1 What is left of the tail family (front-page cause)
+
+At 7388f1c0 the two tail patterns that still lose a large-subject cell to Vectorscan no-SOM (boolean grain) are
+`tail-word-eoz` (set sum 21,908 ns vs 394, x55.6) and `tail-space-eol` (21,977 ns vs 1,013, x21.7), and in both the set sum
+is one subject: pcrec reads 21,775 ns on `t-evil-match-60k` for `\w+\z` and 21,799 ns on `t-trim-match-60k` for `\s+$`, the two 61,440-byte
+bodies that match from byte 0 to the end (0.354 ns per byte), against 42,820 and 130,730 ns at a15fb77b. Every other subject of those
+two cells is 6.6-32.0 ns. So the tail family's remaining cost is the long MATCHING body, not the megabyte of non-matching text; why the walk
+costs 0.354 ns per byte there (reading the whole match back to its start is the natural reading, one body length measured) is not established here.
+
 ## 5. Window facts the next reader needs
 
 - Statuses: 16 pinned pcrec records + 10 sentinel records, all `measured`; `trial_agreement` `agree` on every record
