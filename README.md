@@ -37,6 +37,36 @@ Speedup = competitor median ÷ pcrec median, per case (> 1 means pcrec is faster
 
 Each dot is one case (a pattern in one regime). Right of the dashed 1× line pcrec is faster. The box spans the quartiles of that engine's cases and the thick bar is the median.
 
+## Pattern support
+
+How many of the set's patterns each engine can compile, and whether the answers are right.
+
+<!-- frontpage:supportchart:begin -->
+![What each engine can handle: patterns answered correctly, wrong or given up, unsupported, refused, by engine](docs/img/pattern_support.svg)
+
+One bar per engine, each the full set; speed is not capability. Exact counts are in the table below.
+<!-- frontpage:supportchart:end -->
+
+<!-- frontpage:support:begin -->
+| Engine | Compiled | Unsupported feature | Refused to compile | Wrong answers | Correct on every subject |
+|---|--:|--:|--:|--:|--:|
+| pcrec 0.2.0-beta+255bcdd8 | 69 (97.2%) | 1 | 1 | 0 | 68 of 68 (100.0%) |
+| **Like-for-like engines** |  |  |  |  |  |
+| PCRE2 10.46 JIT | 71 (100.0%) | 0 | 0 | 0 | 68 of 70 (97.1%) |
+| RE2 11.0.0 | 45 (63.4%) | 25 | 1 | 4 | 40 of 44 (90.9%) |
+| RE2 11.0.0 (longest-match) | 45 (63.4%) | 25 | 1 | 7 | 37 of 44 (84.1%) |
+| Rust regex 1.13.1 | 48 (67.6%) | 22 | 1 | 3 | 44 of 47 (93.6%) |
+| Vectorscan 5.4.11 (SOM) | 44 (62.0%) | 22 | 5 | 4 | 39 of 43 (90.7%) |
+| Vectorscan 5.4.11 (no SOM) | 47 (66.2%) | 22 | 2 | 0 | 46 of 46 (100.0%) |
+| **Interpreters, for reference** |  |  |  |  |  |
+| PCRE2 10.46 interpreter | 71 (100.0%) | 0 | 0 | 0 | 68 of 70 (97.1%) |
+| PCRE2 10.46 DFA | 65 (91.5%) | 6 | 0 | 5 | 56 of 64 (87.5%) |
+| Oniguruma 6.9.10 | 69 (97.2%) | 1 | 1 | 0 | 65 of 68 (95.6%) |
+| TRE 0.9.0 | 41 (57.7%) | 29 | 1 | 6 | 33 of 40 (82.5%) |
+
+The set has 71 patterns; each counts once, however many regimes and forms it is measured in. *Compiled* means the engine accepted the pattern (the percentage is of all patterns); *Unsupported feature* is a pattern the engine declares it does not support; *Refused to compile* is one it declined or failed to build (for example a size limit). *Wrong answers* counts compiled patterns with at least one wrong answer against the oracle. *Correct on every subject* is out of the compiled patterns that have an oracle answer in every regime (1 pattern left out for having none, a gap in the set rather than an engine failure); a wrong answer or a give-up counts as not correct. RE2, Rust regex, Vectorscan and TRE decline features such as backreferences, recursion and lookaround by design, and this set deliberately includes such patterns: a lower figure is a design scope, not a defect. The leftmost-longest engines' different match semantics are covered in the [methodology](docs/methodology.md#engines) and also lower the *Correct on every subject* figure of RE2 (longest-match) and TRE.
+<!-- frontpage:support:end -->
+
 ## Explore the full results
 
 [**Results viewer**](https://fdicostanzo.github.io/pcrec-bench/) is a static page over every measured set, engine, pattern and regime in the store: pick engines and sets, choose a metric, and the matrix re-renders in the browser. Cell values come from the same reduction code that produced the tables on this page. The viewer is a reading aid; the records under `store/` are the canonical data.

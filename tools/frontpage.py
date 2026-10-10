@@ -593,6 +593,85 @@ def render_svg(an):
     return "\n".join(o) + "\n"
 
 
+SUPPORT_SEGMENTS = (  # key, legend text, fill
+    ("correct", "correct on every subject", "#0b66b2"),
+    ("bad", "compiled, but a wrong answer or a give-up", "#d4a72c"),
+    ("unsupported", "feature not supported", "#8c959f"),
+    ("refused", "refused to compile", "#424a53"),
+    ("no_oracle", "no oracle answer", "#e6e9ed"),
+)
+
+
+def support_segments(sc):
+    """The five bar segments of one engine; they sum to sc['patterns']."""
+    seg = dict(correct=sc["correct"], bad=sc["judged"] - sc["correct"],
+               unsupported=sc["unsupported"], refused=sc["refused"],
+               no_oracle=sc["no_oracle"])
+    if sum(seg.values()) != sc["patterns"]:
+        raise SystemExit(f"frontpage: support segments sum to {sum(seg.values())}, "
+                         f"not {sc['patterns']}")
+    return seg
+
+
+def render_support_svg(an):
+    srows, total, _ = support_rows(an)
+    W, left, right, top, rowh, bh = 880, 250, 230, 94, 34, 20
+    H = top + rowh * len(srows) + 22 * 1 + 40
+    bw = W - left - right
+    bg, fg, ct, grid = "#ffffff", "#1f2328", "#57606a", "#d0d7de"
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
+         f'viewBox="0 0 {W} {H}" role="img" aria-label="What each engine can '
+         f'handle: for each engine, how many of the set\'s {total} patterns it '
+         f'answers correctly, answers wrongly or gives up on, does not support, '
+         f'or refuses to compile">',
+         f'<rect width="{W}" height="{H}" fill="{bg}"/>',
+         f'<text x="16" y="24" font-family="sans-serif" font-size="14" '
+         f'font-weight="bold" fill="{fg}">What each engine can handle, '
+         f'{esc(an.setid)} ({total} patterns)</text>']
+    lx, ly = 16, 48
+    for key, txt, col in SUPPORT_SEGMENTS:
+        wtxt = 17 + int(len(txt) * 6.4) + 18
+        if lx + wtxt > W - 16:   # wrap: the legend must stay inside the canvas
+            lx, ly = 16, ly + 18
+        o.append(f'<rect x="{lx}" y="{ly - 10}" width="12" height="12" fill="{col}" '
+                 f'stroke="{grid}" stroke-width="0.5"/>'
+                 f'<text x="{lx + 17}" y="{ly}" font-family="sans-serif" '
+                 f'font-size="11" fill="{fg}">{esc(txt)}</text>')
+        lx += wtxt
+    y = top
+    for i, (s, sc, div) in enumerate(srows):
+        if div:
+            y += 14
+            o.append(f'<line x1="16" y1="{y - 8}" x2="{W - 16}" y2="{y - 8}" '
+                     f'stroke="{grid}" stroke-width="1.5" stroke-dasharray="2 3"/>'
+                     f'<text x="16" y="{y + 2}" font-family="sans-serif" '
+                     f'font-size="10" font-style="italic" fill="{ct}">'
+                     f'{GROUP_TITLE[div]}</text>')
+            y += 6
+        seg = support_segments(sc)
+        o.append(f'<text x="{left - 10}" y="{y + bh / 2 + 4:.1f}" text-anchor="end" '
+                 f'font-family="sans-serif" font-size="12" fill="{fg}">'
+                 f'{esc(label(s))}</text>')
+        x = left
+        for key, txt, col in SUPPORT_SEGMENTS:
+            n = seg[key]
+            if not n:
+                continue
+            w = bw * n / total
+            o.append(f'<rect x="{x:.1f}" y="{y}" width="{max(w - 2, 1):.1f}" '
+                     f'height="{bh}" fill="{col}"><title>{esc(label(s))}: {n} '
+                     f'of {total} patterns, {txt}</title></rect>')
+            x += w
+        o.append(f'<text x="{left + bw + 10}" y="{y + bh / 2 + 4:.1f}" '
+                 f'font-family="sans-serif" font-size="12" fill="{fg}">'
+                 f'{sc["correct"]} of {total} correct '
+                 f'<tspan fill="{ct}">· {pct(sc["compiled"], total)} compiled</tspan>'
+                 f'</text>')
+        y += rowh
+    o.append("</svg>")
+    return "\n".join(o) + "\n"
+
+
 # ------------------------------------------------------------------ losses
 
 def load_why(path):
@@ -809,6 +888,105 @@ def render_compile(an):
             "compiler run that turns the emitted source into a loadable object.")
 
 
+def no_oracle_patterns(summaries):
+    """Patterns with no oracle expectation in some regime, on any side: a gap
+    in the set, not an engine failure."""
+    return {k[0] for s in summaries for k, c in s.cells.items()
+            if c.get("n_no_expectation", 0) > 0}
+
+
+def support_counts(s, universe, no_oracle=frozenset()):
+    """-> dict(patterns, compiled, unsupported, refused, judged, correct, wrong).
+
+    Patterns = the plain-form compile rows (one per pattern; the whole-subject
+    form and the regimes collapse to the pattern). judged = compiled patterns
+    not in `no_oracle`; correct = judged patterns whose every (pattern, regime)
+    cell in `universe` has a verified numeric median (a give-up or an
+    unmeasured cell counts as not correct); wrong = judged patterns with at
+    least one wrong-answer cell."""
+    out = s.compile_outcome
+    compiled = {p for p, o in out.items() if o == "compiled"}
+    judged = compiled - set(no_oracle)
+    by_pat = {}
+    for key in universe:
+        by_pat.setdefault(key[0], []).append(key)
+    correct = sum(1 for p in judged
+                  if by_pat.get(p) and all(s.numeric(k) for k in by_pat[p]))
+    wrong = sum(1 for p in judged
+                if any(s.cells.get(k, {}).get("n_wrong", 0) > 0
+                       for k in by_pat.get(p, [])))
+    return dict(
+        patterns=len(out), compiled=len(compiled),
+        unsupported=sum(o == "unsupported-by-declaration" for o in out.values()),
+        refused=sum(o == "did-not-compile" for o in out.values()),
+        judged=len(judged), correct=correct, wrong=wrong,
+        no_oracle=len(compiled) - len(judged))
+
+
+def support_rows(an):
+    """-> ([(summary, counts, divider_group_or_None)], patterns, no_oracle set),
+    in table order (pcrec, like-for-like, interpreters); the table and the
+    chart both read this, so their order cannot differ."""
+    no_oracle = no_oracle_patterns(an.summaries())
+    out, last, total = [], None, None
+    for s, top in [(an.pcrec, 0)] + [(c, 1) for c, *_ in ordered(an.per)]:
+        sc = support_counts(s, an.universe, no_oracle)
+        total = sc["patterns"] if total is None else total
+        if sc["patterns"] != total:
+            raise SystemExit(f"frontpage: {s.testee_id}: {sc['patterns']} patterns, "
+                             f"others {total}")
+        if len(s.compile_ns) != sc["compiled"]:
+            raise SystemExit(f"frontpage: {s.testee_id}: compiled-pattern count "
+                             f"{sc['compiled']} disagrees with the compile table's "
+                             f"{len(s.compile_ns)}")
+        if sc["compiled"] + sc["unsupported"] + sc["refused"] != sc["patterns"]:
+            raise SystemExit(f"frontpage: {s.testee_id}: compile outcomes beyond "
+                             f"compiled / unsupported / refused")
+        div = None
+        if top:
+            g = group_of(s)[0]
+            div = g if g != last else None
+            last = g
+        out.append((s, sc, div))
+    return out, total, no_oracle
+
+
+def render_support(an):
+    head = ["Engine", "Compiled", "Unsupported feature", "Refused to compile",
+            "Wrong answers", "Correct on every subject"]
+    rows = [(an.pcrec, 0)] + [(c, 1) for c, *_ in ordered(an.per)]
+    srows, total, no_oracle = support_rows(an)
+    body = []
+    for s, sc, div in srows:
+        if div:
+            body.append([f"**{GROUP_TITLE[div]}**"] + [""] * (len(head) - 1))
+        body.append([label(s),
+                     f"{sc['compiled']} ({pct(sc['compiled'], sc['patterns'])})",
+                     sc["unsupported"], sc["refused"], sc["wrong"],
+                     f"{sc['correct']} of {sc['judged']} "
+                     f"({pct(sc['correct'], sc['judged'])})"])
+    return (md_table(head, body, ["---", "--:", "--:", "--:", "--:", "--:"]) +
+            f"\n\nThe set has {total} patterns; each counts once, however many "
+            "regimes and forms it is measured in. *Compiled* means the engine "
+            "accepted the pattern (the percentage is of all patterns); "
+            "*Unsupported feature* is a pattern the engine declares it does not "
+            "support; *Refused to compile* is one it declined or failed to build "
+            "(for example a size limit). *Wrong answers* counts compiled patterns "
+            "with at least one wrong answer against the oracle. *Correct on every "
+            "subject* is out of the compiled patterns that have an oracle answer "
+            f"in every regime ({len(no_oracle)} pattern"
+            f"{'' if len(no_oracle) == 1 else 's'} left out for having none, a gap "
+            "in the set rather than an engine failure); a wrong answer or a "
+            "give-up counts as not correct. "
+            "RE2, Rust regex, Vectorscan and TRE decline features such as "
+            "backreferences, recursion and lookaround by design, and this set "
+            "deliberately includes such patterns: a lower figure is a design "
+            "scope, not a defect. The leftmost-longest engines' different match "
+            "semantics are covered in the "
+            "[methodology](docs/methodology.md#engines) and also lower the "
+            "*Correct on every subject* figure of RE2 (longest-match) and TRE.")
+
+
 # --------------------------------------------------------------- other sets
 
 def render_other(store, rows, setids, prov):
@@ -879,11 +1057,19 @@ def build(args):
     why = load_why(os.path.join(ROOT, args.why))
     prov = [("primary", args.set, s) for s in an.summaries()]
     img = os.path.relpath(args.out_svg, os.path.dirname(args.out_readme) or ".")
+    simg = os.path.relpath(args.out_support_svg,
+                           os.path.dirname(args.out_readme) or ".")
     readme = {
         "headline": render_headline(an),
         "table": render_table(an),
         "chart": f"![Per-case speedup of pcrec over each competitor, log "
                  f"scale]({img})",
+        "supportchart": f"![What each engine can handle: patterns answered "
+                        f"correctly, wrong or given up, unsupported, refused, "
+                        f"by engine]({simg})\n\nOne bar per engine, each the "
+                        f"full set; speed is not capability. Exact counts are "
+                        f"in the table below.",
+        "support": render_support(an),
         "losses": render_losses(an, why),
     }
     method = {"excluded": render_excluded(an), "env": render_env(an), "engines": render_engines(an),
@@ -904,6 +1090,7 @@ def main(argv=None):
     ap.add_argument("--out-readme", default="README.md")
     ap.add_argument("--out-methodology", default="docs/methodology.md")
     ap.add_argument("--out-svg", default="docs/img/speedup_distribution.svg")
+    ap.add_argument("--out-support-svg", default="docs/img/pattern_support.svg")
     ap.add_argument("--out-provenance", default="docs/frontpage_provenance.tsv")
     ap.add_argument("--why", default="docs/frontpage_why.tsv")
     ap.add_argument("--check", action="store_true",
@@ -919,6 +1106,7 @@ def main(argv=None):
             cur = f.read()
         outputs[path] = splice(cur, regions, path)
     outputs[args.out_svg] = render_svg(an)
+    outputs[args.out_support_svg] = render_support_svg(an)
     outputs[args.out_provenance] = prov
 
     drift = 0

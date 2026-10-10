@@ -170,6 +170,47 @@ def main():
             ok("rows disagreeing on the work item refused", False)
         except SystemExit:
             ok("rows disagreeing on the work item refused", True)
+
+    # [B134] pattern support: denominators, no-oracle exclusion, wrong vs give-up
+    ps = Fake({("a", "s"): cell(1, 1, 1), ("a", "m"): cell(1, 1, 1),
+               ("b", "s"): cell(1, 1, 1), ("b", "m"): cell(None, None, None, wrong=1),
+               ("c", "s"): cell(None, None, None, gave=1), ("c", "m"): cell(1, 1, 1),
+               ("x", "s"): cell(None, None, None)},
+              {"a": "compiled", "b": "compiled", "c": "compiled",
+               "d": "unsupported-by-declaration", "e": "did-not-compile",
+               "f": "unsupported-by-declaration", "g": "compiled", "h": "compiled",
+               "x": "compiled"})
+    ps.cells[("x", "s")]["n_no_expectation"] = 1
+    uni = set(ps.cells) | {("g", "s"), ("h", "s")}
+    ok("no-oracle patterns found", F.no_oracle_patterns([ps]) == {"x"})
+    sc = F.support_counts(ps, uni, {"x"})
+    ok("support: denominator is every pattern once", sc["patterns"] == 9)
+    ok("support: compiled / unsupported / refused split",
+       (sc["compiled"], sc["unsupported"], sc["refused"]) == (6, 2, 1))
+    ok("support: no-oracle pattern leaves the judged denominator",
+       sc["judged"] == 5)
+    ok("support: correct = every regime verified (wrong, give-up, unmeasured not)",
+       sc["correct"] == 1)
+    ok("support: wrong answers counted apart from give-ups", sc["wrong"] == 1)
+    ok("support: percentages", F.pct(sc["compiled"], sc["patterns"]) == "66.7%"
+       and F.pct(sc["correct"], sc["judged"]) == "20.0%")
+    # [B134] support chart: segments sum to the denominator; order = table order
+    seg = F.support_segments(sc)
+    ok("chart segments sum to the pattern count", sum(seg.values()) == sc["patterns"])
+    ok("chart segments: correct / bad / unsupported / refused / no-oracle",
+       (seg["correct"], seg["bad"], seg["unsupported"], seg["refused"],
+        seg["no_oracle"]) == (1, 4, 2, 1, 1))
+    ok("segment order and keys", [k for k, _, _ in F.SUPPORT_SEGMENTS] ==
+       ["correct", "bad", "unsupported", "refused", "no_oracle"])
+    try:
+        F.support_segments(dict(sc, patterns=sc["patterns"] + 1))
+        ok("segment sum mismatch refused", False)
+    except SystemExit:
+        ok("segment sum mismatch refused", True)
+    import inspect
+    ok("table and chart both read support_rows (one order)",
+       all("support_rows(an)" in inspect.getsource(f)
+           for f in (F.render_support, F.render_support_svg)))
     return 1 if fails else 0
 
 
