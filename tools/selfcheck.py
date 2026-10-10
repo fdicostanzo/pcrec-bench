@@ -11872,6 +11872,102 @@ def check_b135_stamps():
 
 
 
+def check_b135_two_pin_window():
+    """[B135] the TWO-PIN WINDOW mechanism: one process selects a15fb77b
+    (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
+    keeps the canonical pin; the override is refused BY NAME when it names
+    an undeclared pin; the two pins derive DISTINCT testee_ids (so their
+    records cannot collide in the store) from one config; and both pins
+    prepare through ONE cached driver binary (same workdir, same sha256,
+    no rebuild on the second prepare). scripts/run_window.sh's
+    `testee@pin` entry is the only caller that sets the variable."""
+    print("-- [B135]: the two-pin window: $PCRECBENCH_PCREC_PIN, distinct ids, ONE driver build --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b135 two-pin", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    env = mod.PIN_OVERRIDE_ENV
+    saved = {k: os.environ.get(k) for k in (env, "CC", "PCREC_BIN",
+                                            "PCREC_LOCAL_FLAGS")}
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b135-2pin-")
+    try:
+        os.environ.pop(env, None)
+        os.environ.pop("CC", None)
+        canon = adapter.pin()
+        os.environ[env] = "a15fb77b"
+        before = adapter.pin()
+        os.environ[env] = canon
+        same = adapter.pin()
+        if (canon, before, same) == ("7388f1c0", "a15fb77b", "7388f1c0"):
+            ok("b135 two-pin: the override selects an also_pin, the canonical "
+               "value is a no-op", "%s / %s / %s" % (canon, before, same))
+        else:
+            bad("b135 two-pin: the override selects an also_pin",
+                "canonical %r, override %r, override==canonical %r"
+                % (canon, before, same))
+        os.environ[env] = "deadbeef"
+        try:
+            adapter.pin()
+            bad("b135 two-pin: an undeclared pin is refused BY NAME",
+                "pin() returned instead of raising")
+        except _ad.AdapterError as e:
+            if "not a declared pin" in str(e) and env in str(e):
+                ok("b135 two-pin: an undeclared pin is refused BY NAME",
+                   str(e)[:110])
+            else:
+                bad("b135 two-pin: an undeclared pin is refused BY NAME",
+                    str(e)[:200])
+        # distinct ids, one config
+        ids, shas = {}, {}
+        drv = os.path.join(tmp, "pcrec_driver")
+        for tag, pin in (("before", "a15fb77b"), ("after", "7388f1c0")):
+            os.environ[env] = pin
+            adapter.prepare("pcrec-auto", tmp)
+            blk = adapter.describe("pcrec-auto", tmp)
+            ids[tag] = _rec.derive_testee_id(blk)
+            shas[tag] = (_ad.sha256_file(drv), os.path.getmtime(drv))
+            if blk.get("engine_commit", "")[:8] != pin:
+                bad("b135 two-pin: describe() names the selected pin",
+                    "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
+        if ids["before"] != ids["after"] and "a15fb77b" in ids["before"] \
+                and "7388f1c0" in ids["after"] \
+                and ids["before"].replace("a15fb77b", "7388f1c0") == ids["after"]:
+            ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
+               "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
+        else:
+            bad("b135 two-pin: the two pins derive DISTINCT testee_ids",
+                "%r" % ids)
+        if shas["before"] == shas["after"]:
+            ok("b135 two-pin: ONE driver build serves both pins (same "
+               "sha256, same mtime: no rebuild on the second prepare)",
+               "sha256 %s" % shas["before"][0][:16])
+        else:
+            bad("b135 two-pin: ONE driver build serves both pins",
+                "before %r after %r" % (shas["before"], shas["after"]))
+        # run_window.sh: syntax, and the `testee@pin` arm is wired
+        rw = os.path.join(ROOT, "scripts", "run_window.sh")
+        proc = run(["bash", "-n", rw], timeout=30)
+        text = open(rw, encoding="utf-8").read()
+        wired = ('tname=${t%%@*}' in text and 'PCRECBENCH_PCREC_PIN=${t#*@}' in text
+                 and '--testee "$tname"' in text
+                 and 'env -u PCRECBENCH_PCREC_PIN' in text)
+        if proc.returncode == 0 and wired:
+            ok("b135 two-pin: scripts/run_window.sh parses a `testee@pin` "
+               "entry and unsets the variable for a bare one", "bash -n clean")
+        else:
+            bad("b135 two-pin: scripts/run_window.sh parses a `testee@pin` entry",
+                "bash -n rc %d, wired %s" % (proc.returncode, wired))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -16537,6 +16633,7 @@ def main():
     check_b124_stamps()
     check_b126_stamps()
     check_b135_stamps()
+    check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()
