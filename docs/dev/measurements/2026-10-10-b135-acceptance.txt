@@ -1,0 +1,83 @@
+# [B135] I-142 s1 acceptance cells + body-size check + tail stamps, states 1+2 window. Source: docs/dev/measurements/2026-10-10-b135-states12-analysis.py accept over store/records/capability@0.2/pcrec_{a15fb77b,7388f1c0}_auto-{caps,nocaps}-simdna; output verbatim.
+# acceptance cells: ns per call, median [min..max] over 5 trials; ratio = a15fb77b / 7388f1c0 median
+# columns: pattern | subject | cfg | pred lo-hi | A=a15fb77b | B=7388f1c0 | ratio | pred ratio (A/hi..A/lo) | verdict | sig>150 | sig40-60
+tail-digits-eol      t-tail-digits-1m       caps    19-60  | A     741585.3 [732871.5..741931.9] | B   28.36 [26.03..28.69] | x26148      | pred x12360..x39031 | inside | - | -
+tail-digits-eol      t-tail-digits-1m       nocaps  19-60  | A     739064.5 [736796.8..742770.5] | B   26.91 [26.86..27.88] | x27467      | pred x12318..x38898 | inside | - | -
+tail-digits-eol      t-tail-space-1m        caps     7-24  | A     737872.5 [733066.7..741750.5] | B    7.97 [7.97..7.98] | x92567      | pred x30745..x105410 | inside | - | -
+tail-digits-eol      t-tail-space-1m        nocaps   7-24  | A     739410.4 [735132.5..743869.1] | B    7.97 [7.97..9.74] | x92721      | pred x30809..x105630 | inside | - | -
+tail-digits-eol      t-tail-txt-1m          caps     7-24  | A     745618.3 [733558.9..747871.6] | B    7.97 [7.97..7.98] | x93529      | pred x31067..x106517 | inside | - | -
+tail-digits-eol      t-tail-txt-1m          nocaps   7-24  | A     741005.6 [733579.5..743472.1] | B    7.97 [7.97..9.74] | x92933      | pred x30875..x105858 | inside | - | -
+tail-dotstar-txt     t-tail-digits-1m       caps     7-24  | A     210012.5 [210002.1..210108.9] | B    9.54 [9.35..10.35] | x22018      | pred x8751..x30002 | inside | - | -
+tail-dotstar-txt     t-tail-digits-1m       nocaps   7-24  | A     209960.2 [209813.9..210169.8] | B    9.34 [9.30..10.55] | x22490      | pred x8748..x29994 | inside | - | -
+tail-dotstar-txt     t-tail-space-1m        caps     7-24  | A     209971.9 [209800.7..210028.8] | B    9.34 [9.32..9.94] | x22482      | pred x8749..x29996 | inside | - | -
+tail-dotstar-txt     t-tail-space-1m        nocaps   7-24  | A     210096.4 [209952.9..210184.3] | B    9.35 [9.30..10.50] | x22479      | pred x8754..x30014 | inside | - | -
+tail-dotstar-txt     t-tail-txt-1m          caps    33-98  | A     209938.8 [209856.3..210035.2] | B   39.73 [39.31..40.80] | x5284       | pred x2142..x6362 | inside | - | -
+tail-dotstar-txt     t-tail-txt-1m          nocaps  33-98  | A     210133.9 [209999.1..210346.3] | B   40.74 [39.57..42.31] | x5158       | pred x2144..x6368 | inside | - | SIG40-60
+tail-ext-lower-txt   t-tail-digits-1m       caps     7-24  | A    2891848.0 [2889426.0..2895442.2] | B    8.56 [8.56..8.58] | x337855     | pred x120494..x413121 | inside | - | -
+tail-ext-lower-txt   t-tail-digits-1m       nocaps   7-24  | A    2893516.3 [2889912.5..2897790.3] | B    8.57 [8.56..8.72] | x337821     | pred x120563..x413359 | inside | - | -
+tail-ext-lower-txt   t-tail-space-1m        caps     7-24  | A    2892035.8 [2889205.0..2893284.6] | B    8.56 [8.56..8.58] | x337849     | pred x120501..x413148 | inside | - | -
+tail-ext-lower-txt   t-tail-space-1m        nocaps   7-24  | A    2893105.3 [2889623.6..2899781.6] | B    8.56 [8.56..8.68] | x337939     | pred x120546..x413301 | inside | - | -
+tail-ext-lower-txt   t-tail-txt-1m          caps    22-66  | A    2892308.1 [2887556.3..2894911.2] | B   32.92 [32.87..33.02] | x87848      | pred x43823..x131469 | inside | - | -
+tail-ext-lower-txt   t-tail-txt-1m          nocaps  22-66  | A    2893383.3 [2892782.8..2896042.8] | B   33.02 [32.90..33.45] | x87618      | pred x43839..x131517 | inside | - | -
+tail-space-eol       t-tail-digits-1m       caps     7-24  | A    1775443.5 [1774469.0..1778125.0] | B    8.80 [8.57..9.96] | x201781     | pred x73977..x253635 | inside | - | -
+tail-space-eol       t-tail-digits-1m       nocaps   7-24  | A    1775541.0 [1775269.7..1776628.8] | B    9.97 [8.57..10.04] | x178174     | pred x73981..x253649 | inside | - | -
+tail-space-eol       t-tail-space-1m        caps    13-42  | A    1778311.7 [1773260.2..1778635.5] | B   28.36 [27.59..29.64] | x62710      | pred x42341..x136793 | inside | - | -
+tail-space-eol       t-tail-space-1m        nocaps  13-42  | A    1778447.1 [1775691.6..1808869.1] | B   29.05 [27.72..30.15] | x61227      | pred x42344..x136804 | inside | - | -
+tail-space-eol       t-tail-txt-1m          caps     7-24  | A    1777632.3 [1772575.4..1779885.7] | B    8.76 [8.56..10.02] | x202887     | pred x74068..x253947 | inside | - | -
+tail-space-eol       t-tail-txt-1m          nocaps   7-24  | A    1777855.8 [1775262.2..1779371.9] | B    8.76 [8.59..9.97] | x202954     | pred x74077..x253979 | inside | - | -
+tail-space-eol       t-trim-nearmiss-16k    caps     7-24  | A      29052.1 [29023.0..29304.7] | B   10.02 [8.78..10.12] | x2898       | pred x1211..x4150 | inside | - | -
+tail-space-eol       t-trim-nearmiss-16k    nocaps   7-24  | A      29125.7 [29040.1..29609.9] | B    9.93 [8.78..10.43] | x2932       | pred x1214..x4161 | inside | - | -
+tail-word-eoz        t-tail-digits-1m       caps    19-60  | A    2252351.0 [2211648.6..2253912.6] | B   23.48 [23.44..23.66] | x95928      | pred x37539..x118545 | inside | - | -
+tail-word-eoz        t-tail-digits-1m       nocaps  19-60  | A    2252295.3 [2213600.7..2253499.1] | B   23.75 [23.41..25.11] | x94814      | pred x37538..x118542 | inside | - | -
+tail-word-eoz        t-tail-space-1m        caps     7-24  | A    2193391.0 [2098438.8..2251895.2] | B    7.96 [6.59..8.92] | x275402     | pred x91391..x313342 | inside | - | -
+tail-word-eoz        t-tail-space-1m        nocaps   7-24  | A    2213224.2 [2140242.0..2253016.0] | B    7.87 [6.49..8.60] | x281224     | pred x92218..x316175 | inside | - | -
+tail-word-eoz        t-tail-txt-1m          caps    13-42  | A    2245459.9 [2209331.1..2254341.6] | B   21.55 [21.55..21.59] | x104186     | pred x53463..x172728 | inside | - | -
+tail-word-eoz        t-tail-txt-1m          nocaps  13-42  | A    2216852.8 [2210230.2..2253889.6] | B   21.58 [21.55..21.81] | x102707     | pred x52782..x170527 | inside | - | -
+
+# body-size check: the five patterns on every throughput subject, B (7388f1c0) ns/call, caps | nocaps
+floor-byte           a15fb77b  caps: t-64k=1107.4 t-256k=4379.7 t-1m=17637.8 t-tail-digits-1m=17638.2 t-tail-txt-1m=17634.4 t-tail-space-1m=17617.5
+                     a15fb77b  nocaps: t-64k=1109.8 t-256k=4379.3 t-1m=17664.6 t-tail-digits-1m=17633.1 t-tail-txt-1m=17612.3 t-tail-space-1m=17624.0
+floor-byte           7388f1c0  caps: t-64k=1109.5 t-256k=4383.3 t-1m=17633.6 t-tail-digits-1m=17616.2 t-tail-txt-1m=17661.1 t-tail-space-1m=17607.3
+                     7388f1c0  nocaps: t-64k=1107.8 t-256k=4380.0 t-1m=17646.9 t-tail-digits-1m=17616.1 t-tail-txt-1m=17640.8 t-tail-space-1m=17630.1
+tail-digits-eol      a15fb77b  caps: t-64k=65356.5 t-256k=277348.8 t-1m=1115723.2 t-tail-digits-1m=741585.3 t-tail-txt-1m=745618.3 t-tail-space-1m=737872.5
+                     a15fb77b  nocaps: t-64k=64693.8 t-256k=257916.1 t-1m=1111048.0 t-tail-digits-1m=739064.5 t-tail-txt-1m=741005.6 t-tail-space-1m=739410.4
+tail-digits-eol      7388f1c0  caps: t-64k=11.8 t-256k=12.2 t-1m=30.5 t-tail-digits-1m=28.4 t-tail-txt-1m=8.0 t-tail-space-1m=8.0
+                     7388f1c0  nocaps: t-64k=10.8 t-256k=11.1 t-1m=30.4 t-tail-digits-1m=26.9 t-tail-txt-1m=8.0 t-tail-space-1m=8.0
+tail-word-eoz        a15fb77b  caps: t-64k=141898.6 t-256k=575179.2 t-1m=2308946.5 t-tail-digits-1m=2252351.0 t-tail-txt-1m=2245459.9 t-tail-space-1m=2193391.0
+                     a15fb77b  nocaps: t-64k=141893.1 t-256k=573852.4 t-1m=2308815.7 t-tail-digits-1m=2252295.3 t-tail-txt-1m=2216852.8 t-tail-space-1m=2213224.2
+tail-word-eoz        7388f1c0  caps: t-64k=6.6 t-256k=6.7 t-1m=6.6 t-tail-digits-1m=23.5 t-tail-txt-1m=21.6 t-tail-space-1m=8.0
+                     7388f1c0  nocaps: t-64k=6.6 t-256k=6.6 t-1m=6.7 t-tail-digits-1m=23.8 t-tail-txt-1m=21.6 t-tail-space-1m=7.9
+tail-space-eol       a15fb77b  caps: t-64k=111551.0 t-256k=447665.7 t-1m=1784743.4 t-tail-digits-1m=1775443.5 t-tail-txt-1m=1777632.3 t-tail-space-1m=1778311.7
+                     a15fb77b  nocaps: t-64k=112081.3 t-256k=448921.9 t-1m=1785613.5 t-tail-digits-1m=1775541.0 t-tail-txt-1m=1777855.8 t-tail-space-1m=1778447.1
+tail-space-eol       7388f1c0  caps: t-64k=32.0 t-256k=31.1 t-1m=30.7 t-tail-digits-1m=8.8 t-tail-txt-1m=8.8 t-tail-space-1m=28.4
+                     7388f1c0  nocaps: t-64k=32.4 t-256k=31.9 t-1m=31.3 t-tail-digits-1m=10.0 t-tail-txt-1m=8.8 t-tail-space-1m=29.0
+tail-ext-lower-txt   a15fb77b  caps: t-64k=5500.2 t-256k=31378.6 t-1m=161195.5 t-tail-digits-1m=2891848.0 t-tail-txt-1m=2892308.1 t-tail-space-1m=2892035.8
+                     a15fb77b  nocaps: t-64k=5478.7 t-256k=31475.2 t-1m=161284.3 t-tail-digits-1m=2893516.3 t-tail-txt-1m=2893383.3 t-tail-space-1m=2893105.3
+tail-ext-lower-txt   7388f1c0  caps: t-64k=10.6 t-256k=10.6 t-1m=10.6 t-tail-digits-1m=8.6 t-tail-txt-1m=32.9 t-tail-space-1m=8.6
+                     7388f1c0  nocaps: t-64k=10.7 t-256k=10.7 t-1m=10.6 t-tail-digits-1m=8.6 t-tail-txt-1m=33.0 t-tail-space-1m=8.6
+tail-dotstar-txt     a15fb77b  caps: t-64k=5499.1 t-256k=31373.9 t-1m=161064.0 t-tail-digits-1m=210012.5 t-tail-txt-1m=209938.8 t-tail-space-1m=209971.9
+                     a15fb77b  nocaps: t-64k=5492.3 t-256k=31433.1 t-1m=161170.7 t-tail-digits-1m=209960.2 t-tail-txt-1m=210133.9 t-tail-space-1m=210096.4
+tail-dotstar-txt     7388f1c0  caps: t-64k=13.3 t-256k=13.3 t-1m=13.3 t-tail-digits-1m=9.5 t-tail-txt-1m=39.7 t-tail-space-1m=9.3
+                     7388f1c0  nocaps: t-64k=13.4 t-256k=13.1 t-1m=13.1 t-tail-digits-1m=9.3 t-tail-txt-1m=40.7 t-tail-space-1m=9.3
+
+# stamps at both pins (compile rows), the five tail patterns, caps
+tail-digits-eol      caps   a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=range emit=25328 prog=5e69e18c
+tail-digits-eol      caps   7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=range emit=20619 prog=019d0910
+tail-digits-eol      nocaps a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=range emit=25328 prog=5e69e18c
+tail-digits-eol      nocaps 7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=range emit=20619 prog=019d0910
+tail-word-eoz        caps   a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=32145 prog=aad8b8ae
+tail-word-eoz        caps   7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=23624 prog=53f53927
+tail-word-eoz        nocaps a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=32145 prog=aad8b8ae
+tail-word-eoz        nocaps 7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=23624 prog=53f53927
+tail-space-eol       caps   a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=26791 prog=94e9a443
+tail-space-eol       caps   7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=22483 prog=91dbdb46
+tail-space-eol       nocaps a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=26791 prog=94e9a443
+tail-space-eol       nocaps 7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=none end_window=none memfn_libc=none dfa_scan_edge=bitmap emit=22483 prog=91dbdb46
+tail-ext-lower-txt   caps   a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=emitted end_window=none memfn_libc=memchr,memcmp dfa_scan_edge=none emit=26223 prog=3460d76f
+tail-ext-lower-txt   caps   7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=dominated end_window=none memfn_libc=none dfa_scan_edge=none emit=20607 prog=57ffd512
+tail-ext-lower-txt   nocaps a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=byte-class-bounded dfa_match=unwrapped req_why=emitted end_window=none memfn_libc=memchr,memcmp dfa_scan_edge=none emit=26223 prog=3460d76f
+tail-ext-lower-txt   nocaps 7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=dominated end_window=none memfn_libc=none dfa_scan_edge=none emit=20607 prog=57ffd512
+tail-dotstar-txt     caps   a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=memchr-bounded dfa_match=unwrapped req_why=emitted end_window=none memfn_libc=memchr,memcmp dfa_scan_edge=none emit=29993 prog=5bdd12bf
+tail-dotstar-txt     caps   7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=dominated end_window=none memfn_libc=none dfa_scan_edge=none emit=23808 prog=8b68e57b
+tail-dotstar-txt     nocaps a15fb77b engine=dfa engine_sel=selected dfa_scan=unanchored dfa_start=reverse-pass dfa_prefilter=memchr-bounded dfa_match=unwrapped req_why=emitted end_window=none memfn_libc=memchr,memcmp dfa_scan_edge=none emit=29993 prog=5bdd12bf
+tail-dotstar-txt     nocaps 7388f1c0 engine=dfa engine_sel=selected dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none dfa_match=unwrapped req_why=dominated end_window=none memfn_libc=none dfa_scan_edge=none emit=23808 prog=8b68e57b

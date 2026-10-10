@@ -1,0 +1,35 @@
+# [B135] instrument A/B/A/B, states 1+2 window: BEFORE = driver tree at master 2eb8938, AFTER = driver tree at master 17cb77d (the b135prep merge). scratch tier, taskset core 11 (scripts/instrument_ab.sh), 5 trials, 25 cells (10 pcrec-auto, 10 pcrec-nocaps, 5 pcre2-jit), search regime.
+# source: docs/dev/measurements/2026-10-09-b133-instrument-ab-analysis.py over /var/tmp/b135win/ab (run 2026-10-10 12:13:19-12:48:31 EDT, quiet at 12:13, load 0.42), output verbatim below.
+# CONFOUND, READ FIRST: the script's own header says "same pcrec pin (both trees read testees/pcrec/configs.toml's pin)". 2eb8938 PREDATES the b135prep re-pin, so BEFORE ran pcrec at 255bcdd8 (testee ids pcrec_255bcdd8_auto-*) and AFTER at 7388f1c0 (pcrec_7388f1c0_auto-*). For pcrec cells this A/B measures driver + PIN, not the driver alone. Only the pcre2-jit rows (no pcrec in them) are a clean driver-only reading.
+# git diff 2eb8938 17cb77d: testees/pcrec/timed.c and timed.h IDENTICAL (empty diff); driver.c +12 lines and shim.c +28 lines (the simd_guarded_bytes info reader, off the timed path).
+# Reading is in docs/dev/ledgers/2026-10-10-opt-revend-states12-7388f1c0.md section 1.
+config        pattern                                      | AFT1/BEF1    AFT2/BEF2    | BEF2/BEF1    AFT2/AFT1    | median ns [trial min..max]: BEF1 AFT1 BEF2 AFT2
+pcre2-jit     ipv4-near-miss                               | 0.997 ov     1.031 ov     | 0.933 ov     0.965 ov     | 3105.4[2913.7..3106.6] 3094.7[2906.7..3318.6] 2897.5[2896.2..2933.1] 2987.7[2905.6..3243.9]
+pcre2-jit     keyword-prefix-order                         | 1.020 ov     0.945 ov     | 1.009 ov     0.934 ov     | 2964.4[2786.1..3335.3] 3025.1[2821.0..3323.4] 2992.2[2932.1..3357.7] 2826.4[2786.6..3253.2]
+pcre2-jit     trim-nested-star                             | 1.000 ov     0.999 ov     | 1.000 ov     1.000 ov     | 3427851.0[3380983.4..3534015.8] 3427114.8[3351932.2..3433149.6] 3427727.0[3391884.6..3435827.9] 3425884.2[3366392.8..3434865.0]
+pcre2-jit     uuid-near-miss                               | 0.970 ov     1.004 ov     | 0.992 ov     1.027 ov     | 3093.0[2934.8..3119.9] 2999.4[2993.7..3090.3] 3068.4[2993.6..3087.5] 3080.5[2979.8..3246.4]
+pcre2-jit     winpath-near-miss                            | 0.978 ov     1.018 ov     | 0.970 DISJ   1.009 ov     | 2963.7[2904.8..3338.8] 2898.7[2869.3..3190.4] 2873.8[2853.2..2901.5] 2924.4[2897.0..3319.7]
+pcrec-auto    base10num-near-miss                          | 0.954 DISJ   0.951 DISJ   | 1.012 ov     1.009 DISJ   | 549.4[544.1..559.8] 523.9[510.5..526.1] 555.8[543.6..569.6] 528.8[526.7..534.2]
+pcrec-auto    file-ext-order                               | 1.004 ov     1.018 ov     | 1.001 ov     1.015 ov     | 710.5[710.1..727.9] 713.3[713.2..1230.0] 711.0[709.6..727.9] 723.8[713.6..732.0]
+pcrec-auto    ipv4-near-miss                               | 0.971 DISJ   0.974 DISJ   | 1.000 ov     1.003 ov     | 440.8[439.0..446.8] 427.9[427.6..432.4] 440.9[439.8..441.3] 429.3[426.8..436.5]
+pcrec-auto    keyword-prefix-order                         | 1.013 DISJ   1.001 ov     | 1.001 ov     0.989 ov     | 786.9[783.0..789.7] 797.0[791.6..813.2] 787.6[785.5..787.9] 788.6[784.6..792.2]
+pcrec-auto    router-prefix-order                          | 1.005 ov     1.004 DISJ   | 1.001 ov     1.000 ov     | 690.2[690.1..692.1] 693.4[692.0..696.3] 690.6[689.8..690.8] 693.5[692.7..721.1]
+pcrec-auto    uuid-near-miss                               | 0.985 DISJ   0.985 DISJ   | 0.999 ov     0.999 ov     | 547.5[546.2..554.4] 539.1[536.4..541.1] 546.8[544.8..552.8] 538.5[537.3..540.5]
+pcrec-auto    wild-semdiv-dollar-trailing-newline-pcre2    | 0.664 DISJ   0.665 DISJ   | 1.000 ov     1.001 ov     | 967.6[965.4..968.0] 642.8[636.8..663.6] 967.4[964.2..971.8] 643.5[641.6..648.9]
+pcrec-auto    wild-validator-email-owasp                   | 0.962 DISJ   0.959 DISJ   | 1.003 ov     1.000 ov     | 1096.1[1093.2..1101.9] 1054.1[1045.8..1059.7] 1099.4[1096.2..1100.9] 1053.9[1046.6..1054.9]
+pcrec-auto    wild-waf-crs-942360-concat-sqli              | 1.003 ov     1.000 ov     | 0.999 ov     0.996 ov     | 7392.9[7336.6..7506.8] 7415.1[7387.9..7436.4] 7383.8[7354.4..7442.3] 7386.7[7382.0..7488.0]
+pcrec-auto    winpath-near-miss                            | 0.910 DISJ   0.911 DISJ   | 0.994 ov     0.996 ov     | 500.3[497.5..506.1] 455.3[451.7..458.1] 497.5[496.4..498.3] 453.4[452.2..454.5]
+pcrec-nocaps  base10num-near-miss                          | 0.970 ov     0.961 DISJ   | 1.011 ov     1.002 ov     | 542.3[531.1..553.5] 526.0[522.2..535.2] 548.4[537.9..555.0] 526.8[512.5..531.9]
+pcrec-nocaps  ipv4-near-miss                               | 0.972 ov     0.964 DISJ   | 1.011 ov     1.003 ov     | 440.6[438.5..441.3] 428.4[426.3..490.6] 445.6[439.5..449.8] 429.7[425.8..430.4]
+pcrec-nocaps  keyword-prefix-order                         | 1.006 ov     1.003 ov     | 1.000 ov     0.996 ov     | 787.1[785.2..791.0] 791.7[789.8..803.5] 786.9[785.7..788.3] 788.9[785.4..790.9]
+pcrec-nocaps  numeric-id-nested-plus                       | 1.046 DISJ   1.047 DISJ   | 1.000 ov     1.000 ov     | 463.9[461.4..464.9] 485.3[484.9..488.1] 463.7[459.7..466.3] 485.5[484.3..487.2]
+pcrec-nocaps  phone-list-nested-plus                       | 1.040 DISJ   1.041 DISJ   | 1.002 ov     1.003 ov     | 474.4[472.9..475.2] 493.4[491.7..525.3] 475.3[473.4..489.1] 494.7[492.4..496.5]
+pcrec-nocaps  trim-nested-star                             | 1.044 DISJ   1.043 DISJ   | 1.004 ov     1.002 ov     | 426.1[422.9..427.3] 445.0[444.3..448.4] 427.7[424.6..440.8] 445.9[444.4..449.5]
+pcrec-nocaps  wild-semdiv-dollar-trailing-newline-pcre2    | 0.672 DISJ   0.666 DISJ   | 1.001 ov     0.992 ov     | 965.5[965.0..967.3] 648.4[644.2..658.5] 966.1[964.0..971.3] 643.4[639.1..653.8]
+pcrec-nocaps  wild-validator-us-zip-owasp                  | 0.952 DISJ   0.947 DISJ   | 1.005 ov     1.000 ov     | 436.8[436.4..437.8] 415.8[415.0..418.1] 438.9[436.6..439.4] 415.7[414.5..416.6]
+pcrec-nocaps  wild-waf-crs-942360-concat-sqli              | 1.005 ov     1.009 ov     | 0.999 ov     1.003 ov     | 7376.2[7336.8..7575.0] 7412.2[7400.7..8110.3] 7366.9[7342.5..7403.8] 7431.2[7351.5..7591.1]
+pcrec-nocaps  winpath-near-miss                            | 0.914 DISJ   0.909 DISJ   | 0.998 ov     0.993 DISJ   | 499.0[496.3..499.6] 456.1[454.9..459.6] 497.8[497.2..499.9] 452.7[452.0..453.2]
+
+pcre2-jit      5 cells, AFTER/BEFORE geomean-of-reps: min 0.982 median 0.998 max 1.014
+pcrec-auto    10 cells, AFTER/BEFORE geomean-of-reps: min 0.665 median 0.985 max 1.011
+pcrec-nocaps  10 cells, AFTER/BEFORE geomean-of-reps: min 0.669 median 1.004 max 1.047

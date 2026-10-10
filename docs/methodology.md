@@ -44,7 +44,7 @@ Kind and match semantics are the records' own `testee` fields. Per-engine adapte
 <!-- frontpage:engines:begin -->
 | Engine | Testee | Version | Mode | Compile-cost class | Automaton class | Match semantics | Captures | Measured | Trial agreement |
 |---|---|---|---|---|---|---|---|---|---|
-| pcrec 0.2.0-beta+255bcdd8 | `pcrec_255bcdd8_auto-caps-simdna` | 255bcdd8 | auto | compiled-aot | hybrid | perl-leftmost-first | on | 2026-10-08 | agree |
+| pcrec 0.2.0-beta+7388f1c0 | `pcrec_7388f1c0_auto-caps-simdna` | 7388f1c0 | auto | compiled-aot | hybrid | perl-leftmost-first | on | 2026-10-10 | agree |
 | PCRE2 10.46 DFA | `libpcre2_10.46_dfa-nocaps-simdna` | 10.46 | dfa | interpretive | nfa-simulation | perl-leftmost-first | off | 2026-10-08 | agree |
 | PCRE2 10.46 interpreter | `libpcre2_10.46_interp-caps-simdna` | 10.46 | interp | interpretive | backtracking | perl-leftmost-first | on | 2026-10-08 | agree |
 | PCRE2 10.46 JIT | `libpcre2_10.46_jit-caps-simdna` | 10.46 | jit | eager-jit | backtracking | perl-leftmost-first | on | 2026-10-08 | agree |
@@ -86,17 +86,17 @@ Trials per cell in these records: 5. Per-row calibration target (ns of timed wor
 <!-- frontpage:compile:begin -->
 | Engine | Cost class | Patterns compiled | Median compile cost | pcrec compile ÷ this engine (median over common patterns) |
 |---|---|--:|--:|--:|
-| pcrec 0.2.0-beta+255bcdd8 | compiled-aot | 69 | 224 ms | — |
-| PCRE2 10.46 DFA | interpretive | 65 | 2.04 µs | ×111,000 |
-| PCRE2 10.46 interpreter | interpretive | 71 | 2.45 µs | ×101,000 |
-| PCRE2 10.46 JIT | eager-jit | 71 | 16.7 µs | ×13,100 |
-| Oniguruma 6.9.10 | interpretive | 69 | 6.03 µs | ×38,300 |
-| RE2 11.0.0 | eager-jit | 45 | 21.7 µs | ×10,500 |
+| pcrec 0.2.0-beta+7388f1c0 | compiled-aot | 69 | 228 ms | — |
+| PCRE2 10.46 DFA | interpretive | 65 | 2.04 µs | ×109,000 |
+| PCRE2 10.46 interpreter | interpretive | 71 | 2.45 µs | ×103,000 |
+| PCRE2 10.46 JIT | eager-jit | 71 | 16.7 µs | ×13,400 |
+| Oniguruma 6.9.10 | interpretive | 69 | 6.03 µs | ×39,100 |
+| RE2 11.0.0 | eager-jit | 45 | 21.7 µs | ×10,700 |
 | RE2 11.0.0 (longest-match) | eager-jit | 45 | 23.2 µs | ×10,800 |
-| Rust regex 1.13.1 | eager-jit | 48 | 105 µs | ×2,710 |
-| TRE 0.9.0 | interpretive | 41 | 10.8 µs | ×20,200 |
-| Vectorscan 5.4.11 (no SOM) | eager-jit | 47 | 660 µs | ×327 |
-| Vectorscan 5.4.11 (SOM) | eager-jit | 44 | 743 µs | ×251 |
+| Rust regex 1.13.1 | eager-jit | 48 | 105 µs | ×2,800 |
+| TRE 0.9.0 | interpretive | 41 | 10.8 µs | ×21,100 |
+| Vectorscan 5.4.11 (no SOM) | eager-jit | 47 | 660 µs | ×334 |
+| Vectorscan 5.4.11 (SOM) | eager-jit | 44 | 743 µs | ×249 |
 
 Median over patterns of each pattern's median `cost.total_ns` across trials, plain form, compile rows only. A ratio above ×1 means pcrec's compile is slower. pcrec's figure includes the C compiler run that turns the emitted source into a loadable object.
 <!-- frontpage:compile:end -->
