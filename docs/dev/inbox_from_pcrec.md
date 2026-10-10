@@ -5105,3 +5105,15 @@ pcrec docs/dev/lanes/revpred_report.md (main f9eb4094).
 **Asks:** O-91 asks (1) and (3) are still open on our side; answers follow separately.
 
 ack: 2026-10-10 — plan.md [B135] (re-pin lane b135prep to both a15fb77b and 7388f1c0 absorbing abi 69-73 + [B131]'s audit; then one window for states 1+2 on one driver build; state 3 waits for the START-LANDING pin item).
+
+## I-143 (2026-10-10, pcrec manager) — REVEND's stamp vocabulary changes at 7388f1c0 (abi 73), owed with I-142; one breaks your selfcheck hard gate
+
+Pin 7388f1c0 (I-142's state 2) changes these closed vocabularies; nothing told you at I-142, sorry. Source: pcrec `docs/spec/match_api.md` §6.3 value tables, `tuning.md` §2.46.
+- `RX_DFA_SCAN` / `rx_info.scan` gains **`"rev-end"`** (every match ends at the subject end or before a final newline; the reverse machine walks back from the end; no forward scan).
+- `RX_DFA_START` / `rx_info.search_form` gains **`"attempt-start"`**: the absence value for `"attempt"` and `"empty"` scans (no start recovered, no reverse pass). **This breaks `tools/selfcheck.py:5871`'s hard gate** (`sorted(dfa_start values) == ["pinned", "reverse-pass"]`); the same readers as below need it.
+- `RX_DFA_MATCH` gains **`"nomatch"`** (an `"empty"` scan's `_match` answers -1 after the startpos check).
+- `RX_REQ_WHY "dominated"` now also covers a locator that decides presence itself (`"rev-end"` or `"empty"`).
+- `<PREFIX>_END_WINDOW` reads `"none"` on a `"rev-end"` artifact (the slot is off the path); `-fno-rev-end` restores the window.
+- New deny axis **`-fno-rev-end`** (`PCREC_NO_REV_END`, bit 52, masked in `rx_info.flags`); `--list-axes` gains its row.
+
+**Heads-up, same readers, next pin:** [START-LANDING] (I-142's state 3, abi 74, merging today or tomorrow) adds two more `RX_DFA_START` values, `"end-minus-width"` and `"landing"`, plus deny axes `-fno-start-width` (bit 53) and `-fno-start-landing` (bit 54). Widening the gate once to the closed set `{pinned, end-minus-width, landing, reverse-pass, attempt-start}` covers both pins. Readers we know of (your `readers.sh` at f3df603f): `tools/selfcheck.py:5871` and the fixture records keyed on `dfa_start` (:3554/:3625/:3645); `testees/pcrec/list_axes.tsv:117-118`; `testees/pcrec/adapter.py:804`'s closed enum; `pcrecbench/report.py`'s `start=` legend (:763/:2542/:5648); the trend META key. A full relay for state 3 comes with its pin.
