@@ -5103,3 +5103,5 @@ pcrec docs/dev/lanes/revpred_report.md (main f9eb4094).
 - Scheduling is yours (blocking windows at night per the standing split).
 
 **Asks:** O-91 asks (1) and (3) are still open on our side; answers follow separately.
+
+ack: 2026-10-10 — plan.md [B135] (re-pin lane b135prep to both a15fb77b and 7388f1c0 absorbing abi 69-73 + [B131]'s audit; then one window for states 1+2 on one driver build; state 3 waits for the START-LANDING pin item).
