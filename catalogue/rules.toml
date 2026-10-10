@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.16"
+catalogue_version = "3.17"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,21 @@ catalogue_version = "3.16"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.17 (2026-10-10, lane b135prep, [B135], inbox I-140/I-142): MINOR, a
+# `[[pin_order]]` append only -- TWO pins, in order: `a15fb77b` (abi 72: FOUR
+# abi steps past 255bcdd8 -- 68 -> 69 [DEC-VAR-ATTRIB] + [DEC-COLLAPSE-WASTE]
+# (two stamp VALUES move, none is added), 69 -> 70 [MEMFN] R4e'.0b
+# (`<fn>__body` heads, +139..+184 B per function, no stamp), 70 -> 71
+# [MEMFN] RQ-3 (`RX_SIMD_GUARDED_BYTES` on every artifact, always 0), 71 ->
+# 72 [MEMFN] R-12 VMLAZY (the lazy rmin prefix respelled; text only) -- plus
+# the [DEC-FALLBACK] `--list-axes` change, not an abi event) and `7388f1c0`
+# (abi 73: [OPT-REVEND] L1 + L2 with stage 2 -- an end-pinned body searches by
+# the reverse-from-end walk, `RX_DFA_SCAN` `rev-end`, and the generated stamp
+# rule moves `RX_DFA_START` to `attempt-start` and `RX_DFA_MATCH` to
+# `nomatch` where the path asks no RECOVER). `a15fb77b` is the BEFORE and
+# `7388f1c0` the AFTER of one measurement window; they are adjacent here.
+# No rule predicate/threshold/inputs/slots moved.
 #
 # 3.16 (2026-10-08, lane b126prep, [B126], inbox I-134/I-135): MINOR, a
 # `[[pin_order]]` append only -- `255bcdd8` (abi 68: THREE abi steps, 65 ->
@@ -268,7 +283,7 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
-          "60366d747", "255bcdd8"]
+          "60366d747", "255bcdd8", "a15fb77b", "7388f1c0"]
 
 # ===================================================== class R-STATUS ==
 

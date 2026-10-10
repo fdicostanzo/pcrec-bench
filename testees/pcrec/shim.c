@@ -1574,6 +1574,34 @@ unsigned pb_vm_poss_arms(void) {
 #endif
 }
 
+/* [B135] (pin 7388f1c0, abi 68 -> 73, FIVE abi steps): ONE new stamp the
+ * shim reads, `RX_SIMD_GUARDED_BYTES` (abi 71, [MEMFN] RQ-3) -- a fixed-
+ * width hex `ULL` literal on EVERY artifact of both engines, the artifact's
+ * CPU-guarded byte count (0 everywhere at this pin: no SIMD form exists,
+ * `-fmemfn-simd` is inert). `unsigned long long` so the full literal
+ * survives; no rx_info mirror, so the floor stays 16 (`struct rx_info`
+ * gains no member across abi 69-73, MEASURED at the build). Abi 69
+ * ([DEC-VAR-ATTRIB]) moves two stamp VALUES, abi 70 (R4e'.0b) and 72
+ * (R-12 VMLAZY) move text only, and abi 73 ([OPT-REVEND]) adds VALUES to
+ * three existing closed sets (`RX_DFA_SCAN` `rev-end`, `RX_DFA_START`
+ * `attempt-start` as the generated absence value, `RX_DFA_MATCH`
+ * `nomatch`) -- none needs a new reader. */
+int pb_has_simd_guarded_bytes(void) {
+#ifdef RX_SIMD_GUARDED_BYTES
+    return 1;
+#else
+    return 0;
+#endif
+}
+
+unsigned long long pb_simd_guarded_bytes(void) {
+#ifdef RX_SIMD_GUARDED_BYTES
+    return (unsigned long long)RX_SIMD_GUARDED_BYTES;
+#else
+    return 0ULL;
+#endif
+}
+
 /* ------------------------------------------------------------- matching */
 
 /* [B133] The four wrappers below are what the driver's timed loop CALLS

@@ -74,7 +74,15 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "255bcdd8"
+pin = "7388f1c0"
+
+# [B135] A SECOND pin measurable in the same window. `pin` is the canonical
+# one; a process selects one of these with $PCRECBENCH_PCREC_PIN (adapter.py
+# `Adapter.pin`; scripts/run_window.sh does it per cell from a
+# `testee@pin` TESTEES entry). a15fb77b (abi 72) is the BEFORE of
+# [OPT-REVEND]; 7388f1c0 (abi 73) is its AFTER and the canonical pin. The
+# list is the allowlist -- an unlisted value is refused by name.
+also_pins = ["a15fb77b"]
 
 [testees.pcrec-auto]
 engine_mode = "auto"
