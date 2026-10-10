@@ -615,7 +615,7 @@ def support_segments(sc):
 
 def render_support_svg(an):
     srows, total, _ = support_rows(an)
-    W, left, right, top, rowh, bh = 880, 250, 190, 78, 34, 20
+    W, left, right, top, rowh, bh = 880, 250, 230, 94, 34, 20
     H = top + rowh * len(srows) + 22 * 1 + 40
     bw = W - left - right
     bg, fg, ct, grid = "#ffffff", "#1f2328", "#57606a", "#d0d7de"
@@ -628,13 +628,16 @@ def render_support_svg(an):
          f'<text x="16" y="24" font-family="sans-serif" font-size="14" '
          f'font-weight="bold" fill="{fg}">What each engine can handle, '
          f'{esc(an.setid)} ({total} patterns)</text>']
-    lx = 16
+    lx, ly = 16, 48
     for key, txt, col in SUPPORT_SEGMENTS:
-        o.append(f'<rect x="{lx}" y="38" width="12" height="12" fill="{col}" '
+        wtxt = 17 + int(len(txt) * 6.4) + 18
+        if lx + wtxt > W - 16:   # wrap: the legend must stay inside the canvas
+            lx, ly = 16, ly + 18
+        o.append(f'<rect x="{lx}" y="{ly - 10}" width="12" height="12" fill="{col}" '
                  f'stroke="{grid}" stroke-width="0.5"/>'
-                 f'<text x="{lx + 17}" y="48" font-family="sans-serif" '
+                 f'<text x="{lx + 17}" y="{ly}" font-family="sans-serif" '
                  f'font-size="11" fill="{fg}">{esc(txt)}</text>')
-        lx += 17 + int(len(txt) * 6.1) + 18
+        lx += wtxt
     y = top
     for i, (s, sc, div) in enumerate(srows):
         if div:

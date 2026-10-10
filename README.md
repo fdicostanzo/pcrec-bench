@@ -42,6 +42,9 @@ Each dot is one case (a pattern in one regime). Right of the dashed 1× line pcr
 How many of the set's patterns each engine can compile, and whether the answers are right.
 
 <!-- frontpage:supportchart:begin -->
+![What each engine can handle: patterns answered correctly, wrong or given up, unsupported, refused, by engine](docs/img/pattern_support.svg)
+
+One bar per engine, each the full set; speed is not capability. Exact counts are in the table below.
 <!-- frontpage:supportchart:end -->
 
 <!-- frontpage:support:begin -->

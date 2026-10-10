@@ -30,3 +30,9 @@ Renderer + region + README section + tests + CLAUDE.md + regeneration + check: c
 - "Patterns" column dropped to stay at six; the 71 is generated into the note (all engines must agree on it, else the generator exits).
 - Results: pcrec 68 of 68 (100.0%), 0 wrong; PCRE2 JIT/interp 68 of 70, 0 wrong (2 give-ups); Vectorscan no SOM 46 of 46. Compiled counts and the earlier unsupported/refused columns unchanged; README diff vs round 1 confined to the support region.
 - Tests updated (no-oracle exclusion, wrong vs give-up, percentages); `make check-frontpage` all PASS; `make frontpage` rc=0 detached; `make frontpage-check` clean.
+
+## Round 2b (bar chart)
+- `docs/img/pattern_support.svg` (generated, `render_support_svg`): one 71-pattern bar per engine, five segments (correct / compiled-but-wrong-or-gave-up / not supported / refused / no oracle answer), 2px surface gaps, opaque white canvas like speedup_distribution.svg (legible on GitHub light and dark), blue vs amber vs two greys separable by lightness, hover titles on segments, wrapped legend, right label "N of 71 correct · P% compile". Segments are checked to sum to the pattern count (fail-loud). Table and chart share `support_rows`, so order and dividers are identical by construction (tested).
+- README: new `supportchart` region (image + one-line caption) leads the section, then the table.
+- Departure: not rendered visually (no SVG rasteriser on the box); legend wrap and right-label width were fixed from computed text extents, so the owner should eyeball the pushed page. The dataviz palette validator was not run; colours follow the existing SVG's palette family.
+- `make check-frontpage` PASS, `make frontpage` rc=0 detached, `make frontpage-check` clean.
