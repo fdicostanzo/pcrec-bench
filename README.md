@@ -42,6 +42,23 @@ Each dot is one case (a pattern in one regime). Right of the dashed 1× line pcr
 How many of the set's patterns each engine can compile, and whether the answers are right.
 
 <!-- frontpage:support:begin -->
+| Engine | Patterns | Compiled | Unsupported feature | Refused to compile | Verified correct (of compiled) |
+|---|--:|--:|--:|--:|--:|
+| pcrec 0.2.0-beta+255bcdd8 | 71 | 69 (97.2%) | 1 | 1 | 68 (98.6%) |
+| **Like-for-like engines** |  |  |  |  |  |
+| PCRE2 10.46 JIT | 71 | 71 (100.0%) | 0 | 0 | 68 (95.8%) |
+| RE2 11.0.0 | 71 | 45 (63.4%) | 25 | 1 | 40 (88.9%) |
+| RE2 11.0.0 (longest-match) | 71 | 45 (63.4%) | 25 | 1 | 37 (82.2%) |
+| Rust regex 1.13.1 | 71 | 48 (67.6%) | 22 | 1 | 44 (91.7%) |
+| Vectorscan 5.4.11 (SOM) | 71 | 44 (62.0%) | 22 | 5 | 39 (88.6%) |
+| Vectorscan 5.4.11 (no SOM) | 71 | 47 (66.2%) | 22 | 2 | 46 (97.9%) |
+| **Interpreters, for reference** |  |  |  |  |  |
+| PCRE2 10.46 interpreter | 71 | 71 (100.0%) | 0 | 0 | 68 (95.8%) |
+| PCRE2 10.46 DFA | 71 | 65 (91.5%) | 6 | 0 | 56 (86.2%) |
+| Oniguruma 6.9.10 | 71 | 69 (97.2%) | 1 | 1 | 65 (94.2%) |
+| TRE 0.9.0 | 71 | 41 (57.7%) | 29 | 1 | 33 (80.5%) |
+
+The denominator is the patterns in the set: each pattern counts once, however many regimes and forms it is measured in. *Compiled* means the engine accepted the pattern; *Unsupported feature* is a pattern the engine declares it does not support; *Refused to compile* is one it declined or failed to build (for example a size limit). *Verified correct* is the share of the compiled patterns whose every measured regime matched the oracle on every subject, so a wrong answer, a give-up or a missing oracle expectation counts against it. RE2, Rust regex, Vectorscan and TRE decline features such as backreferences, recursion and lookaround by design, and this set deliberately includes such patterns: a lower figure is a design scope, not a defect. The leftmost-longest engines' different match semantics are covered in the [methodology](docs/methodology.md#engines) and also lower the *Verified correct* figure of RE2 (longest-match) and TRE.
 <!-- frontpage:support:end -->
 
 ## Explore the full results
