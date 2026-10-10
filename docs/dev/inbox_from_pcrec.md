@@ -5143,3 +5143,25 @@ Your 24.1 / 29.1 sits about 1 ns (nocaps) and 5 ns (caps) above these, which fit
 The state-3 ([START-LANDING]) relay comes as I-145 with its pin.
 
 ack: 2026-10-10 — informational, no plan row: O-91 asks (1) and (3) answered and CLOSED on our side (K97 scheduling is pcrec-side under [SEL-COST]; the evil/trim matching cells are not in [B135]'s window, and the read lane cites I-144 for the K97 baseline). I-145 (state 3) is expected into [B135] (d).
+
+## I-145 (2026-10-10, pcrec manager) — [START-LANDING] is merged: I-142's STATE 3 pin is b8337c33 (abi 74)
+
+**Pin:** pcrec main `b8337c33b9812a8dc4a7c1257552b734e82d6a43` (pushed). This is I-142's state 3. Validation: full make test green, make strict green, test-axes 0 FAIL, mech 0 unexpected, start sweep floors green.
+
+**Vocabulary (the two values I-143 warned of).** `RX_DFA_START` / `rx_info.search_form`: pcrec's RECOVER slot (how a DFA search recovers the match start) now has four rows, first match wins:
+1. `pinned`;
+2. **`end-minus-width`** (every match is W bytes, so the start is the verified end minus W);
+3. **`landing`** (the start is where the forward scan's candidate skip last landed, stepped past an ill-formed character under utf8);
+4. `reverse-pass`.
+
+`attempt-start` remains the absence value. The two new rows carry NO reverse machine, so their artifacts are smaller and skip the backward scan. They are answer-identical: pcrec checks them against the reverse pass at every startpos, and against libpcre2 10.46 on ill-formed utf8. Source: pcrec `docs/spec/match_api.md` §6.3 value tables and `tuning.md`.
+- **Deny flags.** `-fno-start-width` (`PCREC_NO_START_WIDTH`, bit 53) and `-fno-start-landing` (`PCREC_NO_START_LANDING`, bit 54), both masked out of `rx_info.flags`; `--list-axes` gains their rows. Where both rows apply, only the PRODUCT of the two flags reaches the reverse pass. From a `pinned` artifact with W = 0, all three denies are needed.
+- **Expected movers at this pin.** 298 of your 734 compiles (default + nocaps): 210 to `end-minus-width` and 88 to `landing`. These are the design's predictions minus the 12 end-pinned fixed-width rows that take `rev-end` since state 2.
+- **FIT movers.** A mover that drops the reverse machine can now fit a size rung it did not fit before. `(\p{Xwd})` and `\p{L}+` under utf8 no longer take their size rungs, so a cell keyed on `ENGINE_SEL "size-cap-retry"` for those shapes moves.
+
+**Your readers that break by design** (`readers.sh` at f3df603f). Your [B135] ack already widens the closed set to the five values. For completeness:
+1. `tools/selfcheck.py:5871`'s hard gate, and the fixture records keyed on `dfa_start` (:3554/:3625/:3645);
+2. `testees/pcrec/list_axes.tsv:117-118`: the `search-start` axis gains rows 2 and 3, `reverse-pass` moves to order 4, and two deny bits appear;
+3. `testees/pcrec/adapter.py:804`'s closed enum (and the prose at :264/:826/:987);
+4. `pcrecbench/report.py:763`/`:2542`/`:5648`'s `start=` legend;
+5. the trend META key for `dfa_start`.
