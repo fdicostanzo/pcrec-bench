@@ -809,6 +809,68 @@ def render_compile(an):
             "compiler run that turns the emitted source into a loadable object.")
 
 
+def support_counts(s, universe):
+    """-> dict(patterns, compiled, unsupported, refused, correct) for one summary.
+
+    Patterns = the plain-form compile rows (one per pattern; the whole-subject
+    form and the regimes collapse to the pattern). correct = compiled patterns
+    whose every (pattern, regime) cell in `universe` has a verified numeric
+    median (no wrong answer, no give-up, an oracle expectation present)."""
+    out = s.compile_outcome
+    compiled = {p for p, o in out.items() if o == "compiled"}
+    by_pat = {}
+    for key in universe:
+        by_pat.setdefault(key[0], []).append(key)
+    correct = sum(1 for p in compiled
+                  if by_pat.get(p) and all(s.numeric(k) for k in by_pat[p]))
+    return dict(
+        patterns=len(out), compiled=len(compiled),
+        unsupported=sum(o == "unsupported-by-declaration" for o in out.values()),
+        refused=sum(o == "did-not-compile" for o in out.values()),
+        correct=correct)
+
+
+def render_support(an):
+    head = ["Engine", "Patterns", "Compiled", "Unsupported feature",
+            "Refused to compile", "Verified correct (of compiled)"]
+    rows = [(an.pcrec, 0)] + [(c, 1) for c, *_ in ordered(an.per)]
+    body, last = [], None
+    for s, top in rows:
+        sc = support_counts(s, an.universe)
+        if len(s.compile_ns) != sc["compiled"]:
+            raise SystemExit(f"frontpage: {s.testee_id}: compiled-pattern count "
+                             f"{sc['compiled']} disagrees with the compile table's "
+                             f"{len(s.compile_ns)}")
+        if sc["compiled"] + sc["unsupported"] + sc["refused"] != sc["patterns"]:
+            raise SystemExit(f"frontpage: {s.testee_id}: compile outcomes beyond "
+                             f"compiled / unsupported / refused")
+        if top:
+            g = group_of(s)[0]
+            if g != last:
+                body.append([f"**{GROUP_TITLE[g]}**"] + [""] * (len(head) - 1))
+            last = g
+        body.append([label(s), sc["patterns"],
+                     f"{sc['compiled']} ({pct(sc['compiled'], sc['patterns'])})",
+                     sc["unsupported"], sc["refused"],
+                     f"{sc['correct']} ({pct(sc['correct'], sc['compiled'])})"])
+    return (md_table(head, body, ["---", "--:", "--:", "--:", "--:", "--:"]) +
+            "\n\nThe denominator is the patterns in the set: each pattern counts "
+            "once, however many regimes and forms it is measured in. *Compiled* "
+            "means the engine accepted the pattern; *Unsupported feature* is a "
+            "pattern the engine declares it does not support; *Refused to compile* "
+            "is one it declined or failed to build (for example a size limit). "
+            "*Verified correct* is the share of the compiled patterns whose every "
+            "measured regime matched the oracle on every subject, so a wrong "
+            "answer, a give-up or a missing oracle expectation counts against it. "
+            "RE2, Rust regex, Vectorscan and TRE decline features such as "
+            "backreferences, recursion and lookaround by design, and this set "
+            "deliberately includes such patterns: a lower figure is a design "
+            "scope, not a defect. The leftmost-longest engines' different match "
+            "semantics are covered in the "
+            "[methodology](docs/methodology.md#engines) and also lower the "
+            "*Verified correct* figure of RE2 (longest-match) and TRE.")
+
+
 # --------------------------------------------------------------- other sets
 
 def render_other(store, rows, setids, prov):
@@ -884,6 +946,7 @@ def build(args):
         "table": render_table(an),
         "chart": f"![Per-case speedup of pcrec over each competitor, log "
                  f"scale]({img})",
+        "support": render_support(an),
         "losses": render_losses(an, why),
     }
     method = {"excluded": render_excluded(an), "env": render_env(an), "engines": render_engines(an),

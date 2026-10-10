@@ -37,6 +37,13 @@ Speedup = competitor median ÷ pcrec median, per case (> 1 means pcrec is faster
 
 Each dot is one case (a pattern in one regime). Right of the dashed 1× line pcrec is faster. The box spans the quartiles of that engine's cases and the thick bar is the median.
 
+## Pattern support
+
+How many of the set's patterns each engine can compile, and whether the answers are right.
+
+<!-- frontpage:support:begin -->
+<!-- frontpage:support:end -->
+
 ## Explore the full results
 
 [**Results viewer**](https://fdicostanzo.github.io/pcrec-bench/) is a static page over every measured set, engine, pattern and regime in the store: pick engines and sets, choose a metric, and the matrix re-renders in the browser. Cell values come from the same reduction code that produced the tables on this page. The viewer is a reading aid; the records under `store/` are the canonical data.

@@ -170,6 +170,26 @@ def main():
             ok("rows disagreeing on the work item refused", False)
         except SystemExit:
             ok("rows disagreeing on the work item refused", True)
+
+    # [B134] pattern support: denominator, percentages, correct-of-compiled
+    class Sup(Fake):
+        pass
+    ps = Sup({("a", "s"): cell(1, 1, 1), ("a", "m"): cell(1, 1, 1),
+              ("b", "s"): cell(1, 1, 1), ("b", "m"): cell(None, None, None, wrong=1),
+              ("c", "s"): cell(None, None, None, gave=1), ("c", "m"): cell(1, 1, 1)},
+             {"a": "compiled", "b": "compiled", "c": "compiled",
+              "d": "unsupported-by-declaration", "e": "did-not-compile",
+              "f": "unsupported-by-declaration", "g": "compiled", "h": "compiled"})
+    uni = set(ps.cells) | {("g", "s"), ("h", "s")}
+    sc = F.support_counts(ps, uni)
+    ok("support: denominator is every pattern once",
+       sc["patterns"] == 8)
+    ok("support: compiled / unsupported / refused split",
+       (sc["compiled"], sc["unsupported"], sc["refused"]) == (5, 2, 1))
+    ok("support: correct needs every regime verified (wrong, give-up and unmeasured count against)",
+       sc["correct"] == 1)
+    ok("support: percentages", F.pct(sc["compiled"], sc["patterns"]) == "62.5%"
+       and F.pct(sc["correct"], sc["compiled"]) == "20.0%")
     return 1 if fails else 0
 
 
