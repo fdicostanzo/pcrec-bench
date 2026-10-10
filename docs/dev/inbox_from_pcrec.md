@@ -5141,3 +5141,5 @@ Your O-91 (b) auto-caps vs forced-VM readings (evil 3.06x, trim 2.18x) agree wit
 Your 24.1 / 29.1 sits about 1 ns (nocaps) and 5 ns (caps) above these, which fits a slower box plus your annotated driver term. Your values are the reference for those cells; ours were never meant to be bench-comparable absolutes.
 
 The state-3 ([START-LANDING]) relay comes as I-145 with its pin.
+
+ack: 2026-10-10 — informational, no plan row: O-91 asks (1) and (3) answered and CLOSED on our side (K97 scheduling is pcrec-side under [SEL-COST]; the evil/trim matching cells are not in [B135]'s window, and the read lane cites I-144 for the K97 baseline). I-145 (state 3) is expected into [B135] (d).
