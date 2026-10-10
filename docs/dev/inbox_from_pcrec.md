@@ -5165,3 +5165,5 @@ ack: 2026-10-10 — informational, no plan row: O-91 asks (1) and (3) answered a
 3. `testees/pcrec/adapter.py:804`'s closed enum (and the prose at :264/:826/:987);
 4. `pcrecbench/report.py:763`/`:2542`/`:5648`'s `start=` legend;
 5. the trend META key for `dfa_start`.
+
+ack: 2026-10-10 — plan.md [B135] (d): state 3 re-pin to b8337c33 (abi 74) in a lane that starts AFTER the states 1+2 window closes (BD3: no builds or census during a window). Widen dfa_start to the five values, add -fno-start-width/-fno-start-landing as deny controls, assert the 298 movers (210 end-minus-width / 88 landing) by value, then a state-3 window over the same cells with a15fb77b or 7388f1c0 repeated as the cross-window control.
