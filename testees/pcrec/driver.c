@@ -141,6 +141,12 @@
  * [B126] (pin 255bcdd8, abi 65 -> 68) adds ONE, `info vm_poss_arms`
  * (abi 66, [ART-POSS-ARMS]: a hex bitmask, VM artifacts only). Abi 67 and
  * 68 add none; no rx_info member across 66-68, floor still 16.
+ * [B135] (pin 7388f1c0, abi 68 -> 73) adds ONE, `info simd_guarded_bytes`
+ * (abi 71, [MEMFN] RQ-3: a count, EVERY artifact, 0 at this pin). Abi 69,
+ * 70, 72 add none; abi 73 ([OPT-REVEND]) adds values to `dfa_scan`
+ * (`rev-end`), `dfa_start` (`attempt-start`) and `dfa_match` (`nomatch`)
+ * -- strings the driver already prints. No rx_info member across 69-73,
+ * floor still 16.
  */
 
 #define _GNU_SOURCE
@@ -234,6 +240,8 @@ static int       (*pb_has_memfn_libc)(void);
 static const char *(*pb_memfn_libc)(void);
 static int       (*pb_has_vm_poss_arms)(void);
 static unsigned  (*pb_vm_poss_arms)(void);
+static int       (*pb_has_simd_guarded_bytes)(void);
+static unsigned long long (*pb_simd_guarded_bytes)(void);
 static int       (*pb_has_unroll_k)(void);
 static long long (*pb_unroll_k)(void);
 static const char *(*pb_unroll_k_why)(void);
@@ -453,6 +461,7 @@ int main(int argc, char **argv) {
     SYM(pb_has_memfn_forms); SYM(pb_memfn_forms);
     SYM(pb_has_memfn_libc); SYM(pb_memfn_libc);
     SYM(pb_has_vm_poss_arms); SYM(pb_vm_poss_arms);
+    SYM(pb_has_simd_guarded_bytes); SYM(pb_simd_guarded_bytes);
     SYM(pb_has_unroll_k); SYM(pb_unroll_k); SYM(pb_unroll_k_why);
     SYM(pb_has_max_emit_code_bytes); SYM(pb_max_emit_code_bytes);
     SYM(pb_has_max_emit_bytes); SYM(pb_max_emit_bytes);
@@ -763,6 +772,9 @@ int main(int argc, char **argv) {
      * (0x%x), on every VM artifact and no DFA-only one. */
     if (pb_has_vm_poss_arms())
         printf("info\tvm_poss_arms\t0x%x\n", pb_vm_poss_arms());
+    /* [B135] (abi 71, [MEMFN] RQ-3): a count on EVERY artifact. */
+    if (pb_has_simd_guarded_bytes())
+        printf("info\tsimd_guarded_bytes\t%llu\n", pb_simd_guarded_bytes());
 
     /* [OPT-ALTCLS], pcrec I-39: COMMON to both engines, unconditional
      * since long before this pin -- this shim only started reading it at

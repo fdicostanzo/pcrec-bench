@@ -698,14 +698,21 @@ METADATA_DECL = {
     # two macros, not recorded a second time.
     "dfa_scan": {
         "type": "enum", "scope": "pattern",
-        "values": ["unanchored", "attempt", "empty"],
+        "values": ["unanchored", "attempt", "empty", "rev-end"],
         "source": "<PREFIX>_DFA_SCAN, read through pb_dfa_scan(); CHECKED "
-                  "against rx_info.scan (pb_info_scan(), abi 6+)",
+                  "against rx_info.scan (pb_info_scan(), abi 6+); `rev-end` "
+                  "joined at abi 73 ([OPT-REVEND] L2, [B135]) and is the "
+                  "`locate` axis's order-1 row (`-fno-rev-end`, bit 52)",
         "description": "WHICH DFA scan this artifact contains: the O(n) "
                        "forward+reverse table pair (`unanchored`), the "
                        "per-start computed-goto loop an anchored pattern "
-                       "takes (`attempt`), or a provably-empty body that is "
-                       "one `return 0` (`empty`). Different loops with "
+                       "takes (`attempt`), a provably-empty body that is "
+                       "one `return 0` (`empty`), or -- abi 73, [OPT-REVEND] "
+                       "-- the REVERSE-FROM-END walk an end-pinned body takes "
+                       "(`rev-end`: every match ends at the subject's end or "
+                       "just before a final newline, so the search reads the "
+                       "tail from the end until the reverse machine dies and "
+                       "carries no forward machine). Different loops with "
                        "different cost curves, and nothing else a consumer "
                        "can read distinguishes them",
     },
@@ -801,8 +808,11 @@ METADATA_DECL = {
     },
     "dfa_start": {
         "type": "enum", "scope": "pattern",
-        "values": ["pinned", "reverse-pass"],
-        "source": "<PREFIX>_DFA_START ([OPT-5] STEP 2, pcrec abi 16+), read "
+        "values": ["pinned", "reverse-pass", "attempt-start"],
+        "source": "<PREFIX>_DFA_START ([OPT-5] STEP 2, pcrec abi 16+; "
+                  "`attempt-start` is the ABSENCE value the abi-73 "
+                  "generated stamp rule writes where the search path asks "
+                  "no RECOVER -- an `attempt` loop or the empty engine), read "
                   "through pb_dfa_start(); CHECKED against "
                   "rx_info.search_form (pb_info_search_form()), which is "
                   "NON-NULL on exactly the artifacts the macro is defined "
@@ -1010,8 +1020,10 @@ METADATA_DECL = {
     },
     "dfa_match": {
         "type": "enum", "scope": "pattern",
-        "values": ["unwrapped", "search-filter"],
-        "source": "<PREFIX>_DFA_MATCH ([ENG-ABS], pcrec abi 10+), read "
+        "values": ["unwrapped", "search-filter", "nomatch"],
+        "source": "<PREFIX>_DFA_MATCH ([ENG-ABS], pcrec abi 10+; `nomatch` "
+                  "joined at abi 73: the empty engine's `<prefix>_match` "
+                  "answers -1 at once), read "
                   "through pb_dfa_match(); CHECKED against rx_info.match_form "
                   "(pb_info_match_form()), which is NULL wherever the macro "
                   "is absent. Scope: every artifact whose engine is `dfa`, "
@@ -1871,6 +1883,27 @@ METADATA_DECL = {
                        "`memchr` delegates that search to the C library's "
                        "own dispatch",
     },
+    # [B135] (pin 7388f1c0, abi 71, [MEMFN] RQ-3): ONE new unconditional
+    # stamp on EVERY artifact of both engines, directly after
+    # `RX_MEMFN_LIBC`: the artifact's CPU-guarded byte count. A COUNT
+    # (`run_words`' shape). Reads 0 everywhere at this pin -- no SIMD form
+    # exists and `-fmemfn-simd` is inert -- so the by-value assertion is
+    # "0 on every kind", not a movement.
+    "simd_guarded_bytes": {
+        "type": "integer", "scope": "pattern",
+        "source": "<PREFIX>_SIMD_GUARDED_BYTES ([MEMFN] RQ-3, pcrec abi "
+                  "71+; a fixed-width hex ULL literal in the artifact), "
+                  "read through pb_simd_guarded_bytes() behind "
+                  "pb_has_simd_guarded_bytes(); no rx_info mirror; scope "
+                  "checked by STAMP_SCOPE (every artifact, both engines)",
+        "description": "how many bytes of the artifact sit under a CPU "
+                       "feature guard (match_api.md 6.3.10 p8). `0` on every "
+                       "artifact at pcrec 71-73: no SIMD form exists and "
+                       "-fmemfn-simd is inert. Every length decision "
+                       "(emitted-size caps, the entry-shape knee) reads the "
+                       "SIMD-off length, which equals the old reading "
+                       "wherever nothing is guarded",
+    },
     # [B126] (pin 255bcdd8, abi 66, [ART-POSS-ARMS]): ONE new stamp, a
     # MASK like `vm_strats` -- the per-ARM half of its POSSESSIVE bit.
     "vm_poss_arms": {
@@ -2040,7 +2073,10 @@ INT_PAIRS = ("abi", "ncaps", "ngroups", "nnames", "nentries", "step_budget",
              "run_words",
              "unroll_k", "max_emit_code_bytes", "max_emit_bytes",
              "emit_bytes", "emit_code_bytes", "warned_emit_bytes",
-             "scan_edges", "scan_edges_match")
+             "scan_edges", "scan_edges_match",
+             # [B135] (pin 7388f1c0, abi 71): the CPU-guarded byte COUNT,
+             # every artifact (`run_words`' scope).
+             "simd_guarded_bytes")
 
 #: The `info` names carrying a STRING-valued pair, and the declared name each
 #: lands under. Kept beside INT_PAIRS so a pair can never be printed by the
@@ -2209,6 +2245,11 @@ STAMP_SCOPE = {
     # scope iff (both ways, hybrids included) MEASURED in tools/selfcheck.py
     # check_b126_stamps, not assumed from the sentence.
     "vm_poss_arms":          ("vm",       66),
+    # [B135] (pin 7388f1c0, abi 71, [MEMFN] RQ-3): "every" -- match_api.md
+    # 6.3.10 p8 table row `all`; MEASURED present (0) on a plain DFA, a
+    # forced VM, a VM hybrid and a rev-end DFA artifact in
+    # tools/selfcheck.py check_b135_stamps.
+    "simd_guarded_bytes":    ("every",    71),
 }
 
 #: The scopes an artifact OUTSIDE of must NOT carry the pair (the others,
@@ -2331,6 +2372,10 @@ REGISTRY_STAMP_PAIRS = {
     # opaque id list) carry variable values, `req_byte`'s shape: NOT here.
     "RX_VM_START_SCAN": "vm_start_scan",
     "RX_REQ_WHY": "req_why",
+    # [B135] (pcrec abi 73, [OPT-REVEND] L2): the new `locate` axis puts
+    # RX_DFA_SCAN's `rev-end` and `unanchored` in the registry as `list`
+    # candidates; `attempt` / `empty` are OUTCOMES (REGISTRY_OUTCOME_VALUES).
+    "RX_DFA_SCAN": "dfa_scan",
 }
 
 #: The committed copy of `pcrec --list-definitions | grep -v '^#'` at the
@@ -2379,7 +2424,16 @@ REGISTRY_OUTCOME_VALUES = {
     # `prefilter` axis's `first-class` candidate; `none` is what every
     # other artifact stamps, an outcome no candidate list carries.
     "vm_start_scan": {"none"},
+    # [B135] (pcrec abi 73): the `locate` axis enumerates the two candidate
+    # scans an ordinary body can take; an `attempt` loop (anchored pattern)
+    # and the provably-empty body are not candidates the selector walks.
+    "dfa_scan": {"attempt", "empty"},
 }
+
+#: [B135] The environment variable that selects one of configs.toml's
+#: `also_pins` for a process (`Adapter.pin`). `scripts/run_window.sh` sets it
+#: per cell from a `testee@pin` TESTEES entry.
+PIN_OVERRIDE_ENV = "PCRECBENCH_PCREC_PIN"
 
 #: The driver's refusal token for an artifact below shim.c's PB_SHIM_MIN_ABI.
 #: The NUMBER lives in shim.c and nowhere else; this is only how the refusal
@@ -3284,6 +3338,21 @@ DENY_FLAGS = (
      "every byte, nullable, again, so the loop in front of it backtracks "
      "(RX_VM_POSS_ARMS loses 0x4) -- the abi-65 program's executed code at "
      "the SAME pin; answer-identical"),
+    # [B135] (pin 7388f1c0, abi 73, [OPT-REVEND] L2): the `locate` axis's
+    # order-1 row, bit 52. ENGINE-ROUTE-NEUTRAL but it changes WHAT THE
+    # ARTIFACT CONTAINS (the rev-end walk and its missing forward machine
+    # vs the forward scan + reverse pass): denied, an end-pinned body reads
+    # RX_DFA_SCAN `unanchored` again, so a `-fno-rev-end` build at abi 73 is
+    # the abi-72 search path from the SAME compiler -- the AFTER's own
+    # same-pin deny control. NO pinned testee (the window measures the two
+    # PINS; see testees/pcrec/CLAUDE.md "Re-pin at 7388f1c0").
+    ("-fno-rev-end", "norevend",
+     "the [OPT-REVEND] REVERSE-FROM-END LOCATE denied (--list-axes "
+     "`locate`, bit 52): an end-pinned body keeps the forward scan from "
+     "search_from plus the reverse pass (RX_DFA_SCAN `unanchored`, its "
+     "prefilter and forward machine back) instead of reading the tail from "
+     "the end -- the abi-72 search path at the SAME pin; "
+     "answer-identical"),
 )
 
 
@@ -4031,9 +4100,28 @@ class Adapter(_ad.Adapter):
     # ------------------------------------------------------------- the pin
 
     def pin(self):
+        """The pcrec commit this process measures. `configs.toml`'s `pin` is
+        the CANONICAL one; `$PCRECBENCH_PCREC_PIN` ([B135]) selects another
+        of the `also_pins` that file declares, for ONE process -- so a
+        single window can measure two pcrec revisions through ONE driver
+        build (`driver.c` and `timed.c` are not pin-dependent; the pin
+        enters only through the compiler binary and the artifact). The
+        override is validated against the declared list, never free-form,
+        and the pin reaches `testee_id` through the derived engine_version
+        (git describe of the pin), so the two pins' records can never
+        collide in the store. Unset or equal to `pin`: byte-identical to
+        before this knob existed."""
         p = self.cfg.get("pin")
         if not p:
             raise _ad.AdapterError("testees/pcrec/configs.toml declares no pin")
+        o = os.environ.get(PIN_OVERRIDE_ENV, "").strip()
+        if o and o != p:
+            allowed = list(self.cfg.get("also_pins", []))
+            if o not in allowed:
+                raise _ad.AdapterError(
+                    "$%s=%r is not a declared pin: configs.toml `pin` is %r "
+                    "and `also_pins` is %r" % (PIN_OVERRIDE_ENV, o, p, allowed))
+            return o
         return p
 
     def pin_binary(self, build=True):
