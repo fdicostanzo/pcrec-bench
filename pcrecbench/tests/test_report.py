@@ -3606,6 +3606,53 @@ def test_dfa_start_legend_b34():
            f"an abi-15 table carries neither the clause nor the note:\n{md_o}")
 
 
+def test_dfa_start_closed_set_b135():
+    """[B135] (d): `RX_DFA_START`'s closed set is {pinned, end-minus-width,
+    landing, reverse-pass, attempt-start} (pcrec abi 73/74, inbox I-143/
+    I-145). Every value renders as `start=<v>`; the three beyond the abi-16
+    pair each get ONE extra legend line, printed only when a row carries
+    the value -- so a table with only `pinned`/`reverse-pass` renders
+    byte-identically to before (no committed report carries a new value)."""
+    for v in ("pinned", "end-minus-width", "landing", "reverse-pass",
+              "attempt-start"):
+        em = {"abi": 74, "engine": "dfa", "dfa_scan": "unanchored",
+              "dfa_prefilter": "byte-class", "dfa_prefilter_offsets": "none",
+              "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+              "dfa_scan_edge": "none", "dfa_start": v}
+        _check(report._dfa_start_display(em) == v, f"{v} passes through")
+        _check(f"start={v}" in report._testee_legend_line("t", em),
+               f"start={v} in the legend line")
+    _check([v for v, _t in report.START_VALUE_LEGEND]
+           == ["end-minus-width", "landing", "attempt-start"],
+           "the three explained values")
+    setup = _mini_setup("pcrec_b8337c33_auto-caps-simdna")
+    mk = lambda v: {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,
+                    "compile_outcome": "compiled", "cost_class": "compiled-aot",
+                    "cost": {"total_ns": 1000,
+                             "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                                        {"name": "gcc", "elapsed_ns": 500},
+                                        {"name": "load", "elapsed_ns": 100}]},
+                    "artifact_bytes": 30000,
+                    "engine_metadata": {"abi": 74, "engine": "dfa",
+                        "dfa_scan": "unanchored", "dfa_prefilter": "byte-class",
+                        "dfa_prefilter_offsets": "none",
+                        "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+                        "dfa_scan_edge": "none", "dfa_start": v}}
+    for v in ("end-minus-width", "landing", "attempt-start"):
+        rd, err = report.build_report([_mk_loaded("a.jsonl", setup, [mk(v)])],
+                                      _args(store="x", include_synthetic=True))
+        _check(err is None, err)
+        md = report.render_markdown(rd)
+        _check(f"start={v}" in md and f"      - start={v}: " in md,
+               f"the {v} legend line renders:\n{md}")
+    for v in ("pinned", "reverse-pass"):
+        rd, _e = report.build_report([_mk_loaded("b.jsonl", setup, [mk(v)])],
+                                     _args(store="x", include_synthetic=True))
+        md = report.render_markdown(rd)
+        _check("      - start=" not in md,
+               f"{v} adds no extra legend line (committed reports unchanged)")
+
+
 def test_vm_frameless_legend_b34():
     """[B34], closing [B32] (g): pcrec abi 16's `RX_VM_FRAMELESS`
     ([OPT-VMFL]) renders as `frameless=<0|1>` -- VM artifacts only,
@@ -5606,6 +5653,7 @@ TESTS = [
     test_worst_other_core_header_ledger12d,
     test_scan_edges_legend_column,
     test_dfa_start_legend_b34,
+    test_dfa_start_closed_set_b135,
     test_vm_frameless_legend_b34,
     # [B37]
     test_dfa_uniform_folds_legend_b37,
