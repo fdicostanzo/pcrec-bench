@@ -43,14 +43,14 @@ fi
 # one driver build for all four testee entries (the workdir carries no pin):
 #   sha256sum build/work/pcrec-auto/pcrec_driver build/work/pcrec-nocaps/pcrec_driver
 # must be equal and unchanged between the first sentinel cell and the end.
+# altwide@0.3 (the set is at 0.3 now): pcrecdev1 [ENG-TACTICS] needs sfx-* at b8337c33. SAME-PIN read, so
+# the control arm is OFF by default (add pcrec-auto@7388f1c0 pcrec-nocaps@7388f1c0 for +36 min). The harness
+# has no per-pattern filter on `run`, so the whole set runs (sfx-64/256/512 are in it). Do NOT set STOP_AT.
 SUITE="sentinel capability loglines altwide email litrun sentinel:end" \
 TESTEES_sentinel="pcrec-auto@7388f1c0 pcrec-auto pcrec-nocaps pcrec-nocaps@7388f1c0 pcre2-jit" \
 TESTEES_sentinel_end="pcrec-auto pcrec-auto@7388f1c0 pcrec-nocaps@7388f1c0 pcrec-nocaps pcre2-jit" \
 TESTEES_capability="pcrec-auto@7388f1c0 pcrec-auto pcrec-nocaps pcrec-nocaps@7388f1c0" \
 TESTEES_loglines="pcrec-auto@7388f1c0 pcrec-auto pcrec-nocaps pcrec-nocaps@7388f1c0" \
-# altwide@0.3 (the set is at 0.3 now): pcrecdev1 [ENG-TACTICS] needs sfx-* at b8337c33. SAME-PIN read, so
-# the control arm is OFF by default (add pcrec-auto@7388f1c0 pcrec-nocaps@7388f1c0 for +36 min). The harness
-# has no per-pattern filter on `run`, so the whole set runs (sfx-64/256/512 are in it).
 TESTEES_altwide="pcrec-auto pcrec-nocaps" \
 TESTEES_email="pcrec-auto@7388f1c0 pcrec-auto pcrec-nocaps pcrec-nocaps@7388f1c0" \
 TESTEES_litrun="pcrec-auto@7388f1c0 pcrec-auto pcrec-nocaps pcrec-nocaps@7388f1c0" \
