@@ -330,7 +330,13 @@ testees line below). 2026-10-08: [B126] RE-PINNED (lane b126prep) to
 three additions (+7 patterns, +8 throughput subjects, 6,104 expectations), and
 two SECOND EXPECTATION METHODS for oracle-give-up triples,
 `structural-alphabet` (nomatch-only) and `libpcre2-dfa-fallback`, each with a
-whole-set agreement control (docs/design/expectation_methods_v1.md). Manager sessions start with the
+whole-set agreement control (docs/design/expectation_methods_v1.md).
+2026-10-10: [B135] (lane b135prep, inbox I-140/I-142) RE-PINNED to
+**7388f1c0 (abi 73)** AND made **a15fb77b (abi 72)** a second pin ONE window
+can measure (`also_pins` + `$PCRECBENCH_PCREC_PIN` + `testee@pin` in
+`scripts/run_window.sh`; one cached driver build serves both; see the
+testees line below and testees/pcrec/CLAUDE.md "Re-pin at 7388f1c0").
+Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
 ## MANDATE: repository scope
@@ -481,7 +487,27 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **255bcdd8, abi 68** ([B126], 2026-10-08, lane
+  at a pinned commit — **7388f1c0, abi 73** ([B135], 2026-10-10, lane
+  b135prep, inbox I-140/I-142; pcrec main with [OPT-REVEND] L1 + L2 with
+  stage 2; docs/dev/lanes/b135prep_report.md; `a15fb77b`, abi 72, is the
+  BEFORE and a declared `also_pins` entry. FIVE abi steps: 68->69
+  [DEC-VAR-ATTRIB] + [DEC-COLLAPSE-WASTE] (two stamp VALUES), 69->70 [MEMFN]
+  R4e'.0b (`<fn>__body` heads, +139..+323 B per artifact, no stamp), 70->71
+  [MEMFN] RQ-3 (`RX_SIMD_GUARDED_BYTES`, every artifact, always 0, +52 B
+  everywhere), 71->72 [MEMFN] R-12 VMLAZY (lazy rmin respell), 72->73
+  [OPT-REVEND] (`RX_DFA_SCAN` `rev-end`, the generated absence rule:
+  `RX_DFA_START` `attempt-start`, `RX_DFA_MATCH` `nomatch`; `-fno-rev-end`
+  bit 52, the new `locate` axis, a DENY_FLAGS + DENY_CONTROLS row and NO
+  pinned testee: the denial reproduces a15fb77b's `.text` and sizes byte for
+  byte on every rev-end witness, and 291 of 291 compiled census rev-end rows
+  reproduce its v2 identity). `struct rx_info` unchanged, shim floor STAYS
+  16. Registries: axes 136/46 -> 161/49 (157/48 from [DEC-FALLBACK], I-140,
+  not an abi event; +4 rows/+1 axis REVEND), limits 73, definitions 75,
+  schema 79 byte-identical. Census (docs/dev/measurements/
+  2026-10-10-b135prep-census.txt): 1,468 rows, 744 identical / 621 changed /
+  97 refused-both / SIX refusal movers (altwide w-1024, w-2048, s-2048,
+  s-4096, clsa-1024, clsd-1024 whole-subject forms compile now). Catalogue
+  3.17. Before it, **255bcdd8, abi 68** ([B126], 2026-10-08, lane
   b126prep, inbox I-134/I-135; pcrec main with [NULLABLE-ANCH] 02db3811 +
   [MEMFN] R4h, compiler-identical to 02db3811; docs/dev/lanes/
   b126prep_report.md. THREE abi steps: 65->66 [ART-POSS-ARMS]

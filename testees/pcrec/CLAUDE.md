@@ -1,7 +1,8 @@
 # testees/pcrec/ — the pcrec adapter
 
 Provides forty-eight testees at the commit pinned in `configs.toml` (counted
-by `adapter.testees()` at the [B126] re-pin to 255bcdd8 (adds none; [B124]'s 60366d747 added
+by `adapter.testees()` at the [B135] re-pin to 7388f1c0 (adds none; the
+[B126] re-pin to 255bcdd8 added none; [B124]'s 60366d747 added
 two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`); [B122]'s c4c70f2c
 added none), and
 one — `pcrec-local` — at no pin at all ([B39], 2026-09-06: two more,
@@ -59,7 +60,7 @@ at the same pin — up from thirty-nine):
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
 | `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
 | `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: `timed_run()` holds everything between a subject's two clock reads (search / find-all / whole-subject, the [B129] `--prime` pass, the `_in` buffer variants) in a translation unit of its own, `noinline` + `aligned(64)`; `driver.c` keeps only argv, loading, the stamp getters and output, and hands `timed_run()` the resolved entry points. The four shim wrappers the loop calls (`pb_search`, `pb_match_caps`, `pb_search_in`, `pb_match_caps_in`) are `aligned(64)` in `shim.c` (`PB_TIMED`) — [B132] found a getter above them shifting them mod 64. Adding stamps/getters to `driver.c` or `shim.c` is therefore NOT an instrument change any more; editing `timed.*` or `PB_TIMED` is. See "Re-pin control" below |
-| `configs.toml` | the config ids, `pin = "<commit>"`, the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
+| `configs.toml` | the config ids, `pin = "<commit>"` (+ `also_pins = [...]`, [B135]: pins a process may select with `$PCRECBENCH_PCREC_PIN`; `scripts/run_window.sh` spells it `testee@pin`), the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved. **Since the [B124] pin ([B124], pcrec I-128/I-129; first carrier 5328a87d) the dump carries a `#section memfn` block AFTER pcrec's own table** (pcrec-memory-functions' option rows, another column set; 0 rows at this pin): every reader selects the MAIN table, the rows before the first `#section` line (`adapter.registry_main_lines` / `registry_sections`), and every row/axis count quoted in this repo is the main table's |
 | `list_definitions.tsv` | ([B19]) pcrec's `--list-definitions \| grep -v '^#'` output at the pin, VERBATIM under a source header — the FIFTH registry surface ([DD-11], pcrec registry.md §9): one row per construct DEFINED in terms of another. Nothing the adapter reads depends on it; `make check-harness` diffs it against the pin's live output (`check_list_definitions_registry`). Re-archive at every re-pin |
 | `list_limits.tsv` | ([B22]) pcrec's `--list-limits` output at the pin, VERBATIM under a source header — the SIXTH registry surface (pcrec D90 / [LIM-1], table_contract.md) and the THIRD archive target (inbox I-25): one row per numeric limit in pcrec's `src/core/limits.def` (44 at 263b013, 45 at a7e0bdf, 57 at cd371441 — [OPT-5]'s `PCREC_MAX_SCAN_EDGES` and [K50]'s `PCREC_STARTPOS_GUARD_TEXT_MAX` joined in turn), the table this bench's overflow readings (`>32000 states` = `PCREC_MAX_DFA_STATES_TABLE`, the K7 budget = `PCREC_MAX_SUBSET_ELEMS`, the [ENG-ABS] 4096 = `PCREC_ANCHORED_MAX_STATES`, the [ART-SIZE] caps) now resolve against by name. Nothing a RECORD carries is read from it (every cap/capacity a record needs is stamped per artifact); the ONE thing that reads it is the [B31] cap axis' raise-only FLOOR check, which refuses a below-default config value in the bench's own words and takes pcrec's two defaults from here rather than keeping a second copy of them. `make check-harness` diffs it against the pin's live output (`check_list_limits_registry`). Re-archive at every re-pin |
@@ -667,6 +668,145 @@ steps, and records both in its report:
    to be named in the re-pin's report and the next window's ledger (the
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
+
+## Re-pin at 7388f1c0 (abi 68 -> 73) and the TWO-PIN window — 2026-10-10, lane b135prep, inbox I-140/I-142
+
+The canonical pin is **7388f1c0** (abi 73, [OPT-REVEND] L1 + L2 with stage 2)
+and **a15fb77b** (abi 72, pcrec main immediately before REVEND) is the
+SECOND pin a window can measure: `configs.toml` carries `pin = "7388f1c0"`
+and `also_pins = ["a15fb77b"]`. Both are built (`pin.sh a15fb77b`,
+`pin.sh 7388f1c0`). FIVE abi steps past 255bcdd8 (68 -> 73) plus one
+registry change that is not an abi event ([DEC-FALLBACK], I-140).
+`struct rx_info` is unchanged across the whole span (28 members, compared
+field by field after stripping comments at 255bcdd8, a15fb77b, 7388f1c0), so
+the **shim floor STAYS 16**; the abi-sabotage arms pass.
+
+**How a pin is chosen per run.** `Adapter.pin()` returns `configs.toml`'s
+`pin`, UNLESS `$PCRECBENCH_PCREC_PIN` names one of `also_pins`
+(`PIN_OVERRIDE_ENV` in adapter.py); any other value is refused BY NAME
+(`... is not a declared pin`). Everything that needs the commit -- `pin.sh`,
+`describe()`, the `build_flags` provenance, `rxt_source`'s message -- goes
+through `pin()`, and the testee_id is derived from `describe()`'s
+engine_version (the git describe of the pin), so the two pins derive
+`pcrec_a15fb77b_auto-caps-simdna` / `pcrec_7388f1c0_auto-caps-simdna` from
+ONE config and their records cannot collide. `scripts/run_window.sh` sets
+the variable per cell from a `testee@PIN` entry in `$TESTEES`
+(`pcrec-auto@a15fb77b`); a bare entry runs at the canonical pin with the
+variable UNSET for that cell. `check_b135_two_pin_window` asserts all of it.
+
+**One driver build for both pins.** The workdir is `build/work/<config id>`
+(`harness.run`), which does not contain the pin, and `build_driver` rebuilds
+only when `driver.c`/`timed.c`/`timed.h` are newer than the binary -- so
+`pcrec-auto@a15fb77b` and `pcrec-auto` share ONE cached `pcrec_driver`, and
+`check_b135_two_pin_window` asserts the second `prepare` leaves its sha256
+AND mtime alone. (`pcrec-nocaps` has its own workdir and so its own driver
+build from the same source and flags; the sentinel's flat `pcre2-jit` control
+and the isolated timed loop are what make the two builds comparable.) The
+shim is not a driver: it is compiled into each artifact, from the same
+`shim.c`, at both pins. The re-pin control ([B133], above): `timed.c` /
+`timed.h` are UNTOUCHED by this lane (`git diff master -- testees/pcrec/timed.*`
+is empty), and `2026-10-09-b133-isolation-proof.py` reads 7 IDENTICAL / 0
+DIFFERS with every shim wrapper `aligned(64)` and the positive control firing
+(docs/dev/measurements/2026-10-10-b135prep-isolation-proof.txt). The TIMING
+half of the control (`scripts/instrument_ab.sh`, a quiet-box A/B/A/B) is OWED
+to the manager's window.
+
+1. **68 -> 69, [DEC-VAR-ATTRIB] + [DEC-COLLAPSE-WASTE]**: two stamp VALUES
+   move, none is added. A nullable `${v}` pattern reads `ENGINE_SEL`
+   `selected` (it read `declined-nullable-default` at 255bcdd8, MEASURED at
+   255bcdd8 / a15fb77b / 7388f1c0 by direct emit; a caller-variable artifact
+   is not buildable by this shim and no bench pattern contains `${`), and a
+   size-cap retry quotes the EXACT artifact's size: `-e utf8 (\p{Xwd})`
+   1028613 -> 1028607 B (pcrec's own number, REPRODUCED at the abi-69
+   build). No census row moves (0 of 1,365 at the step).
+2. **69 -> 70, [MEMFN] R4e'.0b**: every offset-skip/pre-check function keeps
+   its loop under `<fn>__body`; text only, no stamp. +139 / +141 / +280 /
+   +290 / +184 / +323 B per artifact by function count (326 census rows
+   change v2 text at this step alone, 442 in all).
+3. **70 -> 71, [MEMFN] RQ-3**: ONE new stamp, `RX_SIMD_GUARDED_BYTES`, a
+   fixed-width hex `ULL` literal on EVERY artifact of both engines, always
+   0 at this pin. Read through `pb_has_simd_guarded_bytes()` /
+   `pb_simd_guarded_bytes()` (shim.c), `info simd_guarded_bytes` (driver.c),
+   declared in `METADATA_DECL` as an `integer`, scope `every` in
+   `STAMP_SCOPE`, `INT_PAIRS`. **+52 B on every artifact** in emit_bytes and
+   emit_code_bytes (`B135_SIMD_GUARDED_LINE`; 1,365 of 1,365 census rows,
+   exactly), 0 in `vm_program_bytes`.
+4. **71 -> 72, [MEMFN] R-12 VMLAZY**: the lazy rmin prefix respelled as a
+   capped span scan + reach test; text and `vm_program_bytes` only, on VM
+   programs with a lazy quantifier of rmin > 0 on the cursor rung (census:
+   4 rows +58 B; `bounded` K41 witness 2's `vm_program_bytes` +1,800).
+5. **72 -> 73, [OPT-REVEND] L1 + L2 with stage 2** (the AFTER): an
+   end-pinned DFA body (`$`/`\Z`/`\z`, no `(?m)`, no `\G`, not optional)
+   searches by the reverse-from-end walk: `RX_DFA_SCAN` gains `rev-end`
+   (declared in `METADATA_DECL`), the artifact carries NO forward machine,
+   `RX_DFA_PREFILTER` reads `none`, `RX_REQ_WHY` often `dominated` (the
+   whole-window pre-check is not emitted). The GENERATED STAMP RULE reads a
+   slot's ABSENCE value where the path asks no RECOVER: `RX_DFA_START`
+   gains `attempt-start` (an `attempt` loop, the empty engine; it read
+   `reverse-pass` through abi 72 -- a stamp that named a pass never run),
+   and an empty body's `RX_DFA_MATCH` gains `nomatch`. An exact VM hybrid's
+   inlined prefilter walks too (stage 2). New flag **`-fno-rev-end`** (the
+   NEW `locate` axis, order 1 `rev-end`, bit 52): `DENY_FLAGS` +
+   `DENY_CONTROLS` rows, **NO new pinned testee** (the window measures the
+   two PINS, which IS the before/after; the same-pin denial is the
+   byte-exact control below, available as `PCREC_LOCAL_FLAGS` for a scratch
+   look).
+   - I-142 section 1's stamp set is asserted BY VALUE on the five
+     capability@0.2 tail patterns under BOTH `pcrec-auto` and `pcrec-nocaps`
+     (LEDGER_STAMP_CASES, 10 rows) and on the literal patterns at BOTH pins
+     (`B135_CASES`): engine=dfa, `rev-end`, `reverse-pass`, prefilter
+     `none`, `unwrapped`; before (a15fb77b) `unanchored` +
+     `byte-class-bounded` (`memchr-bounded` for `.*\.txt$`). `req_why` is
+     the one stamp I-142 did not list: `dominated` on the two `.txt`
+     patterns, `none` on `\d+$`, `\w+\z`, `\s+$`. Caps and nocaps artifacts
+     differ in the `#include` line and `.flags` (0 vs 4) ONLY (asserted on
+     all five).
+   - **The denial is the BEFORE, byte for byte**: on every rev-end witness
+     `-fno-rev-end` at 7388f1c0 has the SAME compiled `.text` as a15fb77b's
+     default (and the default differs), and the SAME `emit_bytes` /
+     `emit_code_bytes` / `vm_program_bytes` (`B135_SIZES`); on the census,
+     291 of 291 compiled rev-end rows reproduce a15fb77b's v2 program
+     identity under the denial, and the 1,074 non-rev-end rows are inert
+     under it. Where no walk applies (`^abc$`, the empty engine, `abc`,
+     forced VM) abi 73 moves no executed code (`.text` identical to a15fb77b).
+   - **Size**: a rev-end artifact SHRINKS (`\d+$` 25,328 -> 20,619 B,
+     `\w+\z` 32,145 -> 23,624, hybrid `(a+)+b$` 35,739 -> 32,154); census
+     median -17.5 %, but 13 rows GROW because the walk's missing forward
+     machine lets the size-cap retry's shed prefilter / anchored machine
+     stay (altwide w-384 whole +460 KB; `engine_sel` `size-cap-retry` ->
+     `selected`). **SIX refusal movers**: altwide w-1024, w-2048, s-2048,
+     s-4096, clsa-1024, clsd-1024 (whole-subject form, auto) were refused
+     at every build 255bcdd8 .. a15fb77b and COMPILE at 7388f1c0 -- a
+     window over altwide gets new compile outcomes, not a speed delta.
+6. **Registries** (docs/dev/measurements/2026-10-10-b135prep-census.txt):
+   `--list-axes` MAIN 136/46 -> **161/49**: +21 rows / +2 axes are
+   [DEC-FALLBACK] B7 (I-140, already in a15fb77b: 157/48; `fallback` 11 rows
+   and `prefilter-admit` 10, both `kind=list` with EMPTY stamp_macro/
+   stamp_value -- descriptive, never bucket on them; `engine-route` orders
+   3/4 swapped), +4 rows / +1 axis are REVEND (`locate` x2, `match`
+   `nomatch`, `search-start` `attempt-start`); `#section memfn` still 0
+   rows. **[B131]'s reader audit** (I-140): every registry reader keys on
+   (axis, candidate/cli_flag/deny_bit/stamp_*) and NONE on a numeric
+   `order`; `kind` is read in ONE place (`registry_check`, which decides
+   the reverse check), and the new axes cannot reach it (`fallback` /
+   `prefilter-admit` carry no stamp_macro in `REGISTRY_STAMP_PAIRS`). The
+   `engine-route` order swap moves nothing. `RX_DFA_SCAN` JOINS
+   `REGISTRY_STAMP_PAIRS` (the `locate` axis lists `rev-end` and
+   `unanchored` as `list` candidates; `attempt` / `empty` are
+   `REGISTRY_OUTCOME_VALUES`). `--list-limits` 73, `--list-definitions` 75,
+   `--list-schema` 79: BYTE-IDENTICAL data rows.
+7. **Census** (1,468 rows, 367 patterns): 744 identical / 621 changed /
+   97 refused-both / 6 refusal movers; by step 70 only 326, 70+72 2, 70+73
+   114, 72 only 2, 73 only 177; steps 69 and 71 move no v2 identity.
+8. **Size books**: +52 B everywhere (71), per-row residuals for 70/72
+   (`B135_RESID`, 12 rows, MEASURED), `B135_SIZES` for the abi-73 witnesses,
+   `ledger` / `stamps` / `DENY_CONTROLS` rows re-measured, never assumed flat.
+   Three STAMP_CASES values moved (`dfa_start` `attempt-start` on the
+   `attempt`, empty and K41-witness-2 rows; `dfa_match` `nomatch` on the
+   empty row) and the "dfa_start is not a constant" check now asserts all
+   THREE values; `B124_LATER_DENIES` gains `-fno-rev-end` (the END-view
+   chain is end-pinned, so the view-edge denial alone no longer reproduced
+   c4c70f2c's program).
 
 ## Re-pin at 255bcdd8 (abi 65 -> 68) — 2026-10-08, lane b126prep, inbox I-134/I-135
 
