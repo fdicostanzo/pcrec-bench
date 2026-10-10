@@ -5062,3 +5062,44 @@ advnorm (abi 67) merged object-identical, and abi 66 and 68 are off the entry pa
 - Then, when a window allows, time `quick` at these main merges (abi checked): c13a1a2c (60), f116cff5 (61), 57db5152 (62), 8148e034 (64) and 60366d74 (65). If you can afford only one, take 8148e034.
 
 ack: 2026-10-09 — plan.md [B130] (requirements v0.2 folds R4/R5/R6/R9 amendments, R12-R18 from Q6, Q1-Q5 as ruled) and [B132] (O-92: the program-identity split RAN — the slowdown is in the IDENTICAL programs; shim-layout A/B first, the pin bisect held behind it).
+
+## I-142 (2026-10-10, pcrec manager) — [OPT-REVEND] is merged: O-91 ask 2's predictions, and a THREE-STATE request (before / REVEND / START-LANDING)
+
+**1. O-91 ask (2): predictions, stated before your AFTER window.**
+
+pcrec predictions for [OPT-REVEND]'s acceptance cells (AFTER pin
+7388f1c0, abi 73; BEFORE a15fb77b, abi 72; your O-91 values are the
+BEFORE). Every one of the 15 tail cells, auto-caps and auto-nocaps, stamps
+`engine=dfa, RX_DFA_SCAN=rev-end, RX_DFA_START=reverse-pass,
+RX_DFA_PREFILTER=none, RX_DFA_MATCH=unwrapped` at 7388f1c0 (before:
+`unanchored` with `byte-class-bounded`, `memchr-bounded` for
+`.*\.txt$`). The caps and nocaps artifacts are identical but for the
+flags word, so one prediction covers both. The walk reads the tail line
+from the end until the reverse DFA dies: 1 step on the no-match cells, 9
+(`\d+$`, `\w+\z` on digits), 4 (`\w+\z` on txt, `\s+$` on space), 11
+(`[a-z]+\.txt$` on txt), 20 (`.*\.txt$` on txt) steps on the matching
+cells (instrumented loads on your subject bytes, sha-verified against
+manifest_throughput.tsv: 2-23 loads; a model from the pattern semantics
+agrees within 3 on all 20 cells). No anchored re-run (no body ends in a
+newline). Your find-all loop makes a second, step-free call after a match.
+Predicted ns per call, range low-high: no-match cells 7-24; `\w+\z`
+x t-tail-txt, `\s+$` x t-tail-space 13-42; `\d+$` and `\w+\z` x
+t-tail-digits 19-60; `[a-z]+\.txt$` x t-tail-txt 22-66; `.*\.txt$` x
+t-tail-txt 33-98; `\s+$` x t-trim-nearmiss-16k 7-24 (from 29,061). Price =
+5.6 ns call floor (your own immediate-return cells in the same window)
++ 1.2-3.5 ns per step + 3-8 ns for the second call, with slack for
+instrument terms; predicted ratios 2,100x-420,000x on the 1 MiB cells,
+1,200x-4,300x on `\s+$` x t-trim-nearmiss-16k. A 1 MiB cell above ~150 ns
+or varying with body size means rev-end did not run; a short cell at 40-60
+ns with flat sentinels is the instrument. Full derivation:
+pcrec docs/dev/lanes/revpred_report.md (main f9eb4094).
+
+**2. The request: three states over the same cells** (Frank's ask). REVEND and [START-LANDING] are consecutive search-start optimizations; we want each one's effect separately, not one combined jump.
+- **State 1, before:** pcrec `a15fb77b` (abi 72; main immediately before REVEND; the only later commit before the merge is plan text).
+- **State 2, REVEND:** pcrec `7388f1c0` (abi 73; [OPT-REVEND] L1 + L2 with stage 2, the reverse-from-end locator).
+- **State 3, START-LANDING:** a pin we will name in a later inbox item when it merges (abi 74 expected; RECOVER rows `end-minus-width` and `landing` replace the reverse walk where the start is already known). That item will carry its expected mover cells and the closed-vocabulary `dfa_start` event (two new values).
+- **Cells:** the O-91 (c) acceptance cells above, plus whatever set you judge carries the broad population (the design estimates START-LANDING moves about half the bench's DFA-routed patterns). States 1 and 2 can run now; please run them in ONE window so the pair is clean, and run state 3 over the same cells with one of the earlier pins repeated as the cross-window control.
+- **Driver:** please use one driver build for all three states (after [B133]'s fix if it has landed), so O-94's instrument term does not differ between states.
+- Scheduling is yours (blocking windows at night per the standing split).
+
+**Asks:** O-91 asks (1) and (3) are still open on our side; answers follow separately.
