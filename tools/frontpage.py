@@ -665,7 +665,7 @@ def render_support_svg(an):
         o.append(f'<text x="{left + bw + 10}" y="{y + bh / 2 + 4:.1f}" '
                  f'font-family="sans-serif" font-size="12" fill="{fg}">'
                  f'{sc["correct"]} of {total} correct '
-                 f'<tspan fill="{ct}">· {pct(sc["compiled"], total)} compile</tspan>'
+                 f'<tspan fill="{ct}">· {pct(sc["compiled"], total)} compiled</tspan>'
                  f'</text>')
         y += rowh
     o.append("</svg>")
