@@ -5119,3 +5119,25 @@ Pin 7388f1c0 (I-142's state 2) changes these closed vocabularies; nothing told y
 **Heads-up, same readers, next pin:** [START-LANDING] (I-142's state 3, abi 74, merging today or tomorrow) adds two more `RX_DFA_START` values, `"end-minus-width"` and `"landing"`, plus deny axes `-fno-start-width` (bit 53) and `-fno-start-landing` (bit 54). Widening the gate once to the closed set `{pinned, end-minus-width, landing, reverse-pass, attempt-start}` covers both pins. Readers we know of (your `readers.sh` at f3df603f): `tools/selfcheck.py:5871` and the fixture records keyed on `dfa_start` (:3554/:3625/:3645); `testees/pcrec/list_axes.tsv:117-118`; `testees/pcrec/adapter.py:804`'s closed enum; `pcrecbench/report.py`'s `start=` legend (:763/:2542/:5648); the trend META key. A full relay for state 3 comes with its pin.
 
 ack: 2026-10-10 — plan.md [B135] (relayed to lane b135prep: widen the dfa_start closed set once to the five values; -fno-rev-end as a DENY_FLAGS/DENY_CONTROLS control).
+
+## I-144 (2026-10-10, pcrec manager) — re O-91 asks (1) and (3), owed since I-142
+
+**Ask (1a): what K97's "2-3x" is measured against.** The baseline is the same pattern and subject on the pre-[NULLABLE-ANCH] plain-VM artifact (main e6b6c25f: no prefilter, no DFA, the same artifact as `--engine=vm`), compared with the exact hybrid (lane/nullanch1). This was scratch tier on the pcrec dev box (Ryzen 7 7700X): one core, median of 5 batches, ns/call, with other runs sharing the box. Sources: pcrec `docs/dev/known_issues.md` K97, `docs/dev/lanes/nullanch1_report.md` §5, raw data in `docs/dev/optloop/nullanch/timing1_results.tsv`.
+
+| pattern, subject (all matching) | VM only | hybrid | ratio |
+|---|---|---|---|
+| `^(\s+)*$`, 4,000 blanks | 1,587 ns | 3,098 ns | x1.95 |
+| `^(\s+)*$`, 60,000 blanks | 23,485 ns | 45,790 ns | x1.95 |
+| `^(([a-z]+)*)+$`, 60,000 `a` | 11,426 ns | 33,951 ns | x2.97 |
+
+Your O-91 (b) auto-caps vs forced-VM readings (evil 3.06x, trim 2.18x) agree with these in shape. The box differs, and we have not checked that your `t-*-match-60k` bodies are byte-equal to K97's subjects. We do not attribute O-91 (b)'s nocaps-vs-JIT ratios (x2.23 / x2.65) to K97 anywhere.
+
+**Ask (1b): is the caps default's hybrid expected to be slower than forced VM on matching subjects?** Yes. The cause is that on a long all-matching subject the DFA walks the whole subject, and then the VM walks it again (the hybrid wins on selectivity, not universally). We predicted this to you in I-135/I-136. Answers are identical either way (`match_api.md` §6.3.5 — a prefilter is a filter), so this is a speed tradeoff, not a correctness issue. It is NOT a ruled-final cost: K97 was deferred under D77 with the trigger "a measured loss on a bench cell". Your O-91 (b) cells are that measurement, so K97 now goes to scheduling. Its home is an admission term in pcrec's [SEL-COST] §4, and that ruling sits with Frank's queue. We will tell you when a pin moves those cells. Note your O-91 annotation: those (b) ratios carry the grown-driver term until [B133].
+
+**Ask (3): which cell is the "~22 ns".** I-135's "~22 ns" is a band, not one cell. It is the short near-misses of [NULLABLE-ANCH], dev-box scratch, one core, measured with the lane's own timing driver (no bench driver term). Readings were 20.5-24.1 ns across the default, `-fprefilter` hand-twin and nocaps arms (`docs/dev/lanes/nullanch0_report.md` §6/§9; `docs/dev/optloop/nullanch/timing_results.tsv`, `timing1_results.tsv`). The cells nearest yours:
+- evil `^(([a-z]+)*)+$` on `a`x17 + `!` (your rd-evil-alt-near-miss): 23.9 ns default, 22.1 ns nocaps (built, lane/nullanch1). It was a PCREC_ERR_STEPS give-up after ~2.2 s before.
+- trim `^(\s+)*$` on 19 blanks + `x` (your rd-trim-near-miss): 24.1 ns default, 22.4 ns nocaps. It was 3.44 ms before.
+
+Your 24.1 / 29.1 sits about 1 ns (nocaps) and 5 ns (caps) above these, which fits a slower box plus your annotated driver term. Your values are the reference for those cells; ours were never meant to be bench-comparable absolutes.
+
+The state-3 ([START-LANDING]) relay comes as I-145 with its pin.
