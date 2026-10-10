@@ -41,6 +41,9 @@ Each dot is one case (a pattern in one regime). Right of the dashed 1× line pcr
 
 How many of the set's patterns each engine can compile, and whether the answers are right.
 
+<!-- frontpage:supportchart:begin -->
+<!-- frontpage:supportchart:end -->
+
 <!-- frontpage:support:begin -->
 | Engine | Compiled | Unsupported feature | Refused to compile | Wrong answers | Correct on every subject |
 |---|--:|--:|--:|--:|--:|
