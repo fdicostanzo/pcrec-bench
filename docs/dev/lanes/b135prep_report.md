@@ -305,8 +305,8 @@ the harness took ~27 min), logs `/var/tmp/b135/final_<target>.log`, markers `/va
 | check-trend | ALL PASS |
 | check-report | rc=0 |
 
-Compared with the first pass (665/46) the 42 non-environmental reds are all cleared; the harness gained 88
-checks net (b126prep: 675 total; now 757).
+Compared with the first pass (665/46) the 42 non-environmental reds are all cleared; the harness gained 78
+checks net (b126prep: 675 passed + 4 environmental = 679; now 753 + 4 = 757).
 
 ## 12. Charter-vs-committed checklist
 
