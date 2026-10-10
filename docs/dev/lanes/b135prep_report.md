@@ -194,9 +194,7 @@ each hashed (v2) at the six builds 255bcdd8 / 32a1c91f0 / 82ff94323 / 631771b7f 
   `check_deny_flag_controls` + `check_b122_round1_stamps` + `check_b124_stamps` + `check_b126_stamps` + the
   three registry checks + `check_emit_size_port` + `check_abi_floor_refusal` + `check_program_sha256`
   **231/0**, `check_b135_stamps` **20/0**, `check_b135_two_pin_window` **5/0**.
-- **Final `make check`** (all seven targets, sequential, detached from the worktree):
-  `/var/tmp/b135/final_check.sh`, logs `/var/tmp/b135/final_<target>.log`, markers
-  `/var/tmp/b135/final_marker.log` (`DONE <target> rc=N` per target, then `ALL_DONE`). RESULT: see section 11.
+- **Final `make check`** (all seven targets): see section 11 -- harness 753 passed / 4 environmental.
 
 ## 9. Findings pcrec did not predict (candidate outbox items)
 
@@ -293,7 +291,22 @@ the instrument. The sentinel BEFORE/AFTER pair and `pcre2-jit` flat decide "inst
 
 ## 11. Final `make check` -- RESULT
 
-FINAL_CHECK_RESULT_PLACEHOLDER
+Run by this lane at the end, sequentially and detached from the worktree (12:07-12:11 EDT for the tail;
+the harness took ~27 min), logs `/var/tmp/b135/final_<target>.log`, markers `/var/tmp/b135/final_marker.log`
+(`ALL_DONE`):
+
+| target | result |
+|---|---|
+| check-schema | 6 accepted / 74 rejected for the intended rule / 0 wrong |
+| check-harness | **753 passed, 4 FAILED -- exactly the four ACCEPTED ENVIRONMENTAL reds** (pruned old-pin builds, red on master too): `capability: gen_patterns.py --check` (build/pcrec-cd371441), `KB-35 build_census` and `KB-35 program_identity --check` (25b1984f), `b108 acceptance mover` (751b9c6d). `check_expectations` ran in full and passed. No other red. |
+| check-interpret | 250 passed / 0 failed (was 249 at b126prep; sidecars at catalogue 3.17) |
+| check-upstream | OK (14 findings, 3 threads) |
+| check-frontpage | all PASS |
+| check-trend | ALL PASS |
+| check-report | rc=0 |
+
+Compared with the first pass (665/46) the 42 non-environmental reds are all cleared; the harness gained 88
+checks net (b126prep: 675 total; now 757).
 
 ## 12. Charter-vs-committed checklist
 
@@ -312,8 +325,8 @@ FINAL_CHECK_RESULT_PLACEHOLDER
 | size books per witness | section 6 |
 | compile-only program-identity census layered by abi step | section 5 + the archived census |
 | catalogue `[[pin_order]]` BOTH pins in order; sidecars | 3.17; 76 sidecars |
-| `make check`, check-interpret, check-report | section 11 (run by this lane, detached; markers named) |
+| `make check`, check-interpret, check-report | section 11: DONE, all seven targets (harness 753/4 environmental) |
 | CLAUDE.md (root testees line, testees/pcrec) | applied |
 | WINDOW PLAN in the report | section 10: cells, testees, durations, the `run_suite.sh` invocation (sentinel first), the shared driver build |
 | report with this checklist | this file |
-| OWED | (1) the [B133] timing A/B/A/B at the new pin (manager, quiet box); (2) final `make check` numbers if section 11 still reads PLACEHOLDER (markers named there); (3) `plan.md`/journal STATE edits (manager); (4) the window itself |
+| OWED | (1) the [B133] timing A/B/A/B at the new pin (manager, quiet box); (2) -- (done, section 11); (3) `plan.md`/journal STATE edits (manager); (4) the window itself |
