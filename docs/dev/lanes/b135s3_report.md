@@ -259,6 +259,21 @@ mover/control side before reading any ratio. `match`-regime cells cannot move (s
 from the b135prep plan, UNMEASURED. `email` (one mover, the floor) is the cheapest cut if the
 window must shrink (-26 min).
 
+**ADDITION (manager, for pcrecdev1's [ENG-TACTICS] recount): `altwide` at b8337c33.** The set is
+`altwide@0.3` now (the brief said 0.2). `pcrecbench run` has NO per-pattern filter (only `quick` does,
+and it is scratch-tier), so the WHOLE set runs; `sfx-64/256/512` are inside it. Added to the chain
+after `loglines` (so pcrecdev1's data lands early) as `TESTEES_altwide="pcrec-auto pcrec-nocaps"` at
+b8337c33 only. Duration: the last altwide window (c4c70f2c, 2026-10-05) measured `pcrec-auto` at
+17.7 min a cell (06:36-06:54) and `pcrec-vm` 18.7 min; nocaps assumed ~18 -> **+36 min**, new total
+**424 min = 7.1 h** (still one night). **Control arm: NO by default.** pcrecdev1's read is same-pin
+(b8337c33 medians), so the 7388f1c0 arm adds nothing to it, and altwide moves only 2 patterns at
+START-LANDING (`altwide` 2 rows in the census) while 7388f1c0 shows six whole-form refusal movers vs
+a15fb77b that are irrelevant to a same-pin read. If the manager wants the control anyway (a
+window-drift check on a set that does not move), add `pcrec-auto@7388f1c0 pcrec-nocaps@7388f1c0`
+(+36 min). **STOP_AT**: altwide sits before the closing `sentinel:end`, and `STOP_AT` skips every
+set that would START after it, the closing sentinel included, so do NOT set STOP_AT for the tier-1
+chain; use it only on the tier-2 sets appended after `sentinel:end`.
+
 ## 10. Charter-vs-committed checklist
 
 | brief item | status |
