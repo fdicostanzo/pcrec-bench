@@ -259,6 +259,37 @@ mover/control side before reading any ratio. `match`-regime cells cannot move (s
 from the b135prep plan, UNMEASURED. `email` (one mover, the floor) is the cheapest cut if the
 window must shrink (-26 min).
 
+**TIER 2 (manager's extension; script revised, same file).** Tier 1 is unchanged (26 cells +
+altwide@0.3, ending `sentinel:end`, 424 min). Tier 2 runs the populations START-LANDING actually
+reaches, each ABBA with `pcrec-auto`/`pcrec-nocaps` at b8337c33 and `@7388f1c0` (the BEFORE), in
+decreasing mover count, then a closing `sentinel:end2` (its own `run_suite.sh` call, so `STOP_AT` can
+never skip it):
+
+| set | testees | movers (patterns; caps = nocaps) | est. (min) |
+|---|---|---|---|
+| `utf8@0.1` | `pcrec-{auto,nocaps}-utf8` x {b8337c33, @7388f1c0} (ids `pcrec_{b8337c33,7388f1c0}_auto-{caps,nocaps}-simdna_utf8`, `@pin` verified through `describe()`) | **57**: 30 end-minus-width + 27 landing (incl. FIT rows `prp-l`, `prp-notl`) | 2 x 38.6 + 2 x 39 = ~156 (+regen) |
+| `syntax@0.1` | `pcrec-{auto,nocaps}` x 2 pins | **49**: 42 end-minus-width + 7 landing | 2 x 41 + 2 x 43 = ~170 |
+| `bounded@0.3` | same | **17**: 7 end-minus-width + 10 landing | 4 x 48 = ~192 |
+| `sentinel:end2` | auto, auto@, nocaps@, nocaps, pcre2-jit | -- | ~37 |
+
+Estimates are the 2026-10-05 c4c70f2c cell lengths from the window logs (utf8 auto 38.6 / nocaps
+~39; syntax auto 41.0 / nocaps 43.3; bounded auto 47.8; the sentinel set's measured 37 min) -- the
+`-utf8` and `@7388f1c0` arms are assumed to run as long as their byte / canonical siblings, and
+UNMEASURED at these pins. **Per-tier**: tier 1 = 424 min (7.1 h); tier 2 = ~555 min (9.3 h);
+**total ~979 min = 16.3 h** (two nights; the box is not quiet-gated across the gap, each cell is
+pre-flighted). Movers by set in the census count the PLAIN form only (the `search` regime); the
+`match` regime moves 0 rows everywhere. Census movers for `utf8` were taken under `-e utf8`; for
+`syntax` and `bounded` in byte mode, as their testees run. Read: a mover cell's `dfa_start` must
+read `end-minus-width`/`landing` on the b8337c33 record and `reverse-pass` on the @7388f1c0 one
+before any ratio is read; `utf8 prp-l`/`prp-notl` also change engine_sel and grow (FIT).
+
+**Where STOP_AT sits.** Never on tier 1 (`STOP_AT` skips every set that would START after it,
+`sentinel:end` included). For tier 2 set `STOP_AT_T2="$(date -d '<deadline minus 3h10m>')"` in the
+environment: it applies to the tier-2 suite call only, skips whole sets that would start after it
+(order utf8, syntax, bounded: bounded, the fewest movers, is the first lost), and the closing
+`sentinel:end2` still runs because it is a separate call. A run that is cut mid-set is bounded by
+`CELL_CAP` (5,400 s) per cell, not by STOP_AT.
+
 **ADDITION (manager, for pcrecdev1's [ENG-TACTICS] recount): `altwide` at b8337c33.** The set is
 `altwide@0.3` now (the brief said 0.2). `pcrecbench run` has NO per-pattern filter (only `quick` does,
 and it is scratch-tier), so the WHOLE set runs; `sfx-64/256/512` are inside it. Added to the chain
