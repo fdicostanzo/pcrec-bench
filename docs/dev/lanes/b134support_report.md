@@ -23,3 +23,10 @@ Six columns (brief suggested ~5). No methodology breakdown (see above). Section 
 
 ## Charter-vs-committed
 Renderer + region + README section + tests + CLAUDE.md + regeneration + check: committed. Nothing OWED.
+
+## Round 2 (change request)
+- Patterns with no oracle expectation in some regime on any side (`no_oracle_patterns`, 1 on this set) leave the "Correct on every subject" denominator for every engine; cells read "N of M (%)" with M = compiled patterns with an oracle answer; the note carries the generated left-out count.
+- New "Wrong answers" column (compiled patterns with at least one wrong-answer cell). Give-ups and unmeasured cells stay not-correct, said in one clause in the note.
+- "Patterns" column dropped to stay at six; the 71 is generated into the note (all engines must agree on it, else the generator exits).
+- Results: pcrec 68 of 68 (100.0%), 0 wrong; PCRE2 JIT/interp 68 of 70, 0 wrong (2 give-ups); Vectorscan no SOM 46 of 46. Compiled counts and the earlier unsupported/refused columns unchanged; README diff vs round 1 confined to the support region.
+- Tests updated (no-oracle exclusion, wrong vs give-up, percentages); `make check-frontpage` all PASS; `make frontpage` rc=0 detached; `make frontpage-check` clean.
