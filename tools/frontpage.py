@@ -809,34 +809,52 @@ def render_compile(an):
             "compiler run that turns the emitted source into a loadable object.")
 
 
-def support_counts(s, universe):
-    """-> dict(patterns, compiled, unsupported, refused, correct) for one summary.
+def no_oracle_patterns(summaries):
+    """Patterns with no oracle expectation in some regime, on any side: a gap
+    in the set, not an engine failure."""
+    return {k[0] for s in summaries for k, c in s.cells.items()
+            if c.get("n_no_expectation", 0) > 0}
+
+
+def support_counts(s, universe, no_oracle=frozenset()):
+    """-> dict(patterns, compiled, unsupported, refused, judged, correct, wrong).
 
     Patterns = the plain-form compile rows (one per pattern; the whole-subject
-    form and the regimes collapse to the pattern). correct = compiled patterns
-    whose every (pattern, regime) cell in `universe` has a verified numeric
-    median (no wrong answer, no give-up, an oracle expectation present)."""
+    form and the regimes collapse to the pattern). judged = compiled patterns
+    not in `no_oracle`; correct = judged patterns whose every (pattern, regime)
+    cell in `universe` has a verified numeric median (a give-up or an
+    unmeasured cell counts as not correct); wrong = judged patterns with at
+    least one wrong-answer cell."""
     out = s.compile_outcome
     compiled = {p for p, o in out.items() if o == "compiled"}
+    judged = compiled - set(no_oracle)
     by_pat = {}
     for key in universe:
         by_pat.setdefault(key[0], []).append(key)
-    correct = sum(1 for p in compiled
+    correct = sum(1 for p in judged
                   if by_pat.get(p) and all(s.numeric(k) for k in by_pat[p]))
+    wrong = sum(1 for p in judged
+                if any(s.cells.get(k, {}).get("n_wrong", 0) > 0
+                       for k in by_pat.get(p, [])))
     return dict(
         patterns=len(out), compiled=len(compiled),
         unsupported=sum(o == "unsupported-by-declaration" for o in out.values()),
         refused=sum(o == "did-not-compile" for o in out.values()),
-        correct=correct)
+        judged=len(judged), correct=correct, wrong=wrong)
 
 
 def render_support(an):
-    head = ["Engine", "Patterns", "Compiled", "Unsupported feature",
-            "Refused to compile", "Verified correct (of compiled)"]
+    head = ["Engine", "Compiled", "Unsupported feature", "Refused to compile",
+            "Wrong answers", "Correct on every subject"]
     rows = [(an.pcrec, 0)] + [(c, 1) for c, *_ in ordered(an.per)]
-    body, last = [], None
+    no_oracle = no_oracle_patterns(an.summaries())
+    body, last, total = [], None, None
     for s, top in rows:
-        sc = support_counts(s, an.universe)
+        sc = support_counts(s, an.universe, no_oracle)
+        total = sc["patterns"] if total is None else total
+        if sc["patterns"] != total:
+            raise SystemExit(f"frontpage: {s.testee_id}: {sc['patterns']} patterns, "
+                             f"others {total}")
         if len(s.compile_ns) != sc["compiled"]:
             raise SystemExit(f"frontpage: {s.testee_id}: compiled-pattern count "
                              f"{sc['compiled']} disagrees with the compile table's "
@@ -849,26 +867,31 @@ def render_support(an):
             if g != last:
                 body.append([f"**{GROUP_TITLE[g]}**"] + [""] * (len(head) - 1))
             last = g
-        body.append([label(s), sc["patterns"],
+        body.append([label(s),
                      f"{sc['compiled']} ({pct(sc['compiled'], sc['patterns'])})",
-                     sc["unsupported"], sc["refused"],
-                     f"{sc['correct']} ({pct(sc['correct'], sc['compiled'])})"])
+                     sc["unsupported"], sc["refused"], sc["wrong"],
+                     f"{sc['correct']} of {sc['judged']} "
+                     f"({pct(sc['correct'], sc['judged'])})"])
     return (md_table(head, body, ["---", "--:", "--:", "--:", "--:", "--:"]) +
-            "\n\nThe denominator is the patterns in the set: each pattern counts "
-            "once, however many regimes and forms it is measured in. *Compiled* "
-            "means the engine accepted the pattern; *Unsupported feature* is a "
-            "pattern the engine declares it does not support; *Refused to compile* "
-            "is one it declined or failed to build (for example a size limit). "
-            "*Verified correct* is the share of the compiled patterns whose every "
-            "measured regime matched the oracle on every subject, so a wrong "
-            "answer, a give-up or a missing oracle expectation counts against it. "
+            f"\n\nThe set has {total} patterns; each counts once, however many "
+            "regimes and forms it is measured in. *Compiled* means the engine "
+            "accepted the pattern (the percentage is of all patterns); "
+            "*Unsupported feature* is a pattern the engine declares it does not "
+            "support; *Refused to compile* is one it declined or failed to build "
+            "(for example a size limit). *Wrong answers* counts compiled patterns "
+            "with at least one wrong answer against the oracle. *Correct on every "
+            "subject* is out of the compiled patterns that have an oracle answer "
+            f"in every regime ({len(no_oracle)} pattern"
+            f"{'' if len(no_oracle) == 1 else 's'} left out for having none, a gap "
+            "in the set rather than an engine failure); a wrong answer or a "
+            "give-up counts as not correct. "
             "RE2, Rust regex, Vectorscan and TRE decline features such as "
             "backreferences, recursion and lookaround by design, and this set "
             "deliberately includes such patterns: a lower figure is a design "
             "scope, not a defect. The leftmost-longest engines' different match "
             "semantics are covered in the "
             "[methodology](docs/methodology.md#engines) and also lower the "
-            "*Verified correct* figure of RE2 (longest-match) and TRE.")
+            "*Correct on every subject* figure of RE2 (longest-match) and TRE.")
 
 
 # --------------------------------------------------------------- other sets
