@@ -3505,6 +3505,53 @@ def _b126_moved(expected, label, form, em):
 
 
 
+# [B135] (pin 7388f1c0, abi 68 -> 73; a15fb77b abi 72 the BEFORE): the size
+# books, MEASURED per witness (docs/dev/lanes/b135prep_report.md section 5).
+#   abi 69 [DEC-VAR-ATTRIB]/[DEC-COLLAPSE-WASTE]: stamp VALUES only; no
+#     artifact byte on any asserted row.
+#   abi 70 [MEMFN] R4e'.0b: every offset-skip/pre-check function keeps its
+#     loop under `<fn>__body` and the function becomes ONE call to it --
+#     +139..+184 B per FUNC, so a per-row residual (B135_RESID), not flat.
+#   abi 71 [MEMFN] RQ-3: `#define RX_SIMD_GUARDED_BYTES 0x0000000000000000ULL`
+#     is ONE stamp line on EVERY artifact of both engines, +52 B exactly in
+#     emit_bytes and emit_code_bytes, 0 in vm_program_bytes
+#     (B135_SIMD_GUARDED_LINE).
+#   abi 72 [MEMFN] R-12 VMLAZY: only a VM program with a lazy quantifier of
+#     rmin > 0 on the cursor rung moves (text + vm_program_bytes), per row.
+#   abi 73 [OPT-REVEND]: a rev-end artifact SHRINKS (the forward machine is
+#     gone; B135_REVEND_SIZES); every other asserted row moves by the
+#     residual below only.
+B135_SIMD_GUARDED_LINE = 52
+#: (label, form) -> (emit, code, program) residual ON TOP of
+#: B135_SIMD_GUARDED_LINE and the [B126] books -- filled from the build.
+B135_RESID = {
+    ('size-cap rung rescue (K41 witness 2)', 'plain'): (0, 0, 1800),
+    ('ASCII-fold class test: (?i)abc under --engine=vm, folds 3', 'plain'): (139, 0, 0),
+    ('ASCII-fold declined: [ac] under --engine=vm (not a 0x20 pair), folds 0', 'plain'): (139, 0, 0),
+    ('ASCII-fold declined: [@`] under --engine=vm (a 0x20 pair of non-letters), folds 0', 'plain'): (139, 0, 0),
+    ('altwide pfx3-256 under --engine=vm: the island behind a factored prefix', 'plain'): (139, 0, 0),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (139, 0, 0),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'plain'): (2, 0, 0),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): (280, 0, 0),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): (184, 0, 0),
+    ('capability router-prefix-order under auto: S1 run-pinned, scan at offset 0', 'plain'): (141, 0, 0),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'plain'): (139, 0, 0),
+    ('capability nested-comment-rec under auto: S1 step 6 alone', 'plain'): (139, 0, 0),
+}
+
+
+def _b135_moved(expected, label, form, em):
+    """`expected` with the size keys moved by the [B135] books: +52 on every
+    artifact (the RX_SIMD_GUARDED_BYTES line) and the row's B135_RESID."""
+    out = dict(expected)
+    r = B135_RESID.get((label, form), (0, 0, 0))
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + (B135_SIMD_GUARDED_LINE if i < 2 else 0) + r[i]
+    return out
+
+
 class _Draft:
     """[B39] DRAFT: a predicted value, compared exactly. See above."""
     __slots__ = ("want",)
@@ -3704,8 +3751,14 @@ STAMP_CASES = (
      # No alternation, so both altcls counts are the honest 0.
      {"engine": "dfa", "dfa_scan": "empty", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
-      "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
-      "dfa_match": "search-filter", "engine_sel": "selected",
+      "dfa_scan_edge": "none",
+      # [B135] (abi 73, [OPT-REVEND] L2.1/L2.2): the empty engine asks no
+      # RECOVER, so `RX_DFA_START` reads its ABSENCE value `attempt-start`
+      # (was `reverse-pass` through abi 72), and its `<prefix>_match` is
+      # the `nomatch` form (was `search-filter`) -- both MEASURED, both
+      # pcrec's declared movers (the 85 empty bodies of L2.2).
+      "dfa_start": "attempt-start",
+      "dfa_match": "nomatch", "engine_sel": "selected",
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: an `empty` scan has neither table -- 0 BY MECHANISM
       # (match_api.md 6.3: "0 on _DFA_SCAN attempt and empty").
@@ -3728,7 +3781,9 @@ STAMP_CASES = (
      # No alternation, so both altcls counts are the honest 0.
      {"engine": "dfa", "dfa_scan": "attempt", "dfa_prefilter": "none",
       "dfa_table": "none", "dfa_prefilter_offsets": "none",
-      "dfa_scan_edge": "none", "dfa_start": "reverse-pass",
+      # [B135] (abi 73): an `attempt` loop asks no RECOVER -- the stamp
+      # reads its ABSENCE value (was `reverse-pass` through abi 72).
+      "dfa_scan_edge": "none", "dfa_start": "attempt-start",
       "dfa_match": "search-filter", "engine_sel": "selected",
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: the other no-table scan, the same 0 by mechanism.
@@ -3827,7 +3882,8 @@ STAMP_CASES = (
      # has alternations, but none of single-character branches.
      {"engine": "vm", "prefilter": "hybrid", "engine_sel": "size-cap-retry",
       "vm_prefilter_lang": "count-collapsed", "dfa_scan_edge": "none",
-      "dfa_start": "reverse-pass", "vm_frameless": 0,
+      # [B135] (abi 73): the hybrid's `attempt` prefilter asks no RECOVER.
+      "dfa_start": "attempt-start", "vm_frameless": 0,
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: a FRAMED program is `plain` by construction (tuning.md
       # 2.21) -- claim 11's witness; its alternations are not literal
@@ -5526,7 +5582,8 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b126_moved(expected, label, form, em)
+            expected = _b135_moved(_b126_moved(expected, label, form, em),
+                                   label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -5868,13 +5925,13 @@ def check_mechanism_stamps():
         # would otherwise be asserted at one value on every case.
         st_all = sorted({em["dfa_start"] for em in metas.values()
                          if "dfa_start" in em})
-        if st_all == ["pinned", "reverse-pass"]:
-            ok("dfa_start is not a constant: BOTH values on real artifacts",
+        if st_all == ["attempt-start", "pinned", "reverse-pass"]:
+            ok("dfa_start is not a constant: ALL THREE values on real artifacts ([B135]: attempt-start joined at abi 73)",
                "pinned on %s"
                % ", ".join(sorted(l for l, em in metas.items()
                                   if em.get("dfa_start") == "pinned"))[:110])
         elif st_all:
-            bad("dfa_start is not a constant: BOTH values on real artifacts",
+            bad("dfa_start is not a constant: ALL THREE values on real artifacts ([B135]: attempt-start joined at abi 73)",
                 "only %r seen over %d artifacts with a DFA scan"
                 % (st_all, sum(has_start.values())))
         # -- [B34] / [B32] (g): THE STAMP AGREES WITH THE GREP IT REPLACES.
@@ -6820,18 +6877,21 @@ DENY_CONTROLS = (
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
                      - 2 * B122_RANGE_SITE  # [B122] the one edge; denied: no edge
                      + B124_STAMP_LINES
-                     + B126_R4H_SCAN_EDGE_DEFAULT,
+                     + B126_R4H_SCAN_EDGE_DEFAULT
+                     + B135_SIMD_GUARDED_LINE,
                      # [B124]: the denied arm is the K92 witness -- its
                      # `.flags` literal loses bit 21 (2097152 -> 0).
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                      + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
-                     + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE),
+                     + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE
+                     + B135_SIMD_GUARDED_LINE),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                             + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                             + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
-                            + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE)}, "deny"),
+                            + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE
+                            + B135_SIMD_GUARDED_LINE)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -6886,12 +6946,14 @@ DENY_CONTROLS = (
                      + 2 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 4 * B122_RANGE_SITE
-                     + B124_STAMP_LINES + B126_R4H_START_PINNED[0],
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[0]
+                     + B135_SIMD_GUARDED_LINE,
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 6 * B122_RANGE_SITE
-                     + B124_STAMP_LINES + B126_R4H_START_PINNED[1]),
+                     + B124_STAMP_LINES + B126_R4H_START_PINNED[1]
+                     + B135_SIMD_GUARDED_LINE),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -6950,12 +7012,12 @@ DENY_CONTROLS = (
       # "memcmp", the chain arm's (word compares only) "none".
       "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
                      + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET
-                     + B126_VM_POSS_ARMS_LINE,
+                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE,
                      # [B122] MEASURED c4c70f2c: the chain arm +201 beyond
                      # the flat term -- S4 C1's overlap row on `foo`/`bar`.
                      20074 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 201
                      + B124_STAMP_LINES + B124_VM_START_SET
-                     + B126_VM_POSS_ARMS_LINE)}, "deny"),
+                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -7178,6 +7240,16 @@ DENY_CONTROLS = (
      "req-use", ("literal", b"\\bfoo"), "",
      {"req_handoff": ("0", "none"),
       "req_why": ("emitted", "emitted")}, "deny"),
+    # [B135] (pin 7388f1c0, abi 73, [OPT-REVEND] L2): `-fno-rev-end` (the
+    # `locate` axis's order-1 row, bit 52, RX_DFA_SCAN `rev-end`) -- the
+    # end-pinned body takes the forward scan + reverse pass again, so the
+    # scan stamp moves `rev-end` -> `unanchored` and the prefilter the
+    # walk made unnecessary RETURNS (`none` -> `byte-class-bounded`).
+    # `\\d+$` is I-142 section 1's first tail pattern.
+    ("dfa_scan: the [OPT-REVEND] reverse-from-end locate denied",
+     "locate", ("literal", b"\\d+$"), "",
+     {"dfa_scan": ("rev-end", "unanchored"),
+      "dfa_prefilter": ("none", "byte-class-bounded")}, "deny"),
 )
 
 
@@ -10866,7 +10938,12 @@ def check_b118_findtie_k69_noop_on_bench():
 
 #: [B124] (pin 60366d747): denials of mechanisms that landed after
 #: c4c70f2c, added to check_b122_round1_stamps' identity arm only.
-B124_LATER_DENIES = ["-fno-start-set"]
+#: [B135] (pin 7388f1c0): `-fno-rev-end` joins -- the END-view chain
+#: `(?:[a-z]{0,64})\\z` is end-pinned, so at abi 73 it takes the rev-end
+#: walk and the view-edge denial alone no longer reproduces c4c70f2c's
+#: program; denying the LATER mechanism too isolates round 1's own flag.
+#: Inert on every pattern with no end pin.
+B124_LATER_DENIES = ["-fno-start-set", "-fno-rev-end"]
 
 #: [B122] (pcrec c4c70f2c, abi 50 -> 59): the round-1 witnesses, each a
 #: (label, extra flags, pattern, {pair: value} at the pin, the deny flag,
@@ -11456,6 +11533,257 @@ def check_b126_stamps():
             else:
                 os.environ[k] = v
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+#: [B135] (pin 7388f1c0, abi 68 -> 73; a15fb77b, abi 72, the BEFORE). Rows:
+#: (label, extra flags, pattern, {pair: value} at 7388f1c0 (abi 73),
+#:  {pair: value} at a15fb77b (abi 72), deny flags, {pair: value} under the
+#:  denial at 7388f1c0). Every value MEASURED by a direct emit at the
+#: 2026-10-10 builds (lane b135prep) before being typed; pcrec's own
+#: predictions are inbox I-142 section 1 (the five tail patterns).
+#: Identity (computed in the check, not typed): a row whose abi-73 stamp
+#: `dfa_scan` is `rev-end` must have its `-fno-rev-end` artifact's compiled
+#: `.text` EQUAL to a15fb77b's default `.text` while the default differs
+#: ("old-text": the denial reproduces the BEFORE at the SAME pin); every
+#: other row's `.text` is the same at both pins ("same-text": abi 73 moves
+#: no executed code where no rev-end walk applies).
+_B135_BASE72 = {"simd_guarded_bytes": 0}
+_B135_REVEND = {"engine": "dfa", "engine_sel": "selected",
+                "dfa_scan": "rev-end", "dfa_start": "reverse-pass",
+                "dfa_prefilter": "none", "dfa_match": "unwrapped",
+                "simd_guarded_bytes": 0}
+B135_CASES = (
+    ("tail \\d+$ (I-142 s1)", "", b"\\d+$",
+     dict(_B135_REVEND, req_why="none", memfn_libc="none"),
+     {"engine": "dfa", "dfa_scan": "unanchored", "dfa_start": "reverse-pass",
+      "dfa_prefilter": "byte-class-bounded", "dfa_match": "unwrapped",
+      "req_why": "none", "simd_guarded_bytes": 0},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded",
+      "dfa_start": "reverse-pass", "dfa_match": "unwrapped"}),
+    ("tail \\w+\\z (I-142 s1)", "", b"\\w+\\z",
+     dict(_B135_REVEND, req_why="none", memfn_libc="none"),
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded"},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded"}),
+    ("tail \\s+$ (I-142 s1)", "", b"\\s+$",
+     dict(_B135_REVEND, req_why="none", memfn_libc="none"),
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded"},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded"}),
+    ("tail [a-z]+\\.txt$ (I-142 s1)", "", b"[a-z]+\\.txt$",
+     dict(_B135_REVEND, req_why="dominated", memfn_libc="none"),
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded",
+      "req_why": "emitted", "memfn_libc": "memchr,memcmp"},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "byte-class-bounded",
+      "req_why": "emitted", "memfn_libc": "memchr,memcmp"}),
+    ("tail .*\\.txt$ (I-142 s1)", "", b".*\\.txt$",
+     dict(_B135_REVEND, req_why="dominated", memfn_libc="none"),
+     {"dfa_scan": "unanchored", "dfa_prefilter": "memchr-bounded",
+      "req_why": "emitted", "memfn_libc": "memchr,memcmp"},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "memchr-bounded",
+      "req_why": "emitted", "memfn_libc": "memchr,memcmp"}),
+    # stage 2: an exact VM hybrid's inlined prefilter walks too.
+    ("stage 2: (a+)+b$ VM hybrid", "", b"(a+)+b$",
+     {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": None, "req_why": "dominated", "simd_guarded_bytes": 0},
+     {"engine": "vm", "prefilter": "hybrid", "dfa_scan": "unanchored",
+      "dfa_prefilter": "memchr-bounded", "req_why": "emitted"},
+     "-fno-rev-end",
+     {"dfa_scan": "unanchored", "dfa_prefilter": "memchr-bounded",
+      "req_why": "emitted"}),
+    # the generated stamp rule: ABSENCE values where the path asks no
+    # RECOVER (an `attempt` loop, the empty engine); abi 72 stamped the
+    # selection that was never asked (`reverse-pass`).
+    ("absence: ^abc$ attempt loop", "", b"^abc$",
+     {"dfa_scan": "attempt", "dfa_start": "attempt-start",
+      "dfa_match": "search-filter", "req_why": "one-attempt"},
+     {"dfa_scan": "attempt", "dfa_start": "reverse-pass",
+      "dfa_match": "search-filter"},
+     "-fno-rev-end", {"dfa_scan": "attempt", "dfa_start": "attempt-start"}),
+    ("absence: empty body [^\\x00-\\xff]", "", b"[^\\x00-\\xff]",
+     {"dfa_scan": "empty", "dfa_start": "attempt-start",
+      "dfa_match": "nomatch"},
+     {"dfa_scan": "empty", "dfa_start": "reverse-pass",
+      "dfa_match": "search-filter"},
+     "-fno-rev-end", {"dfa_scan": "empty", "dfa_match": "nomatch"}),
+    # scope: a plain VM artifact has no DFA scan -> none of the dfa_* pairs,
+    # and the new abi-71 count is on it all the same.
+    ("scope: \\d+$ forced VM carries no dfa_* pair", "--engine=vm", b"\\d+$",
+     {"engine": "vm", "engine_sel": "forced", "dfa_scan": None,
+      "dfa_start": None, "dfa_match": None, "simd_guarded_bytes": 0},
+     {"engine": "vm", "dfa_scan": None, "simd_guarded_bytes": 0},
+     "-fno-rev-end", {"dfa_scan": None}),
+    # a pattern no abi 73 row touches: unanchored, run-pinned.
+    ("control: abc (no end pin)", "", b"abc",
+     {"dfa_scan": "unanchored", "dfa_start": "reverse-pass",
+      "dfa_prefilter": "run-pinned", "dfa_match": "unwrapped",
+      "simd_guarded_bytes": 0},
+     {"dfa_scan": "unanchored", "dfa_start": "reverse-pass",
+      "dfa_prefilter": "run-pinned", "simd_guarded_bytes": 0},
+     "-fno-rev-end", {"dfa_scan": "unanchored", "dfa_prefilter": "run-pinned"}),
+)
+
+
+#: [B135] the SIZE BOOKS of the abi 73 step, MEASURED per witness through the
+#: adapter (emit_bytes, emit_code_bytes, vm_program_bytes) at a15fb77b, at
+#: 7388f1c0, and at 7388f1c0 under `-fno-rev-end`. Three readings:
+#:  * the denied arm equals a15fb77b's BYTE FOR BYTE on every rev-end row
+#:    (the denial restores the abi-72 artifact, not just its stamps);
+#:  * a rev-end artifact SHRINKS (the forward machine is gone): `\d+$`
+#:    25,328 -> 20,619 B, `\w+\z` 32,145 -> 23,624, the hybrid (a+)+b$
+#:    35,739 -> 32,154;
+#:  * a non-rev-end artifact moves by at most a stamp-rule respell: +2 B on
+#:    an `attempt` loop, -199 B on the empty engine (its `_match` is the
+#:    `nomatch` form), 0 elsewhere.
+B135_SIZES = {
+    "tail \\d+$ (I-142 s1)": ((25328, 18528, None), (20619, 17073, None), (25328, 18528, None)),
+    "tail \\w+\\z (I-142 s1)": ((32145, 19456, None), (23624, 17133, None), (32145, 19456, None)),
+    "tail \\s+$ (I-142 s1)": ((26791, 18519, None), (22483, 17465, None), (26791, 18519, None)),
+    "tail [a-z]+\\.txt$ (I-142 s1)": ((26223, 18523, None), (20607, 16402, None), (26223, 18523, None)),
+    "tail .*\\.txt$ (I-142 s1)": ((29993, 19361, None), (23808, 16855, None), (29993, 19361, None)),
+    "stage 2: (a+)+b$ VM hybrid": ((35739, 32087, 3303), (32154, 30316, 3303), (35739, 32087, 3303)),
+    "absence: ^abc$ attempt loop": ((15876, 13938, None), (15878, 13940, None), (15878, 13940, None)),
+    "absence: empty body [^\\x00-\\xff]": ((12263, 12263, None), (12064, 12064, None), (12064, 12064, None)),
+    "scope: \\d+$ forced VM carries no dfa_* pair": ((22735, 21267, 792), (22735, 21267, 792), (22735, 21267, 792)),
+    "control: abc (no end pin)": ((21515, 16205, None), (21515, 16205, None), (21515, 16205, None)),
+}
+
+
+def check_b135_stamps():
+    """[B135] (pin 7388f1c0, abi 68 -> 73; a15fb77b, abi 72, the BEFORE;
+    inbox I-140/I-142). For every row of B135_CASES: the pairs BY VALUE
+    through the adapter at BOTH pins (the shim's `simd_guarded_bytes`
+    reader and the widened `dfa_scan`/`dfa_start`/`dfa_match` sets exercised
+    end to end), the `-fno-rev-end` arm's pairs, and the identity of the
+    compiled `.text` (the denial reproduces a15fb77b's executed code on
+    every rev-end row; abi 73 moves none where no walk applies). Then:
+    `locate` in the registry (rows, flag, bit 52, stamp macro); the caps and
+    nocaps artifacts of each I-142 tail pattern identical but the include
+    line and the `.flags` word; the size consequence of the walk (the
+    forward machine is gone) by value; and the ABI stamp itself."""
+    print("-- [B135]: [OPT-REVEND] rev-end locate, the generated absence rule, "
+          "RX_SIMD_GUARDED_BYTES --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b135 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "a15fb77b"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b135 stamps", "no build for a15fb77b (pin.sh a15fb77b first; "
+            "--path printed %r)" % old_bin)
+        return
+    new_bin = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b135-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS",
+                                            mod.PIN_OVERRIDE_ENV)}
+    try:
+        for i, (label, extra, pat, want73, want72, deny, want_deny) in enumerate(B135_CASES):
+            flags = ["--features", "all"] + extra.split()
+            got = {}
+            for tag, binary, dflags in (("73", new_bin, []), ("72", old_bin, []),
+                                        ("73d", new_bin, deny.split())):
+                os.environ["PCREC_BIN"] = binary
+                cr = _b118_compile(adapter, tmp, "b135-%d-%s" % (i, tag),
+                                   " ".join(flags + dflags), pat)
+                if cr.outcome != "compiled":
+                    got[tag] = None
+                    bad("b135 %s" % label, "%s=%s: %s" % (tag, cr.outcome,
+                                                           cr.diagnostic))
+                    break
+                got[tag] = cr.engine_metadata
+            else:
+                miss = []
+                for tag, want in (("73", want73), ("72", want72),
+                                  ("73d", want_deny)):
+                    miss += ["abi-%s %s=%r (want %r)" % (tag, k, got[tag].get(k), v)
+                             for k, v in want.items() if got[tag].get(k) != v]
+                want_sz = B135_SIZES.get(label)
+                if want_sz is not None:
+                    for tag, w in zip(("72", "73", "73d"), want_sz):
+                        g = tuple(got[tag].get(k) for k in
+                                  ("emit_bytes", "emit_code_bytes",
+                                   "vm_program_bytes"))
+                        if g != w:
+                            miss.append("size books abi-%s (emit, code, "
+                                        "program) %r (want %r)" % (tag, g, w))
+                if got["73"].get("abi") != 73 or got["72"].get("abi") != 72:
+                    miss.append("abi stamps 73/72 read %r/%r"
+                                % (got["73"].get("abi"), got["72"].get("abi")))
+                base = flags
+                h72 = _b126_text_hash(old_bin, base, pat, tmp, "o%d" % i)
+                h73 = _b126_text_hash(new_bin, base, pat, tmp, "n%d" % i)
+                h73d = _b126_text_hash(new_bin, base + deny.split(), pat, tmp,
+                                       "d%d" % i)
+                if want73.get("dfa_scan") == "rev-end":
+                    id_ok = h73d is not None and h73d == h72 and h73 != h72
+                    id_why = ".text: denied == a15fb77b, default != a15fb77b"
+                else:
+                    id_ok = h72 is not None and h72 == h73
+                    id_why = ".text: abi 73 == a15fb77b"
+                if not id_ok:
+                    miss.append("identity (%s) a15=%s n73=%s deny=%s"
+                                % (id_why, h72, h73, h73d))
+                name = "b135 %s: by value at 73/72, %s" % (label, deny)
+                if miss:
+                    bad(name, "; ".join(miss))
+                else:
+                    ok(name, "%s; %s" % (", ".join(
+                        "%s=%r" % kv for kv in want73.items()), id_why))
+        # the registry's `locate` axis
+        rows = [r for r in mod.registry_rows() if r["axis"] == "locate"]
+        want = [("1", "rev-end", "RX_DFA_SCAN", "rev-end", "-fno-rev-end", "52"),
+                ("2", "unanchored", "RX_DFA_SCAN", "unanchored", "", "")]
+        have = [(r["order"], r["candidate"], r["stamp_macro"], r["stamp_value"],
+                 r.get("cli_flag", ""), r.get("deny_bit", "")) for r in rows]
+        if have == want:
+            ok("b135 registry: the `locate` axis (rev-end bit 52, unanchored)",
+               "%s" % have)
+        else:
+            bad("b135 registry: the `locate` axis (rev-end bit 52, unanchored)",
+                "have %r want %r" % (have, want))
+        # caps vs nocaps: identical but the include line and the flags word
+        for pat in (b"\\d+$", b"\\w+\\z", b"\\s+$", b"[a-z]+\\.txt$", b".*\\.txt$"):
+            texts = {}
+            for tag, extra in (("caps", []), ("nocaps", ["--no-captures"])):
+                out = os.path.join(tmp, "cn-%s.c" % tag)
+                r = subprocess.run([new_bin, "-p", "rx", "--features", "all"]
+                                   + extra + ["-o", out, "--pattern",
+                                              pat.decode("latin-1")],
+                                   capture_output=True, env=C_ENV, timeout=300)
+                texts[tag] = (open(out).read().splitlines()
+                              if r.returncode == 0 else None)
+            name = "b135 caps == nocaps but the flags word: %s" % pat.decode()
+            c, n = texts["caps"], texts["nocaps"]
+            if c is None or n is None or len(c) != len(n):
+                bad(name, "refused or different line counts")
+                continue
+            diff = [(a, b) for a, b in zip(c, n) if a != b]
+            norm = [(re.sub(r"\d+ULL", "N", a), re.sub(r"\d+ULL", "N", b))
+                    for a, b in diff if a.startswith("    .flags")]
+            inc = [1 for a, b in diff if a.startswith("#include")]
+            if len(diff) == 2 and len(inc) == 1 and len(norm) == 1 \
+                    and norm[0][0] == norm[0][1]:
+                ok(name, "differs only in the #include line and the `.flags` "
+                         "word (%s vs %s)" % (diff[1][0].strip(), diff[1][1].strip())
+                   if diff[1][0].startswith("    .flags")
+                   else "differs only in the #include line and `.flags`")
+            else:
+                bad(name, "diff lines: %r" % diff[:4])
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
 
 
 def check_list_axes_registry():
@@ -16122,6 +16450,7 @@ def main():
     check_b122_round1_stamps()
     check_b124_stamps()
     check_b126_stamps()
+    check_b135_stamps()
     check_list_axes_registry()
     check_list_definitions_registry()
     check_list_limits_registry()

@@ -2,8 +2,26 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-255bcdd8/build/pcrec --list-axes
+#     build/pcrec-7388f1c0/build/pcrec --list-axes
 #
+# pcrec commit 7388f1c0d442da699704c47b1c206dfd4b7b1a03 (rx_info.abi 73, read off a plain `abc` witness at this build),
+# archived 2026-10-10 by lane b135prep ([B135], inbox I-140/I-142 + the
+# manager's brief): the pin ADVANCED 255bcdd8 (abi 68) -> 7388f1c0 (abi 73,
+# [OPT-REVEND] L1 + L2 with stage 2) and a15fb77b (abi 72, the BEFORE) is the
+# second pin the window measures. MAIN TABLE 161 data rows / 49 axes (was
+# 136 / 46 at 255bcdd8): +21 rows / +2 axes are [DEC-FALLBACK] B7 (I-140, NOT
+# an abi event, already in a15fb77b: 157 / 48 -- `fallback` 11 rows and
+# `prefilter-admit` 10 rows, both kind=list with EMPTY stamp_macro /
+# stamp_value, descriptive, never bucketed on; `engine-route` orders 3/4
+# swapped; `kind` predicate->list on engine-route/size-term/prefilter-lang;
+# two descs changed); +4 rows / +1 axis are [OPT-REVEND] (abi 73): the NEW
+# `locate` axis (order 1 `rev-end`, RX_DFA_SCAN, deny PCREC_NO_REV_END bit 52
+# `-fno-rev-end`; order 2 `unanchored`, the fallback), `match` order 3
+# `nomatch` (RX_DFA_MATCH; order 2 `search-filter`'s applies text lost "the
+# empty engine"), and `search-start` order 3 `attempt-start` (a predicate
+# row, RX_DFA_START). `#section memfn` still 0 rows. Every other row
+# BYTE-IDENTICAL to a15fb77b's (diffed line for line).
+# PREVIOUS archiving (255bcdd8), from the header it carried:
 # pcrec commit 255bcdd8f73bcb7401550134b30413f68229a936 (rx_info.abi 68, read off a plain `abc` witness at this build),
 # archived 2026-10-08 by lane b126prep ([B126], inbox I-134/I-135 + the
 # manager's brief: pcrec main 255bcdd8 = 02db3811 + R4h (33186bc0), docs-only
@@ -76,6 +94,8 @@
 # cli_flag: the -f/-fno-/--engine= spelling, empty for a candidate
 # reached only as a fallback.
 #axis	order	candidate	kind	stamp_macro	stamp_value	deny_macro	deny_bit	force_macro	force_bit	cli_flag	applies
+locate	1	rev-end	list	RX_DFA_SCAN	rev-end	PCREC_NO_REV_END	52			-fno-rev-end	every match ends at the subject's end, or just before a final newline (the end_pin fact: every alternative ends in $/\Z/\z outside multiline, no \G), on an ENG_UNANCH body: the reverse machine walks back from each possible end and the smallest accepting position is the start; one anchored run decides a tie between the two ends where a match can end by consuming the final newline
+locate	2	unanchored	list	RX_DFA_SCAN	unanchored						always (fallback): the forward scan from search_from, the candidate-start slots inside it, then the reverse pass for the start (`attempt` on an ENG_ATTEMPT body: the per-start attempt loop; the VM's attempt loop on a VM artifact)
 table	1	premultiplied	list	RX_DFA_TABLE	premultiplied	PCREC_NO_PREMUL_TABLE	15			-fno-premul-table	this machine's states*classes <= 65535 and no emitted seed cell is negative
 table	2	indexed	list	RX_DFA_TABLE	indexed						always (fallback)
 table	3	none	predicate	RX_DFA_TABLE	none						the artifact has no DFA scan-table at all: a proven-empty engine (dfa_engine_is_empty), or the ENG_ATTEMPT label-dispatch engine, which is asked first (src/gen/CLAUDE.md's [DD-13c] #5)
@@ -105,7 +125,8 @@ direction	1	forward	both								always — finds where a match ENDS
 direction	2	reverse	both								always — finds where that match BEGINS
 direction	3	anchored	both								always on a DFA artifact that selects the unwrapped match-here form ([ENG-ABS]) — finds where the match beginning at ctx->pos ends
 match	1	unwrapped	list	RX_DFA_MATCH	unwrapped	PCREC_NO_ANCHORED_DFA	17			-fno-anchored-dfa	the artifact's own ENG_UNANCH _match, and its anchored machine built inside the DFA caps ([ENG-ABS])
-match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, the empty engine, an anchored machine over a cap, or the deny flag
+match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, an anchored machine over a cap, or the deny flag
+match	3	nomatch	list	RX_DFA_MATCH	nomatch						always, where the body's locator proves there is no match at all (the empty engine): the match-here entry answers -1 at once, as every search entry answers 0
 scan-edge	1	scan-edge	list			PCREC_NO_SCAN_EDGE	21			-fno-scan-edge	per STATE: src/opt/scanedge.c found a maximal run of states differing only in how many bytes of ONE class have been counted, rooted here, and DELETED the run's interior from the table -- so this state's edge is mandatory, not an accelerator ([OPT-5])
 scan-edge	2	table-walk	list								always (fallback) -- this state counts nothing, or the axis is denied and the pass left every state where it was
 scan-body	1	range	list	RX_DFA_SCAN_EDGE	range						the class-form table (src/gen/clskit.c ROWS, site scan) answers byte-range: the edge's class is ONE interval, tested inline against immediates (the same spelling a VM class read uses), no memory touched but the subject ([OPT-5]; D139)
@@ -116,6 +137,7 @@ scan-body	5	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no sc
 scan-body	6	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table, calls a kit matcher or compares a fold pair) -- a per-artifact composition, never a single edge's own selection
 search-start	1	pinned	list	RX_DFA_START	pinned	PCREC_NO_START_PINNED	22			-fno-start-pinned	ENG_UNANCH, a non-empty engine, and the forward machine's start state accepts under the PLAIN view with an accept that is invariant in position and in class context -- and, where mechanism 4 seeds, every live seed state does too. The match then provably begins at search_from and no reverse machine is emitted ([OPT-5] STEP 2)
 search-start	2	reverse-pass	list	RX_DFA_START	reverse-pass						always (fallback) -- the backwards scan over the artifact's own reverse machine recovers the match start
+search-start	3	attempt-start	predicate	RX_DFA_START	attempt-start						the search's path asks no RECOVER (an ENG_ATTEMPT loop, whose attempt began at the start it reports, or the empty engine): the generated stamp rule's absence value
 possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
 possessify	2	backtracking	predicate	RX_VM_STRATS	PCREC_VM_STRAT_BACKTRACKING						always (fallback)
 poss-ctx-follow	1	a0	predicate	RX_VM_POSS_ARMS	0x1	PCREC_NO_POSS_CTX_FOLLOW	50			-fno-poss-ctx-follow	per A_REP: a lookahead-born context gate in the follow narrows to the characters it admits with nothing known on its left (S(P) at P = {0,1})
@@ -127,19 +149,19 @@ revdet	1	revdet	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_REVDET	PCREC_NO_REVDET	5			-
 revdet	2	denied	predicate	RX_VM_RUNGS							always (fallback) — the ladder's next rung (counter, or literal frames)
 counter	1	counter	predicate	RX_VM_RUNGS	PCREC_VM_RUNG_COUNTER	PCREC_NO_COUNTER	6			-fno-counter	per A_REP: a bounded repeat, unrolled by --unroll=K (default PCREC_DEFAULT_UNROLL_K), below the replication cap
 counter	2	denied	predicate	RX_VM_RUNGS							always (fallback) — literal replication (frames)
-size-term	1	option	predicate	RX_UNROLL_K_WHY	option						an explicit --unroll=K on the command line: the term never runs (compile.c: defo.unroll_k > 0 && st_phase == ST_DEFAULT)
-size-term	2	denied	predicate	RX_UNROLL_K_WHY	denied	PCREC_NO_SIZE_TERM	18			-fno-size-term	the axis is denied: K stays at --unroll=K or PCREC_DEFAULT_UNROLL_K
-size-term	3	default	predicate	RX_UNROLL_K_WHY	default						the counter rung is not live, or the emitted CODE size did not exceed PCREC_SIZE_TERM_THRESHOLD, so the ladder never ran
-size-term	4	cap-rescue	predicate	RX_UNROLL_K_WHY	cap-rescue						the ladder ran; the materiality bar declined its argmin K on bytes alone, but an emitted-size cap (--max-emit-bytes/--max-emit-code-bytes) took a smaller K anyway — natural corpus population 0 at the shipped caps (tests/codegen/run_size_term.sh §5/§6), reached only through a lowered-cap reference build
-size-term	5	size-model	predicate	RX_UNROLL_K_WHY	size-model						the ladder ran and its argmin K saved at least 25% of the default K's bytes, so the materiality bar took it
-size-term	6	capacity-declined	predicate	RX_UNROLL_K_WHY	capacity-declined						the ladder ran; the K it wanted would have lowered this artifact's declared capacity (.frame_capacity or .subject_ceiling, §3.3a) below the default K's, so that rung was excluded before the materiality bar was ever asked — natural corpus population 0 at the shipped threshold (tests/codegen/run_size_term.sh §7/§7b), reached only through a lowered-threshold reference build
-size-term	7	size-model-declined	predicate	RX_UNROLL_K_WHY	size-model-declined						always (fallback) — the ladder ran and the materiality bar rejected its argmin K on bytes alone, with no capacity exclusion in play
+size-term	1	option	list	RX_UNROLL_K_WHY	option						an explicit --unroll=K on the command line: the term never runs (compile.c: defo.unroll_k > 0 && st_phase == ST_DEFAULT)
+size-term	2	denied	list	RX_UNROLL_K_WHY	denied	PCREC_NO_SIZE_TERM	18			-fno-size-term	the axis is denied: K stays at --unroll=K or PCREC_DEFAULT_UNROLL_K
+size-term	3	default	list	RX_UNROLL_K_WHY	default						the counter rung is not live, or the emitted CODE size did not exceed PCREC_SIZE_TERM_THRESHOLD, so the ladder never ran
+size-term	4	cap-rescue	list	RX_UNROLL_K_WHY	cap-rescue						the ladder ran; the materiality bar declined its argmin K on bytes alone, but an emitted-size cap (--max-emit-bytes/--max-emit-code-bytes) took a smaller K anyway — natural corpus population 0 at the shipped caps (tests/codegen/run_size_term.sh §5/§6), reached only through a lowered-cap reference build
+size-term	5	size-model	list	RX_UNROLL_K_WHY	size-model						the ladder ran and its argmin K saved at least 25% of the default K's bytes, so the materiality bar took it
+size-term	6	capacity-declined	list	RX_UNROLL_K_WHY	capacity-declined						the ladder ran; the K it wanted would have lowered this artifact's declared capacity (.frame_capacity or .subject_ceiling, §3.3a) below the default K's, so that rung was excluded before the materiality bar was ever asked — natural corpus population 0 at the shipped threshold (tests/codegen/run_size_term.sh §7/§7b), reached only through a lowered-threshold reference build
+size-term	7	size-model-declined	list	RX_UNROLL_K_WHY	size-model-declined						always (fallback) — the ladder ran and the materiality bar rejected its argmin K on bytes alone, with no capacity exclusion in play
 length-prune	1	clamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_CLAMPED	PCREC_NO_LENGTH_PRUNE	7			-fno-length-prune	per A_REP: a minimum-remaining-length bound is derivable for this quantifier's rung
 length-prune	2	unclamped	predicate	RX_VM_PRUNES	PCREC_VM_PRUNE_UNCLAMPED						always (fallback) — no bound derivable, or the axis denied
 vm-prefilter	1	hybrid	predicate	RX_VM_PREFILTER	hybrid	PCREC_NO_PREFILTER	8	PCREC_FORCE_PREFILTER	9	-fno-prefilter / -fprefilter	auto+captures selects it jointly with the engine (select_engine.c); -fprefilter REFUSES on a pure-DFA-selected pattern (do-or-die)
 vm-prefilter	2	none	predicate	RX_VM_PREFILTER	none						always (fallback) — also the --engine=vm side effect (R21 E-6)
-prefilter-lang	1	count-collapsed	predicate	RX_VM_PREFILTER_LANG	count-collapsed	PCREC_NO_PREFILTER_COLLAPSE	19	PCREC_FORCE_PREFILTER_COLLAPSE	20	-fno-prefilter-collapse / -fprefilter-collapse	these machines serve only as the VM's prefilter (the DFA is not the engine), a counted repeat with rmin > 1 or rmax > 1 exists, AND either -fprefilter-collapse was passed or compile_driver took a retry rung (a DFA state cap overflowed, or an emitted-size cap refused the exact artifact). There is no state-count knee: the default is the exact language (Frank's ruling B). Every X{m,n} then lowers as X{min(m,1),}
-prefilter-lang	2	exact	predicate	RX_VM_PREFILTER_LANG	exact						always (fallback) — the pattern's own language, which is also what the collapse produces for a pattern that has nothing to collapse
+prefilter-lang	1	count-collapsed	list	RX_VM_PREFILTER_LANG	count-collapsed	PCREC_NO_PREFILTER_COLLAPSE	19	PCREC_FORCE_PREFILTER_COLLAPSE	20	-fno-prefilter-collapse / -fprefilter-collapse	these machines serve only as the VM's prefilter (the DFA is not the engine), a counted repeat with rmin > 1 or rmax > 1 exists, AND either -fprefilter-collapse was passed or compile_driver took a retry rung (a DFA state cap overflowed, or an emitted-size cap refused the exact artifact). There is no state-count knee: the default is the exact language (Frank's ruling B). Every X{m,n} then lowers as X{min(m,1),}
+prefilter-lang	2	exact	list	RX_VM_PREFILTER_LANG	exact						always (fallback) — the pattern's own language, which is also what the collapse produces for a pattern that has nothing to collapse
 altcls-merge	1	merged	predicate	RX_ALTCLS_MERGES		PCREC_NO_ALTCLS_MERGE	10			-fno-altcls-merge	a maximal run of single-character alternation branches qualifies (runs before either engine is built)
 altcls-merge	2	denied	predicate	RX_ALTCLS_MERGES							always (fallback)
 altcls-factor	1	factored	predicate	RX_ALTCLS_FACTORED		PCREC_NO_ALTCLS_FACTOR	11			-fno-altcls-factor	a maximal run sharing a literal first byte qualifies, on stage 1's own output
@@ -204,14 +226,35 @@ view-edge	1	view-tolerant	predicate	RX_DFA_SCAN_EDGE		PCREC_NO_VIEW_EDGE	42			-f
 view-edge	2	view-free	predicate	RX_DFA_SCAN_EDGE							always (fallback) -- a chain touching a position view is refused, as before [OPT-VEDGE]; changes no answer
 engine	1	vm	predicate	RX_ENGINE	vm					--engine=vm	auto: any construct select_engine.c decides is VM-only (captures, possessive quantifiers, \K, backreferences, calls, ...); forced by --engine=vm (also disables the DFA hybrid prefilter, R21 E-6)
 engine	2	dfa	predicate	RX_ENGINE	dfa					--engine=dfa	auto: always, when no construct forces the VM; --engine=dfa REFUSES a pattern needing VM-only machinery (do-or-die)
-engine-route	1	forced	predicate	RX_ENGINE_SEL	forced					--engine=vm / --engine=dfa	the caller named the engine, so auto selected nothing
-engine-route	2	declined-nullable-default	predicate	RX_ENGINE_SEL	declined-nullable-default						auto (or forced --engine=vm plus -fprefilter), NOTHING overflowed, and the ORDINARY hybrid's own EXACT prefilter language is NULLABLE — it matches the empty string, so the forward+reverse DFA pair would admit a zero-length match at every position and could never dismiss one ([OPT-4.2], the general form of declined-nullable below; pcrec-bench O-10 measured 1.2-9.9x on the analogous collapsed shape). No rung is involved and no prefilter survives. -fprefilter overrides this decline; -fno-prefilter reaches the same artifact by a different door
-engine-route	3	collapsed-prefilter	predicate	RX_ENGINE_SEL	collapsed-prefilter						auto, a DFA build overflowed a cap, and compile_driver's retry KEPT a prefilter by rebuilding it from the count-collapsed language ([OPT-4]/K39; -fno-prefilter-collapse skips this rung)
-engine-route	4	declined-nullable	predicate	RX_ENGINE_SEL	declined-nullable						auto, a DFA build overflowed a cap, compile_driver's retry OFFERED the count-collapsed prefilter and it was DECLINED because the collapsed language is NULLABLE — it matches the empty string, so the filter can never dismiss a position ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x slower than no prefilter). No prefilter survives. -fprefilter is do-or-die and is never silently dropped, but it does not override THIS rung's decline: it makes the [SEL-1] rung ineligible, so the compile refuses instead. On the SIZE rung -fprefilter does override the decline. -fprefilter-collapse overrides neither
-engine-route	5	overflowed-dfa	predicate	RX_ENGINE_SEL	overflowed-dfa						auto, the DFA was to be the ENGINE, its build overflowed, and no prefilter survived the fallback ([SEL-1]/K40)
-engine-route	6	overflowed-prefilter	predicate	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
-engine-route	7	size-cap-retry	predicate	RX_ENGINE_SEL	size-cap-retry						auto, an emitted-size cap (--max-emit-code-bytes/--max-emit-bytes) REFUSED the exact artifact, and compile_driver's [OPT-4] size rung rebuilt a smaller one with a prefilter from the count-collapsed language that SURVIVED (docs/spec/tuning.md §2.17; distinct from collapsed-prefilter above, which is the [SEL-1] DFA-state-cap rung's own success)
-engine-route	8	selected	predicate	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed
+engine-route	1	forced	list	RX_ENGINE_SEL	forced					--engine=vm / --engine=dfa	the caller named the engine, so auto selected nothing
+engine-route	2	declined-nullable-default	list	RX_ENGINE_SEL	declined-nullable-default						auto, NOTHING overflowed, and the ORDINARY hybrid's own EXACT prefilter language is NULLABLE — it matches the empty string, so the forward+reverse DFA pair would admit a zero-length match at every position and could never dismiss one ([OPT-4.2], the general form of declined-nullable below; pcrec-bench O-10 measured 1.2-9.9x on the analogous collapsed shape). No rung is involved and no prefilter survives. -fprefilter overrides this decline (an explicit --engine=vm names the engine, so that route reads forced); -fno-prefilter reaches the same artifact by a different door
+engine-route	3	declined-nullable	list	RX_ENGINE_SEL	declined-nullable						auto, a DFA build overflowed a cap, compile_driver's retry OFFERED the count-collapsed prefilter and it was DECLINED because the collapsed language is NULLABLE — it matches the empty string, so the filter can never dismiss a position ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x slower than no prefilter). No prefilter survives. -fprefilter is do-or-die and is never silently dropped, but it does not override THIS rung's decline: it makes the [SEL-1] rung ineligible, so the compile refuses instead. On the SIZE rung -fprefilter does override the decline. -fprefilter-collapse overrides neither
+engine-route	4	collapsed-prefilter	list	RX_ENGINE_SEL	collapsed-prefilter						auto, a DFA build overflowed a cap, and compile_driver's retry KEPT a prefilter by rebuilding it from the count-collapsed language ([OPT-4]/K39; -fno-prefilter-collapse skips this rung)
+engine-route	5	overflowed-dfa	list	RX_ENGINE_SEL	overflowed-dfa						auto, the DFA was to be the ENGINE, its build overflowed, and no prefilter survived the fallback ([SEL-1]/K40)
+engine-route	6	overflowed-prefilter	list	RX_ENGINE_SEL	overflowed-prefilter						auto, the VM was already chosen for another reason, and only its auto-selected PREFILTER's DFA overflowed, so the prefilter was dropped
+engine-route	7	size-cap-retry	list	RX_ENGINE_SEL	size-cap-retry						auto, an emitted-size cap (--max-emit-code-bytes/--max-emit-bytes) REFUSED the exact artifact, and the size-cap ladder (docs/spec/tuning.md §2.17) shipped a smaller one: [OPT-4]'s size rung rebuilt it with a prefilter from the count-collapsed language that SURVIVED, or a later [PF-DROP] rung dropped the optional anchored machine, the premultiplied table or the prefilter. Distinct from collapsed-prefilter, which is the [SEL-1] DFA-state-cap rung's own success
+engine-route	8	selected	list	RX_ENGINE_SEL	selected						always (fallback) — auto chose on the AST and nothing overflowed
+fallback	1	forcing	list								resume the --emit-facts force loop with its next ask; asked on the arrivals: forcing; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires many
+fallback	2	nomem	list								propagate the allocation failure; asked on the arrivals: nomem; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires once
+fallback	3	size-term-trial	list								the size term's trial catch: try the next K; asked on the arrivals: size,overflow,other; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires many
+fallback	4	sel1-collapse	list			PCREC_NO_PREFILTER_COLLAPSE	19			-fno-prefilter-collapse	retry with a prefilter from the count-collapsed language ([SEL-1]); asked on the arrivals: overflow; degrading; --size-cap=refuse does not reach it; adds 1 attempt; fires once
+fallback	5	sel1-drop	list								retry with the prefilter dropped ([SEL-1]); asked on the arrivals: overflow; degrading; --size-cap=refuse does not reach it; adds 1 attempt; fires once
+fallback	6	unroll-rescue	list								take the smaller unroll K the cap allows; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 0 attempts; fires once
+fallback	7	prefilter-collapse	list			PCREC_NO_PREFILTER_COLLAPSE	19			-fno-prefilter-collapse	retry with a prefilter from the count-collapsed language ([OPT-4] size rung); asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once
+fallback	8	drop-anchored	list								retry without the optional anchored match-here machine; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the optional anchored match-here machine
+fallback	9	drop-premul	list								retry without the premultiplied DFA transition table; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the premultiplied DFA transition table
+fallback	10	drop-prefilter	list								retry without the VM hybrid's prefilter; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the VM hybrid's prefilter
+fallback	11	refuse	list								refuse the compile; asked on the arrivals: every; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires final
+prefilter-admit	1	backref	list								decides the prefilter off; --emit-ir lists prefilter "no-backreference": the erased approximation is neither a sound superset nor the true span (S7); no flag changes this
+prefilter-admit	2	linked-call	list								decides the prefilter off; --emit-ir lists prefilter "no-linked-call": LINKED subroutine call -- erasing a call is a DIFFERENT language, not a superset (S8.2), and a call in a cycle has no finite inlining either; no flag changes this, and -fprefilter refuses. A SPLICED call is not a reason: its callee is inlined EXACTLY (S8.3, S6.3)
+prefilter-admit	3	var	list								decides the prefilter off; --emit-ir lists prefilter "no-variable": ${...} variable -- erasing a variable is not a superset (a${v}b with v = x matches axb, the erased ab does not), and its bytes do not exist until the call; no flag changes this, and -fprefilter refuses
+prefilter-admit	4	nullable-exact	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-exact": nullable exact language -- this pattern's own EXACT language matches the empty string, so the ordinary hybrid's forward+reverse DFA pair would admit a zero-length match at every position and could never dismiss one ([OPT-4.2], the general form of [OPT-4.1]'s rung-scoped decline; pcrec-bench O-10 measured 1.2-9.9x on the analogous collapsed shape). -fprefilter overrides this decline; -fno-prefilter already reaches the same artifact by a different door
+prefilter-admit	5	nullable-collapsed	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-collapsed": nullable collapsed language -- a ladder rung offered the count-collapsed prefilter ([OPT-4]) and it was DECLINED: every X{m,n} lowers as X{min(m,1),}, and this pattern's collapsed language matches the empty string, so the filter could never dismiss a position and would cost a scan it cannot win ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x). -fprefilter is do-or-die and is never silently dropped: on the size rung it OVERRIDES this decline, on the [SEL-1] rung it suppresses the rung itself and the compile refuses. -fprefilter-collapse does not override it
+prefilter-admit	6	overflow-drop	list								decides the prefilter off; --emit-ir lists prefilter "no-dfa-overflow": <cap> -- the auto-selected prefilter's own DFA build hit the cap --engine=dfa/-fprefilter refuse on; auto drops it instead of refusing (SEL-1)
+prefilter-admit	7	size-dropped	list								decides the prefilter off; --emit-ir lists prefilter "no-size-cap": size-cap ladder -- an emitted-size cap refused the artifact and the ladder's last rung ([PF-DROP]) dropped the VM hybrid's prefilter; the refused figures are <PREFIX>_VM_PREFILTER_WHY's. --size-cap=refuse refuses instead
+prefilter-admit	8	forced-on	list								decides the prefilter on
+prefilter-admit	9	forced-off	list								decides the prefilter off; --emit-ir lists prefilter "no-fno-prefilter": -fno-prefilter -- forced off; the VM scans from search_from itself
+prefilter-admit	10	default	list								hands the decision to the engine choice; --emit-ir lists prefilter "no-engine-vm": --engine=vm -- the VM scans from search_from itself (R21 E-6)
 #section memfn
 # pcrec-memory-functions' own option registry (memfn/src/options.def;
 # docs/spec/registry.md §6). NOT pcrec axes: each row is reached as

@@ -27,6 +27,17 @@
 #   TRIALS     5                     -- trials per cell
 #   STORE      store                 -- the record store (real windows: `store`)
 #   TESTEES    "pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in"
+#              ([B135]) an entry may be `testee@PIN` (`pcrec-auto@a15fb77b`):
+#              that cell runs with $PCRECBENCH_PCREC_PIN=PIN, selecting one
+#              of testees/pcrec/configs.toml's `also_pins` for ONE
+#              `pcrecbench run` (the adapter refuses an undeclared pin by
+#              name). A bare entry runs at the canonical `pin` with the
+#              variable UNSET for that cell, whatever the caller exported.
+#              Both pins of a testee share one workdir (build/work/<config>)
+#              and so one cached `pcrec_driver`: a two-pin window measures
+#              through ONE driver build by construction. List the pair
+#              ADJACENT (`pcrec-auto@a15fb77b pcrec-auto`) so the two
+#              records of a set sit minutes apart.
 #              ([B24]) the compilee-toolchain axis adds pcrec-auto-clang /
 #              pcrec-nocaps-clang / pcrec-vm-clang -- run them as their OWN
 #              TESTEES list, beside the gcc six, so the pair is one variable
@@ -213,12 +224,18 @@ for t in $TESTEES; do
     sleep 15
   fi
   first=0
+  # [B135] `testee@PIN`: the testee name and, optionally, the pcrec pin.
+  tname=${t%%@*}
+  pin_env=(env -u PCRECBENCH_PCREC_PIN)
+  if [ "$tname" != "$t" ]; then
+    pin_env=(env "PCRECBENCH_PCREC_PIN=${t#*@}")
+  fi
   echo "-- cell $SUBBENCH x $t $(date -Is) load=$(cut -d' ' -f1-3 /proc/loadavg)" | tee -a "$LOG"
   cells_attempted=$((cells_attempted + 1))
   cell_wrote=0
   spread_retried=0
   for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
-    gnutimeout "$CELL_CAP" python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$t" \
+    gnutimeout "$CELL_CAP" "${pin_env[@]}" python3 -m pcrecbench run --subbench "$SUBBENCH" --testee "$tname" \
         --trials "$TRIALS" --pin "$PIN" --subject-timeout 60 --driver-timeout 900 \
         --store "$STORE" $EXTRA --note "$NOTE" >> "$LOG" 2>&1
     rc=$?
