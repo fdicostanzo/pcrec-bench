@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-b117-olevel-fc719ca4.tsv
 predictions_sha256:2261cf727297ec65ef7529b652b3e54b4e027539f78fe766061d1a3437dca094
 subject_grain:   reports/2026-10-01-capability-0.1-budu-ryzen1600-olevel-fc719ca4.subject-grain.tsv
 subject_grain_sha256:dc79ac380d91787eb6b33ef0760ccc7b4aa8becb01b6c58b5a2aa94b0c30895d
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v25 (2026-09-26)
 query:           subbench=capability, version=0.1, machine=budu-ryzen1600, testee=pcrec_fc719ca4_auto-caps-simdna, testee=pcrec_fc719ca4_auto-caps-simdna_cf-o0, testee=pcrec_fc719ca4_auto-caps-simdna_cf-o1, testee=pcrec_fc719ca4_auto-caps-simdna_cf-o3, testee=pcrec_fc719ca4_auto-caps-simdna_cf-os, testee=pcrec_fc719ca4_vm-caps-simdna, testee=pcrec_fc719ca4_vm-caps-simdna_cf-o0, testee=pcrec_fc719ca4_vm-caps-simdna_cf-o1, testee=pcrec_fc719ca4_vm-caps-simdna_cf-o3, testee=pcrec_fc719ca4_vm-caps-simdna_cf-os

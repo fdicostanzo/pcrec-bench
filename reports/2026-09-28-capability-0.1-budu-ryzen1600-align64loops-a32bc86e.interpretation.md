@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-litrun-a32bc86e.tsv
 predictions_sha256:738175b7cbe71648a3c3b2e74f7783b373954ff7a466fcd78bb460c2fbc84c68
 subject_grain:   reports/2026-09-28-capability-0.1-budu-ryzen1600-align64loops-a32bc86e.subject-grain.tsv
 subject_grain_sha256:5d823c2696bb46e2daeadb0564ab985e37e66b1dea55db743177f6d7aa01d884
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v25 (2026-09-26)
 query:           subbench=capability, version=0.1, machine=budu-ryzen1600, testee=pcrec_a32bc86e_auto-caps-simdna_cf-align-functions-64-align-loops-64, testee=pcrec_a32bc86e_auto-caps-simdna_nolitrun-cf-align-functions-64-align-loops-64

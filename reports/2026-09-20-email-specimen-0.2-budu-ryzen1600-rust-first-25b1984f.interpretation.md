@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/email-specimen-0.2-rust-first.tsv
 predictions_sha256:0a98c4d07d4c5ca8d1eb34a5a93c7256b2712bb229940fe2636048eb3f4cee39
 subject_grain:   (none)
 subject_grain_sha256:(none)
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v24 (2026-09-26)
 query:           subbench=email-specimen, version=0.2, until=2026-09-20T16:45:48Z, testee=rust_1.13.1_default-caps-simdna

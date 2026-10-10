@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-first.tsv
 predictions_sha256:868837215f09663d6166a18f37da7f1bf70f80fd066e1523e5a94998c61c0bf6
 subject_grain:   (none)
 subject_grain_sha256:(none)
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v24 (2026-09-26)
 query:           subbench=capability, version=0.1, machine=budu-ryzen1600, since=2026-09-17T00:00:00Z, until=2026-09-17T08:00:00Z, testee=libpcre2_10.46_interp-caps-simdna, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_dfa-nocaps-simdna, testee=pcrec_a770139e_auto-caps-simdna, testee=pcrec_a770139e_auto-nocaps-simdna, testee=pcrec_a770139e_vm-caps-simdna, testee=pcrec_a770139e_vm-in-caps-simdna

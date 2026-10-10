@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-first.tsv
 predictions_sha256:868837215f09663d6166a18f37da7f1bf70f80fd066e1523e5a94998c61c0bf6
 subject_grain:   (none)
 subject_grain_sha256:(none)
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v24 (2026-09-26)
 query:           subbench=capability, version=0.1, since=2026-09-18T06:00:00Z, until=2026-09-19T05:00:00Z, testee=re2_11.0.0_default-caps-simdna, testee=tre_0.9.0_default-caps-simdna, testee=vectorscan_5.4.11_block-nosom-nocaps-simd

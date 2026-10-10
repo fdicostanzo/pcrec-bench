@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-noreqbyte-twin-02902356.tsv
 predictions_sha256:a72103f19565a07b5ad916187fef94770adf932c6daf0de1a0969dae5d8d4e42
 subject_grain:   reports/2026-09-26-capability-0.1-budu-ryzen1600-twin-noreqbyte-02902356.subject-grain.tsv
 subject_grain_sha256:26caf056cfc902a011c6ffc0bbe7ed0137c96b410fc8a325ca4f789dfb34f085
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v25 (2026-09-26)
 query:           subbench=capability, version=0.1, since=2026-09-27T00:00:00Z, until=2026-09-27T02:00:00Z, testee=pcrec_02902356_auto-caps-simdna, testee=pcrec_02902356_auto-caps-simdna_noreqbyte

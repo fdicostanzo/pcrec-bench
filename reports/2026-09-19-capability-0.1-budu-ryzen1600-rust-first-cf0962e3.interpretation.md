@@ -7,7 +7,7 @@ predictions:     docs/dev/predictions/capability-0.1-rust-first.tsv
 predictions_sha256:3470560615505c41802f0a694a0dcac2910a36ea405f1e884336b51807ca11c5
 subject_grain:   (none)
 subject_grain_sha256:(none)
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v24 (2026-09-26)
 query:           subbench=capability, version=0.1, until=2026-09-19T22:58:39Z, testee=rust_1.13.1_default-caps-simdna

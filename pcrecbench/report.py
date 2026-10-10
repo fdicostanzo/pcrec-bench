@@ -760,7 +760,11 @@ record carrying the pair, which no record in `store/` does yet -- the
 window that measures the AFTER is the manager's, and nothing committed
 under `reports/` changes until it has run.
 
-* **`start=<pinned|reverse-pass>`**, `RX_DFA_START` ([OPT-5] STEP 2) --
+* **`start=<pinned|end-minus-width|landing|reverse-pass|attempt-start>`**,
+  `RX_DFA_START` ([OPT-5] STEP 2; the closed set widened at [B135] (d) --
+  `end-minus-width`/`landing` are pcrec's abi-74 [START-LANDING] rows,
+  `attempt-start` the abi-73 absence value, each explained by one extra
+  legend line that prints only when a row carries it) --
   HOW the search entry recovers the match START. `pinned` means the
   forward machine's start state accepts unconditionally, so the match
   provably begins at `search_from` and the artifact carries NO REVERSE
@@ -2538,8 +2542,27 @@ def _scan_edges_display(engine_metadata):
     return f"{n}" if m is None else f"{n} (match: {m})"
 
 
+#: [B135] (d), pcrec abi 73/74 ([OPT-REVEND] stage 2, [START-LANDING]): the
+#: three values `start=` gained beyond `pinned`/`reverse-pass`, closed set
+#: {pinned, end-minus-width, landing, reverse-pass, attempt-start} (inbox
+#: I-143/I-145). Each legend line prints only when a row in the report
+#: carries the value.
+START_VALUE_LEGEND = (
+    ("end-minus-width", "every match is one fixed byte width W, so the start "
+     "is the verified end minus W; NO reverse machine (abi 74, "
+     "[START-LANDING])"),
+    ("landing", "the start is where the forward scan's candidate skip last "
+     "landed (stepped past an ill-formed character under utf8); NO reverse "
+     "machine (abi 74, [START-LANDING])"),
+    ("attempt-start", "the ABSENCE value: an `attempt` loop or the empty "
+     "engine asks no RECOVER and no reverse pass runs (abi 73)"),
+)
+
+
 def _dfa_start_display(engine_metadata):
-    """[B34]: `start=<pinned|reverse-pass>`, pcrec's `RX_DFA_START`
+    """[B34]: `start=<pinned|reverse-pass>` ([B135] (d): the closed set is
+    now {pinned, end-minus-width, landing, reverse-pass, attempt-start}, see
+    START_VALUE_LEGEND), pcrec's `RX_DFA_START`
     ([OPT-5] STEP 2, abi 16+) -- HOW the SEARCH entry recovers the match
     START. `pinned` means the forward machine's start state accepts
     unconditionally, so the match provably begins at `search_from` and
@@ -5651,6 +5674,14 @@ def render_markdown(rd: ReportData):
                            "absolute offsets and the zero-length-match "
                            "convention hold under both -- so this explains a "
                            "row's SIZE and pass count, never its answer.")
+            # [B135] (d): the abi-73/74 values, named ONLY where a legend
+            # carries them -- so no committed report (none carries one yet)
+            # changes by a byte.
+            _vals = {_dfa_start_display(em) for _sb, em, _pm
+                     in legend_by_key.values()}
+            for _v, _txt in START_VALUE_LEGEND:
+                if _v in _vals:
+                    out.append("      - start=%s: %s" % (_v, _txt))
             # [B34] / [B32] (g): the VM-only frameless clause, named once.
             if any(_vm_frameless_display(em) is not None
                    for _sb, em, _pm in legend_by_key.values()):

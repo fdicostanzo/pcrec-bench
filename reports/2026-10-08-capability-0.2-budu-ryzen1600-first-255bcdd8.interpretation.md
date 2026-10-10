@@ -7,7 +7,7 @@ predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-10-08-capability-0.2-budu-ryzen1600-first-255bcdd8.subject-grain.tsv
 subject_grain_sha256:ac8d50f353d2901f757af28f3178fd66a31e2fd2d3eb11e30d0029be2218a7c5
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v25 (2026-09-26)
 query:           subbench=capability, version=0.2, since=2026-10-08T16:00:00Z, until=2026-10-09T04:00:00Z

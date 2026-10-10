@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.17"
+catalogue_version = "3.18"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,16 @@ catalogue_version = "3.17"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.18 (2026-10-10, lane b135s3, [B135] (d), inbox I-145): MINOR, a
+# `[[pin_order]]` append only -- `b8337c33` (abi 74: [START-LANDING] -- the
+# RECOVER slot gains `end-minus-width` and `landing` between `pinned` and
+# `reverse-pass`, `RX_DFA_START` / `rx_info.search_form` widen to the closed
+# set {pinned, end-minus-width, landing, reverse-pass, attempt-start}, deny
+# bits 53/54; those artifacts carry no reverse machine). `7388f1c0` is state
+# 3's BEFORE and cross-window control; the three pins `a15fb77b`,
+# `7388f1c0`, `b8337c33` are adjacent here. No rule predicate/threshold/
+# inputs/slots moved.
 #
 # 3.17 (2026-10-10, lane b135prep, [B135], inbox I-140/I-142): MINOR, a
 # `[[pin_order]]` append only -- TWO pins, in order: `a15fb77b` (abi 72: FOUR
@@ -283,7 +293,7 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
-          "60366d747", "255bcdd8", "a15fb77b", "7388f1c0"]
+          "60366d747", "255bcdd8", "a15fb77b", "7388f1c0", "b8337c33"]
 
 # ===================================================== class R-STATUS ==
 

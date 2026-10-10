@@ -808,11 +808,16 @@ METADATA_DECL = {
     },
     "dfa_start": {
         "type": "enum", "scope": "pattern",
-        "values": ["pinned", "reverse-pass", "attempt-start"],
+        "values": ["pinned", "end-minus-width", "landing", "reverse-pass",
+                   "attempt-start"],
         "source": "<PREFIX>_DFA_START ([OPT-5] STEP 2, pcrec abi 16+; "
                   "`attempt-start` is the ABSENCE value the abi-73 "
                   "generated stamp rule writes where the search path asks "
-                  "no RECOVER -- an `attempt` loop or the empty engine), read "
+                  "no RECOVER -- an `attempt` loop or the empty engine; "
+                  "`end-minus-width` and `landing` are the two abi-74 "
+                  "[START-LANDING] RECOVER rows, between `pinned` and "
+                  "`reverse-pass`, first match wins, and carry no reverse "
+                  "machine), read "
                   "through pb_dfa_start(); CHECKED against "
                   "rx_info.search_form (pb_info_search_form()), which is "
                   "NON-NULL on exactly the artifacts the macro is defined "
@@ -833,9 +838,17 @@ METADATA_DECL = {
                        "MACHINE AT ALL -- no reverse transition, accept, "
                        "byte-class, stay or scan-edge table, no "
                        "`<prefix>_reverse_*` accessor block and no "
-                       "backwards scan loop) or `reverse-pass` (the second, "
+                       "backwards scan loop) or, [START-LANDING] abi 74, "
+                       "`end-minus-width` (every match is one byte width W, "
+                       "so the start is the verified end minus W) or "
+                       "`landing` (the start is where the forward scan's "
+                       "candidate skip last landed, stepped past an "
+                       "ill-formed character under utf8) -- both carry NO "
+                       "reverse machine either, first match wins in that "
+                       "order -- or `reverse-pass` (the second, "
                        "backwards scan over that machine, from the match "
-                       "end to the furthest-back accepting position). The "
+                       "end to the furthest-back accepting position; the "
+                       "fallback). The "
                        "two forms are ANSWER-IDENTICAL -- caps[0][0]'s "
                        "absolute-offset contract and the zero-length-match "
                        "convention hold under both, the pinned form "
@@ -3353,6 +3366,26 @@ DENY_FLAGS = (
      "prefilter and forward machine back) instead of reading the tail from "
      "the end -- the abi-72 search path at the SAME pin; "
      "answer-identical"),
+    # [B135] (d) (pin b8337c33, abi 74, [START-LANDING]): the two new
+    # `search-start` rows' denials, bits 53/54. Each removes ITS row and the
+    # RECOVER walk falls to the next (pinned, end-minus-width, landing,
+    # reverse-pass); on an artifact where BOTH rows apply only the PRODUCT of
+    # the two reaches `reverse-pass`, and from a `pinned` artifact with W = 0
+    # all three (-fno-start-pinned too). Answer-identical; the reverse machine
+    # these two rows drop is why a denied artifact is larger. NO pinned
+    # testee (the window measures the PINS, 7388f1c0 being state 3's BEFORE).
+    ("-fno-start-width", "nostartwidth",
+     "the [START-LANDING] END-MINUS-WIDTH row denied (--list-axes "
+     "`search-start`, bit 53): a match of one fixed byte width W no longer "
+     "recovers its start as the verified end minus W; the walk falls to "
+     "`landing`, else to the reverse pass (RX_DFA_START `reverse-pass` "
+     "again, the reverse machine back); answer-identical"),
+    ("-fno-start-landing", "nostartlanding",
+     "the [START-LANDING] LANDING row denied (--list-axes `search-start`, "
+     "bit 54): the start is no longer read off where the forward scan's "
+     "candidate skip last landed; the walk falls to the reverse pass "
+     "(RX_DFA_START `reverse-pass` again, the reverse machine back) unless "
+     "`end-minus-width` still applies; answer-identical"),
 )
 
 

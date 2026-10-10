@@ -3462,8 +3462,8 @@ B126_R4H = {
     ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'whole-subject'): (68, 68, 0),
     ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'plain'): (35, 35, 35),
     ('bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness', 'whole-subject'): (35, 35, 35),
-    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'plain'): (98, 98, 0),
-    ('bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)', 'whole-subject'): (68, 68, 0),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, landing)', 'plain'): (98, 98, 0),
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, landing)', 'whole-subject'): (68, 68, 0),
     ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'plain'): (44, 44, 44),
     ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'whole-subject'): (44, 44, 44),
     ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (140, 140, 140),
@@ -3549,6 +3549,30 @@ def _b135_moved(expected, label, form, em):
         v = out.get(k)
         if isinstance(v, int) and not isinstance(v, bool):
             out[k] = v + (B135_SIMD_GUARDED_LINE if i < 2 else 0) + r[i]
+    return out
+
+
+#: [B135] (d) (pin b8337c33, abi 74, [START-LANDING]): the reverse machine
+#: leaves every artifact whose start RECOVER answers without it, so the
+#: size books of those rows SHRINK -- a per-witness residual ON TOP of the
+#: layers above, MEASURED by a direct fit against the build (never a flat
+#: term: it depends on the machine's size). (label, form) ->
+#: (emit, code, program).
+B135S3_RESID = {
+    ('bounded dig-upto-16 under auto: the fold control (folds 0, landing)', 'plain'): (-3805, 0, 0),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): (-17037, 0, 0),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): (-11705, 0, 0),
+}
+
+
+def _b135s3_moved(expected, label, form, em):
+    """`expected` with the size keys moved by B135S3_RESID's row."""
+    out = dict(expected)
+    r = B135S3_RESID.get((label, form), (0, 0, 0))
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + r[i]
     return out
 
 
@@ -3669,7 +3693,7 @@ STAMP_CASES = (
       "vm_prefilter_lang": "exact",
       "vm_prefilter_lang_why": "no counted repeat",
       "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
-      "dfa_start": "reverse-pass", "vm_frameless": 1,
+      "dfa_start": "landing", "vm_frameless": 1,   # [B135] (d) abi 74 (was reverse-pass)
       "altcls_merges": 0, "altcls_factored": 0,
       # [B37]: the SAME program bytes as its one-character sibling above
       # (1,611 -- `x*` vs `x+` differ in a jump, not in size) and the
@@ -4875,10 +4899,14 @@ LEDGER_STAMP_CASES = (
     # ... and its `auto` form is the fold witness's CONTROL: a
     # reverse-pass DFA (a lower-bounded digit run's accept column
     # varies), folds 0, whose -O2 object DOES carry a .rodata section.
-    ("bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)",
+    ("bounded dig-upto-16 under auto: the fold control (folds 0, landing)",
      "pcrec-auto", "bounded", "dig-upto-16",
-     {"engine": "dfa", "engine_sel": "selected", "dfa_start": "reverse-pass",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_start": "landing",
       "dfa_uniform_folds": 0,
+      # [B135] (d) abi 74: `\d{1,16}` is a ONE-CHARACTER-path body, so its
+      # start is the position the prefilter landed on (`landing`, was
+      # `reverse-pass`) and the reverse machine leaves; the SIZE moves by
+      # B135S3_RESID, MEASURED.
       # [B42]: THREE machines (forward + reverse + anchored), but this
       # pattern's scan carries NO scan_edge label at all -- only
       # `_scan_views:` moves on each, +1 B x 3 = +3 (MEASURED directly:
@@ -5632,8 +5660,9 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b135_moved(_b126_moved(expected, label, form, em),
-                                   label, form, em)
+            expected = _b135s3_moved(
+                _b135_moved(_b126_moved(expected, label, form, em),
+                            label, form, em), label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -5975,13 +6004,16 @@ def check_mechanism_stamps():
         # would otherwise be asserted at one value on every case.
         st_all = sorted({em["dfa_start"] for em in metas.values()
                          if "dfa_start" in em})
-        if st_all == ["attempt-start", "pinned", "reverse-pass"]:
-            ok("dfa_start is not a constant: ALL THREE values on real artifacts ([B135]: attempt-start joined at abi 73)",
-               "pinned on %s"
-               % ", ".join(sorted(l for l, em in metas.items()
-                                  if em.get("dfa_start") == "pinned"))[:110])
+        want_st = ["attempt-start", "end-minus-width", "landing", "pinned",
+                   "reverse-pass"]
+        if st_all == want_st:
+            ok("dfa_start is not a constant: ALL FIVE values on real artifacts ([B135]: attempt-start joined at abi 73, end-minus-width and landing at abi 74)",
+               "pinned on %s; end-minus-width on %s; landing on %s"
+               % tuple(", ".join(sorted(l for l, em in metas.items()
+                                        if em.get("dfa_start") == v))[:80]
+                       for v in ("pinned", "end-minus-width", "landing")))
         elif st_all:
-            bad("dfa_start is not a constant: ALL THREE values on real artifacts ([B135]: attempt-start joined at abi 73)",
+            bad("dfa_start is not a constant: ALL FIVE values on real artifacts ([B135]: attempt-start joined at abi 73, end-minus-width and landing at abi 74)",
                 "only %r seen over %d artifacts with a DFA scan"
                 % (st_all, sum(has_start.values())))
         # -- [B34] / [B32] (g): THE STAMP AGREES WITH THE GREP IT REPLACES.
@@ -6508,7 +6540,7 @@ def check_mechanism_stamps():
         # into a constant in .text), and the folds-0 control's object has
         # one. The numbers are printed as the finding. --
         fold_w = "bounded cls-upto-4: the [B33] (3) rodata witness, folds 4"
-        fold_c = "bounded dig-upto-16 under auto: the fold control (folds 0, reverse-pass)"
+        fold_c = "bounded dig-upto-16 under auto: the fold control (folds 0, landing)"
         vm_w = "bounded dig-upto-16 under --engine=vm: the [B33] (3) .text witness"
         sec = {}
         for l in (fold_w, fold_c, vm_w):
@@ -10993,7 +11025,12 @@ def check_b118_findtie_k69_noop_on_bench():
 #: walk and the view-edge denial alone no longer reproduces c4c70f2c's
 #: program; denying the LATER mechanism too isolates round 1's own flag.
 #: Inert on every pattern with no end pin.
-B124_LATER_DENIES = ["-fno-start-set", "-fno-rev-end"]
+#: [B135] (d) (pin b8337c33): `-fno-start-width` and `-fno-start-landing`
+#: join -- [START-LANDING] drops the reverse machine from every artifact
+#: whose start it can recover (abi 74), and only the PRODUCT of the two
+#: reaches the reverse pass again (I-145). Inert where neither applies.
+B135_START_DENIES = ["-fno-start-width", "-fno-start-landing"]
+B124_LATER_DENIES = ["-fno-start-set", "-fno-rev-end"] + B135_START_DENIES
 
 #: [B122] (pcrec c4c70f2c, abi 50 -> 59): the round-1 witnesses, each a
 #: (label, extra flags, pattern, {pair: value} at the pin, the deny flag,
@@ -11298,13 +11335,19 @@ def check_b124_stamps():
                 id_ok = h_new is not None and h_new == h_deny
                 id_why = "default == denied at this pin"
             else:
+                # [B135] (d): abi 74 drops the reverse machine from the
+                # artifacts [START-LANDING] can recover a start for, so the
+                # denied arm adds its two denials (inert where neither row
+                # applies) to still reproduce c4c70f2c's program.
+                h_deny, _t = ident(new_bin, flags + dflags + B135_START_DENIES,
+                                   pat, "d%d" % i)
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == c4c70f2c, default != c4c70f2c"
                 if not id_ok:       # [B126] R4h moved the spelling, not the code
                     tn, to, td = _b126_text_eq(tmp, "b124e%d" % i, [
                         (new_bin, flags, pat), (old_bin, flags, pat),
-                        (new_bin, flags + dflags, pat)])
+                        (new_bin, flags + dflags + B135_START_DENIES, pat)])
                     id_ok = td is not None and td == to and tn != to
                     id_why += " (compiled .text; v2 spelling moved at abi 67)"
             if not id_ok:
@@ -11527,9 +11570,15 @@ def check_b126_stamps():
                          for k, v in want_deny.items() if n_em.get(k) != v]
                 base = ["--features", "all"] + flags
                 h_old = _b126_text_hash(old_bin, base, pat, tmp, "o%d" % i)
-                h_new = _b126_text_hash(new_bin, base, pat, tmp, "n%d" % i)
-                h_deny = _b126_text_hash(new_bin, base + dflags, pat, tmp,
-                                         "d%d" % i)
+                # [B135] (d): abi 74's [START-LANDING] drops the reverse
+                # machine from the DFA artifacts (`abc` included), so the
+                # identity arms compare with its two denials added to BOTH
+                # new-pin sides (inert where neither row applies).
+                h_new = _b126_text_hash(new_bin, base + B135_START_DENIES,
+                                        pat, tmp, "n%d" % i)
+                h_deny = _b126_text_hash(new_bin,
+                                         base + dflags + B135_START_DENIES,
+                                         pat, tmp, "d%d" % i)
                 if mode == "old-text":
                     id_ok = (h_deny is not None and h_deny == h_old
                              and h_new != h_old)
@@ -11742,7 +11791,13 @@ def check_b135_stamps():
         bad("b135 stamps", "no build for a15fb77b (pin.sh a15fb77b first; "
             "--path printed %r)" % old_bin)
         return
-    new_bin = adapter.pin_binary()
+    # [B135] (d): the "73" arm is 7388f1c0 BY NAME, no longer the canonical
+    # pin (b8337c33, abi 74, owns check_b135s3_stamps below).
+    new_proc = run([mod.PIN_SH, "--path", "7388f1c0"], timeout=60)
+    new_bin = new_proc.stdout.strip() if new_proc.returncode == 0 else ""
+    if not new_bin or not os.path.isfile(new_bin):
+        bad("b135 stamps", "no build for 7388f1c0 (pin.sh 7388f1c0 first)")
+        return
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b135-")
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS",
                                             mod.PIN_OVERRIDE_ENV)}
@@ -11872,6 +11927,257 @@ def check_b135_stamps():
 
 
 
+#: [B135] (d) (pin b8337c33, abi 74, [START-LANDING]; inbox I-145). Rows:
+#: (label, extra flags, pattern, {pairs + (emit, code) bytes} at 7388f1c0
+#: (abi 73), {arm: {pairs + bytes}} at b8337c33), the arms being `default`,
+#: `w` (-fno-start-width), `l` (-fno-start-landing), `wl` (both: the PRODUCT,
+#: the only denial that reaches the reverse pass where both rows apply) and
+#: `wlp` (both + -fno-start-pinned: from a `pinned` artifact with W = 0 all
+#: three are needed). Every value MEASURED through the adapter at the two
+#: builds (2026-10-10, lane b135s3, /var/tmp/b135s3/gen_cases.py) before being
+#: typed. `wl` reproduces 7388f1c0's sizes EXACTLY on every row (the program
+#: reverts); the two FIT movers (size-cap-retry at 73, selected at 74) revert
+#: under `l` alone.
+B135S3_CASES = (
+    ('x: BOTH rows apply (W=1, one-char): the PRODUCT reaches reverse-pass', '', b'x',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 20573, 'emit_code_bytes': 15576},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 17890, 'emit_code_bytes': 14559},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 17899, 'emit_code_bytes': 14568},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 17890, 'emit_code_bytes': 14559},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 20573, 'emit_code_bytes': 15576},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 20573, 'emit_code_bytes': 15576},
+     }),
+    ('abc: end-minus-width only (W=3)', '', b'abc',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 21515, 'emit_code_bytes': 16205},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 18717, 'emit_code_bytes': 15188},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 21515, 'emit_code_bytes': 16205},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 18717, 'emit_code_bytes': 15188},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 21515, 'emit_code_bytes': 16205},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'run-pinned', 'dfa_match': 'unwrapped', 'emit_bytes': 21515, 'emit_code_bytes': 16205},
+     }),
+    ('\\d+: landing only (unbounded one-char)', '', b'\\d+',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24261, 'emit_code_bytes': 17802},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20784, 'emit_code_bytes': 15987},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20784, 'emit_code_bytes': 15987},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24261, 'emit_code_bytes': 17802},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24261, 'emit_code_bytes': 17802},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24261, 'emit_code_bytes': 17802},
+     }),
+    ('[0-9]{4}: end-minus-width only', '', b'[0-9]{4}',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24787, 'emit_code_bytes': 18513},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 21161, 'emit_code_bytes': 16453},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24787, 'emit_code_bytes': 18513},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 21161, 'emit_code_bytes': 16453},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24787, 'emit_code_bytes': 18513},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 24787, 'emit_code_bytes': 18513},
+     }),
+    ('foo|bar: end-minus-width (equal-width alternation)', '', b'foo|bar',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 16385},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20693, 'emit_code_bytes': 15368},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 16385},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20693, 'emit_code_bytes': 15368},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 16385},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 16385},
+     }),
+    ('[^\\n]+: landing only', '', b'[^\\n]+',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 28654, 'emit_code_bytes': 17778},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 15973},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23715, 'emit_code_bytes': 15973},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 28654, 'emit_code_bytes': 17778},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 28654, 'emit_code_bytes': 17778},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 28654, 'emit_code_bytes': 17778},
+     }),
+    ('\\d under -e utf8: BOTH rows apply', '-e utf8', b'\\d',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23331, 'emit_code_bytes': 16860},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20648, 'emit_code_bytes': 15843},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20657, 'emit_code_bytes': 15852},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'end-minus-width', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 20648, 'emit_code_bytes': 15843},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23331, 'emit_code_bytes': 16860},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 23331, 'emit_code_bytes': 16860},
+     }),
+    ('a*: pinned, W = 0 -- all THREE denies reach reverse-pass', '', b'a*',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'pinned', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 18701, 'emit_code_bytes': 15573},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'pinned', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 18701, 'emit_code_bytes': 15573},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'pinned', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 18701, 'emit_code_bytes': 15573},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'pinned', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 18701, 'emit_code_bytes': 15573},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'pinned', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 18701, 'emit_code_bytes': 15573},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 22159, 'emit_code_bytes': 17468},
+     }),
+    ('(?:a|b)*c: neither row applies', '', b'(?:a|b)*c',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'memchr', 'dfa_match': 'unwrapped', 'emit_bytes': 21436, 'emit_code_bytes': 16391},
+     }),
+    ('^abc: the absence value', '', b'^abc',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'attempt', 'dfa_start': 'attempt-start', 'dfa_prefilter': 'none', 'dfa_match': 'search-filter', 'emit_bytes': 15251, 'emit_code_bytes': 13408},
+     }),
+    ('abc$: rev-end keeps reverse-pass', '', b'abc$',
+     {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+         'l': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+         'wl': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'rev-end', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'none', 'dfa_match': 'unwrapped', 'emit_bytes': 20279, 'emit_code_bytes': 16389},
+     }),
+    ('abc forced VM: no dfa_* pair', '--engine=vm', b'abc',
+     {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+     {
+         'default': {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+         'w': {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+         'l': {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+         'wl': {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+         'wlp': {'engine': 'vm', 'engine_sel': 'forced', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 22957, 'emit_code_bytes': 21489},
+     }),
+    ('FIT mover: (\\p{Xwd}) under -e utf8, size-cap-retry -> hybrid', '-e utf8', b'(\\p{Xwd})',
+     {'engine': 'vm', 'engine_sel': 'size-cap-retry', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 41213, 'emit_code_bytes': 23894},
+     {
+         'default': {'engine': 'vm', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': None, 'emit_bytes': 365315, 'emit_code_bytes': 26109},
+         'w': {'engine': 'vm', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': None, 'emit_bytes': 365315, 'emit_code_bytes': 26109},
+         'l': {'engine': 'vm', 'engine_sel': 'size-cap-retry', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 41213, 'emit_code_bytes': 23894},
+         'wl': {'engine': 'vm', 'engine_sel': 'size-cap-retry', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 41213, 'emit_code_bytes': 23894},
+         'wlp': {'engine': 'vm', 'engine_sel': 'size-cap-retry', 'dfa_scan': None, 'dfa_start': None, 'dfa_prefilter': None, 'dfa_match': None, 'emit_bytes': 41213, 'emit_code_bytes': 23894},
+     }),
+    ('FIT mover: \\p{L}+ under -e utf8, size-cap-retry -> selected', '-e utf8', b'\\p{L}+',
+     {'engine': 'dfa', 'engine_sel': 'size-cap-retry', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'search-filter', 'emit_bytes': 471796, 'emit_code_bytes': 15895},
+     {
+         'default': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 894613, 'emit_code_bytes': 16988},
+         'w': {'engine': 'dfa', 'engine_sel': 'selected', 'dfa_scan': 'unanchored', 'dfa_start': 'landing', 'dfa_prefilter': 'byte-class', 'dfa_match': 'unwrapped', 'emit_bytes': 894613, 'emit_code_bytes': 16988},
+         'l': {'engine': 'dfa', 'engine_sel': 'size-cap-retry', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'search-filter', 'emit_bytes': 471796, 'emit_code_bytes': 15895},
+         'wl': {'engine': 'dfa', 'engine_sel': 'size-cap-retry', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'search-filter', 'emit_bytes': 471796, 'emit_code_bytes': 15895},
+         'wlp': {'engine': 'dfa', 'engine_sel': 'size-cap-retry', 'dfa_scan': 'unanchored', 'dfa_start': 'reverse-pass', 'dfa_prefilter': 'byte-class', 'dfa_match': 'search-filter', 'emit_bytes': 471796, 'emit_code_bytes': 15895},
+     }),
+)
+
+
+def check_b135s3_stamps():
+    """[B135] (d) (pin b8337c33, abi 74, [START-LANDING]; inbox I-145).
+    `RX_DFA_START` / `rx_info.search_form` widened ONCE to the closed set
+    {pinned, end-minus-width, landing, reverse-pass, attempt-start}: for each
+    row of B135S3_CASES the pairs and the size books BY VALUE at both builds
+    through the adapter, under the default and the four denial arms; the
+    compiled `.text` of the `wl` arm equals 7388f1c0's (the program reverts)
+    wherever the default moved; the registry's `search-start` axis (four
+    rows, bits 53/54); and the abi stamp."""
+    print("-- [B135] (d): [START-LANDING] end-minus-width / landing, -fno-start-width / -fno-start-landing --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b135s3 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    old_proc = run([mod.PIN_SH, "--path", "7388f1c0"], timeout=60)
+    old_bin = old_proc.stdout.strip() if old_proc.returncode == 0 else ""
+    if not old_bin or not os.path.isfile(old_bin):
+        bad("b135s3 stamps", "no build for 7388f1c0 (pin.sh 7388f1c0 first)")
+        return
+    new_bin = adapter.pin_binary()
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b135s3-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    arm_flags = {"default": "", "w": "-fno-start-width",
+                 "l": "-fno-start-landing",
+                 "wl": "-fno-start-width -fno-start-landing",
+                 "wlp": "-fno-start-width -fno-start-landing -fno-start-pinned"}
+    try:
+        for i, (label, extra, pat, want73, arms) in enumerate(B135S3_CASES):
+            base = ["--features", "all"] + extra.split()
+            miss = []
+            os.environ["PCREC_BIN"] = old_bin
+            cr = _b118_compile(adapter, tmp, "s3-%d-73" % i, " ".join(base), pat)
+            if cr.outcome != "compiled":
+                bad("b135s3 %s" % label, "73=%s: %s" % (cr.outcome, cr.diagnostic))
+                continue
+            em73 = cr.engine_metadata
+            miss += ["abi-73 %s=%r (want %r)" % (k, em73.get(k), v)
+                     for k, v in want73.items() if em73.get(k) != v]
+            if em73.get("abi") != 73:
+                miss.append("7388f1c0 abi reads %r" % em73.get("abi"))
+            os.environ["PCREC_BIN"] = new_bin
+            ems = {}
+            for tag, flg in arm_flags.items():
+                cr = _b118_compile(adapter, tmp, "s3-%d-%s" % (i, tag),
+                                   " ".join(base + flg.split()), pat)
+                if cr.outcome != "compiled":
+                    miss.append("%s=%s" % (tag, cr.outcome))
+                    continue
+                ems[tag] = cr.engine_metadata
+                miss += ["abi-74 %s %s=%r (want %r)" % (tag, k, ems[tag].get(k), v)
+                         for k, v in arms[tag].items() if ems[tag].get(k) != v]
+            if ems.get("default", {}).get("abi") != 74:
+                miss.append("b8337c33 abi reads %r" % ems.get("default", {}).get("abi"))
+            # `wl` reverts to the abi-73 program wherever 74 moved it
+            moved = arms["default"] != arms["wl"]
+            h73 = _b126_text_hash(old_bin, base, pat, tmp, "o%d" % i)
+            hwl = _b126_text_hash(new_bin, base + arm_flags["wl"].split(), pat,
+                                  tmp, "wl%d" % i)
+            hdf = _b126_text_hash(new_bin, base, pat, tmp, "n%d" % i)
+            if "wlp" in arms and arms["wlp"] != arms["wl"]:
+                pass                      # the pinned row: asserted by value above
+            if hwl is None or hwl != h73:
+                miss.append(".text: -fno-start-width -fno-start-landing != 7388f1c0 "
+                            "(wl=%s 73=%s)" % (hwl, h73))
+            elif moved and hdf == h73:
+                miss.append(".text: the default did not move although the arms differ")
+            name = "b135s3 %s" % label
+            if miss:
+                bad(name, "; ".join(miss))
+            else:
+                ok(name, "73 %s -> 74 %s; w %s l %s wl %s wlp %s; .text(wl) == 7388f1c0" % (
+                    want73.get("dfa_start"), arms["default"].get("dfa_start"),
+                    arms["w"].get("dfa_start"), arms["l"].get("dfa_start"),
+                    arms["wl"].get("dfa_start"), arms["wlp"].get("dfa_start")))
+        # the registry's `search-start` axis
+        rows = [r for r in mod.registry_rows() if r["axis"] == "search-start"]
+        have = [(r["order"], r["candidate"], r["stamp_value"],
+                 r.get("cli_flag", ""), r.get("deny_bit", "")) for r in rows]
+        want = [("1", "pinned", "pinned", "-fno-start-pinned", "22"),
+                ("2", "end-minus-width", "end-minus-width", "-fno-start-width", "53"),
+                ("3", "landing", "landing", "-fno-start-landing", "54"),
+                ("4", "reverse-pass", "reverse-pass", "", ""),
+                ("3", "attempt-start", "attempt-start", "", "")]
+        # `attempt-start` is a PREDICATE row with its own order sequence
+        # (order 3, as at 7388f1c0); compare as a SET keyed on (candidate,
+        # stamp_value, flag, bit) so that cannot red this, and the order of
+        # the four list rows by value.
+        have_set = sorted((c, v, f, b) for _o, c, v, f, b in have)
+        want_set = sorted((c, v, f, b) for _o, c, v, f, b in want)
+        order = [c for _o, c, _v, _f, _b in sorted(have, key=lambda t: int(t[0]))
+                 if c != "attempt-start"]
+        if have_set == want_set and order == ["pinned", "end-minus-width",
+                                              "landing", "reverse-pass"]:
+            ok("b135s3 registry: the `search-start` axis (pinned bit 22, "
+               "end-minus-width bit 53, landing bit 54, reverse-pass, "
+               "attempt-start)", "%s" % have)
+        else:
+            bad("b135s3 registry: the `search-start` axis",
+                "have %r want %r" % (have, want))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_b135_two_pin_window():
     """[B135] the TWO-PIN WINDOW mechanism: one process selects a15fb77b
     (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
@@ -11896,11 +12202,11 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "a15fb77b"
+        os.environ[env] = "7388f1c0"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("7388f1c0", "a15fb77b", "7388f1c0"):
+        if (canon, before, same) == ("b8337c33", "7388f1c0", "b8337c33"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
@@ -11922,7 +12228,7 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "a15fb77b"), ("after", "7388f1c0")):
+        for tag, pin in (("before", "7388f1c0"), ("after", "b8337c33")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
@@ -11931,9 +12237,9 @@ def check_b135_two_pin_window():
             if blk.get("engine_commit", "")[:8] != pin:
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "a15fb77b" in ids["before"] \
-                and "7388f1c0" in ids["after"] \
-                and ids["before"].replace("a15fb77b", "7388f1c0") == ids["after"]:
+        if ids["before"] != ids["after"] and "7388f1c0" in ids["before"] \
+                and "b8337c33" in ids["after"] \
+                and ids["before"].replace("7388f1c0", "b8337c33") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
@@ -16633,6 +16939,7 @@ def main():
     check_b124_stamps()
     check_b126_stamps()
     check_b135_stamps()
+    check_b135s3_stamps()
     check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()

@@ -7,7 +7,7 @@ predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-09-28-capability-0.1-budu-ryzen1600-after-a32bc86e.subject-grain.tsv
 subject_grain_sha256:59457b4467e763ddbb9879eb352b6a8fba67829b736305452a5b744a14aa88fc
-catalogue:       3.17
+catalogue:       3.18
 interpret:       v2
 reporter:        v25 (2026-09-26)
 query:           subbench=capability, version=0.1, machine=budu-ryzen1600, testee=pcrec_02902356_auto-caps-simdna, testee=pcrec_a32bc86e_auto-caps-simdna
