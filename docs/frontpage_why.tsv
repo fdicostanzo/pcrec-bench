@@ -1,8 +1,8 @@
 # pattern_id	engine	regime	cite	quote
-# Causes for the front page's loss list. A row is used only if `quote` is found verbatim (whitespace-normalised) in the committed file `cite`. engine is the record's engine_name or *.
-pattern_id	engine	regime	cite	quote
-tail-word-eoz	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
-tail-ext-lower-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
-tail-space-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
-tail-digits-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
-tail-dotstar-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail
+# Causes for the front page's loss list. A row is used only if `quote` is found verbatim (whitespace-normalised) in the committed file `cite`. engine is the record's engine_name or *. Optional `item` / `item_url` name the pcrec work item that owns the cause (rendered as a link); rows with the same cite + quote must agree on them, and 2+ losses sharing a documented cause are collapsed into one summary line.
+pattern_id	engine	regime	cite	quote	item	item_url
+tail-word-eoz	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail	OPT-REVEND	https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/
+tail-ext-lower-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail	OPT-REVEND	https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/
+tail-space-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail	OPT-REVEND	https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/
+tail-digits-eol	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail	OPT-REVEND	https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/
+tail-dotstar-txt	*	*	bench/capability/NOTES.md	engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail	OPT-REVEND	https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/
