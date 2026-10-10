@@ -5099,6 +5099,56 @@ LEDGER_STAMP_CASES = (
       # mechanism matters later.
       # [B122] MEASURED c4c70f2c: +224, B122_FLAT_TERM alone.
       "emit_bytes": 30335 + B122_FLAT_TERM + B124_STAMP_LINES + B124_LIBC_TWO_CALLS + B124_VM_START_SET}),
+    # [B135] (pin 7388f1c0, abi 73, [OPT-REVEND]; inbox I-142 section 1): the
+    # FIVE capability@0.2 tail patterns -- 15 acceptance cells with the three
+    # t-tail-*-1m bodies, plus tail-space-eol x t-trim-nearmiss-16k -- under
+    # BOTH auto testees, BY VALUE. pcrec's prediction, to the letter: every
+    # one stamps engine=dfa, RX_DFA_SCAN=rev-end, RX_DFA_START=reverse-pass,
+    # RX_DFA_PREFILTER=none, RX_DFA_MATCH=unwrapped (before: `unanchored`
+    # with `byte-class-bounded`, `memchr-bounded` for tail-dotstar-txt).
+    # req_why is the one stamp pcrec did NOT list: `dominated` on the two
+    # `.txt` patterns (the walk answers presence itself, so the whole-window
+    # pre-check is not emitted), `none` on the three class-run ones.
+    ("capability tail-digits-eol under auto-caps: the I-142 rev-end stamp set (\\d+$)", "pcrec-auto", "capability", "tail-digits-eol",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-digits-eol under auto-nocaps: the I-142 rev-end stamp set (\\d+$)", "pcrec-nocaps", "capability", "tail-digits-eol",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-word-eoz under auto-caps: the I-142 rev-end stamp set (\\w+\\z)", "pcrec-auto", "capability", "tail-word-eoz",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-word-eoz under auto-nocaps: the I-142 rev-end stamp set (\\w+\\z)", "pcrec-nocaps", "capability", "tail-word-eoz",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-space-eol under auto-caps: the I-142 rev-end stamp set (\\s+$)", "pcrec-auto", "capability", "tail-space-eol",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-space-eol under auto-nocaps: the I-142 rev-end stamp set (\\s+$)", "pcrec-nocaps", "capability", "tail-space-eol",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "none", "simd_guarded_bytes": 0}),
+    ("capability tail-ext-lower-txt under auto-caps: the I-142 rev-end stamp set ([a-z]+\\.txt$)", "pcrec-auto", "capability", "tail-ext-lower-txt",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "dominated", "simd_guarded_bytes": 0}),
+    ("capability tail-ext-lower-txt under auto-nocaps: the I-142 rev-end stamp set ([a-z]+\\.txt$)", "pcrec-nocaps", "capability", "tail-ext-lower-txt",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "dominated", "simd_guarded_bytes": 0}),
+    ("capability tail-dotstar-txt under auto-caps: the I-142 rev-end stamp set (.*\\.txt$)", "pcrec-auto", "capability", "tail-dotstar-txt",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "dominated", "simd_guarded_bytes": 0}),
+    ("capability tail-dotstar-txt under auto-nocaps: the I-142 rev-end stamp set (.*\\.txt$)", "pcrec-nocaps", "capability", "tail-dotstar-txt",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "rev-end",
+      "dfa_start": "reverse-pass", "dfa_prefilter": "none",
+      "dfa_match": "unwrapped", "req_why": "dominated", "simd_guarded_bytes": 0}),
 )
 
 
@@ -11617,6 +11667,19 @@ B135_CASES = (
       "dfa_start": None, "dfa_match": None, "simd_guarded_bytes": 0},
      {"engine": "vm", "dfa_scan": None, "simd_guarded_bytes": 0},
      "-fno-rev-end", {"dfa_scan": None}),
+    # abi 69 [DEC-COLLAPSE-WASTE]: the size-cap-retry figure is the exact
+    # artifact's, not the wasted retry's -- 1028613 -> 1028607 at abi 69
+    # (pcrec's own number, REPRODUCED by direct emit at 32a1c91f0), then +52
+    # at abi 71 (the RX_SIMD_GUARDED_BYTES line); through the ADAPTER's argv
+    # (which carries -fcomments) the figure at both a15fb77b and 7388f1c0 is
+    # 1028666 (a direct `-p rx --features all` emit reads 1028659).
+    ("abi 69/71: (\\p{Xwd}) -e utf8, the size-cap-retry figure", "-e utf8",
+     b"(\\p{Xwd})",
+     {"engine": "vm", "engine_sel": "size-cap-retry", "prefilter": "none",
+      "vm_prefilter_why": "size cap retry, hybrid 1028666 > 1000000"},
+     {"engine_sel": "size-cap-retry",
+      "vm_prefilter_why": "size cap retry, hybrid 1028666 > 1000000"},
+     "-fno-rev-end", {"engine_sel": "size-cap-retry"}),
     # a pattern no abi 73 row touches: unanchored, run-pinned.
     ("control: abc (no end pin)", "", b"abc",
      {"dfa_scan": "unanchored", "dfa_start": "reverse-pass",
@@ -11736,6 +11799,29 @@ def check_b135_stamps():
                 else:
                     ok(name, "%s; %s" % (", ".join(
                         "%s=%r" % kv for kv in want73.items()), id_why))
+        # abi 69 [DEC-VAR-ATTRIB]: a nullable `${v}` reads `selected` (it
+        # read `declined-nullable-default` at 255bcdd8). Direct emit only: a
+        # caller-variable artifact is not buildable by this bench's shim (no
+        # bench pattern contains `${`, [B90]).
+        for tag, pin, wantsel in (("255bcdd8", "255bcdd8", "declined-nullable-default"),
+                                  ("a15fb77b", "a15fb77b", "selected"),
+                                  ("7388f1c0", "7388f1c0", "selected")):
+            pp = run([mod.PIN_SH, "--path", pin], timeout=60)
+            binp = pp.stdout.strip() if pp.returncode == 0 else ""
+            name = "b135 abi 69: ${v} ENGINE_SEL at %s" % tag
+            if not binp or not os.path.isfile(binp):
+                ok(name + " (no build of that pin on this box -- skipped)", "")
+                continue
+            out = os.path.join(tmp, "var-%s.c" % tag)
+            r = subprocess.run([binp, "-p", "rx", "--features", "all", "-o", out,
+                                "--pattern", "${v}"], capture_output=True,
+                               env=C_ENV, timeout=300)
+            m = re.search(r'^#define RX_ENGINE_SEL "([^"]*)"',
+                          open(out).read(), re.M) if r.returncode == 0 else None
+            if m and m.group(1) == wantsel:
+                ok(name, "RX_ENGINE_SEL %r" % m.group(1))
+            else:
+                bad(name, "got %r, want %r" % (m.group(1) if m else None, wantsel))
         # the registry's `locate` axis
         rows = [r for r in mod.registry_rows() if r["axis"] == "locate"]
         want = [("1", "rev-end", "RX_DFA_SCAN", "rev-end", "-fno-rev-end", "52"),
