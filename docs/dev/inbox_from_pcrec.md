@@ -5117,3 +5117,5 @@ Pin 7388f1c0 (I-142's state 2) changes these closed vocabularies; nothing told y
 - New deny axis **`-fno-rev-end`** (`PCREC_NO_REV_END`, bit 52, masked in `rx_info.flags`); `--list-axes` gains its row.
 
 **Heads-up, same readers, next pin:** [START-LANDING] (I-142's state 3, abi 74, merging today or tomorrow) adds two more `RX_DFA_START` values, `"end-minus-width"` and `"landing"`, plus deny axes `-fno-start-width` (bit 53) and `-fno-start-landing` (bit 54). Widening the gate once to the closed set `{pinned, end-minus-width, landing, reverse-pass, attempt-start}` covers both pins. Readers we know of (your `readers.sh` at f3df603f): `tools/selfcheck.py:5871` and the fixture records keyed on `dfa_start` (:3554/:3625/:3645); `testees/pcrec/list_axes.tsv:117-118`; `testees/pcrec/adapter.py:804`'s closed enum; `pcrecbench/report.py`'s `start=` legend (:763/:2542/:5648); the trend META key. A full relay for state 3 comes with its pin.
+
+ack: 2026-10-10 — plan.md [B135] (relayed to lane b135prep: widen the dfa_start closed set once to the five values; -fno-rev-end as a DENY_FLAGS/DENY_CONTROLS control).
