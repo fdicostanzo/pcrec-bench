@@ -5,27 +5,30 @@ pcrec-bench measures how fast regex engines really are on hard, realistic patter
 ## Headline
 
 <!-- frontpage:headline:begin -->
+**Latest run: pcrec was faster in 9 of 10 head-to-head comparisons (919 of 1,019), with a median speedup of 4.6×.**
+
 On `capability@0.2` (142 pattern-regime cells), pcrec 0.2.0-beta+255bcdd8 (config `pcrec-auto`, measured 2026-10-08) is faster in 919 of 1019 compared cases (90.2%), tied in 1 (0.1%) and slower in 99 (9.7%); a further 401 pairs have no verified number on one side and are excluded (counted below). Competitors: 10 configurations of 6 engines (libpcre2, oniguruma, re2, rust, tre, vectorscan). Match time, compile excluded.[^rate]
 
 [^rate]: Win rate = wins / (wins + losses + ties) over all competitor × case pairs; a case is one (pattern, regime) cell where both engines produced a verified number; a tie is overlapping [min, max] trial ranges. Competitor records were measured 2026-10-08 to 2026-10-09, pcrec's on 2026-10-08, all on one machine (`budu-ryzen1600`).
 <!-- frontpage:headline:end -->
 
 <!-- frontpage:table:begin -->
-| Competitor | Kind | Cases | pcrec wins | Losses | Ties | Median speedup | Geo-mean speedup | Excluded |
-|---|---|--:|--:|--:|--:|--:|--:|---|
-| PCRE2 10.46 DFA | DFA | 119 | 119 | 0 | 0 | ×5.91 | ×8.92 | 23 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 4 wrong answer, 12 unsupported or refused, 2 not measured) |
-| PCRE2 10.46 interpreter | interpreter (backtracking) | 134 | 133 | 1 | 0 | ×5.01 | ×8.83 | 8 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 3 gave up) |
-| PCRE2 10.46 JIT | JIT | 134 | 116 | 17 | 1 | ×2.84 | ×3.54 | 8 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 3 gave up) |
-| Oniguruma 6.9.10 | interpreter (backtracking) | 131 | 131 | 0 | 0 | ×7.66 | ×13.1 | 11 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 4 gave up, 2 unsupported or refused) |
-| RE2 11.0.0 | automata (lazy DFA, NFA fallback) | 84 | 73 | 11 | 0 | ×8.71 | ×4.88 | 58 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 3 wrong answer, 50 unsupported or refused) |
-| RE2 11.0.0 (longest-match) | automata (lazy DFA, NFA fallback) | 81 | 70 | 11 | 0 | ×8.65 | ×4.76 | 61 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 6 wrong answer, 50 unsupported or refused) |
-| Rust regex 1.13.1 | automata (lazy DFA, PikeVM, bounded backtracker) | 90 | 71 | 19 | 0 | ×2.00 | ×1.39 | 52 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 3 wrong answer, 44 unsupported or refused) |
-| TRE 0.9.0 | automata (POSIX tagged NFA; backtracking only for backreferences) | 73 | 73 | 0 | 0 | ×47.6 | ×159 | 69 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 7 wrong answer, 56 unsupported or refused, 1 not measured) |
-| Vectorscan 5.4.11 (no SOM) | automata (SIMD multi-pattern) | 91 | 62 | 29 | 0 | ×1.57 | ×0.719 | 51 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 46 unsupported or refused) |
-| Vectorscan 5.4.11 (SOM) | automata (SIMD multi-pattern) | 82 | 71 | 11 | 0 | ×3.26 | ×2.63 | 60 (pcrec side: 4 unsupported or refused, 1 no oracle expectation to judge against; engine side: 3 wrong answer, 52 unsupported or refused) |
+| Competitor | Kind | Cases | pcrec wins | Losses | Ties | Median speedup | Geo-mean speedup | [Excluded](docs/methodology.md#excluded-cases-by-side-and-reason) |
+|---|---|--:|--:|--:|--:|--:|--:|--:|
+| PCRE2 10.46 JIT | JIT | 134 | 116 | 17 | 1 | ×2.84 | ×3.54 | 8 |
+| RE2 11.0.0 | automata (lazy DFA, NFA fallback) | 84 | 73 | 11 | 0 | ×8.71 | ×4.88 | 58 |
+| RE2 11.0.0 (longest-match) | automata (lazy DFA, NFA fallback) | 81 | 70 | 11 | 0 | ×8.65 | ×4.76 | 61 |
+| Rust regex 1.13.1 | automata (lazy DFA, PikeVM, bounded backtracker) | 90 | 71 | 19 | 0 | ×2.00 | ×1.39 | 52 |
+| Vectorscan 5.4.11 (SOM) | automata (SIMD multi-pattern) | 82 | 71 | 11 | 0 | ×3.26 | ×2.63 | 60 |
+| Vectorscan 5.4.11 (no SOM) | automata (SIMD multi-pattern) | 91 | 62 | 29 | 0 | ×1.57 | ×0.719 | 51 |
+| **Interpreters, for reference** |  |  |  |  |  |  |  |  |
+| PCRE2 10.46 interpreter | interpreter (backtracking) | 134 | 133 | 1 | 0 | ×5.01 | ×8.83 | 8 |
+| PCRE2 10.46 DFA | DFA | 119 | 119 | 0 | 0 | ×5.91 | ×8.92 | 23 |
+| Oniguruma 6.9.10 | interpreter (backtracking) | 131 | 131 | 0 | 0 | ×7.66 | ×13.1 | 11 |
+| TRE 0.9.0 | automata (POSIX tagged NFA; backtracking only for backreferences) | 73 | 73 | 0 | 0 | ×47.6 | ×159 | 69 |
 | **all pairs** |  | 1019 | 919 | 99 | 1 | ×4.59 | ×5.66 |  |
 
-Speedup = competitor median ÷ pcrec median, per case (> 1 means pcrec is faster); the median and geometric mean run over all of that engine's cases, ties included. Excluded cases are counted, never dropped silently; a pair failing on both sides is attributed to the pcrec side.
+Speedup = competitor median ÷ pcrec median, per case (> 1 means pcrec is faster); the median and geometric mean run over all of that engine's cases, ties included. Excluded cases are counted, never dropped silently; a pair failing on both sides is attributed to the pcrec side. The first group is the like-for-like engines, the second the interpreters, for reference (see Fairness below). The breakdown of the Excluded count by side and reason is in the [methodology](docs/methodology.md#excluded-cases-by-side-and-reason).
 <!-- frontpage:table:end -->
 
 <!-- frontpage:chart:begin -->
@@ -45,28 +48,9 @@ Taken from the same comparison as the table above, worst first, with nothing fil
 On this run the largest losses are the end-anchored patterns added in capability@0.2 (`\w+\z`, `[a-z]+\.txt$`, `\s+$` and their kin over 1 MiB of prose). An engine that can start an end-anchored search from the end of the subject touches only the tail; an engine that scans forward pays for the whole megabyte. pcrec scans forward here: reverse search for end-anchored patterns is a filed, not yet implemented pcrec work item (`[OPT-REVEND]`).
 
 <!-- frontpage:losses:begin -->
-The 20 worst of 99 losing cases across all competitors (pcrec slower, trial ranges disjoint; "slower by" is pcrec median ÷ competitor median), grouped by pattern family; families ordered by their worst case. Vectorscan's `nosom` configuration reports only match or no match and its driver stops at the first match (testees/vectorscan/CLAUDE.md), so on a subject that matches it does less work than an engine that reports a span; read its rows with that in mind.
+**17 of the losing cases share one documented cause:** "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)). Worst: `tail-word-eoz` (large-subject-throughput) against Vectorscan 5.4.11 (no SOM), pcrec slower by ×24,900. Work item: [OPT-REVEND](https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/).
 
-**wild-logparse**
-
-| Pattern | Regime | Engine | pcrec slower by | Why |
-|---|---|---|--:|---|
-| `tail-word-eoz` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×24,900 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-ext-lower-txt` | large-subject-throughput | Rust regex 1.13.1 | ×21,900 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-ext-lower-txt` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×9,970 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-space-eol` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7,760 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-ext-lower-txt` | large-subject-throughput | RE2 11.0.0 | ×7,240 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-ext-lower-txt` | large-subject-throughput | RE2 11.0.0 (longest-match) | ×7,190 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-digits-eol` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×4,230 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-dotstar-txt` | large-subject-throughput | Rust regex 1.13.1 | ×1,880 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-dotstar-txt` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×990 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-dotstar-txt` | large-subject-throughput | RE2 11.0.0 | ×698 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-dotstar-txt` | large-subject-throughput | RE2 11.0.0 (longest-match) | ×691 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-word-eoz` | large-subject-throughput | RE2 11.0.0 | ×77.7 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-word-eoz` | large-subject-throughput | RE2 11.0.0 (longest-match) | ×77.6 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `letters-bounded-tail-z` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×43.6 | cause not yet analysed |
-| `tail-word-eoz` | large-subject-throughput | Rust regex 1.13.1 | ×29.9 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
-| `tail-space-eol` | large-subject-throughput | Rust regex 1.13.1 | ×24.0 | "engines that scan forward pay the megabyte, an engine that can anchor at the end pays the tail" ([bench/capability/NOTES.md](bench/capability/NOTES.md)) |
+Of 99 losing cases across all competitors (pcrec slower, trial ranges disjoint; "slower by" is pcrec median ÷ competitor median), 17 are summarised above; the 20 worst of the remaining 82 are listed here, grouped by pattern family, families ordered by their worst case. Vectorscan's `nosom` configuration reports only match or no match and its driver stops at the first match (testees/vectorscan/CLAUDE.md), so on a subject that matches it does less work than an engine that reports a span; read its rows with that in mind.
 
 **semantics-divergence**
 
@@ -74,6 +58,14 @@ The 20 worst of 99 losing cases across all competitors (pcrec slower, trial rang
 |---|---|---|--:|---|
 | `wild-semdiv-empty-alt-repeat-pcre2` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×2,490 | cause not yet analysed |
 | `keyword-prefix-order` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×438 | cause not yet analysed |
+| `wild-semdiv-altorder-foo-foobar-rustregex` | large-subject-throughput | Rust regex 1.13.1 | ×6.91 | cause not yet analysed |
+
+**wild-logparse**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `letters-bounded-tail-z` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×43.6 | cause not yet analysed |
+| `hex8-bounded` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7.60 | cause not yet analysed |
 
 **wild-datetime**
 
@@ -81,6 +73,39 @@ The 20 worst of 99 losing cases across all competitors (pcrec slower, trial rang
 |---|---|---|--:|---|
 | `wild-datetime-moment-iso8601` | large-subject-throughput | RE2 11.0.0 | ×39.8 | cause not yet analysed |
 | `wild-datetime-moment-iso8601` | large-subject-throughput | RE2 11.0.0 (longest-match) | ×38.9 | cause not yet analysed |
+| `wild-datetime-moment-iso8601` | large-subject-throughput | PCRE2 10.46 JIT | ×10.7 | cause not yet analysed |
+
+**wild-codegrammar**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `wild-codegrammar-json-constant` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×13.0 | cause not yet analysed |
+| `wild-codegrammar-json-constant` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×13.0 | cause not yet analysed |
+| `wild-codegrammar-json-constant` | large-subject-throughput | Rust regex 1.13.1 | ×9.02 | cause not yet analysed |
+
+**wild-validator**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `wild-validator-email-owasp` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×10.7 | cause not yet analysed |
+| `wild-validator-email-owasp` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×10.6 | cause not yet analysed |
+| `wild-validator-email-owasp` | large-subject-throughput | PCRE2 10.46 JIT | ×7.22 | cause not yet analysed |
+
+**wild-waf**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `wild-waf-crs-942360-concat-sqli` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×10.2 | cause not yet analysed |
+| `wild-waf-crs-942270-union-select` | large-subject-throughput | PCRE2 10.46 JIT | ×9.49 | cause not yet analysed |
+| `wild-waf-crs-942270-union-select` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×6.59 | cause not yet analysed |
+| `wild-waf-crs-942270-union-select` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×6.59 | cause not yet analysed |
+
+**binary-nonutf8**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `high-byte-run` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×7.53 | cause not yet analysed |
+| `high-byte-run` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7.53 | cause not yet analysed |
 
 Losses by family, over every case:
 

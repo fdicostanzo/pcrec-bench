@@ -7,6 +7,20 @@ How the numbers on the [front page](../README.md) are produced. Tables marked ge
 The front-page table shows one count per competitor in its Excluded column; this is the breakdown.
 
 <!-- frontpage:excluded:begin -->
+| Competitor | Excluded | pcrec side | Engine side |
+|---|--:|---|---|
+| PCRE2 10.46 JIT | 8 | 4 unsupported or refused, 1 no oracle expectation to judge against | 3 gave up |
+| RE2 11.0.0 | 58 | 4 unsupported or refused, 1 no oracle expectation to judge against | 3 wrong answer, 50 unsupported or refused |
+| RE2 11.0.0 (longest-match) | 61 | 4 unsupported or refused, 1 no oracle expectation to judge against | 6 wrong answer, 50 unsupported or refused |
+| Rust regex 1.13.1 | 52 | 4 unsupported or refused, 1 no oracle expectation to judge against | 3 wrong answer, 44 unsupported or refused |
+| Vectorscan 5.4.11 (SOM) | 60 | 4 unsupported or refused, 1 no oracle expectation to judge against | 3 wrong answer, 52 unsupported or refused |
+| Vectorscan 5.4.11 (no SOM) | 51 | 4 unsupported or refused, 1 no oracle expectation to judge against | 46 unsupported or refused |
+| PCRE2 10.46 interpreter | 8 | 4 unsupported or refused, 1 no oracle expectation to judge against | 3 gave up |
+| PCRE2 10.46 DFA | 23 | 4 unsupported or refused, 1 no oracle expectation to judge against | 4 wrong answer, 12 unsupported or refused, 2 not measured |
+| Oniguruma 6.9.10 | 11 | 4 unsupported or refused, 1 no oracle expectation to judge against | 4 gave up, 2 unsupported or refused |
+| TRE 0.9.0 | 69 | 4 unsupported or refused, 1 no oracle expectation to judge against | 7 wrong answer, 56 unsupported or refused, 1 not measured |
+
+A pair is excluded when one side has no verified number; it is attributed to the pcrec side first, else to the engine's. "Unsupported or refused" covers a pattern the engine does not support or declined to compile.
 <!-- frontpage:excluded:end -->
 
 ## Hardware and software
