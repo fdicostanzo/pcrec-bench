@@ -5,28 +5,28 @@ pcrec-bench measures how fast regex engines really are on hard, realistic patter
 ## Headline
 
 <!-- frontpage:headline:begin -->
-**Latest run: pcrec was faster in 9 of 10 head-to-head comparisons (936 of 1,019), with a median speedup of 5.0×.**
+**Latest run: pcrec was faster in 9 of 10 head-to-head comparisons (937 of 1,019), with a median speedup of 5.0×.**
 
-On `capability@0.2` (142 pattern-regime cells), pcrec 0.2.0-beta+7388f1c0 (config `pcrec-auto`, measured 2026-10-10) is faster in 936 of 1019 compared cases (91.9%), tied in 2 (0.2%) and slower in 81 (7.9%); a further 401 pairs have no verified number on one side and are excluded (counted below). Competitors: 10 configurations of 6 engines (libpcre2, oniguruma, re2, rust, tre, vectorscan). Match time, compile excluded.[^rate]
+On `capability@0.2` (142 pattern-regime cells), pcrec 0.2.0-beta+b8337c33 (config `pcrec-auto`, measured 2026-10-11) is faster in 937 of 1019 compared cases (92.0%), tied in 2 (0.2%) and slower in 80 (7.9%); a further 401 pairs have no verified number on one side and are excluded (counted below). Competitors: 10 configurations of 6 engines (libpcre2, oniguruma, re2, rust, tre, vectorscan). Match time, compile excluded.[^rate]
 
-[^rate]: Win rate = wins / (wins + losses + ties) over all competitor × case pairs; a case is one (pattern, regime) cell where both engines produced a verified number; a tie is overlapping [min, max] trial ranges. Competitor records were measured 2026-10-08 to 2026-10-09, pcrec's on 2026-10-10, all on one machine (`budu-ryzen1600`).
+[^rate]: Win rate = wins / (wins + losses + ties) over all competitor × case pairs; a case is one (pattern, regime) cell where both engines produced a verified number; a tie is overlapping [min, max] trial ranges. Competitor records were measured 2026-10-08 to 2026-10-09, pcrec's on 2026-10-11, all on one machine (`budu-ryzen1600`).
 <!-- frontpage:headline:end -->
 
 <!-- frontpage:table:begin -->
 | Competitor | Kind | Cases | pcrec wins | Losses | Ties | Median speedup | Geo-mean speedup | [Excluded](docs/methodology.md#excluded-cases-by-side-and-reason) |
 |---|---|--:|--:|--:|--:|--:|--:|--:|
-| PCRE2 10.46 JIT | JIT | 134 | 118 | 16 | 0 | ×3.18 | ×5.13 | 8 |
-| RE2 11.0.0 | automata (lazy DFA, NFA fallback) | 84 | 76 | 8 | 0 | ×9.83 | ×6.97 | 58 |
-| RE2 11.0.0 (longest-match) | automata (lazy DFA, NFA fallback) | 81 | 73 | 8 | 0 | ×9.70 | ×6.88 | 61 |
+| PCRE2 10.46 JIT | JIT | 134 | 118 | 16 | 0 | ×3.21 | ×5.15 | 8 |
+| RE2 11.0.0 | automata (lazy DFA, NFA fallback) | 84 | 76 | 8 | 0 | ×9.84 | ×7.00 | 58 |
+| RE2 11.0.0 (longest-match) | automata (lazy DFA, NFA fallback) | 81 | 73 | 8 | 0 | ×9.72 | ×6.91 | 61 |
 | Rust regex 1.13.1 | automata (lazy DFA, PikeVM, bounded backtracker) | 90 | 76 | 13 | 1 | ×2.29 | ×2.13 | 52 |
-| Vectorscan 5.4.11 (SOM) | automata (SIMD multi-pattern) | 82 | 71 | 11 | 0 | ×3.51 | ×4.61 | 60 |
-| Vectorscan 5.4.11 (no SOM) | automata (SIMD multi-pattern) | 91 | 67 | 24 | 0 | ×1.98 | ×1.24 | 51 |
+| Vectorscan 5.4.11 (SOM) | automata (SIMD multi-pattern) | 82 | 71 | 11 | 0 | ×3.54 | ×4.63 | 60 |
+| Vectorscan 5.4.11 (no SOM) | automata (SIMD multi-pattern) | 91 | 67 | 23 | 1 | ×1.98 | ×1.24 | 51 |
 | **Interpreters, for reference** |  |  |  |  |  |  |  |  |
-| PCRE2 10.46 interpreter | interpreter (backtracking) | 134 | 132 | 1 | 1 | ×5.14 | ×12.8 | 8 |
-| PCRE2 10.46 DFA | DFA | 119 | 119 | 0 | 0 | ×5.87 | ×13.6 | 23 |
-| Oniguruma 6.9.10 | interpreter (backtracking) | 131 | 131 | 0 | 0 | ×7.68 | ×19.1 | 11 |
-| TRE 0.9.0 | automata (POSIX tagged NFA; backtracking only for backreferences) | 73 | 73 | 0 | 0 | ×56.4 | ×208 | 69 |
-| **all pairs** |  | 1019 | 936 | 81 | 2 | ×5.00 | ×8.49 |  |
+| PCRE2 10.46 interpreter | interpreter (backtracking) | 134 | 133 | 1 | 0 | ×5.13 | ×12.8 | 8 |
+| PCRE2 10.46 DFA | DFA | 119 | 119 | 0 | 0 | ×5.84 | ×13.6 | 23 |
+| Oniguruma 6.9.10 | interpreter (backtracking) | 131 | 131 | 0 | 0 | ×7.67 | ×19.2 | 11 |
+| TRE 0.9.0 | automata (POSIX tagged NFA; backtracking only for backreferences) | 73 | 73 | 0 | 0 | ×65.7 | ×209 | 69 |
+| **all pairs** |  | 1019 | 937 | 80 | 2 | ×5.01 | ×8.52 |  |
 
 Speedup = competitor median ÷ pcrec median, per case (> 1 means pcrec is faster); the median and geometric mean run over all of that engine's cases, ties included. Excluded cases are counted, never dropped silently; a pair failing on both sides is attributed to the pcrec side. The first group is the like-for-like engines, the second the interpreters, for reference (see Fairness below). The breakdown of the Excluded count by side and reason is in the [methodology](docs/methodology.md#excluded-cases-by-side-and-reason).
 <!-- frontpage:table:end -->
@@ -50,7 +50,7 @@ One bar per engine, each the full set; speed is not capability. Exact counts are
 <!-- frontpage:support:begin -->
 | Engine | Compiled | Unsupported feature | Refused to compile | Wrong answers | Correct on every subject |
 |---|--:|--:|--:|--:|--:|
-| pcrec 0.2.0-beta+7388f1c0 | 69 (97.2%) | 1 | 1 | 0 | 68 of 68 (100.0%) |
+| pcrec 0.2.0-beta+b8337c33 | 69 (97.2%) | 1 | 1 | 0 | 68 of 68 (100.0%) |
 | **Like-for-like engines** |  |  |  |  |  |
 | PCRE2 10.46 JIT | 71 (100.0%) | 0 | 0 | 0 | 68 of 70 (97.1%) |
 | RE2 11.0.0 | 45 (63.4%) | 25 | 1 | 4 | 40 of 44 (90.9%) |
@@ -75,12 +75,12 @@ The set has 71 patterns; each counts once, however many regimes and forms it is 
 
 Taken from the same comparison as the table above, worst first, with nothing filtered out. A cause is shown only where a committed ledger or notes file states one, quoted with its source; otherwise it says "cause not yet analysed".
 
-On the previous run (pcrec 255bcdd8) the largest losses were the end-anchored patterns added in capability@0.2 (`\w+\z`, `[a-z]+\.txt$`, `\s+$` and their kin over 1 MiB of prose): an engine that can start an end-anchored search from the end of the subject touches only the tail, and pcrec scanned forward over the whole megabyte. pcrec's reverse-from-end search (`[OPT-REVEND]`, pin 7388f1c0) removed that: the 15 tail cells went from 0.2-2.9 ms to 7.9-40.7 ns per call, the losing cases fell from 99 to 81 and the group carrying the tail cause from 17 to 2. What is left of the family is the two 61,440-byte bodies that match from byte 0 to the end, about 21.8 µs each, against a boolean-grain engine. Competitor records on this page are from the 2026-10-08 window and pcrec's from 2026-10-10; the cross-window gap is dated in the footnote above.
+Before pcrec's reverse-from-end search (pcrec 255bcdd8 and earlier) the largest losses were the end-anchored patterns added in capability@0.2 (`\w+\z`, `[a-z]+\.txt$`, `\s+$` and their kin over 1 MiB of prose): an engine that can start an end-anchored search from the end of the subject touches only the tail, and pcrec scanned forward over the whole megabyte. `[OPT-REVEND]` (pin 7388f1c0) removed that: the 15 tail cells went from 0.2-2.9 ms to 7.9-40.7 ns per call, the losing cases fell from 99 to 81 and the group carrying the tail cause from 17 to 2. The latest pin (b8337c33, `[START-LANDING]`) acts on forward-scan artifacts and leaves the tail family alone, which pcrec stated in advance (pcrec inbox I-146) and the window confirmed: re-measuring 7388f1c0 in the same window, all 132 per-subject tail cells of b8337c33 are within trial overlap of it, and the two tail losses below are unchanged. The losing cases moved from 81 to 80 (a Vectorscan no-SOM loss became a tie) and the wins from 936 to 937 (a PCRE2-interpreter tie became a win). What is left of the family is the two 61,440-byte bodies that match from byte 0 to the end, about 21.8 µs each, against Vectorscan's no-SOM configuration. **That comparison is not like for like** (pcrec inbox I-146): no-SOM reports only whether a match exists and never recovers where it starts, while pcrec's reverse walk is the price of the leftmost start. Read these two losses against Vectorscan SOM, the configuration that does report a start: there pcrec is faster on every tail cell, including both (set sums 21.9 µs against 22.3 ms for `tail-word-eoz` and 22.0 µs against 18.0 ms for `tail-space-eol`; on the two 61,440-byte bodies themselves 21.8 µs against 133 µs, about 6× faster; [docs/dev/ledgers/2026-10-11-start-landing-state3-b8337c33.md](docs/dev/ledgers/2026-10-11-start-landing-state3-b8337c33.md), section 7.3). The SOM records are from the 2026-10-08/09 window with no same-window control, so the claim rests on a gap of three orders of magnitude, not on a fine ratio. Competitor records on this page are from the 2026-10-08 window and pcrec's from 2026-10-11; the cross-window gap is dated in the footnote above.
 
 <!-- frontpage:losses:begin -->
 **2 of the losing cases share one documented cause:** "the tail family's remaining cost is the long MATCHING body, not the megabyte of non-matching text" ([docs/dev/ledgers/2026-10-10-opt-revend-states12-7388f1c0.md](docs/dev/ledgers/2026-10-10-opt-revend-states12-7388f1c0.md)). Worst: `tail-word-eoz` (large-subject-throughput) against Vectorscan 5.4.11 (no SOM), pcrec slower by ×55.6. Work item: [OPT-REVEND (implemented, pcrec 7388f1c0)](https://github.com/fdicostanzo/pcrec/tree/main/docs/dev/optloop/revend/).
 
-Of 81 losing cases across all competitors (pcrec slower, trial ranges disjoint; "slower by" is pcrec median ÷ competitor median), 2 are summarised above; the 20 worst of the remaining 79 are listed here, grouped by pattern family, families ordered by their worst case. Vectorscan's `nosom` configuration reports only match or no match and its driver stops at the first match (testees/vectorscan/CLAUDE.md), so on a subject that matches it does less work than an engine that reports a span; read its rows with that in mind.
+Of 80 losing cases across all competitors (pcrec slower, trial ranges disjoint; "slower by" is pcrec median ÷ competitor median), 2 are summarised above; the 20 worst of the remaining 78 are listed here, grouped by pattern family, families ordered by their worst case. Vectorscan's `nosom` configuration reports only match or no match and its driver stops at the first match (testees/vectorscan/CLAUDE.md), so on a subject that matches it does less work than an engine that reports a span; read its rows with that in mind.
 
 **semantics-divergence**
 
@@ -119,16 +119,10 @@ Of 81 losing cases across all competitors (pcrec slower, trial ranges disjoint; 
 | Pattern | Regime | Engine | pcrec slower by | Why |
 |---|---|---|--:|---|
 | `wild-waf-crs-942360-concat-sqli` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×10.2 | cause not yet analysed |
-| `wild-waf-crs-942270-union-select` | large-subject-throughput | PCRE2 10.46 JIT | ×9.48 | cause not yet analysed |
-| `wild-waf-crs-942270-union-select` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×6.58 | cause not yet analysed |
+| `wild-waf-crs-942270-union-select` | large-subject-throughput | PCRE2 10.46 JIT | ×9.49 | cause not yet analysed |
+| `wild-waf-crs-942270-union-select` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×6.59 | cause not yet analysed |
 | `wild-waf-crs-942270-union-select` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×6.58 | cause not yet analysed |
-| `wild-waf-crs-942360-concat-sqli` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×6.36 | cause not yet analysed |
-
-**wild-logparse**
-
-| Pattern | Regime | Engine | pcrec slower by | Why |
-|---|---|---|--:|---|
-| `hex8-bounded` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7.61 | cause not yet analysed |
+| `wild-waf-crs-942360-concat-sqli` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×6.33 | cause not yet analysed |
 
 **binary-nonutf8**
 
@@ -136,6 +130,12 @@ Of 81 losing cases across all competitors (pcrec slower, trial ranges disjoint; 
 |---|---|---|--:|---|
 | `high-byte-run` | large-subject-throughput | Vectorscan 5.4.11 (SOM) | ×7.53 | cause not yet analysed |
 | `high-byte-run` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7.53 | cause not yet analysed |
+
+**wild-logparse**
+
+| Pattern | Regime | Engine | pcrec slower by | Why |
+|---|---|---|--:|---|
+| `hex8-bounded` | large-subject-throughput | Vectorscan 5.4.11 (no SOM) | ×7.44 | cause not yet analysed |
 
 Losses by family, over every case:
 
@@ -146,9 +146,9 @@ Losses by family, over every case:
 | semantics-divergence | 108 | 19 | 17.6% |
 | binary-nonutf8 | 41 | 4 | 9.8% |
 | wild-codegrammar | 112 | 9 | 8.0% |
-| wild-secrets | 78 | 5 | 6.4% |
 | cap-lookaround | 32 | 2 | 6.2% |
 | cap-backref | 35 | 2 | 5.7% |
+| wild-secrets | 78 | 4 | 5.1% |
 | wild-validator | 120 | 5 | 4.2% |
 | wild-logparse | 235 | 8 | 3.4% |
 | cap-recursion | 30 | 1 | 3.3% |
@@ -164,29 +164,29 @@ The same metric, for the latest `pcrec-auto` record against each competitor's la
 <!-- frontpage:othersets:begin -->
 | Set | Competitor | pcrec-auto (pin, date) | Competitor date | Cases | Wins | Losses | Ties | Median speedup | Excluded |
 |---|---|---|---|--:|--:|--:|--:|--:|---|
-| `email-specimen@0.2` | PCRE2 10.46 interpreter | 7388f1c0 (2026-10-10) | 2026-09-02 | 6 | 6 | 0 | 0 | ×17.6 | 3 (engine side: 3 not measured) |
-| `email-specimen@0.2` | PCRE2 10.46 JIT | 7388f1c0 (2026-10-10) | 2026-09-02 | 5 | 5 | 0 | 0 | ×2.58 | 4 (engine side: 4 not measured) |
-| `email-specimen@0.2` | Rust regex 1.13.1 | 7388f1c0 (2026-10-10) | 2026-09-20 | 6 | 5 | 1 | 0 | ×1.82 | 3 (engine side: 3 unsupported or refused) |
-| `loglines@0.1` | PCRE2 10.46 interpreter | 7388f1c0 (2026-10-10) | 2026-09-02 | 22 | 22 | 0 | 0 | ×11.7 | 0 |
-| `loglines@0.1` | PCRE2 10.46 JIT | 7388f1c0 (2026-10-10) | 2026-09-02 | 22 | 19 | 3 | 0 | ×1.68 | 0 |
-| `loglines@0.1` | Rust regex 1.13.1 | 7388f1c0 (2026-10-10) | 2026-09-20 | 22 | 15 | 7 | 0 | ×1.41 | 0 |
-| `bounded@0.3` | PCRE2 10.46 interpreter | c4c70f2c (2026-10-05) | 2026-09-04 | 84 | 83 | 1 | 0 | ×5.88 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
-| `bounded@0.3` | PCRE2 10.46 JIT | c4c70f2c (2026-10-05) | 2026-09-05 | 84 | 68 | 15 | 1 | ×2.36 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
-| `bounded@0.3` | Rust regex 1.13.1 | c4c70f2c (2026-10-05) | 2026-09-20 | 120 | 109 | 10 | 1 | ×4.55 | 9 (pcrec side: 3 unsupported or refused; engine side: 6 unsupported or refused) |
+| `email-specimen@0.2` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-02 | 6 | 6 | 0 | 0 | ×17.5 | 3 (engine side: 3 not measured) |
+| `email-specimen@0.2` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-02 | 5 | 5 | 0 | 0 | ×2.91 | 4 (engine side: 4 not measured) |
+| `email-specimen@0.2` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 6 | 5 | 1 | 0 | ×1.81 | 3 (engine side: 3 unsupported or refused) |
+| `loglines@0.1` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-02 | 22 | 22 | 0 | 0 | ×11.9 | 0 |
+| `loglines@0.1` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-02 | 22 | 18 | 3 | 1 | ×1.71 | 0 |
+| `loglines@0.1` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 22 | 15 | 7 | 0 | ×1.44 | 0 |
+| `bounded@0.3` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-04 | 84 | 83 | 1 | 0 | ×6.35 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
+| `bounded@0.3` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-05 | 84 | 70 | 14 | 0 | ×2.63 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
+| `bounded@0.3` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 120 | 111 | 9 | 0 | ×5.80 | 9 (pcrec side: 3 unsupported or refused; engine side: 6 unsupported or refused) |
 | `altwide@0.2` | PCRE2 10.46 interpreter | 751b9c6d (2026-09-27) | 2026-09-03 | 60 | 60 | 0 | 0 | ×728 | 39 (pcrec side: 9 unsupported or refused, 1 not measured; engine side: 29 not measured) |
 | `altwide@0.2` | PCRE2 10.46 JIT | 751b9c6d (2026-09-27) | 2026-09-03 | 60 | 60 | 0 | 0 | ×49.7 | 39 (pcrec side: 9 unsupported or refused, 1 not measured; engine side: 29 not measured) |
 | `altwide@0.2` | Rust regex 1.13.1 | 751b9c6d (2026-09-27) | 2026-09-20 | 89 | 49 | 40 | 0 | ×1.12 | 10 (pcrec side: 9 unsupported or refused, 1 not measured) |
-| `syntax@0.1` | PCRE2 10.46 interpreter | c4c70f2c (2026-10-05) | 2026-09-07 | 163 | 161 | 1 | 1 | ×4.95 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
-| `syntax@0.1` | PCRE2 10.46 JIT | c4c70f2c (2026-10-05) | 2026-09-07 | 163 | 113 | 50 | 0 | ×2.35 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
-| `syntax@0.1` | Rust regex 1.13.1 | c4c70f2c (2026-10-05) | 2026-09-20 | 130 | 95 | 31 | 4 | ×2.06 | 142 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 17 wrong answer, 96 unsupported or refused) |
-| `utf8@0.1` | PCRE2 10.46 DFA UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 137 | 137 | 0 | 0 | ×7.24 | 13 (pcrec side: 12 unsupported or refused; engine side: 1 wrong answer) |
-| `utf8@0.1` | PCRE2 10.46 interpreter UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 138 | 138 | 0 | 0 | ×8.21 | 12 (pcrec side: 12 unsupported or refused) |
-| `utf8@0.1` | PCRE2 10.46 JIT UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 138 | 137 | 1 | 0 | ×4.72 | 12 (pcrec side: 12 unsupported or refused) |
-| `utf8@0.1` | Oniguruma 6.9.10 UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 119 | 118 | 1 | 0 | ×9.54 | 31 (pcrec side: 12 unsupported or refused; engine side: 5 wrong answer, 14 unsupported or refused) |
-| `utf8@0.1` | RE2 11.0.0 UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 122 | 116 | 5 | 1 | ×8.85 | 28 (pcrec side: 12 unsupported or refused; engine side: 6 wrong answer, 10 unsupported or refused) |
-| `utf8@0.1` | Rust regex 1.13.1 | c4c70f2c (2026-10-05) | 2026-09-26 | 114 | 94 | 20 | 0 | ×2.49 | 36 (pcrec side: 12 unsupported or refused; engine side: 4 wrong answer, 20 unsupported or refused) |
-| `utf8@0.1` | Vectorscan 5.4.11 (no SOM) UTF-8 | c4c70f2c (2026-10-05) | 2026-09-26 | 126 | 77 | 48 | 1 | ×1.53 | 24 (pcrec side: 12 unsupported or refused; engine side: 2 wrong answer, 10 unsupported or refused) |
-| `litrun@0.1` | PCRE2 10.46 JIT | 7388f1c0 (2026-10-10) | 2026-09-28 | 28 | 20 | 7 | 1 | ×1.75 | 14 (engine side: 14 not measured) |
+| `syntax@0.1` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-07 | 163 | 163 | 0 | 0 | ×5.25 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
+| `syntax@0.1` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-07 | 163 | 115 | 48 | 0 | ×2.51 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
+| `syntax@0.1` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 130 | 105 | 23 | 2 | ×2.13 | 142 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 17 wrong answer, 96 unsupported or refused) |
+| `utf8@0.1` | PCRE2 10.46 DFA UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 137 | 137 | 0 | 0 | ×7.75 | 13 (pcrec side: 12 unsupported or refused; engine side: 1 wrong answer) |
+| `utf8@0.1` | PCRE2 10.46 interpreter UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 138 | 138 | 0 | 0 | ×8.51 | 12 (pcrec side: 12 unsupported or refused) |
+| `utf8@0.1` | PCRE2 10.46 JIT UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 138 | 138 | 0 | 0 | ×4.97 | 12 (pcrec side: 12 unsupported or refused) |
+| `utf8@0.1` | Oniguruma 6.9.10 UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 119 | 119 | 0 | 0 | ×12.3 | 31 (pcrec side: 12 unsupported or refused; engine side: 5 wrong answer, 14 unsupported or refused) |
+| `utf8@0.1` | RE2 11.0.0 UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 122 | 119 | 3 | 0 | ×9.64 | 28 (pcrec side: 12 unsupported or refused; engine side: 6 wrong answer, 10 unsupported or refused) |
+| `utf8@0.1` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-26 | 114 | 93 | 21 | 0 | ×2.69 | 36 (pcrec side: 12 unsupported or refused; engine side: 4 wrong answer, 20 unsupported or refused) |
+| `utf8@0.1` | Vectorscan 5.4.11 (no SOM) UTF-8 | b8337c33 (2026-10-11) | 2026-09-26 | 126 | 76 | 49 | 1 | ×1.56 | 24 (pcrec side: 12 unsupported or refused; engine side: 2 wrong answer, 10 unsupported or refused) |
+| `litrun@0.1` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-28 | 28 | 21 | 6 | 1 | ×2.11 | 14 (engine side: 14 not measured) |
 
 - `email-specimen@0.2`: competitors measured: libpcre2, rust.
 - `loglines@0.1`: competitors measured: libpcre2, rust.

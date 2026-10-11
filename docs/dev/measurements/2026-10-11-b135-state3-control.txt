@@ -1,0 +1,68 @@
+# [B135] state-3 read (lane b135read3) -- mode 'control' of 2026-10-11-b135-state3-analysis.py
+# source: store/records (window 3 = 2026-10-10 20:21 EDT -> 2026-10-11 13:03 EDT, master 4cad239f; window 1 = states 1+2, 2026-10-10 12:13-19:19 EDT)
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-analysis.py control   (read-only over the records; no engine run, no timing)
+# arithmetic: pcrecbench.reduce (reduce_match_cell / reduce_set_cell), the reporter's own; ov/DISJ = trial [min,max] ranges overlap / disjoint
+#
+# CROSS-WINDOW CONTROL: pcrec 7388f1c0 in window 3 (B, 2026-10-11) vs window 1 (A, 2026-10-10), same testee ids
+# set | cfg | n cells | ratio B/A distribution | DISJ cells | outside +-5%% | outside +-10%%
+capability      caps   n=137 min 0.851 p5 0.995 p25 1.000 med 1.000 p75 1.003 p95 1.011 max 1.158 | DISJ 7 | >5% 2 | >10% 2
+capability      nocaps n=139 min 0.910 p5 0.989 p25 0.999 med 1.000 p75 1.001 p95 1.007 max 1.118 | DISJ 4 | >5% 2 | >10% 1
+loglines        caps   n=22 min 0.995 p5 0.995 p25 0.999 med 1.000 p75 1.001 p95 1.006 max 1.006 | DISJ 0 | >5% 0 | >10% 0
+loglines        nocaps n=22 min 0.992 p5 0.998 p25 0.999 med 1.000 p75 1.001 p95 1.003 max 1.004 | DISJ 0 | >5% 0 | >10% 0
+email-specimen  caps   n=9 min 0.999 p5 0.999 p25 1.000 med 1.000 p75 1.000 p95 1.001 max 1.001 | DISJ 0 | >5% 0 | >10% 0
+email-specimen  nocaps n=9 min 0.998 p5 0.999 p25 1.000 med 1.000 p75 1.001 p95 1.001 max 1.002 | DISJ 0 | >5% 0 | >10% 0
+litrun          caps   n=42 min 0.994 p5 0.998 p25 0.999 med 1.000 p75 1.001 p95 1.005 max 1.006 | DISJ 1 | >5% 0 | >10% 0
+litrun          nocaps n=42 min 0.981 p5 0.996 p25 0.999 med 1.000 p75 1.001 p95 1.005 max 1.008 | DISJ 4 | >5% 0 | >10% 0
+ALL tier-1 cells: n=422 min 0.851 p5 0.995 p25 0.999 med 1.000 p75 1.001 p95 1.007 max 1.158
+
+# by regime (all four sets, caps+nocaps)
+('large-subject-throughput', 'plain') n=193 min 0.910 p5 0.997 p25 1.000 med 1.000 p75 1.001 p95 1.010 max 1.158
+('match-compliance', 'whole-subject') n=34 min 0.981 p5 0.997 p25 0.999 med 1.000 p75 1.001 p95 1.006 max 1.008
+('short-subject-search', 'plain') n=195 min 0.851 p5 0.992 p25 0.999 med 1.000 p75 1.002 p95 1.006 max 1.118
+
+# by baseline scale (A median): <100ns / 100ns-1us / >=1us
+<100ns     n=14 min 0.998 p5 0.999 p25 1.000 med 1.001 p75 1.004 p95 1.023 max 1.029
+100ns-1us  n=156 min 0.978 p5 0.992 p25 0.999 med 1.000 p75 1.001 p95 1.006 max 1.158
+>=1us      n=252 min 0.851 p5 0.995 p25 1.000 med 1.000 p75 1.001 p95 1.007 max 1.118
+
+# the cells outside +-5%, or DISJ with |ratio-1|>2%
+capability     caps   bracket-array-define                     large-subject-throughput   plain      A 285.9[283.3..286.9] B 331.0[285.7..335.7] B/A 1.158 ov same_prog=True
+capability     caps   wild-logparse-quotedstring-grok          short-subject-search       plain      A 2525.2[2517.9..2529.3] B 2149.0[2110.7..2189.4] B/A 0.851 DISJ same_prog=True
+capability     nocaps phone-palindrome-6                       short-subject-search       plain      A 3472.0[3169.9..4320.4] B 3881.6[3165.4..3888.2] B/A 1.118 ov same_prog=True
+capability     nocaps phone-palindrome-6                       large-subject-throughput   plain      A 11110748.6[9801789.6..11653738.5] B 10111641.3[8975818.2..10409287.2] B/A 0.910 ov same_prog=True
+capability     caps   nested-comment-rec                       short-subject-search       plain      A 1483.9[1458.4..1522.3] B 1543.4[1481.4..1552.4] B/A 1.040 ov same_prog=True
+capability     caps   wild-waf-crs-942360-concat-sqli          large-subject-throughput   plain      A 36620517.9[36474185.5..37839924.5] B 37831747.4[36469737.3..38033601.7] B/A 1.033 ov same_prog=True
+capability     caps   phone-palindrome-6                       large-subject-throughput   plain      A 8522314.0[8453172.3..9116242.4] B 8794206.3[8497073.7..9115318.8] B/A 1.032 ov same_prog=True
+capability     caps   winpath-near-miss                        large-subject-throughput   plain      A 63.8[63.4..66.9] B 65.7[63.7..67.6] B/A 1.029 ov same_prog=True
+capability     nocaps codegrammar-xflag                        large-subject-throughput   plain      A 653173.8[640503.9..663594.5] B 671826.8[650658.8..677433.0] B/A 1.029 ov same_prog=True
+capability     caps   tail-digits-eol                          large-subject-throughput   plain      A 138.4[137.5..140.5] B 135.3[133.3..136.5] B/A 0.978 DISJ same_prog=True
+capability     nocaps nested-comment-rec                       short-subject-search       plain      A 1492.7[1477.6..1567.3] B 1463.0[1444.1..1494.9] B/A 0.980 ov same_prog=True
+litrun         nocaps lit-l3                                   match-compliance           whole-subject A 269.6[264.6..273.7] B 264.4[264.1..267.4] B/A 0.981 ov same_prog=True
+capability     nocaps winpath-near-miss                        large-subject-throughput   plain      A 63.5[63.4..67.4] B 64.7[63.5..66.7] B/A 1.019 ov same_prog=True
+capability     nocaps trim-nested-star                         large-subject-throughput   plain      A 92952.2[92014.7..102839.8] B 94713.3[92509.1..98059.2] B/A 1.019 ov same_prog=True
+capability     nocaps bracket-array-define                     large-subject-throughput   plain      A 304.9[304.6..333.2] B 299.3[297.7..299.8] B/A 0.982 DISJ same_prog=True
+capability     caps   tail-ext-lower-txt                       short-subject-search       plain      A 646.1[630.0..649.0] B 634.2[631.8..642.9] B/A 0.982 ov same_prog=True
+capability     nocaps codegrammar-flat                         large-subject-throughput   plain      A 659203.4[657059.6..683195.5] B 670410.4[640430.9..679834.4] B/A 1.017 ov same_prog=True
+capability     nocaps tail-dotstar-txt                         large-subject-throughput   plain      A 147.4[144.1..154.3] B 145.0[144.3..149.9] B/A 0.984 ov same_prog=True
+capability     nocaps tail-ext-lower-txt                       short-subject-search       plain      A 644.5[628.7..650.1] B 635.4[626.6..648.8] B/A 0.986 ov same_prog=True
+capability     caps   wild-semdiv-dollar-trailing-newline-pcre2 large-subject-throughput   plain      A 103.6[103.4..104.0] B 105.0[103.5..105.7] B/A 1.013 ov same_prog=True
+capability     nocaps wild-logparse-quotedstring-noatomic      short-subject-search       plain      A 1585.2[1551.5..1595.1] B 1565.5[1534.8..1599.3] B/A 0.988 ov same_prog=True
+capability     caps   wild-logparse-quotedstring-noatomic      short-subject-search       plain      A 1569.6[1555.8..1587.9] B 1588.5[1550.7..1594.9] B/A 1.012 ov same_prog=True
+capability     nocaps wild-datetime-moment-iso8601             short-subject-search       plain      A 576.5[570.8..580.7] B 570.0[568.9..576.3] B/A 0.989 ov same_prog=True
+capability     caps   tail-word-eoz                            short-subject-search       plain      A 1012.9[997.7..1030.0] B 1023.9[1009.5..1032.8] B/A 1.011 ov same_prog=True
+capability     caps   dup-param-detect                         short-subject-search       plain      A 1156.6[1154.6..1158.8] B 1169.1[1169.0..1171.7] B/A 1.011 DISJ same_prog=True
+capability     nocaps wild-logparse-quotedstring-grok          short-subject-search       plain      A 2164.5[2151.2..2173.0] B 2141.3[2121.6..2161.9] B/A 0.989 ov same_prog=True
+capability     caps   codegrammar-flat                         large-subject-throughput   plain      A 660675.5[654860.6..678168.0] B 667698.3[651881.3..678210.7] B/A 1.011 ov same_prog=True
+capability     caps   phone-palindrome-6                       short-subject-search       plain      A 2902.2[2866.9..3190.9] B 2873.2[2856.8..2901.1] B/A 0.990 ov same_prog=True
+capability     caps   base10num-near-miss                      short-subject-search       plain      A 524.3[507.1..525.0] B 519.5[514.1..531.2] B/A 0.991 ov same_prog=True
+capability     nocaps float-literal-bound                      large-subject-throughput   plain      A 4035186.6[4026987.8..4086793.3] B 4070930.8[4046933.2..4090667.7] B/A 1.009 ov same_prog=True
+capability     nocaps keyword-prefix-order                     large-subject-throughput   plain      A 2284218.3[2267589.2..2287368.7] B 2264171.2[2258534.8..2283783.1] B/A 0.991 ov same_prog=True
+loglines       nocaps ipv6                                     short-subject-search       plain      A 261218.1[259135.8..263596.8] B 259085.4[258725.1..261467.5] B/A 0.992 ov same_prog=True
+capability     caps   logparse-atomic                          large-subject-throughput   plain      A 120.8[120.2..122.3] B 119.9[119.8..121.0] B/A 0.992 ov same_prog=True
+capability     nocaps base10num-near-miss                      short-subject-search       plain      A 522.6[518.9..525.6] B 526.7[520.4..560.0] B/A 1.008 ov same_prog=True
+capability     nocaps wild-semdiv-empty-alt-repeat-pcre2       short-subject-search       plain      A 1166.4[1161.0..1212.5] B 1157.3[1154.4..1168.1] B/A 0.992 ov same_prog=True
+litrun         nocaps lit-l4                                   match-compliance           whole-subject A 275.0[273.4..275.9] B 277.1[276.6..278.9] B/A 1.008 DISJ same_prog=True
+capability     nocaps dup-param-detect                         short-subject-search       plain      A 1157.0[1154.7..1158.9] B 1165.5[1159.7..1169.0] B/A 1.007 DISJ same_prog=True
+capability     caps   currency-lookbehind-fixed                short-subject-search       plain      A 807.3[797.9..809.1] B 813.1[805.1..814.1] B/A 1.007 ov same_prog=True
+capability     caps   email-local-nodup                        short-subject-search       plain      A 1448.5[1447.3..1454.7] B 1458.8[1454.1..1474.4] B/A 1.007 ov same_prog=True
+capability     caps   wild-codegrammar-json-number-extended    short-subject-search       plain      A 1379.9[1376.0..1417.7] B 1389.6[1381.7..1401.8] B/A 1.007 ov same_prog=True

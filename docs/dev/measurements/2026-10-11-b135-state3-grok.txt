@@ -1,0 +1,30 @@
+# [B135] state-3 read (lane b135read3) -- mode 'grok' of 2026-10-11-b135-state3-analysis.py
+# source: store/records (window 3 = 2026-10-10 20:21 EDT -> 2026-10-11 13:03 EDT, master 4cad239f; window 1 = states 1+2, 2026-10-10 12:13-19:19 EDT)
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-analysis.py grok   (read-only over the records; no engine run, no timing)
+# arithmetic: pcrecbench.reduce (reduce_match_cell / reduce_set_cell), the reporter's own; ov/DISJ = trial [min,max] ranges overlap / disjoint
+#
+# wild-logparse-quotedstring-grok x short-subject-search (capability@0.2): set-cell median ns [min..max], then per-subject
+caps   a15fb77b w1      2122.7 [2102.5..2129.3]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+caps   7388f1c0 w1      2525.2 [2517.9..2529.3]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+caps   7388f1c0 w3      2149.0 [2110.7..2189.4]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+caps   b8337c33 w3      2147.0 [2139.9..2175.6]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+   7388f1c0 w1 -> 7388f1c0 w3 : x0.851 DISJ
+   7388f1c0 w3 -> b8337c33 w3 : x0.999 ov
+   7388f1c0 w1 -> b8337c33 w3 : x0.850 DISJ
+   per-subject delta ns (b8337c33 - 7388f1c0 w3): n=75 min -1.206 p5 -0.184 p25 -0.004 med 0.023 p75 0.138 p95 0.677 max 3.034; slower on 53 of 75
+   per-subject delta ns (7388f1c0 w3 - w1): n=75 min -7.271 p5 -6.738 p25 -5.657 med -5.275 p75 -4.428 p95 -3.592 max -0.578; slower on 0 of 75
+   per-subject delta ns (7388f1c0 w1 - a15fb77b w1): n=75 min 0.422 p5 4.120 p25 4.626 med 5.444 p75 6.154 p95 6.707 max 7.304; slower on 75 of 75
+nocaps a15fb77b w1      2154.1 [2125.9..2738.0]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+nocaps 7388f1c0 w1      2164.5 [2151.2..2173.0]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+nocaps 7388f1c0 w3      2141.3 [2121.6..2161.9]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+nocaps b8337c33 w3      2121.8 [2111.8..2172.8]  engine=vm sel=selected emit=64131 prog=ae9848c3aa54 vm_prog=17340
+   7388f1c0 w1 -> 7388f1c0 w3 : x0.989 ov
+   7388f1c0 w3 -> b8337c33 w3 : x0.991 ov
+   7388f1c0 w1 -> b8337c33 w3 : x0.980 ov
+   per-subject delta ns (b8337c33 - 7388f1c0 w3): n=75 min -3.739 p5 -0.999 p25 -0.325 med -0.018 p75 0.011 p95 1.228 max 2.568; slower on 30 of 75
+   per-subject delta ns (7388f1c0 w3 - w1): n=75 min -2.837 p5 -2.040 p25 -0.699 med -0.255 p75 0.001 p95 0.443 max 1.935; slower on 19 of 75
+   per-subject delta ns (7388f1c0 w1 - a15fb77b w1): n=75 min -0.724 p5 -0.315 p25 -0.011 med 0.065 p75 0.405 p95 1.777 max 2.742; slower on 50 of 75
+
+# the same pattern in the other regimes / forms, caps: a15 w1 | 7388 w1 | 7388 w3 | b8337 w3
+('wild-logparse-quotedstring-grok', 'large-subject-throughput', 'plain') 2062400.6 | 2063724.5 | 2063743.8 | 2063179.6
+('wild-logparse-quotedstring-grok', 'short-subject-search', 'plain') 2122.7 | 2525.2 | 2149.0 | 2147.0
