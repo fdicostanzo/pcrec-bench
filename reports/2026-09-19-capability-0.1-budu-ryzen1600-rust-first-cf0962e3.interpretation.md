@@ -2,7 +2,7 @@
 report:          reports/2026-09-19-capability-0.1-budu-ryzen1600-rust-first-cf0962e3.tsv
 report_sha256:   b32ea79646c11cc7aee437977ef98fd18de932339277822564b5cd8b33b978c2
 index:           store/index.tsv
-index_sha256:    8520b6ea7b32873ac765e103ed329e1b4d090553d0bfcd99c2fdcbf193b8d808
+index_sha256:    c40ada514628b4487f5c0fc23bc2be94c4a99160ce1a46a9c72cd3e9acff6ffe
 predictions:     docs/dev/predictions/capability-0.1-rust-first.tsv
 predictions_sha256:3470560615505c41802f0a694a0dcac2910a36ea405f1e884336b51807ca11c5
 subject_grain:   (none)
