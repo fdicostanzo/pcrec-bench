@@ -336,6 +336,15 @@ whole-set agreement control (docs/design/expectation_methods_v1.md).
 can measure (`also_pins` + `$PCRECBENCH_PCREC_PIN` + `testee@pin` in
 `scripts/run_window.sh`; one cached driver build serves both; see the
 testees line below and testees/pcrec/CLAUDE.md "Re-pin at 7388f1c0").
+2026-10-10: [B135] (d) (lane b135s3, inbox I-145) RE-PINNED to
+**b8337c33 (abi 74, [START-LANDING])**, state 3: `also_pins` =
+`a15fb77b`, `7388f1c0` (the cross-window control); `RX_DFA_START`'s closed
+set is `{pinned, end-minus-width, landing, reverse-pass, attempt-start}` at
+every reader; `-fno-start-width` (bit 53) / `-fno-start-landing` (bit 54) are
+DENY_FLAGS + DENY_CONTROLS; I-145's 298-of-734 REPRODUCED EXACTLY (210
+end-minus-width / 88 landing, plain form x {caps, nocaps}; the whole-subject
+form moves nothing); docs/dev/lanes/b135s3_report.md carries the state-3
+window plan (docs/dev/lanes/b135s3_chain.sh, not run).
 Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
@@ -487,7 +496,15 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **7388f1c0, abi 73** ([B135], 2026-10-10, lane
+  at a pinned commit — **b8337c33, abi 74** ([B135] (d), 2026-10-10, lane
+  b135s3, inbox I-145; pcrec main with [START-LANDING] SL1-SL4: the RECOVER
+  slot gains `end-minus-width` and `landing` (no reverse machine), deny bits
+  53/54; ONE abi step; `struct rx_info` unchanged, shim floor STAYS 16;
+  registries axes main 161/49 -> 163/49, the rest byte-identical; census
+  docs/dev/measurements/2026-10-10-b135s3-census.txt: 298 of 734 plain-form
+  rows move, 0 of 734 whole-subject rows; docs/dev/lanes/b135s3_report.md;
+  testees/pcrec/CLAUDE.md "Re-pin at b8337c33"). Before it, **7388f1c0,
+  abi 73** ([B135], 2026-10-10, lane
   b135prep, inbox I-140/I-142; pcrec main with [OPT-REVEND] L1 + L2 with
   stage 2; docs/dev/lanes/b135prep_report.md; `a15fb77b`, abi 72, is the
   BEFORE and a declared `also_pins` entry. FIVE abi steps: 68->69

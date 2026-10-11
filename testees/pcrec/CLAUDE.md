@@ -1,7 +1,8 @@
 # testees/pcrec/ — the pcrec adapter
 
 Provides forty-eight testees at the commit pinned in `configs.toml` (counted
-by `adapter.testees()` at the [B135] re-pin to 7388f1c0 (adds none; the
+by `adapter.testees()` at the [B135] (d) re-pin to b8337c33 (adds none; the
+[B135] re-pin to 7388f1c0 added none; the
 [B126] re-pin to 255bcdd8 added none; [B124]'s 60366d747 added
 two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`); [B122]'s c4c70f2c
 added none), and
@@ -668,6 +669,100 @@ steps, and records both in its report:
    to be named in the re-pin's report and the next window's ledger (the
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
+
+## Re-pin at b8337c33 (abi 73 -> 74) — 2026-10-10, lane b135s3, inbox I-145 ([START-LANDING], state 3)
+
+The canonical pin is **b8337c33** (abi 74); `configs.toml` carries
+`also_pins = ["a15fb77b", "7388f1c0"]` (7388f1c0 is state 3's BEFORE and the
+cross-window control; `testee@7388f1c0` window entries, the [B135] mechanism
+unchanged). ONE abi step. `struct rx_info` is unchanged (the emitted struct,
+comment-stripped and whitespace-normalised, is byte-identical to 7388f1c0's,
+md5 `11f44615...`), so the **shim floor STAYS 16** and no shim/driver byte
+moved (`git diff master -- testees/pcrec/{shim,driver,timed}.*` is empty;
+the abi-sabotage arms pass). pcrec's source tree was not at the box's
+~/pcrec checkout (its last fetch predates the pin), so the pin was built from
+a throwaway clone, `PCREC_SRC=/var/tmp/b135s3/pcrec` (pin.sh's own override;
+nothing written under ~/pcrec, BD2).
+
+pcrec's claim (I-145, abi_changelog.md): the RECOVER slot gains `end-minus-
+width` (every match is one byte width W) and `landing` (the start is where
+the forward scan's candidate skip last landed) between `pinned` and
+`reverse-pass`, first match wins; both carry no reverse machine; deny bits
+53/54 masked out of `rx_info.flags`; the product of the two denials alone
+reaches the reverse pass. MEASURED, all confirmed:
+
+1. **`RX_DFA_START` / `rx_info.search_form`** closed set widened ONCE to
+   `{pinned, end-minus-width, landing, reverse-pass, attempt-start}` at every
+   reader I-145 lists: `adapter.py` `dfa_start` values + source/description
+   prose; `list_axes.tsv` (`search-start` orders 1 pinned / 2 end-minus-width
+   / 3 landing / 4 reverse-pass, plus the predicate row `attempt-start`
+   order 3 of its own sequence); `selfcheck.py`'s "dfa_start is not a
+   constant" hard gate (now ALL FIVE values on real artifacts) and the
+   fixtures keyed on it; `report.py`'s `start=` legend
+   (`START_VALUE_LEGEND`: one extra line each for the three non-original
+   values, printed ONLY when a row carries the value, so no committed report
+   changes by a byte; reporter version NOT bumped for that reason; a test
+   pins both directions); the trend META key needs nothing (`dfa_start` is a
+   free-valued key there, passed through). Each new value BY VALUE on
+   witnesses (`check_b135s3_stamps`, 15 checks): `abc`, `[0-9]{4}`,
+   `foo|bar` (equal-width alternation), `(?i)abc` -> `end-minus-width`;
+   `\d+`, `[^\n]+` -> `landing`; `x` (byte) and `\d` under `-e utf8` -> both rows
+   apply.
+2. **`-fno-start-width` (bit 53) and `-fno-start-landing` (bit 54)**:
+   `DENY_FLAGS` (`nostartwidth`, `nostartlanding`, appended last) and two
+   `DENY_CONTROLS` rows. On a both-rows artifact (`x`) `-fno-start-width`
+   alone falls to `landing`, `-fno-start-landing` alone is inert, and only
+   the PRODUCT reaches `reverse-pass`; from a `pinned` W = 0 artifact (`a*`)
+   all three (+ `-fno-start-pinned`) are needed (`wl` leaves `pinned`).
+   Each denial reproduces 7388f1c0 where it should: census, 298 movers,
+   `-fno-start-width -fno-start-landing` = 7388f1c0's v2 identity on 298 of
+   298; alone, `-fno-start-width` = 7388f1c0's on the 164 end-minus-width
+   rows where landing does not apply and a THIRD program on the 46 where it
+   does, `-fno-start-landing` = 7388f1c0's on 88 of 88 landing rows and inert
+   on the 210 end-minus-width rows. Compiled `.text` of the `wl` arm equals
+   7388f1c0's on every witness, and `.flags` stays `0ULL` on every arm (the
+   masks work).
+3. **I-145's "298 of your 734 compiles (default + nocaps)"**: the population
+   is the PLAIN form x {caps, nocaps} over all nine sets (367 patterns x 2 =
+   734 rows, 47 refused at both pins). REPRODUCED EXACTLY: 298 changed = 210
+   `end-minus-width` + 88 `landing`; every changed row moves `dfa_start` and
+   no other row does (0 refusal movers, no other stamp moves except the FIT
+   rows below). The whole-subject form (734 rows) moves NOTHING (688 identical,
+   46 refused-both) -- the match regime is untouched by [START-LANDING].
+   `docs/dev/measurements/2026-10-10-b135s3-census.txt`.
+4. **FIT movers** (a mover that drops the reverse machine fits a size rung):
+   bench rows `utf8 prp-l` and `utf8 prp-notl` (caps and nocaps, 4 rows)
+   go `ENGINE_SEL size-cap-retry > selected` and `RX_DFA_MATCH
+   search-filter > unwrapped`, and GROW (475,770 -> 899,193 and 494,222 ->
+   878,735 B emitted); I-145's own witnesses `(\p{Xwd})` (VM, size-cap-retry
+   41,213 B -> a selected hybrid, `landing`, 365,315 B) and `\p{L}+` are
+   asserted by value, and `-fno-start-landing` restores the size-cap-retry
+   route on both.
+5. **Covariates move with the machine**: a mover that loses the reverse
+   machine loses its second scan edge and its folds (`\d+`: `scan_edges`
+   2 -> 1; `[0-9]{4}`: `dfa_uniform_folds` 2 -> 1, `scan_edges` 2 -> 1; the
+   `wl` arm restores both) -- a reader bucketing on `scan_edges` or `folds`
+   across the two pins sees these rows move BY DEFINITION.
+6. **Size books**: emit_bytes shrink on every non-FIT mover, per row
+   (end-minus-width median -2,765 B / ratio 0.893; landing median -3,667 B /
+   0.871), re-measured per witness, never a flat term: `B135S3_RESID` holds
+   the three ledger rows (`dig-upto-16` -3,805, `wild-secrets-github-pat`
+   -17,037, `wild-validator-uuid-grok` -11,705) and `B135S3_CASES` the full
+   (emit, code) table at all five arms; `wl` reproduces 7388f1c0's sizes
+   EXACTLY on every case. `B124_LATER_DENIES` and the b124/b126 identity arms
+   add the two denials (`B135_START_DENIES`) to the NEW-pin side, since
+   [START-LANDING] drops the reverse machine from the very artifacts those
+   arms compare against c4c70f2c/60366d747. `check_b135_stamps` now names its
+   abi-73 arm 7388f1c0 BY NAME (it used the canonical pin).
+7. **Registries re-archived**: `list_axes.tsv` MAIN 161/49 -> **163/49** (+2
+   rows, the two start rows; `reverse-pass` moves to order 4);
+   `#section memfn` gains its first THREE rows (`vrun-w32`, `vrun-w16`,
+   `vrun-kb`, [MEMFN] R-13's SIMD denies, `--memfn=no-...`; nothing here
+   reads them); `list_definitions.tsv` (75) / `list_limits.tsv` (73) /
+   `list_schema.tsv` (79) BYTE-IDENTICAL.
+8. Catalogue **3.18** (`[[pin_order]]` + `b8337c33`); the 76 sidecars'
+   `catalogue:` lines. Testee count unchanged (no new pinned testee: the
+   window's before/after IS the two pins, as at [B135] prep).
 
 ## Re-pin at 7388f1c0 (abi 68 -> 73) and the TWO-PIN window — 2026-10-10, lane b135prep, inbox I-140/I-142
 

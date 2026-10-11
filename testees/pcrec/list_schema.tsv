@@ -5,8 +5,13 @@
 # identical; this one: BYTE-IDENTICAL again).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-7388f1c0/build/pcrec --list-schema
+#     build/pcrec-b8337c33/build/pcrec --list-schema
 #
+# pcrec commit b8337c33b9812a8dc4a7c1257552b734e82d6a43 (rx_info.abi 74, read off a plain `abc` witness at this build),
+# archived 2026-10-10 by lane b135s3 ([B135] (d), pcrec b8337c33, abi 74):
+# 79 data rows -- BYTE-IDENTICAL to the 7388f1c0 archive (diffed line for
+# line).
+# PREVIOUS archiving (7388f1c0), from the header it carried:
 # pcrec commit 7388f1c0d442da699704c47b1c206dfd4b7b1a03 (rx_info.abi 73, read off a plain `abc` witness at this build),
 # archived 2026-10-10 by lane b135prep ([B135], pcrec 7388f1c0, abi 73; five
 # abi steps 69-73 absorbed): 79 data rows -- BYTE-IDENTICAL to the 255bcdd8

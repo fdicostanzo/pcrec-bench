@@ -2,8 +2,22 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-7388f1c0/build/pcrec --list-axes
+#     build/pcrec-b8337c33/build/pcrec --list-axes
 #
+# pcrec commit b8337c33b9812a8dc4a7c1257552b734e82d6a43 (rx_info.abi 74, read off a plain `abc` witness at this build),
+# archived 2026-10-10 by lane b135s3 ([B135] (d), inbox I-145): the pin
+# ADVANCED 7388f1c0 (abi 73) -> b8337c33 (abi 74, [START-LANDING]); 7388f1c0
+# and a15fb77b stay runnable as also_pins. MAIN TABLE 163 data rows / 49 axes
+# (was 161 / 49): +2 rows, 0 axes -- `search-start` gains order 2
+# `end-minus-width` (RX_DFA_START, deny PCREC_NO_START_WIDTH bit 53
+# `-fno-start-width`) and order 3 `landing` (deny PCREC_NO_START_LANDING bit
+# 54 `-fno-start-landing`); `reverse-pass` moves to order 4 (the fallback).
+# `#section memfn` gains its FIRST three rows (0 -> 3: `vrun-w32`, `vrun-w16`,
+# `vrun-kb`, the [MEMFN] R-13 SIMD run-scan denies, `--memfn=no-...`, a
+# different column set): not an abi event for this bench and read by nothing
+# here (every reader selects the MAIN table). Every other main row
+# BYTE-IDENTICAL to 7388f1c0's (diffed line for line).
+# PREVIOUS archiving (7388f1c0), from the header it carried:
 # pcrec commit 7388f1c0d442da699704c47b1c206dfd4b7b1a03 (rx_info.abi 73, read off a plain `abc` witness at this build),
 # archived 2026-10-10 by lane b135prep ([B135], inbox I-140/I-142 + the
 # manager's brief): the pin ADVANCED 255bcdd8 (abi 68) -> 7388f1c0 (abi 73,
@@ -136,7 +150,9 @@ scan-body	4	bitmap	list	RX_DFA_SCAN_EDGE	bitmap						always (fallback) -- the cl
 scan-body	5	none	predicate	RX_DFA_SCAN_EDGE	none						the artifact carries no scan edge, so there is no body to name: no machine has a collapsible counted run, or the engine is ENG_ATTEMPT (label dispatch, no table walk to shorten) or provably empty -- and it is also what every artifact stamps under -fno-scan-edge, which denies the scan-edge axis above rather than this one
 scan-body	6	mixed	predicate	RX_DFA_SCAN_EDGE	mixed						the artifact's own edges took DIFFERENT bodies (dfa_scan_edge_name(): one machine's edge tests a contiguous range, another's reads a membership table, calls a kit matcher or compares a fold pair) -- a per-artifact composition, never a single edge's own selection
 search-start	1	pinned	list	RX_DFA_START	pinned	PCREC_NO_START_PINNED	22			-fno-start-pinned	ENG_UNANCH, a non-empty engine, and the forward machine's start state accepts under the PLAIN view with an accept that is invariant in position and in class context -- and, where mechanism 4 seeds, every live seed state does too. The match then provably begins at search_from and no reverse machine is emitted ([OPT-5] STEP 2)
-search-start	2	reverse-pass	list	RX_DFA_START	reverse-pass						always (fallback) -- the backwards scan over the artifact's own reverse machine recovers the match start
+search-start	2	end-minus-width	list	RX_DFA_START	end-minus-width	PCREC_NO_START_WIDTH	53			-fno-start-width	end side, bounded evidence: every match is the same number of bytes W (the width fact's interval [W,W]), so the start is the verified end minus W and no reverse machine is emitted ([START-LANDING])
+search-start	3	landing	list	RX_DFA_START	landing	PCREC_NO_START_LANDING	54			-fno-start-landing	start side, bounded evidence: every one-character path from the pattern's start ends dead or accepting (the land_char fact), so the start is the position the prefilter last landed on, stepped to the next character start where the character there does not decode; no reverse machine is emitted ([START-LANDING])
+search-start	4	reverse-pass	list	RX_DFA_START	reverse-pass						always (fallback) -- the backwards scan over the artifact's own reverse machine recovers the match start
 search-start	3	attempt-start	predicate	RX_DFA_START	attempt-start						the search's path asks no RECOVER (an ENG_ATTEMPT loop, whose attempt began at the start it reports, or the empty engine): the generated stamp rule's absence value
 possessify	1	possessive	predicate	RX_VM_STRATS	PCREC_VM_STRAT_POSSESSIVE	PCREC_NO_POSSESSIFY	4			-fno-possessify	per A_REP: possessify.c proves the loop's body can never profitably re-enter
 possessify	2	backtracking	predicate	RX_VM_STRATS	PCREC_VM_STRAT_BACKTRACKING						always (fallback)
@@ -263,3 +279,6 @@ prefilter-admit	10	default	list								hands the decision to the engine choice; 
 # the acceptance reading that owns the row (a simd row is inert at
 # -fno-memfn-simd).
 #name	kind	budget	layer	spelling	doc
+vrun-w32	deny	scan	simd	--memfn=no-vrun-w32	the 32-byte vector run scan (vrun-w16's form a level up; its short spans fall to vrun-w16 where both render); -fmemfn-simd only
+vrun-w16	deny	scan	simd	--memfn=no-vrun-w16	the 16-byte vector run scan (a SIMD helper over a FUNC whose predicate is one run, sitting over the two-stream pair body); -fmemfn-simd only
+vrun-kb	deny	scan	simd	--memfn=no-vrun-kb	the vector run scan's second filter position (the first position of pcrec's rarity ranking other than the scanned one); denied, the vrun rows filter on the scanned position alone; -fmemfn-simd only
