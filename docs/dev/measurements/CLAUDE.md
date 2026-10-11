@@ -1211,3 +1211,9 @@ Maintenance: update this file when files are added/removed or change role.
   program-identical cells reproduced by swapping ONLY the bench's own
   `testees/pcrec/{shim.c,driver.c}` (26eebfa vs e46e326/master) at pin 255bcdd8;
   the artifact's `rx_search` address is identical in both arms. Scratch tier.
+- `2026-10-10-b135-instrument-ab.txt`, `-sentinel-open-end.txt`, `-acceptance.txt`,
+  `-movers.txt` (+ `2026-10-10-b135-sentinel-open-end.py`, `2026-10-10-b135-states12-analysis.py`)
+  — [B135] (lane b135read): the states 1+2 window at pcrec a15fb77b vs 7388f1c0. The
+  [B133] A/B (NOT same-pin: BEFORE ran 255bcdd8), sentinel open vs end, I-142 s1's
+  acceptance cells (32/32 inside) and every set cell of the four sets with stamps and
+  program identity. Read in `docs/dev/ledgers/2026-10-10-opt-revend-states12-7388f1c0.md`.

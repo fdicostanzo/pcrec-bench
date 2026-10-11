@@ -1437,11 +1437,6 @@ def r_bucket_vsbest(view, ctx):
 
 
 def r_bucket_span(view, ctx):
-    ts_by_testee = {}
-    included = {r["testee"] for r in view.rows("record", metric="agreement")}
-    for ir in view.index_rows():
-        if record_id_of(ir) in included:
-            ts_by_testee[ir["testee_id"]] = ir["timestamp"]
     out = []
     rows = view.rows("rank", metric="median_ns")
     by_cell = defaultdict(list)
@@ -1449,7 +1444,7 @@ def r_bucket_span(view, ctx):
         by_cell[(r["pattern"], r["regime_or_na"], r["form"])].append(r)
     # F11 (docs/design/predicate_audit_v1.md, r7pop-3): the reporter's
     # own partner choice is not scoped to rankable rows -- it reads
-    # `record_ts_by_testee` x `set_cells`, every reduction cell,
+    # `record_ts_by_testee` (keys only since KB-37) x `set_cells`, every reduction cell,
     # rankable or not (report.py:2729-2752) -- so the partner search
     # widens to `excluded` rows here too, which carry `form` and so join
     # on the SAME (pattern, regime, form) key `rank` rows do. The
@@ -1470,7 +1465,6 @@ def r_bucket_span(view, ctx):
                 continue
             engine, version = parts[0], parts[1]
             cfg = config_of(r["testee"])
-            mine = ts_by_testee.get(r["testee"])
             older = []
             for other in candidates:
                 if other["testee"] == r["testee"]:
@@ -1480,10 +1474,13 @@ def r_bucket_span(view, ctx):
                     continue
                 if p2[1] == version:
                     continue
-                ts = ts_by_testee.get(other["testee"])
-                if mine is None or ts is None or ts >= mine:
+                # KB-37: the reporter's partner is the nearest EARLIER PIN
+                # by [[pin_order]], never the older record timestamp (an
+                # ABBA window measures the older pin last); pin_index
+                # raises by name for a pin the table lacks.
+                if ctx.pin_index(p2[1]) >= ctx.pin_index(version):
                     continue
-                older.append((ts, p2[1]))
+                older.append((ctx.pin_index(p2[1]), p2[1]))
             if not older:
                 continue
             older.sort()

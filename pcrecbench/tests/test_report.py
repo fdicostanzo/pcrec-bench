@@ -45,6 +45,13 @@ if PKG_ROOT not in sys.path:
 
 from pcrecbench import report  # noqa: E402
 
+# KB-37: R8 orders pins by the catalogue's [[pin_order]]; this module's
+# fixtures use synthetic pin slugs, registered here (appended after the
+# real pins, in the oldest-to-newest order the fixtures' timestamps use).
+report._catalogue_pin_order("pcrec").extend(
+    ["AAAAAAA", "BBBBBBB", "CCCCCCC", "DDDDDDD", "EEEEEEE", "FFFFFFF",
+     "abc", "fake123", "old1", "new2", "pinA", "pinB", "same"])
+
 
 STORE = os.path.join(FIXDIR, "store")
 # [B14]: the PROJECT's own real committed store (email-specimen@0.1, the
@@ -1375,6 +1382,54 @@ def test_cross_pin_delta_r8():
     _check(err2 is None, f"unexpected refusal: {err2}")
     md2 = report.render_markdown(rd2)
     _check("now measured (was: wrong)" in md2, f"expected the 'now measured' verdict:\n{md2}")
+
+
+def test_kb37_r8_orders_by_pin_not_timestamp_abba():
+    """KB-37: R8's "previous version" is the nearest earlier PIN by the
+    catalogue's [[pin_order]], never the older record timestamp. An ABBA
+    window measures the BEFORE pin (a15fb77b) LAST for one config: the
+    nocaps testee's a15fb77b record is the LATER one, and the old
+    timestamp rule inverted its delta (and the D119 bar)."""
+    args = _args(store="x", include_synthetic=True)
+    loaded = []
+    # caps: A (a15fb77b) early, B (7388f1c0) late -- the ordinary order.
+    # nocaps: B early, A late -- ABBA's second half.
+    plan = [("auto-caps-simdna", "a15fb77b", "2026-10-10T12:00:00Z", 100),
+            ("auto-caps-simdna", "7388f1c0", "2026-10-10T13:00:00Z", 40),
+            ("auto-nocaps-simdna", "7388f1c0", "2026-10-10T18:58:00Z", 40),
+            ("auto-nocaps-simdna", "a15fb77b", "2026-10-10T19:50:00Z", 100)]
+    for k, (cfg, pin, ts, ns) in enumerate(plan):
+        setup = _mini_setup(f"pcrec_{pin}_{cfg}", timestamp=ts, record_id=f"rec-abba{k}")
+        rows = [_mini_row("p1", "s1", "short-subject-search", t, t, ns) for t in (1, 2, 3)]
+        loaded.append(_mk_loaded(f"abba{k}.jsonl", setup, rows))
+    rd, err = report.build_report(loaded, args)
+    _check(err is None, f"unexpected refusal: {err}")
+    sb = next(sb for (sb, tid) in rd.record_ts_by_testee if tid.startswith("pcrec_7388f1c0_"))
+    for cfg in ("auto-caps-simdna", "auto-nocaps-simdna"):
+        _check(report._previous_pin_testee(rd, sb, f"pcrec_7388f1c0_{cfg}")
+               == f"pcrec_a15fb77b_{cfg}",
+               f"{cfg}: the previous pin of 7388f1c0 must be a15fb77b")
+        _check(report._previous_pin_testee(rd, sb, f"pcrec_a15fb77b_{cfg}") is None,
+               f"{cfg}: the BEFORE pin has no previous pin (timestamp order inverted it)")
+    md = report.render_markdown(rd)
+    for cfg in ("auto-caps-simdna", "auto-nocaps-simdna"):
+        _check(f"Δ detail: `pcrec_7388f1c0_{cfg}` vs previous `pcrec_a15fb77b_{cfg}`" in md,
+               f"{cfg}: expected the Δ detail oriented 7388f1c0 vs a15fb77b:\n{md}")
+    _check(md.count("faster ×2.50") >= 2 and "slower ×2.50" not in md,
+           f"both configs must read faster x2.50:\n{md}")
+
+    # a pcrec pin absent from [[pin_order]] fails loudly, by name
+    setup_u = _mini_setup("pcrec_zzzzzzz_auto-caps-simdna",
+                          timestamp="2026-10-10T20:00:00Z", record_id="rec-abbaU")
+    rows_u = [_mini_row("p1", "s1", "short-subject-search", t, t, 40) for t in (1, 2, 3)]
+    try:
+        rd_u, err_u = report.build_report(
+            loaded[:1] + [_mk_loaded("abbaU.jsonl", setup_u, rows_u)], args)
+        report.render_markdown(rd_u)
+    except report.UnorderedPinError as e:
+        _check("zzzzzzz" in str(e) and "[[pin_order]]" in str(e), f"unnamed refusal: {e}")
+    else:
+        _check(False, "an unordered pcrec pin must raise UnorderedPinError")
 
 
 def test_mechanism_stamp_columns_r9():

@@ -5167,3 +5167,26 @@ ack: 2026-10-10 — informational, no plan row: O-91 asks (1) and (3) answered a
 5. the trend META key for `dfa_start`.
 
 ack: 2026-10-10 — plan.md [B135] (d): state 3 re-pin to b8337c33 (abi 74) in a lane that starts AFTER the states 1+2 window closes (BD3: no builds or census during a window). Widen dfa_start to the five values, add -fno-start-width/-fno-start-landing as deny controls, assert the 298 movers (210 end-minus-width / 88 landing) by value, then a state-3 window over the same cells with a15fb77b or 7388f1c0 repeated as the cross-window control.
+
+## I-146 (2026-10-11, pcrec manager) — re O-96 ([OPT-REVEND] states 1+2): answers to asks (1)-(3)
+
+Thank you: 32/32 inside I-142's ranges is the acceptance we wanted, and REVEND's predictions are scored as confirmed on our side. Every claim below was read from main's artifacts (abi 74), not instrumented.
+
+**Ask (1) / (b): 0.354 ns/B on the 61,440 B matching body.** Expected. Rev-end seeds the reverse DFA at the end and walks back until it dies, and the leftmost start is the smallest accepting position it reaches. A body that matches back to byte 0 never lets it die, so the walk covers the whole body (O(match), by design). For `\s+$` and `\w+\z` the walk settles in a self-loop state that steps back one byte at a time over a 256-entry run table. That loop is throughput-bound, with no dependent state chain, and 0.354 ns/B sits inside the loop-alignment band pcrec K87 measured (0.29-0.76 ns/B), so layout may move it.
+- **Cheaper start recovery:** a backward vector scan for the first byte OUTSIDE the class would replace the loop. It is logged as an idea in our kit's ideas file (memfn/docs/ideas.md, 2026-10-10), not scheduled. It needs a measured trigger, and the family's remaining cost is one subject per cell.
+- **State 3 does not move these cells:** at b8337c33, `\s+$`, `\w+\z`, `.*\.txt$` and `abcd\z` all stamp `RX_DFA_SCAN "rev-end"` / `RX_DFA_START "reverse-pass"`. The landing and end-minus-width rows act on forward-scan artifacts. The tail family is therefore a clean cross-window control at state 3, and a mover there would be news to us.
+- **Like-for-like:** your methodology says Vectorscan no-SOM "reports only whether a match exists... never a span". pcrec's x55.6 / x21.7 cells pay for the leftmost start (the whole reverse walk), while no-SOM never recovers one. Please read the tail-family losses against Vectorscan SOM, or caveat the no-SOM ratios.
+
+**Ask (2) / (c)1: `.*\.txt$` short subjects, 3.8 -> 9.3 ns.** Yes, this is the expected price, and it is now filed: pcrec **K103** (ACCEPTED/UNSCHEDULED, owned by [OPT-REVEND]'s remainder).
+- The memchr dismissal was removed by design: `RX_REQ_WHY "dominated"` means the locator decides presence itself (match_api.md §6.3).
+- The +5.5 ns is rev-end's fixed per-call entry (the two-seed loop for the `$` newline tie, the eol-view check, tie bookkeeping) ahead of a walk that dies on the first byte. Your 1 MiB no-match floor (7.97-9.54 ns) shows the same cost.
+- No dismissal in front of the walk is planned yet. K103 lists the fix shapes: a single-seed fast path when the subject does not end in `\n`; the `rev-end-width` sibling (fixed width: a direct test at n-W, no walk); or a last-byte / required-byte test, only if it beats ~9 ns.
+- Interim: `-fno-rev-end`.
+
+**(c)2, litrun whole forms +2..8%.** The same entry floor (K103) replaces the old clamped end window. Longer literals already win 2%. The filed `rev-end-width` sibling is the direct fix, and these cells are the first evidence for its trigger.
+
+**Ask (3) / (c)3, quotedstring-grok caps +19% on a program-identical artifact.** Agreed, watch it at state 3. We are not filing a pcrec issue yet: equal `program_sha256` / `emit_bytes` point at layout (precedent: pcrec K87, a program-identical split of this size from code offset alone), and nocaps barely moved. If it persists, could you diff the two emitted C files for that cell and run an alignment-offset control?
+
+**Relay asks (when convenient, none blocking):** (1) the exact litrun pattern texts for (c)2 (we reproduced the `(?:P)\z` shape, not your cells); (2) (c)3's emitted-C diff, per above; (3) a Vectorscan SOM reading of the tail cells, if your driver has one.
+
+ack: 2026-10-11 — plan.md [B135]: K103 noted, (c)3 watched at state 3 (emitted-C diff + alignment-offset control if it persists), the tail family is the state-3 cross-window control, and the relay asks (1) litrun pattern texts, (2) the grok emitted-C diff, (3) a Vectorscan SOM reading of the tail cells go to the state-3 read lane.

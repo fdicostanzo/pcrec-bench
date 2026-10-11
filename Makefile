@@ -272,9 +272,9 @@ viewer-data:
 ## from store/ ([B127], tools/frontpage.py). Loads ~11 records per set
 ## (hundreds of MB): not part of `make check`, never during a measurement
 ## window. Override the set or pin on the command line, e.g.
-## `make frontpage FRONT_SET=capability@0.2 FRONT_PIN=255bcdd8`.
+## `make frontpage FRONT_SET=capability@0.2 FRONT_PIN=7388f1c0`.
 FRONT_SET   ?= capability@0.2
-FRONT_PIN   ?= 255bcdd8
+FRONT_PIN   ?= 7388f1c0
 FRONT_OTHER ?= email-specimen@0.2 loglines@0.1 bounded@0.3 altwide@0.2 syntax@0.1 utf8@0.1 litrun@0.1
 frontpage:
 	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER)
