@@ -182,7 +182,7 @@ them identity-arm bookkeeping, 5 by-value rows; none was a flat term).
   fixes every group green (`deny controls` 44/0 incl. the two new rows, `b135s3` 15/0, `b124`
   green, `mechanism_stamps` / `b122` / `b126` / `b135` / registries green in run2).
 - `pcrecbench/tests/test_report.py`: 103 passed, 0 failed.
-- **Full `make -k check`: OWED** -- launched detached by this lane (the lane had further work to
+- **FINAL `make -k check` (log /var/tmp/b135s3/final_check.log, rc=2): check-schema 6/74/0; check-harness 770 passed, 4 FAILED = exactly the four known environmental reds; check-interpret 174 passed / 76 FAILED at that run, because the sidecars had been sed-edited (3.17 -> 3.18) and a sidecar re-render is not that edit. FIXED: `git merge master` (no conflicts), then `scripts/regen_sidecars.py` over all 80 sidecars (0 failures), then check-interpret 254 passed / 0 FAILED, check-report OK, check-trend ALL PASS (cite check 0 problems).** (Original text:) full run -- launched detached by this lane (the lane had further work to
   do), log `/var/tmp/b135s3/final_check.log`, last line `DONE rc=<n>`; the numbers are in section 9
   if filled, else the manager reads the log. Expected: the four known pruned-build reds
   (`capability: gen_patterns.py --check` cd371441, `KB-35 build_census` and `KB-35 program_identity
@@ -323,8 +323,8 @@ chain; use it only on the tier-2 sets appended after `sentinel:end`.
 | size books per witness | section 6; `B135S3_RESID`, `B135S3_CASES` |
 | compile-only census vs 7388f1c0 | section 5 + the archive |
 | catalogue `[[pin_order]]` + sidecar version lines | 3.18; 76 sidecars |
-| `make check` (4 known reds expected), check-interpret, check-report | **OWED**: launched detached, `/var/tmp/b135s3/final_check.log`, marker `DONE rc=`; targeted groups and `test_report.py` (103/0) are green |
+| `make check` (4 known reds expected), check-interpret, check-report | DONE, see section 7 (harness 770/4 known, interpret 254/0 after regen, report OK, trend PASS); was: launched detached, `/var/tmp/b135s3/final_check.log`, marker `DONE rc=`; targeted groups and `test_report.py` (103/0) are green |
 | CLAUDE.md lines in the existing style | root, testees/pcrec, catalogue, measurements, pcrec_references |
 | STATE-3 WINDOW PLAN (not run): same cells/sets, 4 testee entries ABBA, sentinel first and last, exact chain script, duration | section 9 + `docs/dev/lanes/b135s3_chain.sh` |
 | report with this checklist | this file |
-| OWED | (1) the full `make check` result (log above); (2) the window itself (manager); (3) reporter version bump with the first report carrying a new `start=` value; (4) plan.md/journal STATE edits (manager); (5) merge note: the 76 sidecars' `catalogue:` line may conflict with lane b135read's regenerated sidecars -- re-apply `sed -i 's/^catalogue:       3\.17$/catalogue:       3.18/'` after taking theirs |
+| OWED | (1) -- (done, section 7); (2) the window itself (manager); (3) reporter version bump with the first report carrying a new `start=` value; (4) plan.md/journal STATE edits (manager); (5) -- (done: master merged, all 80 sidecars regenerated, not sed-edited) |
