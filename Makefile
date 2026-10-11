@@ -275,7 +275,7 @@ viewer-data:
 ## `make frontpage FRONT_SET=capability@0.2 FRONT_PIN=b8337c33`.
 FRONT_SET   ?= capability@0.2
 FRONT_PIN   ?= b8337c33
-FRONT_OTHER ?= email-specimen@0.2 loglines@0.1 bounded@0.3 altwide@0.2 syntax@0.1 utf8@0.1 litrun@0.1
+FRONT_OTHER ?= email-specimen@0.2 loglines@0.1 bounded@0.3 altwide@0.3 syntax@0.1 utf8@0.1 litrun@0.1
 frontpage:
 	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER)
 

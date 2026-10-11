@@ -173,9 +173,8 @@ The same metric, for the latest `pcrec-auto` record against each competitor's la
 | `bounded@0.3` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-04 | 84 | 83 | 1 | 0 | ×6.35 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
 | `bounded@0.3` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-05 | 84 | 70 | 14 | 0 | ×2.63 | 45 (pcrec side: 3 unsupported or refused; engine side: 42 not measured) |
 | `bounded@0.3` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 120 | 111 | 9 | 0 | ×5.80 | 9 (pcrec side: 3 unsupported or refused; engine side: 6 unsupported or refused) |
-| `altwide@0.2` | PCRE2 10.46 interpreter | 751b9c6d (2026-09-27) | 2026-09-03 | 60 | 60 | 0 | 0 | ×728 | 39 (pcrec side: 9 unsupported or refused, 1 not measured; engine side: 29 not measured) |
-| `altwide@0.2` | PCRE2 10.46 JIT | 751b9c6d (2026-09-27) | 2026-09-03 | 60 | 60 | 0 | 0 | ×49.7 | 39 (pcrec side: 9 unsupported or refused, 1 not measured; engine side: 29 not measured) |
-| `altwide@0.2` | Rust regex 1.13.1 | 751b9c6d (2026-09-27) | 2026-09-20 | 89 | 49 | 40 | 0 | ×1.12 | 10 (pcrec side: 9 unsupported or refused, 1 not measured) |
+| `altwide@0.3` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-10-02 | 68 | 68 | 0 | 0 | ×55.1 | 49 (pcrec side: 10 unsupported or refused; engine side: 39 not measured) |
+| `altwide@0.3` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-10-02 | 107 | 79 | 27 | 1 | ×1.41 | 10 (pcrec side: 10 unsupported or refused) |
 | `syntax@0.1` | PCRE2 10.46 interpreter | b8337c33 (2026-10-11) | 2026-09-07 | 163 | 163 | 0 | 0 | ×5.25 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
 | `syntax@0.1` | PCRE2 10.46 JIT | b8337c33 (2026-10-11) | 2026-09-07 | 163 | 115 | 48 | 0 | ×2.51 | 109 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 80 not measured) |
 | `syntax@0.1` | Rust regex 1.13.1 | b8337c33 (2026-10-11) | 2026-09-20 | 130 | 105 | 23 | 2 | ×2.13 | 142 (pcrec side: 2 wrong answer, 3 gave up, 24 unsupported or refused; engine side: 17 wrong answer, 96 unsupported or refused) |
@@ -191,7 +190,7 @@ The same metric, for the latest `pcrec-auto` record against each competitor's la
 - `email-specimen@0.2`: competitors measured: libpcre2, rust.
 - `loglines@0.1`: competitors measured: libpcre2, rust.
 - `bounded@0.3`: competitors measured: libpcre2, rust.
-- `altwide@0.2`: competitors measured: libpcre2, rust.
+- `altwide@0.3`: competitors measured: libpcre2, rust.
 - `syntax@0.1`: competitors measured: libpcre2, rust.
 - `utf8@0.1`: competitors measured: libpcre2, oniguruma, re2, rust, vectorscan.
 - `litrun@0.1`: competitors measured: libpcre2.
