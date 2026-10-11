@@ -1217,3 +1217,10 @@ Maintenance: update this file when files are added/removed or change role.
   [B133] A/B (NOT same-pin: BEFORE ran 255bcdd8), sentinel open vs end, I-142 s1's
   acceptance cells (32/32 inside) and every set cell of the four sets with stamps and
   program identity. Read in `docs/dev/ledgers/2026-10-10-opt-revend-states12-7388f1c0.md`.
+- `2026-10-11-b135-state3-analysis.py` + `2026-10-11-b135-state3-{sentinel,control,movers,threestate,tail,grok,sfx,som,fit}.txt`,
+  `2026-10-11-b135-state3-grok-emitted-c-diff.txt`, `2026-10-11-b135-state3-emitc-phase.{py,txt}` -- [B135] (lane b135read3): the
+  state-3 window at pcrec b8337c33 (abi 74) with 7388f1c0 repeated as the cross-window control. One script, nine read-only modes over
+  the records (sentinel open/end/end2, the cross-window control over 422 cells, every mover cell by class, the three-state view, the
+  tail family, the quotedstring-grok cell, the loglines/altwide-sfx medians table, the Vectorscan SOM tail reading, the utf8 FIT
+  movers); the emit-c phase probe (pcrec's own emit time per pattern; one pattern, `wild-datetime-datefinder-alternation` nocaps, x2.53).
+  Read in `docs/dev/ledgers/2026-10-11-start-landing-state3-b8337c33.md`.

@@ -490,7 +490,8 @@ Per-subject table: `2026-10-11-b135-state3-som.txt`.
    sub-1% rows (uuid-grok throughput +0.7%, aws nocaps throughput +0.6%, litrun `floor` short +0.8%). The sub-1% rows are inside the +-0.7% window drift. The utf8 rows are not.
 3. **The gain is mostly a search-regime gain**: ewm throughput median 0.976 (143/204 better) vs search 0.925 (168/204); capability's throughput rows are flat because its throughput subjects
    rarely match.
-4. Instrument/window facts: sentinels flat (pcrec <= 1.3% over 16 h), the 7388f1c0 control reproduces its window-1 numbers to +-0.7% (p5-p95), with the grok +19% not reproducing.
+4. **One compile-time mover:** pcrec's own emit-c phase on `wild-datetime-datefinder-alternation` (nocaps, 891,859 B emit, program-identical) is x2.53 (173 -> 437 ms); the other 119 (set, config, pattern, form) emit-c cells over 10 ms move by at most x1.18 and the gcc phase is unchanged (`2026-10-11-b135-state3-emitc-phase.txt`; the trend page shows the same pattern's total compile time x1.53 nocaps / x1.83 caps, the caps side being a refusal at both pins). One pattern, not attributed.
+5. Instrument/window facts: sentinels flat (pcrec <= 1.3% over 16 h), the 7388f1c0 control reproduces its window-1 numbers to +-0.7% (p5-p95), with the grok +19% not reproducing.
 
 ## 9. Checklist the NEXT sample is read against
 
