@@ -3278,19 +3278,63 @@ def _giveup_engines_for(rd: "ReportData", sb, testee_id, pattern_id, form):
     return engines
 
 
+class UnorderedPinError(ValueError):
+    """KB-37: a pcrec pin that a cross-pin pairing needs is absent from the
+    catalogue's `[[pin_order]]` table. Never guessed around by timestamp."""
+
+
+_PIN_ORDER_CACHE: dict = {}
+
+
+def _catalogue_pin_order(engine):
+    """The catalogue's `[[pin_order]]` pins for `engine` (oldest first), or
+    None when the catalogue has no table for it (only pcrec has one). The
+    ONE source the trend report and the interpreter read too (KB-37)."""
+    if engine not in _PIN_ORDER_CACHE:
+        import tomllib
+        path = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "catalogue", "rules.toml")
+        with open(path, "rb") as f:
+            cat = tomllib.load(f)
+        order = None
+        for blk in cat.get("pin_order", []):
+            if blk.get("engine") == engine:
+                order = list(blk["pins"])
+        _PIN_ORDER_CACHE[engine] = order
+    return _PIN_ORDER_CACHE[engine]
+
+
 def _previous_pin_testee(rd: "ReportData", sb, testee_id):
     """[B9] R8's "previous pin" search, extracted by [B79] so the null
     band pairs EXACTLY the testees R8's `Δ vs previous version` column
-    pairs (one rule, two consumers): the NEWEST older-timestamped record
-    in this report of the same (engine, config) at a DIFFERENT
-    version_slug, or None."""
+    pairs (one rule, two consumers): the NEAREST EARLIER PIN, by the
+    catalogue's `[[pin_order]]` (KB-37: never by record timestamp -- an
+    ABBA window measures the older pin LAST), among the records in this
+    report of the same (engine, config) at a DIFFERENT version_slug, or
+    None. A pcrec pin absent from `[[pin_order]]` raises
+    `UnorderedPinError` by name. An engine with no order table (pcre2,
+    re2, ... -- their versions are not a pin series here) keeps the
+    older-record-timestamp rule, the only order its records carry."""
     parsed = _parse_testee_config(testee_id)
     if not parsed:
         return None
     engine, version, config = parsed
+    order = _catalogue_pin_order(engine)
     my_ts = rd.record_ts_by_testee.get((sb, testee_id))
 
-    older = []
+    def rank(ver, ts):
+        if order is None:
+            return ts_key(ts) if ts is not None else None
+        if ver not in order:
+            raise UnorderedPinError(
+                f"pin {ver!r} ({engine}) is not in catalogue/rules.toml "
+                f"[[pin_order]]; add it before a cross-pin report can order it")
+        return order.index(ver)
+
+    # Candidates first: a pin is ordered (and a missing one refused) only
+    # when a cross-pin pair actually needs its position -- a single-pin
+    # report never consults [[pin_order]].
+    cands = []
     for (sb2, tid2), ts2 in rd.record_ts_by_testee.items():
         if sb2 != sb or tid2 == testee_id:
             continue
@@ -3303,13 +3347,20 @@ def _previous_pin_testee(rd: "ReportData", sb, testee_id):
             # (record_schema.md 6.4: the version segment is what changed);
             # OD-B15's dedup/superseded machinery covers that case, not R8.
             continue
-        if my_ts is not None and ts_key(ts2) >= ts_key(my_ts):
+        cands.append((p2[1], ts2, tid2))
+    if not cands:
+        return None
+    my_rank = rank(version, my_ts)
+    older = []
+    for ver2, ts2, tid2 in cands:
+        r2 = rank(ver2, ts2)
+        if my_rank is not None and r2 is not None and r2 >= my_rank:
             continue
-        older.append((ts2, tid2))
+        older.append((r2, ts_key(ts2) if ts2 is not None else "", tid2))
     if not older:
         return None
-    older.sort(key=lambda pair: ts_key(pair[0]))
-    return older[-1][1]
+    older.sort(key=lambda t: (t[0], t[1]))
+    return older[-1][2]
 
 
 def _cross_pin_info(rd: "ReportData", sb, pattern_id, regime, testee_id, form, red):
