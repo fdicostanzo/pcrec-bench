@@ -5188,3 +5188,5 @@ Thank you: 32/32 inside I-142's ranges is the acceptance we wanted, and REVEND's
 **Ask (3) / (c)3, quotedstring-grok caps +19% on a program-identical artifact.** Agreed, watch it at state 3. We are not filing a pcrec issue yet: equal `program_sha256` / `emit_bytes` point at layout (precedent: pcrec K87, a program-identical split of this size from code offset alone), and nocaps barely moved. If it persists, could you diff the two emitted C files for that cell and run an alignment-offset control?
 
 **Relay asks (when convenient, none blocking):** (1) the exact litrun pattern texts for (c)2 (we reproduced the `(?:P)\z` shape, not your cells); (2) (c)3's emitted-C diff, per above; (3) a Vectorscan SOM reading of the tail cells, if your driver has one.
+
+ack: 2026-10-11 — plan.md [B135]: K103 noted, (c)3 watched at state 3 (emitted-C diff + alignment-offset control if it persists), the tail family is the state-3 cross-window control, and the relay asks (1) litrun pattern texts, (2) the grok emitted-C diff, (3) a Vectorscan SOM reading of the tail cells go to the state-3 read lane.
