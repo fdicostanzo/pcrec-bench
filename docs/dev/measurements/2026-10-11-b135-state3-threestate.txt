@@ -1,0 +1,152 @@
+# [B135] state-3 read (lane b135read3) -- mode 'threestate' of 2026-10-11-b135-state3-analysis.py
+# source: store/records (window 3 = 2026-10-10 20:21 EDT -> 2026-10-11 13:03 EDT, master 4cad239f; window 1 = states 1+2, 2026-10-10 12:13-19:19 EDT)
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-analysis.py threestate   (read-only over the records; no engine run, no timing)
+# arithmetic: pcrecbench.reduce (reduce_match_cell / reduce_set_cell), the reporter's own; ov/DISJ = trial [min,max] ranges overlap / disjoint
+#
+# THREE STATES, tier-1 sets: set-cell medians ns: a15fb77b(w1) | 7388f1c0(w1) | 7388f1c0(w3, control) | b8337c33(w3)
+# set | cfg | pattern | regime | form | dfa_start@b8337c33 | a15 | 7388 w1 | 7388 w3 | b8337 | r(7388w1/a15) | r(7388w3/7388w1) | r(b8337/7388w3) | r(b8337/7388w1)
+capability | caps | bracket-array-define | large-subject-throughput | plain | None | 286.9 | 285.9 | 331.0 | 294.8 | r 0.996 1.158 0.890 1.031
+capability | caps | floor-byte | large-subject-throughput | plain | end-minus-width | 78578.4 | 78633.4 | 78616.9 | 78606.0 | r 1.001 1.000 1.000 1.000  [program moved]
+capability | caps | floor-byte | short-subject-search | plain | end-minus-width | 682.0 | 682.2 | 683.0 | 681.8 | r 1.000 1.001 0.998 0.999  [program moved]
+capability | caps | hex8-bounded | large-subject-throughput | plain | end-minus-width | 15430124.5 | 15432981.7 | 15438453.1 | 15094254.6 | r 1.000 1.000 0.978 0.978  [program moved]
+capability | caps | hex8-bounded | short-subject-search | plain | end-minus-width | 2183.9 | 2173.2 | 2181.5 | 2094.4 | r 0.995 1.004 0.960 0.964  [program moved]
+capability | caps | letters-bounded-tail-z | large-subject-throughput | plain | reverse-pass | 10289.0 | 779.4 | 782.2 | 783.8 | r 0.076 1.004 1.002 1.006
+capability | caps | letters-bounded-tail-z | short-subject-search | plain | reverse-pass | 2345.6 | 951.5 | 953.1 | 951.0 | r 0.406 1.002 0.998 1.000
+capability | caps | nested-comment-rec | short-subject-search | plain | None | 1507.2 | 1483.9 | 1543.4 | 1521.1 | r 0.985 1.040 0.986 1.025
+capability | caps | phone-palindrome-6 | large-subject-throughput | plain | None | 8491808.1 | 8522314.0 | 8794206.3 | 8494735.0 | r 1.004 1.032 0.966 0.997
+capability | caps | tail-digits-eol | large-subject-throughput | plain | reverse-pass | 3740915.0 | 138.4 | 135.3 | 136.4 | r 0.000 0.978 1.008 0.986
+capability | caps | tail-digits-eol | short-subject-search | plain | reverse-pass | 1640.9 | 711.0 | 710.9 | 712.7 | r 0.433 1.000 1.003 1.002
+capability | caps | tail-dotstar-txt | large-subject-throughput | plain | reverse-pass | 857681.0 | 146.0 | 145.3 | 145.3 | r 0.000 0.995 1.000 0.995
+capability | caps | tail-dotstar-txt | short-subject-search | plain | reverse-pass | 644.2 | 738.1 | 739.5 | 736.4 | r 1.146 1.002 0.996 0.998
+capability | caps | tail-ext-lower-txt | large-subject-throughput | plain | reverse-pass | 8906620.9 | 124.7 | 125.5 | 125.1 | r 0.000 1.007 0.997 1.004
+capability | caps | tail-ext-lower-txt | short-subject-search | plain | reverse-pass | 681.3 | 646.1 | 634.2 | 637.8 | r 0.948 0.982 1.006 0.987
+capability | caps | tail-space-eol | large-subject-throughput | plain | reverse-pass | 7864625.6 | 21977.0 | 21974.4 | 21983.8 | r 0.003 1.000 1.000 1.000
+capability | caps | tail-space-eol | short-subject-search | plain | reverse-pass | 1367.0 | 678.6 | 680.0 | 678.2 | r 0.496 1.002 0.997 0.999
+capability | caps | tail-word-eoz | large-subject-throughput | plain | reverse-pass | 9811057.4 | 21907.6 | 21904.4 | 21905.3 | r 0.002 1.000 1.000 1.000
+capability | caps | tail-word-eoz | short-subject-search | plain | reverse-pass | 2733.0 | 1012.9 | 1023.9 | 1017.4 | r 0.371 1.011 0.994 1.004
+capability | caps | utf8-lead-no-cont | large-subject-throughput | plain | end-minus-width | 1660331.1 | 1660129.3 | 1660262.4 | 1660679.7 | r 1.000 1.000 1.000 1.000  [program moved]
+capability | caps | utf8-lead-no-cont | short-subject-search | plain | end-minus-width | 1254.6 | 1254.8 | 1254.3 | 1245.1 | r 1.000 1.000 0.993 0.992  [program moved]
+capability | caps | wild-codegrammar-json-array-begin | large-subject-throughput | plain | end-minus-width | 273262.0 | 273467.4 | 273361.5 | 267955.7 | r 1.001 1.000 0.980 0.980  [program moved]
+capability | caps | wild-codegrammar-json-array-begin | short-subject-search | plain | end-minus-width | 699.6 | 698.6 | 699.2 | 688.8 | r 0.999 1.001 0.985 0.986  [program moved]
+capability | caps | wild-codegrammar-json-object-begin | large-subject-throughput | plain | end-minus-width | 78612.4 | 78588.1 | 78636.6 | 78649.9 | r 1.000 1.001 1.000 1.001  [program moved]
+capability | caps | wild-codegrammar-json-object-begin | short-subject-search | plain | end-minus-width | 682.1 | 682.3 | 682.0 | 680.3 | r 1.000 1.000 0.997 0.997  [program moved]
+capability | caps | wild-logparse-quotedstring-grok | short-subject-search | plain | reverse-pass | 2122.7 | 2525.2 | 2149.0 | 2147.0 | r 1.190 0.851 0.999 0.850
+capability | caps | wild-secrets-aws-access-key-id | large-subject-throughput | plain | end-minus-width | 159059.2 | 159147.9 | 159109.8 | 158501.1 | r 1.001 1.000 0.996 0.996  [program moved]
+capability | caps | wild-secrets-aws-access-key-id | short-subject-search | plain | end-minus-width | 1411.3 | 1408.9 | 1414.3 | 1361.9 | r 0.998 1.004 0.963 0.967  [program moved]
+capability | caps | wild-secrets-github-pat | large-subject-throughput | plain | end-minus-width | 180241.9 | 180296.0 | 180419.1 | 180375.0 | r 1.000 1.001 1.000 1.000  [program moved]
+capability | caps | wild-secrets-github-pat | short-subject-search | plain | end-minus-width | 1001.6 | 1004.0 | 1006.6 | 845.9 | r 1.002 1.003 0.840 0.842  [program moved]
+capability | caps | wild-semdiv-dollar-trailing-newline-pcre2 | large-subject-throughput | plain | reverse-pass | 139.3 | 103.6 | 105.0 | 104.4 | r 0.744 1.013 0.995 1.008
+capability | caps | wild-semdiv-dollar-trailing-newline-pcre2 | short-subject-search | plain | reverse-pass | 956.3 | 646.4 | 644.9 | 648.6 | r 0.676 0.998 1.006 1.003
+capability | caps | wild-validator-uuid-grok | large-subject-throughput | plain | end-minus-width | 138057.5 | 138366.8 | 138395.4 | 139338.9 | r 1.002 1.000 1.007 1.007  [program moved]
+capability | caps | wild-validator-uuid-grok | short-subject-search | plain | end-minus-width | 710.5 | 708.4 | 710.6 | 647.3 | r 0.997 1.003 0.911 0.914  [program moved]
+capability | caps | wild-waf-crs-942360-concat-sqli | large-subject-throughput | plain | attempt-start | 36496744.1 | 36620517.9 | 37831747.4 | 36466914.9 | r 1.003 1.033 0.964 0.996
+capability | caps | winpath-near-miss | large-subject-throughput | plain | attempt-start | 65.9 | 63.8 | 65.7 | 64.4 | r 0.968 1.029 0.981 1.010
+capability | nocaps | codegrammar-xflag | large-subject-throughput | plain | reverse-pass | 661484.5 | 653173.8 | 671826.8 | 644783.7 | r 0.987 1.029 0.960 0.987
+capability | nocaps | floor-byte | large-subject-throughput | plain | end-minus-width | 78614.5 | 78626.1 | 78574.1 | 78684.9 | r 1.000 0.999 1.001 1.001  [program moved]
+capability | nocaps | floor-byte | short-subject-search | plain | end-minus-width | 682.2 | 682.1 | 682.2 | 681.4 | r 1.000 1.000 0.999 0.999  [program moved]
+capability | nocaps | hex8-bounded | large-subject-throughput | plain | end-minus-width | 15439663.3 | 15434208.2 | 15443535.7 | 15092407.5 | r 1.000 1.001 0.977 0.978  [program moved]
+capability | nocaps | hex8-bounded | short-subject-search | plain | end-minus-width | 2177.6 | 2174.9 | 2187.2 | 2096.6 | r 0.999 1.006 0.959 0.964  [program moved]
+capability | nocaps | letters-bounded-tail-z | large-subject-throughput | plain | reverse-pass | 10311.7 | 784.5 | 782.9 | 781.5 | r 0.076 0.998 0.998 0.996
+capability | nocaps | letters-bounded-tail-z | short-subject-search | plain | reverse-pass | 2363.5 | 947.0 | 950.4 | 951.6 | r 0.401 1.004 1.001 1.005
+capability | nocaps | phone-palindrome-6 | large-subject-throughput | plain | None | 10349030.3 | 11110748.6 | 10111641.3 | 9631793.3 | r 1.074 0.910 0.953 0.867
+capability | nocaps | phone-palindrome-6 | short-subject-search | plain | None | 2922.4 | 3472.0 | 3881.6 | 2923.2 | r 1.188 1.118 0.753 0.842
+capability | nocaps | tail-digits-eol | large-subject-throughput | plain | reverse-pass | 3716820.4 | 135.7 | 136.6 | 135.2 | r 0.000 1.007 0.990 0.997
+capability | nocaps | tail-digits-eol | short-subject-search | plain | reverse-pass | 1635.3 | 711.3 | 710.7 | 710.5 | r 0.435 0.999 1.000 0.999
+capability | nocaps | tail-dotstar-txt | large-subject-throughput | plain | reverse-pass | 858305.0 | 147.4 | 145.0 | 146.9 | r 0.000 0.984 1.013 0.997
+capability | nocaps | tail-dotstar-txt | short-subject-search | plain | reverse-pass | 641.6 | 737.4 | 738.1 | 737.5 | r 1.149 1.001 0.999 1.000
+capability | nocaps | tail-ext-lower-txt | large-subject-throughput | plain | reverse-pass | 8907708.0 | 125.2 | 125.0 | 124.7 | r 0.000 0.998 0.998 0.996
+capability | nocaps | tail-ext-lower-txt | short-subject-search | plain | reverse-pass | 681.9 | 644.5 | 635.4 | 643.2 | r 0.945 0.986 1.012 0.998
+capability | nocaps | tail-space-eol | large-subject-throughput | plain | reverse-pass | 7871603.7 | 21978.9 | 21977.8 | 21970.8 | r 0.003 1.000 1.000 1.000
+capability | nocaps | tail-space-eol | short-subject-search | plain | reverse-pass | 1362.4 | 678.2 | 678.2 | 678.4 | r 0.498 1.000 1.000 1.000
+capability | nocaps | tail-word-eoz | large-subject-throughput | plain | reverse-pass | 9793305.1 | 21905.0 | 21908.9 | 21909.0 | r 0.002 1.000 1.000 1.000
+capability | nocaps | tail-word-eoz | short-subject-search | plain | reverse-pass | 2712.5 | 1014.0 | 1018.0 | 1014.1 | r 0.374 1.004 0.996 1.000
+capability | nocaps | utf8-lead-no-cont | large-subject-throughput | plain | end-minus-width | 1660557.6 | 1660393.6 | 1660889.7 | 1660572.0 | r 1.000 1.000 1.000 1.000  [program moved]
+capability | nocaps | utf8-lead-no-cont | short-subject-search | plain | end-minus-width | 1252.9 | 1250.9 | 1249.7 | 1244.4 | r 0.998 0.999 0.996 0.995  [program moved]
+capability | nocaps | wild-codegrammar-json-array-begin | large-subject-throughput | plain | end-minus-width | 273152.0 | 273359.6 | 273186.1 | 266787.6 | r 1.001 0.999 0.977 0.976  [program moved]
+capability | nocaps | wild-codegrammar-json-array-begin | short-subject-search | plain | end-minus-width | 699.2 | 698.9 | 699.2 | 688.3 | r 1.000 1.000 0.984 0.985  [program moved]
+capability | nocaps | wild-codegrammar-json-object-begin | large-subject-throughput | plain | end-minus-width | 78616.8 | 78621.4 | 78652.4 | 78607.2 | r 1.000 1.000 0.999 1.000  [program moved]
+capability | nocaps | wild-codegrammar-json-object-begin | short-subject-search | plain | end-minus-width | 682.0 | 681.9 | 682.3 | 678.7 | r 1.000 1.001 0.995 0.995  [program moved]
+capability | nocaps | wild-secrets-aws-access-key-id | large-subject-throughput | plain | end-minus-width | 157931.6 | 158157.8 | 158138.5 | 159134.2 | r 1.001 1.000 1.006 1.006  [program moved]
+capability | nocaps | wild-secrets-aws-access-key-id | short-subject-search | plain | end-minus-width | 1097.2 | 1100.3 | 1102.9 | 1080.7 | r 1.003 1.002 0.980 0.982  [program moved]
+capability | nocaps | wild-secrets-github-pat | large-subject-throughput | plain | end-minus-width | 179570.0 | 179615.2 | 179588.0 | 179584.2 | r 1.000 1.000 1.000 1.000  [program moved]
+capability | nocaps | wild-secrets-github-pat | short-subject-search | plain | end-minus-width | 880.2 | 879.9 | 879.8 | 695.7 | r 1.000 1.000 0.791 0.791  [program moved]
+capability | nocaps | wild-semdiv-dollar-trailing-newline-pcre2 | large-subject-throughput | plain | reverse-pass | 139.3 | 104.0 | 104.4 | 104.3 | r 0.747 1.004 0.999 1.003
+capability | nocaps | wild-semdiv-dollar-trailing-newline-pcre2 | short-subject-search | plain | reverse-pass | 957.2 | 653.7 | 650.9 | 643.5 | r 0.683 0.996 0.989 0.984
+capability | nocaps | wild-validator-uuid-grok | large-subject-throughput | plain | end-minus-width | 138231.2 | 138394.2 | 138643.5 | 139543.0 | r 1.001 1.002 1.006 1.008  [program moved]
+capability | nocaps | wild-validator-uuid-grok | short-subject-search | plain | end-minus-width | 711.1 | 710.6 | 707.9 | 648.2 | r 0.999 0.996 0.916 0.912  [program moved]
+loglines | caps | floor | large-subject-throughput | plain | end-minus-width | 2961175.1 | 2963806.0 | 2958636.3 | 2842707.3 | r 1.001 0.998 0.961 0.959  [program moved]
+loglines | caps | floor | short-subject-search | plain | end-minus-width | 2040.0 | 2038.9 | 2051.4 | 1512.2 | r 0.999 1.006 0.737 0.742  [program moved]
+loglines | caps | hex32-id | large-subject-throughput | plain | end-minus-width | 11312531.1 | 11334337.1 | 11297510.7 | 11052363.4 | r 1.002 0.997 0.978 0.975  [program moved]
+loglines | caps | hex32-id | short-subject-search | plain | end-minus-width | 307731.0 | 307038.4 | 307924.9 | 297968.6 | r 0.998 1.003 0.968 0.970  [program moved]
+loglines | caps | uuid | large-subject-throughput | plain | end-minus-width | 1080447.2 | 1080631.9 | 1081038.6 | 1060907.6 | r 1.000 1.000 0.981 0.982  [program moved]
+loglines | caps | uuid | short-subject-search | plain | end-minus-width | 21009.2 | 21006.2 | 21028.0 | 20372.4 | r 1.000 1.001 0.969 0.970  [program moved]
+loglines | nocaps | floor | large-subject-throughput | plain | end-minus-width | 2959683.8 | 2958363.1 | 2964947.0 | 2841138.2 | r 1.000 1.002 0.958 0.960  [program moved]
+loglines | nocaps | floor | short-subject-search | plain | end-minus-width | 2038.8 | 2040.4 | 2041.1 | 1511.8 | r 1.001 1.000 0.741 0.741  [program moved]
+loglines | nocaps | hex32-id | large-subject-throughput | plain | end-minus-width | 11342857.9 | 11304885.0 | 11337430.3 | 11057040.6 | r 0.997 1.003 0.975 0.978  [program moved]
+loglines | nocaps | hex32-id | short-subject-search | plain | end-minus-width | 307375.9 | 307035.0 | 308361.2 | 297938.2 | r 0.999 1.004 0.966 0.970  [program moved]
+loglines | nocaps | http-5xx | short-subject-search | plain | reverse-pass | 4943.6 | 4953.3 | 4949.0 | 5153.8 | r 1.002 0.999 1.041 1.040
+loglines | nocaps | uuid | large-subject-throughput | plain | end-minus-width | 1081614.5 | 1079974.9 | 1080209.0 | 1061509.7 | r 0.998 1.000 0.983 0.983  [program moved]
+loglines | nocaps | uuid | short-subject-search | plain | end-minus-width | 21009.0 | 20983.1 | 20986.1 | 20331.1 | r 0.999 1.000 0.969 0.969  [program moved]
+email-specimen | caps | floor | large-subject-throughput | plain | end-minus-width | 698801.3 | 698916.4 | 698908.1 | 659860.4 | r 1.000 1.000 0.944 0.944  [program moved]
+email-specimen | caps | floor | short-subject-search | plain | end-minus-width | 1327.1 | 1325.8 | 1325.6 | 986.1 | r 0.999 1.000 0.744 0.744  [program moved]
+email-specimen | nocaps | floor | large-subject-throughput | plain | end-minus-width | 698654.5 | 699134.5 | 699272.2 | 660358.3 | r 1.001 1.000 0.944 0.945  [program moved]
+email-specimen | nocaps | floor | short-subject-search | plain | end-minus-width | 1326.6 | 1326.0 | 1323.7 | 990.0 | r 1.000 0.998 0.748 0.747  [program moved]
+litrun | caps | alt-foo-tails | match-compliance | whole-subject | reverse-pass | 280.9 | 302.7 | 303.3 | 303.1 | r 1.077 1.002 0.999 1.001
+litrun | caps | ctrl-abc-dollar | large-subject-throughput | plain | reverse-pass | 390.3 | 257.9 | 259.3 | 256.4 | r 0.661 1.006 0.989 0.994
+litrun | caps | ctrl-abc-dollar | short-subject-search | plain | reverse-pass | 401.1 | 253.4 | 253.0 | 254.2 | r 0.632 0.998 1.005 1.003
+litrun | caps | floor | large-subject-throughput | plain | end-minus-width | 3138078.0 | 3139031.8 | 3138657.2 | 2945623.0 | r 1.000 1.000 0.938 0.938  [program moved]
+litrun | caps | floor | short-subject-search | plain | end-minus-width | 245.0 | 245.2 | 245.1 | 247.0 | r 1.001 1.000 1.008 1.007  [program moved]
+litrun | caps | lit-l10 | large-subject-throughput | plain | end-minus-width | 1092311.8 | 1091845.6 | 1093911.7 | 760973.5 | r 1.000 1.002 0.696 0.697  [program moved]
+litrun | caps | lit-l10 | short-subject-search | plain | end-minus-width | 449.8 | 450.6 | 450.8 | 317.4 | r 1.002 1.001 0.704 0.704  [program moved]
+litrun | caps | lit-l16 | large-subject-throughput | plain | end-minus-width | 1012748.4 | 1011996.2 | 1012191.8 | 734727.3 | r 0.999 1.000 0.726 0.726  [program moved]
+litrun | caps | lit-l16 | short-subject-search | plain | end-minus-width | 562.6 | 562.1 | 562.9 | 368.9 | r 0.999 1.001 0.655 0.656  [program moved]
+litrun | caps | lit-l2 | large-subject-throughput | plain | end-minus-width | 3379599.7 | 3372296.0 | 3372348.6 | 3061991.4 | r 0.998 1.000 0.908 0.908  [program moved]
+litrun | caps | lit-l2 | match-compliance | whole-subject | reverse-pass | 256.0 | 264.3 | 263.7 | 264.3 | r 1.032 0.998 1.002 1.000
+litrun | caps | lit-l2 | short-subject-search | plain | end-minus-width | 434.1 | 435.6 | 434.4 | 362.4 | r 1.003 0.997 0.834 0.832  [program moved]
+litrun | caps | lit-l3 | large-subject-throughput | plain | end-minus-width | 3417423.0 | 3416659.5 | 3415951.4 | 3161079.1 | r 1.000 1.000 0.925 0.925  [program moved]
+litrun | caps | lit-l3 | short-subject-search | plain | end-minus-width | 501.1 | 501.6 | 501.1 | 385.9 | r 1.001 0.999 0.770 0.769  [program moved]
+litrun | caps | lit-l31 | large-subject-throughput | plain | end-minus-width | 788457.2 | 786754.7 | 788066.9 | 523007.7 | r 0.998 1.002 0.664 0.665  [program moved]
+litrun | caps | lit-l31 | short-subject-search | plain | end-minus-width | 824.0 | 824.3 | 825.0 | 564.1 | r 1.000 1.001 0.684 0.684  [program moved]
+litrun | caps | lit-l4 | large-subject-throughput | plain | end-minus-width | 3152427.1 | 3149565.5 | 3152461.2 | 2757348.8 | r 0.999 1.001 0.875 0.875  [program moved]
+litrun | caps | lit-l4 | match-compliance | whole-subject | reverse-pass | 266.0 | 275.0 | 276.3 | 275.9 | r 1.034 1.005 0.999 1.003
+litrun | caps | lit-l4 | short-subject-search | plain | end-minus-width | 442.6 | 442.0 | 442.6 | 353.6 | r 0.998 1.001 0.799 0.800  [program moved]
+litrun | caps | lit-l40 | large-subject-throughput | plain | end-minus-width | 463446.8 | 463313.9 | 463158.0 | 346286.1 | r 1.000 1.000 0.748 0.747  [program moved]
+litrun | caps | lit-l40 | short-subject-search | plain | end-minus-width | 983.1 | 978.2 | 977.3 | 624.0 | r 0.995 0.999 0.638 0.638  [program moved]
+litrun | caps | lit-l7 | large-subject-throughput | plain | end-minus-width | 3220739.0 | 3217153.9 | 3209188.1 | 2671766.7 | r 0.999 0.998 0.833 0.830  [program moved]
+litrun | caps | lit-l7 | short-subject-search | plain | end-minus-width | 484.1 | 484.6 | 484.5 | 349.7 | r 1.001 1.000 0.722 0.722  [program moved]
+litrun | caps | lit-l8 | large-subject-throughput | plain | end-minus-width | 2861918.4 | 2863224.7 | 2863959.4 | 2411136.7 | r 1.000 1.000 0.842 0.842  [program moved]
+litrun | caps | lit-l8 | short-subject-search | plain | end-minus-width | 477.3 | 478.2 | 477.9 | 347.5 | r 1.002 0.999 0.727 0.727  [program moved]
+litrun | caps | wild-secrets-aws-access-key-id | large-subject-throughput | plain | end-minus-width | 403983.1 | 403938.3 | 403957.4 | 402539.0 | r 1.000 1.000 0.996 0.997  [program moved]
+litrun | caps | wild-secrets-aws-access-key-id | short-subject-search | plain | end-minus-width | 1009.7 | 1010.4 | 1009.4 | 936.1 | r 1.001 0.999 0.927 0.926  [program moved]
+litrun | caps | wild-secrets-github-pat | large-subject-throughput | plain | end-minus-width | 29813.9 | 29817.6 | 29810.6 | 29849.2 | r 1.000 1.000 1.001 1.001  [program moved]
+litrun | caps | wild-secrets-github-pat | short-subject-search | plain | end-minus-width | 1272.1 | 1272.7 | 1271.5 | 951.8 | r 1.000 0.999 0.749 0.748  [program moved]
+litrun | nocaps | alt-foo-tails | match-compliance | whole-subject | reverse-pass | 280.3 | 302.0 | 301.7 | 302.7 | r 1.077 0.999 1.004 1.002
+litrun | nocaps | ctrl-abc-dollar | large-subject-throughput | plain | reverse-pass | 391.1 | 257.8 | 256.4 | 257.0 | r 0.659 0.995 1.002 0.997
+litrun | nocaps | ctrl-abc-dollar | short-subject-search | plain | reverse-pass | 400.2 | 253.5 | 252.6 | 257.9 | r 0.633 0.996 1.021 1.018
+litrun | nocaps | floor | large-subject-throughput | plain | end-minus-width | 3137878.4 | 3138405.2 | 3138478.9 | 2943857.8 | r 1.000 1.000 0.938 0.938  [program moved]
+litrun | nocaps | floor | short-subject-search | plain | end-minus-width | 245.1 | 245.1 | 245.1 | 246.8 | r 1.000 1.000 1.007 1.007  [program moved]
+litrun | nocaps | lit-l10 | large-subject-throughput | plain | end-minus-width | 1091209.8 | 1092942.2 | 1093735.4 | 760431.5 | r 1.002 1.001 0.695 0.696  [program moved]
+litrun | nocaps | lit-l10 | short-subject-search | plain | end-minus-width | 450.1 | 450.4 | 451.5 | 317.1 | r 1.001 1.002 0.702 0.704  [program moved]
+litrun | nocaps | lit-l16 | large-subject-throughput | plain | end-minus-width | 1011904.6 | 1013432.6 | 1011852.1 | 734018.9 | r 1.002 0.998 0.725 0.724  [program moved]
+litrun | nocaps | lit-l16 | short-subject-search | plain | end-minus-width | 562.2 | 562.1 | 562.0 | 368.8 | r 1.000 1.000 0.656 0.656  [program moved]
+litrun | nocaps | lit-l2 | large-subject-throughput | plain | end-minus-width | 3377709.1 | 3376093.9 | 3368869.8 | 3059014.0 | r 1.000 0.998 0.908 0.906  [program moved]
+litrun | nocaps | lit-l2 | match-compliance | whole-subject | reverse-pass | 255.7 | 263.9 | 263.7 | 265.4 | r 1.032 0.999 1.006 1.006
+litrun | nocaps | lit-l2 | short-subject-search | plain | end-minus-width | 435.0 | 434.2 | 435.3 | 372.1 | r 0.998 1.003 0.855 0.857  [program moved]
+litrun | nocaps | lit-l3 | large-subject-throughput | plain | end-minus-width | 3417670.6 | 3416148.5 | 3422438.5 | 3158620.6 | r 1.000 1.002 0.923 0.925  [program moved]
+litrun | nocaps | lit-l3 | short-subject-search | plain | end-minus-width | 501.6 | 502.2 | 501.9 | 387.6 | r 1.001 0.999 0.772 0.772  [program moved]
+litrun | nocaps | lit-l31 | large-subject-throughput | plain | end-minus-width | 786950.0 | 786523.1 | 786642.1 | 522294.7 | r 0.999 1.000 0.664 0.664  [program moved]
+litrun | nocaps | lit-l31 | short-subject-search | plain | end-minus-width | 824.0 | 824.6 | 824.5 | 564.0 | r 1.001 1.000 0.684 0.684  [program moved]
+litrun | nocaps | lit-l4 | large-subject-throughput | plain | end-minus-width | 3148650.7 | 3149032.8 | 3154805.5 | 2755528.4 | r 1.000 1.002 0.873 0.875  [program moved]
+litrun | nocaps | lit-l4 | match-compliance | whole-subject | reverse-pass | 265.8 | 275.0 | 277.1 | 276.4 | r 1.035 1.008 0.997 1.005
+litrun | nocaps | lit-l4 | short-subject-search | plain | end-minus-width | 443.0 | 443.2 | 442.3 | 354.9 | r 1.000 0.998 0.802 0.801  [program moved]
+litrun | nocaps | lit-l40 | large-subject-throughput | plain | end-minus-width | 463186.4 | 462947.2 | 463300.8 | 345803.3 | r 0.999 1.001 0.746 0.747  [program moved]
+litrun | nocaps | lit-l40 | short-subject-search | plain | end-minus-width | 978.1 | 978.1 | 983.3 | 626.3 | r 1.000 1.005 0.637 0.640  [program moved]
+litrun | nocaps | lit-l7 | large-subject-throughput | plain | end-minus-width | 3211127.6 | 3213406.4 | 3212768.7 | 2670244.7 | r 1.001 1.000 0.831 0.831  [program moved]
+litrun | nocaps | lit-l7 | short-subject-search | plain | end-minus-width | 484.2 | 485.2 | 485.1 | 349.9 | r 1.002 1.000 0.721 0.721  [program moved]
+litrun | nocaps | lit-l8 | large-subject-throughput | plain | end-minus-width | 2862393.3 | 2862286.1 | 2862141.6 | 2408163.0 | r 1.000 1.000 0.841 0.841  [program moved]
+litrun | nocaps | lit-l8 | short-subject-search | plain | end-minus-width | 477.9 | 477.8 | 478.2 | 346.4 | r 1.000 1.001 0.724 0.725  [program moved]
+litrun | nocaps | wild-secrets-aws-access-key-id | large-subject-throughput | plain | end-minus-width | 401226.2 | 401371.3 | 401488.3 | 401672.9 | r 1.000 1.000 1.000 1.001  [program moved]
+litrun | nocaps | wild-secrets-aws-access-key-id | match-compliance | whole-subject | reverse-pass | 293.6 | 307.7 | 308.1 | 307.9 | r 1.048 1.001 0.999 1.001
+litrun | nocaps | wild-secrets-aws-access-key-id | short-subject-search | plain | end-minus-width | 853.0 | 849.2 | 848.6 | 783.1 | r 0.996 0.999 0.923 0.922  [program moved]
+litrun | nocaps | wild-secrets-github-pat | large-subject-throughput | plain | end-minus-width | 29773.3 | 29803.6 | 29780.8 | 29793.6 | r 1.001 0.999 1.000 1.000  [program moved]
+litrun | nocaps | wild-secrets-github-pat | short-subject-search | plain | end-minus-width | 1159.0 | 1158.7 | 1158.7 | 743.3 | r 1.000 1.000 0.641 0.641  [program moved]

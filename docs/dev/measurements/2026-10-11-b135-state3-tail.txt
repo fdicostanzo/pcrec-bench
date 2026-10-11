@@ -1,0 +1,136 @@
+# [B135] state-3 read (lane b135read3) -- mode 'tail' of 2026-10-11-b135-state3-analysis.py
+# source: store/records (window 3 = 2026-10-10 20:21 EDT -> 2026-10-11 13:03 EDT, master 4cad239f; window 1 = states 1+2, 2026-10-10 12:13-19:19 EDT)
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-analysis.py tail   (read-only over the records; no engine run, no timing)
+# arithmetic: pcrecbench.reduce (reduce_match_cell / reduce_set_cell), the reporter's own; ov/DISJ = trial [min,max] ranges overlap / disjoint
+#
+# TAIL FAMILY (capability@0.2 large-subject-throughput + short-subject-search): must be FLAT at b8337c33 (I-146)
+
+## set cells, caps: 7388 w1 | 7388 w3 | b8337 w3 | b8/7388w3 | ov | w3/w1 | stamps (dfa_scan/dfa_start, program same)
+tail-digits-eol          large-subject-throughput   |      138.4 |      135.3 |      136.4 | 1.008 ov | 0.978 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-digits-eol          short-subject-search       |      711.0 |      710.9 |      712.7 | 1.003 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-word-eoz            large-subject-throughput   |    21907.6 |    21904.4 |    21905.3 | 1.000 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-word-eoz            short-subject-search       |     1012.9 |     1023.9 |     1017.4 | 0.994 ov | 1.011 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-space-eol           large-subject-throughput   |    21977.0 |    21974.4 |    21983.8 | 1.000 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-space-eol           short-subject-search       |      678.6 |      680.0 |      678.2 | 0.997 ov | 1.002 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-ext-lower-txt       large-subject-throughput   |      124.7 |      125.5 |      125.1 | 0.997 ov | 1.007 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-ext-lower-txt       short-subject-search       |      646.1 |      634.2 |      637.8 | 1.006 ov | 0.982 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-dotstar-txt         large-subject-throughput   |      146.0 |      145.3 |      145.3 | 1.000 ov | 0.995 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-dotstar-txt         short-subject-search       |      738.1 |      739.5 |      736.4 | 0.996 ov | 1.002 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+letters-bounded-tail-z   large-subject-throughput   |      779.4 |      782.2 |      783.8 | 1.002 ov | 1.004 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+letters-bounded-tail-z   short-subject-search       |      951.5 |      953.1 |      951.0 | 0.998 ov | 1.002 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+
+## set cells, nocaps: 7388 w1 | 7388 w3 | b8337 w3 | b8/7388w3 | ov | w3/w1 | stamps (dfa_scan/dfa_start, program same)
+tail-digits-eol          large-subject-throughput   |      135.7 |      136.6 |      135.2 | 0.990 ov | 1.007 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-digits-eol          short-subject-search       |      711.3 |      710.7 |      710.5 | 1.000 ov | 0.999 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-word-eoz            large-subject-throughput   |    21905.0 |    21908.9 |    21909.0 | 1.000 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-word-eoz            short-subject-search       |     1014.0 |     1018.0 |     1014.1 | 0.996 ov | 1.004 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-space-eol           large-subject-throughput   |    21978.9 |    21977.8 |    21970.8 | 1.000 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-space-eol           short-subject-search       |      678.2 |      678.2 |      678.4 | 1.000 ov | 1.000 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-ext-lower-txt       large-subject-throughput   |      125.2 |      125.0 |      124.7 | 0.998 ov | 0.998 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-ext-lower-txt       short-subject-search       |      644.5 |      635.4 |      643.2 | 1.012 ov | 0.986 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-dotstar-txt         large-subject-throughput   |      147.4 |      145.0 |      146.9 | 1.013 ov | 0.984 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+tail-dotstar-txt         short-subject-search       |      737.4 |      738.1 |      737.5 | 0.999 ov | 1.001 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+letters-bounded-tail-z   large-subject-throughput   |      784.5 |      782.9 |      781.5 | 0.998 ov | 0.998 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+letters-bounded-tail-z   short-subject-search       |      947.0 |      950.4 |      951.6 | 1.001 ov | 1.004 | rev-end/reverse-pass>rev-end/reverse-pass same=True
+
+## per-subject acceptance cells (large-subject-throughput): ns/call median [min..max]: 7388 w1 | 7388 w3 | b8337 w3 | b8/7388w3
+caps   tail-digits-eol          t-evil-match-60k         |      8.61[7.97..9.45] |      8.17[7.98..8.72] |      8.59[7.97..9.55] | 1.051 ov
+caps   tail-digits-eol          t-evil-nearmiss-16k      |      8.49[7.97..8.57] |      7.98[7.97..8.58] |      7.99[7.97..8.57] | 1.001 ov
+caps   tail-digits-eol          t-tail-digits-1m         |     28.36[26.03..28.69] |     26.97[25.74..27.61] |     27.49[26.93..27.87] | 1.020 ov
+caps   tail-digits-eol          t-tail-space-1m          |      7.97[7.97..7.98] |      7.97[7.97..7.98] |      7.97[7.97..8.00] | 1.001 ov
+caps   tail-digits-eol          t-tail-txt-1m            |      7.97[7.97..7.98] |      7.97[7.97..7.97] |      7.97[7.97..8.00] | 1.000 ov
+caps   tail-digits-eol          t-trim-match-60k         |      7.98[7.97..8.13] |      7.97[7.97..8.12] |      7.97[7.97..8.60] | 1.000 ov
+caps   tail-digits-eol          t-trim-nearmiss-16k      |      7.97[7.97..8.02] |      7.97[7.97..8.00] |      7.97[7.97..8.58] | 1.000 ov
+caps   tail-word-eoz            t-evil-match-60k         |  21775.30[21770.98..21781.32] |  21774.22[21772.77..21781.86] |  21772.85[21772.50..21785.59] | 1.000 ov
+caps   tail-word-eoz            t-evil-nearmiss-16k      |      7.89[7.82..7.98] |      7.81[7.68..7.87] |      7.68[6.68..8.12] | 0.982 ov
+caps   tail-word-eoz            t-tail-digits-1m         |     23.48[23.44..23.66] |     23.40[23.33..24.19] |     23.69[23.25..24.11] | 1.012 ov
+caps   tail-word-eoz            t-tail-space-1m          |      7.96[6.59..8.92] |      7.97[6.70..8.40] |      7.79[6.52..8.40] | 0.978 ov
+caps   tail-word-eoz            t-tail-txt-1m            |     21.55[21.55..21.59] |     21.95[21.54..22.30] |     21.58[21.55..22.30] | 0.983 ov
+caps   tail-word-eoz            t-trim-match-60k         |      7.84[7.75..7.95] |      7.70[7.67..7.97] |      7.82[6.58..7.97] | 1.015 ov
+caps   tail-word-eoz            t-trim-nearmiss-16k      |     18.04[17.81..18.78] |     17.84[17.71..18.16] |     17.88[17.80..19.92] | 1.003 ov
+caps   tail-space-eol           t-evil-match-60k         |      9.21[8.63..10.66] |      8.66[8.57..9.57] |      9.29[8.61..9.71] | 1.074 ov
+caps   tail-space-eol           t-evil-nearmiss-16k      |      9.15[8.59..9.75] |      8.57[8.55..9.50] |      8.62[8.56..9.37] | 1.006 ov
+caps   tail-space-eol           t-tail-digits-1m         |      8.80[8.57..9.96] |      8.76[8.61..8.78] |      8.60[8.56..10.05] | 0.982 ov
+caps   tail-space-eol           t-tail-space-1m          |     28.36[27.59..29.64] |     27.90[27.62..28.06] |     29.00[27.84..29.63] | 1.039 ov
+caps   tail-space-eol           t-tail-txt-1m            |      8.76[8.56..10.02] |      8.77[8.57..8.78] |      8.60[8.56..9.94] | 0.980 ov
+caps   tail-space-eol           t-trim-match-60k         |  21799.16[21795.27..21802.00] |  21799.39[21791.81..21829.73] |  21808.40[21799.08..21814.39] | 1.000 ov
+caps   tail-space-eol           t-trim-nearmiss-16k      |     10.02[8.78..10.12] |      9.76[9.19..10.43] |      9.12[8.64..10.07] | 0.935 ov
+caps   tail-ext-lower-txt       t-evil-match-60k         |      8.56[8.56..8.57] |      8.58[8.57..9.45] |      8.58[8.56..9.26] | 1.000 ov
+caps   tail-ext-lower-txt       t-evil-nearmiss-16k      |      8.56[8.56..8.57] |      8.57[8.56..9.44] |      8.57[8.56..8.58] | 1.000 ov
+caps   tail-ext-lower-txt       t-tail-digits-1m         |      8.56[8.56..8.58] |      8.58[8.56..9.44] |      8.56[8.56..8.57] | 0.999 ov
+caps   tail-ext-lower-txt       t-tail-space-1m          |      8.56[8.56..8.58] |      8.60[8.56..9.75] |      8.59[8.56..9.33] | 0.998 ov
+caps   tail-ext-lower-txt       t-tail-txt-1m            |     32.92[32.87..33.02] |     33.08[33.04..33.17] |     32.87[32.71..33.22] | 0.994 ov
+caps   tail-ext-lower-txt       t-trim-match-60k         |      8.56[8.56..8.57] |      8.56[8.56..9.45] |      8.57[8.56..8.59] | 1.002 ov
+caps   tail-ext-lower-txt       t-trim-nearmiss-16k      |      8.57[8.56..8.58] |      8.56[8.56..9.45] |      8.56[8.56..8.60] | 1.000 ov
+caps   tail-dotstar-txt         t-evil-match-60k         |      9.52[9.29..10.58] |      9.40[9.35..9.45] |      9.37[9.34..9.40] | 0.996 ov
+caps   tail-dotstar-txt         t-evil-nearmiss-16k      |      9.71[9.38..10.41] |      9.41[9.30..9.45] |      9.38[9.30..9.43] | 0.997 ov
+caps   tail-dotstar-txt         t-tail-digits-1m         |      9.54[9.35..10.35] |      9.41[9.30..9.46] |      9.34[9.30..9.47] | 0.993 ov
+caps   tail-dotstar-txt         t-tail-space-1m          |      9.34[9.32..9.94] |      9.40[9.30..9.94] |      9.36[9.30..10.04] | 0.996 ov
+caps   tail-dotstar-txt         t-tail-txt-1m            |     39.73[39.31..40.80] |     40.34[39.21..42.10] |     40.23[39.55..40.80] | 0.997 ov
+caps   tail-dotstar-txt         t-trim-match-60k         |      9.45[9.38..10.26] |      9.40[9.33..9.45] |      9.37[9.30..9.43] | 0.996 ov
+caps   tail-dotstar-txt         t-trim-nearmiss-16k      |      9.74[9.33..10.30] |      9.37[9.31..9.47] |      9.35[9.30..9.45] | 0.997 ov
+caps   letters-bounded-tail-z   t-evil-match-60k         |    630.24[630.19..630.77] |    631.37[630.26..632.57] |    630.81[630.23..632.72] | 0.999 ov
+caps   letters-bounded-tail-z   t-evil-nearmiss-16k      |     12.92[12.45..13.44] |     13.36[12.79..14.18] |     13.20[12.83..13.72] | 0.988 ov
+caps   letters-bounded-tail-z   t-tail-digits-1m         |     12.69[12.61..13.53] |     13.15[12.65..14.23] |     13.24[12.81..13.66] | 1.007 ov
+caps   letters-bounded-tail-z   t-tail-space-1m          |     12.80[12.52..13.54] |     12.60[12.34..13.97] |     13.40[12.87..13.71] | 1.063 ov
+caps   letters-bounded-tail-z   t-tail-txt-1m            |     21.64[21.29..22.55] |     22.58[21.63..23.77] |     22.14[21.55..23.76] | 0.980 ov
+caps   letters-bounded-tail-z   t-trim-match-60k         |     12.73[12.48..13.37] |     13.26[12.67..14.09] |     13.24[12.76..13.62] | 0.999 ov
+caps   letters-bounded-tail-z   t-trim-nearmiss-16k      |     18.54[18.43..19.05] |     18.97[18.63..20.34] |     19.73[18.89..20.37] | 1.040 ov
+-- caps: 66 per-subject cells, b8337c33/7388f1c0(w3) n=66 min 0.935 p5 0.980 p25 0.996 med 1.000 p75 1.003 p95 1.040 max 1.074; DISJ 0
+nocaps tail-digits-eol          t-evil-match-60k         |      8.05[7.97..9.74] |      7.97[7.97..8.85] |      8.00[7.98..9.16] | 1.003 ov
+nocaps tail-digits-eol          t-evil-nearmiss-16k      |      7.97[7.97..9.74] |      7.98[7.97..8.86] |      7.99[7.98..9.16] | 1.001 ov
+nocaps tail-digits-eol          t-tail-digits-1m         |     26.91[26.86..27.88] |     27.85[27.75..27.97] |     26.82[25.62..27.91] | 0.963 ov
+nocaps tail-digits-eol          t-tail-space-1m          |      7.97[7.97..9.74] |      7.97[7.97..8.86] |      7.98[7.98..9.16] | 1.002 ov
+nocaps tail-digits-eol          t-tail-txt-1m            |      7.97[7.97..9.74] |      7.97[7.97..8.85] |      8.02[7.98..9.17] | 1.006 ov
+nocaps tail-digits-eol          t-trim-match-60k         |      7.98[7.97..9.75] |      8.00[7.97..8.85] |      7.99[7.98..9.16] | 0.999 ov
+nocaps tail-digits-eol          t-trim-nearmiss-16k      |      7.97[7.97..9.74] |      7.97[7.97..8.85] |      7.99[7.98..9.16] | 1.003 ov
+nocaps tail-word-eoz            t-evil-match-60k         |  21774.20[21770.38..21780.25] |  21776.62[21774.17..21781.65] |  21776.30[21768.21..21872.25] | 1.000 ov
+nocaps tail-word-eoz            t-evil-nearmiss-16k      |      7.94[7.65..7.97] |      7.89[6.50..9.08] |      7.89[6.65..8.02] | 1.000 ov
+nocaps tail-word-eoz            t-tail-digits-1m         |     23.75[23.41..25.11] |     24.21[23.24..26.12] |     23.53[23.32..24.19] | 0.972 ov
+nocaps tail-word-eoz            t-tail-space-1m          |      7.87[6.49..8.60] |      7.81[6.55..7.97] |      7.80[6.52..8.03] | 0.999 ov
+nocaps tail-word-eoz            t-tail-txt-1m            |     21.58[21.55..21.81] |     21.55[21.54..22.67] |     21.58[21.57..21.66] | 1.001 ov
+nocaps tail-word-eoz            t-trim-match-60k         |      7.82[6.65..7.92] |      7.79[6.59..9.01] |      7.70[6.53..8.00] | 0.987 ov
+nocaps tail-word-eoz            t-trim-nearmiss-16k      |     17.83[17.76..19.22] |     17.98[17.72..18.34] |     19.26[17.86..19.50] | 1.071 ov
+nocaps tail-space-eol           t-evil-match-60k         |      9.19[8.56..9.37] |      8.76[8.71..9.15] |      8.78[8.58..9.36] | 1.002 ov
+nocaps tail-space-eol           t-evil-nearmiss-16k      |      8.58[8.56..9.42] |      8.59[8.56..9.16] |      8.65[8.58..9.16] | 1.006 ov
+nocaps tail-space-eol           t-tail-digits-1m         |      9.97[8.57..10.04] |      9.94[8.64..10.37] |      8.78[8.77..8.79] | 0.883 ov
+nocaps tail-space-eol           t-tail-space-1m          |     29.05[27.72..30.15] |     29.10[27.60..31.05] |     28.15[27.60..28.79] | 0.968 ov
+nocaps tail-space-eol           t-tail-txt-1m            |      8.76[8.59..9.97] |      8.75[8.55..9.90] |      8.77[8.73..8.80] | 1.002 ov
+nocaps tail-space-eol           t-trim-match-60k         |  21798.47[21796.21..21800.08] |  21798.99[21794.16..21800.91] |  21797.73[21794.42..21809.13] | 1.000 ov
+nocaps tail-space-eol           t-trim-nearmiss-16k      |      9.93[8.78..10.43] |     10.37[9.41..10.43] |      8.83[8.81..9.98] | 0.852 ov
+nocaps tail-ext-lower-txt       t-evil-match-60k         |      8.58[8.56..8.82] |      8.57[8.57..8.60] |      8.57[8.56..8.58] | 1.000 ov
+nocaps tail-ext-lower-txt       t-evil-nearmiss-16k      |      8.56[8.56..8.57] |      8.56[8.56..8.58] |      8.57[8.56..8.57] | 1.001 ov
+nocaps tail-ext-lower-txt       t-tail-digits-1m         |      8.57[8.56..8.72] |      8.56[8.56..8.58] |      8.57[8.56..8.59] | 1.001 ov
+nocaps tail-ext-lower-txt       t-tail-space-1m          |      8.56[8.56..8.68] |      8.58[8.56..8.60] |      8.56[8.56..8.63] | 0.999 ov
+nocaps tail-ext-lower-txt       t-tail-txt-1m            |     33.02[32.90..33.45] |     33.10[32.87..33.37] |     32.88[32.74..33.49] | 0.993 ov
+nocaps tail-ext-lower-txt       t-trim-match-60k         |      8.56[8.56..8.58] |      8.56[8.56..8.60] |      8.56[8.56..8.59] | 1.000 ov
+nocaps tail-ext-lower-txt       t-trim-nearmiss-16k      |      8.56[8.56..8.58] |      8.56[8.56..8.58] |      8.56[8.56..8.57] | 1.000 ov
+nocaps tail-dotstar-txt         t-evil-match-60k         |      9.47[9.30..10.51] |      9.37[9.35..9.38] |      9.39[9.37..10.19] | 1.002 ov
+nocaps tail-dotstar-txt         t-evil-nearmiss-16k      |      9.34[9.30..10.48] |      9.37[9.31..9.43] |      9.39[9.31..10.23] | 1.003 ov
+nocaps tail-dotstar-txt         t-tail-digits-1m         |      9.34[9.30..10.55] |      9.34[9.30..9.49] |      9.46[9.32..9.84] | 1.012 ov
+nocaps tail-dotstar-txt         t-tail-space-1m          |      9.35[9.30..10.50] |      9.70[9.30..10.24] |     10.17[9.58..10.54] | 1.049 ov
+nocaps tail-dotstar-txt         t-tail-txt-1m            |     40.74[39.57..42.31] |     39.95[39.13..43.52] |     41.32[39.22..41.48] | 1.034 ov
+nocaps tail-dotstar-txt         t-trim-match-60k         |      9.41[9.30..10.58] |      9.37[9.30..9.48] |      9.37[9.36..9.61] | 1.000 ov
+nocaps tail-dotstar-txt         t-trim-nearmiss-16k      |      9.38[9.30..10.50] |      9.35[9.30..9.49] |      9.38[9.31..9.63] | 1.004 ov
+nocaps letters-bounded-tail-z   t-evil-match-60k         |    630.59[630.37..631.00] |    631.40[631.19..633.32] |    631.70[631.13..690.99] | 1.000 ov
+nocaps letters-bounded-tail-z   t-evil-nearmiss-16k      |     13.31[12.81..13.68] |     13.36[12.65..13.67] |     12.78[12.72..13.58] | 0.957 ov
+nocaps letters-bounded-tail-z   t-tail-digits-1m         |     13.34[12.64..13.44] |     12.73[12.69..13.28] |     12.77[12.63..13.56] | 1.003 ov
+nocaps letters-bounded-tail-z   t-tail-space-1m          |     13.34[12.66..13.48] |     12.80[12.59..13.45] |     12.89[12.58..13.36] | 1.007 ov
+nocaps letters-bounded-tail-z   t-tail-txt-1m            |     22.44[21.56..22.58] |     21.98[21.55..22.13] |     22.44[20.98..23.04] | 1.021 ov
+nocaps letters-bounded-tail-z   t-trim-match-60k         |     13.38[12.81..13.46] |     12.68[12.53..13.13] |     12.71[12.70..13.77] | 1.002 ov
+nocaps letters-bounded-tail-z   t-trim-nearmiss-16k      |     20.22[18.46..20.67] |     19.08[18.44..20.86] |     18.97[18.72..19.61] | 0.994 ov
+-- nocaps: 66 per-subject cells, b8337c33/7388f1c0(w3) n=66 min 0.852 p5 0.952 p25 0.998 med 1.001 p75 1.003 p95 1.019 max 1.071; DISJ 0
+
+## stamps at b8337c33 (compile rows) for the tail patterns, both forms
+tail-digits-eol          plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-digits-eol          whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-word-eoz            plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-word-eoz            whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-space-eol           plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-space-eol           whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-ext-lower-txt       plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-ext-lower-txt       whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-dotstar-txt         plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+tail-dotstar-txt         whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+letters-bounded-tail-z   plain          7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True
+letters-bounded-tail-z   whole-subject  7388: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | b8337: dfa_scan=rev-end dfa_start=reverse-pass dfa_prefilter=none | prog same=True

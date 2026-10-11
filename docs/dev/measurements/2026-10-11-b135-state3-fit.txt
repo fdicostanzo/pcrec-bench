@@ -1,0 +1,14 @@
+# [B135] state-3 read (lane b135read3) -- mode 'fit' of 2026-10-11-b135-state3-analysis.py
+# source: store/records (window 3 = 2026-10-10 20:21 EDT -> 2026-10-11 13:03 EDT, master 4cad239f; window 1 = states 1+2, 2026-10-10 12:13-19:19 EDT)
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-analysis.py fit   (read-only over the records; no engine run, no timing)
+# arithmetic: pcrecbench.reduce (reduce_match_cell / reduce_set_cell), the reporter's own; ov/DISJ = trial [min,max] ranges overlap / disjoint
+#
+# FIT movers (utf8 prp-l, prp-notl) and START-LANDING on utf8: 7388f1c0 (w3) -> b8337c33 (w3)
+utf8 caps prp-l          large-subject-throughput plain          A 11763641.9 B 6077654.2 | sel size-cap-retry>selected emit 471796>894613 start reverse-pass>landing
+utf8 caps prp-l          short-subject-search     plain          A 3093.1 B 1756.4 | sel size-cap-retry>selected emit 471796>894613 start reverse-pass>landing
+utf8 caps prp-notl       large-subject-throughput plain          A 5813573.9 B 5073690.9 | sel size-cap-retry>selected emit 490248>874155 start reverse-pass>landing
+utf8 caps prp-notl       short-subject-search     plain          A 1424.6 B 1298.1 | sel size-cap-retry>selected emit 490248>874155 start reverse-pass>landing
+utf8 nocaps prp-l          large-subject-throughput plain          A 11748351.3 B 6070829.0 | sel size-cap-retry>selected emit 471796>894613 start reverse-pass>landing
+utf8 nocaps prp-l          short-subject-search     plain          A 3092.6 B 1744.2 | sel size-cap-retry>selected emit 471796>894613 start reverse-pass>landing
+utf8 nocaps prp-notl       large-subject-throughput plain          A 5813226.3 B 5077304.6 | sel size-cap-retry>selected emit 490248>874155 start reverse-pass>landing
+utf8 nocaps prp-notl       short-subject-search     plain          A 1419.5 B 1299.9 | sel size-cap-retry>selected emit 490248>874155 start reverse-pass>landing
