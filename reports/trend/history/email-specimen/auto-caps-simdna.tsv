@@ -1,12 +1,12 @@
 # trend_report: history email-specimen auto-caps-simdna
 # schema: trend-tsv-1
 # generator: trend-v1
-# snapshots_sha256: 25531d9a55470b15b2a51361326a30ce33d0456b22392d1f0be3ddfe63e59f74
+# snapshots_sha256: 43e7c269153bd67f33d8068b28d3366e26ba2e708a27e1ba494cc785316a8539
 # links_sha256: 198cb6422854bf062029e26db2e858abbdc2be6d087e4f75881fb5d420f1c402
 # links: 5 (5 confirmed, 0 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
-# pin_order_sha256: 92814f5a4ca96f53ce1b61a2e842147179792c1d14c763a86d7c01224064f99e
-# as_of: 2026-10-10T23:02:29Z
+# pin_order_sha256: 1191543a5ff9af6e1924f20c8a464bec16409d495dc1faa7bed5c584fd9cd0da
+# as_of: 2026-10-11T16:46:44Z
 # identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
 # wide_gap_abi: 8
 # fallback_band: 0.0846
@@ -133,3 +133,12 @@ pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns
 27	7388f1c0	email-specimen@0.2	orig	large-subject-throughput	plain	judged	7050462.5	7047494.9	7057357.8	1410092.50	16117	f47cab23f21387c8	D:email-specimen@0.2:auto-caps-simdna:7388f1c0:orig:large-subject-throughput:plain	a15fb77b	0.9979	within-identical-band
 27	7388f1c0	email-specimen@0.2	orig	match-compliance	whole-subject	judged	73125.9	73125.1	73224.7	860.30	16409	53f08645744958a8	D:email-specimen@0.2:auto-caps-simdna:7388f1c0:orig:match-compliance:whole-subject	a15fb77b	1.0000	within-noise
 27	7388f1c0	email-specimen@0.2	orig	short-subject-search	plain	judged	3714.6	3710.5	3719.4	48.24	16117	f47cab23f21387c8	D:email-specimen@0.2:auto-caps-simdna:7388f1c0:orig:short-subject-search:plain	a15fb77b	1.0008	within-noise
+28	b8337c33	email-specimen@0.2	factored	large-subject-throughput	plain	judged	7023275.0	7021446.1	7026596.2	1404654.99	16377	fe68c991b2280c29	D:email-specimen@0.2:auto-caps-simdna:b8337c33:factored:large-subject-throughput:plain	7388f1c0	1.0001	within-noise
+28	b8337c33	email-specimen@0.2	factored	match-compliance	whole-subject	judged	73257.1	73247.6	73260.8	861.85	16649	aa424a179028f70f	D:email-specimen@0.2:auto-caps-simdna:b8337c33:factored:match-compliance:whole-subject	7388f1c0	1.0005	within-noise
+28	b8337c33	email-specimen@0.2	factored	short-subject-search	plain	judged	3899.7	3897.3	3902.3	50.65	16377	fe68c991b2280c29	D:email-specimen@0.2:auto-caps-simdna:b8337c33:factored:short-subject-search:plain	7388f1c0	1.0002	within-noise
+28	b8337c33	email-specimen@0.2	floor	large-subject-throughput	plain	judged	659860.4	659768.9	660219.0	131972.08	14557	f72473149247eddd	D:email-specimen@0.2:auto-caps-simdna:b8337c33:floor:large-subject-throughput:plain	7388f1c0	0.9441	within-identical-band
+28	b8337c33	email-specimen@0.2	floor	match-compliance	whole-subject	judged	759.8	759.0	762.1	8.94	15916	cba82b7b2871f686	D:email-specimen@0.2:auto-caps-simdna:b8337c33:floor:match-compliance:whole-subject	7388f1c0	1.0014	within-noise
+28	b8337c33	email-specimen@0.2	floor	short-subject-search	plain	judged	986.1	984.9	988.0	12.81	14557	f72473149247eddd	D:email-specimen@0.2:auto-caps-simdna:b8337c33:floor:short-subject-search:plain	7388f1c0	0.7438	faster
+28	b8337c33	email-specimen@0.2	orig	large-subject-throughput	plain	judged	7059721.9	7053019.5	7079510.2	1411944.38	16117	f47cab23f21387c8	D:email-specimen@0.2:auto-caps-simdna:b8337c33:orig:large-subject-throughput:plain	7388f1c0	1.0013	within-noise
+28	b8337c33	email-specimen@0.2	orig	match-compliance	whole-subject	judged	73165.0	73135.6	73256.5	860.76	16409	53f08645744958a8	D:email-specimen@0.2:auto-caps-simdna:b8337c33:orig:match-compliance:whole-subject	7388f1c0	1.0005	within-noise
+28	b8337c33	email-specimen@0.2	orig	short-subject-search	plain	judged	3718.2	3714.5	3718.9	48.29	16117	f47cab23f21387c8	D:email-specimen@0.2:auto-caps-simdna:b8337c33:orig:short-subject-search:plain	7388f1c0	1.0010	within-noise

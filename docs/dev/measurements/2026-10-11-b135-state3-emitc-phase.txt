@@ -1,0 +1,15 @@
+# [B135] state-3 read (lane b135read3) -- pcrec emit-c phase, 7388f1c0 -> b8337c33, window 3 newest records
+# reproduce: python3 docs/dev/measurements/2026-10-11-b135-state3-emitc-phase.py (read-only over the records; no engine run, no timing)
+#
+capability caps emit-c b8337c33/7388f1c0 n=138 median 1.012 p95 1.178 max 2.109 top(>=10ms): [(1.18, 'wild-waf-crs-942140-dbnames', 'plain', 16, 18), (1.04, 'wild-logparse-syslogbase-expanded', 'plain', 746, 774), (1.02, 'letters-bounded-tail-z', 'plain', 147, 150)]
+capability nocaps emit-c b8337c33/7388f1c0 n=139 median 1.008 p95 1.178 max 2.527 top(>=10ms): [(2.53, 'wild-datetime-datefinder-alternation', 'plain', 173, 437), (1.04, 'wild-logparse-syslogbase-expanded', 'plain', 740, 773), (1.04, 'letters-bounded-tail-z', 'plain', 156, 163)]
+syntax caps emit-c b8337c33/7388f1c0 n=165 median 1.040 p95 1.206 max 2.355 top(>=10ms): []
+syntax nocaps emit-c b8337c33/7388f1c0 n=165 median 0.969 p95 1.095 max 2.116 top(>=10ms): []
+utf8 caps emit-c b8337c33/7388f1c0 n=138 median 1.042 p95 1.234 max 2.503 top(>=10ms): [(1.13, 'prp-notl', 'plain', 542, 613), (1.08, 'prp-n', 'plain', 30, 33), (1.08, 'prp-l', 'plain', 803, 866)]
+utf8 nocaps emit-c b8337c33/7388f1c0 n=138 median 0.971 p95 1.095 max 2.088 top(>=10ms): [(1.13, 'prp-notl', 'plain', 541, 613), (1.08, 'prp-n', 'plain', 30, 32), (1.08, 'prp-l', 'plain', 802, 864)]
+bounded caps emit-c b8337c33/7388f1c0 n=84 median 1.015 p95 1.088 max 1.195 top(>=10ms): [(1.15, 'nest3-16', 'plain', 957, 1097), (1.14, 'nest2-64', 'plain', 905, 1029), (1.05, 'cls-upto-2048', 'plain', 151, 159)]
+bounded nocaps emit-c b8337c33/7388f1c0 n=84 median 0.988 p95 1.131 max 2.207 top(>=10ms): [(1.16, 'nest3-16', 'plain', 957, 1114), (1.1, 'nest2-64', 'plain', 919, 1010), (1.03, 'cls-upto-2048', 'whole', 458, 471)]
+loglines caps emit-c b8337c33/7388f1c0 n=22 median 1.003 p95 1.058 max 1.128 top(>=10ms): [(0.96, 'level-context', 'plain', 556, 533), (0.93, 'level-context', 'whole', 800, 744)]
+loglines nocaps emit-c b8337c33/7388f1c0 n=22 median 1.016 p95 1.084 max 2.219 top(>=10ms): [(0.94, 'level-context', 'whole', 792, 748), (0.94, 'level-context', 'plain', 558, 525)]
+litrun caps emit-c b8337c33/7388f1c0 n=28 median 0.991 p95 1.033 max 1.208 top(>=10ms): []
+litrun nocaps emit-c b8337c33/7388f1c0 n=28 median 0.987 p95 1.023 max 1.137 top(>=10ms): []
