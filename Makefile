@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
+.PHONY: check-wtprune wtprune trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -77,7 +77,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend
+check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend check-wtprune
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -323,3 +323,13 @@ check-trend:
 help:
 	@echo "pcrec-bench targets:"
 	@grep -E '^## ' $(MAKEFILE_LIST) | sed -e 's/^## /  /'
+
+## check-wtprune: scripts/wtprune's self-test (a sacrificial repo under
+## mktemp; seconds; 33 checks incl. the lane-scratch extension).
+check-wtprune:
+	bash scripts/tests/wtprune.test
+
+## wtprune: DRY RUN of the gated lane-worktree + lane-scratch cleanup
+## (scripts/wtprune); `scripts/wtprune --apply` removes the REMOVE lines.
+wtprune:
+	bash scripts/wtprune

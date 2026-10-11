@@ -272,10 +272,12 @@ source with what it controls; CLAUDE.md updates; no pcrec-specific
 shapes leaking into engine-neutral surfaces (R-BENCH-4). Send change
 requests back to the lane rather than silently fixing large problems;
 small landing-bar items you may finish directly.
-After the merge, REMOVE the lane's worktree (`git worktree remove
-worktrees/<lane>`, branch kept) once its branch is an ancestor of master
-and it has no dirty/untracked files — routine maintenance, no ask (Frank,
-2026-09-26: eleven merged worktrees had filled the root fs).
+After the merge, REMOVE the lane's worktree AND its scratch with
+`scripts/wtprune --apply <lane>` (gated: merged, clean, quiet, no process
+inside; branch kept; it also removes `/var/tmp/pcrecbench/<lane>/`) —
+routine maintenance, no ask (Frank, 2026-09-26: eleven merged worktrees had
+filled the root fs; 2026-10-11: cleanup is scripted). Manager-run windows
+keep their scratch under `/var/tmp/pcrecbench/<row>win/`.
 
 ## 6. Adversarial critic panels on designs and major code
 
@@ -300,5 +302,7 @@ dispositions; fix-with-measurement before disposition.
 4. Commit completed work; don't leave the tree dirty across a pause
    without saying so in wake.md. Tell the pcrec session you are pausing
    if any run of yours could still be on the box.
-5. `CronDelete` the heartbeat cron created at §1 step 0 (`CronList` to
+5. Run `make wtprune` (dry run) and `scripts/wtprune --apply` for every
+   REMOVE line; say in wake.md what was KEPT and why.
+6. `CronDelete` the heartbeat cron created at §1 step 0 (`CronList` to
    find it); sweep for live agents (`TaskStop` any that delivered).
