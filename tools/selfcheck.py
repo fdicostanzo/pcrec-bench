@@ -3565,6 +3565,30 @@ B135S3_RESID = {
 }
 
 
+#: [B136] (pin 6b2dbd3e, abi 76, [LOSS-REVIEW] candidate 1): the encoding
+#: seam helpers are `static inline` in the artifact instead of exported
+#: symbols. MEASURED per witness (never a flat term): the two BACKREFERENCE
+#: ledger rows each lose 69 B of emitted text (00c97769 reads the old
+#: figure, 6b2dbd3e -69); every other asserted row is unmoved.
+B136_RESID = {
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'plain'): (-69, -69, 0),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'whole-subject'): (-69, -69, 0),
+    ('capability dup-param-detect under auto: K65 alone', 'plain'): (-69, -69, 0),
+    ('capability dup-param-detect under auto: K65 alone', 'whole-subject'): (-69, -69, 0),
+}
+
+
+def _b136_moved(expected, label, form, em):
+    """`expected` with the size keys moved by B136_RESID's row."""
+    out = dict(expected)
+    r = B136_RESID.get((label, form), (0, 0, 0))
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + r[i]
+    return out
+
+
 def _b135s3_moved(expected, label, form, em):
     """`expected` with the size keys moved by B135S3_RESID's row."""
     out = dict(expected)
@@ -4268,8 +4292,11 @@ LEDGER_STAMP_CASES = (
     # contiguous, so the edge's test is a 256-byte membership read (the
     # cursor still the only loop-carried register; the value no other
     # corpus row produces, like `indexed` before -fno-premul-table).
+    # [B136] (abi 75, [REQ-HANDOFF-L1]): ipv6 takes the one-byte landmark's
+    # re-entering handoff -- `dfa_prefilter` byte-class -> `handoff`, K 4
+    # (none at b8337c33); the `bitmap` edge, offsets and engine are unmoved.
     ("ipv6: declined", "pcrec-auto", "loglines", "ipv6",
-     {"engine": "dfa", "dfa_prefilter": "byte-class",
+     {"engine": "dfa", "dfa_prefilter": "handoff", "req_handoff": "4",
       "dfa_prefilter_offsets": "none", "dfa_scan_edge": "bitmap",
       "dfa_uniform_folds": 0, "scan_edges": 1,
       "engine_sel": "selected"}),
@@ -4280,8 +4307,10 @@ LEDGER_STAMP_CASES = (
     # (MEASURED; `-fno-start-set` restores `byte-class-bounded`, asserted
     # in check_b124_startset_stamps). kv-quoted also takes [K82] (B)'s
     # handoff: an emitted run pre-check with a finite window offset.
+    # [B136] (abi 75): the DFA hat's `first-class-bounded` is displaced by
+    # `handoff` (K stays 32 -- the K82 entry handoff it already had).
     ("kv-quoted: declined", "pcrec-auto", "loglines", "kv-quoted",
-     {"engine": "dfa", "dfa_prefilter": "first-class-bounded",
+     {"engine": "dfa", "dfa_prefilter": "handoff",
       "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
       "req_handoff": "32", "vm_start_scan": "none",
       "engine_sel": "selected"}),
@@ -5660,9 +5689,10 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b135s3_moved(
+            expected = _b136_moved(_b135s3_moved(
                 _b135_moved(_b126_moved(expected, label, form, em),
-                            label, form, em), label, form, em)
+                            label, form, em), label, form, em),
+                label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -7163,9 +7193,13 @@ DENY_CONTROLS = (
     # the `prefilter` table -- the denied arm reads `first-class-bounded`
     # where it read `byte-class-bounded` through c4c70f2c (MEASURED; both
     # denials together, `-fno-offset-skip -fno-start-set`, restore it:
-    # check_b124_startset_stamps).
+    # check_b124_startset_stamps). [B136] (abi 75): the denied arm now reads
+    # `handoff` -- uuid's necessary `-` is a one-byte landmark with a finite
+    # K, so the re-entering handoff is the next candidate in the table
+    # (MEASURED at 00c97769 and 6b2dbd3e); `-fno-req-handoff` reaches the
+    # hat again (check_b124_stamps).
     ("dfa_prefilter + offsets", "prefilter", ("loglines", "uuid"), "",
-     {"dfa_prefilter": ("offset-set-bounded", "first-class-bounded"),
+     {"dfa_prefilter": ("offset-set-bounded", "handoff"),
       "dfa_prefilter_offsets": ("0,8*,13", "none")}, "deny"),
     # [B101] (pin 02902356, abi 36, [OPT-LITSCAN] S1): the axis's two NEW
     # candidates, `run-pinned` / `run-pinned-bounded`, ahead of the seven,
@@ -7187,7 +7221,7 @@ DENY_CONTROLS = (
      "-fno-run-prefilter"),
     ("dfa_prefilter: -fno-offset-skip removes the run-pinned candidate too",
      "prefilter", ("literal", b"abc"), "",
-     {"dfa_prefilter": ("run-pinned", "memchr"),
+     {"dfa_prefilter": ("run-pinned", "handoff"),
       "dfa_prefilter_offsets": ("0,1*,2", "none"),
       "req_why": ("dominated", "emitted")}, "deny", "default",
      "-fno-offset-skip"),
@@ -7322,6 +7356,15 @@ DENY_CONTROLS = (
      "req-use", ("literal", b"\\bfoo"), "",
      {"req_handoff": ("0", "none"),
       "req_why": ("emitted", "emitted")}, "deny"),
+    # [B136] (pin 00c97769, abi 75, [REQ-HANDOFF-L1]): the SAME flag, read
+    # from the `prefilter` axis's new `handoff` row (bit 46, listed on two
+    # axes): ipv6 takes the one-byte-landmark K and the re-entering
+    # prefilter; the denial removes BOTH (K `none`, the prefilter back to
+    # `byte-class`).
+    ("dfa_prefilter: the [REQ-HANDOFF-L1] re-entry denied (the `prefilter` axis's row)",
+     "prefilter", ("loglines", "ipv6"), "",
+     {"dfa_prefilter": ("handoff", "byte-class"),
+      "req_handoff": ("4", "none")}, "deny", "default", "-fno-req-handoff"),
     # [B135] (pin 7388f1c0, abi 73, [OPT-REVEND] L2): `-fno-rev-end` (the
     # `locate` axis's order-1 row, bit 52, RX_DFA_SCAN `rev-end`) -- the
     # end-pinned body takes the forward scan + reverse pass again, so the
@@ -11253,10 +11296,13 @@ B124_CASES = (
     ("start-set: loglines bignum", "", ("loglines", "bignum"),
      {"dfa_prefilter": "first-class-bounded"},
      "-fno-start-set", {"dfa_prefilter": "byte-class-bounded"}, "old"),
+    # [B136] (abi 75): with the offset skip denied the handoff row sits ahead
+    # of the DFA hat, so the program that restores c4c70f2c's needs
+    # `-fno-req-handoff` as well.
     ("start-set: loglines uuid under -fno-offset-skip", "-fno-offset-skip",
      ("loglines", "uuid"),
-     {"dfa_prefilter": "first-class-bounded"},
-     "-fno-start-set", {"dfa_prefilter": "byte-class-bounded"}, "old"),
+     {"dfa_prefilter": "handoff"},
+     "-fno-start-set -fno-req-handoff", {"dfa_prefilter": "byte-class-bounded"}, "old"),
     # [K82] (B) (abi 61): the handoff on a run-bearing seeded DFA -- K 0,
     # the window begins at the attempt start.
     ("req-use: the handoff", "", b"\\bfoo",
@@ -11265,7 +11311,7 @@ B124_CASES = (
     # ... and kv-quoted carries BOTH new mechanisms (handoff K 32 and the
     # DFA hat): only the two denials together restore c4c70f2c's program.
     ("req-use + start-set: loglines kv-quoted", "", ("loglines", "kv-quoted"),
-     {"req_handoff": "32", "dfa_prefilter": "first-class-bounded"},
+     {"req_handoff": "32", "dfa_prefilter": "handoff"},
      "-fno-req-handoff -fno-start-set",
      {"req_handoff": "none", "dfa_prefilter": "byte-class-bounded"}, "old"),
     # [K82] (A) (abi 60): `set-leads` -- the necessary set's rarer `)`
@@ -11601,6 +11647,22 @@ def check_b126_stamps():
                 else:
                     id_ok = h_old is not None and h_old == h_new
                     id_why = ".text: pin == 60366d747"
+                if not id_ok and mode == "old-text":
+                    # [B136] (abi 76): the seam step respells every
+                    # BACKREFERENCE artifact's helpers, so the denied arm's
+                    # `.text` can no longer equal 60366d747's; the identity
+                    # is then asserted at 00c97769 (abi 75, before the seam)
+                    # and the pin's own denial must still move the code.
+                    l_bin = _b136_bin("00c97769")
+                    hl_new = _b126_text_hash(l_bin, base + B135_START_DENIES,
+                                             pat, tmp, "ln%d" % i) if l_bin else None
+                    hl_deny = _b126_text_hash(l_bin, base + dflags + B135_START_DENIES,
+                                              pat, tmp, "ld%d" % i) if l_bin else None
+                    if (hl_deny is not None and hl_deny == h_old and hl_new != h_old
+                            and h_deny is not None and h_deny != h_new):
+                        id_ok = True
+                        id_why = (".text: denied == 60366d747 at 00c97769 (the abi-76 "
+                                  "seam respells backreference helpers); denial moves the pin's code")
                 if not id_ok:
                     miss.append("identity (%s) old=%s new=%s deny=%s"
                                 % (id_why, h_old, h_new, h_deny))
@@ -12104,7 +12166,12 @@ def check_b135s3_stamps():
     if not old_bin or not os.path.isfile(old_bin):
         bad("b135s3 stamps", "no build for 7388f1c0 (pin.sh 7388f1c0 first)")
         return
-    new_bin = adapter.pin_binary()
+    # [B136]: this check is b8337c33 vs 7388f1c0 BY NAME; the canonical pin has
+    # moved on (abi 76), so the abi-74 side is the b8337c33 build, not pin_binary().
+    new_bin = _b136_bin("b8337c33")
+    if not new_bin:
+        bad("b135s3 stamps", "no build for b8337c33 (pin.sh b8337c33 first)")
+        return
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b135s3-")
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
     arm_flags = {"default": "", "w": "-fno-start-width",
@@ -12217,11 +12284,11 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "7388f1c0"
+        os.environ[env] = "b8337c33"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("b8337c33", "7388f1c0", "b8337c33"):
+        if (canon, before, same) == ("6b2dbd3e", "b8337c33", "6b2dbd3e"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
@@ -12243,7 +12310,8 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "7388f1c0"), ("after", "b8337c33")):
+        for tag, pin in (("before", "b8337c33"), ("after", "6b2dbd3e"),
+                         ("mid", "00c97769")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
@@ -12252,16 +12320,17 @@ def check_b135_two_pin_window():
             if blk.get("engine_commit", "")[:8] != pin:
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "7388f1c0" in ids["before"] \
-                and "b8337c33" in ids["after"] \
-                and ids["before"].replace("7388f1c0", "b8337c33") == ids["after"]:
+        if ids["before"] != ids["after"] and "b8337c33" in ids["before"] \
+                and "6b2dbd3e" in ids["after"] and "00c97769" in ids["mid"] \
+                and ids["before"].replace("b8337c33", "6b2dbd3e") == ids["after"] \
+                and ids["mid"].replace("00c97769", "6b2dbd3e") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
             bad("b135 two-pin: the two pins derive DISTINCT testee_ids",
                 "%r" % ids)
-        if shas["before"] == shas["after"]:
-            ok("b135 two-pin: ONE driver build serves both pins (same "
+        if shas["before"] == shas["after"] == shas["mid"]:
+            ok("b135 two-pin: ONE driver build serves all three pins (same "
                "sha256, same mtime: no rebuild on the second prepare)",
                "sha256 %s" % shas["before"][0][:16])
         else:
