@@ -262,6 +262,52 @@ def cmd_index(args):
     return 0
 
 
+def cmd_import(args):
+    """[B137] land a foreign store's records in the canonical store."""
+    from . import importer, store
+    try:
+        done, present = importer.import_store(
+            args.foreign_store, store_root=args.store,
+            register_machine=args.register_machine)
+    except importer.ImportRefused as e:
+        for path, why in e.refusals:
+            print("import: REFUSED %s: %s" % (path, why), file=sys.stderr)
+        print("import: %d refusal(s); NOTHING was written" % len(e.refusals),
+              file=sys.stderr)
+        return 5
+    except Exception as e:  # noqa: BLE001 (StoreError et al.)
+        print("import: %s" % e, file=sys.stderr)
+        return 5
+    print("import: %d record(s) imported, %d already present (identical, "
+          "no-op) -> %s" % (len(done), len(present), args.store))
+    return 0
+
+
+def cmd_machines(args):
+    from . import env
+    if args.action == "list":
+        for r in env.load_registry(args.store):
+            print("\t".join(r[k] for k in ("machine_id", "hostname",
+                  "cpu_model", "cores", "first_seen", "note")))
+        return 0
+    miss = [n for n in ("machine_id", "hostname", "cpu_model", "cores")
+            if getattr(args, n) in (None, "")]
+    if miss:
+        print("machines register: missing --%s" % ", --".join(
+            m.replace("_", "-") for m in miss), file=sys.stderr)
+        return 5
+    try:
+        wrote = env.register_machine(
+            args.store, args.machine_id, args.hostname, args.cpu_model,
+            args.cores, first_seen=args.first_seen or "", note=args.note or "")
+    except env.MachineRegistryError as e:
+        print("machines: %s" % e, file=sys.stderr)
+        return 5
+    print("machines: %s %s" % (args.machine_id,
+          "registered" if wrote else "already registered (no-op)"))
+    return 0
+
+
 def cmd_quiet(args):
     """Sample the box and judge EVERY sample through `quiet.gate()` -- the
     same instrument and the same decision function a `run`'s pre-flight
@@ -496,6 +542,34 @@ primary `--testee` arm is unaffected (a refusal there still errors).
                    help="the store root (default: the canonical store; a "
                         "scratch store keeps its own index.tsv)")
     i.set_defaults(func=cmd_index)
+
+    im = sub.add_parser(
+        "import", help="[B137] land a FOREIGN store's records in the "
+                       "canonical store (validated; scratch / unknown or "
+                       "inconsistent machine / set-version-manifest "
+                       "mismatch / differing duplicate refused by name, "
+                       "nothing written on any refusal); re-indexes")
+    im.add_argument("foreign_store", help="the foreign store root (holds "
+                                          "records/)")
+    im.add_argument("--store", default=store.DEFAULT_STORE)
+    im.add_argument("--register-machine", metavar="ID", default=None,
+                    help="register this machine_id from the FOREIGN "
+                         "store's own machines.tsv row first (committed "
+                         "only if the whole import passes)")
+    im.set_defaults(func=cmd_import)
+
+    mc = sub.add_parser("machines", help="[B137] the machine registry "
+                                         "(store/machines.tsv)")
+    mc.add_argument("action", choices=("list", "register"))
+    mc.add_argument("--store", default=store.DEFAULT_STORE)
+    mc.add_argument("--machine-id")
+    mc.add_argument("--hostname")
+    mc.add_argument("--cpu-model", help="the CANONICAL slug (the record's "
+                                        "environment.cpu_model)")
+    mc.add_argument("--cores", type=int)
+    mc.add_argument("--first-seen")
+    mc.add_argument("--note")
+    mc.set_defaults(func=cmd_machines)
 
     q = sub.add_parser("quiet", help="sample the box and print the verdict")
     q.add_argument("--samples", type=int, default=1,

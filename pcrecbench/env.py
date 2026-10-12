@@ -271,6 +271,49 @@ def resolve_machine_id(store_root, hostname, cpu_model, ncores,
     return assign
 
 
+def register_machine(store_root, machine_id, hostname, cpu_model, ncores,
+                     first_seen="", note=""):
+    """Register a box in `<store>/machines.tsv` by hand (the multi-host
+    path, [B137]/O-90: a foreign box's records are imported, never measured
+    here, so `resolve_machine_id`'s probe-the-running-box route cannot name
+    it). Same rules as there: the id matches MACHINE_ID_RE, is never reused
+    for a different box, and a box never gets a second id. Re-registering the
+    identical row is a no-op. Returns True when a row was written."""
+    if not MACHINE_ID_RE.match(machine_id):
+        raise MachineRegistryError(
+            "machine id %r does not match %s (record_schema.md 6.5)"
+            % (machine_id, MACHINE_ID_RE.pattern))
+    for v in (hostname, cpu_model, ncores, first_seen, note):
+        if "\t" in str(v) or "\n" in str(v):
+            raise MachineRegistryError(
+                "a registry field holds a tab or newline: %r" % (v,))
+    key = (hostname, cpu_model, str(ncores))
+    for r in load_registry(store_root):
+        same_box = (r["hostname"], r["cpu_model"], r["cores"]) == key
+        if r["machine_id"] == machine_id:
+            if same_box:
+                return False
+            raise MachineRegistryError(
+                "machine_id %r is already registered for a DIFFERENT box "
+                "(hostname=%s cpu_model=%s cores=%s). Ids are never reused."
+                % (machine_id, r["hostname"], r["cpu_model"], r["cores"]))
+        if same_box:
+            raise MachineRegistryError(
+                "this box (hostname=%s cpu_model=%s cores=%s) is already "
+                "registered as %r; a box never gets a second id "
+                "(record_schema.md 6.5)"
+                % (hostname, cpu_model, ncores, r["machine_id"]))
+    os.makedirs(store_root, exist_ok=True)
+    path = registry_path(store_root)
+    new = not os.path.exists(path)
+    with open(path, "a", encoding="utf-8") as f:
+        if new:
+            f.write(REGISTRY_HEADER)
+        f.write("%s\t%s\t%s\t%s\t%s\t%s\n"
+                % (machine_id, hostname, cpu_model, ncores, first_seen, note))
+    return True
+
+
 # --------------------------------------------------------------- the block
 
 def describe(store_root, machine_id=None, timestamp=None, cc=None,

@@ -1053,6 +1053,15 @@ def provenance_tsv(prov, store):
 def build(args):
     store = os.path.join(ROOT, args.store)
     rows = index_rows(store)
+    _hosts = sorted({r["machine_id"] for r in rows})
+    if len(_hosts) > 1:
+        # [B137] multi-host: the front page states ONE machine's numbers
+        # (its provenance names it); picking by newest timestamp across
+        # hosts would silently choose a box. Refuse until it takes --machine.
+        raise SystemExit(
+            "frontpage: the store holds records of %d machines (%s); the "
+            "front page is single-host and does not pick one for you "
+            "([B137], O-90)" % (len(_hosts), ", ".join(_hosts)))
     an = Analysis(store, args.set, args.pin, rows)
     why = load_why(os.path.join(ROOT, args.why))
     prov = [("primary", args.set, s) for s in an.summaries()]

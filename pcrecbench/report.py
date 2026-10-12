@@ -4317,6 +4317,18 @@ def build_report(loaded, args, known_testee_ids=None):
             ))
     valid = dedup_valid
 
+    # [B137] MULTI-HOST (O-90): a report is PER HOST. Records of two
+    # machine_ids are never pooled into one cell (a cell's median over two
+    # boxes' trials is a number about neither); name the host with
+    # `--machine`. The cross-host view is a ratio between two per-host
+    # reports, never a pooled one.
+    _hosts = sorted({r.setup["environment"]["machine_id"] for r in valid})
+    if len(_hosts) > 1:
+        return None, (
+            "the selected records span %d machines (%s); a report is PER "
+            "HOST and never pools machine_ids into one cell -- add "
+            "--machine <id> (O-90, [B137])" % (len(_hosts), ", ".join(_hosts)))
+
     included = []
     subbench_versions = set()
     machines = set()
