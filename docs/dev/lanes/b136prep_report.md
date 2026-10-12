@@ -139,9 +139,9 @@ by-value `dfa_prefilter` edits (no size assertion on a mover row broke).
 - `pcrecbench/tests/test_report.py`: 104 passed, 0 failed.
 - check-list-axes/definitions/limits registries: archived == live (164/49 main, 75, 73), green.
 - `scripts/run_suite.sh --dry-run` rehearsal of the new entries (`pcrec-auto-noreqhandoff@00c97769`,
-  `pcrec-auto-utf8-noreqhandoff@00c97769`, `pcrec-auto-norevend`, `pcrec-auto@b8337c33`) on `email`: RESULT_DRY_PLACEHOLDER
-- Sidecar regeneration (`scripts/regen_sidecars.py`): RESULT_REGEN_PLACEHOLDER
-- FULL `make -k check`: RESULT_CHECK_PLACEHOLDER
+  `pcrec-auto-utf8-noreqhandoff@00c97769`, `pcrec-auto-norevend`, `pcrec-auto@b8337c33`) on `email`: the FIRST attempt failed on the lane's own environment (the worktree had no generated email subject trees; rc=1 per cell, `WINDOW_RUN_COMPLETE cells=0/4`) -- after `gen_subjects.py`/`gen_throughput_subjects.py`, 4/4 cells ran synthetic into a scratch store and indexed under the derived ids `pcrec_00c97769_auto-caps-simdna_noreqhandoff`, `..._noreqhandoff-utf8`, `pcrec_6b2dbd3e_auto-caps-simdna_norevend`, `pcrec_b8337c33_auto-caps-simdna` (the `testee@pin` mechanism and the four new configs work end to end; the gate read NOT QUIET during the rehearsal -- pcrecdev1's load -- which the dry-run overrides)
+- Sidecar regeneration (`scripts/regen_sidecars.py`): 87 sidecars, 0 failures (38 files differ, 76 lines: the `catalogue:` 3.18 -> 3.19 line only); `make check-interpret`: 261 passed / 0 FAILED; `make check-schema`: 6 accepted / 74 sabotages rejected / 0 WRONG; `make check-upstream` green
+- FULL `make -k check`: **OWED** (BOILERPLATE: a run over ~4 min is the manager's to launch). Exact command, from the merged MAIN tree: `cd /home/duxevents/pcrec-bench && (setsid gnutimeout 10800 make -k check > /var/tmp/pcrecbench/b136prep/final_check.log 2>&1; echo "DONE rc=$?" >> /var/tmp/pcrecbench/b136prep/final_check.log) & disown`; marker: last line `DONE rc=<n>`. Expected: check-harness = the four known pruned-build reds only (`capability: gen_patterns.py --check` cd371441, `KB-35 build_census` and `KB-35 program_identity --check` 25b1984f, `b108 acceptance mover` 751b9c6d); the targeted groups above (the ones this change can move) are already green
 
 ## 8. WINDOW PLAN (NOT RUN): docs/dev/lanes/b136_chain.sh
 
