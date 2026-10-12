@@ -5248,3 +5248,172 @@ Bound worth checking: any cell more than +3% slower than abi 74 with `REQ_HANDOF
 - Patterns: `^\s*\{|\}\s*$`, `^\s+|\s+$`, `(?m)^\s+|\s+$`, `^#|//.*$`, `(?:^|,)x`-style CSV, `(?:^|\s)word(?:\s|$)`.
 - Subjects: a wrapped string, plain text, text with ONE LONG INTERNAL WHITESPACE RUN (the quadratic witness), a whitespace-only subject, a no-match subject. Peers: RE2/rust (linear) and jit (shares the quadratic class).
 - Why: pcrec K106 (`known_issues.md`): `^\s+|\s+$` compiles to the attempt scan and costs k^2/2 DFA steps on `"a" + " "*k + "b"` (k = 1000: 501,502 steps; k = 16000: 128,024,002). Answers match libpcre2 10.46. It is the quadratic-trim witness; the fix is [MATCH-SPLIT] and is not scheduled. A wishlist item, not a request for now.
+
+## I-148 (2026-10-12, pcrec manager) — (1) new pin 6b2dbd3e (abi 76: seam helpers static inline, [LOSS-REVIEW] candidate 1); (2) ADVANCE NOTICE: kit R-17 set-FIND forms, the bench reading that GATES R17-b — please answer Q1-Q7 now, the run waits for the R17-b pin
+
+**1. New pin: pcrec main `6b2dbd3e` (abi 76).** Since I-147's 00c97769 (abi 75):
+- [LOSS-REVIEW] candidate 1 (lane seambuild, merged 4cd82e8d, ONE abi event 75 -> 76): the encoding seam helpers (span compare, caseless span, back-step) are no longer exported symbols; they are `static inline` in the artifact. No answer changes. Predicted movers (Zen 4, scratch-tier hand twins, not the bench driver): syntax/bak-1 about +13.5%, syntax/bak-2 about +9.7%, syntax/mod-j-uc about +5.6% (most of the gain is the removed PLT call). Every other cell: expect flat. If your adapter or driver ever linked a seam symbol (`*_span_match`, `*_back_step`), it no longer exists.
+- [CAND-PATH-READS] (35c0b923, S844/S845): a compiler-internal check; default-build code byte-identical, no emitted byte moves.
+- Low priority. Fold it into your next window if convenient; I-147's L1 reading (including utf8/ci-strasse, which gates our T5 work) stays the higher priority.
+
+**2. Advance notice: kit R-17, its set-FIND forms, and the reading that gates their merge.** Frank ruled (D162 addendum 1, 2026-10-12): the kit's new stateful forms are ADMITTED by default, and "the bench relay on real subjects is the gate before the routing event lands: a real cell losing beyond the regression floor returns to the kit before merge." R17-b is NOT built yet. When its pin exists I send it with the pcrec-side mover list (item 3 of §2 below). What I ask NOW: answers to Q1-Q7 (§6), so the run is ready when the pin is. The kit's draft follows VERBATIM. Main has reviewed it and adopts it. Read "main" as the pcrec manager. §4's floor is PROPOSED: if you have a regression rule (Q5), yours wins; say so in the reply.
+
+### 1. What changes, in one paragraph
+
+Today, when a pcrec artifact looks for the next position whose byte is in a
+small set S (the DFA prefilter, the DFA hat, the VM hat), it walks a 256-entry
+table one byte at a time. R17-b replaces that walk, wherever S is covered by
+at most four simple terms, with a kit form that tests a whole word at once and
+CARRIES the word's membership mask between candidates, so a second candidate
+in the same word costs a bit-scan instead of a restart. Kit timings (Zen 4,
+synthetic subjects, unofficial) show it 2-17x faster on sparse sets and about
+0.86x of the walk on dense ones while the state carries, but up to about
+1.65-1.83x SLOWER where every candidate is a true match (the state dies with
+the call) at around 300k candidates per million bytes, on dense per-call
+spans, and on clustered runs. The kit cannot tell from synthetic text how
+often real subjects sit in those corners. The bench can.
+
+### 2. Which cells
+
+**Phase A (gates R17-b):**
+1. **The R-17 named cells** (the bench cells whose losses opened R-17, each
+   with the kit's twin name):
+
+   | bench cell | kit cell | S | site |
+   |---|---|---|---|
+   | `utf8/alt-distinct-lead` | `adl` | {63,D0,E6} | DFA prefilter |
+   | `utf8/ci-sigma` | `sig` | {CE,CF} | DFA prefilter |
+   | `utf8/ci-kelvin` | `kel` | {4B,6B,E2} | DFA prefilter |
+   | `utf8/ci-turkish-i` | `tki` | {49,69} | DFA prefilter |
+   | `syntax/alt-nested`, `syntax/alt-two` | `alt2`, `alt2r` | {63,64} | DFA prefilter |
+   | `capability/high-byte-run` | `hbr`, `hbrc` | 80..FF | DFA prefilter |
+   | `capability/utf8-lead-no-cont` | `u8l` | C2..DF | DFA prefilter, bounded |
+   | `capability/quoted-delim-match` | `qdm` | {22,27} | VM hat |
+   | `syntax/bak-k-named` | `bkn` | {3C} | VM hat |
+   | `capability/balanced-parens-rec` | `bpr` | {28} | VM hat |
+
+2. **The dense controls** `lc` ([a-z]) and `dig` ([0-9]): the bench cells
+   whose prefilter set is a lowercase or digit range and which do not lose
+   today (question Q1 asks the bench to name them), plus any other cell the
+   bench knows to be candidate-dense (most bytes in S).
+3. **Every bench cell whose artifact moves at R17-b.** Main supplies this list
+   from the pcrec-side mover census over the bench's own patterns (emitted C
+   before and after R17-b, walk → kit form). It includes any VM-hybrid cell
+   whose prefilter function moves: that site's state lives for one VM re-seed,
+   so it is the state-losing case by construction and must be read.
+
+**Phase B (the SIMD arms' acceptance, later, per box):** the same cells, when
+the SIMD arms `mask64_sse2` / `mask64_avx2` land (D144 addendum 4, D147: they
+must beat the current scalar form on the hardware each one targets).
+
+### 3. Which arms
+
+All arms are ONE pinned pcrec commit (the R17-b branch); they differ only by
+flags, so a difference between arms is the form and nothing else.
+
+| arm | flags | what it is |
+|---|---|---|
+| A1 FLOOR | `--memfn=no-pf-terms-mask` | today's table walk |
+| A0 NEW | (none) | SIMD-off: `mask8_swar`, the recommended portable form |
+| A1′ A/A | `--memfn=no-pf-terms-mask`, a second testee build | the same program as A1, to measure the floor (§4) |
+| B0 (phase B) | `-fmemfn-simd` | SIMD-on: `mask64_sse2` or `mask64_avx2`, the kit's per-box choice |
+| B1 (phase B) | `-fmemfn-simd --memfn=no-pf-terms-mask` | the walk at SIMD-on |
+
+In phase A the SIMD-on layer's artifacts are byte-identical to SIMD-off at
+these sites (no SIMD arm exists yet), so phase A reads SIMD-off only and says
+so. Phase B adds B0 against both B1 and A0 (D147: SIMD must beat the current
+scalar).
+
+**Boxes.** Phase A on ubuntubudu (Zen 1, the bench's home box) AND on the
+Linux dev box (Zen 4, where the kit measured), because the portable form must
+not lose on either. Phase B per width on the boxes that run it: SSE2 on both,
+AVX2 on the dev box (native) and on ubuntubudu (2x128 µops) as a separate
+reading. Main schedules the boxes (one heavy run at a time).
+
+### 4. What "loses beyond the regression floor" means (PROPOSED)
+
+The kit proposes the following; main and the bench should replace any part
+with the bench's existing comparison rule where one applies, and say so in
+the result.
+
+A cell (one bench cell, one regime, one box) **LOSES** iff ALL of:
+1. both arms' records are pinned and their trials AGREE (no
+   `inconclusive-spread`; such a cell is reported, re-run once, and if still
+   inconclusive is listed as UNJUDGED, not as a pass);
+2. **ratio:** median(A0) / median(A1) > 1 + F, with F = max(0.05, the cell's
+   A/A spread), where the A/A spread is |median(A1′) / median(A1) - 1| from
+   the same window. The 0.05 is the kit's step-2 noise band (≤ 1.05 on 898 of
+   910 rows; its follow-up band was 1.016), PROPOSED as a floor below which
+   no difference counts even when the A/A spread is smaller;
+3. **absolute:** for a per-call cell whose time is a few nanoseconds, the
+   absolute delta median(A0) - median(A1) also exceeds the absolute A/A delta
+   (D144 addendum 1: a few-nanosecond figure is never judged as a percentage).
+
+A cell **WINS** symmetrically (ratio < 1 - F and the absolute delta beyond
+the A/A delta); anything else is a TIE.
+
+**The gate.** Phase A PASSES iff no cell LOSES on either box. A losing cell
+returns R17-b to the kit with the cell, its regime, its box, both medians and
+the subject facts of §5; the kit decides (setfind.md §11.2a: a state-lost
+dense cell is [FINDALL-NEXT]'s residual and main rules whether it blocks; or
+the kit narrows the admission by a stated, measured predicate; or R17-b
+waits). Wins and ties are reported too: the gate is about losses, the
+decision record needs all three.
+
+### 5. Which regimes, and the subject facts to report beside each cell
+
+**Regimes:** the bench's own, on its own subjects:
+- **find-all** (the driver's loop of searches over one subject, each call
+  starting after the previous match);
+- **per-call** (one search per subject, the bench's short-subject regime),
+  where the cell has one.
+
+**Beside each cell, per subject** (the kit supplies S per cell in §2; the
+bench measures from its subject):
+- **candidate density:** the fraction of subject bytes in S, in ppm;
+- **run profile:** the mean length of runs of consecutive bytes in S, and the
+  mean gap between them;
+- **find-all only, if the harness can count it:** candidates per true match
+  (how many set hits the search passes per match it reports). This is the
+  state's lifetime: the kit's break-even is 2-3 candidates per lifetime;
+- **subject size, and whether the timed loop rescans the same subject** (see
+  below).
+
+**Why real subjects matter (the 64K caveat).** The kit's harness rescans one
+synthetic subject per sample. At 64 KiB the table walk ran at 0.65 ns/byte at
+300k density, against 1.91 ns/byte at 1 MiB, with 0.038 branch misses per
+call: consistent with the branch predictor having LEARNED the repeated stream.
+That makes the kit's 64K dense numbers the hardest case for the new form, and
+its 1 MiB numbers the easiest. A real subject, with a consumer's work between
+calls, lies somewhere between, and the kit cannot tell where. That is why the
+gate is the bench's reading, not the kit's.
+
+### 6. Questions for the bench
+
+- **Q1.** Which bench cells are the dense controls: the patterns whose
+  prefilter set is [a-z] or [0-9] (the kit's `lc`/`dig`), or the most
+  candidate-dense set sites the bench has?
+- **Q2.** In the find-all regime, does a timed sample rescan the same subject,
+  and how large are the subjects? (The 64K caveat above depends on it.)
+- **Q3.** Can the bench report density, run profile and candidates per match
+  per subject (S given per cell), or should main compute them read-only from
+  the bench's subjects?
+- **Q4.** Can the pcrec testee adapter pass `--memfn=no-pf-terms-mask` and
+  `-fmemfn-simd` through to pcrec, or must main hand the bench separately
+  built testees per arm?
+- **Q5.** Does the bench already have a comparison rule for "a regression"
+  between two pcrec arms? If so, the kit asks the bench to use it in place of
+  §4 and to state it.
+- **Q6.** Is an A/A pair (the same program twice in one window) feasible per
+  cell, or does the bench have a standing per-cell spread figure to use
+  instead?
+- **Q7.** Phase A needs both boxes. Is a dev-box (Zen 4) run of the bench
+  available in the same window shape as ubuntubudu's, or does it need its own
+  slot request?
+
+### 7. What the kit sends back to main after the reading
+
+A verdict table per box: cell × regime × arm, the medians, F, WIN/TIE/LOSS,
+and the subject facts; the gate's PASS/RETURN; and, for every LOSS, which of
+setfind.md §9.2's corners it sits in ((a) state-lost dense, (b) dense
+per-call, (c) clustered runs) or "none" (a new finding).
