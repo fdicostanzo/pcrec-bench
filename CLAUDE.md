@@ -345,6 +345,13 @@ DENY_FLAGS + DENY_CONTROLS; I-145's 298-of-734 REPRODUCED EXACTLY (210
 end-minus-width / 88 landing, plain form x {caps, nocaps}; the whole-subject
 form moves nothing); docs/dev/lanes/b135s3_report.md carries the state-3
 window plan (docs/dev/lanes/b135s3_chain.sh, not run).
+2026-10-12: [B136] (lane b136prep, inbox I-147/I-148 §1) RE-PINNED to
+**6b2dbd3e (abi 76)**, `also_pins` = `00c97769` (abi 75, [REQ-HANDOFF-L1]),
+`b8337c33` (BASE): `RX_DFA_PREFILTER` gains `handoff`, `REQ_HANDOFF` carries
+K for six one-byte landmarks, abi 76 = the seam helpers static inline; shim
+floor STAYS 16; four new deny testees; window plan
+docs/dev/lanes/b136_chain.sh (not run); testees/pcrec/CLAUDE.md "Re-pin at
+6b2dbd3e".
 Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
@@ -496,7 +503,9 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **b8337c33, abi 74** ([B135] (d), 2026-10-10, lane
+  at a pinned commit — **6b2dbd3e, abi 76** ([B136], 2026-10-12, lane
+  b136prep, inbox I-147/I-148; `also_pins` 00c97769 (abi 75) + b8337c33;
+  testees/pcrec/CLAUDE.md "Re-pin at 6b2dbd3e"). Before it, **b8337c33, abi 74** ([B135] (d), 2026-10-10, lane
   b135s3, inbox I-145; pcrec main with [START-LANDING] SL1-SL4: the RECOVER
   slot gains `end-minus-width` and `landing` (no reverse machine), deny bits
   53/54; ONE abi step; `struct rx_info` unchanged, shim floor STAYS 16;

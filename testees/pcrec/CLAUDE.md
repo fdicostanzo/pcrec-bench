@@ -1,7 +1,10 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides forty-eight testees at the commit pinned in `configs.toml` (counted
-by `adapter.testees()` at the [B135] (d) re-pin to b8337c33 (adds none; the
+Provides fifty-two testees at the commit pinned in `configs.toml` (counted
+by `adapter.testees()` at the [B136] re-pin to 6b2dbd3e (adds FOUR deny arms:
+`pcrec-auto-noreqhandoff`, `pcrec-auto-utf8-noreqhandoff`,
+`pcrec-auto-norevend`, `pcrec-nocaps-norevend`); the [B135] (d) re-pin to
+b8337c33 (adds none; the
 [B135] re-pin to 7388f1c0 added none; the
 [B126] re-pin to 255bcdd8 added none; [B124]'s 60366d747 added
 two -- `pcrec-auto-nostartset` / `pcrec-vm-nostartset`); [B122]'s c4c70f2c
@@ -52,6 +55,8 @@ at the same pin — up from thirty-nine):
 | `pcrec-vm-nocaps`, `pcrec-vm-nocaps-in` | the same flags as `pcrec-vm` / `pcrec-vm-in`, plus `--no-captures` | ([B121], inbox I-125 Q2) THE FORCED-VM NOCAPS PAIR: mirrors `pcrec-nocaps`'s relationship to `pcrec-auto`, on the forced VM route — a like-for-like nocaps census against the existing caps pair. MEASURED: the compiling population is cell-for-cell IDENTICAL to `pcrec-vm`/`pcrec-auto`'s own on bench/capability@0.1 and bench/syntax@0.1 (124/128, 83/83) — `--no-captures` never refuses anything the forced VM route alone accepts |
 | `pcrec-dfa`, `pcrec-dfa-nocaps` | `--engine=dfa`[`, --no-captures`] | ([B121], inbox I-125 Q3) THE FORCED-DFA PAIR: the DFA route forced — a DIAGNOSTIC REQUEST, REFUSED rather than downgraded (unlike `auto`'s silent VM fallback). `pcrec-dfa` (captures on, the default) refuses every capturing-group pattern outright ("this pattern requires captures ... pass --no-captures for a DFA-only artifact, or omit --engine=dfa"), plus every backrefs/lookaround/k-reset/true-recursion pattern (VM-only regardless of captures). `pcrec-dfa-nocaps` additionally compiles every capturing-group pattern that carries none of those VM-only constructs (93/128 capability, 64/95 syntax vs 58/128, 57/95 for `pcrec-dfa`). THE REVERSE-POPULATION FINDING (Q3's own framing: "auto picks VM, a forced DFA would have won"): MEASURED EMPTY on bench/capability@0.1 and bench/syntax@0.1 at this pin, both forms — `auto` already prefers the DFA whenever it can represent the pattern under `--no-captures`, confirmed structurally too (`pcrec-nocaps` and forced `pcrec-dfa-nocaps` are PROGRAM-IDENTICAL, `tools/program_identity.py` v2, wherever both compile: 93/93 + 64/64, 0 changed). docs/dev/measurements/2026-10-01-b121-dfa-nocaps-census.txt |
 | `pcrec-auto-nostartset`, `pcrec-vm-nostartset` | the same flags as `pcrec-auto` / `pcrec-vm`, plus `-fno-start-set` | ([B124], pin 60366d747 / abi 65) THE [START-SET] DENY AXIS: both hats denied at the SAME pin (`--list-axes` `prefilter` rows `first-class` / `first-memchr-bounded` / `first-class-bounded`, bit 47) -- a VM attempt loop attempts at every position again (`vm_start_scan` `first-class` -> `none`, the 256-entry seek table gone) and a seeded DFA's bounded skip tests the escape set again (`first-*-bounded` -> the pre-abi-64 value). TWO siblings because the hats split by route: the VM hat fires on forced-VM unanchored artifacts with a non-nullable start set (`pcrec-vm-nostartset` vs `pcrec-vm` = stage 2's BEFORE/AFTER), the DFA hat on seeded DFA scans and hybrid prefilters `auto` reaches (`pcrec-auto-nostartset` vs `pcrec-auto` = stage 3's). The deny arm of the [B124] AFTER window. `config_extra` word `nostartset`, LAST in `DENY_FLAGS` order. See "Re-pin at 60366d747" |
+| `pcrec-auto-noreqhandoff`, `pcrec-auto-utf8-noreqhandoff` | the same flags as `pcrec-auto` / `pcrec-auto-utf8`, plus `-fno-req-handoff` | ([B136], pin 00c97769 / abi 75, inbox I-147 ask 1) THE [REQ-HANDOFF-L1] DENY ARM: BOTH the entry handoff and abi 75's re-entry removed (bit 46, listed on the `prefilter` AND `req-use` axes) -- the NO-handoff artifact, NOT main-before-L1 (it also removes K82's entry handoff, so it reproduces b8337c33's program only on the six patterns that gained their K at abi 75: census `to-B` on 12 of 12 rows). Measured at a NAMED pin: `pcrec-auto-noreqhandoff@00c97769` (the `@pin` mechanism, never bare). `config_extra` word `noreqhandoff` (ids `pcrec_00c97769_auto-caps-simdna_noreqhandoff`, `..._noreqhandoff-utf8`). See "Re-pin at 6b2dbd3e" |
+| `pcrec-auto-norevend`, `pcrec-nocaps-norevend` | `pcrec-auto` / `pcrec-nocaps` flags plus `-fno-rev-end` | ([B136], inbox I-147 ask 4 / rewtwin) [OPT-REVEND]'s reverse-from-end locate denied (`locate` axis, bit 52) at the SAME pin: the same-pin arm that settles whether O-96's +2..8% on litrun's whole forms is the Zen 1 box or the a15fb77b pin. `config_extra` word `norevend`. See "Re-pin at 6b2dbd3e" |
 | `pcrec-local` | `--features all` + `$PCREC_LOCAL_FLAGS` | **a PROVIDED binary, `$PCREC_BIN`** ([B10], Frank's I-4 (c)): the edit-test loop's testee. No pin, SCRATCH TIER BY CONSTRUCTION, never in `store/`, never ranked. See below |
 
 | file | role |
@@ -669,6 +674,89 @@ steps, and records both in its report:
    to be named in the re-pin's report and the next window's ledger (the
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
+
+## Re-pin at 6b2dbd3e (abi 74 -> 76) — 2026-10-12, lane b136prep, inbox I-147 / I-148 section 1
+
+The canonical pin is **6b2dbd3e** (abi 76); `configs.toml` carries
+`also_pins = ["00c97769", "b8337c33"]` (00c97769 = abi 75, [REQ-HANDOFF-L1],
+the AFTER of the handoff and the BEFORE of the seam step; b8337c33 = abi 74,
+the BASE of I-147 ask 1). a15fb77b and 7388f1c0 left the allowlist (their
+builds stay on disk). TWO abi steps, ONE driver build serves all three pins
+(`check_b135_two_pin_window`: same sha256, no rebuild). `struct rx_info` is
+UNCHANGED across both steps (the emitted struct, comment-stripped and
+whitespace-normalised, md5 `11f44615...`, 580 chars, identical at b8337c33,
+00c97769 and 6b2dbd3e): the **shim floor STAYS 16**, no shim/driver/timed
+byte moved (`git diff master` empty; the abi-sabotage arms pass). ~/pcrec
+lacked both new pins (read-only), so they were built from a throwaway clone,
+`PCREC_SRC=/var/tmp/pcrecbench/b136prep/pcrec` (nothing written under ~/pcrec,
+BD2); builds sit at the normal `build/pcrec-<pin>/`.
+
+1. **abi 75 [REQ-HANDOFF-L1]** (I-147 section 1), all confirmed BY VALUE
+   (`check_b136_stamps`, 30 checks incl. the 14-row mover table and the 15th nocaps mover):
+   `RX_REQ_HANDOFF` now also carries a K for a ONE-BYTE landmark: loglines
+   ipv6 "4", ipv4 "3", bounded dotted4 "3", syntax qnt-poss-brace "2",
+   grp-atomic-alt "2", utf8 cls-s-ucp "4" (all `none` at b8337c33);
+   `RX_DFA_PREFILTER` gains the closed-set value **`handoff`** (adapter
+   `dfa_prefilter` values + source/description prose; the registry
+   cross-check of declared values against the `prefilter` axis passes; the
+   reporter has no closed-set reader -- the value passes through and
+   `PREFILTER_VALUE_LEGEND` explains it only when a row carries it). The 14
+   movers under `--features all` equal I-147's list exactly (altwide
+   sfx-64/256/512, bounded dotted4, loglines ipv4/ipv6/kv-quoted, syntax
+   cls-fold-pair/cls-pair-ctl/mod-i/mod-r/qnt-poss-brace, utf8
+   ci-ascii-control/ci-strasse); grp-atomic-alt and cls-s-ucp take a K but
+   keep `memchr`. **A 15th mover, unlisted: capability
+   wild-secrets-username-password-pair under `--no-captures` only** (a VM
+   artifact under caps, a DFA one under nocaps: `byte-class` -> `handoff`, K 0).
+   `MEMFN_LIBC` stays `memchr` on dotted4/ipv4/ipv6/qnt-poss-brace (Kit R-15;
+   the relay draft that said otherwise is superseded). `-fno-req-handoff`
+   (no new bit, 46) is listed on the `prefilter` axis AND `req-use`; it is the
+   no-handoff artifact, NOT main-before-L1 (it also removes K82's entry
+   handoff: `to-B` on the six K-only-new patterns, `differs` on the K82
+   movers). `-fno-req-run` no longer turns `REQ_HANDOFF` to `none` where a
+   byte landmark exists (asserted on ipv6). Fallout in existing controls,
+   repaired by value: `-fno-offset-skip` on loglines uuid and on `abc` now
+   lands on `handoff` (the handoff row sits ahead of the DFA hat / memchr
+   in the `prefilter` table), so the b124 uuid arm needs
+   `-fno-req-handoff` to restore c4c70f2c's program; ledger ipv6 and kv-quoted
+   read `handoff`.
+2. **abi 76 [LOSS-REVIEW] candidate 1** (I-148 section 1): the encoding seam
+   helpers (span compare, caseless span, back-step) are `static inline`, no
+   longer exported. No adapter/driver/shim/tool symbol references a
+   `*_span_match` / `*_back_step` (grep over testees/, tools/, pcrecbench/,
+   scripts/: the only hits are selfcheck's own historical text probes of OLD
+   artifacts). Census: 18 patterns x {caps, nocaps} x {plain, whole} change
+   (all VM): backreference artifacts -69 B (capability doubled-word,
+   dup-param-detect, phone-palindrome-6, quoted-delim-match, tag-pair-match,
+   tag-depth3-bound; syntax bak-1, bak-2, bak-g-rel, bak-k-named, bak-py,
+   mod-j-uc) and lookbehind artifacts -29 B (syntax lkb-pos, lkb-neg; utf8
+   asr-lb-fixed/varwidth/neg/class); nothing else moves a byte. I-148's three
+   predicted timing movers are inside the 18. The b126 poss-B identity arm
+   (`-fno-poss-bref-first` == 60366d747's `.text`) can no longer hold at
+   6b2dbd3e for a backreference pattern; it is asserted at 00c97769 and the
+   pin's own denial must still move the code.
+3. **Registries re-archived** (headers chained, bodies verbatim; 00c97769
+   and 6b2dbd3e print BYTE-IDENTICAL registries on all four surfaces):
+   `list_axes.tsv` MAIN 163/49 -> **164/49** (`prefilter` +1 row `handoff`,
+   RX_DFA_PREFILTER, deny bit 46 `-fno-req-handoff`, later orders shift 5-12
+   -> 6-13; the `req-use` `handoff` row's applies text reworded);
+   `#section memfn` 3 -> 6 rows (`vrun-trim`, `vrun-pad`,
+   `precheck-assign-byte`, [MEMFN] denies, read by nothing here);
+   definitions (75) / limits (73) / schema (79) byte-identical.
+4. **Size books** (measured, not assumed flat): the compile census
+   (`docs/dev/measurements/2026-10-12-b136prep-census.txt`, 1,468 rows):
+   L1 moves the 33 plain rows above (e.g. ipv6 31,927 -> 31,179 B, dotted4
+   29,790 -> 29,042, qnt-poss-brace 24,314 -> 24,962 (+648), cls-s-ucp
+   +438) and nothing else, no stamp line added; the seam moves -69/-29 B on
+   the 72 rows above and nothing else. The ledger's two backreference rows
+   carry `B136_RESID` (-69 B emit and code).
+5. **Census** vs b8337c33 / 00c97769: step L1: 654 identical / 33 changed /
+   47 refused-both / 0 refusal movers (plain); whole-subject 688 / 0 / 46 / 0
+   (the handoff is a search-regime event only). Step seam: plain 651 / 36 /
+   47 / 0, whole 652 / 36 / 46 / 0.
+6. Four new DENY testees by the composition rule (above); the reporter's
+   `PREFILTER_VALUE_LEGEND` (not a version bump; bump with the first report
+   that carries `handoff`); catalogue **3.19** (`[[pin_order]]` + both pins).
 
 ## Re-pin at b8337c33 (abi 73 -> 74) — 2026-10-10, lane b135s3, inbox I-145 ([START-LANDING], state 3)
 
