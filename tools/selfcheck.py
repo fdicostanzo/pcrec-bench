@@ -12289,6 +12289,188 @@ def check_b135_two_pin_window():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+#: [B136] (pin 6b2dbd3e, abi 76; 00c97769 = abi 75 [REQ-HANDOFF-L1]; inbox
+#: I-147 section 1, MEASURED by lane b136prep at both builds). The 14
+#: patterns whose `RX_DFA_PREFILTER` moves to `handoff` at abi 75 (plain
+#: form, `--features all`; `-e utf8` for the utf8 set), asserted BY VALUE
+#: with the `RX_REQ_HANDOFF` K each carries (a decimal K or, for a pattern
+#: whose K82 handoff already existed at b8337c33, the same K) and the
+#: prefilter b8337c33 printed. Last field: the encoding flags.
+B136_HANDOFF_MOVERS = (
+    # (set, pattern, K at 00c97769, prefilter at b8337c33, enc)
+    ("loglines", "ipv6", "4", "byte-class", ()),
+    ("loglines", "ipv4", "3", "byte-class", ()),
+    ("loglines", "kv-quoted", "32", "first-class-bounded", ()),
+    ("bounded", "dotted4", "3", "byte-class", ()),
+    ("altwide", "sfx-64", "9", "byte-class", ()),
+    ("altwide", "sfx-256", "9", "byte-class", ()),
+    ("altwide", "sfx-512", "9", "byte-class", ()),
+    ("syntax", "cls-fold-pair", "0", "memchr", ()),
+    ("syntax", "cls-pair-ctl", "0", "memchr", ()),
+    ("syntax", "mod-i", "0", "byte-class", ()),
+    ("syntax", "mod-r", "0", "byte-class", ()),
+    ("syntax", "qnt-poss-brace", "2", "memchr", ()),
+    ("utf8", "ci-ascii-control", "0", "byte-class", ("-e", "utf8")),
+    ("utf8", "ci-strasse", "2", "byte-class", ("-e", "utf8")),
+)
+
+#: I-147 section 1's six NEW one-byte-landmark K values (REQ_HANDOFF was
+#: `none` at b8337c33 on every one), and the two of them whose prefilter
+#: does NOT move to `handoff` (a landmark K without the re-entry).
+B136_K_VALUES = (
+    ("loglines", "ipv6", "4", ()), ("loglines", "ipv4", "3", ()),
+    ("bounded", "dotted4", "3", ()), ("syntax", "qnt-poss-brace", "2", ()),
+    ("syntax", "grp-atomic-alt", "2", ()),
+    ("utf8", "cls-s-ucp", "4", ("-e", "utf8")),
+)
+B136_K_NO_HANDOFF_PF = (("syntax", "grp-atomic-alt", "memchr"),
+                        ("utf8", "cls-s-ucp", "memchr"))
+#: I-147 section 1 (Kit R-15): the one-byte gate renders as a `memchr`
+#: ASSIGN, so `RX_MEMFN_LIBC` keeps `memchr` on these four.
+B136_MEMFN_MEMCHR = (("bounded", "dotted4"), ("loglines", "ipv4"),
+                     ("loglines", "ipv6"), ("syntax", "qnt-poss-brace"))
+
+
+def _b136_bin(pin):
+    mod = _pcrec_adapter_module()
+    proc = run([mod.PIN_SH, "--path", pin], timeout=60)
+    b = proc.stdout.strip() if proc.returncode == 0 else ""
+    return b if b and os.path.isfile(b) else ""
+
+
+def check_b136_stamps():
+    """[B136] (pin 6b2dbd3e, abi 76; 00c97769 abi 75; inbox I-147 sections
+    1-2, I-148 section 1). Asserted BY VALUE through the adapter at all
+    three builds (b8337c33 abi 74 = BASE, 00c97769 abi 75 = [REQ-HANDOFF-L1],
+    6b2dbd3e abi 76 = the seam helpers `static inline`):
+      1. the abi stamps 74 / 75 / 76;
+      2. the 14-pattern `handoff` mover list: `dfa_prefilter` reads the
+         b8337c33 value there and `handoff` at 00c97769 AND 6b2dbd3e, with
+         the K each carries;
+      3. the six one-byte-landmark K values (REQ_HANDOFF `none` at the BASE),
+         and the two that take a K without the `handoff` prefilter;
+      4. `-fno-req-handoff` (no new flag bit, listed on the `prefilter` axis
+         AND `req-use`): REQ_HANDOFF `none` and the prefilter leaves
+         `handoff` on every mover, at both new builds;
+      5. `-fno-req-run` no longer turns REQ_HANDOFF to `none` where a byte
+         landmark exists (it rides REQ_BYTE) -- I-147 section 1's last
+         bullet, with ipv6 as the witness;
+      6. `memfn_libc` stays `memchr` on dotted4, ipv4, ipv6, qnt-poss-brace
+         (Kit R-15; the relay draft's opposite claim is superseded);
+      7. the registry: `-fno-req-handoff` is on BOTH axes, bit 46."""
+    print("-- [B136]: [REQ-HANDOFF-L1] stamps (abi 75), the seam step (abi 76), -fno-req-handoff --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b136 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    bins = {"b8337c33": _b136_bin("b8337c33"), "00c97769": _b136_bin("00c97769"),
+            "6b2dbd3e": adapter.pin_binary()}
+    for pin, b in bins.items():
+        if not b:
+            bad("b136 stamps", "no build for %s (pin.sh %s first)" % (pin, pin))
+            return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b136-")
+    saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
+    cache = {}
+
+    def em(pin, sb, name, enc=(), extra=()):
+        key = (pin, sb, name, tuple(enc), tuple(extra))
+        if key not in cache:
+            os.environ["PCREC_BIN"] = bins[pin]
+            flags = ["--features", "all"] + list(enc) + list(extra)
+            cr = _b118_compile(adapter, tmp, "b136-%s-%s-%d" % (pin, name, len(cache)),
+                               " ".join(flags), _bench_pattern(sb, name))
+            cache[key] = (cr.engine_metadata if cr.outcome == "compiled" else
+                          {"_refused": "%s: %s" % (cr.outcome, cr.diagnostic)})
+        return cache[key]
+    try:
+        # 1. abi stamps
+        got = {pin: em(pin, "loglines", "ipv6").get("abi") for pin in bins}
+        if got == {"b8337c33": 74, "00c97769": 75, "6b2dbd3e": 76}:
+            ok("b136 abi stamps 74 / 75 / 76 read off the three builds", str(got))
+        else:
+            bad("b136 abi stamps 74 / 75 / 76", str(got))
+        # 2. the 14 movers
+        for sb, name, k, pf74, enc in B136_HANDOFF_MOVERS:
+            miss = []
+            a = em("b8337c33", sb, name, enc)
+            if a.get("dfa_prefilter") != pf74:
+                miss.append("74 dfa_prefilter %r (want %r)" % (a.get("dfa_prefilter"), pf74))
+            for pin in ("00c97769", "6b2dbd3e"):
+                m = em(pin, sb, name, enc)
+                if m.get("dfa_prefilter") != "handoff":
+                    miss.append("%s dfa_prefilter %r (want handoff)" % (pin[:4], m.get("dfa_prefilter")))
+                if m.get("req_handoff") != k:
+                    miss.append("%s req_handoff %r (want %r)" % (pin[:4], m.get("req_handoff"), k))
+                if m.get("dfa_prefilter_offsets") != "none":
+                    miss.append("%s dfa_prefilter_offsets %r (want none)" % (pin[:4], m.get("dfa_prefilter_offsets")))
+                d = em(pin, sb, name, enc, ("-fno-req-handoff",))
+                if d.get("req_handoff") != "none" or d.get("dfa_prefilter") == "handoff":
+                    miss.append("%s -fno-req-handoff: req_handoff %r dfa_prefilter %r"
+                                % (pin[:4], d.get("req_handoff"), d.get("dfa_prefilter")))
+            name_ = "b136 handoff mover %s/%s" % (sb, name)
+            if miss:
+                bad(name_, "; ".join(miss))
+            else:
+                ok(name_, "74 %s -> handoff, K %s; deny -> none, prefilter leaves handoff"
+                   % (pf74, k))
+        # 3. the six K values
+        for sb, name, k, enc in B136_K_VALUES:
+            a = em("b8337c33", sb, name, enc).get("req_handoff")
+            miss = []
+            if a != "none":
+                miss.append("74 req_handoff %r (want none)" % a)
+            for pin in ("00c97769", "6b2dbd3e"):
+                v = em(pin, sb, name, enc).get("req_handoff")
+                if v != k:
+                    miss.append("%s req_handoff %r (want %r)" % (pin[:4], v, k))
+            if miss:
+                bad("b136 one-byte K %s/%s" % (sb, name), "; ".join(miss))
+            else:
+                ok("b136 one-byte K %s/%s" % (sb, name), "none -> %r" % k)
+        for sb, name, pf in B136_K_NO_HANDOFF_PF:
+            enc = ("-e", "utf8") if sb == "utf8" else ()
+            v = em("6b2dbd3e", sb, name, enc).get("dfa_prefilter")
+            if v == pf:
+                ok("b136 %s/%s takes a K without the handoff prefilter" % (sb, name), v)
+            else:
+                bad("b136 %s/%s takes a K without the handoff prefilter" % (sb, name),
+                    "dfa_prefilter %r (want %r)" % (v, pf))
+        # 5. -fno-req-run keeps the byte landmark's K
+        r = em("6b2dbd3e", "loglines", "ipv6", (), ("-fno-req-run",))
+        if r.get("req_handoff") == "4" and r.get("dfa_prefilter") == "handoff":
+            ok("b136 -fno-req-run no longer turns REQ_HANDOFF to none (ipv6 rides REQ_BYTE)",
+               "req_handoff %r" % r.get("req_handoff"))
+        else:
+            bad("b136 -fno-req-run keeps ipv6's K", "req_handoff %r dfa_prefilter %r"
+                % (r.get("req_handoff"), r.get("dfa_prefilter")))
+        # 6. memfn_libc
+        for sb, name in B136_MEMFN_MEMCHR:
+            vals = {pin: em(pin, sb, name).get("memfn_libc") for pin in ("00c97769", "6b2dbd3e")}
+            if set(vals.values()) == {"memchr"}:
+                ok("b136 memfn_libc stays memchr on %s/%s (Kit R-15)" % (sb, name), str(vals))
+            else:
+                bad("b136 memfn_libc stays memchr on %s/%s" % (sb, name), str(vals))
+        # 7. registry
+        rows = [r for r in mod.registry_rows()
+                if r.get("cli_flag") == "-fno-req-handoff"]
+        axes = sorted((r["axis"], r["candidate"], r.get("deny_bit", "")) for r in rows)
+        if axes == [("prefilter", "handoff", "46"), ("req-use", "handoff", "46")]:
+            ok("b136 registry: -fno-req-handoff is listed on `prefilter` AND `req-use`, bit 46",
+               str(axes))
+        else:
+            bad("b136 registry: -fno-req-handoff on two axes", str(axes))
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_list_axes_registry():
     """THE FOURTH REGISTRY SURFACE, ARCHIVED AND CHECKED ([B18], pcrec I-15
     (5), registry.md 6). Two facts:
@@ -16955,6 +17137,7 @@ def main():
     check_b126_stamps()
     check_b135_stamps()
     check_b135s3_stamps()
+    check_b136_stamps()
     check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()

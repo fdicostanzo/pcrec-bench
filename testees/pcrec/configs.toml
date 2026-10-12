@@ -984,3 +984,38 @@ engine_mode = "vm"
 captures = "on"
 flags = ["--features", "all", "--engine=vm", "-fno-start-set"]
 description = "pcrec --engine=vm with the [START-SET] VM HAT DENIED (-fno-start-set, bit 47): every position is attempted again (RX_VM_START_SCAN first-class -> none) at the SAME pin -- against pcrec-vm the VM hat's (stage 2's) BEFORE/AFTER, on the route where it fires ([B124], pcrec I-130)"
+
+# [B136] (pin 6b2dbd3e, abi 76; inbox I-147): THE [REQ-HANDOFF-L1] AND
+# [OPT-REVEND] DENY ARMS, defined by the composition rule (flag in `flags`,
+# axis derived by `effective_denies`, `config_extra` gains the DENY_FLAGS
+# word -- `noreqhandoff` / `norevend`, both rows pre-existing). They are
+# measured at a NAMED pin through `testee@pin` (scripts/run_window.sh), never
+# bare: `pcrec-auto-noreqhandoff@00c97769` is I-147 ask 1's deny arm (the
+# no-handoff artifact -- NOT main-before-L1: it also removes the K82 entry
+# handoff, so against `pcrec-auto@b8337c33` it is slower on exactly the
+# subjects K82 cured, I-147 section 1); `pcrec-{auto,nocaps}-norevend` is
+# ask 4's same-pin `-fno-rev-end` arm on litrun (rewtwin's box-or-pin
+# question). Answer-identical to their siblings by construction.
+[testees.pcrec-auto-noreqhandoff]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-req-handoff"]
+description = "pcrec defaults with the [REQ-HANDOFF] entry handoff AND the abi-75 re-entry DENIED (-fno-req-handoff, --list-axes `prefilter` + `req-use` rows, bit 46): no handoff at all -- the no-handoff artifact, NOT main-before-L1 (it also removes K82's entry handoff). I-147 ask 1's deny arm, measured at 00c97769 ([B136])"
+
+[testees.pcrec-auto-utf8-noreqhandoff]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-e", "utf8", "-fno-req-handoff"]
+description = "pcrec-auto-utf8 with -fno-req-handoff: the character-mode sibling of pcrec-auto-noreqhandoff, for the utf8 movers (ci-ascii-control, ci-strasse) of I-147 ask 1 ([B136])"
+
+[testees.pcrec-auto-norevend]
+engine_mode = "auto"
+captures = "on"
+flags = ["--features", "all", "-fno-rev-end"]
+description = "pcrec defaults with [OPT-REVEND]'s reverse-from-end locate DENIED (-fno-rev-end, --list-axes `locate` row, bit 52) at the SAME pin: an end-pinned body takes the forward scan + reverse pass again -- I-147 ask 4's same-pin arm on litrun ([B136])"
+
+[testees.pcrec-nocaps-norevend]
+engine_mode = "auto"
+captures = "off"
+flags = ["--features", "all", "--no-captures", "-fno-rev-end"]
+description = "pcrec-nocaps with -fno-rev-end: the nocaps sibling of pcrec-auto-norevend (O-96's litrun cells are measured caps and nocaps) ([B136])"
