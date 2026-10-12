@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "b8337c33"
+pin = "6b2dbd3e"
 
 # [B135] A SECOND pin measurable in the same window. `pin` is the canonical
 # one; a process selects one of these with $PCRECBENCH_PCREC_PIN (adapter.py
@@ -83,7 +83,12 @@ pin = "b8337c33"
 # [OPT-REVEND]; 7388f1c0 (abi 73) is its AFTER and state 3's cross-window
 # control; b8337c33 (abi 74, [START-LANDING]) is state 3 and the canonical
 # pin. The list is the allowlist -- an unlisted value is refused by name.
-also_pins = ["a15fb77b", "7388f1c0"]
+# [B136] (2026-10-12): the canonical pin ADVANCED b8337c33 -> 6b2dbd3e (abi
+# 76) and the list became [00c97769, b8337c33]: 00c97769 (abi 75,
+# [REQ-HANDOFF-L1]) is the AFTER of the handoff and the BEFORE of the abi-76
+# seam change; b8337c33 (abi 74) is the BASE of I-147 ask 1. a15fb77b and
+# 7388f1c0 are retired from the allowlist (their builds stay on disk).
+also_pins = ["00c97769", "b8337c33"]
 
 [testees.pcrec-auto]
 engine_mode = "auto"
