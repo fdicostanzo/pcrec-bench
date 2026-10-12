@@ -120,6 +120,42 @@ def cpu_mhz():
     return None
 
 
+# v1.8 ([B137], O-90): the ISA feature tokens a box reports. An ALLOWLIST
+# (plus every `avx512*`), because /proc/cpuinfo's x86 flags line is ~100
+# tokens of which most say nothing about what code a compiler may emit.
+CPU_ISA_X86 = frozenset((
+    "sse", "sse2", "sse3", "ssse3", "sse4_1", "sse4_2", "popcnt", "avx",
+    "avx2", "fma", "f16c", "bmi1", "bmi2", "lzcnt", "abm", "movbe", "aes",
+    "pclmulqdq", "sha_ni", "adx", "vaes", "vpclmulqdq", "gfni", "erms",
+    "fsrm", "rdrand", "rdseed", "clflushopt", "clwb", "avx_vnni", "amx_tile"))
+CPU_ISA_ARM = frozenset((
+    "fp", "asimd", "aes", "pmull", "sha1", "sha2", "sha3", "sha512", "crc32",
+    "atomics", "asimdrdm", "asimddp", "asimdhp", "fphp", "sve", "sve2",
+    "bf16", "i8mm", "lrcpc", "dcpop"))
+
+
+def parse_cpu_isa(cpuinfo_text):
+    """-> sorted list of ISA tokens from a /proc/cpuinfo text (x86 `flags`,
+    arm64 `Features`; the first such line, every core reports the same), or
+    None when the text carries neither line (the field is then omitted)."""
+    for line in cpuinfo_text.splitlines():
+        key, sep, val = line.partition(":")
+        if not sep:
+            continue
+        key = key.strip().lower()
+        if key not in ("flags", "features"):
+            continue
+        toks = set(val.split())
+        keep = {t for t in toks
+                if t in CPU_ISA_X86 or t in CPU_ISA_ARM or t.startswith("avx512")}
+        return sorted(keep)
+    return None
+
+
+def cpu_isa():
+    return parse_cpu_isa(_read("/proc/cpuinfo"))
+
+
 def governor():
     g = _read("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor").strip()
     return g or None
@@ -249,7 +285,7 @@ def describe(store_root, machine_id=None, timestamp=None, cc=None,
     host = platform.node() or "unknown"
     cpu = canon_cpu_model(craw)
     n = cores()
-    return {
+    block = {
         "machine_id": resolve_machine_id(store_root, host, cpu, n,
                                          assign=machine_id, timestamp=timestamp,
                                          fallback_roots=fallback_roots),
@@ -267,3 +303,9 @@ def describe(store_root, machine_id=None, timestamp=None, cc=None,
         # for it -- record.project() decides.
         "cpu_mhz": cpu_mhz(),
     }
+    # v1.8 ([B137], X35): omitted (never null) when the box reports no flags
+    # line -- the schema types it as an array.
+    isa = cpu_isa()
+    if isa is not None:
+        block["cpu_isa"] = isa
+    return block

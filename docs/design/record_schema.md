@@ -207,6 +207,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.5 | 2026-09-02 | [B30], `docs/dev/known_issues.md` KB-7, Frank's ruling: `$defs.free_text.maxLength` raised 8192 → 1,048,576 (1 MiB) — a HYGIENE bound against a stray blob in a text field, not a content limit; no rule's applicability changes, and no record's verdict of any kind changes (see the paragraph below) |
 | 1.6 | 2026-09-17 | lane `b44boolgrain`, Frank's Q3 boolean-grain ruling (`capability_set_v1.md` §5.6 option B; the finding lane `l6bvs` proved against `harness.outcome_for` and the schema): optional `testee.grain` (`full`/`boolean`, absent = `full`, §6.10), rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`) |
 | 1.7 | 2026-09-25 | [B88] (BD13, Frank's ruling; lane `b90repin`, riding the ce658cb7 re-pin): the `engine_metadata` declaration TYPE `sha256` (a value is 64 LOWERCASE hex digits, X15) -- an enum growth, MINOR by the rule above. Its first declared pair is pcrec's `program_sha256` (§7), the normalized program-identity hash the null-control band reads (`tools/program_identity.py` normalization v2); no rule's applicability changes for a record that declares no `sha256` pair, and every older record keeps its verdict |
+| 1.8 | 2026-10-12 | [B137] (O-90, pcrec I-138/I-139, multi-host; lane `b137import`): optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, §6.11) and rule X35 (present only on a record stamped >= 1.8; sorted) -- an optional-field ADDITION, MINOR by the rule above. Older records stay valid without it; `pcrecbench import` (store.py) is the other half of the multi-host design |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -801,6 +802,24 @@ GOVERNING RULING", Levels 1 and 2): every record's optional
   `schema/validate.py` enforces on every record stamped ≥ 1.6, not
   merely a fact this section states in prose.
 
+### 6.11 `cpu_isa` and the multi-host store (v1.8)
+
+`environment.cpu_isa` is the list of instruction-set feature tokens the
+box reports: on x86 the `/proc/cpuinfo` `flags` line, on arm64 its
+`Features` line, kept only where the token is in `env.py`'s allowlist
+(`CPU_ISA_X86` / `CPU_ISA_ARM`) or begins `avx512`, deduplicated and
+SORTED (X35). It is a fact about what the CPU can execute, probed per
+record, never typed. `machine_id` still names the box (6.5); the ISA list
+is what makes a cross-host difference attributable (a Zen 4 box with
+avx512 against a Zen 1 box without).
+
+MULTI-HOST (outbox O-90): one canonical store holds records from several
+machines, each landed by `python3 -m pcrecbench import <foreign-store>`
+(store.py `import_store`). A machine is registered in `store/machines.tsv`
+first (`pcrecbench machines register`, or `import --register-machine`).
+A report is PER HOST; the cross-host view is a ratio only; no reader
+pools two machine_ids into one cell (report.py `--machine`).
+
 ### 6.7 `kernel` and `compiler`
 
 `kernel` = `uname -s` and `uname -r`, lowercased, joined by `-`:
@@ -1052,6 +1071,7 @@ enumerated or normalized.
 | `environment.cpu_model` | slug | R | §6.6; FILTERABLE | §4.3 normalized identifier; A11 |
 | `environment.cpu_model_raw` | string | o | REPRODUCIBILITY-ONLY | the un-canonicalised `/proc/cpuinfo` line |
 | `environment.cpu_mhz` | number >0 | o | `/proc/cpuinfo` `cpu MHz` at RUN START | ADDITION: `governor` and `turbo` record the frequency POLICY; this records what the clock was actually doing when the run began. A thermally-throttled box under a `performance` governor looks identical in the policy fields and is not the same machine |
+| `environment.cpu_isa` | array of string, unique | o | `/proc/cpuinfo` `flags` (x86) or `Features` (arm64), filtered to the ISA allowlist in `env.py` (`CPU_ISA_X86`/`CPU_ISA_ARM` and every `avx512*`), SORTED; X35 | v1.8 ADDITION ([B137], O-90): the machine_id names a box, this names what its CPU can EXECUTE, so a record's engine route (SIMD, `-march` artifacts) is attributable when two hosts differ. Absent on pre-1.8 records and where the box reports no flags line; FILTERABLE |
 | `environment.cores` | integer ≥1 | R | FILTERABLE | the load threshold is a function of it (`compare.sh`'s `max(2.0, cores/2)`) |
 | `environment.kernel` | string | R | §6.7; FILTERABLE | §4.3 |
 | `environment.kernel_raw` | string | o | REPRODUCIBILITY-ONLY | as above |
@@ -1289,6 +1309,7 @@ both ways before being believed.
 | X32 | `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under gate_shape_v14.md §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/regimes; `rows_judged + rows_unjudged` = the record's row keys. The validator's recomputation is a DELIBERATE second implementation of §3.5 (no `pcrecbench` import) comparing INTEGER counts and the group key, never floats | v1.4: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise (X20's and X26's situation exactly) |
 | X33 | TWO-DIRECTIONAL: for `schema_version ≥ 1.4` the `trial_agreement` block is REQUIRED on every record; for `< 1.4` it is FORBIDDEN | v1.4: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one (X17 never looks at fields, so this needs its own rule and control) |
 | X34 | When `testee.grain` = `boolean`, no match row's `observed.span` is a non-null value | v1.6 (§5 ADDITIONS 8, §6.10): a boolean-grain testee's whole reason to declare itself is "I never know a span" — a record that declares `boolean` and then emits one anyway is lying about which of the two it is, in either direction |
+| X35 | `environment.cpu_isa` is present only on a record stamped >= 1.8, and its tokens are in sorted order | v1.8 ([B137]): a field on a record stamped before the version that defined it is a mis-stamped record (X33's argument); sorted so two hosts' ISA sets compare as lists |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
