@@ -17137,6 +17137,31 @@ def check_b137_import():
         bad("two-host (iii): viewer export refused without --machine",
             "rc=%s %s" % (pv.returncode, (pv.stderr or pv.stdout)[:200]))
 
+    fp = [sys.executable, os.path.join(ROOT, "tools", "frontpage.py"),
+          "--set", "capability@0.2", "--pin", "b8337c33"]
+    pf = run(fp + ["--store", two], cwd=ROOT, timeout=300)
+    if pf.returncode != 0 and "single-host" in (pf.stderr + pf.stdout) and \
+            host2 in (pf.stderr + pf.stdout):
+        ok("two-host (iii): front page refused without --machine")
+    else:
+        bad("two-host (iii): front page refused without --machine",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+    pf = run(fp + ["--store", two, "--machine", "no-such-host"], cwd=ROOT, timeout=300)
+    if pf.returncode != 0 and "no records for machine" in (pf.stderr + pf.stdout):
+        ok("two-host (iii): front page --machine of an unknown host refused")
+    else:
+        bad("two-host (iii): front page --machine of an unknown host refused",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+    pf = run(fp + ["--other-sets", "email-specimen@0.2", "loglines@0.1", "bounded@0.3",
+                   "altwide@0.3", "syntax@0.1", "utf8@0.1", "litrun@0.1",
+                   "--machine", "budu-ryzen1600", "--check"], cwd=ROOT, timeout=600)
+    if pf.returncode == 0:
+        ok("two-host (iii): front page --machine <host> accepted (the committed "
+           "store's --check stays clean)")
+    else:
+        bad("two-host (iii): front page --machine <host> accepted",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+
     # ---- (iv) cpu_isa
     x86 = "processor\t: 0\nflags\t\t: fpu sse2 avx2 avx512f avx512vl bmi2 hypervisor popcnt\n"
     arm = "processor\t: 0\nFeatures\t: fp asimd aes sha2 crc32 cpuid\n"
