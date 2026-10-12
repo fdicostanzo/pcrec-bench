@@ -178,6 +178,15 @@ def validate_file(path, python=None):
     return proc.returncode == 0, (proc.stdout or "") + (proc.stderr or "")
 
 
+def validate_file_batch(paths, python=None):
+    """One validator run over many files ([B137] `import`). -> (ok, output)."""
+    proc = subprocess.run([python or sys.executable, VALIDATE_PY,
+                           "--check-filename"] + list(paths),
+                          capture_output=True, text=True,
+                          env=dict(os.environ, LC_ALL="C"), timeout=3600)
+    return proc.returncode == 0, (proc.stdout or "") + (proc.stderr or "")
+
+
 def write(store_root, setup, rows, validate=True):
     """Write one record. -> (path, record_id).
 

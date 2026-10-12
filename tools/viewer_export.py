@@ -736,9 +736,24 @@ def main(argv=None):
                      help="merge this run's set list into the manifest "
                           "ALREADY on disk (for a --sets slice run that "
                           "must not blank out the other sets' entries)")
+    ap.add_argument("--machine", default=None,
+                     help="[B137] export ONE host's records (required once "
+                          "the store holds more than one machine_id: the "
+                          "viewer never pools hosts into one column)")
     args = ap.parse_args(argv)
 
     index_rows, index_rows_n = read_index(args.store)
+    _hosts = sorted({r["machine_id"] for r in index_rows})
+    if args.machine:
+        index_rows = [r for r in index_rows if r["machine_id"] == args.machine]
+        if not index_rows:
+            raise SystemExit("viewer_export: no records for machine %r (have: "
+                             "%s)" % (args.machine, ", ".join(_hosts)))
+    elif len(_hosts) > 1:
+        raise SystemExit(
+            "viewer_export: the store holds records of %d machines (%s); "
+            "the viewer is per host -- pass --machine <id> ([B137], O-90)"
+            % (len(_hosts), ", ".join(_hosts)))
     kept = dedup_newest_per_testee(index_rows)
     if not args.all_pins:
         kept = collapse_to_newest_pin(kept)

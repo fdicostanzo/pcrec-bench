@@ -264,8 +264,9 @@ archive-inbox:
 ## on top of it (a development slice); call
 ## `python3 tools/viewer_export.py` directly (no Makefile) for the old
 ## newest-pin-only export.
+VIEWER_MACHINE ?= budu-ryzen1600
 viewer-data:
-	$(PYTHON) tools/viewer_export.py --all-pins $(ARGS)
+	$(PYTHON) tools/viewer_export.py --all-pins --machine $(VIEWER_MACHINE) $(ARGS)
 
 ## frontpage: regenerate README.md's and docs/methodology.md's generated
 ## regions, docs/img/speedup_distribution.svg and docs/frontpage_provenance.tsv
@@ -276,13 +277,14 @@ viewer-data:
 FRONT_SET   ?= capability@0.2
 FRONT_PIN   ?= b8337c33
 FRONT_OTHER ?= email-specimen@0.2 loglines@0.1 bounded@0.3 altwide@0.3 syntax@0.1 utf8@0.1 litrun@0.1
+FRONT_MACHINE ?= budu-ryzen1600
 frontpage:
-	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER)
+	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER) --machine $(FRONT_MACHINE)
 
 ## frontpage-check: regenerate in memory, diff against the committed files,
 ## exit 1 on drift (the generated regions are stale against store/)
 frontpage-check:
-	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER) --check
+	$(PYTHON) tools/frontpage.py --set $(FRONT_SET) --pin $(FRONT_PIN) --other-sets $(FRONT_OTHER) --machine $(FRONT_MACHINE) --check
 
 ## check-frontpage: tools/frontpage.py's unit test (synthetic fixture, no store)
 check-frontpage:

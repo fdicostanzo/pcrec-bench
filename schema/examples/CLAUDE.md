@@ -122,6 +122,7 @@ File names are not chosen: rule X4 makes the name the record id plus
   span.jsonl` is its one-field-mutation reject-side control.
 
 - `boolgrain-example@0.1__example-boolscan_1.0.0_block-nosom-nocaps-simd__example-box__20260925T120000Z.jsonl`
+  -- the schema **v1.8** record `...20261012T120000Z` ([B137]: the v1.7 boolean-grain example re-stamped 1.8 carrying `environment.cpu_isa`; the X35 pair in `bad/` is built from it);
   -- the schema **v1.7** record ([B88], BD13, lane `b90repin`): the v1.6
   boolean-grain example above re-stamped 1.7 (timestamps moved to
   2026-09-25, so its record id differs) with ONE addition, a

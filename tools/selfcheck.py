@@ -17171,6 +17171,289 @@ def check_b105_tre_bracket_backslash_declaration():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def check_b137_import():
+    """[B137] (O-90, pcrec I-138/I-139): `pcrecbench import` and the
+    multi-host store, on a SYNTHETIC foreign store (the smallest committed
+    record re-stamped as a second machine, written under build/):
+
+      (i)   a clean import lands the record in the canonical layout, the
+            machine registered from the foreign registry, the index lists
+            both hosts; a second import is a NO-OP (identical bytes);
+      (ii)  every refusal fires BY NAME and writes NOTHING (the store's file
+            list and bytes are unchanged): scratch tier, unknown machine,
+            machine inconsistent with its registry row, set version
+            mismatch, manifest sha256 mismatch, a same-named record whose
+            bytes differ, a record the validator rejects, and a scratch
+            store as the TARGET;
+      (iii) two hosts are NOT POOLED: a report over the two-host store is
+            REFUSED naming --machine, with --machine each host's report
+            names only its own machine; the viewer exporter and the front
+            page refuse likewise;
+      (iv)  env.parse_cpu_isa on x86 / arm64 / no-flags cpuinfo text, sorted
+            and allowlisted, and a record the harness would write validates
+            with `cpu_isa` (the schema half is check-schema's x35 pair)."""
+    print("-- [B137] import: the multi-host store --")
+    import glob as _glob
+    import json as _json
+    import shutil as _shutil
+    from pcrecbench import env as _env, importer as _imp, store as _st
+    V = _env.V()
+
+    work = os.path.join(ROOT, "build", "b137-import")
+    _shutil.rmtree(work, ignore_errors=True)
+    os.makedirs(work)
+    sets = _imp._committed_sets(os.path.join(ROOT, "bench"))
+
+    # the smallest committed record whose set is committed at that version
+    cands = []
+    for f in _glob.glob(os.path.join(ROOT, "store", "records", "*", "*", "*.jsonl")):
+        with open(f, encoding="utf-8") as fh:
+            first = fh.readline()
+        st = _json.loads(first)
+        sb = st["subbench"]
+        if sets.get(sb["id"], (None,))[0] == str(sb["version"]) and \
+                st.get("status") == "measured":
+            cands.append((os.path.getsize(f), f))
+    if not cands:
+        bad("import: a base record to re-stamp", "none found")
+        return
+    base_path = min(cands)[1]
+    with open(base_path, encoding="utf-8") as fh:
+        base_lines = fh.read().rstrip("\n").split("\n")
+    base = _json.loads(base_lines[0])
+    rows = base_lines[1:]
+
+    def stamp(setup, machine, host, mutate=None):
+        d = _json.loads(_json.dumps(setup))
+        d["environment"]["machine_id"] = machine
+        d["environment"]["hostname"] = host
+        d["subbench"]["content_hash"] = sets[d["subbench"]["id"]][1]
+        if mutate:
+            mutate(d)
+        d["record_id"] = V.derive_record_id(d)
+        d["content_hash"] = {"algorithm": "sha256",
+                             "value": V.compute_content_hash(d, rows)}
+        return d
+
+    def write_rec(root, d, name_rid=None, raw_rows=None):
+        sb = d["subbench"]
+        dd = os.path.join(root, "records", "%s@%s" % (sb["id"], sb["version"]),
+                          d["testee"]["testee_id"])
+        os.makedirs(dd, exist_ok=True)
+        path = os.path.join(dd, (name_rid or d["record_id"]) + ".jsonl")
+        text = _json.dumps(d, sort_keys=True, separators=(",", ":"),
+                           ensure_ascii=False) + "\n" + "\n".join(raw_rows or rows) + "\n"
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        return path
+
+    def foreign(name, d, registry_row=True, **kw):
+        root = os.path.join(work, name)
+        write_rec(root, d, **kw)
+        if registry_row:
+            e = d["environment"]
+            with open(os.path.join(root, "machines.tsv"), "w") as fh:
+                fh.write(_env.REGISTRY_HEADER)
+                fh.write("%s\t%s\t%s\t%s\t%s\t\n" % (
+                    e["machine_id"], e["hostname"], e["cpu_model"], e["cores"],
+                    d["run"]["timestamp"]))
+        return root
+
+    def fresh_target(name):
+        root = os.path.join(work, name)
+        os.makedirs(os.path.join(root, "records"))
+        open(os.path.join(root, ".canonical"), "w").close()
+        e = base["environment"]
+        _env.register_machine(root, e["machine_id"], e["hostname"],
+                              e["cpu_model"], e["cores"], "2026-08-25T04:27:25Z")
+        write_rec(root, base)
+        _st.index(root)
+        return root
+
+    def snapshot(root):
+        out = {}
+        for dp, dn, fn in os.walk(root):
+            for f in fn:
+                p = os.path.join(dp, f)
+                with open(p, "rb") as fh:
+                    out[os.path.relpath(p, root)] = fh.read()
+        return out
+
+    host2 = "selfcheck-host2"
+    good = stamp(base, host2, "selfcheck-host2.invalid")
+
+    # ---- (i) clean import, registration, no-op re-import
+    tgt = fresh_target("t-clean")
+    fgn = foreign("f-clean", good)
+    try:
+        done, present = _imp.import_store(fgn, tgt, register_machine=host2)
+        ok("import (i): one record landed", "%d imported" % len(done))
+        regs = {r["machine_id"] for r in _env.load_registry(tgt)}
+        idx = open(os.path.join(tgt, "index.tsv")).read()
+        mcol = [l.split("\t")[4] for l in idx.splitlines()[1:]]
+        if host2 in regs and sorted(mcol) == sorted(
+                [host2, base["environment"]["machine_id"]]):
+            ok("import (i): machine registered, index lists both hosts")
+        else:
+            bad("import (i): machine registered, index lists both hosts",
+                "%s / %s" % (sorted(regs), idx[:200]))
+        before = snapshot(tgt)
+        done2, present2 = _imp.import_store(fgn, tgt)
+        if not done2 and len(present2) == 1 and snapshot(tgt) == before:
+            ok("import (i): a re-import of identical bytes is a no-op")
+        else:
+            bad("import (i): a re-import of identical bytes is a no-op",
+                "%d imported, %d present" % (len(done2), len(present2)))
+    except Exception as e:                                # noqa: BLE001
+        bad("import (i): clean import", "%s: %s" % (type(e).__name__, str(e)[:300]))
+
+    # ---- (ii) every refusal by name, nothing written
+    def refuse(label, needle, foreign_root, target, **kw):
+        before = snapshot(target)
+        try:
+            _imp.import_store(foreign_root, target, **kw)
+            bad("import (ii): %s refused" % label, "was NOT refused")
+            return
+        except _imp.ImportRefused as e:
+            text = str(e)
+        except _st.StoreError as e:
+            text = str(e)
+        if needle in text and snapshot(target) == before:
+            ok("import (ii): %s refused by name, nothing written" % label)
+        else:
+            bad("import (ii): %s refused by name, nothing written" % label,
+                "needle %r; unchanged=%s; %s" % (needle, snapshot(target) == before,
+                                                 text[:200]))
+
+    def scratch_mut(d):
+        d["tier"] = "scratch"
+        d["testee"]["binary"] = {"path": "/x/pcrec", "sha256": "0" * 64}
+    refuse("a scratch-tier record", "scratch-tier record",
+           foreign("f-scratch", stamp(base, host2, "selfcheck-host2.invalid",
+                                      scratch_mut)),
+           fresh_target("t-scratch"), register_machine=host2)
+    refuse("an unknown machine", "is unknown to",
+           foreign("f-unknown", good), fresh_target("t-unknown"))
+    tgt_inc = fresh_target("t-inconsistent")
+    _env.register_machine(tgt_inc, host2, "selfcheck-host2.invalid",
+                          base["environment"]["cpu_model"],
+                          base["environment"]["cores"] + 4)
+    refuse("a machine inconsistent with its registry row", "inconsistent with its registry",
+           foreign("f-inconsistent", good), tgt_inc)
+
+    def ver_mut(d):
+        d["subbench"]["version"] = "9.9"
+    refuse("a set version mismatch", "version mismatch",
+           foreign("f-version", stamp(base, host2, "selfcheck-host2.invalid",
+                                      ver_mut)),
+           fresh_target("t-version"), register_machine=host2)
+
+    def hash_mut(d):
+        d["subbench"]["content_hash"] = "f" * 64
+    d_hash = stamp(base, host2, "selfcheck-host2.invalid")
+    d_hash["subbench"]["content_hash"] = "f" * 64
+    d_hash["record_id"] = V.derive_record_id(d_hash)
+    d_hash["content_hash"] = {"algorithm": "sha256",
+                              "value": V.compute_content_hash(d_hash, rows)}
+    refuse("a manifest sha256 mismatch", "manifest sha256 mismatch",
+           foreign("f-hash", d_hash), fresh_target("t-hash"),
+           register_machine=host2)
+    # a same-named record whose bytes differ (the TARGET already holds it)
+    tgt_dup = fresh_target("t-dup")
+    _env.register_machine(tgt_dup, host2, "selfcheck-host2.invalid",
+                          base["environment"]["cpu_model"],
+                          base["environment"]["cores"])
+    write_rec(tgt_dup, good, raw_rows=rows[:-1] or rows)
+    refuse("a duplicate record_id with differing bytes", "DIFFER",
+           foreign("f-dup", good), tgt_dup)
+    # the validator rejects it (cores of the wrong type)
+    d_inv = stamp(base, host2, "selfcheck-host2.invalid")
+    d_inv["environment"]["cores"] = "twelve"
+    d_inv["content_hash"] = {"algorithm": "sha256",
+                             "value": V.compute_content_hash(d_inv, rows)}
+    tgt_inv = fresh_target("t-invalid")
+    _env.register_machine(tgt_inv, host2, "selfcheck-host2.invalid",
+                          base["environment"]["cpu_model"], "twelve")
+    refuse("a record the validator rejects", "FAILED validation",
+           foreign("f-invalid", d_inv), tgt_inv)
+    # a scratch store is not a target
+    scratch_t = os.path.join(work, "t-scratchstore")
+    os.makedirs(os.path.join(scratch_t, "records"))
+    refuse("a non-canonical TARGET", "CANONICAL store only",
+           foreign("f-ns", good), scratch_t)
+
+    # ---- (iii) two hosts are not pooled
+    two = tgt                                    # base host + host2, indexed
+    cli = [sys.executable, "-m", "pcrecbench", "report", "--store", two,
+           "--format", "tsv", "--grain", "set"]
+    pr = run(cli, cwd=ROOT, timeout=900)
+    if pr.returncode != 0 and "PER HOST" in pr.stderr and "--machine" in pr.stderr:
+        ok("two-host (iii): report over two machines refused naming --machine")
+    else:
+        bad("two-host (iii): report over two machines refused naming --machine",
+            "rc=%s %s" % (pr.returncode, (pr.stderr or pr.stdout)[:200]))
+    for mid in (host2, base["environment"]["machine_id"]):
+        pr = run(cli + ["--machine", mid], cwd=ROOT, timeout=900)
+        mline = [l for l in pr.stdout.splitlines() if "machines:" in l]
+        if pr.returncode == 0 and mline and \
+                all(m not in mline[0] for m in ({host2, base["environment"]["machine_id"]} - {mid})) \
+                and mid in mline[0]:
+            ok("two-host (iii): --machine %s report names only that host" % mid)
+        else:
+            bad("two-host (iii): --machine %s report names only that host" % mid,
+                "rc=%s %s %s" % (pr.returncode, mline, pr.stderr[:200]))
+    pv = run([sys.executable, os.path.join(ROOT, "tools", "viewer_export.py"),
+              "--store", two, "--out", os.path.join(work, "viewer-out")],
+             cwd=ROOT, timeout=600)
+    if pv.returncode != 0 and "--machine" in (pv.stderr + pv.stdout):
+        ok("two-host (iii): viewer export refused without --machine")
+    else:
+        bad("two-host (iii): viewer export refused without --machine",
+            "rc=%s %s" % (pv.returncode, (pv.stderr or pv.stdout)[:200]))
+
+    fp = [sys.executable, os.path.join(ROOT, "tools", "frontpage.py"),
+          "--set", "capability@0.2", "--pin", "b8337c33"]
+    pf = run(fp + ["--store", two], cwd=ROOT, timeout=300)
+    if pf.returncode != 0 and "single-host" in (pf.stderr + pf.stdout) and \
+            host2 in (pf.stderr + pf.stdout):
+        ok("two-host (iii): front page refused without --machine")
+    else:
+        bad("two-host (iii): front page refused without --machine",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+    pf = run(fp + ["--store", two, "--machine", "no-such-host"], cwd=ROOT, timeout=300)
+    if pf.returncode != 0 and "no records for machine" in (pf.stderr + pf.stdout):
+        ok("two-host (iii): front page --machine of an unknown host refused")
+    else:
+        bad("two-host (iii): front page --machine of an unknown host refused",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+    pf = run(fp + ["--other-sets", "email-specimen@0.2", "loglines@0.1", "bounded@0.3",
+                   "altwide@0.3", "syntax@0.1", "utf8@0.1", "litrun@0.1",
+                   "--machine", "budu-ryzen1600", "--check"], cwd=ROOT, timeout=600)
+    if pf.returncode == 0:
+        ok("two-host (iii): front page --machine <host> accepted (the committed "
+           "store's --check stays clean)")
+    else:
+        bad("two-host (iii): front page --machine <host> accepted",
+            "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
+
+    # ---- (iv) cpu_isa
+    x86 = "processor\t: 0\nflags\t\t: fpu sse2 avx2 avx512f avx512vl bmi2 hypervisor popcnt\n"
+    arm = "processor\t: 0\nFeatures\t: fp asimd aes sha2 crc32 cpuid\n"
+    got = (_env.parse_cpu_isa(x86), _env.parse_cpu_isa(arm),
+           _env.parse_cpu_isa("processor\t: 0\nmodel name\t: x\n"))
+    want = (["avx2", "avx512f", "avx512vl", "bmi2", "popcnt", "sse2"],
+            ["aes", "asimd", "crc32", "fp", "sha2"], None)
+    if got == want:
+        ok("cpu_isa (iv): x86 / arm64 / no-flags parse, sorted, allowlisted")
+    else:
+        bad("cpu_isa (iv): x86 / arm64 / no-flags parse", "%r" % (got,))
+    live = _env.cpu_isa()
+    if live is None or live == sorted(live):
+        ok("cpu_isa (iv): this box's list is sorted", "%d token(s)" % len(live or []))
+    else:
+        bad("cpu_isa (iv): this box's list is sorted")
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -17267,6 +17550,7 @@ def main():
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     check_b105_tre_bracket_backslash_declaration()
+    check_b137_import()
     print()
     print("check-harness: %d check(s) passed, %d FAILED"
           % (len(PASS), len(FAIL)))

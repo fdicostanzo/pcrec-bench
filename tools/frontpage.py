@@ -1053,6 +1053,18 @@ def provenance_tsv(prov, store):
 def build(args):
     store = os.path.join(ROOT, args.store)
     rows = index_rows(store)
+    _hosts = sorted({r["machine_id"] for r in rows})
+    if getattr(args, "machine", None):
+        # [B137] multi-host: the front page states ONE machine's numbers.
+        rows = [r for r in rows if r["machine_id"] == args.machine]
+        if not rows:
+            raise SystemExit("frontpage: no records for machine %r (have: %s)"
+                             % (args.machine, ", ".join(_hosts)))
+    elif len(_hosts) > 1:
+        raise SystemExit(
+            "frontpage: the store holds records of %d machines (%s); the "
+            "front page is single-host -- pass --machine <id> ([B137], O-90)"
+            % (len(_hosts), ", ".join(_hosts)))
     an = Analysis(store, args.set, args.pin, rows)
     why = load_why(os.path.join(ROOT, args.why))
     prov = [("primary", args.set, s) for s in an.summaries()]
@@ -1093,6 +1105,9 @@ def main(argv=None):
     ap.add_argument("--out-support-svg", default="docs/img/pattern_support.svg")
     ap.add_argument("--out-provenance", default="docs/frontpage_provenance.tsv")
     ap.add_argument("--why", default="docs/frontpage_why.tsv")
+    ap.add_argument("--machine", default=None,
+                    help="[B137] state ONE host's numbers (required once the "
+                         "store holds more than one machine_id)")
     ap.add_argument("--check", action="store_true",
                     help="regenerate in memory, diff against disk, exit 1 on drift")
     args = ap.parse_args(argv)

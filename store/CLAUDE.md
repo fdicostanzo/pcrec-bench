@@ -48,5 +48,7 @@ proves both by sabotage (a scratch record planted by hand). The marker
 is a file rather than a path comparison so the rule holds from a
 worktree, whose `store/` is a checkout of this same tree.
 
+MULTI-HOST ([B137], O-90): `store/` is the ONE canonical store for every host. A foreign host's local store comes home via `python3 -m pcrecbench import <foreign-store>` (validated; refusals by name, nothing written on any; see `pcrecbench/importer.py`), after its machine is registered in `machines.tsv` (`pcrecbench machines register ...` or `import --register-machine ID`). Readers are per host: a report/viewer export/front page over a store with more than one machine_id refuses (reports and the viewer take `--machine`); the trend report filters its configured machine.
+
 `.canonical` is committed. Do not create one in a scratch store; do not
 delete this one.
