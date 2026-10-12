@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.18"
+catalogue_version = "3.19"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,14 @@ catalogue_version = "3.18"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.19 (2026-10-12, lane b136prep, [B136], inbox I-147/I-148): MINOR, a
+# `[[pin_order]]` append only -- TWO pins, in order: `00c97769` (abi 75:
+# [REQ-HANDOFF-L1] -- `RX_REQ_HANDOFF` also carries a K for a ONE-BYTE
+# landmark, `RX_DFA_PREFILTER` gains `handoff`, `-fno-req-handoff` listed on
+# the `prefilter` axis too) and `6b2dbd3e` (abi 76: [LOSS-REVIEW] candidate 1,
+# the encoding seam helpers `static inline`; no registry change). Adjacent
+# with `b8337c33`. No rule predicate/threshold/inputs/slots moved.
 #
 # 3.18 (2026-10-10, lane b135s3, [B135] (d), inbox I-145): MINOR, a
 # `[[pin_order]]` append only -- `b8337c33` (abi 74: [START-LANDING] -- the
@@ -293,7 +301,8 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "d34c9131", "cd371441", "a770139e", "cf0962e3", "25b1984f",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
-          "60366d747", "255bcdd8", "a15fb77b", "7388f1c0", "b8337c33"]
+          "60366d747", "255bcdd8", "a15fb77b", "7388f1c0", "b8337c33",
+          "00c97769", "6b2dbd3e"]
 
 # ===================================================== class R-STATUS ==
 

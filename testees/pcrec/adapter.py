@@ -721,7 +721,8 @@ METADATA_DECL = {
         "values": ["none", "memchr", "byte-class", "memchr-bounded",
                    "byte-class-bounded", "offset-set", "offset-set-bounded",
                    "run-pinned", "run-pinned-bounded",
-                   "first-memchr-bounded", "first-class-bounded"],
+                   "first-memchr-bounded", "first-class-bounded",
+                   "handoff"],
         "source": "<PREFIX>_DFA_PREFILTER, read through pb_dfa_prefilter(); "
                   "CHECKED against rx_info.prefilter (pb_info_prefilter()); "
                   "the value set is CHECKED against `pcrec --list-axes` "
@@ -753,7 +754,13 @@ METADATA_DECL = {
                        "by memchr, several by a 256-entry table -- and "
                        "re-seeding the scan state where the skip moved; "
                        "always `-bounded` (a seeded machine carries the "
-                       "D11 bound); removed by -fno-start-set",
+                       "D11 bound); removed by -fno-start-set. `handoff` "
+                       "([REQ-HANDOFF-L1], pcrec abi 75, [B136]) is the "
+                       "forward scan that RE-ENTERS the pre-check's "
+                       "handoff at each restart (re-finds the landmark, "
+                       "moves to hit - K when that is ahead); removed by "
+                       "-fno-req-handoff, which is listed on this axis AND "
+                       "on `req-use`",
     },
     "dfa_prefilter_offsets": {
         "type": "string", "scope": "pattern",
@@ -1825,7 +1832,10 @@ METADATA_DECL = {
                   "(--list-axes `req-use`, bit 46) as the deny control "
                   "that lands on \"none\"",
         "description": "where the search body's scan begins relative to "
-                       "the emitted run pre-check's first window hit c: a "
+                       "the emitted pre-check's first landmark hit c (abi 75, "
+                       "[REQ-HANDOFF-L1]: the run window where `req_run` is "
+                       "not `none`, else the ONE necessary byte `req_byte` -- "
+                       "a one-byte landmark now carries a K too); a "
                        "decimal K (the `req-use` table's `handoff` row -- "
                        "the scan starts at max(startpos, c - K), K the "
                        "window's maximum BYTE offset from the attempt "

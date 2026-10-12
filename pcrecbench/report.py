@@ -2559,6 +2559,21 @@ START_VALUE_LEGEND = (
 )
 
 
+#: [B136] (pin 00c97769, abi 75, [REQ-HANDOFF-L1]; inbox I-147): the value
+#: `prefilter=` gained, `handoff` (RX_DFA_PREFILTER; no other closed-set
+#: reader exists here -- the value passes through `_testee_legend_line`
+#: as-is). Printed only when a row in the report carries it, so no committed
+#: report changes by a byte and the reporter version is NOT bumped (flag:
+#: bump with the first report that carries it, as [B135] (d) did).
+PREFILTER_VALUE_LEGEND = (
+    ("handoff", "the forward scan RE-ENTERS the pre-check handoff at each "
+     "restart: it re-finds the one-byte or run landmark and moves to hit - K "
+     "(K = `REQ_HANDOFF`) when that is ahead (abi 75, [REQ-HANDOFF-L1]); "
+     "removed by `-fno-req-handoff`, which also removes the K82 entry "
+     "handoff"),
+)
+
+
 def _dfa_start_display(engine_metadata):
     """[B34]: `start=<pinned|reverse-pass>` ([B135] (d): the closed set is
     now {pinned, end-minus-width, landing, reverse-pass, attempt-start}, see
@@ -5733,6 +5748,13 @@ def render_markdown(rd: ReportData):
             for _v, _txt in START_VALUE_LEGEND:
                 if _v in _vals:
                     out.append("      - start=%s: %s" % (_v, _txt))
+            # [B136]: the abi-75 prefilter value, named ONLY where a legend
+            # carries it (same rule as start= above).
+            _pfs = {em.get("dfa_prefilter")
+                    for _sb, em, _pm in legend_by_key.values()}
+            for _v, _txt in PREFILTER_VALUE_LEGEND:
+                if _v in _pfs:
+                    out.append("      - prefilter=%s: %s" % (_v, _txt))
             # [B34] / [B32] (g): the VM-only frameless clause, named once.
             if any(_vm_frameless_display(em) is not None
                    for _sb, em, _pm in legend_by_key.values()):
