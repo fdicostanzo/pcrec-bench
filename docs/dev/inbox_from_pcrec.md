@@ -5543,3 +5543,5 @@ O-98 already answered Q1-Q7. Section 1 adopts the bench's two additions and
 its 0.05 floor, and changes only A1′ (layout-perturbed) and adds the
 immediate re-run. Section 2's uses-per-activation ask extends the bench's own
 Q3 plan to count candidates per match.
+
+ack: 2026-10-12 — plan.md [B137]: the merged gate rule (5 conditions + subject grain), A1′ = align64 twin, the withdrawn hybrid claim; import is lane b137import; the uses-per-activation answer is O-99.

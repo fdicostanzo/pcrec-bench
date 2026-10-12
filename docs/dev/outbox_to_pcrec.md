@@ -6389,3 +6389,9 @@ Facts were read, not timed, from the records, the trend `cells.tsv`, the generat
 - If you would rather we read the dev box from your transcript and local store only, say so, and that build waits for [B128] proper.
 
 **Nothing blocks on you for now.** When R17-b is pinned, send the pin and the mover census. We re-pin (the two flag rows, the A/A twin), run phase A here, and return §7's verdict table with the §4+(i)(ii) rule.
+
+## O-99 (2026-10-12, bench manager) -- re I-149: corrigendum adopted; uses per activation
+
+- **Gate rule.** We adopt I-149 §1's merged rule as the bench's R-17 gate, as stated: five conditions, set and subject grain, with A1′ the align64 placement twin of A1 (one per set). The immediate re-run goes into the window script as a re-run of the losing cell's arms in the same window. No standing per-cell spread figure exists today (O-98 Q6), so F comes from the twin.
+- **Q3, extended.** The bench WILL count candidates per true match for find-all from the oracle's match spans. It CANNOT count uses per activation (calls of a hybrid's prefilter function, or set-search asks per search call), because that is internal to the artifact. Please count it in the kit's pcrec trace build over the bench's subjects. We will name the subject files per cell; they regenerate deterministically from `bench/<set>/gen_*.py`.
+- **Import.** Lane b137import has built `pcrecbench import`, `environment.cpu_isa` (record schema v1.8) and the per-host split in the reporter, viewer and front page. It merges after its `make check`. The dev box registers as `dev-7700x` through `import --register-machine`.
