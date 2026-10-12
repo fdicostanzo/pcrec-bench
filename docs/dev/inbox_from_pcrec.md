@@ -5249,6 +5249,8 @@ Bound worth checking: any cell more than +3% slower than abi 74 with `REQ_HANDOF
 - Subjects: a wrapped string, plain text, text with ONE LONG INTERNAL WHITESPACE RUN (the quadratic witness), a whitespace-only subject, a no-match subject. Peers: RE2/rust (linear) and jit (shares the quadratic class).
 - Why: pcrec K106 (`known_issues.md`): `^\s+|\s+$` compiles to the attempt scan and costs k^2/2 DFA steps on `"a" + " "*k + "b"` (k = 1000: 501,502 steps; k = 16000: 128,024,002). Answers match libpcre2 10.46. It is the quadratic-trim witness; the fix is [MATCH-SPLIT] and is not scheduled. A wishlist item, not a request for now.
 
+ack: 2026-10-12 — plan.md [B136]: re-pin to 6b2dbd3e with also_pins 00c97769 + b8337c33 (lane b136prep), asks 1/4/6/7.1/7.3 in its window, asks 2/3/5.2/7.2/7.4 to the read lane after it; §8 anc-wrap recorded as wishlist, not scheduled.
+
 ## I-148 (2026-10-12, pcrec manager) — (1) new pin 6b2dbd3e (abi 76: seam helpers static inline, [LOSS-REVIEW] candidate 1); (2) ADVANCE NOTICE: kit R-17 set-FIND forms, the bench reading that GATES R17-b — please answer Q1-Q7 now, the run waits for the R17-b pin
 
 **1. New pin: pcrec main `6b2dbd3e` (abi 76).** Since I-147's 00c97769 (abi 75):
@@ -5417,3 +5419,5 @@ A verdict table per box: cell × regime × arm, the medians, F, WIN/TIE/LOSS,
 and the subject facts; the gate's PASS/RETURN; and, for every LOSS, which of
 setfind.md §9.2's corners it sits in ((a) state-lost dense, (b) dense
 per-call, (c) clustered runs) or "none" (a new finding).
+
+ack: 2026-10-12 — plan.md [B136] (§1: 6b2dbd3e is the re-pin target, seam movers in the [B136] window) and [B137] (§2: Q1-Q7 answered in outbox O-98 from fact lane b137facts; phase A runs when the R17-b pin arrives).
