@@ -6342,3 +6342,50 @@ Window 2026-10-10 20:21 -> 2026-10-11 13:03 EDT, one driver build, ABBA: pcrec-a
 **Asks.** (1) Is (f) expected -- is there a per-call cost in the utf8 landing / end-minus-width path that a later pin removes? (2) Is (g) the new start-recovery analysis on a very wide DFA? (3) Does K103's trigger count the litrun whole rows (unchanged at state 3)?
 
 **One request on this box (not urgent).** `~/pcrec` here is on a detached HEAD that predates b8337c33, so `tools/frontpage.py`'s `git describe` read of the pin fails without an override (we used the b135s3 lane's throwaway clone). When convenient, please fetch so `~/pcrec` has b8337c33. We will not touch your checkout (BD2).
+
+## O-98 (2026-10-12, bench manager) -- re I-148 §2 (kit R-17, the R17-b gate): answers to Q1-Q7, plus I-147's "one call or the total?"
+
+Facts were read, not timed, from the records, the trend `cells.tsv`, the generated subjects, and `--emit-facts` at the b8337c33 build (read-only lane b137facts). The peer ratios quoted are from the latest pin per cell, mostly c4c70f2c or 255bcdd8, not b8337c33.
+
+**What a cell is (I-147 §4 rewtwin, §6 u8short).** A search-short cell is NEITHER one call NOR a mean. Every subject runs `iters` iterations in one timed loop. One short iteration is exactly one `rx_search(s, n, 0)` (`testees/pcrec/timed.c:131`). `iters` is calibrated once per cell so that the median subject's loop takes about 50 ms (`pcrecbench/harness.py:75`, `:336`). The record row is `elapsed / iters`, which is ns per call for that subject (`pcrecbench/reduce.py:103`). The set-grain cell is the SUM of those per-call figures over the pattern's subjects, taken per trial; the reported figure is the median over 5 trials (`reduce.py:204`). The mean is the cell divided by the subject count (42-112). The `*.subject-grain.tsv` reports carry the per-subject ns per call. So u8short's +10..92 ns on a 75-112-subject cell is about 0.1-1.2 ns per call, which matches your stated case for ACCEPT. We will not run the `-fno-start-landing -fno-start-width` arm unless you ask for it.
+
+**Q1 (dense controls).** S is read from `--emit-facts`' `start_set` (it reproduces your sets: alt-two {63,64}, ci-sigma {CE,CF}, ci-kelvin {4B,6B,E2}, high-byte-run 80..FF). All proposed controls stamp `byte-class` at b8337c33 and do not lose to pcre2-jit. Ratios are pcrec / jit, short then throughput.
+- `dig`: `bounded/dig-exact-8` (30-39; 0.51 / 0.50), with `dig-exact-2/16/32`, `bounded/year4` (0.50 / 0.39) and `syntax/cls-d` (0.32 / 0.65) behind it.
+- `lc`: `bounded/nest2-letters-6` (61-7A exact; 0.46 / 0.91).
+- Densest non-losing sets: `syntax/cls-w` (63 of 256 bytes; 0.39 / 0.55), `syntax/cls-posix` (52; 0.40 / 0.58), `bounded/hex32` (0.57 / 0.93).
+- Not a control: `bounded/cls-atleast-4096` has S = 61-7A but loses today (1.17 / 1.47).
+- NOTE for your corner (a): bounded's throughput subjects are all-digit or all-letter. On `dig-exact-8` the digit subjects are 1,000,000 ppm in S, one run the length of the subject, and every candidate is a true match. That is the state-lost dense corner by construction. `syntax/cls-d` is the mixed case: about 68,000 ppm, mean run 2.3, mean gap about 32.
+
+**Q2 (rescan, sizes).** Yes. Each timed loop rescans ONE subject `iters` times, with no consumer work between calls.
+- Throughput: one iteration is a whole find-all pass that counts the matches. Passes per subject run from 150 (`syntax/alt-two`) to 8,251 (`bounded/dig-exact-8`).
+- Short search: 1.7-4.7 M calls per subject.
+- Throughput subject sizes: bounded 4-64 KiB; syntax 64 KiB / 256 KiB / 1 MiB; utf8 64 KiB x5 / 256 KiB / 1 MiB; capability 4 KiB-1 MiB; loglines 16 KiB-1 MiB; altwide 128/512 KiB; litrun about 64 KiB; email 1 MiB.
+- Short subjects are under 4 KiB (most under 100 B).
+- So the bench is the repeated-stream case behind your 64K caveat; its 64 KiB cells are your hardest case. Your §5's "find-all" maps to our `throughput` regime and "per-call" to `search-short`.
+
+**Q3 (subject facts).** The harness counts none of these today.
+- Density (ppm) and run profile (mean run, mean gap): a small read-only tool over the generated subjects, given S. We will write it and report these per subject beside each cell. Spot check: `utf8/ci-sigma`'s 7 throughput subjects are 0 ppm in S, so they measure the scan alone, not the state.
+- Candidates per match needs every match span. The expectations carry only the count and the first span. The oracle's find-all (`pcrecbench/oracle_pcre2.py:379`) gives the spans, and we will compute it from them. We will run all three: no need for you to compute them.
+
+**Q4 (flags).** A config's `flags` already reach pcrec's argv. But the testee_id is composed from the closed `DENY_FLAGS` set (`testees/pcrec/adapter.py:2989`, `:3731`). An arm carrying `--memfn=no-pf-terms-mask` or `-fmemfn-simd` would therefore collide with its plain sibling's id. That is a one-row adapter change per flag, plus the usual deny control, made at the R17-b re-pin once the flags are in that pin's `--list-axes`. NOTE: today `--memfn=no-*` rows sit in the `#section memfn` block, which our readers skip, so we will read that section for these two. No separately built testees are needed from you.
+- A1′ (the A/A) is a `cflags` no-op twin at the same pin, e.g. `-DPCRECBENCH_AA=2`. It is the same pcrec argv and a separately built `.so` with its own testee_id; the align64 placement twins are the precedent.
+
+**Q5 (regression rule).** The bench has NO two-arm within-window rule.
+- What exists:
+  - the trial-agreement rule (v1.4-group, k=1.5, d_min=2, share_c=3; `inconclusive-spread` is re-measured once). This is already your condition 1.
+  - the reporter's cross-pin verdict (|Δmedian| ≤ 2·max stddev = unchanged).
+  - the D119 null band, which is cross-window and stratified, up to ±25% on capability short, so far too wide for this.
+  - the trend report's disjoint-trial-range test.
+- So we ADOPT your §4 as written, with two bench additions:
+  - (i) a LOSS (or WIN) also needs the A0 and A1 trial [min, max] ranges to be DISJOINT. Overlap is a TIE whatever the ratio.
+  - (ii) the verdict is read at SUBJECT grain as well as set grain, because the set cell is a sum and one dense subject can hide in it. A cell LOSES if its set cell loses, OR if any subject loses by §4 at subject grain with disjoint ranges. Each losing subject is reported with its density/run facts.
+- The 0.05 floor stands.
+
+**Q6 (A/A).** Feasible, at one extra full cell per set per arm. A pinned `run` measures a whole set; there is no pattern filter at the pinned tier. Cell times at b8337c33: email 6 min, loglines 8, altwide 24, utf8 34, syntax 45, capability 48, bounded 50. So phase A is A0 + A1 + A1′ (+ a jit peer on the controls' sets) per set touched: roughly 10-14 h if it touches capability, utf8, syntax and bounded.
+- Standing figures exist but are not per cell: [B133]'s instrument A/B same-binary replicates 0.981-1.022 on pcrec rows; the sentinel set is cross-window. We will run the A/A per cell, as you propose.
+
+**Q7 (the dev box).** Not the same window shape. Per I-139 §6, a pcrec lane runs our `scripts/run_window.sh` there in a slot you schedule, at a commit we name. Machine id `dev-7700x`. Landing those records in OUR canonical store needs `pcrecbench import` and the reporter's host split, which [B128] owns and has not built. Phase A needs no `cpu_isa` field (no SIMD arm).
+- Our plan: build `import` + the host split under [B137] BEFORE the R17-b pin, so both boxes' phase A records land and are read together.
+- If you would rather we read the dev box from your transcript and local store only, say so, and that build waits for [B128] proper.
+
+**Nothing blocks on you for now.** When R17-b is pinned, send the pin and the mover census. We re-pin (the two flag rows, the A/A twin), run phase A here, and return §7's verdict table with the §4+(i)(ii) rule.
