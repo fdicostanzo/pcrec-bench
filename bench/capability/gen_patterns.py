@@ -647,6 +647,21 @@ EXT_BENCH_ROSTER = [
     ("pcrec-vm-nostartset", [t for t in REQUIRES_VOCAB
                              if t not in ("callouts", "conditionals",
                                           "control-verbs", "lookbehind-variable")]),
+    # [B136] (pin 6b2dbd3e): `-fno-req-handoff` / `-fno-rev-end` are
+    # EMIT-side denials (the handoff entry/re-entry, the reverse-from-end
+    # locate), the SAME [B101]/[B108]/[B120]/[B124] reasoning as the rows
+    # above: each satisfies exactly its base row's own tokens. Refusal sets
+    # MEASURED identical to the base rows (lane b136prep's census,
+    # docs/dev/measurements/2026-10-12-b136prep-census.txt: 0 refusal movers).
+    ("pcrec-auto-noreqhandoff", [t for t in REQUIRES_VOCAB
+                                 if t not in ("callouts", "conditionals",
+                                              "control-verbs", "lookbehind-variable")]),
+    ("pcrec-auto-norevend", [t for t in REQUIRES_VOCAB
+                             if t not in ("callouts", "conditionals",
+                                          "control-verbs", "lookbehind-variable")]),
+    ("pcrec-nocaps-norevend", [t for t in REQUIRES_VOCAB
+                               if t not in ("callouts", "captures", "conditionals",
+                                            "control-verbs", "lookbehind-variable")]),
     # THE FORCED-DFA + VM-NOCAPS TESTEES ([B121], pin fc719ca4, inbox
     # I-125 Q2/Q3; docs/dev/measurements/2026-10-01-b121-dfa-nocaps-
     # census.txt is the WITNESS CENSUS this row set rests on -- all four
@@ -1153,6 +1168,8 @@ for _utf8_id in (
     # `-utf8` config by the SAME one reason as every row in this loop).
     "pcrec-auto-nohybreseed-utf8", "pcrec-auto-clang-utf8",
     "pcrec-auto-clang-nohybreseed-utf8",
+    # [B136]: pcrec-auto-noreqhandoff's -utf8 sibling (I-147's utf8 movers).
+    "pcrec-auto-utf8-noreqhandoff",
 ):
     EXCLUDED_TESTEES[_utf8_id] = _UTF8_SIBLING_REASON
 del _utf8_id
