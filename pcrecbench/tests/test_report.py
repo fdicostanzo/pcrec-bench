@@ -3661,6 +3661,38 @@ def test_dfa_start_legend_b34():
            f"an abi-15 table carries neither the clause nor the note:\n{md_o}")
 
 
+def test_prefilter_handoff_legend_b136():
+    """[B136]: `dfa_prefilter` gains `handoff` (abi 75). It passes through the
+    legend line as `prefilter=handoff`, and its ONE explanation line renders
+    only when a row carries it -- a table without it is byte-identical to
+    before (no committed report carries one)."""
+    em = lambda pf: {"abi": 76, "engine": "dfa", "dfa_scan": "unanchored",  # noqa: E731
+                     "dfa_prefilter": pf, "dfa_prefilter_offsets": "none",
+                     "dfa_table": "premultiplied", "dfa_match": "unwrapped",
+                     "dfa_scan_edge": "none", "dfa_start": "reverse-pass"}
+    _check("prefilter=handoff" in report._testee_legend_line("t", em("handoff")),
+           "prefilter=handoff in the legend line")
+    _check([v for v, _t in report.PREFILTER_VALUE_LEGEND] == ["handoff"],
+           "one explained value")
+    setup = _mini_setup("pcrec_6b2dbd3e_auto-caps-simdna")
+    mk = lambda pf: {"kind": "compile", "pattern_id": "p1", "trial": 1, "seq": 1,  # noqa: E731
+                     "compile_outcome": "compiled", "cost_class": "compiled-aot",
+                     "cost": {"total_ns": 1000,
+                              "phases": [{"name": "emit-c", "elapsed_ns": 400},
+                                         {"name": "gcc", "elapsed_ns": 500},
+                                         {"name": "load", "elapsed_ns": 100}]},
+                     "artifact_bytes": 30000, "engine_metadata": em(pf)}
+    rd, err = report.build_report([_mk_loaded("h.jsonl", setup, [mk("handoff")])],
+                                  _args(store="x", include_synthetic=True))
+    _check(err is None, err)
+    md = report.render_markdown(rd)
+    _check("      - prefilter=handoff: " in md, f"the handoff legend line renders:\n{md}")
+    rd, _e = report.build_report([_mk_loaded("i.jsonl", setup, [mk("byte-class")])],
+                                 _args(store="x", include_synthetic=True))
+    _check("      - prefilter=handoff: " not in report.render_markdown(rd),
+           "no handoff line without the value")
+
+
 def test_dfa_start_closed_set_b135():
     """[B135] (d): `RX_DFA_START`'s closed set is {pinned, end-minus-width,
     landing, reverse-pass, attempt-start} (pcrec abi 73/74, inbox I-143/
@@ -5709,6 +5741,7 @@ TESTS = [
     test_scan_edges_legend_column,
     test_dfa_start_legend_b34,
     test_dfa_start_closed_set_b135,
+    test_prefilter_handoff_legend_b136,
     test_vm_frameless_legend_b34,
     # [B37]
     test_dfa_uniform_folds_legend_b37,

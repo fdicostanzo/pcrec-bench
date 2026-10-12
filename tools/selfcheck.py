@@ -12485,6 +12485,29 @@ def check_b136_stamps():
             else:
                 ok(name_, "74 %s -> handoff, K %s; deny -> none, prefilter leaves handoff"
                    % (pf74, k))
+        # 2b. the 15th mover (census, nocaps only): capability's
+        # wild-secrets-username-password-pair is a VM artifact under caps and
+        # a DFA one under --no-captures, where it takes the handoff.
+        nc = ("--no-captures",)
+        a = em("b8337c33", "capability", "wild-secrets-username-password-pair", nc)
+        miss = []
+        if a.get("dfa_prefilter") != "byte-class":
+            miss.append("74 dfa_prefilter %r (want byte-class)" % a.get("dfa_prefilter"))
+        for pin in ("00c97769", "6b2dbd3e"):
+            m = em(pin, "capability", "wild-secrets-username-password-pair", nc)
+            if m.get("dfa_prefilter") != "handoff" or m.get("req_handoff") != "0":
+                miss.append("%s dfa_prefilter %r req_handoff %r (want handoff / 0)"
+                            % (pin[:4], m.get("dfa_prefilter"), m.get("req_handoff")))
+        c = em("6b2dbd3e", "capability", "wild-secrets-username-password-pair")
+        if c.get("engine") != "vm" or c.get("dfa_prefilter") == "handoff":
+            miss.append("caps arm: engine %r dfa_prefilter %r (want vm, not handoff)"
+                        % (c.get("engine"), c.get("dfa_prefilter")))
+        if miss:
+            bad("b136 handoff mover #15 (nocaps only) capability/wild-secrets-username-password-pair",
+                "; ".join(miss))
+        else:
+            ok("b136 handoff mover #15 (nocaps only) capability/wild-secrets-username-password-pair",
+               "nocaps: byte-class -> handoff, K 0; caps: a VM artifact, no handoff")
         # 3. the six K values
         for sb, name, k, enc in B136_K_VALUES:
             a = em("b8337c33", sb, name, enc).get("req_handoff")
