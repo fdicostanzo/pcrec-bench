@@ -30,4 +30,5 @@ Not tested: the front-page refusal (code path is a 4-line guard; frontpage.py ne
 
 - `make check-schema`: 7 accepted, 76 rejected for the intended rule, 0 wrong; check_fields OK, check_rules OK (X35 has controls).
 - `check_b137_import` alone: 17/17 PASS. `check_run_smoke` + `check_v11_fields`: PASS (a real harness record validates at 1.8 carrying cpu_isa).
-- OWED to the manager: full `make check` (check-harness is >20 min; check-report result below if recorded; check-interpret golden/fixtures use a FROZEN snapshot and were not touched). Merge note: report.py touch is one block at "valid = dedup_valid"; no testees/ or adapter file touched.
+- `make check-report`: OK (rc 0, after the report.py change).
+- OWED to the manager: full `make check` (check-harness is >20 min; check-interpret golden/fixtures use a FROZEN snapshot and were not touched). Merge note: report.py touch is one block at "valid = dedup_valid"; no testees/ or adapter file touched.
