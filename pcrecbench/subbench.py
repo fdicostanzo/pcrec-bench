@@ -441,16 +441,23 @@ class Subbench:
         Path-sorted and path-prefixed, so a rename is a change and two files
         swapping contents is a change (a bare concatenation of file hashes
         would see neither)."""
-        parts = []
-        for dirpath, dirnames, filenames in os.walk(self.root):
-            dirnames[:] = sorted(d for d in dirnames if d not in GENERATED_DIRS)
-            for fn in sorted(filenames):
-                full = os.path.join(dirpath, fn)
-                rel = os.path.relpath(full, self.root)
-                with open(full, "rb") as f:
-                    h = hashlib.sha256(f.read()).hexdigest()
-                parts.append("%s\n%s\n" % (rel.replace(os.sep, "/"), h))
-        return hashlib.sha256("".join(parts).encode("utf-8")).hexdigest()
+        return content_hash_of(self.root)
+
+
+def content_hash_of(root):
+    """The `content_hash` rule (see `Subbench.content_hash`) over a sub-bench
+    directory, WITHOUT loading the set ([B137]: `import` checks the hash of
+    every committed set and must not need an engine binary to do it)."""
+    parts = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted(d for d in dirnames if d not in GENERATED_DIRS)
+        for fn in sorted(filenames):
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, root)
+            with open(full, "rb") as f:
+                h = hashlib.sha256(f.read()).hexdigest()
+            parts.append("%s\n%s\n" % (rel.replace(os.sep, "/"), h))
+    return hashlib.sha256("".join(parts).encode("utf-8")).hexdigest()
 
 
 def load(root):

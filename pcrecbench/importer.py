@@ -31,6 +31,7 @@ store is not an import target.
 import os
 import shutil
 import tempfile
+import tomllib
 
 from . import env, store, subbench
 
@@ -56,9 +57,12 @@ def _committed_sets(bench_root):
     if not os.path.isdir(bench_root):
         return out
     for d in sorted(os.listdir(bench_root)):
-        if os.path.exists(os.path.join(bench_root, d, "subbench.toml")):
-            sb = subbench.Subbench(os.path.join(bench_root, d))
-            out[sb.id] = (sb.version, sb.content_hash())
+        toml = os.path.join(bench_root, d, "subbench.toml")
+        if os.path.exists(toml):
+            with open(toml, "rb") as f:
+                cfg = tomllib.load(f)
+            out[cfg["id"]] = (str(cfg["version"]), subbench.content_hash_of(
+                os.path.join(bench_root, d)))
     return out
 
 
