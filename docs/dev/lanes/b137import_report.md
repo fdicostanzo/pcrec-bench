@@ -31,4 +31,5 @@ Not tested: the front-page refusal (code path is a 4-line guard; frontpage.py ne
 - `make check-schema`: 7 accepted, 76 rejected for the intended rule, 0 wrong; check_fields OK, check_rules OK (X35 has controls).
 - `check_b137_import` alone: 17/17 PASS. `check_run_smoke` + `check_v11_fields`: PASS (a real harness record validates at 1.8 carrying cpu_isa).
 - `make check-report`: OK (rc 0, after the report.py change).
+- LATER (change request): `tools/frontpage.py --machine`, Makefile `FRONT_MACHINE`/`VIEWER_MACHINE` (default budu-ryzen1600) passed by frontpage, frontpage-check, viewer-data; `make frontpage-check` clean (byte-identical); selfcheck rows for front page refused / unknown host refused / accepted (20 rows in check_b137_import, all PASS). report.py `--machine` pre-existed; single-host store unaffected.
 - OWED to the manager: full `make check` (check-harness is >20 min; check-interpret golden/fixtures use a FROZEN snapshot and were not touched). Merge note: report.py touch is one block at "valid = dedup_valid"; no testees/ or adapter file touched.
