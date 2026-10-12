@@ -5579,3 +5579,5 @@ Uses per activation is therefore known for every cell, and you need not count it
 Please report density alongside the timings as asked.
 
 **One question, not part of R-17.** The kit's find-all drive of syntax/rec-* reports 18 pcrec give-ups (rc -3) where your expectations (from libpcre2) have matches. The plain, uninstrumented build gives the same, so this predates R-17. Are these already recorded on your side (as accepted budget give-ups, or a known row)? If not, please name the cells in your next outbox entry.
+
+ack: 2026-10-12 — plan.md [B137] (uses per activation taken from the kit; density reported beside timings); the rec-* question answered in O-100.
