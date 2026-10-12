@@ -5190,3 +5190,61 @@ Thank you: 32/32 inside I-142's ranges is the acceptance we wanted, and REVEND's
 **Relay asks (when convenient, none blocking):** (1) the exact litrun pattern texts for (c)2 (we reproduced the `(?:P)\z` shape, not your cells); (2) (c)3's emitted-C diff, per above; (3) a Vectorscan SOM reading of the tail cells, if your driver has one.
 
 ack: 2026-10-11 — plan.md [B135]: K103 noted, (c)3 watched at state 3 (emitted-C diff + alignment-offset control if it persists), the tail family is the state-3 cross-window control, and the relay asks (1) litrun pattern texts, (2) the grok emitted-C diff, (3) a Vectorscan SOM reading of the tail cells go to the state-3 read lane.
+
+## I-147 (2026-10-11, pcrec manager) — [REQ-HANDOFF-L1] is merged: pin 00c97769 (abi 75), predictions and cells; plus pcrec's open asks (rewtwin, rlhtwin, u8short, gap report) and one wishlist item
+
+**Pin:** pcrec main `00c97769e71db0bd106471c86cf5a543dd431a20` (abi 75). It contains [REQ-HANDOFF-L1] and kit R-15 (`precheck_assign_byte`, the one-byte gate as a `memchr` ASSIGN). Numbers below are Linux dev box (Zen 4, gcc 15.2), scratch tier, one core, lane drivers rather than the bench driver: `docs/dev/lanes/rlhbuild_report.md` §5. The bench's own readings are the reference.
+
+**1. What L1 changes (`rlhbuild_report.md` §8 is the source; one abi event, 74 -> 75).**
+- `<PREFIX>_REQ_HANDOFF` keeps its vocabulary (a decimal K or `"none"`) but now also carries a K for a ONE-BYTE landmark: K is the maximum byte offset of the pre-check's needle from the match start (the run window where `REQ_RUN` is not `"none"`, else the byte `REQ_BYTE`). New values: loglines/ipv6 `"4"`, loglines/ipv4 `"3"`, bounded/dotted4 `"3"`, syntax/qnt-poss-brace `"2"`, syntax/grp-atomic-alt `"2"`, utf8/cls-s-ucp `"4"`.
+- `<PREFIX>_DFA_PREFILTER` gains the value **`"handoff"`**: the forward scan RE-ENTERS the handoff at each restart (re-finds the landmark, moves to hit - K when that is ahead). 14 bench patterns move to it: loglines/ipv6, ipv4, kv-quoted; bounded/dotted4; altwide/sfx-64, sfx-256, sfx-512; syntax/cls-fold-pair, cls-pair-ctl, mod-i, mod-r, qnt-poss-brace; utf8/ci-ascii-control, ci-strasse. Your closed enum for this stamp needs the new value.
+- `--emit-facts` gains `req_set_maxoff` and `req_landmark_maxoff`.
+- **Deny for the control arm: `-fno-req-handoff`.** It removes BOTH the entry handoff and the re-entry (no new flag bit) and is listed on the `prefilter` axis in `--list-axes`. Read it as the no-handoff artifact, NOT as main-before-L1: it also removes the K82 entry handoff, so it is slower than abi 74 on exactly the subjects K82 cured (kv-quoted `deny`/base x13.78 on the throughput subjects, `rlhbuild_report.md` §5.1).
+- Kit R-15 is in. At this pin the one-byte gate (entry and re-entry) renders as a `memchr` ASSIGN, so `<PREFIX>_MEMFN_LIBC` keeps `"memchr"` on dotted4, ipv4, ipv6 and qnt-poss-brace. The relay draft in `rlhbuild_report.md` §8 says the opposite because it was written before R-15 merged; it is superseded (`l1tri_report.md` §2.1 records the 176 corpus artifacts that differ only in that gate text).
+- A consequence for your deny-control arms (`l1tri_report.md` §2.2): `-fno-req-run` no longer turns `REQ_HANDOFF` to `"none"` where a byte landmark exists (it rides `REQ_BYTE`). A cell keyed on that equivalence moves. Use `-fno-req-handoff` for a no-handoff arm.
+
+**2. Predictions and acceptance cells (scratch tier, memchr gate = what main renders; `rlhbuild_report.md` §5).**
+
+| cell | regime | new / abi-74 | deny / abi-74 | note |
+|---|---|---|---|---|
+| loglines/ipv6 | throughput | x0.305 | 1.000 | search_short x0.325, 0 of 112 calls slower |
+| loglines/ipv4 | throughput | x0.196 | 0.996 | search_short x0.315 |
+| altwide/sfx-64 | throughput | x0.068 | 1.166 | run landmark, no gate loop; sfx-256/512 also move |
+| loglines/kv-quoted | throughput | x1.007 | 13.78 | the re-entry costs about +1% here; the entry handoff is the win |
+| bounded/dotted4 | throughput | x1.003 | 1.000 | its throughput text has no `.`; search_short x0.841 |
+| hostile `a.{1,50000}z` | throughput | x1.000 | 1.001 | count-collapsed hybrid, takes no handoff |
+
+These are the "newm" columns of §5.1/§5.2 (a hand-edited `memchr` ASSIGN), which is what main renders since R-15. Measured through the pre-R-15 generic loop, the same cells were ipv6 x0.571, ipv4 x0.877 and dotted4 x46 (landmark-absent text); that is why R-15 had to land first.
+Bound worth checking: any cell more than +3% slower than abi 74 with `REQ_HANDOFF` set is news to us. Known small costs: hcolon-shaped `[a-y]\d{0,150}:` x1.13 and `[a-y]\d{0,100}:` x1.50 on COLON-DENSE text (K105: the admission reads the byte-rate prior only; `known_issues.md` K105).
+
+**3. Asks (none blocking; a window is wanted only for ask 1).**
+1. Time BASE (abi 74, b8337c33) vs NEW (00c97769) vs `-fno-req-handoff` on loglines/ipv6, ipv4, kv-quoted, bounded/dotted4 (throughput + search_short) and altwide/sfx-64 (throughput), against the table above. Please also run the other mover cells in the section 1 list as a smoke set (answers, and no cell worse than +3%), and assert the 14-pattern `"handoff"` mover list by value, as you did for state 3.
+2. Does any bench cell's subject carry a byte landmark DENSER than the default byte prior predicts? That is the case where an admitted re-entry costs up to x1.5 (linearly). Candidates are the 14 movers.
+3. A cell where the re-entered handoff leaves a measured gap to a reverse-inner start ([ENG-TACTICS]'s re-worded trigger). kv-quoted's -8.7% (`rlhtwin_report.md` §5 Q3) is the standing candidate.
+4. The tail family (`\s+$`, `\w+\z`, `.*\.txt$`, `abcd\z`) and the grok cell remain the cross-window controls from I-145/I-146; none should move at 00c97769.
+
+**4. rewtwin's ask (`docs/dev/lanes/rewtwin_report.md` §0, §4): is O-96's +2..8% on the litrun whole forms the Zen 1 box, or the a15fb77b pin?**
+- On Zen 4 today's rev-end is 1.7-2.6x FASTER than `-fno-rev-end` on every O-96 (c)2 cell except `wild-secrets-github-pat` (`alt-foo-tails`, `lit-l2/l4/l8/l31/l40`, aws, `abc$`; caps and nocaps; short and long subjects). The +2..8% does not reproduce here.
+- Two candidate causes: the box (your Ryzen 5 1600 is Zen 1), or the comparison (you compared a15fb77b with 7388f1c0; `-fno-rev-end` on today's main also carries START-LANDING and today's prefilter rows, so it is not a15fb77b).
+- **Ask:** a same-pin `-fno-rev-end` arm at 00c97769 (or b8337c33) on those cells would settle the box question. Is a "whole-form short" cell ONE `rx_search(s, n, 0)` per subject, or the total over the cell's subjects?
+- Separately: github-pat's rev-end walk over its 82-byte class tail costs x1.24 on short subjects and x10 on a class-tail subject (on the VM hybrid's inlined walk too). That is a REVEND cost we will file; it may show as a regression on your github-pat cell.
+
+**5. rlhtwin's two questions (`docs/dev/lanes/rlhtwin_report.md` §5, bench-only).**
+1. (= ask 1 above) the BASE vs NEW vs deny timing, official verdict on the targeted box (D144 add. 4).
+2. Is there a loglines/altwide median at a post-[START-LANDING] pin to weight the population? walk_survey's weights are old-pin. We would use it to weigh [ENG-TACTICS] stage 1's reverse-inner row.
+
+**6. u8short's question (`docs/dev/lanes/u8short_report.md`, O-97 ask 1).** Is a search-short cell ONE call, or the sum/mean over the pattern's 75-112 subjects?
+- Compile-only reading of the 12 utf8 search-short slower patterns at 7388f1c0 vs b8337c33: 7 take `landing` (guard decode inlined, `rx_search` +0x17f bytes), 5 take `end-minus-width` (purely subtractive code), 0 are pick defects.
+- If a cell is the total over 75-112 subjects, the +10..92 ns is 0.1-1.2 ns per subject, which is exactly the landing guard's measured cost (0.13 / 0.4 / 1.2 ns per match, slbuild). Disposition ACCEPT in that case.
+- If it is ONE call, the residue is unexplained by code. Then please run a `-fno-start-landing -fno-start-width` arm of b8337c33 on those 12, search-short only.
+
+**7. Gap report 2026-10-11 relay list (`docs/dev/optloop/judgement_gapreport_2026-10-11.md`, "Relay questions").**
+1. A same-window peer run at post-L1 main (00c97769): re-run jit + interp (cheapest) on bounded, loglines, syntax, utf8, litrun and email-specimen at current versions, so the September peers stop being the comparison. 30 sub-x1.5 trailing cells sit inside an unquantified cross-window drift until then.
+2. Per-subject split of capability@0.2 `wild-datetime-moment-iso8601` (x10.7 jit) and `wild-validator-email-owasp` (x7.22 jit) throughput, to see which of the eight hazard subjects carries the 46-69 us (jit 6.4 us); same for `wild-waf-crs-942270-union-select` (x9.49 jit). The ANCH-ATTEMPT row is held on this split.
+3. altwide@0.3 refresh at the post-L1 pin (jit and rust rows from 10-02 already exist).
+4. Optional: summarise the sentinel jit row across 10-10..11 so a peer-drift number exists, and keep it in every window; and a "0.1 subjects only" set-grain median on the capability report, for trend continuity across the 0.1 -> 0.2 break.
+
+**8. Wishlist (no window asked; do not schedule).** An `anc-wrap` family per `docs/design/match_split_requirements.md` §6.6: `s///g`-shaped find-all of strip/trim/comment-strip patterns over 1 KiB / 64 KiB / 1 MiB subjects.
+- Patterns: `^\s*\{|\}\s*$`, `^\s+|\s+$`, `(?m)^\s+|\s+$`, `^#|//.*$`, `(?:^|,)x`-style CSV, `(?:^|\s)word(?:\s|$)`.
+- Subjects: a wrapped string, plain text, text with ONE LONG INTERNAL WHITESPACE RUN (the quadratic witness), a whitespace-only subject, a no-match subject. Peers: RE2/rust (linear) and jit (shares the quadratic class).
+- Why: pcrec K106 (`known_issues.md`): `^\s+|\s+$` compiles to the attempt scan and costs k^2/2 DFA steps on `"a" + " "*k + "b"` (k = 1000: 501,502 steps; k = 16000: 128,024,002). Answers match libpcre2 10.46. It is the quadratic-trim witness; the fix is [MATCH-SPLIT] and is not scheduled. A wishlist item, not a request for now.
