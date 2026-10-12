@@ -22,7 +22,7 @@
 #                                                        ~279 min (4.7 h)
 #   TOTAL ~1236 min = 20.6 h (the cell-length table is in the report).
 #
-# Completion: /var/tmp/b136win/chain.log ends `CHAIN_DONE`; each tier logs
+# Completion: /var/tmp/pcrecbench/b136win/chain.log ends `CHAIN_DONE`; each tier logs
 # `TIERn_DONE suite_rc=<rc>`; the suite log (build/windows/suite_*.log) ends
 # SUITE_RUN_COMPLETE with a `set <name> rc=0 <min> min` line per set; each
 # set's window log ends `WINDOW_RUN_COMPLETE cells=N/N`. `rc=4`
@@ -36,7 +36,7 @@
 # main-before-L1 (it also removes K82's entry handoff: I-147 section 1).
 # ONE driver build serves every pin; sha256 check below.
 cd /home/duxevents/pcrec-bench || exit 9
-W=/var/tmp/b136win; mkdir -p $W
+W=/var/tmp/pcrecbench/b136win; mkdir -p $W
 L=$W/chain.log
 echo "CHAIN_START $(date -Is) TIERS=${TIERS:-1 2 3 4}" >> $L
 # --- preconditions (a failure here aborts: nothing has been measured) ---
