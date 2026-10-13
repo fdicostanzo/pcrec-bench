@@ -1,0 +1,49 @@
+utf8 B/N/D(tier5): cells with pass_rate<1 or no number: 0
+DENY pattern set (69): ['alt-cyr-64', 'alt-distinct-lead', 'alt-mixed-width', 'alt-nearmiss', 'alt-shared-char', 'alt-shared-lead', 'asr-a-z', 'asr-b-ascii', 'asr-b-cyr', 'asr-b-midchar', 'asr-caret-ml', 'asr-dollar-ml', 'asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth', 'ci-ascii-control', 'ci-class-range', 'ci-e-acute', 'ci-greek-run', 'ci-kelvin', 'ci-long-s', 'ci-moskva', 'ci-neg-fold', 'ci-sigma', 'ci-strasse', 'ci-turkish-i', 'cls-boundary-range', 'cls-d-ascii', 'cls-dot', 'cls-dot-rep', 'cls-high-range', 'cls-lead-pair', 'cls-mixed', 'cls-neg-allhigh', 'cls-neg-cjk', 'cls-neg-single', 'cls-posix-alpha', 'cls-s-nbsp', 'cls-w-ascii', 'floor', 'lit-1ch-2b', 'lit-1ch-3b', 'lit-1ch-4b', 'lit-anchored-run', 'lit-cyr-run', 'lit-mixed-ascii', 'lit-nearmiss-run', 'lit-nfc-pair', 'lit-offset-at-head', 'lit-offset-at-tail', 'lit-run-3', 'lit-sharp-s', 'prp-cyrillic', 'prp-greek', 'prp-greek-sc', 'prp-han', 'prp-l', 'prp-latin', 'prp-lu', 'prp-n', 'prp-notl', 'prp-zs', 'qnt-bounded-4b', 'qnt-class-run', 'qnt-counted-3b', 'qnt-dot-bounded', 'qnt-lazy-2b', 'qnt-plus-2b']
+compile rows in D: 147, refused/none: []
+utf8 DENY/NEW, all set cells: n=138 DISJ=37  n=138 min 0.883 p5 0.955 p25 0.995 med 1.000 p75 1.002 p95 1.273 max 2.958
+   > +3%: 10
+     lit-nfc-pair                                 large-subject-throughput plain         x2.958 DISJ  233878.8[233618.5..234034.1] -> 691929.8[691243.4..692110.0]
+     ci-strasse                                   large-subject-throughput plain         x2.044 DISJ  623351.7[622573.4..623770.1] -> 1274328.9[1270620.8..1299501.1]
+     lit-1ch-4b                                   large-subject-throughput plain         x1.884 DISJ  204700.0[204512.5..204922.9] -> 385646.4[385183.5..386153.9]
+     lit-1ch-3b                                   large-subject-throughput plain         x1.630 DISJ  155406.5[154983.8..155631.5] -> 253378.5[252602.4..253551.2]
+     asr-lb-neg                                   large-subject-throughput plain         x1.510 DISJ  133126.7[132524.5..133648.7] -> 200995.1[200503.9..201644.3]
+     alt-shared-char                              large-subject-throughput plain         x1.506 DISJ  129928.6[129507.3..130288.3] -> 195647.6[194758.1..196249.5]
+     lit-sharp-s                                  large-subject-throughput plain         x1.469 DISJ  622101.5[621909.7..622355.2] -> 913873.6[913699.7..913994.7]
+     qnt-bounded-4b                               large-subject-throughput plain         x1.238 DISJ  193579.2[193088.9..194209.7] -> 239733.5[239146.3..240064.6]
+     asr-lb-neg                                   short-subject-search plain         x1.066 DISJ  1873.2[1872.0..1883.7] -> 1997.4[1996.7..2000.3]
+     asr-b-ascii                                  short-subject-search plain         x1.030 DISJ  792.2[791.3..799.3] -> 816.2[815.3..822.3]
+utf8 DENY/BASE, all set cells: n=138 DISJ=38  n=138 min 0.883 p5 0.957 p25 0.996 med 1.000 p75 1.003 p95 1.257 max 2.956
+   > +3%: 9
+     lit-nfc-pair                                 large-subject-throughput plain         x2.956 DISJ  234057.6[233692.2..234551.0] -> 691929.8[691243.4..692110.0]
+     lit-1ch-4b                                   large-subject-throughput plain         x1.883 DISJ  204782.0[204680.7..204825.4] -> 385646.4[385183.5..386153.9]
+     lit-1ch-3b                                   large-subject-throughput plain         x1.632 DISJ  155209.2[154982.1..155433.2] -> 253378.5[252602.4..253551.2]
+     alt-shared-char                              large-subject-throughput plain         x1.509 DISJ  129622.2[129382.3..129865.0] -> 195647.6[194758.1..196249.5]
+     asr-lb-neg                                   large-subject-throughput plain         x1.508 DISJ  133261.3[132835.5..134677.8] -> 200995.1[200503.9..201644.3]
+     lit-sharp-s                                  large-subject-throughput plain         x1.469 DISJ  621942.9[621747.1..622191.8] -> 913873.6[913699.7..913994.7]
+     ci-strasse                                   large-subject-throughput plain         x1.351 DISJ  943098.8[930378.4..949558.3] -> 1274328.9[1270620.8..1299501.1]
+     qnt-bounded-4b                               large-subject-throughput plain         x1.240 DISJ  193343.0[193301.3..193878.4] -> 239733.5[239146.3..240064.6]
+     asr-lb-neg                                   short-subject-search plain         x1.068 DISJ  1870.0[1865.6..1877.0] -> 1997.4[1996.7..2000.3]
+compile rows with program_sha256 D != N: 22
+    (('lit-1ch-3b', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('lit-1ch-4b', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('lit-run-3', 'plain'), 'none', '1', 'offset-set', 'offset-set')
+    (('lit-mixed-ascii', 'plain'), 'none', '3', 'offset-set', 'offset-set')
+    (('lit-cyr-run', 'plain'), 'none', '4', 'offset-set', 'offset-set')
+    (('lit-offset-at-tail', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('lit-offset-at-head', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('lit-nearmiss-run', 'plain'), 'none', '1', 'offset-set', 'offset-set')
+    (('lit-nfc-pair', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('lit-sharp-s', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('ci-strasse', 'plain'), 'none', '2', 'byte-class', 'handoff')
+    (('ci-ascii-control', 'plain'), 'none', '0', 'byte-class', 'handoff')
+    (('alt-shared-char', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('alt-nearmiss', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('qnt-counted-3b', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('qnt-bounded-4b', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('asr-b-ascii', 'plain'), 'none', '0', 'offset-set-bounded', 'offset-set-bounded')
+    (('asr-b-cyr', 'plain'), 'none', '4', 'offset-set-bounded', 'offset-set-bounded')
+    (('asr-lb-neg', 'plain'), 'none', '0', 'offset-set', 'offset-set')
+    (('asr-caret-ml', 'plain'), 'none', '0', 'memchr', 'memchr')
+    (('asr-caret-ml', 'whole-subject'), 'none', '0', 'memchr', 'memchr')
+    (('asr-dollar-ml', 'plain'), 'none', '0', 'offset-set-bounded', 'offset-set-bounded')

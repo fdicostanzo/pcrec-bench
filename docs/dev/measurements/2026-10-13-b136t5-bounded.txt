@@ -1,0 +1,26 @@
+# B      20261012T180207Z
+# N      20261012T184805Z
+# D      20261012T193245Z
+# C(T5)  20261013T143645Z
+bounded: cells with pass_rate<1 or no number: 0
+bounded C/NEW (all set cells): n=126 DISJ=3  n=126 min 0.917 p5 0.981 p25 0.999 med 1.000 p75 1.002 p95 1.014 max 1.039
+   > +3%: 1
+     cls-upto-128                                 large-subject-throughput plain         x1.039 ov  172136.6[170501.0..179041.3] -> 178784.6[172254.2..178949.9]
+bounded C/BASE (all set cells): n=126 DISJ=6  n=126 min 0.531 p5 0.983 p25 0.998 med 1.000 p75 1.002 p95 1.021 max 1.075
+   > +3%: 5
+     dig-exact-32                                 match-compliance   whole-subject x1.075 DISJ  527.0[524.2..534.7] -> 566.4[544.7..579.1]
+     cls-upto-16384                               large-subject-throughput plain         x1.049 ov  146736.8[142651.8..153906.9] -> 153860.4[144174.5..153986.1]
+     line-80                                      short-subject-search plain         x1.043 ov  3582.0[3514.8..3704.7] -> 3736.4[3539.8..3820.5]
+     cls-upto-32                                  large-subject-throughput plain         x1.043 ov  194770.1[191440.5..203255.4] -> 203138.6[194244.0..203659.3]
+     cls-upto-2048                                large-subject-throughput plain         x1.038 ov  160605.3[158202.5..166768.9] -> 166728.4[162114.5..166856.6]
+program-identical C/N cells: n=126 min 0.917 p5 0.981 p25 0.999 med 1.000 p75 1.002 p95 1.014 max 1.039
+program-changed C/N cells: 0
+
+# the dotted4 cells and handoff movers: B N D C
+dotted4 tp 1662.4[1660.9..1663.1] | 1666.2[1662.3..1669.9] | 1664.0[1662.1..1665.3] | 1663.0[1660.9..1664.8] C/N 0.998 N/B 1.002
+dotted4 ss 1162.5[1159.1..1167.4] | 617.0[615.8..619.5] | 1163.2[1159.3..1168.0] | 616.8[615.6..617.7] C/N 1.000 N/B 0.531
+# instrument: bounded BASE 10-12 vs BASE 10-11 (20261011T135644Z): 
+bounded BASE 10-12 / BASE 10-11: n=126 DISJ=4  n=126 min 0.942 p5 0.976 p25 0.999 med 1.000 p75 1.002 p95 1.007 max 1.049
+   > +3%: 2
+     line-80                                      match-compliance   whole-subject x1.049 ov  3457.1[3247.4..3562.1] -> 3627.1[3235.9..3782.4]
+     cls-upto-32768                               large-subject-throughput plain         x1.036 ov  197707.1[193163.3..209137.3] -> 204799.1[185462.8..222555.3]
