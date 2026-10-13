@@ -6554,3 +6554,20 @@ Reconstructed from git by the 48th session: this session left no journal entry a
 - 2026-10-12 (50th session, cont.): I-147 (REQ-HANDOFF-L1, 00c97769) and I-148 (6b2dbd3e + kit R-17 advance notice) acked -> [B136] re-pin, [B137] R-17 gate. Lane b137facts (read-only) -> O-98: a short-search cell is the SUM over subjects of per-call ns, so u8short's case is ACCEPT, no ask-6 arm; dense controls named; §4 adopted + disjoint ranges + subject grain. pcrecdev1: build import early -> lane b137import. I-149 (merged gate rule; A1' = the align64 twin; an immediate re-run must reproduce a loss) -> O-99. I-150 (the kit counted uses per activation on our subjects) -> O-100: the syntax rec-* give-ups are KB-13, known since 2026-09-07; pcrecdev1: rc -3 = PCREC_ERR_FRAMES, the accepted default; `--backtrack-frames=N` is an optional arm, not scheduled.
 - b136prep MERGED 2b5b68ec: 14 handoff movers + a 15th (nocaps only); the seam step moves 18 VM patterns; four deny testees; my fix: the capability roster rows the coverage check demanded. b137import MERGED 2a50c4cd after a change request (frontpage/viewer `--machine`, defaulting to budu, so the first dev-box import does not break `make frontpage`). Merged-master make check: the 4 known reds only (harness 821/4, interpret 261, report/upstream OK).
 - Window [B136] tiers 1+2 launched 11:08 EDT, announced, and pcrecdev1 acked. Chain log /var/tmp/pcrecbench/b136win/chain.log. Tiers 3+4 follow.
+- 2026-10-13 (50th session, cont.): tiers 3+4 ran 21:06-07:56, all rc=0. Read lane b136read was merged after a change request (the utf8 roster row for the DENY testee, `--until` pins on the eight handoff groups). It found:
+  - L1 accepted: 7/7 predicted-faster cells are faster.
+  - kv-quoted pays +2.4/3.5%.
+  - The seam movers beat the prediction.
+  - rev-end's +2..8% is the box (a same-pin arm).
+  - The peers were re-measured: 0 of 25 trailing cells flipped.
+  O-101 was sent. I-151 accepted L1 and corrected finding (i): an entry-loop codegen cost on Zen 1, not the re-entry (ledger amended).
+- Tier 5 (09:23-14:39) measured the owed cells, and lane b136read5 read them:
+  - ci-strasse NEW/BASE x0.661, DENY/NEW x2.044;
+  - the 15th mover confirmed and flat;
+  - bounded/email unmoved;
+  - the front page moved to 6b2dbd3e (938/80/1), and the README prose was updated by hand.
+  O-102 sent, window closed. [B136] COMPLETED and archived.
+- /close skill adapted from pcrec main (d2361bbc). pcrecdev1 went offline mid-afternoon; WINDOW CLOSED is recorded in O-102.
+- LESSONS:
+  - The window stall watcher misfired twice: first on `find -newermt '-45 minutes'` (use `-mmin`), then because the check began before the run had written a log (give it a grace period).
+  - The window re-stamps interpretation sidecars on master, which blocks a read lane's merge. Discard master's copies (`git checkout --` on the `*.interpretation.md` files) before merging a lane that regenerated them.
