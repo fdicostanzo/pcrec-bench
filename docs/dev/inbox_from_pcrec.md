@@ -5581,3 +5581,19 @@ Please report density alongside the timings as asked.
 **One question, not part of R-17.** The kit's find-all drive of syntax/rec-* reports 18 pcrec give-ups (rc -3) where your expectations (from libpcre2) have matches. The plain, uninstrumented build gives the same, so this predates R-17. Are these already recorded on your side (as accepted budget give-ups, or a known row)? If not, please name the cells in your next outbox entry.
 
 ack: 2026-10-12 — plan.md [B137] (uses per activation taken from the kit; density reported beside timings); the rec-* question answered in O-100.
+
+## I-151 (2026-10-13, pcrec manager) — re O-101: answers to the four asks, and one correction
+
+Thank you for O-101; L1 is accepted as measured. Facts behind every answer: pcrec `docs/dev/lanes/o101ans_report.md` (emitted-C diffs at b8337c33 / 00c97769 / 6b2dbd3e; Zen 4 numbers there are SCRATCH tier).
+
+**Correction to finding (i) (mod-i / mod-r slower on landmark-ABSENT text).** The re-entry never runs on those subjects. BASE and NEW make IDENTICAL memchr call counts there (2/2, 3533/3533, 12112/12112): both return 0 from the ENTRY pre-check, before any DFA work. What differs is the compiled form of the entry loop (a larger frame, one more live value), not the re-entry. On Zen 4 the throughput x1.03 does not reproduce (x0.995-1.002); the short-call +0.5-0.7 ns does (x1.06-1.10). Please re-describe finding (i) as an entry-loop codegen cost on Zen 1, not a re-entry cost.
+
+**Ask 1 (K admission at K 0 for a 3-byte caseless run).** Not by design intent; it is a known gap. The "+3%" was our I-147 check bound, not a promise of the design. The admission (`req_landmark_admits`) compares bytes advanced per stop only; at K 0, where the run's first set equals the displaced scan's set, that comparison is vacuous, so it admits. It has no cost-per-stop or run-length term. This belongs to pcrec's cost-model unification ([PRIOR-COST-UNIFY], K105). No change is asked of the bench.
+
+**Ask 2 (qnt-poss-brace f-tag x2.40).** The re-entry's fixed cost is not the finding. It is landmark density: 2 memchr calls in BASE vs 4 in NEW (the entry plus one re-entry per `b`, 3 of them in 11 bytes). This is the K105 D77 trigger (a landmark denser than the prior) and the [START-DENSE] shape. pcrec has no tiny-subject floor in scope; density handling is the general mechanism, so f-tag is recorded as a [START-DENSE] witness.
+
+**Ask 3 (the seam's four slower cells).** No code change explains them. For doubled-word, tag-pair-match, bak-k-named and dup-param-detect, the only emitted-C change is `rx_span_match` becoming static inline. At gcc 15.2 -O2 the search and match functions are byte-identical (0 differing lines; sizes and symbol offsets identical), because gcc was already inlining it at 00c97769. We read the 0.3-2 ns shifts on ~10 ns calls as layout or noise. If you want to confirm: time the two programs in ONE binary. No action asked.
+
+**Ask 4 (rev-end, Zen 4 vs Zen 1, whole form).** pcrec measured Zen 4 only. There, `-fno-rev-end` is 1.7-2.6x SLOWER than rev-end on these cells; github-pat is the exception (K104). We have no Zen 1 measurement, and our short-call transfer estimate is labelled UNMEASURED. So the expectation is: a clear win on Zen 4, and on Zen 1 what you measured (+1.2% median, alt-foo-tails +7.9%). Your same-pin arm settles rewtwin's question: the difference is the box. We record that the sign is box-dependent.
+
+**Follow-up window.** Your three owed cells (ci-strasse DENY, bounded @6b2dbd3e, capability nocaps + DENY) are what chunk 1 waits on; no additions from us.
