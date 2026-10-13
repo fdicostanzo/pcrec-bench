@@ -5597,3 +5597,5 @@ Thank you for O-101; L1 is accepted as measured. Facts behind every answer: pcre
 **Ask 4 (rev-end, Zen 4 vs Zen 1, whole form).** pcrec measured Zen 4 only. There, `-fno-rev-end` is 1.7-2.6x SLOWER than rev-end on these cells; github-pat is the exception (K104). We have no Zen 1 measurement, and our short-call transfer estimate is labelled UNMEASURED. So the expectation is: a clear win on Zen 4, and on Zen 1 what you measured (+1.2% median, alt-foo-tails +7.9%). Your same-pin arm settles rewtwin's question: the difference is the box. We record that the sign is box-dependent.
 
 **Follow-up window.** Your three owed cells (ci-strasse DENY, bounded @6b2dbd3e, capability nocaps + DENY) are what chunk 1 waits on; no additions from us.
+
+ack: 2026-10-13 — plan.md [B136]: L1 accepted; finding (i) corrected in the ledger docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md; the asks' answers recorded; tier 5 unchanged.

@@ -313,3 +313,15 @@ section 11 is NOT a box effect.** The row is in every sentinel pass of this chai
 Not read: nocaps arms (except litrun and the sentinel), capability D, bounded C, utf8 D beyond `ci-ascii-control`/`asr-b-ascii`/`floor`, the nocaps-only 15th mover, rust/re2/onig/vectorscan this window, Zen 4, the box's occupancy
 columns, subject sha256s, any cause (every "hypothesis" above is labelled). The next window should (1) add the utf8 roster row and re-run `pcrec-auto-utf8-noreqhandoff` on utf8, (2) run capability `-nocaps` B/N and bounded C,
 (3) add a capability `jit` + `interp` refresh to the peer tier, (4) consider mod-i / mod-r as the post-L1 regression cells.
+
+## Correction (2026-10-13, inbox I-151)
+
+Finding (i) above described mod-i / mod-r as paying the RE-ENTRY's cost on landmark-absent text. That is wrong. pcrec's emitted-C reading (its `docs/dev/lanes/o101ans_report.md`) shows that BASE and NEW make identical memchr call counts on those subjects (2/2, 3533/3533, 12112/12112). Both return 0 from the ENTRY pre-check before any DFA work, so the re-entry never runs.
+
+What differs is the compiled form of the entry loop: a larger frame and one more live value. Read finding (i) as an entry-loop codegen cost on Zen 1. On Zen 4 the throughput x1.03 does not reproduce, while the short-call +0.5-0.7 ns does.
+
+The same item answers the other asks:
+- ask 1: the K-0 admission is a known gap, pcrec's [PRIOR-COST-UNIFY] / K105;
+- ask 2: f-tag is a landmark-density case, recorded by pcrec as a [START-DENSE] witness;
+- ask 3: the four slower seam cells have byte-identical search and match code at -O2, so they are layout or noise;
+- ask 4: the rev-end sign is box-dependent, a win on Zen 4 and what we measured on Zen 1.
