@@ -1,0 +1,55 @@
+# nocaps B (T5)      20261013T153311Z
+# nocaps N (T5)      20261013T162223Z
+# nocaps B previous  20261011T023548Z
+# caps B             20261012T215301Z
+# caps N             20261012T224439Z
+# caps C             20261012T233655Z
+# caps D (T5)        20261013T171305Z
+
+# 15th mover by value, wild-secrets-username-password-pair (nocaps) and the caps contrast
+nocaps B  plain         engine=dfa prefilter=byte-class req_handoff=0 start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=d5aff4d878be
+nocaps B  whole-subject engine=dfa prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=f24028152460
+nocaps N  plain         engine=dfa prefilter=handoff req_handoff=0 start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=4535c1956061
+nocaps N  whole-subject engine=dfa prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=f24028152460
+caps B    plain         engine=vm prefilter=byte-class req_handoff=0 start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=1983ed3f5a64
+caps B    whole-subject engine=vm prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=bfc8794a4d72
+caps N    plain         engine=vm prefilter=byte-class req_handoff=0 start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=1983ed3f5a64
+caps N    whole-subject engine=vm prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=bfc8794a4d72
+caps D    plain         engine=vm prefilter=byte-class req_handoff=none start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=a8b01bfabe57
+caps D    whole-subject engine=vm prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=bfc8794a4d72
+caps C    plain         engine=vm prefilter=byte-class req_handoff=0 start=reverse-pass scan=unanchored req_byte=61 req_run=55534552@0/dfdfdfdf prog=1983ed3f5a64
+caps C    whole-subject engine=vm prefilter=none req_handoff=none start=reverse-pass scan=rev-end req_byte=61 req_run=55534552@0/dfdfdfdf prog=bfc8794a4d72
+
+# its cells, nocaps BASE | NEW (and the 10-11 BASE record), caps B | N | D | C
+large-subject-throughput   plain         nocaps B 79035.5[78955.6..79075.2] | N 79114.3[79088.1..79147.7] | B(10-11) 79014.2[78981.4..79074.7] | N/B 1.001 DISJ | N/B(10-11) 1.001 || caps B 79156.9[79051.3..79186.7] N 79071.4[79011.2..79119.3] D 79117.0[79042.0..79511.8] C 79089.8[79026.9..79143.3] | N/B 0.999 D/N 1.001
+short-subject-search       plain         nocaps B 797.6[797.6..797.9] | N 796.4[796.2..798.9] | B(10-11) 797.9[797.8..798.0] | N/B 0.999 ov | N/B(10-11) 0.998 || caps B 1052.2[1051.4..1053.2] N 1053.3[1052.9..1094.6] D 1070.4[1068.6..1074.5] C 1052.0[1051.9..1054.0] | N/B 1.001 D/N 1.016
+
+# per-subject throughput of the mover, nocaps B | N
+   t-1m                         B 17625.2 N 17677.1 N/B 1.003 DISJ
+   t-256k                       B 4379.9 N 4388.2 N/B 1.002 ov
+   t-64k                        B 1108.0 N 1112.8 N/B 1.004 DISJ
+   t-evil-match-60k             B 1035.4 N 1035.1 N/B 1.000 ov
+   t-evil-nearmiss-16k          B 222.7 N 224.1 N/B 1.006 DISJ
+   t-mixed-runs-4k              B 497.8 N 490.3 N/B 0.985 ov
+   t-tail-digits-1m             B 17668.7 N 17638.1 N/B 0.998 ov
+   t-tail-space-1m              B 17614.3 N 17628.1 N/B 1.001 ov
+   t-tail-txt-1m                B 17617.0 N 17644.9 N/B 1.002 ov
+   t-trim-match-60k             B 1033.4 N 1033.9 N/B 1.001 ov
+   t-trim-nearmiss-16k          B 223.4 N 224.5 N/B 1.005 DISJ
+
+# ALL nocaps handoff movers (compile rows with dfa_prefilter handoff at N, or K gained), BASE>NEW
+  wild-secrets-username-password-pair              plain         prefilter byte-class>handoff K 0>0 engine dfa
+
+# nocaps NEW/BASE: every set cell, and the REQ_HANDOFF-set cells
+capability nocaps NEW/BASE (all set cells): n=139 DISJ=11  n=139 min 0.972 p5 0.992 p25 0.999 med 1.000 p75 1.002 p95 1.014 max 1.144
+   > +3%: 3
+     phone-palindrome-6                           short-subject-search plain         x1.144 ov  3289.0[2914.7..3581.9] -> 3763.1[3353.5..3888.9]
+     phone-palindrome-6                           large-subject-throughput plain         x1.073 ov  9994261.7[8968091.7..11518174.0] -> 10727130.6[9525351.5..11474354.9]
+     bracket-array-define                         large-subject-throughput plain         x1.031 DISJ  292.9[286.0..298.1] -> 302.0[298.8..302.9]
+   median of ratios on program-identical cells (program_sha256 equal):
+    n=137 min 0.972 p5 0.992 p25 0.999 med 1.000 p75 1.002 p95 1.014 max 1.144
+capability nocaps BASE this-day / BASE 10-11 (instrument): n=139 DISJ=7  n=139 min 0.969 p5 0.992 p25 0.999 med 1.000 p75 1.002 p95 1.012 max 1.125
+   > +3%: 3
+     phone-palindrome-6                           short-subject-search plain         x1.125 ov  2923.2[2834.5..3371.3] -> 3289.0[2914.7..3581.9]
+     phone-palindrome-6                           large-subject-throughput plain         x1.038 ov  9631793.3[8776816.8..10365559.3] -> 9994261.7[8968091.7..11518174.0]
+     trim-nested-star                             large-subject-throughput plain         x1.031 ov  92064.8[84111.8..100968.0] -> 94943.3[92050.1..98757.0]

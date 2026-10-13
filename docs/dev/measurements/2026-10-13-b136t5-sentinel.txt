@@ -1,0 +1,91 @@
+# sentinel records per (testee, slot):
+   libpcre2_10.46_jit-caps-simdna               close5  20261013T182806Z
+   libpcre2_10.46_jit-caps-simdna               end1    20261012T204815Z
+   libpcre2_10.46_jit-caps-simdna               end2    20261013T005416Z
+   libpcre2_10.46_jit-caps-simdna               end3    20261013T060834Z
+   libpcre2_10.46_jit-caps-simdna               open1   20261012T153502Z
+   libpcre2_10.46_jit-caps-simdna               open5   20261013T134731Z
+   pcrec_00c97769_auto-caps-simdna              close5  20261013T180833Z
+   pcrec_00c97769_auto-caps-simdna              end1    20261012T202951Z
+   pcrec_00c97769_auto-caps-simdna              end2    20261013T003508Z
+   pcrec_00c97769_auto-caps-simdna              end3    20261013T054902Z
+   pcrec_00c97769_auto-caps-simdna              open1   20261012T151541Z
+   pcrec_00c97769_auto-caps-simdna              open5   20261013T133055Z
+   pcrec_6b2dbd3e_auto-caps-simdna              close5  20261013T180208Z
+   pcrec_6b2dbd3e_auto-caps-simdna              end1    20261012T202428Z
+   pcrec_6b2dbd3e_auto-caps-simdna              end2    20261013T003007Z
+   pcrec_6b2dbd3e_auto-caps-simdna              end3    20261013T054257Z
+   pcrec_6b2dbd3e_auto-caps-simdna              open1   20261012T152205Z
+   pcrec_6b2dbd3e_auto-caps-simdna              open5   20261013T133725Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            close5  20261013T182132Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            end1    20261012T204145Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            end2    20261013T004744Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            end3    20261013T060207Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            open1   20261012T152833Z
+   pcrec_6b2dbd3e_auto-nocaps-simdna            open5   20261013T134217Z
+   pcrec_b8337c33_auto-caps-simdna              close5  20261013T181502Z
+   pcrec_b8337c33_auto-caps-simdna              end1    20261012T203615Z
+   pcrec_b8337c33_auto-caps-simdna              end2    20261013T004118Z
+   pcrec_b8337c33_auto-caps-simdna              end3    20261013T055531Z
+   pcrec_b8337c33_auto-caps-simdna              open1   20261012T150916Z
+   pcrec_b8337c33_auto-caps-simdna              open5   20261013T132428Z
+
+# ratio later/earlier over the 15 pattern cells (min / median / max, DISJ)
+libpcre2_10.46_jit-caps-simdna               close5 /open5   n=15 min 0.936 median 0.999 max 1.062 DISJ 0
+libpcre2_10.46_jit-caps-simdna               open5  /open1   n=15 min 0.940 median 1.001 max 1.021 DISJ 0
+libpcre2_10.46_jit-caps-simdna               close5 /open1   n=15 min 0.938 median 0.998 max 1.035 DISJ 0
+libpcre2_10.46_jit-caps-simdna               close5 /end3    n=15 min 0.956 median 1.000 max 1.055 DISJ 0
+libpcre2_10.46_jit-caps-simdna               open5  /end3    n=15 min 0.928 median 1.000 max 1.066 DISJ 0
+pcrec_00c97769_auto-caps-simdna              close5 /open5   n=15 min 0.998 median 1.000 max 1.011 DISJ 0
+pcrec_00c97769_auto-caps-simdna              open5  /open1   n=15 min 0.994 median 1.000 max 1.011 DISJ 1
+pcrec_00c97769_auto-caps-simdna              close5 /open1   n=15 min 0.995 median 1.002 max 1.012 DISJ 0
+pcrec_00c97769_auto-caps-simdna              close5 /end3    n=15 min 0.993 median 1.000 max 1.011 DISJ 2
+pcrec_00c97769_auto-caps-simdna              open5  /end3    n=15 min 0.992 median 0.999 max 1.004 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna              close5 /open5   n=15 min 0.993 median 1.000 max 1.009 DISJ 1
+pcrec_6b2dbd3e_auto-caps-simdna              open5  /open1   n=15 min 0.985 median 0.998 max 1.006 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna              close5 /open1   n=15 min 0.985 median 0.999 max 1.001 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna              close5 /end3    n=15 min 0.996 median 1.000 max 1.002 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna              open5  /end3    n=15 min 0.992 median 1.000 max 1.004 DISJ 1
+pcrec_6b2dbd3e_auto-nocaps-simdna            close5 /open5   n=15 min 0.989 median 1.000 max 1.014 DISJ 2
+pcrec_6b2dbd3e_auto-nocaps-simdna            open5  /open1   n=15 min 0.988 median 1.000 max 1.005 DISJ 1
+pcrec_6b2dbd3e_auto-nocaps-simdna            close5 /open1   n=15 min 0.990 median 1.000 max 1.007 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna            close5 /end3    n=15 min 0.990 median 1.000 max 1.008 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna            open5  /end3    n=15 min 0.989 median 0.999 max 1.006 DISJ 1
+pcrec_b8337c33_auto-caps-simdna              close5 /open5   n=15 min 0.991 median 0.997 max 1.004 DISJ 2
+pcrec_b8337c33_auto-caps-simdna              open5  /open1   n=15 min 0.993 median 1.001 max 1.008 DISJ 0
+pcrec_b8337c33_auto-caps-simdna              close5 /open1   n=15 min 0.995 median 0.999 max 1.003 DISJ 0
+pcrec_b8337c33_auto-caps-simdna              close5 /end3    n=15 min 0.994 median 0.999 max 1.015 DISJ 0
+pcrec_b8337c33_auto-caps-simdna              open5  /end3    n=15 min 0.999 median 1.001 max 1.011 DISJ 0
+
+# pcrec pins in the same slot (program-identical on sentinel): later pin / BASE
+open5   pcrec_00c97769_auto-caps-simdna              / BASE caps: n=15 median 0.998 min 0.993 max 1.008
+open5   pcrec_6b2dbd3e_auto-caps-simdna              / BASE caps: n=15 median 0.999 min 0.988 max 1.002
+open5   pcrec_6b2dbd3e_auto-nocaps-simdna            / BASE caps: n=15 median 0.995 min 0.551 max 1.009
+close5  pcrec_00c97769_auto-caps-simdna              / BASE caps: n=15 median 1.001 min 0.999 max 1.013
+close5  pcrec_6b2dbd3e_auto-caps-simdna              / BASE caps: n=15 median 1.000 min 0.997 max 1.005
+close5  pcrec_6b2dbd3e_auto-nocaps-simdna            / BASE caps: n=15 median 1.000 min 0.551 max 1.011
+
+# jit row, all slots: sum of 15 medians
+   open1   sum 10457807 ns (n=15)
+   end1    sum 10459339 ns (n=15)
+   end2    sum 10460474 ns (n=15)
+   end3    sum 10428006 ns (n=15)
+   open5   sum 10464128 ns (n=15)
+   close5  sum 10456609 ns (n=15)
+
+# per cell: caps 6b2dbd3e open1|end3|open5|close5 medians and close5/open5
+   base10num-near-miss            525.6[510.2..529.5] | 524.0[508.1..526.6] | 524.7[514.2..529.0] | 522.0[519.3..529.9] | close5/open5 0.995 ov
+   file-ext-order                 709.9[708.4..714.8] | 710.4[709.7..714.0] | 709.6[708.9..711.8] | 708.9[708.8..710.2] | close5/open5 0.999 ov
+   floor-byte                     681.4[681.3..681.8] | 681.7[680.1..691.8] | 681.6[680.0..681.8] | 681.5[681.4..683.1] | close5/open5 1.000 ov
+   ipv4-near-miss                 427.2[426.4..429.5] | 428.1[426.0..430.4] | 430.0[425.6..432.9] | 426.9[425.6..430.0] | close5/open5 0.993 ov
+   keyword-prefix-order           784.5[782.7..790.0] | 784.9[782.1..790.1] | 785.1[784.3..787.3] | 783.2[782.8..785.2] | close5/open5 0.998 ov
+   numeric-id-nested-plus         878.4[870.6..882.8] | 879.0[867.1..883.1] | 875.9[861.7..878.3] | 878.9[863.9..880.2] | close5/open5 1.003 ov
+   phone-list-nested-plus         897.1[892.6..902.4] | 894.8[893.9..897.2] | 894.3[894.1..897.4] | 896.7[896.2..928.4] | close5/open5 1.003 ov
+   router-prefix-order            690.1[689.9..691.1] | 690.0[689.9..690.7] | 690.6[689.5..691.0] | 689.8[689.4..690.0] | close5/open5 0.999 ov
+   trim-nested-star               782.4[780.6..784.0] | 781.2[780.9..786.5] | 780.7[780.1..783.6] | 782.1[781.3..786.8] | close5/open5 1.002 ov
+   uuid-near-miss                 541.3[536.9..542.0] | 538.8[536.7..547.2] | 539.3[536.2..540.8] | 539.0[536.6..541.8] | close5/open5 0.999 ov
+   wild-semdiv-dollar-trailing-newline-pcre2 653.4[640.7..669.0] | 646.1[642.5..655.5] | 643.5[640.6..656.5] | 643.6[641.0..646.2] | close5/open5 1.000 ov
+   wild-validator-email-owasp     1048.0[1032.1..1051.9] | 1048.3[1042.8..1054.0] | 1040.2[1036.6..1041.8] | 1049.2[1048.3..1050.4] | close5/open5 1.009 DISJ
+   wild-validator-us-zip-owasp    746.6[745.6..747.7] | 746.1[745.5..747.7] | 745.9[745.8..746.7] | 747.1[745.4..747.5] | close5/open5 1.002 ov
+   wild-waf-crs-942360-concat-sqli 7430.0[7393.1..7471.5] | 7408.8[7349.6..7433.6] | 7405.5[7363.4..7514.5] | 7421.2[7405.6..7504.5] | close5/open5 1.002 ov
+   winpath-near-miss              455.9[455.5..458.4] | 457.2[454.0..484.9] | 456.5[455.1..460.7] | 455.3[453.9..457.3] | close5/open5 0.997 ov

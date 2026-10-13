@@ -1,0 +1,38 @@
+capability caps B N C D: cells with pass_rate<1 or no number: 4
+    ('B', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182)
+    ('N', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182)
+    ('C', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182)
+    ('D', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182)
+capability caps D/N: n=137 DISJ=15  n=137 min 0.983 p5 0.992 p25 0.998 med 1.000 p75 1.002 p95 1.009 max 1.019
+   > +3%: 0
+   program-identical subset n=131 min 0.983 p5 0.992 p25 0.998 med 1.000 p75 1.002 p95 1.007 max 1.019
+capability caps D/B: n=137 DISJ=13  n=137 min 0.968 p5 0.988 p25 0.998 med 1.000 p75 1.002 p95 1.012 max 1.020
+   > +3%: 0
+   program-identical subset n=131 min 0.968 p5 0.987 p25 0.998 med 1.000 p75 1.002 p95 1.010 max 1.020
+capability caps N/B: n=137 DISJ=12  n=137 min 0.968 p5 0.991 p25 0.999 med 1.000 p75 1.001 p95 1.007 max 1.030
+   > +3%: 0
+   program-identical subset n=137 min 0.968 p5 0.991 p25 0.999 med 1.000 p75 1.001 p95 1.007 max 1.030
+
+# D/N on the tail family and grok
+tail-digits-eol                    large-subject-throughput   plain         B 136.4[133.5..140.1] N 136.1[134.6..140.1] D 137.6[134.1..141.8] | D/N 1.011 ov D/B 1.008
+tail-digits-eol                    short-subject-search       plain         B 715.8[712.9..716.1] N 713.1[709.2..714.9] D 712.9[711.3..714.7] | D/N 1.000 ov D/B 0.996
+tail-word-eoz                      large-subject-throughput   plain         B 21918.5[21910.4..21921.4] N 21905.3[21903.6..21908.3] D 21927.8[21907.1..21931.1] | D/N 1.001 ov D/B 1.000
+tail-word-eoz                      short-subject-search       plain         B 1027.5[1016.5..1031.3] N 1021.7[1010.6..1038.4] D 1020.4[1005.7..1041.1] | D/N 0.999 ov D/B 0.993
+tail-space-eol                     large-subject-throughput   plain         B 21998.6[21986.9..22015.0] N 21969.8[21968.1..21975.8] D 21994.6[21986.6..21998.4] | D/N 1.001 DISJ D/B 1.000
+tail-space-eol                     short-subject-search       plain         B 681.9[679.2..686.1] N 678.9[678.3..684.1] D 682.0[677.6..682.5] | D/N 1.005 ov D/B 1.000
+tail-ext-lower-txt                 large-subject-throughput   plain         B 128.0[125.0..130.3] N 127.3[125.3..128.9] D 125.9[125.2..127.1] | D/N 0.989 ov D/B 0.984
+tail-ext-lower-txt                 short-subject-search       plain         B 643.3[635.9..645.1] N 644.1[633.9..646.1] D 633.0[630.0..647.7] | D/N 0.983 ov D/B 0.984
+tail-dotstar-txt                   large-subject-throughput   plain         B 146.0[144.1..146.8] N 146.1[143.4..148.0] D 148.8[146.7..152.7] | D/N 1.019 ov D/B 1.020
+tail-dotstar-txt                   short-subject-search       plain         B 737.5[736.7..739.7] N 738.4[735.7..742.9] D 737.4[734.9..739.4] | D/N 0.999 ov D/B 1.000
+letters-bounded-tail-z             large-subject-throughput   plain         B 782.0[779.9..787.1] N 782.3[780.4..795.5] D 782.4[780.3..1077.4] | D/N 1.000 ov D/B 1.001
+letters-bounded-tail-z             short-subject-search       plain         B 950.6[948.6..957.0] N 957.2[952.8..962.5] D 954.3[948.1..967.6] | D/N 0.997 ov D/B 1.004
+wild-logparse-quotedstring-grok    large-subject-throughput   plain         B 2063009.7[2061825.3..2063982.1] N 2065444.6[2060859.3..2068058.8] D 2063379.0[2062799.8..2065109.0] | D/N 0.999 ov D/B 1.000
+wild-logparse-quotedstring-grok    short-subject-search       plain         B 2136.4[2116.7..2161.8] N 2141.3[2117.7..2169.0] D 2132.9[2128.8..2145.7] | D/N 0.996 ov D/B 0.998
+
+# the 14 caps movers (REQ_HANDOFF set at N): D/N and D/B
+wild-secrets-github-pat                      tp  K 3 pref offset-set-bounded | N/B 1.000 D/B 1.012 D/N 1.012
+wild-secrets-github-pat                      ss  K 3 pref offset-set-bounded | N/B 0.999 D/B 0.993 D/N 0.993
+wild-secrets-slack-webhook-url               tp  K 26 pref offset-set | N/B 1.000 D/B 1.000 D/N 1.000
+wild-secrets-slack-webhook-url               ss  K 26 pref offset-set | N/B 0.997 D/B 0.996 D/N 1.000
+wild-secrets-username-password-pair          tp  K 0 pref byte-class | N/B 0.999 D/B 0.999 D/N 1.001
+wild-secrets-username-password-pair          ss  K 0 pref byte-class | N/B 1.001 D/B 1.017 D/N 1.016

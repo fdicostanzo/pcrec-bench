@@ -1,0 +1,59 @@
+# B record 20261013T035401Z rows-cells 138 compile-rows 147
+# N record 20261013T043123Z rows-cells 138 compile-rows 147
+# C record 20261013T050538Z rows-cells 138 compile-rows 147
+# D record 20261013T135909Z rows-cells 138 compile-rows 147
+# D3 record 20261013T050346Z rows-cells 6 compile-rows 79
+# DENY (tier 5) patterns with cells: 69  ['alt-cyr-64', 'alt-distinct-lead', 'alt-mixed-width', 'alt-nearmiss', 'alt-shared-char', 'alt-shared-lead', 'asr-a-z', 'asr-b-ascii', 'asr-b-cyr', 'asr-b-midchar', 'asr-caret-ml', 'asr-dollar-ml', 'asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth', 'ci-ascii-control', 'ci-class-range', 'ci-e-acute', 'ci-greek-run', 'ci-kelvin', 'ci-long-s', 'ci-moskva', 'ci-neg-fold', 'ci-sigma', 'ci-strasse', 'ci-turkish-i', 'cls-boundary-range', 'cls-d-ascii', 'cls-dot', 'cls-dot-rep', 'cls-high-range', 'cls-lead-pair', 'cls-mixed', 'cls-neg-allhigh', 'cls-neg-cjk', 'cls-neg-single', 'cls-posix-alpha', 'cls-s-nbsp', 'cls-w-ascii', 'floor', 'lit-1ch-2b', 'lit-1ch-3b', 'lit-1ch-4b', 'lit-anchored-run', 'lit-cyr-run', 'lit-mixed-ascii', 'lit-nearmiss-run', 'lit-nfc-pair', 'lit-offset-at-head', 'lit-offset-at-tail', 'lit-run-3', 'lit-sharp-s', 'prp-cyrillic', 'prp-greek', 'prp-greek-sc', 'prp-han', 'prp-l', 'prp-latin', 'prp-lu', 'prp-n', 'prp-notl', 'prp-zs', 'qnt-bounded-4b', 'qnt-class-run', 'qnt-counted-3b', 'qnt-dot-bounded', 'qnt-lazy-2b', 'qnt-plus-2b']
+# DENY tier-3 record patterns with cells: 3
+
+# ci-strasse / ci-ascii-control (and floor): set cells BASE | NEW | DENY | CANON, ns median[min..max]
+ci-strasse         large-subject-throughput   plain         B 943098.8[930378.4..949558.3] | N 623351.7[622573.4..623770.1] | D 1274328.9[1270620.8..1299501.1] | C 623392.3[622829.3..624995.7] | N/B 0.661 D/B 1.351 D/N 2.044 C/N 1.000 D/N DISJ
+ci-strasse         short-subject-search       plain         B 1252.4[1250.9..1258.4] | N 1271.3[1265.8..1288.6] | D 1281.8[1277.4..1289.8] | C 1274.3[1272.1..1274.5] | N/B 1.015 D/B 1.024 D/N 1.008 C/N 1.002 D/N ov
+ci-ascii-control   large-subject-throughput   plain         B 405205.4[404715.7..405990.9] | N 404154.4[403856.3..404508.6] | D 400999.4[400563.3..401156.6] | C 405287.1[404807.4..406924.5] | N/B 0.997 D/B 0.990 D/N 0.992 C/N 1.003 D/N DISJ
+ci-ascii-control   short-subject-search       plain         B 1161.0[1159.0..1162.3] | N 1164.8[1162.4..1166.5] | D 1164.3[1162.3..1166.2] | C 1163.2[1162.9..1165.5] | N/B 1.003 D/B 1.003 D/N 1.000 C/N 0.999 D/N ov
+asr-b-ascii        large-subject-throughput   plain         B 501838.9[501253.0..501962.0] | N 501722.8[500631.0..502264.4] | D 503166.1[502414.0..503960.6] | C 501593.6[500968.7..502251.7] | N/B 1.000 D/B 1.003 D/N 1.003 C/N 1.000 D/N DISJ
+asr-b-ascii        short-subject-search       plain         B 793.3[792.9..793.7] | N 792.2[791.3..799.3] | D 816.2[815.3..822.3] | C 794.5[792.0..796.4] | N/B 0.999 D/B 1.029 D/N 1.030 C/N 1.003 D/N DISJ
+floor              large-subject-throughput   plain         B 27497.9[27491.6..27531.4] | N 27527.5[27515.5..27535.7] | D 27514.3[27510.2..27532.5] | C 27551.0[27531.6..27584.3] | N/B 1.001 D/B 1.001 D/N 1.000 C/N 1.001 D/N ov
+floor              short-subject-search       plain         B 857.0[851.8..870.6] | N 857.1[853.9..875.7] | D 851.6[850.2..853.4] | C 858.2[841.1..862.6] | N/B 1.000 D/B 0.994 D/N 0.994 C/N 1.001 D/N DISJ
+
+# stamps (compile rows) for the two cells: B | N | D | C
+ci-strasse         plain         B engine=dfa prefilter=byte-class K(req_handoff)=2 start=reverse-pass scan=unanchored req_byte=none req_run=545241@2/dfdfdf prog=22a5fcda3dda
+ci-strasse         plain         N engine=dfa prefilter=handoff K(req_handoff)=2 start=reverse-pass scan=unanchored req_byte=none req_run=545241@2/dfdfdf prog=84bfe300845e
+ci-strasse         plain         D engine=dfa prefilter=byte-class K(req_handoff)=none start=reverse-pass scan=unanchored req_byte=none req_run=545241@2/dfdfdf prog=9c9683368296
+ci-strasse         plain         C engine=dfa prefilter=handoff K(req_handoff)=2 start=reverse-pass scan=unanchored req_byte=none req_run=545241@2/dfdfdf prog=84bfe300845e
+ci-strasse         whole-subject B engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=545241@2/dfdfdf prog=e92a0ae002af
+ci-strasse         whole-subject N engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=545241@2/dfdfdf prog=e92a0ae002af
+ci-strasse         whole-subject D engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=545241@2/dfdfdf prog=e92a0ae002af
+ci-strasse         whole-subject C engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=545241@2/dfdfdf prog=e92a0ae002af
+ci-ascii-control   plain         B engine=dfa prefilter=byte-class K(req_handoff)=0 start=end-minus-width scan=unanchored req_byte=none req_run=414243@2/dfdfdf prog=df3990ff913e
+ci-ascii-control   plain         N engine=dfa prefilter=handoff K(req_handoff)=0 start=end-minus-width scan=unanchored req_byte=none req_run=414243@2/dfdfdf prog=9a34c186a044
+ci-ascii-control   plain         D engine=dfa prefilter=byte-class K(req_handoff)=none start=end-minus-width scan=unanchored req_byte=none req_run=414243@2/dfdfdf prog=456360c21e5e
+ci-ascii-control   plain         C engine=dfa prefilter=handoff K(req_handoff)=0 start=end-minus-width scan=unanchored req_byte=none req_run=414243@2/dfdfdf prog=9a34c186a044
+ci-ascii-control   whole-subject B engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=414243@2/dfdfdf prog=faf49d3595f7
+ci-ascii-control   whole-subject N engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=414243@2/dfdfdf prog=faf49d3595f7
+ci-ascii-control   whole-subject D engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=414243@2/dfdfdf prog=faf49d3595f7
+ci-ascii-control   whole-subject C engine=dfa prefilter=none K(req_handoff)=none start=reverse-pass scan=rev-end req_byte=none req_run=414243@2/dfdfdf prog=faf49d3595f7
+
+# per-subject (ci-strasse, ci-ascii-control; plain) tp + ss: B N D C ns
+## ci-strasse tp: 7 subjects
+   t-1m                         B 635467.9 N 418064.1 D 847713.0 C 418120.0  N/B 0.658 D/N 2.028
+   t-256k                       B 158875.2 N 96543.8 D 202096.8 C 96591.4  N/B 0.608 D/N 2.093
+   t-64k                        B 38324.5 N 21433.0 D 50546.6 C 21496.0  N/B 0.559 D/N 2.358
+   t-64k-asc                    B 63042.3 N 43643.9 D 65482.0 C 43710.0  N/B 0.692 D/N 1.500
+   t-64k-cjk                    B 5830.5 N 5764.0 D 5944.4 C 5779.3  N/B 0.989 D/N 1.031
+   t-64k-cyr                    B 2203.5 N 2200.3 D 2219.6 C 2199.8  N/B 0.999 D/N 1.009
+   t-64k-lat                    B 36184.6 N 35543.7 D 98805.4 C 35470.6  N/B 0.982 D/N 2.780
+## ci-strasse ss: 91 subjects
+   N/B n=91 min 0.946 p5 0.979 p25 0.991 med 0.994 p75 0.995 p95 1.066 max 1.270
+   D/N n=91 min 0.762 p5 0.951 p25 1.028 med 1.030 p75 1.033 p95 1.135 max 1.181
+## ci-ascii-control tp: 7 subjects
+   t-1m                         B 275617.5 N 273720.8 D 271640.5 C 274789.2  N/B 0.993 D/N 0.992
+   t-256k                       B 60535.9 N 60923.8 D 60101.4 C 61056.7  N/B 1.006 D/N 0.987
+   t-64k                        B 12759.0 N 12795.4 D 12742.5 C 12777.3  N/B 1.003 D/N 0.996
+   t-64k-asc                    B 30257.7 N 30567.7 D 30131.6 C 30642.4  N/B 1.010 D/N 0.986
+   t-64k-cjk                    B 2200.8 N 2205.5 D 2197.4 C 2209.3  N/B 1.002 D/N 0.996
+   t-64k-cyr                    B 2203.8 N 2208.5 D 2195.5 C 2202.8  N/B 1.002 D/N 0.994
+   t-64k-lat                    B 21650.6 N 21525.5 D 21890.8 C 21587.4  N/B 0.994 D/N 1.017
+## ci-ascii-control ss: 91 subjects
+   N/B n=91 min 0.930 p5 0.938 p25 0.991 med 0.994 p75 0.996 p95 1.065 max 1.095
+   D/N n=91 min 0.894 p5 0.913 p25 1.003 med 1.004 p75 1.005 p95 1.135 max 1.175

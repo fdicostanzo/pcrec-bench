@@ -1,0 +1,37 @@
+# email C record 20261013T152500Z
+
+== C vs b8337c33 record 20261011T054614Z
+email C/b8337c33: n=9 DISJ=3  n=9 min 0.998 p5 0.998 p25 0.999 med 0.999 p75 1.000 p95 1.000 max 1.000
+   > +3%: 0
+   program-identical cells: n=9 min 0.998 p5 0.998 p25 0.999 med 0.999 p75 1.000 p95 1.000 max 1.000
+   program-changed cells: 0
+
+== C vs 7388f1c0 record 20261010T212216Z
+email C/7388f1c0: n=9 DISJ=2  n=9 min 0.743 p5 0.823 p25 0.999 med 1.000 p75 1.000 p95 1.001 max 1.001
+   > +3%: 0
+   program-identical cells: n=7 min 0.999 p5 0.999 p25 1.000 med 1.000 p75 1.000 p95 1.001 max 1.001
+   program-changed cells: 2
+     floor                          large-subject-throughput   plain         x0.944 DISJ
+     floor                          short-subject-search       plain         x0.743 DISJ
+
+== C vs 7388f1c0 record 20261011T054009Z
+email C/7388f1c0: n=9 DISJ=2  n=9 min 0.743 p5 0.823 p25 1.000 med 1.000 p75 1.000 p95 1.000 max 1.001
+   > +3%: 0
+   program-identical cells: n=7 min 1.000 p5 1.000 p25 1.000 med 1.000 p75 1.000 p95 1.001 max 1.001
+   program-changed cells: 2
+     floor                          large-subject-throughput   plain         x0.944 DISJ
+     floor                          short-subject-search       plain         x0.743 DISJ
+
+== C vs a15fb77b record 20261010T211611Z
+email C/a15fb77b: n=9 DISJ=3  n=9 min 0.742 p5 0.823 p25 0.998 med 1.000 p75 1.000 p95 1.000 max 1.000
+   > +3%: 0
+   program-identical cells: n=4 min 0.998 p5 0.999 p25 0.999 med 1.000 p75 1.000 p95 1.000 max 1.000
+   program-changed cells: 5
+     factored                       match-compliance           whole-subject x1.000 ov
+     floor                          large-subject-throughput   plain         x0.944 DISJ
+     floor                          match-compliance           whole-subject x1.000 ov
+     floor                          short-subject-search       plain         x0.742 DISJ
+     orig                           match-compliance           whole-subject x1.000 ov
+
+# jit in this window (tier 4):  20261013T113318Z
+email C: cells with pass_rate<1 or no number: 0
