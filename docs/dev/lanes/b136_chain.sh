@@ -116,5 +116,22 @@ if tier 4; then
   scripts/run_suite.sh >> $L 2>&1
   echo "TIER4_DONE suite_rc=$? $(date -Is)" >> $L
 fi
+# ---- TIER 5 (~4 h, the manager's follow-up after b136read, 2026-10-13): the
+# cells the first four tiers did not carry. utf8 DENY (ci-strasse gates pcrec's
+# T5; needs the utf8 roster row merged from lane/b136read), bounded + email at
+# the canonical pin (the front page's FRONT_OTHER sets), capability nocaps
+# BASE/NEW (the nocaps-only 15th handoff mover) + capability DENY. Opens and
+# closes with its own sentinel pass.
+if tier 5; then
+  SUITE="sentinel utf8 bounded email capability sentinel:end5" \
+  TESTEES_sentinel="$SENT_OPEN" TESTEES_sentinel_end5="$SENT_CLOSE" \
+  TESTEES_utf8="pcrec-auto-utf8-noreqhandoff@$N" \
+  TESTEES_bounded="pcrec-auto" TESTEES_email="pcrec-auto" \
+  TESTEES_capability="pcrec-nocaps@$B pcrec-nocaps@$N pcrec-auto-noreqhandoff@$N" \
+  STOP_AT="${STOP_AT_T5:-}" \
+  NOTE="[B136] tier 5: follow-up -- utf8 DENY (ci-strasse), bounded/email canonical, capability nocaps B/N + DENY" \
+  scripts/run_suite.sh >> $L 2>&1
+  echo "TIER5_DONE suite_rc=$? $(date -Is)" >> $L
+fi
 sha256sum build/work/pcrec-auto/pcrec_driver build/work/pcrec-nocaps/pcrec_driver >> $L 2>&1
 echo "CHAIN_DONE $(date -Is)" >> $L
