@@ -1,12 +1,12 @@
 # trend_report: history sentinel auto-nocaps-simdna
 # schema: trend-tsv-1
 # generator: trend-v1
-# snapshots_sha256: 43e7c269153bd67f33d8068b28d3366e26ba2e708a27e1ba494cc785316a8539
+# snapshots_sha256: c1ca0f3c599ef5ca224a4c458d6de46d33d6dcc0123d3b6ce75eaf3dd477f493
 # links_sha256: 198cb6422854bf062029e26db2e858abbdc2be6d087e4f75881fb5d420f1c402
 # links: 5 (5 confirmed, 0 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
-# pin_order_sha256: 1191543a5ff9af6e1924f20c8a464bec16409d495dc1faa7bed5c584fd9cd0da
-# as_of: 2026-10-11T16:46:44Z
+# pin_order_sha256: 272a387785816bd50e27a9beea35ef39b6d35b3d40eba795d345cdb516f5ee51
+# as_of: 2026-10-13T06:02:07Z
 # identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
 # wide_gap_abi: 8
 # fallback_band: 0.0846
@@ -58,3 +58,18 @@ pin_idx	pin	set_ver	pattern	regime	form	state	median_ns	min_ns	max_ns	percall_ns
 28	b8337c33	sentinel@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	judged	413.7	413.5	414.7	5.52	15542	90779a4237012b5c	D:sentinel@0.1:auto-nocaps-simdna:b8337c33:wild-validator-us-zip-owasp:short-subject-search:plain	7388f1c0	0.9973	within-noise
 28	b8337c33	sentinel@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	judged	7433.1	7394.0	7453.8	99.11	101313	cd958447ecfbf645	D:sentinel@0.1:auto-nocaps-simdna:b8337c33:wild-waf-crs-942360-concat-sqli:short-subject-search:plain	7388f1c0	0.9991	within-noise
 28	b8337c33	sentinel@0.1	winpath-near-miss	short-subject-search	plain	judged	455.6	455.0	459.1	6.07	14043	e7945fdd98d31d25	D:sentinel@0.1:auto-nocaps-simdna:b8337c33:winpath-near-miss:short-subject-search:plain	7388f1c0	0.9960	within-noise
+30	6b2dbd3e	sentinel@0.1	base10num-near-miss	short-subject-search	plain	judged	524.8	520.4	530.3	7.00	15100	0cfda4b552900265	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:base10num-near-miss:short-subject-search:plain	b8337c33	1.0090	within-noise
+30	6b2dbd3e	sentinel@0.1	file-ext-order	short-subject-search	plain	judged	709.7	709.2	714.9	9.46	16085	39505134307e3779	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:file-ext-order:short-subject-search:plain	b8337c33	0.9970	within-noise
+30	6b2dbd3e	sentinel@0.1	floor-byte	short-subject-search	plain	judged	681.6	679.7	689.1	9.09	14559	ba211693d228521b	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:floor-byte:short-subject-search:plain	b8337c33	1.0018	within-noise
+30	6b2dbd3e	sentinel@0.1	ipv4-near-miss	short-subject-search	plain	judged	427.7	426.2	427.8	5.70	19134	f8774c973676dc6c	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:ipv4-near-miss:short-subject-search:plain	b8337c33	1.0004	within-noise
+30	6b2dbd3e	sentinel@0.1	keyword-prefix-order	short-subject-search	plain	judged	784.2	783.4	797.2	10.46	16065	c512bf434ad9fba4	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:keyword-prefix-order:short-subject-search:plain	b8337c33	1.0016	within-noise
+30	6b2dbd3e	sentinel@0.1	numeric-id-nested-plus	short-subject-search	plain	judged	485.3	482.9	487.3	6.47	13503	68934b92a144223f	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:numeric-id-nested-plus:short-subject-search:plain	b8337c33	1.0075	within-noise
+30	6b2dbd3e	sentinel@0.1	phone-list-nested-plus	short-subject-search	plain	judged	493.7	491.1	518.6	6.58	13508	a168c0d9d67556b8	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:phone-list-nested-plus:short-subject-search:plain	b8337c33	1.0020	within-noise
+30	6b2dbd3e	sentinel@0.1	router-prefix-order	short-subject-search	plain	judged	693.6	691.3	694.9	9.25	16215	aa3365b534c50822	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:router-prefix-order:short-subject-search:plain	b8337c33	1.0041	within-noise
+30	6b2dbd3e	sentinel@0.1	trim-nested-star	short-subject-search	plain	judged	446.5	442.7	462.9	5.95	13343	5c4b18300f2e77d9	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:trim-nested-star:short-subject-search:plain	b8337c33	1.0039	within-noise
+30	6b2dbd3e	sentinel@0.1	uuid-near-miss	short-subject-search	plain	judged	538.2	536.4	542.3	7.18	19363	bdbd025a7fdbf307	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:uuid-near-miss:short-subject-search:plain	b8337c33	1.0025	within-noise
+30	6b2dbd3e	sentinel@0.1	wild-semdiv-dollar-trailing-newline-pcre2	short-subject-search	plain	judged	648.5	635.9	653.2	8.65	16389	1bfb8b7db636da29	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:wild-semdiv-dollar-trailing-newline-pcre2:short-subject-search:plain	b8337c33	1.0087	within-noise
+30	6b2dbd3e	sentinel@0.1	wild-validator-email-owasp	short-subject-search	plain	judged	1049.4	1044.9	1051.2	13.99	14380	e44ea201149772c1	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:wild-validator-email-owasp:short-subject-search:plain	b8337c33	1.0035	within-noise
+30	6b2dbd3e	sentinel@0.1	wild-validator-us-zip-owasp	short-subject-search	plain	judged	415.3	412.9	480.9	5.54	15542	90779a4237012b5c	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:wild-validator-us-zip-owasp:short-subject-search:plain	b8337c33	1.0039	within-noise
+30	6b2dbd3e	sentinel@0.1	wild-waf-crs-942360-concat-sqli	short-subject-search	plain	judged	7403.4	7370.7	7489.8	98.71	101313	cd958447ecfbf645	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:wild-waf-crs-942360-concat-sqli:short-subject-search:plain	b8337c33	0.9960	within-noise
+30	6b2dbd3e	sentinel@0.1	winpath-near-miss	short-subject-search	plain	judged	459.4	454.8	470.0	6.13	14043	e7945fdd98d31d25	D:sentinel@0.1:auto-nocaps-simdna:6b2dbd3e:winpath-near-miss:short-subject-search:plain	b8337c33	1.0084	within-noise

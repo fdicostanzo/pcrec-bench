@@ -1,12 +1,12 @@
 # trend_report: compile_deltas
 # schema: trend-tsv-1
 # generator: trend-v1
-# snapshots_sha256: 43e7c269153bd67f33d8068b28d3366e26ba2e708a27e1ba494cc785316a8539
+# snapshots_sha256: c1ca0f3c599ef5ca224a4c458d6de46d33d6dcc0123d3b6ce75eaf3dd477f493
 # links_sha256: 198cb6422854bf062029e26db2e858abbdc2be6d087e4f75881fb5d420f1c402
 # links: 5 (5 confirmed, 0 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
-# pin_order_sha256: 1191543a5ff9af6e1924f20c8a464bec16409d495dc1faa7bed5c584fd9cd0da
-# as_of: 2026-10-11T16:46:44Z
+# pin_order_sha256: 272a387785816bd50e27a9beea35ef39b6d35b3d40eba795d345cdb516f5ee51
+# as_of: 2026-10-13T06:02:07Z
 # identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
 # wide_gap_abi: 8
 # fallback_band: 0.0846
@@ -554,6 +554,7 @@ K:bounded@0.3:auto-caps-simdna:b8337c33:nest3-3:plain	bounded@0.3	auto-caps-simd
 K:bounded@0.3:auto-caps-simdna:b8337c33:nest3-3:whole-subject	bounded@0.3	auto-caps-simdna	b8337c33	c4c70f2c	nest3-3	whole-subject	compiled	compiled	28501	21820	0.7656	19051	16935	0.8889	174353522	173306850	0.9940	0	no-or-unknown	1	0	0	1
 K:bounded@0.3:auto-caps-simdna:b8337c33:pw-8-64:whole-subject	bounded@0.3	auto-caps-simdna	b8337c33	c4c70f2c	pw-8-64	whole-subject	compiled	compiled	42690	29310	0.6866	21162	18375	0.8683	212122542	190442963	0.8978	1	no-or-unknown	1	0	0	1
 K:bounded@0.3:auto-caps-simdna:b8337c33:year4:whole-subject	bounded@0.3	auto-caps-simdna	b8337c33	c4c70f2c	year4	whole-subject	compiled	compiled	26748	21057	0.7872	20035	17587	0.8778	190589379	169782450	0.8908	0	no-or-unknown	1	0	0	1
+K:bounded@0.3:auto-caps-simdna:00c97769:cls-upto-65535:whole-subject	bounded@0.3	auto-caps-simdna	00c97769	b8337c33	cls-upto-65535	whole-subject	did-not-compile	did-not-compile							22180560	11934428	0.5381	1	no-or-unknown	0	1	0	0
 K:bounded@0.3:auto-caps-simdna_cc-clang:288d505:cls-lazy-16384:plain	bounded@0.3	auto-caps-simdna_cc-clang	288d505	1989c62	cls-lazy-16384	plain	compiled	compiled	18340	14947	0.8150	13367	11644	0.8711	3705377551	3632402352	0.9803	0	no-or-unknown	1	0	0	1
 K:bounded@0.3:auto-caps-simdna_cc-clang:288d505:cls-upto-1024:plain	bounded@0.3	auto-caps-simdna_cc-clang	288d505	1989c62	cls-upto-1024	plain	compiled	compiled	19697	16307	0.8279	14684	12964	0.8829	230270499	216512579	0.9403	0	no-or-unknown	1	0	0	1
 K:bounded@0.3:auto-caps-simdna_cc-clang:288d505:cls-upto-128:plain	bounded@0.3	auto-caps-simdna_cc-clang	288d505	1989c62	cls-upto-128	plain	compiled	compiled	19690	16302	0.8279	14677	12959	0.8829	197429292	174180205	0.8822	1	no-or-unknown	1	0	0	1
@@ -1024,6 +1025,31 @@ K:syntax@0.1:auto-caps-simdna:b8337c33:unp-p-lc:whole-subject	syntax@0.1	auto-ca
 K:syntax@0.1:auto-caps-simdna:b8337c33:unp-p-uc:whole-subject	syntax@0.1	auto-caps-simdna	b8337c33	c4c70f2c	unp-p-uc	whole-subject	compiled	compiled	31829	23633	0.7425	19140	17142	0.8956	188121403	176601450	0.9388	1	no-or-unknown	1	0	0	1
 K:syntax@0.1:auto-caps-simdna:b8337c33:vrb-skip:plain	syntax@0.1	auto-caps-simdna	b8337c33	c4c70f2c	vrb-skip	plain	did-not-compile	did-not-compile							1220715	2496483	2.0451	1	no-or-unknown	0	1	0	1
 K:syntax@0.1:auto-caps-simdna:b8337c33:xcl-minus:whole-subject	syntax@0.1	auto-caps-simdna	b8337c33	c4c70f2c	xcl-minus	whole-subject	did-not-compile	did-not-compile							1488809	2432113	1.6336	1	no-or-unknown	0	1	0	1
+K:syntax@0.1:auto-caps-simdna:00c97769:cnd-group:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	cnd-group	plain	did-not-compile	did-not-compile							1406028	2315233	1.6466	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:cnd-group:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	cnd-group	whole-subject	did-not-compile	did-not-compile							2297342	1219328	0.5308	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:esc-ctrl:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	esc-ctrl	plain	did-not-compile	did-not-compile							1382207	2280504	1.6499	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:esc-octal-o:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	esc-octal-o	whole-subject	did-not-compile	did-not-compile							1180727	2258013	1.9124	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:grp-branch-reset:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	grp-branch-reset	plain	did-not-compile	did-not-compile							1112266	2251233	2.0240	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:grp-branch-reset:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	grp-branch-reset	whole-subject	did-not-compile	did-not-compile							1174306	2250022	1.9160	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:grp-comment:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	grp-comment	plain	did-not-compile	did-not-compile							1198497	2660065	2.2195	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:msc-c-uc:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	msc-c-uc	whole-subject	did-not-compile	did-not-compile							1127146	1469128	1.3034	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:msc-r-uc:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	msc-r-uc	whole-subject	did-not-compile	did-not-compile							1261306	2322634	1.8415	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:msc-x-uc:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	msc-x-uc	plain	did-not-compile	did-not-compile							1511669	2486684	1.6450	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:msc-x-uc:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	msc-x-uc	whole-subject	did-not-compile	did-not-compile							1136017	2366394	2.0831	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:vrb-skip:plain	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	vrb-skip	plain	did-not-compile	did-not-compile							2496483	1336548	0.5354	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:00c97769:vrb-skip:whole-subject	syntax@0.1	auto-caps-simdna	00c97769	b8337c33	vrb-skip	whole-subject	did-not-compile	did-not-compile							1181326	2345283	1.9853	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:cnd-group:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	cnd-group	plain	did-not-compile	did-not-compile							2315233	1205986	0.5209	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:cnd-group:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	cnd-group	whole-subject	did-not-compile	did-not-compile							1219328	2445783	2.0058	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:esc-ctrl:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	esc-ctrl	whole-subject	did-not-compile	did-not-compile							2294954	1241877	0.5411	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:esc-octal-o:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	esc-octal-o	plain	did-not-compile	did-not-compile							1424308	2437944	1.7117	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:esc-octal-o:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	esc-octal-o	whole-subject	did-not-compile	did-not-compile							2258013	1150206	0.5094	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:grp-branch-reset:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	grp-branch-reset	whole-subject	did-not-compile	did-not-compile							2250022	1196937	0.5320	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:grp-callout:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	grp-callout	plain	did-not-compile	did-not-compile							1254708	2380382	1.8972	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:grp-comment:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	grp-comment	plain	did-not-compile	did-not-compile							2660065	1580699	0.5942	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:msc-r-uc:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	msc-r-uc	plain	did-not-compile	did-not-compile							2569975	1416158	0.5510	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:msc-x-uc:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	msc-x-uc	whole-subject	did-not-compile	did-not-compile							2366394	1187307	0.5017	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:vrb-skip:plain	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	vrb-skip	plain	did-not-compile	did-not-compile							1336548	2364833	1.7694	1	no-or-unknown	0	1	0	0
+K:syntax@0.1:auto-caps-simdna:6b2dbd3e:xcl-minus:whole-subject	syntax@0.1	auto-caps-simdna	6b2dbd3e	00c97769	xcl-minus	whole-subject	did-not-compile	did-not-compile							2390094	1435538	0.6006	1	no-or-unknown	0	1	0	0
 K:syntax@0.1:auto-nocaps-simdna:25b1984f:cnd-group:whole-subject	syntax@0.1	auto-nocaps-simdna	25b1984f	d34c9131	cnd-group	whole-subject	did-not-compile	did-not-compile							1133307	2280692	2.0124	1	no-or-unknown	0	1	0	1
 K:syntax@0.1:auto-nocaps-simdna:25b1984f:esc-ctrl:whole-subject	syntax@0.1	auto-nocaps-simdna	25b1984f	d34c9131	esc-ctrl	whole-subject	did-not-compile	did-not-compile							2051982	1271257	0.6195	1	no-or-unknown	0	1	0	1
 K:syntax@0.1:auto-nocaps-simdna:25b1984f:esc-octal-o:whole-subject	syntax@0.1	auto-nocaps-simdna	25b1984f	d34c9131	esc-octal-o	whole-subject	did-not-compile	did-not-compile							1859122	1074326	0.5779	1	no-or-unknown	0	1	0	1
@@ -1421,6 +1447,9 @@ K:utf8@0.1:auto-caps-simdna_utf8:b8337c33:lit-sharp-s:whole-subject	utf8@0.1	aut
 K:utf8@0.1:auto-caps-simdna_utf8:b8337c33:prp-ingreek:whole-subject	utf8@0.1	auto-caps-simdna_utf8	b8337c33	c4c70f2c	prp-ingreek	whole-subject	did-not-compile	did-not-compile							2388214	1271127	0.5323	1	no-or-unknown	0	1	0	1
 K:utf8@0.1:auto-caps-simdna_utf8:b8337c33:qnt-bounded-4b:whole-subject	utf8@0.1	auto-caps-simdna_utf8	b8337c33	c4c70f2c	qnt-bounded-4b	whole-subject	compiled	compiled	28496	22973	0.8062	19749	17311	0.8766	196057887	183698639	0.9370	0	no-or-unknown	1	0	0	1
 K:utf8@0.1:auto-caps-simdna_utf8:b8337c33:qnt-counted-3b:whole-subject	utf8@0.1	auto-caps-simdna_utf8	b8337c33	c4c70f2c	qnt-counted-3b	whole-subject	compiled	compiled	28128	22692	0.8067	19916	17327	0.8700	202114508	189524171	0.9377	0	no-or-unknown	1	0	0	1
+K:utf8@0.1:auto-caps-simdna_utf8:00c97769:prp-ingreek:whole-subject	utf8@0.1	auto-caps-simdna_utf8	00c97769	b8337c33	prp-ingreek	whole-subject	did-not-compile	did-not-compile							1271127	2495013	1.9628	1	no-or-unknown	0	1	0	0
+K:utf8@0.1:auto-caps-simdna_utf8:6b2dbd3e:prp-ingreek:plain	utf8@0.1	auto-caps-simdna_utf8	6b2dbd3e	00c97769	prp-ingreek	plain	did-not-compile	did-not-compile							2481064	1364238	0.5499	1	no-or-unknown	0	1	0	0
+K:utf8@0.1:auto-caps-simdna_utf8:6b2dbd3e:prp-ingreek:whole-subject	utf8@0.1	auto-caps-simdna_utf8	6b2dbd3e	00c97769	prp-ingreek	whole-subject	did-not-compile	did-not-compile							2495013	1280919	0.5134	1	no-or-unknown	0	1	0	0
 K:utf8@0.1:auto-nocaps-simdna_utf8:751b9c6d:prp-ingreek:whole-subject	utf8@0.1	auto-nocaps-simdna_utf8	751b9c6d	ce658cb7	prp-ingreek	whole-subject	did-not-compile	did-not-compile							2123711	1284486	0.6048	1	no-or-unknown	0	1	0	1
 K:utf8@0.1:auto-nocaps-simdna_utf8:fc719ca4:alt-cyr-64:plain	utf8@0.1	auto-nocaps-simdna_utf8	fc719ca4	751b9c6d	alt-cyr-64	plain	compiled	compiled	290277	292239	1.0068	16963	18925	1.1157	231354221	257386005	1.1125	0	no-or-unknown	1	0	0	1
 K:utf8@0.1:auto-nocaps-simdna_utf8:fc719ca4:alt-cyr-64:whole-subject	utf8@0.1	auto-nocaps-simdna_utf8	fc719ca4	751b9c6d	alt-cyr-64	whole-subject	compiled	compiled	307094	309056	1.0064	18879	20841	1.1039	255103104	284907760	1.1168	1	no-or-unknown	1	0	0	1
