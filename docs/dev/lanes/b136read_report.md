@@ -67,14 +67,21 @@ Ledger: `docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md` (the full deriv
 | 1. regenerate stale sidecars ([B41]) | `scripts/regen_sidecars.py`: 95 sidecars, 0 failures (87 existing re-stamped against the new index + 8 new) |
 | 2. ledger with readings (a)-(k), each verdict says what was read and what was not | `docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md` sections 3-13 (a)-(k), sections 0 and 15 (not read) |
 | 3. `make trend-snapshot` / `trend` / `trend-check` for 00c97769 and 6b2dbd3e, with the interpretation | snapshots `reports/trend/snapshots/{00c97769,6b2dbd3e}.tsv.gz` (`verify_snapshot` `[]`, 45 records each); links 0 proposed, 5 listed; interpretations `reports/trend/interpretation/{00c97769,6b2dbd3e}.md` (cite-check 0 problems); `make trend` / `trend-check` / `check-trend` in `build/trend-final.log` |
-| 4. front page at 6b2dbd3e only if every FRONT_OTHER set has a record at that pin | **NOT regenerated**: `FRONT_OTHER` = email-specimen@0.2 (no pcrec record at 6b2dbd3e), loglines, bounded@0.3 (no 6b2dbd3e record), altwide@0.3, syntax, utf8, litrun; `Makefile` FRONT_PIN stays b8337c33; `make frontpage-check` result below |
+| 4. front page at 6b2dbd3e only if every FRONT_OTHER set has a record at that pin | **NOT moved to 6b2dbd3e**: `FRONT_OTHER` = email-specimen@0.2 (no pcrec record at all in the window), bounded@0.3 (B/N/D only, no 6b2dbd3e record), loglines, altwide@0.3, syntax, utf8, litrun; `Makefile` FRONT_PIN stays b8337c33. BUT `make frontpage-check` had DRIFTED (4 files) as soon as the window's records were in the store -- the front page reads the NEWEST record per testee id, so the capability headline cell now takes this window's b8337c33 record (10-12) and the other-sets table the newest pcre2 peers / pcrec records -- so I ran `make frontpage` at FRONT_PIN b8337c33 to re-converge it: README / methodology / provenance / svg regenerated, `frontpage --check: clean`, `make check-frontpage` PASS (separate commit, OK-before-push is Frank's per the previous lane) |
 | 5. O-101 draft in the report, outbox untouched | this file; `docs/dev/outbox_to_pcrec.md` not edited |
 | 6. CLAUDE.md rows | `reports/CLAUDE.md` (new section), `docs/dev/ledgers/CLAUDE.md` (row), `docs/dev/measurements/CLAUDE.md` (row); `docs/dev/lanes/CLAUDE.md` unchanged (the report is a lane report) |
 | OWED (manager) | merge; send O-101; full `make check` (long); decide the next window's roster row for `pcrec-auto-utf8-noreqhandoff` in `bench/utf8/gen_patterns.py` and a one-cell `ci-strasse` re-run; capability nocaps B/N and bounded C cells; whether to pin the `handoff-6b2dbd3e` groups with `--until` before any regeneration; the I-148 section 2 (R17-b) Q1-Q7 were not in this brief and are NOT answered here |
 
+## Front page note (item 4)
+
+Headline change from the re-convergence (b8337c33, the 10-12 capability record instead of the 10-11 one): faster in **936** of 1,019 comparisons (was 937), slower **81** (was 80), ties 2, median speedup x5.02 (was 5.01), geo-mean x8.51 (was 8.52); per competitor: PCRE2 JIT 118 / 16 / 0, median x3.21 -> x3.18; Rust 76 / **14** / **0** (was 13 / 1: one tie became a loss); Vectorscan no-SOM 66 / 23 / **2** (was 67 / 23 / 1); pcrec compile median 221 -> 223 ms. One case flipped between two records of the SAME pin and the same testee, i.e. the front page's pcrec side moves by record noise at this resolution. The other-sets table now pairs the newest pcrec record per set (loglines at 6b2dbd3e) with the fresh pcre2 jit/interp peers (loglines, email-specimen, bounded, syntax, utf8, litrun).
+
 ## Validation
 
-See the final section appended after the checks ran (below).
+- `make check-interpret`: **269 passed, 0 FAILED** (`build/validate.log`, `DONE rc=0`; 261 + the 8 new sidecars). `make check-report`: OK (test_report **104 passed / 0 failed** incl. the v26 re-pin, test_quick 7/0, matrix/fixtures 15/0, CLI smoke).
+- `make trend-check`: 121 files, 0 drifted (before and after the interpretations); `make check-trend`: ALL PASS, `trend_cite_check` 0 problems on all five sidecars (`build/trend-final.log`).
+- `make frontpage` then `frontpage --check: clean`, `make check-frontpage` PASS (`build/frontpage.log`). The first `make frontpage-check` (before regeneration) read DRIFT in 4 files; the `PCREC_REPO` override was not needed (~/pcrec now carries b8337c33).
+- Full `make check` NOT run (long): `cd /home/duxevents/pcrec-bench/worktrees/b136read && (setsid gnutimeout 10800 make -k check > build/check.log 2>&1; echo "DONE rc=$?" >> build/check.log) & disown` -- OWED, manager.
 
 ## Files
 
