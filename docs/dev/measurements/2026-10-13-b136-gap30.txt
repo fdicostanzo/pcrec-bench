@@ -1,0 +1,38 @@
+# the gap report's 30 sub-x1.5 trailing cells vs jit (rank.json of docs/dev/optloop/gapreport/run_2026-10-11): re-read with THIS window's jit
+# old = gap report ratio (pcrec b8337c33 caps, 2026-10-11 window / jit September record); now = pcrec ns / this window's jit ns
+# pcrec side = b8337c33 THIS window; litrun has no BASE in the window: 6b2dbd3e is used and marked
+bounded     cls-atleast-4096         tp  old x1.47 | now x1.47 | jit now/old 0.998 | pcrec now/old 0.999 | STILL TRAILS [b8337c33]
+bounded     ctx-lazy-64              ss  old x1.22 | now x1.24 | jit now/old 0.990 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+bounded     pw-8-64                  tp  old x1.49 | now x1.49 | jit now/old 0.998 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+capability  high-byte-run            tp  old x1.19 | now - (no new jit record (capability not in tier 4))
+capability  phone-palindrome-6       tp  old x1.26 | now - (no new jit record (capability not in tier 4))
+capability  pwd-strength-chain       ss  old x1.45 | now - (no new jit record (capability not in tier 4))
+capability  router-prefix-order      tp  old x1.43 | now - (no new jit record (capability not in tier 4))
+capability  utf8-lead-no-cont        tp  old x1.13 | now - (no new jit record (capability not in tier 4))
+litrun      lit-l16                  tp  old x1.27 | now x1.30 | jit now/old 0.971 | pcrec now/old 0.999 | STILL TRAILS [6b2dbd3e]
+litrun      lit-l8                   tp  old x1.37 | now x1.36 | jit now/old 1.001 | pcrec now/old 0.999 | STILL TRAILS [6b2dbd3e]
+loglines    iso-ts                   tp  old x1.20 | now x1.20 | jit now/old 0.999 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      bak-1                    tp  old x1.27 | now x1.27 | jit now/old 1.001 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      bak-1                    ss  old x1.21 | now x1.22 | jit now/old 0.986 | pcrec now/old 0.997 | STILL TRAILS [b8337c33]
+syntax      bak-2                    ss  old x1.27 | now x1.21 | jit now/old 0.997 | pcrec now/old 0.947 | STILL TRAILS [b8337c33]
+syntax      bak-g-rel                tp  old x1.27 | now x1.27 | jit now/old 0.999 | pcrec now/old 0.997 | STILL TRAILS [b8337c33]
+syntax      bak-g-rel                ss  old x1.21 | now x1.20 | jit now/old 1.002 | pcrec now/old 1.001 | STILL TRAILS [b8337c33]
+syntax      bak-py                   tp  old x1.28 | now x1.27 | jit now/old 1.003 | pcrec now/old 0.997 | STILL TRAILS [b8337c33]
+syntax      bak-py                   ss  old x1.20 | now x1.23 | jit now/old 0.984 | pcrec now/old 1.005 | STILL TRAILS [b8337c33]
+syntax      esc-hex                  tp  old x1.29 | now x1.27 | jit now/old 1.015 | pcrec now/old 0.999 | STILL TRAILS [b8337c33]
+syntax      esc-quote                tp  old x1.35 | now x1.35 | jit now/old 1.000 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      grp-cap                  tp  old x1.25 | now x1.24 | jit now/old 1.006 | pcrec now/old 0.999 | STILL TRAILS [b8337c33]
+syntax      grp-named                tp  old x1.26 | now x1.24 | jit now/old 1.012 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      grp-named-quote          tp  old x1.25 | now x1.25 | jit now/old 1.005 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      grp-noncap               tp  old x1.26 | now x1.25 | jit now/old 1.013 | pcrec now/old 1.001 | STILL TRAILS [b8337c33]
+syntax      lit-cat                  tp  old x1.29 | now x1.27 | jit now/old 1.017 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      mod-n                    tp  old x1.27 | now x1.26 | jit now/old 1.009 | pcrec now/old 1.001 | STILL TRAILS [b8337c33]
+syntax      mod-reset                tp  old x1.29 | now x1.27 | jit now/old 1.018 | pcrec now/old 0.999 | STILL TRAILS [b8337c33]
+syntax      mod-unset                tp  old x1.28 | now x1.27 | jit now/old 1.014 | pcrec now/old 1.000 | STILL TRAILS [b8337c33]
+syntax      mod-x                    tp  old x1.29 | now x1.27 | jit now/old 1.020 | pcrec now/old 1.002 | STILL TRAILS [b8337c33]
+syntax      qnt-quest                tp  old x1.34 | now x1.29 | jit now/old 1.036 | pcrec now/old 0.997 | STILL TRAILS [b8337c33]
+
+# 25 of 30 have a new jit number; 5 without (capability: 5)
+# of the 25: still trail 25 (of which >= x1.5: 0), flipped to lead 0
+# ratio moved by more than 10% (|now/old - 1| > 0.10): 0; jit now/old: n=25 min 0.971 p5 0.984 p25 0.998 med 1.002 p75 1.013 p95 1.020 max 1.036
+# pcrec-side now/old (the b8337c33 cross-window control on these cells): n=25 min 0.947 p5 0.997 p25 0.999 med 1.000 p75 1.000 p95 1.001 max 1.005

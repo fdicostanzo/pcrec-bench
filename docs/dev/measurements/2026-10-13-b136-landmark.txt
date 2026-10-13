@@ -1,0 +1,154 @@
+# ask 2: landmark byte density of each mover's subjects vs the default prior (default.rxt of 6b2dbd3e, ppm summing to 1e6)
+# landmark = REQ_BYTE (or REQ_RUN's window product); observed density = count/len per subject; dense = observed > prior
+# 'cost bound' = x1.5 (I-147 ask 2) only when an ADMITTED re-entry meets denser text than the prior; this reads the text only
+
+loglines/ipv6 K=4 landmark byte 58 (b':') prior hit rate 0.00665 (1/h = 150 B between hits) | subjects 124, denser than prior: 124
+   densest: s-006          len     367 count     19 density 0.05177 (x7.79 prior) | NEW/BASE 0.696 DENY/BASE 0.988
+   densest: s-026          len     438 count     21 density 0.04795 (x7.21 prior) | NEW/BASE 0.552 DENY/BASE 0.999
+   densest: s-009          len     334 count     16 density 0.04790 (x7.21 prior) | NEW/BASE 0.389 DENY/BASE 1.011
+   densest: s-014          len     343 count     16 density 0.04665 (x7.02 prior) | NEW/BASE 0.439 DENY/BASE 0.996
+   densest: s-041          len     792 count     35 density 0.04419 (x6.65 prior) | NEW/BASE 0.411 DENY/BASE 1.006
+   slowest NEW/BASE: s-006          0.696 (BASE 354.8[349.7..360.5] NEW 246.8[246.6..247.0]) DISJ density 0.05177 x7.79
+   slowest NEW/BASE: s-078          0.569 (BASE 546.2[544.6..551.9] NEW 310.8[309.8..311.3]) DISJ density 0.03955 x5.95
+   slowest NEW/BASE: s-026          0.552 (BASE 542.2[541.4..546.2] NEW 299.2[298.2..301.0]) DISJ density 0.04795 x7.21
+
+loglines/ipv4 K=3 landmark byte 46 (b'.') prior hit rate 0.00997 (1/h = 100 B between hits) | subjects 124, denser than prior: 118
+   densest: s-019          len     358 count     19 density 0.05307 (x5.32 prior) | NEW/BASE 0.855 DENY/BASE 0.992
+   densest: s-008          len     361 count     18 density 0.04986 (x5.00 prior) | NEW/BASE 0.765 DENY/BASE 1.011
+   densest: s-011          len     446 count     17 density 0.03812 (x3.82 prior) | NEW/BASE 0.651 DENY/BASE 1.005
+   densest: s-075          len    1274 count     48 density 0.03768 (x3.78 prior) | NEW/BASE 0.430 DENY/BASE 0.994
+   densest: s-080          len    1239 count     45 density 0.03632 (x3.64 prior) | NEW/BASE 0.328 DENY/BASE 0.995
+   slowest NEW/BASE: s-027          1.077 (BASE 46.4[46.4..46.8] NEW 50.0[49.8..50.1]) DISJ density 0.02867 x2.88
+   slowest NEW/BASE: s-010          1.070 (BASE 53.2[53.2..53.4] NEW 57.0[56.9..57.1]) DISJ density 0.02835 x2.84
+   slowest NEW/BASE: s-019          0.855 (BASE 261.7[246.2..270.7] NEW 223.7[218.2..225.3]) DISJ density 0.05307 x5.32
+
+loglines/kv-quoted K=32 landmark run b'="'@1 mask ffff prior hit rate 0.00001 (1/h = 90561 B between hits) | subjects 124, denser than prior: 12
+   densest: s-002          len     333 count      2 density 0.01201 (x1087.82 prior) | NEW/BASE 1.213 DENY/BASE 2.779
+   densest: s-010          len     388 count      2 density 0.01031 (x933.61 prior) | NEW/BASE 1.184 DENY/BASE 2.714
+   densest: s-042          len     662 count      2 density 0.00604 (x547.19 prior) | NEW/BASE 1.287 DENY/BASE 2.032
+   densest: s-029          len     905 count      2 density 0.00442 (x400.27 prior) | NEW/BASE 1.228 DENY/BASE 2.168
+   densest: s-075          len    1274 count      2 density 0.00314 (x284.33 prior) | NEW/BASE 1.177 DENY/BASE 14.000
+   slowest NEW/BASE: s-042          1.287 (BASE 87.9[87.6..88.3] NEW 113.1[106.5..113.4]) DISJ density 0.00604 x547.19
+   slowest NEW/BASE: s-063          1.236 (BASE 91.2[90.5..91.4] NEW 112.7[109.1..114.4]) DISJ density 0.00281 x254.21
+   slowest NEW/BASE: s-029          1.228 (BASE 88.8[88.7..89.0] NEW 109.0[107.3..114.0]) DISJ density 0.00442 x400.27
+
+bounded/dotted4 K=3 landmark byte 46 (b'.') prior hit rate 0.00997 (1/h = 100 B between hits) | subjects 54, denser than prior: 7
+   densest: f-quad-4       len      13 count      3 density 0.23077 (x23.15 prior) | NEW/BASE 1.011 DENY/BASE 1.001
+   densest: f-quad-4x      len      15 count      3 density 0.20000 (x20.06 prior) | NEW/BASE 1.002 DENY/BASE 0.998
+   densest: f-quad-3       len      10 count      2 density 0.20000 (x20.06 prior) | NEW/BASE 1.070 DENY/BASE 1.001
+   densest: l-06           len     154 count      3 density 0.01948 (x1.95 prior) | NEW/BASE 0.341 DENY/BASE 0.998
+   densest: l-03           len     251 count      4 density 0.01594 (x1.60 prior) | NEW/BASE 0.145 DENY/BASE 0.996
+   slowest NEW/BASE: l-01           1.103 (BASE 8.6[8.6..8.9] NEW 9.4[8.9..10.0]) ov density 0.00000 x0.00
+   slowest NEW/BASE: r-00128        1.099 (BASE 8.6[8.6..8.6] NEW 9.4[8.9..9.5]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: f-quad-3       1.070 (BASE 20.9[20.6..21.0] NEW 22.4[22.4..22.5]) DISJ density 0.20000 x20.06
+
+altwide/sfx-64 K=9 landmark run b'ing'@2 mask ffffff prior hit rate 0.00003 (1/h = 36217 B between hits) | subjects 44, denser than prior: 6
+   densest: f-sfx          len       9 count      1 density 0.33333 (x12072.34 prior) | NEW/BASE 1.105 DENY/BASE 0.960
+   densest: l-sfx-mid      len     226 count      1 density 0.01327 (x480.76 prior) | NEW/BASE 1.042 DENY/BASE 3.899
+   densest: t-128k-dense   len  131072 count    132 density 0.00302 (x109.42 prior) | NEW/BASE 0.113 DENY/BASE 1.089
+   densest: t-128k-sparse  len  131072 count      5 density 0.00011 (x4.14 prior) | NEW/BASE 0.136 DENY/BASE 1.562
+   densest: t-512k-sparse  len  524288 count     19 density 0.00011 (x3.94 prior) | NEW/BASE 0.112 DENY/BASE 1.101
+   slowest NEW/BASE: f-pfx3         1.111 (BASE 11.2[11.2..11.7] NEW 12.5[12.1..12.7]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: f-sfx          1.105 (BASE 42.1[42.0..46.2] NEW 46.5[46.3..57.1]) DISJ density 0.33333 x12072.34
+   slowest NEW/BASE: l-bg-2         1.101 (BASE 17.2[17.1..17.3] NEW 18.9[18.8..20.1]) DISJ density 0.00000 x0.00
+
+altwide/sfx-256 K=9 landmark run b'ing'@2 mask ffffff prior hit rate 0.00003 (1/h = 36217 B between hits) | subjects 44, denser than prior: 6
+   densest: f-sfx          len       9 count      1 density 0.33333 (x12072.34 prior) | NEW/BASE 1.103 DENY/BASE 0.968
+   densest: l-sfx-mid      len     226 count      1 density 0.01327 (x480.76 prior) | NEW/BASE 1.050 DENY/BASE 3.998
+   densest: t-128k-dense   len  131072 count    132 density 0.00302 (x109.42 prior) | NEW/BASE 0.121 DENY/BASE 1.070
+   densest: t-128k-sparse  len  131072 count      5 density 0.00011 (x4.14 prior) | NEW/BASE 0.145 DENY/BASE 1.543
+   densest: t-512k-sparse  len  524288 count     19 density 0.00011 (x3.94 prior) | NEW/BASE 0.120 DENY/BASE 1.086
+   slowest NEW/BASE: f-sfx          1.103 (BASE 42.0[41.8..45.6] NEW 46.3[46.2..46.5]) DISJ density 0.33333 x12072.34
+   slowest NEW/BASE: l-bg-2         1.093 (BASE 17.2[17.1..17.3] NEW 18.8[18.6..20.2]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: l-w511-last    1.072 (BASE 23.5[23.4..24.0] NEW 25.2[25.0..25.3]) DISJ density 0.00000 x0.00
+
+altwide/sfx-512 K=9 landmark run b'ing'@2 mask ffffff prior hit rate 0.00003 (1/h = 36217 B between hits) | subjects 44, denser than prior: 6
+   densest: f-sfx          len       9 count      1 density 0.33333 (x12072.34 prior) | NEW/BASE 1.107 DENY/BASE 0.969
+   densest: l-sfx-mid      len     226 count      1 density 0.01327 (x480.76 prior) | NEW/BASE 1.047 DENY/BASE 3.934
+   densest: t-128k-dense   len  131072 count    132 density 0.00302 (x109.42 prior) | NEW/BASE 0.791 DENY/BASE 8.095
+   densest: t-128k-sparse  len  131072 count      5 density 0.00011 (x4.14 prior) | NEW/BASE 0.191 DENY/BASE 1.792
+   densest: t-512k-sparse  len  524288 count     19 density 0.00011 (x3.94 prior) | NEW/BASE 0.160 DENY/BASE 1.667
+   slowest NEW/BASE: f-sfx          1.107 (BASE 41.8[41.7..42.6] NEW 46.3[46.2..46.5]) DISJ density 0.33333 x12072.34
+   slowest NEW/BASE: f-s255         1.077 (BASE 7.7[7.7..7.7] NEW 8.3[8.0..8.3]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: f-nar4         1.070 (BASE 7.7[7.7..8.4] NEW 8.3[8.0..8.3]) ov density 0.00000 x0.00
+
+syntax/cls-fold-pair K=0 landmark run b'cAt'@0 mask ffdfff prior hit rate 0.00007 (1/h = 15153 B between hits) | subjects 45, denser than prior: 8
+   densest: f-cat          len       3 count      1 density 1.00000 (x15153.26 prior) | NEW/BASE 0.796 DENY/BASE 0.990
+   densest: l-case         len      36 count      4 density 0.33333 (x5051.09 prior) | NEW/BASE 0.795 DENY/BASE 1.002
+   densest: f-concat       len      11 count      1 density 0.27273 (x4132.71 prior) | NEW/BASE 0.798 DENY/BASE 1.241
+   densest: l-dup          len      52 count      1 density 0.05769 (x874.23 prior) | NEW/BASE 0.785 DENY/BASE 0.982
+   densest: l-prose        len      77 count      1 density 0.03896 (x590.39 prior) | NEW/BASE 0.780 DENY/BASE 0.983
+   slowest NEW/BASE: f-num          1.289 (BASE 3.8[3.8..3.8] NEW 4.9[4.0..5.2]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: f-ac           1.039 (BASE 3.8[3.8..3.9] NEW 4.0[4.0..5.2]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: l-kv           1.005 (BASE 13.4[13.4..13.6] NEW 13.4[13.2..14.3]) ov density 0.00000 x0.00
+
+syntax/cls-pair-ctl K=0 landmark run b'cat'@0 mask fffdff prior hit rate 0.00008 (1/h = 12435 B between hits) | subjects 45, denser than prior: 8
+   densest: f-cat          len       3 count      1 density 1.00000 (x12434.63 prior) | NEW/BASE 0.795 DENY/BASE 0.989
+   densest: f-concat       len      11 count      1 density 0.27273 (x3391.26 prior) | NEW/BASE 0.799 DENY/BASE 1.238
+   densest: l-case         len      36 count      3 density 0.25000 (x3108.66 prior) | NEW/BASE 0.793 DENY/BASE 1.000
+   densest: l-dup          len      52 count      1 density 0.05769 (x717.38 prior) | NEW/BASE 0.783 DENY/BASE 0.969
+   densest: l-prose        len      77 count      1 density 0.03896 (x484.47 prior) | NEW/BASE 0.784 DENY/BASE 0.978
+   slowest NEW/BASE: f-ac           1.052 (BASE 3.8[3.8..3.8] NEW 4.0[4.0..5.2]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: f-num          1.038 (BASE 3.8[3.8..3.8] NEW 4.0[4.0..5.2]) DISJ density 0.00000 x0.00
+   slowest NEW/BASE: l-tags         1.002 (BASE 13.0[13.0..13.3] NEW 13.0[13.0..13.7]) ov density 0.00000 x0.00
+
+syntax/mod-i K=0 landmark run b'CAT'@0 mask dfdfdf prior hit rate 0.00008 (1/h = 12524 B between hits) | subjects 45, denser than prior: 10
+   densest: f-cat-uc       len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.156 DENY/BASE 1.060
+   densest: f-cat-mixed    len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.145 DENY/BASE 1.045
+   densest: f-cat          len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.131 DENY/BASE 1.016
+   densest: l-case         len      36 count      7 density 0.58333 (x7305.38 prior) | NEW/BASE 1.117 DENY/BASE 0.976
+   densest: f-concat       len      11 count      1 density 0.27273 (x3415.50 prior) | NEW/BASE 1.149 DENY/BASE 1.057
+   slowest NEW/BASE: f-cat-uc       1.156 (BASE 20.1[20.1..20.4] NEW 23.2[22.8..23.3]) DISJ density 1.00000 x12523.50
+   slowest NEW/BASE: f-concat       1.149 (BASE 27.4[27.3..29.7] NEW 31.5[31.4..31.6]) DISJ density 0.27273 x3415.50
+   slowest NEW/BASE: f-cat-mixed    1.145 (BASE 20.1[20.1..20.4] NEW 23.0[22.9..23.2]) DISJ density 1.00000 x12523.50
+
+syntax/mod-r K=0 landmark run b'CAT'@0 mask dfdfdf prior hit rate 0.00008 (1/h = 12524 B between hits) | subjects 45, denser than prior: 10
+   densest: f-cat-uc       len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.154 DENY/BASE 1.069
+   densest: f-cat-mixed    len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.149 DENY/BASE 1.044
+   densest: f-cat          len       3 count      1 density 1.00000 (x12523.50 prior) | NEW/BASE 1.120 DENY/BASE 1.008
+   densest: l-case         len      36 count      7 density 0.58333 (x7305.38 prior) | NEW/BASE 1.113 DENY/BASE 1.006
+   densest: f-concat       len      11 count      1 density 0.27273 (x3415.50 prior) | NEW/BASE 1.150 DENY/BASE 1.057
+   slowest NEW/BASE: l-dup          1.163 (BASE 22.6[22.6..23.4] NEW 26.3[25.4..27.2]) DISJ density 0.05769 x722.51
+   slowest NEW/BASE: f-cat-uc       1.154 (BASE 20.1[20.1..20.2] NEW 23.2[23.1..23.4]) DISJ density 1.00000 x12523.50
+   slowest NEW/BASE: f-concat       1.150 (BASE 27.4[27.3..28.3] NEW 31.5[31.4..31.6]) DISJ density 0.27273 x3415.50
+
+syntax/qnt-poss-brace K=2 landmark byte 98 (b'b') prior hit rate 0.00989 (1/h = 101 B between hits) | subjects 45, denser than prior: 15
+   densest: f-abba         len       4 count      2 density 0.50000 (x50.58 prior) | NEW/BASE 0.907 DENY/BASE 1.000
+   densest: f-abc          len       3 count      1 density 0.33333 (x33.72 prior) | NEW/BASE 0.904 DENY/BASE 1.000
+   densest: f-tag          len      11 count      3 density 0.27273 (x27.59 prior) | NEW/BASE 2.397 DENY/BASE 1.000
+   densest: f-aaab         len       4 count      1 density 0.25000 (x25.29 prior) | NEW/BASE 0.867 DENY/BASE 1.000
+   densest: f-parens-open  len       6 count      1 density 0.16667 (x16.86 prior) | NEW/BASE 0.933 DENY/BASE 1.000
+   slowest NEW/BASE: f-tag          2.397 (BASE 12.4[12.4..12.4] NEW 29.7[29.7..29.7]) DISJ density 0.27273 x27.59
+   slowest NEW/BASE: l-parens       1.312 (BASE 13.9[13.9..13.9] NEW 18.2[17.6..18.6]) DISJ density 0.02439 x2.47
+   slowest NEW/BASE: l-tags         1.143 (BASE 42.7[42.7..42.9] NEW 48.8[47.5..49.2]) DISJ density 0.06667 x6.74
+
+syntax/grp-atomic-alt K=2 landmark byte 99 (b'c') prior hit rate 0.01844 (1/h = 54 B between hits) | subjects 45, denser than prior: 16
+   densest: f-ac           len       2 count      1 density 0.50000 (x27.11 prior) | NEW/BASE 1.040 DENY/BASE 1.003
+   densest: f-cat          len       3 count      1 density 0.33333 (x18.07 prior) | NEW/BASE 1.056 DENY/BASE 0.999
+   densest: f-abc          len       3 count      1 density 0.33333 (x18.07 prior) | NEW/BASE 1.054 DENY/BASE 0.996
+   densest: f-cafe         len       4 count      1 density 0.25000 (x13.56 prior) | NEW/BASE 1.028 DENY/BASE 1.000
+   densest: f-concat       len      11 count      2 density 0.18182 (x9.86 prior) | NEW/BASE 1.029 DENY/BASE 1.000
+   slowest NEW/BASE: f-cat          1.056 (BASE 17.8[17.8..17.9] NEW 18.8[18.7..20.2]) DISJ density 0.33333 x18.07
+   slowest NEW/BASE: f-abc          1.054 (BASE 55.7[55.4..58.8] NEW 58.7[57.1..59.0]) ov density 0.33333 x18.07
+   slowest NEW/BASE: f-ac           1.040 (BASE 37.2[37.2..37.3] NEW 38.7[38.0..38.9]) DISJ density 0.50000 x27.11
+
+utf8/ci-ascii-control K=0 landmark run b'ABC'@2 mask dfdfdf prior hit rate 0.00001 (1/h = 76082 B between hits) | subjects 98, denser than prior: 7
+   densest: prp-notl-miss  len       3 count      1 density 1.00000 (x76081.86 prior) | NEW/BASE 1.084 DENY/BASE 0.972
+   densest: prp-lu-miss    len       3 count      1 density 1.00000 (x76081.86 prior) | NEW/BASE 1.084 DENY/BASE 0.970
+   densest: prp-l-anchored-miss len       3 count      1 density 1.00000 (x76081.86 prior) | NEW/BASE 1.095 DENY/BASE 0.978
+   densest: ci-ascii-control-hit len       3 count      1 density 1.00000 (x76081.86 prior) | NEW/BASE 1.084 DENY/BASE 1.010
+   densest: prp-l-anchored-hit len       4 count      1 density 0.75000 (x57061.39 prior) | NEW/BASE 1.087 DENY/BASE 0.975
+   slowest NEW/BASE: prp-l-anchored-miss 1.095 (BASE 21.1[21.1..21.3] NEW 23.2[22.9..24.0]) DISJ density 1.00000 x76081.86
+   slowest NEW/BASE: prp-l-anchored-hit 1.087 (BASE 21.7[21.6..22.1] NEW 23.6[23.2..24.4]) DISJ density 0.75000 x57061.39
+   slowest NEW/BASE: prp-lu-miss    1.084 (BASE 21.3[21.2..21.9] NEW 23.1[23.0..23.2]) DISJ density 1.00000 x76081.86
+
+utf8/ci-strasse K=2 landmark run b'TRA'@2 mask dfdfdf prior hit rate 0.00017 (1/h = 5816 B between hits) | subjects 98, denser than prior: 10
+   densest: ci-strasse-nearmiss len       7 count      1 density 0.42857 (x2492.72 prior) | NEW/BASE 1.234 DENY/BASE -
+   densest: ci-strasse-hit len       7 count      1 density 0.42857 (x2492.72 prior) | NEW/BASE 1.090 DENY/BASE -
+   densest: lit-sharps-miss len      11 count      1 density 0.27273 (x1586.27 prior) | NEW/BASE 1.270 DENY/BASE -
+   densest: lit-sharps-hit len      11 count      1 density 0.27273 (x1586.27 prior) | NEW/BASE 1.114 DENY/BASE -
+   densest: cls-posix-straupperss len      11 count      1 density 0.27273 (x1586.27 prior) | NEW/BASE 1.130 DENY/BASE -
+   slowest NEW/BASE: lit-sharps-miss 1.270 (BASE 24.1[22.8..24.5] NEW 30.6[30.6..30.7]) DISJ density 0.27273 x1586.27
+   slowest NEW/BASE: ci-strasse-nearmiss 1.234 (BASE 22.7[22.2..23.6] NEW 28.0[28.0..28.2]) DISJ density 0.42857 x2492.72
+   slowest NEW/BASE: cls-posix-straupperss 1.130 (BASE 45.8[45.6..48.6] NEW 51.8[51.8..59.0]) DISJ density 0.27273 x1586.27
+utf8/cls-s-ucp: no byte or run landmark stamped (req_byte=None req_run=None)

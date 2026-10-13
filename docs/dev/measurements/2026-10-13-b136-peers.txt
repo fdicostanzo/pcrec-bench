@@ -1,0 +1,15 @@
+# ask 7.1: pcre2 jit/interp THIS window vs the previous (September) record of the same testee id; set-grain cells
+bounded        jit    old 20260905T001408Z new 20261013T062006Z | n=129 min 0.920 p5 0.957 p25 0.975 med 0.991 p75 1.004 p95 1.041 max 1.096 | DISJ 28 | outside +-5% 5, +-10% 0
+bounded        interp old 20260904T232830Z new 20261013T065615Z | n=129 min 0.944 p5 0.953 p25 0.972 med 0.991 p75 1.006 p95 1.022 max 1.311 | DISJ 60 | outside +-5% 4, +-10% 1
+loglines       jit    old 20260902T071053Z new 20261013T074441Z | n=22 min 0.970 p5 0.994 p25 0.998 med 0.999 p75 1.000 p95 1.002 max 1.014 | DISJ 3 | outside +-5% 0, +-10% 0
+loglines       interp old 20260902T070149Z new 20261013T075311Z | n=22 min 0.932 p5 0.989 p25 0.993 med 0.997 p75 1.002 p95 1.014 max 1.034 | DISJ 13 | outside +-5% 1, +-10% 0
+syntax         jit    old 20260907T012625Z new 20261013T080418Z | n=282 min 0.910 p5 0.953 p25 0.996 med 1.002 p75 1.009 p95 1.046 max 1.089 | DISJ 49 | outside +-5% 27, +-10% 0
+syntax         interp old 20260907T003211Z new 20261013T084106Z | n=285 min 0.940 p5 0.970 p25 0.991 med 0.998 p75 1.006 p95 1.021 max 1.219 | DISJ 99 | outside +-5% 10, +-10% 4
+utf8           jit    old 20260926T102626Z new 20261013T093808Z | n=150 min 0.869 p5 0.910 p25 0.954 med 0.988 p75 1.000 p95 1.001 max 1.023 | DISJ 44 | outside +-5% 34, +-10% 5
+utf8           interp old 20260926T094437Z new 20261013T101535Z | n=150 min 0.715 p5 0.774 p25 0.980 med 0.999 p75 1.001 p95 1.181 max 1.275 | DISJ 63 | outside +-5% 52, +-10% 43
+litrun         jit    old 20260928T022551Z new 20261013T105937Z | n=42 min 0.907 p5 0.938 p25 0.976 med 0.982 p75 0.996 p95 1.029 max 1.038 | DISJ 7 | outside +-5% 4, +-10% 0
+litrun         interp missing True False
+email-specimen jit    old 20260902T080213Z new 20261013T113318Z | n=8 min 0.773 p5 0.840 p25 0.981 med 0.998 p75 1.000 p95 1.021 max 1.031 | DISJ 1 | outside +-5% 1, +-10% 1
+email-specimen interp old 20260902T075326Z new 20261013T114535Z | n=9 min 0.778 p5 0.791 p25 0.951 med 0.996 p75 1.004 p95 1.016 max 1.022 | DISJ 3 | outside +-5% 2, +-10% 2
+ALL jit:    n=633 min 0.773 p5 0.935 p25 0.978 med 0.998 p75 1.004 p95 1.034 max 1.096
+ALL interp: n=595 min 0.715 p5 0.838 p25 0.986 med 0.998 p75 1.006 p95 1.034 max 1.311

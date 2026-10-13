@@ -1,0 +1,32 @@
+# per-SUBJECT NEW(00c97769)/BASE(b8337c33) over the 14 handoff movers (plain form, every subject of both regimes): subjects, DISJ-slower, >=1.10, >=1.25, >=1.50, and the worst 12
+subjects 976 slower beyond overlap 309 faster beyond overlap 436 >=1.10: 37 >=1.25: 5 >=1.50: 1
+  2.397 syntax/qnt-poss-brace ss f-tag BASE 12.4[12.4..12.4] NEW 29.7[29.7..29.7] DISJ
+  1.312 syntax/qnt-poss-brace ss l-parens BASE 13.9[13.9..13.9] NEW 18.2[17.6..18.6] DISJ
+  1.289 syntax/cls-fold-pair ss f-num BASE 3.8[3.8..3.8] NEW 4.9[4.0..5.2] DISJ
+  1.287 loglines/kv-quoted ss s-042 BASE 87.9[87.6..88.3] NEW 113.1[106.5..113.4] DISJ
+  1.270 utf8/ci-strasse ss lit-sharps-miss BASE 24.1[22.8..24.5] NEW 30.6[30.6..30.7] DISJ
+  1.236 loglines/kv-quoted ss s-063 BASE 91.2[90.5..91.4] NEW 112.7[109.1..114.4] DISJ
+  1.234 utf8/ci-strasse ss ci-strasse-nearmiss BASE 22.7[22.2..23.6] NEW 28.0[28.0..28.2] DISJ
+  1.228 loglines/kv-quoted ss s-029 BASE 88.8[88.7..89.0] NEW 109.0[107.3..114.0] DISJ
+  1.213 loglines/kv-quoted ss s-002 BASE 94.4[94.1..94.9] NEW 114.5[114.2..116.5] DISJ
+  1.184 loglines/kv-quoted ss s-010 BASE 138.1[137.6..138.4] NEW 163.6[155.9..167.4] DISJ
+  1.182 loglines/kv-quoted ss s-101 BASE 102.1[101.5..102.5] NEW 120.7[118.9..124.2] DISJ
+  1.177 loglines/kv-quoted ss s-075 BASE 118.0[117.5..118.3] NEW 138.9[135.8..140.6] DISJ
+  1.163 syntax/mod-r ss l-dup BASE 22.6[22.6..23.4] NEW 26.3[25.4..27.2] DISJ
+  1.156 syntax/mod-i ss f-cat-uc BASE 20.1[20.1..20.4] NEW 23.2[22.8..23.3] DISJ
+
+# per pattern: subjects, # slower >3% beyond overlap, # faster >3% beyond overlap
+  loglines/ipv6 subjects 124 slower>3% 0 faster>3% 124
+  loglines/ipv4 subjects 124 slower>3% 2 faster>3% 122
+  loglines/kv-quoted subjects 124 slower>3% 13 faster>3% 1
+  bounded/dotted4 subjects 51 slower>3% 35 faster>3% 4
+  altwide/sfx-64 subjects 44 slower>3% 25 faster>3% 4
+  altwide/sfx-256 subjects 44 slower>3% 23 faster>3% 4
+  altwide/sfx-512 subjects 44 slower>3% 23 faster>3% 5
+  syntax/cls-fold-pair subjects 45 slower>3% 2 faster>3% 8
+  syntax/cls-pair-ctl subjects 45 slower>3% 2 faster>3% 7
+  syntax/mod-i subjects 45 slower>3% 37 faster>3% 0
+  syntax/mod-r subjects 45 slower>3% 35 faster>3% 0
+  syntax/qnt-poss-brace subjects 45 slower>3% 4 faster>3% 13
+  utf8/ci-ascii-control subjects 98 slower>3% 8 faster>3% 7
+  utf8/ci-strasse subjects 98 slower>3% 5 faster>3% 5

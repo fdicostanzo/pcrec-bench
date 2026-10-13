@@ -1,12 +1,12 @@
 # trend_report: history bounded vm-caps-simdna
 # schema: trend-tsv-1
 # generator: trend-v1
-# snapshots_sha256: 43e7c269153bd67f33d8068b28d3366e26ba2e708a27e1ba494cc785316a8539
+# snapshots_sha256: c1ca0f3c599ef5ca224a4c458d6de46d33d6dcc0123d3b6ce75eaf3dd477f493
 # links_sha256: 198cb6422854bf062029e26db2e858abbdc2be6d087e4f75881fb5d420f1c402
 # links: 5 (5 confirmed, 0 inferred)
 # config_sha256: 7a2746b16c521fb099c05c6b5daeb81bb347bccbaa7c08be2e27054cbae4ef06
-# pin_order_sha256: 1191543a5ff9af6e1924f20c8a464bec16409d495dc1faa7bed5c584fd9cd0da
-# as_of: 2026-10-11T16:46:44Z
+# pin_order_sha256: 272a387785816bd50e27a9beea35ef39b6d35b3d40eba795d345cdb516f5ee51
+# as_of: 2026-10-13T06:02:07Z
 # identity_criterion: program_sha256 (compile row engine_metadata, tools/program_identity.py normalization v2); equal = identical; unequal across abi 67 = unknown-abi67 (v2 is blind to abi 67's text normalization)
 # wide_gap_abi: 8
 # fallback_band: 0.0846

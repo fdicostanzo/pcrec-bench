@@ -1,0 +1,44 @@
+# ask 7.2: per-subject split of capability@0.2 large-subject-throughput; newest records (pcrec 6b2dbd3e caps this window; jit/interp newest in the store)
+# jit record 20261008T220359Z, interp record 20261008T205127Z, pcrec record 20261012T233655Z
+
+## wild-datetime-moment-iso8601
+  t-1m                       len  1048576 | pcrec 11.4[11.4..11.4] | jit 55.4[52.0..56.4] | interp 33.5[33.4..33.6] | pcrec-jit -44 ns | pcrec/jit 0.21  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee3
+  t-256k                     len   262144 | pcrec 11.5[11.5..11.5] | jit 61.9[61.7..62.9] | interp 33.6[33.4..34.1] | pcrec-jit -50 ns | pcrec/jit 0.19  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee2
+  t-64k                      len    65536 | pcrec 11.4[11.4..11.5] | jit 57.0[56.6..57.8] | interp 33.8[33.7..34.3] | pcrec-jit -46 ns | pcrec/jit 0.20  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee1
+  t-evil-match-60k           len    61440 | pcrec 11.4[11.4..11.5] | jit 2361.8[2359.4..2377.1] | interp 33.4[33.4..34.5] | pcrec-jit -2350 ns | pcrec/jit 0.00  throughput/[B125] 60 KiB of random [a-z], nothing else: the long MATCH
+  t-evil-nearmiss-16k        len    16385 | pcrec 11.4[11.4..11.4] | jit 672.4[672.1..675.5] | interp 33.4[33.3..33.9] | pcrec-jit -661 ns | pcrec/jit 0.02  throughput/[B125] the first 16 KiB of t-evil-match-60k + one '!': the 
+  t-mixed-runs-4k            len     4096 | pcrec 15.5[14.8..16.0] | jit 60.7[60.4..60.7] | interp 145.9[144.4..152.4] | pcrec-jit -45 ns | pcrec/jit 0.26  throughput/[B125] 4096 B of interleaved SHORT runs (letters, digits, h
+  t-tail-digits-1m           len  1048522 | pcrec 11.4[11.4..11.6] | jit 55.4[55.3..55.5] | interp 33.5[33.4..35.9] | pcrec-jit -44 ns | pcrec/jit 0.21  throughput/[B125] ~1 MiB generated prose (seed 0xC0FFEE21), last line 
+  t-tail-space-1m            len  1048522 | pcrec 11.4[11.4..11.4] | jit 55.4[55.3..55.4] | interp 33.5[33.3..34.7] | pcrec-jit -44 ns | pcrec/jit 0.21  throughput/[B125] the SAME prose, last line 'end of file' + three spac
+  t-tail-txt-1m              len  1048527 | pcrec 11.4[11.4..11.4] | jit 55.3[55.3..55.6] | interp 33.4[33.4..35.7] | pcrec-jit -44 ns | pcrec/jit 0.21  throughput/[B125] the SAME prose, last line 'saved to report.txt': `[a
+  t-trim-match-60k           len    61440 | pcrec 54448.6[54446.8..54459.5] | jit 2359.9[2354.6..2367.1] | interp 37143.3[37030.3..37219.1] | pcrec-jit 52089 ns | pcrec/jit 23.07  throughput/[B125] 60 KiB of mixed \s bytes (space/tab/LF/CR/FF/VT), en
+  t-trim-nearmiss-16k        len    16385 | pcrec 14562.9[14562.5..14564.3] | jit 672.1[671.4..673.5] | interp 10040.4[9918.5..10076.9] | pcrec-jit 13891 ns | pcrec/jit 21.67  throughput/[B125] the first 16 KiB of t-trim-match-60k + one 'x': the 
+  SUM pcrec 69118 jit 6467 interp 47598 ns -> pcrec/jit 10.69
+
+## wild-validator-email-owasp
+  t-1m                       len  1048576 | pcrec 14.7[14.3..16.1] | jit 63.2[62.5..65.0] | interp 287.0[284.1..291.8] | pcrec-jit -49 ns | pcrec/jit 0.23  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee3
+  t-256k                     len   262144 | pcrec 11.1[10.6..12.6] | jit 52.9[52.3..53.9] | interp 118.4[117.0..119.2] | pcrec-jit -42 ns | pcrec/jit 0.21  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee2
+  t-64k                      len    65536 | pcrec 11.7[11.0..12.4] | jit 55.1[54.5..56.3] | interp 120.2[119.1..120.7] | pcrec-jit -43 ns | pcrec/jit 0.21  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee1
+  t-evil-match-60k           len    61440 | pcrec 36309.1[36303.9..36355.1] | jit 2354.2[2348.6..2359.0] | interp 56778.6[56721.3..56792.3] | pcrec-jit 33955 ns | pcrec/jit 15.42  throughput/[B125] 60 KiB of random [a-z], nothing else: the long MATCH
+  t-evil-nearmiss-16k        len    16385 | pcrec 9716.0[9714.7..9729.0] | jit 661.2[661.0..665.5] | interp 15240.5[15194.6..15327.8] | pcrec-jit 9055 ns | pcrec/jit 14.69  throughput/[B125] the first 16 KiB of t-evil-match-60k + one '!': the 
+  t-mixed-runs-4k            len     4096 | pcrec 6.2[6.2..6.2] | jit 43.4[42.8..44.3] | interp 33.0[33.0..41.0] | pcrec-jit -37 ns | pcrec/jit 0.14  throughput/[B125] 4096 B of interleaved SHORT runs (letters, digits, h
+  t-tail-digits-1m           len  1048522 | pcrec 12.5[12.1..13.3] | jit 49.2[48.0..49.4] | interp 119.0[118.1..119.7] | pcrec-jit -37 ns | pcrec/jit 0.25  throughput/[B125] ~1 MiB generated prose (seed 0xC0FFEE21), last line 
+  t-tail-space-1m            len  1048522 | pcrec 12.3[11.6..13.6] | jit 49.0[48.9..49.6] | interp 118.9[117.5..120.3] | pcrec-jit -37 ns | pcrec/jit 0.25  throughput/[B125] the SAME prose, last line 'end of file' + three spac
+  t-tail-txt-1m              len  1048527 | pcrec 10.7[10.3..11.2] | jit 49.4[49.2..49.8] | interp 119.6[118.0..120.7] | pcrec-jit -39 ns | pcrec/jit 0.22  throughput/[B125] the SAME prose, last line 'saved to report.txt': `[a
+  t-trim-match-60k           len    61440 | pcrec 6.2[6.2..6.2] | jit 2351.1[2347.6..2354.6] | interp 33.0[33.0..66.5] | pcrec-jit -2345 ns | pcrec/jit 0.00  throughput/[B125] 60 KiB of mixed \s bytes (space/tab/LF/CR/FF/VT), en
+  t-trim-nearmiss-16k        len    16385 | pcrec 6.2[6.2..6.2] | jit 658.2[656.7..662.6] | interp 33.1[33.0..57.0] | pcrec-jit -652 ns | pcrec/jit 0.01  throughput/[B125] the first 16 KiB of t-trim-match-60k + one 'x': the 
+  SUM pcrec 46117 jit 6387 interp 73001 ns -> pcrec/jit 7.22
+
+## wild-waf-crs-942270-union-select
+  t-1m                       len  1048576 | pcrec 365493.0[365187.1..365522.0] | jit 45721.5[45699.9..45871.3] | interp 2162712.1[2158476.2..2164242.8] | pcrec-jit 319771 ns | pcrec/jit 7.99  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee3
+  t-256k                     len   262144 | pcrec 83215.5[83171.2..83499.4] | jit 11425.4[11400.3..11456.0] | interp 544280.3[544036.8..544450.3] | pcrec-jit 71790 ns | pcrec/jit 7.28  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee2
+  t-64k                      len    65536 | pcrec 17107.3[17053.0..17171.1] | jit 2937.5[2930.6..3111.3] | interp 138234.1[137869.6..138602.4] | pcrec-jit 14170 ns | pcrec/jit 5.82  throughput/mixed log+http+source+prose grammar, seed 0xc0ffee1
+  t-evil-match-60k           len    61440 | pcrec 27255.6[27193.5..27462.9] | jit 4671.8[4667.0..4687.6] | interp 148427.5[147575.4..149716.8] | pcrec-jit 22584 ns | pcrec/jit 5.83  throughput/[B125] 60 KiB of random [a-z], nothing else: the long MATCH
+  t-evil-nearmiss-16k        len    16385 | pcrec 6739.3[6726.0..6758.0] | jit 1403.5[1398.2..1436.6] | interp 41411.0[41363.8..41515.6] | pcrec-jit 5336 ns | pcrec/jit 4.80  throughput/[B125] the first 16 KiB of t-evil-match-60k + one '!': the 
+  t-mixed-runs-4k            len     4096 | pcrec 1350.1[1347.9..1361.2] | jit 278.4[272.3..282.4] | interp 3603.7[3584.7..3655.1] | pcrec-jit 1072 ns | pcrec/jit 4.85  throughput/[B125] 4096 B of interleaved SHORT runs (letters, digits, h
+  t-tail-digits-1m           len  1048522 | pcrec 487783.8[486465.0..488450.9] | jit 45691.2[45375.1..45952.1] | interp 2756310.6[2749529.5..2762155.9] | pcrec-jit 442093 ns | pcrec/jit 10.68  throughput/[B125] ~1 MiB generated prose (seed 0xC0FFEE21), last line 
+  t-tail-space-1m            len  1048522 | pcrec 487062.0[486238.8..487977.7] | jit 45658.3[45559.1..45931.1] | interp 2758511.1[2744415.7..2762904.3] | pcrec-jit 441404 ns | pcrec/jit 10.67  throughput/[B125] the SAME prose, last line 'end of file' + three spac
+  t-tail-txt-1m              len  1048527 | pcrec 487162.5[486286.7..487836.7] | jit 45731.6[45633.0..45857.0] | interp 2759235.4[2746949.2..2763081.8] | pcrec-jit 441431 ns | pcrec/jit 10.65  throughput/[B125] the SAME prose, last line 'saved to report.txt': `[a
+  t-trim-match-60k           len    61440 | pcrec 2066.9[2061.4..2074.3] | jit 2731.2[2727.8..2733.3] | interp 2110.6[2089.8..2118.5] | pcrec-jit -664 ns | pcrec/jit 0.76  throughput/[B125] 60 KiB of mixed \s bytes (space/tab/LF/CR/FF/VT), en
+  t-trim-nearmiss-16k        len    16385 | pcrec 444.1[443.8..445.8] | jit 760.5[754.3..765.1] | interp 476.5[473.6..490.7] | pcrec-jit -316 ns | pcrec/jit 0.58  throughput/[B125] the first 16 KiB of t-trim-match-60k + one 'x': the 
+  SUM pcrec 1965680 jit 207011 interp 11315313 ns -> pcrec/jit 9.50

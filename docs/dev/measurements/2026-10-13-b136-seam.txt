@@ -1,0 +1,72 @@
+# I-148 section 1 (seam helpers static inline): CANON 6b2dbd3e vs NEW 00c97769, set-grain medians, this window, caps
+# predicted faster-by: bak-1 +13.5%, bak-2 +9.7%, mod-j-uc +5.6% (i.e. CANON/NEW about 0.88, 0.91, 0.95)
+syntax | bak-1 | short-subject-search | NEW 6539.5[6488.4..6565.1] CANON 5596.8[5593.3..5639.8] | CANON/NEW 0.856 DISJ | NEW/BASE 1.003 | program same=False emit 25294>25225 vm_prog 2036>2036
+syntax | bak-1 | large-subject-throughput | NEW 16197222.9[15933560.8..16228878.4] CANON 14297711.9[14260681.2..14310617.9] | CANON/NEW 0.883 DISJ | NEW/BASE 0.998 | program same=False emit 25294>25225 vm_prog 2036>2036
+syntax | bak-2 | short-subject-search | NEW 6770.7[6162.7..7568.7] CANON 5468.6[5399.8..5475.4] | CANON/NEW 0.808 DISJ | NEW/BASE 1.074 | program same=False emit 25380>25311 vm_prog 2825>2825
+syntax | bak-2 | large-subject-throughput | NEW 16012695.5[14285611.5..16398056.2] CANON 14432720.9[14241610.4..14582573.8] | CANON/NEW 0.901 ov | NEW/BASE 0.998 | program same=False emit 25380>25311 vm_prog 2825>2825
+syntax | bak-g-rel | short-subject-search | NEW 6514.4[6502.2..6547.1] CANON 5598.9[5580.6..5614.3] | CANON/NEW 0.859 DISJ | NEW/BASE 0.998 | program same=False emit 25299>25230 vm_prog 2036>2036
+syntax | bak-g-rel | large-subject-throughput | NEW 16202884.0[15951687.3..16205754.2] CANON 14184938.1[13820119.8..14291233.8] | CANON/NEW 0.875 DISJ | NEW/BASE 0.998 | program same=False emit 25299>25230 vm_prog 2036>2036
+syntax | bak-k-named | short-subject-search | NEW 431.2[428.8..443.2] CANON 448.7[447.2..451.6] | CANON/NEW 1.041 DISJ | NEW/BASE 0.995 | program same=False emit 27588>27519 vm_prog 3309>3309
+syntax | bak-k-named | large-subject-throughput | NEW 995925.8[995420.2..996509.7] CANON 869614.8[866605.5..874290.6] | CANON/NEW 0.873 DISJ | NEW/BASE 1.000 | program same=False emit 27588>27519 vm_prog 3309>3309
+syntax | bak-py | short-subject-search | NEW 6491.1[6482.9..6539.1] CANON 5610.1[5592.1..5618.9] | CANON/NEW 0.864 DISJ | NEW/BASE 0.990 | program same=False emit 25392>25323 vm_prog 2036>2036
+syntax | bak-py | large-subject-throughput | NEW 16275519.2[16231601.4..16297251.1] CANON 14204038.9[14181882.3..14320946.0] | CANON/NEW 0.873 DISJ | NEW/BASE 1.001 | program same=False emit 25392>25323 vm_prog 2036>2036
+syntax | mod-j-uc | short-subject-search | NEW 10002.8[9982.1..10064.8] CANON 9238.1[9231.3..9258.4] | CANON/NEW 0.924 DISJ | NEW/BASE 0.999 | program same=False emit 26741>26672 vm_prog 3056>3056
+syntax | mod-j-uc | large-subject-throughput | NEW 25496318.0[24829317.0..25603944.1] CANON 23388073.4[22778921.6..23568138.4] | CANON/NEW 0.917 DISJ | NEW/BASE 1.002 | program same=False emit 26741>26672 vm_prog 3056>3056
+syntax | lkb-pos | short-subject-search | NEW 649.8[647.3..651.6] CANON 575.3[573.3..577.6] | CANON/NEW 0.885 DISJ | NEW/BASE 1.000 | program same=False emit 27761>27732 vm_prog 1761>1761
+syntax | lkb-pos | large-subject-throughput | NEW 573404.2[573360.6..573878.9] CANON 566956.9[565755.7..567439.4] | CANON/NEW 0.989 DISJ | NEW/BASE 1.000 | program same=False emit 27761>27732 vm_prog 1761>1761
+syntax | lkb-neg | short-subject-search | NEW 726.5[725.8..764.2] CANON 719.1[718.1..726.1] | CANON/NEW 0.990 ov | NEW/BASE 1.000 | program same=False emit 27994>27965 vm_prog 2084>2084
+syntax | lkb-neg | large-subject-throughput | NEW 684246.1[681412.3..687802.1] CANON 671200.6[670911.0..671382.8] | CANON/NEW 0.981 DISJ | NEW/BASE 1.001 | program same=False emit 27994>27965 vm_prog 2084>2084
+utf8 | asr-lb-fixed | short-subject-search | NEW 1255.5[1252.7..1259.8] CANON 1177.3[1175.0..1185.1] | CANON/NEW 0.938 DISJ | NEW/BASE 1.001 | program same=False emit 28690>28661 vm_prog 1820>1820
+utf8 | asr-lb-fixed | large-subject-throughput | NEW 78526.5[78389.4..78726.0] CANON 75867.9[75704.0..76037.3] | CANON/NEW 0.966 DISJ | NEW/BASE 0.998 | program same=False emit 28690>28661 vm_prog 1820>1820
+utf8 | asr-lb-varwidth | short-subject-search | NEW 1678.6[1672.4..1756.4] CANON 1464.6[1461.1..1472.8] | CANON/NEW 0.873 DISJ | NEW/BASE 0.994 | program same=False emit 29459>29430 vm_prog 2630>2630
+utf8 | asr-lb-varwidth | large-subject-throughput | NEW 101999.4[101870.3..102222.2] CANON 87482.1[87150.5..87522.2] | CANON/NEW 0.858 DISJ | NEW/BASE 0.999 | program same=False emit 29459>29430 vm_prog 2630>2630
+utf8 | asr-lb-neg | short-subject-search | NEW 1873.2[1872.0..1883.7] CANON 1670.0[1664.2..1680.7] | CANON/NEW 0.891 DISJ | NEW/BASE 1.002 | program same=False emit 30589>30560 vm_prog 2159>2159
+utf8 | asr-lb-neg | large-subject-throughput | NEW 133126.7[132524.5..133648.7] CANON 130213.0[129936.6..130613.9] | CANON/NEW 0.978 DISJ | NEW/BASE 0.999 | program same=False emit 30589>30560 vm_prog 2159>2159
+utf8 | asr-lb-class | short-subject-search | NEW 1492.2[1472.9..1513.6] CANON 1175.5[1165.4..1179.1] | CANON/NEW 0.788 DISJ | NEW/BASE 0.995 | program same=False emit 31274>31245 vm_prog 1868>1868
+utf8 | asr-lb-class | large-subject-throughput | NEW 6773614.5[6770356.6..6849004.8] CANON 4767927.1[4760774.7..4802942.2] | CANON/NEW 0.704 DISJ | NEW/BASE 1.000 | program same=False emit 31274>31245 vm_prog 1868>1868
+capability | doubled-word | short-subject-search | NEW 5877.6[5858.0..5969.4] CANON 6267.7[6236.8..6272.1] | CANON/NEW 1.066 DISJ | NEW/BASE 0.998 | program same=False emit 26683>26614 vm_prog 3418>3418
+capability | doubled-word | large-subject-throughput | NEW 29628628.9[29593898.0..29637617.1] CANON 29478431.1[29464793.8..29493850.4] | CANON/NEW 0.995 DISJ | NEW/BASE 1.000 | program same=False emit 26683>26614 vm_prog 3418>3418
+capability | dup-param-detect | short-subject-search | NEW 1155.4[1153.2..1157.2] CANON 1178.5[1177.6..1180.9] | CANON/NEW 1.020 DISJ | NEW/BASE 0.998 | program same=False emit 30471>30402 vm_prog 4829>4829
+capability | dup-param-detect | large-subject-throughput | NEW 78546.6[78535.5..78571.7] CANON 78604.9[78572.9..78632.8] | CANON/NEW 1.001 DISJ | NEW/BASE 0.999 | program same=False emit 30471>30402 vm_prog 4829>4829
+capability | phone-palindrome-6 | short-subject-search | NEW 2884.6[2878.6..2897.7] CANON 2553.4[2550.3..2675.5] | CANON/NEW 0.885 DISJ | NEW/BASE 0.995 | program same=False emit 26349>26280 vm_prog 4078>4078
+capability | phone-palindrome-6 | large-subject-throughput | NEW 8573221.2[8489112.8..9274656.9] CANON 7531011.2[7491365.4..8019192.1] | CANON/NEW 0.878 DISJ | NEW/BASE 1.007 | program same=False emit 26349>26280 vm_prog 4078>4078
+capability | quoted-delim-match | short-subject-search | NEW 2050.2[2046.8..2064.6] CANON 1997.1[1990.1..2003.2] | CANON/NEW 0.974 DISJ | NEW/BASE 0.992 | program same=False emit 29135>29066 vm_prog 4223>4223
+capability | quoted-delim-match | large-subject-throughput | NEW 2232624.1[2229840.1..2237025.0] CANON 2182500.8[2182236.9..2183534.6] | CANON/NEW 0.978 DISJ | NEW/BASE 0.999 | program same=False emit 29135>29066 vm_prog 4223>4223
+capability | tag-pair-match | short-subject-search | NEW 1084.6[1080.7..1091.5] CANON 1153.8[1149.6..1167.6] | CANON/NEW 1.064 DISJ | NEW/BASE 1.002 | program same=False emit 30643>30574 vm_prog 5848>5848
+capability | tag-pair-match | large-subject-throughput | NEW 78618.3[78556.6..78628.1] CANON 78574.3[78564.7..78634.7] | CANON/NEW 0.999 ov | NEW/BASE 1.000 | program same=False emit 30643>30574 vm_prog 5848>5848
+capability | tag-depth3-bound | short-subject-search | NEW 1158.3[1154.9..1162.3] CANON 1079.9[1077.4..1091.2] | CANON/NEW 0.932 DISJ | NEW/BASE 1.001 | program same=False emit 36857>36788 vm_prog 11163>11163
+capability | tag-depth3-bound | large-subject-throughput | NEW 78623.0[78575.2..78636.0] CANON 78609.9[78532.9..78649.2] | CANON/NEW 1.000 ov | NEW/BASE 1.001 | program same=False emit 36857>36788 vm_prog 11163>11163
+
+# which patterns changed program between NEW and CANON (program_sha256), by set, and their CANON/NEW per regime
+loglines     program-changed plain patterns: 0 []
+altwide      program-changed plain patterns: 0 []
+syntax       program-changed plain patterns: 8 ['bak-1', 'bak-2', 'bak-g-rel', 'bak-k-named', 'bak-py', 'lkb-neg', 'lkb-pos', 'mod-j-uc']
+utf8         program-changed plain patterns: 4 ['asr-lb-class', 'asr-lb-fixed', 'asr-lb-neg', 'asr-lb-varwidth']
+capability   program-changed plain patterns: 6 ['doubled-word', 'dup-param-detect', 'phone-palindrome-6', 'quoted-delim-match', 'tag-depth3-bound', 'tag-pair-match']
+
+# the null: CANON vs NEW on program-IDENTICAL cells per set -- ratio distribution, DISJ count
+loglines     program-identical cells: n=22 min 0.995 p5 0.995 p25 0.999 med 1.000 p75 1.000 p95 1.001 max 1.001 | DISJ 0 | outside +-5%: 0
+      ('floor', 'short-subject-search', 'plain') NEW 1516.1[1510.3..1601.5] CANON 1508.6[1501.4..1516.0]
+      ('kv-quoted', 'large-subject-throughput', 'plain') NEW 207578.1[206537.6..208242.7] CANON 206592.6[206231.9..207291.2]
+      ('bignum', 'short-subject-search', 'plain') NEW 238499.6[237644.9..238779.8] CANON 237904.0[236460.7..238165.0]
+altwide      program-identical cells: n=107 min 0.972 p5 0.995 p25 0.999 med 1.001 p75 1.001 p95 1.004 max 1.008 | DISJ 7 | outside +-5%: 0
+      ('nar4-512', 'match-compliance', 'whole-subject') NEW 498.3[484.7..875.2] CANON 484.4[483.3..496.2]
+      ('w-128', 'match-compliance', 'whole-subject') NEW 505.9[489.6..530.8] CANON 496.4[494.2..530.1]
+      ('s-256', 'match-compliance', 'whole-subject') NEW 434.9[431.4..436.8] CANON 428.1[421.6..429.5]
+syntax       program-identical cells: n=219 min 0.977 p5 0.994 p25 0.999 med 1.000 p75 1.001 p95 1.011 max 1.067 | DISJ 12 | outside +-5%: 2
+      ('rec-define', 'match-compliance', 'whole-subject') NEW 430.5[429.4..438.4] CANON 459.5[429.5..481.2]
+      ('anc-z-lc', 'large-subject-throughput', 'plain') NEW 21.4[21.0..22.4] CANON 22.7[22.2..23.5]
+      ('cls-s-uc', 'match-compliance', 'whole-subject') NEW 691.2[687.3..712.0] CANON 723.6[699.5..1167.8]
+utf8         program-identical cells: n=130 min 0.984 p5 0.994 p25 0.998 med 1.000 p75 1.002 p95 1.007 max 1.026 | DISJ 6 | outside +-5%: 0
+      ('ci-sigma', 'short-subject-search', 'plain') NEW 839.1[822.5..844.0] CANON 860.6[851.1..863.4]
+      ('prp-cyrillic', 'short-subject-search', 'plain') NEW 1090.2[1086.6..1100.4] CANON 1114.7[1113.9..1117.8]
+      ('cls-dot-rep', 'large-subject-throughput', 'plain') NEW 89.4[88.8..90.2] CANON 91.1[89.4..92.6]
+capability   program-identical cells: n=125 min 0.978 p5 0.992 p25 0.999 med 1.000 p75 1.001 p95 1.008 max 1.018 | DISJ 6 | outside +-5%: 0
+      ('nested-comment-rec', 'short-subject-search', 'plain') NEW 1533.7[1493.8..1560.9] CANON 1499.8[1478.8..1537.6]
+      ('winpath-near-miss', 'large-subject-throughput', 'plain') NEW 63.7[63.3..66.1] CANON 64.8[63.3..66.8]
+      ('logparse-atomic', 'large-subject-throughput', 'plain') NEW 122.0[119.8..122.2] CANON 120.0[119.8..122.1]
+
+# the changed cells, CANON/NEW distribution (all 'program-changed' cells together, per set)
+syntax       n=24 min 0.660 p5 0.801 p25 0.864 med 0.893 p75 0.943 p95 0.990 max 1.041
+utf8         n=8 min 0.704 p5 0.733 p25 0.840 med 0.882 p75 0.945 p95 0.974 max 0.978
+capability   n=12 min 0.878 p5 0.882 p25 0.964 med 0.997 p75 1.006 p95 1.065 max 1.066

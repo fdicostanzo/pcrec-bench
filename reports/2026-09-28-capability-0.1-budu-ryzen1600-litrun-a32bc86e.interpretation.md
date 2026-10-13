@@ -2,7 +2,7 @@
 report:          reports/2026-09-28-capability-0.1-budu-ryzen1600-litrun-a32bc86e.tsv
 report_sha256:   b2320a2a879210b5c9ce76df9c5d4eee3000d1344d043d6961f33e7f1f4eb31b
 index:           store/index.tsv
-index_sha256:    c40ada514628b4487f5c0fc23bc2be94c4a99160ce1a46a9c72cd3e9acff6ffe
+index_sha256:    101fccab3dd989b4d6775bdfd6c13f996124aedf35dda51d34c687aa4cf80eb4
 predictions:     docs/dev/predictions/capability-0.1-litrun-a32bc86e.tsv
 predictions_sha256:738175b7cbe71648a3c3b2e74f7783b373954ff7a466fcd78bb460c2fbc84c68
 subject_grain:   reports/2026-09-28-capability-0.1-budu-ryzen1600-litrun-a32bc86e.subject-grain.tsv

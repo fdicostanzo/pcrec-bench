@@ -1,0 +1,109 @@
+# sentinel@0.1 (15 patterns x 75 short subjects, set-grain sums, 5 trials), THIS window; record timestamps (UTC):
+#   libpcre2_10.46_jit-caps-simdna       end1  20261012T204815Z
+#   libpcre2_10.46_jit-caps-simdna       end2  20261013T005416Z
+#   libpcre2_10.46_jit-caps-simdna       end3  20261013T060834Z
+#   libpcre2_10.46_jit-caps-simdna       open  20261012T153502Z
+#   pcrec_00c97769_auto-caps-simdna      end1  20261012T202951Z
+#   pcrec_00c97769_auto-caps-simdna      end2  20261013T003508Z
+#   pcrec_00c97769_auto-caps-simdna      end3  20261013T054902Z
+#   pcrec_00c97769_auto-caps-simdna      open  20261012T151541Z
+#   pcrec_6b2dbd3e_auto-caps-simdna      end1  20261012T202428Z
+#   pcrec_6b2dbd3e_auto-caps-simdna      end2  20261013T003007Z
+#   pcrec_6b2dbd3e_auto-caps-simdna      end3  20261013T054257Z
+#   pcrec_6b2dbd3e_auto-caps-simdna      open  20261012T152205Z
+#   pcrec_6b2dbd3e_auto-nocaps-simdna    end1  20261012T204145Z
+#   pcrec_6b2dbd3e_auto-nocaps-simdna    end2  20261013T004744Z
+#   pcrec_6b2dbd3e_auto-nocaps-simdna    end3  20261013T060207Z
+#   pcrec_6b2dbd3e_auto-nocaps-simdna    open  20261012T152833Z
+#   pcrec_b8337c33_auto-caps-simdna      end1  20261012T203615Z
+#   pcrec_b8337c33_auto-caps-simdna      end2  20261013T004118Z
+#   pcrec_b8337c33_auto-caps-simdna      end3  20261013T055531Z
+#   pcrec_b8337c33_auto-caps-simdna      open  20261012T150916Z
+
+# per testee: ratio later/earlier over the 15 pattern cells (min / median / max, disjoint-range count)
+libpcre2_10.46_jit-caps-simdna       end1 /open  n=15 min 0.944 median 0.998 max 1.025 DISJ 0
+libpcre2_10.46_jit-caps-simdna       end2 /open  n=15 min 0.933 median 1.001 max 1.061 DISJ 0
+libpcre2_10.46_jit-caps-simdna       end3 /open  n=15 min 0.939 median 0.998 max 1.049 DISJ 0
+libpcre2_10.46_jit-caps-simdna       end2 /end1  n=15 min 0.954 median 1.003 max 1.124 DISJ 0
+libpcre2_10.46_jit-caps-simdna       end3 /end2  n=15 min 0.892 median 0.997 max 1.060 DISJ 0
+pcrec_00c97769_auto-caps-simdna      end1 /open  n=15 min 0.978 median 1.001 max 1.005 DISJ 0
+pcrec_00c97769_auto-caps-simdna      end2 /open  n=15 min 0.994 median 1.000 max 1.007 DISJ 0
+pcrec_00c97769_auto-caps-simdna      end3 /open  n=15 min 0.995 median 1.001 max 1.011 DISJ 1
+pcrec_00c97769_auto-caps-simdna      end2 /end1  n=15 min 0.994 median 1.000 max 1.021 DISJ 0
+pcrec_00c97769_auto-caps-simdna      end3 /end2  n=15 min 0.994 median 1.001 max 1.006 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna      end1 /open  n=15 min 0.990 median 0.999 max 1.004 DISJ 1
+pcrec_6b2dbd3e_auto-caps-simdna      end2 /open  n=15 min 0.993 median 1.000 max 1.004 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna      end3 /open  n=15 min 0.989 median 1.000 max 1.003 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna      end2 /end1  n=15 min 0.998 median 1.000 max 1.012 DISJ 0
+pcrec_6b2dbd3e_auto-caps-simdna      end3 /end2  n=15 min 0.994 median 1.000 max 1.004 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna    end1 /open  n=15 min 0.990 median 1.000 max 1.006 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna    end2 /open  n=15 min 0.993 median 1.000 max 1.007 DISJ 1
+pcrec_6b2dbd3e_auto-nocaps-simdna    end3 /open  n=15 min 0.994 median 1.000 max 1.008 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna    end2 /end1  n=15 min 0.996 median 1.001 max 1.005 DISJ 0
+pcrec_6b2dbd3e_auto-nocaps-simdna    end3 /end2  n=15 min 0.999 median 1.000 max 1.009 DISJ 0
+pcrec_b8337c33_auto-caps-simdna      end1 /open  n=15 min 0.996 median 1.001 max 1.006 DISJ 0
+pcrec_b8337c33_auto-caps-simdna      end2 /open  n=15 min 0.997 median 1.000 max 1.012 DISJ 0
+pcrec_b8337c33_auto-caps-simdna      end3 /open  n=15 min 0.983 median 1.000 max 1.003 DISJ 0
+pcrec_b8337c33_auto-caps-simdna      end2 /end1  n=15 min 0.993 median 0.999 max 1.010 DISJ 0
+pcrec_b8337c33_auto-caps-simdna      end3 /end2  n=15 min 0.983 median 1.000 max 1.005 DISJ 0
+
+# pcrec pins against each other in the SAME slot (program-identical patterns on the sentinel set): ratio over 15 cells
+open  00c97769 / b8337c33 n=15 min 0.993 median 1.000 max 1.004 DISJ 0
+open  6b2dbd3e / b8337c33 n=15 min 0.997 median 1.000 max 1.014 DISJ 0
+open  6b2dbd3e / 00c97769 n=15 min 0.996 median 1.002 max 1.015 DISJ 1
+end1  00c97769 / b8337c33 n=15 min 0.976 median 0.999 max 1.006 DISJ 1
+end1  6b2dbd3e / b8337c33 n=15 min 0.989 median 1.000 max 1.004 DISJ 0
+end1  6b2dbd3e / 00c97769 n=15 min 0.986 median 1.000 max 1.016 DISJ 1
+end2  00c97769 / b8337c33 n=15 min 0.990 median 0.999 max 1.007 DISJ 0
+end2  6b2dbd3e / b8337c33 n=15 min 0.990 median 1.001 max 1.011 DISJ 0
+end2  6b2dbd3e / 00c97769 n=15 min 0.992 median 1.001 max 1.007 DISJ 0
+end3  00c97769 / b8337c33 n=15 min 0.998 median 1.001 max 1.015 DISJ 1
+end3  6b2dbd3e / b8337c33 n=15 min 0.998 median 1.001 max 1.016 DISJ 0
+end3  6b2dbd3e / 00c97769 n=15 min 0.992 median 1.001 max 1.003 DISJ 1
+
+# per cell: median ns [min..max] open | end1 | end2 | end3 for caps 6b2dbd3e, nocaps 6b2dbd3e, jit
+pcrec_6b2dbd3e_auto-caps-simdna    base10num-near-miss            525.6[510.2..529.5] | 520.6[509.9..522.8] | 526.9[521.8..529.7] | 524.0[508.1..526.6] | end3/open 0.997 ov
+pcrec_6b2dbd3e_auto-caps-simdna    file-ext-order                 709.9[708.4..714.8] | 710.7[709.2..712.8] | 712.9[710.0..714.5] | 710.4[709.7..714.0] | end3/open 1.001 ov
+pcrec_6b2dbd3e_auto-caps-simdna    floor-byte                     681.4[681.3..681.8] | 679.7[678.5..681.2] | 681.7[678.8..683.0] | 681.7[680.1..691.8] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-caps-simdna    ipv4-near-miss                 427.2[426.4..429.5] | 429.1[426.5..716.2] | 428.2[426.1..429.1] | 428.1[426.0..430.4] | end3/open 1.002 ov
+pcrec_6b2dbd3e_auto-caps-simdna    keyword-prefix-order           784.5[782.7..790.0] | 785.3[784.7..788.5] | 785.0[782.2..787.2] | 784.9[782.1..790.1] | end3/open 1.001 ov
+pcrec_6b2dbd3e_auto-caps-simdna    numeric-id-nested-plus         878.4[870.6..882.8] | 880.6[877.6..884.6] | 881.0[871.1..884.6] | 879.0[867.1..883.1] | end3/open 1.001 ov
+pcrec_6b2dbd3e_auto-caps-simdna    phone-list-nested-plus         897.1[892.6..902.4] | 899.4[894.0..901.8] | 898.2[897.1..909.6] | 894.8[893.9..897.2] | end3/open 0.997 ov
+pcrec_6b2dbd3e_auto-caps-simdna    router-prefix-order            690.1[689.9..691.1] | 690.6[689.6..691.1] | 690.0[689.6..690.3] | 690.0[689.9..690.7] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-caps-simdna    trim-nested-star               782.4[780.6..784.0] | 781.1[758.3..782.2] | 783.1[780.2..788.0] | 781.2[780.9..786.5] | end3/open 0.999 ov
+pcrec_6b2dbd3e_auto-caps-simdna    uuid-near-miss                 541.3[536.9..542.0] | 538.6[535.7..541.9] | 537.5[535.7..539.3] | 538.8[536.7..547.2] | end3/open 0.996 ov
+pcrec_6b2dbd3e_auto-caps-simdna    wild-semdiv-dollar-trailing-newline-pcre2 653.4[640.7..669.0] | 648.1[638.1..1049.7] | 650.3[641.9..653.9] | 646.1[642.5..655.5] | end3/open 0.989 ov
+pcrec_6b2dbd3e_auto-caps-simdna    wild-validator-email-owasp     1048.0[1032.1..1051.9] | 1038.4[1036.0..1043.4] | 1045.2[1039.1..1047.2] | 1048.3[1042.8..1054.0] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-caps-simdna    wild-validator-us-zip-owasp    746.6[745.6..747.7] | 747.6[745.5..753.7] | 746.1[746.0..747.7] | 746.1[745.5..747.7] | end3/open 0.999 ov
+pcrec_6b2dbd3e_auto-caps-simdna    wild-waf-crs-942360-concat-sqli 7430.0[7393.1..7471.5] | 7377.0[7347.4..7505.6] | 7379.0[7346.5..7459.7] | 7408.8[7349.6..7433.6] | end3/open 0.997 ov
+pcrec_6b2dbd3e_auto-caps-simdna    winpath-near-miss              455.9[455.5..458.4] | 455.3[454.9..459.0] | 455.6[454.2..456.8] | 457.2[454.0..484.9] | end3/open 1.003 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  base10num-near-miss            520.5[512.4..522.9] | 521.9[513.5..527.0] | 523.9[523.3..529.8] | 524.8[520.4..530.3] | end3/open 1.008 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  file-ext-order                 712.6[708.9..715.1] | 712.4[709.7..816.4] | 709.5[708.8..715.3] | 709.7[709.2..714.9] | end3/open 0.996 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  floor-byte                     681.5[681.4..682.5] | 681.8[681.3..694.9] | 681.2[678.4..681.6] | 681.6[679.7..689.1] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  ipv4-near-miss                 427.3[426.3..429.0] | 429.7[426.6..432.8] | 428.0[427.2..431.5] | 427.7[426.2..427.8] | end3/open 1.001 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  keyword-prefix-order           785.5[783.1..789.1] | 785.3[784.0..790.6] | 784.5[783.3..786.4] | 784.2[783.4..797.2] | end3/open 0.998 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  numeric-id-nested-plus         485.1[483.7..487.9] | 484.2[481.9..491.5] | 484.9[483.0..486.6] | 485.3[482.9..487.3] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  phone-list-nested-plus         492.0[490.1..563.2] | 491.8[489.7..497.5] | 494.3[492.6..513.2] | 493.7[491.1..518.6] | end3/open 1.004 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  router-prefix-order            691.1[690.2..693.4] | 692.7[692.1..693.0] | 692.9[690.3..693.3] | 693.6[691.3..694.9] | end3/open 1.004 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  trim-nested-star               445.5[442.9..449.2] | 445.7[442.1..446.5] | 446.5[443.5..463.7] | 446.5[442.7..462.9] | end3/open 1.002 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  uuid-near-miss                 539.0[536.2..540.6] | 538.2[535.3..539.6] | 537.6[536.1..539.8] | 538.2[536.4..542.3] | end3/open 0.998 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  wild-semdiv-dollar-trailing-newline-pcre2 650.8[640.2..660.4] | 644.0[637.8..657.2] | 646.4[642.5..660.2] | 648.5[635.9..653.2] | end3/open 0.997 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  wild-validator-email-owasp     1048.0[1045.6..1053.8] | 1048.3[1045.9..1092.1] | 1049.4[1045.8..1052.3] | 1049.4[1044.9..1051.2] | end3/open 1.001 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  wild-validator-us-zip-owasp    415.1[413.1..420.1] | 414.0[413.6..417.0] | 414.7[413.8..416.9] | 415.3[412.9..480.9] | end3/open 1.000 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  wild-waf-crs-942360-concat-sqli 7450.0[7370.3..7498.0] | 7406.1[7379.9..7482.9] | 7410.3[7392.1..7750.7] | 7403.4[7370.7..7489.8] | end3/open 0.994 ov
+pcrec_6b2dbd3e_auto-nocaps-simdna  winpath-near-miss              458.1[455.5..460.6] | 454.9[454.6..458.8] | 455.3[454.6..458.7] | 459.4[454.8..470.0] | end3/open 1.003 ov
+libpcre2_10.46_jit-caps-simdna     base10num-near-miss            2968.3[2948.7..3017.1] | 3042.6[2960.5..4059.9] | 2959.8[2948.9..3223.7] | 2956.8[2939.3..3190.5] | end3/open 0.996 ov
+libpcre2_10.46_jit-caps-simdna     file-ext-order                 2913.6[2789.2..3520.7] | 2810.9[2783.2..3186.1] | 2820.4[2792.6..2915.7] | 2797.7[2767.6..2908.1] | end3/open 0.960 ov
+libpcre2_10.46_jit-caps-simdna     floor-byte                     2917.2[2734.0..3156.9] | 2863.1[2736.7..3359.2] | 2788.4[2737.1..2934.9] | 2957.0[2728.4..3393.9] | end3/open 1.014 ov
+libpcre2_10.46_jit-caps-simdna     ipv4-near-miss                 2925.4[2905.5..3321.0] | 2930.0[2917.3..3435.1] | 3098.9[2909.5..3102.6] | 2916.4[2898.1..3100.0] | end3/open 0.997 ov
+libpcre2_10.46_jit-caps-simdna     keyword-prefix-order           2930.7[2774.3..2971.7] | 2859.0[2777.7..3353.0] | 2970.9[2786.5..3101.3] | 2836.8[2780.4..3166.3] | end3/open 0.968 ov
+libpcre2_10.46_jit-caps-simdna     numeric-id-nested-plus         3103748.4[3052773.2..3115755.4] | 3107770.8[3040267.3..3307252.5] | 3121824.4[3095030.9..3123463.6] | 3102810.1[3041306.4..3120702.6] | end3/open 1.000 ov
+libpcre2_10.46_jit-caps-simdna     phone-list-nested-plus         3890551.0[3883931.6..3893321.1] | 3894553.2[3891001.0..3895913.2] | 3891913.5[3883326.0..3895071.1] | 3893088.1[3890866.5..3897474.1] | end3/open 1.001 ov
+libpcre2_10.46_jit-caps-simdna     router-prefix-order            2941.1[2767.9..3284.3] | 2777.1[2754.7..2938.1] | 3120.3[2775.3..3158.6] | 2783.0[2777.5..2898.6] | end3/open 0.946 ov
+libpcre2_10.46_jit-caps-simdna     trim-nested-star               3413831.9[3363714.5..3433885.4] | 3407757.2[3360897.4..3422372.1] | 3396969.8[3355658.6..3414794.1] | 3382713.1[3345552.2..3395011.2] | end3/open 0.991 ov
+libpcre2_10.46_jit-caps-simdna     uuid-near-miss                 3081.0[2962.2..3096.1] | 3071.8[2936.5..3141.4] | 3083.5[3058.1..3248.9] | 3075.3[3018.5..3100.8] | end3/open 0.998 ov
+libpcre2_10.46_jit-caps-simdna     wild-semdiv-dollar-trailing-newline-pcre2 2806.0[2796.2..3038.4] | 2820.0[2792.9..3178.7] | 2969.2[2781.9..3295.5] | 2943.6[2810.4..3174.4] | end3/open 1.049 ov
+libpcre2_10.46_jit-caps-simdna     wild-validator-email-owasp     3322.2[3083.8..3497.5] | 3250.5[3075.5..3411.6] | 3099.9[3069.0..3344.9] | 3121.1[3102.8..3309.1] | end3/open 0.939 ov
+libpcre2_10.46_jit-caps-simdna     wild-validator-us-zip-owasp    2879.2[2810.0..3417.3] | 2811.3[2794.7..2970.2] | 2806.5[2794.2..2947.0] | 2910.9[2812.3..3478.8] | end3/open 1.011 ov
+libpcre2_10.46_jit-caps-simdna     wild-waf-crs-942360-concat-sqli 17084.1[17044.9..17107.8] | 17120.0[17076.7..17242.4] | 17096.5[17062.2..17147.4] | 17090.7[17053.9..17156.7] | end3/open 1.000 ov
+libpcre2_10.46_jit-caps-simdna     winpath-near-miss              2906.5[2900.1..2973.5] | 2901.2[2860.3..2964.8] | 2951.8[2901.1..3298.7] | 3005.4[2865.5..3101.0] | end3/open 1.034 ov
