@@ -1,16 +1,16 @@
 <!-- pcrecbench interpret
 report:          reports/2026-10-13-email-specimen-0.2-budu-ryzen1600-handoff-6b2dbd3e.tsv
-report_sha256:   8c201bfef3a59bba335f3df603ecb51820295d745e20ee0c60713708ac414668
+report_sha256:   3e22e329a69f1657182940176dfb1754b6629ea4f37582fe70b5359a3c670cfb
 index:           store/index.tsv
 index_sha256:    101fccab3dd989b4d6775bdfd6c13f996124aedf35dda51d34c687aa4cf80eb4
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-10-13-email-specimen-0.2-budu-ryzen1600-handoff-6b2dbd3e.subject-grain.tsv
-subject_grain_sha256:16f08d5c30a5bcbb4cccad40e3196d8f0e7b23a934e31b5cafcb9fc947550185
+subject_grain_sha256:510491fac3977c1ec7bf63ec2c057422f2ad38f8367a683a3e2c55f2287934e8
 catalogue:       3.19
 interpret:       v2
 reporter:        v26 (2026-10-13)
-query:           subbench=email-specimen, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_interp-caps-simdna
+query:           subbench=email-specimen, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, until=2026-10-13T23:59:59Z, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_interp-caps-simdna
 -->
 
 # Interpretation — 2026-10-13-email-specimen-0.2-budu-ryzen1600-handoff-6b2dbd3e

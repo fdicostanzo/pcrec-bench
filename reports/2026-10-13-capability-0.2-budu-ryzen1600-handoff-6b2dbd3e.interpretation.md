@@ -1,16 +1,16 @@
 <!-- pcrecbench interpret
 report:          reports/2026-10-13-capability-0.2-budu-ryzen1600-handoff-6b2dbd3e.tsv
-report_sha256:   32d228f1553375a6068b4226faae6112f4e800902ca615713b1c57869d375afa
+report_sha256:   211aead5bf584fb87f6e1a8c016601afc64cebfcfac988adad079b56d43369ae
 index:           store/index.tsv
 index_sha256:    101fccab3dd989b4d6775bdfd6c13f996124aedf35dda51d34c687aa4cf80eb4
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-10-13-capability-0.2-budu-ryzen1600-handoff-6b2dbd3e.subject-grain.tsv
-subject_grain_sha256:0431c2db5d12b24941e9faafb4117c2dc8bacc9692feedeaa673c4050e89e356
+subject_grain_sha256:ae824556a774606a997e857325381de917622b62742d27ae7e2fbe570ce5ddc2
 catalogue:       3.19
 interpret:       v2
 reporter:        v26 (2026-10-13)
-query:           subbench=capability, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, testee=pcrec_b8337c33_auto-caps-simdna, testee=pcrec_00c97769_auto-caps-simdna, testee=pcrec_6b2dbd3e_auto-caps-simdna
+query:           subbench=capability, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, until=2026-10-13T23:59:59Z, testee=pcrec_b8337c33_auto-caps-simdna, testee=pcrec_00c97769_auto-caps-simdna, testee=pcrec_6b2dbd3e_auto-caps-simdna
 -->
 
 # Interpretation — 2026-10-13-capability-0.2-budu-ryzen1600-handoff-6b2dbd3e

@@ -55,6 +55,8 @@ Ledger: `docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md` (the full deriv
 >
 > **Findings you did not ask for.** (i) `mod-i` / `mod-r` are slower on the large LANDMARK-ABSENT throughput subjects (x1.031-1.036, 3 of 3 subjects) and x1.07-1.08 on short: the re-entered run test at K 0 costs more than the byte-class scan it displaced for a 3-byte caseless run; the K admission reads the prior only (K105's class). (ii) sfx-512's dense 128 KB subject is x0.791 where sfx-64 / sfx-256 are x0.113 / x0.121. (iii) The utf8 DENY testee has no roster row on our side (3 of 76 patterns compile): `ci-strasse` has NO `-fno-req-handoff` cell yet; owed one re-run.
 >
+> **Follow-up window (short, after merge).** Three owed cells: the utf8 DENY cell for `ci-strasse` (the utf8 roster row for `pcrec-auto-utf8-noreqhandoff` is now added on our side, so the arm will compile), bounded @6b2dbd3e, and the capability nocaps arms (which carry the nocaps-only 15th `handoff` mover, `wild-secrets-username-password-pair`) plus the capability DENY. Not asserted above.
+>
 > **Asks.** (1) Is the K admission for a 3-byte caseless run at K 0 (mod-i / mod-r / ci-ascii-control) expected to admit a cell that reads x1.03 on landmark-absent text? (2) `qnt-poss-brace` `f-tag` x2.40 (11 bytes, +17 ns): the x1.5 case of I-147 ask 2 -- is a tiny-subject floor in scope, or is the re-entry's fixed cost the finding? (3) The seam's four slower cells (capability `doubled-word`, `tag-pair-match` short): is the static-inline helper expected to lengthen the VM quick-dismissal path? (4) Please state the Zen 4 vs Zen 1 rev-end expectation for the whole form (our box reads +1.2% median, alt-foo-tails +7.9%).
 
 ## Charter-vs-committed checklist (session_discipline.md 7(c))
@@ -89,3 +91,8 @@ Headline change from the re-convergence (b8337c33, the 10-12 capability record i
 - `docs/dev/measurements/2026-10-13-b136-analysis.py` + `2026-10-13-b136-*.txt` (nineteen outputs)
 - `reports/2026-10-13-*-handoff-6b2dbd3e.*` (48 files), `reports/*.interpretation.md` (87 regenerated), `reports/trend/` (snapshots, regenerated TSVs/HTML, `interpretation/{00c97769,6b2dbd3e}.md`)
 - `pcrecbench/report.py`, `pcrecbench/tests/test_report.py`, `reports/CLAUDE.md`, `docs/dev/ledgers/CLAUDE.md`, `docs/dev/measurements/CLAUDE.md`
+
+## Follow-up (manager's change request)
+
+- `bench/utf8/gen_patterns.py` roster row `pcrec-auto-utf8-noreqhandoff` (tokens = `pcrec-auto-utf8`'s); `patterns.rxt` regenerated, `gen_patterns.py --check` clean. Other `ext bench` rosters: only bench/capability (already carries all four [B136] testees: noreqhandoff, norevend, nocaps-norevend, utf8-noreqhandoff) and bench/utf8; no other set has one.
+- The eight `handoff-6b2dbd3e` groups now carry `until=2026-10-13T23:59:59Z` in their header and were regenerated (+ sidecars).

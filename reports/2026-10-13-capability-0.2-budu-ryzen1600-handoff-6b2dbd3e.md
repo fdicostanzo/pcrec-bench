@@ -4,7 +4,7 @@ reporter: v26 (2026-10-13)
 
 ## Query
 
-- filters: subbench=capability, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, testee=pcrec_b8337c33_auto-caps-simdna, testee=pcrec_00c97769_auto-caps-simdna, testee=pcrec_6b2dbd3e_auto-caps-simdna
+- filters: subbench=capability, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, until=2026-10-13T23:59:59Z, testee=pcrec_b8337c33_auto-caps-simdna, testee=pcrec_00c97769_auto-caps-simdna, testee=pcrec_6b2dbd3e_auto-caps-simdna
 - record source: store/index.tsv (3 record(s) matching this query)
 - records included: 3
 - worst other-core busy: 19.44% (`pcrec_6b2dbd3e_auto-caps-simdna` / `base10num-near-miss` / `large-subject-throughput`)

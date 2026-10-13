@@ -4,7 +4,7 @@ reporter: v26 (2026-10-13)
 
 ## Query
 
-- filters: subbench=email-specimen, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_interp-caps-simdna
+- filters: subbench=email-specimen, version=0.2, machine=budu-ryzen1600, since=2026-10-12T00:00:00Z, until=2026-10-13T23:59:59Z, testee=libpcre2_10.46_jit-caps-simdna, testee=libpcre2_10.46_interp-caps-simdna
 - record source: store/index.tsv (2 record(s) matching this query)
 - records included: 2
 - worst other-core busy: 2.27% (`libpcre2_10.46_jit-caps-simdna` / `floor` / `large-subject-throughput`)

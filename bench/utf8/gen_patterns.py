@@ -462,6 +462,13 @@ EXT_BENCH_ROSTER = [
     ("pcrec-auto-clang-nohybreseed-utf8", ("utf8-encoding", "ascii-class-scope",
                                            "lookaround", "true-end-anchor",
                                            "unicode-properties")),
+    # [B136] (b136read): `-fno-req-handoff` is an emit-side flag denial,
+    # so the token set is `pcrec-auto-utf8`'s verbatim (same reasoning as
+    # the rows above). Its absence left 73 of 76 patterns
+    # unsupported-by-declaration in the 2026-10-12 window.
+    ("pcrec-auto-utf8-noreqhandoff", ("utf8-encoding", "ascii-class-scope",
+                                      "lookaround", "true-end-anchor",
+                                      "unicode-properties")),
     ("pcrec-nocaps-utf8", ("utf8-encoding", "ascii-class-scope",
                            "lookaround", "true-end-anchor",
                            "unicode-properties")),
