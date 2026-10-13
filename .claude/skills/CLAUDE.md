@@ -19,3 +19,8 @@
   `links.tsv` rows, `make trend` / `trend-check`, write the grounded
   `reports/trend/interpretation/<pin>.md`, `make check-trend`, commit with
   explicit paths. The first of the `pcrec-bench-report-<kind>` family.
+- `close/SKILL.md` — `/close` (2026-10-13, copied from pcrec main and
+  adapted): Frank's session-reset request. Wait for the next natural
+  opportunity unless he adds urgency, say what you are waiting for, then
+  run `pcrec-bench-manager` §7. A detached window may run across the
+  reset if wake.md names it; a live lane may not.
