@@ -1,0 +1,37 @@
+# seam: per-subject CANON(6b2dbd3e) vs NEW(00c97769) on the cells where CANON is SLOWER set-grain (short-subject-search): top subjects by ns delta; sum of positive/negative deltas
+
+capability/doubled-word: 75 subjects, sum +411.1 ns / -23.1 ns, slower on 65, faster on 10
+   +42.3 ns  waf-benign NEW 171.9[169.8..173.0] CANON 214.2[211.5..215.4] DISJ
+   +35.2 ns  waf-union NEW 238.6[234.8..241.6] CANON 273.8[271.4..275.1] DISJ
+   +29.1 ns  waf-concat NEW 240.5[237.3..242.7] CANON 269.6[266.6..271.5] DISJ
+   +26.7 ns  sec-github-pat NEW 283.1[282.4..283.8] CANON 309.8[308.7..310.5] DISJ
+   +23.7 ns  sec-userpass NEW 135.9[134.3..137.1] CANON 159.6[156.7..162.2] DISJ
+   -2.6 ns  rec-comment-nested NEW 141.6[137.5..150.2] CANON 139.0[136.5..139.9]
+   -13.6 ns  rec-tag-depth3 NEW 110.0[108.2..112.1] CANON 96.4[95.1..97.7]
+
+capability/tag-pair-match: 75 subjects, sum +84.3 ns / -18.3 ns, slower on 67, faster on 8
+   +2.1 ns  lp-atomic-hit NEW 10.4[10.4..10.5] CANON 12.5[11.8..12.7] DISJ
+   +1.4 ns  waf-sleep NEW 10.4[10.4..10.4] CANON 11.8[11.8..12.7] DISJ
+   +1.4 ns  dt-prose-month NEW 10.4[10.4..10.4] CANON 11.8[11.8..12.7] DISJ
+   +1.4 ns  la-negation-hit NEW 10.4[10.4..10.4] CANON 11.8[11.8..11.8] DISJ
+   +1.4 ns  lp-num-neg-dec NEW 10.4[10.4..10.4] CANON 11.8[11.8..11.8] DISJ
+   -5.0 ns  br-tag-pair NEW 75.9[75.0..76.4] CANON 70.9[69.8..73.9]
+   -6.6 ns  rec-tag-depth3 NEW 134.9[134.2..135.7] CANON 128.3[126.8..131.6]
+
+capability/dup-param-detect: 75 subjects, sum +27.2 ns / -1.8 ns, slower on 73, faster on 2
+   +13.2 ns  waf-benign NEW 357.5[356.7..361.5] CANON 370.7[370.0..371.5] DISJ
+   +0.3 ns  br-tag-pair NEW 10.0[10.0..10.1] CANON 10.3[10.1..10.3] DISJ
+   +0.3 ns  la-currency NEW 10.0[10.0..10.1] CANON 10.3[10.2..10.3] DISJ
+   +0.2 ns  waf-dbnames NEW 10.9[10.9..10.9] CANON 11.2[11.1..11.2] DISJ
+   +0.2 ns  rd-evil-alt-near-miss NEW 10.0[10.0..10.0] CANON 10.3[10.2..10.3] DISJ
+   -0.2 ns  sec-userpass NEW 11.0[10.7..11.4] CANON 10.8[10.7..11.1]
+   -1.6 ns  br-dup-param NEW 51.4[50.7..52.9] CANON 49.7[49.2..50.3]
+
+syntax/bak-k-named: 42 subjects, sum +19.3 ns / -3.0 ns, slower on 37, faster on 5
+   +0.9 ns  l-quoted NEW 9.5[9.5..10.9] CANON 10.5[9.9..10.8] ov
+   +0.9 ns  l-case NEW 9.5[9.5..10.1] CANON 10.5[9.9..11.1] ov
+   +0.7 ns  l-order NEW 10.2[10.2..10.8] CANON 10.9[10.9..11.8] DISJ
+   +0.6 ns  f-ac NEW 9.7[9.7..9.7] CANON 10.3[10.3..10.4] DISJ
+   +0.5 ns  f-cat NEW 8.8[8.8..8.9] CANON 9.4[9.4..9.4] DISJ
+   -0.7 ns  l-tags NEW 35.0[34.9..35.0] CANON 34.2[34.1..34.3]
+   -1.2 ns  f-tag NEW 32.7[32.5..33.5] CANON 31.5[31.4..31.7]

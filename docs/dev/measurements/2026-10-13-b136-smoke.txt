@@ -1,0 +1,134 @@
+# I-147 ask 1 smoke: every cell of every pattern whose NEW compile row carries REQ_HANDOFF != none, NEW vs BASE (this window, caps)
+# flag: NEW/BASE > 1.03 ('slow3'), and whether the trial ranges are disjoint
+loglines | ipv4 | plain | tp | K 3 | prefilter byte-class>handoff | BASE 6949695.0[6937777.9..6977296.8] | NEW 1369741.6[1364126.3..1423546.2] | NEW/BASE 0.197 DISJ | DENY/BASE 1.001 | CANON/NEW 1.000
+loglines | ipv4 | plain | ss | K 3 | prefilter byte-class>handoff | BASE 207980.7[207772.1..208036.3] | NEW 41603.7[41550.6..41640.1] | NEW/BASE 0.200 DISJ | DENY/BASE 0.996 | CANON/NEW 1.000
+loglines | ipv6 | plain | tp | K 4 | prefilter byte-class>handoff | BASE 10621375.8[10502675.6..10657134.8] | NEW 2286718.6[2280615.3..2288211.1] | NEW/BASE 0.215 DISJ | DENY/BASE 0.997 | CANON/NEW 1.000
+loglines | ipv6 | plain | ss | K 4 | prefilter byte-class>handoff | BASE 259216.6[258389.1..264918.4] | NEW 71822.6[71781.9..71869.4] | NEW/BASE 0.277 DISJ | DENY/BASE 1.003 | CANON/NEW 1.000
+loglines | kv-quoted | plain | tp | K 32 | prefilter first-class-bounded>handoff | BASE 202786.2[202580.9..203200.0] | NEW 207578.1[206537.6..208242.7] | NEW/BASE 1.024 DISJ | DENY/BASE 16.627 | CANON/NEW 0.995
+loglines | kv-quoted | plain | ss | K 32 | prefilter first-class-bounded>handoff | BASE 5698.2[5695.8..5710.2] | NEW 5897.9[5881.8..5902.9] | NEW/BASE 1.035 DISJ | DENY/BASE 2.066 | CANON/NEW 1.000
+loglines | stack-frame | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 1307602.4[1306985.3..1308505.2] | NEW 1307431.5[1306972.8..1307663.4] | NEW/BASE 1.000 ov | DENY/BASE 1.403 | CANON/NEW 1.000
+loglines | stack-frame | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 33376.4[33358.2..33385.4] | NEW 33404.1[33370.9..33460.1] | NEW/BASE 1.001 ov | DENY/BASE 1.052 | CANON/NEW 1.001
+altwide | sfx-256 | plain | tp | K 9 | prefilter byte-class>handoff | BASE 2621185.7[2619959.0..2623009.3] | NEW 314874.0[314681.2..315075.7] | NEW/BASE 0.120 DISJ | DENY/BASE 1.126 | CANON/NEW 1.000
+altwide | sfx-256 | plain | ss | K 9 | prefilter byte-class>handoff | BASE 1018.4[1016.6..1026.2] | NEW 1049.7[1047.5..1053.1] | NEW/BASE 1.031 DISJ | DENY/BASE 1.160 | CANON/NEW 0.998
+altwide | sfx-512 | plain | tp | K 9 | prefilter byte-class>handoff | BASE 1867036.5[1865302.5..1867092.4] | NEW 315372.5[314711.7..316136.1] | NEW/BASE 0.169 DISJ | DENY/BASE 1.743 | CANON/NEW 1.001
+altwide | sfx-512 | plain | ss | K 9 | prefilter byte-class>handoff | BASE 1019.4[1015.5..1020.1] | NEW 1041.2[1039.6..1043.9] | NEW/BASE 1.021 DISJ | DENY/BASE 1.155 | CANON/NEW 1.002
+altwide | sfx-64 | plain | tp | K 9 | prefilter byte-class>handoff | BASE 2806165.0[2805361.7..2814876.9] | NEW 314634.1[314505.2..314866.4] | NEW/BASE 0.112 DISJ | DENY/BASE 1.140 | CANON/NEW 1.000
+altwide | sfx-64 | plain | ss | K 9 | prefilter byte-class>handoff | BASE 1016.1[1015.1..1021.6] | NEW 1048.7[1047.0..1062.1] | NEW/BASE 1.032 DISJ | DENY/BASE 1.157 | CANON/NEW 1.000
+bounded | dotted4 | plain | tp | K 3 | prefilter byte-class>handoff | BASE 1662.4[1660.9..1663.1] | NEW 1666.2[1662.3..1669.9] | NEW/BASE 1.002 ov | DENY/BASE 1.001 | CANON/NEW -
+bounded | dotted4 | plain | ss | K 3 | prefilter byte-class>handoff | BASE 1162.5[1159.1..1167.4] | NEW 617.0[615.8..619.5] | NEW/BASE 0.531 DISJ | DENY/BASE 1.001 | CANON/NEW -
+syntax | anc-m-caret | plain | tp | K 0 | prefilter memchr>memchr | BASE 389248.2[388864.9..389500.9] | NEW 389137.6[388986.1..389414.9] | NEW/BASE 1.000 ov | DENY/BASE 1.081 | CANON/NEW 1.000
+syntax | anc-m-caret | plain | ss | K 0 | prefilter memchr>memchr | BASE 406.5[404.1..407.5] | NEW 406.9[405.3..408.9] | NEW/BASE 1.001 ov | DENY/BASE 1.015 | CANON/NEW 0.997
+syntax | anc-m-dollar | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 518743.4[518293.2..519052.2] | NEW 518569.9[517888.7..519655.1] | NEW/BASE 1.000 ov | DENY/BASE 1.071 | CANON/NEW 1.001
+syntax | anc-m-dollar | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 523.0[521.5..526.4] | NEW 522.1[521.4..526.9] | NEW/BASE 0.998 ov | DENY/BASE 1.037 | CANON/NEW 1.002
+syntax | asr-nwb | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 918035.0[917429.0..920588.8] | NEW 922011.5[919354.5..978611.3] | NEW/BASE 1.004 ov | DENY/BASE 1.264 | CANON/NEW 0.997
+syntax | asr-nwb | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 519.8[519.2..521.8] | NEW 521.1[519.5..918.1] | NEW/BASE 1.002 ov | DENY/BASE 1.025 | CANON/NEW 0.997
+syntax | asr-wb | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 925733.1[925417.1..928194.9] | NEW 927166.3[925764.0..930714.3] | NEW/BASE 1.002 ov | DENY/BASE 1.207 | CANON/NEW 0.999
+syntax | asr-wb | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 440.1[439.3..441.3] | NEW 441.2[439.7..442.4] | NEW/BASE 1.003 ov | DENY/BASE 1.033 | CANON/NEW 0.996
+syntax | cls-fold-pair | plain | tp | K 0 | prefilter memchr>handoff | BASE 735960.4[735662.0..736432.8] | NEW 686241.6[685900.3..686724.4] | NEW/BASE 0.932 DISJ | DENY/BASE 1.780 | CANON/NEW 1.000
+syntax | cls-fold-pair | plain | ss | K 0 | prefilter memchr>handoff | BASE 432.9[432.3..434.9] | NEW 410.7[408.3..411.7] | NEW/BASE 0.949 DISJ | DENY/BASE 1.007 | CANON/NEW 0.999
+syntax | cls-n-uc | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 586648.3[586091.3..586909.4] | NEW 586552.2[585435.8..587260.9] | NEW/BASE 1.000 ov | DENY/BASE 1.449 | CANON/NEW 1.000
+syntax | cls-n-uc | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 536.3[535.0..537.5] | NEW 535.4[530.9..538.4] | NEW/BASE 0.998 ov | DENY/BASE 1.002 | CANON/NEW 0.999
+syntax | cls-pair-ctl | plain | tp | K 0 | prefilter memchr>handoff | BASE 735731.9[734706.4..737460.8] | NEW 686292.9[685796.5..686423.2] | NEW/BASE 0.933 DISJ | DENY/BASE 1.780 | CANON/NEW 1.001
+syntax | cls-pair-ctl | plain | ss | K 0 | prefilter memchr>handoff | BASE 432.4[431.4..435.1] | NEW 410.0[407.8..421.9] | NEW/BASE 0.948 DISJ | DENY/BASE 1.010 | CANON/NEW 1.000
+syntax | esc-quote | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 143364.6[143293.0..143457.6] | NEW 143403.2[143376.6..143541.4] | NEW/BASE 1.000 ov | DENY/BASE 1.880 | CANON/NEW 1.000
+syntax | esc-quote | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 342.3[341.8..349.8] | NEW 342.4[342.1..342.9] | NEW/BASE 1.000 ov | DENY/BASE 1.002 | CANON/NEW 1.000
+syntax | grp-atomic-alt | plain | tp | K 2 | prefilter memchr>memchr | BASE 1103062.6[1101804.2..1103922.0] | NEW 1020989.5[1019056.8..1021551.1] | NEW/BASE 0.926 DISJ | DENY/BASE 1.004 | CANON/NEW 0.999
+syntax | grp-atomic-alt | plain | ss | K 2 | prefilter memchr>memchr | BASE 980.3[975.6..981.1] | NEW 798.4[797.0..800.7] | NEW/BASE 0.814 DISJ | DENY/BASE 0.997 | CANON/NEW 1.000
+syntax | lkb-neg | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 683870.1[681775.6..704734.0] | NEW 684246.1[681412.3..687802.1] | NEW/BASE 1.001 ov | DENY/BASE 1.707 | CANON/NEW 0.981
+syntax | lkb-neg | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 726.6[724.6..728.5] | NEW 726.5[725.8..764.2] | NEW/BASE 1.000 ov | DENY/BASE 1.048 | CANON/NEW 0.990
+syntax | lkb-pos | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 573542.4[572976.3..573981.1] | NEW 573404.2[573360.6..573878.9] | NEW/BASE 1.000 ov | DENY/BASE 1.012 | CANON/NEW 0.989
+syntax | lkb-pos | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 650.1[648.3..654.1] | NEW 649.8[647.3..651.6] | NEW/BASE 1.000 ov | DENY/BASE 1.046 | CANON/NEW 0.885
+syntax | mod-i | plain | tp | K 0 | prefilter byte-class>handoff | BASE 1023885.3[1021150.6..1026981.5] | NEW 1055976.7[1055866.4..1057395.9] | NEW/BASE 1.031 DISJ | DENY/BASE 2.155 | CANON/NEW 1.001
+syntax | mod-i | plain | ss | K 0 | prefilter byte-class>handoff | BASE 630.1[627.4..632.4] | NEW 673.8[671.9..679.2] | NEW/BASE 1.069 DISJ | DENY/BASE 1.006 | CANON/NEW 1.004
+syntax | mod-r | plain | tp | K 0 | prefilter byte-class>handoff | BASE 1023318.5[1022846.8..1024883.2] | NEW 1056864.9[1056083.5..1057129.2] | NEW/BASE 1.033 DISJ | DENY/BASE 2.152 | CANON/NEW 1.000
+syntax | mod-r | plain | ss | K 0 | prefilter byte-class>handoff | BASE 628.9[628.5..629.2] | NEW 676.7[674.5..682.2] | NEW/BASE 1.076 DISJ | DENY/BASE 1.009 | CANON/NEW 0.995
+syntax | mod-s | plain | tp | K 5 | prefilter offset-set>offset-set | BASE 445188.8[444735.6..445904.8] | NEW 445001.4[444407.9..445169.4] | NEW/BASE 1.000 ov | DENY/BASE 1.009 | CANON/NEW 1.001
+syntax | mod-s | plain | ss | K 5 | prefilter offset-set>offset-set | BASE 543.9[543.0..544.9] | NEW 544.7[543.8..546.9] | NEW/BASE 1.002 ov | DENY/BASE 1.119 | CANON/NEW 0.999
+syntax | qnt-poss-brace | plain | tp | K 2 | prefilter memchr>handoff | BASE 878442.7[877882.1..879024.8] | NEW 261656.7[261330.5..262053.9] | NEW/BASE 0.298 DISJ | DENY/BASE 1.000 | CANON/NEW 0.999
+syntax | qnt-poss-brace | plain | ss | K 2 | prefilter memchr>handoff | BASE 699.6[698.4..702.1] | NEW 559.7[557.6..561.4] | NEW/BASE 0.800 DISJ | DENY/BASE 1.004 | CANON/NEW 1.002
+syntax | qnt-quest | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 596077.7[594907.5..597299.4] | NEW 595599.2[595363.6..596059.8] | NEW/BASE 0.999 ov | DENY/BASE 2.020 | CANON/NEW 1.000
+syntax | qnt-quest | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 390.8[390.5..391.9] | NEW 391.7[390.5..392.5] | NEW/BASE 1.002 ov | DENY/BASE 1.018 | CANON/NEW 0.996
+utf8 | alt-nearmiss | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 141680.0[140812.5..141988.0] | NEW 141166.6[140666.1..142035.0] | NEW/BASE 0.996 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | alt-nearmiss | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 916.0[908.1..1007.7] | NEW 910.8[908.1..914.9] | NEW/BASE 0.994 ov | DENY/BASE - | CANON/NEW 1.002
+utf8 | alt-shared-char | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 129622.2[129382.3..129865.0] | NEW 129928.6[129507.3..130288.3] | NEW/BASE 1.002 ov | DENY/BASE - | CANON/NEW 1.002
+utf8 | alt-shared-char | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 872.2[870.0..872.8] | NEW 877.9[873.0..882.2] | NEW/BASE 1.006 DISJ | DENY/BASE - | CANON/NEW 1.004
+utf8 | asr-b-ascii | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 501838.9[501253.0..501962.0] | NEW 501722.8[500631.0..502264.4] | NEW/BASE 1.000 ov | DENY/BASE 1.002 | CANON/NEW 1.000
+utf8 | asr-b-ascii | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 793.3[792.9..793.7] | NEW 792.2[791.3..799.3] | NEW/BASE 0.999 ov | DENY/BASE 1.031 | CANON/NEW 1.003
+utf8 | asr-b-cyr | plain | tp | K 4 | prefilter offset-set-bounded>offset-set-bounded | BASE 95657.0[95493.3..95726.8] | NEW 95649.3[95629.4..95660.0] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | asr-b-cyr | plain | ss | K 4 | prefilter offset-set-bounded>offset-set-bounded | BASE 649.5[648.5..652.3] | NEW 647.9[647.6..653.1] | NEW/BASE 0.997 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | asr-caret-ml | plain | tp | K 0 | prefilter memchr>memchr | BASE 27556.4[27547.9..27584.3] | NEW 27579.9[27556.0..27591.3] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | asr-caret-ml | plain | ss | K 0 | prefilter memchr>memchr | BASE 921.4[917.5..923.0] | NEW 924.7[917.6..930.7] | NEW/BASE 1.004 ov | DENY/BASE - | CANON/NEW 0.994
+utf8 | asr-dollar-ml | plain | tp | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 40645.3[40621.1..40709.8] | NEW 40762.1[40674.1..40774.0] | NEW/BASE 1.003 ov | DENY/BASE - | CANON/NEW 0.998
+utf8 | asr-dollar-ml | plain | ss | K 0 | prefilter offset-set-bounded>offset-set-bounded | BASE 935.8[934.2..937.3] | NEW 935.1[934.4..937.0] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | asr-lb-neg | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 133261.3[132835.5..134677.8] | NEW 133126.7[132524.5..133648.7] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 0.978
+utf8 | asr-lb-neg | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 1870.0[1865.6..1877.0] | NEW 1873.2[1872.0..1883.7] | NEW/BASE 1.002 ov | DENY/BASE - | CANON/NEW 0.891
+utf8 | ci-ascii-control | plain | tp | K 0 | prefilter byte-class>handoff | BASE 405205.4[404715.7..405990.9] | NEW 404154.4[403856.3..404508.6] | NEW/BASE 0.997 DISJ | DENY/BASE 0.990 | CANON/NEW 1.003
+utf8 | ci-ascii-control | plain | ss | K 0 | prefilter byte-class>handoff | BASE 1161.0[1159.0..1162.3] | NEW 1164.8[1162.4..1166.5] | NEW/BASE 1.003 DISJ | DENY/BASE 1.003 | CANON/NEW 0.999
+utf8 | ci-strasse | plain | tp | K 2 | prefilter byte-class>handoff | BASE 943098.8[930378.4..949558.3] | NEW 623351.7[622573.4..623770.1] | NEW/BASE 0.661 DISJ | DENY/BASE - | CANON/NEW 1.000
+utf8 | ci-strasse | plain | ss | K 2 | prefilter byte-class>handoff | BASE 1252.4[1250.9..1258.4] | NEW 1271.3[1265.8..1288.6] | NEW/BASE 1.015 DISJ | DENY/BASE - | CANON/NEW 1.002
+utf8 | lit-1ch-3b | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 155209.2[154982.1..155433.2] | NEW 155406.5[154983.8..155631.5] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-1ch-3b | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 961.0[959.5..966.3] | NEW 967.4[960.1..1015.5] | NEW/BASE 1.007 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | lit-1ch-4b | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 204782.0[204680.7..204825.4] | NEW 204700.0[204512.5..204922.9] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-1ch-4b | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 735.2[732.7..745.6] | NEW 734.4[733.7..735.3] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 0.998
+utf8 | lit-cyr-run | plain | tp | K 4 | prefilter offset-set>offset-set | BASE 94949.0[94807.7..95122.5] | NEW 94999.9[94832.7..95113.2] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | lit-cyr-run | plain | ss | K 4 | prefilter offset-set>offset-set | BASE 650.4[648.6..651.2] | NEW 649.9[648.1..652.4] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | lit-mixed-ascii | plain | tp | K 3 | prefilter offset-set>offset-set | BASE 71957.4[71885.4..72035.9] | NEW 72077.3[71913.9..72158.7] | NEW/BASE 1.002 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | lit-mixed-ascii | plain | ss | K 3 | prefilter offset-set>offset-set | BASE 686.4[686.3..688.9] | NEW 686.9[686.3..687.2] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-nearmiss-run | plain | tp | K 1 | prefilter offset-set>offset-set | BASE 40478.5[40383.1..40504.9] | NEW 40457.9[40433.9..40527.7] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | lit-nearmiss-run | plain | ss | K 1 | prefilter offset-set>offset-set | BASE 745.4[745.1..748.5] | NEW 748.6[747.5..828.8] | NEW/BASE 1.004 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-nfc-pair | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 234057.6[233692.2..234551.0] | NEW 233878.8[233618.5..234034.1] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-nfc-pair | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 759.0[758.7..761.4] | NEW 760.7[759.1..761.8] | NEW/BASE 1.002 ov | DENY/BASE - | CANON/NEW 1.003
+utf8 | lit-offset-at-head | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 226487.1[226309.6..226525.4] | NEW 226204.5[225963.9..226417.6] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-offset-at-head | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 794.4[793.5..797.6] | NEW 794.5[794.4..799.0] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | lit-offset-at-tail | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 27532.4[27511.5..27545.3] | NEW 27517.5[27511.1..27519.2] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 0.999
+utf8 | lit-offset-at-tail | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 764.8[764.4..767.7] | NEW 765.5[764.2..767.5] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | lit-run-3 | plain | tp | K 1 | prefilter offset-set>offset-set | BASE 40521.9[40497.5..40559.2] | NEW 40531.9[40515.6..40641.1] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 0.998
+utf8 | lit-run-3 | plain | ss | K 1 | prefilter offset-set>offset-set | BASE 756.2[749.0..758.8] | NEW 754.1[747.5..755.6] | NEW/BASE 0.997 ov | DENY/BASE - | CANON/NEW 1.001
+utf8 | lit-sharp-s | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 621942.9[621747.1..622191.8] | NEW 622101.5[621909.7..622355.2] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.000
+utf8 | lit-sharp-s | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 692.4[685.8..694.2] | NEW 688.5[688.0..691.4] | NEW/BASE 0.994 ov | DENY/BASE - | CANON/NEW 1.003
+utf8 | qnt-bounded-4b | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 193343.0[193301.3..193878.4] | NEW 193579.2[193088.9..194209.7] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 0.998
+utf8 | qnt-bounded-4b | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 745.9[744.5..746.2] | NEW 745.6[745.0..746.5] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 0.998
+utf8 | qnt-counted-3b | plain | tp | K 0 | prefilter offset-set>offset-set | BASE 140859.0[140777.8..141388.3] | NEW 141265.4[141042.6..141909.2] | NEW/BASE 1.003 ov | DENY/BASE - | CANON/NEW 0.996
+utf8 | qnt-counted-3b | plain | ss | K 0 | prefilter offset-set>offset-set | BASE 956.6[956.0..963.3] | NEW 958.1[955.7..962.0] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 0.997
+capability | wild-secrets-github-pat | plain | tp | K 3 | prefilter offset-set-bounded>offset-set-bounded | BASE 180251.3[180142.2..180305.4] | NEW 180218.3[180180.5..180294.0] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.001
+capability | wild-secrets-github-pat | plain | ss | K 3 | prefilter offset-set-bounded>offset-set-bounded | BASE 847.9[843.7..851.3] | NEW 847.3[842.6..849.0] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 0.990
+capability | wild-secrets-slack-webhook-url | plain | tp | K 26 | prefilter offset-set>offset-set | BASE 396610.6[396530.8..396751.2] | NEW 396636.1[396616.8..396715.9] | NEW/BASE 1.000 ov | DENY/BASE - | CANON/NEW 1.000
+capability | wild-secrets-slack-webhook-url | plain | ss | K 26 | prefilter offset-set>offset-set | BASE 1144.0[1139.9..1150.3] | NEW 1140.3[1137.1..1143.1] | NEW/BASE 0.997 ov | DENY/BASE - | CANON/NEW 1.002
+capability | wild-secrets-username-password-pair | plain | tp | K 0 | prefilter byte-class>byte-class | BASE 79156.9[79051.3..79186.7] | NEW 79071.4[79011.2..79119.3] | NEW/BASE 0.999 ov | DENY/BASE - | CANON/NEW 1.000
+capability | wild-secrets-username-password-pair | plain | ss | K 0 | prefilter byte-class>byte-class | BASE 1052.2[1051.4..1053.2] | NEW 1053.3[1052.9..1094.6] | NEW/BASE 1.001 ov | DENY/BASE - | CANON/NEW 0.999
+
+# 96 cells read (REQ_HANDOFF set at NEW); NEW/BASE > 1.03: 7
+  SLOW3 loglines kv-quoted plain short-subject-search K 32 NEW/BASE 1.035 DISJ
+  SLOW3 altwide sfx-256 plain short-subject-search K 9 NEW/BASE 1.031 DISJ
+  SLOW3 altwide sfx-64 plain short-subject-search K 9 NEW/BASE 1.032 DISJ
+  SLOW3 syntax mod-i plain large-subject-throughput K 0 NEW/BASE 1.031 DISJ
+  SLOW3 syntax mod-i plain short-subject-search K 0 NEW/BASE 1.069 DISJ
+  SLOW3 syntax mod-r plain large-subject-throughput K 0 NEW/BASE 1.033 DISJ
+  SLOW3 syntax mod-r plain short-subject-search K 0 NEW/BASE 1.076 DISJ
+
+# cells with a failing subject / pass_rate < 1 / no number, in any of the B N D C records of the six sets: 23
+   ('syntax', 'B', ('asr-k-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-kv'])
+   ('syntax', 'B', ('rec-r-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-parens'])
+   ('syntax', 'B', ('rec-r-uc', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'B', ('rec-1', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'B', ('rec-name', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'N', ('asr-k-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-kv'])
+   ('syntax', 'N', ('rec-r-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-parens'])
+   ('syntax', 'N', ('rec-r-uc', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'N', ('rec-1', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'N', ('rec-name', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'D', ('asr-k-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-kv'])
+   ('syntax', 'D', ('rec-r-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-parens'])
+   ('syntax', 'D', ('rec-r-uc', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'D', ('rec-1', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'D', ('rec-name', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'C', ('asr-k-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-kv'])
+   ('syntax', 'C', ('rec-r-uc', 'match-compliance', 'whole-subject'), 0.9761904761904762, ['f-parens'])
+   ('syntax', 'C', ('rec-r-uc', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'C', ('rec-1', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('syntax', 'C', ('rec-name', 'large-subject-throughput', 'plain'), 0.0, ['t-1m', 't-256k', 't-64k'])
+   ('capability', 'B', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182, ['t-evil-match-60k', 't-evil-nearmiss-16k'])
+   ('capability', 'N', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182, ['t-evil-match-60k', 't-evil-nearmiss-16k'])
+   ('capability', 'C', ('email-nested-plus', 'large-subject-throughput', 'plain'), 0.8181818181818182, ['t-evil-match-60k', 't-evil-nearmiss-16k'])
+
+# K105 caveat: patterns shaped `[a-y]\d{0,N}:` (hcolon) in the six sets

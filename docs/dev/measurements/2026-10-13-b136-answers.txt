@@ -1,0 +1,18 @@
+# answers: subject cells with n_wrong>0 or n_gave_up>0 per pcrec record (caps), THIS window, and identity of the sets across B/N/D/C and vs the 2026-10-11 BASE record
+loglines {'B': 0, 'N': 0, 'D': 0, 'C': 0, 'B1011': 0} identical to BASE: {'N': True, 'D': True, 'C': True, 'B1011': True}
+altwide {'B': 0, 'N': 0, 'D': 0, 'C': 0, 'B1011': 0} identical to BASE: {'N': True, 'D': True, 'C': True, 'B1011': True}
+bounded {'B': 0, 'N': 0, 'D': 0, 'B1011': 0} identical to BASE: {'N': True, 'D': True, 'B1011': True}
+syntax {'B': 11, 'N': 11, 'D': 11, 'C': 11, 'B1011': 11} identical to BASE: {'N': True, 'D': True, 'C': True, 'B1011': True}
+     ('syntax', ('asr-k-uc', 'match-compliance', 'whole-subject'), 'f-kv', 'wrong')
+     ('syntax', ('rec-1', 'large-subject-throughput', 'plain'), 't-1m', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-1', 'large-subject-throughput', 'plain'), 't-256k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-1', 'large-subject-throughput', 'plain'), 't-64k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-name', 'large-subject-throughput', 'plain'), 't-1m', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-name', 'large-subject-throughput', 'plain'), 't-256k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-name', 'large-subject-throughput', 'plain'), 't-64k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-r-uc', 'large-subject-throughput', 'plain'), 't-1m', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-r-uc', 'large-subject-throughput', 'plain'), 't-256k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-r-uc', 'large-subject-throughput', 'plain'), 't-64k', 'gave-up:-3:PCREC_ERR_FRAMES')
+     ('syntax', ('rec-r-uc', 'match-compliance', 'whole-subject'), 'f-parens', 'wrong')
+utf8 {'B': 0, 'N': 0, 'D': 0, 'C': 0, 'B1011': 0} identical to BASE: {'N': True, 'D': True, 'C': True, 'B1011': True}
+capability {'B': 0, 'N': 0, 'C': 0, 'B1011': 0} identical to BASE: {'N': True, 'C': True, 'B1011': True}

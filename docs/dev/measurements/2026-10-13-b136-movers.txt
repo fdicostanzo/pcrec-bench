@@ -1,0 +1,30 @@
+# the `handoff` movers BY VALUE from the records: a compile row whose dfa_prefilter is `handoff`, with BASE / NEW / DENY / CANON values
+loglines | ipv4 | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=none N=3 D=none C=3 | engine N=dfa | handoff in NC
+loglines | ipv6 | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=none N=4 D=none C=4 | engine N=dfa | handoff in NC
+loglines | kv-quoted | plain | prefilter B=first-class-bounded N=handoff D=first-class-bounded C=handoff | K B=32 N=32 D=none C=32 | engine N=dfa | handoff in NC
+altwide | sfx-256 | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=9 N=9 D=none C=9 | engine N=dfa | handoff in NC
+altwide | sfx-512 | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=9 N=9 D=none C=9 | engine N=dfa | handoff in NC
+altwide | sfx-64 | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=9 N=9 D=none C=9 | engine N=dfa | handoff in NC
+bounded | dotted4 | plain | prefilter B=byte-class N=handoff D=byte-class C=None | K B=none N=3 D=none C=None | engine N=dfa | handoff in N
+syntax | cls-fold-pair | plain | prefilter B=memchr N=handoff D=memchr C=handoff | K B=0 N=0 D=none C=0 | engine N=dfa | handoff in NC
+syntax | cls-pair-ctl | plain | prefilter B=memchr N=handoff D=memchr C=handoff | K B=0 N=0 D=none C=0 | engine N=dfa | handoff in NC
+syntax | grp-atomic-alt | plain | prefilter B=memchr N=memchr D=memchr C=memchr | K B=none N=2 D=none C=2 | engine N=vm | handoff in 
+syntax | mod-i | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=0 N=0 D=none C=0 | engine N=dfa | handoff in NC
+syntax | mod-r | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=0 N=0 D=none C=0 | engine N=dfa | handoff in NC
+syntax | qnt-poss-brace | plain | prefilter B=memchr N=handoff D=memchr C=handoff | K B=none N=2 D=none C=2 | engine N=dfa | handoff in NC
+utf8 | ci-ascii-control | plain | prefilter B=byte-class N=handoff D=byte-class C=handoff | K B=0 N=0 D=none C=0 | engine N=dfa | handoff in NC
+utf8 | ci-strasse | plain | prefilter B=byte-class N=handoff D=None C=handoff | K B=2 N=2 D=None C=2 | engine N=dfa | handoff in NC
+
+# plain-form patterns with dfa_prefilter=handoff at NEW, by set:
+  altwide    3 sfx-256, sfx-512, sfx-64
+  bounded    1 dotted4
+  loglines   3 ipv4, ipv6, kv-quoted
+  syntax     5 cls-fold-pair, cls-pair-ctl, mod-i, mod-r, qnt-poss-brace
+  utf8       2 ci-ascii-control, ci-strasse
+  TOTAL 14 (I-147 lists 14 under caps; the 15th, capability wild-secrets-username-password-pair, is a nocaps-only mover, and the window ran no capability nocaps record)
+
+# whole-subject form: any handoff row at NEW?
+  whole-subject handoff rows at NEW across the six sets: 0
+
+# patterns that gained a K (req_handoff none>value) but kept their prefilter (BASE>NEW):
+  syntax grp-atomic-alt plain K 2 prefilter memchr>memchr engine vm

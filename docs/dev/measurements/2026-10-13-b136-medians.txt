@@ -1,0 +1,99 @@
+# ask 5.2: loglines (all patterns) and altwide@0.3 medians at a post-START-LANDING pin: BASE b8337c33 | NEW 00c97769 | CANON 6b2dbd3e, caps, set-grain ns
+
+## loglines
+bignum                     large-subject-throughput   B 7267844.8[7239433.5..7283314.3] N 7283511.2[7277407.6..7291092.9] C 7267486.3[7249895.4..7280353.0] | C/B 1.000 | n_subj 12 | dfa/reverse-pass/first-class-bounded
+bignum                     short-subject-search       B 237637.2[236283.0..238579.4] N 238499.6[237644.9..238779.8] C 237904.0[236460.7..238165.0] | C/B 1.001 | n_subj 112 | dfa/reverse-pass/first-class-bounded
+floor                      large-subject-throughput   B 2842400.6[2841426.3..2844280.3] N 2842326.9[2841038.8..2842537.3] C 2841398.5[2838769.6..2842004.7] | C/B 1.000 | n_subj 12 | dfa/end-minus-width/memchr
+floor                      short-subject-search       B 1507.1[1489.7..1522.8] N 1516.1[1510.3..1601.5] C 1508.6[1501.4..1516.0] | C/B 1.001 | n_subj 112 | dfa/end-minus-width/memchr
+hex32-id                   large-subject-throughput   B 11052552.8[11035772.4..11063429.7] N 11046414.5[11037500.9..11053905.7] C 11049516.5[11044509.0..11058776.7] | C/B 1.000 | n_subj 12 | dfa/end-minus-width/first-class-bounded
+hex32-id                   short-subject-search       B 297833.2[297763.5..297892.2] N 297773.0[297535.2..298143.6] C 297761.5[297706.4..298417.0] | C/B 1.000 | n_subj 112 | dfa/end-minus-width/first-class-bounded
+http-5xx                   large-subject-throughput   B 280336.8[279441.2..281701.0] N 280523.6[280261.2..282651.6] C 280057.0[278736.1..282912.5] | C/B 0.999 | n_subj 12 | dfa/reverse-pass/memchr-bounded
+http-5xx                   short-subject-search       B 4947.5[4943.7..5287.3] N 4945.4[4940.8..4974.9] C 4944.1[4942.0..4953.3] | C/B 0.999 | n_subj 112 | dfa/reverse-pass/memchr-bounded
+ipv4                       large-subject-throughput   B 6949695.0[6937777.9..6977296.8] N 1369741.6[1364126.3..1423546.2] C 1370362.5[1369565.1..1373211.4] | C/B 0.197 | n_subj 12 | dfa/reverse-pass/handoff
+ipv4                       short-subject-search       B 207980.7[207772.1..208036.3] N 41603.7[41550.6..41640.1] C 41611.3[41580.5..41616.2] | C/B 0.200 | n_subj 112 | dfa/reverse-pass/handoff
+ipv6                       large-subject-throughput   B 10621375.8[10502675.6..10657134.8] N 2286718.6[2280615.3..2288211.1] C 2287114.1[2284070.1..2296692.2] | C/B 0.215 | n_subj 12 | dfa/reverse-pass/handoff
+ipv6                       short-subject-search       B 259216.6[258389.1..264918.4] N 71822.6[71781.9..71869.4] C 71821.5[71753.7..71975.7] | C/B 0.277 | n_subj 112 | dfa/reverse-pass/handoff
+iso-ts                     large-subject-throughput   B 1152151.2[1150407.5..1153392.9] N 1152622.7[1152405.9..1153310.8] C 1152743.5[1151786.8..1153429.5] | C/B 1.001 | n_subj 12 | dfa/reverse-pass/offset-set
+iso-ts                     short-subject-search       B 20576.8[20561.1..20623.0] N 20572.6[20557.2..20592.2] C 20576.1[20551.3..20614.2] | C/B 1.000 | n_subj 112 | dfa/reverse-pass/offset-set
+kv-quoted                  large-subject-throughput   B 202786.2[202580.9..203200.0] N 207578.1[206537.6..208242.7] C 206592.6[206231.9..207291.2] | C/B 1.019 | n_subj 12 | dfa/reverse-pass/handoff
+kv-quoted                  short-subject-search       B 5698.2[5695.8..5710.2] N 5897.9[5881.8..5902.9] C 5897.1[5883.4..5906.7] | C/B 1.035 | n_subj 112 | dfa/reverse-pass/handoff
+level-context              large-subject-throughput   B 2291258.9[2289412.0..2307558.0] N 2294245.6[2288741.8..2299518.9] C 2292562.5[2288115.4..2295745.0] | C/B 1.001 | n_subj 12 | vm/reverse-pass/first-class-bounded
+level-context              short-subject-search       B 83964.0[83846.5..84100.9] N 83833.7[83807.1..83911.9] C 83903.4[83878.2..84209.9] | C/B 0.999 | n_subj 112 | vm/reverse-pass/first-class-bounded
+stack-frame                large-subject-throughput   B 1307602.4[1306985.3..1308505.2] N 1307431.5[1306972.8..1307663.4] C 1307112.2[1306530.8..1309734.0] | C/B 1.000 | n_subj 12 | dfa/reverse-pass/offset-set-bounded
+stack-frame                short-subject-search       B 33376.4[33358.2..33385.4] N 33404.1[33370.9..33460.1] C 33431.8[33364.2..33490.1] | C/B 1.002 | n_subj 112 | dfa/reverse-pass/offset-set-bounded
+uuid                       large-subject-throughput   B 1061255.6[1058351.4..1064665.6] N 1061151.8[1059027.1..1064199.3] C 1059833.6[1059293.8..1064880.4] | C/B 0.999 | n_subj 12 | dfa/end-minus-width/offset-set-bounded
+uuid                       short-subject-search       B 20353.7[20341.5..20378.5] N 20356.0[20350.6..20367.7] C 20357.6[20339.2..20389.6] | C/B 1.000 | n_subj 112 | dfa/end-minus-width/offset-set-bounded
+-- loglines large-subject-throughput at CANON: n=11 median 1370362.5 ns, min 206592.6, max 11049516.5
+-- loglines short-subject-search at CANON: n=11 median 33431.8 ns, min 1508.6, max 297761.5
+
+## altwide
+ci-256                     large-subject-throughput   B 2898165.1[2897742.2..2906812.1] N 2896994.9[2895888.0..2898376.9] C 2899224.9[2898085.7..2902281.5] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+ci-256                     short-subject-search       B 7375.8[7371.5..7477.1] N 7362.0[7339.9..7367.7] C 7374.9[7365.1..7393.7] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+ci-512                     large-subject-throughput   B 4107173.2[4101459.7..4110612.1] N 4103823.4[4100290.3..4109062.5] C 4109368.6[4106722.0..4113254.1] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/byte-class
+ci-512                     short-subject-search       B 13463.7[13461.7..13531.6] N 13455.3[13450.2..13463.0] C 13477.9[13474.4..13478.9] | C/B 1.001 | n_subj 40 | dfa/reverse-pass/byte-class
+clsa-256                   large-subject-throughput   B 2887329.6[2884764.0..2913985.4] N 2896154.2[2877483.5..2924248.8] C 2903508.7[2889092.2..2905361.8] | C/B 1.006 | n_subj 4 | dfa/reverse-pass/byte-class
+clsa-256                   short-subject-search       B 8164.7[8157.4..8168.7] N 8158.8[8148.1..8170.0] C 8168.5[8161.7..8177.4] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+clsa-64                    large-subject-throughput   B 3403161.4[3399532.3..3406154.2] N 3402807.0[3398797.8..3405695.1] C 3404780.6[3400628.6..3409892.4] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+clsa-64                    short-subject-search       B 7828.4[7821.2..7834.2] N 7824.6[7820.4..7832.2] C 7830.6[7822.9..7831.3] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+clsd-256                   large-subject-throughput   B 2900615.0[2895517.6..2908974.7] N 2902359.4[2898959.5..2911243.6] C 2906686.3[2885703.3..2920769.4] | C/B 1.002 | n_subj 4 | dfa/reverse-pass/byte-class
+clsd-256                   short-subject-search       B 8380.4[8372.2..8398.1] N 8390.9[8382.7..8442.2] C 8374.2[8362.4..8381.0] | C/B 0.999 | n_subj 40 | dfa/reverse-pass/byte-class
+clsd-64                    large-subject-throughput   B 3408405.4[3396717.3..3410571.9] N 3401773.6[3400262.8..3411442.9] C 3408854.9[3406731.8..3420552.0] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+clsd-64                    short-subject-search       B 8043.6[8039.8..8046.8] N 8041.9[8036.8..8047.1] C 8046.5[8040.8..8054.9] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+cnt-64                     large-subject-throughput   B 3489151.9[3488484.4..3496855.8] N 3487789.2[3485540.6..3489086.4] C 3492314.6[3491256.1..3492969.2] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/byte-class
+cnt-64                     short-subject-search       B 11747.2[11736.6..11789.1] N 11719.2[11696.9..11754.3] C 11767.5[11723.4..11790.2] | C/B 1.002 | n_subj 40 | dfa/reverse-pass/byte-class
+floor                      large-subject-throughput   B 15342.3[15323.5..15347.6] N 15396.4[15387.4..15410.5] C 15414.7[15375.4..15441.2] | C/B 1.005 | n_subj 4 | dfa/end-minus-width/memchr
+floor                      short-subject-search       B 457.6[457.1..459.1] N 458.8[453.8..459.5] C 457.8[455.3..459.5] | C/B 1.000 | n_subj 40 | dfa/end-minus-width/memchr
+nar4-256                   large-subject-throughput   B 1797689.7[1796987.7..1804889.6] N 1806370.7[1801603.5..1817715.9] C 1796910.9[1793241.9..1800026.5] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+nar4-256                   short-subject-search       B 4466.2[4438.1..4484.1] N 4431.6[4399.0..4451.8] C 4440.6[4421.1..4456.2] | C/B 0.994 | n_subj 40 | dfa/reverse-pass/byte-class
+nar4-512                   large-subject-throughput   B 2034346.3[2028993.8..2040089.3] N 2038072.0[2032704.9..2041650.3] C 2043320.8[2038420.1..2048875.1] | C/B 1.004 | n_subj 4 | dfa/reverse-pass/byte-class
+nar4-512                   short-subject-search       B 5768.1[5754.5..5773.0] N 5762.7[5759.0..5770.0] C 5782.4[5773.8..5787.1] | C/B 1.002 | n_subj 40 | dfa/reverse-pass/byte-class
+nar4-64                    large-subject-throughput   B 1909896.2[1904074.4..1912739.9] N 1906487.7[1905165.4..1909569.3] C 1907619.8[1906028.4..1912547.2] | C/B 0.999 | n_subj 4 | dfa/reverse-pass/byte-class
+nar4-64                    short-subject-search       B 4541.7[4521.1..4564.7] N 4551.0[4542.5..4572.3] C 4578.2[4539.5..4633.7] | C/B 1.008 | n_subj 40 | dfa/reverse-pass/byte-class
+pfx3-256                   large-subject-throughput   B 306812.6[306581.8..306880.0] N 306760.2[306299.5..307287.3] C 306526.2[306206.5..307112.8] | C/B 0.999 | n_subj 4 | dfa/reverse-pass/run-pinned
+pfx3-256                   short-subject-search       B 1020.9[1019.3..1022.5] N 1023.1[1019.3..1089.1] C 1024.2[1019.1..1035.7] | C/B 1.003 | n_subj 40 | dfa/reverse-pass/run-pinned
+pfx3-512                   large-subject-throughput   B 306437.7[306201.7..307153.9] N 306346.1[306293.5..306484.3] C 306806.2[306637.4..307044.3] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/run-pinned
+pfx3-512                   short-subject-search       B 1019.2[1017.5..1022.1] N 1019.6[1018.2..1041.1] C 1018.8[1017.4..1020.4] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/run-pinned
+s-2048                     large-subject-throughput   B 4862637.6[4857538.5..4913166.3] N 4856086.4[4854688.9..4861132.1] C 4861355.3[4859552.7..4864790.2] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+s-2048                     short-subject-search       B 15038.9[15013.4..15065.0] N 15018.3[15004.7..15041.8] C 15019.5[15002.9..15057.7] | C/B 0.999 | n_subj 40 | dfa/reverse-pass/byte-class
+s-256                      large-subject-throughput   B 2889621.6[2884742.7..2901022.5] N 2891068.1[2876280.9..2918371.4] C 2888556.1[2884635.4..2894446.6] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+s-256                      short-subject-search       B 8251.0[8248.0..8416.2] N 8255.1[8245.7..8262.2] C 8261.8[8251.4..8272.0] | C/B 1.001 | n_subj 40 | dfa/reverse-pass/byte-class
+s-512                      large-subject-throughput   B 3168774.0[3162983.1..3200122.3] N 3168125.4[3161164.2..3199866.4] C 3170591.9[3165070.8..3198510.3] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/byte-class
+s-512                      short-subject-search       B 8241.3[8236.3..8254.9] N 8243.2[8234.7..8256.5] C 8247.8[8239.7..8277.6] | C/B 1.001 | n_subj 40 | dfa/reverse-pass/byte-class
+sfx-256                    large-subject-throughput   B 2621185.7[2619959.0..2623009.3] N 314874.0[314681.2..315075.7] C 314988.8[314702.4..315210.8] | C/B 0.120 | n_subj 4 | dfa/reverse-pass/handoff
+sfx-256                    short-subject-search       B 1018.4[1016.6..1026.2] N 1049.7[1047.5..1053.1] C 1048.0[1046.2..1062.4] | C/B 1.029 | n_subj 40 | dfa/reverse-pass/handoff
+sfx-512                    large-subject-throughput   B 1867036.5[1865302.5..1867092.4] N 315372.5[314711.7..316136.1] C 315660.4[315599.7..315782.7] | C/B 0.169 | n_subj 4 | dfa/reverse-pass/handoff
+sfx-512                    short-subject-search       B 1019.4[1015.5..1020.1] N 1041.2[1039.6..1043.9] C 1043.3[1042.0..1053.3] | C/B 1.024 | n_subj 40 | dfa/reverse-pass/handoff
+sfx-64                     large-subject-throughput   B 2806165.0[2805361.7..2814876.9] N 314634.1[314505.2..314866.4] C 314504.8[314094.4..314736.6] | C/B 0.112 | n_subj 4 | dfa/reverse-pass/handoff
+sfx-64                     short-subject-search       B 1016.1[1015.1..1021.6] N 1048.7[1047.0..1062.1] C 1048.5[1047.7..1048.9] | C/B 1.032 | n_subj 40 | dfa/reverse-pass/handoff
+sh1-256                    large-subject-throughput   B 500551.4[495538.3..518325.1] N 497834.8[495719.0..500769.7] C 498510.3[497149.5..498696.6] | C/B 0.996 | n_subj 4 | dfa/reverse-pass/memchr
+sh1-256                    short-subject-search       B 1512.3[1508.4..1597.7] N 1510.7[1506.6..1514.6] C 1510.9[1504.9..1512.1] | C/B 0.999 | n_subj 40 | dfa/reverse-pass/memchr
+sh1-512                    large-subject-throughput   B 550236.0[549928.3..551849.7] N 554739.1[554564.9..555539.0] C 554937.6[549530.0..555731.4] | C/B 1.009 | n_subj 4 | dfa/reverse-pass/memchr
+sh1-512                    short-subject-search       B 1518.1[1517.2..1553.1] N 1524.3[1518.8..1530.0] C 1523.2[1520.0..1533.0] | C/B 1.003 | n_subj 40 | dfa/reverse-pass/memchr
+sh1-64                     large-subject-throughput   B 452287.1[449534.2..452631.1] N 452110.5[448453.0..452351.0] C 450916.0[449854.0..453122.2] | C/B 0.997 | n_subj 4 | dfa/reverse-pass/memchr
+sh1-64                     short-subject-search       B 1489.5[1485.0..1495.3] N 1494.9[1483.1..1509.8] C 1496.7[1485.5..1513.1] | C/B 1.005 | n_subj 40 | dfa/reverse-pass/memchr
+srt-256                    large-subject-throughput   B 2902275.4[2898916.4..2915684.3] N 2904171.6[2899080.7..2907580.7] C 2913577.9[2902423.0..2926985.4] | C/B 1.004 | n_subj 4 | dfa/reverse-pass/byte-class
+srt-256                    short-subject-search       B 7622.3[7603.9..7649.7] N 7614.1[7606.7..7627.1] C 7621.8[7603.2..7629.6] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+srt-512                    large-subject-throughput   B 4111214.7[4101617.0..4114675.7] N 4096483.5[4094263.7..4104223.3] C 4104487.6[4100475.4..4112469.2] | C/B 0.998 | n_subj 4 | dfa/reverse-pass/byte-class
+srt-512                    short-subject-search       B 13704.7[13685.5..13713.0] N 13689.9[13685.2..13770.7] C 13697.2[13692.9..13755.7] | C/B 0.999 | n_subj 40 | dfa/reverse-pass/byte-class
+w-128                      large-subject-throughput   B 3109918.4[3104416.0..3123923.6] N 3112093.5[3106443.0..3128303.6] C 3114461.2[3111261.3..3135378.5] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/byte-class
+w-128                      short-subject-search       B 7593.0[7585.2..7603.1] N 7591.0[7584.2..7592.1] C 7599.8[7589.9..7626.2] | C/B 1.001 | n_subj 40 | dfa/reverse-pass/byte-class
+w-192                      large-subject-throughput   B 3116934.2[3101966.7..3127341.0] N 3109426.1[3104734.6..3129506.4] C 3116913.6[3113136.6..3135300.8] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+w-192                      short-subject-search       B 7602.1[7597.4..7606.3] N 7605.2[7600.5..7609.9] C 7605.9[7595.7..7614.5] | C/B 1.001 | n_subj 40 | dfa/reverse-pass/byte-class
+w-256                      large-subject-throughput   B 2906213.7[2898644.1..2917704.2] N 2900734.7[2894512.8..2914569.2] C 2898481.4[2894062.7..2913598.4] | C/B 0.997 | n_subj 4 | dfa/reverse-pass/byte-class
+w-256                      short-subject-search       B 7617.3[7608.9..7653.6] N 7614.5[7612.1..7643.2] C 7615.8[7607.8..7622.0] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+w-384                      large-subject-throughput   B 3021346.2[3016401.6..3026539.7] N 3019020.0[3014194.5..3022381.6] C 3018906.9[3016516.9..3032719.2] | C/B 0.999 | n_subj 4 | dfa/reverse-pass/byte-class
+w-384                      short-subject-search       B 7633.1[7627.7..7655.5] N 7627.6[7620.9..7637.6] C 7629.5[7624.4..7647.7] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+w-512                      large-subject-throughput   B 4099328.9[4098228.7..4102459.1] N 4096550.0[4094885.0..4104231.1] C 4099598.3[4096609.4..4104239.4] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/byte-class
+w-512                      short-subject-search       B 13687.8[13683.7..13738.3] N 13691.4[13679.9..13705.4] C 13693.2[13688.4..13713.2] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+w-64                       large-subject-throughput   B 3408474.7[3399793.8..3417677.8] N 3405108.1[3404714.6..3414439.9] C 3419021.6[3407507.6..3426573.7] | C/B 1.003 | n_subj 4 | dfa/reverse-pass/byte-class
+w-64                       short-subject-search       B 7428.0[7420.5..7436.2] N 7426.7[7425.6..7438.3] C 7426.0[7423.3..7432.6] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+w-8                        large-subject-throughput   B 2250653.2[2225217.4..2256915.2] N 2253682.3[2250496.6..2257882.2] C 2253917.1[2252682.9..2263038.1] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/byte-class
+w-8                        short-subject-search       B 4616.2[4587.5..4626.1] N 4613.0[4604.4..4628.2] C 4617.9[4603.7..4634.4] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+w-96                       large-subject-throughput   B 3132759.7[3129026.4..3152754.5] N 3132760.4[3130988.1..3134592.7] C 3130160.9[3126801.3..3137996.4] | C/B 0.999 | n_subj 4 | dfa/reverse-pass/byte-class
+w-96                       short-subject-search       B 7568.5[7563.9..7806.3] N 7568.9[7562.7..7579.4] C 7570.5[7566.8..7621.7] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/byte-class
+wb-256                     large-subject-throughput   B 3047700.4[3046120.1..3052816.0] N 3047104.4[3044450.5..3053334.6] C 3049025.0[3047508.6..3053383.8] | C/B 1.000 | n_subj 4 | dfa/reverse-pass/first-class-bounded
+wb-256                     short-subject-search       B 6331.2[6314.3..6334.9] N 6320.4[6293.7..6323.2] C 6307.8[6294.4..6329.4] | C/B 0.996 | n_subj 40 | dfa/reverse-pass/first-class-bounded
+wb-512                     large-subject-throughput   B 3835216.8[3835055.9..3836152.8] N 3835691.2[3834923.2..3838260.9] C 3837891.5[3836868.7..3839721.7] | C/B 1.001 | n_subj 4 | dfa/reverse-pass/first-class-bounded
+wb-512                     short-subject-search       B 8490.7[8485.1..8508.5] N 8487.1[8480.9..8498.5] C 8494.6[8472.8..8500.4] | C/B 1.000 | n_subj 40 | dfa/reverse-pass/first-class-bounded
+-- altwide large-subject-throughput at CANON: n=34 median 2905097.5 ns, min 15414.7, max 4861355.3
+-- altwide short-subject-search at CANON: n=34 median 7585.2 ns, min 457.8, max 15019.5

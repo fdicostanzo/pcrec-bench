@@ -1,0 +1,32 @@
+# CROSS-WINDOW CONTROL: pcrec b8337c33 caps, THIS window (B) vs the 2026-10-11 state-3 window (A), same testee id
+loglines     A 20261011T042205Z B 20261012T154645Z | n=22 min 0.995 p5 0.997 p25 1.000 med 1.000 p75 1.001 p95 1.001 max 1.002 | DISJ 0 | >5% 0 | >10% 0
+      worst 0.995 ('ipv6', 'short-subject-search', 'plain') A 260510.0[258163.6..262078.5] B 259216.6[258389.1..264918.4] ov
+      worst 0.997 ('floor', 'short-subject-search', 'plain') A 1512.2[1510.3..1814.1] B 1507.1[1489.7..1522.8] ov
+      worst 0.997 ('bignum', 'large-subject-throughput', 'plain') A 7289045.9[7279862.6..7291919.4] B 7267844.8[7239433.5..7283314.3] ov
+      worst 1.002 ('ipv4', 'large-subject-throughput', 'plain') A 6938840.7[6933711.4..6946778.8] B 6949695.0[6937777.9..6977296.8] ov
+altwide      A 20261011T045002Z B 20261012T162346Z | n=107 min 0.990 p5 0.996 p25 0.999 med 1.000 p75 1.002 p95 1.005 max 1.022 | DISJ 2 | >5% 0 | >10% 0
+      worst 1.022 ('sh1-256', 'match-compliance', 'whole-subject') A 415.9[410.6..424.7] B 425.0[419.5..438.5] ov
+      worst 1.021 ('nar4-512', 'match-compliance', 'whole-subject') A 487.2[484.3..500.4] B 497.6[485.1..499.0] ov
+      worst 1.015 ('w-128', 'match-compliance', 'whole-subject') A 495.9[491.1..499.3] B 503.2[490.9..536.3] ov
+      worst 1.011 ('w-8', 'match-compliance', 'whole-subject') A 413.8[410.3..415.9] B 418.5[417.5..420.9] DISJ
+bounded      A 20261011T135644Z B 20261012T180207Z | n=126 min 0.942 p5 0.976 p25 0.999 med 1.000 p75 1.002 p95 1.007 max 1.049 | DISJ 4 | >5% 2 | >10% 0
+      worst 0.942 ('dig-exact-32', 'match-compliance', 'whole-subject') A 559.6[532.6..594.9] B 527.0[524.2..534.7] ov
+      worst 0.946 ('dig-exact-16', 'match-compliance', 'whole-subject') A 516.3[465.5..529.9] B 488.5[465.4..509.9] ov
+      worst 1.049 ('line-80', 'match-compliance', 'whole-subject') A 3457.1[3247.4..3562.1] B 3627.1[3235.9..3782.4] ov
+      worst 0.953 ('cls-upto-16384', 'large-subject-throughput', 'plain') A 154007.6[153938.2..155434.3] B 146736.8[142651.8..153906.9] DISJ
+syntax       A 20261011T104958Z B 20261013T010710Z | n=243 min 0.947 p5 0.995 p25 0.999 med 1.000 p75 1.001 p95 1.005 max 1.039 | DISJ 8 | >5% 1 | >10% 0
+      worst 0.947 ('bak-2', 'short-subject-search', 'plain') A 6654.9[6164.5..6914.8] B 6305.4[6090.7..6595.2] ov
+      worst 1.039 ('qnt-poss-quest', 'short-subject-search', 'plain') A 1240.2[1203.6..1282.0] B 1288.5[1214.2..1350.1] ov
+      worst 1.036 ('bak-2', 'large-subject-throughput', 'plain') A 15484564.5[13411165.0..16884133.0] B 16046346.4[14874291.9..16895828.5] ov
+      worst 0.974 ('anc-z-lc', 'large-subject-throughput', 'plain') A 21.9[21.3..22.2] B 21.4[21.2..22.6] ov
+utf8         A 20261011T081526Z B 20261013T035401Z | n=138 min 0.967 p5 0.991 p25 0.998 med 1.000 p75 1.001 p95 1.006 max 1.011 | DISJ 8 | >5% 0 | >10% 0
+      worst 0.967 ('ci-turkish-i', 'short-subject-search', 'plain') A 834.6[809.9..842.9] B 806.9[802.9..814.6] ov
+      worst 0.984 ('qnt-class-run', 'short-subject-search', 'plain') A 1232.3[1222.2..1232.9] B 1212.4[1211.5..1227.9] ov
+      worst 0.985 ('ci-e-acute', 'short-subject-search', 'plain') A 984.7[968.4..989.8] B 969.7[969.2..997.0] ov
+      worst 0.986 ('alt-cyr-64', 'short-subject-search', 'plain') A 1129.5[1095.4..1146.4] B 1114.1[1103.8..1133.9] ov
+capability   A 20261011T014742Z B 20261012T215301Z | n=137 min 0.979 p5 0.996 p25 0.999 med 1.001 p75 1.002 p95 1.010 max 1.037 | DISJ 13 | >5% 0 | >10% 0
+      worst 1.037 ('wild-waf-crs-942360-concat-sqli', 'large-subject-throughput', 'plain') A 36466914.9[36458055.3..36667751.2] B 37830350.9[36451591.0..38005964.4] ov
+      worst 1.036 ('bracket-array-define', 'large-subject-throughput', 'plain') A 294.8[284.1..295.7] B 305.3[302.5..305.7] DISJ
+      worst 1.023 ('tail-ext-lower-txt', 'large-subject-throughput', 'plain') A 125.1[124.6..125.9] B 128.0[125.0..130.3] ov
+      worst 0.979 ('nested-comment-rec', 'short-subject-search', 'plain') A 1521.1[1500.8..1523.2] B 1489.2[1480.1..1542.8] ov
+ALL: n=773 min 0.942 p5 0.992 p25 0.999 med 1.000 p75 1.001 p95 1.007 max 1.049

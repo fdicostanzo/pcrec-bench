@@ -1,0 +1,20 @@
+# ask 7.4: the sentinel@0.1 pcre2-jit row, EVERY record in the store (sorted by time); 15 plain pattern cells, set-grain sum ns
+20261010T171322Z n=15 vs-first min 1.000 median 1.000 max 1.000 DISJ  0 | sum of 15 medians 10453195.6 ns
+20261010T230901Z n=15 vs-first min 0.943 median 1.000 max 1.060 DISJ  0 | sum of 15 medians 10460041.4 ns
+20261011T004625Z n=15 vs-first min 0.938 median 1.002 max 1.022 DISJ  0 | sum of 15 medians 10456444.8 ns
+20261011T072728Z n=15 vs-first min 0.963 median 0.999 max 1.063 DISJ  0 | sum of 15 medians 10477652.7 ns
+20261011T165234Z n=15 vs-first min 0.941 median 1.000 max 1.063 DISJ  1 | sum of 15 medians 10419805.7 ns
+20261012T153502Z n=15 vs-first min 0.941 median 1.006 max 1.060 DISJ  0 | sum of 15 medians 10457806.6 ns
+20261012T204815Z n=15 vs-first min 0.943 median 1.001 max 1.033 DISJ  0 | sum of 15 medians 10459338.6 ns
+20261013T005416Z n=15 vs-first min 0.976 median 1.002 max 1.125 DISJ  0 | sum of 15 medians 10460473.9 ns
+20261013T060834Z n=15 vs-first min 0.938 median 1.001 max 1.036 DISJ  0 | sum of 15 medians 10428005.8 ns
+
+# same, adjacent pairs
+20261010T230901Z / 20261010T171322Z median 1.000 (min 0.943 max 1.060)
+20261011T004625Z / 20261010T230901Z median 1.001 (min 0.946 max 1.066)
+20261011T072728Z / 20261011T004625Z median 1.000 (min 0.960 max 1.074)
+20261011T165234Z / 20261011T072728Z median 0.997 (min 0.919 max 1.040)
+20261012T153502Z / 20261011T165234Z median 1.003 (min 0.923 max 1.062)
+20261012T204815Z / 20261012T153502Z median 0.998 (min 0.944 max 1.025)
+20261013T005416Z / 20261012T204815Z median 1.003 (min 0.954 max 1.124)
+20261013T060834Z / 20261013T005416Z median 0.997 (min 0.892 max 1.060)

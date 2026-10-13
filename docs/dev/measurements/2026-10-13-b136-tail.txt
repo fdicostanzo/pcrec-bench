@@ -1,0 +1,35 @@
+# (g) tail family, capability@0.2 caps, this window: BASE | NEW | CANON; none should move (I-147 ask 4)
+tail-digits-eol          large-subject-throughput   plain          B 136.4[133.5..140.1] N 136.1[134.6..140.1] C 135.7[134.8..137.2] | N/B 0.997 ov | C/N 0.998 ov | C/B 0.995
+tail-word-eoz            large-subject-throughput   plain          B 21918.5[21910.4..21921.4] N 21905.3[21903.6..21908.3] C 21907.2[21902.5..21930.4] | N/B 0.999 DISJ | C/N 1.000 ov | C/B 0.999
+tail-space-eol           large-subject-throughput   plain          B 21998.6[21986.9..22015.0] N 21969.8[21968.1..21975.8] C 21975.8[21970.0..21984.0] | N/B 0.999 DISJ | C/N 1.000 ov | C/B 0.999
+tail-ext-lower-txt       large-subject-throughput   plain          B 128.0[125.0..130.3] N 127.3[125.3..128.9] C 125.4[124.9..127.2] | N/B 0.995 ov | C/N 0.985 ov | C/B 0.979
+tail-dotstar-txt         large-subject-throughput   plain          B 146.0[144.1..146.8] N 146.1[143.4..148.0] C 146.1[143.2..147.9] | N/B 1.000 ov | C/N 1.001 ov | C/B 1.001
+letters-bounded-tail-z   large-subject-throughput   plain          B 782.0[779.9..787.1] N 782.3[780.4..795.5] C 781.9[779.5..786.6] | N/B 1.000 ov | C/N 1.000 ov | C/B 1.000
+tail-digits-eol          short-subject-search       plain          B 715.8[712.9..716.1] N 713.1[709.2..714.9] C 712.4[710.4..898.3] | N/B 0.996 ov | C/N 0.999 ov | C/B 0.995
+tail-word-eoz            short-subject-search       plain          B 1027.5[1016.5..1031.3] N 1021.7[1010.6..1038.4] C 1010.5[1003.5..1039.1] | N/B 0.994 ov | C/N 0.989 ov | C/B 0.983
+tail-space-eol           short-subject-search       plain          B 681.9[679.2..686.1] N 678.9[678.3..684.1] C 679.0[677.4..679.8] | N/B 0.996 ov | C/N 1.000 ov | C/B 0.996
+tail-ext-lower-txt       short-subject-search       plain          B 643.3[635.9..645.1] N 644.1[633.9..646.1] C 640.6[635.8..645.5] | N/B 1.001 ov | C/N 0.995 ov | C/B 0.996
+tail-dotstar-txt         short-subject-search       plain          B 737.5[736.7..739.7] N 738.4[735.7..742.9] C 739.4[737.2..745.2] | N/B 1.001 ov | C/N 1.001 ov | C/B 1.002
+letters-bounded-tail-z   short-subject-search       plain          B 950.6[948.6..957.0] N 957.2[952.8..962.5] C 954.6[945.5..957.2] | N/B 1.007 ov | C/N 0.997 ov | C/B 1.004
+
+# per-subject large-subject-throughput, tail family: DISJ count and ratio distribution
+N/B: 66 cells, DISJ 3, n=66 min 0.957 p5 0.971 p25 0.995 med 0.999 p75 1.006 p95 1.048 max 1.110
+C/N: 66 cells, DISJ 0, n=66 min 0.840 p5 0.963 p25 0.993 med 1.000 p75 1.002 p95 1.027 max 1.055
+C/B: 66 cells, DISJ 1, n=66 min 0.848 p5 0.976 p25 0.993 med 0.998 p75 1.000 p95 1.024 max 1.080
+
+# the same, 10-11 b8337c33 record (state-3 window) vs this window's b8337c33: the instrument across a day
+this-window B / 10-11 B: 66 cells, DISJ 0, n=66 min 0.930 p5 0.956 p25 0.999 med 1.002 p75 1.006 p95 1.022 max 1.061
+
+# stamps and program identity across the three pins (tail, plain + whole)
+tail-digits-eol          plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-digits-eol          whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-word-eoz            plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-word-eoz            whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-space-eol           plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-space-eol           whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-ext-lower-txt       plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-ext-lower-txt       whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-dotstar-txt         plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+tail-dotstar-txt         whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+letters-bounded-tail-z   plain          prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True
+letters-bounded-tail-z   whole-subject  prefilter none/none/none start reverse-pass/reverse-pass/reverse-pass scan rev-end/rev-end/rev-end prog same B=N True N=C True

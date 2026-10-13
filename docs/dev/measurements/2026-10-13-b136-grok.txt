@@ -1,0 +1,22 @@
+# grok cross-window control: capability wild-logparse-quotedstring-grok caps
+
+## short-subject-search
+b8337c33 10-11   2147.0[2139.9..2175.6]  engine=vm emit=64131 prog=ae9848c3aa54
+b8337c33 10-12   2136.4[2116.7..2161.8]  engine=vm emit=64131 prog=ae9848c3aa54
+00c97769 10-12   2141.3[2117.7..2169.0]  engine=vm emit=64131 prog=ae9848c3aa54
+6b2dbd3e 10-12   2137.7[2109.3..2168.1]  engine=vm emit=64131 prog=ae9848c3aa54
+   b8337c33 10-12 / b8337c33 10-11 : 0.995 ov
+   00c97769 10-12 / b8337c33 10-12 : 1.002 ov
+   6b2dbd3e 10-12 / 00c97769 10-12 : 0.998 ov
+
+## large-subject-throughput
+b8337c33 10-11   2063179.6[2060426.7..2067213.2]  engine=vm emit=64131 prog=ae9848c3aa54
+b8337c33 10-12   2063009.7[2061825.3..2063982.1]  engine=vm emit=64131 prog=ae9848c3aa54
+00c97769 10-12   2065444.6[2060859.3..2068058.8]  engine=vm emit=64131 prog=ae9848c3aa54
+6b2dbd3e 10-12   2063278.5[2063025.2..2064532.9]  engine=vm emit=64131 prog=ae9848c3aa54
+   b8337c33 10-12 / b8337c33 10-11 : 1.000 ov
+   00c97769 10-12 / b8337c33 10-12 : 1.001 ov
+   6b2dbd3e 10-12 / 00c97769 10-12 : 0.999 ov
+per-subject delta ns (00c97769 10-12 - b8337c33 10-12): n=75 min -0.825 p5 -0.668 p25 -0.424 med -0.009 p75 0.197 p95 1.974 max 2.972; slower on 31 of 75
+per-subject delta ns (6b2dbd3e 10-12 - 00c97769 10-12): n=75 min -3.678 p5 -1.675 p25 -0.196 med 0.007 p75 0.466 p95 0.826 max 0.877; slower on 38 of 75
+per-subject delta ns (b8337c33 10-12 - b8337c33 10-11): n=75 min -3.160 p5 -0.965 p25 -0.243 med -0.010 p75 0.024 p95 0.407 max 0.598; slower on 29 of 75

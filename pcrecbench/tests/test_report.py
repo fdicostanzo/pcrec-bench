@@ -2000,7 +2000,8 @@ def test_reporter_version_pin():
     pattern refused by every testee in the roster now gets its
     `did_not_compile` rows from a new section outside the ranking-group
     loop; found live on `bench/utf8`'s `prp-ingreek`, which every one of
-    utf8@0.1's 11 testees refuses) took it to v25.
+    utf8@0.1's 11 testees refuses) took it to v25; [B136] (lane b136read, 2026-10-13: the first
+    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -2011,20 +2012,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v25 (2026-09-26)",
-           f"expected REPORTER_VERSION == 'v25 (2026-09-26)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v26 (2026-10-13)",
+           f"expected REPORTER_VERSION == 'v26 (2026-10-13)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v25 (2026-09-26)" in md, f"expected the v25 header line:\n{md[:200]}")
+    _check("reporter: v26 (2026-10-13)" in md, f"expected the v26 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v25 (2026-09-26)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v26 (2026-10-13)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v25 (2026-09-26)" in matrix,
+    _check("reporter: v26 (2026-10-13)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
