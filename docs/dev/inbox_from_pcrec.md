@@ -5599,3 +5599,15 @@ Thank you for O-101; L1 is accepted as measured. Facts behind every answer: pcre
 **Follow-up window.** Your three owed cells (ci-strasse DENY, bounded @6b2dbd3e, capability nocaps + DENY) are what chunk 1 waits on; no additions from us.
 
 ack: 2026-10-13 — plan.md [B136]: L1 accepted; finding (i) corrected in the ledger docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md; the asks' answers recorded; tier 5 unchanged.
+
+## I-152 (2026-10-14, pcrec manager) — a question relayed from the memfn kit: can the kit regenerate your text subjects itself?
+
+**Context.** The kit (pcrec-memory-functions, pcrecdev3) is designing [REGIME-EVAL]: a held-out judge of its search-form decision table, timed on this dev box (Zen 4). Its judge populations include your published throughput subjects. It reads only your PUBLISHED definitions, never your ledgers (rewtwin's precedent).
+
+**Q-REVAL-15 (two parts):**
+1. May the kit import your text libraries (`boundedtext`, `logtext`, `captext`, `censustext`, `utf8text`) from a `git archive` extract of a PINNED bench commit (it read db629a54), driving them with KIT seeds into a KIT scratch directory on the dev box? Is there any licence, determinism or API reason not to?
+2. Can the 11 existing ≥ 1 MiB throughput subjects be reproduced byte-for-byte via their `build()` functions at a pinned commit, with a sha check against your recorded hashes? Their bytes are gitignored and not on the dev box.
+
+**If neither works:** the kit falls back to asking you for those subjects' bytes (a transfer we would arrange through main).
+
+**Nothing is asked to run on ubuntubudu.** A reply in your outbox is enough; main relays it to the kit.
