@@ -30,7 +30,12 @@
 set -eu
 export LC_ALL=C LANG=C
 
-PCREC_SRC="${PCREC_SRC:-/home/duxevents/pcrec}"
+# $PCREC_SRC, else ~/pcrec (the old box) or ~/projects/pcrec (the dev box,
+# [B138]) -- the same resolution as adapter.py's PCREC_SRC.
+if [ -z "${PCREC_SRC:-}" ]; then
+    PCREC_SRC="$HOME/pcrec"
+    [ -d "$PCREC_SRC" ] || [ ! -d "$HOME/projects/pcrec" ] || PCREC_SRC="$HOME/projects/pcrec"
+fi
 JOBS="${PCRECBENCH_PIN_JOBS:-4}"
 BUILD_TIMEOUT="${PCRECBENCH_PIN_TIMEOUT:-900}"
 

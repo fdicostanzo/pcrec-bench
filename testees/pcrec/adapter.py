@@ -578,7 +578,13 @@ PIN_SH = os.path.join(HERE, "pin.sh")
 # `program_sha256` and a census row's `new_sha256` are one computation.
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "tools"))
 import program_identity as _pid                              # noqa: E402
-PCREC_SRC = os.environ.get("PCREC_SRC", "/home/duxevents/pcrec")
+# pcrec's checkout: $PCREC_SRC, else the first that exists of ~/pcrec (the
+# old box) and ~/projects/pcrec (the dev box, [B138]); pin.sh and
+# tools/frontpage.py resolve it the same way.
+PCREC_SRC = os.environ.get("PCREC_SRC") or next(
+    (d for d in (os.path.expanduser("~/pcrec"),
+                 os.path.expanduser("~/projects/pcrec")) if os.path.isdir(d)),
+    os.path.expanduser("~/pcrec"))
 BENCH_ROOT = os.path.dirname(os.path.dirname(HERE))
 
 # record_schema.md 6.3's registry for pcrec: what `--engine=` may name.

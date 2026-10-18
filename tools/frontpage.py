@@ -255,7 +255,12 @@ def excl_text(excl):
     return "; ".join(parts) if parts else "none"
 
 
-PCREC_REPO = os.environ.get("PCREC_REPO", os.path.expanduser("~/pcrec"))
+# $PCREC_REPO, else ~/pcrec (the old box) or ~/projects/pcrec (the dev box,
+# [B138]) -- the same resolution as testees/pcrec/adapter.py's PCREC_SRC.
+PCREC_REPO = os.environ.get("PCREC_REPO") or next(
+    (d for d in (os.path.expanduser("~/pcrec"),
+                 os.path.expanduser("~/projects/pcrec")) if os.path.isdir(d)),
+    os.path.expanduser("~/pcrec"))
 _PCREC_VERSION_CACHE = {}
 
 
