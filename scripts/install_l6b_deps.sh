@@ -16,7 +16,20 @@
 #   install_l6b_deps.sh --with-rust  include cargo + rustc (ONLY if the
 #                                    Rust `regex` testee is actually
 #                                    being built -- 11.2's own caveat).
-#                                    Combines with --install.
+#                                    Combines with --install. NOTE: the
+#                                    old box built it with rustup's
+#                                    1.98.1; Ubuntu 26.04's apt rustc is
+#                                    1.93.1 (both build the committed
+#                                    Cargo.lock; the version is probed into
+#                                    every record, testees/rust/CLAUDE.md).
+#
+# RE-VALIDATED 2026-10-18 on the dev box ([B138]: frank-desktop, Ubuntu
+# 26.04.1 LTS, Ryzen 7 7700X) by `apt-cache policy`, candidates:
+#   libonig-dev 6.9.10-1build1, libtre-dev 0.9.0-1build1,
+#   libvectorscan-dev 5.4.11-2ubuntu2, libabsl-dev 20260107.0-4,
+#   libre2-dev 20250805-1build3, clang 1:21.1.6-71,
+#   cargo/rustc 1.93.1ubuntu1. clang joins the base set there: the [B24]
+#   `-clang` testees and check_cc_axis need it (`make deps` flags it).
 #
 # PACKAGE SET (each name validated by `apt-cache policy` on this box,
 # 2026-09-16 -- candidates existed for all; versions in the git log of
@@ -31,6 +44,9 @@
 #                                      installed on this box; measured
 #                                      2026-09-16: it is NOT -- the claim
 #                                      is stale, so it is in the set)
+#   clang              the [B24] compilee toolchain axis (added
+#                                      2026-10-18, [B138]; the old box had
+#                                      it installed outside this script)
 #
 # HARD RULE (11.2, Ubuntu's own Replaces/Provides/Conflicts): NEVER
 # install libhyperscan-dev beside libvectorscan-dev. This script REFUSES
@@ -42,7 +58,7 @@
 set -eu
 export LC_ALL=C LANG=C
 
-PKGS="libonig-dev libtre-dev libvectorscan-dev libabsl-dev libre2-dev"
+PKGS="libonig-dev libtre-dev libvectorscan-dev libabsl-dev libre2-dev clang"
 RUST_PKGS="cargo rustc"
 FORBIDDEN="libhyperscan-dev"
 
@@ -56,6 +72,9 @@ for arg in "$@"; do
     esac
 done
 [ "$with_rust" -eq 1 ] && PKGS="$PKGS $RUST_PKGS"
+
+# shellcheck disable=SC1091
+. /etc/os-release 2>/dev/null && echo "distribution: ${PRETTY_NAME:-unknown}"
 
 # -- the forbidden-package gate, first and unconditionally ------------
 if dpkg-query -W -f '${Status}\n' "$FORBIDDEN" 2>/dev/null \
