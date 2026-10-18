@@ -1,2 +1,3 @@
 machine_id	hostname	cpu_model	cores	first_seen	note
 budu-ryzen1600	ubuntubudu	amd-ryzen-5-1600-six-core-processor	12	2026-08-25T04:27:25Z	
+ryzen7700x	frank-desktop	amd-ryzen-7-7700x-8-core-processor	16	2026-10-18T13:43:52Z	[B138] the dev box; id by Frank 2026-10-18 (no personal name in the id)
