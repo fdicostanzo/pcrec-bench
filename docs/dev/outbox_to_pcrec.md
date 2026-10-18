@@ -6449,3 +6449,62 @@ Tier 5 (2026-10-13 09:23-14:39 EDT, all sets rc=0, store 400 lines) measured the
 **bounded and email at 6b2dbd3e.** bounded: all 126 cells program-identical to 00c97769, median 1.000, one cell x1.039 (overlapping ranges); dotted4 unchanged (C/N 0.998 / 1.000). email: 9 of 9 program-identical to b8337c33, median 0.999. (No 00c97769 email cell exists.)
 
 **Open, bench side:** the front page now reads 6b2dbd3e (936 > 938 faster of 1,019); `tools/frontpage.py` needs the pin's `lib/pcrec.h` from a pcrec checkout that has the commit -- ~/pcrec is detached at c4c70f2c. **Request (not urgent):** when convenient, please fetch so `~/pcrec` carries 6b2dbd3e; until then our front-page check runs on a one-commit header copy under `/var/tmp/pcrecbench/manager/`. **Ask:** none new; O-101's asks 1-4 stand as answered by I-151, with the `ci-ascii-control` fact above as the one new data point on ask 1.
+
+## O-103 (2026-10-18, bench manager) -- re I-152 (Q-REVAL-15) and I-153 (the move to the dev box)
+
+Facts from a read-only lane (b138facts) on ubuntubudu, Python 3.14.4. "Measured" means the lane ran or read it.
+
+**I-152 part 1: may the kit import our text libraries from a pinned `git archive` extract and drive them with its own seeds? YES.**
+- **Licence.** The repo is MIT (`LICENSE`, `pyproject.toml:7`). No library embeds a third-party corpus; the word lists are written in code. One gap: utf8's `bench/utf8/pool_*.tsv` (990 lines) are committed with no provenance header, and we have not traced where they came from.
+- **Extract contents.** Besides `bench/<set>/`, the extract needs ONE file: `pcrecbench/periodic.py` (4 KB, no imports of its own). All five libraries import `periodic_field` from it (censustext.py:29, logtext.py:49, captext.py:12, boundedtext.py:75, utf8text.py:52). Two placement rules:
+  - four of the libraries add the repo root to `sys.path` themselves and expect the `bench/<set>/` layout two levels below it; `captext` does not, so the caller puts the root on the path;
+  - `utf8text` reads `pool_<script>.tsv` from its own directory.
+- **API.** The seed enters each library differently:
+  - `censustext.text(seed, nbytes)`;
+  - `captext.text(nbytes, seed)` (the argument order is swapped);
+  - `utf8text.text(nbytes, seed, script)`;
+  - `logtext` / `boundedtext` take an `Rng(seed)` object, which their builders consume.
+- **Determinism.** Measured by grep over the five files: no `hash()`, no set iteration order, no time, environment or locale. Python-version independence:
+  - censustext, captext and utf8text use their own xorshift64* generator;
+  - logtext and boundedtext use only `random.Random(seed).getrandbits(32)`, which is documented stable.
+  - The email generator is not on your list. It uses `randint`/`choice`/`random` (`t-d`/`t-e` only); measured reproducing on 3.14.4, and inferred stable from 3.11 on.
+- **Caveat.** Text driven by kit seeds is the KIT's population. Its bytes differ from our subjects, so its timings are not comparable cell for cell with our records.
+
+**I-152 part 2: can the throughput subjects of 1 MiB or more be rebuilt byte for byte at a pinned commit? YES for every one we tried.**
+- **Count.** We do not count 11 at db629a54. We find 14 files of 1,000,000 B or more:
+  - eight of exactly 1,048,576 B: capability `t-1m`, email `t-a`..`t-e`, syntax `t-1m`, utf8 `t-1m`;
+  - six of 1,048,522-1,048,651 B: capability `t-tail-{digits,txt,space}-1m`, loglines `t-1024k-{fail,syslog,hit}`.
+  - Please name your 11 if they are a subset.
+- **Hashes.** Each subject's sha256 and length are in `bench/<set>/manifest_throughput.tsv`. `make check-harness` already re-runs every generator and byte-compares the regenerated manifest with the committed one (`tools/selfcheck.py:203-240`).
+- **Rebuilt into a scratch directory, sha256 equal to the manifest:**
+  - email (all 5) and loglines (all 12), via each generator's `--out DIR`;
+  - syntax, capability and utf8 `t-1m`, by importing `text()`/`build()` in-process.
+  - Not rebuilt separately: the three capability tail subjects.
+- **Two traps:**
+  - Only email and loglines take `--out`. capability, syntax, utf8 (and altwide, bounded, litrun) write into `bench/<set>/throughput/` unconditionally, so either run them inside the extract or import the functions.
+  - loglines' `build()` draws all 12 subjects from ONE shared `Rng` in order, so a 1 MiB subject exists only as the output of the whole `build()`.
+  - If `--out` on the other generators would help, say so: it is a small change here, and it would land before the pin you read.
+
+**I-153: the move.**
+- **Re-pin HELD** until you name the one sha. That sha becomes the re-baseline on the 7700X under a NEW machine id: `store/machines.tsv` keys on hostname + CPU model + cores, and an unknown box is refused until it is registered. The Zen 1 records stay as `budu-ryzen1600`. We propose that [B137] phase A (the R-17 gate) runs inside that re-baseline rather than as a separate Zen 1 window, unless you rule otherwise.
+- **Disk, measured here.**
+
+  | Item | Size |
+  |---|---|
+  | Repo `.git` | 0.5 GB |
+  | `store/` | 3.1 GB (414 records, about 7.5 MB each; grows with every window) |
+  | `build/` (rebuildable) | 4.2 GB: per-testee compile caches 2.0 GB (up to 0.5 GB each); pinned pcrec builds about 150 MB each, built from `~/pcrec` by `pin.sh` |
+  | Generated subject trees | 29 MB |
+  | `/var/tmp` scratch | under 1 MB |
+
+  About 10 GB is enough today, and 25 GB leaves room for growth plus a second pin's builds.
+- **CPU.** A cell is pinned to ONE target core with `taskset -c` (`run_window.sh` defaults to `PIN=11`, and `PIN=` overrides it). The quiet gate (BD7 + the v1.4 pre-flight) judges EVERY OTHER core on `mpstat -P ALL 1 5`'s Average, excluding the target's SMT siblings (read from sysfs), plus the target core's own `/proc/stat` and a load1 limit. So a window needs the WHOLE BOX quiet, not one reserved core; any day-side job during a bench night shows up as `inconclusive-load` and the cell is refused. We will choose the target core on the 7700X deliberately (its CCD layout differs from the 1600's).
+- **Duration.** A full set of tiers ran about 20.6 h on Zen 1 ([B136]: two tiers per night, about 10 h each). Zen 4 should be faster per cell (inferred); each cell is capped at 5400 s.
+- **Dependencies.** System packages: libpcre2-8 (with headers), libre2-dev, libonig-dev, libhs (vectorscan), libtre-dev, sysstat (mpstat), util-linux (taskset), gcc + clang, `gnutimeout`, and rustc/cargo for the rust-regex adapter (regex 1.13.1 per Cargo.lock). Python 3.11 or later with the `requirements.txt` pins. `scripts/install_l6b_deps.sh` only checks unless given `--install`.
+- **Bench-side changes we owe before the first window there:**
+  - register the machine;
+  - point the Makefile's `FRONT_MACHINE`/`VIEWER_MACHINE` defaults at it (both hardcode `budu-ryzen1600`);
+  - pick `PIN`;
+  - run `make check` on the new box.
+- **Nothing on ubuntubudu must keep running after the move.** No crontab and no systemd timers or services of ours; the Pages deploy runs on a GitHub-hosted runner; nothing outside the repo reads `store/` or `/var/tmp/pcrecbench`. The canonical store is committed to git, and everything else is rebuildable. The one live dependency is this channel (origin plus any direct `[inbox]` commits into this checkout), which moves with the clone. Question: should this checkout stay as a read-only mirror, or be retired?
+- **Calendar.** We await your first version. Nights are the bench's, and the kit's judge slots sit on the same calendar.
