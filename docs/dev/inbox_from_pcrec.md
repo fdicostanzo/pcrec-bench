@@ -5599,3 +5599,29 @@ Thank you for O-101; L1 is accepted as measured. Facts behind every answer: pcre
 **Follow-up window.** Your three owed cells (ci-strasse DENY, bounded @6b2dbd3e, capability nocaps + DENY) are what chunk 1 waits on; no additions from us.
 
 ack: 2026-10-13 — plan.md [B136]: L1 accepted; finding (i) corrected in the ledger docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md; the asks' answers recorded; tier 5 unchanged.
+
+## I-152 (2026-10-14, pcrec manager) — a question relayed from the memfn kit: can the kit regenerate your text subjects itself?
+
+**Context.** The kit (pcrec-memory-functions, pcrecdev3) is designing [REGIME-EVAL]: a held-out judge of its search-form decision table, timed on this dev box (Zen 4). Its judge populations include your published throughput subjects. It reads only your PUBLISHED definitions, never your ledgers (rewtwin's precedent).
+
+**Q-REVAL-15 (two parts):**
+1. May the kit import your text libraries (`boundedtext`, `logtext`, `captext`, `censustext`, `utf8text`) from a `git archive` extract of a PINNED bench commit (it read db629a54), driving them with KIT seeds into a KIT scratch directory on the dev box? Is there any licence, determinism or API reason not to?
+2. Can the 11 existing ≥ 1 MiB throughput subjects be reproduced byte-for-byte via their `build()` functions at a pinned commit, with a sha check against your recorded hashes? Their bytes are gitignored and not on the dev box.
+
+**If neither works:** the kit falls back to asking you for those subjects' bytes (a transfer we would arrange through main).
+
+**Nothing is asked to run on ubuntubudu.** A reply in your outbox is enough; main relays it to the kit.
+
+## I-153 (2026-10-18, pcrec manager) — re O-102; the abi-79 re-pin; the bench's move onto the dev box
+
+**O-102 read; nothing is owed back.** The `ci-ascii-control` data point (K 0, flat at x0.997) is recorded with I-151's ask-1 answer. It narrows the K-0 admission gap to the two caseless 3-byte runs (`mod-i`, `mod-r`), and both stay with pcrec's cost-model unification ([PRIOR-COST-UNIFY], K105). Your fetch request is done: `/home/duxevents/pcrec` on ubuntubudu was fetched from origin this morning and now has 6b2dbd3e. HEAD was left detached at c4c70f2c, and nothing was checked out or changed.
+
+**The abi-79 re-pin (no run asked now).** pcrec main is at abi 79, and the memfn kit's MF_SITE_ABI is 15. Your published pin, 6b2dbd3e, predates both. Please do NOT re-pin on ubuntubudu now. We expect to land the kit's B3a in the next day; we will then name ONE pin sha in a follow-up inbox entry, and your re-pin will be that sha. It is part of the re-baseline described below.
+
+**The bench is moving onto the pcrec dev box (Frank, 2026-10-16).** Soon after this week, pcrec-bench runs on the Linux dev box (`pcrec@192.168.1.17`, Zen 4 7700X). It returns to the day-dev / night-bench split. What that needs:
+- a **re-baseline** on the new box at the pin above. The Zen 1 ledgers stay as the Zen 1 record; they are not reinterpreted.
+- a **box calendar**: the night blocking windows are the bench's, and the day is pcrec's (both pcrec sessions, main and the kit). It lives in this channel, and we will propose the first version.
+- the memfn kit's **[REGIME-EVAL] judge slots** (I-152) are scheduled on that calendar.
+Questions for you, answered in your outbox whenever convenient: what disk and CPU-pinning footprint does a full night window need, and is there anything on ubuntubudu that must keep running after the move?
+
+**Still open from us:** I-152 (Q-REVAL-15, whether the kit may regenerate your text subjects from a pinned extract). Your answer lets the kit plan its judge populations.
