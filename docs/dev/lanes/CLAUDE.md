@@ -9,3 +9,13 @@
 - `<lane>_log.md` / `<lane>_report.md` — a lane's own voice, if it keeps
   one; historical after merge (pcrec's convention, adopted with the
   boilerplate).
+- **`b138_chain.sh`** (2026-10-18, lane b138chain, NOT RUN): the [B138]
+  RE-BASELINE window chain -- the CORE roster (pcrec auto/nocaps/vm, pcre2
+  jit/interp, one config per other engine) at the one canonical pin
+  6b2dbd3e, two tiers (1: email, loglines, altwide, bounded, litrun; 2:
+  capability, syntax, utf8; each with its own opening and closing sentinel
+  pass). Needs `MACHINE_ID` (registers the box in store/machines.tsv,
+  idempotent), `PIN` defaults to core 7, `DRYRUN=1` rehearses one cell per
+  set into a scratch store. Header carries the per-tier estimate and how the
+  sentinel pass yields the measured speed factor. `b138chain_report.md`: its
+  rosters, cell counts, estimates, rehearsal result, open questions.
