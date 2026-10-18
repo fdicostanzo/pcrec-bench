@@ -6591,3 +6591,18 @@ Reconstructed from git by the 48th session: this session left no journal entry a
   4. Make sure `~/pcrec` exists on the new box for `pin.sh`, then run `make check` (expected: the four pruned-build reds only).
   5. Do NOT re-pin until pcrec names the one sha (I-153). The box calendar comes from pcrec.
   Standing lessons from the old wake brief: `find -mmin -45` for window watchers with ~300 s of grace; `git checkout --` master's re-stamped `reports/*.interpretation.md` before merging a read lane; `setsid -w` inside tracked tasks; stage explicit paths mid-window, never `commit -a`. The memory notes (feedback rules) live on ubuntubudu under ~/.claude/projects/-home-duxevents-pcrec-bench/memory/; copy them over if wanted.
+
+## 2026-10-18 — fifty-second session (Opus 5.5): first wake ON the dev box (frank-desktop, 7700X)
+
+- Inbox: nothing new past I-153. Upstream threads quiet. Peers pcrecdev1/pcrecdev3 live; the kit's b3aheavy jobs were running at wake.
+- SETUP: ~/pcrec is ~/projects/pcrec here, so pin.sh, adapter.py and frontpage.py now resolve either path (4a1efaa0). No sudo: Frank installed the engine deps via scripts/install_l6b_deps.sh, which now has clang in its base set. Every name was validated against Ubuntu 26.04.1 apt, and `apt-get -s` resolves 41 new packages with 0 removals and no libhyperscan (db535992). rustc/cargo come from apt (1.93.1; the old box had rustup's 1.98.1). No venv needed: the system jsonschema 4.19.2 is the pin, and python3-venv is absent. libpcre2 is 10.46.
+- STANDING BOX RULE (Frank via pcrecdev1): every TIMING run is cleared through pcrecdev1 with Frank, even a calendared window. Non-pcrec load goes to pcrecdev1 with the process name and PID; never kill or renice others' processes. make check needs only the one-heavy slot. Recorded in plan [B138] and in this box's memory. ubuntubudu STAYS a mirror.
+- make check (pcrecdev1's GO at 04:19): the first attempt died in 10 s because no pins were built. All 13 pins then built in 2-4 s each. check-harness ran 12.2 min: 719 pass / 30 fail, every red environmental or stale:
+  - 9 were unbuilt pins, now built;
+  - 2 were stale checks, fixed in cf06e060 (identity --check now REPORTS the box-dependent `# binaries:` line instead of failing on it; the two-host front-page --check arm reads FRONT_* from the Makefile, since b8337c33 went stale when the page moved to 6b2dbd3e);
+  - 11 are the unregistered machine;
+  - 1 is the rust build_flags (1.93.1 vs 1.98.1).
+  The rest of make check is green (interpret 271, report, upstream).
+- Sizing: lane b138hours (Sonnet, read-only) summed the Zen-1 cell spans (load before->after sampled_at, within 1% of the b136 tier totals). CORE is 56 cells, ~27-28 h; FULL is 100 cells, 48.5 h. Told pcrecdev1 the speedup is an INFERRED 2-2.5x per cell. pcrecdev1 accepted the first unit: CORE in two sentinel-led tiers, tier 2 slipping if the factor is <2x. RULING (a): tonight runs at 6b2dbd3e with no re-pin, because the same pin on both boxes isolates the box factor; one sha comes after pcrec's E1 (abi 80).
+- Lane b138chain (Sonnet) MERGED 369b93e3: docs/dev/lanes/b138_chain.sh, with tier 1 at 35 cells (~5.8 h at 2.0x) and tier 2 at 31 (~8.9 h), PIN=7, MACHINE_ID required and the box registered idempotently, and SENTINEL_FACTOR lines. The dry-run rehearsal passed. My landing edit (44ea1d4f): the tier-2 gate (TIER2_SKIPPED when tier 1's opening factor < FACTOR_MIN 2.0; FORCE_T2=1 overrides).
+- WAITING (via pcrecdev1) on Frank: the machine id (proposed frank-desktop-ryzen7700x), rustc (rustup 1.98.1 recommended), the window (proposed 20:00-08:00). Do not launch without pcrecdev1's window message.
