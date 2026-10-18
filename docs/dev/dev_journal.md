@@ -6578,3 +6578,9 @@ Reconstructed from git by the 48th session: this session left no journal entry a
 - ~/pcrec now carries 6b2dbd3e (O-102's fetch ask is done): `make frontpage-check` is clean with no `PCREC_REPO` override, so /var/tmp/pcrecbench/manager/pcrec-hdr-repo was removed.
 - The b136read5 worktree and its scratch were pruned (`scripts/wtprune --apply b136read5`).
 - [B137] phase A is still waiting on pcrec's R17-b pin and mover census. Closed out with no cron.
+- (later the same wake) The push was rejected: origin carried [inbox] I-152 (the kit's Q-REVAL-15) and I-153 (the abi-79 re-pin held until pcrec names one sha; the bench is moving to the pcrec dev box, Zen 4 7700X). Frank: "do a git pull" -> merged; "add that to your startup process" -> skill wake step 1a now pulls first, and the coordination memory is updated. Both items acked into plan [B138]. Fact lane b138facts (Sonnet, read-only) -> O-103:
+  - the text libraries are MIT and deterministic, but need `pcrecbench/periodic.py` in the extract;
+  - we count 14 subjects of 1 MiB or more, not 11, and every one rebuilt is sha-equal;
+  - a window needs about 10 GB of disk and a quiet WHOLE box (the gate judges every non-target core);
+  - nothing on ubuntubudu must keep running after the move.
+  Lane stopped. Waiting on pcrec: the one re-baseline sha, the box calendar, and whether this checkout stays as a mirror.
