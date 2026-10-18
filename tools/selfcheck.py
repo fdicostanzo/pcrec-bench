@@ -17411,8 +17411,19 @@ def check_b137_import():
         bad("two-host (iii): viewer export refused without --machine",
             "rc=%s %s" % (pv.returncode, (pv.stderr or pv.stdout)[:200]))
 
+    # the --check arm reads the committed front page's own set/pin/other-sets
+    # from the Makefile ([B138]: a pin written here went stale when the page
+    # moved to 6b2dbd3e, and it read DRIFT). The refusal arms keep b8337c33.
+    mk = {}
+    with open(os.path.join(ROOT, "Makefile"), encoding="utf-8") as fh:
+        for ln in fh:
+            m = re.match(r"^(FRONT_SET|FRONT_PIN|FRONT_OTHER)\s*\?=\s*(.*)$", ln)
+            if m:
+                mk[m.group(1)] = m.group(2).split()
     fp = [sys.executable, os.path.join(ROOT, "tools", "frontpage.py"),
           "--set", "capability@0.2", "--pin", "b8337c33"]
+    fp_live = [sys.executable, os.path.join(ROOT, "tools", "frontpage.py"),
+               "--set", mk["FRONT_SET"][0], "--pin", mk["FRONT_PIN"][0]]
     pf = run(fp + ["--store", two], cwd=ROOT, timeout=300)
     if pf.returncode != 0 and "single-host" in (pf.stderr + pf.stdout) and \
             host2 in (pf.stderr + pf.stdout):
@@ -17426,9 +17437,8 @@ def check_b137_import():
     else:
         bad("two-host (iii): front page --machine of an unknown host refused",
             "rc=%s %s" % (pf.returncode, (pf.stderr or pf.stdout)[-200:]))
-    pf = run(fp + ["--other-sets", "email-specimen@0.2", "loglines@0.1", "bounded@0.3",
-                   "altwide@0.3", "syntax@0.1", "utf8@0.1", "litrun@0.1",
-                   "--machine", "budu-ryzen1600", "--check"], cwd=ROOT, timeout=600)
+    pf = run(fp_live + ["--other-sets"] + mk["FRONT_OTHER"] +
+             ["--machine", "budu-ryzen1600", "--check"], cwd=ROOT, timeout=600)
     if pf.returncode == 0:
         ok("two-host (iii): front page --machine <host> accepted (the committed "
            "store's --check stays clean)")

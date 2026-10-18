@@ -680,12 +680,22 @@ def main(argv=None):
         with open(out, encoding="utf-8") as fh:
             committed = fh.read()
         # the cross-check line is an ANNOTATION made once, against a file
-        # this repo does not hold -- compare everything else.
+        # this repo does not hold -- compare everything else. The
+        # `# binaries:` line is PROVENANCE of the box that built the pins
+        # (pin.sh's own compiler): a rebuild elsewhere ([B138], gcc 15.2 on
+        # the dev box) hashes differently while every row agrees, so it is
+        # reported, never a failure.
+        skip = ("# cross-check", "# binaries:")
         strip = lambda t: "\n".join(ln for ln in t.split("\n")
-                                    if not ln.startswith("# cross-check"))
+                                    if not ln.startswith(skip))
         if strip(committed) != strip(text):
             print(f"{out}: DIFFERS from a fresh census", file=sys.stderr)
             return 1
+        bin_line = lambda t: [ln for ln in t.split("\n")
+                              if ln.startswith("# binaries:")]
+        if bin_line(committed) != bin_line(text):
+            print(f"{out}: note: the pcrec binaries hash differently on this "
+                  f"box (rebuilt pins); every row agrees")
         print(f"{out}: re-derives byte-identical")
         return 0
     os.makedirs(os.path.dirname(out), exist_ok=True)
