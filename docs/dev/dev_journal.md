@@ -6584,3 +6584,10 @@ Reconstructed from git by the 48th session: this session left no journal entry a
   - a window needs about 10 GB of disk and a quiet WHOLE box (the gate judges every non-target core);
   - nothing on ubuntubudu must keep running after the move.
   Lane stopped. Waiting on pcrec: the one re-baseline sha, the box calendar, and whether this checkout stays as a mirror.
+- SESSION END (Frank: "I will restart you on new box"). HAND-OFF FOR THE NEW BOX (wake.md is gitignored and ~/.claude memory is per-box, so neither travels; this entry is the brief):
+  1. `git pull --no-rebase`, then read plan [B138]/[B137], inbox I-152/I-153 and outbox O-103.
+  2. Register the machine (`store/machines.tsv` refuses an unknown host), point the Makefile's `FRONT_MACHINE`/`VIEWER_MACHINE` (hardcoded budu-ryzen1600) at it, and choose `PIN` (default 11; mind the 7700X's CCD/SMT layout).
+  3. Set up the deps listed in O-103 (`scripts/install_l6b_deps.sh` checks them; rustc/cargo for rust-regex) and `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`.
+  4. Make sure `~/pcrec` exists on the new box for `pin.sh`, then run `make check` (expected: the four pruned-build reds only).
+  5. Do NOT re-pin until pcrec names the one sha (I-153). The box calendar comes from pcrec.
+  Standing lessons from the old wake brief: `find -mmin -45` for window watchers with ~300 s of grace; `git checkout --` master's re-stamped `reports/*.interpretation.md` before merging a read lane; `setsid -w` inside tracked tasks; stage explicit paths mid-window, never `commit -a`. The memory notes (feedback rules) live on ubuntubudu under ~/.claude/projects/-home-duxevents-pcrec-bench/memory/; copy them over if wanted.
