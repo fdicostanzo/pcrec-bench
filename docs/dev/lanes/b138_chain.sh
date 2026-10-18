@@ -212,7 +212,19 @@ if tier 1; then
   # as soon as the whole call is done, and again from the closing pass.
   run_tier 1 "email loglines altwide bounded litrun" "${STOP_AT_T1:-}"
   sentinel_factor "$W/suite_t1.log"
+  F1=$(tail -1 "$L" | sed -n 's/^SENTINEL_FACTOR zen1_min.* factor=\([0-9.]*\).*/\1/p')
   sentinel_factor "$W/suite_t1_end.log"
+fi
+# ---- the TIER-2 GATE (agreed with pcrecdev1, 2026-10-18): tier 2 slips to
+# the next night when tier 1's OPENING sentinel factor is under FACTOR_MIN
+# (default 2.0). FORCE_T2=1 overrides; a tier-2-only launch (TIERS="2")
+# is never gated. An unreadable factor gates closed. Skipped in DRYRUN.
+if tier 1 && tier 2 && [ "$DRYRUN" != 1 ] && [ "${FORCE_T2:-0}" != 1 ]; then
+  f=${F1:-}
+  if [ -z "$f" ] || ! python3 -c "import sys; sys.exit(0 if float('$f') >= float('${FACTOR_MIN:-2.0}') else 1)"; then
+    echo "TIER2_SKIPPED factor=${f:-unreadable} < FACTOR_MIN=${FACTOR_MIN:-2.0} (slips to the next night) $(date -Is)" >> "$L"
+    TIERS=1
+  fi
 fi
 # ---- TIER 2 (~535 min at the assumed 2.0): capability, syntax, utf8
 if tier 2; then
