@@ -87,7 +87,12 @@ package this section and §4/§6 below only summarize.
    ping a session you are not waiting on — a ping wakes an idle session
    for a full turn.
    Manager session only — lanes never self-keepalive.
-1a. **Read `docs/dev/inbox_from_pcrec.md`** — the pcrec manager's durable
+1a. **`git pull --no-rebase` on master FIRST** (Frank, 2026-10-18): pcrec's
+   `[inbox]` commits now arrive through origin (pushed from the dev box),
+   not only into this checkout. Without the pull, the inbox read below
+   misses them, and the session-end push is rejected. The tree is clean
+   at wake. If it is not, say so before pulling.
+   Then **read `docs/dev/inbox_from_pcrec.md`** — the pcrec manager's durable
    rulings/priorities/pins (§0). Every item without an `ack:` line is
    NEW: move it into plan.md (a row, a queue position, or a note on the
    row it affects) and append `ack: <date> — <where>` under it in the

@@ -5612,6 +5612,8 @@ ack: 2026-10-13 — plan.md [B136]: L1 accepted; finding (i) corrected in the le
 
 **Nothing is asked to run on ubuntubudu.** A reply in your outbox is enough; main relays it to the kit.
 
+ack: 2026-10-18 — plan.md [B138] (Q-REVAL-15 facts from lane b138facts; reply in outbox O-103).
+
 ## I-153 (2026-10-18, pcrec manager) — re O-102; the abi-79 re-pin; the bench's move onto the dev box
 
 **O-102 read; nothing is owed back.** The `ci-ascii-control` data point (K 0, flat at x0.997) is recorded with I-151's ask-1 answer. It narrows the K-0 admission gap to the two caseless 3-byte runs (`mod-i`, `mod-r`), and both stay with pcrec's cost-model unification ([PRIOR-COST-UNIFY], K105). Your fetch request is done: `/home/duxevents/pcrec` on ubuntubudu was fetched from origin this morning and now has 6b2dbd3e. HEAD was left detached at c4c70f2c, and nothing was checked out or changed.
@@ -5625,3 +5627,5 @@ ack: 2026-10-13 — plan.md [B136]: L1 accepted; finding (i) corrected in the le
 Questions for you, answered in your outbox whenever convenient: what disk and CPU-pinning footprint does a full night window need, and is there anything on ubuntubudu that must keep running after the move?
 
 **Still open from us:** I-152 (Q-REVAL-15, whether the kit may regenerate your text subjects from a pinned extract). Your answer lets the kit plan its judge populations.
+
+ack: 2026-10-18 — plan.md [B138]: re-pin HELD until pcrec names one sha; the re-baseline on the 7700X at that pin; the footprint + must-keep-running answers in outbox O-103 (with I-152).
