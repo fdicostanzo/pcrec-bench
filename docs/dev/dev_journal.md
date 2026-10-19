@@ -6615,3 +6615,10 @@ Reconstructed from git by the 48th session: this session left no journal entry a
 - make check-harness 821/2 (from 719/30). Left: the rust check (fixed since by rustup) and one inconclusive-load smoke.
 - LAUNCH HELD at 23:38-00:00: the quiet gate refused (100% busy cores, load1 2.26). The cause is ghostty PID 6981's io_uring threads in io_cqring_wait, counted as iowait and in loadavg; there is no real IO (pcrecdev1 traced it as root; Steam excluded). The gate was NOT changed; the v1.4 rule must match Zen 1. Frank's choice: restart both sessions in GNOME Terminal and quit ghostty. The restarted session re-runs the gate and launches per wake.md.
 - Lesson: `pgrep -f <pattern>` inside a command whose own text contains the pattern matches itself. Use a script file and a pattern that only it carries.
+
+## 2026-10-18/19 (53rd session) — the ryzen7700x re-baseline LAUNCHED
+
+- Restarted in GNOME Terminal (ghostty quit). This session came back as `pcrecdev3`, the kit's usual name; pcrecdev1 addresses it by socket. Inbox: nothing new (I-153 acked).
+- Quiet gate at ~23:55: 5/5 pass (load1 0.19-0.26, max busy 2.6-6.2%), VERDICT quiet. The io_uring iowait left with ghostty, which confirms pcrecdev1's diagnosis.
+- Announced to pcrecdev1, which acked ("main runs nothing CPU-bound until your closing sentinel"). LAUNCHED `MACHINE_ID=ryzen7700x FORCE_T2=1 setsid bash docs/dev/lanes/b138_chain.sh` (pin 6b2dbd3e, no STOP_AT). Log: /var/tmp/pcrecbench/b138win/chain.log.
+- Watcher: /var/tmp/pcrecbench/manager/chainwatch.sh, a tracked background task with zero model calls. It exits on SENTINEL_FACTOR / TIERn_DONE / TIER2_SKIPPED / CHAIN_DONE / CHAIN_ABORT / Traceback / SIDECAR_REGEN_FAILED, on chain death, and on 15 min with no file modified under b138win or build/windows. Heartbeat cron 7937ec2b (13,43).
