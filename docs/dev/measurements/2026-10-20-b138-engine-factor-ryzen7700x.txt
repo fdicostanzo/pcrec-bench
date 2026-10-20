@@ -1,0 +1,196 @@
+# SOURCE: docs/dev/measurements/probe_b138_factor.py --since 2026-10-18T00 (bench f4fb52e3, 2026-10-20T07:02:43-04:00)
+# new box ryzen7700x (AMD Ryzen 7 7700X, Ubuntu 26.04.1, governor performance) vs budu-ryzen1600 (Ryzen 5 1600, schedutil); pcrec pin 6b2dbd3e both; the [B138] re-baseline window 2026-10-18 23:53 -> 2026-10-20 07:02
+# read-only over committed store records; no timing taken by this script; box free (window closed) at run time, load 0.71 0.93 0.98
+# NOT a ranking input. 'box incl. governor': kernel/governor/ISA differ by design (plan.md [B138] COMPARABILITY).
+
+# probe_b138_factor.py --new ryzen7700x --ref budu-ryzen1600 --since '2026-10-18T00'
+# factor = budu-ryzen1600 median / ryzen7700x median, set grain; >1 = ryzen7700x faster (box incl. governor)
+# new records 64, paired 49, unpaired 15, cells skipped (no number) 77
+
+## regime classes
+large-subject-throughput             LONG
+match-compliance                     SHORT
+short-subject-search                 SHORT
+
+## MATCH, per testee x class
+libpcre2_10.46_interp-caps-simdna                LONG  geo 2.548  med 2.549  range 1.502..3.893  n=234
+libpcre2_10.46_interp-caps-simdna                SHORT geo 2.555  med 2.531  range 1.428..3.895  n=391
+libpcre2_10.46_interp-caps-simdna_utf8           LONG  geo 2.253  med 2.181  range 1.841..3.079  n=75
+libpcre2_10.46_interp-caps-simdna_utf8           SHORT geo 2.770  med 2.739  range 2.414..3.282  n=75
+libpcre2_10.46_jit-caps-simdna                   LONG  geo 2.332  med 2.191  range 1.267..10.620  n=269
+libpcre2_10.46_jit-caps-simdna                   SHORT geo 2.207  med 2.138  range 1.259..8.868  n=529
+libpcre2_10.46_jit-caps-simdna_utf8              LONG  geo 1.961  med 1.980  range 1.805..2.345  n=75
+libpcre2_10.46_jit-caps-simdna_utf8              SHORT geo 1.985  med 1.982  range 1.860..2.369  n=75
+oniguruma_6.9.10_default-caps-simdna             LONG  geo 1.896  med 1.776  range 1.401..2.693  n=65
+oniguruma_6.9.10_default-caps-simdna             SHORT geo 2.303  med 2.248  range 1.735..2.860  n=68
+oniguruma_6.9.10_default-caps-simdna_utf8        LONG  geo 2.117  med 2.152  range 1.627..3.086  n=62
+oniguruma_6.9.10_default-caps-simdna_utf8        SHORT geo 2.598  med 2.636  range 2.089..3.149  n=59
+pcrec_6b2dbd3e_auto-caps-simdna                  LONG  geo 2.110  med 2.051  range 1.360..4.987  n=184
+pcrec_6b2dbd3e_auto-caps-simdna                  SHORT geo 1.987  med 1.996  range 1.497..3.341  n=425
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             LONG  geo 2.270  med 2.077  range 1.482..3.859  n=69
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             SHORT geo 2.154  med 2.193  range 1.514..2.418  n=69
+pcrec_6b2dbd3e_auto-nocaps-simdna                LONG  geo 1.847  med 1.748  range 1.654..2.784  n=14
+pcrec_6b2dbd3e_auto-nocaps-simdna                SHORT geo 1.968  med 1.966  range 1.510..2.766  n=88
+re2_11.0.0_default-caps-simdna                   LONG  geo 2.205  med 2.385  range 1.598..3.646  n=40
+re2_11.0.0_default-caps-simdna                   SHORT geo 2.560  med 2.553  range 2.024..2.986  n=45
+re2_11.0.0_default-caps-simdna_utf8              LONG  geo 2.175  med 2.266  range 1.566..3.414  n=63
+re2_11.0.0_default-caps-simdna_utf8              SHORT geo 2.553  med 2.567  range 2.167..2.733  n=61
+rust_1.13.1_default-caps-simdna                  LONG  geo 2.282  med 2.201  range 1.572..4.497  n=243
+rust_1.13.1_default-caps-simdna                  SHORT geo 1.956  med 1.980  range 1.565..3.283  n=363
+tre_0.9.0_default-caps-simdna                    LONG  geo 2.053  med 1.983  range 1.796..2.854  n=36
+tre_0.9.0_default-caps-simdna                    SHORT geo 2.277  med 2.287  range 2.031..2.520  n=37
+vectorscan_5.4.11_block-nosom-nocaps-simd        LONG  geo 2.278  med 2.583  range 0.574..4.802  n=46
+vectorscan_5.4.11_block-nosom-nocaps-simd        SHORT geo 2.032  med 2.086  range 1.557..2.394  n=47
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   LONG  geo 2.505  med 2.691  range 0.523..13.594  n=69
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   SHORT geo 1.937  med 1.837  range 1.469..2.577  n=67
+
+## MATCH, per testee x set x class
+libpcre2_10.46_interp-caps-simdna                bounded    LONG  geo 2.700  med 2.809  range 1.851..3.085  n=43
+libpcre2_10.46_interp-caps-simdna                bounded    SHORT geo 2.732  med 2.818  range 1.428..3.632  n=86
+libpcre2_10.46_interp-caps-simdna                capability LONG  geo 2.422  med 2.392  range 1.502..3.525  n=68
+libpcre2_10.46_interp-caps-simdna                capability SHORT geo 2.561  med 2.489  range 2.005..3.416  n=70
+libpcre2_10.46_interp-caps-simdna                email-specimen LONG  geo 2.964  med 2.873  range 2.867..3.161  n=3
+libpcre2_10.46_interp-caps-simdna                email-specimen SHORT geo 2.644  med 2.626  range 2.044..3.442  n=6
+libpcre2_10.46_interp-caps-simdna                litrun     LONG  geo 2.836  med 2.808  range 2.132..3.596  n=14
+libpcre2_10.46_interp-caps-simdna                litrun     SHORT geo 2.477  med 2.499  range 2.025..2.911  n=28
+libpcre2_10.46_interp-caps-simdna                loglines   LONG  geo 2.917  med 2.986  range 2.269..3.239  n=11
+libpcre2_10.46_interp-caps-simdna                loglines   SHORT geo 3.090  med 3.183  range 2.396..3.388  n=11
+libpcre2_10.46_interp-caps-simdna                syntax     LONG  geo 2.483  med 2.498  range 1.984..3.893  n=95
+libpcre2_10.46_interp-caps-simdna                syntax     SHORT geo 2.458  med 2.451  range 2.056..3.895  n=190
+libpcre2_10.46_interp-caps-simdna_utf8           utf8       LONG  geo 2.253  med 2.181  range 1.841..3.079  n=75
+libpcre2_10.46_interp-caps-simdna_utf8           utf8       SHORT geo 2.770  med 2.739  range 2.414..3.282  n=75
+libpcre2_10.46_jit-caps-simdna                   altwide    LONG  geo 3.871  med 4.288  range 1.588..10.620  n=39
+libpcre2_10.46_jit-caps-simdna                   altwide    SHORT geo 3.103  med 2.735  range 1.259..8.868  n=78
+libpcre2_10.46_jit-caps-simdna                   bounded    LONG  geo 1.955  med 1.930  range 1.290..4.264  n=43
+libpcre2_10.46_jit-caps-simdna                   bounded    SHORT geo 2.258  med 2.297  range 1.508..3.604  n=86
+libpcre2_10.46_jit-caps-simdna                   capability LONG  geo 1.914  med 1.920  range 1.267..3.629  n=68
+libpcre2_10.46_jit-caps-simdna                   capability SHORT geo 2.003  med 1.952  range 1.585..3.791  n=70
+libpcre2_10.46_jit-caps-simdna                   email-specimen LONG  geo 2.160  med 2.170  range 1.958..2.383  n=2
+libpcre2_10.46_jit-caps-simdna                   email-specimen SHORT geo 2.215  med 2.297  range 1.858..2.441  n=6
+libpcre2_10.46_jit-caps-simdna                   litrun     LONG  geo 1.981  med 2.053  range 1.590..2.230  n=14
+libpcre2_10.46_jit-caps-simdna                   litrun     SHORT geo 2.087  med 2.004  range 1.487..2.743  n=28
+libpcre2_10.46_jit-caps-simdna                   loglines   LONG  geo 2.380  med 2.364  range 1.660..3.572  n=11
+libpcre2_10.46_jit-caps-simdna                   loglines   SHORT geo 2.294  med 2.267  range 1.690..3.396  n=11
+libpcre2_10.46_jit-caps-simdna                   sentinel   SHORT geo 1.945  med 1.874  range 1.408..2.619  n=60
+libpcre2_10.46_jit-caps-simdna                   syntax     LONG  geo 2.423  med 2.323  range 1.585..3.696  n=92
+libpcre2_10.46_jit-caps-simdna                   syntax     SHORT geo 2.059  med 2.121  range 1.507..3.215  n=190
+libpcre2_10.46_jit-caps-simdna_utf8              utf8       LONG  geo 1.961  med 1.980  range 1.805..2.345  n=75
+libpcre2_10.46_jit-caps-simdna_utf8              utf8       SHORT geo 1.985  med 1.982  range 1.860..2.369  n=75
+oniguruma_6.9.10_default-caps-simdna             capability LONG  geo 1.896  med 1.776  range 1.401..2.693  n=65
+oniguruma_6.9.10_default-caps-simdna             capability SHORT geo 2.303  med 2.248  range 1.735..2.860  n=68
+oniguruma_6.9.10_default-caps-simdna_utf8        utf8       LONG  geo 2.117  med 2.152  range 1.627..3.086  n=62
+oniguruma_6.9.10_default-caps-simdna_utf8        utf8       SHORT geo 2.598  med 2.636  range 2.089..3.149  n=59
+pcrec_6b2dbd3e_auto-caps-simdna                  altwide    LONG  geo 2.051  med 1.817  range 1.693..3.858  n=34
+pcrec_6b2dbd3e_auto-caps-simdna                  altwide    SHORT geo 1.999  med 2.037  range 1.670..3.040  n=73
+pcrec_6b2dbd3e_auto-caps-simdna                  bounded    LONG  geo 1.934  med 1.953  range 1.360..4.987  n=42
+pcrec_6b2dbd3e_auto-caps-simdna                  bounded    SHORT geo 1.927  med 1.920  range 1.559..2.780  n=84
+pcrec_6b2dbd3e_auto-caps-simdna                  email-specimen LONG  geo 1.765  med 1.696  range 1.682..1.927  n=3
+pcrec_6b2dbd3e_auto-caps-simdna                  email-specimen SHORT geo 1.844  med 1.878  range 1.684..2.011  n=6
+pcrec_6b2dbd3e_auto-caps-simdna                  litrun     LONG  geo 1.847  med 1.748  range 1.656..2.778  n=14
+pcrec_6b2dbd3e_auto-caps-simdna                  litrun     SHORT geo 2.024  med 1.985  range 1.823..2.338  n=28
+pcrec_6b2dbd3e_auto-caps-simdna                  loglines   LONG  geo 2.429  med 2.226  range 1.927..3.531  n=11
+pcrec_6b2dbd3e_auto-caps-simdna                  loglines   SHORT geo 2.093  med 1.991  range 1.712..3.341  n=11
+pcrec_6b2dbd3e_auto-caps-simdna                  sentinel   SHORT geo 1.913  med 1.825  range 1.508..2.721  n=60
+pcrec_6b2dbd3e_auto-caps-simdna                  syntax     LONG  geo 2.260  med 2.105  range 1.803..4.183  n=80
+pcrec_6b2dbd3e_auto-caps-simdna                  syntax     SHORT geo 2.033  med 2.069  range 1.497..2.699  n=163
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             utf8       LONG  geo 2.270  med 2.077  range 1.482..3.859  n=69
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             utf8       SHORT geo 2.154  med 2.193  range 1.514..2.418  n=69
+pcrec_6b2dbd3e_auto-nocaps-simdna                litrun     LONG  geo 1.847  med 1.748  range 1.654..2.784  n=14
+pcrec_6b2dbd3e_auto-nocaps-simdna                litrun     SHORT geo 2.027  med 1.996  range 1.826..2.347  n=28
+pcrec_6b2dbd3e_auto-nocaps-simdna                sentinel   SHORT geo 1.941  med 1.891  range 1.510..2.766  n=60
+re2_11.0.0_default-caps-simdna                   capability LONG  geo 2.205  med 2.385  range 1.598..3.646  n=40
+re2_11.0.0_default-caps-simdna                   capability SHORT geo 2.560  med 2.553  range 2.024..2.986  n=45
+re2_11.0.0_default-caps-simdna_utf8              utf8       LONG  geo 2.175  med 2.266  range 1.566..3.414  n=63
+re2_11.0.0_default-caps-simdna_utf8              utf8       SHORT geo 2.553  med 2.567  range 2.167..2.733  n=61
+rust_1.13.1_default-caps-simdna                  altwide    LONG  geo 2.283  med 2.235  range 1.590..4.441  n=39
+rust_1.13.1_default-caps-simdna                  altwide    SHORT geo 1.878  med 1.803  range 1.565..2.910  n=78
+rust_1.13.1_default-caps-simdna                  bounded    LONG  geo 2.049  med 1.823  range 1.602..4.285  n=41
+rust_1.13.1_default-caps-simdna                  bounded    SHORT geo 1.831  med 1.805  range 1.565..2.388  n=82
+rust_1.13.1_default-caps-simdna                  capability LONG  geo 2.235  med 2.249  range 1.594..4.230  n=46
+rust_1.13.1_default-caps-simdna                  capability SHORT geo 2.123  med 2.113  range 1.627..2.675  n=46
+rust_1.13.1_default-caps-simdna                  email-specimen LONG  geo 1.806  med 1.811  range 1.686..1.936  n=2
+rust_1.13.1_default-caps-simdna                  email-specimen SHORT geo 1.795  med 1.810  range 1.591..2.017  n=4
+rust_1.13.1_default-caps-simdna                  loglines   LONG  geo 2.093  med 1.949  range 1.598..3.493  n=11
+rust_1.13.1_default-caps-simdna                  loglines   SHORT geo 2.023  med 2.081  range 1.609..3.283  n=11
+rust_1.13.1_default-caps-simdna                  syntax     LONG  geo 2.531  med 2.423  range 1.632..4.497  n=45
+rust_1.13.1_default-caps-simdna                  syntax     SHORT geo 1.962  med 2.032  range 1.574..2.400  n=85
+rust_1.13.1_default-caps-simdna                  utf8       LONG  geo 2.366  med 2.316  range 1.572..4.231  n=59
+rust_1.13.1_default-caps-simdna                  utf8       SHORT geo 2.117  med 2.106  range 1.654..2.385  n=57
+tre_0.9.0_default-caps-simdna                    capability LONG  geo 2.053  med 1.983  range 1.796..2.854  n=36
+tre_0.9.0_default-caps-simdna                    capability SHORT geo 2.277  med 2.287  range 2.031..2.520  n=37
+vectorscan_5.4.11_block-nosom-nocaps-simd        capability LONG  geo 2.278  med 2.583  range 0.574..4.802  n=46
+vectorscan_5.4.11_block-nosom-nocaps-simd        capability SHORT geo 2.032  med 2.086  range 1.557..2.394  n=47
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   utf8       LONG  geo 2.505  med 2.691  range 0.523..13.594  n=69
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   utf8       SHORT geo 1.937  med 1.837  range 1.469..2.577  n=67
+
+## MATCH, per testee x regime
+libpcre2_10.46_interp-caps-simdna                large-subject-throughput       geo 2.548  med 2.549  range 1.502..3.893  n=234
+libpcre2_10.46_interp-caps-simdna                match-compliance               geo 2.361  med 2.343  range 1.428..3.632  n=155
+libpcre2_10.46_interp-caps-simdna                short-subject-search           geo 2.691  med 2.679  range 2.005..3.895  n=236
+libpcre2_10.46_interp-caps-simdna_utf8           large-subject-throughput       geo 2.253  med 2.181  range 1.841..3.079  n=75
+libpcre2_10.46_interp-caps-simdna_utf8           short-subject-search           geo 2.770  med 2.739  range 2.414..3.282  n=75
+libpcre2_10.46_jit-caps-simdna                   large-subject-throughput       geo 2.332  med 2.191  range 1.267..10.620  n=269
+libpcre2_10.46_jit-caps-simdna                   match-compliance               geo 2.429  med 2.440  range 1.259..3.604  n=194
+libpcre2_10.46_jit-caps-simdna                   short-subject-search           geo 2.087  med 1.919  range 1.408..8.868  n=335
+libpcre2_10.46_jit-caps-simdna_utf8              large-subject-throughput       geo 1.961  med 1.980  range 1.805..2.345  n=75
+libpcre2_10.46_jit-caps-simdna_utf8              short-subject-search           geo 1.985  med 1.982  range 1.860..2.369  n=75
+oniguruma_6.9.10_default-caps-simdna             large-subject-throughput       geo 1.896  med 1.776  range 1.401..2.693  n=65
+oniguruma_6.9.10_default-caps-simdna             short-subject-search           geo 2.303  med 2.248  range 1.735..2.860  n=68
+oniguruma_6.9.10_default-caps-simdna_utf8        large-subject-throughput       geo 2.117  med 2.152  range 1.627..3.086  n=62
+oniguruma_6.9.10_default-caps-simdna_utf8        short-subject-search           geo 2.598  med 2.636  range 2.089..3.149  n=59
+pcrec_6b2dbd3e_auto-caps-simdna                  large-subject-throughput       geo 2.110  med 2.051  range 1.360..4.987  n=184
+pcrec_6b2dbd3e_auto-caps-simdna                  match-compliance               geo 1.933  med 1.942  range 1.497..2.780  n=178
+pcrec_6b2dbd3e_auto-caps-simdna                  short-subject-search           geo 2.027  med 2.075  range 1.508..3.341  n=247
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             large-subject-throughput       geo 2.270  med 2.077  range 1.482..3.859  n=69
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             short-subject-search           geo 2.154  med 2.193  range 1.514..2.418  n=69
+pcrec_6b2dbd3e_auto-nocaps-simdna                large-subject-throughput       geo 1.847  med 1.748  range 1.654..2.784  n=14
+pcrec_6b2dbd3e_auto-nocaps-simdna                match-compliance               geo 1.957  med 1.973  range 1.835..2.054  n=14
+pcrec_6b2dbd3e_auto-nocaps-simdna                short-subject-search           geo 1.970  med 1.949  range 1.510..2.766  n=74
+re2_11.0.0_default-caps-simdna                   large-subject-throughput       geo 2.205  med 2.385  range 1.598..3.646  n=40
+re2_11.0.0_default-caps-simdna                   short-subject-search           geo 2.560  med 2.553  range 2.024..2.986  n=45
+re2_11.0.0_default-caps-simdna_utf8              large-subject-throughput       geo 2.175  med 2.266  range 1.566..3.414  n=63
+re2_11.0.0_default-caps-simdna_utf8              short-subject-search           geo 2.553  med 2.567  range 2.167..2.733  n=61
+rust_1.13.1_default-caps-simdna                  large-subject-throughput       geo 2.282  med 2.201  range 1.572..4.497  n=243
+rust_1.13.1_default-caps-simdna                  match-compliance               geo 1.788  med 1.779  range 1.565..2.285  n=125
+rust_1.13.1_default-caps-simdna                  short-subject-search           geo 2.050  med 2.065  range 1.565..3.283  n=238
+tre_0.9.0_default-caps-simdna                    large-subject-throughput       geo 2.053  med 1.983  range 1.796..2.854  n=36
+tre_0.9.0_default-caps-simdna                    short-subject-search           geo 2.277  med 2.287  range 2.031..2.520  n=37
+vectorscan_5.4.11_block-nosom-nocaps-simd        large-subject-throughput       geo 2.278  med 2.583  range 0.574..4.802  n=46
+vectorscan_5.4.11_block-nosom-nocaps-simd        short-subject-search           geo 2.032  med 2.086  range 1.557..2.394  n=47
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   large-subject-throughput       geo 2.505  med 2.691  range 0.523..13.594  n=69
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   short-subject-search           geo 1.937  med 1.837  range 1.469..2.577  n=67
+
+## COMPILE (per record pair: median over patterns of ref/new total_ns)
+libpcre2_10.46_interp-caps-simdna                geo 2.245  med 2.217  range 2.022..2.627  n=6
+libpcre2_10.46_interp-caps-simdna_utf8           geo 2.452  med 2.452  range 2.452..2.452  n=1
+libpcre2_10.46_jit-caps-simdna                   geo 2.785  med 2.793  range 2.482..3.000  n=11
+libpcre2_10.46_jit-caps-simdna_utf8              geo 3.108  med 3.108  range 3.108..3.108  n=1
+oniguruma_6.9.10_default-caps-simdna             geo 2.273  med 2.273  range 2.273..2.273  n=1
+oniguruma_6.9.10_default-caps-simdna_utf8        geo 2.222  med 2.222  range 2.222..2.222  n=1
+pcrec_6b2dbd3e_auto-caps-simdna                  geo 2.457  med 2.445  range 2.423..2.566  n=10
+pcrec_6b2dbd3e_auto-caps-simdna_utf8             geo 2.429  med 2.429  range 2.429..2.429  n=1
+pcrec_6b2dbd3e_auto-nocaps-simdna                geo 2.473  med 2.478  range 2.450..2.482  n=5
+re2_11.0.0_default-caps-simdna                   geo 5.038  med 5.038  range 5.038..5.038  n=1
+re2_11.0.0_default-caps-simdna_utf8              geo 4.975  med 4.975  range 4.975..4.975  n=1
+rust_1.13.1_default-caps-simdna                  geo 2.374  med 2.421  range 2.194..2.575  n=7
+tre_0.9.0_default-caps-simdna                    geo 2.622  med 2.622  range 2.622..2.622  n=1
+vectorscan_5.4.11_block-nosom-nocaps-simd        geo 3.044  med 3.044  range 3.044..3.044  n=1
+vectorscan_5.4.11_block-nosom-nocaps-simd_utf8   geo 4.783  med 4.783  range 4.783..4.783  n=1
+
+## unpaired (no budu-ryzen1600 record at the same testee_id)
+  altwide@0.3 libpcre2_10.46_interp-caps-simdna
+  altwide@0.3 pcrec_6b2dbd3e_auto-nocaps-simdna
+  bounded@0.3 pcrec_6b2dbd3e_auto-nocaps-simdna
+  email-specimen@0.2 pcrec_6b2dbd3e_auto-nocaps-simdna
+  loglines@0.1 pcrec_6b2dbd3e_auto-nocaps-simdna
+  syntax@0.1 pcrec_6b2dbd3e_auto-nocaps-simdna
+  utf8@0.1 pcrec_6b2dbd3e_auto-nocaps-simdna_utf8
+  altwide@0.3 pcrec_6b2dbd3e_vm-caps-simdna
+  bounded@0.3 pcrec_6b2dbd3e_vm-caps-simdna
+  capability@0.2 pcrec_6b2dbd3e_vm-caps-simdna
+  email-specimen@0.2 pcrec_6b2dbd3e_vm-caps-simdna
+  litrun@0.1 pcrec_6b2dbd3e_vm-caps-simdna
+  loglines@0.1 pcrec_6b2dbd3e_vm-caps-simdna
+  syntax@0.1 pcrec_6b2dbd3e_vm-caps-simdna
+  utf8@0.1 pcrec_6b2dbd3e_vm-caps-simdna_utf8
+# probe wall 14.31 s, max RSS 330568 KB
