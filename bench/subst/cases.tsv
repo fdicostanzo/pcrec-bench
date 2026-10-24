@@ -1,0 +1,12 @@
+case	dir	label	ere	needs	density	isolates
+1	1-literal	literal	yes	-	natural	the COPY-COST FLOOR: a pure literal (the dot escaped so no engine reads a metacharacter), shortening replacement
+2	2-rare	rare	yes	-	planted	SEARCH-dominated: output is the input to within a few bytes; a two-literal alternation prefix scanned over the whole file
+3	3-dense	dense	yes	-	natural	OUTPUT-dominated: tens of millions of matches, per-match render/append cost
+4	4-reorder	reorder	yes	-	planted-by-structure	CAPTURE REARRANGEMENT: three groups, permuted (dd/Mon/yyyy to yyyy-Mon-dd), exactly one per line
+5	5-mask-ipv4	mask-ipv4	yes	word-boundary	natural	CLASS-HEAVY masking: bounded counted classes, a word boundary, a fixed-text replacement
+5b	5b-mask-email	mask-email	yes	-	planted	a widely used e-mail shape: unbounded classes either side of a literal `@`, fixed-text replacement
+6	6-upper	upper	yes	case-operator	natural	CASE CHANGE in the template (\U..\E): only some dialects can say it
+7	7-url-tld-fix	url-tld-fix	no	lookahead backreference conditional-template	planted	ONE PASS: a backreference inside a negative lookahead + a conditional template segment (fix a wrong TLD value OR insert the missing field)
+7a	7a-url-tld-value	url-tld-fix-value	no	lookahead backreference	planted	the split pair, half 1: fix a wrong TLD value (plain template)
+7b	7b-url-tld-insert-qmark	url-tld-insert-qmark	no	lookahead	planted	the split pair, half 2a: insert the missing field after a URL with no query, with `?` (plain template)
+7c	7c-url-tld-insert-amp	url-tld-insert-amp	no	lookahead	planted	the split pair, half 2b: insert the missing field after a URL with a query lacking it, with `&` (plain template)

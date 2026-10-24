@@ -507,6 +507,97 @@ Compiled.find_all = _find_all_impl
 Compiled.pattern_info = _pattern_info_impl
 
 
+# ---------------------------------------------------------------------------
+# [B140] SUBSTITUTE -- the substitution set's expectation oracle
+# (docs/design/subst_bench_v1.md 4.1; bench/subst/NOTES.md "Oracle")
+# ---------------------------------------------------------------------------
+#
+# `pcre2_substitute` with PCRE2_SUBSTITUTE_GLOBAL, the one more entry point
+# in this module that the design asks for (no second oracle). The option bits
+# below are [measured] from this box's 10.46 the way PCRE2_CONFIG_VERSION is
+# (no -dev header installed): each is exercised by a case whose answer
+# differs with and without it in the __main__ self-check, so a wrong value
+# cannot pass silently.
+#
+# THE ORACLE IS THE INTERPRETER: the code is never `pcre2_jit_compile`d here,
+# so `pcre2_substitute` runs `pcre2_match`'s interpreter on every call -- no
+# JIT stack, so the design's 11th open question (a JIT-stack error, -46, on a
+# 320 MB subject with tens of millions of matches) cannot arise in the
+# oracle; it belongs to the pcre2-jit LIBRARY testee's first dry run. The
+# default match limits apply per internal match call, not to the whole
+# global substitution.
+PCRE2_SUBSTITUTE_GLOBAL = 0x00000100
+PCRE2_SUBSTITUTE_EXTENDED = 0x00000200
+PCRE2_SUBSTITUTE_UNSET_EMPTY = 0x00000400
+PCRE2_SUBSTITUTE_UNKNOWN_UNSET = 0x00000800
+PCRE2_SUBSTITUTE_OVERFLOW_LENGTH = 0x00001000
+PCRE2_SUBSTITUTE_LITERAL = 0x00008000
+
+_lib.pcre2_substitute_8.restype = ctypes.c_int
+_lib.pcre2_substitute_8.argtypes = [
+    ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t, ctypes.c_size_t,
+    ctypes.c_uint32, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p,
+    ctypes.c_size_t, ctypes.c_void_p, ctypes.POINTER(ctypes.c_size_t)]
+
+
+def _substitute_impl(self, subject, template, extended=False,
+                     unset_empty=False):
+    """-> (nsubst, out) where `out` is a read-only memoryview of the
+    substituted subject (no copy of a 320 MB buffer is made). GLOBAL always;
+    `extended` adds PCRE2_SUBSTITUTE_EXTENDED (`\\U..\\E` case forcing and
+    the `${n:+yes:no}` conditional); `unset_empty` adds UNSET_EMPTY (an unset
+    group referenced OUTSIDE a conditional expands to nothing instead of
+    being an error). Any negative rc is RAISED -- a failed substitution is
+    never recorded as an expectation. The output buffer starts at 1.25 n + 4 KiB and
+    grows once, by PCRE2_SUBSTITUTE_OVERFLOW_LENGTH's own report of the size
+    it needs (the retry re-matches; that cost is the oracle's, never a
+    timed testee's)."""
+    if isinstance(subject, str):
+        subject = subject.encode("latin-1")
+    if isinstance(template, str):
+        template = template.encode("latin-1")
+    flags = PCRE2_SUBSTITUTE_GLOBAL | PCRE2_SUBSTITUTE_OVERFLOW_LENGTH
+    if extended:
+        flags |= PCRE2_SUBSTITUTE_EXTENDED
+    if unset_empty:
+        flags |= PCRE2_SUBSTITUTE_UNSET_EMPTY
+    md = _lib.pcre2_match_data_create_from_pattern_8(self._code, None)
+    if not md:
+        raise MemoryError("pcre2_match_data_create_from_pattern failed")
+    try:
+        cap = len(subject) + len(subject) // 4 + 4096
+        for _attempt in (0, 1):
+            buf = ctypes.create_string_buffer(cap)
+            outlen = ctypes.c_size_t(cap)
+            rc = _lib.pcre2_substitute_8(
+                self._code, subject, len(subject), 0, flags, md, None,
+                template, len(template), buf, ctypes.byref(outlen))
+            if rc == PCRE2_ERROR_NOMEMORY and _attempt == 0:
+                cap = outlen.value + 1
+                continue
+            break
+        if rc < 0:
+            raise Pcre2Error("pcre2_substitute error %d: %s"
+                             % (rc, _errmsg(rc)))
+        return rc, memoryview(buf).cast("B")[:outlen.value].toreadonly()
+    finally:
+        _lib.pcre2_match_data_free_8(md)
+
+
+def substitute_summary(compiled, subject, template, extended=False,
+                       unset_empty=False):
+    """The three figures an expectation carries: nsubst, out_bytes and the
+    output's sha256 (hex), without materializing the output as `bytes`."""
+    import hashlib
+    n, out = compiled.substitute(subject, template, extended=extended,
+                                 unset_empty=unset_empty)
+    return {"nsubst": n, "out_bytes": len(out),
+            "out_sha256": hashlib.sha256(out).hexdigest()}
+
+
+Compiled.substitute = _substitute_impl
+
+
 if __name__ == "__main__":
     # Self-check: U9's own witness (docs/dev/upstream_issues.md), so a
     # future reader can see this binding reproduces the recorded divergence

@@ -17464,6 +17464,15 @@ def check_b137_import():
         bad("cpu_isa (iv): this box's list is sorted")
 
 
+def check_subst_set():
+    """[B140] bench/subst's slice -- the neutral template's renderer against
+    real engines (hostile-template test + controls), the oracle's
+    substitute(), the case files, the generator + calibration, the
+    expectations. Implemented in tools/check_subst.py; see its docstring."""
+    import check_subst
+    check_subst.run(ok, bad)
+
+
 def main():
     print("== check-harness ==")
     check_manifests()
@@ -17557,6 +17566,7 @@ def main():
     check_vectorscan_free_spacing_measure()
     check_kb34_leading_verb_hoist()
     check_kb29_find_all_giveup_propagation()
+    check_subst_set()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     check_b105_tre_bracket_backslash_declaration()

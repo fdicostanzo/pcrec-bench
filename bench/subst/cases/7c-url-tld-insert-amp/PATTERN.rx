@@ -1,0 +1,1 @@
+(https://www\.(?:acme|globex|initech|umbrella|hooli)\.(com|de|fr|nl|org)/[^"?\s]*)(?!\?(?:[^"\s]*&)?tld=)(\?[^"\s]*)(?=")

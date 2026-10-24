@@ -1,0 +1,69 @@
+case	competitor	expectation	reason	basis
+1	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+1	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+1	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+2	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+2	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+2	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+3	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+3	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+3	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+4	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+4	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+4	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+5	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+5	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+5	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+5b	pcre2-interp	agrees	the oracle's own engine (the expectation is derived from it)	declared
+5b	pcre2-jit	agrees	same pattern and template as the interpreter; JIT changes speed not answers	declared
+5b	*	agrees	unambiguous under leftmost-first and leftmost-longest alike; no match can span a newline	predicted
+6	pcre2-interp	agrees	PCRE2_SUBSTITUTE_EXTENDED \U..\E; the oracle's own engine	declared
+6	pcre2-jit	agrees	same call as the interpreter	declared
+6	pcrec	agrees	subst-extended module compiled with the \U template (contract section 2)	predicted
+6	sed	agrees	GNU extension \U\1\E, dialect `sed`	predicted
+6	perl	agrees	native \U${1}\E	predicted
+6	python	unsupported:no-case-operators	the replacement syntax has no case-forcing operator (a callable/closure is user code, not a template; no `callable` rows, ruling 8a item 5)	predicted
+6	rust-regex	unsupported:no-case-operators	the replacement syntax has no case-forcing operator (a callable/closure is user code, not a template; no `callable` rows, ruling 8a item 5)	predicted
+6	re2	unsupported:no-case-operators	the replacement syntax has no case-forcing operator (a callable/closure is user code, not a template; no `callable` rows, ruling 8a item 5)	predicted
+6	sd	unsupported:no-case-operators	the replacement syntax has no case-forcing operator (a callable/closure is user code, not a template; no `callable` rows, ruling 8a item 5)	predicted
+6	rg	unsupported:no-case-operators	the replacement syntax has no case-forcing operator (a callable/closure is user code, not a template; no `callable` rows, ruling 8a item 5)	predicted
+7a	pcre2-interp	agrees	the oracle's own engine	declared
+7a	pcre2-jit	agrees	same call as the interpreter	declared
+7a	pcrec	agrees	VM route (a backreference inside a lookahead); plain template	predicted
+7a	perl	agrees	native lookahead + backreference; plain replacement	predicted
+7a	python	agrees	re.sub with a bytes template; every group participates in every match	predicted
+7a	sed	unsupported:pattern-syntax	the pattern needs a lookahead and a backreference and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7a	rust-regex	unsupported:pattern-syntax	the pattern needs a lookahead and a backreference and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7a	re2	unsupported:pattern-syntax	the pattern needs a lookahead and a backreference and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7a	sd	unsupported:pattern-syntax	the pattern needs a lookahead and a backreference and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7a	rg	unsupported:pattern-syntax	the pattern needs a lookahead and a backreference and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7b	pcre2-interp	agrees	the oracle's own engine	declared
+7b	pcre2-jit	agrees	same call as the interpreter	declared
+7b	pcrec	agrees	VM route (a backreference inside a lookahead); plain template	predicted
+7b	perl	agrees	native lookahead + backreference; plain replacement	predicted
+7b	python	agrees	re.sub with a bytes template; every group participates in every match	predicted
+7b	sed	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7b	rust-regex	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7b	re2	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7b	sd	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7b	rg	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7c	pcre2-interp	agrees	the oracle's own engine	declared
+7c	pcre2-jit	agrees	same call as the interpreter	declared
+7c	pcrec	agrees	VM route (a backreference inside a lookahead); plain template	predicted
+7c	perl	agrees	native lookahead + backreference; plain replacement	predicted
+7c	python	agrees	re.sub with a bytes template; every group participates in every match	predicted
+7c	sed	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7c	rust-regex	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7c	re2	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7c	sd	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7c	rg	unsupported:pattern-syntax	the pattern needs a lookahead and non-capturing groups (not POSIX ERE, not RE2/rust syntax)	predicted
+7	pcre2-interp	agrees	PCRE2_SUBSTITUTE_EXTENDED conditional ${n:+yes:no}; the oracle's own engine	declared
+7	pcre2-jit	agrees	same call as the interpreter	declared
+7	pcrec	pending	whether pcrec's subst has a conditional template segment is the open question of outbox O-106; if not, 7a/7b/7c are the split pair	predicted
+7	sed	unsupported:pattern-syntax	lookahead + backreference + non-capturing group in the pattern (and no conditional in the template)	predicted
+7	rust-regex	unsupported:pattern-syntax	lookahead + backreference + non-capturing group in the pattern (and no conditional in the template)	predicted
+7	re2	unsupported:pattern-syntax	lookahead + backreference + non-capturing group in the pattern (and no conditional in the template)	predicted
+7	sd	unsupported:pattern-syntax	lookahead + backreference + non-capturing group in the pattern (and no conditional in the template)	predicted
+7	rg	unsupported:pattern-syntax	lookahead + backreference + non-capturing group in the pattern (and no conditional in the template)	predicted
+7	perl	unsupported:no-conditional	no conditional template segment (a /e code replacement is user code, not a template)	predicted
+7	python	unsupported:no-conditional	re.sub has no conditional template (a callable is a different feature)	predicted
