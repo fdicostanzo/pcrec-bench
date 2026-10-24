@@ -99,6 +99,16 @@ rejected for some OTHER reason fails the build. The rules are defined in
 | `x33-trial-agreement-on-a-v13-record.jsonl` | X33 | the block on a record re-stamped `1.3` (its status set `inconclusive-load` so the v1.1 X13 stays out of it) — the OTHER direction: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one |
 | `x34-boolean-grain-nonnull-span.jsonl` | X34 | *(built from the new v1.6 `boolgrain-example` good example)* the false-positive row's `observed.span` set to a real `[0, 3]` — schema-legal on its own line (`$defs/match_row` accepts two integers there), but `testee.grain` is `boolean`, which forbids it; a plain per-line JSON Schema cannot see both fields at once, which is exactly why this is a cross-line rule |
 | `x35-cpu-isa-unsorted-*.jsonl` / `x35-cpu-isa-on-pre-18-*.jsonl` | X35 | *(built from the v1.8 boolgrain good example: reversed `cpu_isa`; and the same list on a record stamped 1.7)* |
+| `x36-subst-absent-*.jsonl` / `x36-subst-on-other-regime-*.jsonl` | X36 | *(built from the v1.9 subst-example records: `subst` deleted from a `substitution` row; and `subst` kept on a row re-regimed `short-subject-search`)* |
+| `x37-gate-wrong-but-matched-as-expected-*.jsonl` / `x37-divergent-without-declaration-ref-*.jsonl` | X37 | *(gate `wrong` beside `matched-as-expected`; a `divergent-declared` row with no `subst.declaration_ref`)* |
+| `x38-process-absent-*.jsonl` / `x38-process-on-library-row-*.jsonl` | X38 | *(a timed process row without `process`; a `process` object on a library testee's row)* |
+| `x39-wc-count-differs-from-out-bytes-*.jsonl` | X39 | *(`process.sink_bytes` one more than `subst.out_bytes`)* |
+| `x40-wc-on-the-tools-core-*.jsonl` | X40 | *(`process.sink_core` = `process.core`)* |
+| `x41-process-testee-not-interpretive-*.jsonl` | X41 | *(`invocation: process` with `execution_model: eager-jit`)* |
+| `x42-substitution-on-pre-19-record-*.jsonl` | X42 | *(the v1.9 library record stamped 1.8)* |
+| `x43-trials-disagree-on-out-bytes-*.jsonl` | X43 | *(trial 2 of a process cell with a different `out_bytes`)* |
+| `x44-match-row-on-unsupported-pattern-*.jsonl` | X44 | *(a match row for a pattern whose compile row is `unsupported-by-declaration`)* |
+| `x45-process-pattern-silent-*.jsonl` | X45 | *(the process record's unsupported compile row removed: the pattern has neither)* |
 | `x15-sha256-malformed.jsonl` | X15 | *(built from the v1.7 `boolgrain-example` good example, `20260925T120000Z`)* the compile row's `program_sha256` set to UPPERCASE hex -- a well-formed-looking hash under a declaration of type `sha256` (v1.7, [B88]), which requires 64 LOWERCASE hex digits so two rows compare by string equality, never by case-folding |
 | `schema-status-inconclusive-spread-misspelt.jsonl` | SCHEMA | `status: inconclusive_spread` — the token-spelling rule (record_schema.md §5) |
 | `schema-target-busy-beside-unavailable.jsonl` | SCHEMA | `occupancy.after.verdict: unavailable`, `max_busy_pct: null` and `target_busy_pct: 3.0` — a target number beside a sample that measured nothing, which S2's `then` branch forbids (on the AFTER sample so the v1.4 X13 stays out) |
@@ -135,5 +145,6 @@ X32):
   defect in the control.
 - `x6-tampered-hash` is the one control that is deliberately NOT
   restamped, so its edit and its hash disagree by construction.
+
 
 Maintenance: update this file when files are added/removed or change role.

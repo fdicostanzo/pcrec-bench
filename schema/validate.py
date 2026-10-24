@@ -27,6 +27,14 @@ It checks two things a record must satisfy:
     `testee.grain = boolean` testee's match rows never carry a non-null
     `observed.span` (X34) -- the checked half of "such a testee never
     claims a specific span, correct or wrong".
+    (v1.9, [B140], docs/design/subst_bench_v1.md 5 + 8a item 7) the
+    SUBSTITUTION regime and the `process` (TOOLS) tier: X36-X45 -- `subst`
+    iff the regime, gate/outcome/declaration coherence, `process` iff a timed
+    process launch, the `| wc -c` count equal to the validated output
+    size, wc on another core, interpretive process testees, the v1.9
+    members only on a >= 1.9 record, and trial-to-trial agreement of a
+    cell's output, and (X44/X45) an unsupported case is a compile row
+    `unsupported-by-declaration` with no match rows.
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -518,6 +526,10 @@ class RecordValidator:
         decl = testee.get("engine_metadata_declaration", {}) or {}
         phases = list(testee.get("compile_phases", []) or [])
         boolean_grain = testee.get("grain") == "boolean"
+        # v1.9 ([B140]): a `process` testee is a command-line TOOL; it has
+        # no separable compile call, so compile rows are optional for it
+        # (X11 and X14 below are relaxed, S7).
+        is_process = testee.get("invocation") == "process"
 
         # Everything below is keyed by (pattern, FORM): a testee with no
         # end-anchored mode compiles a SECOND artifact for the whole-subject
@@ -633,7 +645,7 @@ class RecordValidator:
                 continue
             pid = row.get("pattern_id")
             form = row.get("form", DEFAULT_FORM)
-            if not compiled_ok.get((pid, form), False):
+            if not is_process and not compiled_ok.get((pid, form), False):
                 add(Problem(path, n, "timing",
                             f"the {form} artifact of pattern {pid!r} did not "
                             f"compile cleanly in this record, so this cell "
@@ -870,7 +882,7 @@ class RecordValidator:
             # whole-subject one exists only for a testee that needs it.
             missing = sorted(x for x in pat_ids
                              if (x, DEFAULT_FORM) not in seen_compile)
-            if missing:
+            if missing and not is_process:
                 add(Problem(path, 1, "status",
                             f"is `measured` but patterns {missing} have no "
                             f"`plain` compile row; a record that stopped "
@@ -890,6 +902,10 @@ class RecordValidator:
                             f"version that defined it (1.4): a mis-stamped "
                             f"record, not a forward-compatible one (X33)",
                             "X33"))
+
+        # X36..X43 (v1.9, [B140]) the substitution regime, the `process`
+        # tier and the TOOLS tier's `| wc -c` sink
+        self._subst_rules(add, path, setup, testee, rows, f_minor, sv)
 
         # X35 (v1.8, [B137]) `environment.cpu_isa` is present only on a
         # record stamped >= 1.8, and its tokens are sorted
@@ -951,6 +967,162 @@ class RecordValidator:
                                     f"{wg.get('regime')!r} is not among the "
                                     f"sub-bench's declared regimes (X32)", "X32"))
         return p
+
+    @staticmethod
+    def _subst_rules(add, path, setup, testee, rows, f_minor, sv):
+        """X36-X45, record_schema.md 9. Row-local and cross-trial rules of
+        the v1.9 substitution regime; none reads an expectation (the
+        validator does not know the oracle's hash -- `gate` is the
+        harness's verdict, and the rules pin its coherence)."""
+        invocation = testee.get("invocation")
+        is_process = invocation == "process"
+        subst_rec = "substitution" in (setup.get("subbench", {}).get("regimes") or [])
+        pre19 = f_minor is not None and f_minor < 9
+
+        # X42 the v1.9 members exist only on a record stamped >= 1.9
+        if pre19:
+            if invocation is not None:
+                add(Problem(path, 1, "testee.invocation",
+                            f"is present on a record stamped {sv}, before the "
+                            f"version that defined it (1.9): a mis-stamped "
+                            f"record (X42)", "X42"))
+            if "substitution" in (setup.get("subbench", {}).get("regimes") or []):
+                add(Problem(path, 1, "subbench.regimes",
+                            f"declares the `substitution` regime on a record "
+                            f"stamped {sv}, before the version that defined it "
+                            f"(1.9) (X42)", "X42"))
+            for n, row in rows:
+                for fld in ("subst", "process"):
+                    if fld in row:
+                        add(Problem(path, n, fld,
+                                    f"is present on a record stamped {sv}, "
+                                    f"before the version that defined it "
+                                    f"(1.9) (X42)", "X42"))
+
+        # X41 a process testee is interpretive: the tool re-parses the
+        # pattern on every launch, so there is no compile to separate
+        if is_process and testee.get("execution_model") != "interpretive":
+            add(Problem(path, 1, "testee.execution_model",
+                        f"is {testee.get('execution_model')!r} but "
+                        f"testee.invocation is `process`: a command-line tool "
+                        f"re-parses its pattern on every launch, so it is "
+                        f"`interpretive` and its compile rows are optional "
+                        f"(X41)", "X41"))
+
+        cells = {}                # (pattern, subject, regime, form) -> [(n, subst)]
+        for n, row in rows:
+            if row["kind"] != "match":
+                continue
+            subst = row.get("subst")
+            is_subst_regime = row.get("regime") == "substitution"
+            # X36 `subst` is present iff the row's regime is `substitution`
+            if is_subst_regime and not isinstance(subst, dict):
+                add(Problem(path, n, "subst",
+                            "is absent on a `substitution`-regime row: the "
+                            "transform's output IS the answer and the row "
+                            "must carry it (X36)", "X36"))
+            if not is_subst_regime and subst is not None:
+                add(Problem(path, n, "subst",
+                            f"is present on a {row.get('regime')!r} row; only "
+                            f"the `substitution` regime carries it (X36)",
+                            "X36"))
+            gate = subst.get("gate") if isinstance(subst, dict) else None
+            if isinstance(subst, dict):
+                cells.setdefault((row.get("pattern_id"), row.get("subject_id"),
+                                  row.get("regime"), row.get("form", DEFAULT_FORM)),
+                                 []).append((n, row, subst))
+                # X37 gate / match_outcome / declaration_ref coherence
+                agrees = gate == "agrees"
+                outcome_ok = row.get("match_outcome") == "matched-as-expected"
+                if agrees != outcome_ok:
+                    add(Problem(path, n, "match_outcome",
+                                f"is {row.get('match_outcome')!r} but "
+                                f"subst.gate is {gate!r}: "
+                                f"`matched-as-expected` exactly when the gate "
+                                f"`agrees` (a wrong or declared-divergent "
+                                f"cell is never timed) (X37)", "X37"))
+                has_decl = "declaration_ref" in subst
+                if (gate == "divergent-declared") != has_decl:
+                    add(Problem(path, n, "subst.declaration_ref",
+                                f"is {'present' if has_decl else 'absent'} "
+                                f"but subst.gate is {gate!r}: a declared "
+                                f"divergence must cite its declaration, and "
+                                f"only it does -- else it is an unfalsifiable "
+                                f"excuse (X37)", "X37"))
+
+            # X38 `process` iff a process testee's TIMED row
+            proc = row.get("process")
+            want_proc = is_process and "timing" in row
+            if want_proc and proc is None:
+                add(Problem(path, n, "process",
+                            "is absent on a timed row of a `process` testee: "
+                            "the launch's provenance and the wc sink's count "
+                            "are the row's evidence (X38)", "X38"))
+            if proc is not None and not want_proc:
+                add(Problem(path, n, "process",
+                            "is present on a row that is not a timed launch "
+                            "of a `process` testee (library testee, or a "
+                            "cell that was never timed) (X38)", "X38"))
+            if isinstance(proc, dict):
+                # X39 the pipe's count equals the validated output size
+                ob = subst.get("out_bytes") if isinstance(subst, dict) else None
+                if ob is not None and proc.get("sink_bytes") != ob:
+                    add(Problem(path, n, "process.sink_bytes",
+                                f"is {proc.get('sink_bytes')!r} but "
+                                f"subst.out_bytes is {ob!r}: a timed run whose "
+                                f"`| wc -c` count differs from the validated "
+                                f"output fails by name, it is not a "
+                                f"measurement (X39)", "X39"))
+                # X40 wc runs on a different core than the tool
+                if proc.get("sink_core") == proc.get("core"):
+                    add(Problem(path, n, "process.sink_core",
+                                f"equals process.core ({proc.get('core')!r}): "
+                                f"`wc` is pinned to ANOTHER core so the sink "
+                                f"never shares the tool's (X40)", "X40"))
+
+        # X44 an unsupported (testee, pattern) -- a compile row
+        # `unsupported-by-declaration` -- carries NO substitution match rows:
+        # unsupported is a result, never a wrong answer
+        unsup = {(r.get("pattern_id"), r.get("form", DEFAULT_FORM))
+                 for _n, r in rows if r["kind"] == "compile"
+                 and r.get("compile_outcome") == "unsupported-by-declaration"}
+        for n, row in rows:
+            if (row["kind"] == "match" and row.get("regime") == "substitution"
+                    and (row.get("pattern_id"), row.get("form", DEFAULT_FORM)) in unsup):
+                add(Problem(path, n, "pattern_id",
+                            f"{row.get('pattern_id')!r} has a compile row "
+                            f"`unsupported-by-declaration` in this record, so "
+                            f"it carries no substitution match rows: "
+                            f"unsupported is a result, not a wrong answer "
+                            f"(X44)", "X44"))
+
+        # X45 a `process` testee has no compile rows by default (X41), so an
+        # UNSUPPORTED pattern -- which has no match rows either -- must still
+        # be witnessed: a measured substitution record leaves no pattern
+        # silent (no match row and no unsupported-by-declaration row)
+        if is_process and subst_rec and setup.get("status") == "measured":
+            have = {r.get("pattern_id") for _n, r in rows if r["kind"] == "match"}
+            have |= {pid for pid, _f in unsup}
+            silent = sorted(x.get("pattern_id") for x in setup.get("patterns", [])
+                            if x.get("pattern_id") not in have)
+            if silent:
+                add(Problem(path, 1, "patterns",
+                            f"{silent} have neither match rows nor a compile "
+                            f"row `unsupported-by-declaration`: on a `process` "
+                            f"testee compile rows are optional EXCEPT the one "
+                            f"that records an unsupported case (X45)", "X45"))
+
+        # X43 the trials of one cell agree on the cell's identity and output
+        for key, items in cells.items():
+            first_n, _, first = items[0]
+            for n, _row, sub in items[1:]:
+                for fld in ("case", "gate", "nsubst", "out_bytes", "out_sha256"):
+                    if sub.get(fld) != first.get(fld):
+                        add(Problem(path, n, f"subst.{fld}",
+                                    f"is {sub.get(fld)!r} but trial 1's row "
+                                    f"(line {first_n}) has {first.get(fld)!r}: "
+                                    f"every trial of a cell reports the one "
+                                    f"validated output (X43)", "X43"))
 
     @staticmethod
     def _check_trials(add, path, trials, what):
