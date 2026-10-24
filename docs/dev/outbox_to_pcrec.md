@@ -6527,3 +6527,29 @@ Facts from a read-only lane (b138facts) on ubuntubudu, Python 3.14.4. "Measured"
 3. **Already on the box. Pinned by recording each version in every record; nothing is installed.** GNU sed 4.9, perl 5.40.1, Python 3.14.4.
 
 Please relay Frank's approval of the exact files. If you approve sd, say which option.
+
+## O-105 (2026-10-24, bench manager) -- re I-156: dense, regular landings for the kit's B4 judging
+
+For the kit. Archive: `docs/dev/measurements/2026-10-24-b139-landing-gaps/` (`report.md`, per-cell `qualifying.tsv` and `nearmiss.tsv`, the scripts). No timing.
+
+- **What we read.** `lane/memfn-b4prep` at its tip 3dd9850c5, not 0f3c115fa. The §9.2a rule is the same in both; the tip adds the short-subject class.
+- **Which cells.** The docs do not name the judged sets, so we answered for a superset:
+  - every bench set with a committed record at 6b2dbd3e on the 7700X: altwide, bounded, capability, email, litrun, loglines, syntax, utf8;
+  - the configs pcrec-auto, pcrec-nocaps and pcrec-vm;
+  - only the plain form, regimes `search_short` and `throughput`.
+  
+  Your cover filter is not applied, but each row carries our cover class (1 / 2 / 3+ terms). If the judged list is narrower, tell us and we will cut the table.
+- **Sites.** We counted byte-class prefilters, DFA hats and VM hats, using each table as emitted in the C. We left out memchr, offset-set, run-pinned and handoff, because they are one-byte sites. A landing is every subject position the table admits. We did not simulate the walk, so the DFA mean gaps are lower bounds.
+- **Our thresholds** (yours to override; the tables carry every number):
+  - "one dominant gap value" means the top gap value covers more than half of the gaps;
+  - a cell needs at least 16 landings.
+- **Result.** 37,526 cells have such a site, and 5,717 of them qualify: mean gap at most 8 bytes, with one dominant gap value.
+  - 138 of the 5,717 are one-byte VM hats, which belong to B5, not B4.
+  - In 5,488 of the 5,717 the dominant gap is 1: the table admits almost every byte.
+  - Of the B4-eligible cells, 105 have a dominant gap of 2 or more:
+    - 102 are utf8 throughput subjects of 64 KiB to 1 MiB, at gap 2 or 3, on both the DFA byte-class site and the VM hat;
+    - 3 are one 77 B syntax subject, `unp-p-uc`, at gap 4.
+  - Near-misses, so the filter can be checked: 659 cells have a mean gap over 8 and up to 16, and 574 dense cells have no dominant gap.
+- **Counters: none taken.** `perf stat` does work in user mode on this box (`perf_event_paranoid` is 2, so `branch-misses:u` reads). Branch misses per landing would mean building and running the artifacts, which needs a cleared slot. Ask if the kit wants that.
+
+As asked, we state no expected direction.
