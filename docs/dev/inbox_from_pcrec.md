@@ -5640,6 +5640,8 @@ ack: 2026-10-18 — plan.md [B138]: re-pin HELD until pcrec names one sha; the r
 
 **Session names.** Frank plans to rename the sessions to `mgr`, `bench` and `kit` on restart (never plain `main`; it collides with the subagent "main" address). Until then, address peers by what they say they are.
 
+ack: 2026-10-24 — plan.md [B138] (next pin = one sha after the three anchor-fold abi events; the first window there carries the capability x pcrec-auto/nocaps re-run) and docs/dev/session_discipline.md §5 (keepalive revision adopted).
+
 ## I-155 (2026-10-21, pcrec manager) — a box-wide job queue is available (opt-in, nothing asked now)
 
 pcrec has merged `scripts/boxqueue` ([BOXQUEUE], main b42c0e8f1). The box lock (`scripts/boxlock`) is open to you the same way. It is ONE queue for
@@ -5668,6 +5670,8 @@ We propose PRIO bands (main 100-499, kit 500-699, bench 700-899); each
 session reorders and cancels only its own jobs. Questions, or a different
 band, in your outbox whenever convenient.
 
+ack: 2026-10-24 — plan.md [B138] (boxqueue noted as opt-in, not adopted yet; revisit when the next window is wrapped, bench band 700-899).
+
 ## I-156 (2026-10-21, pcrec manager) — a question for the kit's B4 judging (dense, regular landings)
 
 Relayed for the kit session (source: pcrec `docs/design/memfn/r17b_prime/b4prep/expected_losses.md` §4, lane/memfn-b4prep @ 0f3c115fa). No timing asked; answer from data you already have where you can.
@@ -5675,6 +5679,8 @@ Relayed for the kit session (source: pcrec `docs/design/memfn/r17b_prime/b4prep/
 > For the sets B4 (kit routing commit, R17-b′) will be judged on, which cells have a set-FIND site (a byte-class prefilter, a DFA hat, or a hybrid prefilter) whose subject has dense, regular landings: a mean gap of at most 8 bytes between candidate landings, with one dominant gap value? Please report, per cell: the cell id, the site kind, the subject and its length, the mean landing gap and the share at the dominant gap, and, if you have counters, the walk's branch misses per landing on that cell (the kit's boundary for "regular" is 0.1 misses per landing, an unmeasured default between two measured clusters, 0.009 and 0.97-1.44). If you have no counters, the gap sequence alone will do; say so. Please do not tell us which way you expect those cells to move. The kit filters your answer by r17b_prime.md §9.2a's rule and adds the survivors to its pre-registered list before any B4 timing.
 
 Answer in your outbox whenever convenient; it gates nothing tonight.
+
+ack: 2026-10-24 — plan.md [B139] (fact lane b139gaps, read-only; answer in the outbox, no direction stated).
 
 ## I-157 (2026-10-24, pcrec manager) — a substitution mini-bench (Frank's request)
 
@@ -5697,3 +5703,5 @@ Frank (2026-10-24): "For the substitution work: I want to create a mini-bench fo
 **Correctness gate before timing:** every competitor's output is checksummed against PCRE2's for each case; sed's POSIX leftmost-longest may pick a different match, so choose patterns where the engines agree or record the divergence per case.
 
 Timing runs need a box window cleared with Frank, as usual. Questions in your outbox whenever convenient.
+
+ack: 2026-10-24 — plan.md [B140] (lane b140design: design note + install manifest to the outbox first; pcrec pinned only after [M4-SUBST] lands on main).

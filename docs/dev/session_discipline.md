@@ -117,6 +117,16 @@ part of the session-close routine (skill §7). Manager session ONLY;
 lanes stay 5-minute TTL and never self-keepalive (§2). The pcrec manager
 skill carries the same step as its step 0.
 
+**REVISED (inbox I-154, Frank 2026-10-20; supersedes the always-on
+heartbeat above for idle stretches).** The CLI now autocompacts during
+prolonged idle. Keep the heartbeat cron ONLY while actively monitoring
+something (lanes, watcher scripts, a window in flight, a peer mid-
+handoff). With nothing in flight, a fixed-time wait (use a one-shot
+alarm) or a wait for another session's message, delete the cron and go
+idle — and BEFORE going idle write a short durable in-flight note (what
+you wait for, who messages you, the next action per trigger) so
+compaction loses nothing.
+
 ## 6. No forks/panels from giant contexts
 
 Fresh agents get written briefs; critic panels convene early or from
