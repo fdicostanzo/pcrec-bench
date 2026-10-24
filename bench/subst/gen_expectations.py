@@ -49,7 +49,8 @@ from pcrecbench import oracle_pcre2 as oracle  # noqa: E402
 from pcrecbench import subst_template as st  # noqa: E402
 
 OUT = os.path.join(HERE, "expectations.tsv")
-SUBJ_DIR = os.path.join(HERE, "subjects")
+SUBJ_DIR = os.environ.get("PCRECBENCH_SUBST_SUBJECTS",
+                          os.path.join(HERE, "subjects"))
 HEADER = ("case", "subject", "nsubst", "out_bytes", "out_sha256",
           "independent_nsubst", "independent_basis", "control")
 SMALL, MAIN = "acc-small", "acc-main"

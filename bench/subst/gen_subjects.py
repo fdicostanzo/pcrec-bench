@@ -28,6 +28,10 @@ counts of what the generator planted, per subject).
                                       storing), prove acc-small is its
                                       prefix, and calibrate the mid window
 
+Large subjects belong under /var/tmp/pcrecbench/<lane>/ (BOILERPLATE): set
+`PCRECBENCH_SUBST_SUBJECTS` (or pass `--out`) to move `subjects/` there;
+`gen_expectations.py` honours the same variable.
+
 `periodic` is `no` for both: the smallest-period test (pcrecbench/periodic.py)
 runs on the first 256 KiB, which refutes periodicity of the whole file (a
 subject periodic with p <= 4096 is periodic in every prefix longer than p).
@@ -49,7 +53,8 @@ import logsim  # noqa: E402
 from pcrecbench import periodic  # noqa: E402
 
 SUBJECTS = (("acc-small", 17_500), ("acc-main", 1_600_000))
-OUT_DEFAULT = os.path.join(HERE, "subjects")
+OUT_DEFAULT = os.environ.get("PCRECBENCH_SUBST_SUBJECTS",
+                             os.path.join(HERE, "subjects"))
 MANIFEST = os.path.join(HERE, "manifest.tsv")
 PLANTED = os.path.join(HERE, "planted.tsv")
 REF_DEFAULT = os.path.join(ROOT, "build", "subst-ref", "apache_logs")

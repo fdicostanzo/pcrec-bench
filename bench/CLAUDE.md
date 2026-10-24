@@ -23,6 +23,18 @@ are translated.
 | `litrun/` | THE LITERAL-RUN ACCEPTANCE SET ([B108], inbox I-113, 2026-09-27): built directly from pcrec's own `docs/dev/lanes/s2a_report.md` (S7.1/S7.2 at pin a32bc86e, [OPT-LITSCAN] S2a -- the VM's literal run of L >= 2 bytes as one bounds check plus one memcmp) and `docs/dev/memcmp_lowering_study.md` (the gcc-16 `memcmp()`-out-of-line cliff at exactly L=31). NOT BLINDED, unlike every set above -- it transcribes the lane report's own cells rather than a blind reading of `docs/spec/`. THE 2x2 SET: `alt-foo-tails` (`foo.x\|foobar\|foo.`), `wild-secrets-aws-access-key-id` and `wild-secrets-github-pat` (both copied VERBATIM from `bench/capability`, `provenance.tsv`), `ctrl-abc-dollar` (`abc$`, pcre2's own testdata pattern) -- crossed, by the window, against `{default, -fno-altcls-factor} x {default, -fno-lit-run}`. THE L-SWEEP: nine exact literals `lit-l2`..`lit-l40` (L = 2, 3, 4, 7, 8, 10, 16, 31, 40, drawn from a 52-distinct-byte alphabet), each with THREE ~64 KiB throughput subjects DENSE IN CANDIDATE STARTS by tiling a per-length unit (`mat`/`fbf`/`lbf`: full match / first-byte mismatch / last-byte mismatch on every aligned window, proved mechanically at generation time) plus one short `bnd-l<L>` boundary subject (length L-1, never tiled) -- plus the floor. 27 short + 27 throughput subjects, 1,134 expectations. `short_search_max_bytes = 200` |
 | `sentinel/` | THE INSTRUMENT SENTINEL ([B133], BD16, pcrecdev1's O-95 (2); `sentinel@0.1`): 14 short-call patterns + capability's floor (the eleven [B132] MOVERS and three flat CONTROLS), the 75 short subjects of `capability@0.2` — every byte COPIED from `bench/capability` (`gen_patterns.py --check`, `gen_subjects.py --check`), regime `search_short` only, 1,125 expectations. NOT a survey and not ranked: `scripts/run_suite.sh` runs it FIRST in every suite for pcrec-auto, pcrec-nocaps and pcre2-jit, and NOTES.md says how a window report reads it (sentinel shift + flat pcre2-jit = the bench's instrument moved) |
 
+`subst/` ([B140], lane b140set, 2026-10-24) is likewise NOT in the table and
+not enumerated by the generic gates (its sidecar is `subst.toml`, not
+`subbench.toml`, until schema v1.9 + the driver `--mode subst` + the TOOLS
+runner land): THE SUBSTITUTION SET -- eleven (pattern, template) cases
+(literal, rare, dense, reorder, mask-ipv4, mask-email, upper, and the
+backreference-in-a-negative-lookahead `url-tld-fix` one-pass case with its
+split pair 7a/7b/7c) over one generated, CALIBRATED Apache access log
+(`acc-main` 1.6 M lines ~ 350 MB, `acc-small` its 17,500-line byte prefix),
+gated by the output sha256 against the libpcre2 oracle's `substitute()`.
+Its own gate is `tools/check_subst.py` (in `check-harness`). See
+`bench/subst/CLAUDE.md` and `bench/subst/NOTES.md`.
+
 `capability/` ([B42], staged 2026-09-16) is NOT in the table above and is
 not enumerated by `make check-harness`'s generic `bench/*/` gates: it is
 curation staging (L1's wild-member imports, L2's designed members) for

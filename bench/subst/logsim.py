@@ -40,9 +40,8 @@ SEED = "b140-subst-0.1"
 # docs/dev/measurements/2026-10-24-b140-subject-calibration/ is its audit)
 
 EPOCH_LINES = 25_000          # the site/returning-client model turns over
-DT_SAME = (0, 0, 1, 1, 1, 2, 3)   # gap (s) when the line continues the previous line's session
+DT_SAME = (0, 0, 0, 0, 0, 0, 0, 1)   # gap (s) when the line continues the previous line's session (a page and its assets load within a second)
 DT_NEW_MAX = 113              # gap uniform in [5, DT_NEW_MAX] s when it does not (overall mean ~26 s)
-MAX_ACTIVE = 5                # interleaved sessions at once
 START_EPOCH_DAY = 16801       # 2016-01-01 as days since 1970-01-01
 
 # session-kind weights (per mille)
@@ -58,22 +57,28 @@ URL7_MIX = (("correct", 400), ("wrong", 250), ("missing_noq", 150),
 #: THE CALIBRATION KNOBS (everything `calibrate.py` was tuned with). Plain
 #: numbers read at stream time; per mille unless the name says otherwise.
 K = {
-    "P_STICK": 450,           # next line continues the same session
-    "P_NEW_SESSION": 250,     # (of the rest) start a session
-    "W_BROWSE": 246, "W_CRAWL": 27, "W_FEED": 263, "W_SINGLE": 380,
-    "W_PAIR": 143, "W_HEAVY": 14,
-    "P_BROWSE_TAIL": 150,     # a browse page view from the wide tail
-    "RET_SHARE": 150,         # browse sessions by a returning client
-    "REF_DASH": 42,           # percent: main-doc Referer is "-"
-    "REF_SEARCH": 20,         # percent: a long search-engine Referer
-    "M_304": 18, "M_206": 370,    # main doc: 304 revalidation / 206 ranged download (per mille)
-    "A_304_SITE": 7, "A_304_DOC": 4, "A_304_HEAVY": 22, "FEED_304": 30,
-    "S_404": 4,               # percent of drive-by extra paths that 404
-    "UA_Q": 10, "UA_DEN": 10, "DOCS_Q": 120, "HOT_DOCS": 110, "N_AGENTS": 1000,
-    "CRAWL_LONG": 30, "DOC_MOVED": 20, "DOC_MISSING": 15,
-    "SLUG_WORDS": 150, "SLUG_MAXN": 3,
-    "P1_0": 7,                # percent of browse sessions on HTTP/1.0
-    "TS_NEW_MAX": 113,
+    "MAX_ACTIVE": 5,          # interleaved sessions at once
+    "P_STICK": 534,           # next line continues the same session
+    "P_NEW_SESSION": 260,     # (of the rest) start a session
+    "W_BROWSE": 313, "W_CRAWL": 42, "W_FEED": 249, "W_SINGLE": 560,
+    "W_PAIR": 121, "W_HEAVY": 11,
+    "P_BROWSE_TAIL": 110,     # a browse page view from the wide tail
+    "RET_SHARE": 116,         # browse sessions by a returning client
+    "REF_DASH": 57,           # percent: main-doc Referer is "-"
+    "REF_SEARCH": 15,         # percent: a long search-engine Referer
+    "M_304": 16, "M_206": 370,    # main doc: 304 revalidation / 206 ranged download (per mille)
+    "A_304_SITE": 5, "A_304_DOC": 1, "A_304_HEAVY": 19, "FEED_304": 16,
+    "S_404": 1,               # percent of drive-by extra paths that 404
+    "UA_Q": 20, "UA_DEN": 10, "DOCS_Q": 120, "HOT_DOCS": 110, "N_AGENTS": 1516,
+    "CRAWL_LONG": 20, "DOC_MOVED": 42, "DOC_MISSING": 22,
+    "SLUG_WORDS": 128, "SLUG_MAXN": 2,
+    "P1_0": 1, "TALK_IMG_MAX": 5, "SEARCH_PAD": 0,
+    "HOST_ALT": 6,           # percent of sessions using the bare-host site URL
+    "EXT_URL": 49,            # percent of external referrers that are a distinct page URL
+    "P_TRACK": 15,            # per mille of main docs carrying a long tracking query
+    "P_UTM_FEED": 21,         # per mille of main .html docs reached from a feed campaign
+                # percent of browse sessions on HTTP/1.0
+    "TS_NEW_MAX": 60,
 }
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -348,7 +353,7 @@ class World:
             slug = _slug(r, 2, "-") + "-" + str(r.between(2009, 2015))
             base = "/presentations/%s/" % slug
             assets = tuple("%simages/%s.%s" % (base, _slug(r, 2, "-"), r.pick(EXTS_IMG))
-                           for _ in range(r.between(1, 5)))
+                           for _ in range(r.between(1, K["TALK_IMG_MAX"])))
             assets += tuple("%splugin/%s/%s.js" % (base, r.pick(TECH), r.pick(TECH))
                             for _ in range(r.between(0, 2)))
             return (base, assets, k)
@@ -403,7 +408,7 @@ def _b64(r, n):
 def ext_ref(r):
     """An external referrer: a search-engine home page (a handful of
     variants) or a page on some other site (many distinct URLs)."""
-    if r.below(100) < 50:
+    if r.below(100) >= K["EXT_URL"]:
         return r.pick(EXTERNAL_REFS)
     return "http://%s.example.%s/%s/%d" % (
         r.pick(("forum", "news", "wiki", "blog", "links", "planet", "reddit")),
@@ -426,23 +431,28 @@ def doc_status(dstate, dk, rng):
 
 
 def host_url(r):
-    return SITE_HOSTS[0] if r.below(100) < 65 else SITE_HOSTS[1]
+    return SITE_HOSTS[0] if r.below(100) >= K["HOST_ALT"] else SITE_HOSTS[1]
+
+
+SEARCH_PADS = ("", "&biw=1280&bih=720&sa=X",
+               "&biw=1280&bih=720&sa=X&sqi=2&tbm=isch&source=lnms&dpr=1")
 
 
 def search_ref(r):
-    """A long search-engine results referrer (the real log's ~4 % of lines
+    """A long search-engine results referrer (the real log's ~3 % of lines
     with a 200-300 byte Referer)."""
+    pad = SEARCH_PADS[K["SEARCH_PAD"]]
     if r.below(2):
         return ("https://www.google.com/imgres?imgurl=http%%3A%%2F%%2Fwww.example.net%%2Fimages%%2F%s.png"
                 "&imgrefurl=http%%3A%%2F%%2Fwww.example.net%%2Fblog%%2F%s.html&tbnid=%s&docid=%s"
                 "&w=%d&h=%d&ei=%s&zoom=1&iact=rc&dur=%d&page=1&start=0&ndsp=%d&ved=0C%s"
                 % (_slug(r, 2, "-"), _slug(r, 2, "-"), _b64(r, 14), _b64(r, 14),
                    r.between(200, 1200), r.between(150, 900), _b64(r, 22),
-                   r.between(100, 2000), r.between(20, 60), _b64(r, 9)))
+                   r.between(100, 2000), r.between(20, 60), _b64(r, 9))) + pad
     return ("http://www.google.com/url?sa=t&rct=j&q=%s&esrc=s&source=web&cd=%d&ved=0C%s"
             "&url=http%%3A%%2F%%2Fwww.example.net%%2F%s%%2F&ei=%s&usg=AFQjC%s"
             % ("+".join(r.pick(TECH) for _ in range(r.between(1, 4))), r.between(1, 9),
-               _b64(r, 8), _slug(r, 2, "-"), _b64(r, 20), _b64(r, 32)))
+               _b64(r, 8), _slug(r, 2, "-"), _b64(r, 20), _b64(r, 32))) + pad
 
 
 # ---------------------------------------------------------- planted strings
@@ -597,7 +607,7 @@ def stream(n_lines, planted=None):
                 ip = random_ip(rng)
                 ua = agents[zipf_ua.draw(rng)]
             proto = "HTTP/1.1" if rng.below(100) >= K["P1_0"] else "HTTP/1.0"
-            host = SITE_HOSTS[0] if rng.below(100) < 65 else SITE_HOSTS[1]
+            host = SITE_HOSTS[0] if rng.below(100) >= K["HOST_ALT"] else SITE_HOSTS[1]
             first = True
             ref_prev = None
             for _v in range(1 + (rng.below(100) < 30) + (rng.below(100) < 10)
@@ -614,9 +624,9 @@ def stream(n_lines, planted=None):
                     x = rng.below(100)
                     ref = "-" if x < K["REF_DASH"] else (search_ref(rng) if x < K["REF_DASH"] + K["REF_SEARCH"] else ext_ref(rng))
                 st = doc_status(dstate, dk, rng)
-                if rng.below(1000) < 25 and main.endswith(".html"):
+                if rng.below(1000) < K["P_UTM_FEED"] and main.endswith(".html"):
                     main = main + "?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+" + rng.pick(UTM_CAMPAIGNS)
-                if rng.below(1000) < 14 and "?" not in main:
+                if rng.below(1000) < K["P_TRACK"] and "?" not in main:
                     main = main + "?utm_source=" + rng.pick(("newsletter", "twitter", "feedburner")) + "&utm_medium=" + rng.pick(("email", "social", "feed")) + "&utm_campaign=" + _slug(rng, 3, "_") + "&gclid=" + _b64(rng, rng.between(40, 90))
                 q.append(("GET", main, st, None, ref))
                 page_url = host + main
@@ -730,7 +740,7 @@ def stream(n_lines, planted=None):
             continue
         if same:
             s = cur
-        elif not active or (len(active) < MAX_ACTIVE
+        elif not active or (len(active) < K["MAX_ACTIVE"]
                             and rng.below(1000) < K["P_NEW_SESSION"]):
             s = new_session(world)
             active.append(s)

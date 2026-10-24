@@ -681,3 +681,25 @@ if __name__ == "__main__":
     assert next_start(b"\xe6\x97\xa5x", 0, True) == 3
     assert next_start(b"\x80\x80", 5, True) == 6
     print("option word + UTF-8 find-all advance: OK")
+
+    # [B140] substitute(): GLOBAL replaces every match, EXTENDED is what makes
+    # `\U..\E` and the `${n:+yes:no}` conditional mean anything (without it
+    # they are literal text), UNSET_EMPTY turns the -55 "requested value is
+    # not set" error into an empty expansion, and an error is RAISED -- each
+    # flag exercised on a case whose answer differs with and without it, so a
+    # wrong bit value cannot pass.
+    _c = compile(r"(a)(b)?")
+    assert _c.substitute(b"ab a", b"<$1>")[0] == 2
+    assert bytes(_c.substitute(b"ab a", b"<$1>")[1]) == b"<a> <a>"
+    assert bytes(_c.substitute(b"ab", b"\\U$1\\E")[1]) == b"\\Ua\\E"
+    assert bytes(_c.substitute(b"ab", b"\\U$1\\E", extended=True)[1]) == b"A"
+    assert bytes(_c.substitute(b"ab a", b"${2:+Y:N}", extended=True)[1]) == b"Y N"
+    try:
+        _c.substitute(b"a", b"$2")
+        raise AssertionError("an unset group did not raise")
+    except Pcre2Error as e:
+        assert "-55" in str(e), e
+    assert bytes(_c.substitute(b"a", b"[$2]", unset_empty=True)[1]) == b"[]"
+    assert bytes(compile(r"x").substitute(b"abc", b"y")[1]) == b"abc"
+    assert substitute_summary(_c, b"ab", b"$1$1")["out_bytes"] == 2
+    print("substitute (global / extended / unset-empty / raise): OK")
