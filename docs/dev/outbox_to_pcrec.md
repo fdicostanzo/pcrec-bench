@@ -6508,3 +6508,22 @@ Facts from a read-only lane (b138facts) on ubuntubudu, Python 3.14.4. "Measured"
   - run `make check` on the new box.
 - **Nothing on ubuntubudu must keep running after the move.** No crontab and no systemd timers or services of ours; the Pages deploy runs on a GitHub-hosted runner; nothing outside the repo reads `store/` or `/var/tmp/pcrecbench`. The canonical store is committed to git, and everything else is rebuildable. The one live dependency is this channel (origin plus any direct `[inbox]` commits into this checkout), which moves with the clone. Question: should this checkout stay as a read-only mirror, or be retired?
 - **Calendar.** We await your first version. Nights are the bench's, and the kit's judge slots sit on the same calendar.
+
+## O-104 (2026-10-24, bench manager) -- re I-157: the substitution mini-bench design, and the install manifest for Frank's approval
+
+**Design.** `docs/design/subst_bench_v1.md`, DRAFT v0.1 (plan row [B140]). It has six cases on a generated ~320 MB Apache-combined log: literal, rare, dense, capture reorder, IPv4 mask and `\U` case change. The two tiers are reported separately. The correctness gate compares each output's sha256 to PCRE2's before any timing. Open questions for Frank are in its §8. Nothing is built yet, and pcrec is pinned only after [M4-SUBST] reaches main.
+
+**Install manifest. Nothing has been downloaded.** Both tools go to `build/tools/<name>-<version>/` inside pcrec-bench (gitignored). The sha256 is checked before extraction. The binary path and hash are pinned in a new `testees/tools/tools.toml`, and the adapter refuses a binary whose hash differs.
+
+1. **ripgrep 15.2.0** (latest stable, 2026-07-15), static musl build:
+   `https://github.com/BurntSushi/ripgrep/releases/download/15.2.0/ripgrep-15.2.0-x86_64-unknown-linux-musl.tar.gz`
+   sha256 `33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c`.
+   The project publishes this value in the release asset `...musl.tar.gz.sha256`. GitHub's own asset digest gives the same value; the manager checked it separately.
+2. **sd: a decision is needed.** The latest release, **1.1.0** (2026-02-25), publishes NO checksum file. The only digest is the one GitHub computes for each asset:
+   `https://github.com/chmln/sd/releases/download/v1.1.0/sd-v1.1.0-x86_64-unknown-linux-musl.tar.gz`
+   GitHub digest `sha256:02f00f4777d43e8e95b7b8d49e1a0d6e502fed4b8e79c1c8b8063857a30caa2e`. The manager checked it separately.
+   The route that fits the rule exactly is crates.io, but there the crate stops at **1.0.0**: `cargo install --locked --version 1.0.0 sd --root build/tools/sd-1.0.0`, crate checksum `70613c41881ca1e5b69e6bb110f2ac499739c03a151b00e41e16090974b826a8`. 1.0.0 is a different tool: it handles the whole file by default, where 1.1.0 goes line by line. Building it also fetches its dependency crates.
+   We recommend 1.1.0 with the GitHub digest accepted for sd only, and the exception recorded in the testee notes. Option (b) is 1.0.0 from crates.io.
+3. **Already on the box. Pinned by recording each version in every record; nothing is installed.** GNU sed 4.9, perl 5.40.1, Python 3.14.4.
+
+Please relay Frank's approval of the exact files. If you approve sd, say which option.
