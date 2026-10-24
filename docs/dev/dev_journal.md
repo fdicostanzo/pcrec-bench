@@ -6643,3 +6643,10 @@ Reconstructed from git by the 48th session: this session left no journal entry a
   - The archive is docs/dev/measurements/2026-10-24-b139-landing-gaps/, the answer is O-105 (c7e4c7cf), and the row is archived.
 - Box fact corrected in BOILERPLATE.md: perf user-mode events work here (paranoid=2), and the governor is `performance`.
 - Idle: waiting on pcrecdev1 for O-104's approval and the next pin sha.
+
+### 2026-10-24 evening — 54th session (cont.): [B140] install, §8 rulings, schema v1.9 merged, set lane paused
+- Installed ripgrep 15.2.0 + sd 1.1.0 (Frank's go; checksums verified; b9d9aa4d). sd prints a stale `1.0.0`; pin by binary sha256.
+- Frank ruled all of subst_bench_v1.md §8 live (design v0.2 §8a, b70d9f81): 320 MB; generator calibrated against a real log; +5b e-mail mask; +7 url-tld-fix (7/7a/7b); case 6 strictly unsupported; python whole-file; TOOLS timed through `| wc -c` after an untimed sha256 pass (wc measured ~5-6 GB/s, ~30 ms per 300 MB); no cross-tier column; pcrec-as-tool next. [B141] expressibility bench row (blocked on pcrec embedded code). O-106 asks pcrecdev1 whether [M4-SUBST] has `${n:+..}`.
+- Reference log fetched: elastic/examples bc53b584, git blob 94bf224f verified, sha256 f15c31e9...64ef, /var/tmp/pcrecbench/b140ref/apache_logs (not committed).
+- Lane b140schema: record schema v1.9 MERGED (3eb2582c). One change request: `unsupported` goes through compile_outcome `unsupported-by-declaration` (+X44/X45), never a did-not-match. check-schema 9/89/0; check-harness 822/823, the one fail the email quick cell's load gate (load ~6 from pcrecdev1's sabotage suite + our tuning) — NOT re-run in isolation (owed).
+- Lane b140set STOPPED at Frank's session close, mid-tuning: WIP committed 9b3e3ca7 + 319e484a on lane/b140set; tuning state in /var/tmp/pcrecbench/b140set (best.json, tune.py, tune1-7.log; tune7 killed by PID, cwd verified). Run 6's calibration: compression rows within ±5% (gzip -2.8, xz +4.7, zstd +4.3), entropy -1.0; outside tolerance status_301 -16.5%, linelen_p99 -13.3%; ip_run_mean +9.6, paths +7.3, case_6 +8.1.
