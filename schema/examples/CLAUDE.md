@@ -144,4 +144,13 @@ fail with rule X6 — which is exactly what it is for. The 1.4 example is
 NOT hand-edited: change `gen_example_14.py`, re-run it, and re-derive
 every `bad/` sabotage built from its output.
 
+- `subst-example@0.1__example-subst_1.0.0_global-caps-nosimd__example-box__20261024T120000Z.jsonl`
+  and `subst-example@0.1__gnu-sed_4.9_ere-caps-simdna__example-box__20261024T120000Z.jsonl`
+  -- the schema **v1.9** records ([B140]): the substitution regime at the
+  LIBRARY tier (an `agrees` case and an `unsupported` one with its reason
+  token) and at the PROCESS/TOOLS tier (a timed launch carrying `process`,
+  `| wc -c` count == `subst.out_bytes`, no compile rows). Built from the
+  v1.8 boolgrain example by a throwaway generator (not committed); the X36-X43
+  sabotages in `bad/` are one-field mutations of these two.
+
 Maintenance: update this file when files are added/removed or change role.

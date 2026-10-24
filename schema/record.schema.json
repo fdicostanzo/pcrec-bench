@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
   "title": "pcrec-bench record line",
-  "x-record-schema-version": "1.8",
-  "$comment": "History: 1.0 draft 1; 1.1 the post-merge panel (evidence fields, seq, calibration, both samples); 1.2 the record TIERS; 1.3 the FLOOR pattern role; 1.4 ([B20], 2026-08-30, docs/design/gate_shape_v14.md) the gate's shape after BD7 -- `inconclusive-spread`, the tri-state `occupancy_sample.target_busy_pct`, the `trial_agreement` setup block (X31-X33), the per-group occupancy `timeline` (provenance), and KB-4's relaxation (`cost` may sit beside a non-compiled outcome). X13 is VERSIONED at 1.4 under record_schema.md 4's rule-revision clause. 1.5 ([B30], 2026-09-02, KB-7, Frank's ruling) raises `$defs.free_text.maxLength` from 8192 to 1048576 (1 MiB) -- a hygiene bound against a stray blob, not a content limit; no rule changes meaning by version (record_schema.md 4.1). 1.6 (lane b44boolgrain, 2026-09-17, Frank's Q3 boolean-grain ruling, docs/design/capability_set_v1.md 5.6 option B) adds optional `testee.grain` (`full`/`boolean`, absent = `full`) and rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`). 1.7 ([B88], 2026-09-25, BD13, Frank's ruling; lane b90repin) adds the `engine_metadata` declaration TYPE `sha256` (a value is 64 lowercase hex digits, checked under X15) -- the type of pcrec's `program_sha256`, the normalized program-identity hash the null-control band reads (tools/program_identity.py v2); an ENUM growth, MINOR by record_schema.md 4. 1.8 ([B137], 2026-10-12, O-90 / pcrec I-138+I-139, multi-host) adds optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, from /proc/cpuinfo flags; rule X35: present only on a record stamped >= 1.8, sorted) -- an optional-field ADDITION, MINOR by record_schema.md 4.",
+  "x-record-schema-version": "1.9",
+  "$comment": "History: 1.0 draft 1; 1.1 the post-merge panel (evidence fields, seq, calibration, both samples); 1.2 the record TIERS; 1.3 the FLOOR pattern role; 1.4 ([B20], 2026-08-30, docs/design/gate_shape_v14.md) the gate's shape after BD7 -- `inconclusive-spread`, the tri-state `occupancy_sample.target_busy_pct`, the `trial_agreement` setup block (X31-X33), the per-group occupancy `timeline` (provenance), and KB-4's relaxation (`cost` may sit beside a non-compiled outcome). X13 is VERSIONED at 1.4 under record_schema.md 4's rule-revision clause. 1.5 ([B30], 2026-09-02, KB-7, Frank's ruling) raises `$defs.free_text.maxLength` from 8192 to 1048576 (1 MiB) -- a hygiene bound against a stray blob, not a content limit; no rule changes meaning by version (record_schema.md 4.1). 1.6 (lane b44boolgrain, 2026-09-17, Frank's Q3 boolean-grain ruling, docs/design/capability_set_v1.md 5.6 option B) adds optional `testee.grain` (`full`/`boolean`, absent = `full`) and rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`). 1.7 ([B88], 2026-09-25, BD13, Frank's ruling; lane b90repin) adds the `engine_metadata` declaration TYPE `sha256` (a value is 64 lowercase hex digits, checked under X15) -- the type of pcrec's `program_sha256`, the normalized program-identity hash the null-control band reads (tools/program_identity.py v2); an ENUM growth, MINOR by record_schema.md 4. 1.8 ([B137], 2026-10-12, O-90 / pcrec I-138+I-139, multi-host) adds optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, from /proc/cpuinfo flags; rule X35: present only on a record stamped >= 1.8, sorted) -- an optional-field ADDITION, MINOR by record_schema.md 4. 1.9 ([B140], 2026-10-24, docs/design/subst_bench_v1.md 5 + 8a item 7) adds the `substitution` regime, optional `testee.invocation` (`library`/`process`), `match_row.subst` (the transform's answer: case id, substitution count, output size and sha256, gate), `match_row.unsupported_reason`, and `match_row.process` (the TOOLS tier's provenance, incl. the `wc -c` sink's counted bytes and cores); rules X36-X43; compile rows become optional for a `process` testee (X11/X14 relaxed). Additive: every 1.8 record stays valid.",
   "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
   "oneOf": [
     { "$ref": "#/$defs/setup" },
@@ -111,11 +111,19 @@
       "description": "v1.6 (docs/design/capability_set_v1.md 5.6 option B, Frank's Q3 ruling 2026-09-16, lane b44boolgrain). `full`: the testee's match rows are judged and reported at the schema's original grain -- a matching row's span (and, where declared, its captures) is compared against the expectation's own. `boolean`: the testee is STRUCTURALLY incapable of reporting a span (Vectorscan's `nosom` config is the first example) -- its match rows are judged on `matched` alone, `wrong-span-or-captures` never fires from a span mismatch, and no match row ever carries a non-null `observed.span` (rule X34). ABSENT means `full`, so every testee that declares nothing is unchanged.",
       "enum": ["full", "boolean"]
     },
+    "invocation": {
+      "description": "v1.9 ([B140], subst_bench_v1.md 5 S2): the TIER. `library`: in-process, the engine's API called in the driver's timed loop (every testee before v1.9). `process`: the testee is a command-line TOOL (sed, perl, python, sd, ripgrep ...) launched fresh per trial; its wall time includes process start, file read and the transform, and its output goes through `wc -c` (subst_bench_v1.md 8a item 7). ABSENT means `library`. Never mixed in one ordering by the reporter.",
+      "enum": ["library", "process"]
+    },
+    "subst_gate": {
+      "description": "v1.9: the correctness gate's verdict on a substitution cell (subst_bench_v1.md 4). `agrees`: the output's sha256 equals the oracle's. `wrong`: it does not and the divergence is not declared. `divergent-declared`: it does not, and the (case, testee) divergence is declared in the sub-bench. `unsupported`: the tool/engine has no way to express the case (named by `unsupported_reason`).",
+      "enum": ["agrees", "wrong", "divergent-declared", "unsupported"]
+    },
     "on_off": { "enum": ["on", "off"] },
     "on_off_na": { "enum": ["on", "off", "n-a"] },
     "regime": {
-      "description": "requirements.md 3, the three subject regimes.",
-      "enum": ["large-subject-throughput", "short-subject-search", "match-compliance"]
+      "description": "requirements.md 3, the three subject regimes, plus (v1.9, [B140], subst_bench_v1.md 5 S1) `substitution`: the transform regime -- a pattern + template applied to a subject, the OUTPUT being the answer. Not comparable to the other regimes, like they are not to each other.",
+      "enum": ["large-subject-throughput", "short-subject-search", "match-compliance", "substitution"]
     },
     "record_status": {
       "description": "requirements.md 6, verbatim, plus (v1.4, [B20], docs/design/gate_shape_v14.md 3.4) `inconclusive-spread`: the pre-flight passed but the trials do not agree to within the trial-agreement rule (or a pinned record lacks the five odd trials the rule needs). The enum's ORDER is not the stamping precedence, which is `harness-failure` > `inconclusive-load` > `inconclusive-spread` > `measured` (3.4); `harness-failure` is a documented value no harness code path produces.",
@@ -441,6 +449,7 @@
               "items": { "$ref": "#/$defs/convention" }
             },
             "grain": { "$ref": "#/$defs/grain" },
+            "invocation": { "$ref": "#/$defs/invocation" },
             "captures": { "$ref": "#/$defs/on_off" },
             "engine_mode": { "$ref": "#/$defs/slug" },
             "simd": { "$ref": "#/$defs/on_off_na" },
@@ -591,6 +600,52 @@
                 "items": { "type": "integer", "minimum": -1 }
               }
             }
+          }
+        },
+        "subst": {
+          "description": "v1.9 ([B140], S3): the transform's answer. REQUIRED iff `regime` = `substitution` (X36). `case` is an OPAQUE string id (the set's own ids, e.g. `3`, `5b`, `7a` -- the schema enumerates none). `nsubst`/`out_bytes`/`out_sha256` describe the VALIDATED output (the untimed correctness pass for a `process` testee) and are absent iff `gate` = `unsupported`; they are constant across the trials of one cell (X43).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["case", "gate"],
+          "properties": {
+            "case": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "maxLength": 32 },
+            "gate": { "$ref": "#/$defs/subst_gate" },
+            "nsubst": { "$ref": "#/$defs/nonneg_int" },
+            "out_bytes": { "$ref": "#/$defs/nonneg_int" },
+            "out_sha256": { "$ref": "#/$defs/sha256" }
+          },
+          "if": {
+            "properties": { "gate": { "const": "unsupported" } },
+            "required": ["gate"]
+          },
+          "then": { "not": { "anyOf": [
+            { "required": ["nsubst"] }, { "required": ["out_bytes"] }, { "required": ["out_sha256"] }
+          ] } },
+          "else": { "required": ["nsubst", "out_bytes", "out_sha256"] }
+        },
+        "unsupported_reason": {
+          "description": "v1.9 ([B140], S4): WHY a `subst.gate` = `unsupported` cell was dropped by design, a token (mirrors how did-not-compile carries its refusal class). Required iff gate = `unsupported`, forbidden otherwise (X37).",
+          "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "maxLength": 64
+        },
+        "process": {
+          "description": "v1.9 ([B140], S5 as amended by subst_bench_v1.md 8a item 7): the TOOLS tier's provenance for ONE timed launch. Present iff the testee's `invocation` = `process` AND the row is timed (X38). The timed command is `tool ... | wc -c`: `sink` names that, `sink_bytes` is the byte count wc printed, and it MUST equal `subst.out_bytes` (X39) -- a mismatch fails the run by name, it is never recorded as a measurement. `core` is the core the tool was pinned to, `sink_core` the core `wc` was pinned to (a DIFFERENT one, X40). The trial's wall seconds is `timing.elapsed_ns`; rusage is provenance, not ranked.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cmd", "sink", "sink_bytes", "core", "sink_core",
+                       "user_s", "sys_s", "maxrss_kb", "page_cache_resident"],
+          "properties": {
+            "cmd": {
+              "description": "argv of the tool with the subject/output paths elided to tokens (`@IN@`, `@OUT@`).",
+              "type": "array", "minItems": 1, "items": { "type": "string", "maxLength": 4096 }
+            },
+            "sink": { "const": "wc-c" },
+            "sink_bytes": { "$ref": "#/$defs/nonneg_int" },
+            "core": { "type": "integer", "minimum": 0 },
+            "sink_core": { "type": "integer", "minimum": 0 },
+            "user_s": { "type": "number", "minimum": 0 },
+            "sys_s": { "type": "number", "minimum": 0 },
+            "maxrss_kb": { "$ref": "#/$defs/nonneg_int" },
+            "page_cache_resident": { "type": "number", "minimum": 0, "maximum": 1 }
           }
         },
         "engine_metadata": { "$ref": "#/$defs/engine_metadata" },

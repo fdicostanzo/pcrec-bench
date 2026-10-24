@@ -21,7 +21,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.8), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.9), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -47,8 +47,13 @@ they and the note disagree.
   pcrec's `program_sha256`, the normalized program-identity hash the
   null-control band reads; v1.8 ([B137], lane `b137import`, 2026-10-12, O-90)
   added optional `environment.cpu_isa` (sorted ISA feature tokens) and rule
-  X35 (`validate.py`: present only at >= 1.8, sorted).
-  Every 1.1 through 1.7 record still validates, and the older examples
+  X35 (`validate.py`: present only at >= 1.8, sorted); v1.9 ([B140], lane
+  `b140schema`, 2026-10-24) added the `substitution` regime, optional
+  `testee.invocation` (`library`/`process`), `match_row.subst` /
+  `.unsupported_reason` / `.process` (the TOOLS tier's launch + `| wc -c` sink
+  evidence) and rules X36-X43 (`validate.py` `_subst_rules`; compile rows
+  optional for a `process` testee). Additive.
+  Every 1.1 through 1.8 record still validates, and the older examples
   are left stamped at their own versions to prove it.
 - `validate.py` — the validator the harness and the reporter share
   (requirements §6). Per-line schema validation PLUS the cross-line
