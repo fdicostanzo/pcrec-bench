@@ -6626,3 +6626,20 @@ Reconstructed from git by the 48th session: this session left no journal entry a
 - 2026-10-20 07:02: TIER2_DONE and CHAIN_DONE, both rc=0. The window ran 31 h 08 min; it was sized for ~15 h at an assumed ×2, but its wall clock is protocol-bound. 70 records: 64 measured, 6 inconclusive-spread. capability × pcrec-auto and × pcrec-nocaps came back inconclusive-spread on both attempts; two separate sentinel jit cells were also inconclusive. Committed c10730b6 (records, index, the 97 sidecars' index_sha256 restamp, the factor archive). pcrecdev1 was told the box is free; it started its heavy validation lane.
 - The engine-speed factor (probe_b138_factor.py, 14 s, read-only) shows match ×1.9-2.8 per testee, SHORT ≈ LONG at set grain (pcrec-auto 1.99/2.11), compile ×2.2-5.0. The exception is vectorscan's LONG cells: ~10 throughput cells run ×0.52-0.59 here, and prp-n runs ×13.6 faster (hypothesis: ISA dispatch, unverified). Sent to pcrecdev1. Owed items are on plan.md [B138].
 - Lesson: never size a window from an inferred engine speedup. Cell wall time is set by the protocol (calibration targets, gates), so a faster box runs the same hours.
+
+## 2026-10-24 — fifty-fourth session (Opus 5.5): inbox I-154..I-157, two lanes, both delivered
+
+- Wake: no new commits from origin. Four new inbox items; all acked (cb0b7c72):
+  - I-154: the next pin follows three anchor-fold abi events; noted on [B138].
+  - I-154: the keepalive revision is now in session_discipline.md §5.
+  - I-155: boxqueue is opt-in; not adopted yet.
+  - I-156 is [B139]; I-157 is [B140].
+- Upstream: PCRE2 #1034 (our U14) was closed as fixed by PR #1036 (merged 2026-10-19, backport label). The thread was recorded. The registry stays REPORTED until a PCRE2 release with the fix is re-checked.
+- [B140] lane b140design (Sonnet) delivered docs/design/subst_bench_v1.md, DRAFT v0.1, with the install manifest in §9. Review fix: cases 2 and 5 used `(?:`, which POSIX `sed -E` rejects; they now use capturing groups.
+  - Merged as 6e7e3237. I checked the ripgrep and sd digests myself with `gh api`.
+  - Outbox O-104 (873b13f0) asks for approval of the files: ripgrep 15.2.0 musl, and sd 1.1.0 (no published checksum) vs 1.0.0 (crates.io, older, behaves differently).
+  - Nothing is installed.
+- [B139] lane b139gaps (Sonnet, read-only, compile-only) found 5,717 qualifying cells. 5,488 have a dominant gap of 1. 105 B4-eligible cells have a gap of 2 or more (utf8 throughput, plus syntax unp-p-uc).
+  - The archive is docs/dev/measurements/2026-10-24-b139-landing-gaps/, the answer is O-105 (c7e4c7cf), and the row is archived.
+- Box fact corrected in BOILERPLATE.md: perf user-mode events work here (paranoid=2), and the governor is `performance`.
+- Idle: waiting on pcrecdev1 for O-104's approval and the next pin sha.
