@@ -1,6 +1,6 @@
 # subst_bench_v1 -- the SUBSTITUTION mini-bench (plan row [B140], inbox I-157)
 
-STATUS: DRAFT v0.1, 2026-10-24, lane b140design. DESIGN ONLY: nothing here is
+STATUS: DRAFT v0.2, 2026-10-24 (v0.1 lane b140design; v0.2 = Frank's §8 rulings, recorded in §8a, which SUPERSEDE the body where they differ -- the build lane folds them in). DESIGN ONLY: nothing here is
 built, installed, measured or pinned. Governing: Frank's request relayed in
 inbox I-157 ("half a dozen cases, mostly reading large files and making edits,
 then set up competitors"; sd and ripgrep approved in principle). Subject side:
@@ -438,6 +438,64 @@ no existing report (v-bump only for the new view).
     needs a measured JIT-stack setting (`pcre2_jit_stack_create`) -- a build-time
     probe, flagged so the first dry run does not mistake a JIT-stack error
     (-46) for a result.
+
+## 8a. RULINGS (Frank, 2026-10-24, live in the manager session)
+
+These supersede the body above where they differ.
+
+1. **Size: 320 MB** (~1.6 M lines), as designed.
+2. **Subject: the generator, CALIBRATED against a real log.** Reference: a
+   real Apache-combined log (the elastic sample, a checksummed download kept
+   in `build/`, never committed; fetch needs Frank's ok). Measured on both:
+   byte entropy, gzip/zstd/xz compression ratios (they also catch cross-line
+   repetition), line-length distribution, field variety per 10k lines
+   (unique IPs/paths/agents), and each case's matches per line. Tune the
+   generator to within a stated tolerance (proposed: ±5% on compression
+   ratios, ±10% on densities); the comparison table is a committed
+   measurement archive and the generator's `--check` re-runs it. CAVEAT
+   (ruled in): densities we PLANT on purpose (case 2's blocked paths, case
+   4's dates, 5b's e-mails, 7's URLs) are marked "by design" in the table
+   and are exempt from the tolerance. Only the generator + a sha256 manifest
+   are committed; the 320 MB file is gitignored and regenerated.
+3. **Case 3 stays `[0-9]+`** (~25 matches/line, the output-dominated case).
+4. **Add case 5b, e-mail masking** (e.g. `-> <email>`), one simple
+   widely-used pattern, planted density stated before any run.
+   **Add case 7, `url-tld-fix`** (Frank: "vm and complicated; details
+   unimportant"): on `https://` URLs whose host is one of a fixed set, if
+   the query field (e.g. `region=`) carries a TLD different from the host's,
+   replace it; if the field is missing, insert it with `?` or `&` as
+   needed. Intended shape: a backreference inside a negative lookahead
+   (`(?!\1\b)`) -- the VM route on pcrec, `unsupported` on DFA-only engines
+   -- and a one-pass replacement via PCRE2's conditional template
+   `${n:+present:absent}` (PCRE2_SUBSTITUTE_EXTENDED). If pcrec's subst has
+   no conditional template, split into 7a (fix a wrong value) and 7b
+   (insert a missing field); asked of pcrecdev1 in O-106. The generator
+   plants a stated mix: correct TLD (no edit), wrong TLD, missing with no
+   `?`, missing after other fields. Expected: PCRE2 and pcrec answer;
+   sed/rg/sd/RE2/rust regex `unsupported`; python `unsupported` for the
+   one-pass form (no conditional template), runs 7a/7b if split.
+5. **Case 6 stays strictly `unsupported`** where the dialect has no
+   case-change template; no `callable` rows. FOLLOW-ON (separate future
+   row [B141]): a callout/embedded-code EXPRESSIBILITY bench once pcrec has
+   embedded code in the regex.
+6. **python: whole-file `re.sub`**, one call.
+7. **TOOLS output: validate, then time through `wc -c`.** An untimed
+   correctness pass writes a real output file whose sha256 must equal
+   PCRE2's. Every TIMED run is `tool ... | wc -c` with wc pinned to another
+   core; the count must equal the validated size or the run fails by name
+   (this closes the "tool notices /dev/null and skips work" hole on every
+   run). Measured 2026-10-24 on ryzen7700x: 2 GiB to /dev/null 0.12-0.13 s,
+   through `| wc -c` 0.34-0.42 s (~5-6 GB/s), so ~30 ms per 300 MB on the
+   producer side, the same for every tool.
+8. **No cross-tier ratio column** now; revisit when (9) puts pcrec in both
+   tiers.
+9. **pcrec as a TOOL: deferred, but next.** After [M4-SUBST] lands and the
+   library tier works: a built binary per case (a ~50-line main in
+   `testees/`), timed like sed; pcrec's compile time a SEPARATE column, never
+   added into the run time.
+10. **sd: option (a)**, the GitHub release tarball verified against
+    GitHub's asset digest -- INSTALLED 2026-10-24 (plan.md [B140]).
+11. Not a ruling: the JIT-stack probe stays a first-dry-run check.
 
 ## 9. INSTALL MANIFEST (requested for approval; nothing downloaded or installed)
 

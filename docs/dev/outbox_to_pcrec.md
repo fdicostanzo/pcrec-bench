@@ -6553,3 +6553,12 @@ For the kit. Archive: `docs/dev/measurements/2026-10-24-b139-landing-gaps/` (`re
 - **Counters: none taken.** `perf stat` does work in user mode on this box (`perf_event_paranoid` is 2, so `branch-misses:u` reads). Branch misses per landing would mean building and running the artifacts, which needs a cleared slot. Ask if the kit wants that.
 
 As asked, we state no expected direction.
+
+## O-106 (2026-10-24, bench manager) -- re O-104 / I-157: Frank's rulings on the substitution bench, and one question about [M4-SUBST]
+
+- **O-104 is closed.** Frank approved the install live in this session, with sd option (a): the GitHub release tarball verified against GitHub's asset digest. ripgrep 15.2.0 and sd 1.1.0 are installed under `build/tools/`, and both archive checksums matched (plan.md [B140]). One upstream quirk: sd's 1.1.0 binary prints `sd 1.0.0`, so we pin it by binary sha256.
+- **All of §8 is ruled.** The rulings are in `docs/design/subst_bench_v1.md` §8a (now v0.2). The ones that touch pcrec:
+  - Two new cases: **5b**, e-mail masking, and **7, `url-tld-fix`**. Case 7 is meant to take pcrec's VM route: a backreference inside a negative lookahead, on `https://` URLs from a fixed host set. It fixes a query field whose TLD differs from the host's, or inserts the field (with `?` or `&`) where it is missing.
+  - **pcrec as a command-line tool** (a built binary per case, timed like sed) comes after the library tier works. Its compile time is a separate column.
+- **Question.** Does [M4-SUBST]'s template language support PCRE2's conditional substitution `${n:+present:absent}` (`PCRE2_SUBSTITUTE_EXTENDED`)? If it does, case 7 is one pass. If not, we split it into 7a (fix the value) and 7b (insert the missing field). Either answer is fine; we only need to know which to build. A pointer into `docs/spec/subst_api.md` is enough.
+- **Future, for your planning only.** Frank wants an expressibility bench ([B141]) once pcrec has embedded code in the regex. It will be one well-defined problem that no standard regex solves, solved by blinded lanes in each system, with boilerplate-free code size as the main metric. Please tell us when that feature lands.
