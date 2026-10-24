@@ -32,11 +32,17 @@ dialect. All text is ASCII; tools run under `LC_ALL=C`.
 | # | id | pattern | template (neutral) | density on the subject | what it isolates |
 |---|----|---------|--------------------|------------------------|------------------|
 | 1 | `literal` | `HTTP/1.1` | `H1` | ~1 per line on ~85 % of lines | the COPY-COST FLOOR: a pure literal, shortening replacement; every engine has a literal fast path, so this is mostly memchr/memmem + memcpy + write |
-| 2 | `rare` | `/(?:phpmyadmin\|wp-admin)/[a-z]+\.php` | `/BLOCKED` | ~1 per 10,000 lines (planted, count in the manifest) | SEARCH-dominated: output is the input to within a few bytes; the cost is the scan over ~300 MB with a two-literal alternation prefix |
+| 2 | `rare` | `/(phpmyadmin\|wp-admin)/[a-z]+\.php` | `/BLOCKED` | ~1 per 10,000 lines (planted, count in the manifest) | SEARCH-dominated: output is the input to within a few bytes; the cost is the scan over ~300 MB with a two-literal alternation prefix |
 | 3 | `dense` | `[0-9]+` | `N` | ~25 per line, every line edited | OUTPUT-dominated: tens of millions of matches; per-match overhead and render/append cost |
 | 4 | `reorder` | `([0-9]{2})/([A-Z][a-z]{2})/([0-9]{4})` | `$3-$2-$1` | exactly 1 per line (the `[17/May/2015:...]` stamp) | CAPTURE REARRANGEMENT: three groups, group order permuted, no case change (17/May/2015 -> 2015-May-17) |
-| 5 | `mask-ipv4` | `\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b` | `x.x.x.x` | 1 per line (client address) + occasional referer/query addresses | CLASS-HEAVY masking: bounded counted classes, a word-boundary, a fixed-text replacement |
+| 5 | `mask-ipv4` | `\b([0-9]{1,3}\.){3}[0-9]{1,3}\b` | `x.x.x.x` | 1 per line (client address) + occasional referer/query addresses | CLASS-HEAVY masking: bounded counted classes, a word-boundary, a fixed-text replacement |
 | 6 | `upper` | `/(blog\|images\|downloads\|static)/` | `/\U$1\E/` | ~60 % of lines | CASE CHANGE in the template (`\U`): PCRE2 `SUBSTITUTE_EXTENDED`, pcrec `subst-extended` module |
+
+Manager's review note (2026-10-24): the groups in cases 2 and 5 are
+CAPTURING on purpose. `(?:...)` is not POSIX ERE, so GNU `sed -E` would
+reject it. The capture is unused by the template. Its cost to an engine
+that records captures is part of what each engine pays for the same pattern
+text; a capture-free variant is not part of this set.
 
 Notes per case:
 
