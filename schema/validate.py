@@ -28,12 +28,13 @@ It checks two things a record must satisfy:
     `observed.span` (X34) -- the checked half of "such a testee never
     claims a specific span, correct or wrong".
     (v1.9, [B140], docs/design/subst_bench_v1.md 5 + 8a item 7) the
-    SUBSTITUTION regime and the `process` (TOOLS) tier: X36-X43 -- `subst`
-    iff the regime, gate/outcome/reason coherence, `process` iff a timed
+    SUBSTITUTION regime and the `process` (TOOLS) tier: X36-X45 -- `subst`
+    iff the regime, gate/outcome/declaration coherence, `process` iff a timed
     process launch, the `| wc -c` count equal to the validated output
     size, wc on another core, interpretive process testees, the v1.9
     members only on a >= 1.9 record, and trial-to-trial agreement of a
-    cell's output.
+    cell's output, and (X44/X45) an unsupported case is a compile row
+    `unsupported-by-declaration` with no match rows.
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -969,12 +970,13 @@ class RecordValidator:
 
     @staticmethod
     def _subst_rules(add, path, setup, testee, rows, f_minor, sv):
-        """X36-X43, record_schema.md 9. Row-local and cross-trial rules of
+        """X36-X45, record_schema.md 9. Row-local and cross-trial rules of
         the v1.9 substitution regime; none reads an expectation (the
         validator does not know the oracle's hash -- `gate` is the
         harness's verdict, and the rules pin its coherence)."""
         invocation = testee.get("invocation")
         is_process = invocation == "process"
+        subst_rec = "substitution" in (setup.get("subbench", {}).get("regimes") or [])
         pre19 = f_minor is not None and f_minor < 9
 
         # X42 the v1.9 members exist only on a record stamped >= 1.9
@@ -990,7 +992,7 @@ class RecordValidator:
                             f"stamped {sv}, before the version that defined it "
                             f"(1.9) (X42)", "X42"))
             for n, row in rows:
-                for fld in ("subst", "process", "unsupported_reason"):
+                for fld in ("subst", "process"):
                     if fld in row:
                         add(Problem(path, n, fld,
                                     f"is present on a record stamped {sv}, "
@@ -1029,7 +1031,7 @@ class RecordValidator:
                 cells.setdefault((row.get("pattern_id"), row.get("subject_id"),
                                   row.get("regime"), row.get("form", DEFAULT_FORM)),
                                  []).append((n, row, subst))
-                # X37 gate / match_outcome / unsupported_reason coherence
+                # X37 gate / match_outcome / declaration_ref coherence
                 agrees = gate == "agrees"
                 outcome_ok = row.get("match_outcome") == "matched-as-expected"
                 if agrees != outcome_ok:
@@ -1037,19 +1039,16 @@ class RecordValidator:
                                 f"is {row.get('match_outcome')!r} but "
                                 f"subst.gate is {gate!r}: "
                                 f"`matched-as-expected` exactly when the gate "
-                                f"`agrees` (a wrong, declared-divergent or "
-                                f"unsupported cell is never timed) (X37)",
-                                "X37"))
-                has_reason = "unsupported_reason" in row
-                if (gate == "unsupported") != has_reason:
-                    add(Problem(path, n, "unsupported_reason",
-                                f"is {'present' if has_reason else 'absent'} "
-                                f"but subst.gate is {gate!r}: the reason token "
-                                f"exists iff the cell is `unsupported` (X37)",
-                                "X37"))
-            elif "unsupported_reason" in row:
-                add(Problem(path, n, "unsupported_reason",
-                            "is present on a row with no `subst` (X37)", "X37"))
+                                f"`agrees` (a wrong or declared-divergent "
+                                f"cell is never timed) (X37)", "X37"))
+                has_decl = "declaration_ref" in subst
+                if (gate == "divergent-declared") != has_decl:
+                    add(Problem(path, n, "subst.declaration_ref",
+                                f"is {'present' if has_decl else 'absent'} "
+                                f"but subst.gate is {gate!r}: a declared "
+                                f"divergence must cite its declaration, and "
+                                f"only it does -- else it is an unfalsifiable "
+                                f"excuse (X37)", "X37"))
 
             # X38 `process` iff a process testee's TIMED row
             proc = row.get("process")
@@ -1080,6 +1079,38 @@ class RecordValidator:
                                 f"equals process.core ({proc.get('core')!r}): "
                                 f"`wc` is pinned to ANOTHER core so the sink "
                                 f"never shares the tool's (X40)", "X40"))
+
+        # X44 an unsupported (testee, pattern) -- a compile row
+        # `unsupported-by-declaration` -- carries NO substitution match rows:
+        # unsupported is a result, never a wrong answer
+        unsup = {(r.get("pattern_id"), r.get("form", DEFAULT_FORM))
+                 for _n, r in rows if r["kind"] == "compile"
+                 and r.get("compile_outcome") == "unsupported-by-declaration"}
+        for n, row in rows:
+            if (row["kind"] == "match" and row.get("regime") == "substitution"
+                    and (row.get("pattern_id"), row.get("form", DEFAULT_FORM)) in unsup):
+                add(Problem(path, n, "pattern_id",
+                            f"{row.get('pattern_id')!r} has a compile row "
+                            f"`unsupported-by-declaration` in this record, so "
+                            f"it carries no substitution match rows: "
+                            f"unsupported is a result, not a wrong answer "
+                            f"(X44)", "X44"))
+
+        # X45 a `process` testee has no compile rows by default (X41), so an
+        # UNSUPPORTED pattern -- which has no match rows either -- must still
+        # be witnessed: a measured substitution record leaves no pattern
+        # silent (no match row and no unsupported-by-declaration row)
+        if is_process and subst_rec and setup.get("status") == "measured":
+            have = {r.get("pattern_id") for _n, r in rows if r["kind"] == "match"}
+            have |= {pid for pid, _f in unsup}
+            silent = sorted(x.get("pattern_id") for x in setup.get("patterns", [])
+                            if x.get("pattern_id") not in have)
+            if silent:
+                add(Problem(path, 1, "patterns",
+                            f"{silent} have neither match rows nor a compile "
+                            f"row `unsupported-by-declaration`: on a `process` "
+                            f"testee compile rows are optional EXCEPT the one "
+                            f"that records an unsupported case (X45)", "X45"))
 
         # X43 the trials of one cell agree on the cell's identity and output
         for key, items in cells.items():

@@ -50,8 +50,8 @@ they and the note disagree.
   X35 (`validate.py`: present only at >= 1.8, sorted); v1.9 ([B140], lane
   `b140schema`, 2026-10-24) added the `substitution` regime, optional
   `testee.invocation` (`library`/`process`), `match_row.subst` /
-  `.unsupported_reason` / `.process` (the TOOLS tier's launch + `| wc -c` sink
-  evidence) and rules X36-X43 (`validate.py` `_subst_rules`; compile rows
+  `.process` (the TOOLS tier's launch + `| wc -c` sink
+  evidence) and rules X36-X45 (an unsupported case is a compile row `unsupported-by-declaration`, never a match row) (`validate.py` `_subst_rules`; compile rows
   optional for a `process` testee). Additive.
   Every 1.1 through 1.8 record still validates, and the older examples
   are left stamped at their own versions to prove it.

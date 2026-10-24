@@ -208,7 +208,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.6 | 2026-09-17 | lane `b44boolgrain`, Frank's Q3 boolean-grain ruling (`capability_set_v1.md` §5.6 option B; the finding lane `l6bvs` proved against `harness.outcome_for` and the schema): optional `testee.grain` (`full`/`boolean`, absent = `full`, §6.10), rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`) |
 | 1.7 | 2026-09-25 | [B88] (BD13, Frank's ruling; lane `b90repin`, riding the ce658cb7 re-pin): the `engine_metadata` declaration TYPE `sha256` (a value is 64 LOWERCASE hex digits, X15) -- an enum growth, MINOR by the rule above. Its first declared pair is pcrec's `program_sha256` (§7), the normalized program-identity hash the null-control band reads (`tools/program_identity.py` normalization v2); no rule's applicability changes for a record that declares no `sha256` pair, and every older record keeps its verdict |
 | 1.8 | 2026-10-12 | [B137] (O-90, pcrec I-138/I-139, multi-host; lane `b137import`): optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, §6.11) and rule X35 (present only on a record stamped >= 1.8; sorted) -- an optional-field ADDITION, MINOR by the rule above. Older records stay valid without it; `pcrecbench import` (store.py) is the other half of the multi-host design |
-| 1.9 | 2026-10-24 | [B140] (`subst_bench_v1.md` §5 S1-S8 as amended by §8a item 7; lane `b140schema`): the `substitution` regime (enum growth), optional `testee.invocation` (`library`/`process`, absent = `library`), `match_row.subst` / `.unsupported_reason` / `.process` (§6.12), rules X36-X43, and compile rows become optional for a `process` testee (X11 and X14 relaxed, X41). Additive, MINOR by the rule above: a 1.8 record carries none of it and keeps its verdict |
+| 1.9 | 2026-10-24 | [B140] (`subst_bench_v1.md` §5 S1-S8 as amended by §8a item 7; lane `b140schema`): the `substitution` regime (enum growth), optional `testee.invocation` (`library`/`process`, absent = `library`), `match_row.subst` / `.process` (§6.12), rules X36-X45, and compile rows become optional for a `process` testee (X11 and X14 relaxed, X41) except the `unsupported-by-declaration` row that carries an unsupported case (X44, X45). Additive, MINOR by the rule above: a 1.8 record carries none of it and keeps its verdict |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -374,7 +374,7 @@ The enums, in full:
 | `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` `substitution` | §3; `substitution` v1.9 ([B140], §6.12) |
 | `status` | `measured` `harness-failure` `inconclusive-load` `inconclusive-spread` | §6; `inconclusive-spread` v1.4 ([B20], gate_shape_v14.md §3.4) |
 | `invocation` | `library` `process` | v1.9 ([B140], §6.12); `testee.invocation`, absent = `library` |
-| `subst.gate` | `agrees` `wrong` `divergent-declared` `unsupported` | v1.9 ([B140], §6.12) |
+| `subst.gate` | `agrees` `wrong` `divergent-declared` | v1.9 ([B140], §6.12) |
 | `compile_outcome` | `compiled` `did-not-compile` `crashed` `timed-out` `unsupported-by-declaration` | §4.4 |
 | `match_outcome` | `matched-as-expected` `did-not-match-as-expected` `wrong-span-or-captures` `truncated-subject` + `crashed` `timed-out` `gave-up` | §4.4 + ADDITIONS |
 | `truncation_check` | `verified` `unverified-for-truncation` `not-applicable` | §4.4 + ADDITION |
@@ -838,19 +838,28 @@ valid.
   in-process, the default when ABSENT) or `process` (a command-line tool
   launched fresh per trial). FILTERABLE; the reporter never mixes the two in
   one ordering.
-- **The answer** (S3, S4). `match.subst` is REQUIRED on a `substitution` row
+- **The answer** (S3). `match.subst` is REQUIRED on a `substitution` row
   and forbidden elsewhere (X36). `subst.case` is an OPAQUE string id: the
   set's own tokens (`3`, `5b`, `7a` ...), none enumerated here and none
   interpreted by the validator. `subst.gate` is the correctness gate's
-  verdict: `agrees` (output sha256 equals the oracle's), `wrong`,
-  `divergent-declared`, or `unsupported` (no expression of the case in that
-  tool/engine). `nsubst`, `out_bytes` and `out_sha256` describe the VALIDATED
-  output and exist iff the gate is not `unsupported`; an `unsupported` cell
-  carries `match.unsupported_reason` (a token) instead. `match_outcome` keeps
-  its role and is `matched-as-expected` exactly when the gate `agrees` (X37);
-  every other gate value is a `did-not-match-as-expected` row (its `observed`
-  is the existing required object) and is never timed (X11). Every trial of
-  one cell reports the same case, gate, count, size and hash (X43).
+  verdict on a cell that RAN: `agrees` (output sha256 equals the oracle's),
+  `wrong`, or `divergent-declared`. `nsubst`, `out_bytes` and `out_sha256`
+  describe the VALIDATED output. `match_outcome` keeps its role and is
+  `matched-as-expected` exactly when the gate `agrees` (X37); `wrong` and
+  `divergent-declared` rows are `did-not-match-as-expected` (the existing
+  required `observed`), never timed (X11). A `divergent-declared` row MUST
+  carry `subst.declaration_ref`, an opaque string naming the sub-bench's
+  declaration row (X37) -- a declared divergence that cites nothing is an
+  unfalsifiable excuse. Every trial of one cell reports the same case, gate,
+  count, size and hash (X43).
+- **Unsupported is a result, never a wrong answer** (S4 as amended). A
+  (testee, case) that cannot express the case is NOT a gate value and NOT a
+  match row: it is a compile row `unsupported-by-declaration` carrying
+  `declaration_ref` (§4.4; the machinery the reporter already reads) and it
+  has NO substitution match rows (X44). This holds for `process` testees too:
+  their compile rows are optional EXCEPT this one, and a measured process
+  record leaves no pattern silent -- every pattern has match rows or an
+  `unsupported-by-declaration` compile row (X45).
 - **The TOOLS tier's timing** (S5 amended by §8a item 7). An UNTIMED
   correctness pass runs the tool once to a real output file whose sha256
   must equal the oracle's; that pass supplies `subst.out_bytes` and
@@ -867,7 +876,7 @@ valid.
   work (or truncates) be recorded as fast. `process` is present iff a
   `process` testee's row is timed (X38); the two cores differ (X40).
 - **No compile row** (S7). A `process` testee re-parses its pattern on every
-  launch: it is `interpretive` (X41), its compile rows are OPTIONAL, and X11
+  launch: it is `interpretive` (X41), its compile rows are OPTIONAL (except the unsupported-case row, X44/X45), and X11
   and X14 are relaxed for it -- the honest alternative to inventing a compile
   figure the Tools tier's wall time already includes. A `library` testee's
   compile rows are unchanged.
@@ -1282,11 +1291,11 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `observed.captures` | array of `[int,int]`/null | o | `-1` for an unset slot | as above; the capture correspondence (§4.5) is what makes this comparable across a variant |
 | `subst` | object | c | REQUIRED iff `regime` = `substitution`, forbidden otherwise (X36) | v1.9 ADDITION ([B140] S3, §6.12): the transform's output IS the answer; `match_outcome` alone cannot carry a count and a hash |
 | `subst.case` | string | R | OPAQUE case id (`^[a-z0-9][a-z0-9-]*$`); none enumerated by the schema; constant across a cell's trials (X43) | as above: the set's own ids (`3`, `5b`, `7a` ...) |
-| `subst.gate` | enum | R | `agrees` `wrong` `divergent-declared` `unsupported`; `match_outcome` is `matched-as-expected` iff `agrees` (X37); constant across trials (X43) | the correctness gate's verdict (`subst_bench_v1.md` §4) |
-| `subst.nsubst` | integer ≥0 | c | present iff `gate` is not `unsupported`; constant across trials (X43) | the substitution count of the VALIDATED output |
-| `subst.out_bytes` | integer ≥0 | c | present iff `gate` is not `unsupported`; equals `process.sink_bytes` on a timed process row (X39); constant across trials (X43) | the validated output's size |
-| `subst.out_sha256` | sha256 | c | present iff `gate` is not `unsupported`; constant across trials (X43) | the validated output's hash; equals the oracle's iff `gate` = `agrees` (the validator does not hold the oracle: the harness compares) |
-| `unsupported_reason` | token | c | present iff `subst.gate` = `unsupported` (X37) | v1.9 ADDITION ([B140] S4): a dropped-by-design cell says why, as `did-not-compile` carries its refusal class |
+| `subst.gate` | enum | R | `agrees` `wrong` `divergent-declared`; `match_outcome` is `matched-as-expected` iff `agrees` (X37); constant across trials (X43) | the correctness gate's verdict (`subst_bench_v1.md` §4) |
+| `subst.declaration_ref` | string | c | present iff `gate` = `divergent-declared` (X37); OPAQUE (the sub-bench's declaration row) | a declared divergence must cite its declaration, as `compile.declaration_ref` does for `unsupported-by-declaration` (§4.4): else it is an unfalsifiable excuse |
+| `subst.nsubst` | integer ≥0 | R | constant across trials (X43) | the substitution count of the VALIDATED output |
+| `subst.out_bytes` | integer ≥0 | R | equals `process.sink_bytes` on a timed process row (X39); constant across trials (X43) | the validated output's size |
+| `subst.out_sha256` | sha256 | R | constant across trials (X43) | the validated output's hash; equals the oracle's iff `gate` = `agrees` (the validator does not hold the oracle: the harness compares) |
 | `process` | object | c | present iff `testee.invocation` = `process` AND the row is timed (X38) | v1.9 ADDITION ([B140] S5 + §8a item 7, §6.12): the TOOLS tier's launch provenance and the `wc -c` sink's evidence |
 | `process.cmd` | array of string | R | argv, paths elided to `@IN@`/`@OUT@` tokens | what was run |
 | `process.sink` | const `"wc-c"` | R | the timed command is `tool ... \| wc -c` | closes "the tool notices /dev/null and skips work" on every run |
@@ -1387,13 +1396,15 @@ both ways before being believed.
 | X34 | When `testee.grain` = `boolean`, no match row's `observed.span` is a non-null value | v1.6 (§5 ADDITIONS 8, §6.10): a boolean-grain testee's whole reason to declare itself is "I never know a span" — a record that declares `boolean` and then emits one anyway is lying about which of the two it is, in either direction |
 | X35 | `environment.cpu_isa` is present only on a record stamped >= 1.8, and its tokens are in sorted order | v1.8 ([B137]): a field on a record stamped before the version that defined it is a mis-stamped record (X33's argument); sorted so two hosts' ISA sets compare as lists |
 | X36 | `match.subst` is present iff the row's `regime` is `substitution` | v1.9 ([B140]): the output is the answer of that regime and of no other; a row that omits it carries a transform's timing with nothing to say what was produced |
-| X37 | On a row with `subst`: `match_outcome` is `matched-as-expected` iff `subst.gate` = `agrees`; and `unsupported_reason` is present iff `gate` = `unsupported` (and absent on a row with no `subst`) | v1.9: X11's "no timing for a wrong answer" needs the gate and the outcome to be one fact, not two that can disagree; a dropped cell must say why (S4) |
+| X37 | On a row with `subst`: `match_outcome` is `matched-as-expected` iff `subst.gate` = `agrees`; and `subst.declaration_ref` is present iff `gate` = `divergent-declared` | v1.9: X11's "no timing for a wrong answer" needs the gate and the outcome to be one fact, not two that can disagree; a declared divergence must cite its declaration or it is an unfalsifiable excuse |
 | X38 | `match.process` is present iff `testee.invocation` = `process` AND the row has `timing` | v1.9 (S5): a timed launch has provenance and a sink count; a cell never launched (gate failed or unsupported) and a library row have none |
 | X39 | `process.sink_bytes` = `subst.out_bytes` | v1.9 (§8a item 7): the timed `\| wc -c` count must equal the validated output size or the run FAILS BY NAME -- a tool that notices an unread sink and skips its work, or writes a short output, is never recorded as a measurement |
 | X40 | `process.sink_core` differs from `process.core` | v1.9 (§8a item 7): `wc` is pinned to ANOTHER core, so the sink's own work never shares the tool's |
-| X41 | `testee.invocation` = `process` requires `execution_model` = `interpretive` | v1.9 (S7): a tool re-parses its pattern each launch, there is no separable compile; with it, compile rows are OPTIONAL for such a testee and X11 and X14 do not require them |
-| X42 | `testee.invocation`, the `substitution` regime in `subbench.regimes`, and `match.subst` / `.process` / `.unsupported_reason` are present only on a record stamped >= 1.9 | v1.9: a field on a record stamped before the version that defined it is a mis-stamped record (X33's and X35's argument) |
+| X41 | `testee.invocation` = `process` requires `execution_model` = `interpretive` | v1.9 (S7): a tool re-parses its pattern each launch, there is no separable compile; with it, compile rows are OPTIONAL for such a testee and X11 and X14 do not require them (the one required compile row is the unsupported case's, X44/X45) |
+| X42 | `testee.invocation`, the `substitution` regime in `subbench.regimes`, and `match.subst` / `.process` are present only on a record stamped >= 1.9 | v1.9: a field on a record stamped before the version that defined it is a mis-stamped record (X33's and X35's argument) |
 | X43 | Within one cell (pattern, subject, regime, form) every trial's `subst.case`, `gate`, `nsubst`, `out_bytes` and `out_sha256` are equal | v1.9 (`subst_bench_v1.md` §4.5): timing runs never gate each other -- the output was validated once, and a trial whose count or size differs is a different computation, not a noisier one |
+| X44 | A `substitution` match row's (pattern, form) has no compile row `unsupported-by-declaration` in the record | v1.9: an unsupported (testee, case) is a first-class result carried by the compile row and its `declaration_ref`, never a match row -- every reader would otherwise read it as a wrong answer |
+| X45 | On a `measured` record of a `process` testee in the `substitution` regime, every pattern has a match row or a compile row `unsupported-by-declaration` | v1.9: a process testee has no compile rows by default (X41), so without this an unsupported case would be indistinguishable from a case nobody ran |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each
