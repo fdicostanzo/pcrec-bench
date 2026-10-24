@@ -5675,3 +5675,25 @@ Relayed for the kit session (source: pcrec `docs/design/memfn/r17b_prime/b4prep/
 > For the sets B4 (kit routing commit, R17-b′) will be judged on, which cells have a set-FIND site (a byte-class prefilter, a DFA hat, or a hybrid prefilter) whose subject has dense, regular landings: a mean gap of at most 8 bytes between candidate landings, with one dominant gap value? Please report, per cell: the cell id, the site kind, the subject and its length, the mean landing gap and the share at the dominant gap, and, if you have counters, the walk's branch misses per landing on that cell (the kit's boundary for "regular" is 0.1 misses per landing, an unmeasured default between two measured clusters, 0.009 and 0.97-1.44). If you have no counters, the gap sequence alone will do; say so. Please do not tell us which way you expect those cells to move. The kit filters your answer by r17b_prime.md §9.2a's rule and adds the survivors to its pre-registered list before any B4 timing.
 
 Answer in your outbox whenever convenient; it gates nothing tonight.
+
+## I-157 (2026-10-24, pcrec manager) — a substitution mini-bench (Frank's request)
+
+Frank (2026-10-24): "For the substitution work: I want to create a mini-bench for it. Half dozen test cases, mostly around reading large files and making edits. Then set up competitors." Then: "Yes and I want those tools added" (sd and ripgrep). Please build it in pcrec-bench; pcrec supplies the subject side.
+
+**Subject:** pcrec compiled substitution ([M4-SUBST], lane/substland in pcrec, landing soon; contract `docs/spec/subst_api.md` on that branch): pattern and replacement template compiled together into one C function, replace-all into a caller buffer, plus a sizing mode. Wait for the landing on pcrec main before pinning; I will post the commit here.
+
+**Two tiers, reported separately:**
+1. Library (in-process, same file buffer, times only the work): pcrec subst; PCRE2 `pcre2_substitute` (SUBSTITUTE_GLOBAL; the compatibility baseline); Rust `regex` `replace_all`; RE2 `GlobalReplace`. Your existing pcre2/rust/re2 testees can grow a substitute call. Oniguruma, TRE and Vectorscan sit out (no usable substitute API).
+2. Tools (what a user would run; includes process start and file I/O): GNU `sed -E`, `perl -pe 's///g'`, python3 `re.sub`, plus NEW: `sd` and ripgrep's replace mode (`rg --passthru -r`). INSTALL RULE (pcrec's security rule, binding): pinned release versions, from the projects' official releases with a published checksum (or crates.io with --locked), installed inside the pcrec-bench tree only, never system-wide; BEFORE installing, write the exact URLs/versions/checksums in your outbox and wait: Frank approves the exact files through me.
+
+**Six cases** on a large log file (a few hundred MB, e.g. scaled from pcrec's third_party synth-log-lines or the elastic examples; your call):
+1. plain literal replacement (copy-cost floor);
+2. rare matches (search-dominated);
+3. dense matches, an edit on nearly every line (output-dominated);
+4. capture rearrangement (date reformat, e.g. `$3-$1-$2`);
+5. masking with a class-heavy pattern (IPv4 or e-mail -> fixed text);
+6. case change in the template (`\U$1`); engines without it are shown as "not supported", not dropped.
+
+**Correctness gate before timing:** every competitor's output is checksummed against PCRE2's for each case; sed's POSIX leftmost-longest may pick a different match, so choose patterns where the engines agree or record the divergence per case.
+
+Timing runs need a box window cleared with Frank, as usual. Questions in your outbox whenever convenient.
