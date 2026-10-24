@@ -741,6 +741,18 @@ docs/dev/'s append-only records.
   independent citation check (`tools/trend_cite_check.py`), the sidecar
   template. `pcrec_trend_report_v0.md` §7 carries the implementation note.
 
+- `subst_bench_v1.md` -- **[B140] the SUBSTITUTION mini-bench design, DRAFT
+  v0.1 (2026-10-24, lane b140design; inbox I-157)**: six cases (literal /
+  rare / dense / capture reorder / IPv4 mask / `\U` case change) on a
+  generated ~320 MB Apache-combined log; two tiers reported separately
+  (LIBRARY: pcre2_substitute baseline, pcrec subst, Rust regex, RE2
+  GlobalReplace; TOOLS: sed -E, perl, python re.sub, sd, rg --passthru -r);
+  the output-sha256 correctness gate with declared per-case divergences;
+  the driver-protocol extension (`--mode subst`, `out` line), record schema
+  v1.9 proposal (regime `substitution`, `testee.invocation`, `subst` and
+  `process` row objects), the reporter view, 11 open questions, and the
+  INSTALL MANIFEST for sd and ripgrep (section 9). DESIGN ONLY.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
