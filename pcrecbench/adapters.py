@@ -88,6 +88,12 @@ INVOCATION
                                        substitution count + 1, an engine-
                                        neutral number (3.1.1); an engine
                                        that allocates for itself ignores it
+                                       (rust-regex and RE2 do; their drivers
+                                       accept the argument and ignore it, and
+                                       also accept-and-ignore --subst-flags)
+               --no-unicode            (rust driver only) RegexBuilder::
+                                       unicode(false), passed at compile AND
+                                       measure time for a substitution set
                --out-dir DIR           TRIAL 1 ONLY: write each subject's
                                        final output to DIR/<ID>.out, outside
                                        the clock. Absent on trials 2..N

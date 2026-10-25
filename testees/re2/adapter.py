@@ -43,7 +43,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 
 from pcrecbench import adapters as _ad          # noqa: E402
-from pcrecbench.driverrun import run_driver, per_trial, C_ENV  # noqa: E402
+from pcrecbench.driverrun import (run_driver, per_trial, one_trial,  # noqa: E402
+                                   C_ENV)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -280,13 +281,17 @@ class Adapter(_ad.Adapter):
         src = os.path.join(HERE, "driver.cc")
         # [B133]: the timed loop is its own translation unit.
         timed_src = os.path.join(HERE, "timed.cc")
-        deps = [src, timed_src, os.path.join(HERE, "timed.h")]
+        # [B140]: the substitution mode's own timed unit (BD16: timed.cc is
+        # not edited; a second INSTRUMENT, a second translation unit).
+        subst_src = os.path.join(HERE, "timed_subst.cc")
+        deps = [src, timed_src, os.path.join(HERE, "timed.h"), subst_src,
+                os.path.join(HERE, "timed_subst.h")]
         out = os.path.join(workdir, "re2_driver")
         cxx = os.environ.get("CXX", "g++")
         cflags = _pkg_config("--cflags", "re2")
         libs = _pkg_config("--libs", "re2")
         argv = ([cxx, "-O2", "-std=c++17"] + cflags
-               + ["-o", out, src, timed_src] + libs)
+               + ["-o", out, src, timed_src, subst_src] + libs)
         # Registered even on the cached path (pcrecbench.driverrun.
         # build_driver's own discipline, quoted): the record must state
         # how the driver that produced its numbers was built, not only
@@ -413,5 +418,36 @@ class Adapter(_ad.Adapter):
             # loop (driver protocol, pcrecbench/adapters.py); scratch tier only.
             argv.append("--prime")
         return per_trial(argv, subjects, trials, timeout=timeout,
+                         pin=handle.get("pin"),
+                         subject_timeout=handle.get("subject_timeout"))
+
+    # ------------------------------------------------- substitution ([B140])
+
+    def subst_support(self, testee_id):
+        """`RE2::GlobalReplace` renders the neutral template in the `re2`
+        dialect (`\\N`, `$` literal; no case operators, no conditional) and
+        the divergence table names the engine `re2`. Only the default config
+        is chartered (subst_bench_v1.md 3.1: Perl-leftmost-first, so
+        agreement with PCRE2 holds on the unambiguous cases)."""
+        if testee_id != "re2-default":
+            return None
+        return {"dialect": "re2", "competitor": "re2", "sizing": "bound"}
+
+    def measure_subst(self, handle, subjects, bounds, out_dir, timeout=None):
+        """One `--mode subst` trial (driver.cc's `--mode subst` branch). The
+        driver makes the fresh subject copy GlobalReplace edits OUTSIDE the
+        clock; `--bound` is passed for protocol uniformity and ignored."""
+        sub = handle["subst"]
+        argv = [handle["driver"], "--pattern", handle["pattern_file"],
+                "--mode", "subst", "--template", sub["template_file"],
+                "--subst-flags", sub["flags"],
+                "--max-mem", str(handle["max_mem"])]
+        if handle["longest"]:
+            argv.append("--longest")
+        for sid, cap in sorted(bounds.items()):
+            argv += ["--bound", "%s=%d" % (sid, cap)]
+        if out_dir:
+            argv += ["--out-dir", out_dir]
+        return one_trial(argv, subjects, timeout=timeout,
                          pin=handle.get("pin"),
                          subject_timeout=handle.get("subject_timeout"))

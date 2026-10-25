@@ -52,6 +52,19 @@ What it checks, each with its control:
      and no match rows; the refusals (a sizefirst arm on a non-substitution
      set, a testee with no substitution call, --find-all in --mode subst,
      a table that disagrees with the renderer) each fire BY NAME.
+ 10. ([B140] step 3, continued, lane b140drv2) THE RUST AND RE2 DRIVERS: for
+     rust-default (`regex::bytes::Regex::replace_all`, unicode(false)) and
+     re2-default (`RE2::GlobalReplace` on a fresh subject copy) the driver
+     called DIRECTLY on acc-small, every RUNNABLE case's output sha256 +
+     count + length equal to expectations.tsv (no harness code in the
+     verdict); the cases divergences.tsv declares unsupported (6 case change,
+     7 lookahead/backreference/conditional) rendered as `unsupported-by-
+     declaration` compile rows through `run_cell` with a schema-1.9 record
+     the validator accepts and NO match rows for them, the runnable six
+     gated `agrees`; the drivers' own refusals by name; a testee config the
+     charter does not cover (re2-longest) refused by name; and the pattern-
+     level `unsupported:pattern-syntax` row accepted beside the renderer's
+     own (different) template token.
 """
 import csv
 import hashlib
@@ -412,6 +425,7 @@ def _driver_slice(check, data, cases, exp):
         _harness_records(check, sb, work, mock, _ad, harness, store, substrun)
         _gate_and_faults(check, sb, small, work, mock, _ad, substrun)
         _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun)
+        _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun)
     finally:
         for k, v in saved.items():
             if v is None:
@@ -661,3 +675,133 @@ def _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun):
           pl.unsupported and "no-case-operators" in pl.unsupported
           and "divergences.tsv" in pl.declaration_ref
           and substrun.plan_case(sb, p6, {"dialect": "pcre2", "competitor": "pcre2-jit"}).flags == "extended")
+
+
+def _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun):
+    """Section 10 ([B140] b140drv2): rust-default and re2-default."""
+    from pcrecbench.driverrun import run_driver
+    exp = {(x["case"], x["subject"]): x for x in _read_tsv(os.path.join(SUBST, "expectations.tsv"))}
+    div = _read_tsv(os.path.join(SUBST, "divergences.tsv"))
+    lst = os.path.join(work, "list.tsv")
+    with open(lst, "w") as f:
+        f.write("acc-small\t%s\n" % small.path)
+    engines = (("rust-default", "rust", "rust-regex", ["--no-unicode"]),
+               ("re2-default", "re2", "re2", []))
+    for cid, dialect, competitor, extra in engines:
+        ad, _cfg = _ad.resolve(cid)
+        drv = ad.prepare_driver(os.path.join(work, "w-" + cid))
+        declared = {d["case"] for d in div if d["competitor"] == competitor
+                    and d["expectation"].startswith("unsupported")}
+        runnable = [c for c in cases if c["case"] not in declared]
+        bad_cases = []
+        for c in runnable:
+            ir = st.parse(open(os.path.join(SUBST, "cases", c["dir"], "TEMPLATE.neutral"), "rb").read())
+            pf = os.path.join(work, "p-%s-%s" % (cid, c["case"]))
+            tf = pf + ".tpl"
+            with open(pf, "wb") as f:
+                f.write(open(os.path.join(SUBST, "cases", c["dir"], "PATTERN.rx"), "rb").read()[:-1])
+            with open(tf, "wb") as f:
+                f.write(st.render(ir, dialect))
+            od = os.path.join(work, "o-%s-%s" % (cid, c["case"]))
+            os.makedirs(od)
+            e = exp[(c["case"], "acc-small")]
+            argv = [drv, "--pattern", pf, "--list", lst, "--mode", "subst",
+                    "--template", tf, "--subst-flags", "none",
+                    "--bound", "acc-small=%d" % (small.length + 8 * int(e["nsubst"]) + 1),
+                    "--out-dir", od] + extra
+            r = run_driver(argv, timeout=120)
+            row = r.rows[0] if r.rows else None
+            got = (hashlib.sha256(open(os.path.join(od, row.out_path), "rb").read()).hexdigest()
+                   if row is not None and row.out_path else None)
+            if (r.returncode != 0 or row is None or got != e["out_sha256"]
+                    or row.nmatches != int(e["nsubst"]) or row.out_bytes != int(e["out_bytes"])
+                    or row.iters != 1):
+                bad_cases.append("%s: rc=%s %s" % (c["case"], r.returncode,
+                                                   row.answer if row else r.diagnostic()))
+            shutil.rmtree(od, ignore_errors=True)
+        check("subst driver %s: --mode subst on acc-small, the %d runnable "
+              "cases (%d declared unsupported), output sha256 + count + length "
+              "== expectations.tsv" % (cid, len(runnable), len(declared)),
+              not bad_cases and len(declared) == 2 and len(runnable) == 6,
+              "; ".join(bad_cases[:3]))
+        base = [drv, "--pattern", os.path.join(work, "p-%s-1" % cid), "--list", lst,
+                "--mode", "subst", "--template", os.path.join(work, "p-%s-1.tpl" % cid),
+                "--bound", "acc-small=9999999"] + extra
+        for flag in ("--find-all", "--prime", "--utf8"):
+            r = run_driver(base + [flag], timeout=30)
+            check("subst driver %s: %s is REFUSED in --mode subst by name" % (cid, flag),
+                  r.returncode == 2 and any("--mode subst" in e for e in r.errors),
+                  "rc=%s errors=%s" % (r.returncode, r.errors))
+        r = run_driver(base + ["--iters", "2"], timeout=30)
+        check("subst driver %s: --iters 2 is refused by name (one call per subject)" % cid,
+              r.returncode == 2 and any("--iters" in e for e in r.errors))
+        r = run_driver([drv, "--pattern", base[2], "--list", lst, "--mode", "subst"] + extra, timeout=30)
+        check("subst driver %s: --mode subst without --template is refused by name" % cid,
+              r.returncode == 2 and any("--template" in e for e in r.errors))
+        # through the harness: a schema-1.9 record, the by-declaration rows
+        root = os.path.join(work, "store-" + cid)
+        os.makedirs(root)
+        res = harness.run_cell("subst", cid, trials=2, tier=store.TIER_SCRATCH,
+                               store_root=root, subject_limit=1,
+                               workdir=os.path.join(work, "hw-" + cid), synthetic=True)
+        rows = [r for r in res.rows if r["kind"] == "match"]
+        comp = [r for r in res.rows if r["kind"] == "compile"]
+        unsup = {r["pattern_id"]: r for r in comp
+                 if r["compile_outcome"] == "unsupported-by-declaration"}
+        check("subst harness %s: a schema-1.9 record (validator-accepted) with "
+              "12 substitution rows (6 runnable cases x 2 trials), every one "
+              "matched-as-expected / gate agrees with the expectation's hash" % cid,
+              len(rows) == 12 and res.setup["schema_version"] == "1.9"
+              and res.setup["testee"]["invocation"] == "library"
+              and all(r["match_outcome"] == "matched-as-expected"
+                      and r["subst"]["gate"] == "agrees"
+                      and r["subst"]["out_sha256"] == exp[(r["subst"]["case"], "acc-small")]["out_sha256"]
+                      and r["timing"]["iterations"] == 1 for r in rows))
+        check("subst harness %s: cases 6 and 7 are compile rows `unsupported-by-"
+              "declaration` citing divergences.tsv (case 7's row is the PATTERN-"
+              "level `pattern-syntax`, the renderer's own token is the template's), "
+              "with NO match rows and one compile row per COMPILED case-trial only"
+              % cid,
+              set(unsup) == {"6-upper", "7-url-tld-fix"}
+              and all(competitor in r["declaration_ref"] and "divergences.tsv" in r["declaration_ref"]
+                      for r in unsup.values())
+              and "pattern-syntax" in unsup["7-url-tld-fix"]["declaration_ref"]
+              and not ({r["pattern_id"] for r in rows} & set(unsup))
+              and len(comp) == 6 * 2 + 2)
+    # the engine whose chartered config is the DEFAULT only: others refused by name
+    try:
+        harness.run_cell("subst", "re2-longest", trials=1, tier=store.TIER_SCRATCH,
+                         store_root=os.path.join(work, "store-rl"), subject_limit=1,
+                         workdir=os.path.join(work, "hw-rl"), synthetic=True)
+        msg = "no error"
+    except harness.HarnessError as e:
+        msg = str(e)
+    check("subst harness: re2-longest (not the chartered re2-default) is refused "
+          "by name", "declares no substitution call" in msg, msg[:160])
+    # the gate through the rust driver: a deliberately wrong template fails by name
+    ad, _c = _ad.resolve("rust-default")
+    wd = os.path.join(work, "gw-rust")
+    ad.prepare("rust-default", wd)
+    p = sb.pattern("1-literal")
+    cp = ad.compile("rust-default", p.name, sb.pattern_bytes(p.name),
+                    {"substitution": True}, 1, wd)
+    handle = dict(cp.get("plain").handle)
+    handle["pin"], handle["subject_timeout"] = None, 60
+    sup = ad.subst_support("rust-default")
+    wrong = substrun.plan_case(sb, p, sup, template_override=b"lit\tH2\n")
+    substrun.write_template(wrong, os.path.join(wd, "wrong"))
+    ents, _n = substrun.measure_cell(ad, handle, sb, p, wrong, sup, [small], 1, 60,
+                                     lambda a, h: False)
+    check("subst gate (rust): a deliberately WRONG template FAILS BY NAME - gate "
+          "`wrong`, did-not-match-as-expected, not timed",
+          ents[0]["subst"]["gate"] == "wrong"
+          and ents[0]["outcome"] == "did-not-match-as-expected"
+          and ents[0]["timing"] is None
+          and "differs from the oracle's at byte" in ents[0]["diagnostic"])
+    # plan_case: the pattern-level row beside a DIFFERENT template token
+    p7 = sb.pattern("7-url-tld-fix")
+    pl = substrun.plan_case(sb, p7, {"dialect": "rust", "competitor": "rust-regex"})
+    check("subst plan: case 7 for rust is unsupported on the table's PATTERN-level "
+          "token although the renderer's own token differs (no-conditional)",
+          pl.unsupported and "pattern-syntax" in pl.unsupported
+          and "divergences.tsv" in pl.declaration_ref, pl.unsupported)

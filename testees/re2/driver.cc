@@ -65,6 +65,7 @@
 #include <vector>
 
 #include "timed.h"
+#include "timed_subst.h"   // [B140] --mode subst, its own instrument
 
 using absl::string_view;
 
@@ -184,6 +185,7 @@ int main(int argc, char **argv) {
     int longest = 0;
     int enc_utf8 = 0;            // [B77] U2: --encoding utf8 (the ENGINE's)
     int64_t max_mem = RE2::Options::kDefaultMaxMem;
+    const char *template_path = NULL, *out_dir = NULL;   // [B140] --mode subst
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -205,6 +207,20 @@ int main(int argc, char **argv) {
             else { std::printf("error\tunknown encoding %s\n", e); return 2; }
         }
         else if (!std::strcmp(a, "--max-mem") && i + 1 < argc) max_mem = std::strtoll(argv[++i], NULL, 10);
+        // [B140] --mode subst (pcrecbench/adapters.py's protocol). `--bound`
+        // is an engine-neutral capacity this engine ignores (GlobalReplace
+        // grows its own std::string); `--subst-flags` is libpcre2's
+        // EXTENDED switch, meaningless here.
+        else if (!std::strcmp(a, "--template") && i + 1 < argc) template_path = argv[++i];
+        else if (!std::strcmp(a, "--out-dir") && i + 1 < argc) out_dir = argv[++i];
+        else if (!std::strcmp(a, "--bound") && i + 1 < argc) ++i;
+        else if (!std::strcmp(a, "--subst-flags") && i + 1 < argc) {
+            const char *v = argv[++i];
+            if (std::strcmp(v, "extended") && std::strcmp(v, "none")) {
+                std::printf("error\t--subst-flags takes extended|none\n");
+                return 2;
+            }
+        }
         else { std::printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (!pattern_path) die("--pattern is required");
@@ -275,6 +291,73 @@ int main(int argc, char **argv) {
     if (!load_list(list_path, &subs)) {
         std::printf("error\tcannot read subject list %s\n", list_path);
         return 2;
+    }
+
+    if (!std::strcmp(mode, "subst")) {                       // [B140]
+        if (find_all || prime || utf8_adv) {
+            std::printf("error\t--mode subst refuses --find-all, --prime and --utf8\n");
+            return 2;
+        }
+        if (iters > 1) {
+            std::printf("error\t--mode subst is one call per subject (--iters must be 1)\n");
+            return 2;
+        }
+        if (!template_path) {
+            std::printf("error\t--mode subst requires --template\n");
+            return 2;
+        }
+        std::string rewrite;
+        if (!slurp(template_path, &rewrite)) {
+            std::printf("error\tcannot read template %s\n", template_path);
+            return 2;
+        }
+        struct sigaction sas;
+        std::memset(&sas, 0, sizeof sas);
+        sas.sa_handler = on_alarm;
+        sigaction(SIGALRM, &sas, NULL);
+        for (volatile size_t i = (size_t)skip; i < subs.size(); i++) {
+            Subject &s = subs[i];
+            // The fresh copy GlobalReplace edits: made HERE, outside the clock.
+            std::string * volatile work = new std::string(s.buf);
+            volatile int nsubst = 0;
+            volatile double elapsed = 0.0;
+            timed_out = 0;
+            if (sigsetjmp(timeout_jmp, 1) == 0) {
+                if (subject_timeout > 0) alarm((unsigned)subject_timeout);
+                struct tsubst_in tin = {};
+                tin.text = work; tin.re = re; tin.rewrite = string_view(rewrite);
+                struct tsubst_out tout = { 0 };
+                elapsed = timed_subst(&tin, &tout);
+                nsubst = tout.nsubst;
+                if (subject_timeout > 0) alarm(0);
+            }
+            if (timed_out) {
+                std::printf("subject\t%s\ttimedout\t-\t-\t0\t-\t1\t%.9f\t-\t-\n",
+                           s.id.c_str(), (double)elapsed);
+                delete work;
+                continue;
+            }
+            std::printf("subject\t%s\t%s\t-\t-\t0\t%zu\t1\t%.9f\t%d\t-\n",
+                       s.id.c_str(), nsubst > 0 ? "match" : "nomatch",
+                       s.buf.size(), (double)elapsed, (int)nsubst);
+            // ---- outside the clock: announce (and on trial 1 write) the output
+            std::string path = "-";
+            if (out_dir) {
+                path = s.id + ".out";
+                std::string full = std::string(out_dir) + "/" + path;
+                FILE *f = std::fopen(full.c_str(), "wb");
+                size_t w = f ? (work->empty() ? 0 : std::fwrite(work->data(), 1, work->size(), f)) : 1;
+                if (!f || w != work->size() || std::fclose(f) != 0) {
+                    std::printf("error\tcannot write %s\n", full.c_str());
+                    return 2;
+                }
+            }
+            std::printf("out\t%s\t%s\t%zu\n", s.id.c_str(), path.c_str(), work->size());
+            delete work;
+        }
+        delete re;
+        std::fflush(stdout);
+        return 0;
     }
 
     const RE2::Anchor anchor =

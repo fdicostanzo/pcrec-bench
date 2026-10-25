@@ -1,0 +1,12 @@
+# testees/rust/timed-subst/Cargo.toml -- [B140] the rust driver's SUBSTITUTION
+# timed call, a crate of its own (see src/lib.rs's header for why it is NOT a
+# second function in ../timed/). Same `regex` requirement as the driver; the
+# resolved version is the one Cargo.lock pins for all three crates.
+[package]
+name = "rust-timed-subst"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+regex = "1"

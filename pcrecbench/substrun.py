@@ -60,6 +60,11 @@ OUT_ROOT_DEFAULT = os.path.join(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))), "build", "subst-out")
 
 
+# `unsupported:<token>` reasons that live in the PATTERN, not the template: the
+# template renderer cannot see them, so it may disagree about the token.
+PATTERN_LEVEL_TOKENS = ("pattern-syntax",)
+
+
 class SubstError(Exception):
     """A substitution-tier failure the harness turns into a HarnessError."""
 
@@ -146,7 +151,15 @@ def plan_case(sb, p, support, template_override=None):
             "table and the renderer disagree"
             % (case, support["dialect"], token, case, support["competitor"]))
     if declared is not None:
-        if token is not None and token != declared[0]:
+        # A PATTERN-level reason (`pattern-syntax`: the engine cannot parse the
+        # PATTERN) sits upstream of the template renderer, which never looks at
+        # the pattern; when a case is unsupported for it AND its template also
+        # has a dialect gap (rust / re2 / sed / sd / rg on case 7: lookahead +
+        # backreference in the pattern, a conditional in the template), the
+        # renderer's own token legitimately differs from the table's. [B140]
+        # b140drv2: the first non-pcre2 dialects to meet this.
+        if token is not None and token != declared[0] \
+                and declared[0] not in PATTERN_LEVEL_TOKENS:
             raise SubstError(
                 "case %s: divergences.tsv says unsupported:%s but the "
                 "renderer's token is %s" % (case, declared[0], token))

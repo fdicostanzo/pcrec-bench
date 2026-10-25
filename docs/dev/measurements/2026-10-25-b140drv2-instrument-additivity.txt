@@ -1,0 +1,27 @@
+=== RE2 (testees/re2) ===
+diff vs 43b65a3c of testees/re2/timed.cc testees/re2/timed.h: EMPTY (untouched)
+timed_run  OLD addr 0x4080 (mod 64 = 0) 227 insns sha d442b4a1f49a6268
+timed_run  NEW addr 0x5040 (mod 64 = 0) 227 insns sha d442b4a1f49a6268
+CONTROL main: OLD 976 insns sha 2ac9fe1ab2e4f6be ; NEW 1654 insns sha 6f07cbf3fddf6940 -> differs (the comparison can see a change)
+timed_subst NEW addr 0x5400 (mod 64 = 0) 47 insns sha e3be5a6f337e20c1
+re2  mode --mode search --iters 3                                        IDENTICAL (8 lines, secs masked)
+re2  mode --mode search --iters 2 --find-all                             IDENTICAL (8 lines, secs masked)
+re2  mode --mode match --iters 2                                         IDENTICAL (8 lines, secs masked)
+re2  mode --mode search --iters 2 --find-all --prime                     IDENTICAL (8 lines, secs masked)
+re2  mode --mode search --iters 2 --longest                              IDENTICAL (8 lines, secs masked)
+re2  mode --mode search --iters 1 --find-all --utf8 --encoding utf8      IDENTICAL (9 lines, secs masked)
+RE2: ALL 6 existing-mode invocations identical; timed_run unchanged
+=== RUST (testees/rust) ===
+diff vs 43b65a3c of testees/rust/timed: EMPTY (untouched)
+run_subject OLD addr 0xd5b40 (mod 64 = 0) 341 insns sha cee097a619eb342e (_RNvCs6PG4tNP9HjZ_10rust_timed11run_subject)
+run_subject NEW addr 0xe2900 (mod 64 = 0) 341 insns sha cee097a619eb342e (_RNvCs6PG4tNP9HjZ_10rust_timed11run_subject)
+CONTROL driver main: OLD 3645 insns sha 49cc1d0723ca6aa0 ; NEW 4897 insns sha 2eda639a08f18fd6 -> differs (the comparison can see a change)
+timed_subst NEW addr 0xdf180 (mod 64 = 0) 610 insns sha f586878571e46f67
+rust mode --mode search --iters 3                                        IDENTICAL (8 lines, secs masked)
+rust mode --mode search --iters 2 --find-all                             IDENTICAL (8 lines, secs masked)
+rust mode --mode match --form whole-subject --iters 2                    IDENTICAL (8 lines, secs masked)
+rust mode --mode search --iters 2 --find-all --prime                     IDENTICAL (8 lines, secs masked)
+rust mode --mode search --iters 1 --find-all --utf8                      IDENTICAL (8 lines, secs masked)
+rust mode --mode search --iters 2 --subject-timeout 30                   IDENTICAL (8 lines, secs masked)
+RUST: ALL 6 existing-mode invocations identical; run_subject unchanged
+DONE
