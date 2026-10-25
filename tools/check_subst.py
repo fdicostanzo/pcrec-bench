@@ -208,8 +208,8 @@ def run(ok, bad):
 
     # the conditional, pcre2 only (the only dialect that has one)
     for subject, groups in ((b"xaby", {1: b"a", 2: b"b"}), (b"xay", {1: b"a", 2: None})):
-        got = bytes(oracle.compile(b"(a)(b)?").substitute(
-            subject, st.render(ci, "pcre2"), extended=True)[1])
+        got = bytes(oracle.compile(b"(a)(b)?(c)?").substitute(
+            subject, st.render(ci, "pcre2", extended=True), extended=True)[1])
         exp = subject[:1] + st.evaluate(ci, {**groups, 3: None}) + subject[-1:]
         check("subst cond: libpcre2 ${n:+..:..} (group2 %s) == evaluate()"
               % ("set" if groups[2] else "unset"), got == exp, repr(got))
@@ -340,7 +340,11 @@ def run(ok, bad):
                 else:
                     outcome = "agrees" if hashlib.sha256(r.stdout).hexdigest() == sha_want else "WRONG"
             except st.Unsupported as e:
-                outcome = "unsupported:" + e.token
+                # the pattern is read first: a pattern sed cannot parse is
+                # `pattern-syntax` whatever the template needs
+                probe = _run([sed, "-E", b"s/" + pat.replace(b"/", b"\\/") + b"//g"], b"x\n")
+                outcome = ("unsupported:pattern-syntax" if probe.returncode != 0
+                           else "unsupported:" + e.token)
             ran += 1
             if v and v["expectation"] != outcome:
                 mism.append("sed %s: table says %s, run says %s" % (c["case"], v["expectation"], outcome))
