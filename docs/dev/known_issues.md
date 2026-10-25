@@ -1686,6 +1686,8 @@ is expected).
 
 ## KB-36 (2026-10-09, found by lane b125read/[B125]) — the reporter does not state a set's DROPPED-triple count
 
+STATUS 2026-10-25: Frank GO; lane kb36rep.
+
 capability@0.2's NOTES.md R11 requires the number of expectation triples dropped by name (2 triples, 22 rows: `email-nested-plus` x the two `t-evil-*` subjects) to be stated on the report. The reporter shows them only as per-row `no expectation` diagnostics; no header line or summary counts them, so a reader of the set-grain report cannot see that the set has unjudgeable triples. Fix shape: a header key (e.g. `dropped_triples: N (by name: ...)`) derived from the sub-bench's expectation derivation, with a reporter test. Not yet scheduled.
 
 ## KB-37 (2026-10-10, found by lane b135read/[B135]; FIXED lane b135r8) — the reporter's R8 "previous version" was chosen by record TIMESTAMP, so an ABBA window inverts it
