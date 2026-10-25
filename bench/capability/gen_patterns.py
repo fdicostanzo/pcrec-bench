@@ -1174,6 +1174,18 @@ for _utf8_id in (
     EXCLUDED_TESTEES[_utf8_id] = _UTF8_SIBLING_REASON
 del _utf8_id
 
+# [B140] (lane b140drv, 2026-10-25): the pcre2 SIZE-FIRST substitution arms.
+# Substitution-only testees (testees/pcre2/configs.toml `subst_only`): the
+# harness refuses them on any set that is not a substitution set, so they
+# can never be compiled against this one. They are the same engine calls as
+# `pcre2-interp` / `pcre2-jit` with a different `pcre2_substitute` call shape.
+for _sf_id in ("pcre2-interp-sizefirst", "pcre2-jit-sizefirst"):
+    EXCLUDED_TESTEES[_sf_id] = (
+        "substitution-only arm ([B140], `subst_only`): the harness refuses it "
+        "on any set that does not declare the `substitution` regime; its "
+        "engine capabilities are its sibling's")
+del _sf_id
+
 
 def render_ext_bench():
     lines = ["ext bench"]

@@ -32,7 +32,7 @@ def cmd_run(args):
             command_line=["python3", "-m", "pcrecbench"] + sys.argv[1:],
             note=args.note, synthetic=args.synthetic,
             tier=args.tier, prime=args.prime,
-            subject_limit=args.subjects,
+            subject_limit=getattr(args, "subjects", None),
             progress=(lambda *a: print(*a, file=sys.stderr)) if not args.quiet_output else None)
     except quiet.QuietRefusal as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
