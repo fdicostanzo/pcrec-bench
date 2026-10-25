@@ -164,7 +164,17 @@ the cause is not a pcrec change (the capability pair's programs are 54/62 identi
 ## 9. MAKE CHECK (the manager's brief asked for it; launched from this lane because further independent work remained)
 
 Command (from `worktrees/b142prep`): `(setsid gnutimeout 14400 make -k check > /var/tmp/pcrecbench/b142prep/final_check.log 2>&1; echo "DONE rc=$?" >> /var/tmp/pcrecbench/b142prep/final_check.log) & disown`.
-Marker: the last line `DONE rc=<n>`. RESULT: **RESULT_PLACEHOLDER**
+Marker: the last line `DONE rc=<n>`. RESULT: **rc=2, two reds, neither caused by the re-pin.**
+check-schema 9 accepted / 89 rejected / 0 WRONG; check-harness 897 passed, 1 FAILED
+(`a real quick cell on bench/email writes a MEASURED scratch record`: status=inconclusive-load,
+a box-load flake, another lane was running); check-report 96 passed, 8 FAILED
+(test_plain_entry_capacities_r1, _tiny_set_per_subject_subtable_r2, _buffer_frame_legend_r4,
+_jitter_ratio_r5, _artifact_bytes_column_r7, _legend_and_superseded_shortening_r8,
+_engine_reading_and_scoped_legend_b16_r3, _kb16_query_never_opens_other_subbench_files):
+the SAME 8 fail on master's tree (58f6af36), cause: the store now holds two machines
+(budu-ryzen1600, ryzen7700x) and the reporter refuses a pooled selection (O-90, [B137]) --
+the tests need `--machine`; OWED to the reporter owner; check-interpret 271 passed / 0 FAILED;
+check-upstream OK; check-trend 33 / 0 failed
 
 ## 10. Findings pcrec did not state (candidate outbox items)
 
