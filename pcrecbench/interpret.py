@@ -136,12 +136,15 @@ HEADER_KEYS = [
     # [B79] (reporter v22): CONDITIONAL -- present only on a report with
     # a cross-pin pair; after floor_pattern so no existing key moves.
     "null_band",
+    # KB-36 (reporter v28): CONDITIONAL -- present only when the selection
+    # carries a dropped expectation triple; after null_band.
+    "dropped_triples",
 ]
 
 # [B79]: the header keys a report MAY omit -- emitted only when the
 # report's own content calls for them (`null_band`: a cross-pin pair).
 # Every other HEADER_KEYS entry is unconditional.
-CONDITIONAL_HEADER_KEYS = ("null_band",)
+CONDITIONAL_HEADER_KEYS = ("null_band", "dropped_triples")
 
 DID_NOT_FIRE_TOKENS = ("no-matching-rows", "input-absent", "grain",
                        "reporter-version", "no-registered-signatures",

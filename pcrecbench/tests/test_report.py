@@ -2013,7 +2013,7 @@ def test_reporter_version_pin():
     `did_not_compile` rows from a new section outside the ranking-group
     loop; found live on `bench/utf8`'s `prp-ingreek`, which every one of
     utf8@0.1's 11 testees refuses) took it to v25; [B136] (lane b136read, 2026-10-13: the first
-    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26; [B143] (lane b143rep, 2026-10-25: the `compound=` clause, the emit-definition note, the substitution grain) took it to v27.
+    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26; [B143] (lane b143rep, 2026-10-25: the `compound=` clause, the emit-definition note, the substitution grain) took it to v27; KB-36 (lane kb36rep, 2026-10-25: the conditional `dropped_triples:` header key) took it to v28.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -2024,20 +2024,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v27 (2026-10-25)",
-           f"expected REPORTER_VERSION == 'v27 (2026-10-25)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v28 (2026-10-25)",
+           f"expected REPORTER_VERSION == 'v28 (2026-10-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v27 (2026-10-25)" in md, f"expected the v26 header line:\n{md[:200]}")
+    _check("reporter: v28 (2026-10-25)" in md, f"expected the v26 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v27 (2026-10-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v28 (2026-10-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v27 (2026-10-25)" in matrix,
+    _check("reporter: v28 (2026-10-25)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -2065,6 +2065,53 @@ def test_reporter_version_pin():
 
 def _tsv_header_line(tsv):
     return tsv.splitlines()[0]
+
+
+def test_kb36_dropped_triples_header_key():
+    """KB-36: `dropped_triples:` states a set's dropped expectation
+    triples (capability@0.2 NOTES R11), derived from the included records'
+    own `no expectation exists` rows -- never from `bench/`. A set with
+    dropped triples shows it (TSV header, after `floor_pattern`; markdown
+    bullet), counting distinct (pattern, subject, regime) and rows across
+    records; the CONTROL, a set with none, carries neither (the key is
+    omitted, so such a report is byte-identical but for the version)."""
+    def _dropped_row(pattern, subject, trial):
+        row = _mini_row(pattern, subject, "large-subject-throughput", trial, trial, 50)
+        row["match_outcome"] = "did-not-match-as-expected"
+        row["diagnostic"] = (report.NO_EXPECTATION_DIAGNOSTIC_PREFIX
+                             + " -- the sub-bench must state one")
+        del row["timing"]
+        return row
+
+    # Control: no dropped triple anywhere -> no key, no bullet.
+    setup_c = _mini_setup("engine-c_1.0.0_cfg-caps-simdna")
+    rows_c = [_mini_row("p1", "s1", "short-subject-search", t, t, 50) for t in (1, 2, 3)]
+    rd_c, err = report.build_report(
+        [_mk_loaded("c.jsonl", setup_c, rows_c)], _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(rd_c.dropped_triples == {}, f"control: expected no dropped triples, got {rd_c.dropped_triples}")
+    _check("dropped_triples" not in _tsv_header_line(report.render_tsv(rd_c)),
+           "control: the TSV header must omit the key")
+    _check("dropped expectation triples" not in report.render_markdown(rd_c),
+           "control: the markdown must omit the bullet")
+
+    # Two triples, two records (two testees), 2 rows per triple per record.
+    def _rows():
+        return ([_mini_row("p1", "s1", "short-subject-search", 1, 1, 50)]
+                + [_dropped_row("pz", "t-b", 1), _dropped_row("pz", "t-b", 2),
+                   _dropped_row("pz", "t-a", 1), _dropped_row("pz", "t-a", 2)])
+    rd, err = report.build_report(
+        [_mk_loaded("x.jsonl", _mini_setup("engine-x_1.0.0_cfg-caps-simdna"), _rows()),
+         _mk_loaded("y.jsonl", _mini_setup("engine-y_1.0.0_cfg-caps-simdna"), _rows())],
+        _args(store="x", include_synthetic=True))
+    _check(err is None, f"unexpected refusal: {err}")
+    header = _tsv_header_line(report.render_tsv(rd))
+    _check("dropped_triples: 2 triples, 8 rows (by name: pz x t-a, pz x t-b)" in header,
+           f"expected the dropped_triples value (2 triples, 8 rows, sorted names):\n{header}")
+    _check("; null_band" not in header and header.index("floor_pattern") < header.index("dropped_triples"),
+           f"dropped_triples must follow floor_pattern:\n{header}")
+    _check("- dropped expectation triples: 2 triples, 8 rows" in report.render_markdown(rd),
+           "the markdown bullet must state the same value")
 
 
 def test_floor_pattern_header_key_p1():
@@ -5972,6 +6019,7 @@ TESTS = [
     test_reporter_version_pin,
     # [B13.2] P-1/P-2, the interpreter preconditions
     test_floor_pattern_header_key_p1,
+    test_kb36_dropped_triples_header_key,
     test_giveup_smallest_rows_p2,
     test_giveup_smallest_rows_two_codes_p2,
     test_provenance_path_cwd_independent,

@@ -1428,3 +1428,16 @@ substitution-only selection is refused BY NAME, pointing at `--grain subst`).
 No committed report carries an abi >= 77 or a substitution record, so none
 changes by a byte; `REPORTER_VERSION` v27 appears on the first report written
 under it.
+
+## The reporter, KB-36 (2026-10-25) -- v28
+
+Lane `kb36rep`. `report.py` gains the CONDITIONAL header key
+`dropped_triples: <N> triples, <M> rows (by name: pattern x subject, ...)`
+(TSV after `null_band`; a markdown bullet) from the included records' own
+`no expectation exists` rows (`_dropped_triples_header_value`,
+`ReportData.dropped_triples`); omitted when the selection has none, so such
+reports differ only in the version line. `interpret.py` `HEADER_KEYS` /
+`CONDITIONAL_HEADER_KEYS` carry the key (the known-key split derives from
+`report.py`'s header block). Test `test_kb36_dropped_triples_header_key`.
+Regeneration owed: the five `2026-10-*-capability-0.2-*` report groups
+(docs/dev/lanes/kb36rep_report.md).
