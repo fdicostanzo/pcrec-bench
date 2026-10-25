@@ -1,4 +1,13 @@
-# bench/capability/ — the capability survey set (`capability@0.2`)
+# bench/capability/ — the capability survey set (`capability@0.3`)
+
+**@0.3 ([B123], 2026-10-25, lane b123subj; pcrec I-125 Q10 / I-127).** 0.2 plus SIX
+throughput subjects, `t-hyb-*` (`captext.hyb_embed/_logline/_datepath/_digits`,
+`gen_throughput_subjects.hyb_subjects`): 1-64 KiB subjects on which the
+capture-forced hybrid patterns MATCH (an embed ladder 1/8/64 KiB, three
+whole-subject shapes); 14 of the 17 are covered, ipv4/zip/iso8601 cannot be
+(bounded languages). No pattern, short subject, 0.1/0.2 text or expectation
+row moves (sha256s asserted); NOTES.md's last section is the 0.3 text with
+P17-P20 and R12. The `match` regime is still not declared.
 
 **@0.2 ([B125], 2026-10-08, lane b125cap; Frank's I-136).** Built in place, the
 altwide@0.1 -> 0.2 way: the 64 patterns, 75 short subjects, 3 throughput texts
@@ -51,7 +60,7 @@ capability policy, `variant.kind` rendering — all future lanes' scope).
 | `subbench.toml` | the SIDECAR: `id="capability"`, `version="0.1"`, `regimes = ["search_short", "throughput"]` (no `match` — capability_set_v1.md 3.5's set-wide exclusion), `short_search_max_bytes = 512`, and since the [B42] switch `rxt_source = "patterns.rxt"` (the loaded source). Its `[[patterns]]` array is `gen_patterns.py --sidecar`'s own output |
 | `captext.py` | the shared randomness primitive (xorshift64*, in `bench/syntax/censustext.py`'s shape) + the throughput grammar: mixed log-line/HTTP/source-code/prose text (capability_set_v1.md 3.4's own words), re-exports `pcrecbench.periodic.periodic_field` |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 75 typed short subjects, grouped and typed BY FAMILY (not one shared vocabulary — `bench/syntax`'s R3/R4 outlier rules do not transfer to a wild-provenance set). Three subjects carry genuine raw non-UTF-8 bytes for family 12 |
-| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`/`t-256k`/`t-1m` from `captext.text()`. Carries an empirical REDOS SAFETY CHECK (`_redos_safety_check`): every `redos-nested` pattern's `find_all` over all three texts is timed and asserted under a 2 s guard, the belt-and-braces control beyond the structural `^`-anchor argument NOTES.md states |
+| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`/`t-256k`/`t-1m` from `captext.text()` (+ 0.2's eight and 0.3's six `t-hyb-*` rows, 17 texts, the earlier 11 sha256-asserted). Carries an empirical REDOS SAFETY CHECK (`_redos_safety_check`): every `redos-nested` pattern's `find_all` over all three texts is timed and asserted under a 2 s guard, the belt-and-braces control beyond the structural `^`-anchor argument NOTES.md states |
 | `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description, periodic |
 | `gen_expectations.py` | the entry point; the derivation is shared (`pcrecbench/expectations.py`). `--check` re-derives and diffs against the committed `expectations.tsv` |
 | `expectations.tsv` | oracle-verified (`method = libpcre2-differential`) match/no-match/find-all expectations for every (pattern, subject, declared regime) triple |
