@@ -352,6 +352,18 @@ K for six one-byte landmarks, abi 76 = the seam helpers static inline; shim
 floor STAYS 16; four new deny testees; window plan
 docs/dev/lanes/b136_chain.sh (not run); testees/pcrec/CLAUDE.md "Re-pin at
 6b2dbd3e".
+2026-10-25: [B142] (lane b142prep, inbox I-159) RE-PINNED the WHOLE
+roster to **9ae59f5d4 (abi 84)**, `also_pins` = `6b2dbd3e` (00c97769 and b8337c33 retired from the allowlist): EIGHT abi
+steps 77-84 (compound, rev-end mark, knowledge-stamp union, part layout, anchor fold, [MEASURE-SET], K128/K129, find-all
+iterators) in one adapter change — `struct rx_info` gained `measures`/`next`/`next_n` and the shim floor STAYS 16 (the shim
+reads none); three TEXT-READ stamps (`compound`, `iter_retry`, `measures`); pcrec's emit-size definition now excludes the
+iterator scaffold (no marker in the text) so the adapter reads pcrec's own numbers via a second fixed protocol token
+`--warn-emit-bytes=1`; program identity **v3** (census-side; v2 reads every artifact changed); registries axes 171/50
+(+`rev-end-form`, bit 56) · limits 78 · schema 81 · definitions 75 byte-identical; the census (docs/dev/measurements/
+2026-10-25-b142prep-census.txt): 1,339 identical / 36 changed / 0 refusal movers, every mover attributed (18 rev-end mark,
+4 compound, 2 K128, 12 [FLAG-SPELL] — a no-abi change pcrec did not list); [M4-SUBST] confirmed not an abi event;
+catalogue 3.20; docs/dev/lanes/b142prep_report.md. NOT YET MEASURED at 9ae59f5d4: the first window (capability x pcrec-auto/
+nocaps per I-154 is the proposal's first tier).
 Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
@@ -503,7 +515,9 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **6b2dbd3e, abi 76** ([B136], 2026-10-12, lane
+  at a pinned commit — **9ae59f5d4, abi 84** ([B142], 2026-10-25, lane
+  b142prep, inbox I-159; `also_pins` 6b2dbd3e; testees/pcrec/CLAUDE.md "Re-pin at
+  9ae59f5d4"). Before it, **6b2dbd3e, abi 76** ([B136], 2026-10-12, lane
   b136prep, inbox I-147/I-148; `also_pins` 00c97769 (abi 75) + b8337c33;
   testees/pcrec/CLAUDE.md "Re-pin at 6b2dbd3e"). Before it, **b8337c33, abi 74** ([B135] (d), 2026-10-10, lane
   b135s3, inbox I-145; pcrec main with [START-LANDING] SL1-SL4: the RECOVER
