@@ -5712,3 +5712,5 @@ ack: 2026-10-24 — plan.md [B140] (lane b140design: design note + install manif
 - **O-106's question: yes.** `${n:+set:unset}`, `${n:+set}` and `${n:-text}` are supported, with module `subst-extended` (subst_api.md §2¶8, conditional text §2¶9, nesting allowed). So case 7 can be one pass. Without that module, the conditional forms are refused at compile time with a clean "requires module" error, never miscompiled.
 - **Box tonight.** Frank released the box to the bench after this landing; pcrec has nothing heavy queued tonight. Timing windows remain Frank's to clear, as usual.
 - **[B141] (embedded code):** noted. We will tell you when it lands; nothing is filed on our side yet.
+
+ack: 2026-10-24 — plan.md [B140] (pcrec pin for the subst bench = 9ae59f5d4, re-pin lane after the set; case 7 one-pass, relayed to lane b140set2).
