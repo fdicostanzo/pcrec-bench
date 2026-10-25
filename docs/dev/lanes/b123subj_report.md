@@ -91,5 +91,5 @@ From the committed records (timed work only; wall is ~2-3x):
 | 3d. sidecar version bumps | done: syntax 0.2, capability 0.3 (+ syntax export header) |
 | 3e. [B142] re-seed folded in, one syntax bump | done: seed 9ae59f5d4, 4 rows reasoned, coverage.tsv re-derived; facts OWED (item 2) |
 | 4. window cost estimate | above |
-| 5. CLAUDE.md of every dir touched | bench/syntax, bench/capability updated; docs/dev/lanes has no CLAUDE.md index change needed beyond this report (not added) |
+| 5. CLAUDE.md of every dir touched | bench/syntax, bench/capability updated; docs/dev/lanes/CLAUDE.md does not index per-lane reports, so no change there |
 | report | this file |
