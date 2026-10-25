@@ -13,7 +13,8 @@ Provides three testees:
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the engine-metadata DECLARATION |
 | `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`) |
 | `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: everything between a subject's two clock reads (find-all / single call, interpreter / JIT / DFA, the BD15 validate-once rule) in `timed_run()`, a translation unit of its own, `noinline` + `aligned(64)`, linked beside `driver.c` by `build_driver()` (a sibling `timed.c` is picked up automatically and joins the staleness check). Unrelated driver edits (stamp getters, protocol lines) cannot move it: proven by `docs/dev/measurements/2026-10-09-b133-isolation-proof.py`. An INSTRUMENT: editing it needs a plan row and a re-pin-control run (decisions.md BD16) |
-| `configs.toml` | the two config ids; **no version is written here** |
+| `timed_subst.c` + `timed_subst.h` | ([B140], BD16) THE SUBSTITUTION TIMED CALL, ISOLATED: `timed_subst()`, the one `pcre2_substitute` call (or, for the `-sizefirst` arms, the OVERFLOW_LENGTH size call then the real one) between a `--mode subst` subject's two clock reads, in a translation unit of its own, `noinline` + `aligned(64)`. A SECOND FILE rather than a second function in `timed.c` on purpose: `timed.c` is the instrument every pcre2 matching cell was measured with and BD16 (2) makes any edit to it an instrument change needing a re-pin-control run; it is byte-identical (`docs/dev/measurements/2026-10-25-b140drv-instrument-additivity.{py,txt}`: `timed_run`'s normalized disassembly and its address mod 64 are the same in the old and new driver, the old and new drivers' stdout is identical on every column but SECONDS across 8 existing-mode invocations). `build_driver(extra_sources=["timed_subst.c"])` links it |
+| `configs.toml` | the config ids (`pcre2-interp`, `pcre2-jit`, `pcre2-dfa`, the three `-utf` siblings, and ([B140]) `pcre2-interp-sizefirst` / `pcre2-jit-sizefirst`); **no version is written here** |
 
 ## Why dlopen and hand-declared prototypes
 
@@ -544,3 +545,38 @@ DOES, and both testees' `testee_id` SHAPES unchanged.
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The substitution tier ([B140] step 3, lane b140drv, 2026-10-25)
+
+`driver.c --mode subst` (the protocol additions are at the top of
+`pcrecbench/adapters.py`; the charter is `docs/design/subst_bench_v1.md`
+3.1-3.1.2): a TRANSFORM, `pcre2_substitute(GLOBAL [| EXTENDED])` over the whole
+subject, the OUTPUT being the answer. `--template FILE` (the harness-rendered
+`pcre2` dialect: `${N}`, `\\U${N}\\E`, `${N:+yes:no}`), `--subst-flags
+extended|none` (EXTENDED iff the neutral template has a case operator or a
+conditional), `--bound ID=BYTES` (the output capacity `n + 8 * the oracle's
+substitution count + 1`, 3.1.1, an engine-neutral number), `--out-dir DIR`
+(trial 1 only), `--sizing bound|first`. iters is 1.
+
+- **bound arm** (`pcre2-interp`, `pcre2-jit`): ONE call into a pre-sized,
+  pre-faulted buffer; no NOSPACE retry exists in the timed call (a too-small
+  bound is `giveup:-48`, reported, never retried). `pcre2_substitute` uses the
+  JIT by itself when the code is JIT-compiled; `pcre2-interp` is the same call
+  without `pcre2_jit_compile`.
+- **size-first arm** (`pcre2-interp-sizefirst`, `pcre2-jit-sizefirst`, the
+  charter's `pcre2-*-sizefirst`): the OTHER way a caller can use the call - a
+  first `pcre2_substitute` with `PCRE2_SUBSTITUTE_OVERFLOW_LENGTH` and a
+  zero-length output (libpcre2 matches the whole subject to learn the size and
+  returns NOMEMORY with the needed length), then the real call. The retry
+  RE-SEARCHES (contract 9 #7); that second search is what the column measures.
+  The arena is sized from the same bound and faulted before the clock, so
+  allocation is in neither arm. A DIFFERENT testee: `config_extra`
+  `sizefirst`, `subst_only = true` (refused on any non-substitution set by
+  name); `utf8` composes as `utf8-sizefirst` if a utf sibling is ever added.
+- **refused in this mode, by name**: `--find-all`, `--prime`, `--dfa`,
+  `--utf8` (no meaning for a transform; `pcre2-dfa` has `subst_support` None).
+- **the `out` line**: `out<TAB>ID<TAB>PATH<TAB>BYTES`, after the `subject` line
+  and outside the clock. PATH is relative to `--out-dir`, `-` on trials 2..N.
+- **JIT stack probe** (charter 8a item 11): none of the eight cases raised
+  `-46` on acc-small under `pcre2-jit` (case 7's lookahead + backreference
+  included). acc-main is a later lane's first window.

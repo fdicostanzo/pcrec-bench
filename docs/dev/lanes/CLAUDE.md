@@ -19,3 +19,4 @@
   set into a scratch store. Header carries the per-tier estimate and how the
   sentinel pass yields the measured speed factor. `b138chain_report.md`: its
   rosters, cell counts, estimates, rehearsal result, open questions.
+- **`b140drv_report.md`** (2026-10-25, lane b140drv): [B140] build-order step 3 - the pcre2 `--mode subst` driver, the `timed_subst()` instrument (own TU, BD16), the harness plumbing every later substitution driver shares (`pcrecbench/substrun.py`), the `make check-harness` slice (`tools/check_subst.py` section 9), one scratch dry run; charter-vs-committed checklist, BD16 accounting, findings (the trial-agreement rule's blindness at iters = 1, the `subst`-object placeholder gap), check counts.
