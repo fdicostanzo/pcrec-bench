@@ -23,6 +23,9 @@ REGIME_TO_ENUM = {
     "match": "match-compliance",
     "search_short": "short-subject-search",
     "throughput": "large-subject-throughput",
+    # v1.9 ([B140]): the TRANSFORM regime -- a pattern + template applied to
+    # a subject, the OUTPUT being the answer (subst_bench_v1.md 5 S1).
+    "substitution": "substitution",
 }
 ENUM_TO_REGIME = {v: k for k, v in REGIME_TO_ENUM.items()}
 
@@ -32,6 +35,7 @@ REGIME_MODE = {
     "match": "match",
     "search_short": "search",
     "throughput": "search",
+    "substitution": "subst",
 }
 
 # Files under bench/<name>/ that are GENERATED, and so are excluded from the
@@ -92,7 +96,8 @@ def check_id(kind, value, set_id):
 
 class Pattern:
     __slots__ = ("name", "file", "text", "feature_tier", "hazard_class",
-                 "size_class", "convention", "tags", "role")
+                 "size_class", "convention", "tags", "role",
+                 "case", "template_file")
 
     def __init__(self, d):
         for k in self.__slots__:
@@ -229,11 +234,25 @@ FALLBACK_METHODS = ("structural-alphabet", "libpcre2-dfa-fallback")
 SET_ENCODINGS = ("byte", "utf8")
 
 
+#: The sidecar's file name. `subst.toml` is the SUBSTITUTION set's, staged
+#: under another name on purpose until the reporter and the generic gates
+#: learn the regime (bench/subst/subst.toml's header, subst_bench_v1.md 10):
+#: `tools/selfcheck.py`'s `subbench_dirs()` and the reporter's set-id lookup
+#: enumerate `subbench.toml` only, so the loader accepts the staged name while
+#: they do not see the set. The rename is the integration step ([B140] 5).
+SIDECAR_NAMES = ("subbench.toml", "subst.toml")
+
+
 class Subbench:
     def __init__(self, root):
         self.root = os.path.abspath(root)
-        sidecar = os.path.join(self.root, "subbench.toml")
-        if not os.path.exists(sidecar):
+        sidecar = None
+        for nm in SIDECAR_NAMES:
+            cand = os.path.join(self.root, nm)
+            if os.path.exists(cand):
+                sidecar = cand
+                break
+        if sidecar is None:
             raise SubbenchError("no subbench.toml in %s" % self.root)
         with open(sidecar, "rb") as f:
             self.cfg = tomllib.load(f)
@@ -267,6 +286,10 @@ class Subbench:
                                     % (sidecar, rxt_rel, e))
             self.patterns = [Pattern(_pattern_dict_from_rxt(p, self.rxt))
                              for p in self.rxt.patterns]
+        elif "cases" in self.cfg:
+            # [B140] a SUBSTITUTION set: its "patterns" are the CASES
+            # (cases.tsv x cases/<dir>/PATTERN.rx + TEMPLATE.neutral).
+            self.patterns = [Pattern(d) for d in self._case_pattern_dicts()]
         else:
             self.patterns = [Pattern(p) for p in self.cfg.get("patterns", [])]
         if not self.patterns:
@@ -277,8 +300,14 @@ class Subbench:
 
         subj = self.cfg.get("subjects", {})
         self.short_search_max = int(subj.get("short_search_max_bytes", 256))
-        self._short = self._load_manifest(subj.get("manifest", "manifest.tsv"),
-                                          "subjects", "short")
+        self.substitution = "substitution" in self.regimes
+        if self.substitution:
+            self._short = self._load_manifest(
+                subj.get("manifest", "manifest.tsv"), "subjects", "subst",
+                ext=".log", dirname=subst_subjects_dir(self.root))
+        else:
+            self._short = self._load_manifest(
+                subj.get("manifest", "manifest.tsv"), "subjects", "short")
         tman = subj.get("throughput_manifest")
         self._throughput = (self._load_manifest(tman, "throughput", "throughput")
                             if tman else [])
@@ -317,7 +346,7 @@ class Subbench:
 
     # ------------------------------------------------------------- loading
 
-    def _load_manifest(self, name, subdir, kind):
+    def _load_manifest(self, name, subdir, kind, ext=".bin", dirname=None):
         path = os.path.join(self.root, name)
         if not os.path.exists(path):
             raise SubbenchError("manifest %s is missing" % path)
@@ -344,7 +373,9 @@ class Subbench:
                 sid, length, sha, desc = cols[:4]
                 periodic = cols[4] if len(cols) == 5 else None
                 out.append(Subject(sid, length, sha, desc, periodic,
-                                   os.path.join(self.root, subdir, sid + ".bin"),
+                                   os.path.join(dirname or
+                                                os.path.join(self.root, subdir),
+                                                sid + ext),
                                    kind))
         return out
 
@@ -385,7 +416,100 @@ class Subbench:
         if p.text is not None:
             return p.text
         with open(os.path.join(self.root, p.file), "rb") as f:
+            data = f.read()
+        if p.case is not None:
+            # [B140] a case's PATTERN.rx is exactly one line and its newline
+            # is the FILE's, not the pattern's (gen_expectations.py strips it
+            # the same way): the oracle's expectations were derived without it.
+            if not data.endswith(b"\n") or data.count(b"\n") != 1:
+                raise SubbenchError("%s: PATTERN.rx must be exactly one line"
+                                    % p.file)
+            data = data[:-1]
+        return data
+
+    # ------------------------------------------- the substitution set ([B140])
+
+    def _case_pattern_dicts(self):
+        """cases.tsv -> the dicts `Pattern` wants, one per case. The pattern
+        id is the case's DIRECTORY name (`5b-mask-email`: a schema slug);
+        the case id (`5b`, the key of expectations.tsv and divergences.tsv and
+        the record's `subst.case`) rides in `Pattern.case`."""
+        cs = self.cfg["cases"]
+        path = os.path.join(self.root, cs["table"])
+        out = []
+        with open(path, "r", encoding="utf-8") as f:
+            rows = [l.rstrip("\n").split("\t") for l in f if l.strip()]
+        head = rows[0]
+        for r in rows[1:]:
+            row = dict(zip(head, r))
+            d = os.path.join(cs.get("dir", "cases"), row["dir"])
+            out.append({
+                "name": row["dir"], "file": os.path.join(d, "PATTERN.rx"),
+                "template_file": os.path.join(d, "TEMPLATE.neutral"),
+                "case": row["case"], "feature_tier": "base",
+                "hazard_class": "none", "size_class": "tiny",
+                "tags": ["case-" + row["case"], "label-" + row["label"],
+                         "density-" + row["density"]],
+            })
+        return out
+
+    def template_bytes(self, name):
+        """The case's neutral template (the IR source), RAW BYTES."""
+        p = self.pattern(name)
+        if p.template_file is None:
+            raise SubbenchError("%s: pattern %r is not a substitution case"
+                                % (self.id, name))
+        with open(os.path.join(self.root, p.template_file), "rb") as f:
             return f.read()
+
+    def subst_expectation(self, case, subject_id):
+        """-> {nsubst, out_bytes, out_sha256} for (case id, subject id) from
+        the set's 8-column expectations.tsv, or None."""
+        if getattr(self, "_subst_exp", None) is None:
+            path = os.path.join(self.root, self.cfg["expectations"]["file"])
+            exp = {}
+            with open(path, "r", encoding="utf-8") as f:
+                head = None
+                for line in f:
+                    cols = line.rstrip("\n").split("\t")
+                    if head is None:
+                        head = cols
+                        continue
+                    if len(cols) != len(head):
+                        raise SubbenchError("%s: expected %d columns, got %d"
+                                            % (path, len(head), len(cols)))
+                    row = dict(zip(head, cols))
+                    exp[(row["case"], row["subject"])] = {
+                        "nsubst": int(row["nsubst"]),
+                        "out_bytes": int(row["out_bytes"]),
+                        "out_sha256": row["out_sha256"]}
+            self._subst_exp = exp
+        return self._subst_exp.get((case, subject_id))
+
+    def divergence(self, case, *competitors):
+        """-> (expectation, reason, basis, row_text) of the FIRST
+        divergences.tsv row for `case` whose competitor is one of
+        `competitors`, in order, then the `*` row; or None. The row_text is
+        the citation a record's `declaration_ref` carries."""
+        if getattr(self, "_div", None) is None:
+            path = os.path.join(self.root,
+                                self.cfg["cases"].get("divergences",
+                                                      "divergences.tsv"))
+            rows = {}
+            with open(path, "r", encoding="utf-8") as f:
+                next(f)
+                for line in f:
+                    cols = line.rstrip("\n").split("\t")
+                    if len(cols) >= 5:
+                        rows[(cols[0], cols[1])] = tuple(cols[2:5])
+            self._div = rows
+        for who in tuple(competitors) + ("*",):
+            hit = self._div.get((case, who))
+            if hit:
+                return hit + ("bench/%s/divergences.tsv: case %s, %s (%s)"
+                              % (os.path.basename(self.root), case, who,
+                                 hit[0]),)
+        return None
 
     def subject_bytes(self, subject_id):
         with open(self.subject(subject_id).path, "rb") as f:
@@ -399,6 +523,10 @@ class Subbench:
 
     def subjects_for(self, regime):
         """Contract 2's regime -> subject mapping, and the ONE place it lives."""
+        if regime == "substitution":
+            # [B140]: every manifest subject, manifest order (acc-small, the
+            # gate's and make check's, then acc-main, the timed one).
+            return list(self._short)
         if regime == "throughput":
             return list(self._throughput)
         if regime == "search_short":
@@ -418,10 +546,14 @@ class Subbench:
             self._expectations = self._load_expectations()
         return self._expectations
 
-    def missing_subject_files(self, regimes=None):
+    def missing_subject_files(self, regimes=None, limit=None):
+        """Subject files that are absent. `limit` ([B140]): only the first k
+        subjects of each regime are needed (a `quick` cell or a dry run that
+        measures the small subject must not demand the 362 MB one)."""
         want = []
         for r in (regimes or self.regimes):
-            want.extend(self.subjects_for(r))
+            subs = self.subjects_for(r)
+            want.extend(subs[:int(limit)] if limit is not None else subs)
         return [s.path for s in want if not os.path.exists(s.path)]
 
     # ---------------------------------------------------------- the hash
@@ -442,6 +574,15 @@ class Subbench:
         swapping contents is a change (a bare concatenation of file hashes
         would see neither)."""
         return content_hash_of(self.root)
+
+
+def subst_subjects_dir(root):
+    """Where a substitution set's GENERATED subjects live: the environment's
+    `PCRECBENCH_SUBST_SUBJECTS` (the same variable bench/subst/gen_subjects.py
+    writes to -- a 362 MB file belongs under /var/tmp/pcrecbench/, not in the
+    tree) or `<set>/subjects/`."""
+    return os.environ.get("PCRECBENCH_SUBST_SUBJECTS") or os.path.join(
+        root, "subjects")
 
 
 def content_hash_of(root):

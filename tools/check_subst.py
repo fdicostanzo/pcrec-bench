@@ -39,6 +39,19 @@ What it checks, each with its control:
      run the cases they can express on the small subject and their output
      sha256 equals the oracle's -- or they refuse the pattern syntax, as
      divergences.tsv says (rows with basis `verified-small`).
+  9. ([B140] step 3) THE LIBRARY-TIER DRIVER AND HARNESS, pcre2 first: the
+     driver's `--mode subst` on acc-small, all 8 cases, for pcre2-interp,
+     pcre2-jit and both `-sizefirst` arms, every output sha256 equal to
+     expectations.tsv (driver called directly -- no harness code in the
+     verdict); the harness path (`run_cell`) writes a schema-1.9 record the
+     validator accepts whose every row is `matched-as-expected` / gate
+     `agrees` with the expectation's hash; a deliberately WRONG template
+     FAILS the gate BY NAME with the first differing byte and is not timed;
+     a trial-2 length difference is a DETERMINISM FAULT by name; an
+     unsupported (testee, case) is a compile row `unsupported-by-declaration`
+     and no match rows; the refusals (a sizefirst arm on a non-substitution
+     set, a testee with no substitution call, --find-all in --mode subst,
+     a table that disagrees with the renderer) each fire BY NAME.
 """
 import csv
 import hashlib
@@ -365,3 +378,286 @@ def run(ok, bad):
                 mism.append("perl %s: table says %s, run says %s" % (c["case"], v["expectation"], outcome))
     check("subst tools on acc-small: python/sed/perl outcomes == divergences.tsv "
           "(%d runs)" % ran, not mism, "; ".join(mism[:4]))
+
+    _driver_slice(check, data, cases, exp)
+
+
+def _driver_slice(check, data, cases, exp):
+    """Section 9 (module docstring). Scratch under build/check-subst/; a
+    360 MB subject is never read (`subject_limit=1`, acc-small only)."""
+    import tempfile
+    from unittest import mock
+    from pcrecbench import adapters as _ad
+    from pcrecbench import driverrun, harness, store, substrun, subbench
+
+    work = os.path.join(ROOT, "build", "check-subst")
+    shutil.rmtree(work, ignore_errors=True)
+    subj_dir = os.path.join(work, "subjects")
+    out_dir = os.path.join(work, "out")
+    for d in (subj_dir, out_dir):
+        os.makedirs(d)
+    with open(os.path.join(subj_dir, "acc-small.log"), "wb") as f:
+        f.write(data)
+    saved = {k: os.environ.get(k) for k in ("PCRECBENCH_SUBST_SUBJECTS",
+                                            "PCRECBENCH_SUBST_OUT")}
+    os.environ["PCRECBENCH_SUBST_SUBJECTS"] = subj_dir
+    os.environ["PCRECBENCH_SUBST_OUT"] = out_dir
+    try:
+        sb = subbench.find("subst")
+        small = sb.subjects_for("substitution")[0]
+        check("subst driver: the on-disk acc-small is the manifest's bytes",
+              hashlib.sha256(data).hexdigest() == small.sha256
+              and small.subject_id == "acc-small")
+        _driver_direct(check, sb, small, cases, work)
+        _harness_records(check, sb, work, mock, _ad, harness, store, substrun)
+        _gate_and_faults(check, sb, small, work, mock, _ad, substrun)
+        _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun)
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _driver_direct(check, sb, small, cases, work):
+    """9a: the driver called DIRECTLY (argv by hand, the verdict from
+    expectations.tsv and hashlib) for the four pcre2 arms x 8 cases."""
+    from pcrecbench import adapters as _ad
+    from pcrecbench.driverrun import run_driver
+    exp = {(x["case"], x["subject"]): x for x in _read_tsv(os.path.join(SUBST, "expectations.tsv"))}
+    lst = os.path.join(work, "list.tsv")
+    with open(lst, "w") as f:
+        f.write("acc-small\t%s\n" % small.path)
+    for cid in ("pcre2-interp", "pcre2-jit", "pcre2-interp-sizefirst", "pcre2-jit-sizefirst"):
+        ad, cfg = _ad.resolve(cid)
+        drv = ad.prepare_driver(os.path.join(work, "w-" + cid))
+        bad_cases = []
+        for c in cases:
+            ir = st.parse(open(os.path.join(SUBST, "cases", c["dir"], "TEMPLATE.neutral"), "rb").read())
+            ext = st.needs_extended(ir)
+            pf = os.path.join(work, "p-%s-%s" % (cid, c["case"]))
+            tf = pf + ".tpl"
+            with open(pf, "wb") as f:
+                f.write(open(os.path.join(SUBST, "cases", c["dir"], "PATTERN.rx"), "rb").read()[:-1])
+            with open(tf, "wb") as f:
+                f.write(st.render(ir, "pcre2", extended=ext))
+            od = os.path.join(work, "o-%s-%s" % (cid, c["case"]))
+            os.makedirs(od)
+            e = exp[(c["case"], "acc-small")]
+            argv = [drv, "--pattern", pf, "--list", lst, "--mode", "subst",
+                    "--template", tf, "--subst-flags", "extended" if ext else "none",
+                    "--sizing", "first" if cfg.get("subst_sizing") == "first" else "bound",
+                    "--bound", "acc-small=%d" % (small.length + 8 * int(e["nsubst"]) + 1),
+                    "--out-dir", od]
+            if cfg.get("jit"):
+                argv.append("--jit")
+            r = run_driver(argv, timeout=120)
+            row = r.rows[0] if r.rows else None
+            got = (hashlib.sha256(open(os.path.join(od, row.out_path), "rb").read()).hexdigest()
+                   if row is not None and row.out_path else None)
+            if (r.returncode != 0 or row is None or got != e["out_sha256"]
+                    or row.nmatches != int(e["nsubst"]) or row.out_bytes != int(e["out_bytes"])
+                    or row.iters != 1):
+                bad_cases.append("%s: rc=%s %s" % (c["case"], r.returncode,
+                                                   row.answer if row else r.diagnostic()))
+            shutil.rmtree(od, ignore_errors=True)
+        check("subst driver %s: --mode subst on acc-small, all %d cases, output "
+              "sha256 + count + length == expectations.tsv" % (cid, len(cases)),
+              not bad_cases, "; ".join(bad_cases[:3]))
+    # the driver's own refusals (exit 2, `error` line, by name)
+    drv = _ad.resolve("pcre2-jit")[0].prepare_driver(os.path.join(work, "w-pcre2-jit"))
+    base = [drv, "--pattern", os.path.join(work, "p-pcre2-jit-1"), "--list", lst,
+            "--mode", "subst", "--template", os.path.join(work, "p-pcre2-jit-1.tpl")]
+    for flag in ("--find-all", "--prime", "--dfa", "--utf8"):
+        r = run_driver(base + [flag, "--bound", "acc-small=9999999"], timeout=30)
+        check("subst driver: %s is REFUSED in --mode subst by name" % flag,
+              r.returncode == 2 and any("--mode subst" in e for e in r.errors),
+              "rc=%s errors=%s" % (r.returncode, r.errors))
+    r = run_driver([drv, "--pattern", base[2], "--list", lst, "--mode", "subst"], timeout=30)
+    check("subst driver: --mode subst without --template is refused by name",
+          r.returncode == 2 and any("--template" in e for e in r.errors))
+    r = run_driver(base, timeout=30)       # no --bound for the subject
+    check("subst driver: a subject with no --bound is refused by name",
+          r.returncode == 2 and any("--bound" in e for e in r.errors))
+    # a too-small bound is the engine's NOMEMORY -- reported, never retried
+    r = run_driver(base + ["--bound", "acc-small=1000"], timeout=30)
+    check("subst driver: a too-small bound is reported as a failure "
+          "(giveup:-48), never retried inside the timed call",
+          r.rows and r.rows[0].answer.startswith("giveup:-48"),
+          r.rows[0].answer if r.rows else "no row")
+
+
+def _harness_records(check, sb, work, mock, _ad, harness, store, substrun):
+    """9b: run_cell end to end (scratch tier) for interp and jit; 9c: the
+    unsupported path with the divergence competitor patched to `sd`."""
+    exp = {(x["case"], x["subject"]): x for x in _read_tsv(os.path.join(SUBST, "expectations.tsv"))}
+    root = os.path.join(work, "store")
+    os.makedirs(root)
+    for cid, trials in (("pcre2-interp", 1), ("pcre2-jit", 2)):
+        res = harness.run_cell("subst", cid, trials=trials, tier=store.TIER_SCRATCH,
+                               store_root=root, subject_limit=1,
+                               workdir=os.path.join(work, "hw-" + cid),
+                               synthetic=True)
+        rows = [r for r in res.rows if r["kind"] == "match"]
+        comp = [r for r in res.rows if r["kind"] == "compile"]
+        agree = all(r["match_outcome"] == "matched-as-expected"
+                    and r["subst"]["gate"] == "agrees"
+                    and r["subst"]["out_sha256"] == exp[(r["subst"]["case"], "acc-small")]["out_sha256"]
+                    and r["regime"] == "substitution" and r["timing"]["iterations"] == 1
+                    and r["timing"]["bytes_processed"] == 3929818 for r in rows)
+        check("subst harness %s: a schema-%s record (validator-accepted by "
+              "store.write) with %d substitution rows x %d trial(s), every one "
+              "matched-as-expected, gate agrees, out_sha256 == expectations.tsv"
+              % (cid, res.setup["schema_version"], 8, trials),
+              len(rows) == 8 * trials and agree and res.setup["schema_version"] == "1.9"
+              and res.setup["testee"]["invocation"] == "library"
+              and res.setup["subbench"]["regimes"] == ["substitution"]
+              and len(comp) == 8 * trials)
+    # ---- unsupported by declaration (compile row, no match rows, X44)
+    real = _ad.resolve
+
+    class Patched:
+        def __init__(self, ad):
+            self._ad = ad
+
+        def __getattr__(self, n):
+            return getattr(self._ad, n)
+
+        def subst_support(self, tid):
+            d = dict(self._ad.subst_support(tid))
+            d["competitor"] = "sd"          # case 6 / 7 unsupported in the table
+            return d
+
+    def patched(tid, root=None):
+        ad, cfg = real(tid, root)
+        return Patched(ad), cfg
+
+    with mock.patch.object(_ad, "resolve", patched):
+        res = harness.run_cell("subst", "pcre2-jit", trials=1, tier=store.TIER_SCRATCH,
+                               store_root=root, subject_limit=1,
+                               workdir=os.path.join(work, "hw-unsup"), synthetic=True)
+    unsup = {r["pattern_id"]: r for r in res.rows if r["kind"] == "compile"
+             and r["compile_outcome"] == "unsupported-by-declaration"}
+    matched = {r["pattern_id"] for r in res.rows if r["kind"] == "match"}
+    check("subst harness: an unsupported (testee, case) is a compile row "
+          "`unsupported-by-declaration` carrying its declaration_ref and has NO "
+          "match rows (X44); the other six cases still run and agree",
+          set(unsup) == {"6-upper", "7-url-tld-fix"}
+          and all("divergences.tsv" in r["declaration_ref"] for r in unsup.values())
+          and matched.isdisjoint(unsup) and len(matched) == 6,
+          "%s / %s" % (sorted(unsup), sorted(matched)))
+
+
+def _gate_and_faults(check, sb, small, work, mock, _ad, substrun):
+    """9d/9e: the gate's negative control and the determinism fault, through
+    substrun.measure_cell on a hand-compiled handle."""
+    ad, cfg = _ad.resolve("pcre2-jit")
+    wd = os.path.join(work, "gw")
+    ad.prepare("pcre2-jit", wd)
+    p = sb.pattern("1-literal")
+    cp = ad.compile("pcre2-jit", p.name, sb.pattern_bytes(p.name), {}, 1, wd)
+    handle = dict(cp.get("plain").handle)
+    handle["pin"] = None
+    handle["subject_timeout"] = 60
+    sup = ad.subst_support("pcre2-jit")
+    giveup = lambda a, h: False        # noqa: E731
+
+    # the control: the REAL template passes the same path
+    good = substrun.plan_case(sb, p, sup)
+    substrun.write_template(good, os.path.join(wd, "good"))
+    ents, _n = substrun.measure_cell(ad, handle, sb, p, good, sup, [small], 2, 60, giveup)
+    check("subst gate (control): the real template passes - trial 1 agrees, "
+          "both trials timed",
+          [e["subst"]["gate"] for e in ents] == ["agrees", "agrees"]
+          and all(e["timing"] for e in ents))
+    # the deliberately WRONG template: H2 where the case says H1
+    wrong = substrun.plan_case(sb, p, sup, template_override=b"lit\tH2\n")
+    substrun.write_template(wrong, os.path.join(wd, "wrong"))
+    ents, notes = substrun.measure_cell(ad, handle, sb, p, wrong, sup, [small], 3, 60, giveup)
+    e1 = ents[0]
+    check("subst gate: a deliberately WRONG template FAILS the gate BY NAME - "
+          "gate `wrong`, did-not-match-as-expected, NOT timed, the diagnostic "
+          "names the first differing byte and both lengths",
+          e1["subst"]["gate"] == "wrong" and e1["outcome"] == "did-not-match-as-expected"
+          and e1["timing"] is None and "differs from the oracle's at byte" in e1["diagnostic"]
+          and "observed 3836788 bytes" in e1["diagnostic"],
+          (e1["diagnostic"] or "")[:200])
+    check("subst gate: a wrong cell is not re-run (trials 2..3 repeat trial 1's "
+          "identity, dense trial numbering, no timing anywhere)",
+          [e["trial"] for e in ents] == [1, 2, 3]
+          and len({(e["subst"]["gate"], e["subst"]["out_sha256"]) for e in ents}) == 1
+          and all(e["timing"] is None for e in ents)
+          and any("not timed beyond trial 1" in n for n in notes))
+    # a DECLARED divergence is `divergent-declared` and cites its row
+    with mock.patch.object(type(sb), "divergence",
+                           lambda self, case, *c: ("divergent", "test", "declared",
+                                                   "bench/subst/divergences.tsv: test")):
+        ents, _n = substrun.measure_cell(ad, handle, sb, p, wrong, sup, [small], 1, 60, giveup)
+    check("subst gate: a mismatch the table DECLARES is `divergent-declared` "
+          "and cites its declaration (X37)",
+          ents[0]["subst"]["gate"] == "divergent-declared"
+          and ents[0]["subst"]["declaration_ref"] == "bench/subst/divergences.tsv: test")
+
+    # determinism fault: trial 2's length differs from trial 1's
+    class Flaky:
+        def __init__(self, ad):
+            self._ad, self.calls = ad, 0
+
+        def __getattr__(self, n):
+            return getattr(self._ad, n)
+
+        def measure_subst(self, *a, **k):
+            rows, info, notes = self._ad.measure_subst(*a, **k)
+            self.calls += 1
+            if self.calls == 2:
+                rows[0].out_bytes += 1
+            return rows, info, notes
+
+    try:
+        substrun.measure_cell(Flaky(ad), handle, sb, p, good, sup, [small], 2, 60, giveup)
+        fault = None
+    except substrun.DeterminismFault as e:
+        fault = str(e)
+    check("subst trials: a trial-2 output length that differs from trial 1's "
+          "is a DETERMINISM FAULT by name and nothing is recorded",
+          fault is not None and fault.startswith("DETERMINISM FAULT")
+          and "trial 2" in fault, fault)
+
+
+def _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun):
+    """9f: refusals BY NAME, no engine needed past the first line."""
+    from pcrecbench import store
+
+    def refuses(testee, subbench_name, needle):
+        try:
+            harness.run_cell(subbench_name, testee, trials=1, tier=store.TIER_SCRATCH,
+                             store_root=os.path.join(work, "rstore"), subject_limit=1,
+                             workdir=os.path.join(work, "rw"), synthetic=True)
+        except harness.HarnessError as e:
+            return needle in str(e), str(e)[:160]
+        return False, "no error"
+
+    ok1, d1 = refuses("pcre2-jit-sizefirst", "email", "substitution-only testee")
+    check("subst harness: a -sizefirst arm on a non-substitution set is "
+          "refused by name", ok1, d1)
+    ok2, d2 = refuses("pcre2-dfa", "subst", "declares no substitution call")
+    check("subst harness: a testee with no substitution call (pcre2-dfa) is "
+          "refused by name on the substitution set", ok2, d2)
+    # the table and the renderer must agree
+    p6 = sb.pattern("6-upper")
+    try:
+        substrun.plan_case(sb, p6, {"dialect": "python", "competitor": "pcre2-jit"})
+        msg = None
+    except substrun.SubstError as e:
+        msg = str(e)
+    check("subst plan: a renderer refusal the table does not declare is a "
+          "SubstError BY NAME (the table and the renderer disagree)",
+          msg is not None and "disagree" in msg, msg)
+    pl = substrun.plan_case(sb, p6, {"dialect": "python", "competitor": "python"})
+    check("subst plan: case 6 for python is `unsupported` with its citation; "
+          "case 6 for pcre2-jit is runnable with the EXTENDED flag",
+          pl.unsupported and "no-case-operators" in pl.unsupported
+          and "divergences.tsv" in pl.declaration_ref
+          and substrun.plan_case(sb, p6, {"dialect": "pcre2", "competitor": "pcre2-jit"}).flags == "extended")

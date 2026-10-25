@@ -67,6 +67,33 @@ INVOCATION
            [--subject-timeout S]   per-SUBJECT alarm, seconds (0 = none)
            [--skip N]              start at the Nth subject of the list
                                    (how python RESUMES after a driver death)
+           --mode subst            ([B140], docs/design/subst_bench_v1.md
+                                   3.1.2) a TRANSFORM: apply the pattern's
+                                   substitution over the whole subject, the
+                                   OUTPUT being the answer. Additive -- every
+                                   other mode is byte-for-byte what it was.
+                                   Takes, instead of --find-all/--prime/
+                                   --utf8 (REFUSED by name in this mode):
+               --template FILE         the replacement, RAW BYTES, already in
+                                       THIS engine's dialect (the harness
+                                       rendered the neutral template with
+                                       pcrecbench/subst_template.py)
+               --subst-flags extended|none
+                                       the engine's EXTENDED-replacement
+                                       switch where it has one (libpcre2:
+                                       PCRE2_SUBSTITUTE_EXTENDED, needed for
+                                       case operators and conditionals)
+               --bound ID=BYTES        (repeatable) the output capacity per
+                                       subject, n + 8 * the oracle's
+                                       substitution count + 1, an engine-
+                                       neutral number (3.1.1); an engine
+                                       that allocates for itself ignores it
+               --out-dir DIR           TRIAL 1 ONLY: write each subject's
+                                       final output to DIR/<ID>.out, outside
+                                       the clock. Absent on trials 2..N
+               ITERS is always 1 (3.1.2: a 320 MB transform is 0.3-30 s; the
+               trials are the repetition). Engine-specific sizing arms
+               (libpcre2 `--sizing bound|first`) are that driver's own.
 
     The driver reads EVERY subject into memory first, compiles once (timed,
     per phase), then for each subject takes one monotonic clock reading,
@@ -106,6 +133,21 @@ crash-attribution channel, so a buffered driver would lose the attribution):
         protocol.)
 
     error<TAB>TEXT     a fatal the driver could not attribute to a subject
+
+    out<TAB>ID<TAB>PATH<TAB>BYTES
+        ([B140], --mode subst only) emitted AFTER the subject's `subject`
+        line and OUTSIDE the clock: subject ID's final output is BYTES long
+        and sits at PATH (relative to --out-dir; `-` when no --out-dir was
+        given, i.e. on trials 2..N, where only the length is reported). The
+        harness hashes the file (sha256, once per (cell, case), on trial 1),
+        checks trials 2..N by BYTES + NMATCHES, and deletes the file. This
+        keeps SHA-256 out of every driver and out of the timed loop. In
+        subst mode the `subject` line is the 11-column shape reused:
+        ANSWER `match` iff the substitution count > 0 (else `nomatch`),
+        START/END `-`, NCAPS 0, CONSUMED the subject's bytes, ITERS 1,
+        SECONDS the timed transform, NMATCHES the SUBSTITUTION COUNT, CAPS
+        `-`. A parser that does not know `out` ignores it (parse_driver_line
+        returns kind None).
 
 EXIT   0 all subjects reported; 2 usage/IO; 3 the pattern did not compile
        (with `error` lines carrying the engine's diagnostic).
@@ -240,7 +282,8 @@ class MatchRow:
     marking its own homework."""
 
     __slots__ = ("subject_id", "answer", "start", "end", "ncaps", "consumed",
-                 "iters", "seconds", "nmatches", "caps", "detail")
+                 "iters", "seconds", "nmatches", "caps", "detail",
+                 "out_path", "out_bytes")
 
     def __init__(self, subject_id, answer, start=None, end=None, ncaps=0,
                  consumed=None, iters=0, seconds=0.0, nmatches=None,
@@ -249,6 +292,9 @@ class MatchRow:
         self.start, self.end, self.ncaps = start, end, ncaps
         self.consumed, self.iters, self.seconds = consumed, iters, seconds
         self.nmatches, self.caps, self.detail = nmatches, caps, detail
+        # [B140] --mode subst: the `out` line paired to this row by the
+        # driverrun layer (None everywhere else).
+        self.out_path = self.out_bytes = None
 
     @property
     def matched(self):
@@ -265,7 +311,8 @@ def _opt(v):
 
 def parse_driver_line(line):
     """-> ('subject', MatchRow) | ('compile', (trial, phase, seconds))
-         | ('info', (name, value)) | ('error', text) | (None, line)"""
+         | ('info', (name, value)) | ('error', text)
+         | ('out', (id, path_or_None, bytes))   ([B140]) | (None, line)"""
     cols = line.rstrip("\n").split("\t")
     if not cols:
         return None, line
@@ -291,6 +338,10 @@ def parse_driver_line(line):
         return "info", (cols[1], "\t".join(cols[2:]))
     if kind == "error":
         return "error", "\t".join(cols[1:])
+    if kind == "out" and len(cols) >= 4:
+        # [B140]: out<TAB>ID<TAB>PATH<TAB>BYTES (PATH `-` = no file written)
+        return "out", (cols[1], None if cols[2] == "-" else cols[2],
+                       int(cols[3]))
     return None, line
 
 
@@ -381,6 +432,29 @@ class Adapter:
         argument). An adapter with no such wrap -- libpcre2/RE2's
         runtime-flag anchoring, needing no second artifact at all --
         ignores this parameter entirely."""
+        raise NotImplementedError
+
+    # ---- the substitution tier ([B140]) ---------------------------------
+
+    def subst_support(self, testee_id):
+        """-> None (this testee has no substitution call; the default, so
+        every pre-[B140] adapter refuses a substitution set BY NAME) or a dict
+        {"dialect": <pcrecbench.subst_template.DIALECTS member>,
+         "competitor": <the name divergences.tsv rows use for this testee>,
+         "sizing": "bound" | "first"}.
+        The harness renders the neutral template in `dialect`, looks the
+        (case, competitor) pair up in the set's divergences.tsv, and hands
+        the rendered bytes to `measure_subst`."""
+        return None
+
+    def measure_subst(self, handle, subjects, bounds, out_dir, timeout=None):
+        """ONE trial of a substitution cell -> (rows, info, notes), rows one
+        MatchRow per subject with `.out_path`/`.out_bytes` set. `handle` is
+        the compiled-pattern handle with the harness's `handle["subst"]`
+        ({"template_file", "flags": "extended"|"none"}) added; `bounds` is
+        {subject_id: capacity_bytes}; `out_dir` is a directory on trial 1 and
+        None on trials 2..N (the driver writes no file then, still reports the
+        length). The harness, not the adapter, hashes and judges."""
         raise NotImplementedError
 
     def measure(self, handle, regime, subjects, iters, trials, timeout=None):

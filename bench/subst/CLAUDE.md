@@ -10,13 +10,22 @@ case 7 `url-tld-fix`, the backreference-in-a-negative-lookahead shape).
 **Read `NOTES.md` first** — the cases, the neutral-template IR, the stated
 densities and predictions, the calibration outcome, the divergence table.
 
-STATUS: step 1 of [B140] (the set) BUILT (lane b140set2, 2026-10-24): subjects generated and hashed (`manifest.tsv`), expectations derived for both subjects (22 rows), calibration archived with two STATED DEVIATIONS (NOTES.md). NOT yet a harness sub-bench: the
-sidecar is `subst.toml`, not `subbench.toml`, so `tools/selfcheck.py`'s
-generic `bench/*/` gates (`subbench_dirs()`) do not enumerate it until
-schema v1.9 (regime `substitution`), the driver `--mode subst` and the
-TOOLS runner land; renaming the sidecar is the integration step. Its own
-gate is `tools/check_subst.py` (called from `check-harness`). No driver,
-no timing, no store record exists for it.
+STATUS: step 1 of [B140] (the set) BUILT (lane b140set2, 2026-10-24): subjects generated and hashed (`manifest.tsv`), expectations derived for both subjects (22 rows), calibration archived with two STATED DEVIATIONS (NOTES.md).
+STEP 3 (lane b140drv, 2026-10-25): the pcre2 LIBRARY-TIER driver mode, the
+`timed_subst()` instrument, the harness side (`pcrecbench/substrun.py`) and a
+scratch-tier dry run exist; `pcrecbench run --subbench subst` WORKS
+(`subbench.py` accepts the sidecar name `subst.toml` besides `subbench.toml`
+and builds the harness's "patterns" from `cases.tsv`: pattern id = the case
+DIRECTORY name, the case id `5b` etc. is `Pattern.case`, the key of
+`expectations.tsv` / `divergences.tsv` and the record's `subst.case`). The
+sidecar is still `subst.toml`, on purpose: `tools/selfcheck.py`'s generic
+`bench/*/` gates (`subbench_dirs()`), the reporter's set-id lookup and the
+importer enumerate `subbench.toml`, and none of them knows the regime yet;
+renaming it is the reporter step's integration (plan [B140] step 5). Its own
+gate is `tools/check_subst.py` (called from `check-harness`). Subjects:
+`$PCRECBENCH_SUBST_SUBJECTS` or `subjects/` (`<id>.log`); trial 1's output
+files: `$PCRECBENCH_SUBST_OUT` or `build/subst-out/`. No timing run and no
+store record exists for it.
 
 | file | role |
 |---|---|

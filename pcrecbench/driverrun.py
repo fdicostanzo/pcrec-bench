@@ -40,6 +40,7 @@ class DriverOutput:
     def __init__(self):
         self.info = {}
         self.rows = []
+        self.outs = {}                    # [B140] subject id -> (path, bytes)
         self.compile_lines = []
         self.errors = []
         self.returncode = 0
@@ -100,6 +101,12 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
             out.info[payload[0]] = payload[1]
         elif kind == "error":
             out.errors.append(payload)
+        elif kind == "out":
+            out.outs[payload[0]] = (payload[1], payload[2])
+    # [B140] pair each `out` line to its subject row (--mode subst only)
+    for row in out.rows:
+        if row.subject_id in out.outs:
+            row.out_path, row.out_bytes = out.outs[row.subject_id]
     return out
 
 
@@ -112,7 +119,7 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
 DRIVER_BUILDS = {}
 
 
-def build_driver(source, output, extra=None, cflags=None):
+def build_driver(source, output, extra=None, cflags=None, extra_sources=None):
     """Build a driver if the binary is missing or older than its source.
 
     Returns the binary path. `$CC` and `$CFLAGS` are honoured so the record's
@@ -129,7 +136,15 @@ def build_driver(source, output, extra=None, cflags=None):
         os.path.join(here, "timed.c")) else []
     deps = [source] + timed + [p for p in (os.path.join(here, "timed.h"),)
                                if os.path.exists(p)]
-    argv = [cc] + flags + ["-o", output, source] + timed + list(extra or [])
+    # [B140]: an adapter whose driver grows a second INSTRUMENT (a new mode's
+    # own timed function, in its own translation unit, `timed_subst.c`) names
+    # it here; it is linked after `timed.c` and joins the staleness check.
+    # Absent (every other adapter), the command line is what it always was.
+    more = [os.path.join(here, f) for f in (extra_sources or [])]
+    deps = deps + more + [os.path.splitext(m)[0] + ".h" for m in more
+                          if os.path.exists(os.path.splitext(m)[0] + ".h")]
+    argv = ([cc] + flags + ["-o", output, source] + timed + more
+            + list(extra or []))
     # Registered even on the cached path: the record must state how the
     # driver that produced its numbers was built, not only how one that
     # happened to be rebuilt this run was.
@@ -213,6 +228,16 @@ def _run_list_with_resume(argv, subjects, timeout, cwd, pin, subject_timeout):
         return rows, info, notes
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def one_trial(argv, subjects, timeout=None, cwd=None, pin=None,
+              subject_timeout=None):
+    """ONE trial over `subjects` with the resume rule -> (rows, info, notes).
+    The public spelling of the loop `per_trial` repeats; the substitution tier
+    ([B140]) runs trials one at a time because trial 1 alone writes the output
+    files (`--out-dir`) and the harness gates on them before trial 2."""
+    return _run_list_with_resume(argv, subjects, timeout, cwd, pin,
+                                 subject_timeout)
 
 
 def per_trial(argv, subjects, trials, timeout=None, cwd=None, pin=None,

@@ -23,7 +23,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 
 from pcrecbench import adapters as _ad          # noqa: E402
-from pcrecbench.driverrun import build_driver, run_driver, per_trial  # noqa: E402
+from pcrecbench.driverrun import (build_driver, run_driver, per_trial,  # noqa: E402
+                                   one_trial)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -229,8 +230,14 @@ class Adapter(_ad.Adapter):
         # [B77] U2: the ENGINE encoding is an identity (utf8_set_v1.md
         # 7.1) -- a `pcre2-utf-*` config derives its byte sibling's id plus
         # `_utf8`. ABSENT on every byte config, so their ids are unchanged.
-        if enc_extra:
-            block["config_extra"] = enc_extra
+        # [B140]: the `-sizefirst` arm is a DIFFERENT CALL SHAPE (two
+        # pcre2_substitute calls, the first with OVERFLOW_LENGTH) and so a
+        # different testee, whose id must never collide with its sibling's.
+        extra = [e for e in (enc_extra,
+                             "sizefirst" if cfg.get("subst_sizing") == "first"
+                             else None) if e]
+        if extra:
+            block["config_extra"] = "-".join(extra)
         return block
 
     def binary_identity(self, testee_id, workdir=None):
@@ -267,9 +274,13 @@ class Adapter(_ad.Adapter):
     # -------------------------------------------------------------- prepare
 
     def prepare_driver(self, workdir):
+        # [B140]: timed_subst.c is the substitution mode's own INSTRUMENT
+        # (its own translation unit, BD16's discipline); timed.c, the
+        # matching instrument, is not touched by it.
         return build_driver(os.path.join(HERE, "driver.c"),
                             os.path.join(workdir, "pcre2_driver"),
-                            extra=["-ldl"])
+                            extra=["-ldl"],
+                            extra_sources=["timed_subst.c"])
 
     def prepare(self, testee_id, workdir):
         self.config(testee_id)
@@ -344,6 +355,7 @@ class Adapter(_ad.Adapter):
         # interp/jit one, which would misclassify a structural DFA refusal
         # as `crashed`.
         handle = {"driver": drv, "pattern_file": patfile,
+                  "sizing": cfg.get("subst_sizing", "bound"),   # [B140]
                   "jit": bool(cfg.get("jit")),
                   "dfa": bool(cfg.get("dfa")),
                   "utf": utf,
@@ -353,6 +365,42 @@ class Adapter(_ad.Adapter):
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
             artifact_bytes=meta.get("compiled_size_bytes")))
+
+    # ------------------------------------------------- substitution ([B140])
+
+    def subst_support(self, testee_id):
+        """libpcre2 renders the neutral template in its own `pcre2` dialect
+        (`${N}`, `\\U${N}\\E`, `${N:+yes:no}`) and the divergence table names
+        both of its configs `pcre2-interp` / `pcre2-jit`; the sizing arm is the
+        config's (`subst_sizing`). The DFA matcher has no substitute call."""
+        cfg = self.config(testee_id)
+        if cfg.get("dfa"):
+            return None
+        return {"dialect": "pcre2",
+                "competitor": testee_id.replace("-sizefirst", ""),
+                "sizing": cfg.get("subst_sizing", "bound")}
+
+    def measure_subst(self, handle, subjects, bounds, out_dir, timeout=None):
+        """One `--mode subst` trial (driver.c's header, adapters.py's
+        protocol). The pattern is recompiled by the measuring driver exactly
+        as `measure` does; the harness' rendered template and the EXTENDED
+        flag arrive in `handle["subst"]`."""
+        sub = handle["subst"]
+        argv = [handle["driver"], "--pattern", handle["pattern_file"],
+                "--mode", "subst", "--template", sub["template_file"],
+                "--subst-flags", sub["flags"],
+                "--sizing", handle.get("sizing", "bound")]
+        if handle["jit"]:
+            argv.append("--jit")
+        if handle.get("utf"):
+            argv.append("--utf")
+        for sid, cap in sorted(bounds.items()):
+            argv += ["--bound", "%s=%d" % (sid, cap)]
+        if out_dir:
+            argv += ["--out-dir", out_dir]
+        return one_trial(argv, subjects, timeout=timeout,
+                         pin=handle.get("pin"),
+                         subject_timeout=handle.get("subject_timeout"))
 
     # -------------------------------------------------------------- measure
 
