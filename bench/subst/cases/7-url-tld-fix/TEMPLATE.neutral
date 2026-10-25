@@ -1,0 +1,14 @@
+grp	1
+cond	3
+grp	3
+grp	2
+else
+cond	4
+grp	4
+lit	&
+else
+lit	?
+end
+lit	tld=
+grp	2
+end

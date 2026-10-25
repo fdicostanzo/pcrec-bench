@@ -1,0 +1,55 @@
+# The substitution set's SIDECAR (harness contract 2). It is named `subst.toml`,
+# NOT `subbench.toml`, on purpose: `tools/selfcheck.py`'s generic gates
+# (`subbench_dirs()`) enumerate every `bench/*/` that carries a
+# `subbench.toml` and expect patterns + a match/search regime + a matcher
+# driver, none of which this set has until schema v1.9 (regime
+# `substitution`), the driver `--mode subst` and the TOOLS runner land
+# (docs/design/subst_bench_v1.md section 10, steps 2-4). `capability/` was
+# staged the same way. The rename `subst.toml` -> `subbench.toml` IS the
+# integration step; its own gates are `tools/check_subst.py` until then.
+#
+# Fields only, no grammar, no directives -- [DD-13]'s territory is untouched.
+
+id = "subst"
+version = "0.1"
+objective_kind = "realworld"
+objective = """\
+What an engine pays to EDIT a large text file: the cost of a global \
+substitution over a few-hundred-MB Apache access log, split by what \
+dominates it -- copying (a literal), searching (a rare two-literal \
+alternation), per-match output (every digit run), capture rearrangement, \
+class-heavy masking (IPv4, e-mail), a case-forcing template, and a \
+backreference inside a negative lookahead with a conditional template (the \
+VM-only, DFA-refusing shape). The answer is an OUTPUT BYTE STRING, so the \
+correctness gate is its sha256 against the libpcre2 oracle's."""
+description = """\
+Eight (pattern, template) cases over one generated, calibrated Apache \
+combined log (acc-main 1.6 M lines, acc-small its 17,500-line byte prefix): \
+1 literal, 2 rare, 3 dense, 4 reorder, 5 mask-ipv4, 5b mask-email, 6 upper, \
+7 url-tld-fix (one pass, conditional template). Patterns in the common subset of \
+PCRE2 / POSIX ERE (cases 1-6) or PCRE2 only (7*); templates in an \
+engine-neutral IR rendered per dialect by pcrecbench/subst_template.py."""
+
+regimes = ["substitution"]            # not yet schema-legal: v1.9, lane b140schema
+
+[subjects]
+generator = "gen_subjects.py"
+manifest = "manifest.tsv"
+planted = "planted.tsv"
+ids = ["acc-small", "acc-main"]       # acc-small is a byte prefix of acc-main
+
+[cases]
+table = "cases.tsv"                   # case, dir, label, ere, needs, density, isolates
+dir = "cases"                         # cases/<dir>/PATTERN.rx + TEMPLATE.neutral
+divergences = "divergences.tsv"
+
+[expectations]
+file = "expectations.tsv"
+generator = "gen_expectations.py"
+method = "libpcre2-differential"      # pcre2_substitute, GLOBAL (+EXTENDED), interpreter
+independent = "per-case oracle-independent count (gen_expectations.py)"
+
+[calibration]
+reference = "build/subst-ref/apache_logs"
+fetch = "fetch_reference.sh"
+archive = "docs/dev/measurements/2026-10-24-b140-subject-calibration/"
