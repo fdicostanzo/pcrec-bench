@@ -674,6 +674,24 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if unknown:
         raise HarnessError("%s does not declare regime(s) %s (it declares %s)"
                            % (sb.id, ", ".join(unknown), ", ".join(sb.regimes)))
+    adapter, cfg = _ad.resolve(testee_id)
+
+    # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
+    # that has a substitution call, and a substitution-only arm (a testee
+    # whose config says `subst_only`) is refused on any other set -- by name,
+    # before anything is built or measured.
+    subst_support = None
+    if cfg.get("subst_only") and not sb.substitution:
+        raise HarnessError(
+            "%s is a substitution-only testee (config subst_only) and %s is "
+            "not a substitution set" % (testee_id, sb.id))
+    if sb.substitution:
+        subst_support = adapter.subst_support(testee_id)
+        if subst_support is None:
+            raise HarnessError(
+                "%s declares no substitution call (Adapter.subst_support "
+                "returned None), so it cannot run the substitution set %s"
+                % (testee_id, sb.id))
     missing = sb.missing_subject_files(regimes, limit=subject_limit)
     if missing:
         raise HarnessError(
@@ -694,25 +712,6 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         cell_patterns = list(sb.patterns)
     if subject_limit is not None and int(subject_limit) < 1:
         raise HarnessError("subject_limit must be >= 1, got %r" % subject_limit)
-
-    adapter, cfg = _ad.resolve(testee_id)
-
-    # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
-    # that has a substitution call, and a substitution-only arm (a testee
-    # whose config says `subst_only`) is refused on any other set -- by name,
-    # before anything is built or measured.
-    subst_support = None
-    if cfg.get("subst_only") and not sb.substitution:
-        raise HarnessError(
-            "%s is a substitution-only testee (config subst_only) and %s is "
-            "not a substitution set" % (testee_id, sb.id))
-    if sb.substitution:
-        subst_support = adapter.subst_support(testee_id)
-        if subst_support is None:
-            raise HarnessError(
-                "%s declares no substitution call (Adapter.subst_support "
-                "returned None), so it cannot run the substitution set %s"
-                % (testee_id, sb.id))
 
     # (1b) THE TIER, and the early refusal ---------------------------------
     # An adapter whose testee is scratch by construction (a provided binary)

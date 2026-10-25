@@ -104,6 +104,8 @@ class CasePlan:
 def write_template(plan, directory):
     """Put the rendered template on disk (RAW BYTES, no trailing newline added)
     for the driver's `--template FILE`; returns the path."""
+    if plan.template is None:               # an unsupported case: nothing to run
+        return None
     os.makedirs(directory, exist_ok=True)
     path = os.path.join(directory, "template")
     with open(path, "wb") as f:
