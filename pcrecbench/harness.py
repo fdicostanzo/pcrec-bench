@@ -64,7 +64,7 @@ import time
 
 from . import adapters as _ad
 from . import capability as _cap
-from . import driverrun, env, quiet, record, store
+from . import driverrun, env, quiet, record, store, substrun
 from . import expectations as _expect
 from .subbench import REGIME_TO_ENUM, REGIME_MODE
 from . import HARNESS_VERSION
@@ -674,7 +674,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if unknown:
         raise HarnessError("%s does not declare regime(s) %s (it declares %s)"
                            % (sb.id, ", ".join(unknown), ", ".join(sb.regimes)))
-    missing = sb.missing_subject_files(regimes)
+    missing = sb.missing_subject_files(regimes, limit=subject_limit)
     if missing:
         raise HarnessError(
             "%d subject file(s) are missing, starting with %s.\nThe subject "
@@ -696,6 +696,23 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         raise HarnessError("subject_limit must be >= 1, got %r" % subject_limit)
 
     adapter, cfg = _ad.resolve(testee_id)
+
+    # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
+    # that has a substitution call, and a substitution-only arm (a testee
+    # whose config says `subst_only`) is refused on any other set -- by name,
+    # before anything is built or measured.
+    subst_support = None
+    if cfg.get("subst_only") and not sb.substitution:
+        raise HarnessError(
+            "%s is a substitution-only testee (config subst_only) and %s is "
+            "not a substitution set" % (testee_id, sb.id))
+    if sb.substitution:
+        subst_support = adapter.subst_support(testee_id)
+        if subst_support is None:
+            raise HarnessError(
+                "%s declares no substitution call (Adapter.subst_support "
+                "returned None), so it cannot run the substitution set %s"
+                % (testee_id, sb.id))
 
     # (1b) THE TIER, and the early refusal ---------------------------------
     # An adapter whose testee is scratch by construction (a provided binary)
@@ -802,6 +819,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # before this lane -- and every testee that declares nothing --
     # is provably unchanged.
     testee_grain = testee_block.get("grain", "full")
+    if sb.substitution:
+        # v1.9 S2: the tier is part of the record. Every adapter that runs the
+        # substitution set through `measure_subst` calls the engine's API
+        # in-process: `library`. (A `process` testee is the TOOLS tier's
+        # runner, a later lane, and would say so in its own describe().)
+        testee_block.setdefault("invocation", "library")
 
     # O, the OTHER sentences (module docstring): the scratch-tier sentence,
     # did-not-compile, calibration and adapter notes. The gate's reasons are
@@ -822,6 +845,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                 and quiet.cpu_times() is not None else None)
     siblings = quiet.smt_siblings(pinning["cpu"]) if timeline is not None else []
     compiled = {}
+    subst_plans = {}          # [B140] pattern id -> substrun.CasePlan
     # v1.1 (1): a monotonic emission order across the WHOLE record, compile
     # and match rows alike. Row order is not significant to the schema, so
     # without this the sequence a harness actually ran things in -- which is
@@ -842,8 +866,25 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         # bench/capability today) never reaches the `if`: `missing` is
         # always empty when `pcrecbench.capability.pattern_requires`
         # finds nothing to check.
+        splan = None
+        if sb.substitution:
+            # [B140]: render the neutral template in this testee's dialect and
+            # consult the set's divergence table BEFORE compiling; an
+            # unsupported (testee, case) is a compile row, never match rows.
+            try:
+                splan = substrun.plan_case(sb, p, subst_support)
+            except substrun.SubstError as e:
+                raise HarnessError(str(e))
+            substrun.write_template(
+                splan, os.path.join(workdir, "p-" + p.name))
+            subst_plans[p.name] = splan
         missing = _cap.missing_capabilities(sb, testee_id, p)
-        if missing:
+        if splan is not None and splan.unsupported:
+            cp = _ad.CompiledPattern({_ad.FORM_PLAIN: _ad.CompileResult(
+                outcome="unsupported-by-declaration",
+                diagnostic=splan.unsupported,
+                declaration_ref=splan.declaration_ref)})
+        elif missing:
             cp = _ad.CompiledPattern({_ad.FORM_PLAIN: _ad.CompileResult(
                 outcome="unsupported-by-declaration",
                 diagnostic=("REQUIRES %s; %s declares none of it"
@@ -914,7 +955,10 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             # set's handle -- and so every adapter's argv -- is unchanged.
             if _expect.utf8_advance(sb, p):
                 handle["utf8_advance"] = True
-            if iters is None:
+            if regime == "substitution":
+                say("measuring %s / case %s [%s] (substitution, iters 1) ..."
+                    % (testee_id, p.case, form))
+            elif iters is None:
                 say("calibrating %s / %s / %s ..." % (testee_id, p.name, regime))
             else:
                 say("measuring %s / %s [%s] / %s ..."
@@ -928,6 +972,37 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             # `measure_regime_cell`'s docstring. A cell with no give-up
             # subject takes the pre-KB-20 code path exactly (one calibrate()
             # call, one measure() call, both over `subjects` unchanged).
+            if regime == "substitution":
+                # [B140] a TRANSFORM cell: iters is 1 by construction (no
+                # calibration), the gate runs on trial 1's output, trials 2..N
+                # are checked by length + count (substrun's header).
+                try:
+                    entries, mnotes = substrun.measure_cell(
+                        adapter, handle, sb, p, subst_plans[p.name],
+                        subst_support, subjects, trials, driver_timeout,
+                        lambda a, h: classify_giveup(a, h), say=say)
+                except substrun.SubstError as e:
+                    raise HarnessError(str(e))
+                notes.extend(mnotes)
+                say("measured %s / case %s [%s]: %d subject(s) x %d trial(s)"
+                    % (testee_id, p.case, form, len(subjects), trials))
+                if t_before is not None:
+                    t_after = quiet.cpu_times()
+                    if t_after is not None:
+                        timeline.append(quiet.timeline_item(
+                            t_before, t_after,
+                            (time.monotonic() - t_start) * 1000.0,
+                            pinning["cpu"], p.name, enum, form,
+                            siblings=siblings))
+                for en in entries:
+                    subject_ids[en["subject"].subject_id] = en["subject"]
+                    rows.append(record.match_row(
+                        p.name, en["subject"].subject_id, enum, en["trial"],
+                        en["outcome"], timing=en["timing"],
+                        consumed=en["consumed"], truncation=en["truncation"],
+                        observed=en["observed"], diagnostic=en["diagnostic"],
+                        seq=next(seq), form=form, subst=en["subst"]))
+                continue
             n_iters, why, cal, rows_by_trial, mnotes = measure_regime_cell(
                 adapter, handle, regime, subjects, iters, trials,
                 driver_timeout, subject_timeout, budget=budget)

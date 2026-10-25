@@ -40,6 +40,7 @@ class DriverOutput:
     def __init__(self):
         self.info = {}
         self.rows = []
+        self.outs = {}                    # [B140] subject id -> (path, bytes)
         self.compile_lines = []
         self.errors = []
         self.returncode = 0
@@ -100,6 +101,12 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
             out.info[payload[0]] = payload[1]
         elif kind == "error":
             out.errors.append(payload)
+        elif kind == "out":
+            out.outs[payload[0]] = (payload[1], payload[2])
+    # [B140] pair each `out` line to its subject row (--mode subst only)
+    for row in out.rows:
+        if row.subject_id in out.outs:
+            row.out_path, row.out_bytes = out.outs[row.subject_id]
     return out
 
 
@@ -221,6 +228,16 @@ def _run_list_with_resume(argv, subjects, timeout, cwd, pin, subject_timeout):
         return rows, info, notes
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def one_trial(argv, subjects, timeout=None, cwd=None, pin=None,
+              subject_timeout=None):
+    """ONE trial over `subjects` with the resume rule -> (rows, info, notes).
+    The public spelling of the loop `per_trial` repeats; the substitution tier
+    ([B140]) runs trials one at a time because trial 1 alone writes the output
+    files (`--out-dir`) and the harness gates on them before trial 2."""
+    return _run_list_with_resume(argv, subjects, timeout, cwd, pin,
+                                 subject_timeout)
 
 
 def per_trial(argv, subjects, trials, timeout=None, cwd=None, pin=None,

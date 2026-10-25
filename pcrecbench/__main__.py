@@ -32,6 +32,7 @@ def cmd_run(args):
             command_line=["python3", "-m", "pcrecbench"] + sys.argv[1:],
             note=args.note, synthetic=args.synthetic,
             tier=args.tier, prime=args.prime,
+            subject_limit=args.subjects,
             progress=(lambda *a: print(*a, file=sys.stderr)) if not args.quiet_output else None)
     except quiet.QuietRefusal as e:
         print("pcrecbench run: %s" % e, file=sys.stderr)
@@ -413,7 +414,7 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
                         "reduces them (default: 5)")
     r.add_argument("--regimes", type=regimes_arg, default=None,
                    help="comma-separated subset of the sub-bench's declared "
-                        "regimes: match, search_short, throughput "
+                        "regimes: match, search_short, throughput, substitution "
                         "(default: all it declares)")
     r.add_argument("--iters", type=int, default=None,
                    help="fix the in-process loop count instead of "
@@ -427,6 +428,11 @@ checks (rule X5). `python3 -m pcrecbench testees` lists the config ids.""")
                    help="[B129] one UNTIMED call per subject before each timed loop, "
                         "the same operation, answer discarded. Scratch tier "
                         "only (refused at the pinned tier by name)")
+    r.add_argument("--subjects", type=int, default=None, metavar="K",
+                   help="[B140] only the FIRST k subjects of each regime's set "
+                        "(the substitution set's manifest order puts acc-small "
+                        "first: `--subjects 1` is the 4 MB dry run). Absent, "
+                        "every subject, as before")
     r.add_argument("--tier", choices=list(store.TIERS), default=store.TIER_PINNED,
                    help="the record's TIER (record_schema.md 6.8). `pinned` "
                         "(default): a committed engine revision under the "
