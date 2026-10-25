@@ -61,6 +61,11 @@ STORE = os.path.join(FIXDIR, "store")
 # pins) and a REAL `bench/email/expectations.tsv` (R3) that no synthetic
 # fixture here reproduces. Read-only; nothing in this suite writes to it.
 REAL_STORE = os.path.join(report.REPO_ROOT, "store")
+# [B143] Part A: the canonical store holds two machines since [B138] and the
+# reporter refuses to pool them (O-90, [B137]); every committed fixture/report
+# these tests read was built from the first host's records, so every REAL_STORE
+# query names it. The refusal itself is a ruling and is NOT relaxed.
+REAL_MACHINE = "budu-ryzen1600"
 STORE_WALK_ONLY = os.path.join(FIXDIR, "store_walk_only")
 # v1.1 (manager, 2026-08-25): two SEPARATE mixed-version scenarios, kept in
 # separate subdirectories so querying one never accidentally exercises the
@@ -207,7 +212,8 @@ def _load_real_store(subbench="email-specimen"):
     caller could otherwise have seen."""
     if subbench not in _REAL_STORE_CACHE:
         rows, _source = report.discover_index(REAL_STORE)
-        flt = _args(store=REAL_STORE, subbench=subbench)
+        flt = _args(store=REAL_STORE, subbench=subbench,
+                     machine=REAL_MACHINE)
         paths = [r["path"] for r in rows if report.index_row_could_match(r, flt)]
         loaded = report.load_all(paths, check_filename=True)
         _REAL_STORE_CACHE[subbench] = (
@@ -1547,7 +1553,8 @@ def test_plain_entry_capacities_r1():
     _check(report._buffers_display({}) == "n/s", "no pair stamped at all -> n/s")
 
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1644,7 +1651,8 @@ def test_buffer_frame_legend_r4():
            "a real stamped frame size passes through as-is")
 
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1685,7 +1693,8 @@ def test_tiny_set_per_subject_subtable_r2():
     `ns/call`. Not firing: `short-subject-search` (77-85 subjects) gets
     neither."""
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1734,7 +1743,8 @@ def test_jitter_ratio_r5():
     # under 20 microseconds (a libpcre2 interp compile is a handful of
     # microseconds) -- 'timer-floor', not a ratio close to 1.
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1784,7 +1794,8 @@ def test_artifact_bytes_column_r7():
 
     # Firing against the real store too, for a real number.
     loaded_r, _p, _s = _load_real_store()
-    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
     _check("29,744" in md_r, f"expected the real store's artifact_bytes to appear:\n{md_r[:200]}")
@@ -1814,7 +1825,8 @@ def test_legend_and_superseded_shortening_r8():
     # The legend, against the real store: one line per pcrec testee,
     # never a per-row repetition of the same six facts.
     loaded_r, _p, _s = _load_real_store()
-    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
     compiled = md_r.split("### `compiled-aot`")[1].split("### `")[0]
@@ -2894,7 +2906,8 @@ def test_engine_reading_and_scoped_legend_b16_r3():
     # is what a per-testee legend line could not say.
     loaded, _paths, _source = _load_real_store()
     rd, err = report.build_report(loaded, _args(store=REAL_STORE,
-                                                subbench="email-specimen"))
+                                                subbench="email-specimen",
+                                                machine=REAL_MACHINE))
     _check(err is None, f"unexpected refusal: {err}")
     compiled = report.render_markdown(rd).split("### `compiled-aot`")[1].split("### `")[0]
     scoped = [ln for ln in compiled.splitlines()
@@ -4143,6 +4156,7 @@ def test_kb16_query_never_opens_other_subbench_files():
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             rc = report.main(["--store", REAL_STORE, "--subbench", target,
+                              "--machine", REAL_MACHINE,
                               "--include-synthetic", "--include-unmeasured",
                               "--format", "tsv"])
     finally:
