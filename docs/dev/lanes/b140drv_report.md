@@ -51,4 +51,8 @@ The on-disk acc-small is the manifest's bytes. For each of `pcre2-interp`, `pcre
 
 ## Check counts
 
-FULL_CHECK_PLACEHOLDER
+`make check-harness` (= `LC_ALL=C python3 tools/selfcheck.py`, log `/var/tmp/pcrecbench/b140drv/checkh2.log`, ends `DONE rc=0`): **881 check(s) passed, 0 FAILED**, on the final branch tip (the base was 857/0 at 80569bf1; the +24 are section 9). Not a timing run; one check in it (`a real quick cell on bench/email writes a MEASURED scratch record`) needs a QUIET box and passed here.
+
+History, stated because the first full run was not clean: run 1 gave **876 passed, 5 FAILED**, all five found by the full run and fixed in commit "fix check-harness failures": (a) `exit 4: pinned run` / `scratch run` - my `run --subjects` read `args.subjects`, which the check's hand-built `Args` lacks (now `getattr(args, "subjects", None)`); (b) `every real pinned testee id is rostered or excluded` + its control - the two new `-sizefirst` configs must be named in `bench/capability/gen_patterns.py`'s `EXCLUDED_TESTEES` (a registry edit in a committed file of another set, as [B111]'s check requires for every new testee; `gen_patterns.py --check` output unchanged); (c) `a real quick cell on bench/email ... MEASURED` - NOT a defect: it read `inconclusive-load` while a desktop tenant held one core at 100 % (`pcrecbench quiet`: NOT QUIET), passed on re-run when the box was quiet (2 of 3 re-runs; the third hit the same load). Re-runs of (a)-(b) passed individually, then the whole suite passed at 881/0.
+
+Other counts: `tools/check_subst.py` section 9 = 24 checks (run standalone in 33 s while developing: `[24, 0]`); the additivity probe: 8/8 modes identical, timed_run identical. Not run (not this lane's scope, nothing they read changed): `make check-report`, `check-interpret`, `check-upstream`, `check-schema` (schema untouched).
