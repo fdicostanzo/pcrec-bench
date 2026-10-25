@@ -1186,6 +1186,18 @@ for _sf_id in ("pcre2-interp-sizefirst", "pcre2-jit-sizefirst"):
         "engine capabilities are its sibling's")
 del _sf_id
 
+# [B140] step 4 (lane b140tools, 2026-10-25): the TOOLS-tier testees
+# (testees/tools/tools.toml). Command-line tools launched per trial
+# (`invocation = "process"`), reachable only through the substitution set's
+# `measure_subst`; none can run a capability pattern set.
+for _tool_id in ("sed-ere", "perl-p", "python-resub", "sd-stdin",
+                 "rg-passthru"):
+    EXCLUDED_TESTEES[_tool_id] = (
+        "TOOLS-tier testee ([B140] step 4, `invocation = \"process\"`): a "
+        "command-line tool, measured only by the substitution set; it has "
+        "no matcher driver and no capability declaration")
+del _tool_id
+
 
 def render_ext_bench():
     lines = ["ext bench"]

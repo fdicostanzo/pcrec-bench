@@ -65,6 +65,18 @@ What it checks, each with its control:
      charter does not cover (re2-longest) refused by name; and the pattern-
      level `unsupported:pattern-syntax` row accepted beside the renderer's
      own (different) template token.
+ 11. ([B140] step 4, lane b140tools) THE TOOLS TIER: GNU sed -E, perl -p, the
+     python whole-file re.sub script, sd 1.1.0 and `rg --passthru -r` on
+     acc-small. For every (tool, case) divergences.tsv does not declare
+     unsupported (32 pairs) the UNTIMED pass's output sha256 + length equal
+     expectations.tsv (judged here by hashlib); one TIMED `tool | wc -c` per
+     tool whose count equals out_bytes with the input 100 % page-cache
+     resident and wc on another core; a SABOTAGED sink (prints 7) fails BY
+     NAME (`SINK MISMATCH`) with the unsabotaged two-trial call as the
+     control; the pins (a wrong sd sha256, a changed sed version) refuse by
+     name; and `run_cell` per tool writes a schema-1.9 `process` record the
+     validator accepts (X38-X40), with no compile row for a compiled case and
+     an `unsupported-by-declaration` row for each declared one.
 """
 import csv
 import hashlib
@@ -426,6 +438,7 @@ def _driver_slice(check, data, cases, exp):
         _gate_and_faults(check, sb, small, work, mock, _ad, substrun)
         _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun)
         _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun)
+        _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun)
     finally:
         for k, v in saved.items():
             if v is None:
@@ -805,3 +818,185 @@ def _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun):
           "token although the renderer's own token differs (no-conditional)",
           pl.unsupported and "pattern-syntax" in pl.unsupported
           and "divergences.tsv" in pl.declaration_ref, pl.unsupported)
+
+
+TOOL_IDS = ("sed-ere", "perl-p", "python-resub", "sd-stdin", "rg-passthru")
+
+
+def _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
+    """Section 11 ([B140] step 4, lane b140tools): the TOOLS tier. The tools
+    run the cases divergences.tsv does not declare unsupported on acc-small:
+    (a) the UNTIMED pass, called through the runner but judged here by hashlib
+    against expectations.tsv, no harness code in the verdict; (b) one TIMED
+    `tool | wc -c` per tool whose count equals out_bytes; (c) a SABOTAGED sink
+    fails BY NAME (control: the unsabotaged call passes); (d) `run_cell` end
+    to end per tool: a schema-1.9 `process` record, X38-X40, the by-declaration
+    compile rows and nothing else; (e) the pins refuse by name."""
+    import copy
+    from pcrecbench import toolrun
+    exp = {(x["case"], x["subject"]): x for x in _read_tsv(os.path.join(SUBST, "expectations.tsv"))}
+    div = _read_tsv(os.path.join(SUBST, "divergences.tsv"))
+    say = {}
+    for tid in TOOL_IDS:
+        ad, cfg = _ad.resolve(tid)
+        ad.prepare(tid, os.path.join(work, "tw-" + tid))
+        binary = ad.binary_path(tid)
+        comp = cfg["competitor"]
+        declared = {d["case"] for d in div if d["competitor"] == comp
+                    and d["expectation"].startswith("unsupported")}
+        runnable = [c for c in cases if c["case"] not in declared]
+        tool_core, sink_core, _n = toolrun.pick_cores(None)
+        bad, table = [], []
+        for c in runnable:
+            ir = st.parse(open(os.path.join(SUBST, "cases", c["dir"], "TEMPLATE.neutral"), "rb").read())
+            pat = open(os.path.join(SUBST, "cases", c["dir"], "PATTERN.rx"), "rb").read()[:-1]
+            tpl = st.render(ir, cfg["dialect"])
+            pf = os.path.join(work, "tp-%s-%s" % (tid, c["case"]))
+            tf = pf + ".tpl"
+            open(pf, "wb").write(pat)
+            open(tf, "wb").write(tpl)
+            argv, stdin_in, _disp = toolrun.build_argv(cfg["kind"], binary, pat, tpl, small.path,
+                                                      pattern_file=pf, template_file=tf)
+            out = os.path.join(work, "to-%s-%s" % (tid, c["case"]))
+            rc, err, _pk = toolrun.untimed_pass(argv, stdin_in, small.path, out, tool_core, 120)
+            e = exp[(c["case"], "acc-small")]
+            got = hashlib.sha256(open(out, "rb").read()).hexdigest() if os.path.exists(out) else None
+            size = os.path.getsize(out) if os.path.exists(out) else -1
+            os.unlink(out) if os.path.exists(out) else None
+            ok = (rc in tuple(cfg.get("ok_exit", [0])) and got == e["out_sha256"]
+                  and size == int(e["out_bytes"]))
+            table.append((c["case"], ok))
+            if not ok:
+                bad.append("%s: rc=%s size=%d want %s %s" % (c["case"], rc, size, e["out_bytes"], err[:80]))
+        say[tid] = table
+        check("subst tools %s: the UNTIMED pass on acc-small, the %d runnable cases (%d "
+              "declared unsupported), output sha256 + length == expectations.tsv"
+              % (tid, len(runnable), len(declared)), not bad and len(runnable) + len(declared) == 8,
+              "; ".join(bad[:3]))
+        # one TIMED `tool | wc -c` run, case 1: the count equals the oracle's out_bytes
+        c = cases[0]
+        ir = st.parse(open(os.path.join(SUBST, "cases", c["dir"], "TEMPLATE.neutral"), "rb").read())
+        pat = open(os.path.join(SUBST, "cases", c["dir"], "PATTERN.rx"), "rb").read()[:-1]
+        tpl = st.render(ir, cfg["dialect"])
+        pf = os.path.join(work, "tp-%s-%s" % (tid, c["case"]))
+        argv, stdin_in, _disp = toolrun.build_argv(cfg["kind"], binary, pat, tpl, small.path,
+                                                  pattern_file=pf, template_file=pf + ".tpl")
+        frac = toolrun.warm_resident(small.path)
+        t = toolrun.timed_pipeline(argv, stdin_in, small.path, tool_core, sink_core, 120)
+        check("subst tools %s: one TIMED `| wc -c` run, case 1 - the tool exits cleanly, wc's "
+              "count == out_bytes (%s), the input 100%% page-cache resident, wc on another core"
+              % (tid, exp[("1", "acc-small")]["out_bytes"]),
+              t["rc"] in tuple(cfg.get("ok_exit", [0]))
+              and t["sink_bytes"] == int(exp[("1", "acc-small")]["out_bytes"])
+              and frac == 1.0 and tool_core != sink_core and t["seconds"] > 0,
+              "%r" % (t,))
+
+    # (c) the SABOTAGED sink fails BY NAME; the control passes
+    tid = "sed-ere"
+    ad, _cfg = _ad.resolve(tid)
+    wd = os.path.join(work, "tw-sab")
+    ad.prepare(tid, wd)
+    p = sb.pattern("1-literal")
+    sup = ad.subst_support(tid)
+    cp = ad.compile(tid, p.name, sb.pattern_bytes(p.name), {"substitution": True}, 1, wd)
+    handle = dict(cp.get("plain").handle)
+    handle["pin"], handle["subject_timeout"] = None, 60
+    plan = substrun.plan_case(sb, p, sup)
+    substrun.write_template(plan, os.path.join(wd, "p"))
+    ents, _n = substrun.measure_cell(ad, dict(handle), sb, p, plan, sup, [small], 2, 120,
+                                     lambda a, h: False)
+    check("subst tools sink (control): the unsabotaged sed case 1 runs 2 trials, gate agrees, "
+          "every timed row carries `process` with sink_bytes == out_bytes and the wc core != the tool's",
+          all(e["outcome"] == "matched-as-expected" and e["process"]["sink_bytes"] == e["subst"]["out_bytes"]
+              and e["process"]["core"] != e["process"]["sink_core"] and e["process"]["sink"] == "wc-c"
+              and e["subst"]["nsubst"] == int(exp[("1", "acc-small")]["nsubst"]) for e in ents)
+          and len(ents) == 2)
+    saved = toolrun.SINK_ARGV
+    toolrun.SINK_ARGV = ["/bin/sh", "-c", "cat > /dev/null; echo 7"]
+    try:
+        substrun.measure_cell(ad, dict(handle), sb, p, plan, sup, [small], 1, 120, lambda a, h: False)
+        msg = "no error"
+    except substrun.SubstError as e:
+        msg = str(e)
+    finally:
+        toolrun.SINK_ARGV = saved
+    check("subst tools sink (sabotage): a `| wc -c` count of 7 against the validated %s bytes "
+          "FAILS BY NAME (SINK MISMATCH, nothing written)" % exp[("1", "acc-small")]["out_bytes"],
+          "SINK MISMATCH" in msg and "counted 7 bytes" in msg, msg[:200])
+
+    # the rusage floor: wait4's ru_maxrss of a posix_spawn child is floored at the
+    # harness's own RSS (mm shared until exec), so a streaming tool reads ~the
+    # harness's size; the untimed pass's polled VmHWM does not
+    c3 = cases[2]
+    ir3 = st.parse(open(os.path.join(SUBST, "cases", c3["dir"], "TEMPLATE.neutral"), "rb").read())
+    pat3 = open(os.path.join(SUBST, "cases", c3["dir"], "PATTERN.rx"), "rb").read()[:-1]
+    argv3, sin3, _d = toolrun.build_argv("sed", ad.binary_path("sed-ere"), pat3, st.render(ir3, "sed"), small.path)
+    _rc, _e, peak = toolrun.untimed_pass(argv3, sin3, small.path, os.path.join(work, "to-peak"), 15, 120)
+    harness_rss_kb = int(next(l.split()[1] for l in open("/proc/self/status") if l.startswith("VmHWM:")))
+    t3 = toolrun.timed_pipeline(argv3, sin3, small.path, 15, 14, 120)
+    check("subst tools rusage: sed's untimed-pass peak RSS (polled VmHWM, %s KB) is far below "
+          "the harness's own (%d KB) while `wait4`'s ru_maxrss (%d KB) is floored at it - why "
+          "process.maxrss_kb takes the polled value" % (peak, harness_rss_kb, t3["maxrss_kb"]),
+          peak is not None and peak < harness_rss_kb // 2 and t3["maxrss_kb"] >= harness_rss_kb // 2,
+          "%r %r %r" % (peak, harness_rss_kb, t3["maxrss_kb"]))
+
+    # (e) the pins refuse by name
+    ad, _cfg = _ad.resolve("sd-stdin")
+    saved_cfg = ad.cfg
+    ad.cfg = copy.deepcopy(saved_cfg)
+    ad.cfg["testees"]["sd-stdin"]["binary_sha256"] = "0" * 64
+    try:
+        ad.binary_path("sd-stdin")
+        msg = "no error"
+    except _ad.AdapterError as e:
+        msg = str(e)
+    ad.cfg = copy.deepcopy(saved_cfg)
+    ad.cfg["testees"]["sed-ere"]["version"] = "9.99"
+    try:
+        ad.probe_version("sed-ere")
+        msg2 = "no error"
+    except _ad.AdapterError as e:
+        msg2 = str(e)
+    ad.cfg = saved_cfg
+    check("subst tools pins: a wrong binary sha256 (sd) and a changed system-tool version (sed) "
+          "are each refused BY NAME; the real pins describe", "BINARY SHA256 MISMATCH" in msg
+          and "pins '9.99'" in msg2 and ad.describe("sd-stdin")["engine_version"] == "1.1.0"
+          and ad.describe("rg-passthru")["engine_name"] == "ripgrep", msg[:80] + " | " + msg2[:80])
+
+    # (d) run_cell per tool: a schema-1.9 `process` record
+    for tid in TOOL_IDS:
+        ad, cfg = _ad.resolve(tid)
+        comp = cfg["competitor"]
+        declared = {d["case"] for d in div if d["competitor"] == comp
+                    and d["expectation"].startswith("unsupported")}
+        trials = 2 if tid == "sed-ere" else 1
+        root = os.path.join(work, "tstore-" + tid)
+        os.makedirs(root)
+        res = harness.run_cell("subst", tid, trials=trials, tier=store.TIER_SCRATCH,
+                               store_root=root, subject_limit=1,
+                               workdir=os.path.join(work, "thw-" + tid), synthetic=True)
+        rows = [r for r in res.rows if r["kind"] == "match"]
+        comp_rows = [r for r in res.rows if r["kind"] == "compile"]
+        runnable = 8 - len(declared)
+        check("subst tools %s harness: a schema-%s `process` record (validator-accepted by "
+              "store.write) - %d substitution rows (%d runnable cases x %d trial(s)), every one "
+              "matched-as-expected / gate agrees / out_sha256 == the oracle's, each with a "
+              "`process` object (sink wc-c, count == out_bytes, wc core != tool core)"
+              % (tid, res.setup["schema_version"], runnable * trials, runnable, trials),
+              len(rows) == runnable * trials and res.setup["schema_version"] == "1.9"
+              and res.setup["testee"]["invocation"] == "process"
+              and res.setup["testee"]["execution_model"] == "interpretive"
+              and all(r["match_outcome"] == "matched-as-expected" and r["subst"]["gate"] == "agrees"
+                      and r["subst"]["out_sha256"] == exp[(r["subst"]["case"], "acc-small")]["out_sha256"]
+                      and r["process"]["sink_bytes"] == r["subst"]["out_bytes"]
+                      and r["process"]["core"] != r["process"]["sink_core"]
+                      and r["timing"]["iterations"] == 1 for r in rows))
+        unsup = {r["pattern_id"] for r in comp_rows if r["compile_outcome"] == "unsupported-by-declaration"}
+        want = {c["dir"] for c in cases if c["case"] in declared}
+        check("subst tools %s harness: NO compile row for a compiled case (interpretive, S7/X41) and "
+              "exactly the declared-unsupported cases %s as `unsupported-by-declaration` compile rows "
+              "(X44/X45) with NO match rows for them" % (tid, sorted(declared)),
+              len(comp_rows) == len(declared) and unsup == want
+              and not ({r["pattern_id"] for r in rows} & unsup)
+              and all(comp in r["declaration_ref"] for r in comp_rows))
+    return say

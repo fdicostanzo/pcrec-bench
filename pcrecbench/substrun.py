@@ -301,10 +301,20 @@ def _judge(sb, p, plan, support, subj, exp, row, trial, out_dir, handle,
     case = plan.case
 
     def entry(outcome, subst, timing=None, consumed=None, observed=None,
-              diagnostic=None, truncation="not-applicable"):
+              diagnostic=None, truncation="not-applicable", process=None):
         return {"subject": subj, "trial": trial, "outcome": outcome,
                 "timing": timing, "consumed": consumed, "truncation": truncation,
-                "observed": observed, "diagnostic": diagnostic, "subst": subst}
+                "observed": observed, "diagnostic": diagnostic, "subst": subst,
+                "process": process}
+
+    # [B140] step 4 (the TOOLS tier): a command-line tool prints no
+    # substitution count and no consumed-length, so the adapter declares
+    # `support["count"] = "oracle"`: the count is the expectation's when (and
+    # only when) the output's sha256 equals the oracle's -- the same output
+    # has the same number of substitutions -- and the truncation check is
+    # `not-applicable` (the sha256 over the WHOLE output is the evidence the
+    # whole input was read).
+    count_oracle = support.get("count") == "oracle"
 
     if row is None:
         return entry("crashed", _placeholder(case), diagnostic=(
@@ -325,13 +335,17 @@ def _judge(sb, p, plan, support, subj, exp, row, trial, out_dir, handle,
                      diagnostic="the engine %s: %s; subst fields are "
                      "placeholders (no output exists)"
                      % ("gave up" if giveup else "failed", row.answer))
-    if row.out_bytes is None or row.nmatches is None:
+    if row.out_bytes is None or (row.nmatches is None and not count_oracle):
         return entry("crashed", _placeholder(case), diagnostic=(
             "the driver answered %r but reported no `out` line / count; subst "
             "fields are placeholders (no output exists)" % row.answer))
     consumed = row.consumed
     trunc = ("verified" if consumed is not None else "unverified-for-truncation")
+    if count_oracle:
+        trunc = "not-applicable"
     nsubst, nbytes = row.nmatches, row.out_bytes
+    if count_oracle:
+        nsubst = exp["nsubst"]          # trial 1 corrects it below if wrong
     if consumed is not None and consumed < subj.length:
         return entry("truncated-subject",
                      {"case": case, "gate": "wrong", "nsubst": nsubst,
@@ -350,7 +364,8 @@ def _judge(sb, p, plan, support, subj, exp, row, trial, out_dir, handle,
                       "out_bytes": nbytes, "out_sha256": exp["out_sha256"]},
                      timing={"elapsed_ns": int(round(row.seconds * 1e9)),
                              "iterations": 1, "bytes_processed": subj.length},
-                     consumed=consumed, truncation=trunc)
+                     consumed=consumed, truncation=trunc,
+                     process=getattr(row, "process", None))
     # ---- trial 1: the gate -------------------------------------------------
     if not row.out_path:
         return entry("crashed", _placeholder(case), diagnostic=(
@@ -364,7 +379,10 @@ def _judge(sb, p, plan, support, subj, exp, row, trial, out_dir, handle,
                       "out_bytes": nbytes, "out_sha256": sha},
                      timing={"elapsed_ns": int(round(row.seconds * 1e9)),
                              "iterations": 1, "bytes_processed": subj.length},
-                     consumed=consumed, truncation=trunc)
+                     consumed=consumed, truncation=trunc,
+                     process=getattr(row, "process", None))
+    if count_oracle:
+        nsubst = 0                      # unobservable on a wrong output
     diag = diagnose_wrong(sb, p, plan, subj, support["dialect"], path)
     div = sb.divergence(case, support["competitor"])
     declared = div is not None and div[0].startswith("divergent")
@@ -372,6 +390,9 @@ def _judge(sb, p, plan, support, subj, exp, row, trial, out_dir, handle,
              "nsubst": nsubst, "out_bytes": nbytes, "out_sha256": sha}
     if declared:
         subst["declaration_ref"] = div[3]
+    if count_oracle:
+        diag += ("; nsubst 0 is a placeholder (a command-line tool does not "
+                 "report its substitution count)")
     return entry("did-not-match-as-expected", subst, consumed=consumed,
                  truncation=trunc, observed={"matched": nsubst > 0},
                  diagnostic="gate %s: %s" % (subst["gate"], diag))

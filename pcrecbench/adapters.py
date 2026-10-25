@@ -158,6 +158,28 @@ crash-attribution channel, so a buffered driver would lose the attribution):
 EXIT   0 all subjects reported; 2 usage/IO; 3 the pattern did not compile
        (with `error` lines carrying the engine's diagnostic).
 
+THE PROCESS INVOCATION ([B140] step 4, the TOOLS tier -- NOT a driver). A
+`testee.invocation = "process"` testee is a command-line tool (sed, perl, a
+python script, sd, ripgrep: testees/tools/) and has NO driver binary and no
+`--mode` at all. Its adapter implements only the substitution surface
+(`subst_support`, `measure_subst`; `compile()` returns a handle and the
+harness writes no compile row for a compiled case, schema X41/S7) and runs
+pcrecbench/toolrun.py:
+    trial 1:   an UNTIMED pass, `tool ... > out_dir/<ID>.out`; the harness's
+               gate hashes it exactly as for a driver's `out` file
+    every trial: the TIMED launch `tool ... | wc -c` (os.posix_spawn, no
+               shell; tool and wc pinned to DIFFERENT cores; env LC_ALL=C
+               only; warm page cache asserted by fincore). SECONDS is
+               spawn-to-second-wait4; the byte count wc prints MUST equal
+               the validated output size or the run raises SinkMismatch BY
+               NAME (X39) and nothing is written
+The `MatchRow` it returns has `.out_bytes` (wc's count), `.out_path` (trial 1
+only), `.process` (the `match.process` object: argv with paths elided,
+sink/sink_bytes, core/sink_core, user_s/sys_s/maxrss_kb from the tool's
+wait4 rusage, page_cache_resident) and NO `nmatches`: a tool prints no
+substitution count, so `subst_support()` carries `count = "oracle"` and
+substrun takes the count from expectations.tsv when the output hash agrees.
+
 TIMEOUTS come in two layers and they measure different things. The
 per-SUBJECT alarm inside the driver is what makes record_schema.md's
 per-subject `timed-out` possible at all -- requirements 4.4 wants to know
@@ -289,7 +311,7 @@ class MatchRow:
 
     __slots__ = ("subject_id", "answer", "start", "end", "ncaps", "consumed",
                  "iters", "seconds", "nmatches", "caps", "detail",
-                 "out_path", "out_bytes")
+                 "out_path", "out_bytes", "process")
 
     def __init__(self, subject_id, answer, start=None, end=None, ncaps=0,
                  consumed=None, iters=0, seconds=0.0, nmatches=None,
@@ -301,6 +323,9 @@ class MatchRow:
         # [B140] --mode subst: the `out` line paired to this row by the
         # driverrun layer (None everywhere else).
         self.out_path = self.out_bytes = None
+        # [B140] step 4 (TOOLS tier): the `match.process` object of a timed
+        # `tool | wc -c` launch (None for every library testee).
+        self.process = None
 
     @property
     def matched(self):
@@ -358,6 +383,10 @@ class Adapter:
     are found by `discover()`."""
 
     name = None
+    #: False for the TOOLS tier ([B140] step 4, testees/tools/): a command-line
+    #: tool has no matcher driver, so the generic per-adapter sweeps that call
+    #: `measure()` or expect a pattern to refuse at compile skip it.
+    has_driver = True
 
     def __init__(self, directory):
         self.dir = directory
@@ -447,7 +476,11 @@ class Adapter:
         every pre-[B140] adapter refuses a substitution set BY NAME) or a dict
         {"dialect": <pcrecbench.subst_template.DIALECTS member>,
          "competitor": <the name divergences.tsv rows use for this testee>,
-         "sizing": "bound" | "first"}.
+         "sizing": "bound" | "first",
+         "count": "oracle"          (optional; the TOOLS tier: the testee
+                                     cannot report a substitution count, so
+                                     substrun takes it from the expectation
+                                     iff the output hash agrees)}.
         The harness renders the neutral template in `dialect`, looks the
         (case, competitor) pair up in the set's divergences.tsv, and hands
         the rendered bytes to `measure_subst`."""
