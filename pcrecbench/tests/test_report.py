@@ -2013,7 +2013,7 @@ def test_reporter_version_pin():
     `did_not_compile` rows from a new section outside the ranking-group
     loop; found live on `bench/utf8`'s `prp-ingreek`, which every one of
     utf8@0.1's 11 testees refuses) took it to v25; [B136] (lane b136read, 2026-10-13: the first
-    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26.
+    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26; [B143] (lane b143rep, 2026-10-25: the `compound=` clause, the emit-definition note, the substitution grain) took it to v27.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -2024,20 +2024,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v26 (2026-10-13)",
-           f"expected REPORTER_VERSION == 'v26 (2026-10-13)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v27 (2026-10-25)",
+           f"expected REPORTER_VERSION == 'v27 (2026-10-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v26 (2026-10-13)" in md, f"expected the v26 header line:\n{md[:200]}")
+    _check("reporter: v27 (2026-10-25)" in md, f"expected the v26 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v26 (2026-10-13)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v27 (2026-10-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v26 (2026-10-13)" in matrix,
+    _check("reporter: v27 (2026-10-25)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -4016,6 +4016,35 @@ def test_vm_alt_islands_and_entry_shape_legend_b37():
            f"an abi-16 table carries none of the clauses or notes:\n{md_o}")
 
 
+def test_compound_clause_and_emit_note_b143():
+    """[B143] (b142prep OWED 1, 3; pcrec abi 77+): `compound=<name>` from the
+    `compound` stamp, printed ONLY for a non-`none` value (the stamp is on
+    every artifact at abi 77+, so presence cannot gate it), after
+    `clsfolds=`; the emit-bytes definition note appears iff a row has abi
+    >= 77. Controls: `none`, an empty value, an absent key and an abi-76
+    record all render exactly as v26 did."""
+    _check(report._compound_display({"compound": "split"}) == "split", "split")
+    for v in ("none", "", None):
+        _check(report._compound_display({"compound": v}) is None, f"{v!r} -> None")
+    _check(report._compound_display({}) is None, "absent -> None")
+    base = {"abi": 84, "engine": "vm", "prefilter": "none", "vm_frameless": 0,
+            "vm_alt_islands": 0, "vm_entry_shape": "plain",
+            "vm_program_bytes": 1000, "vm_cls_folds": 0,
+            "scan_edges": 0, "scan_edges_match": 0}
+    on = report._testee_legend_line("t", dict(base, compound="split"))
+    _check("clsfolds=0, compound=split, rungs=" in on,
+           f"compound= sits after clsfolds= and before rungs=, got {on!r}")
+    off = report._testee_legend_line("t", dict(base, compound="none"))
+    _check("compound=" not in off, f"`none` prints no clause, got {off!r}")
+    old = report._testee_legend_line("t", dict(base, abi=76))
+    _check("compound=" not in old, "an abi-76 record prints no clause")
+    n = report._emit_definition_note([dict(base)])
+    _check(n and "abi 77" in n and "scaffold" in n, f"abi 84 -> the note, got {n!r}")
+    _check(report._emit_definition_note([dict(base, abi=76), {}]) is None,
+           "abi 76 and a record with no abi -> no note")
+    _check(report._emit_definition_note([]) is None, "no rows -> no note")
+
+
 def test_vm_cls_folds_legend_b39():
     """[B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
     build): `clsfolds=<N>` from `vm_cls_folds`, rendered after `shape=` on
@@ -5794,6 +5823,8 @@ TESTS = [
     test_b79_no_census_is_stated_never_silent,
     test_b79_single_pin_report_renders_no_band,
     test_b88_null_band_reads_program_sha256_first,
+    # [B143]
+    test_compound_clause_and_emit_note_b143,
 ]
 
 
