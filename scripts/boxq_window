@@ -88,9 +88,16 @@ for s in "$STATE_DIR"/*-bench-"$NAME".state; do
   [ ! -e "$s" ] || die "name already used: state file $s exists (new name, e.g. $NAME-r2)"
 done
 
-mkdir -p "$LOGDIR" || die "cannot create $LOGDIR"
-LOG=$LOGDIR/run.log
-CHAINLOG=$LOG.chain
+# pcrec-main 2026-10-25: the reservation's `log` must be an absolute path
+# under /home/pcrec/projects/pcrec-bench/ (the declared log root of
+# scripts/boxqueue.inboxes; anything else is IMPORT-REJECT). The run log holds
+# only our wrapper's lines, so it lives in the inbox's logs/; the chain's bulk
+# output stays under LOGDIR (/var/tmp). BQ_RUNLOG overrides (the tests).
+mkdir -p "$LOGDIR" "$INBOX/logs" || die "cannot create $LOGDIR or $INBOX/logs"
+# (tests set BQ_LOGDIR and keep the run log beside the chain log there)
+LOG=${BQ_RUNLOG:-${BQ_LOGDIR:+$LOGDIR/run.log}}
+LOG=${LOG:-$INBOX/logs/$NAME.log}
+CHAINLOG=$LOGDIR/run.log.chain
 [ ! -e "$LOG" ] || die "run log exists: $LOG (new name)"
 : > "$LOG"
 
