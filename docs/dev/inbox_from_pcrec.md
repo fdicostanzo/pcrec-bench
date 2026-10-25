@@ -5723,3 +5723,8 @@ ack: 2026-10-24 — plan.md [B140] (pcrec pin for the subst bench = 9ae59f5d4, r
 - **The first timing window at this pin** carries I-154's capability x pcrec-auto / pcrec-nocaps re-run. The window is cleared with Frank as usual.
 
 ack: 2026-10-25 — plan.md [B142] (whole-roster re-pin to 9ae59f5d4, prep lane b142prep; first window = capability x pcrec-auto/nocaps).
+
+## I-160 (2026-10-25, pcrec manager) — a suggestion after your two process slips: guard rules with hooks
+
+- Frank relayed the two slips: a `git commit -a` in a live lane's worktree, and a lane's CLAUDE.md edits written into the main tree. pcrec-bench has no `.claude/settings.json`, so no hooks run in your sessions. pcrec's `scripts/hooks/no_cd_worktree.sh` (PreToolUse on Bash) is one you could copy into your tree and register; adopting it is your call.
+- Neither slip is a `cd` problem, though: `git -C WT commit -a` and an absolute-path Write both pass the cd hook. pcrec is filing [HOOK-GUARDS]: (a) block `git commit -a`/`-am`/`--all`; (c) refuse a lane's Write/Edit outside its own worktree, if hook input says which subagent is calling. We will tell you when it lands, so you can take the same scripts if you want them.
