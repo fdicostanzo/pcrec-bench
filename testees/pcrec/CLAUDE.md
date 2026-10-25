@@ -1,6 +1,6 @@
 # testees/pcrec/ — the pcrec adapter
 
-Provides fifty-two testees at the commit pinned in `configs.toml` (counted
+Provides fifty-two testees (+2 at [B140]: `pcrec-auto-sizefirst`, `pcrec-vm-sizefirst`, substitution-only) at the commit pinned in `configs.toml` (counted
 by `adapter.testees()` at the [B136] re-pin to 6b2dbd3e (adds FOUR deny arms:
 `pcrec-auto-noreqhandoff`, `pcrec-auto-utf8-noreqhandoff`,
 `pcrec-auto-norevend`, `pcrec-nocaps-norevend`); the [B135] (d) re-pin to
@@ -64,7 +64,9 @@ at the same pin — up from thirty-nine):
 | `adapter.py` | the configs; the pin; `effective_cc()` (the compilee-toolchain rule); `effective_caps()` + `effective_denies()` + `effective_cflags()` + `effective_encoding()` + `compose_config_extra()` (the emitted-size cap rule, the deny-axis rule, the compilee-flags rule, the engine-encoding rule, and the ONE place `config_extra`'s parts are ordered); `effective_olevel()` ([B117]: which of a `cflags` list is the LAST `-O` flag, so `build_flags` names the EFFECTIVE optimization level rather than leaving gcc/clang's last-flag-wins precedence to a reader's memory); `scan_edge_counts()` (the [B32] covariate: pcrec's own `[OPT-5] SCAN EDGE:` marker counted in the emitted C and attributed to the machine it lands in); `binary_for()` (the ONE place the binary is chosen: the pin's, or `$PCREC_BIN`); `local_provenance()` (the `local:` version); the engine-metadata DECLARATION; the `buffer_*` config → driver argv plumbing |
 | `pin.sh` | `git archive <commit>` from pcrec into the build root, and `make` THERE |
 | `shim.c` | **the one file in this project that knows pcrec's ABI** |
-| `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run |
+| `driver.c` | the timing driver; its `dlopen` is the third AOT compile phase; `--buffer-frames N --buffer-trail M` allocate the caller-provided regions once per run; `--mode subst` ([B140]: `--sizing bound|first`, `--bound ID=BYTES`, `--out-dir`, `--template`/`--subst-flags` accepted and unread because the template is baked in at compile; the `out` line; `--find-all`/`--prime`/`--utf8`/the buffers refused by name) |
+| `timed_subst.c` + `timed_subst.h` | ([B140] b140pcrec, BD16) THE SUBSTITUTION TIMED CALL, ISOLATED: `timed_subst()` holds everything between a `--mode subst` subject's two clock reads (one `pb_subst_all` call into the pre-faulted buffer on the bound arm; the sizing call `out == NULL, cap == 0` then the real call on the size-first arm) in a translation unit of its own, `noinline` + `aligned(64)`. A NEW unit, not a new function in `timed.c`: `timed.c`/`timed.h` stay byte-identical (diff-empty; `timed_run`'s disassembly and alignment identical, docs/dev/measurements/2026-10-25-b140pcrec-instrument-additivity.txt). `adapter.py` passes `extra_sources=["timed_subst.c"]` to `build_driver` |
+| `subst_shim.c` | ([B140] b140pcrec) a SECOND translation unit of the same `.so` as `shim.c`, built only for a substitution cell: includes the subst artifact (`pcrec -p sub --subst-file`), the rx header (`extern rx_info`) and the support unit PRIVATE to it (`PCREC_SUPPORT_STATIC`, no `pcrec_subst_*` dynamic symbol), and exports ONE function, `pb_subst_all` - the contract's own `sub_all()` (subst_api.md 6.9): iterator init, context setup + check, `pcrec_subst_replace_all` - plus `pb_subst_modules`/`pb_subst_uses_scratch`. The case-region scratch is a static 64 KiB (a batch of 64 x one group; a scratch NOSPACE would be a named failure) |
 | `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: `timed_run()` holds everything between a subject's two clock reads (search / find-all / whole-subject, the [B129] `--prime` pass, the `_in` buffer variants) in a translation unit of its own, `noinline` + `aligned(64)`; `driver.c` keeps only argv, loading, the stamp getters and output, and hands `timed_run()` the resolved entry points. The four shim wrappers the loop calls (`pb_search`, `pb_match_caps`, `pb_search_in`, `pb_match_caps_in`) are `aligned(64)` in `shim.c` (`PB_TIMED`) — [B132] found a getter above them shifting them mod 64. Adding stamps/getters to `driver.c` or `shim.c` is therefore NOT an instrument change any more; editing `timed.*` or `PB_TIMED` is. See "Re-pin control" below |
 | `configs.toml` | the config ids, `pin = "<commit>"` (+ `also_pins = [...]`, [B135]: pins a process may select with `$PCRECBENCH_PCREC_PIN`; `scripts/run_window.sh` spells it `testee@pin`), the optional per-config `cc` and its precedence ruling ([B24]), the optional per-config `max_emit_bytes` / `max_emit_code_bytes` with the measured derivation of the 8 MiB bound ([B31]), the `_in` testees' capacities with the measurement that chose them, and `[testees.pcrec-local]` (`local = true`, `binary = "PCREC_BIN"`, `extra_flags = "PCREC_LOCAL_FLAGS"`) |
 | `list_axes.tsv` | ([B18]) pcrec's `--list-axes` output at the pin, VERBATIM under a source header — the FOURTH registry surface (pcrec registry.md §6). `adapter.registry_check()` checks the declared stamp value sets against it; `make check-harness` diffs it against the pin's live output and reads the deny flags' spellings from it. Re-archive at every re-pin: the diff is the list of what moved. **Since the [B124] pin ([B124], pcrec I-128/I-129; first carrier 5328a87d) the dump carries a `#section memfn` block AFTER pcrec's own table** (pcrec-memory-functions' option rows, another column set; 0 rows at this pin): every reader selects the MAIN table, the rows before the first `#section` line (`adapter.registry_main_lines` / `registry_sections`), and every row/axis count quoted in this repo is the main table's |
@@ -3838,3 +3840,49 @@ called, so every engine steps by the same code shape.
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The substitution tier ([B140] step 3, lane b140pcrec, 2026-10-25, pin 9ae59f5d4 / abi 84)
+
+pcrec is the last library driver of the substitution set (`bench/subst`,
+docs/design/subst_bench_v1.md 3.1). The contract is pcrec's
+`docs/spec/subst_api.md` at the pin. A substitution cell compiles a NEW
+artifact kind in `_compile_one(subst=...)`, three pcrec execs and one gcc:
+
+1. the rx artifact for the case's PATTERN (the config's flags, as always);
+2. `pcrec -p sub [--features subst-extended] -o sub.c --subst-file T` - the
+   TEMPLATE, rendered by the harness in PCRE2's dialect (`${N}`,
+   `\U${N}\E`, `${N:+yes:no}`; subst_api.md 2 is libpcre2 10.46's, D26)
+   and read from `workdir/p-<case>/template`; `--features subst-extended` iff
+   `workdir/p-<case>/template.flags` says `extended` (a one-line file
+   `substrun.write_template` now writes beside the template), because every
+   other pcrec option is REFUSED with `--subst`;
+3. `pcrec --emit-support -o support.h`, included by `subst_shim.c` with
+   `PCREC_SUPPORT_STATIC` (a private copy, no link clash);
+4. `shim.c` + `subst_shim.c` into one `.so`. The `emit-c` compile phase is
+   the SUM of the three pcrec execs (the compile row's diagnostic says so).
+
+**Roster** (`Adapter.subst_support`): `pcrec-auto`, `pcrec-vm` and the two
+size-first arms `pcrec-auto-sizefirst`, `pcrec-vm-sizefirst` (`subst_only`,
+`subst_sizing = "first"`, `config_extra` word `sizefirst`, composed LAST).
+Every other config is refused BY NAME with its reason - `pcrec-nocaps` (the
+check refuses `ncaps == 0`, subst_api.md 3 para 10; cases 4/6/7 read groups),
+the `-in` arms (replace-all drives `rx_info.next_n`, which takes no caller
+buffer), `-utf8`, `-clang`, `-bigcap`, `-align64`, `-o<n>` and every deny arm
+(crossing a matching-tier axis with the substitution tier makes cells no
+comparison can attribute, BD3), `pcrec-dfa*` (a forced DFA refuses every
+capturing pattern), `pcrec-local` (scratch tier). Widen the roster only when
+a question needs an axis; the refusal text names this section.
+
+**Sizing arms** (subst_bench_v1.md 3.1.1): bound = ONE `pb_subst_all` call
+into a buffer of `n + 8 * oracle count + 1`; size-first = `out == NULL,
+cap == 0` (the whole find-all renders its pieces once and sums them), then the
+real call with `cap` = the returned length. Same artifact, same bytes; the
+arms differ by the second find-all.
+
+**Verified on acc-small** (check_subst.py section 12): all 8 cases agree by
+sha256 on all four arms; case 6 (`\U$1\E`, `subst-extended`) and case 7
+(the conditional, VM route: `RX_ENGINE vm`, `selected` under auto) are
+`verified-small` in `bench/subst/divergences.tsv`; WITHOUT the module case 6
+COMPILES (a backslash is an ordinary byte) and is a wrong answer the gate
+catches. Under `pcrec-auto` the engine is dfa on cases 1, 3, 5b and vm on
+2, 4, 5, 6, 7.

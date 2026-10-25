@@ -42,7 +42,7 @@ store record exists for it.
 | `fetch_reference.sh` | downloads the reference at the pinned commit and verifies BOTH its sha256 and its git blob hash, refusing on mismatch (never run by `make check`) |
 | `gen_expectations.py` | `expectations.tsv` from the libpcre2 oracle (`Compiled.substitute`) with an independent count per row and case 7's composition control; `--check` re-derives acc-small |
 | `expectations.tsv` | per (case, subject): nsubst, out_bytes, out_sha256 + the independent count |
-| `divergences.tsv` | the declared per-(case, competitor) expectations: `agrees` / `unsupported:<token>`; basis `declared` (the oracle), `verified-small` (a tool run on acc-small by `check_subst.py`) or `predicted` |
+| `divergences.tsv` | the declared per-(case, competitor) expectations: `agrees` / `unsupported:<token>`; basis `declared` (the oracle), `verified-small` (a tool run on acc-small by `check_subst.py`) or `predicted` (pcrec's cases 6 and 7 are `verified-small` since b140pcrec, 2026-10-25: sha256 equality on acc-small, four arms) |
 
 `subjects/` (or `$PCRECBENCH_SUBST_SUBJECTS`, e.g. under /var/tmp/pcrecbench/) is GENERATED and gitignored (`bench/*/subjects/`). The real log
 lives in `build/subst-ref/` (gitignored) and is never committed.

@@ -1096,19 +1096,28 @@ def _pcrec_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
               and pc_rows[c]["basis"] == "verified-small" for c in ("6", "7"))
           and all(outs.get((a, c)) == exp[(c, "acc-small")]["out_sha256"]
                   for a in PCREC_ARMS for c in ("6", "7")))
-    # ---- control: case 6 needs `subst-extended` (pcrec, by name)
-    pcrec = _ad.resolve("pcrec-auto")[0].binary_for("pcrec-auto")
-    t6 = os.path.join(work, "t6.tpl")
-    open(t6, "wb").write(b"/\\U$1\\E/")
-    r = subprocess.run([pcrec, "-p", "sub", "-o", os.path.join(work, "t6.c"), "--subst-file", t6],
-                       capture_output=True)
-    r2 = subprocess.run([pcrec, "-p", "sub", "--features", "subst-extended", "-o",
-                         os.path.join(work, "t6.c"), "--subst-file", t6], capture_output=True)
-    check("subst pcrec: case 6's template is REFUSED by pcrec without `--features "
-          "subst-extended` (naming the module) and compiles with it (the control that "
-          "the flag matters)",
-          r.returncode != 0 and b"subst-extended" in r.stderr and r2.returncode == 0,
-          (r.stderr or b"")[:120].decode("latin-1"))
+    # ---- control: case 6 needs `subst-extended` - WITHOUT the module a backslash
+    # is an ordinary byte (subst_api.md 2 para 7), so the template COMPILES and
+    # renders `\\U..\\E` LITERALLY: not a refusal, a WRONG ANSWER the gate catches
+    ad, _c = _ad.resolve("pcrec-auto")
+    wd6 = os.path.join(work, "pw-noext")
+    ad.prepare("pcrec-auto", wd6)
+    p6 = sb.pattern("6-upper")
+    sup6 = ad.subst_support("pcrec-auto")
+    plan6 = substrun.plan_case(sb, p6, sup6)
+    ext_flag = plan6.flags
+    plan6.flags = "none"            # the control: the same template, the module off
+    substrun.write_template(plan6, os.path.join(wd6, "p-" + p6.name))
+    cp6 = ad.compile("pcrec-auto", p6.name, sb.pattern_bytes(p6.name), {"substitution": True}, 1, wd6)
+    h6 = dict(cp6.get("plain").handle)
+    h6["pin"], h6["subject_timeout"] = None, 60
+    ents6, _n = substrun.measure_cell(ad, h6, sb, p6, plan6, sup6, [small], 1, 60,
+                                      lambda a, h: False)
+    check("subst pcrec: case 6 WITHOUT `subst-extended` compiles but is a WRONG ANSWER the "
+          "gate catches by name (a backslash is an ordinary byte), while the real case 6 "
+          "(flags %r) agreed above - the control that the module flag matters"
+          % ext_flag, ext_flag == "extended" and ents6[0]["subst"]["gate"] == "wrong"
+          and ents6[0]["outcome"] == "did-not-match-as-expected")
     # ---- the support unit is PRIVATE to the shim's TU
     nm = subprocess.run(["nm", "-D", "--defined-only", sample_lib], capture_output=True, text=True).stdout
     check("subst pcrec: the support unit is private (PCREC_SUPPORT_STATIC) - the .so exports "

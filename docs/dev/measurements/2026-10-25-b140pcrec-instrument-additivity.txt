@@ -1,0 +1,14 @@
+timed.c / timed.h diff vs f1ea966b: EMPTY (untouched)
+timed_run  OLD addr 0x4d00 (mod 64 = 0) 261 insns sha 4a2e2d849cf44ae9
+timed_run  NEW addr 0x5680 (mod 64 = 0) 261 insns sha 4a2e2d849cf44ae9
+CONTROL main: OLD 2755 insns sha 7b087e2d2d0d6f43 ; NEW 2908 insns sha f9204ee79df6aabc -> differs (the comparison can see a change)
+timed_subst NEW addr 0x5ac0 (mod 64 = 0) 89 insns sha 5a0440bafbe17a5e
+mode dfa.so   --mode search --iters 3                                                IDENTICAL (55 lines, secs masked)
+mode dfa.so   --mode search --iters 2 --find-all                                     IDENTICAL (55 lines, secs masked)
+mode dfa.so   --mode search --iters 2 --find-all --prime                             IDENTICAL (55 lines, secs masked)
+mode dfa.so   --mode search --iters 1 --find-all --utf8                              IDENTICAL (55 lines, secs masked)
+mode vm.so    --mode search --iters 3                                                IDENTICAL (64 lines, secs masked)
+mode vm.so    --mode match --iters 2                                                 IDENTICAL (64 lines, secs masked)
+mode vm.so    --mode search --iters 2 --find-all                                     IDENTICAL (64 lines, secs masked)
+mode vm.so    --mode search --iters 2 --find-all --buffer-frames 64 --buffer-trail 256 IDENTICAL (66 lines, secs masked)
+ALL 8 existing-mode invocations identical; timed_run unchanged
