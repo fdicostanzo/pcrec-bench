@@ -419,7 +419,7 @@ bindings) live here, vendored or system, pinned either way.
   (the upstream-findings pipeline, [B103]). See docs/dev/CLAUDE.md.
 - `docs/design/` — living design notes (requirements, the record schema,
   set format position, adapter notes, measurement dirs). See its CLAUDE.md.
-- `schema/` — the RECORD format at **v1.9** (v1.9 [B140] the `substitution` regime, `testee.invocation` library/process, `match.subst`/`.process` incl. the `| wc -c` sink, X36-X45; v1.8 [B137] `environment.cpu_isa` + X35; `pcrecbench import` / `machines` land a foreign host's records, `pcrecbench/importer.py`; v1.6 [B44] `testee.grain`;
+- `schema/` — the RECORD format at **v1.10** (v1.10 [B144] the trial-agreement rule `v1.10-group`: a `substitution` trial is timed at `iterations >= 1`, X32 versioned by the record's `schema_version`, gate_shape_v14.md 3.7; v1.9 [B140] the `substitution` regime, `testee.invocation` library/process, `match.subst`/`.process` incl. the `| wc -c` sink, X36-X45; v1.8 [B137] `environment.cpu_isa` + X35; `pcrecbench import` / `machines` land a foreign host's records, `pcrecbench/importer.py`; v1.6 [B44] `testee.grain`;
   v1.7 [B88] the `sha256` engine_metadata declaration type, pcrec's
   `program_sha256`): `record.schema.json` (JSON
   Schema draft 2020-12), `validate.py` (the validator the harness and the

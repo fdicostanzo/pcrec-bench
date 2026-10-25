@@ -14117,10 +14117,15 @@ def _ta_fixture(trials=5):
 
 def _assemble(rows, base=None, trials_hint=None):
     """A VALID setup for hand-built rows: the 1.4 example's setup with the
-    rosters replaced and one `plain` compile row per pattern prepended."""
+    rosters replaced and one `plain` compile row per pattern prepended,
+    RE-STAMPED at the current schema ([B144]: callers stamp the block with
+    `reduce.judge_trial_agreement`'s default rule, which X32 pairs with the
+    current version; the 1.4 example's own block names `v1.4-group`)."""
     import json as _json
+    from pcrecbench import record as _rec_a
     setup, _ex_rows = _example_14() if base is None else base
     setup = _json.loads(_json.dumps(setup))
+    setup["schema_version"] = _rec_a.SCHEMA_VERSION
     pats = sorted({r["pattern_id"] for r in rows})
     subs = sorted({r["subject_id"] for r in rows if r["kind"] == "match"})
     setup["patterns"] = [{"pattern_id": p, "canonical_sha256": "0" * 64,
@@ -14141,6 +14146,123 @@ def _assemble(rows, base=None, trials_hint=None):
     setup.pop("status_detail", None)
     setup.pop("note", None)
     return setup, all_rows
+
+
+def check_trial_agreement_subst_fixture():
+    """gate_shape_v14.md 3.7 / 8 ([B144], rule `v1.10-group`): a
+    hand-computed SUBSTITUTION fixture -- 5 trials, ONE iteration each, one
+    group of 4 rows (s1, s4 clean; s2 two 1.6x trials; s3 one 0.6x trial).
+    Judged: 4 rows, 2 disagreeing, the group disagrees (d=2, n=4, 3*2>=4).
+    The first two rows alone: d=1 of n=2, the group does not (d < d_min).
+    The SAME rows under a non-substitution regime are `few_timed_trials`
+    (unjudged); the substitution rows under `rule=v1.4-group` likewise.
+    CONTROL: validate.py's own implementation (no shared source) gives the
+    same integers on all four calls; the fixture written as a 1.10 record
+    VALIDATES and the block sabotaged to claim `agree` is REJECTED by X32."""
+    print("-- the v1.10 substitution fixture: two implementations, one answer --")
+    import importlib.util
+    from pcrecbench import reduce as _rd, store as _store
+    SUB, SRCH = "substitution", "short-subject-search"
+    vals = {"s1": [100, 101, 99, 100, 102], "s2": [100, 160, 100, 160, 100],
+            "s3": [100, 100, 60, 100, 100], "s4": [100, 100, 100, 100, 101]}
+
+    def build(regime, sids=("s1", "s2", "s3", "s4")):
+        rows, seq = [], 0
+        for sid in sids:
+            for t in range(1, 6):
+                seq += 1
+                r = _ta_row("pa", sid, regime, t, seq, vals[sid][t - 1],
+                            iterations=1)
+                if regime == SUB:       # X36: the transform's answer, X43: constant
+                    r["subst"] = {"case": "1", "gate": "agrees", "nsubst": 3,
+                                  "out_bytes": 30, "out_sha256": "0" * 64}
+                rows.append(r)
+        return rows
+    keys = ("trials", "groups_judged", "groups_disagreeing", "rows_judged",
+            "rows_disagreeing", "rows_unjudged", "rows_unjudged_reasons",
+            "worst_group")
+    spec = importlib.util.spec_from_file_location(
+        "pb_validate_b144", os.path.join(ROOT, "schema", "validate.py"))
+    V = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(V)
+    cases = [
+        ("4 substitution rows", build(SUB), "v1.10-group",
+         {"trials": 5, "groups_judged": 1, "groups_disagreeing": 1,
+          "rows_judged": 4, "rows_disagreeing": 2, "rows_unjudged": 0,
+          "rows_unjudged_reasons": {"few_timed_trials": 0, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": {"pattern_id": "pa", "regime": SUB, "form": "plain",
+                          "d": 2, "n": 4}}, "disagree"),
+        ("s1 + s2 only (one clean, one disagreeing)", build(SUB, ("s1", "s2")),
+         "v1.10-group",
+         {"trials": 5, "groups_judged": 1, "groups_disagreeing": 0,
+          "rows_judged": 2, "rows_disagreeing": 1, "rows_unjudged": 0,
+          "rows_unjudged_reasons": {"few_timed_trials": 0, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": {"pattern_id": "pa", "regime": SUB, "form": "plain",
+                          "d": 1, "n": 2}}, "agree"),
+        ("the same 4 rows, non-substitution regime", build(SRCH), "v1.10-group",
+         {"trials": 5, "groups_judged": 0, "groups_disagreeing": 0,
+          "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 4,
+          "rows_unjudged_reasons": {"few_timed_trials": 4, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": None}, "agree"),
+        ("substitution rows under v1.4-group", build(SUB), "v1.4-group",
+         {"trials": 5, "groups_judged": 0, "groups_disagreeing": 0,
+          "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 4,
+          "rows_unjudged_reasons": {"few_timed_trials": 4, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": None}, "agree"),
+    ]
+    for label, rows, rule, want, verdict in cases:
+        got = _rd.judge_trial_agreement(rows, rule=rule)
+        v = V.judge_trial_agreement(rows, 1.5, 2, 3, rule)
+        if all(got[k] == want[k] for k in keys) and got["verdict"] == verdict \
+                and got["rule"] == rule:
+            ok("subst fixture: %s (%s) -> %s" % (label, rule, verdict),
+               "%d judged, %d disagreeing, %d unjudged" % (
+                   got["rows_judged"], got["rows_disagreeing"], got["rows_unjudged"]))
+        else:
+            bad("subst fixture: %s" % label,
+                repr({k: got.get(k) for k in keys + ("verdict", "rule")}))
+        if all(v[k] == want[k] for k in keys):
+            ok("subst fixture: CONTROL -- validate.py's own implementation agrees (%s)" % label)
+        else:
+            bad("subst fixture: validate.py disagrees (%s)" % label, repr(v))
+    # through store.write: the 1.10 stamp validates; a lying block is X32's
+    rows = build(SUB)
+    setup, all_rows = _assemble(rows)
+    setup["subbench"]["regimes"] = [SUB]
+    setup["trial_agreement"] = _rd.judge_trial_agreement(all_rows)
+    setup["status"] = "inconclusive-spread"
+    setup["status_detail"] = "fixture"
+    try:
+        _write_scratch(setup, all_rows, "tasub")
+        ok("subst fixture: written as a %s record VALIDATES (X31/X32 on the v1.10-group stamp)"
+           % setup["schema_version"])
+    except _store.StoreError as e:
+        bad("subst fixture: record rejected", str(e)[-400:])
+    lie = dict(setup["trial_agreement"], groups_disagreeing=0, rows_disagreeing=0,
+               verdict="agree", worst_group=None)
+    lie_setup = dict(setup, trial_agreement=lie, status="measured")
+    try:
+        _write_scratch(lie_setup, all_rows, "tasub2")
+        bad("subst fixture: a block claiming `agree` beside disagreeing rows must be REJECTED")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("subst fixture: a block claiming agree beside disagreeing substitution rows is rejected by X32")
+        else:
+            bad("subst fixture: rejected for the wrong reason", str(e)[-200:])
+    # the rule text is paired with the version: v1.4-group on a 1.10 record
+    old = dict(setup, trial_agreement=dict(setup["trial_agreement"], rule="v1.4-group"))
+    try:
+        _write_scratch(old, all_rows, "tasub3")
+        bad("subst fixture: v1.4-group stamped on a 1.10 record must be REJECTED")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("subst fixture: the rule text is keyed on the version (v1.4-group on 1.10 -> X32)")
+        else:
+            bad("subst fixture: rule pairing rejected for the wrong reason", str(e)[-200:])
 
 
 def check_trial_agreement_fixture():
@@ -14279,7 +14401,7 @@ def check_spread_status_stamped():
         sd = written.get("status_detail", "")
         if written["status"] == want_status and (
                 want_status == "measured" or (
-                    sd.startswith("trial agreement (v1.4-group, k=1.5, d_min=2, share_c=3, "
+                    sd.startswith("trial agreement (v1.10-group, k=1.5, d_min=2, share_c=3, "
                                   "trials=5): 1 of 1 groups disagree; 2 of 2 rows disagree, "
                                   "0 unjudged; worst group pa / short-subject-search / plain: "
                                   "d=2 of n=2")
@@ -14370,7 +14492,7 @@ def check_smoke_block_na_trials():
     st, _s = _h.derive_status([], ta, "scratch")
     st_p, sent = _h.derive_status([], ta, "pinned")
     if st == "measured" and st_p == "inconclusive-spread" and sent \
-            and sent[0].startswith("trial agreement (v1.4-group): n/a-trials (1 trials"):
+            and sent[0].startswith("trial agreement (v1.10-group): n/a-trials (1 trials"):
         ok("smoke block: CONTROL -- scratch keeps the pre-flight's status; pinned "
            "is inconclusive-spread", "derive_status rows 5 and 4")
     else:
@@ -18031,6 +18153,7 @@ def main():
     check_quiet_cli_agrees_with_gate()
     check_after_sample_is_provenance()
     check_trial_agreement_fixture()
+    check_trial_agreement_subst_fixture()
     check_spread_status_stamped()
     check_status_sentence_never_elided()
     check_smoke_block_na_trials()

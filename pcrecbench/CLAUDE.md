@@ -679,7 +679,7 @@ implemented here as one wave. What a reader of this package must know:
   otherwise. The old "occupancy differed across the run" sentence is
   retired.
 - **Trial agreement decides `measured` vs `inconclusive-spread`.**
-  `reduce.judge_trial_agreement(rows)` (rule `v1.4-group`: k=1.5,
+  `reduce.judge_trial_agreement(rows, rule=)` (rule `v1.10-group` from schema 1.10 — a `substitution` trial is timed at `iterations >= 1`, gate_shape_v14.md 3.7, [B144] — `v1.4-group` below it: k=1.5,
   d_min=2, share_c=3, N ≥ 5 and odd; the arithmetic is gate_shape_v14.md
   §3.5, spelled a second time in `schema/validate.py` for X32) stamps
   `setup.trial_agreement` on EVERY record (X33); the pure

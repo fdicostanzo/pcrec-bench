@@ -111,6 +111,7 @@ sys.path.insert(0, ROOT)
 
 from pcrecbench import oracle_pcre2 as oracle  # noqa: E402
 from pcrecbench import subst_template as st  # noqa: E402
+from pcrecbench.record import SCHEMA_VERSION as _SCHEMA_VERSION  # noqa: E402
 
 C_ENV = dict(os.environ, LC_ALL="C", LANG="C")
 
@@ -557,7 +558,7 @@ def _harness_records(check, sb, work, mock, _ad, harness, store, substrun):
               "store.write) with %d substitution rows x %d trial(s), every one "
               "matched-as-expected, gate agrees, out_sha256 == expectations.tsv"
               % (cid, res.setup["schema_version"], 8, trials),
-              len(rows) == 8 * trials and agree and res.setup["schema_version"] == "1.9"
+              len(rows) == 8 * trials and agree and res.setup["schema_version"] == _SCHEMA_VERSION
               and res.setup["testee"]["invocation"] == "library"
               and res.setup["subbench"]["regimes"] == ["substitution"]
               and len(comp) == 8 * trials)
@@ -783,7 +784,7 @@ def _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun):
         check("subst harness %s: a schema-1.9 record (validator-accepted) with "
               "12 substitution rows (6 runnable cases x 2 trials), every one "
               "matched-as-expected / gate agrees with the expectation's hash" % cid,
-              len(rows) == 12 and res.setup["schema_version"] == "1.9"
+              len(rows) == 12 and res.setup["schema_version"] == _SCHEMA_VERSION
               and res.setup["testee"]["invocation"] == "library"
               and all(r["match_outcome"] == "matched-as-expected"
                       and r["subst"]["gate"] == "agrees"
@@ -1002,7 +1003,7 @@ def _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
               "matched-as-expected / gate agrees / out_sha256 == the oracle's, each with a "
               "`process` object (sink wc-c, count == out_bytes, wc core != tool core)"
               % (tid, res.setup["schema_version"], runnable * trials, runnable, trials),
-              len(rows) == runnable * trials and res.setup["schema_version"] == "1.9"
+              len(rows) == runnable * trials and res.setup["schema_version"] == _SCHEMA_VERSION
               and res.setup["testee"]["invocation"] == "process"
               and res.setup["testee"]["execution_model"] == "interpretive"
               and all(r["match_outcome"] == "matched-as-expected" and r["subst"]["gate"] == "agrees"
@@ -1155,7 +1156,7 @@ def _pcrec_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
               "substitution rows (8 cases x 2 trials), every one matched-as-expected / gate "
               "agrees with the expectation's hash, 16 `compiled` compile rows (8 cases x 2 "
               "trials) and no `unsupported` row" % cid,
-              len(rows) == 16 and res.setup["schema_version"] == "1.9"
+              len(rows) == 16 and res.setup["schema_version"] == _SCHEMA_VERSION
               and res.setup["testee"]["invocation"] == "library"
               and all(r["match_outcome"] == "matched-as-expected"
                       and r["subst"]["gate"] == "agrees"

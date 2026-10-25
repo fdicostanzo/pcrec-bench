@@ -31,12 +31,15 @@ BAD      = $(EXAMPLES)/bad
 #      rejects for an unrelated reason is not a control;
 #   5. (v1.4, [B20]) the GENERATED 1.4 example reproduces byte for byte from
 #      schema/examples/gen_example_14.py -- every v1.4 sabotage in bad/ is a
-#      one-field mutation of that output, so the output must be pinned.
+#      one-field mutation of that output, so the output must be pinned;
+#      (v1.10, [B144]) likewise the GENERATED 1.10 substitution example and
+#      its X32 sabotage (schema/examples/gen_example_110.py --check).
 check-schema:
 	@echo "== check-schema =="
 	@$(PYTHON) schema/check_fields.py
 	@$(PYTHON) schema/check_rules.py
 	@$(PYTHON) schema/examples/gen_example_14.py --check
+	@$(PYTHON) schema/examples/gen_example_110.py --check
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl

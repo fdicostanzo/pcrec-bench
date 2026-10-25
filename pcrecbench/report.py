@@ -481,7 +481,7 @@ THE [B20] SCHEMA v1.4 WAVE (2026-08-30) -- v9, docs/design/gate_shape_v14.md 6
   than a measured one is "newer, not measured"; between the two
   inconclusive values dedup has no preference.
 * R3 -- a LEGEND line under the status policy names the trial-agreement
-  rule (`v1.4-group`, k=1.5, d_min=2, c=3, N >= 5 odd) and what the
+  rule (`v1.4-group`, or from schema 1.10 `v1.10-group`; k=1.5, d_min=2, c=3, N >= 5 odd) and what the
   after-run samples are at v1.4 (provenance).
 * R4 -- every record line of the header carries `agreement: ...` FROM
   THE BLOCK (`reduce.agreement_line`, the string `run`/`quick` print):
@@ -5179,7 +5179,16 @@ def render_markdown(rd: ReportData):
                 "ranks it instead, with `status` shown"
                 + (" [ACTIVE]" if rd.include_unmeasured else ""))
     # [B20] R3 / R4': the trial-agreement policy and the X13 rule marker.
-    out.append("- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33): "
+    # [B144]: the rule named is the records' OWN (`trial_agreement.rule`):
+    # v1.4-group below schema 1.10, v1.10-group from it; a query that mixes
+    # both names both. With no block among the records the line keeps the
+    # historical wording (v1.4-group), so every pre-1.10 report is
+    # byte-identical.
+    ta_rules = sorted({b.get("rule") for b in rd.agreement_by_record.values()
+                       if isinstance(b, dict) and b.get("rule")},
+                      key=lambda r: (len(r), r)) or ["v1.4-group"]
+    out.append("- trial-agreement policy (schema v1.4, rule " + ", ".join(ta_rules)
+                + ", X31-X33): "
                 "a record's five trials must agree to within k=1.5 on every "
                 "group of its rows — one slow trial of five tolerated; two, "
                 "or one fast, is a disagreeing row; a group disagrees at >= 2 "
@@ -5188,6 +5197,9 @@ def render_markdown(rd: ReportData):
                 "trials, is `inconclusive-spread` and unranked like "
                 "`inconclusive-load`; the after-run load/occupancy samples are "
                 "provenance (v1.4 X13), shown under --include-provenance"
+                + ("; under v1.10-group a `substitution` row's one-iteration "
+                   "trials are timed and judged (X32 versioned, [B144])"
+                   if "v1.10-group" in ta_rules else "")
                 + (" [ACTIVE]" if rd.include_provenance else ""))
     rules = "; ".join(f"{label} on {n} record(s)"
                       for label, n in sorted(rd.x13_rule_counts.items()))

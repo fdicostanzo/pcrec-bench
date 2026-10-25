@@ -291,7 +291,18 @@ def read_record(path):
 # over the store's 68 records (the census files under
 # docs/dev/measurements/): k = 1.5, d_min = 2, share_c = 3.
 
-TRIAL_AGREEMENT_RULE = "v1.4-group"
+#
+# v1.10 ([B144], docs/design/gate_shape_v14.md 3.7): the rule `v1.10-group`
+# is `v1.4-group` with ONE change -- on a row whose regime is
+# `substitution` a `matched-as-expected` trial with `iterations >= 1`
+# is timed (a whole-file pass is the unit there: 1 iteration x N trials).
+# Every other regime keeps `iterations > 1`. `rule=` selects the text;
+# the default is the current one, a record stamped < 1.10 is judged by
+# `v1.4-group` (record_schema.md 4's rule-revision clause).
+
+TRIAL_AGREEMENT_RULE = "v1.10-group"
+TRIAL_AGREEMENT_RULE_V14 = "v1.4-group"
+SUBSTITUTION = "substitution"
 TRIAL_AGREEMENT_K = 1.5
 TRIAL_AGREEMENT_D_MIN = 2
 TRIAL_AGREEMENT_SHARE_C = 3
@@ -305,29 +316,34 @@ def _row_key(r):
             r.get("subject_id"))
 
 
-def _ns_per_iter_judged(r):
+def _ns_per_iter_judged(r, rule=TRIAL_AGREEMENT_RULE):
     """A TRIAL is timed for the rule iff `matched-as-expected` AND
     `timing.iterations > 1` (3.5) -- stricter than `ns_per_call`, which
-    accepts a one-iteration loop the ranking may still use."""
+    accepts a one-iteration loop the ranking may still use. Under
+    `v1.10-group` a `substitution` row needs only `iterations >= 1`."""
     t = r.get("timing") or {}
     it = t.get("iterations")
-    if r.get("match_outcome") != MATCHED or not isinstance(it, int) or it <= 1:
+    floor = 1 if (rule != TRIAL_AGREEMENT_RULE_V14
+                  and r.get("regime") == SUBSTITUTION) else 2
+    if r.get("match_outcome") != MATCHED or not isinstance(it, int) or it < floor:
         return None
     return t["elapsed_ns"] / it
 
 
 def judge_trial_agreement(rows, k=TRIAL_AGREEMENT_K, d_min=TRIAL_AGREEMENT_D_MIN,
-                          share_c=TRIAL_AGREEMENT_SHARE_C):
+                          share_c=TRIAL_AGREEMENT_SHARE_C, rule=TRIAL_AGREEMENT_RULE):
     """-> the `trial_agreement` block (record_schema.md 8, v1.4) for a
     record's rows (compile rows are ignored). Every number in it is
-    recomputable from the rows by X32's independent implementation."""
+    recomputable from the rows by X32's independent implementation.
+    `rule` names the text applied (`v1.10-group` by default; `v1.4-group`
+    for a record stamped below 1.10)."""
     match = [r for r in rows if r.get("kind") == "match"]
     by_key = {}
     for r in match:
         by_key.setdefault(_row_key(r), []).append(r)
     trials = max((int(r.get("trial") or 0) for r in match), default=0)
     block = {
-        "rule": TRIAL_AGREEMENT_RULE,
+        "rule": rule,
         "k": k, "d_min": d_min, "share_c": share_c,
         "trials": trials,
         "groups_judged": 0, "groups_disagreeing": 0,
@@ -354,7 +370,7 @@ def judge_trial_agreement(rows, k=TRIAL_AGREEMENT_K, d_min=TRIAL_AGREEMENT_D_MIN
     groups = {}
     for key, krows in by_key.items():
         timed = {r.get("trial"): v for r in krows
-                 for v in (_ns_per_iter_judged(r),) if v is not None}
+                 for v in (_ns_per_iter_judged(r, rule),) if v is not None}
         n_timed_out = sum(1 for r in krows if r.get("match_outcome") == TIMED_OUT)
         if n_timed_out >= 1 and timed:
             disagreeing = True          # a MIXED row: the alarm hit some passes
