@@ -82,4 +82,4 @@ No existing instrument is touched: `timed.c`/`timed.h`, the pcre2/rust/RE2 `time
 
 ## Check counts
 
-CHECKCOUNTS_PLACEHOLDER
+`make check-harness` (= `LC_ALL=C python3 tools/selfcheck.py`, log `/var/tmp/pcrecbench/b140tools/checkh.log`, ends `DONE rc=0`): **924 check(s) passed, 0 FAILED** (the base was 900/0 after b140drv2; the +24 are section 11). History, stated because the first full run was not clean: run 1 died at the driver smoke with an uncaught `NotImplementedError` (finding 11; 69 log lines, no count), fixed by `Adapter.has_driver`; the four generic sweeps and the two that include the tools adapter were re-run standalone (32 checks, 0 failed) before the clean second full run. Section 11 alone: 24 ok / 0 bad in 54 s. Not run (nothing they read changed): `make check-report`, `check-interpret`, `check-upstream`, `check-schema`.
