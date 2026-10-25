@@ -346,7 +346,7 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
 def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
               timing=None, consumed=None, truncation=None, observed=None,
               diagnostic=None, seq=None, calibration=None,
-              form=None, subst=None):
+              form=None, subst=None, process=None):
     row = {
         "kind": "match",
         "pattern_id": pattern_id,
@@ -371,6 +371,9 @@ def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
     if subst is not None:
         # v1.9 ([B140]): the substitution regime's answer (X36)
         row["subst"] = dict(subst)
+    if process is not None:
+        # v1.9 ([B140] step 4): a `process` testee's timed launch (X38-X40)
+        row["process"] = dict(process)
     _stamp_form(row, form)
     return row
 

@@ -1,0 +1,99 @@
+# testees/tools/tools.toml -- the TOOLS tier's testees ([B140] step 4,
+# docs/design/subst_bench_v1.md 3.2, 9.4, 8a items 6/7/10). Read by
+# adapter.py in place of a configs.toml (the Adapter base class's
+# `configs.toml` is OPTIONAL here: `Adapter.__init__` is overridden).
+#
+# A testee is a COMMAND-LINE TOOL launched fresh per trial (`invocation =
+# "process"`); the timed command is `tool ... | wc -c` (ruling 7). Pinning:
+#
+#   * sd and ripgrep are pinned BY BINARY SHA256 (`binary_sha256`): the
+#     adapter refuses to describe, prepare or run a binary whose hash differs.
+#     sd 1.1.0's `--version` prints a stale "1.0.0" (a known upstream
+#     mismatch), so `version` here is the RELEASE it was installed from and
+#     `--version` is recorded as provenance, never trusted.
+#   * sed, perl and python3 are the distro binaries (subst_bench_v1.md 9.4):
+#     pinned by the VERSION STRING they must report (a changed version
+#     refuses the run), with the binary's sha256 recorded live in every
+#     record (`testee.binary`), not enforced -- an `apt upgrade` that keeps
+#     the version string would not be caught by a hash pin, and one that
+#     changes it is.
+#
+# `path` is absolute for the system tools; `build/tools/...` paths are
+# relative to the repository root (or, in a lane worktree, the main
+# checkout that holds the gitignored `build/`). Never PATH-resolved.
+
+[testees.sed-ere]
+engine_name = "sed"
+kind = "sed"
+path = "/usr/bin/sed"
+version = "4.9"
+version_argv = ["--version"]
+version_regex = "GNU sed\\) ([0-9][0-9.]*)"
+competitor = "sed"
+dialect = "sed"
+convention = "posix-leftmost-longest"
+automaton_class = "hybrid"
+license_id = "GPL-3.0-or-later"
+description = "GNU sed -E 's/PAT/REPL/g' FILE: POSIX ERE, LEFTMOST-LONGEST, line-streaming; a GNU extension supplies \\U..\\E"
+
+[testees.perl-p]
+engine_name = "perl"
+kind = "perl"
+path = "/usr/bin/perl"
+version = "5.40.1"
+version_argv = ["-e", "printf q(%vd), $^V"]
+version_regex = "([0-9][0-9.]*)"
+competitor = "perl"
+dialect = "perl"
+convention = "perl-leftmost-first"
+automaton_class = "backtracking"
+license_id = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+description = "perl -pe 's/PAT/REPL/g' FILE: the -p line loop over perl's own backtracking regex engine"
+
+[testees.python-resub]
+engine_name = "python"
+kind = "python"
+path = "/usr/bin/python3"
+version = "3.14.4"
+version_argv = ["--version"]
+version_regex = "Python ([0-9][0-9.]*)"
+competitor = "python"
+dialect = "python"
+convention = "perl-leftmost-first"
+automaton_class = "backtracking"
+license_id = "PSF-2.0"
+description = "python3 -I testees/tools/subst_py.py: a whole-file re.sub on bytes, one call (ruling 8a item 6), interpreter start included"
+
+[testees.sd-stdin]
+engine_name = "sd"
+kind = "sd"
+path = "build/tools/sd-1.1.0/sd"
+binary_sha256 = "302e73682783eeeaee5d8be154d1bb9eb855f562f1537f3a77cfe58d2838a29e"
+version = "1.1.0"
+version_argv = ["--version"]
+version_regex = "sd ([0-9][0-9.]*)"
+reported_version_is_stale = true
+competitor = "sd"
+dialect = "sd"
+convention = "perl-leftmost-first"
+automaton_class = "nfa-simulation"
+license_id = "MIT"
+description = "sd 'PAT' 'REPL' < FILE: the Rust regex crate, stdin to stdout, sd's DEFAULT line-by-line processing (not --across)"
+
+[testees.rg-passthru]
+engine_name = "ripgrep"
+kind = "rg"
+path = "build/tools/ripgrep-15.2.0/rg"
+binary_sha256 = "e62198eb19b136b88c330af83647b5a962cb99b6b1f066758568f12de1974849"
+version = "15.2.0"
+version_argv = ["--version"]
+version_regex = "ripgrep ([0-9][0-9.]*)"
+competitor = "rg"
+dialect = "rg"
+convention = "perl-leftmost-first"
+automaton_class = "nfa-simulation"
+license_id = "Unlicense OR MIT"
+# rg exits 1 when nothing matched: with --passthru the output is still the
+# whole file, so exit 1 is a valid run (the sha256 gate judges the bytes).
+ok_exit = [0, 1]
+description = "rg --no-config --passthru -N --no-heading --color never -j1 -r REPL PAT FILE: the Rust regex crate, one search thread"

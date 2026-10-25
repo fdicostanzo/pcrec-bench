@@ -821,8 +821,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if sb.substitution:
         # v1.9 S2: the tier is part of the record. Every adapter that runs the
         # substitution set through `measure_subst` calls the engine's API
-        # in-process: `library`. (A `process` testee is the TOOLS tier's
-        # runner, a later lane, and would say so in its own describe().)
+        # in-process: `library`. (A `process` testee, the TOOLS tier's
+        # `testees/tools/`, says so in its own describe(): `process`.)
         testee_block.setdefault("invocation", "library")
 
     # O, the OTHER sentences (module docstring): the scratch-tier sentence,
@@ -911,6 +911,13 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         compiled[p.name] = cp
         phases = testee_block["compile_phases"]
         for form, cr in cp.forms.items():
+            if (testee_block.get("invocation") == "process"
+                    and cr.outcome == "compiled"):
+                # v1.9 S7 / X41: a command-line tool re-parses its pattern on
+                # every launch, so there is no separable compile; the row is
+                # OMITTED (the timed launch prices it). An unsupported or
+                # refused case still gets its row (X44/X45).
+                continue
             n = len(cr.phase_seconds) if cr.outcome == "compiled" else 1
             for t in range(1, max(n, 1) + 1):
                 ps = (cr.phase_seconds[t - 1]
@@ -1005,7 +1012,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                         en["outcome"], timing=en["timing"],
                         consumed=en["consumed"], truncation=en["truncation"],
                         observed=en["observed"], diagnostic=en["diagnostic"],
-                        seq=next(seq), form=form, subst=en["subst"]))
+                        seq=next(seq), form=form, subst=en["subst"],
+                        process=en.get("process")))
                 continue
             n_iters, why, cal, rows_by_trial, mnotes = measure_regime_cell(
                 adapter, handle, regime, subjects, iters, trials,
