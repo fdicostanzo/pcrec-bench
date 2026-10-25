@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+# boxq_window -- run a window chain under pcrec's box-queue RESERVATION ([B146],
+# inbox I-161; Frank 2026-10-25). The contract is pcrec-main's, provisional:
+# we write ONLY data files into OUR inbox (worktrees/.mgr/boxqueue/), we only
+# READ pcrec's state file, we never write under ~/pcrec and never run any
+# pcrec script (BD2); pcrec's side runs none of our code.
+#
+#   scripts/boxq_window --name NAME --prio 7NN --cap S [--patience S]
+#       [--idle-ok S] [--start-s S] -- CHAIN [ARGS...]
+#   scripts/boxq_window --no-queue [--name NAME] -- CHAIN [ARGS...]
+#   scripts/boxq_window --cancel NAME
+#
+# Flow: write <inbox>/NAME.window; poll the state file; on RUNNING start CHAIN
+# in its own process group (setsid); keep polling; if the state leaves RUNNING
+# (cap, cancel, anything) kill the chain's group BY PID. Our run log (the
+# contract's log=) carries ONLY this wrapper's lines, the chain's own output
+# goes to <log>.chain, so no chain line can ever match done_ere/fail_ere.
+#   success : "BENCH_WINDOW_COMPLETE rc=0"      (done_ere ^BENCH_WINDOW_COMPLETE rc=, expect=0)
+#   anything else (chain rc != 0, signal, error, state left RUNNING):
+#             "BENCH_WINDOW_FAILED <why>"       (fail_ere ^BENCH_WINDOW_FAILED )
+# Env (tests): BQ_STATE_DIR BQ_INBOX BQ_LOGDIR BQ_POLL (state poll s, 30)
+# BQ_TICK (chain-liveness tick s, 1) BQ_IMPORT_WAIT (s to wait for the state
+# file to appear, 900) BQ_KILL_GRACE (s TERM->KILL, 10).
+set -u
+LC_ALL=C; export LC_ALL
+
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# the MAIN tree root (worktrees/ lives there), also when run from a lane worktree
+COMMON=$(git -C "$HERE" rev-parse --git-common-dir 2>/dev/null)
+ROOT=$(cd "$HERE" && cd "$(dirname "$(realpath "$COMMON")")" && pwd)
+INBOX=${BQ_INBOX:-$ROOT/worktrees/.mgr/boxqueue}
+STATE_DIR=${BQ_STATE_DIR:-/home/pcrec/projects/pcrec/worktrees/.boxqueue/reservations}
+POLL=${BQ_POLL:-30}; TICK=${BQ_TICK:-1}
+IMPORT_WAIT=${BQ_IMPORT_WAIT:-900}; KILL_GRACE=${BQ_KILL_GRACE:-10}
+
+die() { echo "boxq_window: $*" >&2; exit 2; }
+
+NAME= PRIO= CAP= PATIENCE=86400 IDLE_OK= START_S=300 NOQ=0 CANCEL=
+while [ $# -gt 0 ]; do
+  case $1 in
+    --name) NAME=${2:-}; shift 2 ;;
+    --prio) PRIO=${2:-}; shift 2 ;;
+    --cap) CAP=${2:-}; shift 2 ;;
+    --patience) PATIENCE=${2:-}; shift 2 ;;
+    --idle-ok) IDLE_OK=${2:-}; shift 2 ;;
+    --start-s) START_S=${2:-}; shift 2 ;;
+    --no-queue) NOQ=1; shift ;;
+    --cancel) CANCEL=${2:-}; shift 2 ;;
+    --) shift; break ;;
+    *) die "unknown argument: $1" ;;
+  esac
+done
+
+okname() { [[ $1 =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]]; }
+
+if [ -n "$CANCEL" ]; then
+  okname "$CANCEL" || die "bad name: $CANCEL"
+  mkdir -p "$INBOX"
+  [ -e "$INBOX/$CANCEL.window" ] || echo "boxq_window: note: no $CANCEL.window in the inbox (already imported, or never written)" >&2
+  : > "$INBOX/$CANCEL.cancel" || die "cannot write the cancel file"
+  echo "wrote $INBOX/$CANCEL.cancel"
+  exit 0
+fi
+
+[ $# -ge 1 ] || die "no CHAIN given (after --)"
+CHAIN=$1; [ -x "$CHAIN" ] || die "chain not executable: $CHAIN"
+LOGDIR=${BQ_LOGDIR:-/var/tmp/pcrecbench/${NAME}win}
+
+if [ "$NOQ" = 1 ]; then
+  # the bench stays independent of the queue: no reservation, no polling
+  "$@"; rc=$?
+  if [ $rc -eq 0 ]; then echo "BENCH_WINDOW_COMPLETE rc=0"; else echo "BENCH_WINDOW_FAILED chain rc=$rc (no-queue)"; fi
+  exit $rc
+fi
+
+okname "$NAME" || die "--name required, [A-Za-z0-9_.-]: '$NAME'"
+[[ $PRIO =~ ^[0-9]{3}$ ]] && [ "$PRIO" -ge 700 ] && [ "$PRIO" -le 899 ] || die "--prio must be 700..899: '$PRIO'"
+[[ $CAP =~ ^[0-9]+$ ]] && [ "$CAP" -gt 0 ] || die "--cap seconds required: '$CAP'"
+for v in "$PATIENCE" "$START_S" "$IDLE_OK"; do [ -z "$v" ] || [[ $v =~ ^[0-9]+$ ]] || die "numeric option expected: '$v'"; done
+STATE="$STATE_DIR/$PRIO-bench-$NAME.state"
+
+# import is once per name: refuse a name with a .window (or any .cancel) in the
+# inbox or a state file at ANY priority
+mkdir -p "$INBOX" || die "cannot create $INBOX"
+[ ! -e "$INBOX/$NAME.window" ] || die "name already used: $INBOX/$NAME.window exists (new name, e.g. $NAME-r2)"
+[ ! -e "$INBOX/$NAME.cancel" ] || die "name already used: $INBOX/$NAME.cancel exists"
+for s in "$STATE_DIR"/*-bench-"$NAME".state; do
+  [ ! -e "$s" ] || die "name already used: state file $s exists (new name, e.g. $NAME-r2)"
+done
+
+mkdir -p "$LOGDIR" || die "cannot create $LOGDIR"
+LOG=$LOGDIR/run.log
+CHAINLOG=$LOG.chain
+[ ! -e "$LOG" ] || die "run log exists: $LOG (new name)"
+: > "$LOG"
+
+say() { local l; l="$(date -Is) $*"; echo "$l"; echo "$l" >> "$LOG"; }
+# contract lines carry no timestamp prefix: done_ere/fail_ere anchor at ^
+marker() { echo "$*"; echo "$*" >> "$LOG"; }
+
+CPID= FINAL=0
+fail_exit() { # why rc
+  [ "$FINAL" = 1 ] && return
+  FINAL=1
+  marker "BENCH_WINDOW_FAILED $1"
+}
+kill_chain() { # by PID of the group leader we started, never by pattern
+  [ -n "$CPID" ] || return 0
+  kill -0 "$CPID" 2>/dev/null || return 0
+  say "killing chain process group $CPID (TERM, then KILL after ${KILL_GRACE}s)"
+  kill -TERM -- "-$CPID" 2>/dev/null
+  local i=0
+  while [ "$i" -lt "$KILL_GRACE" ] && kill -0 "$CPID" 2>/dev/null; do sleep 1; i=$((i+1)); done
+  kill -KILL -- "-$CPID" 2>/dev/null
+  wait "$CPID" 2>/dev/null
+}
+on_signal() { say "signal received"; kill_chain; fail_exit "signal"; exit 143; }
+on_exit() { # any exit not already finalised is abnormal
+  if [ "$FINAL" != 1 ]; then kill_chain; fail_exit "abnormal exit"; fi
+}
+trap on_signal INT TERM HUP
+trap on_exit EXIT
+
+# (a) the reservation
+W=$INBOX/.$NAME.window.tmp
+{
+  echo "prio=$PRIO"
+  echo "name=$NAME"
+  echo "cap=$CAP"
+  echo "patience=$PATIENCE"
+  [ -z "$IDLE_OK" ] || echo "idle_ok=$IDLE_OK"
+  echo "log=$LOG"
+  echo "start_s=$START_S"
+  echo "done_ere=^BENCH_WINDOW_COMPLETE rc="
+  echo "expect=0"
+  echo "witness=BENCH_WINDOW_COMPLETE rc=0"
+  echo "fail_ere=^BENCH_WINDOW_FAILED "
+} > "$W" && mv "$W" "$INBOX/$NAME.window" || { fail_exit "cannot write the .window"; exit 2; }
+say "reservation written: $INBOX/$NAME.window (job $PRIO-bench-$NAME, cap=$CAP patience=$PATIENCE)"
+say "watching $STATE"
+
+state_word() { local l=; [ -r "$STATE" ] && IFS= read -r l < "$STATE"; echo "$l"; }
+
+# (b) wait for RUNNING
+last= waited=0 seen=0
+while :; do
+  cur=$(state_word)
+  if [ -z "$cur" ]; then
+    if [ "$seen" = 0 ] && [ "$waited" -ge "$IMPORT_WAIT" ]; then
+      say "state file never appeared within ${IMPORT_WAIT}s (not imported?)"
+      fail_exit "no state file"; exit 3
+    fi
+  else
+    seen=1
+  fi
+  [ "$cur" = "$last" ] || { say "state: ${cur:-<absent>}"; last=$cur; }
+  case $cur in
+    RUNNING*) break ;;
+    DONE*) say "state is DONE before start; the chain does not run"
+           fail_exit "state DONE before start: $cur"; exit 3 ;;
+  esac
+  sleep "$POLL"; waited=$((waited + POLL))
+done
+
+# (c) start the chain in its own process group
+say "RUNNING: starting chain: $*"
+setsid -w "$@" >> "$CHAINLOG" 2>&1 &
+CPID=$!
+say "chain pid/pgid $CPID, output $CHAINLOG"
+since=0 empty=0
+while kill -0 "$CPID" 2>/dev/null; do
+  sleep "$TICK"
+  since=$((since + TICK))
+  [ "$since" -ge "$POLL" ] || continue
+  since=0
+  cur=$(state_word)
+  case $cur in
+    RUNNING*) empty=0 ;;
+    "") # a torn in-place rewrite reads empty: require two consecutive reads
+        empty=$((empty + 1))
+        [ "$empty" -ge 2 ] || { since=$POLL; continue; } ;&
+    *) say "state left RUNNING: ${cur:-<absent>}; stopping the chain"
+       kill_chain
+       fail_exit "state left RUNNING: ${cur:-absent}"; exit 4 ;;
+  esac
+done
+wait "$CPID"; rc=$?
+CPID=
+say "chain exited rc=$rc"
+# the state may have left RUNNING in the last interval; the chain is done either way
+if [ "$rc" -eq 0 ]; then
+  FINAL=1; marker "BENCH_WINDOW_COMPLETE rc=0"; exit 0
+fi
+fail_exit "chain rc=$rc"; exit 1

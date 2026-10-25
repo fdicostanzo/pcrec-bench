@@ -155,6 +155,15 @@ A lane spawns NO forks or helper agents. A fork inherits the lane's full
 write mandate, whatever its brief says: two "read-only" research forks
 edited [B118]'s worktree beside their parent. Do the research inline.
 
+## Launching windows (2026-10-25, [B146])
+
+Timing windows enter pcrec's box queue by RESERVATION: the manager launches
+`setsid scripts/boxq_window --name NAME --prio 7NN --cap S -- <chain>` (the chain
+unchanged) instead of the chain directly; `--no-queue` runs it directly. A lane
+never launches a window (it never did) and never writes into `worktrees/.mgr/boxqueue/`
+or reads/writes pcrec's queue by hand; the wrapper is the only writer. Its own
+test (`make check-boxq-window`) is light and uses fake state.
+
 ## Hooks (2026-10-25, I-160)
 
 Project hooks now BLOCK: a `cd` into `worktrees/` or any `cd X && ...` chain (use absolute paths or `git -C <worktree>`; a `(cd X && ...)` subshell is fine), any `git commit -a`/`--all` (stage named paths), and a subagent Write/Edit to a main-tree path (write under your worktree). A block is a correct refusal: change the command, never route around it.

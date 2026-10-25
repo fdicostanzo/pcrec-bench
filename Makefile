@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check-wtprune wtprune trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
+.PHONY: check-boxq-window check-wtprune wtprune trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -81,7 +81,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend check-wtprune
+check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend check-wtprune check-boxq-window
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -334,6 +334,11 @@ help:
 ## mktemp; seconds; 33 checks incl. the lane-scratch extension).
 check-wtprune:
 	bash scripts/tests/wtprune.test
+
+## check-boxq-window: scripts/boxq_window's self-test ([B146]; fake state dir,
+## inbox and chains, ~25 s of sleeps, no engine, no store, nothing heavy).
+check-boxq-window:
+	bash scripts/tests/test_boxq_window.sh
 
 ## wtprune: DRY RUN of the gated lane-worktree + lane-scratch cleanup
 ## (scripts/wtprune); `scripts/wtprune --apply` removes the REMOVE lines.
