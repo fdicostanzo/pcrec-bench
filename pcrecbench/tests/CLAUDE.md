@@ -511,5 +511,13 @@ invocation of the CLI itself over `fixtures/store` in both formats plus
 `--format matrix` (rendered through `scripts/matrix_page.py`, and
 refused BY NAME at `--grain subject`). See the root Makefile.
 
+**[B143] additions (2026-10-25, 4 new tests, 108 total)**: Part A -- every
+`REAL_STORE` query names `REAL_MACHINE` (the store holds two machines since
+[B138]; the pooling refusal stays); `test_compound_clause_and_emit_note_b143`;
+three `--grain subst` tests on hand-built `LoadedRecord`s
+(`_subst_rec`/`_subst_report`): tiers + ratios + summary by hand,
+unsupported/wrong first-class (md + TSV), compile table / tier gates / the
+standard grain's refusal. The version pin is v27.
+
 Maintenance: update this file when files are added/removed or change
 role.

@@ -14,14 +14,15 @@ STATUS: step 1 of [B140] (the set) BUILT (lane b140set2, 2026-10-24): subjects g
 STEP 3 (lane b140drv, 2026-10-25): the pcre2 LIBRARY-TIER driver mode, the
 `timed_subst()` instrument, the harness side (`pcrecbench/substrun.py`) and a
 scratch-tier dry run exist; `pcrecbench run --subbench subst` WORKS
-(`subbench.py` accepts the sidecar name `subst.toml` besides `subbench.toml`
-and builds the harness's "patterns" from `cases.tsv`: pattern id = the case
-DIRECTORY name, the case id `5b` etc. is `Pattern.case`, the key of
+(`subbench.py` builds the harness's "patterns" from `cases.tsv`: pattern id =
+the case DIRECTORY name, the case id `5b` etc. is `Pattern.case`, the key of
 `expectations.tsv` / `divergences.tsv` and the record's `subst.case`). The
-sidecar is still `subst.toml`, on purpose: `tools/selfcheck.py`'s generic
-`bench/*/` gates (`subbench_dirs()`), the reporter's set-id lookup and the
-importer enumerate `subbench.toml`, and none of them knows the regime yet;
-renaming it is the reporter step's integration (plan [B140] step 5). Its own
+sidecar is `subbench.toml` since [B143] (2026-10-25; it was staged as
+`subst.toml`): `tools/selfcheck.py`'s generic `bench/*/` gates
+(`subbench_dirs()`) now enumerate the set, and `SUBST_GATE_SKIPS` names the
+four gates it skips (manifests, floor quick cell, floor oracle smoke, rxt
+export) with the reason printed; every other gate applies. The reporter reads
+it with `report --grain subst`. Its own
 gate is `tools/check_subst.py` (called from `check-harness`). Subjects:
 `$PCRECBENCH_SUBST_SUBJECTS` or `subjects/` (`<id>.log`); trial 1's output
 files: `$PCRECBENCH_SUBST_OUT` or `build/subst-out/`. No timing run and no
@@ -30,7 +31,7 @@ store record exists for it.
 | file | role |
 |---|---|
 | `NOTES.md` | the set's statement: cases, IR spec, densities + predictions (stated before any run), calibration, oracle, divergences, design gaps |
-| `subst.toml` | the sidecar (fields only) |
+| `subbench.toml` | the sidecar (fields only; renamed from `subst.toml` at [B143]) |
 | `cases.tsv` | the case table: id, dir, label, ERE-safe?, what the pattern needs, planted-or-natural, what it isolates |
 | `cases/<dir>/PATTERN.rx` | the pattern text, ONE line, the same bytes for every engine (cases 1-6 are POSIX-ERE-clean: capturing groups only) |
 | `cases/<dir>/TEMPLATE.neutral` | the engine-neutral template (IR: `lit`/`grp`/`upper`/`cond`/`else`/`end`), rendered per dialect by `pcrecbench/subst_template.py` |
