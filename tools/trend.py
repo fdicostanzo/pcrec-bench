@@ -69,6 +69,7 @@ sys.path.insert(0, ROOT)
 sys.path.insert(0, HERE)
 from pcrecbench import reduce as R  # noqa: E402
 import trend_snapshot as TS  # noqa: E402
+from pcrecbench import identity as ID  # noqa: E402
 
 GEN_VERSION = "trend-v1"
 DIGEST_VERSION = "d2"   # cache key part: bump when build_digest changes
@@ -706,13 +707,19 @@ def finish_deltas(raw, cfg, pin_order, out, ctrls):
             d["transition"] = f"{sp}->{sn}"
         pid, form = d["pattern"], d["form"]
         pm, nm = comp_meta(prev, pid, form), comp_meta(new, pid, form)
-        sp_, sn_ = clean(pm.get("program_sha256")), clean(nm.get("program_sha256"))
-        if sp_ and sp_ == sn_:
+        # [B145] the ONE chooser decides the criterion (v3 when both rows
+        # carry program_sha256_v3, else v2); the abi-67 blindness is a
+        # property of v2 alone.
+        verdict_, crit_ = ID.same_program(pm, nm)
+        _c, sp_, sn_ = ID.compared_hashes(pm, nm)
+        d["identity_crit"] = crit_
+        if verdict_ == ID.IDENTICAL:
             d["identical"] = "yes"
-        elif sp_ and sn_ and d["abi_prev"] is not None and d["abi_new"] is not None \
+        elif verdict_ == ID.CHANGED and crit_ == ID.CRIT_V2 \
+                and d["abi_prev"] is not None and d["abi_new"] is not None \
                 and d["abi_prev"] < ABI_BLIND <= d["abi_new"]:
             d["identical"] = "unknown-abi67"
-        elif sp_ and sn_:
+        elif verdict_ == ID.CHANGED:
             d["identical"] = "no"
         else:
             d["identical"] = "unknown"
@@ -813,6 +820,7 @@ def delta_row(d):
     row["state_prev"], row["state_new"] = d["state_prev"], d["state_new"]
     row["transition"] = d["transition"]
     row["identical"] = d["identical"]
+    row["identity_crit"] = d.get("identity_crit", ID.CRIT_NONE)
     row["prog_prev"], row["prog_new"] = d["prog_prev"], d["prog_new"]
     if a:
         row.update(ns_prev=fnum(a["median"]), min_prev=fnum(a["min"]),
@@ -891,7 +899,9 @@ def summarize(groups, cfg, out):
             "instrument_changed_files": first.get("instrument_files", ""),
             "n_correctness_changes": len(trans),
             "top_movers": ";".join(d["row_id"] for d in top),
-            "identity_criterion": "program_sha256-v2",
+            "identity_criterion": criterion_label(
+                ID.criterion_summary(d.get("identity_crit", ID.CRIT_NONE)
+                                     for d in num)),
         })
         for d in num:
             d["row_cell_drift"] = d["cell_drift"]
@@ -964,9 +974,9 @@ def compile_deltas(byconf, pidx, cfg, out, links):
                     "emit_code_bytes_ratio": frat(ec),
                     "compile_ns_prev": fnum(co, 0), "compile_ns_new": fnum(cn, 0),
                     "compile_ratio": frat(cr), "compile_ranges_disjoint": int(cdis),
-                    "identical": ("yes" if om.get("program_sha256")
-                                  and om.get("program_sha256") == nm.get("program_sha256")
+                    "identical": ("yes" if ID.same_program(om, nm)[0] == ID.IDENTICAL
                                   else "no-or-unknown"),
+                    "identity_crit": ID.same_program(om, nm)[1],
                     "highlight_size": int(hl_size), "highlight_compile": int(hl_comp),
                     "outcome_changed": int(outc_change),
                     "instrument_changed": int(new.instr != prev.instr),
@@ -992,8 +1002,8 @@ def deny_twins(pc, cfg, out):
             if a["median"] is None or c["median"] is None:
                 continue
             ratio = c["median"] / a["median"]
-            pa = clean(comp_meta(base, pid, form).get("program_sha256"))
-            pb = clean(comp_meta(tw, pid, form).get("program_sha256"))
+            pverdict, pcrit = ID.same_program(comp_meta(base, pid, form),
+                                              comp_meta(tw, pid, form))
             out.twins.append({
                 "row_id": f"T:{sv}:{config}:{pin}:{pid}:{rg}:{form}",
                 "set_ver": sv, "pin": pin, "base_config": b, "deny_config": config,
@@ -1001,7 +1011,8 @@ def deny_twins(pc, cfg, out):
                 "ratio_deny_over_base": frat(ratio),
                 "ns_base": fnum(a["median"]), "ns_deny": fnum(c["median"]),
                 "ranges_disjoint": int(disjoint(a, c)),
-                "program_identical": "yes" if pa and pa == pb else "no",
+                "program_identical": "yes" if pverdict == ID.IDENTICAL else "no",
+                "identity_crit": pcrit,
                 "window_gap_hours": fnum(gap_h, 1),
                 "cross_window": int(gap_h > cfg["same_window_hours"]),
                 "n_common_subjects": len(cs),
@@ -1048,11 +1059,48 @@ def interest_rows(out, spec):
                          "pattern": d["pattern"], "regime": d["regime"],
                          "form": d["form"], "ratio": d["ratio"],
                          "verdict": d["verdict"], "identical": d["identical"],
+                         "identity_crit": d.get("identity_crit", ID.CRIT_NONE),
                          "instrument_changed": d["instrument_changed"]})
     return rows
 
 
 # ------------------------------------------------------------------ writing
+
+IDENTITY_CRITERION_V3 = (
+    "per comparison, by the ONE chooser (pcrecbench/identity.py): "
+    "program_sha256_v3 (normalization v3, tools/program_identity.py) when "
+    "BOTH compile rows carry it, else program_sha256 (v2); a v2 hash is "
+    "never compared with a v3 hash; the per-row criterion is the "
+    "`identity_crit` column; equal = identical; unequal across abi 67 under "
+    "v2 only = unknown-abi67")
+
+
+def identity_criterion_text(out):
+    """The header text: the pre-[B145] sentence until some comparison in
+    this report used v3, then the per-comparison statement."""
+    rows = list(out.deltas) + list(out.compile) + list(out.twins)
+    if any(r.get("identity_crit") == ID.CRIT_V3 for r in rows):
+        return IDENTITY_CRITERION_V3
+    return IDENTITY_CRITERION
+
+
+def criterion_label(summary):
+    """The header / summary spelling of a criterion summary. A pin whose
+    comparisons are all v2 (or unknown) keeps the pre-[B145] text, so no
+    committed output moves until a 1.10 record exists."""
+    return {"v3": "program_sha256-v3", "mixed": "mixed"}.get(
+        summary, "program_sha256-v2")
+
+
+def with_crit(cols, rows, after):
+    """[B145] the per-row `identity_crit` column, inserted after `after`,
+    only in a table where some row compared by v3 (every other table is
+    byte-identical to its pre-v3 form)."""
+    if not any(r.get("identity_crit") == ID.CRIT_V3 for r in rows):
+        return cols
+    i = cols.index(after) + 1
+    return cols[:i] + ["identity_crit"] + cols[i:]
+
 
 def header_lines(name, meta, extra=()):
     h = [f"# trend_report: {name}", f"# schema: {TSV_SCHEMA}",
@@ -1282,7 +1330,7 @@ def build_outputs(args, links=None):
         "config_sha256": sha_file(args.config),
         "pin_order_sha256": hashlib.sha256("\n".join(pin_order).encode()).hexdigest(),
         "as_of": max(used_ts) if used_ts else "",
-        "identity_criterion": IDENTITY_CRITERION,
+        "identity_criterion": identity_criterion_text(out),
         "wide_gap_abi": cfg["wide_gap_abi"],
         "fallback_band": cfg["fallback_band"],
         "direction": "ratio = new/old of the set-grain median (>1 slower)",
@@ -1338,17 +1386,17 @@ def render_files(args):
     files["records.tsv"] = tsv_text("records", meta, RECORD_COLS, metas, ex)
     files["cells.tsv"] = tsv_text("cells", meta, CELL_COLS, out.cells)
     n_unl = sum(1 for d in out.deltas if d["verdict"] == "unlinked")
-    files["deltas.tsv"] = tsv_text("deltas", meta, DELTA_COLS, out.deltas,
+    files["deltas.tsv"] = tsv_text("deltas", meta, with_crit(DELTA_COLS, out.deltas, "identical"), out.deltas,
                                    [f"# unlinked_cells: {n_unl}"])
     files["summary.tsv"] = tsv_text("summary", meta, SUMMARY_COLS, out.summary)
     files["movers_by_stamp.tsv"] = tsv_text("movers_by_stamp", meta, MOVER_COLS,
                                             out.movers)
     files["compile_deltas.tsv"] = tsv_text(
-        "compile_deltas", meta, COMPILE_COLS, out.compile,
+        "compile_deltas", meta, with_crit(COMPILE_COLS, out.compile, "identical"), out.compile,
         [f"# size_threshold: {cfg['size_threshold']}",
          f"# compile_threshold: {cfg['compile_threshold']}"])
-    files["deny_twins.tsv"] = tsv_text("deny_twins", meta, TWIN_COLS, out.twins)
-    files["interest.tsv"] = tsv_text("interest", meta, INTEREST_COLS, irows)
+    files["deny_twins.tsv"] = tsv_text("deny_twins", meta, with_crit(TWIN_COLS, out.twins, "program_identical"), out.twins)
+    files["interest.tsv"] = tsv_text("interest", meta, with_crit(INTEREST_COLS, irows, "identical"), irows)
     # history (R14): pin-major so a new pin appends
     dmap = {(d["set_ver"], d["config"], d["pin"], d["pattern"], d["regime"],
              d["form"]): d for d in out.deltas}

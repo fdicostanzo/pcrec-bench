@@ -67,7 +67,8 @@ from pcrecbench import reduce as R  # noqa: E402
 
 SNAPSHOT_SCHEMA = "trend-snapshot-2"
 META_KEYS = ("engine", "dfa_prefilter", "dfa_start", "req_why", "vm_start_scan",
-             "emit_bytes", "emit_code_bytes", "program_sha256", "engine_sel",
+             "emit_bytes", "emit_code_bytes", "program_sha256",
+             "program_sha256_v3", "engine_sel",
              "abi")
 REC_COLS = ["rid", "path", "role", "set_ver", "testee_id", "config", "pin", "machine",
             "timestamp", "status", "disposition", "superseded_by",

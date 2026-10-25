@@ -5829,6 +5829,24 @@ def _b88_render(census_path, **kw):
         report.census_path_for = saved
 
 
+def test_b145_null_band_identity_goes_through_the_chooser():
+    """[B145]: the band's field identity is the ONE chooser's verdict --
+    v3 where both rows carry it (and the criterion is returned), v2 where
+    one side lacks v3, never a v2/v3 cross comparison; the pre-1.10 shape
+    (v2 only) is unchanged."""
+    from pcrecbench import nullband as nb
+    a2, b2, c3 = "a" * 64, "b" * 64, "c" * 64
+    _check(nb.field_identity_criterion({"program_sha256": a2, "program_sha256_v3": c3},
+                                       {"program_sha256": b2, "program_sha256_v3": c3})
+           == ("identical", "v3"), "v3 wins when both carry it")
+    _check(nb.field_identity_criterion({"program_sha256": a2},
+                                       {"program_sha256": b2}) == ("changed", "v2"),
+           "v2 only: the pre-1.10 shape")
+    _check(nb.field_identity_criterion({"program_sha256_v3": c3},
+                                       {"program_sha256": c3}) == (None, "none"),
+           "a v2 value never meets a v3 value")
+
+
 def test_b88_null_band_reads_program_sha256_first():
     """[B88] (BD13): (1) NO census, both sides carry the field -> the band
     is built from the FIELD alone and its strata equal the census-built
@@ -6026,6 +6044,7 @@ TESTS = [
     test_b79_no_census_is_stated_never_silent,
     test_b79_single_pin_report_renders_no_band,
     test_b88_null_band_reads_program_sha256_first,
+    test_b145_null_band_identity_goes_through_the_chooser,
     # [B143]
     test_compound_clause_and_emit_note_b143,
     test_subst_tiers_ratios_and_summary_b143,

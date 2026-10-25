@@ -26,7 +26,7 @@ interpretation design: `docs/design/trend_interpretation_v0.md`.
 | `interpretation/<pin>.md` | the AI interpretation sidecar (written by a Claude session, never generated; checked by `tools/trend_cite_check.py`) |
 
 Every TSV starts with `#` header lines (generator version, snapshots sha,
-links sha + counts, config sha, pin-order sha, as_of = newest record timestamp, identity criterion, band
+links sha + counts, config sha, pin-order sha, as_of = newest record timestamp, identity criterion (since [B145] per comparison through `pcrecbench/identity.py`: `program_sha256-v2` until a pair compares by v3, then the per-comparison text plus an `identity_crit` column `v3`/`v2`; the summary's `identity_criterion` is `program_sha256-v2`/`-v3`/`mixed`), band
 fallback, direction) then a column row. Row ids (`D:`/`S:`/`C:`/`K:`/`T:`) are
 what the interpretation cites. Regenerate at every window close (the skill's steps; `make trend` is
 store-free and takes minutes):

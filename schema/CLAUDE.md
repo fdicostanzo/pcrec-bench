@@ -44,7 +44,7 @@ they and the note disagree.
   v1.7 ([B88], BD13, lane `b90repin`, 2026-09-25) added the
   `engine_metadata` declaration TYPE `sha256` (64 lowercase hex digits,
   checked under X15 in `validate.py`, `_SHA256_HEX`) -- the type of
-  pcrec's `program_sha256`, the normalized program-identity hash the
+  pcrec's `program_sha256` (v2 forever; [B145] adds `program_sha256_v3` at 1.10, rule X46, examples via `examples/gen_example_ident110.py`), the normalized program-identity hash the
   null-control band reads; v1.8 ([B137], lane `b137import`, 2026-10-12, O-90)
   added optional `environment.cpu_isa` (sorted ISA feature tokens) and rule
   X35 (`validate.py`: present only at >= 1.8, sorted); v1.9 ([B140], lane
@@ -94,7 +94,7 @@ they and the note disagree.
   v1.1 because five rules had reached that version with no control at
   all while the note claimed in prose that none could.
 - `examples/` — records that MUST validate, and `examples/gen_example_14.py`
-  / `gen_example_110.py`, the committed deterministic generators of the
+  / `gen_example_110.py` / `gen_example_ident110.py` ([B145]: the 1.10 two-hash example + its X46 sabotage), the committed deterministic generators of the
   1.4 example and of the 1.10 substitution example + its X32 sabotage
   (`--check` is part of `make check-schema`). See its CLAUDE.md.
 - `examples/bad/` — records that MUST NOT. See its CLAUDE.md.

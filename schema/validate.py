@@ -612,6 +612,27 @@ class RecordValidator:
             # X15
             for name, value in (row.get("engine_metadata") or {}).items():
                 self._check_metadata(add, path, n, name, value, decl, kind)
+            # X46 (v1.10, [B145], BD13 amendment) the two program hashes
+            # travel together: a compile row of a record stamped >= 1.10
+            # that carries `program_sha256` (v2) carries `program_sha256_v3`
+            # too, and the v3 member exists on no earlier record. A row with
+            # neither (a refusal, a non-pcrec engine) is unaffected.
+            if kind == "compile":
+                em = row.get("engine_metadata") or {}
+                has_v3 = "program_sha256_v3" in em
+                if f_minor is not None and f_minor >= 10:
+                    if "program_sha256" in em and not has_v3:
+                        add(Problem(path, n, "engine_metadata.program_sha256_v3",
+                                    "is absent on a compile row of a record "
+                                    f"stamped {sv} that carries "
+                                    "`program_sha256`: from 1.10 the two "
+                                    "program hashes travel together (X46)",
+                                    "X46"))
+                elif has_v3:
+                    add(Problem(path, n, "engine_metadata.program_sha256_v3",
+                                f"is present on a record stamped {sv}, "
+                                "before the version that defined it (1.10): "
+                                "a mis-stamped record (X46)", "X46"))
 
         # X18 the per-record emission order
         seq_lines = {}

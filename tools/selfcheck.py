@@ -5400,6 +5400,148 @@ def check_program_sha256():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+# [B145]: the files allowed to name a program hash field in a COMPARISON.
+# identity.py IS the chooser; program_identity.py computes the hashes;
+# the adapter writes them; selfcheck/tests assert on them.
+_IDENT_GUARD_ALLOW = ("pcrecbench/identity.py", "tools/program_identity.py",
+                      "testees/pcrec/adapter.py", "tools/selfcheck.py",
+                      "tools/tests/", "pcrecbench/tests/")
+_IDENT_CMP_RE = re.compile(
+    r"program_sha256|IDENTITY_FIELD|V2_FIELD|V3_FIELD")
+
+
+def _ident_guard_hits(text):
+    """-> the (1-based line, text) of every non-comment line that names a
+    program-hash field AND compares (== or !=) on that line. The
+    chooser is the only place such a line may stand."""
+    hits = []
+    for n, line in enumerate(text.split("\n"), start=1):
+        code = line.split("#", 1)[0]
+        if _IDENT_CMP_RE.search(code) and re.search(r"==|!=", code):
+            hits.append((n, line.strip()))
+    return hits
+
+
+def check_identity_chooser():
+    """[B145] (BD13 amendment, record schema 1.10) THE ONE CHOOSER.
+
+    Part A (no build): pcrecbench/identity.py `same_program` on its four
+    cases -- both v3 equal; both v3 differ while v2 ALSO differs (and the
+    control: v3 equal while v2 differs reads identical, v2 equal while v3
+    differs reads changed, so the criterion is really v3); one side lacks
+    v3 -> v2; one side lacks both -> unknown -- and a v2 value NEVER meets a
+    v3 value; the GUARD (no raw comparison of a program-hash field outside
+    the chooser) over pcrecbench/ + tools/ + testees/, with a positive
+    control (a synthetic offender is flagged) and a negative one (the same
+    source routed through the chooser passes).
+    Part B (pcrec builds): the `abc` witness at the pin vs 6b2dbd3e reads
+    changed under v2 and identical under v3 THROUGH the chooser, and the
+    adapter's own compile row carries both hashes equal to the census's."""
+    print("-- [B145] the program-identity chooser: four cases, the guard, the abc witness --")
+    from pcrecbench import identity as ID
+    h = lambda c: c * 64
+    cases = (
+        ("both v3 equal", {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b"), "program_sha256_v3": h("c")}, ("identical", "v3")),
+        ("both v3 differ, v2 also differs",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b"), "program_sha256_v3": h("d")}, ("changed", "v3")),
+        ("v3 differs while v2 is equal (criterion really v3)",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("a"), "program_sha256_v3": h("d")}, ("changed", "v3")),
+        ("one side lacks v3 -> v2, equal",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("a")}, ("identical", "v2")),
+        ("one side lacks v3 -> v2, differs",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b")}, ("changed", "v2")),
+        ("one side lacks both -> unknown",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")}, {}, ("unknown", "none")),
+        ("a v2 value never meets a v3 value",
+         {"program_sha256_v3": h("a")}, {"program_sha256": h("a")}, ("unknown", "none")),
+        ("None metadata -> unknown", None, None, ("unknown", "none")),
+    )
+    for label, a, b, want in cases:
+        got = ID.same_program(a, b)
+        if got == want and ID.same_program(b, a) == want:
+            ok("identity chooser: " + label, "%s/%s, symmetric" % got)
+        else:
+            bad("identity chooser: " + label, "got %r want %r" % (got, want))
+    if (ID.criterion_summary(["v3", "v3"]), ID.criterion_summary(["v2", "none"]),
+            ID.criterion_summary(["v2", "v3"]), ID.criterion_summary([])) == \
+            ("v3", "v2", "mixed", "none"):
+        ok("identity chooser: criterion_summary v3 / v2 / mixed / none", "")
+    else:
+        bad("identity chooser: criterion_summary", "")
+    # the guard
+    offender = 'x = (a.get("program_sha256") == b.get("program_sha256"))\n'
+    routed = 'x = ID.same_program(a, b)[0]\n'
+    if _ident_guard_hits(offender) and not _ident_guard_hits(routed):
+        ok("identity guard: a synthetic raw comparison is flagged, the chooser call is not", "")
+    else:
+        bad("identity guard: positive/negative control", "")
+    hits = []
+    for sub in ("pcrecbench", "tools", "testees", "schema"):
+        for dp, _dn, fns in os.walk(os.path.join(ROOT, sub)):
+            for fn in fns:
+                if not fn.endswith(".py"):
+                    continue
+                path = os.path.join(dp, fn)
+                rel = os.path.relpath(path, ROOT)
+                if any(rel == a or rel.startswith(a) for a in _IDENT_GUARD_ALLOW):
+                    continue
+                with open(path, encoding="utf-8") as fh:
+                    for n, line in _ident_guard_hits(fh.read()):
+                        hits.append("%s:%d: %s" % (rel, n, line))
+    if not hits:
+        ok("identity guard: no raw program-hash comparison outside the chooser", "")
+    else:
+        bad("identity guard: no raw program-hash comparison outside the chooser",
+            "; ".join(hits[:5]))
+
+    # Part B: real artifacts
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("identity chooser: real artifact", "no pcrec adapter")
+        return
+    import program_identity as PI
+    binary = adapter.pin_binary()
+    prev = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(binary))),
+                        "pcrec-6b2dbd3e", "build", "pcrec")
+    if not os.path.exists(prev):
+        print("   (skip) the abc witness: no build/pcrec-6b2dbd3e on this box")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b145-")
+    try:
+        shape, pshape = PI._cli_shape(binary, tmp), PI._cli_shape(prev, tmp)
+        flags = list(adapter.config("pcrec-auto").get("flags", []))
+        new = PI.emit(binary, shape, flags, b"abc", os.path.join(tmp, "n"))
+        old = PI.emit(prev, pshape, flags, b"abc", os.path.join(tmp, "o"))
+        v2 = lambda t: {"program_sha256": PI.program_sha256_of_text(t)}
+        both = lambda t: dict(v2(t), program_sha256_v3=PI.program_sha256_v3_of_text(t))
+        r2 = ID.same_program(v2(old), v2(new))
+        r3 = ID.same_program(both(old), both(new))
+        if r2 == ("changed", "v2") and r3 == ("identical", "v3"):
+            ok("identity chooser: abc at the pin vs 6b2dbd3e -- changed under v2, "
+               "identical under v3, through the chooser", "%s / %s" % (r2, r3))
+        else:
+            bad("identity chooser: abc at the pin vs 6b2dbd3e", "v2 %r v3 %r" % (r2, r3))
+        # the adapter's row carries both, equal to the census's values
+        adapter.prepare("pcrec-auto", tmp)
+        cr = adapter.compile("pcrec-auto", "abc-b145", b"abc", {}, 1, tmp).get(_ad.FORM_PLAIN)
+        em = cr.engine_metadata or {}
+        want = both(PI.emit(binary, shape, flags, b"abc", os.path.join(tmp, "c")))
+        if cr.outcome == "compiled" and all(em.get(k) == v for k, v in want.items()) \
+                and re.fullmatch(r"[0-9a-f]{64}", str(em.get("program_sha256_v3"))):
+            ok("identity chooser: the compile row carries program_sha256 AND "
+               "program_sha256_v3, each == the census's", em["program_sha256_v3"][:16] + "...")
+        else:
+            bad("identity chooser: the compile row carries both hashes", repr(em)[:200])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_kb35_email_alias_resolution():
     """KB-35 (docs/dev/known_issues.md), fixed this lane
     (kb35alias): `tools/program_identity.py` resolved bench/email's
@@ -18111,6 +18253,7 @@ def main():
     check_kb33_refusal_metadata_declared()
     check_mechanism_stamps()
     check_program_sha256()
+    check_identity_chooser()
     check_kb35_email_alias_resolution()
     check_vars_surface()
     check_deny_flag_controls()

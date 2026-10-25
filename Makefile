@@ -40,6 +40,7 @@ check-schema:
 	@$(PYTHON) schema/check_rules.py
 	@$(PYTHON) schema/examples/gen_example_14.py --check
 	@$(PYTHON) schema/examples/gen_example_110.py --check
+	@$(PYTHON) schema/examples/gen_example_ident110.py --check
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl

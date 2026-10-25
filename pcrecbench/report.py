@@ -3625,7 +3625,7 @@ class _PairBand:
                  "strata", "n_null", "n_cells",
                  # [B88]: identity read off the records' `program_sha256`
                  # FIRST, the census as fallback (pcrecbench.nullband)
-                 "n_field", "n_census_only", "disagreements",
+                 "n_field", "n_census_only", "disagreements", "n_v3",
                  # [B91] (the owed [B90] wording fix): per SIDE, how many
                  # of the pair's compiled cells carry `program_sha256` on
                  # their own compile row -- (with_field, compiled).
@@ -3697,7 +3697,7 @@ def _build_null_band_model(rd):
         pb.census = _CensusFile(cpath) if os.path.exists(cpath) else None
         pb.strata = {}
         pb.n_null = pb.n_cells = 0
-        pb.n_field = pb.n_census_only = 0
+        pb.n_field = pb.n_census_only = pb.n_v3 = 0
         pb.disagreements = []
         model.pairs.append(pb)
         for prev, tid in pair_members[key]:
@@ -3730,11 +3730,14 @@ def _build_null_band_model(rd):
                 # census as fallback, a cross-check where both exist.
                 cv = (pb.census.verdicts.get((slug, pattern_id, form))
                       if pb.census is not None else None)
-                fv = _nb.field_identity(_compile_meta(rd, sb, prev, pattern_id, form),
-                                        _compile_meta(rd, sb, tid, pattern_id, form))
+                fv, fcrit = _nb.field_identity_criterion(
+                    _compile_meta(rd, sb, prev, pattern_id, form),
+                    _compile_meta(rd, sb, tid, pattern_id, form))
                 identity, src, dis = _nb.cell_identity(fv, cv)
                 if src == _nb.SOURCE_FIELD:
                     pb.n_field += 1
+                    if fcrit == "v3":
+                        pb.n_v3 += 1
                 elif src == _nb.SOURCE_CENSUS:
                     pb.n_census_only += 1
                 if dis:
@@ -3768,6 +3771,17 @@ def _build_null_band_model(rd):
                 c.verdict, c.bar, c.source = _nb.d119_verdict(c.delta, c.iqr_pct, c.stratum)
             model.cells[(sb, tid, pattern_id, regime, form)] = c
     return model
+
+
+def _criterion_clause(pb, sep=","):
+    """[B145]: which program hash the field-read cells compared -- stated
+    ONLY where a v3 comparison happened (every pair before the first 1.10
+    record is v2 by construction, and its committed text is unchanged: the
+    field it names, `program_sha256`, IS the v2 hash, forever)."""
+    if not pb.n_v3:
+        return ""
+    return (f"{sep} criterion v3 (`program_sha256_v3`) on {pb.n_v3} cell(s), "
+            f"v2 (`program_sha256`) on {pb.n_field - pb.n_v3}")
 
 
 def _field_carriage(rd, sb, testee_ids):
@@ -3916,6 +3930,7 @@ def _null_band_header_lines(model):
                        f"{pb.n_field} cell(s) read `engine_metadata."
                        f"{_nb.IDENTITY_FIELD}` on BOTH compile rows, "
                        f"{pb.n_census_only} fell back to the census"
+                       + _criterion_clause(pb)
                        + (f"; the field and the census DISAGREE on "
                           f"{len(pb.disagreements)}: "
                           + "; ".join(pb.disagreements[:10])
@@ -6381,7 +6396,7 @@ def render_tsv(rd: ReportData):
                 _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
                            "identity_field", _nb.IDENTITY_FIELD, str(pb.n_null),
                            "", "", "",
-                           f"field_cells={pb.n_field}; census_fallback_cells="
+                           f"field_cells={pb.n_field}{_criterion_clause(pb, ';')}; census_fallback_cells="
                            f"{pb.n_census_only}; disagreements="
                            f"{len(pb.disagreements)}; cells={pb.n_cells}"
                            + ("; " + "; ".join(pb.disagreements[:10])
