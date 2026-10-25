@@ -1,4 +1,4 @@
-#coverage of the seed list_syntax_9a1583ba.tsv by bench/syntax's 95 patterns: covered 77, covered-by-family 32, not-exercised 19, not-exercised-by-family 5, pcre2-rejects 5
+#coverage of the seed list_syntax_9ae59f5d4.tsv by bench/syntax's 95 patterns: covered 77, covered-by-family 32, not-exercised 23, not-exercised-by-family 5, pcre2-rejects 5
 kind	syntax	key	seed_status	seed_module	seed_engines	seed_built	coverage	patterns	reason
 esc	\d	\d	module	classes	dfa|vm	built	covered	cls-d	
 esc	\D	\D	module	classes	dfa|vm	built	not-exercised	-	the complement of `\d`: the same class mechanism, set inverted
@@ -28,8 +28,8 @@ esc	\g<0>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelli
 esc	\g<01>	\g<1>	module	recursion	vm	built	covered-by-family	rec-g-angle	a spelling of `\g<1>` (the seed's `family` column)
 esc	\g'0'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
 esc	\g'01'	\g'1'	module	recursion	vm	built	not-exercised-by-family	-	a spelling of `\g'1'`, which is not exercised: the quoted spelling of `\g<1>`: one pattern per call spelling family, and the angle spelling is the witness
-esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-lc	
-esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	unbuilt	covered	unp-p-uc	
+esc	\p{L}	\p{L}	module	unicode-props	dfa|vm	built	covered	unp-p-lc	
+esc	\P{L}	\P{L}	module	unicode-props	dfa|vm	built	covered	unp-p-uc	
 esc	\Q	\Q	module	quoting	dfa|vm	built	covered	esc-quote	
 esc	\E	\E	module	quoting	dfa|vm	built	covered	esc-quote	
 esc	\R	\R	module	misc	dfa|vm	unbuilt	covered	msc-r-uc	
@@ -127,6 +127,9 @@ verb	(*napla:a)	(?*a)	module	lookaround	vm	built	covered-by-family	lka-nonatomic
 verb	(*non_atomic_positive_lookahead:a)	(?*a)	module	lookaround	vm	built	covered-by-family	lka-nonatomic	a spelling of `(?*a)` (the seed's `family` column)
 verb	(*naplb:a)	(?<*a)	module	lookaround	vm	built	not-exercised-by-family	-	a spelling of `(?<*a)`, which is not exercised: non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
 verb	(*non_atomic_positive_lookbehind:a)	(?<*a)	module	lookaround	vm	built	not-exercised-by-family	-	a spelling of `(?<*a)`, which is not exercised: non-atomic positive LOOKBEHIND: `(?*a)` witnesses the non-atomic mechanism on the lookahead side
+verb	(*UCP)a	(*UCP)a	module	ucp	dfa|vm	built	not-exercised	-	a leading option verb that CHANGES THE ENCODING-DEPENDENT MEANING of `\d \s \w \b` and the POSIX classes: an encoding/class-scope question, bench/utf8's (declared per pattern there, oracled under PCRE2_UCP), not a byte-mode census construct
+verb	(*UTF)a	(*UTF)a	module	ucp	dfa|vm	built	not-exercised	-	a restatement of the engine's encoding (pcrec refuses it under the byte encoding this set runs): bench/utf8's, not this set's (NOTES.md, `Room for a utf family`)
+verb	(*UTF8)a	(*UTF)a	module	ucp	dfa|vm	built	not-exercised	-	as `(*UTF)a` (the older spelling)
 verb	(*ACCEPT)	(*ACCEPT)	module	verbs	vm	unbuilt	covered	vrb-accept vrb-skip	
 class-bracket	[[:alpha:]]	[[:alpha:]]	module	classes	dfa|vm	built	covered	cls-posix	
 class-bracket	[[.a.]]	[[.a.]]	rejected			-	pcre2-rejects	-	PCRE2 refuses this construct (the seed's `expect`: POSIX collating elements are not supported); the oracle can state no expectation
@@ -137,6 +140,7 @@ quant-suffix	a?+	a?+	module	atomic-groups	vm	built	covered	qnt-poss-quest
 quant-suffix	a{1,2}+	a{1,2}+	module	atomic-groups	vm	built	covered	qnt-poss-brace	
 bare	^	^	base		dfa|vm	-	covered	anc-caret anc-m-caret	
 bare	$	$	base		dfa|vm	-	covered	anc-dollar anc-m-dollar	
+bare	${name}	${name}	module	vars	vm	built	not-exercised	-	pcrec's caller-variable extension, NOT PCRE2 syntax: libpcre2 reads `$` then the literal text `{name}`, a different language, so no engine-neutral expectation exists (requirements R-BENCH-4)
 bare	(a)	(a)	base		dfa|vm	-	covered	grp-cap	
 
 #base-grammar constructs with no seed row, exercised by these patterns (constructs = ())

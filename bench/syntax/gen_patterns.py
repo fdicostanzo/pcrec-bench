@@ -57,7 +57,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "patterns")
 COVERAGE = os.path.join(HERE, "coverage.tsv")
 SIDECAR = os.path.join(HERE, "subbench.toml")
-SEED = os.path.join(HERE, "list_syntax_9a1583ba.tsv")
+SEED = os.path.join(HERE, "list_syntax_9ae59f5d4.tsv")
 
 # The family slugs, in the order the sidecar lists them, and the tag each
 # pattern carries (`fam-<slug>`). A family is a MECHANISM class, not a seed
@@ -356,6 +356,20 @@ NOT_EXERCISED = {
            "witness the option-setting mechanism",
     "(?<*a)": "non-atomic positive LOOKBEHIND: `(?*a)` witnesses the "
               "non-atomic mechanism on the lookahead side",
+    # [B123] the four rows the 9ae59f5d4 re-seed added (abi 23 -> 84):
+    "(*UCP)a": "a leading option verb that CHANGES THE ENCODING-DEPENDENT "
+               "MEANING of `\\d \\s \\w \\b` and the POSIX classes: an "
+               "encoding/class-scope question, bench/utf8's (declared per "
+               "pattern there, oracled under PCRE2_UCP), not a byte-mode "
+               "census construct",
+    "(*UTF)a": "a restatement of the engine's encoding (pcrec refuses it "
+               "under the byte encoding this set runs): bench/utf8's, "
+               "not this set's (NOTES.md, `Room for a utf family`)",
+    "(*UTF8)a": "as `(*UTF)a` (the older spelling)",
+    "${name}": "pcrec's caller-variable extension, NOT PCRE2 syntax: "
+               "libpcre2 reads `$` then the literal text `{name}`, a "
+               "different language, so no engine-neutral expectation "
+               "exists (requirements R-BENCH-4)",
 }
 
 # The five FOLD-PAIR WITNESSES carry one more tag (`fold-pair-witness`):

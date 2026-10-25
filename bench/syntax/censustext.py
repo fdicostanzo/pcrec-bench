@@ -185,3 +185,52 @@ def text(seed, nbytes):
         s = line(rng)
         out += s.encode("latin-1") + b"\n"
     return bytes(out[:nbytes])
+
+
+# ------------------------------------------------- [B123] the lka density pair
+#
+# `lka_text` builds the DENSITY-CONTROLLED pair for the lookahead family
+# (`lka-pos` `item(?= done)`, `lka-neg` `item(?! done)`, `lka-verb`, and
+# `lka-nonatomic`): the SAME background, the SAME size, the SAME conditional
+# (`item` is followed by ` done` four times in five) -- only the density of
+# `item` differs, so a cost read per MATCH and a cost read per BYTE can be
+# told apart (pcrec I-124 2b: a per-call re-learning cost shows on the
+# match-dense subject only). It is NEW code: `text()` above and every draw it
+# makes are untouched, so no existing throughput text can move.
+
+# The background words: the census vocabulary minus every word that contains
+# `item` or begins `done`, so a hit is exactly the planted `item` token (an
+# `items` or `doneness` would be an unplanned lka-neg / lka-pos match).
+LKA_BACKGROUND = tuple(w for w in WORDS
+                       if "item" not in w and not w.startswith("done"))
+
+
+def lka_text(seed, nbytes, item_num, item_den, done_num=4, done_den=5):
+    """Exactly `nbytes` bytes of newline-terminated lines of 6-12 words.
+    Each word slot is, with probability `item_num`/`item_den`, the planted
+    `item` token -- followed (the SAME slot, so a line break can never fall
+    between them) by ` done` with probability `done_num`/`done_den` -- and
+    otherwise a background word. The last line is cut at the byte boundary."""
+    rng = Rng(seed)
+    out = bytearray()
+    while len(out) < nbytes:
+        words = []
+        for _ in range(6 + rng.below(7)):
+            if rng.chance(item_num, item_den):
+                words.append("item done" if rng.chance(done_num, done_den)
+                             else "item")
+            else:
+                words.append(rng.choice(LKA_BACKGROUND))
+        out += (" ".join(words) + "\n").encode("ascii")
+    return bytes(out[:nbytes])
+
+
+def lka_counts(body):
+    """-> (n_item, n_item_done): `item` occurrences, and those followed by
+    ` done`; lka-pos / lka-verb match n_item_done times, lka-neg
+    n_item - n_item_done times. Counted from the FINAL bytes, so the cut
+    last line is accounted for."""
+    import re
+    n_item = len(re.findall(rb"item", body))
+    n_done = len(re.findall(rb"item(?= done)", body))
+    return n_item, n_done

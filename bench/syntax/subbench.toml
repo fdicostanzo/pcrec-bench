@@ -3,7 +3,7 @@
 # deliberately untouched.
 
 id = "syntax"
-version = "0.1"
+version = "0.2"
 objective_kind = "feature"
 objective = """\
 A CENSUS across the PCRE syntax an engine may support, one construct per \
@@ -34,14 +34,17 @@ settings, nine single-byte and quoting escapes, `\\R` `\\X` `\\C`, \
 `\\p{L}` `\\P{L}` in byte mode, two backtracking verbs, an extended class \
 difference, and the floor `#`. Every pattern is typed in gen_patterns.py, \
 names the seed rows it exercises, and `coverage.tsv` is derived from the \
-table x the seed: every one of the seed's 138 rows is covered, covered by \
+table x the seed: every one of the seed's 142 rows is covered, covered by \
 its own family column, excused by a stated reason, or a PCRE2 reject. \
 Subjects: 30 whole-string FIELDS typed as one construct's hit or semantic \
 edge (`item done` / `item done\\n` / `item\\ndone` / `item\\r\\ndone` \
 separate the end anchors and the newline escapes; `aaab` and `abc` the \
 possessive and atomic edges; `Cat` / `CAT` the option reset; `caf\\xe9` \
-the Latin-1 letter), 12 LINES of the same vocabulary for search, and three \
-generated texts of the same grammar at 64 KB, 256 KB and 1 MB. See \
+the Latin-1 letter), 12 LINES of the same vocabulary for search, three \
+generated texts of the same grammar at 64 KB, 256 KB and 1 MB, and (@0.2, \
+[B123]) a DENSITY PAIR for the lookahead family, `t-lka-dense-256k` / \
+`t-lka-sparse-256k` (256 KB each, one background, `item` planted at 1 word \
+slot in 3 against 1 in 4096). See \
 NOTES.md for the pattern table, the outlier rule stated before any run, \
 the predictions, the room left for a utf family and the cell-time \
 estimate."""
@@ -49,7 +52,8 @@ estimate."""
 # All three. `match` is the whole-string regime the semantic edges are typed
 # for; `search_short` reads each construct's per-call cost on twelve lines;
 # `throughput` reads its per-byte cost on failing text at three sizes (a
-# size sweep, not a density cross: NOTES.md, "Regimes").
+# size sweep, not a density cross: NOTES.md, "Regimes"; the one density
+# control is @0.2's lka pair, two extra throughput subjects).
 regimes = ["match", "search_short", "throughput"]
 
 # THE MEMBERS. The pattern block below is DERIVED from gen_patterns.py's

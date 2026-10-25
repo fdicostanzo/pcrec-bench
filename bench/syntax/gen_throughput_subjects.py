@@ -56,6 +56,27 @@ RUNS = (
 )
 
 
+# [B123] syntax@0.2: the lka DENSITY PAIR, appended after the three 0.1 texts
+# (the 0.1 rows and files are untouched, asserted below). Same size, same
+# seed, same background, same `item`->` done` conditional (4 in 5); only the
+# density of `item` differs: one word slot in three (match-dense: a call per
+# match dominates) against one in 4096 (match-sparse: the per-byte scan
+# dominates). pcrec I-124 item 2b / inbox I-127 [BENCH-ASKS-PENDING] (1).
+LKA_BYTES = 262144
+LKA_SEED = 20261025
+LKA_PAIR = (
+    ("t-lka-dense-256k", 1, 3, "match-dense"),
+    ("t-lka-sparse-256k", 1, 4096, "match-sparse"),
+)
+
+# The 0.1 rows, byte for byte: 0.2 EXTENDS the manifest, it never re-draws it.
+_0_1_SHA256 = {
+    "t-64k": "2611159e8419e266c57b9b21714d1b34ec1cbcbd678aba320e0476ce1af2e658",
+    "t-256k": "8b7ca5c5e32209bed1ee5ccce8b1f74141e25d0c092cd62a48b281f5be20be2d",
+    "t-1m": "8b41f4bc9494eb4160d51a5ba030904e933b5c0798102c2d8a0c918111f09b63",
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     rows = ["id\tlen\tsha256\tdescription\tperiodic"]
@@ -63,6 +84,8 @@ def main():
         body = ct.text(seed, nbytes)
         assert len(body) == nbytes
         assert b"#" not in body, "the floor byte must not occur"
+        assert hashlib.sha256(body).hexdigest() == _0_1_SHA256[sid], (
+            "syntax@0.2 moved a 0.1 throughput text: %s" % sid)
         nlines = body.count(b"\n")
         with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
             f.write(body)
@@ -71,10 +94,35 @@ def main():
         rows.append("%s\t%d\t%s\t%s\t%s" % (
             sid, nbytes, hashlib.sha256(body).hexdigest(), desc,
             ct.periodic_field(body)))
+    counts = {}
+    for sid, num, den, label in LKA_PAIR:
+        body = ct.lka_text(LKA_SEED, LKA_BYTES, num, den)
+        assert len(body) == LKA_BYTES
+        assert b"#" not in body, "the floor byte must not occur"
+        n_item, n_done = ct.lka_counts(body)
+        counts[sid] = (n_item, n_done)
+        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+            f.write(body)
+        desc = ("lka/%s %d B, seed %d, `item` planted at 1 word slot in %d, "
+                "followed by ` done` 4 times in 5: %d `item`, %d `item done` "
+                "(lka-pos matches %d, lka-neg %d) -- [B123] the density pair"
+                % (label, LKA_BYTES, LKA_SEED, den, n_item, n_done, n_done,
+                   n_item - n_done))
+        rows.append("%s\t%d\t%s\t%s\t%s" % (
+            sid, len(body), hashlib.sha256(body).hexdigest(), desc,
+            ct.periodic_field(body)))
+    # the pair's contract, asserted: dense is >= 100x sparse in `item` AND in
+    # matches; sparse still has at least one lka-pos and one lka-neg match
+    # (a count of zero would make a per-match cost unreadable).
+    (di, dd), (si, sd) = counts["t-lka-dense-256k"], counts["t-lka-sparse-256k"]
+    assert di >= 100 * si and dd >= 100 * sd, counts
+    assert sd >= 1 and si - sd >= 1, counts
     with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(rows) + "\n")
     print("gen_throughput_subjects: %d subjects (%d B) -> %s, manifest -> %s"
-          % (len(RUNS), sum(r[1] for r in RUNS), OUT, MANIFEST))
+          % (len(RUNS) + len(LKA_PAIR),
+             sum(r[1] for r in RUNS) + LKA_BYTES * len(LKA_PAIR), OUT,
+             MANIFEST))
     return 0
 
 
