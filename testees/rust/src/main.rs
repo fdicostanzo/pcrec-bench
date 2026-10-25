@@ -110,6 +110,9 @@ use std::time::{Duration, Instant};
 
 // [B133] the timed loop lives in the `rust-timed` crate (timed/).
 use rust_timed::{run_subject, SubjectResult};
+// [B140] the substitution mode's timed call, a crate of its own (timed-subst/).
+use rust_timed_subst::timed_subst;
+use std::sync::Arc;
 
 // RegexBuilder's own documented defaults, as of the `regex` crate version
 // this project's research cited (docs/design/capability_set_v1.md 5's
@@ -235,6 +238,10 @@ struct Args {
     prime: bool,
     size_limit: usize,
     dfa_size_limit: usize,
+    // [B140] --mode subst
+    template_path: Option<PathBuf>,
+    out_dir: Option<PathBuf>,
+    no_unicode: bool,
 }
 
 fn parse_args() -> Args {
@@ -253,6 +260,9 @@ fn parse_args() -> Args {
         prime: false,
         size_limit: DEFAULT_SIZE_LIMIT,
         dfa_size_limit: DEFAULT_DFA_SIZE_LIMIT,
+        template_path: None,
+        out_dir: None,
+        no_unicode: false,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -282,11 +292,113 @@ fn parse_args() -> Args {
             "--dfa-size-limit" => {
                 a.dfa_size_limit = next!().parse().unwrap_or(DEFAULT_DFA_SIZE_LIMIT)
             }
+            // [B140] --mode subst (pcrecbench/adapters.py's protocol). The
+            // `--bound` capacity is an engine-neutral number this engine
+            // ignores (replace_all allocates for itself); `--subst-flags` is
+            // libpcre2's EXTENDED switch, which has no meaning here.
+            "--template" => a.template_path = Some(PathBuf::from(next!())),
+            "--out-dir" => a.out_dir = Some(PathBuf::from(next!())),
+            "--bound" => {
+                let _ = next!();
+            }
+            "--subst-flags" => {
+                let v = next!();
+                if v != "none" && v != "extended" {
+                    die("--subst-flags takes extended|none");
+                }
+            }
+            // regex::bytes::RegexBuilder::unicode(false): `\b`, `\w`, `[0-9]`
+            // are byte-level (subst_bench_v1.md 3.1). Passed at COMPILE and at
+            // measure time by the adapter for a substitution set.
+            "--no-unicode" => a.no_unicode = true,
             other => die(&format!("unknown argument {}", other)),
         }
         i += 1;
     }
     a
+}
+
+/// [B140] `--mode subst` (docs/design/subst_bench_v1.md 3.1, 3.1.2): per
+/// subject ONE `replace_all` (timed_subst, its own crate), then OUTSIDE the
+/// clock the substitution count, the output file and the `out` line. ITERS is
+/// always 1. The count is `find_iter(..).count()` over the same haystack: the
+/// `regex` API does not return one, and `replace_all` is defined as the same
+/// non-overlapping leftmost-first iteration (a counting closure would be a
+/// different, non-idiomatic call). It costs a second untimed pass per trial.
+fn run_subst(args: &Args, re: &Regex, subs: Vec<Subject>, lock: &mut io::StdoutLock) {
+    macro_rules! emit {
+        ($($arg:tt)*) => {{
+            writeln!(lock, $($arg)*).ok();
+            lock.flush().ok();
+        }};
+    }
+    if args.find_all || args.prime || args.utf8_adv {
+        die("--mode subst refuses --find-all, --prime and --utf8");
+    }
+    if args.iters > 1 {
+        die("--mode subst is one call per subject (--iters must be 1)");
+    }
+    let tpl_path = match &args.template_path {
+        Some(p) => p.clone(),
+        None => die("--mode subst requires --template"),
+    };
+    let repl: Arc<Vec<u8>> = match slurp(&tpl_path) {
+        Ok(b) => Arc::new(b),
+        Err(e) => {
+            emit!("error\t{}", escape_for_transport(&format!(
+                "cannot read template {}: {}", tpl_path.display(), e)));
+            std::process::exit(2);
+        }
+    };
+    for s in subs.into_iter().skip(args.skip) {
+        let id = s.id.clone();
+        let buf_len = s.buf.len();
+        let buf: Arc<Vec<u8>> = Arc::new(s.buf);
+        // (elapsed, the output as an OWNED Vec). `into_owned` runs after the
+        // clock stopped inside timed_subst; for a no-match subject the Cow is
+        // Borrowed and that is a copy -- untimed, and it is the output.
+        let work = {
+            let (re2, buf2, repl2) = (re.clone(), Arc::clone(&buf), Arc::clone(&repl));
+            move || {
+                let (el, out) = timed_subst(&re2, &buf2, &repl2);
+                (el, out.into_owned())
+            }
+        };
+        let result: Option<(f64, Vec<u8>)> = if args.subject_timeout > 0 {
+            // A thread + channel, never a signal/longjmp pair: this file's header.
+            let (tx, rx) = mpsc::channel();
+            thread::spawn(move || {
+                let _ = tx.send(work());
+            });
+            match rx.recv_timeout(Duration::from_secs(args.subject_timeout)) {
+                Ok(r) => Some(r),
+                Err(_) => None,
+            }
+        } else {
+            Some(work())
+        };
+        let (elapsed, out) = match result {
+            Some(r) => r,
+            None => {
+                emit!("subject\t{}\ttimedout\t-\t-\t0\t-\t1\t{:.9}\t-\t-",
+                      id, args.subject_timeout as f64);
+                continue;
+            }
+        };
+        let nsubst = re.find_iter(&buf).count();
+        emit!("subject\t{}\t{}\t-\t-\t0\t{}\t1\t{:.9}\t{}\t-",
+              id, if nsubst > 0 { "match" } else { "nomatch" }, buf_len, elapsed, nsubst);
+        let mut path = "-".to_string();
+        if let Some(dir) = &args.out_dir {
+            path = format!("{}.out", id);
+            if let Err(e) = fs::write(dir.join(&path), &out) {
+                emit!("error\t{}", escape_for_transport(&format!(
+                    "cannot write {}/{}: {}", dir.display(), path, e)));
+                std::process::exit(2);
+            }
+        }
+        emit!("out\t{}\t{}\t{}", id, path, out.len());
+    }
 }
 
 fn main() {
@@ -330,6 +442,9 @@ fn main() {
     emit!("info\tsize_limit\t{}", args.size_limit);
     emit!("info\tdfa_size_limit\t{}", args.dfa_size_limit);
     emit!("info\tform\t{}", args.form);
+    if args.no_unicode {
+        emit!("info\tunicode\toff");   // [B140]; printed ONLY under --no-unicode
+    }
 
     let pat_bytes = match slurp(&pattern_path) {
         Ok(b) => b,
@@ -362,6 +477,7 @@ fn main() {
         let built = RegexBuilder::new(pat_str)
             .size_limit(args.size_limit)
             .dfa_size_limit(args.dfa_size_limit)
+            .unicode(!args.no_unicode)
             .build();
         let elapsed = t0.elapsed().as_secs_f64();
         match built {
@@ -402,6 +518,12 @@ fn main() {
             std::process::exit(2);
         }
     };
+
+    if args.mode == "subst" {
+        run_subst(&args, &re, subs, &mut lock);
+        io::stdout().flush().ok();
+        return;
+    }
 
     for s in subs.into_iter().skip(args.skip) {
         let id = s.id.clone();

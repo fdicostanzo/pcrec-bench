@@ -42,7 +42,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
 
 from pcrecbench import adapters as _ad          # noqa: E402
 from pcrecbench import record as _rec           # noqa: E402
-from pcrecbench.driverrun import run_driver, per_trial, C_ENV  # noqa: E402
+from pcrecbench.driverrun import (run_driver, per_trial, one_trial,  # noqa: E402
+                                   C_ENV)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CARGO_TOML = os.path.join(HERE, "Cargo.toml")
@@ -343,7 +344,10 @@ class Adapter(_ad.Adapter):
             os.path.getmtime(CARGO_TOML), os.path.getmtime(CARGO_LOCK),
             # [B133]: the timed loop is the `rust-timed` crate.
             os.path.getmtime(os.path.join(HERE, "timed", "src", "lib.rs")),
-            os.path.getmtime(os.path.join(HERE, "timed", "Cargo.toml")))
+            os.path.getmtime(os.path.join(HERE, "timed", "Cargo.toml")),
+            # [B140]: the substitution mode's own timed crate.
+            os.path.getmtime(os.path.join(HERE, "timed-subst", "src", "lib.rs")),
+            os.path.getmtime(os.path.join(HERE, "timed-subst", "Cargo.toml")))
         if os.path.exists(drv) and os.path.getmtime(drv) >= src_mtime:
             return drv
         os.makedirs(out_dir, exist_ok=True)
@@ -383,16 +387,23 @@ class Adapter(_ad.Adapter):
         reusing the shared helper, for its own different reason (no `\z`
         spelling at all)."""
         ws_pattern = pattern + b"\n" if requires_free_spacing else pattern
+        # [B140]: a substitution set times ONE artifact per case (the plain
+        # form: replace_all scans unanchored), built with unicode(false) so
+        # the compile row prices the thing that is timed.
+        subst = bool((options or {}).get("substitution"))
         forms = {}
         for form, text in (
                 (_ad.FORM_PLAIN, pattern),
                 (_ad.FORM_WHOLE_SUBJECT, rb"\A(?:" + ws_pattern + rb")\z")):
+            if subst and form == _ad.FORM_WHOLE_SUBJECT:
+                continue
             forms[form] = self._compile_one(testee_id, pattern_id, form,
-                                            text, trials, workdir)
+                                            text, trials, workdir,
+                                            no_unicode=subst)
         return _ad.CompiledPattern(forms)
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir):
+                     workdir, no_unicode=False):
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
         # per-PATTERN, per-FORM scratch: testees/onig/adapter.py's own
@@ -419,6 +430,8 @@ class Adapter(_ad.Adapter):
                "--compile-trials", str(trials),
                "--size-limit", str(size_limit),
                "--dfa-size-limit", str(dfa_size_limit)]
+        if no_unicode:
+            argv.append("--no-unicode")         # [B140]
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
         # KB (docs/dev/lanes/b69census_report.md 4's "gap found"): the
         # driver's own `error` lines are transport-escaped
@@ -449,6 +462,7 @@ class Adapter(_ad.Adapter):
             if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
+                 "no_unicode": no_unicode,
                  "size_limit": size_limit,
                  "dfa_size_limit": dfa_size_limit,
                  "giveup_codes": set()}  # never fires -- see driver.rs's header
@@ -477,5 +491,37 @@ class Adapter(_ad.Adapter):
             # loop (driver protocol, pcrecbench/adapters.py); scratch tier only.
             argv.append("--prime")
         return per_trial(argv, subjects, trials, timeout=timeout,
+                         pin=handle.get("pin"),
+                         subject_timeout=handle.get("subject_timeout"))
+
+    # ------------------------------------------------- substitution ([B140])
+
+    def subst_support(self, testee_id):
+        """`regex::bytes::Regex::replace_all` renders the neutral template in
+        the `rust` dialect (`${N}`, `$$` literal; no case operators, no
+        conditional) and the divergence table names the engine `rust-regex`.
+        Only the default config is chartered (subst_bench_v1.md 3.1)."""
+        if testee_id != "rust-default":
+            return None
+        return {"dialect": "rust", "competitor": "rust-regex",
+                "sizing": "bound"}
+
+    def measure_subst(self, handle, subjects, bounds, out_dir, timeout=None):
+        """One `--mode subst` trial (src/main.rs `run_subst`). The pattern is
+        rebuilt by the measuring driver exactly as `measure` does, with
+        `--no-unicode`; `--bound` is passed for protocol uniformity and
+        ignored (replace_all allocates for itself)."""
+        sub = handle["subst"]
+        argv = [handle["driver"], "--pattern", handle["pattern_file"],
+                "--form", handle["form"], "--mode", "subst",
+                "--template", sub["template_file"],
+                "--subst-flags", sub["flags"], "--no-unicode",
+                "--size-limit", str(handle["size_limit"]),
+                "--dfa-size-limit", str(handle["dfa_size_limit"])]
+        for sid, cap in sorted(bounds.items()):
+            argv += ["--bound", "%s=%d" % (sid, cap)]
+        if out_dir:
+            argv += ["--out-dir", out_dir]
+        return one_trial(argv, subjects, timeout=timeout,
                          pin=handle.get("pin"),
                          subject_timeout=handle.get("subject_timeout"))

@@ -851,6 +851,11 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # what a thermal-drift or warm-up question needs -- is unrecoverable.
     seq = itertools.count(1)
     options = (sb.testee_notes.get(adapter.name, {}) or {}).get("options", {})
+    if sb.substitution:
+        # [B140] b140drv2: an adapter whose engine builds differently for a
+        # transform (rust-regex: unicode(false), plain form only) is told so at
+        # COMPILE time, so the compile row prices the artifact that is timed.
+        options = dict(options, substitution=True)
 
     for p in cell_patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
