@@ -234,13 +234,12 @@ FALLBACK_METHODS = ("structural-alphabet", "libpcre2-dfa-fallback")
 SET_ENCODINGS = ("byte", "utf8")
 
 
-#: The sidecar's file name. `subst.toml` is the SUBSTITUTION set's, staged
-#: under another name on purpose until the reporter and the generic gates
-#: learn the regime (bench/subst/subst.toml's header, subst_bench_v1.md 10):
-#: `tools/selfcheck.py`'s `subbench_dirs()` and the reporter's set-id lookup
-#: enumerate `subbench.toml` only, so the loader accepts the staged name while
-#: they do not see the set. The rename is the integration step ([B140] 5).
-SIDECAR_NAMES = ("subbench.toml", "subst.toml")
+#: The sidecar's file name. The substitution set staged its sidecar as
+#: `subst.toml` until [B143] (plan [B140] step 5) renamed it; only
+#: `subbench.toml` is accepted now, so the generic enumerations (selfcheck's
+#: `subbench_dirs()`, the reporter's set-id lookup, the importer) and the
+#: loader agree on what a set is.
+SIDECAR_NAMES = ("subbench.toml",)
 
 
 class Subbench:

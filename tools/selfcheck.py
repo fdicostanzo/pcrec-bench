@@ -182,7 +182,41 @@ def run(argv, timeout=900, cwd=None):
 
 # ------------------------------------------------------------- 1 manifests
 
-def subbench_dirs():
+#: [B143] (plan [B140] step 5): THE SUBSTITUTION-ONLY SET and the generic
+#: gates it does NOT take part in, by name. `bench/subst`'s sidecar is now
+#: `subbench.toml`, so `subbench_dirs()` enumerates it like any other set;
+#: a gate listed here is SKIPPED for a set whose regimes are exactly
+#: ["substitution"], with the reason below printed as an `ok` line (a skip
+#: is stated, never silent). Every gate NOT listed APPLIES to it: expectations
+#: re-derive (gen_expectations --check, ~0.3 s), KB-12's id slug rule, the
+#: `${` scan, the free_text cap witness hunt, the utf8 option word (byte),
+#: the capability no-op. Its own gate is tools/check_subst.py.
+SUBST_GATE_SKIPS = {
+    "manifests": "gen_subjects.py WRITES the 320 MB acc-main (and runs "
+                 "calibration); check_subst re-derives acc-small in memory "
+                 "and the manifest by --check",
+    "floor-quick-cell": "no `role: floor` pattern and no match/search regime "
+                        "to run a quick cell in (a substitution cell is "
+                        "run by `run --subbench subst`; check_subst's "
+                        "section-9 slice covers it)",
+    "floor-oracle-smoke": "no floor pattern and no matcher driver mode "
+                          "(the driver answers `--mode subst`, check_subst "
+                          "section 9)",
+    "rxt-export": "its patterns are (pattern, template) cases, not match "
+                  "blocks: there is no .rxt form of a substitution case",
+}
+
+
+def is_substitution_only(path):
+    """True iff the sidecar at `path` declares regimes exactly
+    ["substitution"] ([B143])."""
+    try:
+        return list(Subbench(path).cfg.get("regimes", [])) == ["substitution"]
+    except Exception:                                   # noqa: BLE001
+        return False
+
+
+def subbench_dirs(gate=None):
     """EVERY sub-bench under `bench/`, by discovery, never by name ([B11.1]).
 
     The generic gates -- generators reproduce their manifests, expectations
@@ -190,19 +224,26 @@ def subbench_dirs():
     the sub-bench CONTRACT (harness contract 6: "bench/*/ each"), so they
     enumerate. A gate that named `email` would have silently covered one of
     two sub-benches the day the second landed, and the count it printed would
-    not have moved to say so."""
+    not have moved to say so.
+
+    [B143]: `gate=` names a gate in SUBST_GATE_SKIPS; the substitution-only
+    set is then left out and the skip is printed with its reason."""
     root = os.path.join(ROOT, "bench")
     out = []
     for name in sorted(os.listdir(root)):
         path = os.path.join(root, name)
         if os.path.exists(os.path.join(path, "subbench.toml")):
+            if gate in SUBST_GATE_SKIPS and is_substitution_only(path):
+                ok("%s: gate %r SKIPPED (substitution-only set)" % (name, gate),
+                   SUBST_GATE_SKIPS[gate])
+                continue
             out.append((name, path))
     return out
 
 
 def check_manifests():
     print("-- manifests reproduce byte for byte --")
-    for name, bench in subbench_dirs():
+    for name, bench in subbench_dirs("manifests"):
         sb = Subbench(bench)
         subj = sb.cfg.get("subjects", {})
         pairs = [(subj.get("generator"), subj.get("manifest", "manifest.tsv"))]
@@ -2021,7 +2062,7 @@ def check_floor_pattern():
     # bench/email.
     from pcrecbench import reduce as _rd
     import glob as _glob
-    for name, bench in subbench_dirs():
+    for name, bench in subbench_dirs("floor-quick-cell"):
         set_sb = Subbench(bench)
         set_floors = [p for p in set_sb.patterns if p.role == "floor"]
         if len(set_floors) != 1:
@@ -2070,7 +2111,7 @@ def check_floor_pattern():
     # sub-bench ([B11.1]), which is also this suite's per-sub-bench driver
     # smoke: a real adapter compiles a real pattern from the set and answers
     # real subjects of it, and the answers are the oracle's.
-    for name, bench in subbench_dirs():
+    for name, bench in subbench_dirs("floor-oracle-smoke"):
         _floor_oracle_smoke(name, Subbench(bench))
 
 
@@ -2319,7 +2360,7 @@ def check_rxt_export():
             "%s does not exist -- this check never builds" % pcrec_bin)
         return
 
-    for name, bench in subbench_dirs():
+    for name, bench in subbench_dirs("rxt-export"):
         try:
             sb = Subbench(bench)
             # [B42] L4: a set whose sidecar declares `rxt_source =` is
@@ -17853,6 +17894,52 @@ def check_b137_import():
         bad("cpu_isa (iv): this box's list is sorted")
 
 
+def check_subst_gate_skips():
+    """[B143] the substitution set's sidecar is `subbench.toml`, so the
+    generic enumeration SEES it; the four gates in SUBST_GATE_SKIPS skip it
+    BY NAME (with their reason printed), every other gate applies. Proves:
+    the set is enumerated; each named gate drops exactly that set and
+    nothing else; an unnamed gate keeps it; every name in the table is
+    actually passed by some call site (a skip nobody asks for is dead)."""
+    print("-- [B143] the substitution set under the generic gates --")
+    import io, contextlib
+    all_names = [n for n, _p in subbench_dirs()]
+    if "subst" in all_names:
+        ok("subst: enumerated by subbench_dirs()", "%d sets" % len(all_names))
+    else:
+        bad("subst: enumerated by subbench_dirs()", repr(all_names))
+        return
+    for gate in sorted(SUBST_GATE_SKIPS):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            kept = [n for n, _p in subbench_dirs(gate)]
+        if kept == [n for n in all_names if n != "subst"]:
+            ok("gate %r skips exactly subst" % gate, SUBST_GATE_SKIPS[gate][:60])
+        else:
+            bad("gate %r skips exactly subst" % gate, repr(kept))
+        # the table is not dead: some call site names the gate
+        with open(os.path.join(ROOT, "tools", "selfcheck.py"), encoding="utf-8") as fh:
+            src = fh.read()
+        if src.count('subbench_dirs("%s")' % gate) >= 1:
+            ok("gate %r is passed by a call site" % gate)
+        else:
+            bad("gate %r is passed by a call site" % gate, "dead entry")
+    # CONTROL: an unnamed gate keeps the set
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        kept = [n for n, _p in subbench_dirs("expectations")]
+    if kept == all_names:
+        ok("an unnamed gate ('expectations') keeps subst", "applies")
+    else:
+        bad("an unnamed gate keeps subst", repr(kept))
+    # the sidecar's regimes are what is_substitution_only reads
+    if is_substitution_only(os.path.join(ROOT, "bench", "subst")) and \
+            not is_substitution_only(os.path.join(ROOT, "bench", "email")):
+        ok("is_substitution_only: subst yes, email no")
+    else:
+        bad("is_substitution_only: subst yes, email no")
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -17957,6 +18044,7 @@ def main():
     check_kb34_leading_verb_hoist()
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
+    check_subst_gate_skips()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     check_b105_tre_bracket_backslash_declaration()

@@ -61,6 +61,11 @@ STORE = os.path.join(FIXDIR, "store")
 # pins) and a REAL `bench/email/expectations.tsv` (R3) that no synthetic
 # fixture here reproduces. Read-only; nothing in this suite writes to it.
 REAL_STORE = os.path.join(report.REPO_ROOT, "store")
+# [B143] Part A: the canonical store holds two machines since [B138] and the
+# reporter refuses to pool them (O-90, [B137]); every committed fixture/report
+# these tests read was built from the first host's records, so every REAL_STORE
+# query names it. The refusal itself is a ruling and is NOT relaxed.
+REAL_MACHINE = "budu-ryzen1600"
 STORE_WALK_ONLY = os.path.join(FIXDIR, "store_walk_only")
 # v1.1 (manager, 2026-08-25): two SEPARATE mixed-version scenarios, kept in
 # separate subdirectories so querying one never accidentally exercises the
@@ -207,7 +212,8 @@ def _load_real_store(subbench="email-specimen"):
     caller could otherwise have seen."""
     if subbench not in _REAL_STORE_CACHE:
         rows, _source = report.discover_index(REAL_STORE)
-        flt = _args(store=REAL_STORE, subbench=subbench)
+        flt = _args(store=REAL_STORE, subbench=subbench,
+                     machine=REAL_MACHINE)
         paths = [r["path"] for r in rows if report.index_row_could_match(r, flt)]
         loaded = report.load_all(paths, check_filename=True)
         _REAL_STORE_CACHE[subbench] = (
@@ -1547,7 +1553,8 @@ def test_plain_entry_capacities_r1():
     _check(report._buffers_display({}) == "n/s", "no pair stamped at all -> n/s")
 
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1644,7 +1651,8 @@ def test_buffer_frame_legend_r4():
            "a real stamped frame size passes through as-is")
 
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1685,7 +1693,8 @@ def test_tiny_set_per_subject_subtable_r2():
     `ns/call`. Not firing: `short-subject-search` (77-85 subjects) gets
     neither."""
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1734,7 +1743,8 @@ def test_jitter_ratio_r5():
     # under 20 microseconds (a libpcre2 interp compile is a handful of
     # microseconds) -- 'timer-floor', not a ratio close to 1.
     loaded, _paths, _source = _load_real_store()
-    args = _args(store=REAL_STORE, subbench="email-specimen")
+    args = _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE)
     rd, err = report.build_report(loaded, args)
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
@@ -1784,7 +1794,8 @@ def test_artifact_bytes_column_r7():
 
     # Firing against the real store too, for a real number.
     loaded_r, _p, _s = _load_real_store()
-    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
     _check("29,744" in md_r, f"expected the real store's artifact_bytes to appear:\n{md_r[:200]}")
@@ -1814,7 +1825,8 @@ def test_legend_and_superseded_shortening_r8():
     # The legend, against the real store: one line per pcrec testee,
     # never a per-row repetition of the same six facts.
     loaded_r, _p, _s = _load_real_store()
-    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen"))
+    rd_r, err_r = report.build_report(loaded_r, _args(store=REAL_STORE, subbench="email-specimen",
+                     machine=REAL_MACHINE))
     _check(err_r is None, f"unexpected refusal: {err_r}")
     md_r = report.render_markdown(rd_r)
     compiled = md_r.split("### `compiled-aot`")[1].split("### `")[0]
@@ -2001,7 +2013,7 @@ def test_reporter_version_pin():
     `did_not_compile` rows from a new section outside the ranking-group
     loop; found live on `bench/utf8`'s `prp-ingreek`, which every one of
     utf8@0.1's 11 testees refuses) took it to v25; [B136] (lane b136read, 2026-10-13: the first
-    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26.
+    report carrying `dfa_prefilter=handoff`, its legend line) took it to v26; [B143] (lane b143rep, 2026-10-25: the `compound=` clause, the emit-definition note, the substitution grain) took it to v27.
 
     [B34], [B37] AND [B39] ARE THE CASES THIS TEST MUST NOT BE READ AS
     CONTRADICTING. Every one of their clauses is CONDITIONAL on a record
@@ -2012,20 +2024,20 @@ def test_reporter_version_pin():
     by different reporter code must never carry the same version, and the
     first abi-22 window will render differently under v14 than v13 would
     have."""
-    _check(report.REPORTER_VERSION == "v26 (2026-10-13)",
-           f"expected REPORTER_VERSION == 'v26 (2026-10-13)', got {report.REPORTER_VERSION!r}")
+    _check(report.REPORTER_VERSION == "v27 (2026-10-25)",
+           f"expected REPORTER_VERSION == 'v27 (2026-10-25)', got {report.REPORTER_VERSION!r}")
     loaded, _paths, _source = _load_store(STORE)
     rd, err = report.build_report(loaded, _args(store=STORE, include_synthetic=True))
     _check(err is None, f"unexpected refusal: {err}")
     md = report.render_markdown(rd)
-    _check("reporter: v26 (2026-10-13)" in md, f"expected the v26 header line:\n{md[:200]}")
+    _check("reporter: v27 (2026-10-25)" in md, f"expected the v26 header line:\n{md[:200]}")
     tsv = report.render_tsv(rd)
-    _check("reporter: v26 (2026-10-13)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
+    _check("reporter: v27 (2026-10-25)" in tsv, f"the TSV header must carry it too:\n{tsv[:200]}")
     # [B52]: the matrix format carries the same version line, and refuses
     # BY NAME at --grain subject (the same refusal shape --subject-grain-
     # slice already uses for the opposite grain).
     matrix = report.render_matrix_tsv(rd)
-    _check("reporter: v26 (2026-10-13)" in matrix,
+    _check("reporter: v27 (2026-10-25)" in matrix,
            f"the matrix TSV header must carry the version line too:\n{matrix[:200]}")
     rd_subj, err_subj = report.build_report(
         loaded, _args(store=STORE, include_synthetic=True, grain="subject"))
@@ -2894,7 +2906,8 @@ def test_engine_reading_and_scoped_legend_b16_r3():
     # is what a per-testee legend line could not say.
     loaded, _paths, _source = _load_real_store()
     rd, err = report.build_report(loaded, _args(store=REAL_STORE,
-                                                subbench="email-specimen"))
+                                                subbench="email-specimen",
+                                                machine=REAL_MACHINE))
     _check(err is None, f"unexpected refusal: {err}")
     compiled = report.render_markdown(rd).split("### `compiled-aot`")[1].split("### `")[0]
     scoped = [ln for ln in compiled.splitlines()
@@ -4003,6 +4016,238 @@ def test_vm_alt_islands_and_entry_shape_legend_b37():
            f"an abi-16 table carries none of the clauses or notes:\n{md_o}")
 
 
+def test_compound_clause_and_emit_note_b143():
+    """[B143] (b142prep OWED 1, 3; pcrec abi 77+): `compound=<name>` from the
+    `compound` stamp, printed ONLY for a non-`none` value (the stamp is on
+    every artifact at abi 77+, so presence cannot gate it), after
+    `clsfolds=`; the emit-bytes definition note appears iff a row has abi
+    >= 77. Controls: `none`, an empty value, an absent key and an abi-76
+    record all render exactly as v26 did."""
+    _check(report._compound_display({"compound": "split"}) == "split", "split")
+    for v in ("none", "", None):
+        _check(report._compound_display({"compound": v}) is None, f"{v!r} -> None")
+    _check(report._compound_display({}) is None, "absent -> None")
+    base = {"abi": 84, "engine": "vm", "prefilter": "none", "vm_frameless": 0,
+            "vm_alt_islands": 0, "vm_entry_shape": "plain",
+            "vm_program_bytes": 1000, "vm_cls_folds": 0,
+            "scan_edges": 0, "scan_edges_match": 0}
+    on = report._testee_legend_line("t", dict(base, compound="split"))
+    _check("clsfolds=0, compound=split, rungs=" in on,
+           f"compound= sits after clsfolds= and before rungs=, got {on!r}")
+    off = report._testee_legend_line("t", dict(base, compound="none"))
+    _check("compound=" not in off, f"`none` prints no clause, got {off!r}")
+    old = report._testee_legend_line("t", dict(base, abi=76))
+    _check("compound=" not in old, "an abi-76 record prints no clause")
+    n = report._emit_definition_note([dict(base)])
+    _check(n and "abi 77" in n and "scaffold" in n, f"abi 84 -> the note, got {n!r}")
+    _check(report._emit_definition_note([dict(base, abi=76), {}]) is None,
+           "abi 76 and a record with no abi -> no note")
+    _check(report._emit_definition_note([]) is None, "no rows -> no note")
+
+
+# ----------------------------------------------- [B143] the substitution grain
+#
+# Hand-built LoadedRecords (the [B9] bypass technique): a substitution record
+# is built from schema-1.9 shapes without the validator, so the reporter's
+# reduction and rendering are tested on numbers computed by hand.
+
+def _subst_rec(testee_id, engine, mode, inv, cells, machine="m1", tier="pinned",
+               status="measured", subj="acc-small", nbytes=1_000_000,
+               ts="2026-10-25T10:00:00Z", compile_rows=None):
+    """cells: {case: (state, ms_list_or_None, extra)} state in
+    ok | wrong | div | unsupported; extra: dict(nsubst=, diag=, maxrss=,
+    compile_ns=, token=)."""
+    setup = _mini_setup(testee_id, sb_id="subst", sb_version="0.1",
+                        machine=machine, timestamp=ts, status=status, tier=tier,
+                        subjects=[{"subject_id": subj, "bytes_offered": nbytes}])
+    setup["schema_version"] = "1.9"
+    setup["subbench"]["regimes"] = ["substitution"]
+    setup["testee"].update({"engine_name": engine, "engine_mode": mode,
+                            "invocation": inv})
+    rows, seq = [], 0
+    for case, (state, ms, ex) in cells.items():
+        pid = ex.get("pid", "%s-x" % case)
+        if state == "unsupported":
+            seq += 1
+            rows.append({"kind": "compile", "pattern_id": pid, "trial": 1, "seq": seq,
+                         "compile_outcome": "unsupported-by-declaration",
+                         "declaration_ref": "bench/subst/divergences.tsv: case %s, %s (unsupported:%s)"
+                                            % (case, engine, ex.get("token", "t"))})
+            continue
+        if ex.get("compile_ns") is not None:
+            seq += 1
+            rows.append({"kind": "compile", "pattern_id": pid, "trial": 1, "seq": seq,
+                         "compile_outcome": "compiled",
+                         "cost": {"total_ns": ex["compile_ns"]}})
+        for trial, ms_v in enumerate(ms or [None], 1):
+            seq += 1
+            gate = {"ok": "agrees", "wrong": "wrong", "div": "divergent-declared"}[state]
+            r = {"kind": "match", "pattern_id": pid, "subject_id": subj,
+                 "regime": "substitution", "trial": trial, "seq": seq,
+                 "match_outcome": ("matched-as-expected" if state != "wrong"
+                                   else "did-not-match-as-expected"),
+                 "subst": {"case": case, "gate": gate,
+                           "nsubst": ex.get("nsubst", 10), "out_bytes": 5,
+                           "out_sha256": "0" * 64}}
+            if state == "wrong":
+                r["diagnostic"] = ex.get("diag", "first differing byte at 17")
+            else:
+                r["timing"] = {"elapsed_ns": int(ms_v * 1e6), "iterations": 1,
+                               "bytes_processed": nbytes}
+            if state == "div":
+                r["subst"]["declaration_ref"] = "bench/subst/divergences.tsv: case %s" % case
+            if inv == "process" and state != "wrong":
+                r["process"] = {"cmd": ["x"], "sink": "wc-c", "sink_bytes": 5,
+                                "core": 1, "sink_core": 2, "user_s": 0.01,
+                                "sys_s": 0.0, "maxrss_kb": ex.get("maxrss", 2048),
+                                "page_cache_resident": 1.0}
+            rows.append(r)
+    return report.LoadedRecord(path="/x/%s.jsonl" % testee_id, setup=setup,
+                               rows=rows, problems=[], schema_major=1,
+                               schema_minor=9)
+
+
+def _subst_report(recs, **kw):
+    from pcrecbench import report_subst
+    args = _args(grain="subst", include_scratch=True, store="/x/store", **kw)
+    sd, err = report_subst.build_subst_report(recs, args)
+    return report_subst, sd, err
+
+
+def _subst_population():
+    return [
+        _subst_rec("libpcre2_jit", "libpcre2", "jit", "library", {
+            "1": ("ok", [1.0, 1.0, 1.0], dict(nsubst=100, compile_ns=2000)),
+            "6": ("ok", [4.0] * 3, dict(nsubst=7)),
+            "7": ("ok", [3.0] * 3, dict(nsubst=9))}),
+        _subst_rec("pcrec_auto", "pcrec", "auto", "library", {
+            "1": ("ok", [0.5] * 3, dict(nsubst=100, compile_ns=7_000_000)),
+            "6": ("wrong", None, dict(diag="first differing byte at 17")),
+            "7": ("unsupported", None, dict(token="no-conditional"))}),
+        _subst_rec("re2_default", "re2", "default", "library", {
+            "1": ("ok", [2.0] * 3, dict(nsubst=100)),
+            "6": ("unsupported", None, dict(token="no-case-operators")),
+            "7": ("ok", [1.5] * 3, dict(nsubst=9))}),
+        _subst_rec("sed_tool", "sed", "default", "process", {
+            "1": ("ok", [4.0] * 5, dict(nsubst=100, maxrss=2048)),
+            "6": ("ok", [8.0] * 5, dict(nsubst=7))}),
+        _subst_rec("rg_tool", "ripgrep", "default", "process", {
+            "1": ("ok", [2.0] * 5, dict(nsubst=100, maxrss=8192)),
+            "6": ("unsupported", None, dict(token="no-case-operators"))}),
+    ]
+
+
+def test_subst_tiers_ratios_and_summary_b143():
+    """[B143] (subst_bench_v1.md 6, 8a items 8-9): two tiers reported
+    SEPARATELY with no cross-tier ratio; ratios against pcre2-jit (LIBRARY)
+    and sed (TOOLS), hand-computed (pcrec 0.5 ms vs jit 1.0 ms = x2.00
+    faster; rg 2.0 vs sed 4.0 = x2.00 faster); n_subst under the case name;
+    the pcrec/best-other summary excludes wrong and unsupported cells."""
+    rs, sd, err = _subst_report(_subst_population())
+    _check(err is None, f"unexpected refusal: {err}")
+    _check(sd.baseline == {"library": "libpcre2_jit", "tools": "sed_tool"},
+           f"baselines: {sd.baseline}")
+    md = rs.render_subst_markdown(sd)
+    lib = md.split("## LIBRARY tier")[1].split("## TOOLS tier")[0]
+    tools = md.split("## TOOLS tier")[1].split("## Legend")[0]
+    _check("**1** `1-x` (n_subst 100)" in lib, "n_subst sits under the case name")
+    _check("x2.00 faster" in lib and "baseline" in lib,
+           f"pcrec 0.5 ms vs jit 1.0 ms must read x2.00 faster:\n{lib}")
+    _check("x2.00 slower" in lib, "re2 2.0 ms vs jit 1.0 ms must read x2.00 slower")
+    _check("x2.00 faster" in tools and "maxrss 8.0 MB" in tools,
+           f"rg 2.0 vs sed 4.0 = x2.00 faster, with maxrss:\n{tools}")
+    _check("sed_tool" not in lib and "libpcre2_jit" not in tools,
+           "no testee of one tier appears in the other tier's tables")
+    _check("No cross-tier ratio is computed" in md
+           and "the tiers are not comparable" in md, "the not-comparable sentence")
+    # summary: case 1, pcrec 0.5 vs best other min(1.0, 2.0) = 1.0 -> x2.00 faster
+    _v, txt = rs._summary_row(sd, "acc-small", "1")
+    _check(_v is not None and abs(_v[0] - 2.0) < 1e-9 and _v[2] == "libpcre2_jit"
+           and "x2.00 faster" in txt, f"summary case 1: {_v} {txt}")
+    # case 6: pcrec WRONG -> no ranked pcrec cell; case 7: pcrec unsupported
+    for case in ("6", "7"):
+        _v, txt = rs._summary_row(sd, "acc-small", case)
+        _check(_v is None and "no ranked pcrec" in txt, f"case {case}: {txt}")
+    # best-other for a case where jit is wrong/unsupported would exclude it:
+    # re2 unsupported on 6 is excluded, jit 4.0 is the only other.
+
+
+def test_subst_unsupported_and_wrong_first_class_b143():
+    """[B143] (8a item 5, design 1.1): `unsupported` is a cell, never dropped,
+    with its declared token; `wrong` shows the diagnostic and is excluded
+    from every number; both appear in the TSV as their own states."""
+    rs, sd, err = _subst_report(_subst_population())
+    md = rs.render_subst_markdown(sd)
+    _check("**unsupported** (no-conditional)" in md
+           and "**unsupported** (no-case-operators)" in md,
+           "an unsupported cell renders as the word with its token")
+    _check("**WRONG** (excluded; first differing byte at 17)" in md,
+           "a wrong cell shows the first differing byte")
+    tsv = rs.render_subst_tsv(sd)
+    rows = [l.split("\t") for l in tsv.splitlines() if not l.startswith("#")]
+    hdr = rows[0]
+    cell = {(r[hdr.index("testee")], r[hdr.index("case")]): r
+            for r in rows[1:] if r[0] == "cell"}
+    _check(cell[("pcrec_auto", "7")][hdr.index("state")] == "unsupported",
+           "TSV state unsupported")
+    _check(cell[("pcrec_auto", "6")][hdr.index("state")] == "wrong"
+           and cell[("pcrec_auto", "6")][hdr.index("median_ns")] == "",
+           "TSV state wrong, no median")
+    _check(cell[("pcrec_auto", "1")][hdr.index("ratio_vs_baseline")] == "2",
+           f"TSV ratio {cell[('pcrec_auto', '1')]}")
+    _check("cross_tier_ratio: none" in tsv.splitlines()[0], "TSV header states no cross-tier ratio")
+    # CONTROL: a population with no unsupported/wrong cell prints neither word.
+    clean = [r for r in _subst_population() if r.setup["testee"]["testee_id"] == "libpcre2_jit"]
+    _rs, sd2, _e = _subst_report(clean)
+    md2 = _rs.render_subst_markdown(sd2)
+    body2 = md2.split("## LIBRARY tier")[1].split("## Legend")[0]
+    _check("unsupported" not in body2 and "WRONG" not in body2,
+           "control: no unsupported/WRONG cells")
+
+
+def test_subst_compile_separate_and_tiers_gates_b143():
+    """[B143] (8a item 9): pcrec's compile time is its own table, never added
+    into a run time; a TOOLS testee has no compile (S7) and says so; scratch
+    and non-measured records are NOT ranked by default, listed; two machines
+    are refused; the standard grains refuse a substitution-only selection."""
+    rs, sd, _e = _subst_report(_subst_population())
+    md = rs.render_subst_markdown(sd)
+    comp = md.split("### LIBRARY compile")[1].split("## TOOLS tier")[0]
+    _check("7.000 ms" in comp and "2.0 us" in comp, f"pcrec 7 ms / jit 2 us compile:\n{comp}")
+    run = md.split("### LIBRARY compile")[0]
+    _check("7.000 ms" not in run, "compile time is not in the run-time table")
+    _check("no separable compile" in md, "TOOLS section states the S7 fact")
+    # default: scratch records are not ranked
+    from pcrecbench import report_subst
+    args = _args(grain="subst", store="/x/store")
+    scr = [_subst_rec("s%d" % i, "libpcre2", "jit", "library",
+                      {"1": ("ok", [1.0] * 3, {})}, tier="scratch") for i in range(2)]
+    sd2, err = report_subst.build_subst_report(scr, args)
+    _check(err is None and not sd2.ranked_testees
+           and [w for _t, w in sd2.not_ranked] == ["tier scratch"] * 2,
+           f"scratch not ranked by default: {sd2.not_ranked}")
+    sd2b, _e = report_subst.build_subst_report(
+        scr, _args(grain="subst", store="/x/store", include_scratch=True))
+    _check(len(sd2b.ranked_testees) == 2, "--include-scratch ranks them")
+    pinned = [_subst_rec("a", "libpcre2", "jit", "library",
+                         {"1": ("ok", [1.0] * 3, {})}, tier="pinned"),
+              _subst_rec("b", "pcrec", "auto", "library",
+                         {"1": ("ok", [1.0] * 3, {})}, tier="pinned",
+                         status="inconclusive-load")]
+    sd3, err = report_subst.build_subst_report(pinned, args)
+    _check(sd3.ranked_testees == ["a"] and sd3.not_ranked == [("b", "status inconclusive-load")],
+           f"unmeasured listed, not ranked: {sd3.ranked_testees} {sd3.not_ranked}")
+    two = [_subst_rec("a", "libpcre2", "jit", "library", {"1": ("ok", [1.0] * 3, {})}),
+           _subst_rec("b", "libpcre2", "jit", "library", {"1": ("ok", [1.0] * 3, {})},
+                      machine="m2")]
+    sd4, err = report_subst.build_subst_report(two, args)
+    _check(sd4 is None and "span 2 machines" in err and "--machine" in err, f"two hosts: {err}")
+    # the standard grain leaves a substitution-only selection to --grain subst
+    rd, err = report.build_report(_subst_population(),
+                                  _args(store="/x/store", include_scratch=True))
+    _check(rd is None and "--grain subst" in err, f"standard grain: {err}")
+
+
 def test_vm_cls_folds_legend_b39():
     """[B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
     build): `clsfolds=<N>` from `vm_cls_folds`, rendered after `shape=` on
@@ -4143,6 +4388,7 @@ def test_kb16_query_never_opens_other_subbench_files():
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             rc = report.main(["--store", REAL_STORE, "--subbench", target,
+                              "--machine", REAL_MACHINE,
                               "--include-synthetic", "--include-unmeasured",
                               "--format", "tsv"])
     finally:
@@ -5780,6 +6026,11 @@ TESTS = [
     test_b79_no_census_is_stated_never_silent,
     test_b79_single_pin_report_renders_no_band,
     test_b88_null_band_reads_program_sha256_first,
+    # [B143]
+    test_compound_clause_and_emit_note_b143,
+    test_subst_tiers_ratios_and_summary_b143,
+    test_subst_unsupported_and_wrong_first_class_b143,
+    test_subst_compile_separate_and_tiers_gates_b143,
 ]
 
 

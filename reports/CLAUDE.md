@@ -3478,3 +3478,18 @@ Eight cross-pin groups, reporter **v26** (the first report carrying `prefilter=h
 ## `2026-10-13-{capability-0.2,utf8-0.1}-*-handoff5-6b2dbd3e.*` ([B136] tier 5, lane b136read5)
 
 Two cross-pin groups for the follow-up window (reporter v26; 5 files + 1 sidecar each, queried `--since 2026-10-12T00:00:00Z --until 2026-10-13T23:59:59Z` plus explicit `--testee` ids), the two sets the first read could not cover: capability@0.2 holds `b8337c33` / `00c97769` / `00c97769 _noreqhandoff` (DENY) / `6b2dbd3e` caps plus `b8337c33` / `00c97769` nocaps (6 records; the nocaps pair carries the 15th `handoff` mover `wild-secrets-username-password-pair`); utf8@0.1 holds the same four `-utf8` pcrec testees with the DENY record now WHOLE (69 patterns, was 3) and NO pcre2 peers (the `handoff-6b2dbd3e` group carries them). `subject-grain.tsv` is the `--subject-grain-slice` form. The existing `handoff-6b2dbd3e` groups are untouched. Ledger: the "Tier 5 addendum" of `docs/dev/ledgers/2026-10-13-req-handoff-l1-6b2dbd3e.md`.
+
+## [B143] (2026-10-25) -- committed query lines and `--machine`
+
+The store holds two machines since [B138] and the reporter refuses to pool
+them (O-90, [B137]). 96 of the 136 committed report TSVs carry no `machine=`
+in their `filters:` header (the other 40 do), so `scripts/regen_reports.py`'s
+`header_argv` -- which rebuilds the argv from `filters:` alone -- would REFUSE
+every one of those 96 whose subbench@version now has records from the second
+host. The fix is NOT to regenerate (nothing was): a regeneration must add
+`--machine <id>` taken from the file's own `machines:` header key, and the
+regenerated `filters:` line then GAINS a `machine=` entry, so those 96 files
+change by that line (and the version line) -- a classified, expected diff.
+`regen_reports.py` is the owner's to amend (OWED, see
+docs/dev/lanes/b143rep_report.md). No file under `reports/` was touched.
+
