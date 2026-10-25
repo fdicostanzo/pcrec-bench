@@ -154,3 +154,7 @@ ran tests on the box mid-window.
 A lane spawns NO forks or helper agents. A fork inherits the lane's full
 write mandate, whatever its brief says: two "read-only" research forks
 edited [B118]'s worktree beside their parent. Do the research inline.
+
+## Hooks (2026-10-25, I-160)
+
+Project hooks now BLOCK: a `cd` into `worktrees/` or any `cd X && ...` chain (use absolute paths or `git -C <worktree>`; a `(cd X && ...)` subshell is fine), any `git commit -a`/`--all` (stage named paths), and a subagent Write/Edit to a main-tree path (write under your worktree). A block is a correct refusal: change the command, never route around it.
