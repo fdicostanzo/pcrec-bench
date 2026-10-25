@@ -10058,6 +10058,14 @@ def check_encoding_axis():
                     offenders.append("%s: encoding_extra %r, config_extra %r "
                                      "(want %r)" % (tid, cfg.get("encoding_extra"),
                                                     live, want))
+            elif cfg.get("subst_sizing") == "first":
+                # [B140]: the size-first substitution arms compose `sizefirst`
+                # LAST onto the frozen parts (append-only; no encoding).
+                want = mod.compose_config_extra(frozen, "sizefirst")
+                if cfg.get("encoding_extra") is not None or live != want:
+                    offenders.append("%s: encoding_extra %r, config_extra %r "
+                                     "(want %r)" % (tid, cfg.get("encoding_extra"),
+                                                    live, want))
             elif cfg.get("encoding_extra") is not None or live != frozen:
                 offenders.append("%s: encoding_extra %r, config_extra %r but "
                                  "the frozen four-part renderer gives %r"
