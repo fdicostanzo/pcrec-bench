@@ -57,12 +57,17 @@ drvsum
 
 export CELL_CAP_sentinel=3600 CELL_CAP_sentinel_end1=3600
 export CELL_CAP_loglines=3600 CELL_CAP_capability=5400
-SENTINEL=1 SUITE="capability loglines" SUITE_LOG="$W/suite_t1.log" \
+# pcrec-main 2026-10-25: part 1 must END by 20:00. No cell STARTS at or after
+# STOP_AT (default 18:30 today): the longest cell (capability, ~55 min) plus
+# the closing sentinel (~26 min) then ends by ~19:51.
+STOP_AT_T1=${STOP_AT_T1:-"$(date +%F) 18:30"}
+echo "STOP_AT=$STOP_AT_T1" >> "$L"
+STOP_AT="$STOP_AT_T1" SENTINEL=1 SUITE="capability loglines" SUITE_LOG="$W/suite_t1.log" \
   TESTEES_sentinel="$R_SENT" TESTEES_capability="$R_CAP" TESTEES_loglines="$R_LOG" \
   NOTE="[B142] first window at 9ae59f5d4 part 1: capability I-154 re-run + loglines, BEFORE @$B ($MACHINE_ID)" \
   STORE="$STORE" scripts/run_suite.sh >> "$L" 2>&1
 rc=$?
-SENTINEL=0 SUITE="sentinel:end1" SUITE_LOG="$W/suite_t1_end.log" \
+STOP_AT="" SENTINEL=0 SUITE="sentinel:end1" SUITE_LOG="$W/suite_t1_end.log" \
   TESTEES_sentinel_end1="$R_SENT" \
   NOTE="[B142] part 1 closing sentinel ($MACHINE_ID)" \
   STORE="$STORE" scripts/run_suite.sh >> "$L" 2>&1
