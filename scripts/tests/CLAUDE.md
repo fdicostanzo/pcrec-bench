@@ -6,4 +6,8 @@
   upstream gate checks are unchanged, and 7 lane-scratch checks are appended
   for the pcrec-bench extension. 33 checks, seconds.
 
+- `test_boxq_window.sh` -- `scripts/boxq_window`'s self-test (`make check-boxq-window`,
+  part of `make check`): fake state dir / inbox / sleep chains in a mktemp dir,
+  41 checks, ~25 s of sleeps, `KEEP=1` keeps the dir.
+
 Maintenance: update this file when a test is added or removed.

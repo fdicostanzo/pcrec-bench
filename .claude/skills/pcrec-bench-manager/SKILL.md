@@ -68,6 +68,13 @@ package this section and §4/§6 below only summarize.
   edit-test loop fast (scratch tier, `quick`, the `pcrec-local`
   testee); pinned runs keep the WINDOW OPEN / CLOSED handshake and
   one-heavy-suite rule; scratch runs are light and announce nothing.
+  **Window launch ([B146]):** a pinned window enters pcrec's box queue by
+  reservation -- `setsid scripts/boxq_window --name NAME --prio 7NN --cap S
+  -- <chain>` writes the `.window` into `worktrees/.mgr/boxqueue/`, waits for
+  pcrec's state to read `RUNNING`, runs the chain, and kills it if the state
+  leaves `RUNNING`; watch its run log for `BENCH_WINDOW_COMPLETE rc=0` or
+  `BENCH_WINDOW_FAILED`. `--no-queue` bypasses the queue; `--cancel NAME`
+  cancels. A name is used once (re-run: `-r2`). Never write pcrec's side.
 
 ## 1. Wake up (do this first, in order)
 
