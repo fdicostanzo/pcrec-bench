@@ -61,3 +61,6 @@ Note on the rust binary: adding the `rust-timed-subst` dependency changes `Cargo
 
 ## Check counts
 
+`make check-harness` (= `LC_ALL=C python3 tools/selfcheck.py`; log `/var/tmp/pcrecbench/b140drv2/checkh.log`, ends `DONE rc=0`): **900 check(s) passed, 0 FAILED** on the branch tip, run once, clean first time (the base was 881/0 after b140drv; the +19 are section 10). No inconclusive-load item occurred (load average 0.2 at launch, the box quiet). Standalone, `check_subst.py`'s driver slice (sections 9 + 10) = 43 ok / 0 bad in 65 s. The additivity probe: 6 + 6 existing-mode invocations identical, `timed_run` and `run_subject` unchanged. Not run (nothing they read changed): `make check-report`, `check-interpret`, `check-upstream`, `check-schema`.
+
+Expected merge conflict: `tools/selfcheck.py` was not touched by this lane at all (the new checks live in `tools/check_subst.py`), so the conflict the brief anticipated with b142prep should not arise from here; `testees/rust/Cargo.lock` and `Cargo.toml` are the files most likely to meet another lane.
