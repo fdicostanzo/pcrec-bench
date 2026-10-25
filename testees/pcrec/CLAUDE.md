@@ -679,6 +679,8 @@ steps, and records both in its report:
 
 ## Re-pin at 9ae59f5d4 (abi 76 -> 84) — 2026-10-25, lane b142prep, inbox I-154 / I-158 / I-159
 
+**Finding (b142fix, 2026-10-25): the compound's `compound` token was undeclared.** The first window's pinned sentinel cell was refused by validate.py (X15): on `wild-waf-crs-942360-concat-sqli`'s whole-subject form (a COMPOUND, `engine_metadata.compound = split`) the machine-level stamps read the token `compound` (counts -1; match_api.md 6.3.12, src/gen/stamp_kinds.c SK_MACHINE_STR/NUM), which METADATA_DECL's closed enums never listed. Fixed: `COMPOUND_MACHINE_ENUMS` (eight enums: dfa_scan, dfa_prefilter, dfa_scan_edge, dfa_start, dfa_match, dfa_table, req_why, vm_start_scan) gain `compound` (and `REGISTRY_OUTCOME_VALUES`); the three free-string pairs and two counts need no declaration change; `check_compound_iff` enforces the iff in `_check_agreement`. See docs/dev/lanes/b142fix_report.md.
+
 The WHOLE ROSTER re-pins (I-159: "retire 6b2dbd3e as the main pin"). The canonical
 pin is **9ae59f5d4** (abi 84, pcrec main after [M4-SUBST]); `configs.toml`
 carries `also_pins = ["6b2dbd3e"]` — the BEFORE of every one of the eight abi
