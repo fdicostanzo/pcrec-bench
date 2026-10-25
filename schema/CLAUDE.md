@@ -21,7 +21,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.9), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.10), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -44,7 +44,7 @@ they and the note disagree.
   v1.7 ([B88], BD13, lane `b90repin`, 2026-09-25) added the
   `engine_metadata` declaration TYPE `sha256` (64 lowercase hex digits,
   checked under X15 in `validate.py`, `_SHA256_HEX`) -- the type of
-  pcrec's `program_sha256`, the normalized program-identity hash the
+  pcrec's `program_sha256` (v2 forever; [B145] adds `program_sha256_v3` at 1.10, rule X46, examples via `examples/gen_example_ident110.py`), the normalized program-identity hash the
   null-control band reads; v1.8 ([B137], lane `b137import`, 2026-10-12, O-90)
   added optional `environment.cpu_isa` (sorted ISA feature tokens) and rule
   X35 (`validate.py`: present only at >= 1.8, sorted); v1.9 ([B140], lane
@@ -52,7 +52,13 @@ they and the note disagree.
   `testee.invocation` (`library`/`process`), `match_row.subst` /
   `.process` (the TOOLS tier's launch + `| wc -c` sink
   evidence) and rules X36-X45 (an unsupported case is a compile row `unsupported-by-declaration`, never a match row) (`validate.py` `_subst_rules`; compile rows
-  optional for a `process` testee). Additive.
+  optional for a `process` testee). Additive. v1.10 ([B144], lane
+  `b144spread`, 2026-10-25) REVISES the trial-agreement rule under
+  record_schema.md 4's rule-revision clause: `trial_agreement.rule` is
+  `v1.4-group` (1.4..1.9) or `v1.10-group` (from 1.10; a `substitution`
+  trial is timed at `iterations >= 1`, gate_shape_v14.md 3.7); X32 keys
+  the rule on the record's own `schema_version` (`validate.py`
+  `ta_rule_for`) and requires the block's `rule` to match.
   Every 1.1 through 1.8 record still validates, and the older examples
   are left stamped at their own versions to prove it.
 - `validate.py` — the validator the harness and the reporter share
@@ -87,9 +93,10 @@ they and the note disagree.
   named for it, every control must name a rule that exists. Added at
   v1.1 because five rules had reached that version with no control at
   all while the note claimed in prose that none could.
-- `examples/` — records that MUST validate, and `examples/gen_example_14.py`,
-  the committed deterministic generator of the 1.4 example (`--check` is
-  part of `make check-schema`). See its CLAUDE.md.
+- `examples/` — records that MUST validate, and `examples/gen_example_14.py`
+  / `gen_example_110.py` / `gen_example_ident110.py` ([B145]: the 1.10 two-hash example + its X46 sabotage), the committed deterministic generators of the
+  1.4 example and of the 1.10 substitution example + its X32 sabotage
+  (`--check` is part of `make check-schema`). See its CLAUDE.md.
 - `examples/bad/` — records that MUST NOT. See its CLAUDE.md.
 
 ## How to run it

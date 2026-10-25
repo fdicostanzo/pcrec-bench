@@ -461,6 +461,25 @@ def main():
             f.write("- p1 faster [#%s].\n" % g("p1")["row_id"])
         h = H.render_all(cfg, meta, out, outd, dict(files))
         ok("html: valid sidecar rendered", "AI-written, grounded" in h["pins/bbbb222.html"])
+    # [B145] the identity criterion: all-v2 keeps the pre-v3 text and
+    # columns; any v3 comparison switches both on.
+    ok("b145: v2-only table keeps its columns",
+       T.with_crit(["identical", "x"], [{"identity_crit": "v2"}], "identical")
+       == ["identical", "x"])
+    ok("b145: a v3 row adds identity_crit after the verdict column",
+       T.with_crit(["identical", "x"], [{"identity_crit": "v3"}], "identical")
+       == ["identical", "identity_crit", "x"])
+    ok("b145: criterion label v2/v3/mixed",
+       (T.criterion_label("v2"), T.criterion_label("none"),
+        T.criterion_label("v3"), T.criterion_label("mixed"))
+       == ("program_sha256-v2", "program_sha256-v2", "program_sha256-v3", "mixed"))
+    class _O:
+        deltas, compile, twins = [], [], []
+    ok("b145: header text is the pre-v3 sentence until a v3 comparison exists",
+       T.identity_criterion_text(_O) == T.IDENTITY_CRITERION)
+    _O.deltas = [{"identity_crit": "v3"}]
+    ok("b145: header text becomes per-comparison with a v3 row",
+       T.identity_criterion_text(_O) == T.IDENTITY_CRITERION_V3)
     print("\n%s" % ("ALL PASS" if not fails else "FAILED: " + ", ".join(fails)))
     return 1 if fails else 0
 

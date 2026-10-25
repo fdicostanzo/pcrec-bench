@@ -185,7 +185,7 @@ def main(argv):
     occ["timeline_tool"] = "/proc/stat"
 
     # -- the block, by the harness's own derivation (X32 re-derives it) -------
-    setup["trial_agreement"] = judge_trial_agreement(rows)
+    setup["trial_agreement"] = judge_trial_agreement(rows, rule="v1.4-group")
     assert setup["trial_agreement"]["verdict"] == "agree", setup["trial_agreement"]
     setup["status"] = "measured"
 

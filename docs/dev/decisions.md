@@ -380,6 +380,41 @@ census tool stays for back-filling pairs recorded before the field; the
 band reads the field first and the census as the fallback, and the first
 pair carrying both is the cross-check. Row: [B88].
 
+### BD13 amendment — 2026-10-25 — records carry BOTH program hashes; one function chooses ([B145], Frank's ruling)
+
+In plain words: a "program hash" is a fingerprint of the C code pcrec
+emitted for a pattern; two fingerprints equal means the program did not
+change. The old fingerprint (called v2) compares every program as changed
+across pcrec's abi 77-84 pins, because every artifact then gained unused
+scaffold code; the newer one (v3) ignores that scaffold and so still
+recognises an unchanged program. Records now keep both, and ONE function
+picks which to compare, so a reader can never mix them up.
+
+Ruling (Frank, 2026-10-25, on BD13's v2-to-v3 question; lane b145ident;
+record schema 1.10, no further bump): (1) `program_sha256` KEEPS MEANING
+v2 FOREVER and is never overwritten or recomputed under another
+normalization -- a field whose meaning changes under a stored value makes
+old records lie. (2) A new compile-row `engine_metadata` field
+`program_sha256_v3` (type `sha256`) is carried on every pcrec compile row
+from schema 1.10 (X46: a 1.10 compile row with `program_sha256` has
+`program_sha256_v3`; no earlier record has it). (3) THE CHOOSER:
+`pcrecbench/identity.py` `same_program(meta_a, meta_b) -> (verdict,
+criterion)`: both sides carry v3 -> compare v3, criterion `v3`; else both
+carry v2 -> compare v2, criterion `v2`; else `unknown`. A v2 value is never
+compared with a v3 value. Every comparison -- the reporter's null band,
+`tools/trend.py` (deltas, compile deltas, deny twins) -- calls it; no
+other code compares the raw fields, and `make check-harness`
+(`check_identity_chooser`) fails if one does. (4) Every output that states
+an identity verdict states its criterion: the trend report per row
+(`identity_crit`, present in a table whenever one of its rows compared by
+v3) and per pin in `summary.tsv` (`program_sha256-v2` / `-v3` / `mixed`),
+the reporter's null-band lines (named when a v3 comparison occurred).
+Outputs that contain no v3 comparison are byte-identical to what they were
+before the field existed, so the criterion statement appears from the first
+1.10 record on and never rewrites a committed report. The census tool's
+`normalize_v3` is the one v3 implementation; records and census read the
+same function.
+
 ## BD14 — 2026-09-25 — the UTF oracle validates each subject ONCE per find-all (utf8_set_v1.md §8.2 amended; the manager's ruling, flagged to Frank)
 
 §8.2 said `PCRE2_NO_UTF_CHECK` is never passed on expectation derivation.

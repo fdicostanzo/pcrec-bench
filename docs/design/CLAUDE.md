@@ -75,7 +75,7 @@ docs/dev/'s append-only records.
   revised by version: `load.before`, `occupancy.before`, the target
   clause, trial agreement; the status-deciding sentence first and never
   elided, today's `note`/`status_detail` split kept), TRIAL AGREEMENT as
-  a GROUP rule `v1.4-group` with its constants MEASURED over all 68
+  a GROUP rule `v1.4-group` (revised to `v1.10-group` at record schema 1.10, [B144], §3.7: a `substitution` trial is timed at one iteration) with its constants MEASURED over all 68
   store records (`docs/dev/measurements/2026-08-30-trial-agreement-
   census.txt` the row census, `-census-groups.txt` the group census:
   k = 1.5, a group disagrees at d ≥ 2 and 3·d ≥ n, N ≥ 5 and odd —

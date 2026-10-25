@@ -1325,6 +1325,25 @@ METADATA_DECL = {
                        "or shim change is NOT in it -- a pin covariate, "
                        "inside the band by design",
     },
+    # -- [B145] (BD13 amendment, record schema 1.10): the SECOND program
+    # hash. `program_sha256` above stays normalization v2 forever; this one
+    # is v3 (the find-all scaffold and the forwarder/twin pairs of abi
+    # 77-84 folded away), so it reads "the same program" across those abi
+    # steps. A reader never picks between them: pcrecbench/identity.py
+    # `same_program` is the ONE chooser.
+    "program_sha256_v3": {
+        "type": "sha256", "scope": "pattern",
+        "source": "tools/program_identity.py `program_sha256_v3_of_files()` "
+                  "over the emitted .c and .h (normalization v3 = v2 plus "
+                  "the iterator-scaffold chunks dropped by name, exported "
+                  "forwarder/twin pairs folded, chunks sorted)",
+        "description": "sha256 of the artifact's v3-normalized PROGRAM "
+                       "text: equal on two rows of one config iff the "
+                       "emitted program did not change, ACROSS abi 77-84's "
+                       "scaffold and forwarder changes. Compared only with "
+                       "another v3 value, only through "
+                       "pcrecbench/identity.py (BD13 amendment, [B145])",
+    },
     "warned_emit_bytes": {
         "type": "integer", "scope": "pattern",
         "source": "the `pcrec: warning: large artifact: B bytes ...` line on "
@@ -4879,6 +4898,10 @@ class Adapter(_ad.Adapter):
         # [B88] the normalized PROGRAM hash (BD13): the null band's identity
         # fact, read off the same emitted files the size port reads.
         pairs["program_sha256"] = _pid.program_sha256_of_files(
+            emit_files[0], emit_files[1] if len(emit_files) > 1 else None)
+        # [B145] the v3 hash beside it (schema 1.10): both always, so the
+        # chooser can use v3 whenever both rows of a pair carry it.
+        pairs["program_sha256_v3"] = _pid.program_sha256_v3_of_files(
             emit_files[0], emit_files[1] if len(emit_files) > 1 else None)
         # [B115] the FINDINGS stamp (pcrec [FINDINGS] B1, abi 40): the bundle
         # name + digest that answered this compile. None only on an

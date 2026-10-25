@@ -221,8 +221,23 @@ MATCHED_AS_EXPECTED = "matched-as-expected"
 TIMED_OUT = "timed-out"
 
 
-def judge_trial_agreement(rows, k, d_min, share_c):
-    """The 3.5 arithmetic over a record's MATCH rows (dicts as written).
+# The rule text a record is judged by follows its own schema_version
+# (record_schema.md 4's rule-revision clause): `v1.4-group` for 1.4..1.9,
+# `v1.10-group` from 1.10 (gate_shape_v14.md 3.7: a `substitution` trial
+# is timed at iterations >= 1; every other regime keeps > 1).
+RULE_V14 = "v1.4-group"
+RULE_V110 = "v1.10-group"
+TA_V110_MINOR = 10
+
+
+def ta_rule_for(minor):
+    """The rule id a record stamped 1.<minor> must carry (>= 1.4)."""
+    return RULE_V110 if minor >= TA_V110_MINOR else RULE_V14
+
+
+def judge_trial_agreement(rows, k, d_min, share_c, rule=RULE_V110):
+    """The 3.5 arithmetic over a record's MATCH rows (dicts as written),
+    under rule text `rule`.
     -> the `trial_agreement` block minus `rule`/`k`/`d_min`/`share_c`."""
     import statistics
     match = [r for r in rows if isinstance(r, dict) and r.get("kind") == "match"]
@@ -250,8 +265,10 @@ def judge_trial_agreement(rows, k, d_min, share_c):
                 n_timed_out += 1
             t = r.get("timing") or {}
             it = t.get("iterations")
+            need = 1 if (rule == RULE_V110
+                         and r.get("regime") == "substitution") else 2
             if (r.get("match_outcome") == MATCHED_AS_EXPECTED
-                    and isinstance(it, int) and it > 1
+                    and isinstance(it, int) and it >= need
                     and isinstance(t.get("elapsed_ns"), int)):
                 timed[r.get("trial")] = float(t["elapsed_ns"]) / it
         if n_timed_out >= 1 and len(timed) >= 1:
@@ -595,6 +612,27 @@ class RecordValidator:
             # X15
             for name, value in (row.get("engine_metadata") or {}).items():
                 self._check_metadata(add, path, n, name, value, decl, kind)
+            # X46 (v1.10, [B145], BD13 amendment) the two program hashes
+            # travel together: a compile row of a record stamped >= 1.10
+            # that carries `program_sha256` (v2) carries `program_sha256_v3`
+            # too, and the v3 member exists on no earlier record. A row with
+            # neither (a refusal, a non-pcrec engine) is unaffected.
+            if kind == "compile":
+                em = row.get("engine_metadata") or {}
+                has_v3 = "program_sha256_v3" in em
+                if f_minor is not None and f_minor >= 10:
+                    if "program_sha256" in em and not has_v3:
+                        add(Problem(path, n, "engine_metadata.program_sha256_v3",
+                                    "is absent on a compile row of a record "
+                                    f"stamped {sv} that carries "
+                                    "`program_sha256`: from 1.10 the two "
+                                    "program hashes travel together (X46)",
+                                    "X46"))
+                elif has_v3:
+                    add(Problem(path, n, "engine_metadata.program_sha256_v3",
+                                f"is present on a record stamped {sv}, "
+                                "before the version that defined it (1.10): "
+                                "a mis-stamped record (X46)", "X46"))
 
         # X18 the per-record emission order
         seq_lines = {}
@@ -936,7 +974,15 @@ class RecordValidator:
             if isinstance(k, (int, float)) and isinstance(d_min, int) \
                     and isinstance(share_c, int) and k > 1 and d_min >= 1 \
                     and share_c >= 1:
-                want = judge_trial_agreement([r for _n, r in rows], k, d_min, share_c)
+                want_rule = ta_rule_for(f_minor) if f_minor is not None else RULE_V14
+                if ta.get("rule") != want_rule:
+                    add(Problem(path, 1, "trial_agreement.rule",
+                                f"is {ta.get('rule')!r} but a record stamped "
+                                f"{sv} is judged by {want_rule!r} "
+                                f"(record_schema.md 4 rule-revision clause; "
+                                f"gate_shape_v14.md 3.7; X32)", "X32"))
+                want = judge_trial_agreement([r for _n, r in rows], k, d_min,
+                                             share_c, want_rule)
                 for fld in ("trials", "groups_judged", "groups_disagreeing",
                             "rows_judged", "rows_disagreeing", "rows_unjudged"):
                     if ta.get(fld) != want[fld]:

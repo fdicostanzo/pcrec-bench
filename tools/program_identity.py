@@ -406,7 +406,7 @@ def program_sha256_of_files(c_path, h_path=None):
 # (`<prefix>__next_pos`, `__valid_upto`, `__find`). MEASURED over the b142
 # census (1,468 rows): v2 `identical` = 0 of 1,375 compiled-both rows. v3
 # is the census-side answer ([B142]; the RECORD field `program_sha256`
-# stays v2 -- a record-field change is a schema/BD13 ruling, OWED).
+# stays v2 forever; [B145] added the SECOND record field `program_sha256_v3`, schema 1.10, chosen between by pcrecbench/identity.py).
 #
 # THE RULES (applied to v2's output, ONE artifact at a time):
 #   1. The six-line `__has_attribute(noclone)` prelude is dropped wherever
@@ -527,6 +527,20 @@ def normalize_v3(text, prefix="rx"):
 def program_sha256_v3_of_text(text, prefix="rx"):
     """The v3 identity hash of ONE artifact's `.c` + SEP + `.h` text."""
     return sha(normalize_v3(text, prefix))
+
+
+def program_sha256_v3_of_files(c_path, h_path=None, prefix="rx"):
+    """The v3 identity hash read off an emitted artifact's files -- the
+    record field `engine_metadata.program_sha256_v3` ([B145], schema 1.10),
+    read off the same `.c` + SEP + `.h` text the v2 field reads."""
+    if h_path is None:
+        h_path = c_path[:-2] + ".h"
+    parts = []
+    for p in (c_path, h_path):
+        if os.path.exists(p):
+            with open(p, "rb") as fh:
+                parts.append(fh.read().decode("utf-8", "surrogateescape"))
+    return program_sha256_v3_of_text(SEP.join(parts), prefix)
 
 
 def pin_binary(pin):

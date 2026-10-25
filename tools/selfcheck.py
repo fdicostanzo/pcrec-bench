@@ -5400,6 +5400,148 @@ def check_program_sha256():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+# [B145]: the files allowed to name a program hash field in a COMPARISON.
+# identity.py IS the chooser; program_identity.py computes the hashes;
+# the adapter writes them; selfcheck/tests assert on them.
+_IDENT_GUARD_ALLOW = ("pcrecbench/identity.py", "tools/program_identity.py",
+                      "testees/pcrec/adapter.py", "tools/selfcheck.py",
+                      "tools/tests/", "pcrecbench/tests/")
+_IDENT_CMP_RE = re.compile(
+    r"program_sha256|IDENTITY_FIELD|V2_FIELD|V3_FIELD")
+
+
+def _ident_guard_hits(text):
+    """-> the (1-based line, text) of every non-comment line that names a
+    program-hash field AND compares (== or !=) on that line. The
+    chooser is the only place such a line may stand."""
+    hits = []
+    for n, line in enumerate(text.split("\n"), start=1):
+        code = line.split("#", 1)[0]
+        if _IDENT_CMP_RE.search(code) and re.search(r"==|!=", code):
+            hits.append((n, line.strip()))
+    return hits
+
+
+def check_identity_chooser():
+    """[B145] (BD13 amendment, record schema 1.10) THE ONE CHOOSER.
+
+    Part A (no build): pcrecbench/identity.py `same_program` on its four
+    cases -- both v3 equal; both v3 differ while v2 ALSO differs (and the
+    control: v3 equal while v2 differs reads identical, v2 equal while v3
+    differs reads changed, so the criterion is really v3); one side lacks
+    v3 -> v2; one side lacks both -> unknown -- and a v2 value NEVER meets a
+    v3 value; the GUARD (no raw comparison of a program-hash field outside
+    the chooser) over pcrecbench/ + tools/ + testees/, with a positive
+    control (a synthetic offender is flagged) and a negative one (the same
+    source routed through the chooser passes).
+    Part B (pcrec builds): the `abc` witness at the pin vs 6b2dbd3e reads
+    changed under v2 and identical under v3 THROUGH the chooser, and the
+    adapter's own compile row carries both hashes equal to the census's."""
+    print("-- [B145] the program-identity chooser: four cases, the guard, the abc witness --")
+    from pcrecbench import identity as ID
+    h = lambda c: c * 64
+    cases = (
+        ("both v3 equal", {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b"), "program_sha256_v3": h("c")}, ("identical", "v3")),
+        ("both v3 differ, v2 also differs",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b"), "program_sha256_v3": h("d")}, ("changed", "v3")),
+        ("v3 differs while v2 is equal (criterion really v3)",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("a"), "program_sha256_v3": h("d")}, ("changed", "v3")),
+        ("one side lacks v3 -> v2, equal",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("a")}, ("identical", "v2")),
+        ("one side lacks v3 -> v2, differs",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")},
+         {"program_sha256": h("b")}, ("changed", "v2")),
+        ("one side lacks both -> unknown",
+         {"program_sha256": h("a"), "program_sha256_v3": h("c")}, {}, ("unknown", "none")),
+        ("a v2 value never meets a v3 value",
+         {"program_sha256_v3": h("a")}, {"program_sha256": h("a")}, ("unknown", "none")),
+        ("None metadata -> unknown", None, None, ("unknown", "none")),
+    )
+    for label, a, b, want in cases:
+        got = ID.same_program(a, b)
+        if got == want and ID.same_program(b, a) == want:
+            ok("identity chooser: " + label, "%s/%s, symmetric" % got)
+        else:
+            bad("identity chooser: " + label, "got %r want %r" % (got, want))
+    if (ID.criterion_summary(["v3", "v3"]), ID.criterion_summary(["v2", "none"]),
+            ID.criterion_summary(["v2", "v3"]), ID.criterion_summary([])) == \
+            ("v3", "v2", "mixed", "none"):
+        ok("identity chooser: criterion_summary v3 / v2 / mixed / none", "")
+    else:
+        bad("identity chooser: criterion_summary", "")
+    # the guard
+    offender = 'x = (a.get("program_sha256") == b.get("program_sha256"))\n'
+    routed = 'x = ID.same_program(a, b)[0]\n'
+    if _ident_guard_hits(offender) and not _ident_guard_hits(routed):
+        ok("identity guard: a synthetic raw comparison is flagged, the chooser call is not", "")
+    else:
+        bad("identity guard: positive/negative control", "")
+    hits = []
+    for sub in ("pcrecbench", "tools", "testees", "schema"):
+        for dp, _dn, fns in os.walk(os.path.join(ROOT, sub)):
+            for fn in fns:
+                if not fn.endswith(".py"):
+                    continue
+                path = os.path.join(dp, fn)
+                rel = os.path.relpath(path, ROOT)
+                if any(rel == a or rel.startswith(a) for a in _IDENT_GUARD_ALLOW):
+                    continue
+                with open(path, encoding="utf-8") as fh:
+                    for n, line in _ident_guard_hits(fh.read()):
+                        hits.append("%s:%d: %s" % (rel, n, line))
+    if not hits:
+        ok("identity guard: no raw program-hash comparison outside the chooser", "")
+    else:
+        bad("identity guard: no raw program-hash comparison outside the chooser",
+            "; ".join(hits[:5]))
+
+    # Part B: real artifacts
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("identity chooser: real artifact", "no pcrec adapter")
+        return
+    import program_identity as PI
+    binary = adapter.pin_binary()
+    prev = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(binary))),
+                        "pcrec-6b2dbd3e", "build", "pcrec")
+    if not os.path.exists(prev):
+        print("   (skip) the abc witness: no build/pcrec-6b2dbd3e on this box")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b145-")
+    try:
+        shape, pshape = PI._cli_shape(binary, tmp), PI._cli_shape(prev, tmp)
+        flags = list(adapter.config("pcrec-auto").get("flags", []))
+        new = PI.emit(binary, shape, flags, b"abc", os.path.join(tmp, "n"))
+        old = PI.emit(prev, pshape, flags, b"abc", os.path.join(tmp, "o"))
+        v2 = lambda t: {"program_sha256": PI.program_sha256_of_text(t)}
+        both = lambda t: dict(v2(t), program_sha256_v3=PI.program_sha256_v3_of_text(t))
+        r2 = ID.same_program(v2(old), v2(new))
+        r3 = ID.same_program(both(old), both(new))
+        if r2 == ("changed", "v2") and r3 == ("identical", "v3"):
+            ok("identity chooser: abc at the pin vs 6b2dbd3e -- changed under v2, "
+               "identical under v3, through the chooser", "%s / %s" % (r2, r3))
+        else:
+            bad("identity chooser: abc at the pin vs 6b2dbd3e", "v2 %r v3 %r" % (r2, r3))
+        # the adapter's row carries both, equal to the census's values
+        adapter.prepare("pcrec-auto", tmp)
+        cr = adapter.compile("pcrec-auto", "abc-b145", b"abc", {}, 1, tmp).get(_ad.FORM_PLAIN)
+        em = cr.engine_metadata or {}
+        want = both(PI.emit(binary, shape, flags, b"abc", os.path.join(tmp, "c")))
+        if cr.outcome == "compiled" and all(em.get(k) == v for k, v in want.items()) \
+                and re.fullmatch(r"[0-9a-f]{64}", str(em.get("program_sha256_v3"))):
+            ok("identity chooser: the compile row carries program_sha256 AND "
+               "program_sha256_v3, each == the census's", em["program_sha256_v3"][:16] + "...")
+        else:
+            bad("identity chooser: the compile row carries both hashes", repr(em)[:200])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def check_kb35_email_alias_resolution():
     """KB-35 (docs/dev/known_issues.md), fixed this lane
     (kb35alias): `tools/program_identity.py` resolved bench/email's
@@ -14117,10 +14259,15 @@ def _ta_fixture(trials=5):
 
 def _assemble(rows, base=None, trials_hint=None):
     """A VALID setup for hand-built rows: the 1.4 example's setup with the
-    rosters replaced and one `plain` compile row per pattern prepended."""
+    rosters replaced and one `plain` compile row per pattern prepended,
+    RE-STAMPED at the current schema ([B144]: callers stamp the block with
+    `reduce.judge_trial_agreement`'s default rule, which X32 pairs with the
+    current version; the 1.4 example's own block names `v1.4-group`)."""
     import json as _json
+    from pcrecbench import record as _rec_a
     setup, _ex_rows = _example_14() if base is None else base
     setup = _json.loads(_json.dumps(setup))
+    setup["schema_version"] = _rec_a.SCHEMA_VERSION
     pats = sorted({r["pattern_id"] for r in rows})
     subs = sorted({r["subject_id"] for r in rows if r["kind"] == "match"})
     setup["patterns"] = [{"pattern_id": p, "canonical_sha256": "0" * 64,
@@ -14141,6 +14288,123 @@ def _assemble(rows, base=None, trials_hint=None):
     setup.pop("status_detail", None)
     setup.pop("note", None)
     return setup, all_rows
+
+
+def check_trial_agreement_subst_fixture():
+    """gate_shape_v14.md 3.7 / 8 ([B144], rule `v1.10-group`): a
+    hand-computed SUBSTITUTION fixture -- 5 trials, ONE iteration each, one
+    group of 4 rows (s1, s4 clean; s2 two 1.6x trials; s3 one 0.6x trial).
+    Judged: 4 rows, 2 disagreeing, the group disagrees (d=2, n=4, 3*2>=4).
+    The first two rows alone: d=1 of n=2, the group does not (d < d_min).
+    The SAME rows under a non-substitution regime are `few_timed_trials`
+    (unjudged); the substitution rows under `rule=v1.4-group` likewise.
+    CONTROL: validate.py's own implementation (no shared source) gives the
+    same integers on all four calls; the fixture written as a 1.10 record
+    VALIDATES and the block sabotaged to claim `agree` is REJECTED by X32."""
+    print("-- the v1.10 substitution fixture: two implementations, one answer --")
+    import importlib.util
+    from pcrecbench import reduce as _rd, store as _store
+    SUB, SRCH = "substitution", "short-subject-search"
+    vals = {"s1": [100, 101, 99, 100, 102], "s2": [100, 160, 100, 160, 100],
+            "s3": [100, 100, 60, 100, 100], "s4": [100, 100, 100, 100, 101]}
+
+    def build(regime, sids=("s1", "s2", "s3", "s4")):
+        rows, seq = [], 0
+        for sid in sids:
+            for t in range(1, 6):
+                seq += 1
+                r = _ta_row("pa", sid, regime, t, seq, vals[sid][t - 1],
+                            iterations=1)
+                if regime == SUB:       # X36: the transform's answer, X43: constant
+                    r["subst"] = {"case": "1", "gate": "agrees", "nsubst": 3,
+                                  "out_bytes": 30, "out_sha256": "0" * 64}
+                rows.append(r)
+        return rows
+    keys = ("trials", "groups_judged", "groups_disagreeing", "rows_judged",
+            "rows_disagreeing", "rows_unjudged", "rows_unjudged_reasons",
+            "worst_group")
+    spec = importlib.util.spec_from_file_location(
+        "pb_validate_b144", os.path.join(ROOT, "schema", "validate.py"))
+    V = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(V)
+    cases = [
+        ("4 substitution rows", build(SUB), "v1.10-group",
+         {"trials": 5, "groups_judged": 1, "groups_disagreeing": 1,
+          "rows_judged": 4, "rows_disagreeing": 2, "rows_unjudged": 0,
+          "rows_unjudged_reasons": {"few_timed_trials": 0, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": {"pattern_id": "pa", "regime": SUB, "form": "plain",
+                          "d": 2, "n": 4}}, "disagree"),
+        ("s1 + s2 only (one clean, one disagreeing)", build(SUB, ("s1", "s2")),
+         "v1.10-group",
+         {"trials": 5, "groups_judged": 1, "groups_disagreeing": 0,
+          "rows_judged": 2, "rows_disagreeing": 1, "rows_unjudged": 0,
+          "rows_unjudged_reasons": {"few_timed_trials": 0, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": {"pattern_id": "pa", "regime": SUB, "form": "plain",
+                          "d": 1, "n": 2}}, "agree"),
+        ("the same 4 rows, non-substitution regime", build(SRCH), "v1.10-group",
+         {"trials": 5, "groups_judged": 0, "groups_disagreeing": 0,
+          "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 4,
+          "rows_unjudged_reasons": {"few_timed_trials": 4, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": None}, "agree"),
+        ("substitution rows under v1.4-group", build(SUB), "v1.4-group",
+         {"trials": 5, "groups_judged": 0, "groups_disagreeing": 0,
+          "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 4,
+          "rows_unjudged_reasons": {"few_timed_trials": 4, "all_timed_out": 0,
+                                    "na_trials": 0},
+          "worst_group": None}, "agree"),
+    ]
+    for label, rows, rule, want, verdict in cases:
+        got = _rd.judge_trial_agreement(rows, rule=rule)
+        v = V.judge_trial_agreement(rows, 1.5, 2, 3, rule)
+        if all(got[k] == want[k] for k in keys) and got["verdict"] == verdict \
+                and got["rule"] == rule:
+            ok("subst fixture: %s (%s) -> %s" % (label, rule, verdict),
+               "%d judged, %d disagreeing, %d unjudged" % (
+                   got["rows_judged"], got["rows_disagreeing"], got["rows_unjudged"]))
+        else:
+            bad("subst fixture: %s" % label,
+                repr({k: got.get(k) for k in keys + ("verdict", "rule")}))
+        if all(v[k] == want[k] for k in keys):
+            ok("subst fixture: CONTROL -- validate.py's own implementation agrees (%s)" % label)
+        else:
+            bad("subst fixture: validate.py disagrees (%s)" % label, repr(v))
+    # through store.write: the 1.10 stamp validates; a lying block is X32's
+    rows = build(SUB)
+    setup, all_rows = _assemble(rows)
+    setup["subbench"]["regimes"] = [SUB]
+    setup["trial_agreement"] = _rd.judge_trial_agreement(all_rows)
+    setup["status"] = "inconclusive-spread"
+    setup["status_detail"] = "fixture"
+    try:
+        _write_scratch(setup, all_rows, "tasub")
+        ok("subst fixture: written as a %s record VALIDATES (X31/X32 on the v1.10-group stamp)"
+           % setup["schema_version"])
+    except _store.StoreError as e:
+        bad("subst fixture: record rejected", str(e)[-400:])
+    lie = dict(setup["trial_agreement"], groups_disagreeing=0, rows_disagreeing=0,
+               verdict="agree", worst_group=None)
+    lie_setup = dict(setup, trial_agreement=lie, status="measured")
+    try:
+        _write_scratch(lie_setup, all_rows, "tasub2")
+        bad("subst fixture: a block claiming `agree` beside disagreeing rows must be REJECTED")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("subst fixture: a block claiming agree beside disagreeing substitution rows is rejected by X32")
+        else:
+            bad("subst fixture: rejected for the wrong reason", str(e)[-200:])
+    # the rule text is paired with the version: v1.4-group on a 1.10 record
+    old = dict(setup, trial_agreement=dict(setup["trial_agreement"], rule="v1.4-group"))
+    try:
+        _write_scratch(old, all_rows, "tasub3")
+        bad("subst fixture: v1.4-group stamped on a 1.10 record must be REJECTED")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("subst fixture: the rule text is keyed on the version (v1.4-group on 1.10 -> X32)")
+        else:
+            bad("subst fixture: rule pairing rejected for the wrong reason", str(e)[-200:])
 
 
 def check_trial_agreement_fixture():
@@ -14279,7 +14543,7 @@ def check_spread_status_stamped():
         sd = written.get("status_detail", "")
         if written["status"] == want_status and (
                 want_status == "measured" or (
-                    sd.startswith("trial agreement (v1.4-group, k=1.5, d_min=2, share_c=3, "
+                    sd.startswith("trial agreement (v1.10-group, k=1.5, d_min=2, share_c=3, "
                                   "trials=5): 1 of 1 groups disagree; 2 of 2 rows disagree, "
                                   "0 unjudged; worst group pa / short-subject-search / plain: "
                                   "d=2 of n=2")
@@ -14370,7 +14634,7 @@ def check_smoke_block_na_trials():
     st, _s = _h.derive_status([], ta, "scratch")
     st_p, sent = _h.derive_status([], ta, "pinned")
     if st == "measured" and st_p == "inconclusive-spread" and sent \
-            and sent[0].startswith("trial agreement (v1.4-group): n/a-trials (1 trials"):
+            and sent[0].startswith("trial agreement (v1.10-group): n/a-trials (1 trials"):
         ok("smoke block: CONTROL -- scratch keeps the pre-flight's status; pinned "
            "is inconclusive-spread", "derive_status rows 5 and 4")
     else:
@@ -17989,6 +18253,7 @@ def main():
     check_kb33_refusal_metadata_declared()
     check_mechanism_stamps()
     check_program_sha256()
+    check_identity_chooser()
     check_kb35_email_alias_resolution()
     check_vars_surface()
     check_deny_flag_controls()
@@ -18031,6 +18296,7 @@ def main():
     check_quiet_cli_agrees_with_gate()
     check_after_sample_is_provenance()
     check_trial_agreement_fixture()
+    check_trial_agreement_subst_fixture()
     check_spread_status_stamped()
     check_status_sentence_never_elided()
     check_smoke_block_na_trials()

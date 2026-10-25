@@ -40,6 +40,8 @@ silent one.
 
 import math
 
+from pcrecbench import identity as _id
+
 N_MIN = 10
 
 # ------------------------------------------------ the IDENTITY, field first
@@ -59,14 +61,19 @@ SOURCE_FIELD = "field"
 SOURCE_CENSUS = "census"
 
 
+def field_identity_criterion(old_meta, new_meta):
+    """-> ("identical"/"changed"/None, criterion). The ONE chooser
+    (pcrecbench/identity.py) decides which hash is compared: v3 when both
+    rows carry it, else v2; None (the caller falls back to the census) when
+    neither hash is on both rows."""
+    verdict, crit = _id.same_program(old_meta, new_meta)
+    return (None if verdict == _id.UNKNOWN else verdict), crit
+
+
 def field_identity(old_meta, new_meta):
-    """-> "identical" / "changed" when BOTH compile rows' engine_metadata
-    carry `program_sha256`, else None (the caller falls back)."""
-    a = (old_meta or {}).get(IDENTITY_FIELD)
-    b = (new_meta or {}).get(IDENTITY_FIELD)
-    if not a or not b:
-        return None
-    return "identical" if a == b else "changed"
+    """-> "identical" / "changed" when BOTH compile rows carry a comparable
+    program hash (via the chooser), else None (the caller falls back)."""
+    return field_identity_criterion(old_meta, new_meta)[0]
 
 
 def cell_identity(field_verdict, census_verdict):

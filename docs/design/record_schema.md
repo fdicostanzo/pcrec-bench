@@ -209,6 +209,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.7 | 2026-09-25 | [B88] (BD13, Frank's ruling; lane `b90repin`, riding the ce658cb7 re-pin): the `engine_metadata` declaration TYPE `sha256` (a value is 64 LOWERCASE hex digits, X15) -- an enum growth, MINOR by the rule above. Its first declared pair is pcrec's `program_sha256` (§7), the normalized program-identity hash the null-control band reads (`tools/program_identity.py` normalization v2); no rule's applicability changes for a record that declares no `sha256` pair, and every older record keeps its verdict |
 | 1.8 | 2026-10-12 | [B137] (O-90, pcrec I-138/I-139, multi-host; lane `b137import`): optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, §6.11) and rule X35 (present only on a record stamped >= 1.8; sorted) -- an optional-field ADDITION, MINOR by the rule above. Older records stay valid without it; `pcrecbench import` (store.py) is the other half of the multi-host design |
 | 1.9 | 2026-10-24 | [B140] (`subst_bench_v1.md` §5 S1-S8 as amended by §8a item 7; lane `b140schema`): the `substitution` regime (enum growth), optional `testee.invocation` (`library`/`process`, absent = `library`), `match_row.subst` / `.process` (§6.12), rules X36-X45, and compile rows become optional for a `process` testee (X11 and X14 relaxed, X41) except the `unsupported-by-declaration` row that carries an unsupported case (X44, X45). Additive, MINOR by the rule above: a 1.8 record carries none of it and keeps its verdict |
+| 1.10 | 2026-10-25 | [B145] (BD13 amendment, Frank's ruling; lane `b145ident`, riding the same 1.10): the second program hash `program_sha256_v3` (type `sha256`, §7) on every pcrec compile row, rule X46 (it travels with `program_sha256`; none before 1.10); `program_sha256` keeps meaning v2 forever. Additive, MINOR. [B144] (Frank's ruling on `docs/dev/lanes/b140drv_report.md` F1; `gate_shape_v14.md` §3.7; lane `b144spread`): the trial-agreement rule is REVISED under §4's rule-revision clause — `trial_agreement.rule` gains `v1.10-group`, which counts a `substitution` row's `matched-as-expected` trial with `iterations >= 1` as timed (every other regime keeps `> 1`), so a 1 iteration × 5 trials substitution record can be judged and can be `inconclusive-spread`. X32 is VERSIONED: a record below 1.10 is judged by `v1.4-group` forever. Enum growth + a versioned rule, MINOR (see the paragraph below) |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -338,6 +339,28 @@ separately-declared 8192 bound, UNCHANGED: KB-7 named them as a
 candidate worth discussing (point 2), but Frank's ruling addressed
 `free_text` by name, and they are not `$defs/free_text` fields — a
 distinct decision this change does not make.
+
+
+**1.9 → 1.10 is a MINOR bump under the rule-revision clause above —
+NO REWRITE, no record re-stamped** ([B144], 2026-10-25; Frank's ruling on
+finding F1 of `docs/dev/lanes/b140drv_report.md`;
+`docs/design/gate_shape_v14.md` §3.7). Every `bench/subst` row is one
+iteration × five trials (a whole-file pass is the unit), and
+`v1.4-group` counts a trial as timed only at `iterations > 1`, so every
+substitution row was unjudged (`few_timed_trials`) and a pinned
+substitution record could never be `inconclusive-spread`. `v1.10-group`
+changes exactly that: on a row whose regime is `substitution` a
+`matched-as-expected` trial with `iterations >= 1` is timed (per-trial
+value `elapsed_ns / iterations`, as before); every other regime keeps
+`> 1`. The constants (k = 1.5, d_min = 2, share_c = 3, N ≥ 5 and odd) are
+UNCHANGED and were measured over in-process loops, not whole-pass walls —
+the first substitution window's spread is their check, not a settled
+fact. `validate.py` keys X32 on the record's own `schema_version`
+(`ta_rule_for`: `v1.10-group` from 1.10, `v1.4-group` for 1.4..1.9, and
+the block's `rule` must be the one its version names), so every record in
+the store keeps the verdict of its day; `make check-schema` witnesses it
+with a good 1.10 substitution example, a sabotage rejected for X32, and
+the 1.9 substitution example (left stamped `1.9`, `v1.4-group`).
 
 ## 5. The fixed enums (OD-B4 (a))
 
@@ -740,7 +763,9 @@ measured constants, §3.3 the block, §3.4 the status, §3.5 the
 arithmetic both implementations follow). One sentence here so a reader
 of this note is not surprised: at v1.4 `status = measured` on a PINNED
 record requires the record's five (or more, odd) trials to AGREE on
-every group of its rows under rule `v1.4-group` (k = 1.5: a row
+every group of its rows under rule `v1.4-group` (from 1.10 `v1.10-group`,
+which differs only in judging `substitution` rows at one iteration —
+gate_shape_v14.md §3.7; k = 1.5: a row
 disagrees at two trials above 1.5× its median or one below its median
 / 1.5, or a `timed-out` trial beside timed ones; a group disagrees at
 d ≥ 2 disagreeing rows reaching a third of it); a SCRATCH record
@@ -967,6 +992,7 @@ row's `diagnostic`, unindexed.
 | `vm_prefilter_lang`, `vm_prefilter_lang_why` | enum `exact`,`count-collapsed`; **string** | pattern | `<PREFIX>_VM_PREFILTER_LANG` / `_LANG_WHY` (pcrec abi 12+); every VM HYBRID and NO other artifact (match_api.md §6.3's own iff); the why is free text (`exact`, `no counted repeat`, `forced`, `dfa overflow retry, exact nfa N`, `size cap retry, exact N > cap`, and since pin 263b013 `nullable collapsed language` — the `-fprefilter-collapse` POLICY decline, [B22]) ([B19]) |
 | `emit_bytes`, `emit_code_bytes` | integer | pattern | NOT stamps: the adapter's port of pcrec's `emit_size_measure` over the emitted `.c` + `.h` (comment-excluded total; that minus table initializers — the two quantities the caps and `--warn-emit-bytes` measure), CONTROLLED against that warning's own numbers ([B19] (d)) |
 | `program_sha256` | **sha256** (v1.7) | pattern | NOT a stamp: `tools/program_identity.py` `program_sha256_of_files()` over the emitted `.c` + `.h` -- the census's own normalization **v2** (C comments removed and blank runs collapsed, so `-fcomments` cannot move it; the pin-constant `PCREC_RX_ABI_H` block, the unread `rx_info` initializer and every UNREFERENCED `#define` dropped; everything else verbatim). Two compile rows of one config are PROGRAM-IDENTICAL iff equal -- the null-control band's identity, read FIRST, with the `reports/identity/` census as the fallback for older pairs ([B88], BD13) |
+| `program_sha256_v3` | **sha256** (v1.10) | pattern | [B145], BD13 amendment: the SAME emitted `.c` + `.h` under normalization **v3** (`tools/program_identity.py` `program_sha256_v3_of_files()` = `normalize_v3`: v2 plus the find-all iterator scaffold dropped by name, exported forwarder/twin pairs folded, chunks sorted), so it reads "the same program" across pcrec abi 77-84, which `program_sha256` (v2, whose meaning is FIXED FOREVER) reads as changed. Present on every pcrec compile row from schema 1.10 (X46). Never compared directly: `pcrecbench/identity.py` `same_program` compares v3 when both rows carry it, else v2, never one against the other, and reports the criterion |
 | `warned_emit_bytes` | integer | pattern | present ONLY when pcrec printed its advisory `--warn-emit-bytes` line for the compile (limits.md §8: never a refusal); the total the line names; the line itself lands in the row's `diagnostic` ([B19] (e)) |
 | `fast_frames`, `fast_trail` | integer | pattern | `<PREFIX>_FAST_FRAMES` / `_TRAIL` (pcrec abi 5+, VM artifacts only) |
 | `vm_rungs` | mask | pattern | `<PREFIX>_VM_RUNGS`, bits `PCREC_VM_RUNG_CURSOR`, `_FRAMES_BOUNDED`, `_FRAMES_UNBOUNDED`, `_REVDET`, `_COUNTER` (D46/[ABI-NS] D60) |
@@ -1200,7 +1226,7 @@ from the counts (X31).
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `trial_agreement` | object | c | REQUIRED at ≥ 1.4 on EVERY record (pinned or scratch, any trial count, even a record with no match rows: then `n/a-trials` with `trials: 0`); FORBIDDEN on a record stamped < 1.4 (X33) | the status depends on it, so the record must carry what decided the status — the same argument as `load.limit` beside `load.verdict` (X20) and `limit_busy_pct` beside the occupancy verdicts (X26) |
-| `trial_agreement.rule` | const `"v1.4-group"` | R | names THIS definition (gate_shape_v14.md §3.5); a changed definition is a new const and a schema bump | a verdict without the rule that produced it is re-judgeable by nobody |
+| `trial_agreement.rule` | enum `"v1.4-group"`/`"v1.10-group"` | R | names THIS definition (gate_shape_v14.md §3.5; §3.7 for `v1.10-group`); a changed definition is a new enum value and a schema bump. X32: `v1.4-group` on a record stamped 1.4..1.9, `v1.10-group` from 1.10 — the record's own `schema_version` selects the text (§4's rule-revision clause) | a verdict without the rule that produced it is re-judgeable by nobody |
 | `trial_agreement.k` | number > 1 | R | the outlier ratio the run used (1.5) | data, not a schema constant (quiet_baseline.md's own argument for `load.limit`) |
 | `trial_agreement.d_min` | integer ≥ 1 | R | the least disagreeing rows a group needs (2) | as above |
 | `trial_agreement.share_c` | integer ≥ 1 | R | the share denominator: a group disagrees at `share_c · d ≥ n` (3) | as above |
@@ -1391,7 +1417,7 @@ both ways before being believed.
 | X29 | `tier` = `scratch` requires `testee.binary` = {`path`, `sha256` (64 hex)} | §6.8 (v1.2), I-4's "plus what the binary was": a scratch record's only engine identity is the file, so the record must name it |
 | X30 | At most one entry in `patterns[]` has `role` = `floor` | §5 ADDITIONS 7 (v1.3): the floor pattern's whole point is a SINGLE per-call baseline the rest of the set reads against; two of them leave that baseline ambiguous |
 | X31 | `trial_agreement.verdict` is `n/a-trials` iff `trials < 5` or `trials` is even; else `disagree` iff `groups_disagreeing ≥ 1`; else `agree` | v1.4 (gate_shape_v14.md §3.3): the verdict beside its numbers, required to agree with them — X20's argument for the third instrument |
-| X32 | `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under gate_shape_v14.md §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/regimes; `rows_judged + rows_unjudged` = the record's row keys. The validator's recomputation is a DELIBERATE second implementation of §3.5 (no `pcrecbench` import) comparing INTEGER counts and the group key, never floats | v1.4: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise (X20's and X26's situation exactly) |
+| X32 | (VERSIONED, v1.10 / [B144]: the record's own `schema_version` selects the rule text — `v1.4-group` for 1.4..1.9, `v1.10-group` from 1.10 — and `trial_agreement.rule` must name it; §3.7 of gate_shape_v14.md.) `trials`, `groups_judged`, `groups_disagreeing`, `rows_judged`, `rows_disagreeing`, `rows_unjudged` and `rows_unjudged_reasons` equal the values RECOMPUTED from the record's match rows under gate_shape_v14.md §3.5 with the block's own `k`, `d_min`, `share_c`; `worst_group` (when not null) equals the recomputed one (key, `d`, `n`) and its ids exist among the record's patterns/regimes; `rows_judged + rows_unjudged` = the record's row keys. The validator's recomputation is a DELIBERATE second implementation of §3.5 (no `pcrecbench` import) comparing INTEGER counts and the group key, never floats | v1.4: without X32, X31 is inert — a harness can stamp `0 of 72` beside rows that say otherwise (X20's and X26's situation exactly) |
 | X33 | TWO-DIRECTIONAL: for `schema_version ≥ 1.4` the `trial_agreement` block is REQUIRED on every record; for `< 1.4` it is FORBIDDEN | v1.4: a block on a record stamped before the version that defined it is a mis-stamped record, not a forward-compatible one (X17 never looks at fields, so this needs its own rule and control) |
 | X34 | When `testee.grain` = `boolean`, no match row's `observed.span` is a non-null value | v1.6 (§5 ADDITIONS 8, §6.10): a boolean-grain testee's whole reason to declare itself is "I never know a span" — a record that declares `boolean` and then emits one anyway is lying about which of the two it is, in either direction |
 | X35 | `environment.cpu_isa` is present only on a record stamped >= 1.8, and its tokens are in sorted order | v1.8 ([B137]): a field on a record stamped before the version that defined it is a mis-stamped record (X33's argument); sorted so two hosts' ISA sets compare as lists |
@@ -1405,6 +1431,7 @@ both ways before being believed.
 | X43 | Within one cell (pattern, subject, regime, form) every trial's `subst.case`, `gate`, `nsubst`, `out_bytes` and `out_sha256` are equal | v1.9 (`subst_bench_v1.md` §4.5): timing runs never gate each other -- the output was validated once, and a trial whose count or size differs is a different computation, not a noisier one |
 | X44 | A `substitution` match row's (pattern, form) has no compile row `unsupported-by-declaration` in the record | v1.9: an unsupported (testee, case) is a first-class result carried by the compile row and its `declaration_ref`, never a match row -- every reader would otherwise read it as a wrong answer |
 | X45 | On a `measured` record of a `process` testee in the `substitution` regime, every pattern has a match row or a compile row `unsupported-by-declaration` | v1.9: a process testee has no compile rows by default (X41), so without this an unsupported case would be indistinguishable from a case nobody ran |
+| X46 | On a record stamped >= 1.10, every compile row whose `engine_metadata` carries `program_sha256` also carries `program_sha256_v3`; a record stamped < 1.10 carries no `program_sha256_v3` | v1.10 ([B145], BD13 amendment): the two program hashes travel together so the one chooser (`pcrecbench/identity.py`) can always use v3 when both rows have it, and a pre-1.10 record cannot claim a field its version did not define. A compile row with no `program_sha256` (a refusal, a non-pcrec engine) is unaffected |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

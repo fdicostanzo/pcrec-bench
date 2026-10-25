@@ -481,7 +481,7 @@ THE [B20] SCHEMA v1.4 WAVE (2026-08-30) -- v9, docs/design/gate_shape_v14.md 6
   than a measured one is "newer, not measured"; between the two
   inconclusive values dedup has no preference.
 * R3 -- a LEGEND line under the status policy names the trial-agreement
-  rule (`v1.4-group`, k=1.5, d_min=2, c=3, N >= 5 odd) and what the
+  rule (`v1.4-group`, or from schema 1.10 `v1.10-group`; k=1.5, d_min=2, c=3, N >= 5 odd) and what the
   after-run samples are at v1.4 (provenance).
 * R4 -- every record line of the header carries `agreement: ...` FROM
   THE BLOCK (`reduce.agreement_line`, the string `run`/`quick` print):
@@ -3625,7 +3625,7 @@ class _PairBand:
                  "strata", "n_null", "n_cells",
                  # [B88]: identity read off the records' `program_sha256`
                  # FIRST, the census as fallback (pcrecbench.nullband)
-                 "n_field", "n_census_only", "disagreements",
+                 "n_field", "n_census_only", "disagreements", "n_v3",
                  # [B91] (the owed [B90] wording fix): per SIDE, how many
                  # of the pair's compiled cells carry `program_sha256` on
                  # their own compile row -- (with_field, compiled).
@@ -3697,7 +3697,7 @@ def _build_null_band_model(rd):
         pb.census = _CensusFile(cpath) if os.path.exists(cpath) else None
         pb.strata = {}
         pb.n_null = pb.n_cells = 0
-        pb.n_field = pb.n_census_only = 0
+        pb.n_field = pb.n_census_only = pb.n_v3 = 0
         pb.disagreements = []
         model.pairs.append(pb)
         for prev, tid in pair_members[key]:
@@ -3730,11 +3730,14 @@ def _build_null_band_model(rd):
                 # census as fallback, a cross-check where both exist.
                 cv = (pb.census.verdicts.get((slug, pattern_id, form))
                       if pb.census is not None else None)
-                fv = _nb.field_identity(_compile_meta(rd, sb, prev, pattern_id, form),
-                                        _compile_meta(rd, sb, tid, pattern_id, form))
+                fv, fcrit = _nb.field_identity_criterion(
+                    _compile_meta(rd, sb, prev, pattern_id, form),
+                    _compile_meta(rd, sb, tid, pattern_id, form))
                 identity, src, dis = _nb.cell_identity(fv, cv)
                 if src == _nb.SOURCE_FIELD:
                     pb.n_field += 1
+                    if fcrit == "v3":
+                        pb.n_v3 += 1
                 elif src == _nb.SOURCE_CENSUS:
                     pb.n_census_only += 1
                 if dis:
@@ -3768,6 +3771,17 @@ def _build_null_band_model(rd):
                 c.verdict, c.bar, c.source = _nb.d119_verdict(c.delta, c.iqr_pct, c.stratum)
             model.cells[(sb, tid, pattern_id, regime, form)] = c
     return model
+
+
+def _criterion_clause(pb, sep=","):
+    """[B145]: which program hash the field-read cells compared -- stated
+    ONLY where a v3 comparison happened (every pair before the first 1.10
+    record is v2 by construction, and its committed text is unchanged: the
+    field it names, `program_sha256`, IS the v2 hash, forever)."""
+    if not pb.n_v3:
+        return ""
+    return (f"{sep} criterion v3 (`program_sha256_v3`) on {pb.n_v3} cell(s), "
+            f"v2 (`program_sha256`) on {pb.n_field - pb.n_v3}")
 
 
 def _field_carriage(rd, sb, testee_ids):
@@ -3916,6 +3930,7 @@ def _null_band_header_lines(model):
                        f"{pb.n_field} cell(s) read `engine_metadata."
                        f"{_nb.IDENTITY_FIELD}` on BOTH compile rows, "
                        f"{pb.n_census_only} fell back to the census"
+                       + _criterion_clause(pb)
                        + (f"; the field and the census DISAGREE on "
                           f"{len(pb.disagreements)}: "
                           + "; ".join(pb.disagreements[:10])
@@ -5179,7 +5194,16 @@ def render_markdown(rd: ReportData):
                 "ranks it instead, with `status` shown"
                 + (" [ACTIVE]" if rd.include_unmeasured else ""))
     # [B20] R3 / R4': the trial-agreement policy and the X13 rule marker.
-    out.append("- trial-agreement policy (schema v1.4, rule v1.4-group, X31-X33): "
+    # [B144]: the rule named is the records' OWN (`trial_agreement.rule`):
+    # v1.4-group below schema 1.10, v1.10-group from it; a query that mixes
+    # both names both. With no block among the records the line keeps the
+    # historical wording (v1.4-group), so every pre-1.10 report is
+    # byte-identical.
+    ta_rules = sorted({b.get("rule") for b in rd.agreement_by_record.values()
+                       if isinstance(b, dict) and b.get("rule")},
+                      key=lambda r: (len(r), r)) or ["v1.4-group"]
+    out.append("- trial-agreement policy (schema v1.4, rule " + ", ".join(ta_rules)
+                + ", X31-X33): "
                 "a record's five trials must agree to within k=1.5 on every "
                 "group of its rows — one slow trial of five tolerated; two, "
                 "or one fast, is a disagreeing row; a group disagrees at >= 2 "
@@ -5188,6 +5212,9 @@ def render_markdown(rd: ReportData):
                 "trials, is `inconclusive-spread` and unranked like "
                 "`inconclusive-load`; the after-run load/occupancy samples are "
                 "provenance (v1.4 X13), shown under --include-provenance"
+                + ("; under v1.10-group a `substitution` row's one-iteration "
+                   "trials are timed and judged (X32 versioned, [B144])"
+                   if "v1.10-group" in ta_rules else "")
                 + (" [ACTIVE]" if rd.include_provenance else ""))
     rules = "; ".join(f"{label} on {n} record(s)"
                       for label, n in sorted(rd.x13_rule_counts.items()))
@@ -6369,7 +6396,7 @@ def render_tsv(rd: ReportData):
                 _emit_row(["null_band", "", "", "", "", "", label, "", "", "",
                            "identity_field", _nb.IDENTITY_FIELD, str(pb.n_null),
                            "", "", "",
-                           f"field_cells={pb.n_field}; census_fallback_cells="
+                           f"field_cells={pb.n_field}{_criterion_clause(pb, ';')}; census_fallback_cells="
                            f"{pb.n_census_only}; disagreements="
                            f"{len(pb.disagreements)}; cells={pb.n_cells}"
                            + ("; " + "; ".join(pb.disagreements[:10])
