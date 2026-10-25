@@ -1,12 +1,10 @@
-# The substitution set's SIDECAR (harness contract 2). It is named `subst.toml`,
-# NOT `subbench.toml`, on purpose: `tools/selfcheck.py`'s generic gates
-# (`subbench_dirs()`) enumerate every `bench/*/` that carries a
-# `subbench.toml` and expect patterns + a match/search regime + a matcher
-# driver, none of which this set has until schema v1.9 (regime
-# `substitution`), the driver `--mode subst` and the TOOLS runner land
-# (docs/design/subst_bench_v1.md section 10, steps 2-4). `capability/` was
-# staged the same way. The rename `subst.toml` -> `subbench.toml` IS the
-# integration step; its own gates are `tools/check_subst.py` until then.
+# The substitution set's SIDECAR (harness contract 2). It was staged as
+# `subst.toml` until the reporter and the generic gates learned the regime;
+# [B143] (plan [B140] step 5) renamed it `subbench.toml`, so every
+# `bench/*/subbench.toml` enumeration now sees this set. `tools/selfcheck.py`'s
+# `SUBST_GATE_SKIPS` names the four generic gates a substitution-only set
+# skips (manifests, floor quick cell, floor oracle smoke, rxt export) and the
+# rest apply; its own gate is `tools/check_subst.py`.
 #
 # Fields only, no grammar, no directives -- [DD-13]'s territory is untouched.
 
@@ -30,7 +28,7 @@ combined log (acc-main 1.6 M lines, acc-small its 17,500-line byte prefix): \
 PCRE2 / POSIX ERE (cases 1-6) or PCRE2 only (7*); templates in an \
 engine-neutral IR rendered per dialect by pcrecbench/subst_template.py."""
 
-regimes = ["substitution"]            # not yet schema-legal: v1.9, lane b140schema
+regimes = ["substitution"]            # schema v1.9 regime
 
 [subjects]
 generator = "gen_subjects.py"
