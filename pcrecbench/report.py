@@ -4313,6 +4313,23 @@ def build_report(loaded, args, known_testee_ids=None):
 
     selected = [r for r in loaded if matches_filters(r, args)]
 
+    # [B143]: a substitution record (schema v1.9) has no set/subject-grain
+    # reading -- its rows carry no search/match answer -- so the standard
+    # grains leave it to `--grain subst`. A query selecting ONLY such
+    # records is refused BY NAME; a mixed one drops them and says so in the
+    # header (never reached by any committed query: the store holds none).
+    _n_subst = sum(1 for r in selected
+                   if r.setup and "substitution" in
+                   (r.setup.get("subbench", {}).get("regimes") or []))
+    if _n_subst and _n_subst == len(selected):
+        return None, ("every selected record is of the `substitution` "
+                      "regime; use --grain subst (the set/subject grains "
+                      "read search and match rows)")
+    if _n_subst:
+        selected = [r for r in selected
+                    if not (r.setup and "substitution" in
+                            (r.setup.get("subbench", {}).get("regimes") or []))]
+
     # Mixed-schema-version refusal (requirements 6; record_schema.md 4).
     # Evaluated on the DECLARED major, independent of whether the shared
     # validator can read it -- see the module docstring.
@@ -6879,7 +6896,7 @@ def build_argparser():
                      help="'matrix' ([B52]): the tests-x-engines ratio matrix, "
                           "one row per (subbench, pattern, regime_or_na, form), "
                           "one column per testee; requires --grain set")
-    ap.add_argument("--grain", choices=["set", "subject"], default="set",
+    ap.add_argument("--grain", choices=["set", "subject", "subst"], default="set",
                      help="ranking grain (manager change request, 2026-08-25): "
                           "'set' (default) reduces over the whole subject set "
                           "per (pattern, regime) -- per trial, sum the "
@@ -6960,6 +6977,12 @@ def main(argv=None):
         print("pcrecbench report: --format matrix requires --grain set",
               file=sys.stderr)
         return 2
+    # [B143]: the substitution view has two renderings (md, tsv) only.
+    if args.grain == "subst" and (args.format == "matrix"
+                                  or args.subject_grain_slice):
+        print("pcrecbench report: --grain subst renders md or tsv only "
+              "(no matrix, no subject-grain slice)", file=sys.stderr)
+        return 2
 
     args._subbench_alias_note = None
     if args.subbench:
@@ -6995,6 +7018,19 @@ def main(argv=None):
     paths = [r["path"] for r in rows if index_row_could_match(r, args)]
 
     loaded = load_all(paths, check_filename=True)
+    if args.grain == "subst":
+        # [B143]: the substitution view (pcrecbench/report_subst.py).
+        from pcrecbench import report_subst
+        sd, err = report_subst.build_subst_report(
+            loaded, args, known_testee_ids=known_testee_ids or None)
+        if err:
+            print(f"pcrecbench report: {err}", file=sys.stderr)
+            return 1
+        rendered = (report_subst.render_subst_tsv(sd) if args.format == "tsv"
+                    else report_subst.render_subst_markdown(sd))
+        _warn_if_large(rendered, "substitution report")
+        sys.stdout.write(rendered)
+        return 0
     rd, err = build_report(loaded, args, known_testee_ids=known_testee_ids or None)
     if err:
         print(f"pcrecbench report: {err}", file=sys.stderr)
