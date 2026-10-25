@@ -51,9 +51,6 @@ Branch `lane/b140set` (worktree `worktrees/b140set`). No timing run, no `store/`
 | case_5b-mask-email_per_line | 0.0198 | 0.0462 | 0.0483 | +133.3% | +143.9% | by design | BY-DESIGN |
 | case_6-upper_per_line | 0.5598 | 0.5768 | 0.5749 | +3.0% | +2.7% | +-10% | PASS |
 | case_7-url-tld-fix_per_line | 0 | 0.0144 | 0.0155 | n/a | n/a | by design | BY-DESIGN |
-| case_7a-url-tld-value_per_line | 0 | 0.0073 | 0.0066 | n/a | n/a | by design | BY-DESIGN |
-| case_7b-url-tld-insert-qmark_per_line | 0 | 0.0028 | 0.0047 | n/a | n/a | by design | BY-DESIGN |
-| case_7c-url-tld-insert-amp_per_line | 0 | 0.0043 | 0.0042 | n/a | n/a | by design | BY-DESIGN |
 
 Deviations: `linelen_p99` (mid window -11.9 % vs +-10 %, bound 13 %) and `status_304_frac` (-12.8 % / -11.5 %, 0.57 / 0.51 pp vs +-10 % or +-0.3 pp, bound 14 %). Reasons are in NOTES.md. All other non-exempt rows PASS on both windows (closest: xz +4.7 % of 5 %, ip_run_mean +10.0 % of 10 % on the first window, listed PASS at its rounded value).
 

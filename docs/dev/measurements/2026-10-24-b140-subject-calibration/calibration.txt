@@ -3,11 +3,12 @@
 # Reference: elastic/examples "Common Data Formats/apache_logs/apache_logs", commit bc53b584c0f9f574d4373193334bf03541a54936,
 #   git blob 94bf224f30abf42f3707db4fc02c90362e0ba338, sha256 f15c31e905f86c7b4b6ab44aee74d0a2086dce89f010187d983edea7ef0364ef (10,000 lines; not committed)
 # Generator: bench/subst/logsim.py sha256 ff6644e48c6d1309643401b863dfc84adce273c334bedb04bbf76f31c7721e6c
-#   calibrate.py sha256 0eef78584c38488992abe456ac75e0e39cc7538c39b85b2b1f9c937566927c03
+   calibrate.py sha256 60ce2c6d1930ee02349506bb71ebdb4ada240486202f0a5db67d87827dfee19e
 # Windows: gen_first10k = lines 1..10,000 of acc-main; gen_mid10k = lines 800,000..809,999.
 # Knobs: logsim.K after tuning run 8 (the lane's last; runs 1-8 total). Verdict DEVIATION = outside tolerance, inside the STATED bound
 #   (calibrate.STATED_DEVIATIONS); see bench/subst/NOTES.md "Stated deviations". Not a ranking input; no timing.
 # Reproduce: bash reproduce.sh   (needs build/subst-ref/apache_logs via bench/subst/fetch_reference.sh)
+# Amended after inbox I-158: cases 7a/7b/7c removed from the table (case 7 is one pass); metrics otherwise identical.
 metric	reference	gen_first10k	gen_mid10k	dev_gen_first10k	dev_gen_mid10k	tolerance	verdict
 entropy_bits_per_byte	5.49409	5.44646	5.44997	-0.9%	-0.8%	+-5%	PASS
 gzip6_ratio	0.0999431	0.0972136	0.0964831	-2.7%	-3.5%	+-5%	PASS
@@ -36,7 +37,4 @@ case_5-mask-ipv4_per_line	1.0213	1.0203	1.0181	-0.1%	-0.3%	+-10%	PASS
 case_5b-mask-email_per_line	0.0198	0.0462	0.0483	+133.3%	+143.9%	by design	BY-DESIGN
 case_6-upper_per_line	0.5598	0.5768	0.5749	+3.0%	+2.7%	+-10%	PASS
 case_7-url-tld-fix_per_line	0	0.0144	0.0155	n/a	n/a	by design	BY-DESIGN
-case_7a-url-tld-value_per_line	0	0.0073	0.0066	n/a	n/a	by design	BY-DESIGN
-case_7b-url-tld-insert-qmark_per_line	0	0.0028	0.0047	n/a	n/a	by design	BY-DESIGN
-case_7c-url-tld-insert-amp_per_line	0	0.0043	0.0042	n/a	n/a	by design	BY-DESIGN
-calibrate: PASS (30 rows, 0 FAIL, 2 stated DEVIATION)
+calibrate: PASS (27 rows, 0 FAIL, 2 stated DEVIATION)
