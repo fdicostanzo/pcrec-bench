@@ -147,6 +147,29 @@
  * (`rev-end`), `dfa_start` (`attempt-start`) and `dfa_match` (`nomatch`)
  * -- strings the driver already prints. No rx_info member across 69-73,
  * floor still 16.
+ *
+ * `--mode subst` ([B140], docs/design/subst_bench_v1.md 3.1, 3.1.1, 3.1.2;
+ * contract docs/spec/subst_api.md): a TRANSFORM, not a match -- the .so the
+ * adapter built for a substitution cell carries, beside the usual rx
+ * artifact, a SUBST artifact (pattern AND template, compiled together by
+ * the adapter) and a private copy of the support unit, and exports ONE more
+ * function, `pb_subst_all` (subst_shim.c: the contract's sub_all()), which
+ * timed_subst.c times. Everything this adds is below the `run_subst()`
+ * banner; the timed call is timed_subst() in timed_subst.c (its own
+ * translation unit, BD16's discipline; timed.c is untouched). The protocol
+ * additions (pcrecbench/adapters.py): `--template FILE` and `--subst-flags
+ * extended|none` are ACCEPTED so the harness's argv is the same for every
+ * engine, but they were consumed at COMPILE time -- the template is baked
+ * into the artifact (subst_api.md 1) -- and are not read here; `--bound
+ * ID=BYTES` (the output capacity per subject: n + 8 * the oracle's
+ * substitution count + 1, the charter's engine-neutral bound), `--sizing
+ * bound|first` (the size-then-render arm, subst_api.md 10.7), `--out-dir DIR`
+ * (trial 1 only: the output is written to DIR/ID.out OUTSIDE the clock and
+ * announced on an `out` line). iters is always 1. --find-all, --prime,
+ * --utf8 and the frame-buffer options are REFUSED in this mode by name.
+ * The existing modes are not touched: nothing runs differently unless
+ * --mode is `subst`, and the dlsym list above is unchanged (`pb_subst_all`
+ * is looked up only in this mode).
  */
 
 #define _GNU_SOURCE
@@ -163,6 +186,7 @@
 #include <unistd.h>
 
 #include "timed.h"
+#include "timed_subst.h"
 
 static int       (*pb_abi)(void);
 static int       (*pb_ncaps)(void);
@@ -359,6 +383,142 @@ static subject *load_list(const char *path, size_t *n_out) {
     return v;
 }
 
+/* ------------------------------------------- run_subst: --mode subst ([B140]) */
+
+#define SUBST_MAX_BOUNDS 64
+
+struct subst_args {
+    const char *out_dir;
+    int size_first;
+    long subject_timeout, skip;
+    int nbounds;
+    char *bound_id[SUBST_MAX_BOUNDS];
+    size_t bound_cap[SUBST_MAX_BOUNDS];
+};
+
+static int subst_bound_for(const struct subst_args *a, const char *id, size_t *cap) {
+    for (int i = 0; i < a->nbounds; i++)
+        if (!strcmp(a->bound_id[i], id)) { *cap = a->bound_cap[i]; return 1; }
+    return 0;
+}
+
+/* The contract's codes below PCREC_ERR_ITER (subst_api.md 8) plus the two the
+ * element shares with the matcher; pb_err_name() knows only the matcher's. */
+static const char *subst_err_name(int rc) {
+    switch (rc) {
+    case -8:   return "PCREC_ERR_UNSET_VAR";
+    case -10:  return "PCREC_ERR_ITER";
+    case -11:  return "PCREC_SUBST_NOSPACE";
+    case -12:  return "PCREC_SUBST_BADSPAN";
+    case -14:  return "PCREC_SUBST_UNSET";
+    case -15:  return "PCREC_SUBST_MISMATCH";
+    case -16:  return "PCREC_SUBST_MISSING_REF";
+    case -1000: return "size-first output larger than the bound-sized arena";
+    default:   return pb_err_name(rc);
+    }
+}
+
+/* Writes DIR/ID.out; 0 on success. Outside the clock, after the subject line. */
+static int write_out_file(const char *dir, const char *id,
+                          const unsigned char *buf, size_t n, char *path_out,
+                          size_t path_cap) {
+    snprintf(path_out, path_cap, "%s.out", id);
+    char full[4096];
+    snprintf(full, sizeof full, "%s/%s", dir, path_out);
+    FILE *f = fopen(full, "wb");
+    if (!f) return -1;
+    size_t w = n ? fwrite(buf, 1, n, f) : 0;
+    int rc = (w == n) ? 0 : -1;
+    if (fclose(f) != 0) rc = -1;
+    return rc;
+}
+
+/* noinline: sigsetjmp lives here, as in main(); see load_list's note. */
+__attribute__((noinline))
+static int run_subst(void *lib, const char *list_path, const struct subst_args *a) {
+    psubst_fn subst_all = (psubst_fn)dlsym(lib, "pb_subst_all");
+    if (!subst_all) {
+        printf("error\tdlsym: pb_subst_all is missing -- the artifact was not "
+               "built as a substitution artifact\n");
+        return 2;
+    }
+    size_t nsub = 0;
+    subject *subs = load_list(list_path, &nsub);
+    if (!subs) { printf("error\tcannot read subject list %s\n", list_path); return 2; }
+
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+
+    for (size_t i = (size_t)a->skip; i < nsub; i++) {
+        subject *s = &subs[i];
+        size_t cap = 0;
+        if (!subst_bound_for(a, s->id, &cap)) {
+            printf("error\tno --bound for subject %s\n", s->id);
+            return 2;
+        }
+        /* The output arena: sized to the bound, then FAULTED IN before the
+         * clock (a fresh 400 MB mapping would otherwise charge its page
+         * faults to whichever call first writes it). */
+        unsigned char *out = malloc(cap ? cap : 1);
+        if (!out) { printf("error\tmalloc %zu failed\n", cap); return 2; }
+        memset(out, 0, cap ? cap : 1);
+
+        volatile int    rc_final = 0;
+        volatile size_t outlen = 0;
+        volatile double elapsed = 0.0;
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (a->subject_timeout > 0) alarm((unsigned)a->subject_timeout);
+            struct psubst_in tin = {
+                .buf = s->buf, .len = s->len, .out = out, .cap = cap,
+                .size_first = a->size_first, .iters = 1,
+                .subst_all = subst_all,
+            };
+            struct psubst_out tout = { 0, 0 };
+            elapsed = timed_subst(&tin, &tout);
+            rc_final = tout.rc;
+            outlen = tout.outlen;
+            if (a->subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t1\t%.9f\t-\t-\n",
+                   s->id, (double)elapsed);
+            free(out);
+            continue;
+        }
+        if (rc_final < 0) {
+            const char *nm = subst_err_name((int)rc_final);
+            char answerbuf[256];
+            if (nm) snprintf(answerbuf, sizeof answerbuf, "giveup:%d:%s",
+                             (int)rc_final, nm);
+            else    snprintf(answerbuf, sizeof answerbuf, "giveup:%d",
+                             (int)rc_final);
+            printf("subject\t%s\t%s\t-\t-\t0\t%zu\t1\t%.9f\t-\t-\n",
+                   s->id, answerbuf, s->len, (double)elapsed);
+            free(out);
+            continue;
+        }
+        printf("subject\t%s\t%s\t-\t-\t0\t%zu\t1\t%.9f\t%d\t-\n",
+               s->id, rc_final > 0 ? "match" : "nomatch", s->len,
+               (double)elapsed, (int)rc_final);
+        /* ---- outside the clock: announce (and on trial 1, write) the output */
+        char pathbuf[512] = "-";
+        if (a->out_dir &&
+            write_out_file(a->out_dir, s->id, out, outlen, pathbuf,
+                           sizeof pathbuf) != 0) {
+            printf("error\tcannot write %s/%s.out: %s\n", a->out_dir, s->id,
+                   strerror(errno));
+            return 2;
+        }
+        printf("out\t%s\t%s\t%zu\n", s->id, pathbuf, (size_t)outlen);
+        free(out);
+    }
+    fflush(stdout);
+    return 0;
+}
+
 #define SYM(name) do {                                            \
         *(void **)(&name) = dlsym(lib, #name);                    \
         if (!name) { printf("error\tdlsym %s: %s\n", #name,       \
@@ -386,6 +546,8 @@ int main(int argc, char **argv) {
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   /* [B77] U1: --utf8, the protocol flag */
     volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
+    struct subst_args sargs;   /* [B140] --mode subst */
+    memset(&sargs, 0, sizeof sargs);
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -401,8 +563,43 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--prime"))                           prime = 1;
         else if (!strcmp(a, "--buffer-frames") && i + 1 < argc)  buffer_frames = strtoll(argv[++i], NULL, 10);
         else if (!strcmp(a, "--buffer-trail") && i + 1 < argc)   buffer_trail = strtoll(argv[++i], NULL, 10);
+        /* [B140] the --mode subst arguments (header comment) */
+        else if (!strcmp(a, "--template") && i + 1 < argc)       ++i;   /* baked in at compile */
+        else if (!strcmp(a, "--subst-flags") && i + 1 < argc)    ++i;   /* ditto */
+        else if (!strcmp(a, "--out-dir") && i + 1 < argc)        sargs.out_dir = argv[++i];
+        else if (!strcmp(a, "--sizing") && i + 1 < argc) {
+            const char *v = argv[++i];
+            if (!strcmp(v, "first")) sargs.size_first = 1;
+            else if (strcmp(v, "bound")) { printf("error\t--sizing takes bound|first\n"); return 2; }
+        }
+        else if (!strcmp(a, "--bound") && i + 1 < argc) {
+            char *v = argv[++i], *eq = strchr(v, '=');
+            if (!eq || sargs.nbounds >= SUBST_MAX_BOUNDS) {
+                printf("error\t--bound takes ID=BYTES (at most 64)\n");
+                return 2;
+            }
+            *eq = 0;
+            sargs.bound_id[sargs.nbounds] = v;
+            sargs.bound_cap[sargs.nbounds++] = (size_t)strtoull(eq + 1, NULL, 10);
+        }
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
+    if (!strcmp(mode, "subst")) {
+        /* [B140]: a transform has no find-all loop, no prime pass, no find-all
+         * advance and no frame buffer (replace-all drives rx_info.next_n) --
+         * refused by name, never ignored. */
+        if (find_all) { printf("error\t--find-all has no meaning in --mode subst\n"); return 2; }
+        if (prime) { printf("error\t--prime has no meaning in --mode subst\n"); return 2; }
+        if (utf8_adv) { printf("error\t--utf8 has no meaning in --mode subst\n"); return 2; }
+        if (buffer_frames >= 0 || buffer_trail >= 0) {
+            printf("error\t--buffer-frames/--buffer-trail have no meaning in "
+                   "--mode subst (replace-all drives next_n, which takes no "
+                   "caller buffer)\n");
+            return 2;
+        }
+    }
+    sargs.subject_timeout = subject_timeout;
+    sargs.skip = skip;
     if (!lib_path) { printf("error\t--lib is required\n"); return 2; }
     if (iters < 1) iters = 1;
     if ((buffer_frames >= 0) != (buffer_trail >= 0)) {
@@ -830,6 +1027,8 @@ int main(int argc, char **argv) {
     }
 
     if (!list_path) { fflush(stdout); return 0; }   /* load-only run */
+
+    if (!strcmp(mode, "subst")) return run_subst(lib, list_path, &sargs);   /* [B140] */
 
     size_t nsub = 0;
     subject *subs = load_list(list_path, &nsub);

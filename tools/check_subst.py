@@ -77,6 +77,24 @@ What it checks, each with its control:
      name; and `run_cell` per tool writes a schema-1.9 `process` record the
      validator accepts (X38-X40), with no compile row for a compiled case and
      an `unsupported-by-declaration` row for each declared one.
+ 12. ([B140] step 3, last driver, lane b140pcrec) THE pcrec LIBRARY-TIER
+     DRIVER: `--mode subst` over a substitution artifact (rx artifact + subst
+     artifact + a private support unit in one .so, the template baked in at
+     compile). For pcrec-auto, pcrec-vm and both `-sizefirst` arms the cases
+     are compiled through the ADAPTER and the driver called DIRECTLY on
+     acc-small, all 8 cases, output sha256 + count + length equal to
+     expectations.tsv (judged here by hashlib) - cases 6 (`\\U$1\\E`) and 7
+     (the conditional, VM route) included, which is what flips their
+     divergences.tsv basis to `verified-small`; the size-first arm's bytes
+     equal the bound arm's; case 6 refused by pcrec BY NAME without
+     `subst-extended` (the control that the flag matters); the support unit
+     private (no `pcrec_subst_*` dynamic symbol); the driver's refusals by
+     name and a too-small bound a `giveup:-11` (NOSPACE), never retried;
+     `run_cell` end to end for a bound and a size-first arm (schema-1.9
+     record, distinct testee ids, every row `agrees`); a deliberately WRONG
+     template fails the gate BY NAME; every config off the roster
+     (nocaps, `-in`, utf8, clang, bigcap, deny arms, dfa, pcrec-local)
+     refused BY NAME with its reason.
 """
 import csv
 import hashlib
@@ -439,6 +457,7 @@ def _driver_slice(check, data, cases, exp):
         _refusals(check, sb, work, mock, _ad, driverrun, harness, substrun)
         _rust_re2(check, sb, small, cases, work, _ad, harness, store, substrun)
         _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun)
+        _pcrec_tier(check, sb, small, cases, work, _ad, harness, store, substrun)
     finally:
         for k, v in saved.items():
             if v is None:
@@ -1000,3 +1019,191 @@ def _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
               and not ({r["pattern_id"] for r in rows} & unsup)
               and all(comp in r["declaration_ref"] for r in comp_rows))
     return say
+
+
+PCREC_ARMS = ("pcrec-auto", "pcrec-vm", "pcrec-auto-sizefirst", "pcrec-vm-sizefirst")
+
+
+def _pcrec_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
+    """Section 12 ([B140] step 3, lane b140pcrec): pcrec's substitution
+    artifact. See the module docstring."""
+    from pcrecbench.driverrun import run_driver
+    exp = {(x["case"], x["subject"]): x for x in _read_tsv(os.path.join(SUBST, "expectations.tsv"))}
+    div = _read_tsv(os.path.join(SUBST, "divergences.tsv"))
+    lst = os.path.join(work, "list.tsv")
+    with open(lst, "w") as f:
+        f.write("acc-small\t%s\n" % small.path)
+    outs = {}                   # (arm, case) -> output bytes' sha256
+    engines = {}                # (arm, case) -> (engine, engine_sel)
+    sample_lib = None
+    for cid in PCREC_ARMS:
+        ad, cfg = _ad.resolve(cid)
+        wd = os.path.join(work, "pw-" + cid)
+        ad.prepare(cid, wd)
+        sup = ad.subst_support(cid)
+        bad_cases = []
+        for c in cases:
+            p = sb.pattern(c["dir"])
+            plan = substrun.plan_case(sb, p, sup)
+            substrun.write_template(plan, os.path.join(wd, "p-" + p.name))
+            cp = ad.compile(cid, p.name, sb.pattern_bytes(p.name),
+                            {"substitution": True}, 1, wd)
+            cr = cp.get("plain")
+            if cr.outcome != "compiled":
+                bad_cases.append("%s: %s %s" % (c["case"], cr.outcome, (cr.diagnostic or "")[:100]))
+                continue
+            engines[(cid, c["case"])] = (cr.engine_metadata.get("engine"),
+                                         cr.engine_metadata.get("engine_sel"))
+            lib = cr.handle["lib"]
+            sample_lib = sample_lib or lib
+            e = exp[(c["case"], "acc-small")]
+            od = os.path.join(work, "po-%s-%s" % (cid, c["case"]))
+            os.makedirs(od)
+            argv = [cr.handle["driver"], "--lib", lib, "--mode", "subst",
+                    "--sizing", cfg.get("subst_sizing", "bound"),
+                    "--bound", "acc-small=%d" % (small.length + 8 * int(e["nsubst"]) + 1),
+                    "--out-dir", od]
+            r = run_driver(argv + ["--list", lst], timeout=120)
+            row = r.rows[0] if r.rows else None
+            got = (hashlib.sha256(open(os.path.join(od, row.out_path), "rb").read()).hexdigest()
+                   if row is not None and row.out_path else None)
+            outs[(cid, c["case"])] = got
+            if (r.returncode != 0 or row is None or got != e["out_sha256"]
+                    or row.nmatches != int(e["nsubst"]) or row.out_bytes != int(e["out_bytes"])
+                    or row.iters != 1):
+                bad_cases.append("%s: rc=%s %s" % (c["case"], r.returncode,
+                                                   row.answer if row else r.diagnostic()))
+            shutil.rmtree(od, ignore_errors=True)
+        check("subst driver %s: --mode subst on acc-small, all 8 cases compiled through "
+              "the adapter (rx artifact + subst artifact + support unit), output sha256 + "
+              "count + length == expectations.tsv (cases 6 and 7 included)" % cid,
+              not bad_cases and len([k for k in outs if k[0] == cid]) == 8,
+              "; ".join(bad_cases[:3]))
+    check("subst driver pcrec: each -sizefirst arm's 8 outputs are byte-identical to its "
+          "bound sibling's (sha256), the two call shapes differ in time only",
+          all(outs.get((a, c["case"])) == outs.get((a + "-sizefirst", c["case"])) is not None
+              for a in ("pcrec-auto", "pcrec-vm") for c in cases))
+    check("subst driver pcrec: case 7 (backreference in a negative lookahead) is the VM "
+          "route under pcrec-auto as divergences.tsv predicted (`selected`), and "
+          "forced under pcrec-vm",
+          engines.get(("pcrec-auto", "7")) == ("vm", "selected")
+          and engines.get(("pcrec-vm", "7")) == ("vm", "forced"), "%r" % (engines.get(("pcrec-auto", "7")),))
+    pc_rows = {d["case"]: d for d in div if d["competitor"] == "pcrec"}
+    check("subst divergences: the pcrec rows for cases 6 and 7 are `agrees` with basis "
+          "`verified-small` - flipped from `predicted` by the four arms' sha256 equality "
+          "above, never by editing the table alone",
+          all(pc_rows.get(c, {}).get("expectation") == "agrees"
+              and pc_rows[c]["basis"] == "verified-small" for c in ("6", "7"))
+          and all(outs.get((a, c)) == exp[(c, "acc-small")]["out_sha256"]
+                  for a in PCREC_ARMS for c in ("6", "7")))
+    # ---- control: case 6 needs `subst-extended` - WITHOUT the module a backslash
+    # is an ordinary byte (subst_api.md 2 para 7), so the template COMPILES and
+    # renders `\\U..\\E` LITERALLY: not a refusal, a WRONG ANSWER the gate catches
+    ad, _c = _ad.resolve("pcrec-auto")
+    wd6 = os.path.join(work, "pw-noext")
+    ad.prepare("pcrec-auto", wd6)
+    p6 = sb.pattern("6-upper")
+    sup6 = ad.subst_support("pcrec-auto")
+    plan6 = substrun.plan_case(sb, p6, sup6)
+    ext_flag = plan6.flags
+    plan6.flags = "none"            # the control: the same template, the module off
+    substrun.write_template(plan6, os.path.join(wd6, "p-" + p6.name))
+    cp6 = ad.compile("pcrec-auto", p6.name, sb.pattern_bytes(p6.name), {"substitution": True}, 1, wd6)
+    h6 = dict(cp6.get("plain").handle)
+    h6["pin"], h6["subject_timeout"] = None, 60
+    ents6, _n = substrun.measure_cell(ad, h6, sb, p6, plan6, sup6, [small], 1, 60,
+                                      lambda a, h: False)
+    check("subst pcrec: case 6 WITHOUT `subst-extended` compiles but is a WRONG ANSWER the "
+          "gate catches by name (a backslash is an ordinary byte), while the real case 6 "
+          "(flags %r) agreed above - the control that the module flag matters"
+          % ext_flag, ext_flag == "extended" and ents6[0]["subst"]["gate"] == "wrong"
+          and ents6[0]["outcome"] == "did-not-match-as-expected")
+    # ---- the support unit is PRIVATE to the shim's TU
+    nm = subprocess.run(["nm", "-D", "--defined-only", sample_lib], capture_output=True, text=True).stdout
+    check("subst pcrec: the support unit is private (PCREC_SUPPORT_STATIC) - the .so exports "
+          "pb_subst_all and no pcrec_subst_* dynamic symbol",
+          " pb_subst_all" in nm and "pcrec_subst" not in nm, nm[:200])
+    # ---- driver refusals and the bound arm's NOSPACE
+    drv = os.path.join(work, "pw-pcrec-auto", "pcrec_driver")
+    base = [drv, "--lib", sample_lib, "--mode", "subst", "--list", lst, "--bound", "acc-small=9999999"]
+    for flag in (["--find-all"], ["--prime"], ["--utf8"], ["--buffer-frames", "8", "--buffer-trail", "8"]):
+        r = run_driver(base + flag, timeout=30)
+        check("subst driver pcrec: %s is REFUSED in --mode subst by name" % flag[0],
+              r.returncode == 2 and any("--mode subst" in e for e in r.errors),
+              "rc=%s errors=%s" % (r.returncode, r.errors))
+    r = run_driver(base[:-2], timeout=30)
+    check("subst driver pcrec: a subject with no --bound is refused by name",
+          r.returncode == 2 and any("--bound" in e for e in r.errors), "%r" % r.errors)
+    r = run_driver(base[:-1] + ["acc-small=1000"], timeout=60)
+    row = r.rows[0] if r.rows else None
+    check("subst driver pcrec: a too-small bound is PCREC_SUBST_NOSPACE (giveup:-11), "
+          "reported, never retried", row is not None and row.answer.startswith("giveup:-11:PCREC_SUBST_NOSPACE"),
+          row.answer if row else r.diagnostic())
+    # ---- through the harness
+    ids = {}
+    for cid in ("pcrec-auto", "pcrec-vm-sizefirst"):
+        root = os.path.join(work, "pstore-" + cid)
+        os.makedirs(root)
+        res = harness.run_cell("subst", cid, trials=2, tier=store.TIER_SCRATCH,
+                               store_root=root, subject_limit=1,
+                               workdir=os.path.join(work, "phw-" + cid), synthetic=True)
+        rows = [r for r in res.rows if r["kind"] == "match"]
+        comp = [r for r in res.rows if r["kind"] == "compile"]
+        ids[cid] = res.setup["testee"]["testee_id"] if "testee_id" in res.setup["testee"] \
+            else _rec_id(res.setup["testee"])
+        check("subst harness %s: a schema-1.9 record (validator-accepted) with 16 "
+              "substitution rows (8 cases x 2 trials), every one matched-as-expected / gate "
+              "agrees with the expectation's hash, 16 `compiled` compile rows (8 cases x 2 "
+              "trials) and no `unsupported` row" % cid,
+              len(rows) == 16 and res.setup["schema_version"] == "1.9"
+              and res.setup["testee"]["invocation"] == "library"
+              and all(r["match_outcome"] == "matched-as-expected"
+                      and r["subst"]["gate"] == "agrees"
+                      and r["subst"]["out_sha256"] == exp[(r["subst"]["case"], "acc-small")]["out_sha256"]
+                      and r["timing"]["iterations"] == 1 for r in rows)
+              and len(comp) == 16 and all(r["compile_outcome"] == "compiled" for r in comp),
+              "rows=%d comp=%d" % (len(rows), len(comp)))
+    check("subst harness pcrec: the bound and size-first arms derive DISTINCT testee ids "
+          "(`..._sizefirst` last), so their records can never share a store path",
+          ids["pcrec-auto"] != ids["pcrec-vm-sizefirst"] and ids["pcrec-vm-sizefirst"].endswith("sizefirst"),
+          "%r" % (ids,))
+    # ---- the gate: a deliberately wrong template fails by name
+    ad, _c = _ad.resolve("pcrec-auto")
+    wd = os.path.join(work, "pw-wrong")
+    ad.prepare("pcrec-auto", wd)
+    p = sb.pattern("1-literal")
+    sup = ad.subst_support("pcrec-auto")
+    wrong = substrun.plan_case(sb, p, sup, template_override=b"lit\tH2\n")
+    substrun.write_template(wrong, os.path.join(wd, "p-" + p.name))
+    cp = ad.compile("pcrec-auto", p.name, sb.pattern_bytes(p.name), {"substitution": True}, 1, wd)
+    handle = dict(cp.get("plain").handle)
+    handle["pin"], handle["subject_timeout"] = None, 60
+    ents, _n = substrun.measure_cell(ad, handle, sb, p, wrong, sup, [small], 1, 60,
+                                     lambda a, h: False)
+    check("subst gate (pcrec): a deliberately WRONG template FAILS BY NAME - gate `wrong`, "
+          "did-not-match-as-expected, not timed",
+          ents[0]["subst"]["gate"] == "wrong" and ents[0]["outcome"] == "did-not-match-as-expected"
+          and ents[0]["timing"] is None
+          and "differs from the oracle's at byte" in ents[0]["diagnostic"])
+    # ---- the roster: every other config refused by name, with its reason
+    refused = {"pcrec-nocaps": "captures are off", "pcrec-auto-in": "frame buffer",
+               "pcrec-auto-utf8": "utf8", "pcrec-auto-clang": "cc",
+               "pcrec-auto-bigcap": "cap", "pcrec-auto-noedge": "denial",
+               "pcrec-dfa": "forced dfa", "pcrec-local": "provided-binary"}
+    bad_ref = []
+    for cid, needle in refused.items():
+        try:
+            _ad.resolve(cid)[0].subst_support(cid)
+            bad_ref.append("%s was ACCEPTED" % cid)
+        except _ad.AdapterError as e:
+            m = str(e)
+            if "not on the substitution roster" not in m or needle.lower() not in m.lower():
+                bad_ref.append("%s: %s" % (cid, m[:140]))
+    check("subst roster pcrec: %d configs off the roster (%s) are each refused BY NAME with "
+          "their reason; auto, vm and the sizefirst arms accepted" % (len(refused), ", ".join(sorted(refused))),
+          not bad_ref, "; ".join(bad_ref[:3]))
+
+
+def _rec_id(testee_block):
+    from pcrecbench import record as _rec
+    return _rec.derive_testee_id(testee_block)

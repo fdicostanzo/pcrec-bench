@@ -10099,6 +10099,14 @@ def check_encoding_axis():
                     offenders.append("%s: encoding_extra %r, config_extra %r "
                                      "(want %r)" % (tid, cfg.get("encoding_extra"),
                                                     live, want))
+            elif cfg.get("subst_sizing") == "first":
+                # [B140]: the size-first substitution arms compose `sizefirst`
+                # LAST onto the frozen parts (append-only; no encoding).
+                want = mod.compose_config_extra(frozen, "sizefirst")
+                if cfg.get("encoding_extra") is not None or live != want:
+                    offenders.append("%s: encoding_extra %r, config_extra %r "
+                                     "(want %r)" % (tid, cfg.get("encoding_extra"),
+                                                    live, want))
             elif cfg.get("encoding_extra") is not None or live != frozen:
                 offenders.append("%s: encoding_extra %r, config_extra %r but "
                                  "the frozen four-part renderer gives %r"
@@ -13422,7 +13430,8 @@ def check_abi_floor_refusal():
         # The artifact's own .h sits beside the original; both .c files are
         # in `tmp`, so one -I serves both.
         drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
-                           os.path.join(tmp, "pcrec_driver"), extra=["-ldl"])
+                           os.path.join(tmp, "pcrec_driver"), extra=["-ldl"],
+                           extra_sources=["timed_subst.c"])  # [B140]
         shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
         results = {}
         for arm, csrc in (("real", art), ("sabotaged", sabotaged),
