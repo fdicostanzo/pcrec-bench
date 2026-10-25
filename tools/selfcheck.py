@@ -17894,6 +17894,52 @@ def check_b137_import():
         bad("cpu_isa (iv): this box's list is sorted")
 
 
+def check_subst_gate_skips():
+    """[B143] the substitution set's sidecar is `subbench.toml`, so the
+    generic enumeration SEES it; the four gates in SUBST_GATE_SKIPS skip it
+    BY NAME (with their reason printed), every other gate applies. Proves:
+    the set is enumerated; each named gate drops exactly that set and
+    nothing else; an unnamed gate keeps it; every name in the table is
+    actually passed by some call site (a skip nobody asks for is dead)."""
+    print("-- [B143] the substitution set under the generic gates --")
+    import io, contextlib
+    all_names = [n for n, _p in subbench_dirs()]
+    if "subst" in all_names:
+        ok("subst: enumerated by subbench_dirs()", "%d sets" % len(all_names))
+    else:
+        bad("subst: enumerated by subbench_dirs()", repr(all_names))
+        return
+    for gate in sorted(SUBST_GATE_SKIPS):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            kept = [n for n, _p in subbench_dirs(gate)]
+        if kept == [n for n in all_names if n != "subst"]:
+            ok("gate %r skips exactly subst" % gate, SUBST_GATE_SKIPS[gate][:60])
+        else:
+            bad("gate %r skips exactly subst" % gate, repr(kept))
+        # the table is not dead: some call site names the gate
+        with open(os.path.join(ROOT, "tools", "selfcheck.py"), encoding="utf-8") as fh:
+            src = fh.read()
+        if src.count('subbench_dirs("%s")' % gate) >= 1:
+            ok("gate %r is passed by a call site" % gate)
+        else:
+            bad("gate %r is passed by a call site" % gate, "dead entry")
+    # CONTROL: an unnamed gate keeps the set
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        kept = [n for n, _p in subbench_dirs("expectations")]
+    if kept == all_names:
+        ok("an unnamed gate ('expectations') keeps subst", "applies")
+    else:
+        bad("an unnamed gate keeps subst", repr(kept))
+    # the sidecar's regimes are what is_substitution_only reads
+    if is_substitution_only(os.path.join(ROOT, "bench", "subst")) and \
+            not is_substitution_only(os.path.join(ROOT, "bench", "email")):
+        ok("is_substitution_only: subst yes, email no")
+    else:
+        bad("is_substitution_only: subst yes, email no")
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -17998,6 +18044,7 @@ def main():
     check_kb34_leading_verb_hoist()
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
+    check_subst_gate_skips()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     check_b105_tre_bracket_backslash_declaration()
