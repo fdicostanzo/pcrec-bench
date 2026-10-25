@@ -233,6 +233,7 @@ class Adapter(_ad.Adapter):
         ok_exit = tuple(cfg.get("ok_exit", [0]))
         limit = timeout or 900
         validated = sub.setdefault("validated", {})
+        peaks = sub.setdefault("peak_rss_kb", {})
         rows, notes = [], []
         if core_note and out_dir:
             notes.append(core_note)
@@ -245,8 +246,10 @@ class Adapter(_ad.Adapter):
             if out_dir:
                 # trial 1: the UNTIMED correctness pass
                 out_path = os.path.join(out_dir, s.subject_id + ".out")
-                rc, err = toolrun.untimed_pass(argv, stdin_is_input, s.path,
-                                               out_path, tool_core, limit)
+                rc, err, peak = toolrun.untimed_pass(
+                    argv, stdin_is_input, s.path, out_path, tool_core, limit)
+                if peak is not None:
+                    peaks[s.subject_id] = peak
                 if rc not in ok_exit:
                     row.answer = ("error:%s untimed pass exited %s: %s"
                                   % (cfg["engine_name"], rc, err.strip()[:300]))
@@ -281,7 +284,10 @@ class Adapter(_ad.Adapter):
                 "cmd": display, "sink": "wc-c",
                 "sink_bytes": t["sink_bytes"], "core": tool_core,
                 "sink_core": sink_core, "user_s": t["user_s"],
-                "sys_s": t["sys_s"], "maxrss_kb": t["maxrss_kb"],
+                "sys_s": t["sys_s"],
+                # the untimed pass's polled VmHWM when it saw one: wait4's
+                # ru_maxrss is floored at the harness's own RSS (toolrun)
+                "maxrss_kb": peaks.get(s.subject_id, t["maxrss_kb"]),
                 "page_cache_resident": frac}
             rows.append(row)
         return rows, {}, notes

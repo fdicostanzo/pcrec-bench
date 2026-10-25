@@ -858,7 +858,7 @@ def _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
             argv, stdin_in, _disp = toolrun.build_argv(cfg["kind"], binary, pat, tpl, small.path,
                                                       pattern_file=pf, template_file=tf)
             out = os.path.join(work, "to-%s-%s" % (tid, c["case"]))
-            rc, err = toolrun.untimed_pass(argv, stdin_in, small.path, out, tool_core, 120)
+            rc, err, _pk = toolrun.untimed_pass(argv, stdin_in, small.path, out, tool_core, 120)
             e = exp[(c["case"], "acc-small")]
             got = hashlib.sha256(open(out, "rb").read()).hexdigest() if os.path.exists(out) else None
             size = os.path.getsize(out) if os.path.exists(out) else -1
@@ -923,6 +923,22 @@ def _tools_tier(check, sb, small, cases, work, _ad, harness, store, substrun):
     check("subst tools sink (sabotage): a `| wc -c` count of 7 against the validated %s bytes "
           "FAILS BY NAME (SINK MISMATCH, nothing written)" % exp[("1", "acc-small")]["out_bytes"],
           "SINK MISMATCH" in msg and "counted 7 bytes" in msg, msg[:200])
+
+    # the rusage floor: wait4's ru_maxrss of a posix_spawn child is floored at the
+    # harness's own RSS (mm shared until exec), so a streaming tool reads ~the
+    # harness's size; the untimed pass's polled VmHWM does not
+    c3 = cases[2]
+    ir3 = st.parse(open(os.path.join(SUBST, "cases", c3["dir"], "TEMPLATE.neutral"), "rb").read())
+    pat3 = open(os.path.join(SUBST, "cases", c3["dir"], "PATTERN.rx"), "rb").read()[:-1]
+    argv3, sin3, _d = toolrun.build_argv("sed", ad.binary_path("sed-ere"), pat3, st.render(ir3, "sed"), small.path)
+    _rc, _e, peak = toolrun.untimed_pass(argv3, sin3, small.path, os.path.join(work, "to-peak"), 15, 120)
+    harness_rss_kb = int(next(l.split()[1] for l in open("/proc/self/status") if l.startswith("VmHWM:")))
+    t3 = toolrun.timed_pipeline(argv3, sin3, small.path, 15, 14, 120)
+    check("subst tools rusage: sed's untimed-pass peak RSS (polled VmHWM, %s KB) is far below "
+          "the harness's own (%d KB) while `wait4`'s ru_maxrss (%d KB) is floored at it - why "
+          "process.maxrss_kb takes the polled value" % (peak, harness_rss_kb, t3["maxrss_kb"]),
+          peak is not None and peak < harness_rss_kb // 2 and t3["maxrss_kb"] >= harness_rss_kb // 2,
+          "%r %r %r" % (peak, harness_rss_kb, t3["maxrss_kb"]))
 
     # (e) the pins refuse by name
     ad, _cfg = _ad.resolve("sd-stdin")

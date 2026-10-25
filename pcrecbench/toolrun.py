@@ -276,9 +276,35 @@ def _watchdog(pids, seconds):
     return t, fired
 
 
+def _poll_hwm(pid, exe_real, stop, peaks):
+    """Poll /proc/PID/status VmHWM while the process is the TOOL (its
+    /proc/PID/exe is the tool's binary, i.e. after taskset's exec, so the
+    shared pre-exec mm is never read). Untimed pass only."""
+    while not stop.is_set():
+        try:
+            if os.path.realpath("/proc/%d/exe" % pid) == exe_real:
+                with open("/proc/%d/status" % pid) as f:
+                    for line in f:
+                        if line.startswith("VmHWM:"):
+                            peaks.append(int(line.split()[1]))
+                            break
+        except (OSError, ValueError):
+            pass
+        stop.wait(0.001)
+
+
 def untimed_pass(argv, stdin_is_input, input_path, out_path, core,
                  timeout=900):
-    """The correctness pass: `tool ... > out_path`, no sink. -> (rc, stderr)."""
+    """The correctness pass: `tool ... > out_path`, no sink. -> (rc, stderr,
+    peak_rss_kb_or_None).
+
+    The peak is the tool's own VmHWM polled from /proc while it runs. It
+    exists because `wait4`'s ru_maxrss cannot be used for a small tool: a
+    vfork/posix_spawn child shares the harness's mm until exec and the
+    kernel folds that mm's high-water mark into the child's signal struct, so
+    EVERY tool reads at least the harness's own RSS (measured: ~36 MB for
+    sed, perl, sd, rg alike). Polling is fine here because this pass is not
+    timed."""
     argv = _resolve(argv)
     err_path = out_path + ".err"
     in_fd = os.open(input_path if stdin_is_input else os.devnull, os.O_RDONLY)
@@ -291,9 +317,15 @@ def untimed_pass(argv, stdin_is_input, input_path, out_path, core,
             os.close(fd)
     timer, fired = _watchdog([pid], timeout)
     timer.start()
+    stop, peaks = threading.Event(), []
+    poller = threading.Thread(target=_poll_hwm, daemon=True, args=(
+        pid, os.path.realpath(argv[0]), stop, peaks))
+    poller.start()
     try:
         _, status, _ru = os.wait4(pid, 0)
     finally:
+        stop.set()
+        poller.join()
         timer.cancel()
     rc = _decode_status(status)
     with open(err_path, "rb") as f:
@@ -301,7 +333,7 @@ def untimed_pass(argv, stdin_is_input, input_path, out_path, core,
     os.unlink(err_path)
     if fired:
         rc = "timeout"
-    return rc, err
+    return rc, err, (max(peaks) if peaks else None)
 
 
 def timed_pipeline(argv, stdin_is_input, input_path, tool_core, sink_core,
