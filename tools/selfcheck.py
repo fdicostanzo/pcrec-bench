@@ -319,6 +319,8 @@ def check_driver_smokes():
             f.write("s-smoke\t%s\n" % subj)
 
         for engine, adapter in sorted(_ad.discover().items()):
+            if not adapter.has_driver:      # [B140] step 4: the TOOLS tier
+                continue
             tid = sorted(adapter.testees())[0]
             try:
                 adapter.prepare(tid, tmp)
@@ -2948,6 +2950,8 @@ def check_kb33_refusal_metadata_declared():
 
     failures, checked, captured = [], [], {}
     for name, adapter in sorted(adapters.items()):
+        if not adapter.has_driver:          # [B140] step 4: a tool never refuses a pattern at compile
+            continue
         tids = sorted(adapter.testees())
         if not tids:
             continue
@@ -14267,6 +14271,8 @@ def check_prime_flag():
 
         _dr._run_list_with_resume = spy
         for engine, adapter in sorted(_ad.discover().items()):
+            if not adapter.has_driver:      # [B140] step 4: the TOOLS tier
+                continue
             tid = sorted(adapter.testees())[0]
             try:
                 adapter.prepare(tid, tmp)
@@ -14524,6 +14530,8 @@ def check_utf8_find_all_advance():
             subject_id, path, length = "s-utf8", subj, len(subject)
 
         for engine, adapter in sorted(_ad.discover().items()):
+            if not adapter.has_driver:      # [B140] step 4: the TOOLS tier
+                continue
             tid = sorted(adapter.testees())[0]
             try:
                 adapter.prepare(tid, tmp)

@@ -71,6 +71,7 @@ def _tool_roots():
 
 class Adapter(_ad.Adapter):
     name = "tools"
+    has_driver = False          # no matcher driver: the generic driver sweeps skip it
 
     def __init__(self, directory):
         self.dir = directory

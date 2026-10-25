@@ -383,6 +383,10 @@ class Adapter:
     are found by `discover()`."""
 
     name = None
+    #: False for the TOOLS tier ([B140] step 4, testees/tools/): a command-line
+    #: tool has no matcher driver, so the generic per-adapter sweeps that call
+    #: `measure()` or expect a pattern to refuse at compile skip it.
+    has_driver = True
 
     def __init__(self, directory):
         self.dir = directory
