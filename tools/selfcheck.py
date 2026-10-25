@@ -12848,15 +12848,26 @@ def check_emit_size_port():
         bad("emit-size port", "no pcrec adapter")
         return
     mod = _pcrec_adapter_module()
-    pcrec = adapter.pin_binary()
+    # [B142] TWO binaries: the canonical pin (abi 84, whose size definition
+    # EXCLUDES the find-all iterator's scaffold -- the text port overcounts
+    # by exactly that, and the adapter reads pcrec's own line instead) and
+    # the BEFORE also_pin 6b2dbd3e (abi 76, where the port is byte-exact).
+    bins = [("pin", adapter.pin_binary())]
+    old_bin = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
+        adapter.pin_binary()))), "pcrec-6b2dbd3e", "build", "pcrec")
+    if os.path.isfile(old_bin):
+        bins.append(("6b2dbd3e", old_bin))
+    else:
+        bad("emit-size port: the abi-76 control build exists", old_bin)
     tmp = tempfile.mkdtemp(prefix="pcrecbench-emitsize-")
     try:
+      for bl, pcrec in bins:
         for i, (label, src, extra) in enumerate(EMIT_SIZE_WITNESSES):
             pattern = src[1] if src[0] == "literal" else _bench_pattern(src[0], src[1])
             forms = ((_ad.FORM_PLAIN, pattern),
                      (_ad.FORM_WHOLE_SUBJECT, _rec.whole_subject_text(pattern)))
             for form, text in forms:
-                d = os.path.join(tmp, "w%d-%s" % (i, form))
+                d = os.path.join(tmp, "%s-w%d-%s" % (bl, i, form))
                 os.makedirs(d, exist_ok=True)
                 art = os.path.join(d, "artifact.c")
                 argv = [pcrec, "-p", "rx", "--features", "all",
@@ -12876,9 +12887,29 @@ def check_emit_size_port():
                 pin_tot, pin_code = int(m.group(1)), int(m.group(2))
                 files = [art] + ([art[:-2] + ".h"] if os.path.exists(art[:-2] + ".h") else [])
                 port = mod.emit_size(files)
-                if port == (pin_tot, pin_code):
-                    raw = sum(os.path.getsize(f) for f in files)
-                    ok("emit-size port: %s / %s" % (label, form),
+                abi = mod.artifact_abi(files)
+                raw = sum(os.path.getsize(f) for f in files)
+                if abi is not None and abi >= mod.SCAFFOLD_ABI:
+                    # the scaffold-blind definition: the port overcounts by
+                    # the iterator scaffold -- code bytes, no prose/tables, so
+                    # the two deltas are EQUAL -- and the adapter's own
+                    # _emit_facts must return pcrec's numbers, not the port's
+                    d_t, d_c = port[0] - pin_tot, port[1] - pin_code
+                    facts, _ln = type(adapter)._emit_facts(
+                        files, proc.stderr or "")
+                    if d_t == d_c and d_t > 0 and (
+                            facts["emit_bytes"], facts["emit_code_bytes"]) \
+                            == (pin_tot, pin_code):
+                        ok("emit-size [%s abi %d]: %s / %s" % (bl, abi, label, form),
+                           "pin says %d / %d; the text port overcounts by "
+                           "%d B of iterator scaffold; _emit_facts returns "
+                           "the pin's numbers" % (pin_tot, pin_code, d_t))
+                    else:
+                        bad("emit-size [%s abi %d]: %s / %s" % (bl, abi, label, form),
+                            "pin %d / %d, port %d / %d, _emit_facts %r"
+                            % (pin_tot, pin_code, port[0], port[1], facts))
+                elif port == (pin_tot, pin_code):
+                    ok("emit-size port [%s abi %s]: %s / %s" % (bl, abi, label, form),
                        "pin says %d total / %d code; the port agrees "
                        "(raw file bytes %d, %d files)"
                        % (pin_tot, pin_code, raw, len(files)))

@@ -1359,6 +1359,50 @@ METADATA_DECL = {
                        "prints the identical digest for the same (query, "
                        "encoding) ([B115], inbox I-118 S2)",
     },
+    # -- [B142] (pin 9ae59f5d4, abi 77..84): THREE unconditional text-read
+    # stamps, `findings`' shape (a static string fixed at emit time, read off
+    # the emitted text the size port already opens; NO shim getter, NO driver
+    # line, so the shared driver binary does not change and one build still
+    # serves every pin). Each is stamped on EVERY artifact of both engines at
+    # its abi (MEASURED over the census, tools/selfcheck.py check_b142_stamps).
+    "compound": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_COMPOUND ([COMPOUND] B4, pcrec abi 77+), read "
+                  "from the emitted .c/.h text by TEXT_STAMP_RES "
+                  "(adapter.text_stamps()); no rx_info mirror",
+        "description": "whether the artifact is a COMPOUND (a pin-only "
+                       "pattern split into a controller and two bounded "
+                       "parts, compound.md): `none` (the plain artifact), "
+                       "a compound row's name (`split`), or `forced-off` "
+                       "(pcrec's harness-only lever; never set by this "
+                       "bench). No CLI deny flag exists; the "
+                       "`drop-compound` size-cap fallback is the only "
+                       "off-ramp",
+    },
+    "iter_retry": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_ITER_RETRY ([FINDALL-NEXT] I1, pcrec abi "
+                  "83/84), read from the emitted text by TEXT_STAMP_RES; no "
+                  "rx_info mirror",
+        "description": "how the find-all iterator `<prefix>_next` retries "
+                       "after an empty match at the iterator's start "
+                       "(match_api.md 6.3.13): `none`, `retry` or "
+                       "`retry-budgeted` (the abi-84 names; abi 83 spelled "
+                       "them dfa-root / vm-guard). The iterator is scaffold: "
+                       "this bench's protocol calls `_search`/`_match`, "
+                       "never `_next`",
+    },
+    "measures": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_MEASURES ([MEASURE-SET] M0, pcrec abi 82+) and "
+                  "its rx_info.measures mirror, read from the emitted text "
+                  "by TEXT_STAMP_RES",
+        "description": "the measurement set a compile consulted, as "
+                       "`id@rev:digest16`, or the empty string when none "
+                       "was read (measures.md 4). `\"\"` on every artifact "
+                       "at this pin: no memfn-kit row reads a set key "
+                       "before the kit's B4",
+    },
     # -- [B32] THE SCAN-EDGE COUNT: the covariate the full-suite regression
     # family needs. `dfa_scan_edge` is one token per artifact and cannot
     # separate a pattern with eight edges from one with a single edge;
@@ -2601,6 +2645,26 @@ def emit_size(paths):
 #: one would falsely suggest two artifacts differ.
 EMIT_COMMENTS_FLAG = "-fcomments"
 
+#: [B142] THE SIZE PROBE: a second fixed protocol token (the `-fcomments`
+#: shape -- never in `cfg["flags"]`, invisible in testee_id / build_flags),
+#: `--warn-emit-bytes=1`, makes pcrec print its OWN two size numbers on every
+#: compile ("warn, never refuse": no answer, no byte of the artifact moves).
+#: WHY (pin 9ae59f5d4, abi 83/84 [FINDALL-NEXT]): pcrec's emit-size
+#: definition now EXCLUDES the find-all iterator's scaffold (StrBuf.scaf_*,
+#: src/core/sb.c `pcrec_sb_size_decide`), and the scaffold carries no marker
+#: in the emitted text -- twin names' second `_`, forwarder bodies, the
+#: iterator's functions are counted out at their EMISSION site -- so a text
+#: port over the emitted files overcounts by 5,728 B (a plain DFA) up to
+#: ~8.6 KB, MEASURED over 400 artifacts (docs/dev/measurements/
+#: 2026-10-25-b142prep-census.txt). The numbers the caps enforce are
+#: therefore read from pcrec's own line; the port (`emit_size`) stays the
+#: byte-exact control for artifacts that predate the scaffold (abi < 83).
+#: The advisory line itself is recorded (`warned_emit_bytes`, the note) only
+#: where the DEFAULT threshold would have fired it.
+WARN_PROBE_FLAG = "--warn-emit-bytes=1"
+WARN_EMIT_DEFAULT = 250000      # list_limits.tsv PCREC_DEFAULT_WARN_EMIT_BYTES
+SCAFFOLD_ABI = 83               # first abi whose size definition is scaffold-blind
+
 #: [B32] THE SCAN-EDGE MARKER. pcrec's emitter writes one comment block
 #: beside every scan edge it emits -- once per edge per MACHINE, which its
 #: own comment bounds at twelve per artifact (src/gen/emit_dfa.c,
@@ -2655,6 +2719,21 @@ _C_DEF_RE = re.compile(rb"^[A-Za-z_][^;]*?\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 SCAN_EDGE_SEARCH_FNS = ("search", "prefilter")
 SCAN_EDGE_MATCH_FNS = ("match",)
 
+#: [B142] (pin 9ae59f5d4, abi 83/84, [FINDALL-NEXT]): two MORE functions
+#: carry the marker, MEASURED over the 1,468-row census (every bench pattern
+#: x {plain, whole} x {caps, nocaps}, `-fcomments`): `<prefix>__find`
+#: (18 markers, utf8 only: abi 83 moves `_search`'s body into this static
+#: twin where the entry's caller-position prologue writes anything -- a UTF
+#: check or an encoding start guard -- and `_search` calls it, so its edges
+#: ARE the search band's and join SCAN_EDGE_SEARCH_FNS as `_find`), and
+#: `<prefix>__retry` (31 markers: the find-all iterator's notempty-rooted
+#: retry machine, called by `_next`/`_next_n` only -- NEVER by the
+#: `_search`/`_match` entries this bench's protocol times -- so it is
+#: scaffold and is counted in NEITHER column).
+SCAN_EDGE_SEARCH_FNS = SCAN_EDGE_SEARCH_FNS + ("_find",)
+SCAN_EDGE_ITER_FNS = ("_retry",)
+_ATTR_RE = re.compile(rb"__attribute__\(\(.*?\)\)")
+
 
 def scan_edge_counts(paths, prefix=ARTIFACT_PREFIX):
     """-> (scan_edges, scan_edges_match) over the emitted files ([B32]).
@@ -2689,7 +2768,7 @@ def scan_edge_counts(paths, prefix=ARTIFACT_PREFIX):
                     if ln.rstrip().endswith(b";"):
                         fn = None                 # a declaration names none
                     else:
-                        m = _C_DEF_RE.match(ln)
+                        m = _C_DEF_RE.match(_ATTR_RE.sub(b"", ln))
                         fn = (m.group(1).decode("ascii", "replace")
                               if m else None)
                 if SCAN_EDGE_MARKER not in ln:
@@ -2701,6 +2780,8 @@ def scan_edge_counts(paths, prefix=ARTIFACT_PREFIX):
                     search += 1
                 elif base in SCAN_EDGE_MATCH_FNS:
                     match += 1
+                elif base in SCAN_EDGE_ITER_FNS:
+                    continue                      # iterator scaffold ([B142])
                 else:
                     raise _ad.AdapterError(
                         "%s carries a %s marker inside %s, which is neither "
@@ -2760,17 +2841,72 @@ def findings_stamp(emit_files):
     return values.pop()
 
 
-def parse_warn_line(stderr_text):
+#: [B142] the three text-read stamps (see METADATA_DECL "compound" ..):
+#: declared name -> macro suffix. Each is `#define RX_<SUFFIX> "<value>"`.
+TEXT_STAMPS = {"compound": "COMPOUND", "iter_retry": "ITER_RETRY",
+               "measures": "MEASURES"}
+TEXT_STAMP_RES = {
+    k: re.compile(r'^#define\s+%s_%s\s+"([^"]*)"'
+                  % (re.escape(ARTIFACT_PREFIX.upper()), v))
+    for k, v in TEXT_STAMPS.items()}
+
+
+def text_stamps(emit_files):
+    """-> {declared name: value} for each [B142] text-read stamp the emitted
+    files carry; a stamp an artifact (abi < its introduction) lacks is simply
+    absent. Refuses two disagreeing values for one stamp, like
+    `findings_stamp`."""
+    seen = {}
+    for path in emit_files:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            for line in f:
+                if not line.startswith("#define"):
+                    continue
+                for k, rx in TEXT_STAMP_RES.items():
+                    m = rx.match(line)
+                    if m:
+                        seen.setdefault(k, set()).add(m.group(1))
+    out = {}
+    for k, vals in seen.items():
+        if len(vals) > 1:
+            raise _ad.AdapterError(
+                "the emitted files disagree about <PREFIX>_%s: %s"
+                % (TEXT_STAMPS[k], ", ".join(sorted(vals))))
+        out[k] = next(iter(vals))
+    return out
+
+
+_ABI_INIT_RE = re.compile(r"^\s*\.abi\s*=\s*(\d+)\s*,", re.M)
+
+
+def artifact_abi(emit_files):
+    """-> the emitted artifact's rx_info.abi (its `.abi = N,` initializer),
+    or None when absent ([B142]: which size definition applies)."""
+    for path in emit_files:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            m = _ABI_INIT_RE.search(f.read())
+        if m:
+            return int(m.group(1))
+    return None
+
+
+def parse_warn_line(stderr_text, last=False):
     """-> (warned_total, warned_code, threshold, line) for pcrec's advisory
     large-artifact warning on `stderr_text`, or None when it did not
     fire. The warning is NOT a failure (limits.md 8: exit code unchanged,
     nothing emitted differently); it is a fact about the artifact and is
-    recorded as one."""
+    recorded as one. `last=True` ([B142]) takes the LAST such line: under
+    the size probe every attempt of a size-cap ladder prints one, and the
+    artifact that shipped is the final attempt's."""
+    found = None
     for line in (stderr_text or "").splitlines():
         m = WARN_RE.search(line)
         if m:
-            return int(m.group(1)), int(m.group(2)), int(m.group(3)), line.strip()
-    return None
+            found = (int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                     line.strip())
+            if not last:
+                return found
+    return found
 
 
 # ------------------------------------------------ the compilee toolchain axis
@@ -4476,7 +4612,7 @@ class Adapter(_ad.Adapter):
             # 0x93). pcrec then correctly matched the corrupted pattern,
             # which read as a wrong answer on the bench's raw-high-byte
             # witnesses (the capability first sample's F4, O-31).
-            argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG]
+            argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG, WARN_PROBE_FLAG]
                     + list(cfg.get("flags", []))
                     + ["-o", art_c, "--pattern"] + [bytes(pattern)])
             t0 = time.monotonic()
@@ -4612,6 +4748,19 @@ class Adapter(_ad.Adapter):
         that is not the one the caps enforce -- an AdapterError, never a
         number."""
         tot, code = emit_size(emit_files)
+        # [B142] pcrec's own numbers, from the size probe (WARN_PROBE_FLAG).
+        probe = parse_warn_line(stderr_text, last=True)
+        abi = artifact_abi(emit_files)
+        if probe is not None and abi is not None and abi >= SCAFFOLD_ABI:
+            tot, code = probe[0], probe[1]
+        scaffold_blind = abi is not None and abi >= SCAFFOLD_ABI
+        if scaffold_blind and probe is None:
+            raise _ad.AdapterError(
+                "pcrec printed no --warn-emit-bytes line under the size "
+                "probe (%s) for an abi-%d artifact, whose size definition "
+                "the emitted text cannot reproduce (the iterator scaffold "
+                "is uncounted at its emission site): %s"
+                % (WARN_PROBE_FLAG, abi, ", ".join(emit_files)))
         # [B32] the scan-edge covariate, on EVERY compile row that reached
         # emission: 0 is a real value (a forced-VM artifact, a
         # `-fno-scan-edge` build, a scan with no collapsible run), which is
@@ -4631,11 +4780,14 @@ class Adapter(_ad.Adapter):
         fnd = findings_stamp(emit_files)
         if fnd is not None:
             pairs["findings"] = fnd
-        warn = parse_warn_line(stderr_text)
+        # [B142] the abi 77/83/82 stamps, text-read (absent on an older
+        # artifact -- a pcrec-local binary below the pin).
+        pairs.update(text_stamps(emit_files))
+        warn = probe
         if warn is None:
             return pairs, None
         w_tot, w_code, _thr, line = warn
-        if (w_tot, w_code) != (tot, code):
+        if not scaffold_blind and (w_tot, w_code) != (tot, code):
             raise _ad.AdapterError(
                 "pcrec's --warn-emit-bytes line says the artifact is %d "
                 "bytes (%d of code) but this adapter's port of pcrec's "
@@ -4643,6 +4795,10 @@ class Adapter(_ad.Adapter):
                 "must agree byte for byte (the same definition, src/core/"
                 "compile.c); re-derive emit_size() against the pin."
                 % (w_tot, w_code, tot, code, ", ".join(emit_files)))
+        if w_tot <= WARN_EMIT_DEFAULT:
+            return pairs, None            # the default would not have fired
+        line = line.replace("--warn-emit-bytes=%d." % _thr,
+                            "--warn-emit-bytes=%d." % WARN_EMIT_DEFAULT)
         pairs["warned_emit_bytes"] = w_tot
         return pairs, line
 

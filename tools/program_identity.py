@@ -395,6 +395,129 @@ def program_sha256_of_files(c_path, h_path=None):
     return program_sha256_of_text(SEP.join(parts))
 
 
+# ---------------------------------------------------------------------------
+# NORMALIZATION v3 -- THE CROSS-ABI-77..84 CENSUS NORMALIZATION ([B142])
+#
+# WHY. v2 reads EVERY artifact `changed` across 6b2dbd3e (abi 76) ->
+# 9ae59f5d4 (abi 84): pcrec's find-all iterator (`<prefix>_next`,
+# `_next_n`, abi 83/84, [FINDALL-NEXT]) is emitted into every artifact as
+# scaffold the bench protocol never calls, and the same event turned every
+# exported residual entry into a forwarder to a static twin
+# (`<prefix>__next_pos`, `__valid_upto`, `__find`). MEASURED over the b142
+# census (1,468 rows): v2 `identical` = 0 of 1,375 compiled-both rows. v3
+# is the census-side answer ([B142]; the RECORD field `program_sha256`
+# stays v2 -- a record-field change is a schema/BD13 ruling, OWED).
+#
+# THE RULES (applied to v2's output, ONE artifact at a time):
+#   1. The six-line `__has_attribute(noclone)` prelude is dropped wherever
+#      it stands (an attribute annotation, v2's rule-1 reasoning).
+#   2. Top-level CHUNKS (a function definition, a table, a directive) are
+#      parsed by brace depth. Chunks of the find-all ITERATOR SCAFFOLD are
+#      dropped by name: `<p>__enter`, `__bind_checks`, `__step`,
+#      `__step_own*`, `__one`, `__one_call`, `__one_local`, `__retry*`,
+#      `__match_notempty*`, `<p>_next`, `<p>_next_n`, `<p>_iter_buffers*`,
+#      `<p>_retry_*` (the retry machine's helpers), the `rx_retry_state`
+#      typedef, and the header declarations of `_next`/`_next_n`/
+#      `_iter_buffers`/`_valid_upto`.
+#   3. TWIN FOLD: an exported `<p>_X` whose body ends `return <p>__Y(...);`
+#      with ONE static twin `<p>__Y` in the file is replaced by its head +
+#      its own prologue lines + the twin's body, and the twin chunk is
+#      dropped. This undoes abi 83's forwarder split (`rx_search` ->
+#      `rx__find`, `rx_next_pos` -> `rx__next_pos`) so the folded function
+#      equals the abi-76 one.
+#   4. The remaining chunks are SORTED (order of top-level items is not a
+#      program property; `#define rx_VALID_LB` moved, for instance).
+# Everything else is compared byte for byte. MEASURED at [B142]: v3 reads
+# 386 of 400 randomly sampled compiled-both rows identical across the
+# pin pair; the 14 others are program changes (K128/K129 and the anchor
+# fold, attributed in docs/dev/lanes/b142prep_report.md).
+# ---------------------------------------------------------------------------
+
+NORMALIZATION_V3 = "v3"
+_V3_PRELUDE = ["#ifndef __has_attribute", "# define __has_attribute(x) 0",
+               "#endif", "#if __has_attribute(noclone)",
+               "__attribute__((noclone))", "#endif"]
+_V3_ATTR = re.compile(r"__attribute__\(\(.*?\)\)")
+_V3_HEADNAME = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
+_V3_SCAFFOLD = re.compile(
+    r"^_(?:_enter|_bind_checks|_step|_step_own\w*|_one|_one_call|_one_local"
+    r"|_retry\w*|_match_notempty\w*|next|next_n|iter_buffers\w*|retry_\w+)$")
+_V3_SCAFFOLD_LINE = re.compile(
+    r"^(?:typedef \w+(?: \w+)? rx_retry_state;"
+    r"|static inline void rx_iter_buffers|int rx_next\(|size_t rx_next_n\("
+    r"|size_t rx_valid_upto\()")
+
+
+def _v3_chunks(lines):
+    chunks, cur, depth = [], [], 0
+    for ln in lines:
+        cur.append(ln)
+        depth += ln.count("{") - ln.count("}")
+        if depth == 0 and not ln.endswith(",") and (
+                ln.endswith(("}", "};", ";")) or ln.startswith("#")):
+            chunks.append(cur)
+            cur = []
+    if cur:
+        chunks.append(cur)
+    return chunks
+
+
+def _v3_name(chunk):
+    for ln in chunk:
+        if ln.startswith("#"):
+            continue
+        m = _V3_HEADNAME.search(_V3_ATTR.sub("", ln))
+        if m:
+            return m.group(1)
+    return None
+
+
+def normalize_v3(text, prefix="rx"):
+    """-> the v3-normalized text of ONE artifact; rules in the block comment
+    above. Deterministic; `prefix` is the artifact's symbol prefix."""
+    lines = normalize_one(text).split("\n")
+    out, i, n = [], 0, len(_V3_PRELUDE)
+    while i < len(lines):                                       # rule 1
+        if lines[i:i + n] == _V3_PRELUDE:
+            i += n
+            continue
+        out.append(lines[i])
+        i += 1
+    chunks = _v3_chunks([ln for ln in out if ln != ""])
+    named = [(c, _v3_name(c)) for c in chunks]
+    twins = {}
+    for c, nm in named:
+        if (nm and nm.startswith(prefix + "__")
+                and not _V3_SCAFFOLD.match(nm[len(prefix):])):
+            twins.setdefault(nm, []).append(c)
+    ret = re.compile(r"return (%s__\w+)\(.*\);$" % re.escape(prefix))
+    res, folded = [], set()
+    for c, nm in named:                                         # rules 2, 3
+        if nm and nm.startswith(prefix) and _V3_SCAFFOLD.match(nm[len(prefix):]):
+            continue
+        if nm and nm.startswith(prefix + "_") and not nm.startswith(prefix + "__"):
+            rets = [(k, ret.match(ln)) for k, ln in enumerate(c)]
+            rets = [(k, m.group(1)) for k, m in rets if m]
+            if rets and rets[-1][1] in twins and len(twins[rets[-1][1]]) == 1 \
+                    and rets[-1][1] not in folded and "{" in c:
+                k0, tw = rets[-1]
+                twc = twins[tw][0]
+                ti = twc.index("{")
+                bi = c.index("{")
+                res.append(c[:bi + 1] + c[bi + 1:k0] + twc[ti + 1:-1] + ["}"])
+                folded.add(tw)
+                continue
+        res.append(c)
+    final = ["\n".join(c) for c in res if _v3_name(c) not in folded]
+    final = [x for x in final if not _V3_SCAFFOLD_LINE.match(x)]  # decls
+    return "\n".join(sorted(final)) + "\n"
+
+
+def program_sha256_v3_of_text(text, prefix="rx"):
+    """The v3 identity hash of ONE artifact's `.c` + SEP + `.h` text."""
+    return sha(normalize_v3(text, prefix))
+
+
 def pin_binary(pin):
     proc = subprocess.run([PIN_SH, "--path", pin], capture_output=True,
                           text=True, env=C_ENV, timeout=120)
