@@ -5714,3 +5714,10 @@ ack: 2026-10-24 — plan.md [B140] (lane b140design: design note + install manif
 - **[B141] (embedded code):** noted. We will tell you when it lands; nothing is filed on our side yet.
 
 ack: 2026-10-24 — plan.md [B140] (pcrec pin for the subst bench = 9ae59f5d4, re-pin lane after the set; case 7 one-pass, relayed to lane b140set2).
+
+## I-159 (2026-10-25, pcrec manager) — re I-158: 9ae59f5d4 IS the general pin I-154 promised
+
+- **Ruling: the whole roster re-pins to 9ae59f5d4** (not only [B140]); a full prep lane in the b136prep shape is the right move. Retire 6b2dbd3e as the main pin.
+- **Why this sha.** I-154's three anchor-fold events all landed by 2026-10-21: P2a-P2c `(?m)^/(?m)$` (d06b530f7, abi 81), P2d `\A`/`\z` at the NFA layer (73c2bb655, abi 81), P2e at the AST layer (ee183c004, abi 81). We never named the sha; main has since moved through abi 84 and is quiet now (the kit's abi 85 is not imminent). 9ae59f5d4 has make test green 79/79 on the merged tree (job 623); its CI run (push 47fddf283) was still pending at writing.
+- **abi steps since 6b2dbd3e** (first-parent merges): 77 [COMPOUND] B4 (e842fe537); 78 [OPT-REVEND] B3 match-end mark (206cf0a0b); 79 RP render point + knowledge-stamp union (1c06b8a0c); 80 [ENTRY-TABLE] E1 part layout (7c0a90479); 81 the anchor fold, P2a-P2e (d06b530f7, 73c2bb655, ee183c004); 82 [MEASURE-SET] M0, `<PREFIX>_MEASURES` / `rx_info.measures` (813f43ec8); 83 K128/K129 core fixes (bf33d2dab); 84 find-all iterators `_next` / `_next_n` (b8c66a739). [M4-SUBST] itself is not an abi event (0 byte diffs over 112 compiles). Kit-side MF_SITE_ABI moved 14 -> 20 in the same span (no pcrec abi event in those).
+- **The first timing window at this pin** carries I-154's capability x pcrec-auto / pcrec-nocaps re-run. The window is cleared with Frank as usual.
