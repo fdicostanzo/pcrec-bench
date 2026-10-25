@@ -2111,6 +2111,25 @@ METADATA_DECL = {
     },
 }
 
+#: [B142] follow-up (b142fix): the MACHINE-level stamps whose declared value
+#: set is a closed enum and which read the token `compound` on a COMPOUND
+#: artifact (pcrec abi 77, [COMPOUND] B4; docs/spec/match_api.md 6.3.12's
+#: "machine (string)" row, src/gen/stamp_kinds.c SK_MACHINE_STR). A compound
+#: controller is no machine, so these take the defined compound value and the
+#: parts keep their own under `<p>__f_`/`<p>__q_`. Free-string pairs
+#: (COMPOUND_MACHINE_STRINGS) carry no value list, so they need no
+#: declaration change; the two counts (COMPOUND_MACHINE_COUNTS) read -1.
+#: The VM's own string stamps are in the same catalogue row but are VM-only
+#: and a compound shell is a DFA artifact, so none reaches a record.
+COMPOUND_MACHINE_ENUMS = ("dfa_scan", "dfa_prefilter", "dfa_scan_edge",
+                          "dfa_start", "dfa_match", "dfa_table", "req_why",
+                          "vm_start_scan")
+COMPOUND_MACHINE_STRINGS = ("dfa_prefilter_offsets", "end_window",
+                            "req_handoff")
+COMPOUND_MACHINE_COUNTS = ("dfa_uniform_folds", "run_words")
+for _k in COMPOUND_MACHINE_ENUMS:
+    METADATA_DECL[_k]["values"] = list(METADATA_DECL[_k]["values"]) + ["compound"]
+
 # The bit VALUES, from pcrec docs/spec/match_api.md 2 (the emitted
 # PCREC_RX_ABI_H block). record_schema.md 7 rule 3: a `mask` value is an
 # ARRAY OF BIT NAMES, never the integer -- the reporter must not need pcrec's
@@ -2502,6 +2521,9 @@ REGISTRY_OUTCOME_VALUES = {
     # and the provably-empty body are not candidates the selector walks.
     "dfa_scan": {"attempt", "empty"},
 }
+# [B142] follow-up: `compound` is an outcome no candidate list carries.
+for _k in COMPOUND_MACHINE_ENUMS:
+    REGISTRY_OUTCOME_VALUES.setdefault(_k, set()).add("compound")
 
 #: [B135] The environment variable that selects one of configs.toml's
 #: `also_pins` for a process (`Adapter.pin`). `scripts/run_window.sh` sets it
@@ -4123,6 +4145,32 @@ def registry_check(rows=None):
     return problems
 
 
+def check_compound_iff(meta):
+    """[B142] follow-up (b142fix) THE COMPOUND IFF. A route-family stamp
+    reads the token `compound` (a count: -1) IFF `<PREFIX>_COMPOUND` names a
+    compound row (anything but `none` / `forced-off`), and on a compound
+    EVERY such stamp that is present reads it (match_api.md 6.3.12;
+    src/gen/stamp_kinds.c). A `compound` on a plain artifact, or a machine
+    value on a compound, is a compiler/catalogue bug, not a measurement.
+    Raises AdapterError by name; returns None."""
+    cmp_ = meta.get("compound")
+    is_cmp = cmp_ not in (None, "none", "forced-off")
+    for f in COMPOUND_MACHINE_ENUMS + COMPOUND_MACHINE_STRINGS:
+        v = meta.get(f)
+        if v is not None and is_cmp != (v == "compound"):
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_COMPOUND %r but %s %r -- a "
+                "route-family stamp reads `compound` IFF the artifact is a "
+                "compound (match_api.md 6.3.12)." % (cmp_, f, v))
+    for f in COMPOUND_MACHINE_COUNTS:
+        v = meta.get(f)
+        if v is not None and is_cmp != (v == -1):
+            raise _ad.AdapterError(
+                "pcrec artifact stamps <PREFIX>_COMPOUND %r but %s %r -- a "
+                "machine-level count reads -1 IFF the artifact is a "
+                "compound (match_api.md 6.3.12)." % (cmp_, f, v))
+
+
 def _find_repo_beside(start):
     """The repository a binary sits in, or None: walk UP from `start` to a
     directory holding `.git` (a FILE in a worktree, a directory in a main
@@ -5039,6 +5087,10 @@ class Adapter(_ad.Adapter):
             with no mirror and no neighbour to imply, checked by scope
             here (`vm` since 23) and by value there.
 
+        [B142] follow-up (b142fix) adds 13: the compound iff -- a route-family
+        stamp reads `compound` (counts -1) IFF `<PREFIX>_COMPOUND` is a
+        compound row (check_compound_iff).
+
         [B84] (pin 6ef76820, abi 31, [OPT-PRECHECK-ADMIT]) added one more:
 
         12. `req_why` is `"none"` IFF `req_byte` itself reads `"none"` --
@@ -5201,6 +5253,11 @@ class Adapter(_ad.Adapter):
                 "a framed artifact takes `plain` whatever is asked (gcc "
                 "refuses always_inline on a function containing a computed "
                 "goto)." % (shape,))
+
+        # 13. ([B142] follow-up, b142fix) THE COMPOUND IFF, see
+        #     check_compound_iff (a module function so a control can call
+        #     it on a planted dict without an artifact).
+        check_compound_iff(meta)
 
         # 6. ([B18], [OPT-K]) `dfa_prefilter_offsets` is "none" IFF
         #    `dfa_prefilter` is not an offset-set value (6.3's iff, both

@@ -12885,6 +12885,56 @@ def check_b142_stamps():
             (ok if ans == wantans else bad)("b142 abi 77: the compound compiles through the adapter and answers right through the driver", str(ans))
         else:
             bad("b142 abi 77: the compound compiles through the adapter", "%s %s" % (cr.outcome, cr.diagnostic))
+        # -- b142fix: the compound's RECORD VALUES validate (declared sets) --
+        # The first window at 9ae59f5d4 was refused by validate.py on the
+        # compound's `compound` tokens: METADATA_DECL's closed value lists
+        # never gained them. Validate the real compound's engine_metadata
+        # through the validator's own X15 check, then the controls.
+        sys.path.insert(0, os.path.join(ROOT, "schema"))
+        import validate as _val
+        decl = adapter.describe("pcrec-auto", tid_tmp)["engine_metadata_declaration"]
+
+        def x15(meta):
+            probs = []
+            for k, v in meta.items():
+                _val.RecordValidator._check_metadata(probs.append, "b142fix", 1, k, v, decl, "compile")
+            return [str(q) for q in probs]
+        if cr.outcome == "compiled":
+            pr = x15(cr.engine_metadata)
+            on_cmp = sorted(k for k, v in cr.engine_metadata.items() if v == "compound")
+            (ok if not pr and len(on_cmp) >= 8 else bad)(
+                "b142fix: the real compound's compile-row metadata validates (X15), %d fields read `compound`" % len(on_cmp),
+                "%s %s" % (on_cmp, pr[:3]))
+            try:
+                mod.check_compound_iff(cr.engine_metadata)
+                ok("b142fix: the compound iff accepts the real compound", "")
+            except _ad.AdapterError as e:
+                bad("b142fix: the compound iff accepts the real compound", str(e))
+            crp = adapter.compile("pcrec-auto", "b142fix-plain", b"abc", {}, 1, tid_tmp).get(_ad.FORM_PLAIN)
+            if crp.outcome == "compiled":
+                pm = dict(crp.engine_metadata)
+                (ok if not x15(pm) else bad)("b142fix: control, a plain pattern's metadata validates", "")
+                # the declared sets are per FIELD, not per pattern, so a planted
+                # `compound` on a plain artifact passes X15 by design; the
+                # adapter's iff is what refuses it (below).
+                plant = dict(pm, dfa_scan="compound")
+                for label, m2 in (("plain artifact with dfa_scan=compound", plant),
+                                  ("plain artifact with dfa_uniform_folds=-1", dict(pm, dfa_uniform_folds=-1)),
+                                  ("compound with a machine dfa_scan",
+                                   dict(cr.engine_metadata, dfa_scan="unanchored")),
+                                  ("compound with a machine req_why",
+                                   dict(cr.engine_metadata, req_why="none"))):
+                    try:
+                        mod.check_compound_iff(m2)
+                        bad("b142fix: control, the iff refuses %s" % label, "accepted")
+                    except _ad.AdapterError:
+                        ok("b142fix: control, the iff refuses %s BY NAME" % label, "")
+                # the non-route enums must still exclude `compound`
+                nroute = [k for k, d in decl.items() if d.get("type") == "enum"
+                          and k not in mod.COMPOUND_MACHINE_ENUMS and "compound" in (d.get("values") or [])]
+                (ok if not nroute else bad)("b142fix: no other enum declares `compound`", str(nroute))
+            else:
+                bad("b142fix: control pattern compiles", crp.diagnostic)
         # -- abi 79: the knowledge-stamp union ------------------------------
         a1, _e = emit(new, ["-e", "utf8", "-fno-req-byte"], b"(\\p{Xwd})x")
         a0, _e = emit(old, ["-e", "utf8", "-fno-req-byte"], b"(\\p{Xwd})x")
