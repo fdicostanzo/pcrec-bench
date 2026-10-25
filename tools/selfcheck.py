@@ -13381,7 +13381,8 @@ def check_abi_floor_refusal():
         # The artifact's own .h sits beside the original; both .c files are
         # in `tmp`, so one -I serves both.
         drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
-                           os.path.join(tmp, "pcrec_driver"), extra=["-ldl"])
+                           os.path.join(tmp, "pcrec_driver"), extra=["-ldl"],
+                           extra_sources=["timed_subst.c"])  # [B140]
         shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
         results = {}
         for arm, csrc in (("real", art), ("sabotaged", sabotaged),
