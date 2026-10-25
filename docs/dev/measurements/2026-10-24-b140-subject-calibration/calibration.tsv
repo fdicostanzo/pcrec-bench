@@ -1,0 +1,31 @@
+metric	reference	gen_first10k	gen_mid10k	dev_gen_first10k	dev_gen_mid10k	tolerance	verdict
+entropy_bits_per_byte	5.49409	5.44646	5.44997	-0.9%	-0.8%	+-5%	PASS
+gzip6_ratio	0.0999431	0.0972136	0.0964831	-2.7%	-3.5%	+-5%	PASS
+xz6_ratio	0.0549572	0.0574497	0.0571217	+4.5%	+3.9%	+-5%	PASS
+zstd3_ratio	0.0821828	0.0856649	0.085374	+4.2%	+3.9%	+-5%	PASS
+linelen_mean	237.079	223.869	223.572	-5.6%	-5.7%	+-10%	PASS
+linelen_p10	159	163	165	+2.5%	+3.8%	+-10%	PASS
+linelen_p50	232	219	219	-5.6%	-5.6%	+-10%	PASS
+linelen_p90	315	295	295	-6.3%	-6.3%	+-10%	PASS
+linelen_p99	445	426	392	-4.3%	-11.9%	+-10%	DEVIATION
+unparsed_lines	1	0	0	-100.0%	-100.0%	info	INFO
+unique_ips_per_10k	1753	1650	1598	-5.9%	-8.8%	+-10%	PASS
+unique_paths_per_10k	1498	1570	1541	+4.8%	+2.9%	+-10%	PASS
+unique_agents_per_10k	558	569	546	+2.0%	-2.2%	+-10%	PASS
+unique_referrers_per_10k	628	623	578	-0.8%	-8.0%	+-10%	PASS
+ip_run_mean	2.31834	2.54907	2.53872	+10.0%	+9.5%	+-10%	PASS
+status_200_frac	0.912591	0.9194	0.9117	+0.7%	-0.1%	+-10%	PASS
+status_304_frac	0.0445045	0.0388	0.0394	-12.8%	-11.5%	+-10% or +-0.3pp	DEVIATION
+status_404_frac	0.0213021	0.0202	0.0221	-5.2%	+3.7%	+-10% or +-0.3pp	PASS
+status_301_frac	0.0164016	0.0141	0.0146	-14.0%	-11.0%	+-10% or +-0.3pp	PASS
+case_1-literal_per_line	0.93	0.9152	0.8763	-1.6%	-5.8%	+-10%	PASS
+case_2-rare_per_line	0	0.0001	0.0001	n/a	n/a	by design	BY-DESIGN
+case_3-dense_per_line	25.1154	24.3476	24.2099	-3.1%	-3.6%	+-10%	PASS
+case_4-reorder_per_line	1	1	1	+0.0%	+0.0%	by design	BY-DESIGN
+case_5-mask-ipv4_per_line	1.0213	1.0203	1.0181	-0.1%	-0.3%	+-10%	PASS
+case_5b-mask-email_per_line	0.0198	0.0462	0.0483	+133.3%	+143.9%	by design	BY-DESIGN
+case_6-upper_per_line	0.5598	0.5768	0.5749	+3.0%	+2.7%	+-10%	PASS
+case_7-url-tld-fix_per_line	0	0.0144	0.0155	n/a	n/a	by design	BY-DESIGN
+case_7a-url-tld-value_per_line	0	0.0073	0.0066	n/a	n/a	by design	BY-DESIGN
+case_7b-url-tld-insert-qmark_per_line	0	0.0028	0.0047	n/a	n/a	by design	BY-DESIGN
+case_7c-url-tld-insert-amp_per_line	0	0.0043	0.0042	n/a	n/a	by design	BY-DESIGN
