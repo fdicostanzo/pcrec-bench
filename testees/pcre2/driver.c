@@ -96,6 +96,22 @@
  * assumed: docs/dev/measurements/2026-09-26-b94-pcre2-driver-validate-once.txt
  * (the "search regime" section).
  *
+ * `--mode subst` ([B140], docs/design/subst_bench_v1.md 3.1, 3.1.1, 3.1.2): a
+ * TRANSFORM, not a match -- pcre2_substitute(GLOBAL [| EXTENDED]) over the
+ * whole subject, the OUTPUT being the answer. Everything it adds is below the
+ * `run_subst()` banner and the timed call is timed_subst() in timed_subst.c
+ * (its own translation unit, BD16's discipline; timed.c is untouched). The
+ * protocol additions (pcrecbench/adapters.py): `--template FILE` (raw bytes,
+ * ALREADY PCRE2's dialect -- the harness rendered the neutral template),
+ * `--subst-flags extended|none`, `--bound ID=BYTES` (the output buffer
+ * capacity per subject: n + 8 * the oracle's substitution count + 1, the
+ * charter's engine-neutral bound), `--sizing bound|first` (the PCRE2
+ * OVERFLOW_LENGTH arm), `--out-dir DIR` (trial 1 only: the output is written
+ * to DIR/ID.out OUTSIDE the clock and announced on an `out` line). iters is
+ * always 1. --find-all, --prime, --dfa and --utf8 are REFUSED in this mode
+ * by name (they have no meaning for a transform). The existing modes are not
+ * touched: nothing in main() runs differently unless --mode is `subst`.
+ *
  * `--utf-always-check` is a DRIVER-ONLY flag (never part of the driver
  * PROTOCOL in pcrecbench/adapters.py, never passed by testees/pcre2/
  * adapter.py) that disables validate-once and restores the always-check
@@ -116,6 +132,7 @@
 #include <unistd.h>
 
 #include "timed.h"
+#include "timed_subst.h"
 
 /* ---- the hand-declared 8-bit ABI slice (pcrec tests/fuzz/pcre2_abi.h) ---- */
 
@@ -137,6 +154,10 @@ static void     (*p_match_data_free)(void *);
 static void     (*p_code_free)(void *);
 static int      (*p_get_error_message)(int, unsigned char *, size_t);
 static int      (*p_pattern_info)(const void *, uint32_t, void *);
+static int      (*p_substitute)(void *, const unsigned char *, size_t, size_t,
+                                uint32_t, void *, void *,
+                                const unsigned char *, size_t,
+                                unsigned char *, size_t *);   /* [B140] */
 
 #define PCRE2_ERROR_NOMATCH   (-1)
 #define PCRE2_UNSET           ((size_t)-1)
@@ -165,6 +186,10 @@ static int      (*p_pattern_info)(const void *, uint32_t, void *);
  * libpcre2 itself validated the whole subject. This file's header comment
  * has the full rule and the man pcre2api citations. */
 #define PCRE2_NO_UTF_CHECK    0x40000000u
+/* [B140] pcre2_substitute's option bits -- read straight off the installed
+ * /usr/include/pcre2.h (10.46), the same way the DFA error codes below are. */
+#define PCRE2_SUBSTITUTE_GLOBAL    0x00000100u
+#define PCRE2_SUBSTITUTE_EXTENDED  0x00000200u
 
 /* [verified] 2026-09-16 ([B42] L6a): this box now HAS libpcre2-dev (a side
  * finding of docs/dev/research/2026-09-12-b42-engine-landscape.md (3),
@@ -288,6 +313,142 @@ static subject *load_list(const char *path, size_t *n_out) {
     return v;
 }
 
+/* ------------------------------------------- run_subst: --mode subst ([B140]) */
+
+#define SUBST_MAX_BOUNDS 64
+
+struct subst_args {
+    const char *template_path, *out_dir;
+    int extended, size_first;
+    long subject_timeout, skip;
+    int nbounds;
+    char *bound_id[SUBST_MAX_BOUNDS];
+    size_t bound_cap[SUBST_MAX_BOUNDS];
+};
+
+static int subst_bound_for(const struct subst_args *a, const char *id, size_t *cap) {
+    for (int i = 0; i < a->nbounds; i++)
+        if (!strcmp(a->bound_id[i], id)) { *cap = a->bound_cap[i]; return 1; }
+    return 0;
+}
+
+/* Writes DIR/ID.out; 0 on success. Outside the clock, after the subject line. */
+static int write_out_file(const char *dir, const char *id,
+                          const unsigned char *buf, size_t n, char *path_out,
+                          size_t path_cap) {
+    snprintf(path_out, path_cap, "%s.out", id);
+    char full[4096];
+    snprintf(full, sizeof full, "%s/%s", dir, path_out);
+    FILE *f = fopen(full, "wb");
+    if (!f) return -1;
+    size_t w = n ? fwrite(buf, 1, n, f) : 0;
+    int rc = (w == n) ? 0 : -1;
+    if (fclose(f) != 0) rc = -1;
+    return rc;
+}
+
+/* noinline: sigsetjmp lives here, as in main(); see load_list's note. */
+__attribute__((noinline))
+static int run_subst(void *code, const char *list_path, const struct subst_args *a) {
+    size_t replen = 0;
+    unsigned char *repl = slurp(a->template_path, &replen);
+    if (!repl) { printf("error\tcannot read template %s\n", a->template_path); return 2; }
+    if (!p_substitute) { printf("error\tdlsym: pcre2_substitute_8 is missing\n"); return 2; }
+    size_t nsub = 0;
+    subject *subs = load_list(list_path, &nsub);
+    if (!subs) { printf("error\tcannot read subject list %s\n", list_path); return 2; }
+    void *md = p_match_data_create_from_pattern(code, NULL);
+    if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
+
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+
+    const uint32_t opts = PCRE2_SUBSTITUTE_GLOBAL
+                        | (a->extended ? PCRE2_SUBSTITUTE_EXTENDED : 0u);
+
+    for (size_t i = (size_t)a->skip; i < nsub; i++) {
+        subject *s = &subs[i];
+        size_t cap = 0;
+        if (!subst_bound_for(a, s->id, &cap)) {
+            printf("error\tno --bound for subject %s\n", s->id);
+            return 2;
+        }
+        /* The output arena: sized to the bound, then FAULTED IN before the
+         * clock (a fresh 400 MB mapping would otherwise charge its page
+         * faults to whichever call first writes it). */
+        unsigned char *out = malloc(cap ? cap : 1);
+        if (!out) { printf("error\tmalloc %zu failed\n", cap); return 2; }
+        memset(out, 0, cap ? cap : 1);
+
+        volatile int    rc_final = 0;
+        volatile size_t outlen = 0;
+        volatile double elapsed = 0.0;
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (a->subject_timeout > 0) alarm((unsigned)a->subject_timeout);
+            struct tsubst_in tin = {
+                .buf = s->buf, .len = s->len, .repl = repl, .repl_len = replen,
+                .opts = opts, .size_first = a->size_first, .iters = 1,
+                .code = code, .md = md, .out = out, .cap = cap,
+                .subst = p_substitute,
+            };
+            struct tsubst_out tout = { 0, 0 };
+            elapsed = timed_subst(&tin, &tout);
+            rc_final = tout.rc;
+            outlen = tout.outlen;
+            if (a->subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t1\t%.9f\t-\t-\n",
+                   s->id, (double)elapsed);
+            free(out);
+            continue;
+        }
+        if (rc_final < 0) {
+            char answerbuf[256];
+            unsigned char emsg[160];
+            int en = (rc_final > -1000)
+                   ? p_get_error_message(rc_final, emsg, sizeof emsg) : 0;
+            if (en > 0) {
+                for (int k = 0; emsg[k]; k++)
+                    if (emsg[k] == '\t' || emsg[k] == '\n') emsg[k] = ' ';
+                snprintf(answerbuf, sizeof answerbuf, "giveup:%d:%s",
+                         (int)rc_final, (char *)emsg);
+            } else if (rc_final == -1000) {
+                snprintf(answerbuf, sizeof answerbuf, "giveup:%d:size-first "
+                         "output larger than the bound-sized arena",
+                         (int)rc_final);
+            } else {
+                snprintf(answerbuf, sizeof answerbuf, "giveup:%d", (int)rc_final);
+            }
+            printf("subject\t%s\t%s\t-\t-\t0\t%zu\t1\t%.9f\t-\t-\n",
+                   s->id, answerbuf, s->len, (double)elapsed);
+            free(out);
+            continue;
+        }
+        printf("subject\t%s\t%s\t-\t-\t0\t%zu\t1\t%.9f\t%d\t-\n",
+               s->id, rc_final > 0 ? "match" : "nomatch", s->len,
+               (double)elapsed, (int)rc_final);
+        /* ---- outside the clock: announce (and on trial 1, write) the output */
+        char pathbuf[512] = "-";
+        if (a->out_dir &&
+            write_out_file(a->out_dir, s->id, out, outlen, pathbuf,
+                           sizeof pathbuf) != 0) {
+            printf("error\tcannot write %s/%s.out: %s\n", a->out_dir, s->id,
+                   strerror(errno));
+            return 2;
+        }
+        printf("out\t%s\t%s\t%zu\n", s->id, pathbuf, (size_t)outlen);
+        free(out);
+    }
+    p_match_data_free(md);
+    free(repl);
+    fflush(stdout);
+    return 0;
+}
+
 /* ------------------------------------------------------------------- main */
 
 static void emit_caps(size_t *ov, uint32_t npairs, char *out, size_t outcap) {
@@ -325,6 +486,8 @@ int main(int argc, char **argv) {
     volatile int utf_always_check = 0;
     int jit = 0, dfa = 0;
     uint32_t copts = 0;
+    struct subst_args sargs;                       /* [B140] --mode subst */
+    memset(&sargs, 0, sizeof sargs);
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -347,12 +510,43 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
         else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
         else if (!strcmp(a, "--utf-always-check"))          utf_always_check = 1;
+        /* [B140] the --mode subst arguments (header comment) */
+        else if (!strcmp(a, "--template") && i + 1 < argc)  sargs.template_path = argv[++i];
+        else if (!strcmp(a, "--out-dir") && i + 1 < argc)   sargs.out_dir = argv[++i];
+        else if (!strcmp(a, "--subst-flags") && i + 1 < argc) {
+            const char *v = argv[++i];
+            if (!strcmp(v, "extended")) sargs.extended = 1;
+            else if (strcmp(v, "none")) die("--subst-flags takes extended|none");
+        }
+        else if (!strcmp(a, "--sizing") && i + 1 < argc) {
+            const char *v = argv[++i];
+            if (!strcmp(v, "first")) sargs.size_first = 1;
+            else if (strcmp(v, "bound")) die("--sizing takes bound|first");
+        }
+        else if (!strcmp(a, "--bound") && i + 1 < argc) {
+            char *v = argv[++i], *eq = strchr(v, '=');
+            if (!eq || sargs.nbounds >= SUBST_MAX_BOUNDS)
+                die("--bound takes ID=BYTES (at most 64)");
+            *eq = 0;
+            sargs.bound_id[sargs.nbounds] = v;
+            sargs.bound_cap[sargs.nbounds++] = (size_t)strtoull(eq + 1, NULL, 10);
+        }
         else { printf("error\tunknown argument %s\n", a); return 2; }
     }
     if (dfa && jit) die("--dfa and --jit together: pcre2_dfa_match has no JIT "
                         "(man pcre2jit: \"It does not apply when the DFA "
                         "matching function is being used\")");
     if (!pattern_path) die("--pattern is required");
+    if (!strcmp(mode, "subst")) {
+        /* [B140]: a transform has no find-all loop, no prime pass, no DFA
+         * form and no find-all advance -- refused by name, never ignored. */
+        if (find_all) die("--find-all has no meaning in --mode subst");
+        if (prime) die("--prime has no meaning in --mode subst");
+        if (dfa) die("--dfa has no meaning in --mode subst (pcre2_substitute "
+                     "calls pcre2_match)");
+        if (utf8_adv) die("--utf8 has no meaning in --mode subst");
+        if (!sargs.template_path) die("--mode subst needs --template");
+    }
     if (iters < 1) iters = 1;
 
     setvbuf(stdout, NULL, _IOLBF, 0);
@@ -372,6 +566,7 @@ int main(int argc, char **argv) {
     p_code_free       = dlsym(lib, "pcre2_code_free_8");
     p_get_error_message = dlsym(lib, "pcre2_get_error_message_8");
     p_pattern_info = dlsym(lib, "pcre2_pattern_info_8");
+    p_substitute = dlsym(lib, "pcre2_substitute_8");          /* [B140] */
     if (!p_compile || !p_match || !p_get_ovector_pointer ||
         !p_match_data_create_from_pattern || !p_match_data_free ||
         !p_code_free || !p_get_error_message || !p_config ||
@@ -446,6 +641,12 @@ int main(int argc, char **argv) {
             printf("info\tjit_size_bytes\t%zu\n", jsize);
     }
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
+
+    if (!strcmp(mode, "subst")) {                    /* [B140] */
+        int rc = run_subst(code, list_path, &sargs);
+        p_code_free(code);
+        return rc;
+    }
 
     size_t nsub = 0;
     subject *subs = load_list(list_path, &nsub);

@@ -112,7 +112,7 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
 DRIVER_BUILDS = {}
 
 
-def build_driver(source, output, extra=None, cflags=None):
+def build_driver(source, output, extra=None, cflags=None, extra_sources=None):
     """Build a driver if the binary is missing or older than its source.
 
     Returns the binary path. `$CC` and `$CFLAGS` are honoured so the record's
@@ -129,7 +129,15 @@ def build_driver(source, output, extra=None, cflags=None):
         os.path.join(here, "timed.c")) else []
     deps = [source] + timed + [p for p in (os.path.join(here, "timed.h"),)
                                if os.path.exists(p)]
-    argv = [cc] + flags + ["-o", output, source] + timed + list(extra or [])
+    # [B140]: an adapter whose driver grows a second INSTRUMENT (a new mode's
+    # own timed function, in its own translation unit, `timed_subst.c`) names
+    # it here; it is linked after `timed.c` and joins the staleness check.
+    # Absent (every other adapter), the command line is what it always was.
+    more = [os.path.join(here, f) for f in (extra_sources or [])]
+    deps = deps + more + [os.path.splitext(m)[0] + ".h" for m in more
+                          if os.path.exists(os.path.splitext(m)[0] + ".h")]
+    argv = ([cc] + flags + ["-o", output, source] + timed + more
+            + list(extra or []))
     # Registered even on the cached path: the record must state how the
     # driver that produced its numbers was built, not only how one that
     # happened to be rebuilt this run was.
