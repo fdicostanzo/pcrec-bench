@@ -8,10 +8,10 @@ afternoon window and is already running or done; this is the night behind it.
 ```
 cd /home/pcrec/projects/pcrec-bench
 MACHINE_ID=ryzen7700x setsid scripts/boxq_window --name b142-part2 --prio 710 \
-    --cap 14520 --patience 86400 --idle-ok 600 --start-s 300 -- \
+    --cap 14520 --patience 86400 --idle-ok 1800 --start-s 300 -- \
     docs/dev/lanes/b142win2_chain.sh > /dev/null 2>&1 &
 MACHINE_ID=ryzen7700x setsid scripts/boxq_window --name b142-tier2 --prio 720 \
-    --cap 29700 --patience 86400 --idle-ok 600 --start-s 300 -- \
+    --cap 29700 --patience 86400 --idle-ok 1800 --start-s 300 -- \
     docs/dev/lanes/b142win3_chain.sh > /dev/null 2>&1 &
 ```
 
@@ -25,11 +25,7 @@ through the wrapper to the chain.
 | b142-part2 | 710 | b142win2_chain.sh (bench/subst at 9ae59f5d4) | ~3.1 h (186 min) | 14,520 s (186 x 1.3 = 242 min) |
 | b142-tier2 | 720 | b142win3_chain.sh (litrun, syntax, utf8, email, bounded, loglines x {auto, auto@6b2dbd3e}) | ~6.4 h (381 min) | 29,700 s (381 x 1.3 = 495 min) |
 
-`--idle-ok 600` is a GUESS at the argument's meaning ("the quiet gate":
-seconds of idle the box must show before the start). Neither the wrapper nor
-our docs define it (the key is pcrec's contract; boxq_window only forwards the
-number). Confirm the unit and meaning with pcrecdev1 before launching, or drop
-the flag (it is optional).
+`--idle-ok 1800`: pcrec's contract defines `idle_ok=SECONDS` as the IDLE-BOX ALARM window (the runner logs IDLE-SUSPECT when the box, the job tree and the log all stay idle that long; it never kills). A window waiting on the quiet gate can sit idle for minutes, so 1800 s instead of the 600 s default.
 
 The caps are the reservation's ceiling, not the plan: each chain carries its
 own deadline, `STOP_AT_NIGHT` (default 09:30 on the morning after launch;
