@@ -26,6 +26,7 @@ prediction.
 | `Cargo.lock` | GENERATED and COMMITTED (the first `cargo build --release`, 2026-09-19): `regex 1.13.1`, `regex-automata 0.4.18`, `regex-syntax 0.8.11`, `aho-corasick 1.1.5`, `memchr 2.8.3` |
 | `src/main.rs` | the native Rust driver (the protocol is in `pcrecbench/adapters.py`) |
 | `timed/` (crate `rust-timed`: `Cargo.toml`, `src/lib.rs`) | ([B133], BD16) THE TIMED LOOP, ISOLATED: `run_subject()` (everything between a subject's two clock reads, `group_spans`, the find-all advance) in a CRATE of its own, `#[inline(never)]`, so no edit to `src/main.rs` can change its code generation. ALIGNMENT, what stable Rust allows: no per-function alignment (`fn_align` is nightly), so `lib.rs` gives the function its own section and a `global_asm!` re-declares that section `.balign 64` — verified 0 mod 64 by the isolation proof, and the proof is the check, not the trick. What could NOT be pinned: the crate's code placement relative to the rest of the link beyond that (the section start is 64-aligned, the neighbours are not ours). `Cargo.lock` gained the `rust-timed` package entry; the `regex` version is unchanged. An INSTRUMENT: decisions.md BD16 |
+| `timed-subst/` (crate `rust-timed-subst`: `Cargo.toml`, `src/lib.rs`) | ([B140] b140drv2, BD16) THE SUBSTITUTION TIMED CALL, a THIRD crate beside `timed/`: `timed_subst()` is ONE `regex::bytes::Regex::replace_all(&[u8], &[u8])` between two clock reads, `#[inline(never)]` in its own `.text.rust_timed_subst` section aligned to 64 (same `global_asm!` trick as `timed/`). A new crate and not a second function in `rust-timed` so the existing instrument is byte-identical (`timed/` diff-empty; `run_subject`'s normalized disassembly identical, docs/dev/measurements/2026-10-25-b140drv2-instrument-additivity.txt). `Cargo.lock` gained the `rust-timed-subst` package entry (path crate; `regex` unchanged). The returned `Cow` is handed back untouched: its `into_owned`, the substitution count and the output file are the driver's, after the clock |
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; version probing from the committed `Cargo.lock` + a live `rustc --version`; the `\A(?:...)\z` whole-subject wrap |
 | `configs.toml` | the one config id, `rust-default` |
 
@@ -596,3 +597,33 @@ committed 17-token row plus `utf8-encoding`).
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The substitution tier ([B140] step 3, lane b140drv2, 2026-10-25)
+
+`rust_regex_driver --mode subst` (protocol: top of `pcrecbench/adapters.py`;
+charter `docs/design/subst_bench_v1.md` 3.1-3.1.2, 8a): `Regex::replace_all`
+over the whole subject, the OUTPUT being the answer, with the template in the
+`rust` dialect (`${N}`, `$$` literal). `--no-unicode` (unicode(false): `\b`,
+`\w`, `[0-9]` are byte-level) is passed by the adapter at COMPILE and at
+measure time for a substitution set - `harness.run_cell` hands `compile()` an
+`options` dict with `substitution: True`, and in that case only the PLAIN form
+is built (replace_all scans unanchored; no whole-subject artifact), so the
+compile row prices the thing that is timed. `--bound` is accepted and ignored
+(`replace_all` allocates for itself - intrinsic to the API, a reading note, not
+engineered away); `--subst-flags` is validated and ignored (libpcre2's
+EXTENDED switch). Refused by name: `--find-all`, `--prime`, `--utf8`,
+`--iters` > 1, no `--template`. Only `rust-default` has `subst_support`.
+
+- **the count is an untimed second pass.** The `regex` API returns no
+  substitution count, so after the clock stops the driver counts
+  `find_iter(..)` over the same haystack (the same non-overlapping
+  leftmost-first iteration `replace_all` is defined by). A counting closure in
+  the timed call would be a different, non-idiomatic competitor. The cost is
+  one extra untimed scan per subject per trial - a WINDOW-LENGTH note for
+  acc-main, never a timing one.
+- **timeout**: the thread + channel of the other modes (the abandoned thread
+  keeps its `Arc`'d subject until it finishes).
+- **cases**: 1-5b run and gate `agrees` on acc-small; 6 (`no-case-operators`)
+  and 7 (`pattern-syntax`) are `unsupported-by-declaration`. Case 7's template
+  also has a conditional the `rust` renderer refuses (`no-conditional`);
+  `substrun.plan_case` lets the table's PATTERN-level token govern.

@@ -16,6 +16,7 @@
 | `adapter.py` | `describe`/`prepare`/`compile`/`measure`; the two config option objects; `refusal_class` classification from RE2's own `ErrorCode` |
 | `driver.cc` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`); a DIRECT RE2 C++ driver, never `cre2` |
 | `timed.cc` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: everything between a subject's two clock reads in `timed_run()`, a translation unit of its own, `noinline` + `aligned(64)`, linked beside `driver.c` by `build_driver()` (a sibling `timed.cc` is picked up automatically and joins the staleness check). Unrelated driver edits (stamp getters, protocol lines) cannot move it: proven by `docs/dev/measurements/2026-10-09-b133-isolation-proof.py`. An INSTRUMENT: editing it needs a plan row and a re-pin-control run (decisions.md BD16) |
+| `timed_subst.cc` + `timed_subst.h` | ([B140] b140drv2, BD16) THE SUBSTITUTION TIMED CALL, ISOLATED: `timed_subst()`, ONE `RE2::GlobalReplace(std::string*, const RE2&, rewrite)` between two clock reads, a translation unit of its own, `noinline` + `aligned(64)`. A second INSTRUMENT beside `timed.cc` (untouched; `timed_run`'s normalized disassembly identical old/new, docs/dev/measurements/2026-10-25-b140drv2-instrument-additivity.txt). The adapter's g++ line and staleness check list it |
 | `configs.toml` | the two config ids; **no version is written here** (testees/CLAUDE.md's rule) |
 
 ## Why a direct RE2 C++ driver, not `cre2`
@@ -353,3 +354,20 @@ contract is valid UTF-8).
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The substitution tier ([B140] step 3, lane b140drv2, 2026-10-25)
+
+`driver.cc --mode subst` (protocol: top of `pcrecbench/adapters.py`; charter
+`docs/design/subst_bench_v1.md` 3.1-3.1.2, 8a): `RE2::GlobalReplace` over the
+whole subject, the OUTPUT being the answer, the template in the `re2` dialect
+(`\N`; `$` is literal; no case operators, no conditional). `GlobalReplace`
+edits a `std::string` IN PLACE, so each subject gets a FRESH COPY made OUTSIDE
+the clock (`new std::string(s.buf)` before `timed_subst()`; iters is 1, so there
+is exactly one copy per timed call). The substitution count is
+`GlobalReplace`'s own return value. `--bound` is accepted and ignored,
+`--subst-flags` validated and ignored. Refused by name: `--find-all`,
+`--prime`, `--utf8`, `--iters` > 1, no `--template`. Only `re2-default` has
+`subst_support` (Perl-leftmost-first-like selection, so agreement with PCRE2
+holds on the unambiguous cases); `re2-longest` and `re2-utf8` are refused by
+name on the substitution set. Cases 1-5b run and gate `agrees` on acc-small; 6
+and 7 are `unsupported-by-declaration`.
