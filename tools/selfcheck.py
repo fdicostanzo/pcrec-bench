@@ -3589,6 +3589,44 @@ def _b136_moved(expected, label, form, em):
     return out
 
 
+#: [B142] (pin 9ae59f5d4, abi 77..84): the size books. MEASURED over the
+#: 1,375 compiled-both census rows (docs/dev/measurements/
+#: 2026-10-25-b142prep-census.txt), pcrec's OWN numbers (the
+#: --warn-emit-bytes=1 probe; the iterator scaffold is uncounted):
+#:   * +106 B (emit and code alike) on 1,241 of 1,375 rows -- the three new
+#:     stamp lines (`RX_COMPOUND`, `RX_MEASURES`, `.measures`/`.next`
+#:     initializer members); +104/+114/+115/+116 on 17 rows whose stamp
+#:     values are longer or shorter (a per-row residual below where an
+#:     assertion reaches one);
+#:   * + ~4,080 B (code ~2,400) more on a DFA artifact whose ITER_RETRY is
+#:     `retry` (the notempty-rooted retry machine is a MACHINE and counts,
+#:     abi-83 changelog); VM `retry-budgeted` artifacts add nothing (the
+#:     guarded matcher copy is scaffold);
+#:   * per-witness residuals: [FLAG-SPELL] (not an abi event: a dead label
+#:     removed from a VM program, -57 B program) and the retry machine.
+B142_FLAT = 106
+B142_RESID = {
+    ("start-PINNED DFA ([OPT-5] STEP 2's own population)", 'plain'): (3975, 0, 0),
+    ('ASCII-fold class test: (?i)abc under --engine=vm, folds 3', 'plain'): (-48, 0, -57),
+    ('bounded cls-upto-16384: the DFA that warned, collapsed and now PINNED', 'plain'): (3981, 2301, 0),
+    ('altwide ci-256 under --engine=vm: THE FOLD WITNESS, 26 letters -> folds 26', 'plain'): (-54, 0, -63),
+    ('bounded cls-upto-4: the [B33] (3) rodata witness, folds 4', 'plain'): (3973, 0, 0),
+}
+
+
+def _b142_moved(expected, label, form, em):
+    """`expected` with the emitted-size keys moved by B142_FLAT and the
+    row's B142_RESID (emit, code, program)."""
+    out = dict(expected)
+    r = B142_RESID.get((label, form), (0, 0, 0))
+    flat = (B142_FLAT, B142_FLAT, 0)
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + flat[i] + r[i]
+    return out
+
+
 def _b135s3_moved(expected, label, form, em):
     """`expected` with the size keys moved by B135S3_RESID's row."""
     out = dict(expected)
@@ -5689,10 +5727,10 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b136_moved(_b135s3_moved(
+            expected = _b142_moved(_b136_moved(_b135s3_moved(
                 _b135_moved(_b126_moved(expected, label, form, em),
                             label, form, em), label, form, em),
-                label, form, em)
+                label, form, em), label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -6538,15 +6576,22 @@ def check_mechanism_stamps():
                 d = os.path.join(ratio_dir, name, arm)
                 os.makedirs(d, exist_ok=True)
                 c = os.path.join(d, "artifact.c")
+                # [B142] the numbers are pcrec's OWN (the size probe's line):
+                # since abi 83 the text port overcounts by the iterator
+                # scaffold, which would bias the ratio toward 1.
                 pr = run([adapter.pin_binary(), "-p", "rx", "--features", "all",
-                          "--engine=vm"] + extra + ["-o", c, "--pattern",
+                          "--engine=vm", mod.WARN_PROBE_FLAG] + extra + ["-o", c, "--pattern",
                           _bench_pattern("altwide", name).decode("latin-1")],
                          timeout=120)
                 if pr.returncode != 0:
                     ratio_problems.append("%s %s arm refused: %s"
                                           % (name, arm, pr.stderr.strip()[:80]))
                     break
-                sizes[arm] = mod.emit_size([c, c[:-1] + "h"])[1]
+                _wl = mod.parse_warn_line(pr.stderr, last=True)
+                if _wl is None:
+                    ratio_problems.append("%s %s arm: no size line" % (name, arm))
+                    break
+                sizes[arm] = _wl[1]
             if len(sizes) == 2:
                 r = sizes["island"] / float(sizes["chain"])
                 got_ratios[name] = (sizes["island"], sizes["chain"], r)
@@ -6594,14 +6639,23 @@ def check_mechanism_stamps():
             sec[l] = secs
         if fold_w in sec and fold_c in sec:
             w, c = sec[fold_w], sec[fold_c]
-            if ".rodata" not in w and c.get(".rodata", 0) > 0:
-                ok("FINDING: the folds-4 witness's -O2 object carries NO .rodata section; the folds-0 control's does ([CC-DIFF] STEP 1's fold, seen in the object)",
-                   "cls-upto-4: .text %s, no .rodata (288d505: .rodata 580); dig-upto-16 auto: .text %s, .rodata %s; "
+            # [B142] RE-AIMED (abi 83/84): "NO .rodata at all" retired -- the
+            # find-all iterator's DFA retry machine (this witness stamps
+            # ITER_RETRY `retry`) carries tables of its own (.rodata 294 B at
+            # 9ae59f5d4; none at 6b2dbd3e, where .text was 552), and the
+            # iterator's compiled scaffold lifts every object's .text by
+            # ~0.8-1.0 KB (cls-upto-4 552 -> 1,848; dig-upto-16 auto
+            # 952 -> 1,704). The fold's consequence that REMAINS is the
+            # ordering: the folds-4 witness's .rodata is strictly below the
+            # folds-0 control's (294 < 838).
+            if w.get(".rodata", 0) < c.get(".rodata", 0):
+                ok("FINDING: the folds-4 witness's -O2 object carries LESS .rodata than the folds-0 control's ([CC-DIFF] STEP 1's fold, seen in the object; the abi-84 retry machine's tables keep it above zero)",
+                   "cls-upto-4: .text %s, .rodata %s (288d505: .rodata 580; 6b2dbd3e: none); dig-upto-16 auto: .text %s, .rodata %s; "
                    "dig-upto-16 forced-VM .text %s (288d505: 1,449)"
-                   % (w.get(".text"), c.get(".text"), c.get(".rodata"),
+                   % (w.get(".text"), w.get(".rodata"), c.get(".text"), c.get(".rodata"),
                       sec.get(vm_w, {}).get(".text")))
             else:
-                bad("FINDING: the folds-4 witness's -O2 object carries NO .rodata section; the folds-0 control's does ([CC-DIFF] STEP 1's fold, seen in the object)",
+                bad("FINDING: the folds-4 witness's -O2 object carries LESS .rodata than the folds-0 control's",
                     "witness sections %r; control sections %r" % (w, c))
         else:
             bad("FINDING: the folds-4 witness's -O2 object carries NO .rodata section; the folds-0 control's does",
@@ -6990,20 +7044,29 @@ DENY_CONTROLS = (
                      - 2 * B122_RANGE_SITE  # [B122] the one edge; denied: no edge
                      + B124_STAMP_LINES
                      + B126_R4H_SCAN_EDGE_DEFAULT
-                     + B135_SIMD_GUARDED_LINE,
+                     + B135_SIMD_GUARDED_LINE
+                     # [B142] flat +106 and the DFA RETRY MACHINE (+3,981):
+                     # the default arm's ITER_RETRY is `retry`
+                     + B142_FLAT + 3981,
                      # [B124]: the denied arm is the K92 witness -- its
                      # `.flags` literal loses bit 21 (2097152 -> 0).
                      252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + B74_STAMP_LINES_DFA + B80_STAMP_LINE + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK
                      + B108_FINDINGS_STAMP_LINE + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
                      + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE
-                     + B135_SIMD_GUARDED_LINE),
+                     + B135_SIMD_GUARDED_LINE
+                     # [B142] +106 and the retry machine of the UNCOLLAPSED
+                     # DFA: it copies the machine's tables, 255,041 ->
+                     # 612,992 B (+357,951, MEASURED), so a pre-cap DFA
+                     # artifact is ~2.4x its pre-abi-83 size
+                     + B142_FLAT + 357845),
       "warned_emit_bytes": (None, 252587 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                             + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                             + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                             + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM
                             + B124_STAMP_LINES + B124_K92_FLAGS_SCAN_EDGE
-                            + B135_SIMD_GUARDED_LINE)}, "deny"),
+                            + B135_SIMD_GUARDED_LINE
+                            + B142_FLAT + 357845)}, "deny"),
     # [B34] (abi 16, [OPT-5] STEP 2): -fno-start-pinned (bit 22) denies the
     # `search-start` axis's order-1 candidate, and the flag's registry row
     # DOES carry a stamp_value (`pinned`), so this is the ordinary deny
@@ -7059,13 +7122,15 @@ DENY_CONTROLS = (
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 4 * B122_RANGE_SITE
                      + B124_STAMP_LINES + B126_R4H_START_PINNED[0]
-                     + B135_SIMD_GUARDED_LINE,
+                     + B135_SIMD_GUARDED_LINE
+                     + B142_FLAT + 3979,   # [B142] +106 and the retry machine
                      20206 + B42_STARTPOS_GUARD_LINES + B45_RX_TUNE_STAMP_LINE
                      + 3 * B42_PORTFIX_SEMI_PER_MACHINE + B74_STAMP_LINES_DFA + B80_STAMP_LINE
                      + B84_STAMP_LINE_NONE + B90_VAR_ABI_BLOCK + B108_FINDINGS_STAMP_LINE
                      + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM - 6 * B122_RANGE_SITE
                      + B124_STAMP_LINES + B126_R4H_START_PINNED[1]
-                     + B135_SIMD_GUARDED_LINE),
+                     + B135_SIMD_GUARDED_LINE
+                     + B142_FLAT + 3979),
       "scan_edges": (1, 2), "scan_edges_match": (1, 1)}, "deny"),
     # [B37] (abi 18, [ENG-ISL] STEP 1): -fno-alt-island (bit 23) denies
     # the `alt-island` axis's order-1 row -- a `predicate` row with NO
@@ -7124,12 +7189,14 @@ DENY_CONTROLS = (
       # "memcmp", the chain arm's (word compares only) "none".
       "emit_bytes": (20092 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM
                      + B124_STAMP_LINES + B124_LIBC_ONE_CALL + B124_VM_START_SET
-                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE,
+                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE
+                     + B142_FLAT,
                      # [B122] MEASURED c4c70f2c: the chain arm +201 beyond
                      # the flat term -- S4 C1's overlap row on `foo`/`bar`.
                      20074 + B118_UTF_VALID_VM_TERM + B122_FLAT_TERM + 201
                      + B124_STAMP_LINES + B124_VM_START_SET
-                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE)}, "deny"),
+                     + B126_VM_POSS_ARMS_LINE + B135_SIMD_GUARDED_LINE
+                     + B142_FLAT)}, "deny"),
     # [B39] DRAFT -- values to be confirmed at the build. (abi 23,
     # [FORM-CHAR] STEP 1): -fno-cls-fold (bit 24) denies the `cls-fold`
     # axis's order-1 row -- a `predicate` row with NO stamp_value (the
@@ -7390,6 +7457,18 @@ DENY_CONTROLS = (
      "search-start", ("literal", b"\\d+"), "",
      {"dfa_start": ("landing", "reverse-pass")}, "deny", "default",
      "-fno-start-landing"),
+    # [B142] (pin 9ae59f5d4, abi 78, [OPT-REVEND] B3): `-fno-rev-end-onewalk`
+    # (bit 56) restores the two-seed rev-end walk with its tie code. NO
+    # stamp moves (the `rev-end-form` row is internal; --emit-ir/--emit-facts
+    # list it), so the control is the emitted-size pair on `\s+$`, pcrec's own
+    # numbers, MEASURED through the adapter's compile (artifact.c) 19,116 -> 22,589 B
+    # (the same pattern emitted as e.c reads 19,111 -> 22,584: the output
+    # basename is inside the text; 6b2dbd3e: 22,476, +106 = the new stamp
+    # lines); program identity is asserted in check_b142_stamps.
+    ("emit_bytes: the [OPT-REVEND] B3 one-walk end mark denied",
+     "rev-end-form", ("literal", b"\\s+$"), "",
+     {"emit_bytes": (19116, 22589)}, "deny", "default",
+     "-fno-rev-end-onewalk"),
 )
 
 
@@ -12284,7 +12363,9 @@ def check_b135s3_stamps():
 
 
 def check_b135_two_pin_window():
-    """[B135] the TWO-PIN WINDOW mechanism: one process selects a15fb77b
+    """[B135] the TWO-PIN WINDOW mechanism ([B142]: canonical 9ae59f5d4, the
+    one also_pin 6b2dbd3e; 00c97769 and b8337c33 left the allowlist and are
+    refused BY NAME): one process selects a15fb77b
     (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
     keeps the canonical pin; the override is refused BY NAME when it names
     an undeclared pin; the two pins derive DISTINCT testee_ids (so their
@@ -12307,17 +12388,30 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "b8337c33"
+        os.environ[env] = "6b2dbd3e"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("6b2dbd3e", "b8337c33", "6b2dbd3e"):
+        if (canon, before, same) == ("9ae59f5d4", "6b2dbd3e", "9ae59f5d4"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
             bad("b135 two-pin: the override selects an also_pin",
                 "canonical %r, override %r, override==canonical %r"
                 % (canon, before, same))
+        for retired in ("b8337c33", "00c97769"):
+            os.environ[env] = retired
+            try:
+                adapter.pin()
+                bad("b135 two-pin: the retired also_pin %s is refused BY NAME" % retired,
+                    "pin() returned instead of raising")
+            except _ad.AdapterError as e:
+                if "not a declared pin" in str(e):
+                    ok("b135 two-pin: the retired also_pin %s is refused BY NAME" % retired,
+                       str(e)[:100])
+                else:
+                    bad("b135 two-pin: the retired also_pin %s is refused BY NAME" % retired,
+                        str(e)[:200])
         os.environ[env] = "deadbeef"
         try:
             adapter.pin()
@@ -12333,27 +12427,25 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "b8337c33"), ("after", "6b2dbd3e"),
-                         ("mid", "00c97769")):
+        for tag, pin in (("before", "6b2dbd3e"), ("after", "9ae59f5d4")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
             ids[tag] = _rec.derive_testee_id(blk)
             shas[tag] = (_ad.sha256_file(drv), os.path.getmtime(drv))
-            if blk.get("engine_commit", "")[:8] != pin:
+            if not blk.get("engine_commit", "").startswith(pin):
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "b8337c33" in ids["before"] \
-                and "6b2dbd3e" in ids["after"] and "00c97769" in ids["mid"] \
-                and ids["before"].replace("b8337c33", "6b2dbd3e") == ids["after"] \
-                and ids["mid"].replace("00c97769", "6b2dbd3e") == ids["after"]:
+        if ids["before"] != ids["after"] and "6b2dbd3e" in ids["before"] \
+                and "9ae59f5d4" in ids["after"] \
+                and ids["before"].replace("6b2dbd3e", "9ae59f5d4") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
             bad("b135 two-pin: the two pins derive DISTINCT testee_ids",
                 "%r" % ids)
-        if shas["before"] == shas["after"] == shas["mid"]:
-            ok("b135 two-pin: ONE driver build serves all three pins (same "
+        if shas["before"] == shas["after"]:
+            ok("b135 two-pin: ONE driver build serves both pins (same "
                "sha256, same mtime: no rebuild on the second prepare)",
                "sha256 %s" % shas["before"][0][:16])
         else:
@@ -12457,8 +12549,10 @@ def check_b136_stamps():
         bad("b136 stamps", "no pcrec adapter")
         return
     mod = _pcrec_adapter_module()
+    # [B142] 6b2dbd3e is no longer the canonical pin (9ae59f5d4 is): all
+    # three are named builds, historical assertions over the old pins.
     bins = {"b8337c33": _b136_bin("b8337c33"), "00c97769": _b136_bin("00c97769"),
-            "6b2dbd3e": adapter.pin_binary()}
+            "6b2dbd3e": _b136_bin("6b2dbd3e")}
     for pin, b in bins.items():
         if not b:
             bad("b136 stamps", "no build for %s (pin.sh %s first)" % (pin, pin))
@@ -12584,6 +12678,239 @@ def check_b136_stamps():
             else:
                 os.environ[k] = v
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b142_stamps():
+    r"""[B142] (pin 9ae59f5d4, abi 76 -> 84, EIGHT abi steps; inbox I-159).
+    pcrec's claims, each asserted BY VALUE against the build that makes
+    them (docs/dev/lanes/b142prep_report.md has the claim-vs-measured
+    table; the census behind it is docs/dev/measurements/
+    2026-10-25-b142prep-census.txt):
+      abi 77 [COMPOUND] B4   RX_COMPOUND on every artifact; `split` on a
+                             pin-only pattern, where the route family's
+                             machine-level stamps read `compound` and the
+                             integer ones -1; the artifact compiles through
+                             the adapter and answers right through the driver.
+      abi 78 [OPT-REVEND] B3 the `rev-end` walk's match-end mark; the deny
+                             flag `-fno-rev-end-onewalk` (bit 56) restores
+                             the abi-77 program (v3 identity).
+      abi 79 knowledge-stamp union: `(\p{Xwd})x` under `-e utf8
+                             -fno-req-byte` reads FINDINGS `byte-rate=none`
+                             (the old pin read the empty string).
+      abi 80 [ENTRY-TABLE] E1 RX_PART_LAYOUT only under a control.
+      abi 81 anchor fold     `(?m)^a|\B` is the one mover, `(?m)^a` is not.
+      abi 82 [MEASURE-SET]   RX_MEASURES `""`; rx_info gains `measures`.
+      abi 83 K128/K129       `^(([a-z]+)*)+$` forced-VM program moves.
+      abi 84 find-all        `_next`/`_next_n` on every artifact,
+                             RX_ITER_RETRY none / retry / retry-budgeted.
+    and the SHIM FLOOR: `struct rx_info` gained three members
+    (`measures`, `next`, `next_n`) and the shim reads none, so
+    PB_SHIM_MIN_ABI stays 16 (the abi-sabotage arms in
+    check_abi_floor_refusal are the control)."""
+    print("-- [B142]: abi 77-84 stamps, the compound, the iterator scaffold, the rev-end deny, the shim floor --")
+    import hashlib
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b142 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import program_identity as _pi
+    new, old = adapter.pin_binary(), _b136_bin("6b2dbd3e")
+    if not old:
+        bad("b142 stamps", "no build for 6b2dbd3e (pin.sh 6b2dbd3e first)")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b142-")
+    n = [0]
+
+    def emit(binary, flags, pat, probe=False):
+        n[0] += 1
+        out = os.path.join(tmp, "e%d.c" % n[0])
+        argv = [binary, "-p", "rx", "--features", "all"] + list(flags) \
+            + ([mod.WARN_PROBE_FLAG] if probe else []) + ["-o", out, "--pattern", pat]
+        r = subprocess.run(argv, capture_output=True, env=C_ENV, timeout=300)
+        if r.returncode != 0:
+            return None, r.stderr.decode("utf-8", "replace")
+        with open(out, "rb") as fh:
+            c = fh.read().decode("utf-8", "surrogateescape")
+        with open(out[:-2] + ".h", "rb") as fh:
+            h = fh.read().decode("utf-8", "surrogateescape")
+        return (c, h, out), r.stderr.decode("utf-8", "replace")
+
+    def txt(a):
+        return a[0] + _pi.SEP + a[1]
+
+    def stamp(a, name):
+        m = re.search(r'^#define RX_%s (.*)$' % name, a[0], re.M)
+        return m.group(1).strip('"') if m else None
+
+    def v3(a):
+        return hashlib.sha256(_pi.normalize_v3(txt(a)).encode("utf-8", "surrogateescape")).hexdigest()[:12]
+    try:
+        # -- abi + the struct --------------------------------------------
+        an, _e = emit(new, [], b"abc")
+        ao, _e = emit(old, [], b"abc")
+        abis = (mod.artifact_abi([an[2]]), mod.artifact_abi([ao[2]]))
+        if abis == (84, 76):
+            ok("b142 abi stamps 84 (9ae59f5d4) / 76 (6b2dbd3e)", str(abis))
+        else:
+            bad("b142 abi stamps 84 / 76", str(abis))
+
+        def struct_of(a):
+            i = a[1].index("struct rx_info {")
+            j = a[1].index("};", i)
+            t = re.sub(r"/\*.*?\*/", "", a[1][i:j + 2], flags=re.S)
+            return " ".join(t.split())
+        so, sn = struct_of(ao), struct_of(an)
+        md5 = hashlib.md5(so.encode()).hexdigest()
+        tail = sn[len(so) - 2:] if sn.startswith(so[:-2]) else None
+        if md5 == "11f44615bcfa6af1e48dd5b633c4f1c1" and tail is not None \
+                and tail.strip() == "const char *measures; rx_nextfn next; rx_nextnfn next_n; };":
+            ok("b142 struct rx_info: 6b2dbd3e's body (md5 11f44615...) is a PREFIX of 9ae59f5d4's; abi 82/84 APPEND measures, next, next_n",
+               "%d -> %d chars" % (len(so), len(sn)))
+        else:
+            bad("b142 struct rx_info appends exactly measures, next, next_n",
+                "old md5 %s; tail %r" % (md5, tail))
+        # -- the shim floor: the shim reads none of the new members -------
+        shim = open(os.path.join(ROOT, "testees", "pcrec", "shim.c"), encoding="utf-8").read()
+        drv = open(os.path.join(ROOT, "testees", "pcrec", "driver.c"), encoding="utf-8").read()
+        floor = re.search(r"#define PB_SHIM_MIN_ABI (\d+)", shim)
+        reads = re.findall(r"PB_INFO\.(measures|next_n|next)\b|RX_MEASURES|RX_ITER_RETRY|RX_COMPOUND", shim + drv)
+        if floor and floor.group(1) == "16" and not reads:
+            ok("b142 the shim floor STAYS 16: shim.c/driver.c read none of measures/next/next_n/RX_MEASURES/RX_ITER_RETRY/RX_COMPOUND",
+               "PB_SHIM_MIN_ABI 16")
+        else:
+            bad("b142 the shim floor stays 16", "floor %r, reads %r" % (floor and floor.group(1), reads))
+        # -- abi 77/82/84 text stamps -------------------------------------
+        got = mod.text_stamps([an[2], an[2][:-2] + ".h"])
+        gold = mod.text_stamps([ao[2], ao[2][:-2] + ".h"])
+        if got == {"compound": "none", "iter_retry": "none", "measures": ""} and gold == {}:
+            ok("b142 text stamps on abc: compound none, iter_retry none, measures \"\" (all three ABSENT at 6b2dbd3e)", str(got))
+        else:
+            bad("b142 text stamps on abc", "new %r old %r" % (got, gold))
+        for label, flags, pat, want in (
+                ("a* (DFA): the empty-match retry machine", [], b"a*", "retry"),
+                ("a* forced VM: the budgeted guard", ["--engine=vm"], b"a*", "retry-budgeted"),
+                ("abc: cannot report an empty span", [], b"abc", "none")):
+            a, _e = emit(new, flags, pat)
+            v = stamp(a, "ITER_RETRY")
+            (ok if v == want else bad)("b142 ITER_RETRY %s" % label, "%r (want %r)" % (v, want))
+        # -- abi 84: the iterator is on every artifact ----------------------
+        has = all(x in an[0] for x in (".next = rx_next,", ".next_n = rx_next_n,")) \
+            and "int rx_next(rx_iter *it" in an[1] and "size_t rx_next_n(rx_iter *it" in an[1]
+        (ok if has else bad)("b142 abi 84: rx_info.next/.next_n initialised, rx_next/rx_next_n declared, on a plain DFA artifact", "")
+        # -- abi 77 [COMPOUND]: a split artifact ----------------------------
+        ac, _e = emit(new, [], b"x\\z|^y")
+        cs = {k: stamp(ac, k) for k in ("COMPOUND", "DFA_SCAN", "DFA_PREFILTER", "DFA_PREFILTER_OFFSETS",
+                                         "REQ_WHY", "END_WINDOW", "DFA_UNIFORM_FOLDS", "RUN_WORDS")}
+        want = {"COMPOUND": "split", "DFA_SCAN": "compound", "DFA_PREFILTER": "compound",
+                "DFA_PREFILTER_OFFSETS": "compound", "REQ_WHY": "compound", "END_WINDOW": "compound",
+                "DFA_UNIFORM_FOLDS": "-1", "RUN_WORDS": "-1"}
+        (ok if cs == want else bad)("b142 abi 77: `x\\z|^y` is a COMPOUND (split); the machine-level stamps read `compound`, the integers -1", str(cs))
+        os.environ["PCREC_BIN"] = new
+        tid_tmp = tempfile.mkdtemp(dir=tmp)
+        adapter.prepare("pcrec-auto", tid_tmp)
+        cr = adapter.compile("pcrec-auto", "b142-compound", b"x\\z|^y", {}, 1,
+                             tid_tmp).get(_ad.FORM_PLAIN)
+        if cr.outcome == "compiled" and cr.engine_metadata.get("compound") == "split" \
+                and cr.engine_metadata.get("dfa_uniform_folds") == -1:
+            class _S:
+                pass
+            subs = []
+            for i, b in enumerate((b"zzzyx", b"yzzz", b"abc", b"xx")):
+                pth = os.path.join(tid_tmp, "s%d.bin" % i)
+                with open(pth, "wb") as fh:
+                    fh.write(b)
+                o = _S()
+                o.subject_id, o.path, o.length = "s%d" % i, pth, len(b)
+                subs.append(o)
+            rows, _i, _nn = adapter.measure(dict(cr.handle), "search_short", subs, 1, 1, timeout=120)
+            ans = [(r.subject_id, r.answer, r.start, r.end) for r in rows[0]]
+            wantans = [("s0", "match", 4, 5), ("s1", "match", 0, 1), ("s2", "nomatch", None, None),
+                       ("s3", "match", 1, 2)]
+            (ok if ans == wantans else bad)("b142 abi 77: the compound compiles through the adapter and answers right through the driver", str(ans))
+        else:
+            bad("b142 abi 77: the compound compiles through the adapter", "%s %s" % (cr.outcome, cr.diagnostic))
+        # -- abi 79: the knowledge-stamp union ------------------------------
+        a1, _e = emit(new, ["-e", "utf8", "-fno-req-byte"], b"(\\p{Xwd})x")
+        a0, _e = emit(old, ["-e", "utf8", "-fno-req-byte"], b"(\\p{Xwd})x")
+        f1, f0 = stamp(a1, "FINDINGS"), stamp(a0, "FINDINGS")
+        (ok if (f1, f0) == ("byte-rate=none", "") else bad)(
+            "b142 abi 79: F-5 witness `(\\p{Xwd})x` -e utf8 -fno-req-byte: FINDINGS", "%r (old %r)" % (f1, f0))
+        # -- abi 80: part-layout stamps only under a control ----------------
+        d0, _e = emit(new, [], b"a(b|c)+d")
+        d1, _e = emit(new, ["--part-layout=prefilter:shared"], b"a(b|c)+d")
+        (ok if (stamp(d0, "PART_LAYOUT") is None and stamp(d1, "PART_LAYOUT") == "prefilter=shared") else bad)(
+            "b142 abi 80: RX_PART_LAYOUT absent by default, `prefilter=shared` under --part-layout=prefilter:shared",
+            "%r / %r" % (stamp(d0, "PART_LAYOUT"), stamp(d1, "PART_LAYOUT")))
+        # -- abi 78: the rev-end mark and its deny flag ---------------------
+        pat = b"\\s+$"
+        r_new, e_new = emit(new, [], pat, probe=True)
+        r_den, e_den = emit(new, ["-fno-rev-end-onewalk"], pat, probe=True)
+        r_old, e_old = emit(old, [], pat, probe=True)
+        if r_new and r_den and r_old:
+            idn = (v3(r_den) == v3(r_old)) and v3(r_new) != v3(r_old)
+            sz = [mod.parse_warn_line(e, last=True)[:2] for e in (e_new, e_den, e_old)]
+            (ok if idn else bad)("b142 abi 78: `-fno-rev-end-onewalk` restores 6b2dbd3e's program (v3 identity); the default moved",
+                                 "pcrec's own bytes/code: default %s, denied %s, 6b2dbd3e %s" % tuple(sz))
+        else:
+            bad("b142 abi 78: rev-end witness compiled", "")
+        rows = mod.registry_rows()
+        ow = sorted((r["candidate"], r.get("deny_bit", "")) for r in rows
+                    if r["axis"] == "rev-end-form")
+        want_rows = [("denied", ""), ("one-seed", "56"), ("overflow", ""), ("tagged", "56"), ("two-seed", "56")]
+        (ok if ow == want_rows else bad)("b142 registry: axis `rev-end-form` (5 rows), deny bit 56 on one-seed/tagged/two-seed", str(ow))
+        fb = [r["candidate"] for r in rows if r["axis"] == "fallback"]
+        (ok if "drop-compound" in fb and "drop-end-mark" in fb else bad)(
+            "b142 registry: `fallback` gains drop-compound and drop-end-mark", str(fb))
+        sl = [r for r in rows if r["axis"] == "req-admit" and r["candidate"] == "set-leads"]
+        retired = subprocess.run([new, "-p", "rx", "--features", "all", "-fno-req-set-lead", "-o",
+                                  os.path.join(tmp, "sl.c"), "--pattern", "abc"],
+                                 capture_output=True, env=C_ENV, timeout=60).returncode
+        (ok if sl and not sl[0].get("cli_flag") and retired == 0 else bad)(
+            "b142 registry: `req-admit` `set-leads` lost its deny flag (bit 45 -> `--memfn=no-pres-set-lead`); the old spelling is still accepted",
+            "cli_flag %r, old spelling rc %s" % (sl and sl[0].get("cli_flag"), retired))
+        # -- abi 81: the anchor fold's one mover ---------------------------
+        for pat, want_moved in ((b"(?m)^a|\\B", True), (b"(?m)^a", False), (b"\\Aabc\\z", False)):
+            for enc in ((), ("-e", "utf8")):
+                x, _e = emit(new, enc, pat)
+                y, _e = emit(old, enc, pat)
+                moved = v3(x) != v3(y)
+                (ok if moved == want_moved else bad)(
+                    "b142 abi 81: %s %s %s" % (pat.decode(), " ".join(enc) or "byte", "MOVES" if want_moved else "is unmoved"),
+                    "v3 %s" % ("changed" if moved else "identical"))
+        # -- abi 83: K128 moves a VM program; [FLAG-SPELL] (no abi event) -----
+        k1, _e = emit(new, ["--engine=vm"], b"^(([a-z]+)*)+$")
+        k0, _e = emit(old, ["--engine=vm"], b"^(([a-z]+)*)+$")
+        def _n(x):
+            return int(re.sub(r"[^0-9]", "", x))
+        p1, p0 = _n(stamp(k1, "VM_PROGRAM_BYTES")), _n(stamp(k0, "VM_PROGRAM_BYTES"))
+        (ok if p1 > p0 else bad)("b142 abi 83: K128 `^(([a-z]+)*)+$` forced-VM program grows (the last mandatory iteration's guard)",
+                                 "%d -> %d program bytes" % (p0, p1))
+        f1, _e = emit(new, ["--engine=vm"], b"(?i)abc")
+        f0, _e = emit(old, ["--engine=vm"], b"(?i)abc")
+        q1, q0 = _n(stamp(f1, "VM_PROGRAM_BYTES")), _n(stamp(f0, "VM_PROGRAM_BYTES"))
+        (ok if q1 - q0 == -57 else bad)("b142 [FLAG-SPELL] (landed WITHOUT an abi bump): `(?i)abc` forced-VM program loses its dead label",
+                                        "%d -> %d program bytes (%+d; pcrec said +57 B was the dead label)" % (q0, q1, q1 - q0))
+        # -- v2 reads every row changed; v3 reads the program ----------------
+        v2n = hashlib.sha256(_pi.normalize_one(txt(an)).encode("utf-8", "surrogateescape")).hexdigest()
+        v2o = hashlib.sha256(_pi.normalize_one(txt(ao)).encode("utf-8", "surrogateescape")).hexdigest()
+        (ok if (v2n != v2o and v3(an) == v3(ao)) else bad)(
+            "b142 program identity: abc is v2-CHANGED and v3-IDENTICAL across 6b2dbd3e -> 9ae59f5d4", "")
+        # -- the size probe: the adapter reads pcrec's own numbers ----------
+        for pat in (b"abc", b"a*"):
+            ax, ex = emit(new, [], pat, probe=True)
+            facts = type(adapter)._emit_facts([ax[2], ax[2][:-2] + ".h"], ex)[0]
+            wl = mod.parse_warn_line(ex, last=True)
+            (ok if (facts["emit_bytes"], facts["emit_code_bytes"]) == wl[:2] else bad)(
+                "b142 size probe: _emit_facts returns pcrec's own numbers on %s" % pat.decode(),
+                "%d / %d (the text port says %s)" % (facts["emit_bytes"], facts["emit_code_bytes"],
+                                                      mod.emit_size([ax[2], ax[2][:-2] + ".h"])))
+    finally:
+        os.environ.pop("PCREC_BIN", None)
+        shutil.rmtree(tmp, ignore_errors=True)
+
 
 
 def check_list_axes_registry():
@@ -17586,6 +17913,7 @@ def main():
     check_b135_stamps()
     check_b135s3_stamps()
     check_b136_stamps()
+    check_b142_stamps()
     check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()

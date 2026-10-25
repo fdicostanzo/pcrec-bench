@@ -18,6 +18,7 @@ import gzip, os, re, sys
 sys.path.insert(0, os.getcwd())
 sys.path.insert(0, os.path.join(os.getcwd(), "tools"))
 import program_identity as PI                          # noqa: E402
+from pcrecbench import subbench as _sb                  # noqa: E402
 
 EMITDIR, OUT = sys.argv[1], sys.argv[2]
 STAMPS = ("ENGINE", "ENGINE_SEL", "DFA_SCAN", "DFA_START", "DFA_PREFILTER",
@@ -72,6 +73,41 @@ def signature(old, new):
     return ";".join(sorted(set(names)))[:200], len(ch)
 
 
+OPTION_RUN = re.compile(rb"^\(\?[A-Za-z^-]+\)")
+
+
+def attribute(sid, pid, v3, owx, compound, engine, text):
+    """The abi step / change a v3-CHANGED row belongs to, by rule (each rule
+    is checked by value in tools/selfcheck.py check_b142_stamps):
+      rev-end-mark   the `-fno-rev-end-onewalk` arm restores the old program;
+      compound       the artifact is a COMPOUND (abi 77);
+      flag-spell     a VM program that lost a dead label, whose pattern
+                     STARTS with an option run -- [FLAG-SPELL] (pcrec
+                     flagfix, merged WITHOUT an abi bump);
+      k128           a VM program that grew by a guard, pattern with a
+                     nullable body under an unbounded mandatory repeat
+                     (abi 83);
+      UNATTRIBUTED   anything else (the census's failure condition)."""
+    if v3 != "changed":
+        return "-"
+    if owx == "to-old":
+        return "abi78-rev-end-mark"
+    if compound == "split":
+        return "abi77-compound"
+    if engine == "vm" and OPTION_RUN.match(text):
+        return "flag-spell(no-abi)"
+    if engine == "vm" and b")*)+" in text:
+        return "abi83-k128"
+    return "UNATTRIBUTED"
+
+
+SETS = {}
+for _d in sorted(os.listdir("bench")):
+    if os.path.isfile(os.path.join("bench", _d, "subbench.toml")):
+        _x = _sb.find(_d)
+        SETS[_x.id] = _x
+
+
 def main():
     rows = [l.rstrip("\n").split("\t") for l in open(os.path.join(EMITDIR, "index.tsv"))]
     hdr, rows = rows[0], rows[1:]
@@ -105,13 +141,16 @@ def main():
         st = dict(STAMP_RE.findall(new or ""))
         so = dict(STAMP_RE.findall(old or ""))
         stamp_cells = [st.get(k, "-") for k in STAMPS]
+        text = SETS[sid].pattern_bytes(pid)
+        attr = attribute(sid, pid, verdict3, owx, st.get("COMPOUND", "").strip('"'),
+                         st.get("ENGINE", "").strip('"'), text)
         moves = stamp_moves(old, new) if old is not None and new is not None else "-"
-        out.append([sid, pid, cfg, form, verdict2, verdict3, owx, sig, str(nch), moves,
+        out.append([sid, pid, cfg, form, verdict2, verdict3, attr, owx, sig, str(nch), moves,
                     old_sz, new_sz, arm_sz,
                     so.get("ENGINE", "-"), so.get("ENGINE_SEL", "-"),
                     so.get("DFA_SCAN", "-"), so.get("DFA_START", "-"),
                     so.get("DFA_PREFILTER", "-")] + stamp_cells)
-    cols = ["set", "pattern_id", "config", "form", "v2", "v3", "onewalk_arm", "v3_signature",
+    cols = ["set", "pattern_id", "config", "form", "v2", "v3", "attribution", "onewalk_arm", "v3_signature",
             "v3_nchunks", "stamp_moves", "old_bytes:code", "new_bytes:code", "arm_bytes:code",
             "old_engine", "old_engine_sel", "old_dfa_scan", "old_dfa_start", "old_dfa_prefilter"] \
         + ["new_" + k.lower() for k in STAMPS]

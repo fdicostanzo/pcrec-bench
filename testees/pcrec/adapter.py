@@ -3538,6 +3538,20 @@ DENY_FLAGS = (
      "candidate skip last landed; the walk falls to the reverse pass "
      "(RX_DFA_START `reverse-pass` again, the reverse machine back) unless "
      "`end-minus-width` still applies; answer-identical"),
+    # [B142] (pin 9ae59f5d4, abi 78, [OPT-REVEND] B3): the `rev-end-form`
+    # axis's deny, bit 56. It moves NO stamp (the form row is internal;
+    # --emit-ir / --emit-facts list it): a denied end-pinned artifact keeps
+    # the two-seed rev-end walk WITH its tie code where a match can end by
+    # consuming the final newline -- the abi-77 program at the SAME pin
+    # (v3 identity, check_b142_stamps). NO pinned testee: the abi-78 AFTER is
+    # measured against 6b2dbd3e, and the same-pin twin is a candidate if the
+    # window finds a tail-family mover.
+    ("-fno-rev-end-onewalk", "norevendonewalk",
+     "the [OPT-REVEND] B3 ONE-WALK END MARK denied (--list-axes "
+     "`rev-end-form`, bit 56): a rev-end artifact keeps the two-seed walk "
+     "(n, and n-1 before a final newline) with the tie code instead of the "
+     "one-seed / tagged lowering -- the abi-77 search path at the SAME pin; "
+     "answer-identical"),
 )
 
 
