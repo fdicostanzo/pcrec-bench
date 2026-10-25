@@ -3593,9 +3593,9 @@ def _b136_moved(expected, label, form, em):
 #: 1,375 compiled-both census rows (docs/dev/measurements/
 #: 2026-10-25-b142prep-census.txt), pcrec's OWN numbers (the
 #: --warn-emit-bytes=1 probe; the iterator scaffold is uncounted):
-#:   * +106 B (emit and code alike) on 1,241 of 1,375 rows -- the three new
+#:   * +106 B (emit and code alike) on 1,257 of the 1,339 v3-identical rows -- the three new
 #:     stamp lines (`RX_COMPOUND`, `RX_MEASURES`, `.measures`/`.next`
-#:     initializer members); +104/+114/+115/+116 on 17 rows whose stamp
+#:     initializer members); +104/+114/+115/+116 on 14 rows whose stamp
 #:     values are longer or shorter (a per-row residual below where an
 #:     assertion reaches one);
 #:   * + ~4,080 B (code ~2,400) more on a DFA artifact whose ITER_RETRY is
