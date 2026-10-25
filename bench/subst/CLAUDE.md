@@ -10,7 +10,7 @@ case 7 `url-tld-fix`, the backreference-in-a-negative-lookahead shape).
 **Read `NOTES.md` first** — the cases, the neutral-template IR, the stated
 densities and predictions, the calibration outcome, the divergence table.
 
-STATUS: step 1 of [B140] (the set) BUILT (lane b140set2, 2026-10-24): subjects generated and hashed (`manifest.tsv`), expectations derived for both subjects (22 rows), calibration archived with two STATED DEVIATIONS (NOTES.md).
+STATUS: step 1 of [B140] (the set) BUILT (lane b140set2, 2026-10-24): subjects generated and hashed (`manifest.tsv`), expectations derived for both subjects (16 rows: 8 cases x 2; 7a/7b/7c dropped on I-158), calibration archived with two STATED DEVIATIONS (NOTES.md).
 STEP 3 (lane b140drv, 2026-10-25): the pcre2 LIBRARY-TIER driver mode, the
 `timed_subst()` instrument, the harness side (`pcrecbench/substrun.py`) and a
 scratch-tier dry run exist; `pcrecbench run --subbench subst` WORKS
