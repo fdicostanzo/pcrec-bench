@@ -5099,7 +5099,19 @@ class Adapter(_ad.Adapter):
         #    `dfa_prefilter` is not an offset-set value (6.3's iff, both
         #    sides), whenever both are recorded.
         ofs = meta.get("dfa_prefilter_offsets")
-        if ofs is not None and macro_dfa_pf is not None:
+        if macro_dfa_pf == "compound" or ofs == "compound":
+            # [B142] (abi 77, [COMPOUND] B4): on a COMPOUND the route
+            # family's machine-level stamps read the token `compound`
+            # (match_api.md 6.3: the parts' own values live in the `<p>__f_`
+            # / `<p>__q_` stamp families) -- the iff holds as "both
+            # compound or neither".
+            if (macro_dfa_pf == "compound") != (ofs == "compound"):
+                raise _ad.AdapterError(
+                    "pcrec artifact stamps <PREFIX>_DFA_PREFILTER %r but "
+                    "<PREFIX>_DFA_PREFILTER_OFFSETS %r -- on a compound "
+                    "both read `compound` (match_api.md 6.3)."
+                    % (macro_dfa_pf, ofs))
+        elif ofs is not None and macro_dfa_pf is not None:
             is_set = macro_dfa_pf in OFFSET_SET_VALUES
             if is_set and ofs == "none":
                 raise _ad.AdapterError(
@@ -5273,6 +5285,8 @@ class Adapter(_ad.Adapter):
         if (rb_val is not None and isinstance(_abi, int) and _abi >= 59
                 and meta.get("req_run") not in (None, "none")):
             rb_val = "<run %s>" % meta.get("req_run")
+        if rw == "compound":
+            rw = None     # [B142] a COMPOUND's pre-check lives in its parts
         if rw is not None and rb_val is not None:
             if rw == "none" and rb_val != "none":
                 raise _ad.AdapterError(

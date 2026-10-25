@@ -11554,10 +11554,23 @@ B126_EMPTY_ADMITS = (
 )
 
 
+#: [B142] the find-all iterator's compiled scaffold (abi 83/84): functions
+#: the `.text` identity hash must not see, because an older pin's object has
+#: no such symbol (the matcher entries it DOES share are hashed).
+_TEXT_SCAFFOLD = re.compile(
+    r"^(?:rx_next|rx_next_n|rx_iter_buffers|rx__\w+)$")
+
+
 def _b126_text_hash(binary, flags, pat, tmp, tag):
-    """sha256 of the compiled `.text` of the artifact `binary` emits for
-    `pat` (gcc -O2 -c, no link): the executed code, blind to the spelling
-    of the source that produced it. None on a refusal."""
+    """sha256 of the compiled executed code of the artifact `binary` emits
+    for `pat` (gcc -O2 -c -ffunction-sections, no link): the code of every
+    function section the artifact shares with an abi-<83 one -- blind to the
+    SPELLING of the source that produced it ([B126]) and, since [B142]
+    (abi 83/84), to the find-all iterator's scaffold, which is compiled
+    into every object (`rx_next`, `rx_next_n`, the `rx__*` statics; an
+    older pin's whole `.text` can no longer equal a current one). The
+    exported forwarders and the matcher entries are hashed; a static twin
+    gcc inlines leaves no section of its own. None on a refusal."""
     out = os.path.join(tmp, tag + ".c")
     argv = ([binary, "-p", "rx"] + list(flags) + ["-o", out, "--pattern",
                                                     pat.decode("latin-1")])
@@ -11565,18 +11578,28 @@ def _b126_text_hash(binary, flags, pat, tmp, tag):
     if r.returncode != 0:
         return None
     obj = os.path.join(tmp, tag + ".o")
-    g = subprocess.run(["gcc", "-O2", "-c", out, "-o", obj],
+    g = subprocess.run(["gcc", "-O2", "-ffunction-sections", "-c", out, "-o", obj],
                        capture_output=True, env=C_ENV, timeout=600)
     if g.returncode != 0:
         return None
-    raw = os.path.join(tmp, tag + ".text")
-    o = subprocess.run(["objcopy", "-O", "binary", "-j", ".text", obj, raw],
-                       capture_output=True, env=C_ENV, timeout=120)
-    if o.returncode != 0:
-        return None
+    sec = subprocess.run(["readelf", "-SW", obj], capture_output=True,
+                         text=True, env=C_ENV, timeout=120)
+    names = sorted(m.group(1) for m in re.finditer(
+        r"\]\s+(\.text\S*)\s", sec.stdout))
     import hashlib
-    with open(raw, "rb") as fh:
-        return hashlib.sha256(fh.read()).hexdigest()[:16]
+    h = hashlib.sha256()
+    for nm in names:
+        fn = nm.split(".")[-1]
+        if nm == ".text" or _TEXT_SCAFFOLD.match(fn):
+            continue
+        raw = os.path.join(tmp, tag + nm.replace("/", "_") + ".bin")
+        o = subprocess.run(["objcopy", "-O", "binary", "-j", nm, obj, raw],
+                           capture_output=True, env=C_ENV, timeout=120)
+        if o.returncode != 0:
+            return None
+        with open(raw, "rb") as fh:
+            h.update(nm.encode() + b"\0" + fh.read() + b"\0")
+    return h.hexdigest()[:16]
 
 
 def check_b126_stamps():

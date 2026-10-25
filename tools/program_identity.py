@@ -425,6 +425,10 @@ def program_sha256_of_files(c_path, h_path=None):
 #      dropped. This undoes abi 83's forwarder split (`rx_search` ->
 #      `rx__find`, `rx_next_pos` -> `rx__next_pos`) so the folded function
 #      equals the abi-76 one.
+#      The VM's `_run` forwarder carries the range test + STARTPOS guard; the
+#      abi-76 text declares the VM locals (`rx_ctx ctx;` ...) BEFORE that
+#      prologue and the split twin declares them after it, so the twin's
+#      leading initializer-free declarations are placed first.
 #   4. The remaining chunks are SORTED (order of top-level items is not a
 #      program property; `#define rx_VALID_LB` moved, for instance).
 # Everything else is compared byte for byte. MEASURED at [B142]: v3 reads
@@ -442,6 +446,8 @@ _V3_HEADNAME = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 _V3_SCAFFOLD = re.compile(
     r"^_(?:_enter|_bind_checks|_step|_step_own\w*|_one|_one_call|_one_local"
     r"|_retry\w*|_match_notempty\w*|next|next_n|iter_buffers\w*|retry_\w+)$")
+_V3_BARE_DECL = re.compile(
+    r"^(?:rx_ctx|ptrdiff_t|size_t|int|unsigned|uint64_t)\s+\w+(?:\[[^\]]*\])*;$")
 _V3_SCAFFOLD_LINE = re.compile(
     r"^(?:typedef \w+(?: \w+)? rx_retry_state;"
     r"|static inline void rx_iter_buffers|int rx_next\(|size_t rx_next_n\("
@@ -504,7 +510,12 @@ def normalize_v3(text, prefix="rx"):
                 twc = twins[tw][0]
                 ti = twc.index("{")
                 bi = c.index("{")
-                res.append(c[:bi + 1] + c[bi + 1:k0] + twc[ti + 1:-1] + ["}"])
+                tb = twc[ti + 1:-1]
+                lead = 0                  # the VM's initializer-free locals
+                while lead < len(tb) and _V3_BARE_DECL.match(tb[lead]):
+                    lead += 1             # precede the caller-position prologue
+                res.append(c[:bi + 1] + tb[:lead] + c[bi + 1:k0] + tb[lead:]
+                           + ["}"])
                 folded.add(tw)
                 continue
         res.append(c)

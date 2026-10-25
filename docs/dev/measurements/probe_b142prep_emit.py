@@ -10,7 +10,7 @@ timing. Step 2 (probe_b142prep_census.py) reads OUTDIR.
     B142_JOBS=6 python3 docs/dev/measurements/probe_b142prep_emit.py OUTDIR
 """
 import concurrent.futures as cf
-import gzip, hashlib, os, sys, tempfile
+import gzip, hashlib, os, re, subprocess, sys, tempfile
 sys.path.insert(0, os.getcwd())
 sys.path.insert(0, os.path.join(os.getcwd(), "tools"))
 import program_identity as PI                          # noqa: E402
@@ -51,12 +51,34 @@ def one(job):
     with tempfile.TemporaryDirectory(dir=OUT) as tmp:
         for tag, pin, extra in [("old", OLD, []), ("new", NEW, [])] + \
                 [("arm_" + a, NEW, f) for a, f in ARMS.items()]:
-            t = PI.emit(BIN[pin], "--pattern", flags + extra, pat, os.path.join(tmp, tag))
+            t, sz = emit_sized(BIN[pin], flags + extra, pat, os.path.join(tmp, tag))
             if t is not None:
                 with gzip.open(os.path.join(OUT, "%s.%s.gz" % (key, tag)), "wb") as fh:
                     fh.write(t.encode("utf-8", "surrogateescape"))
-            res.append((tag, t is not None))
-    return [sid, pid, cfg, form, key] + ["1" if ok else "0" for _t, ok in res]
+            res.append((tag, "%s:%s" % sz if t is not None else "0"))
+    return [sid, pid, cfg, form, key] + [v for _t, v in res]
+
+
+WARN = re.compile(rb"large artifact: (\d+) bytes of emitted C source \((\d+) of code\)")
+
+
+def emit_sized(binary, flags, pat, workdir):
+    """program_identity.emit() plus pcrec's OWN size numbers (the
+    --warn-emit-bytes=1 probe, the line the caps enforce)."""
+    os.makedirs(workdir, exist_ok=True)
+    out = os.path.join(workdir, "a.c")
+    r = subprocess.run([binary, "-p", "rx"] + list(flags) + ["--warn-emit-bytes=1", "-o", out,
+                       "--pattern", bytes(pat)], capture_output=True, env=PI.C_ENV, timeout=600)
+    if r.returncode != 0:
+        return None, ("-", "-")
+    ms = WARN.findall(r.stderr)
+    sz = (ms[-1][0].decode(), ms[-1][1].decode()) if ms else ("-", "-")
+    parts = []
+    for p in (out, out[:-2] + ".h"):
+        if os.path.exists(p):
+            with open(p, "rb") as fh:
+                parts.append(fh.read().decode("utf-8", "surrogateescape"))
+    return PI.SEP.join(parts), sz
 
 
 def main():
