@@ -65,20 +65,20 @@ K = {
     "P_BROWSE_TAIL": 110,     # a browse page view from the wide tail
     "RET_SHARE": 116,         # browse sessions by a returning client
     "REF_DASH": 57,           # percent: main-doc Referer is "-"
-    "REF_SEARCH": 15,         # percent: a long search-engine Referer
+    "REF_SEARCH": 13,         # percent: a long search-engine Referer
     "M_304": 16, "M_206": 370,    # main doc: 304 revalidation / 206 ranged download (per mille)
-    "A_304_SITE": 5, "A_304_DOC": 1, "A_304_HEAVY": 19, "FEED_304": 16,
-    "S_404": 1,               # percent of drive-by extra paths that 404
-    "UA_Q": 20, "UA_DEN": 10, "DOCS_Q": 120, "HOT_DOCS": 110, "N_AGENTS": 1516,
-    "CRAWL_LONG": 20, "DOC_MOVED": 42, "DOC_MISSING": 22,
-    "SLUG_WORDS": 128, "SLUG_MAXN": 2,
-    "P1_0": 1, "TALK_IMG_MAX": 5, "SEARCH_PAD": 0,
-    "HOST_ALT": 6,           # percent of sessions using the bare-host site URL
+    "A_304_SITE": 5, "A_304_DOC": 1, "A_304_HEAVY": 20, "FEED_304": 16,
+    "S_404": 2,               # percent of drive-by extra paths that 404
+    "UA_Q": 23, "UA_DEN": 10, "DOCS_Q": 120, "HOT_DOCS": 110, "N_AGENTS": 1573,
+    "CRAWL_LONG": 19, "DOC_MOVED": 42, "DOC_MISSING": 22,
+    "SLUG_WORDS": 105, "SLUG_MAXN": 2,
+    "P1_0": 1, "TALK_IMG_MAX": 4, "SEARCH_PAD": 2,
+    "HOST_ALT": 5,           # percent of sessions using the bare-host site URL
     "EXT_URL": 49,            # percent of external referrers that are a distinct page URL
-    "P_TRACK": 15,            # per mille of main docs carrying a long tracking query
-    "P_UTM_FEED": 21,         # per mille of main .html docs reached from a feed campaign
+    "P_TRACK": 18,            # per mille of main docs carrying a long tracking query
+    "P_UTM_FEED": 23,         # per mille of main .html docs reached from a feed campaign
                 # percent of browse sessions on HTTP/1.0
-    "TS_NEW_MAX": 60,
+    "TS_NEW_MAX": 67,
 }
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
