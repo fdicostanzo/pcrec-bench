@@ -567,7 +567,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
 from pcrecbench import adapters as _ad                       # noqa: E402
 from pcrecbench import record as _rec                        # noqa: E402
 from pcrecbench.driverrun import (C_ENV, build_driver,       # noqa: E402
-                                  per_trial, run_driver)
+                                  one_trial, per_trial, run_driver)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PIN_SH = os.path.join(HERE, "pin.sh")
@@ -4540,7 +4540,13 @@ class Adapter(_ad.Adapter):
                                      cfg.get("cflags_extra"),
                                      cfg.get("encoding_extra"),
                                      cfg.get("tune_extra"),
-                                     cfg.get("analysis_extra"))
+                                     cfg.get("analysis_extra"),
+                                     # [B140] the size-first arm is a
+                                     # DIFFERENT CALL SHAPE (two replace-all
+                                     # calls) and so a different testee,
+                                     # chartered LAST (append-only).
+                                     "sizefirst" if cfg.get("subst_sizing")
+                                     == "first" else None)
         if extra:
             block["config_extra"] = extra
         if local:
@@ -4557,7 +4563,8 @@ class Adapter(_ad.Adapter):
         os.makedirs(workdir, exist_ok=True)
         self.binary_for(testee_id)
         build_driver(os.path.join(HERE, "driver.c"),
-                     os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
+                     os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
+                     extra_sources=["timed_subst.c"])   # [B140]
 
     # -------------------------------------------------------------- compile
 
@@ -4578,7 +4585,18 @@ class Adapter(_ad.Adapter):
         timed and given their own compile rows -- they are different
         compiles of different text, and folding their costs together would
         report a compile cost for an artifact the record does not witness
-        (rule X27)."""
+        (rule X27).
+
+        [B140] A SUBSTITUTION cell (`options["substitution"]`, set by the
+        harness) builds ONE form, `plain`, and a different artifact KIND: the
+        rx artifact PLUS the subst artifact for the case's template
+        (`pcrec -p sub --subst-file`, contract subst_api.md 5) and a private
+        copy of the support unit -- see `_compile_one`'s `subst`."""
+        if options and options.get("substitution"):
+            sub = self._subst_inputs(testee_id, pattern_id, workdir)
+            return _ad.CompiledPattern({_ad.FORM_PLAIN: self._compile_one(
+                testee_id, pattern_id, _ad.FORM_PLAIN, pattern, trials,
+                workdir, subst=sub)})
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT,
@@ -4587,13 +4605,37 @@ class Adapter(_ad.Adapter):
                                             trials, workdir)
         return _ad.CompiledPattern(forms)
 
+    def _subst_inputs(self, testee_id, pattern_id, workdir):
+        """-> {"template": path, "extended": bool} for a substitution cell:
+        the file `substrun.write_template` put the rendered template in
+        (raw bytes) and the `template.flags` it wrote beside it. The
+        template is an input of the COMPILE here (the artifact bakes it in,
+        subst_api.md 1), where libpcre2's and the other engines' take it per
+        call."""
+        self.subst_support(testee_id)       # the roster check, by name
+        base = os.path.join(workdir, "p-" + pattern_id)
+        tpl = os.path.join(base, "template")
+        flags = os.path.join(base, "template.flags")
+        if not os.path.isfile(tpl) or not os.path.isfile(flags):
+            raise _ad.AdapterError(
+                "%s: a substitution compile needs the harness's rendered "
+                "template (%s and %s); the harness writes both before "
+                "compiling" % (testee_id, tpl, flags))
+        with open(flags, "r", encoding="ascii") as f:
+            ext = f.read().strip()
+        if ext not in ("extended", "none"):
+            raise _ad.AdapterError("%s: %s says %r, not extended|none"
+                                   % (testee_id, flags, ext))
+        return {"template": tpl, "extended": ext == "extended"}
+
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir):
+                     workdir, subst=None):
         import time
         cfg = self.config(testee_id)
         pcrec = self.binary_for(testee_id)
         drv = build_driver(os.path.join(HERE, "driver.c"),
-                           os.path.join(workdir, "pcrec_driver"), extra=["-ldl"])
+                           os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
+                           extra_sources=["timed_subst.c"])   # [B140]
         # [B24]: the config decides the COMPILEE toolchain, falling back to
         # `$CC` and then gcc for a config that declares none (`config()`
         # resolves it; `effective_cc` is the one rule). The shim is compiled
@@ -4649,6 +4691,37 @@ class Adapter(_ad.Adapter):
                                          phase_seconds=[{"emit-c": t1 - t0}],
                                          diagnostic=diag or "pcrec exit %d"
                                          % proc.returncode)
+            sub_c = support_h = None
+            if subst:
+                # [B140] the two extra emits of a substitution artifact: the
+                # template compiler (`--subst-file`, byte for byte; every
+                # other pcrec option is REFUSED with --subst, subst_api.md
+                # 5 para 1, so none of the config's flags ride here) and the
+                # support unit (`--emit-support`, 10 para 2). Their cost is
+                # part of the `emit-c` phase: all three are pcrec exec's.
+                sub_c = os.path.join(cdir, "sub.c")
+                support_h = os.path.join(cdir, "support.h")
+                s0 = time.monotonic()
+                sproc = subprocess.run(
+                    [pcrec, "-p", "sub"]
+                    + (["--features", "subst-extended"]
+                       if subst["extended"] else [])
+                    + ["-o", sub_c, "--subst-file", subst["template"]],
+                    capture_output=True, env=C_ENV, timeout=600)
+                uproc = subprocess.run(
+                    [pcrec, "--emit-support", "-o", support_h],
+                    capture_output=True, env=C_ENV, timeout=600)
+                t1 += time.monotonic() - s0
+                for what, pr in (("--subst-file", sproc),
+                                 ("--emit-support", uproc)):
+                    if pr.returncode != 0:
+                        diag = (pr.stderr or b"").decode("utf-8",
+                                                         "replace").strip()
+                        return _ad.CompileResult(
+                            "did-not-compile",
+                            phase_seconds=[{"emit-c": t1 - t0}],
+                            diagnostic="pcrec %s refused: %s"
+                            % (what, diag or "exit %d" % pr.returncode))
             if t == 1:
                 first_art_c = art_c
                 # [B19] the two source-bytes facts and the advisory warning,
@@ -4677,6 +4750,15 @@ class Adapter(_ad.Adapter):
                     + cfg.get("cflags", [])
                     + ["-o", so, os.path.join(HERE, "shim.c"),
                        "-DPB_ARTIFACT=\"%s\"" % art_c, "-I", cdir])
+            if subst:
+                # [B140] the second translation unit of the same .so
+                # (subst_shim.c's header): the support unit private to it,
+                # the rx header for `extern rx_info`, the subst artifact.
+                gargv[gargv.index("-I"):gargv.index("-I")] = [
+                    os.path.join(HERE, "subst_shim.c"),
+                    "-DPB_SUBST_ARTIFACT=\"%s\"" % sub_c,
+                    "-DPB_SUPPORT=\"%s\"" % support_h,
+                    "-DPB_RX_HEADER=\"%s\"" % (art_c[:-2] + ".h")]
             g0 = time.monotonic()
             gproc = subprocess.run(gargv, capture_output=True, text=True,
                                    env=C_ENV, timeout=900)
@@ -4748,6 +4830,17 @@ class Adapter(_ad.Adapter):
                   "artifact_c": first_art_c,
                   "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
                   "buffer_args": bufargs}
+        if subst:
+            # [B140] which sizing arm measure_subst drives; the compile
+            # row's diagnostic says what the artifact is made of.
+            handle["sizing"] = cfg.get("subst_sizing", "bound")
+            note = ("substitution artifact: rx artifact + subst artifact "
+                    "(template %d B, module subst%s) + a private support "
+                    "unit in one .so; `emit-c` = the rx emit + the "
+                    "--subst-file emit + --emit-support"
+                    % (os.path.getsize(subst["template"]),
+                       ",subst-extended" if subst["extended"] else ""))
+            engine_why = (engine_why + "\n" if engine_why else "") + note
         return _ad.CompileResult("compiled", phase_seconds=phase_seconds,
                                  engine_metadata=meta, handle=handle,
                                  artifact_bytes=artifact_bytes,
@@ -5380,6 +5473,87 @@ class Adapter(_ad.Adapter):
                     "6.3)." % (engine, macro_vm_pf, pair, scope_name[scope]))
 
     # -------------------------------------------------------------- measure
+
+    # ------------------------------------------------- substitution ([B140])
+
+    #: the config keys whose `*_extra` slug part marks an axis the
+    #: substitution roster does not cross (one variable at a time, BD3).
+    _SUBST_AXES = (("cc_extra", "the compilee-toolchain (cc) axis"),
+                   ("cap_extra", "the emitted-size cap axis"),
+                   ("deny_extra", "a generation-axis denial"),
+                   ("cflags_extra", "the compilee-flags axis"),
+                   ("encoding_extra", "the utf8 engine encoding (a "
+                    "character-mode template and the support unit's UTF-8 "
+                    "case map are a different set)"),
+                   ("tune_extra", "the --tune dial"),
+                   ("analysis_extra", "the --analysis bundle"))
+
+    def subst_support(self, testee_id):
+        """pcrec's substitution tier: the contract is subst_api.md at the pin;
+        the template is read in PCRE2's own dialect (`${N}`, `\\U${N}\\E`,
+        `${N:+yes:no}` -- subst_api.md 2 is libpcre2 10.46's, D26), the
+        divergence table names the testee `pcrec`, and the sizing arm is the
+        config's (`subst_sizing`). The roster is NARROW on purpose: the four
+        configs `pcrec-auto`, `pcrec-vm` and their `-sizefirst` arms. Every
+        other config is REFUSED BY NAME, with the reason:
+
+          pcrec-local        a provided binary, scratch tier by construction
+          captures off       the check refuses `rx->ncaps == 0` (3 para 10)
+                             and cases 4, 6, 7 read groups
+          buffers (`-in`)    replace-all drives `rx_info.next_n`, which takes
+                             no caller buffer
+          engine dfa         a forced DFA refuses every capturing pattern
+          an axis slug       cc / caps / deny / cflags / encoding / tune /
+                             analysis: crossing a matching-tier axis with the
+                             substitution tier makes cells no comparison can
+                             attribute (BD3's one-variable rule); chartered
+                             when a question needs one."""
+        cfg = self.config(testee_id)
+        why = None
+        if self.is_local(testee_id):
+            why = "it is a provided-binary (scratch-tier) testee"
+        elif cfg.get("captures", "on") == "off":
+            why = ("captures are off: pcrec_subst_check refuses an rx with "
+                   "ncaps == 0 (subst_api.md 3 para 10) and cases 4, 6 and 7 "
+                   "read groups")
+        elif buffer_capacities(cfg):
+            why = ("it passes a caller-provided frame buffer, and "
+                   "pcrec_subst_replace_all drives rx_info.next_n, which "
+                   "takes none (subst_api.md 10 para 6a)")
+        elif cfg.get("engine_mode") not in ("auto", "vm"):
+            why = ("a forced %s engine refuses every capturing-group pattern "
+                   "(and the roster is auto and vm)" % cfg.get("engine_mode"))
+        else:
+            for key, name in self._SUBST_AXES:
+                if cfg.get(key):
+                    why = ("it crosses %s (config_extra part %r) with the "
+                           "substitution tier" % (name, cfg.get(key)))
+                    break
+        if why:
+            raise _ad.AdapterError(
+                "%s is not on the substitution roster: %s. The roster is "
+                "pcrec-auto, pcrec-vm and their -sizefirst arms "
+                "(testees/pcrec/CLAUDE.md, [B140])" % (testee_id, why))
+        return {"dialect": "pcre2", "competitor": "pcrec",
+                "sizing": cfg.get("subst_sizing", "bound")}
+
+    def measure_subst(self, handle, subjects, bounds, out_dir, timeout=None):
+        """One `--mode subst` trial (driver.c's header, adapters.py's
+        protocol). The artifact was built from the template at compile time;
+        `handle["subst"]` is only passed along for the driver's argv, which is
+        the same for every engine."""
+        sub = handle["subst"]
+        argv = [handle["driver"], "--lib", handle["lib"], "--mode", "subst",
+                "--template", sub["template_file"],
+                "--subst-flags", sub["flags"],
+                "--sizing", handle.get("sizing", "bound")]
+        for sid, cap in sorted(bounds.items()):
+            argv += ["--bound", "%s=%d" % (sid, cap)]
+        if out_dir:
+            argv += ["--out-dir", out_dir]
+        return one_trial(argv, subjects, timeout=timeout,
+                         pin=handle.get("pin"),
+                         subject_timeout=handle.get("subject_timeout"))
 
     def measure(self, handle, regime, subjects, iters, trials, timeout=None):
         from pcrecbench.subbench import REGIME_MODE

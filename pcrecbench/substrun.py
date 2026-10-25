@@ -115,6 +115,12 @@ def write_template(plan, directory):
     path = os.path.join(directory, "template")
     with open(path, "wb") as f:
         f.write(plan.template)
+    # [B140] b140pcrec: the flags beside it. An engine whose artifact BAKES the
+    # template in at compile time (pcrec: the subst module is chosen at
+    # template compile, subst_api.md 2 para 7) reads both before `compile()`,
+    # where `plan.flags` is not otherwise visible to an adapter.
+    with open(path + ".flags", "w", encoding="ascii") as f:
+        f.write(plan.flags + "\n")
     plan.template_file = path
     return path
 
