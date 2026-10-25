@@ -4878,6 +4878,7 @@ class Adapter(_ad.Adapter):
                 meta, engine_why = self._metadata(out.info, forced=forced)
                 pairs, warn_line = emit_meta
                 meta.update(pairs)
+                check_compound_iff(meta)    # needs the text stamps (13.)
                 if warn_line:
                     engine_why = ((engine_why + "\n") if engine_why else "") \
                         + "pcrec stderr: " + warn_line
@@ -5277,10 +5278,11 @@ class Adapter(_ad.Adapter):
                 "refuses always_inline on a function containing a computed "
                 "goto)." % (shape,))
 
-        # 13. ([B142] follow-up, b142fix) THE COMPOUND IFF, see
-        #     check_compound_iff (a module function so a control can call
-        #     it on a planted dict without an artifact).
-        check_compound_iff(meta)
+        # 13. ([B142] follow-up, b142fix) THE COMPOUND IFF is NOT run here:
+        #     `compound` is a TEXT-read stamp (text_stamps) merged into meta
+        #     only after _metadata returns, so _compile_one runs
+        #     check_compound_iff after `meta.update(pairs)` (found by the
+        #     merged make check, 2026-10-25: here it read compound=None).
 
         # 6. ([B18], [OPT-K]) `dfa_prefilter_offsets` is "none" IFF
         #    `dfa_prefilter` is not an offset-set value (6.3's iff, both
