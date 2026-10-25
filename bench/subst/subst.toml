@@ -23,10 +23,10 @@ backreference inside a negative lookahead with a conditional template (the \
 VM-only, DFA-refusing shape). The answer is an OUTPUT BYTE STRING, so the \
 correctness gate is its sha256 against the libpcre2 oracle's."""
 description = """\
-Eleven (pattern, template) cases over one generated, calibrated Apache \
+Eight (pattern, template) cases over one generated, calibrated Apache \
 combined log (acc-main 1.6 M lines, acc-small its 17,500-line byte prefix): \
 1 literal, 2 rare, 3 dense, 4 reorder, 5 mask-ipv4, 5b mask-email, 6 upper, \
-7 url-tld-fix and its split pair 7a/7b/7c. Patterns in the common subset of \
+7 url-tld-fix (one pass, conditional template). Patterns in the common subset of \
 PCRE2 / POSIX ERE (cases 1-6) or PCRE2 only (7*); templates in an \
 engine-neutral IR rendered per dialect by pcrecbench/subst_template.py."""
 

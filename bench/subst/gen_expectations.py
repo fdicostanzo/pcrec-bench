@@ -20,12 +20,11 @@ INDEPENDENT count of the substitutions, taken without the oracle:
   3   digit-run transitions via bytes.translate (no regex at all)
   4   the newline count (one date per line by construction)
   5, 5b, 6   python's `re` (another implementation of the same patterns)
-  7, 7a, 7b, 7c   the generator's planted populations (wrong TLD / missing
+  7   the generator's planted populations (wrong TLD / missing
       with no query / missing after other fields)
 A disagreement between the oracle and the independent count is a FAILURE of
-the set (nothing is written). And case 7's one-pass output must equal the
-sequential application of 7a, 7b, 7c (their populations are disjoint): the
-`control` column.
+the set (nothing is written). (The `control` column is kept, empty: case 7 is
+ONE pass only since inbox I-158; the 7a/7b/7c split pair was removed.)
 
     gen_expectations.py             write expectations.tsv (acc-small always;
                                     acc-main when subjects/acc-main.log exists)
@@ -110,12 +109,6 @@ def independent(case, data, planted):
                "5b": rb"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
                "6": rb"/(blog|images|downloads|static)/"}[case]
         return sum(1 for _ in re.finditer(pat, data)), "python re"
-    if case == "7a":
-        return planted["n_url7_wrong"], "planted"
-    if case == "7b":
-        return planted["n_url7_missing_noq"], "planted"
-    if case == "7c":
-        return planted["n_url7_missing_q"], "planted"
     if case == "7":
         return (planted["n_url7_wrong"] + planted["n_url7_missing_noq"]
                 + planted["n_url7_missing_q"]), "planted"
@@ -141,20 +134,6 @@ def derive(subject, data, cases):
                              % (case, subject, n, ind, basis))
         rows.append([case, subject, str(n), str(len(out)), sha, str(ind), basis, ""])
         del out
-    # case 7's one pass == 7a, then 7b, then 7c (disjoint populations)
-    cur = data
-    for case, pat, ir in cases:
-        if case in ("7a", "7b", "7c"):
-            tpl = st.render(ir, "pcre2", extended=False)
-            _n, o = oracle.compile(pat).substitute(cur, tpl)
-            cur = bytes(o)
-    comp = hashlib.sha256(cur).hexdigest()
-    for r in rows:
-        if r[0] == "7":
-            if comp != r[4]:
-                raise SystemExit("case 7 control: 7a+7b+7c != the one-pass 7 "
-                                 "on %s" % subject)
-            r[7] = "composition(7a,7b,7c)==7:ok"
     return rows
 
 

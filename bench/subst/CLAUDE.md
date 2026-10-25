@@ -28,7 +28,7 @@ no timing, no store record exists for it.
 | `logsim.py` | the access-log SIMULATOR: one deterministic infinite stream of interleaved sessions (browsers, crawlers, feed readers, drive-bys, heavy users) with the planted structures; `K` is its calibration knob table |
 | `gen_subjects.py` | writes `subjects/acc-small.log` + `acc-main.log` (gitignored) from one stream, `manifest.tsv`, `planted.tsv`; `--check` reproduces them and runs the calibration when the reference is present |
 | `manifest.tsv` | `id len sha256 description periodic` for the two subjects (the harness's five-column shape) |
-| `planted.tsv` | per-subject oracle-INDEPENDENT planted counts (rare paths, e-mails, the four case-7 URL populations) |
+| `planted.tsv` | per-subject oracle-INDEPENDENT planted counts (rare paths, e-mails, the case-7 URL populations) |
 | `calibrate.py` | (STATED_DEVIATIONS: verdict DEVIATION) measures a generated window against the real Apache log: entropy, gzip/xz/zstd ratios, line lengths, field variety, status mix, each case's matches per line; stated tolerances; run with `python3 -I` |
 | `fetch_reference.sh` | downloads the reference at the pinned commit and verifies BOTH its sha256 and its git blob hash, refusing on mismatch (never run by `make check`) |
 | `gen_expectations.py` | `expectations.tsv` from the libpcre2 oracle (`Compiled.substitute`) with an independent count per row and case 7's composition control; `--check` re-derives acc-small |

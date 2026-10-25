@@ -70,9 +70,7 @@ LINE_RX = re.compile(
 
 #: cases whose density is PLANTED on purpose ("by design", exempt); the others
 #: are natural and held to the tolerance.
-BY_DESIGN = {"2-rare", "4-reorder", "5b-mask-email", "7-url-tld-fix",
-             "7a-url-tld-value", "7b-url-tld-insert-qmark",
-             "7c-url-tld-insert-amp"}
+BY_DESIGN = {"2-rare", "4-reorder", "5b-mask-email", "7-url-tld-fix"}
 
 
 PLANTED_URL = re.compile(rb"https://www\.(acme|globex|initech|umbrella|hooli)\.")

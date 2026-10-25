@@ -35,9 +35,6 @@ oracle's. A mismatch is `wrong`; a construct a dialect cannot express is
 | 5b | `5b-mask-email` | `[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}` | `<email>` | **planted**, ~1 line in 20 | the widely used e-mail shape: unbounded classes either side of a literal `@` |
 | 6 | `6-upper` | `/(blog\|images\|downloads\|static)/` | `/\U${1}\E/` | natural, ~0.6 / line | CASE CHANGE in the template — only some dialects can say it |
 | 7 | `7-url-tld-fix` | see below | see below | **planted**, ~1 line in 40 | ONE PASS: a backreference in a negative lookahead + a conditional template segment |
-| 7a | `7a-url-tld-value` | see below | `${1}${2}` | planted | the split pair, half 1: fix a wrong TLD value |
-| 7b | `7b-url-tld-insert-qmark` | see below | `${1}?tld=${2}` | planted | half 2a: insert the missing field after a URL with no query |
-| 7c | `7c-url-tld-insert-amp` | see below | `${1}${3}&tld=${2}` | planted | half 2b: insert it after a URL with a query lacking it |
 
 Patterns 1-6 are written in the intersection of PCRE2 / Rust (`unicode(false)`)
 / RE2 / POSIX ERE (GNU `sed -E`) / perl / python `re`: **capturing groups only,
@@ -70,20 +67,18 @@ unset group is referenced outside its guard**, so the oracle runs WITHOUT
 error; `subst_template.unset_refs` lints this and `gen_expectations.py`
 refuses a template that does).
 
-We do not yet know whether pcrec's subst has a conditional segment (asked in
-outbox O-106), so the set carries the SPLIT PAIR too: `7a` (fix a wrong
-value), `7b` (insert with `?`), `7c` (insert with `&`) — plain templates, no
-conditional. **The three populations are disjoint, so applying 7a, 7b, 7c in
-any order equals the one-pass 7**; `gen_expectations.py` asserts exactly that
-on every subject (the `control` column of `expectations.tsv`).
+**Case 7 is ONE pass only** (brief change, inbox I-158 answering O-106): pcrec's
+subst supports `${n:+set:unset}`, `${n:+set}` and `${n:-text}` under module
+`subst-extended`, so the earlier 7a/7b/7c split pair is NOT built (removed).
+The pcrec pin that lands this ([M4-SUBST]) is **9ae59f5d4**; no pcrec work is
+done here, the re-pin is a later lane.
 
-Expected outcomes: libpcre2 answers all four; pcrec answers 7a/7b/7c on the
-VM route and 7 iff it has a conditional segment (`pending`, O-106). GNU sed,
-RE2, Rust regex, sd and ripgrep cannot parse the pattern at all
-(`unsupported:pattern-syntax` — lookahead, non-capturing groups, and for 7a
-a backreference; POSIX ERE has none). perl and python run 7a/7b/7c; for the
-one-pass 7 they are `unsupported:no-conditional` (no conditional template;
-a `/e` code replacement or a callable is user code, not a template).
+Expected outcomes: libpcre2 and pcrec answer case 7 (pcrec on the VM route).
+GNU sed, RE2, Rust regex, sd and ripgrep cannot parse the pattern at all
+(`unsupported:pattern-syntax` — lookahead, backreference, non-capturing groups;
+POSIX ERE has none). perl and python are `unsupported:no-conditional` (no
+conditional template; a `/e` code replacement or a callable is user code, not a
+template).
 
 ## The neutral template (IR)
 
@@ -251,11 +246,9 @@ run's check for the pcre2-jit library testee). The output buffer starts at
 
 Nothing rests on the oracle's word alone: every row carries an INDEPENDENT
 count (`independent_nsubst`, `independent_basis`) — `bytes.count` of the
-literal (1), the generator's planted count (2, and the three case-7
-populations), digit-run transitions via `bytes.translate` with no regex (3),
+literal (1), the generator's planted count (2, and case 7's three edited populations), digit-run transitions via `bytes.translate` with no regex (3),
 the newline count (4), python's `re` (5, 5b, 6) — and a disagreement fails
-the generation. Case 7's one-pass output must equal 7a, 7b, 7c applied in
-sequence.
+the generation.
 
 The gate (design §4): a competitor's output sha256 must equal the row's
 `out_sha256`; the first differing offset is recorded when it does not; a
@@ -278,16 +271,16 @@ sed, perl, pcre2, pcrec agree; python, Rust, RE2, sd, rg are
 in general (`foo|foobar`) but no case has a prefix-ambiguous alternation:
 case 2's alternatives diverge at the first byte after `/`, case 6's likewise; the
 authoring rule "an alternation's alternatives must not be prefixes of one
-another" holds for all eleven.
+another" holds for all eight.
 
 ## Predictions (stated before any run; nothing timed in this build)
 
 * P1. Every oracle row equals its independent count (the generation enforces it).
 * P2. Case 4: `nsubst` = the line count; case 2: `nsubst` = the planted count;
-  7a + 7b + 7c populations = the planted `url7_wrong` / `url7_missing_noq` /
+  case 7 `nsubst` = the planted `url7_wrong` + `url7_missing_noq` +
   `url7_missing_q`.
 * P3. Output size: cases 1, 3, 5, 5b, 2 shorten the file; 4 and 6 keep its length
-  exactly (same-length rewrites); 7* lengthen it by 4-9 bytes per edit.
+  exactly (same-length rewrites); 7 lengthens it by 4-9 bytes per edit.
 * P4. GNU sed -E, perl and python `re` agree with the oracle on every case they
   can express; sed and RE2/Rust-class engines refuse case 7* (the table).
 * P5 (for the windows, not this build). Case 3's cost is dominated by per-match
@@ -301,11 +294,7 @@ another" holds for all eleven.
    metacharacter that makes several engines treat the pattern as a regex. The
    escaped spelling is the literal the design intends; answers on this subject
    are identical either way.
-2. **The brief's "7b" is delivered as 7b + 7c.** "Insert the missing field with
-   `?` or `&`" needs the separator chosen per URL; no plain template can
-   (the separator is not in the subject at the insertion point), so without a
-   conditional it is two patterns — `?` after a query-less URL, `&` after a
-   query lacking the field.
+2. **No split pair**: the 7a/7b/7c fallback was built first and removed when O-106 was answered (I-158). Case 7 is one pass.
 3. **Sidecar named `subst.toml`**, not `subbench.toml` (the generic gates would
    enumerate it and require patterns, a matcher driver and a legal regime).
    Rename = the integration step.

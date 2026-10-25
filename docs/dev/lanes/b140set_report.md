@@ -10,8 +10,8 @@ Branch `lane/b140set` (worktree `worktrees/b140set`). No timing run, no `store/`
 | Stated deviations | `calibrate.STATED_DEVIATIONS` (verdict `DEVIATION` inside a stated bound, FAIL beyond), `bench/subst/NOTES.md` "Stated deviations" (value, tolerance, why), the archive's `calibration.tsv`. |
 | 1. Calibration archive | `docs/dev/measurements/2026-10-24-b140-subject-calibration/` (`calibration.txt` = source header incl. reference sha256 f15c31e9...64ef, commit bc53b584, blob 94bf224f + verbatim stdout; `calibration.tsv`; `reproduce.sh`); `docs/dev/measurements/CLAUDE.md` row. `gen_subjects.py --check` re-runs the first window (`--full`: the middle one too) and prints `calibration SKIPPED -- reference ... absent` by name when the reference is missing (tools/check_subst.py reports it as an `ok SKIPPED BY NAME`). Verified: `--check --full` printed `calibration PASS (30 rows, 0 FAIL, window(s): first10k + mid10k)`. |
 | 2. Subject regenerated, manifest committed, subject gitignored | `bench/subst/manifest.tsv`, `planted.tsv`; `bench/*/subjects/` already ignored (the 362 MB file lives at `/var/tmp/pcrecbench/b140set/subjects/` via `PCRECBENCH_SUBST_SUBJECTS`). `gen_subjects.py --check --full`: regenerated acc-small + acc-main match the manifest, the on-disk files match, acc-small is a byte prefix of acc-main. acc-small 3,929,818 B sha256 7f9724543efa7f2b..., acc-main 361,986,301 B sha256 a9b0a4cc17e65d3a... (not 320 MB: NOTES deviation 9). |
-| 3. Expectations via the oracle | `bench/subst/expectations.tsv`, 22 rows (11 cases x 2 subjects): nsubst, out_bytes, out_sha256, plus an oracle-independent count per row (all equal); case 7 one-pass AND 7a/7b/7c built, case 7 == 7a+7b+7c composed control ok on both subjects; case 6 `unsupported` strictly for non-case-operator dialects in `divergences.tsv`. Table below. |
-| 4. Densities in NOTES.md before timing; divergences complete | NOTES.md "Densities" (stated) + the measured planted counts paragraph; `divergences.tsv` (68 rows: cases 1-5b agree for everyone, case 6 split, 7/7a/7b/7c per competitor; pcrec 7 `pending` on O-106, which is unanswered). |
+| 3. Expectations via the oracle | `bench/subst/expectations.tsv`, 16 rows (8 cases x 2 subjects): nsubst, out_bytes, out_sha256, plus an oracle-independent count per row (all equal); case 7 ONE pass only (brief change after I-158: 7a/7b/7c removed, composition control dropped); case 6 `unsupported` strictly for non-case-operator dialects in `divergences.tsv`. Table below. |
+| 4. Densities in NOTES.md before timing; divergences complete | NOTES.md "Densities" (stated) + the measured planted counts paragraph; `divergences.tsv` (38 rows: cases 1-5b agree for everyone, case 6 split, case 7 per competitor; pcrec 7 `pending` row to be set `agrees` at the [M4-SUBST] re-pin). |
 | 5. `make check-harness` slice | Full run: **857 checks passed, 0 FAILED** (rc 0, log `/var/tmp/pcrecbench/b140set/checkh2.log`, ~35 min wall, box otherwise idle; no inconclusive-load item, not a timing run). The subst slice (`tools/check_subst.py`) is 34 checks, 0 bad; it includes the calibration first-window PASS, the acc-small expectation re-derivation, and python/sed/perl against the divergence table. Two real bugs in the slice were found and fixed (see below). Not independently verified: the one-pass case 7 on pcrec (O-106). |
 | 6. CLAUDE.md files | `bench/subst/CLAUDE.md` (status, subjects dir), `docs/dev/measurements/CLAUDE.md` (archive row). `tools/` and `docs/dev/lanes/` CLAUDE.mds were not changed by this lane beyond file edits to an existing, already-listed `check_subst.py`. |
 
@@ -69,9 +69,6 @@ Deviations: `linelen_p99` (mid window -11.9 % vs +-10 %, bound 13 %) and `status
 | 5b | acc-small | 830 | 3918120 | `b4910705dad7e380` | 830 (python re) |
 | 6 | acc-small | 10236 | 3929818 | `9092731349312891` | 10236 (python re) |
 | 7 | acc-small | 283 | 3930988 | `247378b400f06379` | 283 (planted) |
-| 7a | acc-small | 126 | 3929827 | `f5d2245afdea6d7e` | 126 (planted) |
-| 7b | acc-small | 72 | 3930354 | `d59f20264ffc74ee` | 72 (planted) |
-| 7c | acc-small | 85 | 3930443 | `27aa00de1c24845c` | 85 (planted) |
 | 1 | acc-main | 1411976 | 353514445 | `461dc93c83463524` | 1411976 (bytes.count) |
 | 2 | acc-main | 160 | 361984203 | `0b9c3be4cfc728e3` | 160 (planted) |
 | 3 | acc-main | 39337500 | 311463435 | `8e72938fde1567f7` | 39337500 (digit-run transitions) |
@@ -80,18 +77,19 @@ Deviations: `linelen_p99` (mid window -11.9 % vs +-10 %, bound 13 %) and `status
 | 5b | acc-main | 80123 | 360838508 | `4b66e137a1e58cae` | 80123 (python re) |
 | 6 | acc-main | 928237 | 361986301 | `e328833e09d745bc` | 928237 (python re) |
 | 7 | acc-main | 23986 | 362091138 | `80c1df04f414bfb7` | 23986 (planted) |
-| 7a | acc-main | 9920 | 361987067 | `1d458bd3cbb0ff78` | 9920 (planted) |
-| 7b | acc-main | 6048 | 362031062 | `68e0991b39879c39` | 6048 (planted) |
-| 7c | acc-main | 8018 | 362045611 | `4c3476897269cddd` | 8018 (planted) |
 
 Planted densities (acc-main): case 2 160 (1 per 10,000 lines), case 5b 80,123 (5.01 % of lines), case 7 23,986 edits of 40,095 planted URLs (9,920 wrong + 6,048 missing-no-query + 8,018 missing-with-query; 16,109 already correct), case 4 one per line.
 
 ## Predictions check (NOTES P1-P4)
 
-P1 (oracle == independent count): holds on all 22 rows. P2 (case 4 = lines, case 2 = planted, 7a+7b+7c = planted populations): holds. P3 (size): cases 4 and 6 keep the length exactly (3,929,818 / 361,986,301 B), cases 1, 2, 3, 5, 5b shorten, case 7 lengthens by 1,170 B (small) / 104,837 B (main) = 4.4 B per edit on average. P4 (sed/perl/python agree where they can express): verified on acc-small by the slice.
+P1 (oracle == independent count): holds on all 22 rows. P2 (case 4 = lines, case 2 = planted, case 7 = the three planted edit populations): holds. P3 (size): cases 4 and 6 keep the length exactly (3,929,818 / 361,986,301 B), cases 1, 2, 3, 5, 5b shorten, case 7 lengthens by 1,170 B (small) / 104,837 B (main) = 4.4 B per edit on average. P4 (sed/perl/python agree where they can express): verified on acc-small by the slice.
 
 ## OWED
 
-* Case 7 on pcrec (one-pass vs the 7a/7b/7c pair): OWED to the manager, trigger = pcrecdev1's answer to O-106.
+* Case 7 on pcrec: O-106 is answered (I-158; pcrec pin 9ae59f5d4 = [M4-SUBST], recorded in NOTES.md). The `divergences.tsv` row for pcrec case 7 is still `pending`; flip it to `agrees` after the later re-pin lane verifies it. OWED to the manager.
 * The sidecar rename `subst.toml` -> `subbench.toml`, driver `--mode subst`, TOOLS runner, record schema regime use (steps 2-4 of section 10): not this lane.
 * Reference file is not committed by design; anyone re-running the calibration needs `bench/subst/fetch_reference.sh` (not run here; the file was already at `build/subst-ref/apache_logs` in this worktree, sha256 verified by `calibrate.load_reference` on every run).
+
+## Amendment (brief change, I-158)
+
+Case 7 is one pass only. Removed: `cases/7a-*`, `7b-*`, `7c-*`, their rows in `cases.tsv`/`divergences.tsv`/`expectations.tsv`, the independent-count branches and the composition control in `gen_expectations.py`, the BY_DESIGN entries in `calibrate.py`, the NOTES text. Expectations for the remaining cases are unchanged (sha256 identical; the case-7 `control` column is now empty). After the change: `gen_expectations.py --check` 8/8, `tools/check_subst.py` slice 34 ok / 0 bad. The full `make check-harness` was NOT re-run after the amendment (857/0 above predates it; the change is confined to bench/subst).
