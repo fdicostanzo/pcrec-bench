@@ -1099,6 +1099,14 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         if nothing:
             notes.append(nothing)
     driver_flags, driver_cc = driverrun.driver_build_provenance()
+    if driver_flags is None and testee_block.get("invocation") == "process":
+        # v1.9 ([B140] step 4): a command-line tool has NO driver binary, but
+        # `run.driver_build_flags` / `run.driver_compiler` are required
+        # strings; say so rather than invent a build.
+        driver_flags = ("none: the testee is a command-line tool launched "
+                        "directly (testee.invocation = process), no driver "
+                        "binary was built")
+        driver_cc = "none"
     run_block = {
         # `run.run_id` is a schema SLUG (lowercase), so the stamp is
         # lowercased -- the id shared by every record of one invocation.
