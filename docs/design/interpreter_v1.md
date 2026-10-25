@@ -276,6 +276,7 @@ keys `interpret` reads, by name:
 | `x13_rules`, `mixed_x13` | R-STATUS-7 |
 | `worst_other_core_busy` | R-STATUS-8 |
 | `floor_pattern` | R-FLOOR-2 — **a new key, precondition P-1 (§2.5)**, appended at the END of the header line (after `worst_other_core_busy`), so the known-key list at reporter v16 gains exactly this one key in exactly this position |
+| `dropped_triples` | KB-36 (reporter v28) — a CONDITIONAL key appended after `null_band`: present only when the selection carries a `no expectation exists` row; no rule reads it yet; `interpret.py` `CONDITIONAL_HEADER_KEYS` lists it |
 
 **The header's parse rule (corrected from v1.1, panel/manager cross-review
 I-58 edit 1): the KNOWN-KEY split is NORMATIVE, not "equivalent" to a
