@@ -213,3 +213,9 @@ twenty [B111] deny-flag/compiler/buffer/cap rows do) or, when the
 testee should never run against this set, an `EXCLUDED_TESTEES` entry
 naming the reason. Either way, regenerate `patterns.rxt`
 (`python3 bench/capability/gen_patterns.py`, then `--check`).
+
+**[B140] step 4 (lane b140tools, 2026-10-25):** `gen_patterns.py`'s
+`EXCLUDED_TESTEES` also names the five TOOLS-tier testees (`sed-ere`,
+`perl-p`, `python-resub`, `sd-stdin`, `rg-passthru`, `testees/tools/`) -
+command-line tools measured only by `bench/subst`, with no matcher driver
+and no capability declaration. `patterns.rxt` is unchanged (`--check` clean).
