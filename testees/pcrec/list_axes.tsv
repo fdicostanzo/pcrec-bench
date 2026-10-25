@@ -2,8 +2,23 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-6b2dbd3e/build/pcrec --list-axes
+#     build/pcrec-9ae59f5d4/build/pcrec --list-axes
 #
+# pcrec commit 9ae59f5d432ca3664cff67958c1c68b0626d9380 (rx_info.abi 84, read off a plain `abc` witness at this build),
+# archived 2026-10-25 by lane b142prep ([B142], inbox I-159): the pin
+# ADVANCED 6b2dbd3e (abi 76) -> 9ae59f5d4 (abi 84, EIGHT abi steps 77-84); 6b2dbd3e
+# stays runnable as an also_pin. MAIN TABLE 164 -> 171 data rows / 49 -> 50 axes
+# (see testees/pcrec/CLAUDE.md "Re-pin at 9ae59f5d4" for the row-by-row delta):
+# NEW axis `rev-end-form` (abi 78, D164 B3: orders 1-5 denied/one-seed/tagged/two-seed/overflow, RX_REV_END_FORM
+# is internal; deny PCREC_NO_REV_END_ONEWALK bit 56 `-fno-rev-end-onewalk`);
+# `fallback` gains `drop-compound` (6) and `drop-end-mark` (7), later orders shift 6-11 -> 8-13;
+# `req-admit` rows 3/4 reworded -- the `set-leads` row LOSES its deny flag
+# (`-fno-req-set-lead`, bit 45, retired into the memfn kit's `--memfn=no-pres-set-lead`);
+# `#section memfn` 6 -> 12 rows (fd-r8, fd-ndisp, fd-d1, fd-pres-g1, fd-pres-pick,
+# pres-set-lead) and TWO NEW `#section` blocks, `part-layout` (valued controls, abi 80) and
+# `part-layout-table` (the T/P/W decision tables), read by nothing here -- every reader
+# selects the MAIN table. Every other main row BYTE-IDENTICAL to 6b2dbd3e's.
+# PREVIOUS archiving (6b2dbd3e), from the header it carried:
 # pcrec commit 6b2dbd3e53f1424b75f4289992ea0f8f83892ade (rx_info.abi 76, read off a plain `abc` witness at this build),
 # archived 2026-10-12 by lane b136prep ([B136], inbox I-147 + I-148 §1): the pin
 # ADVANCED b8337c33 (abi 74) -> 6b2dbd3e (abi 76); 00c97769 (abi 75,
@@ -124,6 +139,11 @@
 #axis	order	candidate	kind	stamp_macro	stamp_value	deny_macro	deny_bit	force_macro	force_bit	cli_flag	applies
 locate	1	rev-end	list	RX_DFA_SCAN	rev-end	PCREC_NO_REV_END	52			-fno-rev-end	every match ends at the subject's end, or just before a final newline (the end_pin fact: every alternative ends in $/\Z/\z outside multiline, no \G), on an ENG_UNANCH body: the reverse machine walks back from each possible end and the smallest accepting position is the start; one anchored run decides a tie between the two ends where a match can end by consuming the final newline
 locate	2	unanchored	list	RX_DFA_SCAN	unanchored						always (fallback): the forward scan from search_from, the candidate-start slots inside it, then the reverse pass for the start (`attempt` on an ENG_ATTEMPT body: the per-start attempt loop; the VM's attempt loop on a VM artifact)
+rev-end-form	1	denied	list								-fno-rev-end-onewalk: the two-seed walk (n, and n-1 before a final newline) with the tie code where a match can end by consuming the final newline (nl_last)
+rev-end-form	2	one-seed	list			PCREC_NO_REV_END_ONEWALK	56			-fno-rev-end-onewalk	nl_last is false (no match can end by consuming a final newline): ONE seed, n-1 when the subject ends in a newline, else n, the seed's views resolved at compile time (form W); a zero-length match at n is probed where the n-1 walk finds none
+rev-end-form	3	tagged	list			PCREC_NO_REV_END_ONEWALK	56			-fno-rev-end-onewalk	the tie fact holds (a state of the tagged reverse machine accepts two mark distances under one context atom) and every lowered machine fit: the end mark lowered in the forward, reverse and anchored machines (one lowering per artifact), ONE walk from n whose accept value is the distance set; a tie is FINISH's (prio-const where mark_prio is constant, else verify-at, else search-from)
+rev-end-form	4	two-seed	list			PCREC_NO_REV_END_ONEWALK	56			-fno-rev-end-onewalk	the tagged machine was built and fit and carries no tie although a match can end by consuming a final newline: the two-seed walk WITHOUT tie code (a tie is proven impossible)
+rev-end-form	5	overflow	list								always (fallback): the two-seed walk with the tie code where nl_last; reached when a lowered or tagged build overflowed its cap
 table	1	premultiplied	list	RX_DFA_TABLE	premultiplied	PCREC_NO_PREMUL_TABLE	15			-fno-premul-table	this machine's states*classes <= 65535 and no emitted seed cell is negative
 table	2	indexed	list	RX_DFA_TABLE	indexed						always (fallback)
 table	3	none	predicate	RX_DFA_TABLE	none						the artifact has no DFA scan-table at all: a proven-empty engine (dfa_engine_is_empty), or the ENG_ATTEMPT label-dispatch engine, which is asked first (src/gen/CLAUDE.md's [DD-13c] #5)
@@ -224,8 +244,8 @@ req-run-fold	1	cube	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN_FOLD	44			-fno-req-ru
 req-run-fold	2	exact	predicate	RX_REQ_RUN							always (fallback) — single bytes only, the pre-row walk, ranked by length; the deny flag
 req-admit	1	none	list	RX_REQ_WHY	none						no necessary byte and no necessary run: nothing to pre-check
 req-admit	2	one-attempt	list	RX_REQ_WHY	one-attempt						G2: the route tries exactly one start position, and on the VM that one attempt is linear (an exact hybrid DFA in front, or a frameless program), so the check would scan the window the attempt reads anyway
-req-admit	3	dominated	list	RX_REQ_WHY	dominated						G1: the candidate-start scan already tests the same byte (and, for a run, verifies the run), or under a byte-rate a one-byte memchr scan of a byte no commoner than the necessary byte
-req-admit	4	set-leads	list	RX_REQ_WHY	emitted	PCREC_NO_REQ_SET_LEAD	45			-fno-req-set-lead	a run pre-check is admitted and the necessary set's pick is strictly rarer than the run's scan member (one PICK over the two guards, the run first, so a tie keeps the run alone; under no byte-rate a byte against a two-member pair): the set pick's memchr first, then the run search
+req-admit	3	dominated	list	RX_REQ_WHY	dominated						the body's LOCATE row answers presence itself (rev-end, the empty engine); or G1, the memfn kit's PRES row P2 (`--memfn=no-fd-pres-g1`): the candidate-start scan already tests the same byte (and, for a run, verifies the run), or under a byte-rate a one-byte memchr scan of a byte no commoner than the necessary byte
+req-admit	4	set-leads	list	RX_REQ_WHY	emitted						a run pre-check is admitted and the memfn kit's PRES row P4 (`--memfn=no-pres-set-lead`, the retired -fno-req-set-lead) leads with the necessary set's pick: it is strictly rarer than the run's scan member (one PICK over the two guards, the run first, so a tie keeps the run alone; under no byte-rate a byte against a two-member pair): the set pick's memchr first, then the run search
 req-admit	5	emitted	list	RX_REQ_WHY	emitted						always (fallback): the pre-check on the req_byte fact, or the run search where a run shipped
 req-use	1	handoff	list	RX_REQ_HANDOFF		PCREC_NO_REQ_HANDOFF	46			-fno-req-handoff	a pre-check is emitted (req-admit `emitted` or `set-leads`), the artifact has a DFA scan to move (a DFA body or the VM hybrid's prefilter, not the empty machine), its landmark's maximum byte offset K from the attempt start (the run window where a run shipped, else the one necessary byte) is finite, the prefilter is not count-collapsed, and no VM hybrid with a \G start family reads its prefilter-window ceiling: the gate's first landmark hit c becomes the scan start max(startpos, c - K), rounded up to a character start under a multibyte encoding; the forward scan's `handoff` prefilter row re-enters it
 req-use	2	scan-from-startpos	list	RX_REQ_HANDOFF	none						always (fallback): the scan starts at the startpos; a run pre-check, where one is emitted, only discards
@@ -270,12 +290,14 @@ fallback	2	nomem	list								propagate the allocation failure; asked on the arri
 fallback	3	size-term-trial	list								the size term's trial catch: try the next K; asked on the arrivals: size,overflow,other; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires many
 fallback	4	sel1-collapse	list			PCREC_NO_PREFILTER_COLLAPSE	19			-fno-prefilter-collapse	retry with a prefilter from the count-collapsed language ([SEL-1]); asked on the arrivals: overflow; degrading; --size-cap=refuse does not reach it; adds 1 attempt; fires once
 fallback	5	sel1-drop	list								retry with the prefilter dropped ([SEL-1]); asked on the arrivals: overflow; degrading; --size-cap=refuse does not reach it; adds 1 attempt; fires once
-fallback	6	unroll-rescue	list								take the smaller unroll K the cap allows; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 0 attempts; fires once
-fallback	7	prefilter-collapse	list			PCREC_NO_PREFILTER_COLLAPSE	19			-fno-prefilter-collapse	retry with a prefilter from the count-collapsed language ([OPT-4] size rung); asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once
-fallback	8	drop-anchored	list								retry without the optional anchored match-here machine; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the optional anchored match-here machine
-fallback	9	drop-premul	list								retry without the premultiplied DFA transition table; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the premultiplied DFA transition table
-fallback	10	drop-prefilter	list								retry without the VM hybrid's prefilter; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the VM hybrid's prefilter
-fallback	11	refuse	list								refuse the compile; asked on the arrivals: every; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires final
+fallback	6	drop-compound	list								retry without the compound: ship the plain artifact; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the compound (its controller and parts)
+fallback	7	drop-end-mark	list								retry with the rev-end walk's two-seed form (no match-end mark); asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the match-end mark's lowered machines
+fallback	8	unroll-rescue	list								take the smaller unroll K the cap allows; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 0 attempts; fires once
+fallback	9	prefilter-collapse	list			PCREC_NO_PREFILTER_COLLAPSE	19			-fno-prefilter-collapse	retry with a prefilter from the count-collapsed language ([OPT-4] size rung); asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once
+fallback	10	drop-anchored	list								retry without the optional anchored match-here machine; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the optional anchored match-here machine
+fallback	11	drop-premul	list								retry without the premultiplied DFA transition table; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the premultiplied DFA transition table
+fallback	12	drop-prefilter	list								retry without the VM hybrid's prefilter; asked on the arrivals: size; degrading; --size-cap=refuse denies it; adds 1 attempt; fires once; stderr note: the VM hybrid's prefilter
+fallback	13	refuse	list								refuse the compile; asked on the arrivals: every; not degrading; --size-cap=refuse does not reach it; adds 0 attempts; fires final
 prefilter-admit	1	backref	list								decides the prefilter off; --emit-ir lists prefilter "no-backreference": the erased approximation is neither a sound superset nor the true span (S7); no flag changes this
 prefilter-admit	2	linked-call	list								decides the prefilter off; --emit-ir lists prefilter "no-linked-call": LINKED subroutine call -- erasing a call is a DIFFERENT language, not a superset (S8.2), and a call in a cycle has no finite inlining either; no flag changes this, and -fprefilter refuses. A SPLICED call is not a reason: its callee is inlined EXACTLY (S8.3, S6.3)
 prefilter-admit	3	var	list								decides the prefilter off; --emit-ir lists prefilter "no-variable": ${...} variable -- erasing a variable is not a superset (a${v}b with v = x matches axb, the erased ab does not), and its bytes do not exist until the call; no flag changes this, and -fprefilter refuses
@@ -300,3 +322,59 @@ vrun-kb	deny	scan	simd	--memfn=no-vrun-kb	the vector run scan's second filter po
 vrun-trim	deny	scan	simd	--memfn=no-vrun-trim	the vector run scan's trimmed verify (each candidate's run compare skips the positions its filter already proved); denied, every candidate is verified over the whole run; -fmemfn-simd only
 vrun-pad	deny	scan	simd	--memfn=no-vrun-pad	the vector run scan's padded verify (in the main block loop, a run of 3 or 5-7 bytes is compared as one wider masked word, the loop holding the bytes past the run it reads); denied, every candidate is verified by the run compare's words; -fmemfn-simd only
 precheck-assign-byte	deny	any	scalar	--memfn=no-precheck-assign-byte	the pre-check's kept one-byte landmark as one memchr (an ASSIGN pre-check whose kept position is its first byte's); denied, the generic row renders the site
+fd-r8	deny	any	simd	--memfn=no-fd-r8	the finder table's row R8: a long one-shot call with a measured sparse gap takes the 64-byte form; denied, the row is skipped (ASSERT_ZERO until it routes at B6)
+fd-ndisp	deny	any	scalar	--memfn=no-fd-ndisp	the finder table's N-dispatch rows R1 and R2: a one-shot call shorter than a crossover takes the shorter call's form behind a run-time dispatch; denied, no dispatch (ASSERT_ZERO until a dispatch pays, B4 or B8)
+fd-d1	deny	any	scalar	--memfn=no-fd-d1	the finder table's row D1: a one-member stop outside a VM attempt seek is searched by the C library; denied, the site takes D1w's table walk (ASSERT_ZERO until it routes at B2)
+fd-pres-g1	deny	any	scalar	--memfn=no-fd-pres-g1	the finder table's PRES row P2 (G1, ported): a pre-check whose leading check the start search already proves is dropped; denied, the pre-check is kept (the pick decides it)
+fd-pres-pick	deny	any	scalar	--memfn=no-fd-pres-pick	the finder table's PRES row P3 (the pick, ported): one necessary-set member, or the run's window, verified; denied, every member and the whole run are verified
+pres-set-lead	deny	any	scalar	--memfn=no-pres-set-lead	the finder table's PRES row P4 (set-leads, ported; pcrec's -fno-req-set-lead until B3b): a set member strictly rarer than the run's scan member is tested first; denied, the run pre-check alone
+#section part-layout
+# The part-layout controls (docs/spec/tuning.md sections 2.51-2.53):
+# valued parameters, not flag bits. `field` names the pcrec_options
+# member and the lib/pcrec.h constant the spelling sets.
+#control	value	spelling	field	meaning
+part-layout:prefilter	auto	--part-layout=prefilter:auto	part_layout slot PCREC_PART_PREFILTER = PCREC_PART_AUTO	the owner's default layout: the attribute its emitter writes, often none, gcc deciding, for the VM hybrid's embedded DFA search, <prefix>_prefilter
+part-layout:prefilter	shared	--part-layout=prefilter:shared	part_layout slot PCREC_PART_PREFILTER = PCREC_PART_SHARED	one out-of-line static body each caller calls (noipa), for the VM hybrid's embedded DFA search, <prefix>_prefilter
+part-layout:prefilter	inline	--part-layout=prefilter:inline	part_layout slot PCREC_PART_PREFILTER = PCREC_PART_INLINE	a copy in each caller (always_inline), for the VM hybrid's embedded DFA search, <prefix>_prefilter
+part-layout:compound	auto	--part-layout=compound:auto	part_layout slot PCREC_PART_COMPOUND = PCREC_PART_AUTO	the owner's default layout: the attribute its emitter writes, often none, gcc deciding, for a compound artifact's parts, <prefix>__<role>_search
+part-layout:compound	shared	--part-layout=compound:shared	part_layout slot PCREC_PART_COMPOUND = PCREC_PART_SHARED	one out-of-line static body each caller calls (noipa), for a compound artifact's parts, <prefix>__<role>_search
+part-layout:compound	inline	--part-layout=compound:inline	part_layout slot PCREC_PART_COMPOUND = PCREC_PART_INLINE	a copy in each caller (always_inline), for a compound artifact's parts, <prefix>__<role>_search
+part-layout:find	auto	--part-layout=find:auto	part_layout slot PCREC_PART_FIND = PCREC_PART_AUTO	the owner's default layout: the attribute its emitter writes, often none, gcc deciding, for the iterator's parts (none: the iterator is not built)
+part-layout:find	shared	--part-layout=find:shared	part_layout slot PCREC_PART_FIND = PCREC_PART_SHARED	one out-of-line static body each caller calls (noipa), for the iterator's parts (none: the iterator is not built)
+part-layout:find	inline	--part-layout=find:inline	part_layout slot PCREC_PART_FIND = PCREC_PART_INLINE	a copy in each caller (always_inline), for the iterator's parts (none: the iterator is not built)
+part-layout:wrap	auto	--part-layout=wrap:auto	part_layout slot PCREC_PART_WRAP = PCREC_PART_AUTO	the owner's default layout: the attribute its emitter writes, often none, gcc deciding, for static twins of wrapper bodies and residual leaves (none: not built)
+part-layout:wrap	shared	--part-layout=wrap:shared	part_layout slot PCREC_PART_WRAP = PCREC_PART_SHARED	one out-of-line static body each caller calls (noipa), for static twins of wrapper bodies and residual leaves (none: not built)
+part-layout:wrap	inline	--part-layout=wrap:inline	part_layout slot PCREC_PART_WRAP = PCREC_PART_INLINE	a copy in each caller (always_inline), for static twins of wrapper bodies and residual leaves (none: not built)
+part-inline-rank	none	--part-inline-rank=none	part_inline_rank = PCREC_PART_RANK_NONE	inline no part by rank
+part-inline-rank	R3	--part-inline-rank=R3	part_inline_rank = PCREC_PART_RANK_R3	inline a copyable part whose hottest call site is inside a per-attempt loop
+part-inline-rank	R2	--part-inline-rank=R2	part_inline_rank = PCREC_PART_RANK_R2	R3, and parts called once per call
+part-inline-rank	R1	--part-inline-rank=R1	part_inline_rank = PCREC_PART_RANK_R1	R2, and parts called on a data-dependent subset of calls
+part-inline-rank	R0	--part-inline-rank=R0	part_inline_rank = PCREC_PART_RANK_R0	every copyable part, rare-path call sites included
+part-inline-rank	measured	--part-inline-rank=measured	part_inline_rank = PCREC_PART_RANK_MEASURED	the active measurement set's threshold; with none in the set, none (stamped)
+part-residual	auto	--part-residual=auto	part_residual = PCREC_PART_AUTO	the owner's default layout: the attribute its emitter writes, often none, gcc deciding
+part-residual	shared	--part-residual=shared	part_residual = PCREC_PART_SHARED	one out-of-line static body each caller calls (noipa)
+part-residual	inline	--part-residual=inline	part_residual = PCREC_PART_INLINE	a copy in each caller (always_inline)
+#section part-layout-table
+# The part-layout tables, in table order (docs/spec/tuning.md section
+# 2.51): the ARTIFACT table once per compile (K always, then the first
+# holding row of T1/TM/T2, then of T0/T3), the PART table first match
+# per part, the WRAPPER table per forwarding caller of a shared part.
+#table	id	name	conjuncts	writes
+artifact	K	resolve	(always)	each control := the caller's value if set, else the position's preset cell, else unset
+artifact	T1	rank-unmeasured	the threshold is `measured`; the active set has no theta_hot	the threshold := none; _PART_LAYOUT_WHY "threshold-unmeasured"
+artifact	TM	rank-measured	the threshold is `measured`; the active set's theta_hot is a rank	the threshold := theta_hot (stamped rank=R@set)
+artifact	T2	rank-none	the threshold is `measured`; theta_hot is none	the threshold := none; _PART_LAYOUT_WHY "no-material-rank"
+artifact	T0	as-emitted	every class value is unset or auto; the threshold is unset or none; the residual is unset or auto	every function keeps its default layout; no mark, no part table
+artifact	T3	per-part	(otherwise)	consult the part table for each part; <PREFIX>_PART_LAYOUT
+part	P1	owned	the function is OWNED (an owner writes its attribute)	the head as its emitter wrote it, unchanged (no attribute added)
+part	P2	not-copyable	copyable(part) is false (a label table or a computed goto)	the head as its emitter wrote it, unchanged (no attribute added)
+part	P3	single-caller	callers(part) = 1	its default layout (no attribute added)
+part	P4	class-shared	the part's class value is shared	one out-of-line body: noipa where __has_attribute(noipa), else noinline
+part	P5	class-inline	the part's class value is inline	always_inline into each caller
+part	P6	class-auto	the part's class value is auto	its default layout (no attribute added)
+part	P7	rank-hot	the threshold is a rank; the part's rank is at or above it	always_inline into each caller
+part	P8	residual-shared	the residual is shared	one out-of-line body: noipa where __has_attribute(noipa), else noinline
+part	P9	residual-inline	the residual is inline	always_inline into each caller
+part	P10	residual-auto	(otherwise: the residual is auto or unset)	its default layout (no attribute added)
+wrapper	W1	forward	forwardable(w): the wrapper's row is `forward` (its arguments pass unchanged)	return part(args); -- gcc's tail jump, no frame
+wrapper	W2	adapt	(otherwise)	the wrapper's own adaptation and a call (a frame; a canary under -fstack-protector-strong)

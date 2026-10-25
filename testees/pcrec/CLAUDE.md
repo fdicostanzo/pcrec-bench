@@ -675,6 +675,135 @@ steps, and records both in its report:
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
 
+## Re-pin at 9ae59f5d4 (abi 76 -> 84) — 2026-10-25, lane b142prep, inbox I-154 / I-158 / I-159
+
+The WHOLE ROSTER re-pins (I-159: "retire 6b2dbd3e as the main pin"). The canonical
+pin is **9ae59f5d4** (abi 84, pcrec main after [M4-SUBST]); `configs.toml`
+carries `also_pins = ["6b2dbd3e"]` — the BEFORE of every one of the eight abi
+steps 77-84 and the cross-window control. **00c97769 and b8337c33 LEAVE the
+allowlist** (their builds stay on disk; `testee@pin` for them is refused BY
+NAME, asserted in `check_b135_two_pin_window`): the questions they answered
+(I-147 ask 1, I-148's seam) closed with the b136 windows and the b142 census
+reads 6b2dbd3e as the one BEFORE. ONE driver build still serves both pins
+(shim.c / driver.c / timed.* are UNTOUCHED: `git diff master` empty). Claim vs
+measured, step by step, is docs/dev/lanes/b142prep_report.md §1; the census is
+docs/dev/measurements/2026-10-25-b142prep-census.txt (1,468 rows).
+
+1. **The shim floor STAYS 16.** `struct rx_info` GROWS this time — three members
+   APPENDED after `findings` (`const char *measures` abi 82; `rx_nextfn next`,
+   `rx_nextnfn next_n` abi 84; emitted struct md5 `11f44615...` 580 chars →
+   637 chars, the old body a strict PREFIX) — and the shim reads none of them
+   (`check_b142_stamps`: PB_SHIM_MIN_ABI 16, no `PB_INFO.measures|next|next_n`,
+   no `RX_MEASURES|RX_ITER_RETRY|RX_COMPOUND` in shim.c/driver.c). The
+   abi-sabotage arms (abi 5 and abi 15) stay green, the unmodified artifact
+   loads at abi 84.
+2. **Three new stamps, TEXT-READ, no shim getter** (`findings`' shape): `compound`
+   (`RX_COMPOUND`, abi 77: `none` / `split` / `forced-off`), `iter_retry`
+   (`RX_ITER_RETRY`, abi 83/84: `none` / `retry` / `retry-budgeted`),
+   `measures` (`RX_MEASURES`, abi 82: `""` everywhere — no kit row reads a set
+   key before the kit's B4). `adapter.text_stamps()` reads them from the emitted
+   files into the compile row's `engine_metadata`; absent below their abi. Not
+   in `STAMP_SCOPE` (that table is the driver/shim's). `RX_PART_LAYOUT` /
+   `_WHY` (abi 80) exist only under a `--part-layout=` / `--part-inline-rank=` /
+   `--part-residual=` control no pinned config passes: asserted absent by default
+   and present under a control, no adapter reader.
+3. **THE SIZE DEFINITION MOVED, and the text port can no longer reproduce it.**
+   Since abi 83 pcrec's emit-size measure EXCLUDES the find-all iterator's
+   scaffold (`StrBuf.scaf_*`) — counted out at its emission site, with no marker
+   in the emitted text — so `adapter.emit_size()` over the files overcounts by
+   5,728 B (a plain DFA) to ~8.6 KB. The adapter now passes a SECOND fixed
+   protocol token, `--warn-emit-bytes=1` (`WARN_PROBE_FLAG`, the `-fcomments`
+   shape: never in `cfg["flags"]`, invisible in `testee_id`/`build_flags`),
+   reads pcrec's OWN two numbers from the last warning line, and records
+   `warned_emit_bytes` / the note only where the DEFAULT 250,000 threshold would
+   have fired (`WARN_EMIT_DEFAULT`). The port stays the byte-exact CONTROL for
+   artifacts below abi 83 (`SCAFFOLD_ABI`; asserted at 6b2dbd3e on all ten
+   witnesses). `check_emit_size_port` now runs both binaries.
+4. **Scan-edge attribution**: the `scan_edges` covariate's function table gains
+   `rx__find` (the UTF-check / start-guard artifacts' search loop, 18 markers
+   in the census: counted on the SEARCH side) and ignores `rx__retry*` (the
+   iterator's notempty-rooted retry machine, 31 markers: never called by
+   `_search`/`_match`). The function-name reader now strips `__attribute__((..))`
+   before naming a head.
+5. **COMPOUND artifacts** (abi 77): a `split` artifact stamps the route family's
+   machine-level stamps as the token `compound` (`dfa_scan`, `dfa_scan_edge`,
+   `dfa_start`, `dfa_prefilter`, `_offsets`, `dfa_table`, `dfa_match`,
+   `req_why`, `req_handoff`, `vm_start_scan`, `end_window`) and the integer ones
+   as -1 (`dfa_uniform_folds`, `run_words`); the parts' own stamps sit in the
+   `RX__F_*` / `RX__Q_*` families. Two `_check_agreement` rules were widened
+   (offsets iff, req_why iff). It compiles through the adapter and ANSWERS right
+   through the driver (`x\z|^y`: four subjects, oracle-checked in
+   `check_b142_stamps`). In the bench's sets it is `wild-waf-crs-942360-concat-sqli`'s
+   WHOLE-subject form only (sentinel and capability, 4 rows; 402,992 → 516,567 B)
+   — a form no declared regime times today.
+6. **Registries re-archived** (headers chained, bodies verbatim): `list_axes.tsv`
+   MAIN 164/49 → **171/50** (+ the NEW axis `rev-end-form`, orders 1-5, deny
+   PCREC_NO_REV_END_ONEWALK bit 56 `-fno-rev-end-onewalk` on one-seed / tagged /
+   two-seed; `fallback` +`drop-compound`, +`drop-end-mark` (later orders
+   shift 6-11 → 8-13); `req-admit` rows 3/4 reworded and `set-leads` LOSES its
+   deny flag (`-fno-req-set-lead`, bit 45, retired into the kit's
+   `--memfn=no-pres-set-lead`; the old spelling is STILL ACCEPTED, rc 0, and the
+   b124 identity arm still passes)); `#section memfn` 6 → 12 rows; TWO NEW
+   `#section` blocks, `part-layout` (valued controls) and `part-layout-table`
+   (the T/P/W decision tables) — read by nothing, every reader selects MAIN;
+   `list_limits.tsv` 73 → **78** (`PCREC_COMPILE_STACK_BUDGET` [DD-10],
+   `PCREC_MAX_TEMPLATE_GROUP` / `_NESTING` [M4-SUBST], `PCREC_MARK_PRIO_MAX_STATES`
+   D164 B3, `PCREC_SPAN_WALK_SUBSETS` [KIT-VERIFY]; two descriptions reworded);
+   `list_schema.tsv` 79 → **81** (`config measures`, `block mg`);
+   `list_definitions.tsv` 75 **byte-identical** (the seventh pin running).
+   `--list-syntax` / `--list-families` / `--list-verbs` / `--list-source`
+   (not archived here): syntax's `built` column for `(*UTF)`/`(*UTF8)` moved
+   unbuilt → built and two `^`/`$` descriptions; the bench/syntax SEED
+   (9a1583ba) is 4 rows short of the live registry (`(*UCP)a`, `(*UTF)a`,
+   `(*UTF8)a`, `${name}`) — unchanged across 6b2dbd3e → 9ae59f5d4, owed to a
+   re-seed lane, not this delta.
+7. **PROGRAM IDENTITY v3** (`tools/program_identity.py normalize_v3`): v2 reads
+   EVERY compiled-both row CHANGED (0 of 1,375 identical — the iterator
+   scaffold is in every artifact and every exported residual entry became a
+   forwarder to a static twin). v3 strips the scaffold, folds the twins back
+   (the VM's `_run` forwarder's prologue placed after the twin's initializer-free
+   locals) and sorts the top-level items: 1,339 identical, 36 changed (all
+   attributed), 93 refused-both, 0 refusal movers. v3 is CENSUS-side; the
+   record field `program_sha256` stays v2 — OWED: a BD13 ruling (cross-pin null
+   bands at this pair read the census, not the field). The `.text` identity arms
+   of b122/b124/b126 now hash the function sections the object shares with an
+   abi-<83 one (`-ffunction-sections`, the iterator's `rx_next`/`rx_next_n`/
+   `rx__*` excluded).
+8. **Size books** (pcrec's own bytes, census): **+106 B flat** (emit and code) on
+   1,257 of the 1,339 v3-identical rows (the three stamp lines + initializer lines; +104/+114/
+   +115/+116 on 14); a DFA artifact whose ITER_RETRY is `retry` (68 rows) ALSO
+   counts the retry MACHINE, which copies the tables: +3,064..+4,128 B on the
+   narrow DFAs, +31,585 / +60,257 / +117,601 / +237,081 B on the bounded
+   `cls-upto-{512,1024,2048,4096}` WHOLE forms (emit only; code +2.0 KB), and
+   612,992 vs 255,041 B on the denied (uncollapsed) 16384 rung. `B142_FLAT` and
+   five `B142_RESID` rows carry it in selfcheck (measured per witness).
+9. **Four DISTINCT movers, NOT one**: 18 rows the abi-78 end mark (9 tail
+   patterns x caps/nocaps, plain form; `-fno-rev-end-onewalk` restores
+   6b2dbd3e's program on all 18; sizes SHRINK 1.0-3.4 KB); 4 rows the abi-77
+   compound; 2 rows K128 (abi 83: capability evil-alt-nested); and 12 rows
+   [FLAG-SPELL] — pcrec's flagfix, merged WITHOUT an abi bump and not in I-159's
+   list (VM programs whose pattern starts with an option run lose a dead label,
+   -50 B; `(?i)abc` forced-VM `vm_program_bytes` 634 → 577). Stamp-only movers
+   (v3-invisible): `RX_ENGINE_WHY` text (12 rows), `RX_REQ_RUN` `6174@0` →
+   `436174@0/dfffff` (syntax mod-reset, mod-unset). The anchor fold (abi 81) moves
+   NO bench pattern — only its witnesses `(?m)^a|\B`, `(?m)^a|\b`.
+   [M4-SUBST] is NOT an abi event: 1,375 identical + 93 refused-both + 0 DIFFERS
+   over every bench compile, raw text, against its first parent 600111e4e
+   (`probe_b142prep_subst_noevent.py`; pcrec said 112 compiles).
+10. New DENY flag `-fno-rev-end-onewalk` → `DENY_FLAGS` (`norevendonewalk`) +
+    one `DENY_CONTROLS` row (emit-size pair on `\s+$`, 19,116 → 22,589 B; no
+    stamp moves) and v3 identity in `check_b142_stamps`. **No new pinned
+    testee**: the abi-78 AFTER is read against 6b2dbd3e; a same-pin twin
+    (`pcrec-auto-norevendonewalk`, `flags = ["--features","all",
+    "-fno-rev-end-onewalk"]`) is the single-variable control if the window finds a
+    tail-family mover — proposed in the report's window plan, not built.
+11. Catalogue **3.20** (`[[pin_order]]` + `9ae59f5d4`; the intermediate abi steps
+    were never pinned); the 97 sidecars' `catalogue:` line regenerated.
+    `FRONT_PIN` (Makefile) STAYS 6b2dbd3e until a window writes records at the
+    new pin. No reporter change: closed-set readers pass `compound` through; a
+    legend line for it, and the version bump, belong with the first report that
+    carries one.
+
 ## Re-pin at 6b2dbd3e (abi 74 -> 76) — 2026-10-12, lane b136prep, inbox I-147 / I-148 section 1
 
 The canonical pin is **6b2dbd3e** (abi 76); `configs.toml` carries
