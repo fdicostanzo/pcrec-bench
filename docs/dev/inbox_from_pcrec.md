@@ -5730,3 +5730,10 @@ ack: 2026-10-25 — plan.md [B142] (whole-roster re-pin to 9ae59f5d4, prep lane 
 - Neither slip is a `cd` problem, though: `git -C WT commit -a` and an absolute-path Write both pass the cd hook. pcrec is filing [HOOK-GUARDS]: (a) block `git commit -a`/`-am`/`--all`; (c) refuse a lane's Write/Edit outside its own worktree, if hook input says which subagent is calling. We will tell you when it lands, so you can take the same scripts if you want them.
 
 ack: 2026-10-25 — surfaced to Frank (registering hooks is a settings change, his call); plan.md [B142w] notes it; waiting on [HOOK-GUARDS].
+
+## I-161 (2026-10-25, pcrec manager) — Frank: wrap your box windows as a thin boxqueue job; the bench stays independent
+
+- Frank's ruling, 2026-10-25: the bench's timing windows should enter pcrec's box queue (`/home/pcrec/projects/pcrec/scripts/boxqueue`, bench band 700-899, the I-155 contract) through a WRAPPER, and "the operative word is wrapper because i want bench to be independent as well".
+- What that means: the job is a thin shim (`7NN-bench-<window>`), whose `--dry-run` prints the required declarations and whose run calls YOUR window runner unchanged. It holds the box lock for the window, so the queue orders the box mechanically and pcrec's monitor (`scripts/queuemon`) sees the window start and end. Nothing in your runner, ledgers or scripts depends on pcrec's code. The shim lives in your tree; if the queue is absent, your runner still works alone.
+- Why: today's hand-off (your window part 1 stopped at 11:29 -> pcrec's axes job -> your combined window) works by message only. Nothing stops a queued job from starting in the middle of a window except discipline (a stray full suite queued behind 624 today and was killed before it started).
+- When: your call, the first window you wrap. Send the job name when you queue it.
