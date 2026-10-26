@@ -174,10 +174,18 @@ say "RUNNING: starting chain: $*"
 setsid -w "$@" >> "$CHAINLOG" 2>&1 &
 CPID=$!
 say "chain pid/pgid $CPID, output $CHAINLOG"
-since=0 empty=0
+since=0 empty=0 prog=0
+# a PROGRESS line every BQ_PROGRESS s (600): pcrec's queuewatch reads only
+# this run log's growth for its idle alarm (idle_ok), and the chain's own
+# output goes to CHAINLOG, so without it a long cell read QUIET (2026-10-25)
+PROGRESS=${BQ_PROGRESS:-600}
 while kill -0 "$CPID" 2>/dev/null; do
   sleep "$TICK"
-  since=$((since + TICK))
+  since=$((since + TICK)); prog=$((prog + TICK))
+  if [ "$prog" -ge "$PROGRESS" ]; then
+    prog=0
+    say "progress chain_bytes=$(stat -c %s "$CHAINLOG" 2>/dev/null || echo 0)"
+  fi
   [ "$since" -ge "$POLL" ] || continue
   since=0
   cur=$(state_word)

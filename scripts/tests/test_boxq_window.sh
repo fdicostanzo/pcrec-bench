@@ -7,7 +7,7 @@ HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 WRAP=$HERE/../boxq_window
 T=$(mktemp -d "${TMPDIR:-/var/tmp}/boxq_test.XXXXXX") || exit 2
 trap '[ -n "${KEEP:-}" ] || rm -rf "$T"' EXIT
-export BQ_STATE_DIR=$T/state BQ_INBOX=$T/inbox BQ_LOGDIR=$T/log BQ_POLL=1 BQ_TICK=1 BQ_KILL_GRACE=3 BQ_IMPORT_WAIT=5
+export BQ_STATE_DIR=$T/state BQ_INBOX=$T/inbox BQ_LOGDIR=$T/log BQ_POLL=1 BQ_TICK=1 BQ_KILL_GRACE=3 BQ_IMPORT_WAIT=5 BQ_PROGRESS=1
 mkdir -p "$BQ_STATE_DIR" "$BQ_INBOX"
 PASS=0 FAIL=0
 ck() { if eval "$2"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "FAIL: $1   [$2]"; fi; }
@@ -64,6 +64,7 @@ ck "3 left-RUNNING line" "grep -q 'state left RUNNING: DONE cancelled' $(L mid)"
 ck "3 kill line names the pid" "grep -q 'killing chain process group $CP' $(L mid)"
 ck "3 chain pid gone" "! kill -0 $CP 2>/dev/null"
 ck "3 chain child gone" "! kill -0 $CC 2>/dev/null"
+ck "3 progress line while the chain runs (queuewatch idle alarm)" "grep -q 'progress chain_bytes=' $(L mid)"
 ck "3 fail line" "grep -q '^BENCH_WINDOW_FAILED state left RUNNING' $(L mid)"
 
 # 4 QUEUED then RUNNING after a delay
