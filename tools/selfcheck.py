@@ -15961,7 +15961,7 @@ def check_capability_policy():
                     "--synthetic", "--quiet-output"],
                    cwd=ROOT, timeout=150)
         files = sorted(_glob.glob(os.path.join(
-            scratch, "records", "capability@0.2", "*", "*.jsonl")),
+            scratch, "records", "capability@*", "*", "*.jsonl")),
             key=os.path.getmtime)
         return proc, (files[-1] if files else None)
 

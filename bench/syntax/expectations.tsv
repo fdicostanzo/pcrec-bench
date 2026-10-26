@@ -86,6 +86,8 @@ lit-cat	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lit-cat	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 lit-cat	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 lit-cat	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+lit-cat	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+lit-cat	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 anc-caret	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-caret	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-caret	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -173,6 +175,8 @@ anc-caret	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 anc-caret	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-caret	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-caret	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-caret	t-lka-dense-256k	throughput	match	0	4	1	libpcre2-differential	10.46 2025-08-27
+anc-caret	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-dollar	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-dollar	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-dollar	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -260,6 +264,8 @@ anc-dollar	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-
 anc-dollar	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-dollar	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-dollar	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-dollar	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-dollar	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -347,6 +353,8 @@ anc-a-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-a-uc	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-a-uc	t-lka-dense-256k	throughput	match	0	4	1	libpcre2-differential	10.46 2025-08-27
+anc-a-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -434,6 +442,8 @@ anc-z-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-uc	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-z-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-z-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -521,6 +531,8 @@ anc-z-lc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-z-lc	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-z-lc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-z-lc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -608,6 +620,8 @@ anc-g-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-g-uc	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+anc-g-uc	t-lka-dense-256k	throughput	match	0	4	1	libpcre2-differential	10.46 2025-08-27
+anc-g-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 anc-m-caret	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-m-caret	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-m-caret	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -695,6 +709,8 @@ anc-m-caret	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 anc-m-caret	t-64k	throughput	match	719	723	19	libpcre2-differential	10.46 2025-08-27
 anc-m-caret	t-256k	throughput	match	1241	1245	64	libpcre2-differential	10.46 2025-08-27
 anc-m-caret	t-1m	throughput	match	38	42	258	libpcre2-differential	10.46 2025-08-27
+anc-m-caret	t-lka-dense-256k	throughput	match	0	4	1446	libpcre2-differential	10.46 2025-08-27
+anc-m-caret	t-lka-sparse-256k	throughput	match	73256	73260	4	libpcre2-differential	10.46 2025-08-27
 anc-m-dollar	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-m-dollar	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 anc-m-dollar	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -782,6 +798,8 @@ anc-m-dollar	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-0
 anc-m-dollar	t-64k	throughput	match	2796	2800	6	libpcre2-differential	10.46 2025-08-27
 anc-m-dollar	t-256k	throughput	match	1642	1646	36	libpcre2-differential	10.46 2025-08-27
 anc-m-dollar	t-1m	throughput	match	5986	5990	150	libpcre2-differential	10.46 2025-08-27
+anc-m-dollar	t-lka-dense-256k	throughput	match	59	63	1150	libpcre2-differential	10.46 2025-08-27
+anc-m-dollar	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 asr-wb	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 asr-wb	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-wb	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -869,6 +887,8 @@ asr-wb	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-wb	t-64k	throughput	match	1483	1486	86	libpcre2-differential	10.46 2025-08-27
 asr-wb	t-256k	throughput	match	1810	1813	356	libpcre2-differential	10.46 2025-08-27
 asr-wb	t-1m	throughput	match	851	854	1417	libpcre2-differential	10.46 2025-08-27
+asr-wb	t-lka-dense-256k	throughput	match	247	250	375	libpcre2-differential	10.46 2025-08-27
+asr-wb	t-lka-sparse-256k	throughput	match	67	70	690	libpcre2-differential	10.46 2025-08-27
 asr-nwb	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-nwb	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-nwb	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -956,6 +976,8 @@ asr-nwb	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-nwb	t-64k	throughput	match	679	682	112	libpcre2-differential	10.46 2025-08-27
 asr-nwb	t-256k	throughput	match	677	680	399	libpcre2-differential	10.46 2025-08-27
 asr-nwb	t-1m	throughput	match	598	601	1540	libpcre2-differential	10.46 2025-08-27
+asr-nwb	t-lka-dense-256k	throughput	match	254	257	362	libpcre2-differential	10.46 2025-08-27
+asr-nwb	t-lka-sparse-256k	throughput	match	7	10	680	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1043,6 +1065,8 @@ asr-k-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	t-64k	throughput	match	2542	2545	18	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	t-256k	throughput	match	860	863	62	libpcre2-differential	10.46 2025-08-27
 asr-k-uc	t-1m	throughput	match	16802	16806	181	libpcre2-differential	10.46 2025-08-27
+asr-k-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+asr-k-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-d	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-d	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-d	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1130,6 +1154,8 @@ cls-d	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-d	t-64k	throughput	match	123	127	1962	libpcre2-differential	10.46 2025-08-27
 cls-d	t-256k	throughput	match	247	251	7686	libpcre2-differential	10.46 2025-08-27
 cls-d	t-1m	throughput	match	249	253	30307	libpcre2-differential	10.46 2025-08-27
+cls-d	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-d	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1217,6 +1243,8 @@ cls-s-lc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	t-256k	throughput	match	35219	35226	4	libpcre2-differential	10.46 2025-08-27
 cls-s-lc	t-1m	throughput	match	46613	46620	9	libpcre2-differential	10.46 2025-08-27
+cls-s-lc	t-lka-dense-256k	throughput	match	11598	11605	4	libpcre2-differential	10.46 2025-08-27
+cls-s-lc	t-lka-sparse-256k	throughput	match	2387	2394	11	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1304,6 +1332,8 @@ cls-s-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	t-64k	throughput	match	159	176	190	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	t-256k	throughput	match	283	300	748	libpcre2-differential	10.46 2025-08-27
 cls-s-uc	t-1m	throughput	match	285	302	2947	libpcre2-differential	10.46 2025-08-27
+cls-s-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-s-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-w	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-w	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-w	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -1391,6 +1421,8 @@ cls-w	l-run	search_short	match	0	43	-	libpcre2-differential	10.46 2025-08-27
 cls-w	t-64k	throughput	match	0	4	12992	libpcre2-differential	10.46 2025-08-27
 cls-w	t-256k	throughput	match	0	3	51966	libpcre2-differential	10.46 2025-08-27
 cls-w	t-1m	throughput	match	0	8	208594	libpcre2-differential	10.46 2025-08-27
+cls-w	t-lka-dense-256k	throughput	match	0	4	50078	libpcre2-differential	10.46 2025-08-27
+cls-w	t-lka-sparse-256k	throughput	match	0	3	48097	libpcre2-differential	10.46 2025-08-27
 cls-h	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-h	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-h	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1478,6 +1510,8 @@ cls-h	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-h	t-64k	throughput	match	2256	2267	9	libpcre2-differential	10.46 2025-08-27
 cls-h	t-256k	throughput	match	45346	45357	20	libpcre2-differential	10.46 2025-08-27
 cls-h	t-1m	throughput	match	20545	20555	122	libpcre2-differential	10.46 2025-08-27
+cls-h	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-h	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-v	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-v	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-v	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1565,6 +1599,8 @@ cls-v	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-v	t-64k	throughput	match	48932	48941	1	libpcre2-differential	10.46 2025-08-27
 cls-v	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-v	t-1m	throughput	match	495366	495375	1	libpcre2-differential	10.46 2025-08-27
+cls-v	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-v	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1652,6 +1688,8 @@ cls-n-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	t-64k	throughput	match	206	210	179	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	t-256k	throughput	match	598	602	681	libpcre2-differential	10.46 2025-08-27
 cls-n-uc	t-1m	throughput	match	38	42	2733	libpcre2-differential	10.46 2025-08-27
+cls-n-uc	t-lka-dense-256k	throughput	match	0	4	13159	libpcre2-differential	10.46 2025-08-27
+cls-n-uc	t-lka-sparse-256k	throughput	match	12952	12956	11	libpcre2-differential	10.46 2025-08-27
 cls-posix	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-posix	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-posix	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -1739,6 +1777,8 @@ cls-posix	l-run	search_short	match	0	43	-	libpcre2-differential	10.46 2025-08-27
 cls-posix	t-64k	throughput	match	0	4	11615	libpcre2-differential	10.46 2025-08-27
 cls-posix	t-256k	throughput	match	0	3	46471	libpcre2-differential	10.46 2025-08-27
 cls-posix	t-1m	throughput	match	0	8	186977	libpcre2-differential	10.46 2025-08-27
+cls-posix	t-lka-dense-256k	throughput	match	0	4	50078	libpcre2-differential	10.46 2025-08-27
+cls-posix	t-lka-sparse-256k	throughput	match	0	3	48097	libpcre2-differential	10.46 2025-08-27
 cls-negset	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-negset	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-negset	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1826,6 +1866,8 @@ cls-negset	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-
 cls-negset	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-negset	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-negset	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-negset	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-negset	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-range	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-range	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-range	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -1913,6 +1955,8 @@ cls-range	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 cls-range	t-64k	throughput	match	192	198	190	libpcre2-differential	10.46 2025-08-27
 cls-range	t-256k	throughput	match	317	323	748	libpcre2-differential	10.46 2025-08-27
 cls-range	t-1m	throughput	match	318	324	2947	libpcre2-differential	10.46 2025-08-27
+cls-range	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+cls-range	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 cls-dot	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-dot	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-dot	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2000,6 +2044,8 @@ cls-dot	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-dot	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 cls-dot	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 cls-dot	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+cls-dot	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+cls-dot	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 cls-fold-pair	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-fold-pair	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-fold-pair	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2087,6 +2133,8 @@ cls-fold-pair	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-
 cls-fold-pair	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 cls-fold-pair	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 cls-fold-pair	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+cls-fold-pair	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+cls-fold-pair	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 cls-pair-ctl	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-pair-ctl	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-pair-ctl	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2174,6 +2222,8 @@ cls-pair-ctl	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-0
 cls-pair-ctl	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 cls-pair-ctl	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 cls-pair-ctl	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+cls-pair-ctl	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+cls-pair-ctl	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 cls-mixed-case	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-mixed-case	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cls-mixed-case	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2261,6 +2311,8 @@ cls-mixed-case	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025
 cls-mixed-case	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 cls-mixed-case	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 cls-mixed-case	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+cls-mixed-case	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+cls-mixed-case	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 cls-i-class	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-i-class	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 cls-i-class	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -2348,6 +2400,8 @@ cls-i-class	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 cls-i-class	t-64k	throughput	match	90	93	400	libpcre2-differential	10.46 2025-08-27
 cls-i-class	t-256k	throughput	match	364	367	1632	libpcre2-differential	10.46 2025-08-27
 cls-i-class	t-1m	throughput	match	404	407	6030	libpcre2-differential	10.46 2025-08-27
+cls-i-class	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+cls-i-class	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 qnt-star	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 qnt-star	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-star	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2435,6 +2489,8 @@ qnt-star	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-star	t-64k	throughput	match	90	93	479	libpcre2-differential	10.46 2025-08-27
 qnt-star	t-256k	throughput	match	364	367	1956	libpcre2-differential	10.46 2025-08-27
 qnt-star	t-1m	throughput	match	404	407	7127	libpcre2-differential	10.46 2025-08-27
+qnt-star	t-lka-dense-256k	throughput	match	247	250	1796	libpcre2-differential	10.46 2025-08-27
+qnt-star	t-lka-sparse-256k	throughput	match	7	10	3341	libpcre2-differential	10.46 2025-08-27
 qnt-plus	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-plus	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-plus	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2522,6 +2578,8 @@ qnt-plus	l-run	search_short	match	2	43	-	libpcre2-differential	10.46 2025-08-27
 qnt-plus	t-64k	throughput	match	1410	1412	98	libpcre2-differential	10.46 2025-08-27
 qnt-plus	t-256k	throughput	match	507	509	377	libpcre2-differential	10.46 2025-08-27
 qnt-plus	t-1m	throughput	match	662	664	1505	libpcre2-differential	10.46 2025-08-27
+qnt-plus	t-lka-dense-256k	throughput	match	49	51	356	libpcre2-differential	10.46 2025-08-27
+qnt-plus	t-lka-sparse-256k	throughput	match	40	42	649	libpcre2-differential	10.46 2025-08-27
 qnt-quest	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-quest	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-quest	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2609,6 +2667,8 @@ qnt-quest	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 qnt-quest	t-64k	throughput	match	23	29	137	libpcre2-differential	10.46 2025-08-27
 qnt-quest	t-256k	throughput	match	1013	1019	565	libpcre2-differential	10.46 2025-08-27
 qnt-quest	t-1m	throughput	match	153	159	2327	libpcre2-differential	10.46 2025-08-27
+qnt-quest	t-lka-dense-256k	throughput	match	386	392	357	libpcre2-differential	10.46 2025-08-27
+qnt-quest	t-lka-sparse-256k	throughput	match	332	338	656	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2696,6 +2756,8 @@ qnt-lazy	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	t-64k	throughput	match	541	547	95	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	t-256k	throughput	match	4	16	363	libpcre2-differential	10.46 2025-08-27
 qnt-lazy	t-1m	throughput	match	799	812	1497	libpcre2-differential	10.46 2025-08-27
+qnt-lazy	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-lazy	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-star	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-star	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-star	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2783,6 +2845,8 @@ qnt-poss-star	l-run	search_short	match	2	43	-	libpcre2-differential	10.46 2025-0
 qnt-poss-star	t-64k	throughput	match	62	63	494	libpcre2-differential	10.46 2025-08-27
 qnt-poss-star	t-256k	throughput	match	67	68	2082	libpcre2-differential	10.46 2025-08-27
 qnt-poss-star	t-1m	throughput	match	52	53	8345	libpcre2-differential	10.46 2025-08-27
+qnt-poss-star	t-lka-dense-256k	throughput	match	33	34	1083	libpcre2-differential	10.46 2025-08-27
+qnt-poss-star	t-lka-sparse-256k	throughput	match	29	30	1942	libpcre2-differential	10.46 2025-08-27
 qnt-poss-plus	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-plus	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-plus	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2870,6 +2934,8 @@ qnt-poss-plus	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-
 qnt-poss-plus	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-plus	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-plus	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-poss-plus	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-poss-plus	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-plus-ctl	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-plus-ctl	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-plus-ctl	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -2957,6 +3023,8 @@ qnt-plus-ctl	l-run	search_short	match	2	43	-	libpcre2-differential	10.46 2025-08
 qnt-plus-ctl	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-plus-ctl	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-plus-ctl	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-plus-ctl	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-plus-ctl	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-quest	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-quest	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-quest	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3044,6 +3112,8 @@ qnt-poss-quest	l-run	search_short	match	2	4	-	libpcre2-differential	10.46 2025-0
 qnt-poss-quest	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-quest	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-quest	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-poss-quest	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+qnt-poss-quest	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 qnt-poss-brace	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-brace	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 qnt-poss-brace	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3131,6 +3201,8 @@ qnt-poss-brace	l-run	search_short	match	40	43	-	libpcre2-differential	10.46 2025
 qnt-poss-brace	t-64k	throughput	match	1410	1412	98	libpcre2-differential	10.46 2025-08-27
 qnt-poss-brace	t-256k	throughput	match	507	509	377	libpcre2-differential	10.46 2025-08-27
 qnt-poss-brace	t-1m	throughput	match	662	664	1505	libpcre2-differential	10.46 2025-08-27
+qnt-poss-brace	t-lka-dense-256k	throughput	match	49	51	356	libpcre2-differential	10.46 2025-08-27
+qnt-poss-brace	t-lka-sparse-256k	throughput	match	40	42	649	libpcre2-differential	10.46 2025-08-27
 grp-cap	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-cap	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-cap	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3218,6 +3290,8 @@ grp-cap	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-cap	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 grp-cap	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 grp-cap	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+grp-cap	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+grp-cap	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 grp-noncap	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-noncap	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-noncap	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3305,6 +3379,8 @@ grp-noncap	l-run	search_short	match	41	43	-	libpcre2-differential	10.46 2025-08-
 grp-noncap	t-64k	throughput	match	1410	1412	98	libpcre2-differential	10.46 2025-08-27
 grp-noncap	t-256k	throughput	match	507	509	377	libpcre2-differential	10.46 2025-08-27
 grp-noncap	t-1m	throughput	match	662	664	1505	libpcre2-differential	10.46 2025-08-27
+grp-noncap	t-lka-dense-256k	throughput	match	49	51	356	libpcre2-differential	10.46 2025-08-27
+grp-noncap	t-lka-sparse-256k	throughput	match	40	42	649	libpcre2-differential	10.46 2025-08-27
 grp-named	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-named	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-named	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3392,6 +3468,8 @@ grp-named	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 grp-named	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 grp-named	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 grp-named	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+grp-named	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+grp-named	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 grp-named-quote	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-named-quote	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-named-quote	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3479,6 +3557,8 @@ grp-named-quote	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 202
 grp-named-quote	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 grp-named-quote	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 grp-named-quote	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+grp-named-quote	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+grp-named-quote	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 grp-atomic-rep	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-atomic-rep	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-atomic-rep	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3566,6 +3646,8 @@ grp-atomic-rep	l-run	search_short	match	2	43	-	libpcre2-differential	10.46 2025-
 grp-atomic-rep	t-64k	throughput	match	1410	1412	98	libpcre2-differential	10.46 2025-08-27
 grp-atomic-rep	t-256k	throughput	match	507	509	377	libpcre2-differential	10.46 2025-08-27
 grp-atomic-rep	t-1m	throughput	match	662	664	1505	libpcre2-differential	10.46 2025-08-27
+grp-atomic-rep	t-lka-dense-256k	throughput	match	49	51	356	libpcre2-differential	10.46 2025-08-27
+grp-atomic-rep	t-lka-sparse-256k	throughput	match	40	42	649	libpcre2-differential	10.46 2025-08-27
 grp-atomic-alt	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-atomic-alt	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-atomic-alt	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3653,6 +3735,8 @@ grp-atomic-alt	l-run	search_short	match	56	58	-	libpcre2-differential	10.46 2025
 grp-atomic-alt	t-64k	throughput	match	40	42	307	libpcre2-differential	10.46 2025-08-27
 grp-atomic-alt	t-256k	throughput	match	90	92	1117	libpcre2-differential	10.46 2025-08-27
 grp-atomic-alt	t-1m	throughput	match	58	60	4434	libpcre2-differential	10.46 2025-08-27
+grp-atomic-alt	t-lka-dense-256k	throughput	match	77	79	1032	libpcre2-differential	10.46 2025-08-27
+grp-atomic-alt	t-lka-sparse-256k	throughput	match	63	65	1891	libpcre2-differential	10.46 2025-08-27
 grp-comment	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-comment	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-comment	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3740,6 +3824,8 @@ grp-comment	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 grp-comment	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 grp-comment	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 grp-comment	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+grp-comment	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+grp-comment	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 grp-branch-reset	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-branch-reset	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-branch-reset	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3827,6 +3913,8 @@ grp-branch-reset	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 20
 grp-branch-reset	t-64k	throughput	match	90	93	521	libpcre2-differential	10.46 2025-08-27
 grp-branch-reset	t-256k	throughput	match	45	48	2260	libpcre2-differential	10.46 2025-08-27
 grp-branch-reset	t-1m	throughput	match	143	146	8611	libpcre2-differential	10.46 2025-08-27
+grp-branch-reset	t-lka-dense-256k	throughput	match	247	250	2173	libpcre2-differential	10.46 2025-08-27
+grp-branch-reset	t-lka-sparse-256k	throughput	match	7	10	4062	libpcre2-differential	10.46 2025-08-27
 grp-callout	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 grp-callout	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 grp-callout	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3914,6 +4002,8 @@ grp-callout	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 grp-callout	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 grp-callout	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 grp-callout	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+grp-callout	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+grp-callout	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 alt-two	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 alt-two	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 alt-two	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4001,6 +4091,8 @@ alt-two	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 alt-two	t-64k	throughput	match	90	93	521	libpcre2-differential	10.46 2025-08-27
 alt-two	t-256k	throughput	match	45	48	2260	libpcre2-differential	10.46 2025-08-27
 alt-two	t-1m	throughput	match	143	146	8611	libpcre2-differential	10.46 2025-08-27
+alt-two	t-lka-dense-256k	throughput	match	247	250	2173	libpcre2-differential	10.46 2025-08-27
+alt-two	t-lka-sparse-256k	throughput	match	7	10	4062	libpcre2-differential	10.46 2025-08-27
 alt-nested	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 alt-nested	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 alt-nested	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4088,6 +4180,8 @@ alt-nested	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-
 alt-nested	t-64k	throughput	match	90	93	521	libpcre2-differential	10.46 2025-08-27
 alt-nested	t-256k	throughput	match	45	48	2260	libpcre2-differential	10.46 2025-08-27
 alt-nested	t-1m	throughput	match	143	146	8611	libpcre2-differential	10.46 2025-08-27
+alt-nested	t-lka-dense-256k	throughput	match	247	250	2173	libpcre2-differential	10.46 2025-08-27
+alt-nested	t-lka-sparse-256k	throughput	match	7	10	4062	libpcre2-differential	10.46 2025-08-27
 bak-1	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-1	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-1	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4175,6 +4269,8 @@ bak-1	l-run	search_short	match	39	48	-	libpcre2-differential	10.46 2025-08-27
 bak-1	t-64k	throughput	match	103	110	377	libpcre2-differential	10.46 2025-08-27
 bak-1	t-256k	throughput	match	39	44	1584	libpcre2-differential	10.46 2025-08-27
 bak-1	t-1m	throughput	match	325	332	6138	libpcre2-differential	10.46 2025-08-27
+bak-1	t-lka-dense-256k	throughput	match	303	306	1843	libpcre2-differential	10.46 2025-08-27
+bak-1	t-lka-sparse-256k	throughput	match	218	221	2412	libpcre2-differential	10.46 2025-08-27
 bak-2	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-2	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-2	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4262,6 +4358,8 @@ bak-2	l-run	search_short	match	2	6	-	libpcre2-differential	10.46 2025-08-27
 bak-2	t-64k	throughput	match	5400	5404	8	libpcre2-differential	10.46 2025-08-27
 bak-2	t-256k	throughput	match	27544	27548	26	libpcre2-differential	10.46 2025-08-27
 bak-2	t-1m	throughput	match	18156	18160	151	libpcre2-differential	10.46 2025-08-27
+bak-2	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+bak-2	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 bak-g-rel	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-g-rel	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-g-rel	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4349,6 +4447,8 @@ bak-g-rel	l-run	search_short	match	39	48	-	libpcre2-differential	10.46 2025-08-2
 bak-g-rel	t-64k	throughput	match	103	110	377	libpcre2-differential	10.46 2025-08-27
 bak-g-rel	t-256k	throughput	match	39	44	1584	libpcre2-differential	10.46 2025-08-27
 bak-g-rel	t-1m	throughput	match	325	332	6138	libpcre2-differential	10.46 2025-08-27
+bak-g-rel	t-lka-dense-256k	throughput	match	303	306	1843	libpcre2-differential	10.46 2025-08-27
+bak-g-rel	t-lka-sparse-256k	throughput	match	218	221	2412	libpcre2-differential	10.46 2025-08-27
 bak-k-named	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-k-named	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-k-named	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4436,6 +4536,8 @@ bak-k-named	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 bak-k-named	t-64k	throughput	match	1373	1385	250	libpcre2-differential	10.46 2025-08-27
 bak-k-named	t-256k	throughput	match	962	973	941	libpcre2-differential	10.46 2025-08-27
 bak-k-named	t-1m	throughput	match	875	886	4165	libpcre2-differential	10.46 2025-08-27
+bak-k-named	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+bak-k-named	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 bak-py	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-py	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 bak-py	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4523,6 +4625,8 @@ bak-py	l-run	search_short	match	39	48	-	libpcre2-differential	10.46 2025-08-27
 bak-py	t-64k	throughput	match	103	110	377	libpcre2-differential	10.46 2025-08-27
 bak-py	t-256k	throughput	match	39	44	1584	libpcre2-differential	10.46 2025-08-27
 bak-py	t-1m	throughput	match	325	332	6138	libpcre2-differential	10.46 2025-08-27
+bak-py	t-lka-dense-256k	throughput	match	303	306	1843	libpcre2-differential	10.46 2025-08-27
+bak-py	t-lka-sparse-256k	throughput	match	218	221	2412	libpcre2-differential	10.46 2025-08-27
 lka-pos	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-pos	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-pos	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4610,6 +4714,8 @@ lka-pos	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-pos	t-64k	throughput	match	2687	2691	3	libpcre2-differential	10.46 2025-08-27
 lka-pos	t-256k	throughput	match	75609	75613	6	libpcre2-differential	10.46 2025-08-27
 lka-pos	t-1m	throughput	match	46928	46932	27	libpcre2-differential	10.46 2025-08-27
+lka-pos	t-lka-dense-256k	throughput	match	0	4	10564	libpcre2-differential	10.46 2025-08-27
+lka-pos	t-lka-sparse-256k	throughput	match	12952	12956	8	libpcre2-differential	10.46 2025-08-27
 lka-neg	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-neg	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-neg	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4697,6 +4803,8 @@ lka-neg	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-neg	t-64k	throughput	match	206	210	176	libpcre2-differential	10.46 2025-08-27
 lka-neg	t-256k	throughput	match	598	602	675	libpcre2-differential	10.46 2025-08-27
 lka-neg	t-1m	throughput	match	38	42	2706	libpcre2-differential	10.46 2025-08-27
+lka-neg	t-lka-dense-256k	throughput	match	100	104	2595	libpcre2-differential	10.46 2025-08-27
+lka-neg	t-lka-sparse-256k	throughput	match	42463	42467	3	libpcre2-differential	10.46 2025-08-27
 lkb-pos	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-pos	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-pos	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4784,6 +4892,8 @@ lkb-pos	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-pos	t-64k	throughput	match	2692	2696	3	libpcre2-differential	10.46 2025-08-27
 lkb-pos	t-256k	throughput	match	75614	75618	6	libpcre2-differential	10.46 2025-08-27
 lkb-pos	t-1m	throughput	match	46933	46937	27	libpcre2-differential	10.46 2025-08-27
+lkb-pos	t-lka-dense-256k	throughput	match	5	9	10564	libpcre2-differential	10.46 2025-08-27
+lkb-pos	t-lka-sparse-256k	throughput	match	12957	12961	8	libpcre2-differential	10.46 2025-08-27
 lkb-neg	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-neg	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-neg	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4871,6 +4981,8 @@ lkb-neg	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lkb-neg	t-64k	throughput	match	303	307	148	libpcre2-differential	10.46 2025-08-27
 lkb-neg	t-256k	throughput	match	190	194	659	libpcre2-differential	10.46 2025-08-27
 lkb-neg	t-1m	throughput	match	0	4	2726	libpcre2-differential	10.46 2025-08-27
+lkb-neg	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+lkb-neg	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 lka-nonatomic	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-nonatomic	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-nonatomic	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -4958,6 +5070,8 @@ lka-nonatomic	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-
 lka-nonatomic	t-64k	throughput	match	206	210	179	libpcre2-differential	10.46 2025-08-27
 lka-nonatomic	t-256k	throughput	match	598	602	681	libpcre2-differential	10.46 2025-08-27
 lka-nonatomic	t-1m	throughput	match	38	42	2733	libpcre2-differential	10.46 2025-08-27
+lka-nonatomic	t-lka-dense-256k	throughput	match	0	4	13159	libpcre2-differential	10.46 2025-08-27
+lka-nonatomic	t-lka-sparse-256k	throughput	match	12952	12956	11	libpcre2-differential	10.46 2025-08-27
 lka-verb	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-verb	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-verb	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5045,6 +5159,8 @@ lka-verb	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 lka-verb	t-64k	throughput	match	2687	2691	3	libpcre2-differential	10.46 2025-08-27
 lka-verb	t-256k	throughput	match	75609	75613	6	libpcre2-differential	10.46 2025-08-27
 lka-verb	t-1m	throughput	match	46928	46932	27	libpcre2-differential	10.46 2025-08-27
+lka-verb	t-lka-dense-256k	throughput	match	0	4	10564	libpcre2-differential	10.46 2025-08-27
+lka-verb	t-lka-sparse-256k	throughput	match	12952	12956	8	libpcre2-differential	10.46 2025-08-27
 cnd-group	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cnd-group	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 cnd-group	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5132,6 +5248,8 @@ cnd-group	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 cnd-group	t-64k	throughput	match	206	210	179	libpcre2-differential	10.46 2025-08-27
 cnd-group	t-256k	throughput	match	598	602	681	libpcre2-differential	10.46 2025-08-27
 cnd-group	t-1m	throughput	match	38	42	2733	libpcre2-differential	10.46 2025-08-27
+cnd-group	t-lka-dense-256k	throughput	match	0	4	13159	libpcre2-differential	10.46 2025-08-27
+cnd-group	t-lka-sparse-256k	throughput	match	12952	12956	11	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5219,6 +5337,8 @@ rec-r-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	t-64k	throughput	match	464	473	116	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	t-256k	throughput	match	1026	1029	505	libpcre2-differential	10.46 2025-08-27
 rec-r-uc	t-1m	throughput	match	1427	1436	2067	libpcre2-differential	10.46 2025-08-27
+rec-r-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-r-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-1	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-1	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-1	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5306,6 +5426,8 @@ rec-1	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-1	t-64k	throughput	match	464	473	116	libpcre2-differential	10.46 2025-08-27
 rec-1	t-256k	throughput	match	1026	1029	505	libpcre2-differential	10.46 2025-08-27
 rec-1	t-1m	throughput	match	1427	1436	2067	libpcre2-differential	10.46 2025-08-27
+rec-1	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-1	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-name	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-name	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-name	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5393,6 +5515,8 @@ rec-name	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-name	t-64k	throughput	match	464	473	116	libpcre2-differential	10.46 2025-08-27
 rec-name	t-256k	throughput	match	1026	1029	505	libpcre2-differential	10.46 2025-08-27
 rec-name	t-1m	throughput	match	1427	1436	2067	libpcre2-differential	10.46 2025-08-27
+rec-name	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-name	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-define	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-define	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-define	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5480,6 +5604,8 @@ rec-define	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-
 rec-define	t-64k	throughput	match	150	155	190	libpcre2-differential	10.46 2025-08-27
 rec-define	t-256k	throughput	match	274	279	748	libpcre2-differential	10.46 2025-08-27
 rec-define	t-1m	throughput	match	276	281	2947	libpcre2-differential	10.46 2025-08-27
+rec-define	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-define	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-g-angle	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-g-angle	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-g-angle	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5567,6 +5693,8 @@ rec-g-angle	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 rec-g-angle	t-64k	throughput	match	123	127	386	libpcre2-differential	10.46 2025-08-27
 rec-g-angle	t-256k	throughput	match	247	251	1530	libpcre2-differential	10.46 2025-08-27
 rec-g-angle	t-1m	throughput	match	249	253	6070	libpcre2-differential	10.46 2025-08-27
+rec-g-angle	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-g-angle	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-py	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-py	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-py	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5654,6 +5782,8 @@ rec-py	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-py	t-64k	throughput	match	123	127	386	libpcre2-differential	10.46 2025-08-27
 rec-py	t-256k	throughput	match	247	251	1530	libpcre2-differential	10.46 2025-08-27
 rec-py	t-1m	throughput	match	249	253	6070	libpcre2-differential	10.46 2025-08-27
+rec-py	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-py	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-fwd	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-fwd	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-fwd	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5741,6 +5871,8 @@ rec-fwd	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-fwd	t-64k	throughput	match	123	127	386	libpcre2-differential	10.46 2025-08-27
 rec-fwd	t-256k	throughput	match	247	251	1530	libpcre2-differential	10.46 2025-08-27
 rec-fwd	t-1m	throughput	match	249	253	6070	libpcre2-differential	10.46 2025-08-27
+rec-fwd	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-fwd	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 rec-back	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-back	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-back	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -5828,6 +5960,8 @@ rec-back	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 rec-back	t-64k	throughput	match	123	127	386	libpcre2-differential	10.46 2025-08-27
 rec-back	t-256k	throughput	match	247	251	1530	libpcre2-differential	10.46 2025-08-27
 rec-back	t-1m	throughput	match	249	253	6070	libpcre2-differential	10.46 2025-08-27
+rec-back	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+rec-back	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 mod-i	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-i	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-i	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -5915,6 +6049,8 @@ mod-i	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-i	t-64k	throughput	match	90	93	400	libpcre2-differential	10.46 2025-08-27
 mod-i	t-256k	throughput	match	364	367	1632	libpcre2-differential	10.46 2025-08-27
 mod-i	t-1m	throughput	match	404	407	6030	libpcre2-differential	10.46 2025-08-27
+mod-i	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-i	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 mod-s	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-s	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-s	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6002,6 +6138,8 @@ mod-s	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-s	t-64k	throughput	match	2687	2696	4	libpcre2-differential	10.46 2025-08-27
 mod-s	t-256k	throughput	match	75609	75618	6	libpcre2-differential	10.46 2025-08-27
 mod-s	t-1m	throughput	match	46928	46937	28	libpcre2-differential	10.46 2025-08-27
+mod-s	t-lka-dense-256k	throughput	match	0	9	10564	libpcre2-differential	10.46 2025-08-27
+mod-s	t-lka-sparse-256k	throughput	match	12952	12961	8	libpcre2-differential	10.46 2025-08-27
 mod-x	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-x	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-x	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6089,6 +6227,8 @@ mod-x	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-x	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 mod-x	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 mod-x	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+mod-x	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-x	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 mod-n	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-n	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-n	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6176,6 +6316,8 @@ mod-n	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-n	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 mod-n	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 mod-n	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+mod-n	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-n	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6263,6 +6405,8 @@ mod-u-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	t-64k	throughput	match	541	547	95	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	t-256k	throughput	match	4	16	363	libpcre2-differential	10.46 2025-08-27
 mod-u-uc	t-1m	throughput	match	799	812	1497	libpcre2-differential	10.46 2025-08-27
+mod-u-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+mod-u-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6350,6 +6494,8 @@ mod-j-uc	l-run	search_short	match	39	48	-	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	t-64k	throughput	match	103	110	377	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	t-256k	throughput	match	39	44	1584	libpcre2-differential	10.46 2025-08-27
 mod-j-uc	t-1m	throughput	match	325	332	6138	libpcre2-differential	10.46 2025-08-27
+mod-j-uc	t-lka-dense-256k	throughput	match	303	306	1843	libpcre2-differential	10.46 2025-08-27
+mod-j-uc	t-lka-sparse-256k	throughput	match	218	221	2412	libpcre2-differential	10.46 2025-08-27
 mod-a	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-a	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-a	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -6437,6 +6583,8 @@ mod-a	l-run	search_short	match	0	43	-	libpcre2-differential	10.46 2025-08-27
 mod-a	t-64k	throughput	match	0	4	12992	libpcre2-differential	10.46 2025-08-27
 mod-a	t-256k	throughput	match	0	3	51966	libpcre2-differential	10.46 2025-08-27
 mod-a	t-1m	throughput	match	0	8	208594	libpcre2-differential	10.46 2025-08-27
+mod-a	t-lka-dense-256k	throughput	match	0	4	50078	libpcre2-differential	10.46 2025-08-27
+mod-a	t-lka-sparse-256k	throughput	match	0	3	48097	libpcre2-differential	10.46 2025-08-27
 mod-r	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-r	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-r	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -6524,6 +6672,8 @@ mod-r	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-r	t-64k	throughput	match	90	93	400	libpcre2-differential	10.46 2025-08-27
 mod-r	t-256k	throughput	match	364	367	1632	libpcre2-differential	10.46 2025-08-27
 mod-r	t-1m	throughput	match	404	407	6030	libpcre2-differential	10.46 2025-08-27
+mod-r	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-r	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 mod-reset	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-reset	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-reset	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -6611,6 +6761,8 @@ mod-reset	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 mod-reset	t-64k	throughput	match	90	93	400	libpcre2-differential	10.46 2025-08-27
 mod-reset	t-256k	throughput	match	364	367	1632	libpcre2-differential	10.46 2025-08-27
 mod-reset	t-1m	throughput	match	404	407	6030	libpcre2-differential	10.46 2025-08-27
+mod-reset	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-reset	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 mod-unset	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 mod-unset	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 mod-unset	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -6698,6 +6850,8 @@ mod-unset	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 mod-unset	t-64k	throughput	match	90	93	400	libpcre2-differential	10.46 2025-08-27
 mod-unset	t-256k	throughput	match	364	367	1632	libpcre2-differential	10.46 2025-08-27
 mod-unset	t-1m	throughput	match	404	407	6030	libpcre2-differential	10.46 2025-08-27
+mod-unset	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+mod-unset	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 esc-tab	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-tab	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-tab	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6785,6 +6939,8 @@ esc-tab	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-tab	t-64k	throughput	match	22741	22750	1	libpcre2-differential	10.46 2025-08-27
 esc-tab	t-256k	throughput	match	23845	23854	3	libpcre2-differential	10.46 2025-08-27
 esc-tab	t-1m	throughput	match	116139	116148	21	libpcre2-differential	10.46 2025-08-27
+esc-tab	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-tab	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-nl	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-nl	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-nl	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6872,6 +7028,8 @@ esc-nl	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-nl	t-64k	throughput	match	48932	48941	1	libpcre2-differential	10.46 2025-08-27
 esc-nl	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-nl	t-1m	throughput	match	495366	495375	1	libpcre2-differential	10.46 2025-08-27
+esc-nl	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-nl	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-cr	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-cr	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-cr	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -6959,6 +7117,8 @@ esc-cr	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-cr	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-cr	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-cr	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-cr	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-cr	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-hex	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 esc-hex	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-hex	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7046,6 +7206,8 @@ esc-hex	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-hex	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 esc-hex	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 esc-hex	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+esc-hex	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+esc-hex	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 esc-hex-braced	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-hex-braced	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-hex-braced	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7133,6 +7295,8 @@ esc-hex-braced	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025
 esc-hex-braced	t-64k	throughput	match	6005	6009	15	libpcre2-differential	10.46 2025-08-27
 esc-hex-braced	t-256k	throughput	match	9571	9575	42	libpcre2-differential	10.46 2025-08-27
 esc-hex-braced	t-1m	throughput	match	2309	2313	197	libpcre2-differential	10.46 2025-08-27
+esc-hex-braced	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-hex-braced	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7220,6 +7384,8 @@ esc-ctrl	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-ctrl	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-ctrl	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-ctrl	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 esc-octal-o	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 esc-octal-o	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-octal-o	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7307,6 +7473,8 @@ esc-octal-o	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 esc-octal-o	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 esc-octal-o	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 esc-octal-o	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+esc-octal-o	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+esc-octal-o	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 esc-octal-0	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-octal-0	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-octal-0	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7394,6 +7562,8 @@ esc-octal-0	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08
 esc-octal-0	t-64k	throughput	match	2687	2696	3	libpcre2-differential	10.46 2025-08-27
 esc-octal-0	t-256k	throughput	match	75609	75618	6	libpcre2-differential	10.46 2025-08-27
 esc-octal-0	t-1m	throughput	match	46928	46937	27	libpcre2-differential	10.46 2025-08-27
+esc-octal-0	t-lka-dense-256k	throughput	match	0	9	10564	libpcre2-differential	10.46 2025-08-27
+esc-octal-0	t-lka-sparse-256k	throughput	match	12952	12961	8	libpcre2-differential	10.46 2025-08-27
 esc-quote	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-quote	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 esc-quote	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7481,6 +7651,8 @@ esc-quote	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-2
 esc-quote	t-64k	throughput	match	4186	4190	5	libpcre2-differential	10.46 2025-08-27
 esc-quote	t-256k	throughput	match	25248	25252	13	libpcre2-differential	10.46 2025-08-27
 esc-quote	t-1m	throughput	match	17449	17453	54	libpcre2-differential	10.46 2025-08-27
+esc-quote	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+esc-quote	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7568,6 +7740,8 @@ msc-r-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	t-64k	throughput	match	48932	48941	1	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 msc-r-uc	t-1m	throughput	match	495366	495375	1	libpcre2-differential	10.46 2025-08-27
+msc-r-uc	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+msc-r-uc	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7655,6 +7829,8 @@ msc-x-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 msc-x-uc	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+msc-x-uc	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+msc-x-uc	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7742,6 +7918,8 @@ msc-c-uc	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	t-64k	throughput	match	90	93	377	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	t-256k	throughput	match	364	367	1557	libpcre2-differential	10.46 2025-08-27
 msc-c-uc	t-1m	throughput	match	404	407	5694	libpcre2-differential	10.46 2025-08-27
+msc-c-uc	t-lka-dense-256k	throughput	match	247	250	1448	libpcre2-differential	10.46 2025-08-27
+msc-c-uc	t-lka-sparse-256k	throughput	match	7	10	2720	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	f-cat	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	f-cat-uc	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	f-cat-mixed	match	match	0	3	-	libpcre2-differential	10.46 2025-08-27
@@ -7829,6 +8007,8 @@ unp-p-lc	l-run	search_short	match	0	43	-	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	t-64k	throughput	match	0	4	11598	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	t-256k	throughput	match	0	3	46367	libpcre2-differential	10.46 2025-08-27
 unp-p-lc	t-1m	throughput	match	0	8	186599	libpcre2-differential	10.46 2025-08-27
+unp-p-lc	t-lka-dense-256k	throughput	match	0	4	50078	libpcre2-differential	10.46 2025-08-27
+unp-p-lc	t-lka-sparse-256k	throughput	match	0	3	48097	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -7916,6 +8096,8 @@ unp-p-uc	l-run	search_short	match	43	44	-	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	t-64k	throughput	match	4	7	11597	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	t-256k	throughput	match	3	5	46366	libpcre2-differential	10.46 2025-08-27
 unp-p-uc	t-1m	throughput	match	8	9	186598	libpcre2-differential	10.46 2025-08-27
+unp-p-uc	t-lka-dense-256k	throughput	match	4	5	50078	libpcre2-differential	10.46 2025-08-27
+unp-p-uc	t-lka-sparse-256k	throughput	match	3	4	48096	libpcre2-differential	10.46 2025-08-27
 vrb-accept	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 vrb-accept	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 vrb-accept	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -8003,6 +8185,8 @@ vrb-accept	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-
 vrb-accept	t-64k	throughput	match	206	210	179	libpcre2-differential	10.46 2025-08-27
 vrb-accept	t-256k	throughput	match	598	602	681	libpcre2-differential	10.46 2025-08-27
 vrb-accept	t-1m	throughput	match	38	42	2733	libpcre2-differential	10.46 2025-08-27
+vrb-accept	t-lka-dense-256k	throughput	match	0	4	13159	libpcre2-differential	10.46 2025-08-27
+vrb-accept	t-lka-sparse-256k	throughput	match	12952	12956	11	libpcre2-differential	10.46 2025-08-27
 vrb-skip	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 vrb-skip	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 vrb-skip	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -8090,6 +8274,8 @@ vrb-skip	l-run	search_short	match	2	43	-	libpcre2-differential	10.46 2025-08-27
 vrb-skip	t-64k	throughput	match	1410	1412	98	libpcre2-differential	10.46 2025-08-27
 vrb-skip	t-256k	throughput	match	507	509	377	libpcre2-differential	10.46 2025-08-27
 vrb-skip	t-1m	throughput	match	662	664	1505	libpcre2-differential	10.46 2025-08-27
+vrb-skip	t-lka-dense-256k	throughput	match	49	51	356	libpcre2-differential	10.46 2025-08-27
+vrb-skip	t-lka-sparse-256k	throughput	match	40	42	649	libpcre2-differential	10.46 2025-08-27
 xcl-minus	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 xcl-minus	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 xcl-minus	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -8177,6 +8363,8 @@ xcl-minus	l-run	search_short	match	0	2	-	libpcre2-differential	10.46 2025-08-27
 xcl-minus	t-64k	throughput	match	0	1	21102	libpcre2-differential	10.46 2025-08-27
 xcl-minus	t-256k	throughput	match	0	1	84281	libpcre2-differential	10.46 2025-08-27
 xcl-minus	t-1m	throughput	match	0	1	336389	libpcre2-differential	10.46 2025-08-27
+xcl-minus	t-lka-dense-256k	throughput	match	1	2	101225	libpcre2-differential	10.46 2025-08-27
+xcl-minus	t-lka-sparse-256k	throughput	match	0	1	98240	libpcre2-differential	10.46 2025-08-27
 floor	f-cat	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	f-cat-uc	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	f-cat-mixed	match	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -8264,3 +8452,5 @@ floor	l-run	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 floor	t-64k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 floor	t-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
 floor	t-1m	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+floor	t-lka-dense-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
+floor	t-lka-sparse-256k	throughput	nomatch	-	-	0	libpcre2-differential	10.46 2025-08-27
