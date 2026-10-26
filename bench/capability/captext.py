@@ -221,3 +221,149 @@ def prose(nbytes, seed, tail):
         lines.append(line)
         total += len(line) + 1
     return ("\n".join(lines) + "\n").encode("ascii") + tail
+
+
+# ---------------------------------------------------------------------------
+# [B123] capability@0.3 -- the capture-forced-hybrid MATCH subjects (pcrec
+# I-125 Q10 / I-127 [BENCH-ASKS-PENDING] (2)): 1-64 KiB subjects on which the
+# 17 `RX_VM_PREFILTER "hybrid"` + `RX_ENGINE_WHY "capture group"` patterns
+# actually MATCH, in place of the 5-93 byte hand literals. Again NEW code only:
+# every function seeds a fresh Rng and no 0.1/0.2 subject can move.
+#
+# Two kinds, because the 17 are two kinds of pattern:
+#   * the UNANCHORED seven-plus (JSON key, syslog prefix, secrets, a
+#     credentials pair, `(a|)*\d`) match INSIDE text: `hyb_embed`, a ladder
+#     of three sizes of one log/config/JSON grammar with planted instances;
+#   * the `^...$` / `^...@` ones match the WHOLE SUBJECT (or its prefix): one
+#     generated subject per shape, `hyb_logline`, `hyb_datepath`,
+#     `hyb_digits`, each safe against the set's ReDoS family (every `^`-
+#     anchored hazard pattern attempts offset 0 only, and the first run of
+#     its alphabet at offset 0 is a few bytes long by construction).
+# `ipv4`, `us-zip` and `moment-iso8601` have NO realistic 1-64 KiB matching
+# subject (their languages are bounded at <= ~30 B; a long leading `\s*` pad
+# would be the `^(\s+)*$` family's catastrophic near-miss): NOTES.md, 0.3.
+# ---------------------------------------------------------------------------
+
+_ALNUM_LC = "abcdefghijklmnopqrstuvwxyz0123456789_"
+_ALNUM_UC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+_ALNUM_MIX = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+_MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+           "Oct", "Nov", "Dec")
+_PASSWORDS = ("hunter22", "s3cretpw", "letmein99", "correcthorse")
+
+
+def _pick(rng, alphabet, n):
+    return "".join(alphabet[rng.randrange(len(alphabet))] for _ in range(n))
+
+
+def _json_line(rng):
+    return '  {"id": %d, "name": "%s", "kind": "%s", "ok": %s}' % (
+        rng.randrange(100000), rng.choice(_WORDS), rng.choice(_WORDS),
+        rng.choice(("true", "false")))
+
+
+def _syslog_line(rng):
+    return "%s %2d %02d:%02d:%02d %s %s[%d]: %s %s" % (
+        rng.choice(_MONTHS), 1 + rng.randrange(28), rng.randrange(24),
+        rng.randrange(60), rng.randrange(60), rng.choice(_HOSTS),
+        rng.choice(_PROGS), 1000 + rng.randrange(9000),
+        rng.choice(_WORDS), rng.choice(_WORDS))
+
+
+def _aws_line(rng):
+    return "aws_access_key_id = AKIA%s" % _pick(rng, _ALNUM_UC, 16)
+
+
+def _github_line(rng):
+    return "token: github_pat_%s" % _pick(rng, _ALNUM_MIX, 82)
+
+
+def _slack_line(rng):
+    return "webhook = https://hooks.slack.com/services/T%s/B%s/%s" % (
+        _pick(rng, _ALNUM_LC, 8), _pick(rng, _ALNUM_LC, 8 + rng.randrange(5)),
+        _pick(rng, _ALNUM_LC, 24))
+
+
+def _creds_block(rng):
+    return 'username = "%s"\npassword = "%s"' % (rng.choice(_NAMES),
+                                                   rng.choice(_PASSWORDS))
+
+
+_EMBED_PLANTS = (_json_line, _syslog_line, _aws_line, _github_line,
+                 _slack_line, _creds_block)
+_EMBED_BACKGROUND = (_log_line, _http_line, _source_line, _prose_line)
+
+
+def hyb_embed(nbytes, seed):
+    """EXACTLY `nbytes` of log/config/JSON text (the last line is cut at the
+    byte boundary, as `text()` does). Line 1 is
+    an address line (`alice.smith+lists@example.com wrote:`) so the `^`-
+    prefix `^([a-zA-Z0-9._%+-]+)+@` matches at offset 0; the next six lines
+    plant ONE instance of each embedded family (JSON key, syslog prefix, AWS
+    key id, GitHub PAT, Slack webhook, credentials pair), so even the 1 KiB
+    rung holds every instance; after that each line is a plant with
+    probability 1/4 (kinds uniform) and a background line (the 0.1 grammar's
+    four kinds) otherwise. Source lines keep their quoted strings, so an
+    unanchored `[^"\\\\]+` class stays bounded by one gap between quotes."""
+    rng = Rng(seed)
+    lines = ["alice.smith+lists@example.com wrote:"]
+    lines += [p(rng) for p in _EMBED_PLANTS]
+    total = sum(len(l) + 1 for l in lines)
+    while total < nbytes:
+        if rng.randrange(4) == 0:
+            line = rng.choice(_EMBED_PLANTS)(rng)
+        else:
+            line = rng.choice(_EMBED_BACKGROUND)(rng)
+        lines.append(line)
+        total += len(line) + 1
+    return ("\n".join(lines) + "\n").encode("ascii")[:nbytes]
+
+
+def hyb_logline(nbytes, seed):
+    """EXACTLY `nbytes` of ONE line, no newline: `kern.err: ` then prose
+    words. The whole subject is the match of `logparse-atomic` (and its
+    `-removed` twin), `^(?>facility.level): (.*)$` -- a long message, the way
+    a stack trace or a JSON payload rides inside one syslog line."""
+    rng = Rng(seed)
+    words = ["kern.err:"]
+    total = len(words[0])
+    while total < nbytes:
+        w = rng.choice(_WORDS)
+        words.append(w)
+        total += 1 + len(w)
+    body = " ".join(words)[:nbytes]
+    return (body[:-1] + ("x" if body[-1] == " " else body[-1])).encode("ascii")
+
+
+def hyb_datepath(nbytes, seed):
+    """EXACTLY `nbytes`: digit groups (1-4) each closed by `/` (three in four)
+    or `-`, the first group fixed `2025/` so offset 0's first alphabet run is
+    5 bytes, ending in a `/`. The whole subject is the match of
+    `date-nested-plus`, `^(([0-9]+[-/])+)+$` -- a URL/date path."""
+    rng = Rng(seed)
+    out = ["2025/"]
+    total = 5
+    while True:
+        tok = _pick(rng, "0123456789", 1 + rng.randrange(4)) + (
+            "-" if rng.randrange(4) == 0 else "/")
+        if total + len(tok) > nbytes:
+            break
+        out.append(tok)
+        total += len(tok)
+    body = "".join(out)
+    pad = nbytes - len(body)
+    return (body[:-1] + "0" * pad + "/").encode("ascii") if pad else \
+        body.encode("ascii")
+
+
+def hyb_digits(nbytes, seed):
+    """EXACTLY `nbytes` random decimal digits (first non-zero). The whole
+    subject is the match of `numeric-id-nested-plus` `^(\\d+)+$` and of
+    `phone-list-nested-plus` `^(\\d+\\s*)+$` -- and a would-be catastrophic
+    near-miss for `email-nested-plus` (the digits are in its class, there is
+    no `@`): libpcre2's required-code-unit check dismisses it at once
+    (measured 0.0 s through the oracle), so the oracle needs no fallback
+    method here; an engine WITHOUT that check backtracks and may give up."""
+    rng = Rng(seed)
+    return (str(1 + rng.randrange(9)) + _pick(rng, "0123456789", nbytes - 1)
+            ).encode("ascii")

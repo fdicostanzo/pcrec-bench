@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """gen_throughput_subjects.py -- the capability set's three throughput
-texts: `throughput/` (gitignored) + `manifest_throughput.tsv`
+texts ([B125] 0.2 appends eight, [B123] 0.3 appends six `t-hyb-*` MATCH
+subjects, 1-64 KiB): `throughput/` (gitignored) + `manifest_throughput.tsv`
 (committed), in `bench/syntax/gen_throughput_subjects.py`'s shape:
 `captext.text()` at three sizes and three seeds, a SIZE SWEEP at fixed
 "grammar", not a density cross (capability_set_v1.md 3.5).
@@ -97,6 +98,68 @@ def extra_subjects():
     return out
 
 
+# [B123] capability@0.3: the capture-forced-hybrid MATCH subjects, APPENDED after
+# the eleven 0.1/0.2 rows (which are untouched, asserted by main()). All are
+# > short_search_max_bytes, so THROUGHPUT only; 1 KiB .. 64 KiB (pcrec I-125 Q10).
+# Which of the 17 `RX_VM_PREFILTER "hybrid"` + `RX_ENGINE_WHY "capture group"`
+# patterns each one is the matching subject of is in each description and in
+# NOTES.md's 0.3 section.
+_HYB_EMBED = (
+    ("t-hyb-embed-1k", 1024, 0xC0FFEE31),
+    ("t-hyb-embed-8k", 8192, 0xC0FFEE32),
+    ("t-hyb-embed-64k", 65536, 0xC0FFEE33),
+)
+_HYB_EMBED_WHO = (
+    "a ladder rung of one log/config/JSON grammar with planted instances "
+    "(an address first line; a JSON line, a syslog line, an AWS key id, a "
+    "GitHub PAT, a Slack webhook URL and a username/password pair in the "
+    "first seven lines, then one line in four a plant): find-all MATCHES "
+    "codegrammar-flat, codegrammar-xflag, wild-logparse-syslogbase-expanded, "
+    "wild-secrets-aws-access-key-id, -github-pat, -slack-webhook-url, "
+    "-username-password-pair, wild-semdiv-empty-alt-repeat-pcre2 (every "
+    "digit) and, once at offset 0, email-nested-plus")
+
+
+def hyb_subjects():
+    """-> [(id, bytes, description)] in manifest order: the embed ladder, then
+    the three whole-subject shapes."""
+    out = []
+    for sid, n, seed in _HYB_EMBED:
+        out.append((sid, ct.hyb_embed(n, seed),
+                    "throughput/[B123] %d B, seed 0x%X: %s"
+                    % (n, seed, _HYB_EMBED_WHO)))
+    out.append((
+        "t-hyb-logline-16k", ct.hyb_logline(16384, 0xC0FFEE34),
+        "throughput/[B123] 16384 B, ONE line, no newline, `kern.err: ` then "
+        "prose words: the whole subject is the match of logparse-atomic and "
+        "logparse-atomic-removed (a long syslog message)"))
+    out.append((
+        "t-hyb-datepath-16k", ct.hyb_datepath(16384, 0xC0FFEE35),
+        "throughput/[B123] 16384 B of digit groups closed by `/` (or, one in "
+        "four, `-`), first group `2025/`, ending in `/`: the whole subject is "
+        "the match of date-nested-plus"))
+    out.append((
+        "t-hyb-digits-4k", ct.hyb_digits(4096, 0xC0FFEE36),
+        "throughput/[B123] 4096 random decimal digits: the whole subject is "
+        "the match of numeric-id-nested-plus and phone-list-nested-plus, and "
+        "email-nested-plus's would-be catastrophic near-miss (the digits are in "
+        "its class and there is no '@': PCRE2's required-code-unit check "
+        "dismisses it at once, an engine without one would backtrack)"))
+    return out
+
+
+_0_2_SHA256 = {
+    "t-evil-match-60k": "7e997b935b2b6fc8914f888a146f90163a59ee7e9a356b22880999d4c4427ee1",
+    "t-evil-nearmiss-16k": "7783c01caab83dfdc8bf4859f2dd1bab0e2bbd5fb6d3d12278b8c064fb2728af",
+    "t-trim-match-60k": "eb6cb8751e37a9cb75812a3cb05b1a939624c1e9e6ef3f0716bb1e0739f3e80a",
+    "t-trim-nearmiss-16k": "41783dc6c35a4a0670ac026a91cf8c9569b5d479e9d0436613d0fa0e17fbcd47",
+    "t-mixed-runs-4k": "04db4aaa9e01339995fb7acc0dfdb216042f5913b41e938b368cbd75f411b7d5",
+    "t-tail-digits-1m": "06a2c18097ee1b62860a53250be52e50a9be2b284e0e67b4afae3ff8c0a3dbd2",
+    "t-tail-txt-1m": "e1fc06ff899dffd8fad1239d20ca32c72f2708881c311d27cc4c9fbbe19fc057",
+    "t-tail-space-1m": "9d6c19081540d136581fc08ba781a0d5062abf696693c4d5ace1142b7254b3b1",
+}
+
+
 _REDOS_PATTERNS = (
     r"^([a-zA-Z0-9._%+-]+)+@",
     r"^(\s+)*$",
@@ -153,6 +216,16 @@ def main():
             % seed, ct.periodic_field(body)))
     for sid, body, desc in extra_subjects():
         assert len(body) > 512, sid       # throughput-only, by size
+        assert hashlib.sha256(body).hexdigest() == _0_2_SHA256[sid], (
+            "capability@0.3 moved a 0.2 throughput text: %s" % sid)
+        texts.append((sid, body))
+        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+            f.write(body)
+        rows.append("%s\t%d\t%s\t%s\t%s" % (
+            sid, len(body), hashlib.sha256(body).hexdigest(), desc,
+            ct.periodic_field(body)))
+    for sid, body, desc in hyb_subjects():
+        assert 1024 <= len(body) <= 65536, sid     # I-125 Q10's band
         texts.append((sid, body))
         with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
             f.write(body)

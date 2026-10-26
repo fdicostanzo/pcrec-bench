@@ -1,5 +1,6 @@
-# bench/capability@0.2 — the capability survey set: objective, families, predictions
+# bench/capability@0.3 — the capability survey set: objective, families, predictions
 
+(@0.3, [B123], 2026-10-25: the LAST section is the 0.3 text; 0.3 changes no pattern, no short subject, no 0.1/0.2 throughput text.)
 (@0.2, [B125], 2026-10-08: read the section "capability@0.2" at the END of this file first for what
 changed; everything above it is the @0.1 text, still true of the first 64 patterns, 75 short subjects
 and 3 throughput texts, all byte-identical in 0.2.)
@@ -525,3 +526,107 @@ pattern, 1 MiB like `t-1m`).
 - R11. A throughput subject with a dropped (no-expectation) triple for a pattern
   excludes that pattern's cell at that subject's set-grain pass rate; the number
   of such triples is stated on the report (it is 2 by the derivation).
+
+## capability@0.3 ([B123], 2026-10-25) -- the capture-forced-hybrid match subjects
+
+Origin: pcrec inbox I-125 Q10 / I-127 [BENCH-ASKS-PENDING] (2) ("is there a
+realistic-size match-regime subject, 1 KiB - 64 KiB, for the 17 capture-forced
+hybrid patterns, or shall one be added?"; our answer in
+`docs/dev/lanes/b121asks_report.md` Q10 was "none exists; adding one is a real
+ask"). Frank cleared it 2026-10-25. The revision is in place, 0.1 -> 0.2 -> 0.3:
+the 71 patterns, 75 short subjects, the eleven 0.1/0.2 throughput texts
+(sha256s asserted) and every existing expectation row are byte-identical; six
+subjects are APPENDED to the throughput manifest (fresh seeds
+`0xC0FFEE31`..`0xC0FFEE36`, `captext.hyb_*`).
+
+**Which regime, and why no `match` regime.** The set still declares no `match`
+regime (capability_set_v1.md 3.5: the lexical `(?:pattern)\z` wrapper's three
+defects). The "match-regime subject" pcrec asked for is read as a subject the
+pattern MATCHES at realistic size, so it enters the THROUGHPUT regime
+(find-all; every pattern x every throughput subject, as for 0.2's subjects).
+For an anchored pattern the find-all count is 1 and the match IS the whole
+subject (or its prefix) -- the same cell a whole-subject match regime would
+time, at the same size.
+
+**The 17, by the rule Q10 states** (`RX_VM_PREFILTER "hybrid"` AND
+`RX_ENGINE_WHY` containing `"capture group"`; pcrec's own census file is
+`docs/dev/optloop/capsurvey_census.tsv`, which this repo does not hold, so the
+list is I-125's literal one): codegrammar-flat, codegrammar-xflag,
+date-nested-plus, email-nested-plus, logparse-atomic, logparse-atomic-removed,
+numeric-id-nested-plus, phone-list-nested-plus, wild-datetime-moment-iso8601,
+wild-logparse-syslogbase-expanded, wild-secrets-aws-access-key-id,
+wild-secrets-github-pat, wild-secrets-slack-webhook-url,
+wild-secrets-username-password-pair, wild-semdiv-empty-alt-repeat-pcre2,
+wild-validator-ipv4-owasp, wild-validator-us-zip-owasp. (Whether the list
+still holds at pin 9ae59f5d4 is pcrec's census to re-run; this lane did not
+compile.)
+
+**The subjects, and which pattern each is the MATCHING subject of.**
+
+| subject | bytes | seed | find-all MATCHES (count at the oracle) |
+|---|---|---|---|
+| `t-hyb-embed-1k` | 1,024 | 0xC0FFEE31 | the eight embedded patterns + `email-nested-plus` once at offset 0 |
+| `t-hyb-embed-8k` | 8,192 | 0xC0FFEE32 | same nine |
+| `t-hyb-embed-64k` | 65,536 | 0xC0FFEE33 | same nine |
+| `t-hyb-logline-16k` | 16,384 | 0xC0FFEE34 | `logparse-atomic`, `logparse-atomic-removed`: the WHOLE subject, count 1 |
+| `t-hyb-datepath-16k` | 16,384 | 0xC0FFEE35 | `date-nested-plus`: the whole subject, count 1 |
+| `t-hyb-digits-4k` | 4,096 | 0xC0FFEE36 | `numeric-id-nested-plus`, `phone-list-nested-plus`: the whole subject, count 1 |
+
+The embed ladder is one log/config/JSON grammar (the 0.1 background's four line
+kinds plus six PLANTS: a JSON line, a syslog line, an AWS key id, a GitHub PAT,
+a Slack webhook URL, a username/password pair) at three sizes. The first seven
+lines carry one of each plant, so even the 1 KiB rung holds every instance;
+afterwards one line in four is a plant. The oracle's counts at generation
+(`captext.hyb_embed`, probed 2026-10-25): codegrammar 4 / 36 / 188, aws 1 / 13 /
+75, github 2 / 8 / 64, slack 1 / 8 / 56, pair 1 / 7 / 62, syslog 1 / 7 / 58,
+`(a|)*\d` 105 / 1,003 / 8,231 -- so the ladder is a SIZE ladder at a
+fixed-ish match density, matches per KiB roughly constant from 8 KiB up (the
+1 KiB rung is plant-heavy by construction). The unanchored `[^"\\]+` class of
+codegrammar stays bounded because source lines keep a quote every few lines
+(the 0.1 grammar's own reason). The `^`-anchored ReDoS patterns attempt offset 0
+only, and the first run of their alphabet there is a few bytes long in every
+subject by construction (`2025/`, `kern.err`, the address line, the first digit
+group), so no new subject is a catastrophic near-miss for the family; the
+generator's `_redos_safety_check` runs over all seventeen texts.
+
+**Not covered, by design: 3 of the 17.** `wild-validator-ipv4-owasp`
+(`^...$`, 7-15 B), `wild-validator-us-zip-owasp` (`^\d{5}(-\d{4})?$`, 5 or 10 B)
+and `wild-datetime-moment-iso8601` (`^\s*DATE(TIME)?$`, ~30 B) have bounded
+languages: no 1-64 KiB subject matches them as a whole, and the one place an
+unbounded run exists (the leading `\s*`) is exactly the `^(\s+)*$` family's
+catastrophic near-miss at length. They keep their search_short matches.
+Adding a long pad would test the trim-nested pathology, not the hybrid's
+second pass. Reported to pcrec as "14 of 17, and why".
+
+**Prediction P17-P20 (stated before any run).**
+
+- P17 (answers). Every new triple has a libpcre2-differential expectation (no
+  fallback method is needed: the digits-4k x `email-nested-plus` triple is
+  dismissed by PCRE2's required-code-unit '@' check in 0.0 s, measured through
+  the oracle); every testee that answers agrees; R0 empty for the new subjects.
+- P18 (the second pass, Q10 itself). For the 14 covered patterns on their
+  matching subject, `pcrec-auto` (caps) / `pcrec-nocaps` is in 1.3-4x: the
+  capture-assigning VM pass is a real share of a hybrid-exact artifact's time
+  (pcrec's M-B measured it on the 5-93 B literals). On the three whole-subject
+  shapes the ratio at 16 KiB is no lower than at 93 B: a longer whole match
+  makes the VM pass LONGER, not cheaper per byte.
+- P19 (size flatness). On the embed ladder, per-byte cost (ns/B) at 1 KiB is
+  at most 3x the 64 KiB rung's for pcre2-jit and pcrec-auto (a fixed per-call
+  share, plant-heavy rung), and the 8 KiB and 64 KiB rungs agree within 25%
+  for the five secrets/JSON/syslog patterns (matches per KiB is constant
+  there).
+- P20 (nothing gives up). On the six new subjects no testee gives up on any
+  pattern: pcre2-interp/jit take the first greedy path on the three
+  whole-subject matches (linear, as on P11's subjects) and dismiss the
+  `email-nested-plus` x digits triple by the required-code-unit check. A
+  give-up here is a finding (an engine without the check), not an expected cell.
+
+**Outlier-rule addition.** R12: a cell at a 0.3 subject is compared across
+engines at 0.3 only; the 0.1/0.2 cells are untouched and a cross-version delta
+is not a ranking.
+
+**Cell time.** The 0.2 records give a per-subject floor of ~7 s of timed work
+(t-mixed-runs-4k: 6.8 s on pcrec-auto, 8.2 s on pcre2-jit over ~345 rows) plus
+~0.15 s per KiB; the six subjects (109 KiB) are ~42 s + ~16 s = **~1 minute of
+timed work, ~2-3 minutes of wall per testee** on a ~47-49 minute cell (+5%).
+No cell cap moves.

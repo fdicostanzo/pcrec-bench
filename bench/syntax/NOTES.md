@@ -20,9 +20,8 @@ Three things would defeat it, and the design is shaped against each:
 
 1. **Enumerating from a head.** A set written from what its author
    remembers of PCRE omits what the author forgot. The construct list is
-   pcrec's `--list-syntax` REGISTRY at our pin (`list_syntax_9a1583ba.tsv`, re-seeded at the [B39] pin from the 334fd10e seed it was authored from — one description row moved, nothing machine-read,
-   copied verbatim with a source header), and `coverage.tsv` is DERIVED
-   from the pattern table × the seed: every one of the seed's 138 rows is
+   pcrec's `--list-syntax` REGISTRY at our pin (`list_syntax_9ae59f5d4.tsv`, RE-SEEDED at the [B142] pin 9ae59f5d4 (abi 84) in @0.2 — [B123]; before it 9a1583ba, before that the 334fd10e seed the set was authored from — copied verbatim with a source header), and `coverage.tsv` is DERIVED
+   from the pattern table × the seed: every one of the seed's 142 rows is
    covered by a pattern, covered through the seed's own `family` column (a
    spelling of a covered construct), excused by a stated reason, or a
    PCRE2 reject the oracle cannot judge. A row nobody covers and nobody
@@ -438,6 +437,74 @@ present under search were dropped, and the control-byte line folded into
 `f-bell`. A fourth run (CRLF-ended text, for `\R` and `\v` at density) was
 not built: the two CRLF short subjects carry that edge and a density
 question is a depth probe's.
+
+## syntax@0.2 — the RE-SEED and the lka density pair ([B123], 2026-10-25)
+
+@0.2 is an EXTENSION: the 95 patterns, the 42 short subjects, the three 0.1
+throughput texts and their expectation rows are byte-identical (asserted:
+`gen_throughput_subjects.py` pins the three 0.1 sha256s). Two things landed,
+in one bump.
+
+**The re-seed.** `list_syntax_9ae59f5d4.tsv` (pcrec's `--list-syntax` at the
+[B142] pin, abi 84) replaces the 9a1583ba seed, which was four registry rows
+short (`docs/dev/lanes/b142prep_report.md`, finding 7). The four new rows are
+`(*UCP)a`, `(*UTF)a`, `(*UTF8)a` and `${name}`; each is a stated
+`NOT_EXERCISED` reason in `gen_patterns.py` (encoding-scope verbs belong to
+bench/utf8; `${name}` is pcrec's extension, not PCRE2 syntax, so no
+engine-neutral expectation exists, R-BENCH-4). Seed rows 138 -> 142;
+coverage 77 covered / 32 by family / 23 + 5 not exercised / 5 rejects; no
+pattern moved. The two `\p{L}`/`\P{L}` rows' `built` column went
+unbuilt -> built (a seed column nothing here reads).
+
+**The density pair** (inbox I-124 item 2b / I-127 [BENCH-ASKS-PENDING] (1)).
+Two throughput subjects, `t-lka-dense-256k` and `t-lka-sparse-256k`: 262,144 B
+each, one seed, ONE background (the census vocabulary minus every word that
+contains `item` or begins `done`, so a hit is exactly a planted token), the
+SAME conditional (the planted `item` is followed by ` done` four times in
+five) — and `item` planted at one word slot in three (dense) against one in
+4,096 (sparse). The exact counts of `item` and `item done` are in each
+manifest description (computed from the final bytes) and `gen_expectations`
+re-derives them from the oracle: `lka-pos` / `lka-verb` match `item done`
+times, `lka-neg` `item` minus that. The generator asserts dense >= 100x
+sparse on both counts and sparse >= 1 of each (a zero would make a per-match
+cost unreadable). Every pattern of the set also runs on both subjects (the
+throughput regime is every pattern x every throughput subject): the other
+93 are a second and third density-varied background for free, and none of
+them is hazard-prone on a text of this grammar.
+
+*How to read the pair.* With T the cell's median time on one subject and M
+its match count: per-BYTE cost b = T_sparse / 262,144; per-MATCH cost
+c = (T_dense - T_sparse) / (M_dense - M_sparse). A cost that is "per byte"
+shows in b and leaves c near the call's own floor; a cost that is "per
+match" (a per-call re-learning step, a prefilter reseed) shows in c and is
+invisible in b. The pair does not cross candidate density with match
+density: dense and sparse differ in both together, which is what a
+find-all with one call per match does.
+
+**Predictions, stated before any run** (P14-P16; P1-P13 above stand):
+
+- **P14 (answers).** Every testee that answers agrees with the oracle on
+  both subjects (R0 empty for this pair); the expected counts are the
+  manifest's. `lka-pos` and `lka-verb` give the same count on each subject.
+- **P15 (the PCRE2 shape).** On `pcre2-jit` and `pcre2-interp`,
+  `lka-pos`'s sparse ns/byte is at the literal-scan tier (within x2 of
+  `lit-item`'s on t-256k — PCRE2 starts at the first code unit) and its
+  dense ns/byte is 5-30x its sparse one, the whole difference being the
+  per-match restart (c a few tens of ns on the JIT, ~100-300 ns on the
+  interpreter).
+- **P16 (the pcrec question — I-124 item 2).** On `pcrec-auto`, sparse
+  `lka-pos` / `lka-verb` is >= 3x faster than forced `pcrec-vm` (auto no
+  longer equals forced-VM, the [OPT-HYB-RESEED] claim) and dense is NOT:
+  auto / vm speedup 0.6-1.1 (pcrec's Mac scratch read x0.62 where `item` is
+  a third of the words), i.e. c(auto) > c(vm). A dense auto cell more than
+  5% slower than `-fno-hyb-reseed` is `[OPT-HYB-RESEED-XCALL]`'s trigger,
+  and is reported either way.
+
+*Cell time.* The timed work of one 256 KiB throughput subject is ~17-20 s
+over the 95 patterns x 5 trials (from the 0.1 records: 17.2 s auto, 18.1 s
+vm, 20.2 s jit), so the pair adds ~36-40 s of timed work and, at the
+harness's measured wall-to-timed factor for this regime, **~2-4 minutes per
+testee** on a ~47-52 minute cell (~+5%); no cell cap moves. `expectations.tsv` grows by 190 throughput rows (2 x 95): 8,265 -> 8,455.
 
 ## Origin
 

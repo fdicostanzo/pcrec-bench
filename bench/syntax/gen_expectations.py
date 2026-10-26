@@ -6,7 +6,7 @@ The derivation itself is `pcrecbench/expectations.py` -- the sub-bench
 contract's chain, shared, not copied (see that module's header). This script
 is the entry point and the place the sub-bench's own directory is named.
 
-90 patterns x (42 match + 42 search_short + 3 throughput) subject slots.
+95 patterns x (42 match + 42 search_short + 5 throughput) subject slots (@0.2: +2, the lka density pair; 3 at 0.1).
 
 CAPTURES PARTICIPATE HERE, ON PURPOSE. The shared derivation prints a NOTE
 per pattern whose capture groups participated in a match; in this set that
