@@ -3506,3 +3506,16 @@ the tsv the slice form; sentinel has no precedent and none), and subst-0.1
 `.interpretation.md` sidecar except subst-0.1: `interpret` refuses the
 subst TSV's column list BY NAME (rc 2), so it has no sidecar. Queries and
 counts: docs/dev/lanes/b142rep_report.md.
+
+## `2026-10-26-*-ryzen7700x-rebaseline-6b2dbd3e.*` ([B138], lane b138rep)
+
+The [B138] RE-BASELINE at pcrec 6b2dbd3e (abi 76), machine `ryzen7700x`, ONE
+pin (no cross-pin pair, no null band, no identity census), `--since
+2026-10-19T03:50:00Z --until 2026-10-20T11:00:00Z`, no `--testee` filter (the
+full engine roster in the window). Nine groups: email-specimen-0.2,
+loglines-0.1, altwide-0.3, bounded-0.3, litrun-0.1, capability-0.2,
+syntax-0.1, utf8-0.1 (`.tsv`/`.md`/`.matrix.tsv`/`.subject-grain.{md,tsv}`/
+`.interpretation.md`) and sentinel-0.1 (no subject-grain pair). READ FIRST:
+in capability-0.2 every pcrec auto-caps/auto-nocaps cell is
+`inconclusive-spread` (not ranked); the vm-caps record is measured. Counts:
+docs/dev/lanes/b138rep_report.md.

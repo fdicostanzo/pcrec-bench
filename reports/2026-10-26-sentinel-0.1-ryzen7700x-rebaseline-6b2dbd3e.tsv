@@ -1,0 +1,976 @@
+# reporter: v28 (2026-10-25); filters: subbench=sentinel, version=0.1, machine=ryzen7700x, since=2026-10-19T03:50:00Z, until=2026-10-20T11:00:00Z; source: store/index.tsv (14 record(s) matching this query); records: 3; excluded_invalid: 0; superseded: 11; newer_not_measured: 0; subbench_versions: sentinel@0.1; machines: ryzen7700x; schema_versions: 1.8; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 3; mixed_x13: False; include_provenance: False; worst_other_core_busy: 1.46% (libpcre2_10.46_jit-caps-simdna / wild-validator-us-zip-owasp / short-subject-search); floor_pattern: floor-byte
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						sentinel@0.1__libpcre2_10.46_jit-caps-simdna__ryzen7700x__20261020T105206Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__pcrec_6b2dbd3e_auto-caps-simdna__ryzen7700x__20261020T103105Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__pcrec_6b2dbd3e_auto-nocaps-simdna__ryzen7700x__20261020T103645Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline_yes	base10num-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	339.618785	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	297.967814	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	344.075059	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	17.447341	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1538.861333	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1522.335993	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1591.248884	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	23.904849	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	4.531143	75	1.0000	0	0		
+rank_yes	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	4.531143	75	1.0000	0	0		
+baseline_yes	file-ext-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	309.775841	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	309.596241	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	323.300438	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.258526	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1693.519920	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1561.535408	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	2034.544385	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	173.193495	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	5.466921	75	1.0000	0	0		
+rank_yes	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	5.466921	75	1.0000	0	0		
+baseline_yes	floor-byte	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	304.909036	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	294.035552	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	309.096697	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.113490	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1759.596984	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1485.663816	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1966.782803	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	193.738609	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	5.770892	75	1.0000	0	0		
+rank_yes	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	5.770892	75	1.0000	0	0		
+baseline_yes	ipv4-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	248.887982	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	248.678001	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	250.131481	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.672005	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1857.676093	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1557.311484	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	2086.286868	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	182.696551	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	7.463904	75	1.0000	0	0		
+rank_yes	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	7.463904	75	1.0000	0	0		
+baseline_yes	keyword-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	361.028224	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	360.316138	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	363.855518	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	1.313729	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1576.320900	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1540.101595	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1913.457019	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	139.195320	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	4.366199	75	1.0000	0	0		
+rank_yes	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	4.366199	75	1.0000	0	0		
+baseline_yes	numeric-id-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	501.578048	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	457.026273	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	511.550364	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	23.896158	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1199508.410027	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1197138.134739	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1259258.745612	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	24996.238564	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	2391.469112	75	1.0000	0	0		
+rank_yes	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	2391.469112	75	1.0000	0	0		
+baseline_yes	phone-list-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	534.588046	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	491.307700	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	537.356427	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	17.204968	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1657927.015158	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1656364.294376	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1658341.454071	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	739.129702	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	3101.317038	75	1.0000	0	0		
+rank_yes	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	3101.317038	75	1.0000	0	0		
+baseline_yes	router-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	305.049653	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	304.744931	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	315.392965	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	5.145127	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1590.723418	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1563.111716	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1902.623454	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	126.389494	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	5.214638	75	1.0000	0	0		
+rank_yes	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	5.214638	75	1.0000	0	0		
+baseline_yes	trim-nested-star	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	427.281760	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	415.169931	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	438.395387	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	7.365293	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1296323.552848	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1282138.773448	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1297235.936220	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	5701.063081	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	3033.884605	75	1.0000	0	0		
+rank_yes	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	3033.884605	75	1.0000	0	0		
+baseline_yes	uuid-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	336.822783	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	329.527357	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	337.698177	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	3.051465	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1543.432290	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1453.544730	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1616.675273	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	57.750019	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	4.582327	75	1.0000	0	0		
+rank_yes	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	4.582327	75	1.0000	0	0		
+baseline_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	301.376999	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	301.175103	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	301.550833	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.131713	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1593.553716	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1545.010237	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	1832.539878	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	103.888482	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	5.287576	75	1.0000	0	0		
+rank_yes	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	5.287576	75	1.0000	0	0		
+baseline_yes	wild-validator-email-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	550.942220	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	516.792951	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	551.101526	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	16.750228	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1688.757946	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1591.539266	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	2038.346050	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	154.031856	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	3.065218	75	1.0000	0	0		
+rank_yes	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	3.065218	75	1.0000	0	0		
+baseline_yes	wild-validator-us-zip-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	435.974980	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	434.723814	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	437.406610	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.990970	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1529.157993	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1489.191060	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	2244.714769	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	284.979248	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	3.507444	75	1.0000	0	0		
+rank_yes	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	3.507444	75	1.0000	0	0		
+baseline_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	2742.862406	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	2643.868013	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	3398.845672	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	276.474771	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	6747.363361	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	6652.016245	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	7044.337481	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	138.252997	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	2.459972	75	1.0000	0	0		
+rank_yes	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	2.459972	75	1.0000	0	0		
+baseline_yes	winpath-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	280.367726	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	279.927356	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	293.726720	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.612731	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	median_ns	1722.720349	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	min_ns	1536.990094	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	max_ns	2094.185674	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	stddev_ns	185.593372	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_baseline	6.144503	75	1.0000	0	0		
+rank_yes	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	2	ratio_vs_best	6.144503	75	1.0000	0	0		
+baseline_no	base10num-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	342.990590	75	1.0000	0	0		
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	298.782379	75	1.0000	0	0		
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	344.349561	75	1.0000	0	0		
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	17.946305	75	1.0000	0	0		
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	file-ext-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	310.141346	75	1.0000	0	0		
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	308.806679	75	1.0000	0	0		
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	321.514430	75	1.0000	0	0		
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	5.816379	75	1.0000	0	0		
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	floor-byte	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	293.976068	75	1.0000	0	0		
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	293.700958	75	1.0000	0	0		
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	304.826583	75	1.0000	0	0		
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	4.349849	75	1.0000	0	0		
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	ipv4-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	250.307189	75	1.0000	0	0		
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	248.952051	75	1.0000	0	0		
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	251.088685	75	1.0000	0	0		
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.754001	75	1.0000	0	0		
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	keyword-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	360.401495	75	1.0000	0	0		
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	350.321894	75	1.0000	0	0		
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	366.592218	75	1.0000	0	0		
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	5.479589	75	1.0000	0	0		
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	numeric-id-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	262.382893	75	1.0000	0	0		
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	262.325066	75	1.0000	0	0		
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	262.746732	75	1.0000	0	0		
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.152784	75	1.0000	0	0		
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	phone-list-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	266.617203	75	1.0000	0	0		
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	266.526861	75	1.0000	0	0		
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	269.612211	75	1.0000	0	0		
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	1.213574	75	1.0000	0	0		
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	router-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	306.167355	75	1.0000	0	0		
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	304.844370	75	1.0000	0	0		
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	315.305944	75	1.0000	0	0		
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	4.863527	75	1.0000	0	0		
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	trim-nested-star	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	234.248430	75	1.0000	0	0		
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	233.552191	75	1.0000	0	0		
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	235.072219	75	1.0000	0	0		
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.500956	75	1.0000	0	0		
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	uuid-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	335.713626	75	1.0000	0	0		
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	330.011673	75	1.0000	0	0		
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	341.149896	75	1.0000	0	0		
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	3.740088	75	1.0000	0	0		
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	301.287758	75	1.0000	0	0		
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	301.250138	75	1.0000	0	0		
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	301.509976	75	1.0000	0	0		
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.093188	75	1.0000	0	0		
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	wild-validator-email-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	532.476552	75	1.0000	0	0		
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	516.274507	75	1.0000	0	0		
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	559.380122	75	1.0000	0	0		
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	17.328362	75	1.0000	0	0		
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	wild-validator-us-zip-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	244.509177	75	1.0000	0	0		
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	244.004475	75	1.0000	0	0		
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	244.855891	75	1.0000	0	0		
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.313578	75	1.0000	0	0		
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	2757.552818	75	1.0000	0	0		
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	2726.837748	75	1.0000	0	0		
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	2766.526161	75	1.0000	0	0		
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	14.156263	75	1.0000	0	0		
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline_no	winpath-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	293.730809	75	1.0000	0	0		
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	280.002797	75	1.0000	0	0		
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	294.042376	75	1.0000	0	0		
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	5.547488	75	1.0000	0	0		
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank_no	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+baseline	base10num-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	339.618785	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	297.967814	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	344.075059	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	17.447341	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	342.990590	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	298.782379	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	344.349561	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	17.946305	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.009928	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.009928	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1538.861333	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1522.335993	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1591.248884	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	23.904849	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	4.531143	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	4.531143	75	1.0000	0	0		
+baseline	file-ext-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	309.775841	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	309.596241	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	323.300438	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.258526	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	310.141346	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	308.806679	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	321.514430	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	5.816379	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.001180	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.001180	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1693.519920	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1561.535408	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	2034.544385	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	173.193495	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	5.466921	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	5.466921	75	1.0000	0	0		
+baseline	floor-byte	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	293.976068	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	293.700958	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	304.826583	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	4.349849	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	304.909036	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	294.035552	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	309.096697	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	6.113490	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.037190	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.037190	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1759.596984	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1485.663816	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1966.782803	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	193.738609	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	5.985511	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	5.985511	75	1.0000	0	0		
+baseline	ipv4-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	248.887982	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	248.678001	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	250.131481	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.672005	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	250.307189	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	248.952051	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	251.088685	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	0.754001	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.005702	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.005702	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1857.676093	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1557.311484	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	2086.286868	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	182.696551	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	7.463904	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	7.463904	75	1.0000	0	0		
+baseline	keyword-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	360.401495	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	350.321894	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	366.592218	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	5.479589	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	361.028224	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	360.316138	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	363.855518	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.313729	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001739	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001739	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1576.320900	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1540.101595	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1913.457019	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	139.195320	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	4.373791	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	4.373791	75	1.0000	0	0		
+baseline	numeric-id-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	262.382893	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	262.325066	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	262.746732	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.152784	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	501.578048	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	457.026273	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	511.550364	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	23.896158	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.911626	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.911626	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1199508.410027	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1197138.134739	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1259258.745612	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	24996.238564	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	4571.595337	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	4571.595337	75	1.0000	0	0		
+baseline	phone-list-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	266.617203	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	266.526861	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	269.612211	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	1.213574	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	534.588046	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	491.307700	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	537.356427	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	17.204968	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	2.005077	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	2.005077	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1657927.015158	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1656364.294376	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1658341.454071	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	739.129702	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	6218.379751	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	6218.379751	75	1.0000	0	0		
+baseline	router-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	305.049653	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	304.744931	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	315.392965	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	5.145127	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	306.167355	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	304.844370	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	315.305944	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	4.863527	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.003664	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.003664	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1590.723418	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1563.111716	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1902.623454	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	126.389494	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	5.214638	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	5.214638	75	1.0000	0	0		
+baseline	trim-nested-star	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	234.248430	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	233.552191	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	235.072219	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.500956	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	427.281760	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	415.169931	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	438.395387	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	7.365293	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.824054	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.824054	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1296323.552848	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1282138.773448	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1297235.936220	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	5701.063081	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	5533.969017	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	5533.969017	75	1.0000	0	0		
+baseline	uuid-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	335.713626	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	330.011673	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	341.149896	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	3.740088	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	336.822783	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	329.527357	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	337.698177	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	3.051465	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003304	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003304	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1543.432290	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1453.544730	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1616.675273	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	57.750019	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	4.597467	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	4.597467	75	1.0000	0	0		
+baseline	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	301.287758	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	301.250138	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	301.509976	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.093188	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	301.376999	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	301.175103	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	301.550833	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.131713	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000296	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000296	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1593.553716	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1545.010237	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	1832.539878	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	103.888482	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	5.289142	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	5.289142	75	1.0000	0	0		
+baseline	wild-validator-email-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	532.476552	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	516.274507	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	559.380122	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	17.328362	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	550.942220	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	516.792951	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	551.101526	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	16.750228	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.034679	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.034679	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1688.757946	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1591.539266	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	2038.346050	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	154.031856	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	3.171516	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	3.171516	75	1.0000	0	0		
+baseline	wild-validator-us-zip-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-nocaps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	median_ns	244.509177	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	min_ns	244.004475	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	max_ns	244.855891	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	stddev_ns	0.313578	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	435.974980	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	434.723814	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	437.406610	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.990970	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.783062	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.783062	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1529.157993	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1489.191060	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	2244.714769	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	284.979248	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	6.253990	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	6.253990	75	1.0000	0	0		
+baseline	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	2742.862406	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	2643.868013	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	3398.845672	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	276.474771	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	2757.552818	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	2726.837748	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	2766.526161	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	14.156263	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.005356	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.005356	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	6747.363361	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	6652.016245	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	7044.337481	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	138.252997	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	2.459972	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	2.459972	75	1.0000	0	0		
+baseline	winpath-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	280.367726	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	279.927356	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	293.726720	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6.612731	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	median_ns	293.730809	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	min_ns	280.002797	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	max_ns	294.042376	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	stddev_ns	5.547488	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_baseline	1.047663	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna	measured	pinned	2	ratio_vs_best	1.047663	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	median_ns	1722.720349	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	min_ns	1536.990094	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	max_ns	2094.185674	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	stddev_ns	185.593372	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_baseline	6.144503	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna	measured	pinned	3	ratio_vs_best	6.144503	75	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	6						
+query_yes_beats_nocaps	base10num-near-miss		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=339.618785; nocaps_ns=342.990590; ratio=0.990169; null_band_clearance=within IQR: gap 0.98%; IQR 6.56% (within); no null band (no cross-pin pair in this report)	
+query_yes_beats_nocaps	file-ext-order		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=309.775841; nocaps_ns=310.141346; ratio=0.998821; null_band_clearance=within IQR: gap 0.12%; IQR 3.81% (within); no null band (no cross-pin pair in this report)	
+query_yes_beats_nocaps	ipv4-near-miss		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=248.887982; nocaps_ns=250.307189; ratio=0.994330; null_band_clearance=clears IQR only: gap 0.57%; IQR 0.56% (clears); no null band (no cross-pin pair in this report)	
+query_yes_beats_nocaps	router-prefix-order		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=305.049653; nocaps_ns=306.167355; ratio=0.996349; null_band_clearance=within IQR: gap 0.37%; IQR 3.44% (within); no null band (no cross-pin pair in this report)	
+query_yes_beats_nocaps	wild-waf-crs-942360-concat-sqli		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=2742.862406; nocaps_ns=2757.552818; ratio=0.994673; null_band_clearance=within IQR: gap 0.53%; IQR 1.10% (within); no null band (no cross-pin pair in this report)	
+query_yes_beats_nocaps	winpath-near-miss		short-subject-search			pcrec_6b2dbd3e_auto-nocaps-simdna				beaten_by	pcrec_6b2dbd3e_auto-caps-simdna					competitor_ns=280.367726; nocaps_ns=293.730809; ratio=0.954506; null_band_clearance=within IQR: gap 4.55%; IQR 4.56% (within); no null band (no cross-pin pair in this report)	
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	4909.000000	5					
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	220						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna				frame	n/s						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3517.000000	5					
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	184						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	2826.000000	5					
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	161						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	8856.000000	5					
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	693						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3617.000000	5					
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	186						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	4468.000000	5					
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	171						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	4108.000000	5					
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	173						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3556.000000	5					
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	184						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3777.000000	5					
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	172						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	4919.000000	5					
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	425						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3267.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	166						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	7054.000000	5					
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	320						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	3778.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	180						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	226337.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	0.104						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	3459						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				median_total_ns	4819.000000	5					
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				jitter	timer-floor						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna				artifact_bytes	275						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	65251216.000000	5					
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.012						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	17485						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15100						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_match	search-filter						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_scan_edge	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				engine_sel	selected						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	63022417.000000	5					
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28696						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	16938						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14553						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69632751.000000	5					
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28912						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	22208						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16085						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	66550542.000000	5					
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20782						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15940						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	64756162.000000	5					
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.006						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	17890						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14559						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	65992163.000000	5					
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19475						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15917						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	74507985.000000	5					
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	37824						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	24450						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	19134						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	72193755.000000	5					
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.004						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	37616						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	23528						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	18212						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68891294.000000	5					
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.008						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28912						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	22679						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16065						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67148609.000000	5					
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	22080						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15935						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	97720418.000000	5					
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.006						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32872						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	29830						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	28148						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	96888399.000000	5					
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.004						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32872						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	29759						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	28077						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	102365420.000000	5					
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32952						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	31102						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	29160						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	102361162.000000	5					
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32912						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	31030						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	29088						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69136896.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28912						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	22195						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16215						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	65798496.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20438						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15936						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	93266568.000000	5					
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32912						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	28816						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26974						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	91911415.000000	5					
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32872						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	28745						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26903						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	77521604.000000	5					
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	38192						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	24767						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	19363						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	76799932.000000	5					
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	38152						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	24589						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	19185						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69388440.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.002						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20279						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16389						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	66402384.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19814						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15924						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	64135243.000000	5					
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32832						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	16737						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14380						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	63875163.000000	5					
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.002						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32832						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	16560						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14203						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	92898504.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.004						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	33184						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	29459						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26915						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	91701630.000000	5					
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.008						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	33104						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	29199						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26655						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	566289716.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.012						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	685664						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	101313						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				warned_emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	550838997.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	665128						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	402999						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	103463						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				warned_emit_bytes	402999						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	63497461.000000	5					
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.008						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28696						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	16126						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14043						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	63249523.000000	5					
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28656						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	15949						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	13866						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	65661598.000000	5					
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.003						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28768						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	17485						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15100						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				dfa_match	search-filter						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				dfa_scan_edge	none						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				scan_edges_match	0						
+compile_stamp						pcrec_6b2dbd3e_auto-nocaps-simdna				engine_sel	selected						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	63238453.000000	5					
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.003						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28696						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	16938						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	14553						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	69311706.000000	5					
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.008						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28912						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	22208						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	16085						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	66580590.000000	5					
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.008						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	20782						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15940						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	65119990.000000	5					
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.007						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28768						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	17890						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	14559						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	66286436.000000	5					
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.005						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	19475						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15917						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	74635335.000000	5					
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.005						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	37824						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	24450						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	19134						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	71400711.000000	5					
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.001						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	37616						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	23528						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	18212						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	69245900.000000	5					
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.013						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28912						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	22679						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	16065						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	67158580.000000	5					
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.009						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	22080						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15935						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	62040536.000000	5					
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.009						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28536						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	15185						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13503						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	61532598.000000	5					
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.013						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28536						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	15009						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13327						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	62405253.000000	5					
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.010						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28576						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	15219						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13508						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	62044803.000000	5					
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.005						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28536						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	15042						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13331						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	69273373.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.007						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28912						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	22195						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	16215						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	66525296.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.006						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	20438						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15936						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	61717828.000000	5					
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.008						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28536						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	14954						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13343						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	61323767.000000	5					
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.009						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28496						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	14778						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13167						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	76743618.000000	5					
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.008						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	38192						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	24767						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	19363						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	77107985.000000	5					
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.007						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	38152						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	24589						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	19185						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	70033124.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.011						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	20279						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	16389						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	66683184.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.003						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	19814						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15924						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	63678443.000000	5					
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.007						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	32832						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	16737						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	14380						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	63607848.000000	5					
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.004						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	32832						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	16560						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	14203						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	67050897.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.007						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28976						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	18086						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15542						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	65743162.000000	5					
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.006						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28896						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	17723						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	15179						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	565959565.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.003						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	685664						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	101313						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				warned_emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	550874294.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.002						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	665128						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	402999						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	103463						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				warned_emit_bytes	402999						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	63306280.000000	5					
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.014						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28696						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	16126						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	14043						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				median_total_ns	62885428.000000	5					
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				jitter	0.006						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				artifact_bytes	28656						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_bytes	15949						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-nocaps-simdna				emit_code_bytes	13866						
