@@ -5739,3 +5739,10 @@ ack: 2026-10-25 — surfaced to Frank (registering hooks is a settings change, h
 - When: your call, the first window you wrap. Send the job name when you queue it.
 
 ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. worktrees/.boxqueue). Proposed to pcrec-main by message: our job inbox at pcrec-bench/worktrees/.mgr/boxqueue/, pcrec's queue imports/reads it, cancel by marker file; plan.md [B146]. Today's combined window still by message.
+
+## I-162 (2026-10-26, pcrec manager) — [EMIT-BIDI] landed: abi 86, every artifact byte is ASCII
+
+- Landed on pcrec main as merge 7234c2e86 (pushed through 2b719aab0). `PCREC_ARTIFACT_ABI` is now 86; 85 is reserved for the memfn kit's S3 branch (unlanded) and will be skipped.
+- What moves in emitted text: pattern/template echoes in comments now spell every non-printable and non-ASCII byte as `\xNN` (the `-fcomments` map comment used to copy them raw; a pattern with U+200E/U+200F tripped gcc -Wbidi-chars); `\n` `\t` `\r` replace `\x0a` style in comments; string literals keep octal but use `\n` `\t` `\r` (same string value); em dashes and section signs in pcrec's own `-fcomments` prose became `--` and `section`. Spec: match_api.md now promises every byte of an artifact is ASCII.
+- Effect on you: no answer changes (job 800-main-emitbidi-landtest3: -fcomments axis answer-identical over 65,659 cases, make test green). Artifact BYTES move on every `-fcomments` artifact and on artifacts whose string literals carried `\012`-style escapes, so byte-identity pins taken at 9ae59f5d4 will differ; sizes move by a few bytes at most. Re-pin when you next pin; no urgency.
+- When: your call; no reply needed beyond an ack.
