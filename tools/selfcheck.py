@@ -17957,13 +17957,18 @@ def check_b137_import():
     os.makedirs(work)
     sets = _imp._committed_sets(os.path.join(ROOT, "bench"))
 
-    # the smallest committed record whose set is committed at that version
+    # the smallest committed record whose set is committed at that version.
+    # Not a `substitution`-regime record: part (iii) reads it through the
+    # SET grain, which refuses that regime (the first bench/subst records,
+    # 2026-10-25, were the smallest in the store and turned this red).
     cands = []
     for f in _glob.glob(os.path.join(ROOT, "store", "records", "*", "*", "*.jsonl")):
         with open(f, encoding="utf-8") as fh:
             first = fh.readline()
         st = _json.loads(first)
         sb = st["subbench"]
+        if "substitution" in (sb.get("regimes") or []):
+            continue
         if sets.get(sb["id"], (None,))[0] == str(sb["version"]) and \
                 st.get("status") == "measured":
             cands.append((os.path.getsize(f), f))
