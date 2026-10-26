@@ -3493,3 +3493,16 @@ change by that line (and the version line) -- a classified, expected diff.
 `regen_reports.py` is the owner's to amend (OWED, see
 docs/dev/lanes/b143rep_report.md). No file under `reports/` was touched.
 
+
+## `2026-10-26-*-ryzen7700x-first-9ae59f5d4.*` ([B142], lane b142rep)
+
+The first window at pcrec 9ae59f5d4 (abi 84), machine `ryzen7700x`, two-pin
+cells (9ae59f5d4 vs `also_pins` 6b2dbd3e), `--since 2026-10-25T19:30:00Z
+--until 2026-10-26T08:00:00Z`. Nine groups: capability-0.2, loglines-0.1,
+litrun-0.1, syntax-0.1, utf8-0.1, email-specimen-0.2, bounded-0.3, sentinel-0.1
+(`.tsv`/`.md`/`.matrix.tsv`; the first seven also `.subject-grain.{md,tsv}`,
+the tsv the slice form; sentinel has no precedent and none), and subst-0.1
+(`--grain subst`, `.tsv`/`.md` only). Every set group carries the
+`.interpretation.md` sidecar except subst-0.1: `interpret` refuses the
+subst TSV's column list BY NAME (rc 2), so it has no sidecar. Queries and
+counts: docs/dev/lanes/b142rep_report.md.

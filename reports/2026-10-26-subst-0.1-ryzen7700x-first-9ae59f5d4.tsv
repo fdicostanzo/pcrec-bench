@@ -1,0 +1,273 @@
+# reporter: v28 (2026-10-25); filters: subbench=subst, version=0.1, machine=ryzen7700x, since=2026-10-25T19:30:00Z, until=2026-10-26T08:00:00Z; source: store/index.tsv (15 record(s) matching this query); records: 15; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: subst@0.1; machines: ryzen7700x; schema_versions: 1.10; grain: subst; include_unmeasured: False; include_scratch: False; baseline_library: libpcre2_10.46_jit-caps-simdna; baseline_tools: sed_4.9_default-caps-simdna; cross_tier_ratio: none (the tiers are not comparable)
+section	tier	subject	case	pattern_id	testee	state	gate	n_trials	median_ns	min_ns	max_ns	mb_per_s	ratio_vs_baseline	n_subst	out_bytes	maxrss_kb	user_s	sys_s	compile_median_ns	note
+record	library				libpcre2_10.46_interp-caps-simdna	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				libpcre2_10.46_interp-caps-simdna_sizefirst	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				libpcre2_10.46_jit-caps-simdna	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				libpcre2_10.46_jit-caps-simdna_sizefirst	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				pcrec_9ae59f5d4_vm-caps-simdna	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	pinned													agree (0 of 8 groups; 0 of 16 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	tools				perl_5.40.1_default-caps-simdna	measured	pinned													agree (0 of 7 groups; 0 of 14 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	tools				python_3.14.4_default-caps-simdna	measured	pinned													agree (0 of 6 groups; 0 of 12 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				re2_11.0.0_default-caps-simdna	measured	pinned													agree (0 of 6 groups; 0 of 12 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	tools				ripgrep_15.2.0_default-caps-simdna	measured	pinned													agree (0 of 6 groups; 0 of 12 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	library				rust_1.13.1_default-caps-simdna	measured	pinned													agree (0 of 6 groups; 0 of 12 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	tools				sd_1.1.0_default-caps-simdna	measured	pinned													agree (0 of 6 groups; 0 of 12 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+record	tools				sed_4.9_default-caps-simdna	measured	pinned													agree (0 of 7 groups; 0 of 14 rows; 0 unjudged; k=1.5, 2/3; 5 trials)
+cell	library	acc-main	1	1-literal	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.03028e+08	1.01153e+08	1.05108e+08	3513.48	0.651764	1411976	353514445				441	
+cell	library	acc-main	1	1-literal	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.94051e+08	1.92635e+08	2.08974e+08	1865.41	0.346041	1411976	353514445				371	
+cell	library	acc-main	1	1-literal	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	6.71498e+07	6.50288e+07	7.01673e+07	5390.73		1411976	353514445				4107	
+cell	library	acc-main	1	1-literal	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	1.24281e+08	1.23643e+08	1.36757e+08	2912.65	0.540307	1411976	353514445				3335	
+cell	library	acc-main	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	6.12249e+07	6.07785e+07	6.21531e+07	5912.41	1.09677	1411976	353514445				137138853	
+cell	library	acc-main	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	1.00533e+08	9.9472e+07	1.04388e+08	3600.66	0.667936	1411976	353514445				134687232	
+cell	library	acc-main	1	1-literal	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.21566e+08	1.20225e+08	1.25102e+08	2977.7	0.552374	1411976	353514445				139482068	
+cell	library	acc-main	1	1-literal	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	2.28612e+08	2.2769e+08	2.32918e+08	1583.41	0.293729	1411976	353514445				138912133	
+cell	library	acc-main	1	1-literal	re2_11.0.0_default-caps-simdna	measured	agrees	5	4.47054e+08	4.40642e+08	4.66926e+08	809.715	0.150205	1411976	353514445				1964	
+cell	library	acc-main	1	1-literal	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.56636e+08	1.51282e+08	1.58714e+08	2311.01	0.4287	1411976	353514445				4608	
+summary	library	acc-main	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.09677							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	2	2-rare	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	6.18495e+08	6.15052e+08	6.23894e+08	585.27	0.0777223	160	361984203				1002	
+cell	library	acc-main	2	2-rare	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.23955e+09	1.23637e+09	1.27939e+09	292.03	0.0387808	160	361984203				1022	
+cell	library	acc-main	2	2-rare	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	4.80708e+07	4.78928e+07	5.12053e+07	7530.27		160	361984203				7815	
+cell	library	acc-main	2	2-rare	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	8.33347e+07	8.32723e+07	8.42284e+07	4343.76	0.57684	160	361984203				11541	
+cell	library	acc-main	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.28047e+08	1.27456e+08	1.32133e+08	2826.99	0.375417	160	361984203				278466879	
+cell	library	acc-main	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	2.31055e+08	2.30575e+08	2.39203e+08	1566.67	0.20805	160	361984203				272613849	
+cell	library	acc-main	2	2-rare	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.65599e+08	1.65103e+08	1.68982e+08	2185.92	0.290285	160	361984203				270778109	
+cell	library	acc-main	2	2-rare	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.0886e+08	3.08093e+08	3.4341e+08	1172.01	0.15564	160	361984203				271535779	
+cell	library	acc-main	2	2-rare	re2_11.0.0_default-caps-simdna	measured	agrees	5	4.28135e+08	4.18062e+08	4.3651e+08	845.496	0.11228	160	361984203				6713	
+cell	library	acc-main	2	2-rare	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.33781e+08	1.31183e+08	1.35894e+08	2705.8	0.359324	160	361984203				32501	
+summary	library	acc-main	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.375417							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	3	3-dense	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.81446e+09	1.80571e+09	1.86802e+09	199.5	0.60576	39337500	311463435				401	
+cell	library	acc-main	3	3-dense	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	3.53572e+09	3.51456e+09	3.66565e+09	102.38	0.310865	39337500	311463435				481	
+cell	library	acc-main	3	3-dense	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	1.09913e+09	1.08055e+09	1.21778e+09	329.339		39337500	311463435				2905	
+cell	library	acc-main	3	3-dense	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	2.16443e+09	2.09415e+09	2.20413e+09	167.243	0.507814	39337500	311463435				2986	
+cell	library	acc-main	3	3-dense	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	5.11946e+08	5.07866e+08	5.15469e+08	707.079	2.14697	39337500	311463435				135170393	
+cell	library	acc-main	3	3-dense	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	8.63649e+08	8.61303e+08	9.05228e+08	419.136	1.27266	39337500	311463435				132028622	
+cell	library	acc-main	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	4.28287e+08	4.27254e+08	4.40443e+08	845.196	2.56634	39337500	311463435				151002989	
+cell	library	acc-main	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	6.92314e+08	6.83772e+08	7.05993e+08	522.864	1.58762	39337500	311463435				149126092	
+cell	library	acc-main	3	3-dense	re2_11.0.0_default-caps-simdna	measured	agrees	5	4.14618e+09	4.12986e+09	4.16039e+09	87.3059	0.265095	39337500	311463435				1343	
+cell	library	acc-main	3	3-dense	rust_1.13.1_default-caps-simdna	measured	agrees	5	2.09988e+09	2.09718e+09	2.12504e+09	172.384	0.523426	39337500	311463435				27132	
+summary	library	acc-main	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna	pcrec-vs-best-other							2.56634							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	4	4-reorder	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	2.34385e+09	2.32337e+09	2.3785e+09	154.441	0.082374	1600000	361986301				912	
+cell	library	acc-main	4	4-reorder	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	4.63173e+09	4.61611e+09	4.69215e+09	78.1536	0.0416848	1600000	361986301				1162	
+cell	library	acc-main	4	4-reorder	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	1.93073e+08	1.92383e+08	1.9651e+08	1874.87		1600000	361986301				5570	
+cell	library	acc-main	4	4-reorder	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	3.80956e+08	3.78255e+08	3.89859e+08	950.205	0.506811	1600000	361986301				6722	
+cell	library	acc-main	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.64305e+08	1.62874e+08	1.71556e+08	2203.14	1.17509	1600000	361986301				342010193	
+cell	library	acc-main	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	3.00368e+08	2.89898e+08	3.02322e+08	1205.14	0.642787	1600000	361986301				340223567	
+cell	library	acc-main	4	4-reorder	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	3.18182e+08	3.15464e+08	3.25128e+08	1137.67	0.606799	1600000	361986301				356341771	
+cell	library	acc-main	4	4-reorder	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	6.03503e+08	6.01217e+08	6.08829e+08	599.809	0.31992	1600000	361986301				344209399	
+cell	library	acc-main	4	4-reorder	re2_11.0.0_default-caps-simdna	measured	agrees	5	9.69613e+08	9.59007e+08	9.76794e+08	373.331	0.199123	1600000	361986301				5029	
+cell	library	acc-main	4	4-reorder	rust_1.13.1_default-caps-simdna	measured	agrees	5	5.62337e+08	5.57509e+08	5.69198e+08	643.718	0.34334	1600000	361986301				88407	
+summary	library	acc-main	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.17509							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	5	5-mask-ipv4	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.92878e+09	1.91611e+09	2.04764e+09	187.676	0.202503	1635130	352097319				1032	
+cell	library	acc-main	5	5-mask-ipv4	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	3.87017e+09	3.84111e+09	4.3681e+09	93.5324	0.100922	1635130	352097319				832	
+cell	library	acc-main	5	5-mask-ipv4	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	3.90585e+08	3.89927e+08	4.03143e+08	926.779		1635130	352097319				6632	
+cell	library	acc-main	5	5-mask-ipv4	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	7.7988e+08	7.73905e+08	7.81226e+08	464.157	0.500828	1635130	352097319				5581	
+cell	library	acc-main	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	2.65963e+08	2.6293e+08	2.7315e+08	1361.04	1.46857	1635130	352097319				179896658	
+cell	library	acc-main	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	5.02811e+08	5.0219e+08	5.06182e+08	719.925	0.776803	1635130	352097319				179753507	
+cell	library	acc-main	5	5-mask-ipv4	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	6.02242e+08	6.01432e+08	6.14802e+08	601.064	0.648552	1635130	352097319				178525785	
+cell	library	acc-main	5	5-mask-ipv4	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	1.18176e+09	1.17637e+09	1.19598e+09	306.312	0.330512	1635130	352097319				168817420	
+cell	library	acc-main	5	5-mask-ipv4	re2_11.0.0_default-caps-simdna	measured	agrees	5	9.15973e+08	9.0387e+08	9.36244e+08	395.193	0.426416	1635130	352097319				6662	
+cell	library	acc-main	5	5-mask-ipv4	rust_1.13.1_default-caps-simdna	measured	agrees	5	8.56237e+08	8.54335e+08	8.7543e+08	422.764	0.456165	1635130	352097319				60113	
+summary	library	acc-main	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.46857							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	5b	5b-mask-email	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	5.35147e+09	5.33855e+09	5.46033e+09	67.6424	0.0534425	80123	360838508				822	
+cell	library	acc-main	5b	5b-mask-email	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.06454e+10	1.0629e+10	1.07462e+10	34.0039	0.0268656	80123	360838508				851	
+cell	library	acc-main	5b	5b-mask-email	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	2.85996e+08	2.85842e+08	2.90251e+08	1265.7		80123	360838508				6182	
+cell	library	acc-main	5b	5b-mask-email	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	5.58777e+08	5.58349e+08	5.62865e+08	647.818	0.511825	80123	360838508				4928	
+cell	library	acc-main	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	4.53377e+08	4.53246e+08	4.5838e+08	798.422	0.630813	80123	360838508				131623729	
+cell	library	acc-main	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	8.86449e+08	8.86365e+08	8.89613e+08	408.355	0.322631	80123	360838508				131052031	
+cell	library	acc-main	5b	5b-mask-email	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.42685e+09	1.42475e+09	1.43129e+09	253.697	0.20044	80123	360838508				157468102	
+cell	library	acc-main	5b	5b-mask-email	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	2.84327e+09	2.83029e+09	2.87685e+09	127.313	0.100587	80123	360838508				152456148	
+cell	library	acc-main	5b	5b-mask-email	re2_11.0.0_default-caps-simdna	measured	agrees	5	6.59273e+08	6.51726e+08	6.83799e+08	549.069	0.433805	80123	360838508				8125	
+cell	library	acc-main	5b	5b-mask-email	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.43423e+08	1.40638e+08	1.43755e+08	2523.91	1.99408	80123	360838508				18335	
+summary	library	acc-main	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.316343							best-other=rust_1.13.1_default-caps-simdna
+cell	library	acc-main	6	6-upper	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	8.37685e+08	8.35992e+08	8.5645e+08	432.127	0.286943	928237	361986301				882	
+cell	library	acc-main	6	6-upper	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.66521e+09	1.64742e+09	1.66691e+09	217.382	0.144347	928237	361986301				1083	
+cell	library	acc-main	6	6-upper	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	2.40368e+08	2.3981e+08	2.4084e+08	1505.97		928237	361986301				7213	
+cell	library	acc-main	6	6-upper	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	4.63163e+08	4.61866e+08	4.7042e+08	781.553	0.518971	928237	361986301				8506	
+cell	library	acc-main	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.70518e+08	1.701e+08	1.77209e+08	2122.86	1.40963	928237	361986301				250126453	
+cell	library	acc-main	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	3.13428e+08	3.0831e+08	3.16586e+08	1154.93	0.766899	928237	361986301				249398140	
+cell	library	acc-main	6	6-upper	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.9017e+08	1.89078e+08	1.95941e+08	1903.49	1.26396	928237	361986301				259333224	
+cell	library	acc-main	6	6-upper	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.49239e+08	3.4627e+08	3.51229e+08	1036.5	0.688262	928237	361986301				253791511	
+cell	library	acc-main	6	6-upper	re2_11.0.0_default-caps-simdna	unsupported														no-case-operators
+cell	library	acc-main	6	6-upper	rust_1.13.1_default-caps-simdna	unsupported														no-case-operators
+summary	library	acc-main	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.40963							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-main	7	7-url-tld-fix	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.57799e+08	1.55198e+08	1.58736e+08	2293.97	0.331066	23986	362091138				3417	
+cell	library	acc-main	7	7-url-tld-fix	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	2.89814e+08	2.88609e+08	2.92137e+08	1249.03	0.18026	23986	362091138				3366	
+cell	library	acc-main	7	7-url-tld-fix	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	5.22418e+07	5.2128e+07	5.50889e+07	6929.06		23986	362091138				22052	
+cell	library	acc-main	7	7-url-tld-fix	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	8.5231e+07	8.4425e+07	8.62934e+07	4247.12	0.612943	23986	362091138				17783	
+cell	library	acc-main	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	2.03165e+08	2.03062e+08	2.09117e+08	1781.73	0.257139	23986	362091138				221606647	
+cell	library	acc-main	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	3.93816e+08	3.89278e+08	4.09615e+08	919.176	0.132655	23986	362091138				220643705	
+cell	library	acc-main	7	7-url-tld-fix	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	2.06054e+08	2.02655e+08	2.07704e+08	1756.75	0.253534	23986	362091138				221328464	
+cell	library	acc-main	7	7-url-tld-fix	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.93675e+08	3.89101e+08	4.42164e+08	919.505	0.132703	23986	362091138				229017775	
+cell	library	acc-main	7	7-url-tld-fix	re2_11.0.0_default-caps-simdna	unsupported														pattern-syntax
+cell	library	acc-main	7	7-url-tld-fix	rust_1.13.1_default-caps-simdna	unsupported														pattern-syntax
+summary	library	acc-main	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.257139							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	1	1-literal	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.2052e+06	1.14413e+06	1.26617e+06	3260.72	0.61154	15505	3836788				441	
+cell	library	acc-small	1	1-literal	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	2.34473e+06	2.30528e+06	2.67067e+06	1676.02	0.314334	15505	3836788				371	
+cell	library	acc-small	1	1-literal	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	737029	712132	752798	5331.97		15505	3836788				4107	
+cell	library	acc-small	1	1-literal	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	1.35568e+06	1.32473e+06	1.77125e+06	2898.77	0.543658	15505	3836788				3335	
+cell	library	acc-small	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	649695	549545	727822	6048.71	1.13442	15505	3836788				137138853	
+cell	library	acc-small	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	1.04786e+06	975959	1.08193e+06	3750.31	0.703363	15505	3836788				134687232	
+cell	library	acc-small	1	1-literal	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.29676e+06	1.22213e+06	1.36456e+06	3030.48	0.56836	15505	3836788				139482068	
+cell	library	acc-small	1	1-literal	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	2.50968e+06	2.461e+06	2.81563e+06	1565.86	0.293675	15505	3836788				138912133	
+cell	library	acc-small	1	1-literal	re2_11.0.0_default-caps-simdna	measured	agrees	5	5.63312e+06	5.33792e+06	5.84534e+06	697.627	0.130838	15505	3836788				1964	
+cell	library	acc-small	1	1-literal	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.75957e+06	1.65001e+06	1.857e+06	2233.4	0.41887	15505	3836788				4608	
+summary	library	acc-small	1	1-literal	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.13442							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	2	2-rare	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	7.26663e+06	6.94336e+06	8.41474e+06	540.803	0.075226	2	3929792				1002	
+cell	library	acc-small	2	2-rare	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.45308e+07	1.41147e+07	1.50419e+07	270.448	0.0376195	2	3929792				1022	
+cell	library	acc-small	2	2-rare	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	546640	439678	561128	7189.04		2	3929792				7815	
+cell	library	acc-small	2	2-rare	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	958717	933509	1.06279e+06	4099.04	0.570179	2	3929792				11541	
+cell	library	acc-small	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.2932e+06	1.17817e+06	1.4351e+06	3038.84	0.422704	2	3929792				278466879	
+cell	library	acc-small	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	2.41234e+06	2.30261e+06	2.47798e+06	1629.05	0.226602	2	3929792				272613849	
+cell	library	acc-small	2	2-rare	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.68941e+06	1.57711e+06	1.80862e+06	2326.14	0.323568	2	3929792				270778109	
+cell	library	acc-small	2	2-rare	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.33279e+06	3.22795e+06	3.3625e+06	1179.14	0.164019	2	3929792				271535779	
+cell	library	acc-small	2	2-rare	re2_11.0.0_default-caps-simdna	measured	agrees	5	4.77277e+06	4.54411e+06	4.83231e+06	823.383	0.114533	2	3929792				6713	
+cell	library	acc-small	2	2-rare	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.64794e+06	1.5204e+06	9.09472e+06	2384.68	0.33171	2	3929792				32501	
+summary	library	acc-small	2	2-rare	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.422704							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	3	3-dense	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	2.00725e+07	1.97606e+07	2.07597e+07	195.782	0.607623	426622	3385182				401	
+cell	library	acc-small	3	3-dense	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	3.86244e+07	3.6444e+07	3.88543e+07	101.745	0.315772	426622	3385182				481	
+cell	library	acc-small	3	3-dense	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	1.21965e+07	1.17927e+07	1.24416e+07	322.209		426622	3385182				2905	
+cell	library	acc-small	3	3-dense	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	2.39239e+07	2.2869e+07	2.44146e+07	164.263	0.509803	426622	3385182				2986	
+cell	library	acc-small	3	3-dense	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	5.72832e+06	5.5323e+06	5.7985e+06	686.033	2.12915	426622	3385182				135170393	
+cell	library	acc-small	3	3-dense	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	9.557e+06	9.36516e+06	9.77568e+06	411.198	1.27618	426622	3385182				132028622	
+cell	library	acc-small	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	4.72914e+06	4.6516e+06	4.84246e+06	830.979	2.57901	426622	3385182				151002989	
+cell	library	acc-small	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	7.76088e+06	7.65098e+06	7.90506e+06	506.362	1.57153	426622	3385182				149126092	
+cell	library	acc-small	3	3-dense	re2_11.0.0_default-caps-simdna	measured	agrees	5	4.50484e+07	4.36702e+07	4.56754e+07	87.2355	0.270742	426622	3385182				1343	
+cell	library	acc-small	3	3-dense	rust_1.13.1_default-caps-simdna	measured	agrees	5	2.29073e+07	2.27203e+07	2.31087e+07	171.553	0.532428	426622	3385182				27132	
+summary	library	acc-small	3	3-dense	pcrec_9ae59f5d4_vm-caps-simdna	pcrec-vs-best-other							2.57901							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	4	4-reorder	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	2.55229e+07	2.51765e+07	2.71987e+07	153.972	0.084767	17500	3929818				912	
+cell	library	acc-small	4	4-reorder	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	5.07244e+07	5.00994e+07	5.09787e+07	77.4739	0.042652	17500	3929818				1162	
+cell	library	acc-small	4	4-reorder	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	2.1635e+06	2.14156e+06	2.20364e+06	1816.42		17500	3929818				5570	
+cell	library	acc-small	4	4-reorder	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	4.33282e+06	4.26309e+06	4.41499e+06	906.99	0.499328	17500	3929818				6722	
+cell	library	acc-small	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.79809e+06	1.75076e+06	1.82788e+06	2185.55	1.20322	17500	3929818				342010193	
+cell	library	acc-small	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	3.21145e+06	3.19638e+06	3.29385e+06	1223.69	0.673682	17500	3929818				340223567	
+cell	library	acc-small	4	4-reorder	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	3.44508e+06	3.23594e+06	3.49741e+06	1140.7	0.627996	17500	3929818				356341771	
+cell	library	acc-small	4	4-reorder	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	6.77112e+06	6.49478e+06	6.95717e+06	580.379	0.319518	17500	3929818				344209399	
+cell	library	acc-small	4	4-reorder	re2_11.0.0_default-caps-simdna	measured	agrees	5	9.9075e+06	9.79757e+06	1.00092e+07	396.651	0.21837	17500	3929818				5029	
+cell	library	acc-small	4	4-reorder	rust_1.13.1_default-caps-simdna	measured	agrees	5	6.30689e+06	6.05453e+06	6.3982e+06	623.1	0.343037	17500	3929818				88407	
+summary	library	acc-small	4	4-reorder	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.20322							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	5	5-mask-ipv4	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	2.11815e+07	2.09324e+07	2.13746e+07	185.531	0.209254	17785	3823488				1032	
+cell	library	acc-small	5	5-mask-ipv4	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	4.19329e+07	4.17318e+07	4.31898e+07	93.7169	0.1057	17785	3823488				832	
+cell	library	acc-small	5	5-mask-ipv4	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	4.43231e+06	4.30149e+06	4.49551e+06	886.629		17785	3823488				6632	
+cell	library	acc-small	5	5-mask-ipv4	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	8.74939e+06	8.69858e+06	8.90823e+06	449.153	0.506585	17785	3823488				5581	
+cell	library	acc-small	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	2.84765e+06	2.80006e+06	2.90241e+06	1380.02	1.55648	17785	3823488				179896658	
+cell	library	acc-small	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	5.48956e+06	5.11225e+06	5.55808e+06	715.871	0.807407	17785	3823488				179753507	
+cell	library	acc-small	5	5-mask-ipv4	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	6.606e+06	6.47128e+06	6.78463e+06	594.886	0.670953	17785	3823488				178525785	
+cell	library	acc-small	5	5-mask-ipv4	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	1.28637e+07	1.26856e+07	1.32084e+07	305.497	0.34456	17785	3823488				168817420	
+cell	library	acc-small	5	5-mask-ipv4	re2_11.0.0_default-caps-simdna	measured	agrees	5	9.28944e+06	9.19642e+06	9.5485e+06	423.041	0.477134	17785	3823488				6662	
+cell	library	acc-small	5	5-mask-ipv4	rust_1.13.1_default-caps-simdna	measured	agrees	5	9.47303e+06	9.37446e+06	9.51712e+06	414.843	0.467887	17785	3823488				60113	
+summary	library	acc-small	5	5-mask-ipv4	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.55648							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	5b	5b-mask-email	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	5.75427e+07	5.6765e+07	5.79678e+07	68.294	0.0553896	830	3918120				822	
+cell	library	acc-small	5b	5b-mask-email	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.14833e+08	1.13218e+08	1.15613e+08	34.2221	0.0277557	830	3918120				851	
+cell	library	acc-small	5b	5b-mask-email	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	3.18727e+06	3.12218e+06	3.27295e+06	1232.97		830	3918120				6182	
+cell	library	acc-small	5b	5b-mask-email	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	6.40422e+06	6.22884e+06	6.53636e+06	613.63	0.497682	830	3918120				4928	
+cell	library	acc-small	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	4.96075e+06	4.69368e+06	4.97309e+06	792.182	0.642497	830	3918120				131623729	
+cell	library	acc-small	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	9.66969e+06	9.30108e+06	9.6882e+06	406.406	0.329614	830	3918120				131052031	
+cell	library	acc-small	5b	5b-mask-email	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	1.57295e+07	1.52488e+07	1.58333e+07	249.837	0.20263	830	3918120				157468102	
+cell	library	acc-small	5b	5b-mask-email	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.09471e+07	3.0416e+07	3.13866e+07	126.985	0.102991	830	3918120				152456148	
+cell	library	acc-small	5b	5b-mask-email	re2_11.0.0_default-caps-simdna	measured	agrees	5	7.96943e+06	7.76586e+06	8.1475e+06	493.112	0.399937	830	3918120				8125	
+cell	library	acc-small	5b	5b-mask-email	rust_1.13.1_default-caps-simdna	measured	agrees	5	1.57769e+06	1.51378e+06	1.66314e+06	2490.86	2.02021	830	3918120				18335	
+summary	library	acc-small	5b	5b-mask-email	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.318035							best-other=rust_1.13.1_default-caps-simdna
+cell	library	acc-small	6	6-upper	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	9.69508e+06	9.31526e+06	1.06417e+07	405.341	0.270183	10236	3929818				882	
+cell	library	acc-small	6	6-upper	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	1.88236e+07	1.8618e+07	1.98171e+07	208.771	0.139158	10236	3929818				1083	
+cell	library	acc-small	6	6-upper	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	2.61945e+06	2.50846e+06	2.67589e+06	1500.25		10236	3929818				7213	
+cell	library	acc-small	6	6-upper	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	5.11177e+06	5.03512e+06	5.15139e+06	768.778	0.512434	10236	3929818				8506	
+cell	library	acc-small	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	1.84217e+06	1.60086e+06	1.87296e+06	2133.25	1.42193	10236	3929818				250126453	
+cell	library	acc-small	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	3.4038e+06	3.09509e+06	3.47219e+06	1154.54	0.769564	10236	3929818				249398140	
+cell	library	acc-small	6	6-upper	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	2.0162e+06	1.81403e+06	2.07883e+06	1949.12	1.2992	10236	3929818				259333224	
+cell	library	acc-small	6	6-upper	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	3.78071e+06	3.50178e+06	3.88887e+06	1039.44	0.692845	10236	3929818				253791511	
+cell	library	acc-small	6	6-upper	re2_11.0.0_default-caps-simdna	unsupported														no-case-operators
+cell	library	acc-small	6	6-upper	rust_1.13.1_default-caps-simdna	unsupported														no-case-operators
+summary	library	acc-small	6	6-upper	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							1.42193							best-other=libpcre2_10.46_jit-caps-simdna
+cell	library	acc-small	7	7-url-tld-fix	libpcre2_10.46_interp-caps-simdna	measured	agrees	5	1.82551e+06	1.772e+06	1.85155e+06	2152.72	0.320707	283	3930988				3417	
+cell	library	acc-small	7	7-url-tld-fix	libpcre2_10.46_interp-caps-simdna_sizefirst	measured	agrees	5	3.47198e+06	3.3676e+06	3.54422e+06	1131.87	0.168622	283	3930988				3366	
+cell	library	acc-small	7	7-url-tld-fix	libpcre2_10.46_jit-caps-simdna	measured	agrees	5	585453	572860	639525	6712.44		283	3930988				22052	
+cell	library	acc-small	7	7-url-tld-fix	libpcre2_10.46_jit-caps-simdna_sizefirst	measured	agrees	5	962343	942937	987782	4083.59	0.608362	283	3930988				17783	
+cell	library	acc-small	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna	measured	agrees	5	2.23971e+06	2.14124e+06	2.37728e+06	1754.61	0.261397	283	3930988				221606647	
+cell	library	acc-small	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna_sizefirst	measured	agrees	5	4.49958e+06	4.368e+06	4.7267e+06	873.375	0.130113	283	3930988				220643705	
+cell	library	acc-small	7	7-url-tld-fix	pcrec_9ae59f5d4_vm-caps-simdna	measured	agrees	5	2.34848e+06	2.1112e+06	2.39395e+06	1673.35	0.249291	283	3930988				221328464	
+cell	library	acc-small	7	7-url-tld-fix	pcrec_9ae59f5d4_vm-caps-simdna_sizefirst	measured	agrees	5	4.47206e+06	4.37963e+06	4.53777e+06	878.749	0.130914	283	3930988				229017775	
+cell	library	acc-small	7	7-url-tld-fix	re2_11.0.0_default-caps-simdna	unsupported														pattern-syntax
+cell	library	acc-small	7	7-url-tld-fix	rust_1.13.1_default-caps-simdna	unsupported														pattern-syntax
+summary	library	acc-small	7	7-url-tld-fix	pcrec_9ae59f5d4_auto-caps-simdna	pcrec-vs-best-other							0.261397							best-other=libpcre2_10.46_jit-caps-simdna
+cell	tools	acc-main	1	1-literal	perl_5.40.1_default-caps-simdna	measured	agrees	5	6.15045e+08	6.1257e+08	6.18135e+08	588.553	0.826141	1411976	353514445	5984	0.532094	0.079897		
+cell	tools	acc-main	1	1-literal	python_3.14.4_default-caps-simdna	measured	agrees	5	8.59075e+08	8.49756e+08	8.6002e+08	421.368	0.591466	1411976	353514445	1355448	0.307108	0.519698		
+cell	tools	acc-main	1	1-literal	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	2.92452e+08	2.91251e+08	2.94065e+08	1237.76	1.73742	1411976	353514445	358632	0.244472	0.048894		
+cell	tools	acc-main	1	1-literal	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.63005e+09	1.62866e+09	1.71457e+09	222.07	0.311716	1411976	353514445	2220	0.728211	0.918974		
+cell	tools	acc-main	1	1-literal	sed_4.9_default-caps-simdna	measured	agrees	5	5.08114e+08	5.06303e+08	5.2402e+08	712.412		1411976	353514445	2408	0.398774	0.106939		
+cell	tools	acc-main	2	2-rare	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.42362e+08	3.4184e+08	3.47404e+08	1057.32	1.10249	160	361984203	5424	0.268601	0.077066		
+cell	tools	acc-main	2	2-rare	python_3.14.4_default-caps-simdna	measured	agrees	5	7.52149e+08	7.46649e+08	7.74999e+08	481.269	0.501832	160	361984203	1072180	0.290585	0.437067		
+cell	tools	acc-main	2	2-rare	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	1.80939e+08	1.77966e+08	1.82354e+08	2000.59	2.08607	160	361984203	358536	0.131436	0.04885		
+cell	tools	acc-main	2	2-rare	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.49837e+09	1.49762e+09	1.53195e+09	241.586	0.251908	160	361984203	2336	0.617847	0.907839		
+cell	tools	acc-main	2	2-rare	sed_4.9_default-caps-simdna	measured	agrees	5	3.77453e+08	3.76256e+08	3.78389e+08	959.024		160	361984203	2488	0.269755	0.106741		
+cell	tools	acc-main	3	3-dense	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.06087e+09	3.03449e+09	3.17292e+09	118.263	0.732834	39337500	311463435	6096	2.97688	0.082997		
+cell	tools	acc-main	3	3-dense	python_3.14.4_default-caps-simdna	measured	agrees	5	7.13989e+09	7.10384e+09	7.25158e+09	50.6992	0.314165	39337500	311463435	8445684	4.56394	2.54844		
+cell	tools	acc-main	3	3-dense	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	5.5058e+09	5.40817e+09	5.52163e+09	65.7463	0.407407	39337500	311463435	358632	5.4438	0.060986		
+cell	tools	acc-main	3	3-dense	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.13751e+10	1.11037e+10	1.13985e+10	31.8226	0.197193	39337500	311463435	2292	7.29933	4.08765		
+cell	tools	acc-main	3	3-dense	sed_4.9_default-caps-simdna	measured	agrees	5	2.24311e+09	2.21283e+09	2.26454e+09	161.377		39337500	311463435	2340	2.11752	0.116027		
+cell	tools	acc-main	4	4-reorder	perl_5.40.1_default-caps-simdna	measured	agrees	5	1.67296e+09	1.66026e+09	1.68309e+09	216.375	1.24288	1600000	361986301	6108	1.5756	0.086135		
+cell	tools	acc-main	4	4-reorder	python_3.14.4_default-caps-simdna	measured	agrees	5	3.60422e+09	3.56293e+09	3.73519e+09	100.434	0.576905	1600000	361986301	1472408	2.98979	0.592982		
+cell	tools	acc-main	4	4-reorder	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	1.05499e+09	1.05228e+09	1.06769e+09	343.118	1.97091	1600000	361986301	358216	0.998239	0.057013		
+cell	tools	acc-main	4	4-reorder	sd_1.1.0_default-caps-simdna	measured	agrees	5	2.3787e+09	2.36826e+09	2.43576e+09	152.178	0.874129	1600000	361986301	2296	1.04097	1.32796		
+cell	tools	acc-main	4	4-reorder	sed_4.9_default-caps-simdna	measured	agrees	5	2.07929e+09	2.05454e+09	2.10294e+09	174.091		1600000	361986301	2384	1.95282	0.130032		
+cell	tools	acc-main	5	5-mask-ipv4	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.11993e+09	3.11015e+09	3.21082e+09	116.024	0.865089	1635130	352097319	6104	3.03752	0.09498		
+cell	tools	acc-main	5	5-mask-ipv4	python_3.14.4_default-caps-simdna	measured	agrees	5	3.99554e+09	3.91141e+09	4.01954e+09	90.5975	0.675507	1635130	352097319	1391160	3.4058	0.565853		
+cell	tools	acc-main	5	5-mask-ipv4	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	1.9888e+09	1.98061e+09	2.01496e+09	182.013	1.35711	1635130	352097319	358248	1.93119	0.060998		
+cell	tools	acc-main	5	5-mask-ipv4	sd_1.1.0_default-caps-simdna	measured	agrees	5	2.58288e+09	2.57459e+09	2.72256e+09	140.149	1.04497	1635130	352097319	2372	1.75516	0.860984		
+cell	tools	acc-main	5	5-mask-ipv4	sed_4.9_default-caps-simdna	measured	agrees	5	2.69902e+09	2.68862e+09	2.74167e+09	134.118		1635130	352097319	2472	2.57709	0.129995		
+cell	tools	acc-main	5b	5b-mask-email	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.84265e+08	3.80415e+08	3.86971e+08	942.022	1.88193	80123	360838508	6164	0.309896	0.072975		
+cell	tools	acc-main	5b	5b-mask-email	python_3.14.4_default-caps-simdna	measured	agrees	5	4.56523e+09	4.53131e+09	4.64071e+09	79.292	0.158406	80123	360838508	1086616	4.0882	0.448126		
+cell	tools	acc-main	5b	5b-mask-email	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	1.88041e+08	1.86887e+08	1.88783e+08	1925.04	3.84576	80123	360838508	358216	0.130588	0.056001		
+cell	tools	acc-main	5b	5b-mask-email	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.4473e+09	1.44217e+09	1.45599e+09	250.111	0.499662	80123	360838508	2164	0.573001	0.874914		
+cell	tools	acc-main	5b	5b-mask-email	sed_4.9_default-caps-simdna	measured	agrees	5	7.23161e+08	7.19959e+08	7.29396e+08	500.561		80123	360838508	2416	0.626364	0.098057		
+cell	tools	acc-main	6	6-upper	perl_5.40.1_default-caps-simdna	measured	agrees	5	1.00315e+09	9.98274e+08	1.01182e+09	360.849	0.9636	928237	361986301	6084	0.92487	0.078984		
+cell	tools	acc-main	6	6-upper	python_3.14.4_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-main	6	6-upper	ripgrep_15.2.0_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-main	6	6-upper	sd_1.1.0_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-main	6	6-upper	sed_4.9_default-caps-simdna	measured	agrees	5	9.66635e+08	9.65828e+08	9.68165e+08	374.481		928237	361986301	2472	0.846611	0.118945		
+cell	tools	acc-main	7	7-url-tld-fix	perl_5.40.1_default-caps-simdna	unsupported														no-conditional
+cell	tools	acc-main	7	7-url-tld-fix	python_3.14.4_default-caps-simdna	unsupported														no-conditional
+cell	tools	acc-main	7	7-url-tld-fix	ripgrep_15.2.0_default-caps-simdna	unsupported														pattern-syntax
+cell	tools	acc-main	7	7-url-tld-fix	sd_1.1.0_default-caps-simdna	unsupported														pattern-syntax
+cell	tools	acc-main	7	7-url-tld-fix	sed_4.9_default-caps-simdna	unsupported														pattern-syntax
+cell	tools	acc-small	1	1-literal	perl_5.40.1_default-caps-simdna	measured	agrees	5	9.26808e+06	8.97641e+06	9.33408e+06	424.017	0.799061	15505	3836788	5776	0.006316	0.002109		
+cell	tools	acc-small	1	1-literal	python_3.14.4_default-caps-simdna	measured	agrees	5	1.96907e+07	1.94437e+07	2.03236e+07	199.577	0.376104	15505	3836788	25976	0.010789	0.007846		
+cell	tools	acc-small	1	1-literal	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	5.12439e+06	4.94163e+06	5.22374e+06	766.886	1.4452	15505	3836788	8968	0.002838	0.001886		
+cell	tools	acc-small	1	1-literal	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.95885e+07	1.9341e+07	1.96834e+07	200.618	0.378066	15505	3836788	2216	0.007229	0.011359		
+cell	tools	acc-small	1	1-literal	sed_4.9_default-caps-simdna	measured	agrees	5	7.40576e+06	7.24347e+06	7.56392e+06	530.644		15505	3836788	2412	0.004218	0.00253		
+cell	tools	acc-small	2	2-rare	perl_5.40.1_default-caps-simdna	measured	agrees	5	5.82838e+06	5.70807e+06	5.9939e+06	674.255	1.03192	2	3929792	5388	0.003784	0.001261		
+cell	tools	acc-small	2	2-rare	python_3.14.4_default-caps-simdna	measured	agrees	5	1.93625e+07	1.88283e+07	1.94698e+07	202.96	0.310621	2	3929792	22804	0.010315	0.008011		
+cell	tools	acc-small	2	2-rare	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	4.01317e+06	3.92819e+06	4.14517e+06	979.23	1.49867	2	3929792	8752	0.002313	0.001156		
+cell	tools	acc-small	2	2-rare	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.8235e+07	1.81323e+07	1.87776e+07	215.51	0.329828	2	3929792	2336	0.005101	0.012244		
+cell	tools	acc-small	2	2-rare	sed_4.9_default-caps-simdna	measured	agrees	5	6.0144e+06	5.76482e+06	6.43461e+06	653.401		2	3929792	2472	0.003017	0.002011		
+cell	tools	acc-small	3	3-dense	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.54274e+07	3.52582e+07	3.67559e+07	110.926	0.724502	426622	3385182	6180	0.032247	0.003908		
+cell	tools	acc-small	3	3-dense	python_3.14.4_default-caps-simdna	measured	agrees	5	9.28368e+07	9.25972e+07	9.70681e+07	42.3304	0.276477	426622	3385182	103012	0.05995	0.034657		
+cell	tools	acc-small	3	3-dense	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	6.06843e+07	6.02292e+07	6.14077e+07	64.7584	0.422963	426622	3385182	8992	0.058971	0.001007		
+cell	tools	acc-small	3	3-dense	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.27024e+08	1.24806e+08	1.30657e+08	30.9377	0.202067	426622	3385182	2292	0.07883	0.049123		
+cell	tools	acc-small	3	3-dense	sed_4.9_default-caps-simdna	measured	agrees	5	2.56672e+07	2.5439e+07	2.66288e+07	153.107		426622	3385182	2340	0.023962	0.00193		
+cell	tools	acc-small	4	4-reorder	perl_5.40.1_default-caps-simdna	measured	agrees	5	2.01525e+07	1.96429e+07	2.1367e+07	195.004	1.19396	17500	3929818	6040	0.01751	0.002188		
+cell	tools	acc-small	4	4-reorder	python_3.14.4_default-caps-simdna	measured	agrees	5	4.96653e+07	4.91786e+07	5.20394e+07	79.126	0.484471	17500	3929818	27384	0.039584	0.010169		
+cell	tools	acc-small	4	4-reorder	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	1.34984e+07	1.33864e+07	1.35937e+07	291.133	1.78254	17500	3929818	8616	0.012084	0.00101		
+cell	tools	acc-small	4	4-reorder	sd_1.1.0_default-caps-simdna	measured	agrees	5	2.74965e+07	2.73661e+07	2.95852e+07	142.921	0.875071	17500	3929818	2300	0.01257	0.016057		
+cell	tools	acc-small	4	4-reorder	sed_4.9_default-caps-simdna	measured	agrees	5	2.40614e+07	2.36741e+07	2.41873e+07	163.325		17500	3929818	2408	0.020774	0.002922		
+cell	tools	acc-small	5	5-mask-ipv4	perl_5.40.1_default-caps-simdna	measured	agrees	5	3.61691e+07	3.58921e+07	3.91329e+07	108.651	0.849796	17785	3823488	6160	0.034897	0.001991		
+cell	tools	acc-small	5	5-mask-ipv4	python_3.14.4_default-caps-simdna	measured	agrees	5	5.41648e+07	5.33439e+07	5.52398e+07	72.553	0.56746	17785	3823488	26420	0.045857	0.007935		
+cell	tools	acc-small	5	5-mask-ipv4	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	2.3671e+07	2.34175e+07	2.38081e+07	166.018	1.29848	17785	3823488	8552	0.02149	0.001953		
+cell	tools	acc-small	5	5-mask-ipv4	sd_1.1.0_default-caps-simdna	measured	agrees	5	2.97936e+07	2.96986e+07	3.05104e+07	131.901	1.03164	17785	3823488	2372	0.02189	0.007296		
+cell	tools	acc-small	5	5-mask-ipv4	sed_4.9_default-caps-simdna	measured	agrees	5	3.07363e+07	3.03461e+07	3.21047e+07	127.856		17785	3823488	2424	0.028179	0.001952		
+cell	tools	acc-small	5b	5b-mask-email	perl_5.40.1_default-caps-simdna	measured	agrees	5	6.36525e+06	6.16252e+06	6.73722e+06	617.386	1.50889	830	3918120	5592	0.004734	0.001006		
+cell	tools	acc-small	5b	5b-mask-email	python_3.14.4_default-caps-simdna	measured	agrees	5	6.12324e+07	6.10516e+07	6.32477e+07	64.1788	0.156852	830	3918120	22912	0.051647	0.0089		
+cell	tools	acc-small	5b	5b-mask-email	ripgrep_15.2.0_default-caps-simdna	measured	agrees	5	4.12771e+06	4.03566e+06	4.41296e+06	952.058	2.32682	830	3918120	8280	0.001797	0.001797		
+cell	tools	acc-small	5b	5b-mask-email	sd_1.1.0_default-caps-simdna	measured	agrees	5	1.79407e+07	1.75258e+07	1.81794e+07	219.045	0.535344	830	3918120	2168	0.006895	0.010082		
+cell	tools	acc-small	5b	5b-mask-email	sed_4.9_default-caps-simdna	measured	agrees	5	9.60445e+06	9.47995e+06	9.85645e+06	409.166		830	3918120	2372	0.00664	0.002183		
+cell	tools	acc-small	6	6-upper	perl_5.40.1_default-caps-simdna	measured	agrees	5	1.32577e+07	1.32236e+07	1.35926e+07	296.417	0.946144	10236	3929818	5848	0.011691	0.00107		
+cell	tools	acc-small	6	6-upper	python_3.14.4_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-small	6	6-upper	ripgrep_15.2.0_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-small	6	6-upper	sd_1.1.0_default-caps-simdna	unsupported														no-case-operators
+cell	tools	acc-small	6	6-upper	sed_4.9_default-caps-simdna	measured	agrees	5	1.25437e+07	1.23404e+07	1.28565e+07	313.29		10236	3929818	2464	0.010524	0.000995		
+cell	tools	acc-small	7	7-url-tld-fix	perl_5.40.1_default-caps-simdna	unsupported														no-conditional
+cell	tools	acc-small	7	7-url-tld-fix	python_3.14.4_default-caps-simdna	unsupported														no-conditional
+cell	tools	acc-small	7	7-url-tld-fix	ripgrep_15.2.0_default-caps-simdna	unsupported														pattern-syntax
+cell	tools	acc-small	7	7-url-tld-fix	sd_1.1.0_default-caps-simdna	unsupported														pattern-syntax
+cell	tools	acc-small	7	7-url-tld-fix	sed_4.9_default-caps-simdna	unsupported														pattern-syntax

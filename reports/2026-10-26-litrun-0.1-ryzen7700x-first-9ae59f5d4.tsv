@@ -1,0 +1,908 @@
+# reporter: v28 (2026-10-25); filters: subbench=litrun, version=0.1, machine=ryzen7700x, since=2026-10-25T19:30:00Z, until=2026-10-26T08:00:00Z, testee=pcrec_6b2dbd3e_auto-caps-simdna, testee=pcrec_9ae59f5d4_auto-caps-simdna; source: store/index.tsv (2 record(s) matching this query); records: 2; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: litrun@0.1; machines: ryzen7700x; schema_versions: 1.10; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: False; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 2; mixed_x13: False; include_provenance: False; worst_other_core_busy: 14.8% (pcrec_6b2dbd3e_auto-caps-simdna / lit-l4 / match-compliance); floor_pattern: floor; null_band: pcrec 6b2dbd3e -> 9ae59f5d4: field program_sha256, 40 null of 42 cells, strata ok=3 insufficient=0 empty=6, n_min=10
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						litrun@0.1__pcrec_6b2dbd3e_auto-caps-simdna__ryzen7700x__20261026T025208Z				agreement	agree (0 of 42 groups; 0 of 1134 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						litrun@0.1__pcrec_9ae59f5d4_auto-caps-simdna__ryzen7700x__20261026T023804Z				agreement	agree (0 of 42 groups; 0 of 1134 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						after: load1 2.02
+baseline	alt-foo-tails	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	335827.908225	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	335320.357109	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	337071.309817	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	620.605500	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	335899.952957	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	334976.961805	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	338884.145996	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1411.537252	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000215	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000215	27	1.0000	0	0		unchanged (within spread)
+baseline	alt-foo-tails	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	137.313445	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	136.096720	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	147.459913	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	4.215910	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	140.967579	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	139.916804	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	142.556137	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.911486	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.026612	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.026612	27	1.0000	0	0		
+baseline	alt-foo-tails	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	162.577659	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	162.001766	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	171.436364	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	3.558383	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	164.377005	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	162.852588	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	164.638341	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.633294	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.011068	27	1.0000	0	0		
+rank	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.011068	27	1.0000	0	0		
+baseline	ctrl-abc-dollar	(set)	large-subject-throughput			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	88.772310	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	88.483559	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	89.521667	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.364976	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.32
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	117.011695	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	116.727554	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	117.379065	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.226715	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.318110	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.318110	27	1.0000	0	0		
+baseline	ctrl-abc-dollar	(set)	match-compliance			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	137.042769	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	136.120759	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	137.817369	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.637147	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	137.367790	27	1.0000	0	0		unchanged (within spread)
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	135.846996	27	1.0000	0	0		unchanged (within spread)
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	138.532613	27	1.0000	0	0		unchanged (within spread)
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	0.948137	27	1.0000	0	0		unchanged (within spread)
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002372	27	1.0000	0	0		unchanged (within spread)
+rank	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002372	27	1.0000	0	0		unchanged (within spread)
+baseline	ctrl-abc-dollar	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	90.944173	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	90.817539	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	92.208061	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.525763	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.30
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	117.822291	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	117.512696	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	119.400592	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.685580	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.295545	27	1.0000	0	0		
+rank	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.295545	27	1.0000	0	0		
+baseline	floor	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	1572648.794246	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	1570444.538462	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	1585573.652908	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	6484.086946	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	1577376.831481	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	1566267.469136	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	1595717.940741	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	10693.680092	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003006	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003006	27	1.0000	0	0		unchanged (within spread)
+baseline	floor	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	119.108443	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	119.092361	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	120.334853	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.482532	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	120.081743	27	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	119.007375	27	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	120.521499	27	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.547084	27	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.008172	27	1.0000	0	0		
+rank	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.008172	27	1.0000	0	0		
+baseline	floor	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	105.622136	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	105.534199	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	106.147965	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.222754	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	105.848151	27	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	105.655794	27	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	107.118238	27	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.543654	27	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002140	27	1.0000	0	0		
+rank	floor	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002140	27	1.0000	0	0		
+baseline	lit-l10	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	456308.880255	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	456030.327408	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	456550.821003	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	193.718853	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	456390.057433	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	456099.765550	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	456926.561014	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	344.943210	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000178	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000178	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l10	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	152.895305	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	151.370053	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	153.626700	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.838857	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	156.536477	27	1.0000	0	0		
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	154.751822	27	1.0000	0	0		
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	165.081986	27	1.0000	0	0		
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	3.670747	27	1.0000	0	0		
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.023815	27	1.0000	0	0		
+rank	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.023815	27	1.0000	0	0		
+baseline	lit-l10	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	150.416083	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	150.168273	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	154.508239	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.723653	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	151.775310	27	1.0000	0	0		
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	150.296084	27	1.0000	0	0		
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	152.156704	27	1.0000	0	0		
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.744277	27	1.0000	0	0		
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.009036	27	1.0000	0	0		
+rank	lit-l10	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.009036	27	1.0000	0	0		
+baseline	lit-l16	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	422855.503453	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	422068.735706	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	424038.644002	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	721.809691	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	423178.443812	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	422897.722440	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	423515.346291	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	247.879895	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000764	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000764	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l16	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	168.797042	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	167.470060	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	170.321735	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.098638	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.01
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	171.270998	27	1.0000	0	0		
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	170.896399	27	1.0000	0	0		
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	173.208151	27	1.0000	0	0		
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.016504	27	1.0000	0	0		
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.014656	27	1.0000	0	0		
+rank	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.014656	27	1.0000	0	0		
+baseline	lit-l16	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	186.821161	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	186.138173	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	190.562600	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	1.600138	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	188.532424	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	186.469380	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	189.221708	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	0.973394	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.009160	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.009160	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l2	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	1734824.792720	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	1731493.571284	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	1740026.406471	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	3480.112068	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	1736708.661601	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	1734522.635258	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	1738422.334347	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1422.595131	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001086	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001086	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l2	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	128.947979	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	128.335590	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	130.577843	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.766634	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.03
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	132.606062	27	1.0000	0	0		
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	132.435405	27	1.0000	0	0		
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	133.996870	27	1.0000	0	0		
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.686357	27	1.0000	0	0		
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.028369	27	1.0000	0	0		
+rank	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.028369	27	1.0000	0	0		
+baseline	lit-l2	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	158.252761	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	157.150206	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	176.007528	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	7.213966	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	159.373669	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	158.425463	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	166.498503	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	3.016213	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.007083	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.007083	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l3	(set)	large-subject-throughput			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	1822692.177419	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	1821915.139401	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	1823481.421659	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	541.203793	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	1824069.702427	27	1.0000	0	0		
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	1821807.959132	27	1.0000	0	0		
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	1830475.757344	27	1.0000	0	0		
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	3161.763954	27	1.0000	0	0		
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000756	27	1.0000	0	0		
+rank	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000756	27	1.0000	0	0		
+baseline	lit-l3	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	136.606909	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	135.054146	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	137.504616	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.956386	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	136.856597	27	1.0000	0	0		
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	136.336861	27	1.0000	0	0		
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	136.979872	27	1.0000	0	0		
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.238604	27	1.0000	0	0		
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001828	27	1.0000	0	0		
+rank	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001828	27	1.0000	0	0		
+baseline	lit-l3	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	172.901336	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	172.137088	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	174.065577	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.627498	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	173.451093	27	1.0000	0	0		
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	170.859543	27	1.0000	0	0		
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	173.869189	27	1.0000	0	0		
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.279151	27	1.0000	0	0		
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003180	27	1.0000	0	0		
+rank	lit-l3	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003180	27	1.0000	0	0		
+baseline	lit-l31	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	277689.434648	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	277080.492084	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	278172.284581	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	360.602257	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	277786.259197	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	277012.123230	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	278141.489591	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	397.153320	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000349	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000349	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l31	(set)	match-compliance			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	201.079231	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	199.689487	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	201.932746	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.949223	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	201.103447	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	198.728853	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	205.796995	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	2.376953	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000120	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000120	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l31	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	258.397318	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	257.472403	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	262.921553	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	2.096895	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	258.423522	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	257.785798	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	260.576399	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1.089137	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000101	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000101	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l4	(set)	large-subject-throughput			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	1615964.659953	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	1613311.688389	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	1631871.868483	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	6697.223470	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	1616724.523409	27	1.0000	0	0		
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	1613673.651861	27	1.0000	0	0		
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	1632065.703481	27	1.0000	0	0		
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	7939.646336	27	1.0000	0	0		
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000470	27	1.0000	0	0		
+rank	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000470	27	1.0000	0	0		
+baseline	lit-l4	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	135.856381	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	133.350754	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	136.578615	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.221939	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.03
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	139.818277	27	1.0000	0	0		
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	139.386906	27	1.0000	0	0		
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	140.167975	27	1.0000	0	0		
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.327148	27	1.0000	0	0		
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.029162	27	1.0000	0	0		
+rank	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.029162	27	1.0000	0	0		
+baseline	lit-l4	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	160.037524	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	159.516594	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	170.635397	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	4.221869	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	160.467941	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	160.001456	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	161.799451	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	0.791742	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002689	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002689	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l40	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	183304.454427	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	180589.146791	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	183886.673375	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	1169.259150	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	183819.232736	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	180431.075960	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	184162.972589	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1406.599201	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002808	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002808	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l40	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	208.878488	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	207.073485	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	210.605901	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.352354	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.02
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	212.827132	27	1.0000	0	0		
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	210.609716	27	1.0000	0	0		
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	214.076677	27	1.0000	0	0		
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.186958	27	1.0000	0	0		
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.018904	27	1.0000	0	0		
+rank	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.018904	27	1.0000	0	0		
+baseline	lit-l40	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	307.506733	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	304.349251	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	307.822839	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	1.289412	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	308.008523	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	305.547116	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	308.582928	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1.236262	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001632	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001632	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l7	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	1628766.844048	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	1615400.377381	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	1634475.340476	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	8149.522088	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	1631133.742857	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	1618646.126190	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	1632947.938095	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	5282.264592	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001453	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001453	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l7	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	146.979163	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	145.484878	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	148.182186	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.964959	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	147.156782	27	1.0000	0	0		
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	145.818415	27	1.0000	0	0		
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	147.673300	27	1.0000	0	0		
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.711771	27	1.0000	0	0		
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001208	27	1.0000	0	0		
+rank	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001208	27	1.0000	0	0		
+baseline	lit-l7	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	166.118432	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	165.580114	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	170.214024	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	1.743788	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	166.367045	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	165.981645	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	168.363417	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	0.892176	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001497	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001497	27	1.0000	0	0		unchanged (within spread)
+baseline	lit-l8	(set)	large-subject-throughput			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	1421923.520134	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	1420083.461745	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	1434253.166443	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	5114.367314	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	1425674.450601	27	1.0000	0	0		
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	1421134.770360	27	1.0000	0	0		
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	1440854.766355	27	1.0000	0	0		
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	8211.835511	27	1.0000	0	0		
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002638	27	1.0000	0	0		
+rank	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002638	27	1.0000	0	0		
+baseline	lit-l8	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	144.100622	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	143.048126	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	144.735294	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	0.584935	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		faster ×1.01
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	146.072628	27	1.0000	0	0		
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	145.381292	27	1.0000	0	0		
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	147.381787	27	1.0000	0	0		
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	0.838531	27	1.0000	0	0		
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.013685	27	1.0000	0	0		
+rank	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.013685	27	1.0000	0	0		
+baseline	lit-l8	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	169.138364	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	167.799546	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	172.755192	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.688932	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	169.653378	27	1.0000	0	0		
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	167.799747	27	1.0000	0	0		
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	171.497205	27	1.0000	0	0		
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.421758	27	1.0000	0	0		
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003045	27	1.0000	0	0		
+rank	lit-l8	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003045	27	1.0000	0	0		
+baseline	wild-secrets-aws-access-key-id	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	230746.489495	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	230314.219151	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	232338.270689	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	871.249428	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	231541.842293	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	230609.615746	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	232023.014006	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	553.869182	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.003447	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.003447	27	1.0000	0	0		unchanged (within spread)
+baseline	wild-secrets-aws-access-key-id	(set)	match-compliance			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	169.416604	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	167.197646	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	173.724390	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	2.520506	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	169.617351	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	168.003037	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	175.625286	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	2.662608	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001185	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001185	27	1.0000	0	0		
+baseline	wild-secrets-aws-access-key-id	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	479.633153	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	477.144447	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	481.146614	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.538669	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	480.308579	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	474.447275	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	481.466101	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	2.655528	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.001408	27	1.0000	0	0		
+rank	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.001408	27	1.0000	0	0		
+baseline	wild-secrets-github-pat	(set)	large-subject-throughput			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	10734.479188	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	10732.549058	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	10760.673013	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	10.721637	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	10745.039543	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	10736.292894	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	10761.822380	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	9.370282	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.000984	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.000984	27	1.0000	0	0		unchanged (within spread)
+baseline	wild-secrets-github-pat	(set)	match-compliance			pcrec_6b2dbd3e_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	median_ns	177.374300	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	min_ns	176.321722	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	max_ns	178.656216	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	stddev_ns	0.844717	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	median_ns	180.864823	27	1.0000	0	0		slower ×1.02
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	min_ns	179.086701	27	1.0000	0	0		slower ×1.02
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	max_ns	183.462513	27	1.0000	0	0		slower ×1.02
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	stddev_ns	1.509267	27	1.0000	0	0		slower ×1.02
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.019679	27	1.0000	0	0		slower ×1.02
+rank	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.019679	27	1.0000	0	0		slower ×1.02
+baseline	wild-secrets-github-pat	(set)	short-subject-search			pcrec_9ae59f5d4_auto-caps-simdna				baseline_identity	row-best-fallback					pcrec_9ae59f5d4_auto-caps-simdna (row-best fallback -- interp absent from this group)	
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	median_ns	523.809078	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	min_ns	522.543491	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	max_ns	525.501935	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	stddev_ns	1.143043	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_baseline	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned	1	ratio_vs_best	1.000000	27	1.0000	0	0		unchanged (within spread)
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	median_ns	525.370268	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	min_ns	523.454193	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	max_ns	528.017880	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	stddev_ns	1.778686	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_baseline	1.002980	27	1.0000	0	0		
+rank	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna	measured	pinned	2	ratio_vs_best	1.002980	27	1.0000	0	0		
+query_yes_beats_nocaps										hit_count	0						
+null_band						pcrec 6b2dbd3e -> 9ae59f5d4				identity_field	program_sha256	40				field_cells=42; criterion v3 (`program_sha256_v3`) on 42 cell(s), v2 (`program_sha256`) on 0; census_fallback_cells=0; disagreements=0; cells=42	
+null_band		>=1us	large-subject-throughput			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct	0.344687	13				status=ok; min_pct=-0.263099; median_pct=0.076371; max_pct=0.344687; n_min=10	
+null_band		100ns-1us	large-subject-throughput			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+null_band		<100ns	large-subject-throughput			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+null_band		>=1us	match-compliance			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+null_band		100ns-1us	match-compliance			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct	2.833604	14				status=ok; min_pct=-2.833604; median_pct=-1.080274; max_pct=1.967885; n_min=10	
+null_band		<100ns	match-compliance			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+null_band		>=1us	short-subject-search			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+null_band		100ns-1us	short-subject-search			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct	1.094646	13				status=ok; min_pct=-1.094646; median_pct=-0.140623; max_pct=0.915990; n_min=10	
+null_band		<100ns	short-subject-search			pcrec 6b2dbd3e -> 9ae59f5d4				band_pct		0				status=empty; min_pct=; median_pct=; max_pct=; n_min=10	
+d119	alt-foo-tails	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.021453; iqr_pct=0.127578; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=335827.908225; after_ns=335899.952957	unchanged (within spread)
+d119	alt-foo-tails	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-2.592180; iqr_pct=0.570082; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=140.967579; after_ns=137.313445	unchanged (within spread)
+d119	alt-foo-tails	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-1.094646; iqr_pct=0.156069; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=164.377005; after_ns=162.577659	unchanged (within spread)
+d119	ctrl-abc-dollar	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	improve					delta_pct=-24.133814; iqr_pct=0.210780; band_pct=; bar_pct=0.210780; bar_source=IQR-only; stratum=large-subject-throughput/100ns-1us; identity=changed; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=117.011695; after_ns=88.772310	faster ×1.32
+d119	ctrl-abc-dollar	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.237167; iqr_pct=0.700090; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=137.042769; after_ns=137.367790	unchanged (within spread)
+d119	ctrl-abc-dollar	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	improve					delta_pct=-22.812422; iqr_pct=0.436620; band_pct=1.094646; bar_pct=1.094646; bar_source=band; stratum=short-subject-search/100ns-1us; identity=changed; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=117.822291; after_ns=90.944173	faster ×1.30
+d119	floor	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.300642; iqr_pct=0.785171; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1572648.794246; after_ns=1577376.831481	unchanged (within spread)
+d119	floor	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.810532; iqr_pct=0.433437; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=120.081743; after_ns=119.108443	unchanged (within spread)
+d119	floor	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.213528; iqr_pct=0.573725; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=105.848151; after_ns=105.622136	unchanged (within spread)
+d119	lit-l10	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.017790; iqr_pct=0.056654; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=456308.880255; after_ns=456390.057433	unchanged (within spread)
+d119	lit-l10	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-2.326085; iqr_pct=0.676213; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=156.536477; after_ns=152.895305	unchanged (within spread)
+d119	lit-l10	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.895552; iqr_pct=0.844820; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=151.775310; after_ns=150.416083	unchanged (within spread)
+d119	lit-l16	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.076371; iqr_pct=0.239799; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=422855.503453; after_ns=423178.443812	unchanged (within spread)
+d119	lit-l16	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-1.444468; iqr_pct=1.186056; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=171.270998; after_ns=168.797042	faster ×1.01
+d119	lit-l16	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.915990; iqr_pct=0.765306; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=186.821161; after_ns=188.532424	unchanged (within spread)
+d119	lit-l2	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.108591; iqr_pct=0.395438; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1734824.792720; after_ns=1736708.661601	unchanged (within spread)
+d119	lit-l2	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-2.758609; iqr_pct=0.973323; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=132.606062; after_ns=128.947979	faster ×1.03
+d119	lit-l2	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.708303; iqr_pct=0.207711; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=158.252761; after_ns=159.373669	unchanged (within spread)
+d119	lit-l3	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.075519; iqr_pct=0.147909; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1824069.702427; after_ns=1822692.177419	unchanged (within spread)
+d119	lit-l3	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.182445; iqr_pct=0.234760; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=136.856597; after_ns=136.606909	unchanged (within spread)
+d119	lit-l3	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.316952; iqr_pct=1.379152; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=173.451093; after_ns=172.901336	unchanged (within spread)
+d119	lit-l31	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.034868; iqr_pct=0.086093; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=277689.434648; after_ns=277786.259197	unchanged (within spread)
+d119	lit-l31	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.012043; iqr_pct=0.978569; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=201.079231; after_ns=201.103447	unchanged (within spread)
+d119	lit-l31	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.010141; iqr_pct=1.195944; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=258.397318; after_ns=258.423522	unchanged (within spread)
+d119	lit-l4	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.047000; iqr_pct=0.945609; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1616724.523409; after_ns=1615964.659953	unchanged (within spread)
+d119	lit-l4	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-2.833604; iqr_pct=0.482625; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=139.818277; after_ns=135.856381	faster ×1.03
+d119	lit-l4	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.268948; iqr_pct=2.228467; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=160.037524; after_ns=160.467941	unchanged (within spread)
+d119	lit-l40	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.280832; iqr_pct=0.140595; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=183304.454427; after_ns=183819.232736	unchanged (within spread)
+d119	lit-l40	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-1.855329; iqr_pct=0.620926; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=212.827132; after_ns=208.878488	faster ×1.02
+d119	lit-l40	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.163180; iqr_pct=0.321918; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=307.506733; after_ns=308.008523	unchanged (within spread)
+d119	lit-l7	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.145318; iqr_pct=1.027862; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1628766.844048; after_ns=1631133.742857	unchanged (within spread)
+d119	lit-l7	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.120700; iqr_pct=0.772740; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=147.156782; after_ns=146.979163	unchanged (within spread)
+d119	lit-l7	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.149660; iqr_pct=1.151478; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=166.118432; after_ns=166.367045	unchanged (within spread)
+d119	lit-l8	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.263099; iqr_pct=1.103829; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=1425674.450601; after_ns=1421923.520134	unchanged (within spread)
+d119	lit-l8	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-1.350017; iqr_pct=1.152635; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=146.072628; after_ns=144.100622	faster ×1.01
+d119	lit-l8	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.303569; iqr_pct=1.448296; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=169.653378; after_ns=169.138364	unchanged (within spread)
+d119	wild-secrets-aws-access-key-id	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.344687; iqr_pct=0.748481; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=230746.489495; after_ns=231541.842293	unchanged (within spread)
+d119	wild-secrets-aws-access-key-id	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.118353; iqr_pct=0.653679; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=169.617351; after_ns=169.416604	unchanged (within spread)
+d119	wild-secrets-aws-access-key-id	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.140623; iqr_pct=0.758336; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=480.308579; after_ns=479.633153	unchanged (within spread)
+d119	wild-secrets-github-pat	(set)	large-subject-throughput	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=0.098378; iqr_pct=0.021922; band_pct=0.344687; bar_pct=; bar_source=null-control; stratum=large-subject-throughput/>=1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=10734.479188; after_ns=10745.039543	unchanged (within spread)
+d119	wild-secrets-github-pat	(set)	match-compliance	whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=1.967885; iqr_pct=0.726466; band_pct=2.833604; bar_pct=; bar_source=null-control; stratum=match-compliance/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=177.374300; after_ns=180.864823	slower ×1.02
+d119	wild-secrets-github-pat	(set)	short-subject-search	plain	same program	pcrec_9ae59f5d4_auto-caps-simdna	measured	pinned		verdict	null-control					delta_pct=-0.297160; iqr_pct=0.615859; band_pct=1.094646; bar_pct=; bar_source=null-control; stratum=short-subject-search/100ns-1us; identity=identical; capture_class=yes; previous=pcrec_6b2dbd3e_auto-caps-simdna; before_ns=525.370268; after_ns=523.809078	unchanged (within spread)
+d119_view										all	improve=2; regress=0; within=0; null-control=40; iqr_only=1						
+compile	alt-foo-tails			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	75587481.000000	5					
+compile	alt-foo-tails			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	alt-foo-tails			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28912						
+compile	alt-foo-tails			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	23854						
+compile	alt-foo-tails			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	17043						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_prefilter_offsets	0*,1,2						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_match	unwrapped						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				dfa_scan_edge	range						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				scan_edges_match	1						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna				engine_sel	selected						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	71307466.000000	5					
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	21920						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16658						
+compile	ctrl-abc-dollar			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	73017828.000000	5					
+compile	ctrl-abc-dollar			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	ctrl-abc-dollar			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	ctrl-abc-dollar			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20279						
+compile	ctrl-abc-dollar			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	16389						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69061131.000000	5					
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19814						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15924						
+compile	floor			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	65397618.000000	5					
+compile	floor			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.015						
+compile	floor			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	floor			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	17888						
+compile	floor			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	14557						
+compile	floor			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	66832150.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	floor			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	floor			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19474						
+compile	floor			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15916						
+compile	lit-l10			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68446012.000000	5					
+compile	lit-l10			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.004						
+compile	lit-l10			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l10			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20602						
+compile	lit-l10			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15136						
+compile	lit-l10			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67280106.000000	5					
+compile	lit-l10			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	lit-l10			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l10			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	22367						
+compile	lit-l10			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15944						
+compile	lit-l16			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68878787.000000	5					
+compile	lit-l16			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.003						
+compile	lit-l16			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l16			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	23691						
+compile	lit-l16			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15147						
+compile	lit-l16			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68091876.000000	5					
+compile	lit-l16			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	lit-l16			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l16			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	26289						
+compile	lit-l16			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15950						
+compile	lit-l2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69113400.000000	5					
+compile	lit-l2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.015						
+compile	lit-l2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	18444						
+compile	lit-l2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15033						
+compile	lit-l2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	66954331.000000	5					
+compile	lit-l2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	lit-l2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19607						
+compile	lit-l2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15919						
+compile	lit-l3			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68908263.000000	5					
+compile	lit-l3			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	lit-l3			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l3			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	18717						
+compile	lit-l3			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15188						
+compile	lit-l3			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67809874.000000	5					
+compile	lit-l3			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	lit-l3			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l3			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19812						
+compile	lit-l3			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15922						
+compile	lit-l31			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	73236130.000000	5					
+compile	lit-l31			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	lit-l31			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32864						
+compile	lit-l31			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	37756						
+compile	lit-l31			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15929						
+compile	lit-l31			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	69168023.000000	5					
+compile	lit-l31			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	lit-l31			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32904						
+compile	lit-l31			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	42952						
+compile	lit-l31			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15965						
+compile	lit-l4			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67524195.000000	5					
+compile	lit-l4			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.008						
+compile	lit-l4			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l4			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	18774						
+compile	lit-l4			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15065						
+compile	lit-l4			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67716068.000000	5					
+compile	lit-l4			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.010						
+compile	lit-l4			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l4			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20026						
+compile	lit-l4			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15926						
+compile	lit-l40			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	74514188.000000	5					
+compile	lit-l40			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.011						
+compile	lit-l40			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	36960						
+compile	lit-l40			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	49698						
+compile	lit-l40			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15936						
+compile	lit-l40			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	70651339.000000	5					
+compile	lit-l40			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	lit-l40			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	37000						
+compile	lit-l40			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	57748						
+compile	lit-l40			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15973						
+compile	lit-l7			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68448095.000000	5					
+compile	lit-l7			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.009						
+compile	lit-l7			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l7			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19615						
+compile	lit-l7			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15212						
+compile	lit-l7			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67208060.000000	5					
+compile	lit-l7			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	lit-l7			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l7			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	20995						
+compile	lit-l7			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15935						
+compile	lit-l8			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	68381552.000000	5					
+compile	lit-l8			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.021						
+compile	lit-l8			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28768						
+compile	lit-l8			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	19830						
+compile	lit-l8			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15089						
+compile	lit-l8			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	67461977.000000	5					
+compile	lit-l8			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.006						
+compile	lit-l8			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	28808						
+compile	lit-l8			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	21400						
+compile	lit-l8			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	15938						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	109052720.000000	5					
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.005						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32984						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	36859						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	29182						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	107659363.000000	5					
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.003						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	32928						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	38869						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	30124						
+compile	wild-secrets-github-pat			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	154096078.000000	5					
+compile	wild-secrets-github-pat			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.007						
+compile	wild-secrets-github-pat			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	36992						
+compile	wild-secrets-github-pat			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	41771						
+compile	wild-secrets-github-pat			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26913						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				median_total_ns	144339942.000000	5					
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				jitter	0.006						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				artifact_bytes	36944						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_bytes	42828						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna				emit_code_bytes	26407						
+compile	alt-foo-tails			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	87762485.000000	5					
+compile	alt-foo-tails			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.007						
+compile	alt-foo-tails			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	33120						
+compile	alt-foo-tails			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	23960						
+compile	alt-foo-tails			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	17149						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				engine	dfa						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				entry	plain entry						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				prefilter	-						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				vm_rungs	-						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				buffers	0 (DFA)						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				frame	0 (DFA)						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				dfa_prefilter_offsets	0*,1,2						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				dfa_match	unwrapped						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				dfa_scan_edge	range						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				scan_edges	0						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				scan_edges_match	1						
+compile_stamp						pcrec_9ae59f5d4_auto-caps-simdna				engine_sel	selected						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	83337756.000000	5					
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.013						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	33016						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	22026						
+compile	alt-foo-tails			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16764						
+compile	ctrl-abc-dollar			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	79058703.000000	5					
+compile	ctrl-abc-dollar			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.005						
+compile	ctrl-abc-dollar			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32968						
+compile	ctrl-abc-dollar			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19131						
+compile	ctrl-abc-dollar			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15346						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	78533514.000000	5					
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.004						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19920						
+compile	ctrl-abc-dollar			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16030						
+compile	floor			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	77570479.000000	5					
+compile	floor			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.006						
+compile	floor			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28880						
+compile	floor			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	17994						
+compile	floor			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	14663						
+compile	floor			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	77262700.000000	5					
+compile	floor			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.004						
+compile	floor			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	floor			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19580						
+compile	floor			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16022						
+compile	lit-l10			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	80899331.000000	5					
+compile	lit-l10			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.008						
+compile	lit-l10			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l10			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	20708						
+compile	lit-l10			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15242						
+compile	lit-l10			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	79410635.000000	5					
+compile	lit-l10			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.010						
+compile	lit-l10			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l10			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	22473						
+compile	lit-l10			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16050						
+compile	lit-l16			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	83328891.000000	5					
+compile	lit-l16			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.011						
+compile	lit-l16			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l16			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	23797						
+compile	lit-l16			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15253						
+compile	lit-l16			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	80268312.000000	5					
+compile	lit-l16			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.006						
+compile	lit-l16			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l16			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	26395						
+compile	lit-l16			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16056						
+compile	lit-l2			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	82000859.000000	5					
+compile	lit-l2			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.010						
+compile	lit-l2			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l2			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	18550						
+compile	lit-l2			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15139						
+compile	lit-l2			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	81822001.000000	5					
+compile	lit-l2			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.006						
+compile	lit-l2			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l2			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19713						
+compile	lit-l2			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16025						
+compile	lit-l3			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	82845068.000000	5					
+compile	lit-l3			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.009						
+compile	lit-l3			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l3			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	18823						
+compile	lit-l3			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15294						
+compile	lit-l3			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	81126238.000000	5					
+compile	lit-l3			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.008						
+compile	lit-l3			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l3			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19918						
+compile	lit-l3			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16028						
+compile	lit-l31			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	88353719.000000	5					
+compile	lit-l31			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.007						
+compile	lit-l31			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	37072						
+compile	lit-l31			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	37862						
+compile	lit-l31			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16035						
+compile	lit-l31			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	82036094.000000	5					
+compile	lit-l31			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.004						
+compile	lit-l31			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	33016						
+compile	lit-l31			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	43058						
+compile	lit-l31			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16071						
+compile	lit-l4			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	80765650.000000	5					
+compile	lit-l4			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.004						
+compile	lit-l4			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28880						
+compile	lit-l4			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	18880						
+compile	lit-l4			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15171						
+compile	lit-l4			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	79012006.000000	5					
+compile	lit-l4			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.006						
+compile	lit-l4			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l4			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	20132						
+compile	lit-l4			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16032						
+compile	lit-l40			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	90690993.000000	5					
+compile	lit-l40			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.009						
+compile	lit-l40			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	41168						
+compile	lit-l40			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	49804						
+compile	lit-l40			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16042						
+compile	lit-l40			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	83502388.000000	5					
+compile	lit-l40			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.006						
+compile	lit-l40			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	37112						
+compile	lit-l40			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	57854						
+compile	lit-l40			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16079						
+compile	lit-l7			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	81570256.000000	5					
+compile	lit-l7			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.002						
+compile	lit-l7			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l7			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19721						
+compile	lit-l7			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15318						
+compile	lit-l7			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	79525603.000000	5					
+compile	lit-l7			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.005						
+compile	lit-l7			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l7			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	21101						
+compile	lit-l7			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16041						
+compile	lit-l8			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	80910412.000000	5					
+compile	lit-l8			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.007						
+compile	lit-l8			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	32976						
+compile	lit-l8			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	19936						
+compile	lit-l8			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	15195						
+compile	lit-l8			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	79483063.000000	5					
+compile	lit-l8			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.004						
+compile	lit-l8			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	28920						
+compile	lit-l8			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	21506						
+compile	lit-l8			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	16044						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	128463255.000000	5					
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.018						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	33096						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	36965						
+compile	wild-secrets-aws-access-key-id			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	29288						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	123819154.000000	5					
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.007						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	33040						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	38975						
+compile	wild-secrets-aws-access-key-id			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	30230						
+compile	wild-secrets-github-pat			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	251336545.000000	5					
+compile	wild-secrets-github-pat			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.018						
+compile	wild-secrets-github-pat			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	41200						
+compile	wild-secrets-github-pat			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	41877						
+compile	wild-secrets-github-pat			plain	same program	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	27019						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				median_total_ns	232783994.000000	5					
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				jitter	0.002						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				artifact_bytes	41152						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_bytes	42934						
+compile	wild-secrets-github-pat			whole-subject	separate artifact	pcrec_9ae59f5d4_auto-caps-simdna				emit_code_bytes	26513						
