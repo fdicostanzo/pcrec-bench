@@ -4418,7 +4418,18 @@ def test_kb16_query_never_opens_other_subbench_files():
     # only its files (and none of the far larger remainder) is the
     # clearest demonstration that the other subbenches' files were never
     # touched, and keeps this test's own I/O small.
-    target = min(by_subbench, key=lambda k: len(by_subbench[k]))
+    # Not a `substitution`-regime set: this query renders at the default
+    # SET grain, which refuses that regime (`--grain subst` reads it); the
+    # first bench/subst records (2026-10-25) were the store's fewest and
+    # turned this red. One header line per set decides it.
+    import json as _json
+
+    def _is_subst(sb):
+        with open(by_subbench[sb][0], encoding="utf-8") as fh:
+            head = _json.loads(fh.readline())
+        return "substitution" in (head["subbench"].get("regimes") or [])
+    target = min((sb for sb in by_subbench if not _is_subst(sb)),
+                 key=lambda k: len(by_subbench[k]))
     target_paths = set(by_subbench[target])
     other_paths = set(p for sb, ps in by_subbench.items() if sb != target
                       for p in ps)
