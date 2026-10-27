@@ -10,7 +10,7 @@ VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
 
-.PHONY: check-boxq-window check-wtprune wtprune trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
+.PHONY: check-boxq-window check-wtprune wtprune trend trend-snapshot trend-links trend-check check-trend check check-schema check-harness check-report check-interpret check-upstream check-tokcount deps help archive-inbox cc-gate-census viewer-data frontpage frontpage-check check-frontpage
 
 ## check-schema: validate the record schema, its examples and its sabotages
 #
@@ -81,7 +81,7 @@ check-schema:
 # It is a SMOKE SUITE, not a measurement: --trials 1 --iters 1, one regime,
 # --force-unquiet, and every record it writes is marked `synthetic`. Nothing
 # here may be read as a number.
-check: check-schema check-harness check-report check-interpret check-upstream check-frontpage check-trend check-wtprune check-boxq-window
+check: check-schema check-harness check-report check-interpret check-upstream check-tokcount check-frontpage check-trend check-wtprune check-boxq-window
 
 ## check-harness: the harness self-checks (tools/selfcheck.py)
 check-harness:
@@ -145,6 +145,16 @@ check-upstream:
 	@$(PYTHON) tools/tests/test_upstream.py
 	@echo
 	@$(PYTHON) tools/upstream.py check
+
+## check-tokcount: [B148] L2 -- the assist token counter's self-test
+## (tools/tests/test_tokcount.py: hand-counted C/C++/Rust/Python fixtures,
+## boilerplate exclusion, smuggling sabotages, fence errors, the ledger,
+## ub_map.h compiled) plus the committed assists.tsv against the counter.
+## Seconds; runs no engine.
+check-tokcount:
+	@echo "== check-tokcount =="
+	@$(PYTHON) tools/tests/test_tokcount.py
+	@$(PYTHON) tools/tokcount.py ledger-check
 
 ## deps: report what the harness needs and whether this box has it
 deps:
