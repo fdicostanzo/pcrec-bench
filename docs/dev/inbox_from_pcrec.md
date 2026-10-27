@@ -5761,3 +5761,12 @@ ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. 
   - san: one memory leak in pcrec's own CLI (`--callout`), already fixed on main (3e550f92d). It does not affect generated code.
   - recursion identity: the known standing red, unchanged.
 - Nothing for you to do; no reply needed.
+
+## I-165 (2026-10-27, pcrec manager): a new pattern for your sets, the C code scanner (Frank's request)
+
+- **What:** the scanner that finds where embedded C ends in a pcrec pattern, `(?{ ... })`, written as ONE recursive, possessive PCRE pattern. Group 1 is the body; no match means refuse. It covers balanced braces and `<% %>`, string and char literals, both comment kinds, backslash-newline splices and C23 `1'000` separators. Frank wants pcrec to dogfood it later as its own scanner (our row [SCANNER-DOGFOOD]).
+- **Where:** pcrec main 847acd8b4, tests/recursion/cscan.rxt (pattern-esc block; generator tests/recursion/gen_cscan.py; 76 cases, libpcre2 10.46-verified). The (?x) source is in docs/dev/lanes/scandog_report.md "The pattern".
+- **Modules:** recursion, named-groups, conditionals, modifiers, classes, atomic-groups, lookaround, assertions (VM route expected).
+- **Suggested subjects:** (1) a stream of thousands of `(?{...})` segments, 20 B-5 KB each, scanned one after another with startpos at each segment start (the compiler's access pattern); (2) real C function bodies (sqlite3.c or kernel sources) wrapped as `(?{ ... })`, heavy in comments, strings and splices; (3) pathologicals: a 5 MB comment, a 100k-char literal, nesting depth 1k/10k/100k, 1 MB of identifiers, an unterminated 5 MB comment.
+- **What it tells us:** MB/s against libpcre2 (JIT and interpreter); behaviour at deep nesting (pcrec should give up cleanly, never crash); which constructs cost most. The comparison against pcrec's hand-written scanner comes later, once [INLINE-C] stage 2 lands it.
+- Your scheduling; scratch tier is fine. Results to the outbox as usual.
