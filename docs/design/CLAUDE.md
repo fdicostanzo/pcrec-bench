@@ -754,20 +754,24 @@ docs/dev/'s append-only records.
   INSTALL MANIFEST for sd and ripgrep (section 9). DESIGN ONLY.
 
 - `unusual_set_v1.md` -- **[B148] the UNUSUAL-FEATURES set design, DRAFT
-  v0.1 (2026-10-27, lane b148des; inbox I-165/I-166, Frank's rulings in
-  plan.md's [B148] row)**: `bench/unusual@0.1`, realistic patterns whose
-  feature is recursion (pcrec's `cscan` C-segment scanner), callouts
-  (four pure-callee members, three arms twin/pass/real, one shared C body,
-  fire counts + standalone-callee calibration) or caller variables (three
-  members, the memoized escaped-recompile assist, declared value streams);
-  the NATIVE / ASSISTED / NOT-CAPABLE verdict per engine by a 300-token
-  assist budget with blinded authors and an idiomatic reviewer; the
-  deep-nesting default/ceiling arms with named give-ups; cscan's three
-  subject families (segment stream, sqlite3.c vendored / kernel optional
-  fetch, pathologicals); the oracles (libpcre2 + a reference scanner /
-  host references / python re); the schema v1.11 minimum (`call-stream`
-  regime, `match_row.stream`, `testee.assist`); scratch-first tiers at
-  pcrec 9ea9c4a76; lanes L0-L8 and twelve open questions. DESIGN ONLY.
+  v0.2 (2026-10-27, lane b148v2; v0.1 lane b148des, merged 1c20bd13)**:
+  `bench/unusual@0.1`, ten members -- recursion (pcrec's `cscan`, two WILD
+  members: pcre2pattern(3)'s balanced-paren pattern and a `(?(DEFINE)` JSON
+  validator whose source is OWED), callouts (four members, arms
+  twin/pass/real/pass-nofn, one shared `callees.o`, a return-code mapping
+  table, per-engine fire logs and callee shares; netstring ASSISTED on
+  libpcre2/Onig), vars (three members, the memoized escaped-recompile assist,
+  declared value streams); NATIVE / ASSISTED / NOT-CAPABLE by a 300-token
+  budget per (MEMBER, engine) with blinded authors, one `assist-v01` identity
+  token and an `unusual-<member>` capability token; deep nesting as two arms
+  (`default` read back, `deep` = a 1 GiB storage CAP on every engine, Q1),
+  a depth-of-failure table, Oniguruma's silent nest-level-20 declared, and a
+  per-method working-storage high-water; the `call-stream` regime with its
+  driver protocol (`--mode calls`), rule `v1.11-group`, schema v1.11 (X47-X53)
+  and reader treatment; oracles; lanes L0-L9 with Frank's fetch gates. Applies
+  the r9 panel (`../dev/reviews/2026-10-27-r9-unusual-set.md`, C1-C10 + Q1);
+  its change log maps each C to sections and lists the PROPOSED choices
+  P1-P14. DESIGN ONLY.
 
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
