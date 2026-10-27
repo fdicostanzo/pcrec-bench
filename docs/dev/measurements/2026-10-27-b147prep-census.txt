@@ -1,0 +1,85 @@
+# [B147] compile-only census, 9ae59f5d4 (abi 84) -> 614d45eb3 (abi 89), 1500 rows
+# every bench pattern x {plain, whole} x {auto-caps, auto-nocaps}; emitted WITH -fcomments,
+# --features all (-e utf8 on bench/utf8); arm = 614d45eb3 with -fno-scan-edge. Identity: v2/v3
+# (tools/program_identity.py); the abi-86 attribution rule respells string-literal escapes first.
+
+== verdicts (v3, per form) ==
+  plain  changed                31
+  plain  identical              672
+  plain  refusal-mover:old      2
+  plain  refused-both           45
+  whole  changed                13
+  whole  identical              691
+  whole  refusal-mover:old      2
+  whole  refused-both           44
+  v2 identical (all forms): 1363 of 1407 compiled-both
+
+== attribution of every non-identical, non-refused-both row ==
+  abi86-emit-bidi            6
+  abi87-scanedge-set         38
+  abi89-callout-compiles     4
+  UNATTRIBUTED               0
+
+== movers (set, pattern, config, form, attribution, signature, stamp moves, old->new bytes:code) ==
+  capability	tail-dotstar-txt	caps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	22662:15821 -> 23185:16344
+  capability	tail-dotstar-txt	caps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	23442:16489 -> 23865:16912
+  capability	tail-dotstar-txt	nocaps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	22662:15821 -> 23185:16344
+  capability	tail-dotstar-txt	nocaps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	23442:16489 -> 23865:16912
+  capability	tail-ext-lower-txt	caps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	19438:15352 -> 20248:16162
+  capability	tail-ext-lower-txt	caps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	20240:16035 -> 20934:16729
+  capability	tail-ext-lower-txt	nocaps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	19438:15352 -> 20248:16162
+  capability	tail-ext-lower-txt	nocaps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	20240:16035 -> 20934:16729
+  capability	tail-space-eol	caps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_match;rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	19109:15564 -> 25454:17492
+  capability	tail-space-eol	nocaps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_match;rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	19109:15564 -> 25454:17492
+  capability	wild-logparse-base10num-grok	caps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	35158:29372 -> 37117:29852
+  capability	wild-logparse-base10num-grok	nocaps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	35158:29372 -> 37117:29852
+  capability	wild-logparse-base10num-noatomic	caps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_search	RX_DFA_SCAN_EDGE	24893:17767 -> 26852:18247
+  capability	wild-logparse-base10num-noatomic	nocaps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_search	RX_DFA_SCAN_EDGE	24893:17767 -> 26852:18247
+  capability	wild-logparse-winpath-grok	caps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	38874:30390 -> 39365:30881
+  capability	wild-logparse-winpath-grok	nocaps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	38874:30390 -> 39365:30881
+  capability	wild-secrets-username-password-pair	caps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	553807:44540 -> 553912:44645
+  capability	wild-secrets-username-password-pair	nocaps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_search	RX_DFA_SCAN_EDGE	563141:20929 -> 563369:21144
+  capability	wild-secrets-username-password-pair	nocaps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match	RX_DFA_SCAN_EDGE	110027:17914 -> 110146:18020
+  capability	wild-datetime-datefinder-alternation	nocaps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	891958:22869 -> 898608:24528
+  capability	wild-codegrammar-json-number-extended	caps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_search	RX_DFA_SCAN_EDGE	24434:16112 -> 25939:17617
+  capability	wild-codegrammar-json-number-extended	caps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match	RX_DFA_SCAN_EDGE	21898:16536 -> 22450:17088
+  capability	wild-codegrammar-json-number-extended	nocaps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_search	RX_DFA_SCAN_EDGE	24434:16112 -> 25939:17617
+  capability	wild-codegrammar-json-number-extended	nocaps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match	RX_DFA_SCAN_EDGE	21898:16536 -> 22450:17088
+  subst	5b-mask-email	caps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search		25844:16804 -> 27753:17241
+  subst	5b-mask-email	caps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	20461:16062 -> 22616:16745
+  subst	5b-mask-email	nocaps	plain	abi87-scanedge-set	rx_reverse_is_stop;rx_search		25844:16804 -> 27753:17241
+  subst	5b-mask-email	nocaps	whole	abi87-scanedge-set	rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	20461:16062 -> 22616:16745
+  syntax	asr-k-uc	caps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	29439:25329 -> 31650:26068
+  syntax	asr-k-uc	nocaps	plain	abi87-scanedge-set	rx_forward_is_stop;rx_prefilter	RX_DFA_SCAN_EDGE	29439:25329 -> 31650:26068
+  syntax	cls-s-uc	caps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_reverse_is_stop;rx_	RX_DFA_SCAN_EDGE	32579:17120 -> 34084:18625
+  syntax	cls-s-uc	caps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match;rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	26556:16950 -> 27313:17707
+  syntax	cls-s-uc	nocaps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_reverse_is_stop;rx_	RX_DFA_SCAN_EDGE	32579:17120 -> 34084:18625
+  syntax	cls-s-uc	nocaps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match;rx_reverse_is_stop;rx_search	RX_DFA_SCAN_EDGE	26556:16950 -> 27313:17707
+  syntax	cls-range	caps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_search	RX_DFA_SCAN_EDGE	21448:16164 -> 25881:17652
+  syntax	cls-range	caps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match	RX_DFA_SCAN_EDGE	19895:16032 -> 21913:16577
+  syntax	cls-range	nocaps	plain	abi87-scanedge-set	rx_anchored_is_stop;rx_forward_is_stop;rx_match;rx_search	RX_DFA_SCAN_EDGE	21448:16164 -> 25881:17652
+  syntax	cls-range	nocaps	whole	abi87-scanedge-set	rx_anchored_is_stop;rx_match	RX_DFA_SCAN_EDGE	19895:16032 -> 21913:16577
+  syntax	grp-callout	caps	plain	abi89-callout-compiles	-	-	0 -> 24914:23391
+  syntax	grp-callout	caps	whole	abi89-callout-compiles	-	-	0 -> 25138:23615
+  syntax	grp-callout	nocaps	plain	abi89-callout-compiles	-	-	0 -> 24914:23391
+  syntax	grp-callout	nocaps	whole	abi89-callout-compiles	-	-	0 -> 25138:23615
+  syntax	esc-tab	caps	plain	abi86-emit-bidi	rx_ofsskip__body		20076:15193 -> 20074:15191
+  syntax	esc-tab	nocaps	plain	abi86-emit-bidi	rx_ofsskip__body		20076:15193 -> 20074:15191
+  syntax	esc-nl	caps	plain	abi86-emit-bidi	rx_ofsskip__body		20078:15195 -> 20076:15193
+  syntax	esc-nl	nocaps	plain	abi86-emit-bidi	rx_ofsskip__body		20078:15195 -> 20076:15193
+  syntax	esc-cr	caps	plain	abi86-emit-bidi	rx_ofsskip__body		20498:15244 -> 20494:15240
+  syntax	esc-cr	nocaps	plain	abi86-emit-bidi	rx_ofsskip__body		20498:15244 -> 20494:15240
+
+== size books (pcrec's OWN bytes, --warn-emit-bytes=1 probe) ==
+  v3-identical rows: emit_bytes delta histogram [(0, 1363)]
+  v3-identical rows: emit_code_bytes delta histogram [(0, 1363)]
+  abi86-emit-bidi: n=6, emit delta min -4 max -2, code delta min -4 max -2
+  abi87-scanedge-set: n=38, emit delta min 105 max 6650, code delta min 105 max 1928
+
+== abi 86 [EMIT-BIDI]: every artifact byte ASCII (the emits carry -fcomments) ==
+  old        files 1407, files with a byte > 127: 1407
+  new        files 1411, files with a byte > 127: 0
+  arm_noedge files 1411, files with a byte > 127: 0
+
+== abi 87 [SCANEDGE-SET]: scan-edge blocks (`SCAN EDGE:` markers) ==
+  compiled-both caps rows: 773 edge blocks old, 798 new; 18 rows GAIN edge blocks, 0 LOSE any
