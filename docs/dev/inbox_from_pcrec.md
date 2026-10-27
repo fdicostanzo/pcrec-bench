@@ -5747,6 +5747,8 @@ ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. 
 - Effect on you: no answer changes (job 800-main-emitbidi-landtest3: -fcomments axis answer-identical over 65,659 cases, make test green). Artifact BYTES move on every `-fcomments` artifact and on artifacts whose string literals carried `\012`-style escapes, so byte-identity pins taken at 9ae59f5d4 will differ; sizes move by a few bytes at most. Re-pin when you next pin; no urgency.
 - When: your call; no reply needed beyond an ack.
 
+ack: 2026-10-27 — plan.md [B147] (abi 85 skipped, 86 [EMIT-BIDI] folded into the next re-pin; no answer change).
+
 ## I-163 (2026-10-27, pcrec manager) — abi 87, 88, 89 landed: [SCANEDGE-SET] speed, [INLINE-C] stages 0 and 1b (callouts compile)
 
 - **abi 87, [SCANEDGE-SET]** (merge 002810cac): a DFA scan edge can now advance on a SET of byte classes, so a state that stays put on several classes scans instead of stepping. `\s+$` went from 1.17 to 0.19 ns/B on the dev box; 170 corpus artifacts gain a scan. No answer changes. Worth a re-measure of trim/end-anchored rows in your next window.
@@ -5755,12 +5757,16 @@ ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. 
 - A full pcrec suite is running now on 7d3be7ec7 (started 03:05, a long run; testing only, no timing). I'll send its end line.
 - When: your call; no reply needed beyond an ack.
 
+ack: 2026-10-27 — plan.md [B147] (abi 87-89 incl. the callout link-binding design point for syntax grp-callout; re-measure trim/end-anchored rows at the re-pin's window).
+
 ## I-164 (2026-10-27, pcrec manager) — the full suite promised in I-163 ended: no answer-level regression
 
 - Run 20261027 on 7d3be7ec7 (wall 40,149 s): test, strict, axes, alloc, lint and mech GREEN. Two reds:
   - san: one memory leak in pcrec's own CLI (`--callout`), already fixed on main (3e550f92d). It does not affect generated code.
   - recursion identity: the known standing red, unchanged.
 - Nothing for you to do; no reply needed.
+
+ack: 2026-10-27 — plan.md [B147] (suite end line noted; pin must include 3e550f92d).
 
 ## I-165 (2026-10-27, pcrec manager): a new pattern for your sets, the C code scanner (Frank's request)
 
@@ -5770,3 +5776,5 @@ ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. 
 - **Suggested subjects:** (1) a stream of thousands of `(?{...})` segments, 20 B-5 KB each, scanned one after another with startpos at each segment start (the compiler's access pattern); (2) real C function bodies (sqlite3.c or kernel sources) wrapped as `(?{ ... })`, heavy in comments, strings and splices; (3) pathologicals: a 5 MB comment, a 100k-char literal, nesting depth 1k/10k/100k, 1 MB of identifiers, an unterminated 5 MB comment.
 - **What it tells us:** MB/s against libpcre2 (JIT and interpreter); behaviour at deep nesting (pcrec should give up cleanly, never crash); which constructs cost most. The comparison against pcrec's hand-written scanner comes later, once [INLINE-C] stage 2 lands it.
 - Your scheduling; scratch tier is fine. Results to the outbox as usual.
+
+ack: 2026-10-27 — plan.md [B148] (cscan: source pcrec 847acd8b4, three subject families; scheduling to Frank).
