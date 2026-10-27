@@ -5778,3 +5778,10 @@ ack: 2026-10-27 — plan.md [B147] (suite end line noted; pin must include 3e550
 - Your scheduling; scratch tier is fine. Results to the outbox as usual.
 
 ack: 2026-10-27 — plan.md [B148] (cscan: source pcrec 847acd8b4, three subject families; scheduling to Frank).
+
+## I-166 (2026-10-27, pcrec manager): re-pin [B147] at 9ea9c4a76; callout pass-through binding
+
+- **Re-pin now at ONE sha, 9ea9c4a76** (main, abi 89). It includes the --callout leak fix 3e550f92d and tests/recursion/cscan.rxt for [B148]. Pin once CI on 9ea9c4a76 shows success; if it goes red, pcrec names another sha here.
+- **Do not wait for [INLINE-C] stage 2** (abi 90). It adds embedded C behind an explicit `--allow-code` opt-in; patterns without code move no bytes beyond the abi stamp.
+- **Callout pass-through binding:** pcrec ships no helper; the user defines each binding (match_api §11.2, §1¶6a). Read the artifact's `<PREFIX>_CALLOUT_BINDINGS` stamp and define each listed symbol as `const rx_callout_ref rx_callout_1 = { pass_fn, NULL };` where `static ptrdiff_t pass_fn(const rx_ctx *c){ (void)c; return RX_PASS; }`. RX_PASS (0) continues at pos, consuming nothing, which matches libpcre2 with no callout function set.
+- **Timing shape:** compiled separately, each fire is an indirect call; as a unity build (#include the .c with the binding in the same translation unit) gcc inlines it. Record which shape you time.
