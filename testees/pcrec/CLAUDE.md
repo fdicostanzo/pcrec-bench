@@ -677,6 +677,98 @@ steps, and records both in its report:
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
 
+## Re-pin at 614d45eb3 (abi 84 -> 89) — 2026-10-27, lane b147prep, inbox I-162 / I-163 / I-166 / I-167
+
+The WHOLE ROSTER re-pins. Canonical pin **614d45eb3** (abi 89, pcrec main; CI green
+on all three shards, I-167 — it replaces I-166's 9ea9c4a76, whose CI was red on a
+test-bookkeeping pin, no pcrec bug). `configs.toml` carries `also_pins =
+["9ae59f5d4"]`: the BEFORE of every one of the five abi steps 85-89 (85 is
+SKIPPED by pcrec, reserved for the memfn kit) and the cross-window control.
+**6b2dbd3e LEAVES the allowlist** by the b142 rule (a retained pin is the
+BEFORE of something the re-pin measures; it is the BEFORE of nothing here):
+its build stays on disk and `testee@6b2dbd3e` is refused BY NAME. NOTE for the
+manager: the NOT-RUN b142 night chains (`docs/dev/lanes/b142win_chain.sh`,
+`b142win3_chain.sh`, `b142night_runbook.md`) name `@6b2dbd3e` and plain testees; at
+this pin the plain names measure 614d45eb3 and the `@6b2dbd3e` entries are refused.
+ONE driver build serves both pins (shim.c / driver.c / timed.* UNTOUCHED).
+Report: docs/dev/lanes/b147prep_report.md; census
+docs/dev/measurements/2026-10-27-b147prep-census.txt (+ `.tsv`, 1,500 rows).
+
+1. **The shim floor STAYS 16; `struct rx_info` is BYTE-IDENTICAL to 9ae59f5d4's**
+   (637 chars, `check_b147_stamps`). Abi 86-89 add no field and no `rx_info` mirror.
+2. **abi 86 [EMIT-BIDI]: every artifact byte is ASCII.** Measured over the census
+   emits (all with `-fcomments`, the adapter's protocol token): 1,407 of 1,407
+   artifacts at 9ae59f5d4 carry a byte > 127 (pcrec's own em dashes in comment
+   prose), 0 of 1,411 at 614d45eb3. The pattern echo spells every non-printable
+   byte `\xNN` (`a<U+200E>b` -> `\xe2\x80\x8e`). **Comment-text probes survive**: the two
+   we grep (`[OPT-5] SCAN EDGE:`, `NO RESUME FRAME AT ALL`) are ASCII and found
+   at the new pin. String literals respell `\011 \012 \015` as `\t \n \r` (same
+   value): the six bench rows with a backslash escape in a literal (syntax
+   `esc-tab`/`esc-nl`/`esc-cr` x caps/nocaps, plain) change under program identity
+   v2 AND v3 while the program is the same (identical once the escapes are respelled
+   in the census's attribution rule), and `RX_VM_PROGRAM_BYTES` (a TEXT length)
+   moves with them (`key\tvalue` forced-VM 330 -> 326) — a stamp that moves with no
+   program change. Counted sizes -2..-4 B on those six rows, 0 elsewhere.
+3. **abi 87 [SCANEDGE-SET]: a scan edge advances on a SET of byte classes.** No
+   new stamp value (`RX_DFA_SCAN_EDGE` stays none/bitmap/range/mixed; the registry's
+   `scan-body` rows are byte-identical). Witness `\s+$`: 0 edges / `none` at
+   9ae59f5d4 -> 3 / `bitmap`, counted bytes 19,110 (code 15,565) -> 25,455
+   (17,493); `-fno-scan-edge` gives 19,111 (15,566) and the OLD PROGRAM (v3
+   identity) — the `.flags` denial digit is the +1. A one-class run
+   (`[ \t]+$`) is unmoved. Bench movers: 38 rows (13 patterns): capability `tail-dotstar-txt`,
+   `tail-ext-lower-txt`, `tail-space-eol`, `wild-logparse-base10num-grok`/
+   `-noatomic`, `wild-logparse-winpath-grok`, `wild-secrets-username-password-pair`,
+   `wild-datetime-datefinder-alternation`, `wild-codegrammar-json-number-extended`;
+   subst `5b-mask-email`; syntax `asr-k-uc`, `cls-s-uc`, `cls-range`; +105 B ..
+   +6,650 B counted. pcrec's "170 corpus artifacts" is pcrec's corpus; ours is 38
+   rows (13 patterns x forms x caps/nocaps); over the compiled-both `caps` rows the
+   edge-block count goes 773 -> 798 and 18 rows gain blocks, none lose any. **The
+   start-set denied arms move too**: with `-fno-start-set` the plain bounded skip
+   loop is back and abi 87 collapses its class run into an edge, so the b124 identity
+   arms ("denied == c4c70f2c") needed `-fno-scan-edge` added to still reproduce
+   c4c70f2c's executed code (5 witnesses; `check_b124_stamps`).
+4. **abi 88 [INLINE-C] stage 0**: comment-only — v3-identical, counted size 0 B on
+   all 1,363 identical rows.
+5. **abi 89 [INLINE-C] stage 1b: callouts COMPILE, and the artifact does not LINK
+   alone.** `ca(?C1)t` (bench/syntax `grp-callout`, the only callout pattern in the
+   sets) moves did-not-compile -> compiles on all four rows (caps/nocaps x
+   plain/whole; 24,914 B plain, 25,138 B whole). The artifact's HEADER carries
+   `RX_CALLOUTS` (sites the pattern NAMES) and `RX_CALLOUT_BINDINGS` (sorted,
+   distinct, comma-separated: four sites, three names -> `rx_callout_3,
+   rx_callout_foo`), declares `extern const rx_callout_ref <name>;`, routes to the
+   VM (`RX_ENGINE_WHY` `(?C1) at pattern offset 2`), takes no prefilter
+   (`prefilter-admit` gains a `callout` row, orders 5-11 renumber), and refuses
+   `--engine=dfa` and `-fprefilter` BY NAME. **The adapter supplies the binding**
+   (pcrec ships none; match_api.md 11.2-11.4, I-166): `callout_binding_source()`
+   writes `callout_binding.c` into the artifact's compile dir — `#include`s the
+   artifact header, one `static ptrdiff_t pb_callout_pass(const rx_ctx *)`
+   returning `RX_PASS` (0), one `const rx_callout_ref <name> = { pb_callout_pass,
+   NULL };` per listed symbol — and adds it to the SAME gcc/clang command as
+   shim.c: a SEPARATE translation unit, same compiler and flags, no LTO, so gcc
+   cannot inline the call (**the timed shape: one indirect call per fire**; a
+   unity build would inline it). A pattern with no callout stamp gets NO binding
+   unit. The record SAYS it: two declared engine_metadata keys,
+   `callout_bindings` (the stamp, text-read like `compound`) and
+   `callout_binding` = `separate-tu-pass` (present only where the first is).
+   libpcre2's side needs NO change: `pcre2-interp`/`pcre2-jit` run `ca(?C1)t` with
+   no callout function set, which is the pass-through's equivalent (asserted:
+   [2,5) over `xxcatyy`). `check_b147_stamps` (34 checks): the artifact alone has
+   `rx_callout_1` UNDEFINED in the `.so` (`nm -D`), with the unit DEFINED;
+   pcrec-auto / -vm / -nocaps / -vm-in answer 5 subjects exactly as the oracle;
+   `cat` records no binding.
+6. **Registries re-archived** (`list_*.tsv`, headers chained): axes 171/50 -> 172/50
+   (six descriptions lose their em dashes; `prefilter-admit` +`callout`), definitions
+   75 BYTE-IDENTICAL (the eighth pin running), limits 103 lines BYTE-IDENTICAL,
+   schema 77 -> 78 data rows (+`block callout`; the `# schema-rows:` count). No new axis, no new deny flag, no
+   new pinned testee.
+7. **Size books**: 0 B on all 1,363 v3-identical rows (pcrec's own `--warn-emit-bytes=1`
+   numbers) — no flat term this time; the movers above carry their own deltas.
+   Catalogue 3.21 (`[[pin_order]]` append), 114 sidecars regenerated. Targeted
+   re-aims in `tools/selfcheck.py`: the two-pin check (canonical 614d45eb3, also_pin
+   9ae59f5d4, 6b2dbd3e refused by name), `check_b142_stamps` names its own builds, the
+   `-fno-rev-end-onewalk` deny row (25,461 vs 22,589 B: the default arm now carries
+   abi 87's edges, the denied two-seed walk takes none), the b124 edge arm.
+
 ## Re-pin at 9ae59f5d4 (abi 76 -> 84) — 2026-10-25, lane b142prep, inbox I-154 / I-158 / I-159
 
 **Finding (b142fix, 2026-10-25): the compound's `compound` token was undeclared.** The first window's pinned sentinel cell was refused by validate.py (X15): on `wild-waf-crs-942360-concat-sqli`'s whole-subject form (a COMPOUND, `engine_metadata.compound = split`) the machine-level stamps read the token `compound` (counts -1; match_api.md 6.3.12, src/gen/stamp_kinds.c SK_MACHINE_STR/NUM), which METADATA_DECL's closed enums never listed. Fixed: `COMPOUND_MACHINE_ENUMS` (eight enums: dfa_scan, dfa_prefilter, dfa_scan_edge, dfa_start, dfa_match, dfa_table, req_why, vm_start_scan) gain `compound` (and `REGISTRY_OUTCOME_VALUES`); the three free-string pairs and two counts need no declaration change; `check_compound_iff` enforces the iff in `_check_agreement`. See docs/dev/lanes/b142fix_report.md.

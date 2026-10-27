@@ -364,6 +364,16 @@ iterator scaffold (no marker in the text) so the adapter reads pcrec's own numbe
 4 compound, 2 K128, 12 [FLAG-SPELL] — a no-abi change pcrec did not list); [M4-SUBST] confirmed not an abi event;
 catalogue 3.20; docs/dev/lanes/b142prep_report.md. NOT YET MEASURED at 9ae59f5d4: the first window (capability x pcrec-auto/
 nocaps per I-154 is the proposal's first tier).
+2026-10-27: [B147] (lane b147prep, inbox I-162/I-163/I-166/I-167) RE-PINNED the WHOLE roster to **614d45eb3 (abi 89)**,
+`also_pins` = `9ae59f5d4` (6b2dbd3e retired from the allowlist): FIVE abi steps 85-89 (85 skipped by pcrec) — [EMIT-BIDI]
+(every artifact byte ASCII; string literals respell `\011` as `\t`), [SCANEDGE-SET] (scan edges on byte-class SETS: 38 bench rows
+move, `-fno-scan-edge` restores the old program), [INLINE-C] stage 0 (comment-only) and stage 1b (CALLOUTS COMPILE: syntax
+`grp-callout` did-not-compile -> compiles, and the artifact does NOT LINK alone — the adapter now supplies a pass-through
+binding in a SEPARATE translation unit per match_api.md 11.2-11.4, recorded as engine_metadata `callout_bindings` +
+`callout_binding` = `separate-tu-pass`); `struct rx_info` UNCHANGED, shim floor STAYS 16; registries axes +1 row
+(`prefilter-admit` `callout`) · schema +1 (`block callout`) · limits/definitions byte-identical; census
+(docs/dev/measurements/2026-10-27-b147prep-census.txt): 1,363 identical / 44 changed / 0 unattributed, 4 refusal movers (the
+callout rows); catalogue 3.21; docs/dev/lanes/b147prep_report.md. NOT YET MEASURED at 614d45eb3.
 Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
@@ -515,7 +525,9 @@ bindings) live here, vendored or system, pinned either way.
   `pcrec-{auto,vm}-o{0,1,3,s}` ([B117], the compilee optimization-level
   axis, prep only), four `-utf8` pcrec siblings and the `align64loops`
   placement-twin pair ([B110]) since the count below was last stated —
-  at a pinned commit — **9ae59f5d4, abi 84** ([B142], 2026-10-25, lane
+  at a pinned commit — **614d45eb3, abi 89** ([B147], 2026-10-27, lane
+  b147prep, inbox I-167; `also_pins` 9ae59f5d4; testees/pcrec/CLAUDE.md "Re-pin at
+  614d45eb3"). Before it, **9ae59f5d4, abi 84** ([B142], 2026-10-25, lane
   b142prep, inbox I-159; `also_pins` 6b2dbd3e; testees/pcrec/CLAUDE.md "Re-pin at
   9ae59f5d4"). Before it, **6b2dbd3e, abi 76** ([B136], 2026-10-12, lane
   b136prep, inbox I-147/I-148; `also_pins` 00c97769 (abi 75) + b8337c33;

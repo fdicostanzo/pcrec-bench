@@ -5,8 +5,13 @@
 # identical; this one: BYTE-IDENTICAL again).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-9ae59f5d4/build/pcrec --list-schema
+#     build/pcrec-614d45eb3/build/pcrec --list-schema
 #
+# pcrec commit 614d45eb3eca3dc5d055a5e3e1ab16c28191b026 (rx_info.abi 89, read off a plain `abc` witness at this build),
+# archived 2026-10-27 by lane b147prep ([B147], inbox I-162/I-163/I-166/I-167): the pin
+# ADVANCED 9ae59f5d4 (abi 84) -> 614d45eb3 (abi 89). 77 -> 78 data rows: ONE row added, `block callout`
+# ([INLINE-C] stage 1b: the .rxt `callout` block, line format); the `# schema-rows:` count 77 -> 78.
+# PREVIOUS archiving (9ae59f5d4), from the header it carried:
 # pcrec commit 9ae59f5d432ca3664cff67958c1c68b0626d9380 (rx_info.abi 84, read off a plain `abc` witness at this build),
 # archived 2026-10-25 by lane b142prep ([B142], inbox I-159): the pin
 # ADVANCED 6b2dbd3e (abi 76) -> 9ae59f5d4 (abi 84). 79 -> 81 data rows: +2 `.rxt` grammar rows
@@ -118,6 +123,7 @@ block	gp	case	false	none	repeat		format	pcrec	1
 block	gu	case	false	none	repeat		format	pcrec	1
 block	var	qualified-line	false	none	repeat		format	all-readers	1
 block	var-unset	token	false	none	repeat		format	all-readers	1
+block	callout	line	false	none	repeat		format	pcrec	1
 block	tag	list	false	none	repeat	closed per-key	format	pcrec	23
 block	mc	case	false	none	repeat		format	none	23
 block	mg	case	false	none	repeat		format	none	23
@@ -167,6 +173,6 @@ subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never r
 pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
 config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
 ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
-# schema-rows: 77
+# schema-rows: 78
 # wave-built: 23
 # wave-reserved: 999
