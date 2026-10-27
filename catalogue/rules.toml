@@ -16,7 +16,7 @@
 # reviewer's approval line in the commit message naming the rule ids
 # reviewed (§8(6)).
 
-catalogue_version = "3.20"
+catalogue_version = "3.21"
 # Every bump regenerates every committed sidecar in the same commit
 # (§3.3). AMENDED 2026-09-19 (Frank, docs/design/predicate_audit_v1.md
 # §7 Q2): the unit of compatibility is whether emitted FACTS/VERDICTS
@@ -29,6 +29,13 @@ catalogue_version = "3.20"
 # template's wording, a link, a `legend` line, an `example`, a
 # `[[pin_order]]` append, an appended column. A field-text edit is an
 # INSTANCE of MINOR, not its definition.
+#
+# 3.21 (2026-10-27, lane b147prep, [B147], inbox I-162/I-163/I-166/I-167): MINOR, a
+# `[[pin_order]]` append only -- `614d45eb3` (abi 89: FIVE abi steps 85-89
+# from `9ae59f5d4`, abi 85 SKIPPED by pcrec -- [EMIT-BIDI] 86 (every artifact
+# byte ASCII), [SCANEDGE-SET] 87 (scan edges on byte-class SETS), [INLINE-C]
+# stage 0 88 (comment-only), [INLINE-C] stage 1b 89 (callouts compile)).
+# Adjacent with `9ae59f5d4`. No rule predicate/threshold/inputs/slots moved.
 #
 # 3.20 (2026-10-25, lane b142prep, [B142], inbox I-159): MINOR, a
 # `[[pin_order]]` append only -- `9ae59f5d4` (abi 84: EIGHT abi steps 77-84
@@ -310,7 +317,7 @@ pins   = ["8da6120", "692c2e8", "35e1ab1", "36d5963", "96e44c2",
           "8d716693", "b1885a83", "6ef76820", "ce658cb7", "02902356",
           "751b9c6d", "a32bc86e", "fc719ca4", "c4c70f2c",
           "60366d747", "255bcdd8", "a15fb77b", "7388f1c0", "b8337c33",
-          "00c97769", "6b2dbd3e", "9ae59f5d4"]
+          "00c97769", "6b2dbd3e", "9ae59f5d4", "614d45eb3"]
 
 # ===================================================== class R-STATUS ==
 

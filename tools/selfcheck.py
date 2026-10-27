@@ -7652,9 +7652,15 @@ DENY_CONTROLS = (
     # (the same pattern emitted as e.c reads 19,111 -> 22,584: the output
     # basename is inside the text; 6b2dbd3e: 22,476, +106 = the new stamp
     # lines); program identity is asserted in check_b142_stamps.
+    # [B147] (pin 614d45eb3, abi 87 [SCANEDGE-SET]): the DEFAULT arm now
+    # carries three scan-edge blocks on this pattern (19,116 -> 25,461, +6,345
+    # B; check_b147_stamps: `-fno-scan-edge` gives the old size back), and the
+    # denied two-seed walk takes none (22,589 unchanged), so the pair now
+    # reads default > denied: the row still separates the two forms, no longer
+    # as a pure one-walk size delta.
     ("emit_bytes: the [OPT-REVEND] B3 one-walk end mark denied",
      "rev-end-form", ("literal", b"\\s+$"), "",
-     {"emit_bytes": (19116, 22589)}, "deny", "default",
+     {"emit_bytes": (25461, 22589)}, "deny", "default",
      "-fno-rev-end-onewalk"),
 )
 
@@ -11685,6 +11691,17 @@ def check_b124_stamps():
                         (new_bin, flags + dflags + B135_START_DENIES, pat)])
                     id_ok = td is not None and td == to and tn != to
                     id_why += " (compiled .text; v2 spelling moved at abi 67)"
+                if not id_ok:
+                    # [B147] abi 87 [SCANEDGE-SET]: with the start-set hat
+                    # denied the plain bounded skip loop is back, and abi 87
+                    # now collapses ITS class run into an edge (the DFA
+                    # tables renumber) -- the denied arm reproduces
+                    # c4c70f2c's executed code only with the edge denied too.
+                    td2 = _b126_text_eq(tmp, "b124x%d" % i, [
+                        (new_bin, flags + dflags + B135_START_DENIES
+                         + ["-fno-scan-edge"], pat)])[0]
+                    id_ok = td2 is not None and td2 == to and tn != to
+                    id_why += "; or + -fno-scan-edge (abi 87 edges the denied arm)"
             if not id_ok:
                 miss.append("identity (%s) new=%s deny=%s"
                             % (id_why, (h_new or "-")[:12], (h_deny or "-")[:12]))
@@ -12558,9 +12575,9 @@ def check_b135s3_stamps():
 
 
 def check_b135_two_pin_window():
-    """[B135] the TWO-PIN WINDOW mechanism ([B142]: canonical 9ae59f5d4, the
-    one also_pin 6b2dbd3e; 00c97769 and b8337c33 left the allowlist and are
-    refused BY NAME): one process selects a15fb77b
+    """[B135] the TWO-PIN WINDOW mechanism ([B147]: canonical 614d45eb3, the
+    one also_pin 9ae59f5d4; 6b2dbd3e, 00c97769 and b8337c33 left the
+    allowlist and are refused BY NAME): one process selects a15fb77b
     (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
     keeps the canonical pin; the override is refused BY NAME when it names
     an undeclared pin; the two pins derive DISTINCT testee_ids (so their
@@ -12583,18 +12600,18 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "6b2dbd3e"
+        os.environ[env] = "9ae59f5d4"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("9ae59f5d4", "6b2dbd3e", "9ae59f5d4"):
+        if (canon, before, same) == ("614d45eb3", "9ae59f5d4", "614d45eb3"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
             bad("b135 two-pin: the override selects an also_pin",
                 "canonical %r, override %r, override==canonical %r"
                 % (canon, before, same))
-        for retired in ("b8337c33", "00c97769"):
+        for retired in ("b8337c33", "00c97769", "6b2dbd3e"):
             os.environ[env] = retired
             try:
                 adapter.pin()
@@ -12622,7 +12639,7 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "6b2dbd3e"), ("after", "9ae59f5d4")):
+        for tag, pin in (("before", "9ae59f5d4"), ("after", "614d45eb3")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
@@ -12631,9 +12648,9 @@ def check_b135_two_pin_window():
             if not blk.get("engine_commit", "").startswith(pin):
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "6b2dbd3e" in ids["before"] \
-                and "9ae59f5d4" in ids["after"] \
-                and ids["before"].replace("6b2dbd3e", "9ae59f5d4") == ids["after"]:
+        if ids["before"] != ids["after"] and "9ae59f5d4" in ids["before"] \
+                and "614d45eb3" in ids["after"] \
+                and ids["before"].replace("9ae59f5d4", "614d45eb3") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
@@ -12912,7 +12929,7 @@ def check_b142_stamps():
     mod = _pcrec_adapter_module()
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import program_identity as _pi
-    new, old = adapter.pin_binary(), _b136_bin("6b2dbd3e")
+    new, old = _b136_bin("9ae59f5d4"), _b136_bin("6b2dbd3e")
     if not old:
         bad("b142 stamps", "no build for 6b2dbd3e (pin.sh 6b2dbd3e first)")
         return
