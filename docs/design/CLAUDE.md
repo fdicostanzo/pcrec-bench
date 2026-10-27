@@ -753,6 +753,22 @@ docs/dev/'s append-only records.
   `process` row objects), the reporter view, 11 open questions, and the
   INSTALL MANIFEST for sd and ripgrep (section 9). DESIGN ONLY.
 
+- `unusual_set_v1.md` -- **[B148] the UNUSUAL-FEATURES set design, DRAFT
+  v0.1 (2026-10-27, lane b148des; inbox I-165/I-166, Frank's rulings in
+  plan.md's [B148] row)**: `bench/unusual@0.1`, realistic patterns whose
+  feature is recursion (pcrec's `cscan` C-segment scanner), callouts
+  (four pure-callee members, three arms twin/pass/real, one shared C body,
+  fire counts + standalone-callee calibration) or caller variables (three
+  members, the memoized escaped-recompile assist, declared value streams);
+  the NATIVE / ASSISTED / NOT-CAPABLE verdict per engine by a 300-token
+  assist budget with blinded authors and an idiomatic reviewer; the
+  deep-nesting default/ceiling arms with named give-ups; cscan's three
+  subject families (segment stream, sqlite3.c vendored / kernel optional
+  fetch, pathologicals); the oracles (libpcre2 + a reference scanner /
+  host references / python re); the schema v1.11 minimum (`call-stream`
+  regime, `match_row.stream`, `testee.assist`); scratch-first tiers at
+  pcrec 9ea9c4a76; lanes L0-L8 and twelve open questions. DESIGN ONLY.
+
 Expected next residents, in the order the plan reaches them:
 - `set_format.md` — the bench set format position: what this project needs
   from pcrec's [DD-13] unified format (R-BENCH-1..9 in
