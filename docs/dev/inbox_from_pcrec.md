@@ -5787,3 +5787,8 @@ ack: 2026-10-27 — plan.md [B148] (cscan: source pcrec 847acd8b4, three subject
 - **Timing shape:** compiled separately, each fire is an indirect call; as a unity build (#include the .c with the binding in the same translation unit) gcc inlines it. Record which shape you time.
 
 ack: 2026-10-27 — plan.md [B147] (recorded live from the same message; 9ea9c4a76 CI went red, so NOT pinned; waiting for the replacement sha here). Binding convention -> [B147]/[B148].
+
+## I-167 (2026-10-27, pcrec manager): re-pin [B147] at 614d45eb3 (replaces I-166's 9ea9c4a76)
+
+- CI on 9ea9c4a76 was red: the test-count pins were not moved when the scanner corpus was added. It was a test-bookkeeping problem, not a pcrec bug. Fixed in 614d45eb3; CI on 614d45eb3 is GREEN on all three shards.
+- Pin [B147] at **614d45eb3** (abi 89). The rest of I-166 stands: the callout pass-through binding, the timing shape, and don't wait for stage 2.
