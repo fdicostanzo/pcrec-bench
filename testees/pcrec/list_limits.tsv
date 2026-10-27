@@ -3,8 +3,13 @@
 # docs/spec/table_contract.md), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-9ae59f5d4/build/pcrec --list-limits
+#     build/pcrec-614d45eb3/build/pcrec --list-limits
 #
+# pcrec commit 614d45eb3eca3dc5d055a5e3e1ab16c28191b026 (rx_info.abi 89, read off a plain `abc` witness at this build),
+# archived 2026-10-27 by lane b147prep ([B147], inbox I-162/I-163/I-166/I-167): the pin
+# ADVANCED 9ae59f5d4 (abi 84) -> 614d45eb3 (abi 89). BYTE-IDENTICAL to the 9ae59f5d4 archive (diffed line
+# for line): no step 85-89 adds or moves a numeric limit.
+# PREVIOUS archiving (9ae59f5d4), from the header it carried:
 # pcrec commit 9ae59f5d432ca3664cff67958c1c68b0626d9380 (rx_info.abi 84, read off a plain `abc` witness at this build),
 # archived 2026-10-25 by lane b142prep ([B142], inbox I-159): the pin
 # ADVANCED 6b2dbd3e (abi 76) -> 9ae59f5d4 (abi 84). 73 -> 78 data rows: +5 rows

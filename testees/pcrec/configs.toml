@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "9ae59f5d4"
+pin = "614d45eb3"
 
 # [B135] A SECOND pin measurable in the same window. `pin` is the canonical
 # one; a process selects one of these with $PCRECBENCH_PCREC_PIN (adapter.py
@@ -95,7 +95,16 @@ pin = "9ae59f5d4"
 # disk, `testee@pin` for them is refused by name): the questions they
 # answered (I-147 ask 1, I-148's seam) closed with the b136 windows, and the
 # b142 census reads 6b2dbd3e as the one BEFORE.
-also_pins = ["6b2dbd3e"]
+# [B147] (2026-10-27): the canonical pin ADVANCED 9ae59f5d4 -> 614d45eb3 (abi
+# 89, the whole roster, inbox I-167) and the list became [9ae59f5d4]: it is
+# the BEFORE of every one of the five abi steps 85-89 (85 is skipped by pcrec)
+# and the cross-window control. 6b2dbd3e LEAVES the allowlist by the b142
+# rule (a retained pin is the BEFORE of something this re-pin measures; it is
+# the BEFORE of nothing here, its build stays on disk, `testee@6b2dbd3e` is
+# refused by name). NOTE for the manager: the NOT-RUN b142 night chains
+# (b142win_chain.sh, b142win3_chain.sh) name `@6b2dbd3e` and plain testees;
+# at this pin the plain names measure 614d45eb3.
+also_pins = ["9ae59f5d4"]
 
 [testees.pcrec-auto]
 engine_mode = "auto"

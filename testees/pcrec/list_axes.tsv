@@ -2,8 +2,16 @@
 # pin, archived VERBATIM (pcrec D35: stable name, verbatim output, a source
 # header). Everything below this header is the unmodified output of:
 #
-#     build/pcrec-9ae59f5d4/build/pcrec --list-axes
+#     build/pcrec-614d45eb3/build/pcrec --list-axes
 #
+# pcrec commit 614d45eb3eca3dc5d055a5e3e1ab16c28191b026 (rx_info.abi 89, read off a plain `abc` witness at this build),
+# archived 2026-10-27 by lane b147prep ([B147], inbox I-162/I-163/I-166/I-167): the pin
+# ADVANCED 9ae59f5d4 (abi 84) -> 614d45eb3 (abi 89). 171/50 -> 172/50 data rows (diffed line for line against
+# the 9ae59f5d4 output): SIX rows reworded ([EMIT-BIDI] abi 86: em dashes -> `--` in the `prefilter` 13,
+# `match` 2, `vm-anchor-bound` 3, `end-window` 2, `hyb-reseed` 1 and 3 descriptions) and ONE row added +
+# the later orders renumbered: `prefilter-admit` order 4 `callout` ([INLINE-C] stage 1b, abi 89: "a callout
+# pattern has no prefilter yet"); the old orders 4-10 are now 5-11. No new axis, no new deny flag.
+# PREVIOUS archiving (9ae59f5d4), from the header it carried:
 # pcrec commit 9ae59f5d432ca3664cff67958c1c68b0626d9380 (rx_info.abi 84, read off a plain `abc` witness at this build),
 # archived 2026-10-25 by lane b142prep ([B142], inbox I-159): the pin
 # ADVANCED 6b2dbd3e (abi 76) -> 9ae59f5d4 (abi 84, EIGHT abi steps 77-84); 6b2dbd3e
@@ -160,7 +168,7 @@ prefilter	9	memchr-bounded	list	RX_DFA_PREFILTER	memchr-bounded						forward sca
 prefilter	10	memchr	list	RX_DFA_PREFILTER	memchr						forward scan, one candidate byte
 prefilter	11	byte-class-bounded	list	RX_DFA_PREFILTER	byte-class-bounded						forward scan, several candidate bytes, under a $/\Z/\z view or a word-context accept
 prefilter	12	byte-class	list	RX_DFA_PREFILTER	byte-class						forward scan, several candidate bytes
-prefilter	13	none	list	RX_DFA_PREFILTER	none						always (fallback) — also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
+prefilter	13	none	list	RX_DFA_PREFILTER	none						always (fallback) -- also the reverse machine, and every case where the start state itself accepts (no skip is sound there)
 view	1	end+eol	list								both a \z view and a $/\Z view exist on this machine
 view	2	end	list								a \z view exists and no $/\Z view does
 view	3	eol	list								a $/\Z view exists and no \z view does
@@ -174,7 +182,7 @@ direction	1	forward	both								always — finds where a match ENDS
 direction	2	reverse	both								always — finds where that match BEGINS
 direction	3	anchored	both								always on a DFA artifact that selects the unwrapped match-here form ([ENG-ABS]) — finds where the match beginning at ctx->pos ends
 match	1	unwrapped	list	RX_DFA_MATCH	unwrapped	PCREC_NO_ANCHORED_DFA	17			-fno-anchored-dfa	the artifact's own ENG_UNANCH _match, and its anchored machine built inside the DFA caps ([ENG-ABS])
-match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) — ENG_ATTEMPT, an anchored machine over a cap, or the deny flag
+match	2	search-filter	list	RX_DFA_MATCH	search-filter						always (fallback) -- ENG_ATTEMPT, an anchored machine over a cap, or the deny flag
 match	3	nomatch	list	RX_DFA_MATCH	nomatch						always, where the body's locator proves there is no match at all (the empty engine): the match-here entry answers -1 at once, as every search entry answers 0
 scan-edge	1	scan-edge	list			PCREC_NO_SCAN_EDGE	21			-fno-scan-edge	per STATE: src/opt/scanedge.c found a maximal run of states differing only in how many bytes of ONE class have been counted, rooted here, and DELETED the run's interior from the table -- so this state's edge is mandatory, not an accelerator ([OPT-5])
 scan-edge	2	table-walk	list								always (fallback) -- this state counts nothing, or the axis is denied and the pass left every state where it was
@@ -233,9 +241,9 @@ run-overlap	3	bytes	predicate	RX_RUN_WORDS							per masked compare (fallback): 
 run-overlap	4	memcmp	predicate	RX_RUN_WORDS							per exact compare (fallback): one constant-length !memcmp, which gcc lowers to one load at L in {1, 2, 4, 8} and to a vector compare at L >= 16
 vm-anchor-bound	1	anchored	list	RX_VM_START	anchored	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative of the whole pattern begins with ^ (outside multiline) or \A, so only offset 0 can start a match and the attempt loop stops after one pass
 vm-anchor-bound	2	gstart	list	RX_VM_START	gstart	PCREC_NO_VM_ANCHOR_BOUND	28			-fno-vm-anchor-bound	per artifact on the VM route: every alternative begins with \G, so only the caller's own search_from can start a match and the attempt loop stops after one pass
-vm-anchor-bound	3	unanchored	list	RX_VM_START	unanchored						always (fallback) — nothing was proved about where a match begins, or the deny flag; the loop runs to subject_length as it always has
+vm-anchor-bound	3	unanchored	list	RX_VM_START	unanchored						always (fallback) -- nothing was proved about where a match begins, or the deny flag; the loop runs to subject_length as it always has
 end-window	1	window	list	RX_END_WINDOW		PCREC_NO_END_WINDOW	29			-fno-end-window	per artifact, both engines: every alternative ends in $/\Z/\z outside multiline AND pcrec_cwmax is finite, so a match can only BEGIN in the last maxw+eps bytes and both search entries raise search_from to there (eps is 1 for $/\Z's final-newline allowance, 0 for \z); the stamp carries the bound
-end-window	2	none	list	RX_END_WINDOW	none						always (fallback) — the pattern is not end-anchored, its width is unbounded, it contains \G (which reads the parameter the clamp would move), the encoding has non-boundary positions, or the deny flag
+end-window	2	none	list	RX_END_WINDOW	none						always (fallback) -- the pattern is not end-anchored, its width is unbounded, it contains \G (which reads the parameter the clamp would move), the encoding has non-boundary positions, or the deny flag
 req-byte	1	byte	predicate	RX_REQ_BYTE		PCREC_NO_REQ_BYTE	30			-fno-req-byte	per artifact, both engines: every match of the pattern must contain some literal byte (a bottom-up AST walk — concatenation unions, alternation intersects, a min-0 quantifier contributes nothing, a one-byte class is a singleton, a backreference/call/assertion is empty), so ONE memchr over [search_from, subject_length) answers NOMATCH for the whole call; the stamp carries the byte, the RIGHTMOST member like PCRE2's own LASTCODEUNIT
 req-byte	2	none	predicate	RX_REQ_BYTE	none						always (fallback) — no byte is necessary on every path (an alternation with no common literal, a caselessly folded literal, a nullable quantifier), or the deny flag
 req-run	1	run	predicate	RX_REQ_RUN		PCREC_NO_REQ_RUN	31			-fno-req-run	per artifact, both engines: every match of the pattern must contain a RUN of contiguous positions carrying at least 16 bits of information, each position a literal byte or (req-run-fold) a two-member cube such as a caseless letter (the same bottom-up walk as req-byte with a second accumulator — a concatenation joins the left factor's guaranteed suffix to the right factor's guaranteed prefix, an alternation keeps only its branches' common prefix and suffix, nothing is joined across a repeat's iterations), so one memchr for the run's rarest member plus one run compare per hit answers NOMATCH for the whole call where the byte alone could not; the stamp carries the run's bytes in lowercase hex and the scanned member's index
@@ -263,9 +271,9 @@ atomic-discharge	1	discharged	predicate			PCREC_NO_ATOMIC_DISCHARGE	12			-fno-at
 atomic-discharge	2	denied	predicate								always (fallback) — ENGINE-SELECTING: the A_ATOMIC node stays, which is DFA-excluding, so RX_ENGINE can move to "vm"
 ctx-node	1	ctx-node	predicate			PCREC_NO_CTX_NODE	35			-fno-ctx-node	the body is capture-free and assertion-free, its LANGUAGE is a set of single characters, and every member is one byte of the encoding (ucp_design.md §2.3)
 ctx-node	2	lookaround	predicate								always (fallback) — today's A_LOOK lowering: a VM sub-match
-hyb-reseed	1	exact	list	RX_VM_RESEED	exact						the prefilter answers for the pattern's own language (no cut, no lookaround, no count collapse — Vm.mrl_win), so nothing is gained: today's retry, the clamp recompute where an MRL clamp exists, else a step
+hyb-reseed	1	exact	list	RX_VM_RESEED	exact						the prefilter answers for the pattern's own language (no cut, no lookaround, no count collapse -- Vm.mrl_win), so nothing is gained: today's retry, the clamp recompute where an MRL clamp exists, else a step
 hyb-reseed	2	clamped	list	RX_VM_RESEED	clamped						an MRL clamp exists, so today's retry already re-seeds after every failed attempt: kept, because a step block would add attempts it skips (an answer could become a give-up) for a gain measured mixed
-hyb-reseed	3	anchored	list	RX_VM_RESEED	anchored						every match begins at one position (`^`, `\A`, `\G` — the start_anchor fact), so the attempt loop stops after its first attempt and no retry runs: today's retry, whose text is never reached
+hyb-reseed	3	anchored	list	RX_VM_RESEED	anchored						every match begins at one position (`^`, `\A`, `\G` -- the start_anchor fact), so the attempt loop stops after its first attempt and no retry runs: today's retry, whose text is never reached
 hyb-reseed	4	adaptive-dense	list	RX_VM_RESEED	adaptive-dense	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	the compile's byte-rate prior (the built-in default under -e byte, cardinality where the prior is NONE) puts the candidate scan's byte set at a mean gap under the class's calibrated crossover: adaptive, starting inside an armed step block
 hyb-reseed	5	adaptive	list	RX_VM_RESEED	adaptive	PCREC_NO_HYB_RESEED	37			-fno-hyb-reseed	always, on an over-approximating prefilter: adaptive, starting with a short step probation, then re-seed mode
 hyb-reseed	6	fixed	list	RX_VM_RESEED	fixed						always (fallback, the deny's landing row): today's retry
@@ -301,13 +309,14 @@ fallback	13	refuse	list								refuse the compile; asked on the arrivals: every;
 prefilter-admit	1	backref	list								decides the prefilter off; --emit-ir lists prefilter "no-backreference": the erased approximation is neither a sound superset nor the true span (S7); no flag changes this
 prefilter-admit	2	linked-call	list								decides the prefilter off; --emit-ir lists prefilter "no-linked-call": LINKED subroutine call -- erasing a call is a DIFFERENT language, not a superset (S8.2), and a call in a cycle has no finite inlining either; no flag changes this, and -fprefilter refuses. A SPLICED call is not a reason: its callee is inlined EXACTLY (S8.3, S6.3)
 prefilter-admit	3	var	list								decides the prefilter off; --emit-ir lists prefilter "no-variable": ${...} variable -- erasing a variable is not a superset (a${v}b with v = x matches axb, the erased ab does not), and its bytes do not exist until the call; no flag changes this, and -fprefilter refuses
-prefilter-admit	4	nullable-exact	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-exact": nullable exact language -- this pattern's own EXACT language matches the empty string, so the ordinary hybrid's forward+reverse DFA pair would admit a zero-length match at every position and could never dismiss one ([OPT-4.2], the general form of [OPT-4.1]'s rung-scoped decline; pcrec-bench O-10 measured 1.2-9.9x on the analogous collapsed shape). -fprefilter overrides this decline; -fno-prefilter already reaches the same artifact by a different door
-prefilter-admit	5	nullable-collapsed	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-collapsed": nullable collapsed language -- a ladder rung offered the count-collapsed prefilter ([OPT-4]) and it was DECLINED: every X{m,n} lowers as X{min(m,1),}, and this pattern's collapsed language matches the empty string, so the filter could never dismiss a position and would cost a scan it cannot win ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x). -fprefilter is do-or-die and is never silently dropped: on the size rung it OVERRIDES this decline, on the [SEL-1] rung it suppresses the rung itself and the compile refuses. -fprefilter-collapse does not override it
-prefilter-admit	6	overflow-drop	list								decides the prefilter off; --emit-ir lists prefilter "no-dfa-overflow": <cap> -- the auto-selected prefilter's own DFA build hit the cap --engine=dfa/-fprefilter refuse on; auto drops it instead of refusing (SEL-1)
-prefilter-admit	7	size-dropped	list								decides the prefilter off; --emit-ir lists prefilter "no-size-cap": size-cap ladder -- an emitted-size cap refused the artifact and the ladder's last rung ([PF-DROP]) dropped the VM hybrid's prefilter; the refused figures are <PREFIX>_VM_PREFILTER_WHY's. --size-cap=refuse refuses instead
-prefilter-admit	8	forced-on	list								decides the prefilter on
-prefilter-admit	9	forced-off	list								decides the prefilter off; --emit-ir lists prefilter "no-fno-prefilter": -fno-prefilter -- forced off; the VM scans from search_from itself
-prefilter-admit	10	default	list								hands the decision to the engine choice; --emit-ir lists prefilter "no-engine-vm": --engine=vm -- the VM scans from search_from itself (R21 E-6)
+prefilter-admit	4	callout	list								decides the prefilter off; --emit-ir lists prefilter "no-callout": callout site -- a callout pattern has no prefilter yet; no flag changes this, and -fprefilter refuses
+prefilter-admit	5	nullable-exact	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-exact": nullable exact language -- this pattern's own EXACT language matches the empty string, so the ordinary hybrid's forward+reverse DFA pair would admit a zero-length match at every position and could never dismiss one ([OPT-4.2], the general form of [OPT-4.1]'s rung-scoped decline; pcrec-bench O-10 measured 1.2-9.9x on the analogous collapsed shape). -fprefilter overrides this decline; -fno-prefilter already reaches the same artifact by a different door
+prefilter-admit	6	nullable-collapsed	list								decides the prefilter off; --emit-ir lists prefilter "no-nullable-collapsed": nullable collapsed language -- a ladder rung offered the count-collapsed prefilter ([OPT-4]) and it was DECLINED: every X{m,n} lowers as X{min(m,1),}, and this pattern's collapsed language matches the empty string, so the filter could never dismiss a position and would cost a scan it cannot win ([OPT-4.1]; pcrec-bench O-10 measured 1.2-9.9x). -fprefilter is do-or-die and is never silently dropped: on the size rung it OVERRIDES this decline, on the [SEL-1] rung it suppresses the rung itself and the compile refuses. -fprefilter-collapse does not override it
+prefilter-admit	7	overflow-drop	list								decides the prefilter off; --emit-ir lists prefilter "no-dfa-overflow": <cap> -- the auto-selected prefilter's own DFA build hit the cap --engine=dfa/-fprefilter refuse on; auto drops it instead of refusing (SEL-1)
+prefilter-admit	8	size-dropped	list								decides the prefilter off; --emit-ir lists prefilter "no-size-cap": size-cap ladder -- an emitted-size cap refused the artifact and the ladder's last rung ([PF-DROP]) dropped the VM hybrid's prefilter; the refused figures are <PREFIX>_VM_PREFILTER_WHY's. --size-cap=refuse refuses instead
+prefilter-admit	9	forced-on	list								decides the prefilter on
+prefilter-admit	10	forced-off	list								decides the prefilter off; --emit-ir lists prefilter "no-fno-prefilter": -fno-prefilter -- forced off; the VM scans from search_from itself
+prefilter-admit	11	default	list								hands the decision to the engine choice; --emit-ir lists prefilter "no-engine-vm": --engine=vm -- the VM scans from search_from itself (R21 E-6)
 #section memfn
 # pcrec-memory-functions' own option registry (memfn/src/options.def;
 # docs/spec/registry.md §6). NOT pcrec axes: each row is reached as
