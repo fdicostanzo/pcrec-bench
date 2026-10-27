@@ -12,5 +12,6 @@ cited by the design that uses them. Named `YYYY-MM-DD-<row>-<topic>.md`.
 | `2026-09-12-b42-rx-in-the-wild.md` | [B42] (a): sources of regexes in real use (rule sets, validators, log parsers, published corpora, benchmark suites) — licence, dialect, size, real-vs-contrived evidence, edge-case value, a shortlist |
 | `2026-09-12-b42-engine-landscape.md` | [B42] (a): the engine capability/option landscape for the [B7] roster (RE2, Rust regex, Vectorscan, Oniguruma, TRE, POSIX, pcre2 modes, pcrec) — unsupported constructs and how each reports them, match semantics, the space-vs-speed dials, what "compile time" is per engine |
 | `2026-09-12-b42-rxt-as-source.md` | [B42] (a): what building a set ON the .rxt format (pcrec DD-13) means — what .rxt carries, what a sub-bench needs beyond it, source-of-truth options and their R-BENCH-4 consequences |
+| `2026-10-27-b148-json-validator-source.md` | [B148]: the provenance of the wild member `wild-json-validate` -- Stack Overflow answer 3845829 (mario, CC BY-SA 4.0), fetched via the Stack Exchange API with Frank's approval; the verbatim PHP code block and the adapted pattern (PHP quoting undone), smoke-checked against libpcre2 10.46 |
 
 Maintenance: update this table when a note is added.
