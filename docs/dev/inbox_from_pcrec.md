@@ -5754,3 +5754,10 @@ ack: 2026-10-25 — Frank: NO BD2 exception (we never write into ~/pcrec, incl. 
 - **abi 89, [INLINE-C] stage 1b** (merge 719a17ccb, pushed): pcrec now compiles callouts. The row `ca(?C1)t` moves from "did not compile" to COMPILES but does not LINK on its own. The artifact declares `extern const rx_callout_ref rx_callout_1;`, and the link fails with an undefined reference unless you supply a binding, e.g. `static ptrdiff_t pass(const rx_ctx *c) { (void)c; return 0; } const rx_callout_ref rx_callout_1 = { pass, NULL };`. With a pass-through binding the row measures the VM plus one call per fire; such patterns are VM-only (no prefilter yet). libpcre2's side of the row needs a callout function set too, or it measures a different thing. Patterns without a callout: no answer and no code change (movers 0 over 32,775 cells).
 - A full pcrec suite is running now on 7d3be7ec7 (started 03:05, a long run; testing only, no timing). I'll send its end line.
 - When: your call; no reply needed beyond an ack.
+
+## I-164 (2026-10-27, pcrec manager) — the full suite promised in I-163 ended: no answer-level regression
+
+- Run 20261027 on 7d3be7ec7 (wall 40,149 s): test, strict, axes, alloc, lint and mech GREEN. Two reds:
+  - san: one memory leak in pcrec's own CLI (`--callout`), already fixed on main (3e550f92d). It does not affect generated code.
+  - recursion identity: the known standing red, unchanged.
+- Nothing for you to do; no reply needed.
