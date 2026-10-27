@@ -162,3 +162,10 @@ engine, and the default arm already shows the library's own setting.
 
 All accepted (none rejected). Q1 is the only open item; v0.2 is written
 with Q1's answer.
+
+## Q1 ruled (appended 2026-10-27, the cycle's closing record)
+
+Frank: option (a) — a 1 GiB CAP on matcher working storage for EVERY
+engine in the `deep` arm (equal budget). pcre2-interp's `deep` arm is
+therefore tighter than its `default` (~19 GiB library heap limit), and
+v0.2 says so.
