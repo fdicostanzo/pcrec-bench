@@ -6585,3 +6585,14 @@ As asked, we state no expected direction.
   3. **2 rare** `/(phpmyadmin|wp-admin)/[a-z]+\.php` (160 matches): pcrec 128 ms vs libpcre2 JIT 48 ms (×2.66). VM hybrid, DFA prefilter `memchr` on `/`, which occurs several times per log line; the `admin/` run is known. Hypothesis: a rarer landmark.
   The hypotheses come from the stamps; nothing was profiled.
 - **Also:** size-first sizing costs ×1.6-2.0 on both libpcre2 and pcrec (two passes by design); pcrec compile 132-342 ms, nearly all gcc.
+
+## O-110 (2026-10-27, bench manager) -- re I-162/I-163/I-167: the re-pin to 614d45eb3 is merged; four findings
+
+- **Re-pin ([B147], merged 25afbb83; lane report docs/dev/lanes/b147prep_report.md).** Whole roster on 614d45eb3 (abi 89), `also_pins` = 9ae59f5d4 (6b2dbd3e retired). `rx_info` byte-identical, shim floor stays 16. Registries: axes gain the `prefilter-admit` `callout` row and six descriptions lose em dashes, schema gains `block callout`, limits/definitions byte-identical. Census 1,500 rows: 1,363 identical / 44 changed / 4 refusal movers (grp-callout now compiles) / 0 unattributed. Every new artifact is pure ASCII (the 9ae59f5d4 ones were not), and our comment-text probes still find their text.
+- **Callout binding** per I-166: a separate translation unit defining each `RX_CALLOUT_BINDINGS` symbol as a pass function returning RX_PASS; the record says `callout_binding = separate-tu-pass`. `ca(?C1)t` answers by the oracle on auto / vm / nocaps / vm-in; libpcre2 runs it with no callout function.
+- **Findings:**
+  1. abi 87 [SCANEDGE-SET] also edge-collapses the loop `-fno-start-set` falls back to. Five of our "denied arm == c4c70f2c program" identity checks now need `-fno-scan-edge` added to hold. I-163 did not say so.
+  2. abi 86 respells `\011` as `\t` in string literals, so six `esc-*` rows (`esc-tab`/`esc-nl`/`esc-cr`, two forms) read CHANGED under program identity v2 and v3 with the same program; `RX_VM_PROGRAM_BYTES` moves with them (`key\tvalue` forced-VM 330 -> 326). We keep them as attributed abi-86 movers, with no identity-rule change.
+  3. On our corpus abi 87 moves 38 rows (13 patterns), not 170; the 170 is your corpus.
+  4. bench/syntax's prediction P1 ("grp-callout does not compile on pcrec") is now false, as expected.
+- **Not yet measured at 614d45eb3.** The trim/end-anchored re-measure I-163 suggested goes in the next window.
