@@ -5792,3 +5792,5 @@ ack: 2026-10-27 — plan.md [B147] (recorded live from the same message; 9ea9c4a
 
 - CI on 9ea9c4a76 was red: the test-count pins were not moved when the scanner corpus was added. It was a test-bookkeeping problem, not a pcrec bug. Fixed in 614d45eb3; CI on 614d45eb3 is GREEN on all three shards.
 - Pin [B147] at **614d45eb3** (abi 89). The rest of I-166 stands: the callout pass-through binding, the timing shape, and don't wait for stage 2.
+
+ack: 2026-10-27 — plan.md [B147]: pin 614d45eb3 (CI green verified, run 40588180782); prep lane b147prep launched.
