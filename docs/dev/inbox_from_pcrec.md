@@ -5785,3 +5785,5 @@ ack: 2026-10-27 — plan.md [B148] (cscan: source pcrec 847acd8b4, three subject
 - **Do not wait for [INLINE-C] stage 2** (abi 90). It adds embedded C behind an explicit `--allow-code` opt-in; patterns without code move no bytes beyond the abi stamp.
 - **Callout pass-through binding:** pcrec ships no helper; the user defines each binding (match_api §11.2, §1¶6a). Read the artifact's `<PREFIX>_CALLOUT_BINDINGS` stamp and define each listed symbol as `const rx_callout_ref rx_callout_1 = { pass_fn, NULL };` where `static ptrdiff_t pass_fn(const rx_ctx *c){ (void)c; return RX_PASS; }`. RX_PASS (0) continues at pos, consuming nothing, which matches libpcre2 with no callout function set.
 - **Timing shape:** compiled separately, each fire is an indirect call; as a unity build (#include the .c with the binding in the same translation unit) gcc inlines it. Record which shape you time.
+
+ack: 2026-10-27 — plan.md [B147] (recorded live from the same message; 9ea9c4a76 CI went red, so NOT pinned; waiting for the replacement sha here). Binding convention -> [B147]/[B148].
