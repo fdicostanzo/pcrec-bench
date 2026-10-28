@@ -4077,7 +4077,15 @@ def runtime_options(flags):
 
 
 def buffer_args(cfg):
-    """The driver's `--buffer-frames N --buffer-trail M`, or []."""
+    """The driver's `--buffer-frames N --buffer-trail M`, or []. [B148] L4:
+    a `deep` config's `buffer_bytes = B` -> `--buffer-bytes B` (the driver
+    splits it from the artifact's stamped sizes; driver.c's header)."""
+    if cfg.get("buffer_bytes"):
+        if buffer_capacities(cfg) is not None:
+            raise _ad.AdapterError(
+                "buffer_bytes and buffer_frames/buffer_trail are two "
+                "spellings of one buffer; a config gives one")
+        return ["--buffer-bytes", str(int(cfg["buffer_bytes"]))]
     caps = buffer_capacities(cfg)
     if caps is None:
         return []
@@ -4323,6 +4331,24 @@ class Adapter(_ad.Adapter):
     name = "pcrec"
 
     # ------------------------------------------------------- local vs pinned
+
+    calls_mode = True                                    # [B148] L4
+
+    def unusual_metadata_decl(self, testee_id):
+        """[B148] L4: `lim_storage_bytes` + `stream_anchor` + the 6.4 pair.
+        Every other pcrec limit (step_budget, work_budget, frame_capacity,
+        resume_frames/trail_frames, buffer_frames/buffer_trail) is already a
+        declared pair READ BACK from the artifact on every set."""
+        decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
+        decl["lim_storage_bytes"] = {
+            "type": "integer", "scope": "pattern",
+            "source": "driver.c --limits: buffer_frames x RESUME_FRAME_SIZE + "
+                      "buffer_trail x TRAIL_FRAME_SIZE (a caller buffer), else "
+                      "the stamped RESUME_FRAMES / TRAIL_FRAMES x their sizes",
+            "description": "bytes of matcher frame storage the call runs in "
+                           "(0 on a DFA artifact, which takes none)"}
+        decl.update(_ad.DEEP_MEM_DECL)
+        return decl
 
     def is_local(self, testee_id):
         return bool(_ad.Adapter.config(self, testee_id).get("local"))
@@ -4597,6 +4623,20 @@ class Adapter(_ad.Adapter):
                            % caps)
             runtime += [{"name": "buffer_frames", "value": caps[0]},
                         {"name": "buffer_trail", "value": caps[1]}]
+        if cfg.get("buffer_bytes"):
+            # [B148] L4: the deep arm's caller buffer, in BYTES (6.2)
+            buffer_note = ("; LIMITS ARM deep (lim-ceil1g, [B148] L4, "
+                           "unusual_set_v1.md 6.2): the _in entries with a "
+                           "caller buffer of %d B in total, split frames : "
+                           "trail = 1 : 4 from the artifact's stamped sizes, "
+                           "allocated once and NOT pre-touched; step and work "
+                           "budgets at INT64_MAX via pcrec's --step-budget/"
+                           "--work-budget (counters unbounded, storage "
+                           "capped, P10)" % int(cfg["buffer_bytes"]))
+            runtime += [{"name": "buffer_bytes",
+                         "value": int(cfg["buffer_bytes"])}]
+        if cfg.get("limits"):
+            runtime += [{"name": "limits", "value": cfg["limits"]}]
         # record_schema.md 6.2: where a testee is pinned to a VCS revision
         # rather than a release -- "which is pcrec ALWAYS" -- engine_commit
         # carries the 40-hex and engine_version a git-describe-shaped string,
@@ -4671,7 +4711,11 @@ class Adapter(_ad.Adapter):
                                      # calls) and so a different testee,
                                      # chartered LAST (append-only).
                                      "sizefirst" if cfg.get("subst_sizing")
-                                     == "first" else None)
+                                     == "first" else None,
+                                     # [B148] L4 the `deep` limits arm
+                                     # (unusual_set_v1.md 6.1), LAST.
+                                     "lim-" + cfg["limits"] if cfg.get("limits")
+                                     else None)
         if extra:
             block["config_extra"] = extra
         if local:
@@ -4689,7 +4733,8 @@ class Adapter(_ad.Adapter):
         self.binary_for(testee_id)
         build_driver(os.path.join(HERE, "driver.c"),
                      os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
-                     extra_sources=["timed_subst.c"])   # [B140]
+                     extra_sources=["timed_subst.c",   # [B140]
+                                    "timed_calls.c"])  # [B148] L4
 
     # -------------------------------------------------------------- compile
 
@@ -4722,12 +4767,13 @@ class Adapter(_ad.Adapter):
             return _ad.CompiledPattern({_ad.FORM_PLAIN: self._compile_one(
                 testee_id, pattern_id, _ad.FORM_PLAIN, pattern, trials,
                 workdir, subst=sub)})
+        limits = bool(options and options.get("limits"))   # [B148] L4
         forms = {}
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT,
                             _rec.whole_subject_text(pattern, requires_free_spacing))):
             forms[form] = self._compile_one(testee_id, pattern_id, form, text,
-                                            trials, workdir)
+                                            trials, workdir, limits=limits)
         return _ad.CompiledPattern(forms)
 
     def _subst_inputs(self, testee_id, pattern_id, workdir):
@@ -4754,13 +4800,14 @@ class Adapter(_ad.Adapter):
         return {"template": tpl, "extended": ext == "extended"}
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir, subst=None):
+                     workdir, subst=None, limits=False):
         import time
         cfg = self.config(testee_id)
         pcrec = self.binary_for(testee_id)
         drv = build_driver(os.path.join(HERE, "driver.c"),
                            os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
-                           extra_sources=["timed_subst.c"])   # [B140]
+                           extra_sources=["timed_subst.c",   # [B140]
+                                    "timed_calls.c"])  # [B148] L4
         # [B24]: the config decides the COMPILEE toolchain, falling back to
         # `$CC` and then gcc for a config that declares none (`config()`
         # resolves it; `effective_cc` is the one rule). The shim is compiled
@@ -4916,7 +4963,8 @@ class Adapter(_ad.Adapter):
             # The buffer options ride along so the load-only run's `info`
             # block -- which is where the compile row's engine_metadata comes
             # from -- says what the measuring runs will actually use.
-            out = run_driver([drv, "--lib", so, "--trial", str(t)] + bufargs,
+            out = run_driver([drv, "--lib", so, "--trial", str(t)] + bufargs
+                             + (["--limits"] if limits else []),   # [B148] L4
                              timeout=120, cwd=cdir)
             if out.returncode != 0:
                 # THE ABI FLOOR is a REFUSAL, not a crashed measurement.
@@ -4948,6 +4996,8 @@ class Adapter(_ad.Adapter):
                 forced = any(f.startswith("--engine=") and f != "--engine=auto"
                              for f in cfg.get("flags", []))
                 meta, engine_why = self._metadata(out.info, forced=forced)
+                if limits and "lim_storage_bytes" in out.info:     # [B148] L4
+                    meta["lim_storage_bytes"] = int(out.info["lim_storage_bytes"])
                 pairs, warn_line = emit_meta
                 meta.update(pairs)
                 if meta.get("callout_bindings"):
@@ -4971,7 +5021,8 @@ class Adapter(_ad.Adapter):
         handle = {"driver": drv, "lib": libs[0],
                   "artifact_c": first_art_c,
                   "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
-                  "buffer_args": bufargs}
+                  "buffer_args": bufargs,
+                  "stream_anchor": cfg.get("stream_anchor", "native")}  # [B148] L4
         if subst:
             # [B140] which sizing arm measure_subst drives; the compile
             # row's diagnostic says what the artifact is made of.
@@ -5717,6 +5768,10 @@ class Adapter(_ad.Adapter):
                 "--mode", REGIME_MODE[regime], "--iters", str(iters)]
         if regime == "throughput":
             argv.append("--find-all")
+        if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
+            argv.append("--anchor-explicit")          # [B148] L4
+        if handle.get("mem_pass"):
+            argv.append("--mem-pass")                 # [B148] L4, 6.4
         if handle.get("utf8_advance"):
             # [B77] U1: the character-boundary find-all advance (the
             # driver protocol, pcrecbench/adapters.py), set by the harness

@@ -170,6 +170,39 @@
  * The existing modes are not touched: nothing runs differently unless
  * --mode is `subst`, and the dlsym list above is unchanged (`pb_subst_all`
  * is looked up only in this mode).
+ *
+ * `--mode calls` ([B148] L4, docs/design/unusual_set_v1.md 7.1-7.3): a CALL
+ * STREAM -- one `<prefix>_search` (or `_search_in`) per declared call at the
+ * call's offset over the WHOLE subject (`\G` anchors there), replayed
+ * `--iters` times, each replay clocked separately and summed. The replay is
+ * timed_calls() in timed_calls.c (its own translation unit, BD16);
+ * run_calls() below loads the streams, spells the tokens after the clock and
+ * prints the `stream` line, naming the first give-up with pb_err_name()
+ * (testees/common/calls_io.h). `--anchor-explicit` uses `_match_caps` at the
+ * offset (7.1's O(segment) fallback).
+ *
+ * `--buffer-bytes B` ([B148] L4, 6.2's `deep` arm, `lim-ceil1g`): the `_in`
+ * entries with a caller buffer of B bytes in total, split as `--buffer-
+ * frames F --buffer-trail 4F` (the ratio of the pinned `-in` configs) with
+ * F = B / (resume_frame_size + 4 * trail_frame_size) from THIS artifact's
+ * stamped sizes, allocated ONCE and NOT pre-touched (6.2: pre-touching 1 GiB
+ * would be a measurement of its own; first-use page faults are inside
+ * iteration 1 and stated). The step/work budgets ride in the pcrec FLAGS
+ * (`--step-budget`/`--work-budget` at INT64_MAX, compiled into the artifact)
+ * and are read back by the existing `info step_budget/work_budget` lines.
+ *
+ * `--limits` ([B148] L4): `info lim_storage_bytes` -- the matcher storage
+ * the call runs in (the caller buffer's bytes, or the stamped default
+ * storage's resume_frames x resume_frame_size + trail_frames x
+ * trail_frame_size); every other limit is already an info line.
+ *
+ * `--mem-pass` ([B148] L4, 6.4, method `canary`): an UNTIMED pass instead of
+ * a measurement -- the caller buffer is filled with an 8-byte canary, each
+ * subject (each call, in calls mode) is run ONCE, and the highest byte
+ * written in each region is the high-water. Prints `mem<TAB>ID<TAB>BYTES
+ * <TAB>canary<TAB>MAXRSS_KB`. Needs a caller buffer (the stack-resident
+ * default storage has no region to scan; 6.4's frame-count fallback is not
+ * exposed by the shim -- stated in the lane report).
  */
 
 #define _GNU_SOURCE
@@ -185,8 +218,11 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <sys/resource.h>
+
 #include "timed.h"
 #include "timed_subst.h"
+#include "timed_calls.h"
 
 static int       (*pb_abi)(void);
 static int       (*pb_ncaps)(void);
@@ -519,6 +555,113 @@ static int run_subst(void *lib, const char *list_path, const struct subst_args *
     return 0;
 }
 
+/* ---------------------------------------- [B148] L4 deep arm + mem pass */
+
+/* The deep arm's caller buffer: posix_memalign WITHOUT the memset
+ * alloc_region does (6.2: never pre-touched). */
+static void *alloc_untouched(size_t align, size_t bytes) {
+    void *p = NULL;
+    if (align < sizeof(void *)) align = sizeof(void *);
+    if (posix_memalign(&p, align, bytes ? bytes : 1) != 0) return NULL;
+    return p;
+}
+
+#define CANARY 0xA5C3F00D5EEDBEEFULL
+static void canary_fill(void *p, size_t bytes) {
+    uint64_t *q = p;
+    for (size_t i = 0; i < bytes / 8; i++) q[i] = CANARY;
+}
+/* bytes from the region's start to one past the last 8-byte word that no
+ * longer holds the canary */
+static size_t canary_high(const void *p, size_t bytes) {
+    const uint64_t *q = p;
+    size_t n = bytes / 8;
+    while (n > 0 && q[n - 1] == CANARY) n--;
+    return n * 8;
+}
+
+static long maxrss_kb(void) {
+    struct rusage ru;
+    if (getrusage(RUSAGE_SELF, &ru) != 0) return -1;
+    return ru.ru_maxrss;
+}
+
+/* ---------------------------------------- run_calls: --mode calls ([B148]) */
+
+struct calls_args {
+    const char *tokens_dir;
+    int anchor_explicit, mem_pass;
+    long iters, subject_timeout, skip;
+};
+
+__attribute__((noinline))
+static int run_calls(const char *list_path, const struct calls_args *a) {
+    size_t nsub = 0;
+    struct calls_subject *subs = calls_load_list(list_path, &nsub);
+    if (!subs) return 2;
+    const int ncaps = pb_ncaps() > 0 ? pb_ncaps() : 1;
+    ptrdiff_t (*caps)[2] = malloc((size_t)ncaps * sizeof *caps);
+    if (!caps) { printf("error\tout of memory\n"); return 2; }
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+    size_t fbytes = buf_nframes * (size_t)(use_buffers ? pb_resume_frame_size() : 0);
+    size_t tbytes = buf_ntrail * (size_t)(use_buffers ? pb_trail_frame_size() : 0);
+    for (size_t i = (size_t)a->skip; i < nsub; i++) {
+        struct calls_subject *s = &subs[i];
+        struct call_res *res = calloc(s->ncalls, sizeof *res);
+        if (!res) { printf("error\tcannot allocate %zu call results\n", s->ncalls); return 2; }
+        volatile double elapsed = 0.0;
+        struct tcalls_in tin = {
+            .buf = s->buf, .len = s->len, .calls = s->calls, .ncalls = s->ncalls,
+            .iters = a->mem_pass ? 1 : a->iters, .anchored = a->anchor_explicit,
+            .has_g1 = ncaps >= 2, .caps = caps, .use_buffers = use_buffers,
+            .buf_frames = buf_frames, .buf_trail = buf_trail,
+            .buf_nframes = buf_nframes, .buf_ntrail = buf_ntrail,
+            .search = pb_search, .match_caps = pb_match_caps,
+            .search_in = pb_search_in, .match_caps_in = pb_match_caps_in,
+            .res = res,
+        };
+        struct tcalls_out tout = { 0, 0 };
+        if (a->mem_pass && use_buffers) {
+            canary_fill(buf_frames, fbytes);
+            canary_fill(buf_trail, tbytes);
+        }
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (a->subject_timeout > 0) alarm((unsigned)a->subject_timeout);
+            elapsed = timed_calls(&tin, &tout);
+            if (a->subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                   s->id, (long)tin.iters, (double)elapsed);
+            free(res);
+            continue;
+        }
+        if (a->mem_pass) {
+            printf("mem\t%s\t%zu\tcanary\t%ld\n", s->id,
+                   canary_high(buf_frames, fbytes) + canary_high(buf_trail, tbytes),
+                   maxrss_kb());
+            free(res);
+            continue;
+        }
+        size_t matched = 0;
+        int first_g = 0;
+        for (size_t k = 0; k < s->ncalls; k++) {
+            matched += res[k].kind == CALL_M;
+            if (res[k].kind == CALL_G && !first_g) first_g = res[k].code;
+        }
+        printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+               s->id, s->len, (long)tin.iters, (double)elapsed, matched);
+        calls_report(s->id, res, s->ncalls, ncaps >= 2, a->tokens_dir,
+                     first_g ? pb_err_name(first_g) : NULL);
+        free(res);
+    }
+    return 0;
+}
+
 #define SYM(name) do {                                            \
         *(void **)(&name) = dlsym(lib, #name);                    \
         if (!name) { printf("error\tdlsym %s: %s\n", #name,       \
@@ -548,6 +691,10 @@ int main(int argc, char **argv) {
     volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
     struct subst_args sargs;   /* [B140] --mode subst */
     memset(&sargs, 0, sizeof sargs);
+    struct calls_args cargs;   /* [B148] L4 --mode calls */
+    memset(&cargs, 0, sizeof cargs);
+    long long buffer_bytes = -1;
+    int limits = 0, mem_pass = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -563,6 +710,12 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--prime"))                           prime = 1;
         else if (!strcmp(a, "--buffer-frames") && i + 1 < argc)  buffer_frames = strtoll(argv[++i], NULL, 10);
         else if (!strcmp(a, "--buffer-trail") && i + 1 < argc)   buffer_trail = strtoll(argv[++i], NULL, 10);
+        /* [B148] L4 (header comment) */
+        else if (!strcmp(a, "--buffer-bytes") && i + 1 < argc)   buffer_bytes = strtoll(argv[++i], NULL, 10);
+        else if (!strcmp(a, "--tokens-dir") && i + 1 < argc)     cargs.tokens_dir = argv[++i];
+        else if (!strcmp(a, "--anchor-explicit"))                cargs.anchor_explicit = 1;
+        else if (!strcmp(a, "--limits"))                         limits = 1;
+        else if (!strcmp(a, "--mem-pass"))                       mem_pass = 1;
         /* [B140] the --mode subst arguments (header comment) */
         else if (!strcmp(a, "--template") && i + 1 < argc)       ++i;   /* baked in at compile */
         else if (!strcmp(a, "--subst-flags") && i + 1 < argc)    ++i;   /* ditto */
@@ -597,6 +750,25 @@ int main(int argc, char **argv) {
                    "caller buffer)\n");
             return 2;
         }
+    }
+    if (!strcmp(mode, "calls")) {
+        /* [B148] L4: no find-all loop, no prime pass, no find-all advance */
+        if (find_all) { printf("error\t--find-all has no meaning in --mode calls\n"); return 2; }
+        if (prime) { printf("error\t--prime has no meaning in --mode calls\n"); return 2; }
+        if (utf8_adv) { printf("error\t--utf8 has no meaning in --mode calls\n"); return 2; }
+    } else if (cargs.anchor_explicit) {
+        printf("error\t--anchor-explicit is a --mode calls flag\n");
+        return 2;
+    }
+    if (buffer_bytes >= 0 && (buffer_frames >= 0 || buffer_trail >= 0)) {
+        printf("error\t--buffer-bytes and --buffer-frames/--buffer-trail are "
+               "two spellings of one buffer; give one\n");
+        return 2;
+    }
+    if (buffer_bytes == 0) { printf("error\ta buffer of 0 bytes is not a buffer\n"); return 2; }
+    if (mem_pass && buffer_bytes < 0 && buffer_frames < 0) {
+        printf("error\t--mem-pass (method canary) needs a caller buffer\n");
+        return 2;
     }
     sargs.subject_timeout = subject_timeout;
     sargs.skip = skip;
@@ -996,6 +1168,34 @@ int main(int argc, char **argv) {
         printf("info\tbuffer_align\t%lld\n", pb_buffer_align());
     }
 
+    if (buffer_bytes > 0) {
+        /* [B148] L4: the deep arm's buffer, split from THIS artifact's
+         * stamped sizes (header comment); a DFA artifact (stamped 0) takes
+         * none, exactly as below. */
+        if (!pb_has_in_entries()) {
+            printf("error\t--buffer-bytes given but this artifact has no _in surface\n");
+            return 2;
+        }
+        long long fs = pb_resume_frame_size(), ts = pb_trail_frame_size();
+        if (fs <= 0 || ts <= 0) {
+            printf("info\tbuffer_inert\tstamped-size-0\n");
+        } else {
+            size_t align = (size_t)pb_buffer_align();
+            buf_nframes = (size_t)buffer_bytes / (size_t)(fs + 4 * ts);
+            buf_ntrail = 4 * buf_nframes;
+            buf_frames = alloc_untouched(align, buf_nframes * (size_t)fs);
+            buf_trail  = alloc_untouched(align, buf_ntrail * (size_t)ts);
+            if (!buf_frames || !buf_trail) {
+                printf("error\tcould not allocate the %lld-byte deep buffer\n",
+                       buffer_bytes);
+                return 2;
+            }
+            use_buffers = 1;
+            printf("info\tbuffer_frames\t%zu\n", buf_nframes);
+            printf("info\tbuffer_trail\t%zu\n", buf_ntrail);
+        }
+    }
+
     if (buffer_frames > 0) {
         if (!pb_has_in_entries()) {
             printf("error\t--buffer-frames/--buffer-trail given but this "
@@ -1026,9 +1226,28 @@ int main(int argc, char **argv) {
         }
     }
 
+    if (limits && pb_has_in_entries()) {             /* [B148] L4 */
+        long long st = use_buffers
+            ? (long long)(buf_nframes * (size_t)pb_resume_frame_size()
+                          + buf_ntrail * (size_t)pb_trail_frame_size())
+            : pb_resume_frames() * pb_resume_frame_size()
+              + pb_trail_frames() * pb_trail_frame_size();
+        printf("info\tlim_storage_bytes\t%lld\n", st);
+    }
+
     if (!list_path) { fflush(stdout); return 0; }   /* load-only run */
 
     if (!strcmp(mode, "subst")) return run_subst(lib, list_path, &sargs);   /* [B140] */
+
+    if (!strcmp(mode, "calls")) {                     /* [B148] L4 */
+        cargs.iters = iters;
+        cargs.subject_timeout = subject_timeout;
+        cargs.skip = skip;
+        cargs.mem_pass = mem_pass;
+        int rc = run_calls(list_path, &cargs);
+        fflush(stdout);
+        return rc;
+    }
 
     size_t nsub = 0;
     subject *subs = load_list(list_path, &nsub);
@@ -1060,7 +1279,7 @@ int main(int argc, char **argv) {
              * translation unit; see that file's header). Everything between
              * the two clock reads of a subject is there. */
             struct timed_in tin = {
-                .buf = s->buf, .len = s->len, .iters = iters,
+                .buf = s->buf, .len = s->len, .iters = mem_pass ? 1 : iters,
                 .prime = (int)prime, .anchored = anchored,
                 .find_all = find_all, .utf8_adv = utf8_adv, .ncaps = ncaps,
                 .caps = caps, .firstcaps = firstcaps,
@@ -1071,6 +1290,10 @@ int main(int argc, char **argv) {
                 .search_in = pb_search_in, .match_caps_in = pb_match_caps_in,
             };
             struct timed_out tout = { -1, -1, -1, 0 };
+            if (mem_pass && use_buffers) {           /* [B148] L4, 6.4 */
+                canary_fill(buf_frames, buf_nframes * (size_t)pb_resume_frame_size());
+                canary_fill(buf_trail, buf_ntrail * (size_t)pb_trail_frame_size());
+            }
             elapsed = timed_run(&tin, &tout);
             first_s = tout.first_s; first_e = tout.first_e;
             nmatch = tout.nmatch; giveup = tout.giveup;
@@ -1080,6 +1303,14 @@ int main(int argc, char **argv) {
         if (timed_out) {
             printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
                    s->id, (long)iters, (double)elapsed);
+            continue;
+        }
+        if (mem_pass) {                              /* [B148] L4, 6.4 */
+            printf("mem\t%s\t%zu\tcanary\t%ld\n", s->id,
+                   use_buffers
+                   ? canary_high(buf_frames, buf_nframes * (size_t)pb_resume_frame_size())
+                     + canary_high(buf_trail, buf_ntrail * (size_t)pb_trail_frame_size())
+                   : 0, maxrss_kb());
             continue;
         }
 
