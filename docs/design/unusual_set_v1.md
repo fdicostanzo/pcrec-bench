@@ -674,7 +674,7 @@ it to `expectations_stream.tsv` and sets the outcome, as for X37.
 
 ### 7.5 Readers (S-4)
 
-- **Reporter:** a `--grain stream` view on the [B143] model
+- **Reporter** (BUILT, lane b148rep, `pcrecbench/report_stream.py`): a `--grain stream` view on the [B143] model
   (`pcrecbench/report_subst.py`): ns per stream, calls/s, segment MB/s,
   refused and miss counts, the callout cost split and shares (3.2), the
   depth-of-failure table (6.5), the break-even line (3.3); set grain REFUSES a

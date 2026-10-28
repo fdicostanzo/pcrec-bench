@@ -519,5 +519,21 @@ three `--grain subst` tests on hand-built `LoadedRecord`s
 unsupported/wrong first-class (md + TSV), compile table / tier gates / the
 standard grain's refusal. The version pin is v27.
 
+**[B148] rep addition (2026-10-28, lane b148rep; `--grain stream`)**: a NEW
+file, `test_report_stream.py` (9 tests, wired into `make check-report`),
+on hand-built schema-1.11 LoadedRecords: the cell reduction by hand
+(median/min/max, calls/s, MB/s, declared misses for the assisted testee
+only), the break-even arithmetic (and its `none` control), the callout
+split + share + the 20 % / 40 % flags against a synthetic calibration TSV
+(fires-differ suppresses `real - pass`), the depth table (limit named,
+`WRONG (excluded)`, rungs sorted by depth, an all-match stream rung is not
+a row), a gave-up stream cell naming its limit, the status / tier / two-host
+gates and the no-call-stream-record refusal, the set AND subject grains
+refusing a call-stream-only selection BY NAME (control: the stream view
+reads it), the two CLI flag refusals, and the three exporter skip-table
+controls run for real over `schema/examples`' v1.11 record (viewer export,
+trend digest, front page each yield no call-stream cell; a search record is
+the control). 117 reporter-side tests with `test_report.py`'s 108.
+
 Maintenance: update this file when files are added/removed or change
 role.
