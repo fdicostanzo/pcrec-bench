@@ -1,1 +1,4 @@
 member	feature	engine	language	tokens	lines	budget	verdict	assist_sha256	keying	container	counter_version	author_lane	reviewer_lane	reviewer_verdict
+cscan	recursion	rust	Rust	226	22	300	ASSISTED	f186b61b4d352a2714037036fe12a0224f93f72ea903934797f99a5bd738e094	none (compiled token regex only)	regex lazy-DFA caches inside the compiled Regex	tokcount-1	b148a-rec-rust		pending
+wild-sexp-balanced	recursion	rust	Rust	212	22	300	ASSISTED	447ce6fdc7e5f810bc30231f667e700570566551862937b847f41cbaa029f4ea	none (compiled paren regex only)	regex caches inside the compiled Regex	tokcount-1	b148a-rec-rust		pending
+wild-json-validate	recursion	rust	Rust	307	25	300	NOT-CAPABLE	4b1fe4f9078b961a678047cf87129d56925fd5d3eb817ad127df97b682c6fb84	none (compiled token regex only)	regex caches inside the compiled Regex	tokcount-1	b148a-rec-rust		pending
