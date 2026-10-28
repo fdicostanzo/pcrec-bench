@@ -131,6 +131,18 @@ Reading aid:
 | co-member-03 | `user=zed user=nick` | `m:9,18;14,18` | 2 |
 | co-member-10 | `user=mon` | `n` (a prefix of `mona` is not `mona`) | 1 |
 
+## 7a. The predicate is SHARED, not yours (manager ruling, 2026-10-28)
+
+Every engine, native or assisted, calls the SAME compiled predicate: the
+Luhn / ISBN-13 / membership functions declared in `bench/unusual/callees/callees.h`
+and built once into `callees.o` (unusual_set_v1.md C5: one shared C body). Your
+assist CALLS it, through a wrapper fenced as `wrappers` boilerplate
+(`assists/RULES.md`); you never reimplement it, and it is not counted, exactly as
+it is not counted for an engine with native callouts. What you write and what is
+counted is the glue: finding the candidates with your engine, handing each to
+the predicate, and turning the answers into the answer token. A wrapper that
+does more than forward its arguments is counted as smuggling.
+
 ## 8. Deliverable
 
 One source file per member (or one serving several) in your engine's binding
