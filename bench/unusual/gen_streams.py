@@ -60,8 +60,11 @@ def main(argv):
                    % (sid, len(data), subjgen.sha(data), n, refused, subjgen.sha(data) and __import__("pcrecbench.periodic", fromlist=["x"]).periodic_field(data),
                       n, segb, subjgen.sha(ctext), refused))
         for path, blob in ((os.path.join(HERE, "streams", sid + ".bin"), data), (os.path.join(HERE, "calls", sid + ".tsv"), ctext)):
-            if check:
-                if os.path.exists(path) and open(path, "rb").read() != blob:
+            # --check MATERIALIZES a missing stream (the files are generated and
+            # gitignored; the harness's generic gates run this --check before
+            # gen_expectations.py reads them) and compares a present one.
+            if check and os.path.exists(path):
+                if open(path, "rb").read() != blob:
                     sys.stderr.write("DIFF %s\n" % path)
                     bad += 1
             else:
