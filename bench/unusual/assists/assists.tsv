@@ -8,3 +8,6 @@ wild-json-validate	recursion	rust	Rust	307	25	300	NOT-CAPABLE	4b1fe4f9078b961a67
 cscan	recursion	vectorscan	C	755	48	300	NOT-CAPABLE	204613eea2189a0345f9fce71e9225bcf6c98ab95c05c115936a2ca535154d5e	none	none (stateless; host splice-skipping lexer, no engine call)	tokcount-1	b148a-rec-vs		pending
 wild-sexp-balanced	recursion	vectorscan	C	261	22	300	ASSISTED	b1a191d295c2f0a46a7adf76d9e9b18b7303b6e569e5b9de2756418cd634f29b	none	paren stack (size_t array grown to subject length); hs db + scratch	tokcount-1	b148a-rec-vs		pending
 wild-json-validate	recursion	vectorscan	C	469	53	300	NOT-CAPABLE	37d0459af17cfc963497095bc4b66cb8875c2e6464c5e389311738be602c4b11	none	container stack (char array grown to subject length); hs db + scratch	tokcount-1	b148a-rec-vs		pending
+co-luhn	callouts	re2	C++	202	15	300	ASSISTED	25380e2bea174bd2e80d041c494532af8cdfa1ac39463a77b5ff830469afca4f	none	none (stateless; compiled RE2 held in a global)	tokcount-1	b148a-co-re2		pending
+co-isbn	callouts	re2	C++	202	15	300	ASSISTED	f35f54e286fd7345fc0f8cd83cb10c13a10e3d9bc3a2208f8d3411f794c97414	none	none (stateless; compiled RE2 held in a global)	tokcount-1	b148a-co-re2		pending
+co-member	callouts	re2	C++	202	15	300	ASSISTED	8026428d47e54b7d8b788aafaf0166fe9a49f2b1bb67d206b6d15117ed15d0ea	none	none (stateless; compiled RE2 held in a global)	tokcount-1	b148a-co-re2		pending
