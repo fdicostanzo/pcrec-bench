@@ -1,9 +1,9 @@
-"""check_assist.py -- `make check-harness`'s slice for the ASSIST pipeline of
+"""check_assist.py -- `make check-unusual`'s slice for the ASSIST pipeline of
 bench/unusual ([B148] lane b148aw; docs/design/unusual_set_v1.md 5, 7.4):
 the templates, the runner, `pcrecbench assist-init` / `assist-selftest`, and
 the assisted configs (testees/assist/).
 
-Called from tools/selfcheck.py's main() as `check_assist.run(ok, bad)`. A
+Called from tools/check_unusual.py as `check_assist.run(ok, bad)` ([B148] L8: moved out of selfcheck.py's main()). A
 SMOKE: scratch records under build/, nothing printed is a number. The dummy
 assists live under build/check-assist/fx (`$PCRECBENCH_ASSISTS_DIR`), never
 under bench/unusual/assists/<member>/.

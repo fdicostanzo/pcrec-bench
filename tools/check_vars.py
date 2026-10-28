@@ -1,8 +1,8 @@
-"""check_vars.py -- `make check-harness`'s slice for the caller-VARIABLES
+"""check_vars.py -- `make check-unusual`'s slice for the caller-VARIABLES
 members of bench/unusual ([B148] L7, docs/design/unusual_set_v1.md 3.3, 7.1,
 8; review r9 C6).
 
-Called from tools/selfcheck.py's main() as `check_vars.run(ok, bad)` (the two
+Called from tools/check_unusual.py as `check_vars.run(ok, bad)` ([B148] L8: moved out of selfcheck.py's main()) (the two
 reporting callbacks selfcheck owns), shaped after tools/check_calls.py. A
 SMOKE: `--iters 1`, one trial, scratch records under build/, nothing printed
 is a number.

@@ -1,7 +1,7 @@
-"""check_callouts.py -- `make check-harness`'s slice for the unusual set's
+"""check_callouts.py -- `make check-unusual`'s slice for the unusual set's
 CALLOUT ARMS ([B148] L5, docs/design/unusual_set_v1.md 3.2, r9 C5/C9).
 
-Called from tools/selfcheck.py's main() as `check_callouts.run(ok, bad)`,
+Called from tools/check_unusual.py as `check_callouts.run(ok, bad)` ([B148] L8: moved out of selfcheck.py's main()),
 shaped after tools/check_calls.py. A SMOKE: one trial, iters 1, scratch
 records under build/, nothing printed is a number.
 

@@ -1,8 +1,8 @@
-"""check_calls.py -- `make check-harness`'s slice for the CALL-STREAM regime
+"""check_calls.py -- `make check-unusual`'s slice for the CALL-STREAM regime
 and the `deep` limits arms ([B148] L4, docs/design/unusual_set_v1.md 6.2-6.5,
 7.1-7.3).
 
-Called from tools/selfcheck.py's main() as `check_calls.run(ok, bad)` (the
+Called from tools/check_unusual.py as `check_calls.run(ok, bad)` ([B148] L8: moved out of selfcheck.py's main()) (the
 two reporting callbacks selfcheck owns), shaped after tools/check_subst.py:
 the slice's checks live beside nothing else. A SMOKE: `--iters 1`, one
 trial, scratch records under build/, nothing printed is a number.

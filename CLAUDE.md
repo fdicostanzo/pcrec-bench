@@ -1166,6 +1166,9 @@ store and reporter (BD4): `pyproject.toml` (compatibility ranges),
                         # (check_utf8_validate_once); bench/utf8's own
                         # re-derivation is ~34 s of check_expectations
                         # (~20 min; needs libpcre2-8-0 and a C compiler)
+    make check-unusual  # [B148] L8: bench/unusual's one entry point (tools/check_unusual.py): the assist
+                        # ledger vs the 3.0 table + file tree, check_set.py, and the calls/vars/callouts/assist
+                        # slices (moved out of check-harness); in `make check`; `--only SECTION`
     make check-interpret # 132 checks in six sections (~28 s; [B13.3]): the
                         # catalogue/code correspondence and every load-time
                         # check, the header known-key list DERIVED from
