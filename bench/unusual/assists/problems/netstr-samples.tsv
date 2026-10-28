@@ -1,0 +1,28 @@
+case	member	subject_hex	subject	expected	findall	fires_first	fires_all	note
+co-netstr-01	co-netstr	393a6772656574696e67732c	b'9:greetings,'	m:0,12;0,1	1	10	10	one
+co-netstr-02	co-netstr	7820303a2c	b'x 0:,'	m:2,5;2,3	1	1	1	empty-data
+co-netstr-03	co-netstr	323a61622c343a636465662c	b'2:ab,4:cdef,'	m:0,5;0,1	2	3	8	two-adjacent
+co-netstr-04	co-netstr	6c6f673a20373a7061796c6f61642c207461696c	b'log: 7:payload, tail'	m:5,15;5,6	1	8	8	after-prefix
+co-netstr-05	co-netstr	353a612c622c632c	b'5:a,b,c,'	m:0,8;0,1	1	6	6	comma-in-data
+co-netstr-06	co-netstr	353a6b3a763a772c	b'5:k:v:w,'	m:0,8;0,1	1	6	6	colon-in-data
+co-netstr-07	co-netstr	373a6c310a6c32007a2c	b'7:l1\nl2\x00z,'	m:0,10;0,1	1	8	8	newline-and-nul-in-data
+co-netstr-08	co-netstr	363a333a6162632c2c	b'6:3:abc,,'	m:0,9;0,1	1	7	7	data-looks-like-netstring
+co-netstr-09	co-netstr	393a313a782c323a797a2c2c	b'9:1:x,2:yz,,'	m:0,12;0,1	1	10	10	data-is-two-netstrings
+co-netstr-10	co-netstr	333a616263642c	b'3:abcd,'	n	0	4	4	length-too-short
+co-netstr-11	co-netstr	363a616263642c	b'6:abcd,'	n	0	6	6	length-too-long
+co-netstr-12	co-netstr	383a78797a2c	b'8:xyz,'	n	0	5	5	length-past-subject-end
+co-netstr-13	co-netstr	343a616263643b	b'4:abcd;'	n	0	0	0	wrong-terminator
+co-netstr-14	co-netstr	333a616263	b'3:abc'	n	0	0	0	missing-terminator
+co-netstr-15	co-netstr	31326162632c	b'12abc,'	n	0	0	0	no-colon
+co-netstr-16	co-netstr	3a6162632c	b':abc,'	n	0	0	0	no-digits
+co-netstr-17	co-netstr	303030353a68656c6c6f2c	b'0005:hello,'	m:0,11;0,4	1	6	6	leading-zeros
+co-netstr-18	co-netstr	3030303030303030323a68692c	b'000000002:hi,'	m:0,13;0,9	1	3	3	nine-digits
+co-netstr-19	co-netstr	303030303030303030323a68692c	b'0000000002:hi,'	m:1,14;1,10	1	3	3	ten-digits
+co-netstr-20	co-netstr	37373a353a776f726c642c	b'77:5:world,'	m:1,11;1,2	1	17	17	start-inside-digit-run
+co-netstr-21	co-netstr	3132333a78797a2c	b'123:xyz,'	m:2,8;2,3	1	14	14	start-inside-digit-run-2
+co-netstr-22	co-netstr	353a6162632c207468656e20343a676f6f642c	b'5:abc, then 4:good,'	m:12,19;12,13	1	11	11	bad-then-good
+co-netstr-23	co-netstr	3939393939393939393a323a6f6b2c	b'999999999:2:ok,'	m:10,15;10,11	1	57	57	huge-declared-then-good
+co-netstr-24	co-netstr	003230203b2020312c2c2c310020322079793b79330078782030783a7831	b'\x0020 ;  1,,,1\x00 2 yy;y3\x00xx 0x:x1'	n	0	0	0	junk-only
+co-netstr-25	co-netstr	003230203b2020312c2c2c310020322079793b79330078782030783a7831353a61667465722c	b'\x0020 ;  1,,,1\x00 2 yy;y3\x00xx 0x:x15:after,'	m:30,38;30,31	1	13	13	junk-then-netstring
+co-netstr-26	co-netstr		b''	n	0	0	0	empty-subject
+co-netstr-27	co-netstr	2b333a6162632c2033203a6162632c20333a6162632c	b'+3:abc, 3 :abc, 3:abc,'	m:1,7;1,2	2	4	8	signed-or-spaced-length
