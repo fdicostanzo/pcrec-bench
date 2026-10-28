@@ -256,7 +256,8 @@ class Deriver:
             if m.route == "netstr-native" or gave_up is False:
                 pass
             self.notes["fallback"] += 1 if gave_up else 0
-            self.fallbacks.append((m.id, regime, self.current_sid, gave_up))
+            if gave_up:
+                self.fallbacks.append((m.id, regime, self.current_sid, gave_up))
             return b
         if b is None:
             self.notes["unjudged"] += 1

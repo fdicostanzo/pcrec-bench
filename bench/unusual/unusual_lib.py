@@ -103,15 +103,16 @@ class _Logical:
     map is the identity (offset base) and costs nothing."""
     __slots__ = ("chars", "_pos", "base", "n")
 
-    def __init__(self, subject, start):
-        tail = subject[start:]
+    def __init__(self, subject, start, limit=None):
+        limit = len(subject) if limit is None else limit
+        tail = subject[start:limit]
         if b"\\\n" not in tail:
             self.chars, self._pos, self.base = tail, None, start
         else:
             import array
             chars = bytearray()
             pos = array.array("Q")
-            i, n = start, len(subject)
+            i, n = start, limit
             while i < n:
                 c = subject[i]
                 if c == 92 and i + 1 < n and subject[i + 1] == NL:
@@ -128,21 +129,22 @@ class _Logical:
         return self.base + i if self._pos is None else self._pos[i]
 
 
-def ref_scan(subject, start=0):
-    """-> (match_start, match_end, body_start, body_end) in ORIGINAL offsets,
-    or None (the refusal / no match). `subject` is bytes."""
-    n = len(subject)
-    if subject[start:start + 3] != b"(?{":
-        return None
-    # the opener is three literal bytes (no splice inside); the logical stream
-    # begins right after it.
-    lg = _Logical(subject, start + 3)
+_NEED = object()        # the window ended before the scan could decide
+
+
+def _scan(subject, start, limit):
+    more = limit < len(subject)              # bytes beyond the window exist
+
+    def eof():
+        return _NEED if more else None
+
+    lg = _Logical(subject, start + 3, limit)
     chars, m = lg.chars, lg.n
     i = 0
     depth = 1
     while True:
-        if i >= m:
-            return None                      # end of subject at depth > 0
+        if i >= m or (more and i >= m - 16):  # never decide within 16 bytes of a cut window
+            return eof()
         c = chars[i]
         nx = chars[i + 1] if i + 1 < m else -1
         if _is_idstart(c):                   # identifier (prefixes are plain text)
@@ -169,7 +171,7 @@ def ref_scan(subject, start=0):
             i += 1
             while True:
                 if i >= m:
-                    return None              # unterminated
+                    return eof()             # unterminated (or the window ended)
                 d = chars[i]
                 if d == q:
                     i += 1
@@ -177,7 +179,9 @@ def ref_scan(subject, start=0):
                 if d == NL:
                     return None              # choice 1: raw newline in a literal
                 if d == 92:
-                    if i + 1 >= m or chars[i + 1] == NL:
+                    if i + 1 >= m:
+                        return eof()
+                    if chars[i + 1] == NL:
                         return None
                     i += 2
                 else:
@@ -186,7 +190,7 @@ def ref_scan(subject, start=0):
         if c == 47 and nx == 42:             # block comment
             j = chars.find(b"*/", i + 2)
             if j < 0:
-                return None                  # unterminated comment
+                return eof()                 # unterminated comment
             i = j + 2
             continue
         if c == 47 and nx == 47:             # line comment (to the newline)
@@ -208,6 +212,22 @@ def ref_scan(subject, start=0):
                 return (start, lg.orig(j) + 1, start + 3, lg.orig(i))
             return None
         i += 1                               # everything else, one byte
+
+
+def ref_scan(subject, start=0):
+    """-> (match_start, match_end, body_start, body_end) in ORIGINAL offsets,
+    or None (the refusal / no match). `subject` is bytes. The scan works on a
+    window of the tail that grows 4x until the scan can decide, so a call costs
+    O(segment), never O(rest of the subject)."""
+    n = len(subject)
+    if subject[start:start + 3] != b"(?{":
+        return None
+    w = 4096
+    while True:
+        r = _scan(subject, start, min(n, start + 3 + w))
+        if r is not _NEED:
+            return r
+        w *= 4
 
 
 # --------------------------------------------------------------------------
