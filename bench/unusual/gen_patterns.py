@@ -42,6 +42,18 @@ VOCAB_REQUIRES = {"backrefs", "lookaround", "lookbehind-variable", "possessive-q
                   "span-reporting", "non-utf8-subject", "captures", "true-end-anchor"}
 
 
+# [B148] L7: the caller-VARIABLES capability (unusual_set_v1.md 3.3 / 5.5). pcrec
+# runs the vars members NATIVELY (`--features vars`, one compile + the per-call
+# `rx_var` array on the VM route, vars.md 7), so its non-DFA, byte-mode configs
+# declare `vars` and one `unusual-<member>` per vars member; every other roster
+# entry declares neither (the ASSISTED engines' verdicts are L6's, from their
+# authored assists). pcrec-dfa* / the -utf8 siblings are not on this roster.
+VARS_MEMBERS = ["va-tenant", "va-route", "va-term", "va-term-bang"]
+VARS_NATIVE = ["pcrec-auto", "pcrec-nocaps", "pcrec-vm", "pcrec-vm-in",
+               "pcrec-auto-deep", "pcrec-vm-deep"]
+VARS_TOKENS = ["vars"] + ["unusual-" + m for m in VARS_MEMBERS]
+
+
 def capability_blocks():
     """-> {testee_id: [token lines]} read from bench/capability/patterns.rxt."""
     out, cur = {}, None
@@ -72,7 +84,8 @@ def render_rxt():
         "  bench/capability/patterns.rxt's, so an engine fact is declared in one place",
         "  (gen_patterns.py --check). The `callouts` token is declared for libpcre2 only:",
         "  pcrec's callout binding and Oniguruma's `(?{N})` spelling are L5's to declare;",
-        "  the vars / unusual-<member> tokens are declared by L5/L7 (patterns carry them as requires-*).",
+        "  the `vars` + `unusual-va-*` tokens are declared for pcrec's native-vars configs only (L7);",
+        "  the callout `unusual-*` tokens are L5's (patterns carry them as requires-*).",
         "",
         "oracle pcre2",
         "tag set=unusual, version=0.1",
@@ -84,6 +97,9 @@ def render_rxt():
         for tok in blocks[src]:
             assert tok in VOCAB_REQUIRES, tok
             lines.append("    " + tok)
+        if t in VARS_NATIVE:                                  # [B148] L7
+            for tok in VARS_TOKENS:
+                lines.append("    " + tok)
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 

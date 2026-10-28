@@ -13940,7 +13940,7 @@ def check_abi_floor_refusal():
         # in `tmp`, so one -I serves both.
         drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
                            os.path.join(tmp, "pcrec_driver"), extra=["-ldl"],
-                           extra_sources=["timed_subst.c", "timed_calls.c"])  # [B140], [B148] L4
+                           extra_sources=["timed_subst.c", "timed_calls.c", "timed_calls_vars.c"])  # [B140], [B148] L4/L7
         shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
         results = {}
         for arm, csrc in (("real", art), ("sabotaged", sabotaged),

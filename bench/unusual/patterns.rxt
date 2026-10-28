@@ -5,7 +5,8 @@ description |
   bench/capability/patterns.rxt's, so an engine fact is declared in one place
   (gen_patterns.py --check). The `callouts` token is declared for libpcre2 only:
   pcrec's callout binding and Oniguruma's `(?{N})` spelling are L5's to declare;
-  the vars / unusual-<member> tokens are declared by L5/L7 (patterns carry them as requires-*).
+  the `vars` + `unusual-va-*` tokens are declared for pcrec's native-vars configs only (L7);
+  the callout `unusual-*` tokens are L5's (patterns carry them as requires-*).
 
 oracle pcre2
 tag set=unusual, version=0.1
@@ -61,6 +62,11 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities pcrec-nocaps
     backrefs
     lookaround
@@ -74,6 +80,11 @@ ext bench
     span-reporting
     non-utf8-subject
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities pcrec-vm
     backrefs
     lookaround
@@ -88,6 +99,11 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities pcrec-vm-in
     backrefs
     lookaround
@@ -102,6 +118,11 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities re2-default
     unicode-properties
     named-groups
@@ -188,6 +209,11 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities pcrec-vm-deep
     backrefs
     lookaround
@@ -202,6 +228,11 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    vars
+    unusual-va-tenant
+    unusual-va-route
+    unusual-va-term
+    unusual-va-term-bang
   capabilities onig-default-deep
     backrefs
     lookaround
