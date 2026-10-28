@@ -532,6 +532,11 @@ static int run_subst(void *code, const char *list_path, const struct subst_args 
  * the general context. A size header in front of each block, so free() knows
  * what it releases. Untimed by construction (the pass prints no SECONDS). */
 static size_t mem_live, mem_peak;
+/* The counting general context, also handed to pcre2_match_data_create: the
+ * interpreter's backtracking FRAMES live in the match data's heap vector and
+ * are allocated through ITS memctl (pcre2_match.c), not the match context's
+ * -- a match context alone counted 136 B on a 2,048-deep nest. */
+static void *mem_gctx;
 static void *count_malloc(size_t n, void *u) {
     (void)u;
     size_t *p = malloc(n + sizeof(size_t) * 2);
@@ -661,7 +666,7 @@ static int run_calls(void *code, const char *list_path, const struct calls_args 
     size_t nsub = 0;
     struct calls_subject *subs = calls_load_list(list_path, &nsub);
     if (!subs) return 2;
-    void *md = p_match_data_create_from_pattern(code, NULL);
+    void *md = p_match_data_create_from_pattern(code, mem_gctx);
     if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
     struct sigaction sa;
     memset(&sa, 0, sizeof sa);
@@ -941,6 +946,7 @@ int main(int argc, char **argv) {
         if (mem_pass && !jit) {
             if (!p_general_context_create) die("dlsym pcre2_general_context_create_8");
             gctx = p_general_context_create(count_malloc, count_free, NULL);
+            mem_gctx = gctx;
         }
         if (deep) {
             mctx = deep_context(jit, gctx, NULL, mem_pass);
@@ -998,7 +1004,7 @@ int main(int argc, char **argv) {
      * capture count "is therefore not advisable" for DFA -- a small fixed
      * oveccount instead (this driver only ever reads the first pair). */
     void *md = dfa ? p_match_data_create(16, NULL)
-                   : p_match_data_create_from_pattern(code, NULL);
+                   : p_match_data_create_from_pattern(code, mem_gctx);
     if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
     size_t *ov = p_get_ovector_pointer(md);
     uint32_t ovn = p_get_ovector_count(md);

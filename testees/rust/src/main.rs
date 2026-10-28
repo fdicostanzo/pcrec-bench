@@ -625,6 +625,13 @@ fn main() {
         }
     };
 
+    // [B148] L4: a calls-mode list has THREE columns; read by run_calls alone
+    if args.mode == "calls" {
+        run_calls(&args, &re, &list_path, iters, &mut lock);
+        io::stdout().flush().ok();
+        return;
+    }
+
     let subs = match load_list(&list_path) {
         Ok(v) => v,
         Err(e) => {
@@ -636,12 +643,6 @@ fn main() {
 
     if args.mode == "subst" {
         run_subst(&args, &re, subs, &mut lock);
-        io::stdout().flush().ok();
-        return;
-    }
-    if args.mode == "calls" {
-        drop(subs);
-        run_calls(&args, &re, &list_path, iters, &mut lock);
         io::stdout().flush().ok();
         return;
     }

@@ -299,6 +299,56 @@ int main(int argc, char **argv) {
         return 0;  // compile-only run
     }
 
+    // a calls-mode list has THREE columns: read by calls_load_list alone
+    if (!std::strcmp(mode, "calls")) {                       // [B148] L4
+        if (find_all || prime || utf8_adv) {
+            std::printf("error\t--mode calls refuses --find-all, --prime and --utf8\n");
+            return 2;
+        }
+        size_t ncs = 0;
+        struct calls_subject *cs = calls_load_list(list_path, &ncs);
+        if (!cs) return 2;
+        struct sigaction csa;
+        std::memset(&csa, 0, sizeof csa);
+        csa.sa_handler = on_alarm;
+        sigaction(SIGALRM, &csa, NULL);
+        const int has_g1 = re->NumberOfCapturingGroups() >= 1;
+        absl::string_view sm[2];
+        for (size_t i = (size_t)skip; i < ncs; i++) {
+            struct calls_subject *s = &cs[i];
+            struct call_res *res = (struct call_res *)std::calloc(s->ncalls, sizeof *res);
+            if (!res) { std::printf("error\tout of memory\n"); return 2; }
+            volatile double elapsed = 0.0;
+            struct tcalls_in tin = {};
+            tin.text = absl::string_view((const char *)s->buf, s->len);
+            tin.calls = s->calls; tin.ncalls = s->ncalls; tin.iters = iters;
+            tin.anchor = anchor_explicit ? RE2::ANCHOR_START : RE2::UNANCHORED;
+            tin.nsub = has_g1 ? 2 : 1; tin.re = re; tin.submatch = sm; tin.res = res;
+            struct tcalls_out tout = { 0, 0 };
+            timed_out = 0;
+            if (sigsetjmp(timeout_jmp, 1) == 0) {
+                if (subject_timeout > 0) alarm((unsigned)subject_timeout);
+                elapsed = timed_calls(&tin, &tout);
+                if (subject_timeout > 0) alarm(0);
+            }
+            if (timed_out) {
+                std::printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                            s->id, (long)iters, (double)elapsed);
+                std::free(res);
+                continue;
+            }
+            size_t matched = 0;
+            for (size_t k = 0; k < s->ncalls; k++) matched += res[k].kind == CALL_M;
+            std::printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+                        s->id, s->len, (long)iters, (double)elapsed, matched);
+            calls_report(s->id, res, s->ncalls, has_g1, tokens_dir, NULL);
+            std::free(res);
+        }
+        delete re;
+        std::fflush(stdout);
+        return 0;
+    }
+
     std::vector<Subject> subs;
     if (!load_list(list_path, &subs)) {
         std::printf("error\tcannot read subject list %s\n", list_path);
@@ -372,54 +422,6 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    if (!std::strcmp(mode, "calls")) {                       // [B148] L4
-        if (find_all || prime || utf8_adv) {
-            std::printf("error\t--mode calls refuses --find-all, --prime and --utf8\n");
-            return 2;
-        }
-        size_t ncs = 0;
-        struct calls_subject *cs = calls_load_list(list_path, &ncs);
-        if (!cs) return 2;
-        struct sigaction csa;
-        std::memset(&csa, 0, sizeof csa);
-        csa.sa_handler = on_alarm;
-        sigaction(SIGALRM, &csa, NULL);
-        const int has_g1 = re->NumberOfCapturingGroups() >= 1;
-        absl::string_view sm[2];
-        for (size_t i = (size_t)skip; i < ncs; i++) {
-            struct calls_subject *s = &cs[i];
-            struct call_res *res = (struct call_res *)std::calloc(s->ncalls, sizeof *res);
-            if (!res) { std::printf("error\tout of memory\n"); return 2; }
-            volatile double elapsed = 0.0;
-            struct tcalls_in tin = {};
-            tin.text = absl::string_view((const char *)s->buf, s->len);
-            tin.calls = s->calls; tin.ncalls = s->ncalls; tin.iters = iters;
-            tin.anchor = anchor_explicit ? RE2::ANCHOR_START : RE2::UNANCHORED;
-            tin.nsub = has_g1 ? 2 : 1; tin.re = re; tin.submatch = sm; tin.res = res;
-            struct tcalls_out tout = { 0, 0 };
-            timed_out = 0;
-            if (sigsetjmp(timeout_jmp, 1) == 0) {
-                if (subject_timeout > 0) alarm((unsigned)subject_timeout);
-                elapsed = timed_calls(&tin, &tout);
-                if (subject_timeout > 0) alarm(0);
-            }
-            if (timed_out) {
-                std::printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
-                            s->id, (long)iters, (double)elapsed);
-                std::free(res);
-                continue;
-            }
-            size_t matched = 0;
-            for (size_t k = 0; k < s->ncalls; k++) matched += res[k].kind == CALL_M;
-            std::printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
-                        s->id, s->len, (long)iters, (double)elapsed, matched);
-            calls_report(s->id, res, s->ncalls, has_g1, tokens_dir, NULL);
-            std::free(res);
-        }
-        delete re;
-        std::fflush(stdout);
-        return 0;
-    }
     if (anchor_explicit) {
         std::printf("error\t--anchor-explicit is a --mode calls flag\n");
         return 2;

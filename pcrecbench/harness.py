@@ -787,6 +787,9 @@ CALLS_MODE_REFUSAL = ("%s's driver does not speak `--mode calls` "
 CALLS_DROPPED_NOTE = ("the `call-stream` regime was not run: this testee's "
                       "driver does not speak `--mode calls` "
                       "(Adapter.supports_calls)")
+NO_STREAMS_REFUSAL = ("%s declares the `call-stream` regime but its manifests "
+                      "carry no stream subject (kind `stream`, a call list "
+                      "beside it): there is nothing to replay")
 UNUSUAL_ONLY_REFUSAL = ("%s is an unusual-set-only testee (config "
                         "unusual_only: a `deep` limits arm or an assisted "
                         "testee, docs/design/unusual_set_v1.md 6.2/7.3) and %s "
@@ -842,6 +845,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if cfg.get("unusual_only") and not unusual_set:
         # [B148] L4 (unusual_set_v1.md 7.3): the `subst_only` analogue.
         raise HarnessError(UNUSUAL_ONLY_REFUSAL % (testee_id, sb.id))
+    if "call-stream" in regimes and not sb.subjects_for("call-stream"):
+        raise HarnessError(NO_STREAMS_REFUSAL % sb.id)
     calls_dropped = False
     if "call-stream" in regimes and not adapter.supports_calls(testee_id):
         # Named explicitly: refused by name. Defaulted (the set's whole

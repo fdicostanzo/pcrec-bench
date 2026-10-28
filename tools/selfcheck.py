@@ -15003,11 +15003,15 @@ def check_call_stream_readers():
     skip `call-stream` BY NAME. `reduce.SET_GRAIN_SKIP_REGIMES` names it and
     `set_grain_rows` drops exactly those rows; the viewer exporter, the
     trend digest and the front page each read their cells through it (the
-    source is checked, since none of the three is run here); and the harness
-    refuses a `call-stream` cell BY NAME until lane L4's driver plumbing
-    lands (`harness.CALL_STREAM_PENDING`). CONTROL: a search row passes the
-    filter unchanged; `cells_from_record` itself still sees the stream row."""
-    print("-- the call-stream regime's skip table and the harness refusal --")
+    source is checked, since none of the three is run here). Since lane L4
+    landed (`harness.CALL_STREAM_PENDING` False) the pending arm is gone: a
+    set that DECLARES `call-stream` with no stream subject is refused BY NAME
+    (`harness.NO_STREAMS_REFUSAL`) -- it would otherwise write a record with
+    no stream row and no word why. The regime's own measurement, refusals and
+    limits are tools/check_calls.py (`check_calls_set`). CONTROL: a search
+    row passes the filter unchanged; `cells_from_record` itself still sees
+    the stream row."""
+    print("-- the call-stream regime's skip table and the no-stream refusal --")
     from pcrecbench import reduce as _rd, harness as _h, subbench as _sbm
     rows = [{"kind": "match", "regime": "call-stream", "pattern_id": "a"},
             {"kind": "match", "regime": "short-subject-search", "pattern_id": "b"},
@@ -15030,13 +15034,13 @@ def check_call_stream_readers():
         ok("readers: the sidecar spelling `call-stream` maps to the schema enum, mode `calls`")
     else:
         bad("readers: REGIME_TO_ENUM/REGIME_MODE lack call-stream")
-    # a set that DECLARES the regime (email with `call-stream` appended in
-    # memory -- no real set declares it before lane L3): the guard, not the
-    # "does not declare" check, must be what refuses
+    # a set that DECLARES the regime but has no stream subject (email with
+    # `call-stream` appended in memory): the no-stream guard, not the "does
+    # not declare" check, must be what refuses
     real_find = _sbm.find
 
-    def _find(name):
-        sb = real_find(name)
+    def _find(name, *a, **k):
+        sb = real_find(name, *a, **k)
         sb.regimes = list(sb.regimes) + ["call-stream"]
         return sb
     _sbm.find = _find
@@ -15047,9 +15051,10 @@ def check_call_stream_readers():
         bad("readers: a call-stream cell must be refused before measuring")
     except _h.HarnessError as e:
         msg = str(e)
-        if "`call-stream` regime" in msg and "L4" in msg:
-            ok("readers: a call-stream cell is refused BY NAME before anything is built",
-               "harness.CALL_STREAM_PENDING")
+        if "`call-stream` regime" in msg and "no stream subject" in msg \
+                and _h.CALL_STREAM_PENDING is False:
+            ok("readers: a call-stream regime with no stream subject is refused BY NAME",
+               "harness.NO_STREAMS_REFUSAL; CALL_STREAM_PENDING is False")
         else:
             bad("readers: refusal text", msg[:300])
     finally:
@@ -18910,6 +18915,16 @@ def check_unusual_gate_skips():
         bad("an unnamed gate keeps unusual", repr(kept))
 
 
+def check_calls_set():
+    """[B148] L4 the call-stream regime and the `deep` limits arms -- the
+    synthetic stream on every calls-capable testee against the oracle, the
+    refusals by name, bench/unusual's real streams through run_cell, every
+    engine's limits read back, the 6.4 high-water controls. Implemented in
+    tools/check_calls.py; see its docstring."""
+    import check_calls
+    check_calls.run(ok, bad)
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -19021,6 +19036,7 @@ def main():
     check_kb34_leading_verb_hoist()
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
+    check_calls_set()
     check_subst_gate_skips()
     check_unusual_gate_skips()
     check_pcre2_dfa()
