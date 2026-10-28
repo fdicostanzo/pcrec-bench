@@ -2968,7 +2968,7 @@ co-netstr	ns-junk-first	search_short	match	12	18	-	host-reference	10.46 2025-08-
 co-netstr	ns-no-comma	search_short	nomatch	-	-	-	host-reference	10.46 2025-08-27
 co-netstr	x-log	search_short	match	79	87	-	host-reference	10.46 2025-08-27
 co-netstr	x-plain	search_short	nomatch	-	-	-	host-reference	10.46 2025-08-27
-co-netstr	co-netstr-1m	throughput	match	0	52	14527	host-reference	10.46 2025-08-27
+co-netstr	co-netstr-1m	throughput	match	0	52	22547	host-reference	10.46 2025-08-27
 co-netstr-assist	cs-00	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-assist	cs-01	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-assist	cs-02	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3130,7 +3130,7 @@ co-netstr-assist	ns-junk-first	search_short	match	12	18	-	libpcre2-differential	
 co-netstr-assist	ns-no-comma	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-assist	x-log	search_short	match	79	87	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-assist	x-plain	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
-co-netstr-assist	co-netstr-1m	throughput	match	0	52	14527	libpcre2-differential	10.46 2025-08-27
+co-netstr-assist	co-netstr-1m	throughput	match	0	52	22547	libpcre2-differential	10.46 2025-08-27
 co-netstr-twin	cs-00	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-twin	cs-01	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-twin	cs-02	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
@@ -3292,7 +3292,7 @@ co-netstr-twin	ns-junk-first	search_short	match	12	14	-	libpcre2-differential	10
 co-netstr-twin	ns-no-comma	search_short	match	0	2	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-twin	x-log	search_short	match	79	81	-	libpcre2-differential	10.46 2025-08-27
 co-netstr-twin	x-plain	search_short	nomatch	-	-	-	libpcre2-differential	10.46 2025-08-27
-co-netstr-twin	co-netstr-1m	throughput	match	0	3	43084	libpcre2-differential	10.46 2025-08-27
+co-netstr-twin	co-netstr-1m	throughput	match	0	3	28742	libpcre2-differential	10.46 2025-08-27
 floor	cs-00	search_short	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 floor	cs-01	search_short	match	0	3	-	libpcre2-differential	10.46 2025-08-27
 floor	cs-02	search_short	match	0	3	-	libpcre2-differential	10.46 2025-08-27

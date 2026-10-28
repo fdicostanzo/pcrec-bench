@@ -28,4 +28,4 @@ js-near-1m	1000648	1754b46ff5439c7bff455e0548812f1472d1e0b77acd950c32102d1f5df6e
 co-luhn-1m	1000017	71fb0cb7a19d37ca7f158b85f44b64ce703afa84a4f0d7a2984557bb94d0f383	log-like lines with 13-24 digit numbers: 30% Luhn-valid, 30% invalid, rest noise	no
 co-isbn-1m	1000051	eb0af5c96e528fb09b961dad814fb0958d7fbb8bfb824bfa401c45bde6c24d4f	log-like lines with ISBN-13 candidates: valid, bad check digit, 10 digits, 15 digits	no
 co-member-1m	1000066	87aad1558cb2e44ed39747ff9302fd82109ab0c4a8f597828be3e13d8049e465	access-log lines with user=<name>: 40% members, 40% unknown, 20% upper-case	no
-co-netstr-1m	1000025	c706cd5a99af67002886374bc23e3478853b5111a5dfb84220458517acbe8c94	netstrings (70%), wrong-length netstrings (20%) and junk (10%)	no
+co-netstr-1m	1000025	417edc120e6991d65ee513a4419706f0b1f9f2e28c917291f4ba6ae25dc0dc2e	netstrings (70%), wrong-length netstrings (20%) and junk (10%)	no

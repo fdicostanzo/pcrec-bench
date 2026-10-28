@@ -387,7 +387,10 @@ def netstr_text(n, seed="netstr"):
     out = bytearray()
     while len(out) < n:
         k = rng.below(10)
-        data = bytes(rng.choice(b"abcdefghij ,:\n0123456789") for _ in range(rng.between(0, 60)))
+        # no ':' in a payload ([B148] 2026-10-28, Frank): a payload digit run followed by ':' was a
+        # false candidate declaring up to 999,999,999 bytes, and the assisted spelling's per-byte
+        # callout then walked to the subject's end (~11M fires on 1 MB, callee share > 40 %)
+        data = bytes(rng.choice(b"abcdefghij ,\n0123456789") for _ in range(rng.between(0, 60)))
         if k < 7:
             out += netstr(data)
         elif k < 9:

@@ -174,6 +174,12 @@ callee FAILing at every step -- O(n) per such candidate), its callee share
 real filter members sit at 2.6-19 % share on every engine (pcre2-jit 12-16 %,
 inside R2's 20 %).
 
+2026-10-28 (Frank: "make the subject fix", in place at 0.1 -- no record in store/ cites unusual@0.1):
+`co-netstr-1m`'s payload alphabet drops `:`, so a payload digit run can no longer pose as a
+header declaring up to 999,999,999 bytes. The libpcre2 interpreter's fire count for
+`co-netstr-assist` falls from 10,971,980 to 935,341 (0.94 per byte; 22,547 matches). The callee
+SHARE is not re-measured yet (tools/callout_calib.py, owed on a quiet box).
+
 ## 7. Checks
 
 `python3 -I bench/unusual/check_set.py` (fast) and `--full` (re-derives every expectation:
