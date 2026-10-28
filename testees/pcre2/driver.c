@@ -181,6 +181,24 @@ extern int (*timed_ctx_match)(void *, const unsigned char *, size_t, size_t,
 int timed_ctx_forward(void *, const unsigned char *, size_t, size_t, uint32_t,
                       void *, void *);
 
+#ifdef PB_CALLOUTS
+/* [B148] L5 the callout driver (`pcre2_driver_co`, built -DPB_CALLOUTS with
+ * callout_wrap.c, ../common/ub_bind.c and the ONE callees.o; the plain driver
+ * has none of this). `--callees SPEC` binds each `(?CN)` site to a shared
+ * callee (ub_bind.h) and installs callout_wrap.c's wrapper on the match
+ * context; `--no-callout-fn` builds the same match context with NO callout
+ * function (the `pass-nofn` arm: libpcre2 skips every callout point). Either
+ * way the timed call goes through timed_ctx.c's forwarder -- the same path
+ * as the deep arm -- so twin / pass / real / nofn differ only in the
+ * function installed and what it calls. All of it before any timed call. */
+#include "../common/ub_bind.h"
+struct pb_callout_block;
+extern size_t pb_co_ncap;
+int pb_pcre2_callout(struct pb_callout_block *, void *);
+static int (*p_set_callout)(void *, int (*)(struct pb_callout_block *, void *),
+                            void *);
+#endif
+
 /* ---- the hand-declared 8-bit ABI slice (pcrec tests/fuzz/pcre2_abi.h) ---- */
 
 typedef size_t PCRE2_SIZE;
@@ -755,6 +773,10 @@ int main(int argc, char **argv) {
     struct calls_args cargs;                       /* [B148] L4 --mode calls */
     memset(&cargs, 0, sizeof cargs);
     int deep = 0, limits = 0, mem_pass = 0;
+#ifdef PB_CALLOUTS
+    const char *callee_spec = NULL;                /* [B148] L5 */
+    int no_callout_fn = 0;
+#endif
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -783,6 +805,10 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--deep"))                      deep = 1;
         else if (!strcmp(a, "--limits"))                    limits = 1;
         else if (!strcmp(a, "--mem-pass"))                  mem_pass = 1;
+#ifdef PB_CALLOUTS
+        else if (!strcmp(a, "--callees") && i + 1 < argc)   callee_spec = argv[++i];
+        else if (!strcmp(a, "--no-callout-fn"))             no_callout_fn = 1;
+#endif
         /* [B140] the --mode subst arguments (header comment) */
         else if (!strcmp(a, "--template") && i + 1 < argc)  sargs.template_path = argv[++i];
         else if (!strcmp(a, "--out-dir") && i + 1 < argc)   sargs.out_dir = argv[++i];
@@ -856,6 +882,9 @@ int main(int argc, char **argv) {
     p_substitute = dlsym(lib, "pcre2_substitute_8");          /* [B140] */
     p_general_context_create = dlsym(lib, "pcre2_general_context_create_8");
     p_match_context_create = dlsym(lib, "pcre2_match_context_create_8");
+#ifdef PB_CALLOUTS
+    p_set_callout = dlsym(lib, "pcre2_set_callout_8");
+#endif
     p_set_match_limit = dlsym(lib, "pcre2_set_match_limit_8");
     p_set_depth_limit = dlsym(lib, "pcre2_set_depth_limit_8");
     p_set_heap_limit = dlsym(lib, "pcre2_set_heap_limit_8");
@@ -934,6 +963,9 @@ int main(int argc, char **argv) {
         if (jit && p_pattern_info(code, PCRE2_INFO_JITSIZE, &jsize) == 0)
             printf("info\tjit_size_bytes\t%zu\n", jsize);
         cargs.has_g1 = ncap >= 1;
+#ifdef PB_CALLOUTS
+        pb_co_ncap = (size_t)ncap + 1;
+#endif
     }
     if (limits && code) print_limits(code, jit, deep);   /* [B148] L4 */
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
@@ -973,6 +1005,23 @@ int main(int argc, char **argv) {
             if (st) p_jit_stack_assign(mctx, jit_stack_cb, st);
         }
     }
+#ifdef PB_CALLOUTS
+    /* [B148] L5: bind, then install (or, for pass-nofn, deliberately not) */
+    if (callee_spec && no_callout_fn) die("--callees and --no-callout-fn together");
+    if (!callee_spec && !no_callout_fn) die("the callout driver needs --callees or --no-callout-fn");
+    if (dfa) die("--dfa has no callout arm here (unusual_set_v1.md 3.2 names interp and jit)");
+    if (!p_set_callout || !p_match_context_create) die("dlsym pcre2_set_callout_8");
+    if (!mctx) mctx = p_match_context_create(NULL);
+    if (callee_spec) {
+        char err[256];
+        if (ub_bind_parse(callee_spec, err, sizeof err)) {
+            printf("error\t--callees: %s\n", err);
+            return 2;
+        }
+        p_set_callout(mctx, pb_pcre2_callout, NULL);
+    }
+    printf("info\tcallout_fn\t%s\n", callee_spec ? "on" : "off");
+#endif
 
     if (!strcmp(mode, "calls")) {                    /* [B148] L4 */
         cargs.iters = iters;

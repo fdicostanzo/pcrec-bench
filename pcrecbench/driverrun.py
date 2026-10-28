@@ -189,6 +189,12 @@ def build_driver(source, output, extra=None, cflags=None, extra_sources=None):
     if os.path.isdir(common):
         deps += [os.path.join(common, f) for f in sorted(os.listdir(common))
                  if f.endswith(".h")]
+    # [B148] L5: an `extra` entry that is a FILE (a callout driver's wrapper
+    # TU, the binding parser, the ONE callees.o) joins the staleness check;
+    # a flag (`-ldl`) is not a file and changes nothing.
+    deps += [e for e in (extra or []) if os.path.isfile(e)]
+    if any(os.path.basename(e) == "ub_bind.c" for e in (extra or [])):
+        deps += [os.path.join(common, "ub_bind.h")]
     argv = ([cc] + flags + ["-o", output, source] + timed + more
             + list(extra or []))
     # Registered even on the cached path: the record must state how the
@@ -224,11 +230,18 @@ def driver_build_provenance():
 def write_list(subjects, path):
     """The driver's `--list` file: `id<TAB>abspath` per line, no header.
     [B148] L4: a CALL-STREAM subject (one with `calls_path`) adds its call
-    list as a third column (`--mode calls`, adapters.py)."""
+    list as a third column (`--mode calls`, adapters.py); a VARS stream
+    ([B148] L7) adds its bindings table as a fourth."""
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         for s in subjects:
             cp = getattr(s, "calls_path", None)
-            if cp:
+            bp = getattr(s, "bindings_path", None)
+            if cp and bp:
+                # [B148] L7: a VARS stream adds its bindings table as a 4th
+                # column (adapters.py, "--mode calls")
+                f.write("%s\t%s\t%s\t%s\n" % (s.subject_id, os.path.abspath(s.path),
+                                               os.path.abspath(cp), os.path.abspath(bp)))
+            elif cp:
                 f.write("%s\t%s\t%s\n" % (s.subject_id, os.path.abspath(s.path),
                                           os.path.abspath(cp)))
             else:

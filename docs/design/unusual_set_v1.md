@@ -625,7 +625,10 @@ versioned by `schema_version`. Touches `reduce.py` (the
 
 - `--mode calls --calls FILE` where FILE is TSV `call_id offset length
   segment_bytes binding_id`; `--bindings FILE` (vars: `binding_id name
-  value_hex|UNSET`); `--callees SPEC` binding callout numbers to shared callees
+  value_hex|UNSET`; **as built by L7**: the bindings table is a FOURTH column of
+  the `--list` line, and its value is `hex | UNSET | EMPTY` -- a zero-length hex
+  field is not a TSV cell a reader can rely on; a vars call is one LINE matched
+  alone, line-relative offsets); `--callees SPEC` binding callout numbers to shared callees
   and `user` (`1=luhn,2=isbn13,3=member:values/users.tsv,4=netstr`, or
   `N=stub` for the `pass` arm); `--no-callout-fn` (`pass-nofn`, pcre2 only).
 - Output per trial: the usual timing lines plus one `stream calls= matched=

@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__)))))
 
 from pcrecbench import adapters as _ad          # noqa: E402
+from pcrecbench import callees as _co           # noqa: E402  [B148] L5
 from pcrecbench.driverrun import (build_driver, run_driver, per_trial,  # noqa: E402
                                    one_trial)
 
@@ -197,6 +198,7 @@ DEEP_BUILD_NOTE = ("; LIMITS ARM deep (lim-ceil1g, [B148] L4, "
 class Adapter(_ad.Adapter):
     name = "pcre2"
     calls_mode = True                                  # [B148] L4
+    native_callouts = True                             # [B148] L5
     giveup_names = dict(GAVE_UP_CODES)
 
     def mem_method(self, handle):
@@ -213,7 +215,27 @@ class Adapter(_ad.Adapter):
         decl.update({k: v for k, v in LIMITS_DECL.items()
                      if cfg.get("jit") or k != "lim_jit_stack_bytes"})
         decl.update(_ad.DEEP_MEM_DECL)
+        if not cfg.get("dfa"):
+            decl.update({k: v for k, v in _co.CALLOUT_DECL.items()
+                         if k != "callout_respell"})       # [B148] L5
         return decl
+
+    def prepare_co_driver(self, workdir, count=False):
+        """[B148] L5: the callout driver (driver.c -DPB_CALLOUTS + callout_wrap.c
+        + the binding parser + callees.o; `count` links the counting object
+        instead). -> (path, the callee object's sha256)."""
+        return _co.co_driver(
+            build_driver, os.path.join(HERE, "driver.c"),
+            os.path.join(workdir, "pcre2_driver_co" + ("_count" if count else "")),
+            ["-ldl"], ["timed_subst.c", "timed_calls.c", "timed_ctx.c"],
+            os.path.join(HERE, "callout_wrap.c"), count=count)
+
+    def fire_handle(self, handle):
+        """[B148] L5: the handle the untimed fire pass runs (the counting
+        driver), or None when this handle has no callout arm."""
+        if not handle.get("count_driver"):
+            return None
+        return dict(handle, driver=handle["count_driver"])
 
     # ------------------------------------------------------------- describe
 
@@ -379,6 +401,16 @@ class Adapter(_ad.Adapter):
         del requires_free_spacing
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
+        # [B148] L5: a callout arm of the unusual set compiles and runs on
+        # the callout driver (pcre2-dfa keeps the plain one: no arm, 3.2).
+        co = (options or {}).get("callouts") if not cfg.get("dfa") else None
+        co_args, co_meta, count_drv = [], {}, None
+        if co:
+            drv, sha = self.prepare_co_driver(workdir)
+            count_drv, _ = self.prepare_co_driver(workdir, count=True)
+            co_args = (["--callees", co["spec"]] if co["spec"]
+                       else ["--no-callout-fn"])
+            co_meta = _co.compile_metadata(co, sha)
         # per-PATTERN scratch: see Adapter.compile's docstring.
         pdir = os.path.join(workdir, "p-" + pattern_id)
         os.makedirs(pdir, exist_ok=True)
@@ -392,6 +424,7 @@ class Adapter(_ad.Adapter):
             argv.append("--dfa")
         if cfg.get("limits"):
             argv.append("--deep")                      # [B148] L4
+        argv += co_args                                # [B148] L5
         if options.get("limits"):
             argv.append("--limits")                    # [B148] L4
         utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
@@ -431,6 +464,7 @@ class Adapter(_ad.Adapter):
                                            if options.get("limits") else []):
             if name in out.info:
                 meta[name] = int(out.info[name])
+        meta.update(co_meta)                           # [B148] L5
         # The MEASURED set of libpcre2 resource-limit refusals travels with
         # the handle, so harness.classify_giveup needs no engine knowledge.
         # [B42] L6a: pcre2-dfa's handle carries its OWN wider code set
@@ -444,6 +478,8 @@ class Adapter(_ad.Adapter):
                   "utf": utf,
                   "deep": bool(cfg.get("limits")),         # [B148] L4
                   "stream_anchor": cfg.get("stream_anchor", "native"),
+                  "callout_args": co_args,             # [B148] L5
+                  "count_driver": count_drv,
                   "giveup_names": dict(GAVE_UP_CODES),
                   "giveup_codes": set(GAVE_UP_CODES_DFA if cfg.get("dfa")
                                       else GAVE_UP_CODES)}
@@ -500,6 +536,7 @@ class Adapter(_ad.Adapter):
             argv.append("--dfa")
         if handle.get("deep"):
             argv.append("--deep")                      # [B148] L4
+        argv += handle.get("callout_args") or []       # [B148] L5
         if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
             argv.append("--anchor-explicit")
         if handle.get("mem_pass"):

@@ -234,10 +234,14 @@ def run(ok, bad):
     # 3. the real streams through run_cell -----------------------------------
     store_root = os.path.join(WORK, "scratch-store")
     recs = {}
-    # one match row per stream subject: counted from the manifest, never a literal
-    # (b148f2 added the two sqlite streams to F1's two)
-    with open(os.path.join(ROOT, "bench", "unusual", "manifest_streams.tsv")) as f:
-        n_streams = sum(1 for l in f) - 1
+    # one match row per stream the PATTERN applies to: counted from the pattern's own
+    # expectations_stream.tsv rows, never a literal and never the whole manifest (b148f2
+    # added the sqlite streams; L7's vars streams belong to the va-* members only)
+    with open(os.path.join(ROOT, "bench", "unusual", "expectations_stream.tsv")) as f:
+        _srows = [l.split("\t") for l in f.read().splitlines()[1:]]
+    streams_for = {}
+    for r in _srows:
+        streams_for.setdefault(r[1], set()).add(r[0])   # columns: subject, pattern
     for t, pat in (("pcre2-jit", "cscan"), ("onig-default-deep", "cscan-onig"),
                    ("pcrec-vm-deep", "cscan-onig"), ("pcrec-auto", "cscan-onig")):
         try:
@@ -256,8 +260,8 @@ def run(ok, bad):
                        "the default arm's stack-resident frames; X49")
                 else:
                     bad("streams: pcrec-auto give-up naming", repr((outs, lim)))
-            elif outs == ["matched-as-expected"] and len(mrows) == n_streams:
-                ok("streams: %s x %s x %d streams matched-as-expected" % (t, pat, n_streams),
+            elif outs == ["matched-as-expected"] and len(mrows) == len(streams_for.get(pat, ())):
+                ok("streams: %s x %s x %d streams matched-as-expected" % (t, pat, len(streams_for[pat])),
                    "validator-accepted scratch record")
             else:
                 bad("streams: %s x %s" % (t, pat), repr(outs))

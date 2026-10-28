@@ -3981,6 +3981,29 @@ COMPILES (a backslash is an ordinary byte) and is a wrong answer the gate
 catches. Under `pcrec-auto` the engine is dfa on cases 1, 3, 5b and vm on
 2, 4, 5, 6, 7.
 
+## The caller-VARIABLES path ([B148] L7, docs/design/unusual_set_v1.md 3.3; pcrec docs/spec/vars.md)
+
+pcrec runs the `vars` members of bench/unusual NATIVELY (`--features all` includes `vars`): one compile, a var-bearing
+artifact (`RX_NVARS` defined; VM route only, vars.md 7), the per-call `rx_var` array passed to `<prefix>_search` /
+`_search_in`'s trailing `vars, nvars` pair. Changes (all additive; a var-free artifact's code is unchanged -- `PB_NOVARS`
+expands to nothing there):
+- `shim.c`: `PB_NOVARS` makes the pre-existing `pb_search` / `pb_search_in` link on a var-bearing artifact (they pass NO
+  variables, so a bare `${name}` answers `PCREC_ERR_UNSET_VAR`); new exports at the END of the file `pb_vars_n`,
+  `pb_unset_var_code`, `pb_vars_search`, `pb_vars_search_in`, with a `_Static_assert` that the driver's mirror struct
+  has `rx_var`'s layout (a pcrec layout change is a build error). The shim floor stays 16.
+- `driver.c`: four `dlsym`s, `run_calls_vars()` (same shape as `run_calls`), dispatch when the `--list` file has a
+  fourth column (`vars_list_has_bindings`); a vars list on an artifact with no variables is refused BY NAME
+  ("no caller variables"). `timed_calls_vars.c/.h` is the timed replay (its own translation unit, BD16; `timed.c` and
+  `timed_calls.c` untouched): per call ONE search on the call's LINE alone (`buf + offset`, length, start 0) with the
+  call's variable array (built once outside the clock by `testees/common/vars_io.h`); `PCREC_ERR_UNSET_VAR` is token
+  `r` (a REFUSED call, nothing attempted), any other negative code a give-up. pcrec's per-call name resolution against
+  the array is INSIDE the clock (it is pcrec's cost of the feature).
+- `adapter.py`: `timed_calls_vars.c` joins the driver's `extra_sources` (two places; `tools/selfcheck.py`'s hand-built
+  driver too). Capability: the `vars` token and one `unusual-va-*` per member are declared in bench/unusual's `ext bench`
+  block for the six native configs (`pcrec-auto/-nocaps/-vm/-vm-in` + the two `deep` arms); `-utf8` and forced-DFA
+  siblings are not on that roster (fail closed). Measured: pcrec answers all 6 (stream, member) pairs of the five
+  streams as the oracle does, on `pcrec-auto`, `pcrec-vm-in` (the caller-buffer entry) and `pcrec-vm-deep`.
+
 ## The call-stream regime and the `deep` arm ([B148] L4, docs/design/unusual_set_v1.md 6.2-6.5, 7.1-7.3)
 
 - **`--mode calls`** (`timed_calls.c`/`.h`): `pb_search` (or `pb_search_in` with a caller
@@ -4002,3 +4025,18 @@ catches. Under `pcrec-auto` the engine is dfa on cases 1, 3, 5b and vm on
   is not on the shim's surface -- OWED).
 
 All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).
+
+## The callout arms ([B148] L5, bench/unusual only)
+
+When `harness.run_cell` passes the `callouts` compile option (a bench/unusual callout arm),
+`_compile_one` writes the REAL binding instead of [B147]'s pass-through:
+`callee_binding_source()` binds every `<PREFIX>_CALLOUT_BINDINGS` symbol (`rx_callout_<N>`
+-> `&ub_slots[N]`, `rx_callout_<name>` -> `&ub_named[k].slot`; an unbound site refused BY
+NAME) to ONE `noinline, aligned(64)` wrapper that builds the engine-neutral view from
+`rx_ctx` and calls the slot's callee; a constructor parses the baked spec. That unit, the
+binding parser and the ONE `callees.o` link into the artifact `.so` (separate TUs:
+match_api.md 11.2-11.4); `artifact-count.so` links `callees_count.o` for the fire pass.
+`callout_binding` = `separate-tu-callee` (new enum value); RETURN-CODE MAPPING is the
+identity (RX_FAIL -1 fails the candidate, >0 consumes -- the netstr callee FAILs an
+overlong length). A callout pattern compiled WITHOUT the option (every other set) keeps
+`separate-tu-pass`, byte for byte. The driver and shim are untouched (BD16).

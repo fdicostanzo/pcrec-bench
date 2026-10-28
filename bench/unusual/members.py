@@ -189,12 +189,23 @@ def members():
                         twin_of=pid + "-twin", isolates="the site present, the full wrapper, a stub callee (answers equal the twin's)"))
         M.append(Member(pid + "-twin", "callouts", twin_text, "plain", base_tags + ["arm-twin", "twin_of-" + pid], ["captures"] + extra_req, AUTH,
                         isolates="the site removed, common subset"))
+        # [B148] L5: libpcre2's fourth arm -- the site present and NO callout
+        # function set (pcre2callout(3): the callout point is passed over),
+        # beside `pass`, so pass - pass-nofn prices the wrapper + stub call
+        # and pass-nofn - twin the callout point itself. libpcre2 only:
+        # pcrec binds at link time and Oniguruma's callout function is
+        # global, so neither has a "site with no function" state.
+        M.append(Member(pid + "-nofn", "callouts", site_text, "nofn:" + pid + "-twin",
+                        base_tags + ["arm-pass-nofn", "twin_of-" + pid],
+                        req + ["unusual-%s-nofn" % pid], AUTH, twin_of=pid + "-twin",
+                        isolates="the site present, NO callout function (answers equal the twin's)"))
     co("co-luhn", rb"\b(\d{13,19})\b(?C1)", rb"\b(\d{13,19})\b", "luhn", 1, [])
     co("co-isbn", rb"\b(97[89]\d{10})\b(?C2)", rb"\b(97[89]\d{10})\b", "isbn", 2, [])
     co("co-member", rb"\buser=(\w++)(?C3)", rb"\buser=(\w+)", "member", 3, [])
     base_tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized"]
     M.append(Member("co-netstr", "callouts", rb'(\d{1,9}):(?C"netstr,consume"),', "netstr-native",
-                    base_tags + ["arm-real", "spelling-pcrec-consume", "twin_of-co-netstr"], ["callouts", "captures"], AUTH,
+                    base_tags + ["arm-real", "spelling-pcrec-consume", "twin_of-co-netstr"],
+                    ["callouts", "captures", "unusual-co-netstr"], AUTH,
                     twin_of="co-netstr-twin",
                     isolates="netstrings by pcrec's consume callout (match_api 11.7); expectations by the host reference"))
     M.append(Member("co-netstr-assist", "callouts", rb"(\d{1,9}):(?>(?s:.)*?(?C4))," , "callout:netstr",

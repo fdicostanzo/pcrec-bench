@@ -7,7 +7,7 @@ libpcre2 10.46 (as the ORACLE) has been run; the declarations in sections 4 and
 5 were written before any engine measured anything, and a later edit to them
 is a dated amendment, never a rewrite.
 
-## 1. The members (22 patterns)
+## 1. The members (25 patterns; 22 until L5 added the three `-nofn` arms, 2026-10-28)
 
 | id | arm / role | route | provenance |
 |---|---|---|---|
@@ -19,10 +19,11 @@ is a dated amendment, never a rewrite.
 | `co-luhn` `co-isbn` `co-member` | callouts, REAL arm (site + real callee) | libpcre2 + Python callee, host reference | authored |
 | `co-luhn-pass` `co-isbn-pass` `co-member-pass` | PASS arm (site + stub callee) | stub callee; MUST equal the twin | authored |
 | `co-luhn-twin` `co-isbn-twin` `co-member-twin` | TWIN arm (site removed, common subset) | libpcre2 | authored |
+| `co-luhn-nofn` `co-isbn-nofn` `co-member-nofn` | PASS-NOFN arm (L5): the site present, NO callout function at all (libpcre2 only) | MUST equal the twin | authored |
 | `co-netstr` | pcrec's native `(?C"netstr,consume")` spelling | host reference (not libpcre2 syntax); must equal `-assist` | authored |
 | `co-netstr-assist` | the check-at-end spelling for libpcre2 / Onig `(?{4})` (P3) | libpcre2 + the check-at-end callee | authored |
 | `co-netstr-twin` | `(\d{1,9}):` -- a DIFFERENT language, a scan-cost floor only | libpcre2 | authored |
-| `va-tenant` `va-route` `va-term` `va-term-bang` | vars | NONE (L7): per-call expectations over declared value streams | authored |
+| `va-tenant` `va-route` `va-term` `va-term-bang` | vars | NO short/throughput rows: per-call expectations over the five declared value streams (`expectations_stream.tsv`; libpcre2 over the resolved + escaped pattern, cross-checked against Python `re`; section 8) | authored |
 | `floor` | `\(\?\{` (role = floor) | libpcre2 | authored |
 
 There is no `co-netstr-pass`: a stub callee cannot consume, so a pass arm is not
@@ -141,12 +142,85 @@ L1: regime `call-stream` in `subbench.py` / the schema; `REQUIRES_VOCAB` growing
 `unusual-<member>` (LANDED by L1; the vars members carry `requires-vars` + `requires-unusual-<member>`); `twin_of` (LANDED; the callout arms carry `twin_of-<root>`); the reader skip tables. L4: the `--mode calls` protocol over `calls/*.tsv`, the
 O(segment) pre-flight, `CELL_CAP_unusual`. L5: `callees.c`/`callees.o`, the wrappers,
 `pass-nofn`, pcrec's and Onig's callout declarations in the `ext bench` block (only libpcre2
-declares `callouts` today). L7: the vars members' value streams and their expectations
-(there are NO vars rows in `expectations.tsv`). L8: `UNUSUAL_GATE_SKIPS` (the generic
+declares `callouts` today). L7 (LANDED): the vars members' value streams (`gen_vars.py`, five streams, `values/`) and
+their per-call expectations (there are NO vars rows in `expectations.tsv`). L8: `UNUSUAL_GATE_SKIPS` (the generic
 floor / manifest / expectations gates do not know `manifest_streams.tsv`, `applies.tsv` or a
 set whose expectation file is not the full cross product) and `make check-unusual`.
+
+## 6a. L5 (lane b148l5, 2026-10-28): the callout arms -- a dated amendment
+
+Landed: `callees/` (callees.h/.c, one shared C body per callee; `replay.c`, the
+callee-cost microbench), `callees.o` built ONCE with fixed flags
+(`pcrecbench/callees.py`, sha256 on every callout row as `callees_sha256`), the
+`[callouts]` table in `subbench.toml` (real / pass bindings), the `-nofn` arms
+(+3 patterns, +486 expectation rows: 3,485 data rows), the native wrappers
+(`testees/pcre2/callout_wrap.c`, `testees/onig/callout_wrap.c`, pcrec's
+separate-TU real binding), the untimed fire pass (`callout_fires` /
+`callout_views_sha256` on every real/pass arm match row). Rosters: libpcre2
+interp/jit declare `unusual-<member>-nofn`; pcrec-auto/-vm and onig-default
+declare `callouts` (pcrec also `unusual-co-netstr`); deep arms inherit.
+
+D-3 AMENDED: `pass == twin` (and `pass-nofn == twin` on libpcre2) is a
+`check-harness` gate NOW (tools/check_callouts.py, L5), not L8's.
+
+What L5 measured (docs/dev/lanes/b148l5_report.md; calibration with box load in
+docs/dev/measurements/2026-10-28-b148l5-callout-calibration.txt): every native
+engine shows the SAME fire COUNT on every real arm's throughput subject
+except one; `co-netstr-assist` fires 10,971,980 times on co-netstr-1m (an
+overlong-length candidate drives the lazy `(?s:.)*?` to the subject's end, the
+callee FAILing at every step -- O(n) per such candidate), its callee share
+0.21-0.56 (R2 FLAG on pcrec-vm); pcre2-jit GIVES UP on that row at the default
+32 KiB JIT stack (`-46` JIT_STACKLIMIT) where pcre2-jit-deep answers. The three
+real filter members sit at 2.6-19 % share on every engine (pcre2-jit 12-16 %,
+inside R2's 20 %).
 
 ## 7. Checks
 
 `python3 -I bench/unusual/check_set.py` (fast) and `--full` (re-derives every expectation:
 minutes). `gen_*.py --check` reproduce the manifests; `gen_patterns.py --check` the sidecar.
+
+## 8. The caller-variables streams (L7, lane b148l7)
+
+THE CALL. A vars call is one LINE of the stream's subject (bytes `[offset, offset + length)`) plus a
+BINDING; the engine matches the member's resolved pattern against that line ALONE (a line is its own
+subject: `^` is its start, result offsets are LINE-RELATIVE), first match. Token: `n` | `m:<s>,<e>` | `r`
+(REFUSED by the variables rule, vars.md 5: nothing was attempted). `segment_bytes` = `length` = the line, so
+the throughput denominator is the sum of the lines. The protocol carries the bindings table as a FOURTH
+column of the `--list` file (`id subject calls bindings`); the table is `binding_id name value`, value =
+lowercase hex, `UNSET`, or `EMPTY` (a zero-length hex field is not a TSV cell a reader can rely on; this
+amends the note's `value_hex|UNSET`).
+
+| stream | members | calls | bindings | distinct resolved (= misses) | refused | reuse |
+|---|---|---|---|---|---|---|
+| `tenant-d4` | va-tenant | 16,384 | 4 | 4 | 0 | round-robin |
+| `tenant-d64` | va-tenant | 16,384 | 64 | 64 | 0 | round-robin |
+| `tenant-d4096` | va-tenant | 16,384 | 4,096 | 4,096 | 0 | round-robin |
+| `route-zipf` | va-route | 4,096 | 108 | 40 | 983 | zipf-s1.1 |
+| `term-zipf` | va-term, va-term-bang | 4,096 | 49 | 47 | 201 | zipf-s1.1 |
+
+The stream length is FIXED at 16,384 across the ladder (P13), so the miss count (a memoizing engine's
+compiles per replay) is the only thing that moves: 4 / 64 / 4,096, exact because the ladder is
+round-robin. `route-zipf`'s 108 bindings resolve to 40 patterns (prefix UNSET / EMPTY / `api` are one
+pattern: the memo key is the resolved pattern, not the binding); 983 of its calls are refused (an UNSET
+`res`). `term-zipf` carries metacharacters, a NUL, a high byte, EMPTY and UNSET (refused by `:?`); its
+lines put a word byte beside a non-word-ended term so `\b` can hold, and the opposite beside a
+word-ended one. Every stream is a pure function of a seed (`gen_vars.py`), pinned by
+`manifest_streams.tsv` and `values/streams.tsv` (stream, member, calls, bindings, distinct values, distinct
+resolved, refused, reuse, bindings sha256).
+
+EXPECTATIONS. Per call: `gen_vars.resolve` (vars.md 2/5 in Python: the five operators, `${!n}`, a default
+word LITERAL and escaped, a backslash in a word, UNSET vs EMPTY, bare `${n}` refusing on UNSET and `${n:?}`
+on UNSET/EMPTY, every byte of a value escaped so it matches as itself) builds the pattern, libpcre2 10.46
+answers it; Python `re` over `re.escape`d values answers it independently and every call must AGREE
+(abort otherwise). The nested chain `${a:-${b}}` is DROPPED from v0.1 (the rule for `b` UNSET is unspecified
+in vars.md; Q-C is open with pcrec): `gen_vars.parse` refuses it. Regenerate in seconds with
+`gen_expectations.py --streams-only` (the full derivation is minutes). The public sample for the blinded
+assist authors (80 cases, 20 per member, disjoint from these streams) is
+`assists/problems/vars-samples.tsv`, its problem statement `assists/problems/vars.md`.
+
+D-5 (declared before any run). pcrec runs all five streams NATIVELY and answers every call as the oracle
+does, on `pcrec-auto`, `-nocaps`, `-vm`, `-vm-in` and the `deep` arms. Predictions for the window: the
+tenant ladder is FLAT across d (one compile, a per-call variable resolution whose cost does not depend on
+how many distinct values the stream holds); every assisted engine's time grows with d (a miss compile per
+distinct value) and pcrec's break-even call count against it falls as d rises. A refused call costs pcrec
+the resolution and nothing else.

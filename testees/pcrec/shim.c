@@ -438,6 +438,19 @@
 #define PB_BUFFERS        rx_buffers
 #endif
 
+/* [B148] L7: a VAR-BEARING artifact (`RX_NVARS` defined, pcrec vars.md 4) has
+ * `<prefix>_search` / `_search_in` with a trailing `vars, nvars` pair before the
+ * `_in` descriptor. The two pre-existing wrappers below (pb_search, pb_search_in)
+ * pass NO variables on such an artifact (so every bare `${name}` answers
+ * PCREC_ERR_UNSET_VAR) and stay link-compatible; the vars-passing entries are
+ * pb_vars_search / pb_vars_search_in at the END of this file. PB_NOVARS expands
+ * to nothing on a var-free artifact, so the wrappers' code is unchanged there. */
+#ifdef RX_NVARS
+#define PB_NOVARS , (const rx_var *)0, (size_t)0
+#else
+#define PB_NOVARS
+#endif
+
 /* Returned by the `_in` wrappers ONLY when the artifact has no `_in` surface
  * at all. Far below PCREC_ERR_FLOOR (-5) and PCREC_ERR_INTERNAL (-6): not a
  * give-up, not an internal code, nothing the harness could mistake for one. */
@@ -1620,7 +1633,7 @@ unsigned long long pb_simd_guarded_bytes(void) {
  * number it got). */
 PB_TIMED int pb_search(const unsigned char *s, size_t n, size_t pos,
               ptrdiff_t (*caps)[2]) {
-    return PB_SEARCH(s, n, pos, caps);
+    return PB_SEARCH(s, n, pos, caps PB_NOVARS);
 }
 
 /* Anchored at `pos`, capture-delivering. Returns the matched LENGTH (>= 0),
@@ -1724,10 +1737,10 @@ PB_TIMED int pb_search_in(const unsigned char *s, size_t n, size_t pos,
                  void *frames, size_t nframes, void *trail, size_t ntrail) {
 #ifdef RX_BUFFER_ALIGN
     PB_BUFFERS buf;
-    if (!frames && !trail) return PB_SEARCH_IN(s, n, pos, caps, (const PB_BUFFERS *)0);
+    if (!frames && !trail) return PB_SEARCH_IN(s, n, pos, caps PB_NOVARS, (const PB_BUFFERS *)0);
     buf.frames = frames; buf.nframes = nframes;
     buf.trail = trail;   buf.ntrail = ntrail;
-    return PB_SEARCH_IN(s, n, pos, caps, &buf);
+    return PB_SEARCH_IN(s, n, pos, caps PB_NOVARS, &buf);
 #else
     (void)s; (void)n; (void)pos; (void)caps;
     (void)frames; (void)nframes; (void)trail; (void)ntrail;
@@ -1761,6 +1774,74 @@ PB_TIMED long long pb_match_caps_in(const unsigned char *s, size_t n, size_t pos
     return (long long)PB_MATCH_CAPS_IN(&ctx, caps, &buf);
 #else
     (void)s; (void)n; (void)pos; (void)caps;
+    (void)frames; (void)nframes; (void)trail; (void)ntrail;
+    return PB_UNSUPPORTED;
+#endif
+}
+
+/* --------------------------------------- caller variables ([B148] L7) */
+
+/* The driver passes the caller's variable array as an opaque pointer: its own
+ * mirror struct (name, p, len) has rx_var's layout, asserted here against the
+ * artifact's real type so a layout change in pcrec is a build error, never a
+ * silently misread array. */
+#ifdef RX_NVARS
+struct pb_var_mirror { const char *name; const unsigned char *p; size_t len; };
+_Static_assert(sizeof(rx_var) == sizeof(struct pb_var_mirror) &&
+               offsetof(rx_var, name) == offsetof(struct pb_var_mirror, name) &&
+               offsetof(rx_var, p) == offsetof(struct pb_var_mirror, p) &&
+               offsetof(rx_var, len) == offsetof(struct pb_var_mirror, len),
+               "rx_var layout != the driver's pb_var mirror (vars.md 3)");
+#endif
+
+/* The number of distinct variable names the pattern mentions; 0 on a
+ * var-free artifact. */
+int pb_vars_n(void) {
+#ifdef RX_NVARS
+    return RX_NVARS;
+#else
+    return 0;
+#endif
+}
+
+/* PCREC_ERR_UNSET_VAR (-8, vars.md 5) -- "nothing was attempted": the driver
+ * tokenizes it `r` (refused), never `g` (gave up). PB_UNSUPPORTED where the
+ * artifact's header does not define it. */
+int pb_unset_var_code(void) {
+#ifdef PCREC_ERR_UNSET_VAR
+    return PCREC_ERR_UNSET_VAR;
+#else
+    return PB_UNSUPPORTED;
+#endif
+}
+
+/* `<prefix>_search` WITH the caller's variables (vars.md 4: on a var-bearing
+ * artifact only, the trailing pair). Same return space as pb_search(), plus
+ * PCREC_ERR_UNSET_VAR. */
+PB_TIMED int pb_vars_search(const unsigned char *s, size_t n, size_t pos,
+                   ptrdiff_t (*caps)[2], const void *vars, size_t nvars) {
+#ifdef RX_NVARS
+    return PB_SEARCH(s, n, pos, caps, (const rx_var *)vars, nvars);
+#else
+    (void)s; (void)n; (void)pos; (void)caps; (void)vars; (void)nvars;
+    return PB_UNSUPPORTED;
+#endif
+}
+
+/* The `_in` sibling: vars pair, then the descriptor built from the driver's
+ * two regions (pb_search_in's contract). */
+PB_TIMED int pb_vars_search_in(const unsigned char *s, size_t n, size_t pos,
+                      ptrdiff_t (*caps)[2], const void *vars, size_t nvars,
+                      void *frames, size_t nframes, void *trail, size_t ntrail) {
+#if defined(RX_NVARS) && defined(RX_BUFFER_ALIGN)
+    PB_BUFFERS buf;
+    if (!frames && !trail)
+        return PB_SEARCH_IN(s, n, pos, caps, (const rx_var *)vars, nvars, (const PB_BUFFERS *)0);
+    buf.frames = frames; buf.nframes = nframes;
+    buf.trail = trail;   buf.ntrail = ntrail;
+    return PB_SEARCH_IN(s, n, pos, caps, (const rx_var *)vars, nvars, &buf);
+#else
+    (void)s; (void)n; (void)pos; (void)caps; (void)vars; (void)nvars;
     (void)frames; (void)nframes; (void)trail; (void)ntrail;
     return PB_UNSUPPORTED;
 #endif

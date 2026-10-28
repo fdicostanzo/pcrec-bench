@@ -13940,7 +13940,7 @@ def check_abi_floor_refusal():
         # in `tmp`, so one -I serves both.
         drv = build_driver(os.path.join(ROOT, "testees", "pcrec", "driver.c"),
                            os.path.join(tmp, "pcrec_driver"), extra=["-ldl"],
-                           extra_sources=["timed_subst.c", "timed_calls.c"])  # [B140], [B148] L4
+                           extra_sources=["timed_subst.c", "timed_calls.c", "timed_calls_vars.c"])  # [B140], [B148] L4/L7
         shim = os.path.join(ROOT, "testees", "pcrec", "shim.c")
         results = {}
         for arm, csrc in (("real", art), ("sabotaged", sabotaged),
@@ -18933,6 +18933,26 @@ def check_calls_set():
     check_calls.run(ok, bad)
 
 
+def check_vars_set():
+    """[B148] L7 the caller-variables members -- the resolver against a hand
+    table, the value streams (fixed length on the ladder, miss counts), the
+    escaping control, the public sample, pcrec's native vars path through
+    run_cell with its controls, the fail-closed capability declaration.
+    Implemented in tools/check_vars.py; see its docstring."""
+    import check_vars
+    check_vars.run(ok, bad)
+
+
+def check_callouts_set():
+    """[B148] L5 the callout arms -- callees.o once, the return-code mapping
+    with the first-candidate-fails control on every native config, the
+    pass == twin gate, the counting build, the Onig witnesses, pcrec's
+    binding shape, run_cell. Implemented in tools/check_callouts.py; see its
+    docstring."""
+    import check_callouts
+    check_callouts.run(ok, bad)
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -19045,6 +19065,8 @@ def main():
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
     check_calls_set()
+    check_vars_set()
+    check_callouts_set()
     check_subst_gate_skips()
     check_unusual_gate_skips()
     check_pcre2_dfa()

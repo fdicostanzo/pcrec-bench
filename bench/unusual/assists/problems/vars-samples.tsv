@@ -1,0 +1,81 @@
+case	member	bindings	line_hex	line	expected
+va-tenant-01	va-tenant	tenant=61636d65	61636d652d30303432204552524f52206469736b2066756c6c	b'acme-0042 ERROR disk full'	m:0,16
+va-tenant-02	va-tenant	tenant=61636d65	61636d652d3030343220494e464f20616c6c2077656c6c	b'acme-0042 INFO all well'	n
+va-tenant-03	va-tenant	tenant=61636d65	61636d652d303432205741524e20746872656520646967697473	b'acme-042 WARN three digits'	n
+va-tenant-04	va-tenant	tenant=61636d65	7861636d652d30303432204552524f52206e6f7420617420746865207374617274	b'xacme-0042 ERROR not at the start'	n
+va-tenant-05	va-tenant	tenant=612e63	612e632d31323334205741524e20646f74206973206120646f74	b'a.c-1234 WARN dot is a dot'	m:0,14
+va-tenant-06	va-tenant	tenant=612e63	6162632d31323334205741524e20646f74206973206e6f7420612077696c6463617264	b'abc-1234 WARN dot is not a wildcard'	n
+va-tenant-07	va-tenant	tenant=612b	612b2d30303031204552524f5220706c7573206973206120706c7573	b'a+-0001 ERROR plus is a plus'	m:0,14
+va-tenant-08	va-tenant	tenant=612b	6161612d30303031204552524f5220706c7573206973206e6f74206120726570656174	b'aaa-0001 ERROR plus is not a repeat'	n
+va-tenant-09	va-tenant	tenant=28787c7929	28787c79292d30303031205741524e2067726f7570206973206c69746572616c	b'(x|y)-0001 WARN group is literal'	m:0,16
+va-tenant-10	va-tenant	tenant=28787c7929	782d30303031205741524e20616c7465726e6174696f6e206973206c69746572616c	b'x-0001 WARN alternation is literal'	n
+va-tenant-11	va-tenant	tenant=EMPTY	2d30303031204552524f5220656d70747920697320612076616c7565	b'-0001 ERROR empty is a value'	m:0,12
+va-tenant-12	va-tenant	tenant=EMPTY	61636d652d30303031204552524f5220656d707479206973206e6f742061636d65	b'acme-0001 ERROR empty is not acme'	n
+va-tenant-13	va-tenant	tenant=UNSET	61636d652d30303031204552524f5220756e7365742072656675736573	b'acme-0001 ERROR unset refuses'	r
+va-tenant-14	va-tenant	tenant=UNSET	2d30303031204552524f5220756e73657420646f6573206e6f7420776964656e20746f20656d707479	b'-0001 ERROR unset does not widen to empty'	r
+va-tenant-15	va-tenant	tenant=41434d45	61636d652d30303031204552524f522063617365206d6174746572732068657265	b'acme-0001 ERROR case matters here'	n
+va-tenant-16	va-tenant	tenant=610062	6100622d30303037205741524e2061204e554c206279746520696e207468652076616c7565	b'a\x00b-0007 WARN a NUL byte in the value'	m:0,14
+va-tenant-17	va-tenant	tenant=610062	61622d30303037205741524e20746865204e554c206973206e6f742064726f70706564	b'ab-0007 WARN the NUL is not dropped'	n
+va-tenant-18	va-tenant	tenant=2431	24312d30303031204552524f5220646f6c6c6172206f6e65	b'$1-0001 ERROR dollar one'	m:0,14
+va-tenant-19	va-tenant	tenant=5e74	5e742d30303031204552524f52206361726574	b'^t-0001 ERROR caret'	m:0,14
+va-tenant-20	va-tenant	tenant=745c64	745c642d30303031205741524e206261636b736c61736820642c206e6f74206120646967697420636c617373	b't\\d-0001 WARN backslash d, not a digit class'	m:0,14
+va-route-01	va-route	prefix=UNSET;res=7573657273;fmt=UNSET	2f6170692f76312f7573657273	b'/api/v1/users'	m:0,13
+va-route-02	va-route	prefix=EMPTY;res=7573657273;fmt=UNSET	2f6170692f76312f75736572733f706167653d32	b'/api/v1/users?page=2'	m:0,14
+va-route-03	va-route	prefix=617069;res=7573657273;fmt=UNSET	2f6170692f76322f75736572732e6a736f6e23746f70	b'/api/v2/users.json#top'	n
+va-route-04	va-route	prefix=696e7465726e616c;res=7573657273;fmt=UNSET	2f696e7465726e616c2f76332f7573657273	b'/internal/v3/users'	m:0,18
+va-route-05	va-route	prefix=696e7465726e616c;res=7573657273;fmt=UNSET	2f6170692f76332f7573657273	b'/api/v3/users'	n
+va-route-06	va-route	prefix=UNSET;res=7573657273;fmt=EMPTY	2f6170692f76312f75736572732e6a736f6e	b'/api/v1/users.json'	m:0,18
+va-route-07	va-route	prefix=UNSET;res=7573657273;fmt=EMPTY	2f6170692f76312f7573657273	b'/api/v1/users'	n
+va-route-08	va-route	prefix=UNSET;res=7573657273;fmt=78	2f6170692f76312f75736572732e6a736f6e3f713d31	b'/api/v1/users.json?q=1'	m:0,19
+va-route-09	va-route	prefix=UNSET;res=7573657273;fmt=78	2f6170692f76312f75736572732e6a736f6e78	b'/api/v1/users.jsonx'	n
+va-route-10	va-route	prefix=UNSET;res=6974656d732e6c697374;fmt=UNSET	2f6170692f76312f6974656d732e6c697374	b'/api/v1/items.list'	m:0,18
+va-route-11	va-route	prefix=UNSET;res=6974656d732e6c697374;fmt=UNSET	2f6170692f76312f6974656d73586c697374	b'/api/v1/itemsXlist'	n
+va-route-12	va-route	prefix=UNSET;res=612b62;fmt=UNSET	2f6170692f7631302f612b62	b'/api/v10/a+b'	m:0,12
+va-route-13	va-route	prefix=UNSET;res=612b62;fmt=UNSET	2f6170692f7631302f616162	b'/api/v10/aab'	n
+va-route-14	va-route	prefix=65782e747261;res=6f7264657273;fmt=UNSET	2f65782e7472612f76322f6f72646572732f39	b'/ex.tra/v2/orders/9'	n
+va-route-15	va-route	prefix=65782e747261;res=6f7264657273;fmt=UNSET	2f65782e7472612f76322f6f72646572732f39	b'/ex.tra/v2/orders/9'	n
+va-route-16	va-route	prefix=UNSET;res=UNSET;fmt=UNSET	2f6170692f76312f7573657273	b'/api/v1/users'	r
+va-route-17	va-route	prefix=617069;res=EMPTY;fmt=UNSET	2f6170692f76312f	b'/api/v1/'	m:0,8
+va-route-18	va-route	prefix=UNSET;res=7265706f727473283229;fmt=79	2f6170692f76312f7265706f7274732832292e6a736f6e	b'/api/v1/reports(2).json'	m:0,23
+va-route-19	va-route	prefix=UNSET;res=7573657273;fmt=UNSET	2f6170692f76582f7573657273	b'/api/vX/users'	n
+va-route-20	va-route	prefix=762d31;res=7573657273;fmt=UNSET	2f762d312f76312f75736572733f	b'/v-1/v1/users?'	m:0,14
+va-term-01	va-term	term=6572726f72	616e206572726f72206f63637572726564	b'an error occurred'	m:3,8
+va-term-02	va-term	term=6572726f72	616e204552524f52206f63637572726564	b'an ERROR occurred'	m:3,8
+va-term-03	va-term	term=6572726f72	746572726f72732061626f756e64	b'terrors abound'	n
+va-term-04	va-term	term=612e62	73656520612e622068657265	b'see a.b here'	m:4,7
+va-term-05	va-term	term=612e62	736565206178622068657265	b'see axb here'	n
+va-term-06	va-term	term=632b2b	7573657320632b2b206461696c79	b'uses c++ daily'	n
+va-term-07	va-term	term=632b2b	7573657320632b2b78206461696c79	b'uses c++x daily'	m:5,8
+va-term-08	va-term	term=787c79	6120787c792062	b'a x|y b'	m:2,5
+va-term-09	va-term	term=787c79	6120792062	b'a y b'	n
+va-term-10	va-term	term=28666f6f29	63616c6c207828666f6f2978206e6f77	b'call x(foo)x now'	m:6,11
+va-term-11	va-term	term=5b7a5d	696e64657820785b7a5d78206f6b	b'index x[z]x ok'	m:7,10
+va-term-12	va-term	term=610062	6861732061006220696e73696465	b'has a\x00b inside'	m:4,7
+va-term-13	va-term	term=610062	68617320616220696e73696465	b'has ab inside'	n
+va-term-14	va-term	term=24555344	707269636520696e20782455534420746f646179	b'price in x$USD today'	m:10,14
+va-term-15	va-term	term=636166c3a9	756e20636166c3a978206e6f6972	b'un caf\xc3\xa9x noir'	m:3,8
+va-term-16	va-term	term=636166c3a9	756e20434146c389206e6f6972	b'un CAF\xc3\x89 noir'	n
+va-term-17	va-term	term=EMPTY	616e206572726f72206f63637572726564	b'an error occurred'	r
+va-term-18	va-term	term=UNSET	616e206572726f72206f63637572726564	b'an error occurred'	r
+va-term-19	va-term	term=5461696c	617420746865205441494c20656e64	b'at the TAIL end'	m:7,11
+va-term-20	va-term	term=6261636b5c736c617368	61206261636b5c736c6173682062	b'a back\\slash b'	m:2,12
+va-term-bang-01	va-term-bang	term=6572726f72	616e206572726f72206f63637572726564	b'an error occurred'	m:3,8
+va-term-bang-02	va-term-bang	term=6572726f72	616e204552524f52206f63637572726564	b'an ERROR occurred'	m:3,8
+va-term-bang-03	va-term-bang	term=6572726f72	746572726f72732061626f756e64	b'terrors abound'	n
+va-term-bang-04	va-term-bang	term=612e62	73656520612e622068657265	b'see a.b here'	m:4,7
+va-term-bang-05	va-term-bang	term=612e62	736565206178622068657265	b'see axb here'	n
+va-term-bang-06	va-term-bang	term=632b2b	7573657320632b2b206461696c79	b'uses c++ daily'	n
+va-term-bang-07	va-term-bang	term=632b2b	7573657320632b2b78206461696c79	b'uses c++x daily'	m:5,8
+va-term-bang-08	va-term-bang	term=787c79	6120787c792062	b'a x|y b'	m:2,5
+va-term-bang-09	va-term-bang	term=787c79	6120792062	b'a y b'	n
+va-term-bang-10	va-term-bang	term=28666f6f29	63616c6c207828666f6f2978206e6f77	b'call x(foo)x now'	m:6,11
+va-term-bang-11	va-term-bang	term=5b7a5d	696e64657820785b7a5d78206f6b	b'index x[z]x ok'	m:7,10
+va-term-bang-12	va-term-bang	term=610062	6861732061006220696e73696465	b'has a\x00b inside'	m:4,7
+va-term-bang-13	va-term-bang	term=610062	68617320616220696e73696465	b'has ab inside'	n
+va-term-bang-14	va-term-bang	term=24555344	707269636520696e20782455534420746f646179	b'price in x$USD today'	m:10,14
+va-term-bang-15	va-term-bang	term=636166c3a9	756e20636166c3a978206e6f6972	b'un caf\xc3\xa9x noir'	m:3,8
+va-term-bang-16	va-term-bang	term=636166c3a9	756e20434146c389206e6f6972	b'un CAF\xc3\x89 noir'	n
+va-term-bang-17	va-term-bang	term=EMPTY	616e206572726f72206f63637572726564	b'an error occurred'	r
+va-term-bang-18	va-term-bang	term=UNSET	616e206572726f72206f63637572726564	b'an error occurred'	r
+va-term-bang-19	va-term-bang	term=5461696c	617420746865205441494c20656e64	b'at the TAIL end'	m:7,11
+va-term-bang-20	va-term-bang	term=6261636b5c736c617368	61206261636b5c736c6173682062	b'a back\\slash b'	m:2,12

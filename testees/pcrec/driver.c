@@ -224,6 +224,7 @@
 #include "timed.h"
 #include "timed_subst.h"
 #include "timed_calls.h"
+#include "timed_calls_vars.h"   /* [B148] L7 */
 
 static int       (*pb_abi)(void);
 static int       (*pb_ncaps)(void);
@@ -324,6 +325,14 @@ static int       (*pb_search)(const unsigned char *, size_t, size_t,
                               ptrdiff_t (*)[2]);
 static long long (*pb_match_caps)(const unsigned char *, size_t, size_t,
                                   ptrdiff_t (*)[2]);
+/* [B148] L7: the vars-passing entries and the artifact's variable count */
+static int       (*pb_vars_n)(void);
+static int       (*pb_unset_var_code)(void);
+static int       (*pb_vars_search)(const unsigned char *, size_t, size_t,
+                                   ptrdiff_t (*)[2], const void *, size_t);
+static int       (*pb_vars_search_in)(const unsigned char *, size_t, size_t,
+                                      ptrdiff_t (*)[2], const void *, size_t,
+                                      void *, size_t, void *, size_t);
 static int       (*pb_has_in_entries)(void);
 static long long (*pb_buffer_align)(void);
 static long long (*pb_resume_frames)(void);
@@ -661,6 +670,85 @@ static int run_calls(const char *list_path, const struct calls_args *a) {
     return 0;
 }
 
+/* ------------------------- run_calls_vars: a VARS stream ([B148] L7) */
+
+/* The list has a fourth (bindings) column: every call is one LINE of the
+ * subject with its binding (testees/common/vars_io.h). Same shape as
+ * run_calls() above -- the replay is timed_calls_vars() in
+ * timed_calls_vars.c (its own translation unit, BD16). A var-FREE artifact
+ * given a vars stream is a protocol error, refused by name. */
+__attribute__((noinline))
+static int run_calls_vars(const char *list_path, const struct calls_args *a) {
+    if (pb_vars_n() == 0) {
+        printf("error\ta vars stream (bindings column) was given to an artifact "
+               "with no caller variables (RX_NVARS undefined)\n");
+        return 2;
+    }
+    size_t nsub = 0;
+    struct vars_subject *subs = vars_load_list(list_path, &nsub);
+    if (!subs) return 2;
+    const int ncaps = pb_ncaps() > 0 ? pb_ncaps() : 1;
+    ptrdiff_t (*caps)[2] = malloc((size_t)ncaps * sizeof *caps);
+    if (!caps) { printf("error\tout of memory\n"); return 2; }
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+    size_t fbytes = buf_nframes * (size_t)(use_buffers ? pb_resume_frame_size() : 0);
+    size_t tbytes = buf_ntrail * (size_t)(use_buffers ? pb_trail_frame_size() : 0);
+    for (size_t i = (size_t)a->skip; i < nsub; i++) {
+        struct vars_subject *s = &subs[i];
+        struct call_res *res = calloc(s->ncalls, sizeof *res);
+        if (!res) { printf("error\tcannot allocate %zu call results\n", s->ncalls); return 2; }
+        volatile double elapsed = 0.0;
+        struct tvars_in tin = {
+            .buf = s->buf, .len = s->len, .calls = s->calls, .ncalls = s->ncalls,
+            .bindings = s->bindings,
+            .iters = a->mem_pass ? 1 : a->iters,
+            .has_g1 = ncaps >= 2, .caps = caps, .use_buffers = use_buffers,
+            .buf_frames = buf_frames, .buf_trail = buf_trail,
+            .buf_nframes = buf_nframes, .buf_ntrail = buf_ntrail,
+            .unset_code = pb_unset_var_code(),
+            .search = pb_vars_search, .search_in = pb_vars_search_in,
+            .res = res,
+        };
+        struct tcalls_out tout = { 0, 0 };
+        if (a->mem_pass && use_buffers) {
+            canary_fill(buf_frames, fbytes);
+            canary_fill(buf_trail, tbytes);
+        }
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (a->subject_timeout > 0) alarm((unsigned)a->subject_timeout);
+            elapsed = timed_calls_vars(&tin, &tout);
+            if (a->subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                   s->id, (long)tin.iters, (double)elapsed);
+            free(res);
+            continue;
+        }
+        if (a->mem_pass) {
+            printf("mem\t%s\t%zu\tcanary\t%ld\n", s->id,
+                   canary_high(buf_frames, fbytes) + canary_high(buf_trail, tbytes),
+                   maxrss_kb());
+        }
+        size_t matched = 0;
+        int first_g = 0;
+        for (size_t k = 0; k < s->ncalls; k++) {
+            matched += res[k].kind == CALL_M;
+            if (res[k].kind == CALL_G && !first_g) first_g = res[k].code;
+        }
+        printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+               s->id, s->len, (long)tin.iters, (double)elapsed, matched);
+        calls_report(s->id, res, s->ncalls, ncaps >= 2, a->tokens_dir,
+                     first_g ? pb_err_name(first_g) : NULL);
+        free(res);
+    }
+    return 0;
+}
+
 #define SYM(name) do {                                            \
         *(void **)(&name) = dlsym(lib, #name);                    \
         if (!name) { printf("error\tdlsym %s: %s\n", #name,       \
@@ -843,6 +931,8 @@ int main(int argc, char **argv) {
     SYM(pb_resume_frames); SYM(pb_trail_frames);
     SYM(pb_resume_frame_size); SYM(pb_trail_frame_size);
     SYM(pb_search_in); SYM(pb_match_caps_in);
+    SYM(pb_vars_n); SYM(pb_unset_var_code);                 /* [B148] L7 */
+    SYM(pb_vars_search); SYM(pb_vars_search_in);
 
     /* engine_metadata, `pattern`-scoped: read from the artifact's STRUCTURED
      * fields, never from the prose RX_ENGINE_WHY (requirements 4.2). The
@@ -1243,7 +1333,9 @@ int main(int argc, char **argv) {
         cargs.subject_timeout = subject_timeout;
         cargs.skip = skip;
         cargs.mem_pass = mem_pass;
-        int rc = run_calls(list_path, &cargs);
+        int rc = vars_list_has_bindings(list_path)       /* [B148] L7 */
+            ? run_calls_vars(list_path, &cargs)
+            : run_calls(list_path, &cargs);
         fflush(stdout);
         return rc;
     }

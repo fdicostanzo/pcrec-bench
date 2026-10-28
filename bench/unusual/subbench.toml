@@ -3,8 +3,9 @@
 # Design: docs/design/unusual_set_v1.md v0.2 (lane b148l3 = L3 of its build order).
 #
 # REGIMES. `search_short`, `throughput` and (lane b148l4, L4) `call-stream`: the
-# F1 segment streams are `[subjects] stream_manifest` (manifest_streams.tsv +
-# streams/ + calls/, gen_streams.py), judged against `[expectations]
+# F1 segment streams and (lane b148l7, L7) the five caller-VARIABLES streams are
+# `[subjects] stream_manifest` (manifest_streams.tsv + streams/ + calls/ +
+# values/, gen_streams.py), judged against `[expectations]
 # stream_file` (expectations_stream.tsv) by the harness; a pattern with no
 # stream expectation has no call-stream cell (Subbench.applies).
 #
@@ -31,12 +32,13 @@ recursion, callouts, caller variables: the answer, the capability verdict \
 (native / assisted / not-capable), and the cost of the feature, assist \
 included."""
 description = """\
-22 patterns in three feature families plus the floor. RECURSION: \
+25 patterns in three feature families plus the floor. RECURSION: \
 pcrec's `cscan` (the C `(?{ ... })` end scanner, one pcrec pattern, MIT) with \
 its declared Oniguruma syntax-only variant, and two WILD members -- \
 pcre2pattern(3)'s balanced-parenthesis pattern (BSD-3) and a `(?(DEFINE)` \
 JSON validator (Stack Overflow 3845829, CC BY-SA 4.0) with its Onig variant. \
-CALLOUTS: Luhn, ISBN-13 and set membership as twin / pass / real arms, and \
+CALLOUTS: Luhn, ISBN-13 and set membership as twin / pass / real arms (and \
+pass-nofn on libpcre2), and \
 netstrings as pcrec-consume / assisted / twin. VARS: three `${...}` members \
 and one spelling twin. Short subjects \
 are typed cases for every member; the throughput subjects are the F3 \
@@ -58,6 +60,15 @@ stream_generator = "gen_streams.py"
 stream_manifest = "manifest_streams.tsv"
 applies = "applies.tsv"
 short_search_max_bytes = 1024
+
+# CALLOUTS (L5, unusual_set_v1.md 3.2): the binding spec each callout arm's
+# driver binds -- site number (or pcrec's callout name) = callee. `real` serves
+# the real and twin arms (a twin has no site, so nothing fires: pass - twin is
+# symmetric), `pass` the stub arm; pass-nofn binds nothing. Member paths are
+# relative to this directory. The callees are bench/unusual/callees/.
+[callouts]
+real = "1=luhn,2=isbn13,3=member:values/users.tsv,4=netstr-end,netstr=netstr"
+pass = "1=stub,2=stub,3=stub,4=stub,netstr=stub"
 
 [expectations]
 file = "expectations.tsv"
@@ -145,6 +156,16 @@ tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synth
 role = "member"
 
 [[patterns]]
+name = "co-luhn-nofn"
+file = "patterns/co-luhn-nofn.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass-nofn", "twin_of-co-luhn", "requires-callouts", "requires-captures", "requires-unusual-co-luhn-nofn"]
+role = "member"
+
+[[patterns]]
 name = "co-isbn"
 file = "patterns/co-isbn.rx"
 feature_tier = "base"
@@ -172,6 +193,16 @@ hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
 tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "twin_of-co-isbn", "requires-captures"]
+role = "member"
+
+[[patterns]]
+name = "co-isbn-nofn"
+file = "patterns/co-isbn-nofn.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass-nofn", "twin_of-co-isbn", "requires-callouts", "requires-captures", "requires-unusual-co-isbn-nofn"]
 role = "member"
 
 [[patterns]]
@@ -205,13 +236,23 @@ tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synth
 role = "member"
 
 [[patterns]]
+name = "co-member-nofn"
+file = "patterns/co-member-nofn.rx"
+feature_tier = "base"
+hazard_class = "none"
+size_class = "small"
+convention = "perl-leftmost-first"
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass-nofn", "twin_of-co-member", "requires-callouts", "requires-captures", "requires-unusual-co-member-nofn"]
+role = "member"
+
+[[patterns]]
 name = "co-netstr"
 file = "patterns/co-netstr.rx"
 feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-pcrec-consume", "twin_of-co-netstr", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-pcrec-consume", "twin_of-co-netstr", "requires-callouts", "requires-captures", "requires-unusual-co-netstr"]
 role = "member"
 
 [[patterns]]
