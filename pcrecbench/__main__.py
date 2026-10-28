@@ -591,9 +591,35 @@ primary `--testee` arm is unaffected (a refusal there still errors).
     t = sub.add_parser("testees", help="list the testees the adapters provide")
     t.set_defaults(func=cmd_testees)
 
+    # [B148] lane b148aw: the assist authoring loop (pcrecbench/assists.py)
+    for name, hlp in (("assist-init", "write an assist file from its engine's "
+                       "template, only the member's family kept"),
+                      ("assist-selftest", "build an assist and run it over the "
+                       "member's PUBLIC sample (never held-out data); pass/fail "
+                       "per case + the token count")):
+        a = sub.add_parser(name, help=hlp)
+        a.add_argument("--member", required=True)
+        a.add_argument("--engine", required=True,
+                       help="pcre2 | onig | vectorscan | re2 | rust")
+        if name == "assist-init":
+            a.add_argument("--force", action="store_true",
+                           help="overwrite an existing assist file")
+            a.set_defaults(func=lambda args: _assists().main_init(args))
+        else:
+            a.add_argument("--file", default=None,
+                           help="the assist to test (default: "
+                                "assists/<member>/<engine>/assist.<ext> under "
+                                "$PCRECBENCH_ASSISTS_DIR or bench/unusual/assists)")
+            a.set_defaults(func=lambda args: _assists().main_selftest(args))
+
     rep = sub.add_parser("report", help="the query -> report reducer (pcrecbench/report.py); its flags: python3 -m pcrecbench report --help")
     rep.set_defaults(func=cmd_report)
     return p
+
+
+def _assists():
+    from pcrecbench import assists
+    return assists
 
 
 def main(argv=None):

@@ -36,6 +36,27 @@ DEEP_ARMS = [("pcre2-interp-deep", "pcre2-interp"), ("pcre2-jit-deep", "pcre2-ji
              ("pcrec-auto-deep", "pcrec-auto"), ("pcrec-vm-deep", "pcrec-vm"),
              ("onig-default-deep", "onig-default")]
 
+# [B148] lane b148aw: the ASSISTED configs (unusual_set_v1.md 5.5,
+# testees/assist/): the SAME engine as their base config with an assist for
+# the members it lacks, so -- like a deep arm -- each declares its base's
+# block verbatim. The per-member `unusual-<member>` grant of an ASSISTED
+# ledger row is the adapter's (testees/assist/adapter.py
+# `capability_grants`, read from assists.tsv at run time), never typed here.
+ASSIST_ARMS = [("pcre2-jit-assist-v01", "pcre2-jit"),
+               ("onig-default-assist-v01", "onig-default"),
+               ("re2-default-assist-v01", "re2-default"),
+               ("rust-default-assist-v01", "rust-default"),
+               ("vectorscan-block-som-assist-v01", "vectorscan-block-som")]
+
+# [B148] lane b148aw: the members an assisted config can run, whose feature a
+# NATIVE config has (recursion, callouts). Each carries `requires=unusual-<id>`
+# (members.py); a config DECLARES it here exactly when its block already
+# satisfies the member's other requires -- derived, never typed, so the matrix
+# admits exactly what it admitted before. (vars / co-netstr: VARS_NATIVE and
+# UNUSUAL_DELTA, unchanged.)
+FEATURE_MEMBERS = ["cscan", "wild-sexp-balanced", "wild-json-validate",
+                   "co-luhn", "co-isbn", "co-member"]
+
 VOCAB_REQUIRES = {"backrefs", "lookaround", "lookbehind-variable", "possessive-quantifier",
                   "atomic-group", "recursion", "conditionals", "k-reset", "control-verbs",
                   "unicode-properties", "named-groups", "free-spacing", "callouts",
@@ -108,25 +129,36 @@ def render_rxt():
         "  gen_patterns.py UNUSUAL_DELTA): `callouts` for pcrec (link-time binding) and",
         "  Oniguruma (`(?CN)` respelled `(?{N})`), `unusual-co-netstr` for pcrec only,",
         "  `unusual-co-*-nofn` for libpcre2 only; the `vars` + `unusual-va-*` tokens are",
-        "  declared for pcrec's native-vars configs only (L7, VARS_NATIVE).",
+        "  declared for pcrec's native-vars configs only (L7, VARS_NATIVE). The",
+        "  `*-assist-v01` configs copy their base's block (b148aw, ASSIST_ARMS); their",
+        "  ASSISTED members' `unusual-<member>` grants are read from assists.tsv at run",
+        "  time. `unusual-<member>` of a recursion/callout member is declared wherever",
+        "  the block already satisfies the member's other requires (FEATURE_MEMBERS).",
         "",
         "oracle pcre2",
         "tag set=unusual, version=0.1",
         "ext bench",
-        "  roster " + " ".join(ROSTER + [d for d, _ in DEEP_ARMS]),
+        "  roster " + " ".join(ROSTER + [d for d, _ in DEEP_ARMS + ASSIST_ARMS]),
     ]
-    for t, src in [(t, t) for t in ROSTER] + DEEP_ARMS:
+    reqs = {m.id: set(m.req) for m in MB.members()}
+    for t, src in [(t, t) for t in ROSTER] + DEEP_ARMS + ASSIST_ARMS:
         lines.append("  capabilities " + t)
+        have = []
         for tok in blocks[src]:
             assert tok in VOCAB_REQUIRES, tok
-            lines.append("    " + tok)
+            have.append(tok)
         for tok in UNUSUAL_DELTA.get(src, []):
             assert tok in VOCAB_REQUIRES or tok.startswith("unusual-"), tok
             if tok not in blocks[src]:
-                lines.append("    " + tok)
+                have.append(tok)
         if t in VARS_NATIVE:                                  # [B148] L7
-            for tok in VARS_TOKENS:
-                lines.append("    " + tok)
+            have.extend(VARS_TOKENS)
+        for mid in FEATURE_MEMBERS:                           # [B148] b148aw
+            own = "unusual-" + mid
+            assert own in reqs[mid], (mid, "members.py lost its unusual- token")
+            if reqs[mid] - {own} <= set(have):
+                have.append(own)
+        lines.extend("    " + tok for tok in have)
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 

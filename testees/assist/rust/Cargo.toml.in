@@ -1,0 +1,23 @@
+# testees/assist/rust/Cargo.toml.in -- the manifest of a Rust ASSIST crate
+# ([B148] lane b148aw). pcrecbench/assists.py writes it into a per-build
+# directory with @ASSIST_RS@ replaced by the assist file's absolute path, beside
+# a copy of Cargo.lock (this directory, generated --offline; the same regex
+# 1.13.1 / regex-automata 0.4.18 / regex-syntax 0.8.11 / aho-corasick 1.1.5 /
+# memchr 2.8.3 as testees/rust/Cargo.lock, checked by check_assist), and builds
+# `cargo build --release --locked --offline`: a staticlib linked with the C
+# assist runner.
+[package]
+name = "ub-assist"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+path = "@ASSIST_RS@"
+
+[dependencies]
+regex = "1"
+
+[profile.release]
+opt-level = 3

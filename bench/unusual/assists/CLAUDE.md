@@ -17,7 +17,16 @@ assist is authored.
   for engines with no callouts, 48 cases), `netstr.md` + `netstr-samples.tsv` (co-netstr for
   libpcre2, Oniguruma, RE2, rust-regex, Vectorscan; the callee of the callout-assisted shape is
   authored by the blind author, 27 cases) -- lane b148probs, docs/dev/lanes/b148probs_report.md.
-- `<member>/<engine>/assist.<ext>` -- (L6, later) one blinded author's assist.
+- `templates/<engine>.<ext>` ([B148] b148aw) -- one template per assist engine (`pcre2.c`,
+  `onig.c`, `vectorscan.c`, `re2.cc`, `rust.rs`): fenced boilerplate plus ONE empty assist
+  function per family. Each template x family counts 6-7 tokens empty, with nothing smuggled.
+  `pcrecbench assist-init` instantiates one member's family. The runner and the ABI are in
+  testees/assist/.
+- `AUTHORS.md` -- the authoring loop an L6 lane follows (init, fill, `assist-selftest`, be
+  brief) and the contract per family. Engine-neutral.
+- `<member>/<engine>/assist.<ext>` -- (L6, later) one blinded author's assist. Built, counted
+  and self-tested by `pcrecbench/assists.py`; measured through `<base>-assist-v01`
+  (testees/assist/).
 
 The counter is `tools/tokcount.py` (shared with [B141]); the item registry
 lives in its `ITEMS` and RULES.md must name every item (the self-test checks).

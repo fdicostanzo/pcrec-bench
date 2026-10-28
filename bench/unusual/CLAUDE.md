@@ -60,6 +60,13 @@ made before any run, dependencies).
 
 Not here yet (other lanes): the authored `assists/<member>/<engine>/` (L6).
 
+b148aw (lane b148aw): the assist pipeline -- `assists/templates/`, `assists/AUTHORS.md`, the
+runner and the five `-assist-v01` configs (testees/assist/), `pcrecbench/assists.py` +
+`assist-init`/`assist-selftest`, `tools/check_assist.py`. `members.py`/`gen_patterns.py`:
+every member an assist can cover now declares `requires-unusual-<member>`; `ASSIST_ARMS` adds
+the five assisted ids to the roster. The census shows 0 admission changes over the 15
+existing configs -- docs/dev/lanes/b148aw_report.md.
+
 L4 (lane b148l4): `--mode calls` in the pcre2/pcrec/onig/re2/rust/vectorscan-som drivers,
 the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-default-deep`,
 `unusual_only`), limits read back on every compile row, the untimed 6.4 high-water pass on
