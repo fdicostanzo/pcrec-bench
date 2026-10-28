@@ -30,7 +30,7 @@ made before any run, dependencies).
 - `gen_expectations.py` -- `expectations.tsv`, `expectations_stream.tsv`, `applies.tsv`
   (which large subjects belong to which patterns). The full derivation takes MINUTES
   (libpcre2's interpreter is super-quadratic on deep brace nesting; NOTES.md section 3).
-- `check_set.py` -- the set's own checks (`--full` re-derives all expectations).
+- `check_set.py` -- the set's own checks (`--full` re-derives all expectations); run by `tools/check_unusual.py` (`make check-unusual`, in `make check`) as its `set` section.
 - `fetch_sqlite.py`, `fetch_kernel.py` -- the F2 fetchers. `fetch_sqlite.py` is PINNED and RUN
   (SQLite 3.54.1, approved by Frank 2026-10-27): `vendor/sqlite3.c.xz` + `.sha256` + `SQLITE.md`.
   `fetch_kernel.py`: empty pin table, refuses by name until Frank approves each URL + sha256.
@@ -83,3 +83,5 @@ docs/dev/lanes/b148l7_report.md.
 L5 (lane b148l5): the callout arms -- `callees/`, the `-nofn` arms, the native wrappers
 (pcre2, onig, pcrec), the fire pass, `tools/check_callouts.py`, the calibration
 (`tools/callout_calib.py`) -- NOTES.md 6a, docs/dev/lanes/b148l5_report.md.
+
+L8 (lane b148l8): `tools/check_unusual.py` / `make check-unusual` is the ONE entry point for this set's checks -- the assist ledger vs the 3.0 table and the `assists/` file tree (`assist-tree`), `check_set.py`, and `check_calls/vars/callouts/assist.py` (moved out of `check-harness`); docs/dev/lanes/b148l8_report.md.
