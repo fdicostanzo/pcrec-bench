@@ -194,6 +194,14 @@ def fence_drift(member, engine, path):
     if len(want) != len(have):
         probs.append("%d fenced regions, the template has %d" % (len(have), len(want)))
     for i, (w, h) in enumerate(zip(want, have)):
+        if w[0] == h[0] and "BOILERPLATE includes" in w[0]:
+            # RULES.md lets `includes` hold any import line (the counter enforces the
+            # shape and its 120-token cap): the author may ADD includes, never drop
+            # the template's (manager ruling 2026-10-28, b148a-va-pcre2's report)
+            miss = [ln for ln in w[1].split("\n") if ln.strip() and ln not in h[1].split("\n")]
+            if miss:
+                probs.append("fenced region %d (%s) drops the template's %s" % (i + 1, h[0], miss[0].strip()))
+            continue
         if w != h:
             probs.append("fenced region %d (%s) differs from the template's" % (i + 1, h[0]))
     return probs

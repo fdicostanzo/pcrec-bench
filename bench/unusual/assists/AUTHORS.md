@@ -16,7 +16,9 @@ not another engine's assist, not the held-out subjects or expectations.
 
 2. **Fill in the parts marked `ASSIST`, and your setup.** That means the one
    answer function, any state it needs, and the setup function that builds
-   that state. Leave every `/* BOILERPLATE ... */` region exactly as it is:
+   that state. You may ADD standard-library `#include` / `use` lines inside
+   the `includes` region (never remove the template's). Leave every other
+   `/* BOILERPLATE ... */` region exactly as it is:
    the self-test compares each region with the template and reports drift.
    Fixed patterns are compiled in setup, which runs outside the clock (setup's
    `pattern` argument is the member's id text, for information: your patterns

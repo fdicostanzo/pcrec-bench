@@ -16,8 +16,8 @@
 #include <oniguruma.h>
 #include "ub_assist.h"
 #include "ub_map.h"
-/* END BOILERPLATE */
 #include <stdio.h>
+/* END BOILERPLATE */
 
 /* BOILERPLATE shim */
 static ub_map cache;            /* the compiled-pattern cache: key -> regex_t * */
