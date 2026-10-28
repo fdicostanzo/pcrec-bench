@@ -492,3 +492,16 @@ not-yet-reported pcre2 finding).
 Repro: `docs/dev/upstream/repro/U14/`.
 
 - **Sent 2026-10-07**: Frank approved ("Write a new GitHub issue. Approved") — a NEW issue, not folded into the perf-only #1015: https://github.com/PCRE2Project/pcre2/issues/1034. Watched via threads.tsv.
+
+## U15 — Oniguruma doc/API says onig_get_subexp_call_max_nest_level() defaults to 24; the library returns 20 (src/regint.h DEFAULT_SUBEXP_CALL_MAX_NEST_LEVEL 20) (OBSERVED 2026-10-27)
+
+Found while triaging Oniguruma's silent no-match past its recursion nest limit for
+bench/unusual (plan.md [B148] Q-D; the silent no-match itself is a design property and is
+NOT reported). doc/API:1020 says the default is 24; `src/regint.h:115` defines
+`DEFAULT_SUBEXP_CALL_MAX_NEST_LEVEL 20`, and `onig_get_subexp_call_max_nest_level()`
+returns 20 on this box (libonig5 6.9.10). Upstream master read 2026-10-27: both lines
+unchanged. Tracker searched 2026-10-27 ("nest level", "max_nest_level"): none found.
+Frank approved filing 2026-10-27 and asked for a brief report.
+
+Repro: `docs/dev/upstream/repro/U15/` (PRESENT on 6.9.10). Note:
+`docs/dev/upstream/notes/onig-2026-10-27.md`.
