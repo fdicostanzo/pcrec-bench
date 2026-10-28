@@ -6678,3 +6678,15 @@ Both night reservations closed green (part 2 21:53, tier 2 03:47); store a6bcc99
 Reports: lane b142rep rendered the window's nine groups (merged cbd82c04); lane b138rep rendered [B138]'s ryzen7700x re-baseline (2026-10-19/20, never reported until today -- a gap the manager had missed and told pcrec-main the opposite of; corrected by message; merged 91d92722). Both for pcrec-main's target picking (pcrec docs/dev/optloop/targets_2026-10-26.md). Answered its Q2-Q5/Q7 by message (sentinel's kept records span three passes; vectorscan nosom is existence-only; window ~4.5 h for jit/re2/rust on syntax+litrun with both pcrec pins).
 
 OWED: ledger + outbox for the 9ae59f5d4 window; trend snapshot for 9ae59f5d4; an interpret path for --grain subst TSVs; capability auto's re-baseline records both inconclusive-spread. Box: pcrec's full suite from 2026-10-27 00:05 (cap 16 h) -- no timing of ours until its end line.
+
+## 2026-10-27/28 — fifty-seventh session (Opus 5.5): inbox I-162..I-167, [B147] re-pin to 614d45eb3, [B148] the unusual set designed and wave 1 built
+
+- Inbox I-162..I-167 acked (pcrec abi 86-89, callouts compile, pin 614d45eb3 per I-167). [B147] lane b147prep MERGED 25afbb83: census 1,500 rows / 1,363 identical / 44 changed / 4 refusal movers (grp-callout) / 0 unattributed; callout binding = separate-TU pass. Outbox O-110 (four findings).
+- [B148] the UNUSUAL set (Frank's charter: realistic recursion / callouts / variables; native, assisted or not-capable by a 300-token budget). Design v0.1 -> r9 panel (43 findings, C1-C10, Q1 ruled: a 1 GiB cap for every engine) -> v0.2 (68bf2198); outbox O-108 (design + the nested-unset question Q-C).
+- Subst readout ledger + O-109 (8cf61b36): pcrec slower on cases 2 (x2.66), 5b (x3.16), 7 (x3.89); pcrec-main's lane subtri triages.
+- Wave 1 MERGED: L2 tokcount (78501a19), L1 schema v1.11 (f135cff2), L3 bench/unusual via lane b148land (f16f400a). One real bug found at landing: gen_streams --check never wrote the gitignored streams, so a fresh worktree's expectations check crashed; fixed + control. make check: harness 1124/1 (the known load-sensitive email quick cell), rest green.
+- sqlite3.c 3.54.1 VENDORED on Frank's approval (f8c66a01): SHA3-256 verified vs sqlite.org, sha256s pinned in fetch_sqlite.py.
+- Q-D: Oniguruma's silent no-match past the nest limit = design property, not filed. The doc error (API says 24, library 20) -> U15, approved, NOT SENT: kkos/oniguruma is ARCHIVED (2025-04-24); Frank: "just sit on it". Oniguruma labelled UNMAINTAINED, kept as a frozen baseline (a4516c10).
+- Housekeeping: seven merged worktrees pruned (~37 GB); bench temp files now under /var/tmp/pcrecbench/tmp (b4d1ae9d; Python-side only, a measured run's gcc env unchanged). pcrec-main explained its /var/tmp writers (lane vartmp will consolidate under /var/tmp/pcrec-<user>/).
+- L6 RULED (733d715f): 16 author lanes, one per (family, engine), for 43 (member, engine) pairs, scored per member.
+- RUNNING at pause: L4 drivers (lane b148l4, opus), in its scratch dry run.
