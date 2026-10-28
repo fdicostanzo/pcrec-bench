@@ -1,0 +1,162 @@
+id	len	sha256	description	periodic
+cs-00	29	8ad82ad424f98c0f9f95ee6347ed7bbddeb54ed9eb149129964d6c6e1efd3195	cscan case 0: nonascii-ident	no
+cs-01	14	87238e933bb54d0e5a0aa6044a8dff860bf80c95884431fa29b1513fcde7113e	cscan case 1: nonascii-ident-digit	no
+cs-02	5	6b297473aa37ab55b413a4bf4dcf9c9ff05b9d3386df2f0e725040df001b534b	cscan case 2: empty	no
+cs-03	13	c255d321ce0b3c86b6463a327b06d167ffcb03678f6109e5ced010d3449688e9	cscan case 3: plain	no
+cs-04	22	d74192bff5e8f332bb8f4757181317817be67c871ea7634f5d0d904c34abec26	cscan case 4: nested2	no
+cs-05	12	2a2cab66aef26f475ea193f112363eeae168fb190170548ac3d2995deccf17f0	cscan case 5: depth2-close-then-})	no
+cs-06	15	d106e0fe334c93bfa326d7889f1311c91e624b16e1076a6cddffbb665ed06097	cscan case 6: dq-brace	no
+cs-07	15	2ed64afcac05757fedfc0a095a3b2e36fb5f105262606c5db53b03cbec49ff8d	cscan case 7: sq-brace	no
+cs-08	15	0d49f95f42c90c023b3902de32d6aa88f48ee34a934d81012d42dd09acb96599	cscan case 8: sq-open-brace	no
+cs-09	18	a88f761353a51d8fee9ff395f87a2bee3405504d842dcf5eee4a39990959a3d8	cscan case 9: dq-escaped-quote	no
+cs-10	25	a8b9a8574cb902f83ba162235f59ecfcd8ada192ad6b83962bf9dc9a229347c3	cscan case 10: sq-escaped-quote	no
+cs-11	16	57fedc6c8efbe57d73c9a34368cac5585b183f15291d872b36cb58e16cdf2458	cscan case 11: dq-backslash-end	no
+cs-12	17	8c1457e2ae2a25d79f012edc03a7ff6e750ab65d845fa929e5cc521caadff873	cscan case 12: block-comment	no
+cs-13	17	10e81cd0a2fd662ef2b890e1cc4320b0a781e4fe715709327a34cc69384f0d17	cscan case 13: block-comment-open	no
+cs-14	21	9fead295413f497593f6db8435800120ab3a4dd54fb96dc3b79cbef22e0f6c11	cscan case 14: block-comment-stars	no
+cs-15	15	033ebdf0448b722d92f8de298b42185a6380fc5fb167043fd90b174503299488	cscan case 15: line-comment	no
+cs-16	11	88727ae36b038e830ca0d941a8a03adbefee7260fc5621b6dcad8bf453514720	cscan case 16: line-comment-brace-open	no
+cs-17	11	d3c10cedf2482745e099809a5a8c0c14aafba197e63dbc14baa18cd2209e5df1	cscan case 17: line-comment-no-nl-eof	no
+cs-18	17	989c44792d2acfd46d480ffaf7190cc3def2512002ea2c0ff59f8a5c018e4a6b	cscan case 18: div-not-comment	no
+cs-19	16	331f72de853f480b2b4cf5c19dd89aa8b109a430e015989796f277b5e960dfe3	cscan case 19: div-then-star-char	no
+cs-20	24	90f2edf4f61decbe51dd6f91361cf1b8037f28b751b96c09b868f88a4f9e31ca	cscan case 20: digraph-nest	no
+cs-21	10	3b14cda8a6a058434647fcf57f44c8e633d0460ae5cf87b3f012024e7a545efa	cscan case 21: digraph-close-top	no
+cs-22	14	e7a0c1987be320159f2d100ba3d0b6d4cf40d05dcba5fd152edbd1e6471d0f6f	cscan case 22: digraph-open-brace-close	no
+cs-23	14	deecce023f2f851268489e179baa85011385b03fdb564f644ab1fc0f823afd1b	cscan case 23: brace-open-digraph-close	no
+cs-24	17	62fa744af60a86fa13910c273bd72405ef08a6e47dee13744600651e6fff654e	cscan case 24: lt-percent-mod	no
+cs-25	16	e783987342193508e6ba03956e761103b6d0e51f2d78318a3df96a0e778397d2	cscan case 25: percent-gt	no
+cs-26	17	8eeae5c90cd3e7713e84a6e3e7ae44ebd9f93de6aade3979adc19e63906026ea	cscan case 26: trigraph-not-recognised	no
+cs-27	17	0ff0462b043c8f95e8dd59ed20f3f94171ebcd5a360e95267873413d18148475	cscan case 27: digit-sep	no
+cs-28	28	d06d37607e25a5d55277ffea31b0502f418a833c0fca627057a792068549f017	cscan case 28: digit-sep-brace-after	no
+cs-29	19	f623d042d1004260a1dd0149cf7d90c6a49137b1afd1cbd17612d80004995d30	cscan case 29: digit-sep-hex	no
+cs-30	21	d327cf13182a1bd9df515ab393dca6de9c8851298b7ecdf9a48793a48a188f26	cscan case 30: digit-sep-float	no
+cs-31	23	7142bcfb08bc3dd5a38c4cbef2ae6a0487eb7b4d9e7ef869eb01349c2ddb8fc1	cscan case 31: digit-sep-then-char	no
+cs-32	17	3df94f57bd0f95b111af2e1fd97b3c93b3703001727339db798417992cc589e8	cscan case 32: ident-digit-then-char	no
+cs-33	17	c225630cc1755aa638197e1d7da2cb2aeeee61a1883af4ada497449cd43a8b50	cscan case 33: u8-string	no
+cs-34	16	9667af7d1e74ffc8ce1dd3a079690debef2bd4321412b670d88c9d795ad249aa	cscan case 34: L-string	no
+cs-35	16	330fd21e52ba0accc54da610a3b1035bbda51e7370c279c8a507b2782309e77f	cscan case 35: U-char	no
+cs-36	16	ab1c19f476fa82df7f9473c9980131ea71082fbcda85e00313a3aa17f5366936	cscan case 36: u-char	no
+cs-37	15	40cd95cb8d7cd627ce0e8a6f4e8c4bbf084dafe909c61c3d1f0922887d076187	cscan case 37: splice-in-block-open	no
+cs-38	11	b3f0e4749c826bb6df6a6acf0519fe7c595b6add3f51d301ea985e245f31b84a	cscan case 38: splice-before-close	no
+cs-39	11	91f3b28dd702ed78d9f9ae6a7ba609a5d1e75543e42eb57d55248e90931f01fd	cscan case 39: splice-before-paren	no
+cs-40	19	659980e07863af6d24321476b6883966382ce93aa5fdab60ac67cb20f7ab34a3	cscan case 40: splice-in-comment-open	no
+cs-41	19	e41815dad17d9e0bd07d2584a0f2d80a524bcb9ca31d922027698e1bcf9ec378	cscan case 41: splice-in-comment-close	no
+cs-42	16	4cc03e88230ece6c02176326bb7f4bb691d9662f324844ada34a2a33005150ac	cscan case 42: splice-in-linecomment-open	no
+cs-43	16	acb2da06b9c9f648f0150b2ba4905fc4225ea64f5d74c959a27afafa9725e4af	cscan case 43: splice-continues-linecomment	no
+cs-44	25	039273bd77b766a92d3805b2933dec954168e0e717e86a7bb4577d4af9db6525	cscan case 44: splice-continues-linecomment-multi	no
+cs-45	14	c1ac66f4ee9b69968cd6f935c761af59b242d020a8837fde42180f064bc28994	cscan case 45: backslash-backslash-nl-comment	no
+cs-46	19	a69d31c86600d712a74266361e722d3aa4fbc8f9ce4c831e7c936ef94311c61e	cscan case 46: splice-in-dq	no
+cs-47	19	5ff225c1e560a00977987864dabfd2b517a11a11f7c4900e722a4c3888eb8bfa	cscan case 47: splice-after-escape-dq	no
+cs-48	18	b0030024ac6ea255d699ce74671226271ef30687f9cf7ddf1e3526bbbdae6da6	cscan case 48: escaped-backslash-then-splice-dq	no
+cs-49	20	b3ff69f480d4c23fa0f98d2b2dc8ce6ace4553573cd16c6c82657524c064c984	cscan case 49: splice-escape-quote-dq	no
+cs-50	19	11fe4d3663dc958df9bdbe32aecf83d29d094427ba9e33722067e08d0bf20cb3	cscan case 50: splice-in-digraph	no
+cs-51	19	0219699eff784f903418ef2a8415853d1f23116664bc6ca114e35964e3580058	cscan case 51: splice-in-digitsep	no
+cs-52	25	1ce0fc549702af0da66c781ea6f120bc4dcca589fa0d44ed79dff9a5164efb3d	cscan case 52: splice-in-ident-number	no
+cs-53	21	9594f3f61a2a2bfc1be2207914cb9e4b2ecb3c68e01dce67bc660f5a3232d61a	cscan case 53: pp-directive-unbalanced	no
+cs-54	25	8d3921e3483a202d8963b69d884f757588353936e54f26b75e2a1f58f3ed1f14	cscan case 54: pp-directive-balanced	no
+cs-55	16	40c98b7dea206109a0d18ac59be52f88da838d19811375173bb6d5f6d640097c	cscan case 55: unterminated-dq	no
+cs-56	14	ac79f0f3b35c7b65b287f7f3c8b0fda1cf8e5da2d41767975d57be09fbefb6ba	cscan case 56: unterminated-sq	no
+cs-57	17	c2f2fe4801eef28da79e21bc14e7013692be2d560158b516d220a4f0228cffc0	cscan case 57: newline-in-dq	no
+cs-58	12	616765063f89dadb679a86a4873a43321cf88bc47208b7b0b971b9b8bbcaef38	cscan case 58: unterminated-comment	no
+cs-59	17	0d8e15999b7a007a77f81c8c5df3b8f9f4f60923ce473a4d4911aa083f9af517	cscan case 59: unterminated-eof	no
+cs-60	11	a7d78fc8240f485c9b91ae2e03c8bf1fa418c4dca9bbd6c8207c6a13dd31819d	cscan case 60: depth-gt0-end	no
+cs-61	10	9a68845447d040b6ad7b70cc9a73808d3c2c28072dcdee05162f9f7bf7a963e4	cscan case 61: not-followed-by-paren	no
+cs-62	9	0b858592974f4ea1854f86a6c2b13e16156191dc5659f0cc90a0c36c50b68eec	cscan case 62: close-then-brace	no
+cs-63	8	d9e4406c9ed802f9799bd6bf6ea0bfce80b599dcca27f160574b4af8e07dcf49	cscan case 63: close-eof	no
+cs-64	10	f805fc87b056cdb813b7ad07ab77545ecdb71417ce3ed5d1b06379d4cc321e28	cscan case 64: close-then-x	no
+cs-65	14	49da7bb200a298596b188667357cf59e1d294f8d628e8e558b0ba36b9541c06c	cscan case 65: first-close-not-paren-later-ok	no
+cs-66	27	30ad86f621a076bcf201d37d92bff5bce37b769c0509ee72321e95210e4587d3	cscan case 66: trailing-after-ok	no
+cs-67	12	f0cd692a53c97dfcac4159f45d4618091fa82decaf8c2025890a784dabae6248	cscan case 67: two-segments-first	no
+cs-68	17	63b1c789dadca053b62266fb08f279360ae7dc95620ae819a1e3f9a7ef6fe966	cscan case 68: lone-paren	no
+cs-69	13	eb8e4f79aa914e52c260ef54197e48453e527cacd9179e6763f8265b560f365c	cscan case 69: dollar-ident	no
+cs-70	233	eb4d794fdca8a64d2377ddaa503cc6c66e287f573bbb6bfacaba3826cebe72c7	cscan case 70: realistic-fn	no
+cs-71	96	fd4c715fae44b940cdf39ddb69d123b813ca854395882a3e7d99c20b637134fd	cscan case 71: realistic-switch	no
+cs-72	54	f9f23e0bba8f4e0a37471091181d6887edf857eceb00937ca76f722beb586dff	cscan case 72: realistic-macro-splice	no
+cs-nest-19	49	e8ce5673182d12fafba673fe81c017ae30ca212dfe11132f1cb7572e5c632488	brace nesting depth 19 (Oniguruma nest-level-20 witness)	no
+cs-nest-20	51	86ee816a879cd7efc3f82ec0f543d7fb1202b5e528d14c076644fc9c7c5e4400	brace nesting depth 20 (Oniguruma nest-level-20 witness)	no
+cs-nest-21	53	62b62b43220d5b891e91aec7aea27d05d984a67d2374f238169d466a108711ce	brace nesting depth 21 (Oniguruma nest-level-20 witness)	no
+cs-nest-30	71	58e6a042a965d30750e7a6ba44acc6c598934db226c30e4c1192842abb30264a	brace nesting depth 30 (Oniguruma nest-level-20 witness)	no
+cs-nest-100	211	3bc5c8adaa3c2d4fe7149ea4e45606fb7cc969537a2ec8b37376828129b53764	brace nesting depth 100 (Oniguruma nest-level-20 witness)	no
+cs-define	12	af289ecd569fe3dc9a0b9ab16c79004b65528a7310afb03fbfeec402a77556c0	the (?(DEFINE) witness: Onig's regex condition reads xDEFINEy as a match	no
+sx-simple	7	2e2b3df4bfa54a708f89220c844beacd703d0f281c345b8bd9851ac5e8a6496c	S-expression case: one flat form	no
+sx-nested	19	e2e3c35e4231ab7705641d5a9c5c6780d5d049321ba5e997a1face47c8ab174e	S-expression case: nested forms	no
+sx-prefix	17	4fb8992bf51da211d72d61f14ddecee23dd90616d546e4eb732c53ed2df9d78d	S-expression case: balanced group after a prefix	no
+sx-empty	2	2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d	S-expression case: the empty form	no
+sx-two	7	8e5e42365a190d8d9f156c404efb064e0d9353790ecbc0c49ef9d6a382de5f36	S-expression case: two forms, the first wins	no
+sx-define	28	fa8d08498e774fd00ded6c7d1bd28faadd9cb65058310417d9bd4e2f508e0b9f	S-expression case: a Scheme definition	no
+sx-unbal-open	8	9ddfdc0b63bf4a68b8bc6102bba3515c7fa63c700e66aaa42cf06e811feaf1ed	S-expression case: an unclosed outer form: the inner group is the leftmost balanced one	no
+sx-unbal-open2	4	b4e2c61e897feed795c019dbe25d73d867b47df220ba44a7b28aac0f990917a9	S-expression case: same, minimal	no
+sx-unbal-close	6	41e5d8d3e5911a31cfe66f7d94144ece03d3285a59bb31d56443ff6584a95ee8	S-expression case: a stray closer before a form	no
+sx-none	21	6b16bc0f2aa4a0216ff4afdeab7e01ca0afbb834f03ace33277c6c94e2e9af4f	S-expression case: no parenthesis	no
+sx-deep-12	25	2547a9b49648f33ad16a73d6147b1caa37710a7041d4087505bc2e5e0448a4be	S-expression case: depth 12, balanced	no
+sx-deep-drop	24	1a04864a5eb308ade23c1a6dc4d3db6cca0eb59222a8d4e3dd430fc4ca0df58d	S-expression case: depth 12 with one closer dropped (the near miss)	no
+sx-string	18	cf0416e0474ab3c22c3a408fe3c509652d900c31ec22157504d59923dfa7e7f0	S-expression case: a string atom	no
+sx-lone-open	1	32ebb1abcc1c601ceb9c4e3c4faba0caa5b85bb98c4f1e6612c40faa528a91c9	S-expression case: a single opener	no
+sx-lone-close	1	ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee	S-expression case: a single closer	no
+sx-multi	33	c5fde204b55559384d61057c25f6ecb062ebcd8cb48778d31387746b4fd83fb3	S-expression case: two top-level forms over lines	no
+js-obj-empty	2	44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a	JSON case: empty object	no
+js-arr-empty	2	4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945	JSON case: empty array	no
+js-obj-1	7	015abd7f5cc57a2dd94b7590f04ad8084273905ee33ec5cebeae62276a97f862	JSON case: one pair	no
+js-arr-nums	16	9977d4f27f4043d6af8c4ea179ce62e29d3ac3856ce056404481b2903e29d442	JSON case: number forms	no
+js-nested	33	a2811ef694d1ccb04537090c2247755c74973fda43834f3c5fe4fda4fcb76139	JSON case: nested document	no
+js-str-esc	16	350f8e69f7d9438f451a033640c733d241f4824d3825570103dc193042057e42	JSON case: a string with escapes	15
+js-ws-num	6	9ed3756f547c9a78ee0df145d3cd13e358c9ac205c26da9a68255515b2759a23	JSON case: a number padded with whitespace	4
+js-ws-doc	19	ff10dbc5b4f82401516d586f06e442e4c735803c870186a38bf78e1086535514	JSON case: whitespace everywhere, trailing newline	no
+js-bad-trail-arr	4	886ad6246ed150b2930495926ba07d579307bc7fecaf4b391650dca8bae7bc66	JSON case: trailing comma in an array	no
+js-bad-trail-obj	8	aa99a5ce3eb0dd8355f0bfb15376ea1d862ad75d0d278af1f8c280ca8c02c640	JSON case: trailing comma in an object	no
+js-bad-squote	7	a84fed7e2eca1809b18c96ccd4571e0cef929a290d0108e0f4df368b7227eb5c	JSON case: single quotes	no
+js-bad-leading0	2	938db8c9f82c8cb58d3f3ef4fd250036a48d26a712753d2fde5abd03a85cabf4	JSON case: leading zero	no
+js-bad-missing-comma	5	9f901106b754d3b187811f5628437ca2076a61e68f2ac1696c4df25dd3c9852c	JSON case: missing comma	no
+js-bad-pair	5	aad532c506485850e6d2c02301b2862735a7eb3a9b0cd1559c24e3a4083a5c77	JSON case: a key without a value	no
+js-bad-word	3	99e6242759016035192f8efe5f53878a355026b61b0da04e0b56942148936eb2	JSON case: a truncated literal	no
+js-bad-unterm	4	aa885fb27a812abedb8978a3bb3218cbb01a22d270469b74f23995140175c462	JSON case: an unterminated string	no
+js-bad-ctrl	5	e0b6aa5e22df0d2a12cc3ebd8c821db5ae6cf6d7bcf45646dc2463cd63cb7783	JSON case: a raw control character in a string	4
+js-bad-trailing	4	4a0aa4da859bc84269fc36c50a5968cf4109b9b07099c0cb49f331f50c5c848b	JSON case: garbage after the value	no
+js-bad-brace2	8	74ca86c1049af062d8afa771d25d8789fe4a019cda418e58cf7d7d3c58ac78cb	JSON case: an extra closer	no
+js-bad-nan	5	638577393ecb248f472c18a1a95104181a3188551615d763873393eaf4eff186	JSON case: a non-JSON constant	no
+js-bad-dot	2	c977dbe785221d34114d345fdf8ff4e18bb4af66750751dbea29407f9738735f	JSON case: a number ending in a dot	no
+js-bad-minus	1	3973e022e93220f9212c18d0d0c543ae7c309e46640da93a4a0314de999f5112	JSON case: a lone minus	no
+js-bad-exp	7	cd95911cdcea473d29fc612acb88378cec4f4b947b0d2291cd653084921d0bfc	JSON case: a doubled exponent	no
+js-bad-escape	10	a3e11777af1caa9ff6e2f749660786d85680827ccd6615cb5ae92c746d223322	JSON case: an invalid escape	no
+js-bad-bare-key	5	f09a9231c12685ac5f0b6f0b06c9154f13dc3a5b3548db5142c19bde1383f261	JSON case: an unquoted key	no
+js-deep-arr	81	aac940f6456649ffdf2203510ce7fa818542e9b708c15421958461ed39d04735	JSON case: forty nested arrays	no
+js-unicode-esc	16	85f3853614bba6443ceed66f89e873c0f35bde5822820941a4969f5136307337	JSON case: valid unicode escapes	no
+js-bad-unicode-esc	10	4eb7998e377aa7e4f1561acfedaf9641946fd20579da56c04f7a96549cb1d50b	JSON case: an invalid unicode escape	no
+lu-valid	24	da9832f0a240b04843d6f2e53426248592c8ffa121bb0cf2f1990f01738a3395	Luhn case: one valid 16-digit number	no
+lu-invalid	25	5f719e655483a6115abee12102870353ac1f451767823682a9ed5237c455e141	Luhn case: one Luhn-invalid 16-digit number	no
+lu-first-fails	39	80019b655845f59e652bbbf90fe88962864a59ccdbb0e9736428f7a5a10dcf14	Luhn case: FIRST candidate fails the callee, the second passes (return-code control)	no
+lu-both-valid	39	d6ab0c59e561d9ff4d11c74491930a038ba1f3cb70c68e98c8b653ef8446c0f4	Luhn case: 13 and 19 digits, both valid	no
+lu-short	21	f85ea5ded3c1ce8386bc88327f8f7e03304f3652662ae2943f6e0e24f4ef32f7	Luhn case: 12 digits: below the quantifier floor	no
+lu-long-20	24	0a044f101c1da87658736e5a8200f6df0d0b952a881cffda30d3bf032dddcec7	Luhn case: 20 digits: no candidate (no boundary inside the run)	no
+lu-embedded	19	82f68a09160ce39adb10f1873c360a809a33b3f15b28b44f24b65b5b7ec52d25	Luhn case: digits glued to letters: no word boundary	no
+lu-lines	70	cb1f9649836a038854170d8a2fcd146a561e0570ebd1fb9a4f76ce8b2f3cda6a	Luhn case: a few log lines	no
+is-valid	22	81d29f21a3c7c0ebee65df4f7fc5fe6f6cc438d6c7b7196648b4cd23951dfa76	ISBN case: a valid ISBN-13	no
+is-invalid	22	30cfe47716e825a7d3e4d20c81ed81575308582c8bc861ef54d0ed8d8f4a7876	ISBN case: a bad check digit	no
+is-first-fails	41	199412cd4a9d1bbf9c360c0c64982456c6526964677534b093229bceccd155c5	ISBN case: FIRST candidate fails the callee, the second passes	no
+is-979	22	66bca4440b7c9879e0ccfa35edaa38279d027b2db7bfc6187d41f7e1b673943b	ISBN case: a 979 prefix	no
+is-isbn10	19	798c6de9a92c823f3f1c9a84725a09ec33a709e4ab0ac418fe0ef753559c740c	ISBN case: ten digits: not a candidate	no
+is-14	23	51b482e4e145fddf177e1a2fcfeb4f6e18c2a70b479a4d1680089fa90f954cf4	ISBN case: a 14-digit run: no boundary after 13	no
+is-not-97	22	7f1945c5c1e2f322a5b6aee3359b41391d6ae1e26ca66afc7c19fe38b40f0a97	ISBN case: 977 is not a bookland prefix	no
+me-alice	19	db539adbf520d74008cf55ad2543a2d3245431fab253eea5d457d3afdac36b09	membership case: a member	no
+me-mallory	21	e281ff36c62cb4ab6f0789bb4b096b8ef03f31a6473a3cf98153458d3f0ef794	membership case: not a member	no
+me-first-fails	21	a1f4fa900a3a17b3aaa148df0b28a0cce062a2254e60eda3855e9b8ffdcdb59c	membership case: FIRST candidate not a member, the second is	no
+me-empty	7	f4909bebc8916579a97031937c8c437603e6f997836363f4795de415948aaafd	membership case: an empty name	no
+me-glued	11	071973540c1acabbbdd47f28ae30bc4806b31707d15b34d2d4591a6a3b808a11	membership case: no word boundary before user=	no
+me-hyphen	16	851f873191cc616c0b1d3d560a8b3c67ebb9692ec67f15bf2a32ba8675f05144	membership case: \w++ stops at the hyphen: `alice` is a member	no
+me-case	10	1cfc4550276d9fe42d82255dda977c436176c8635ebdf34c5153d7aa2e8de6ae	membership case: case matters	no
+me-two-members	24	60d0d187519c2b998e722776f802c50c098b04444cab44ae84e379ef4abb8d4c	membership case: both members: the first is the answer	no
+ns-simple	8	9fcc3ae5d2fac6c6dbddb81cb46ff92d5c180d35e831074c93d36620f4eb3583	netstring case: a netstring	no
+ns-bad-len	7	d53f6eb3e47038c5f8f69ab1e6897fac87ab4dfa1823dc62179cb612d142a9f6	netstring case: declared 5, data is 4	no
+ns-zero	3	643d76d2766c1c66bf6df40630304dc3b86aa16ace3849a62e16419d2ed3cce7	netstring case: the empty netstring	no
+ns-comma-data	6	1f62e5a87f1eebcef6ef69912ffb08cecfce4adaef5b2025b7b81f7eec59448e	netstring case: a comma inside the data	no
+ns-run-start	10	121d8411805e6d09e88787b76fec0ee87adef5db5262dbdaf2a6d005e0388ae4	netstring case: start 0 declares 1234; the leftmost WORKING start is inside the digit run	no
+ns-newline	6	8512bfcb08adc10f10944ce0776f227072faf27733ff7ad91012087b40765491	netstring case: a newline inside the data	no
+ns-multi	13	d48ceb20cc41ea344c9f84fda90525f26013c97f60c6f5d21d1b66a854dc63bb	netstring case: two netstrings	no
+ns-none	17	dd63ad8c7405ca11517db1e850091d54fd8d5e6f26a4ffcee161fb27d2da3b64	netstring case: no digit	no
+ns-short-data	6	75a337bc4b317d33e96374e0e98031643fc8d36773247bf67f03b455860aa9ca	netstring case: declared 9, subject ends	no
+ns-nine	14	b17e0fd932dd016ff48b6e58b84b04f8939200f32944ac1e2a96356207ecedaa	netstring case: nine digits	no
+ns-ten	15	09330720a8ff75920e6013975b16957eb2eac524fd8836a2b81fc44f5925056f	netstring case: ten digits: only the start at offset 1 works	no
+ns-junk-first	22	dffdf777b71b486d406d65f29c661b680d7a82448188790f692d275718e05fe9	netstring case: a number without a colon, then a netstring	no
+ns-no-comma	6	e523f7d278a1082ad13b57fa303dd182fadf72c2e1dfb87cd7f28f78215f5d84	netstring case: wrong terminator	no
+x-log	107	9f17b230bc397e02bdf945b9b2fbc9cb21e558ea87cb3f86985b29f309f7316c	one line carrying a candidate for every family	no
+x-plain	43	05c6e08f1d9fdafa03147fcb8f82f124c76d2f70e3d989dc8aadb5e7d7450bec	plain text, no candidates	no

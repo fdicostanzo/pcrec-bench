@@ -1,0 +1,37 @@
+pattern	regime	subject_glob
+cscan	search_short	*
+cscan	throughput	comment-5m literal-100k nest-brace-* nest-paren-* nest-digraph-10k idents-1m splice-1m define-witness unterminated-5m
+cscan-onig	search_short	*
+cscan-onig	throughput	comment-5m literal-100k nest-brace-* nest-paren-* nest-digraph-10k idents-1m splice-1m define-witness unterminated-5m
+wild-sexp-balanced	search_short	*
+wild-sexp-balanced	throughput	sx-1m nest-paren-*
+wild-json-validate	search_short	*
+wild-json-validate	throughput	js-1m js-near-1m
+wild-json-validate-onig	search_short	*
+wild-json-validate-onig	throughput	js-1m js-near-1m
+co-luhn	search_short	*
+co-luhn	throughput	co-luhn-1m
+co-luhn-pass	search_short	*
+co-luhn-pass	throughput	co-luhn-1m
+co-luhn-twin	search_short	*
+co-luhn-twin	throughput	co-luhn-1m
+co-isbn	search_short	*
+co-isbn	throughput	co-isbn-1m
+co-isbn-pass	search_short	*
+co-isbn-pass	throughput	co-isbn-1m
+co-isbn-twin	search_short	*
+co-isbn-twin	throughput	co-isbn-1m
+co-member	search_short	*
+co-member	throughput	co-member-1m
+co-member-pass	search_short	*
+co-member-pass	throughput	co-member-1m
+co-member-twin	search_short	*
+co-member-twin	throughput	co-member-1m
+co-netstr	search_short	*
+co-netstr	throughput	co-netstr-1m
+co-netstr-assist	search_short	*
+co-netstr-assist	throughput	co-netstr-1m
+co-netstr-twin	search_short	*
+co-netstr-twin	throughput	co-netstr-1m
+floor	search_short	*
+floor	throughput	*
