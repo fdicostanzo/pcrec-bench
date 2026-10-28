@@ -1,0 +1,10 @@
+(?sx)
+\A (?&value) \Z
+        (?<ws>      [\t\n\r ]* ){0}
+        (?<number>  -? (?: 0|[1-9]\d*) (?: \.\d+)? (?: [Ee] [+-]? \d++)? ){0}
+        (?<boolean> true | false | null ){0}
+        (?<string>  " (?: [^\\"\x00-\x1f] | \\ ["\\bfnrt\/] | \\ u [0-9A-Fa-f]{4} )* " ){0}
+        (?<pair>    (?&ws) (?&string) (?&ws) : (?&value) ){0}
+        (?<array>   \[ (?: (?&value) (?: , (?&value) )* )? (?&ws) \] ){0}
+        (?<object>  \{ (?: (?&pair) (?: , (?&pair) )* )? (?&ws) \} ){0}
+        (?<value>   (?&ws) (?: (?&number) | (?&boolean) | (?&string) | (?&array) | (?&object) ) (?&ws) ){0}

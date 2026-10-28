@@ -1,0 +1,140 @@
+description |
+  bench/unusual@0.1 -- the unusual-features set. This file carries ONLY the
+  `ext bench` capability matrix (the pattern source is subbench.toml's
+  [[patterns]] array + patterns/*.rx); every block below is a verbatim copy of
+  bench/capability/patterns.rxt's, so an engine fact is declared in one place
+  (gen_patterns.py --check). The `callouts` token is declared for libpcre2 only:
+  pcrec's callout binding and Oniguruma's `(?{N})` spelling are L5's to declare;
+  the vars / unusual-<member> tokens wait for L1's REQUIRES_VOCAB.
+
+oracle pcre2
+tag set=unusual, version=0.1
+ext bench
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in re2-default onig-default vectorscan-block-som rust-default
+  capabilities pcre2-interp
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcre2-jit
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-auto
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-nocaps
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities pcrec-vm
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-vm-in
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities re2-default
+    unicode-properties
+    named-groups
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities onig-default
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities vectorscan-block-som
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    true-end-anchor
+  capabilities rust-default
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
