@@ -3519,3 +3519,7 @@ syntax-0.1, utf8-0.1 (`.tsv`/`.md`/`.matrix.tsv`/`.subject-grain.{md,tsv}`/
 in capability-0.2 every pcrec auto-caps/auto-nocaps cell is
 `inconclusive-spread` (not ranked); the vm-caps record is measured. Counts:
 docs/dev/lanes/b138rep_report.md.
+
+## `--grain stream` ([B148] rep, 2026-10-28)
+
+A third non-default grain beside `subst`: `python3 -m pcrecbench report --grain stream [--callee-calib FILE]` (md / tsv) reads the `call-stream` records of the unusual set (`pcrecbench/report_stream.py`, unusual_set_v1.md 7.5). No committed report uses it yet (the sample is the first scratch read), `REPORTER_VERSION` is unchanged and no existing report moves. The set and subject grains still refuse a call-stream-only selection BY NAME and drop stream rows from a mixed record.

@@ -7021,7 +7021,8 @@ def build_argparser():
                      help="'matrix' ([B52]): the tests-x-engines ratio matrix, "
                           "one row per (subbench, pattern, regime_or_na, form), "
                           "one column per testee; requires --grain set")
-    ap.add_argument("--grain", choices=["set", "subject", "subst"], default="set",
+    ap.add_argument("--grain", choices=["set", "subject", "subst", "stream"],
+                     default="set",
                      help="ranking grain (manager change request, 2026-08-25): "
                           "'set' (default) reduces over the whole subject set "
                           "per (pattern, regime) -- per trial, sum the "
@@ -7029,6 +7030,12 @@ def build_argparser():
                           "trials; a set cell excludes if ANY subject in it "
                           "fails. 'subject' gives the finer (pattern, subject, "
                           "regime) drill-down tables.")
+    ap.add_argument("--callee-calib", metavar="FILE", default=None,
+                     help="[B148] rep: with --grain stream, a callout "
+                          "calibration TSV (tools/callout_calib.py's stdout) "
+                          "supplying each engine's callee ns/fire for the "
+                          "callout cost split's SHARE column; without it the "
+                          "share prints `-`")
     ap.add_argument("--include-synthetic", action="store_true",
                      help="ADDITION beyond requirements/harness_contract: "
                           "include synthetic:true records (excluded by "
@@ -7109,6 +7116,17 @@ def main(argv=None):
               "(no matrix, no subject-grain slice)", file=sys.stderr)
         return 2
 
+    # [B148] rep: the stream view has two renderings (md, tsv) only.
+    if args.grain == "stream" and (args.format == "matrix"
+                                   or args.subject_grain_slice):
+        print("pcrecbench report: --grain stream renders md or tsv only "
+              "(no matrix, no subject-grain slice)", file=sys.stderr)
+        return 2
+    if args.callee_calib and args.grain != "stream":
+        print("pcrecbench report: --callee-calib requires --grain stream",
+              file=sys.stderr)
+        return 2
+
     args._subbench_alias_note = None
     if args.subbench:
         resolved, note = resolve_subbench_arg(args.subbench, REPO_ROOT)
@@ -7154,6 +7172,19 @@ def main(argv=None):
         rendered = (report_subst.render_subst_tsv(sd) if args.format == "tsv"
                     else report_subst.render_subst_markdown(sd))
         _warn_if_large(rendered, "substitution report")
+        sys.stdout.write(rendered)
+        return 0
+    if args.grain == "stream":
+        # [B148] rep: the call-stream view (pcrecbench/report_stream.py).
+        from pcrecbench import report_stream
+        sd, err = report_stream.build_stream_report(
+            loaded, args, known_testee_ids=known_testee_ids or None)
+        if err:
+            print(f"pcrecbench report: {err}", file=sys.stderr)
+            return 1
+        rendered = (report_stream.render_stream_tsv(sd) if args.format == "tsv"
+                    else report_stream.render_stream_markdown(sd))
+        _warn_if_large(rendered, "stream report")
         sys.stdout.write(rendered)
         return 0
     rd, err = build_report(loaded, args, known_testee_ids=known_testee_ids or None)

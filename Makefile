@@ -220,6 +220,10 @@ deps:
 #   5. [B52]: pcrecbench/tests/test_matrix_page.py -- scripts/
 #      matrix_page.py's `.matrix.tsv` parser and HTML renderer, run
 #      against hand-built fixture strings; no engine, no store.
+#   6. [B148] rep: pcrecbench/tests/test_report_stream.py -- the
+#      `--grain stream` view (hand-computed cells, break-even, callout
+#      split, depth table, the set/subject refusal, the viewer / trend /
+#      front-page skip controls); no engine, no store.
 check-report:
 	@echo "== check-report =="
 	@$(PYTHON) -m pcrecbench.tests.test_report
@@ -229,6 +233,9 @@ check-report:
 	@echo
 	@echo "-- pcrecbench.tests.test_matrix_page ([B52], scripts/matrix_page.py) --"
 	@$(PYTHON) -m pcrecbench.tests.test_matrix_page
+	@echo
+	@echo "-- pcrecbench.tests.test_report_stream ([B148] rep, report --grain stream) --"
+	@$(PYTHON) -m pcrecbench.tests.test_report_stream
 	@echo
 	@echo "-- fixtures independently accepted by schema/validate.py --"
 	@$(VALIDATE) --check-filename pcrecbench/tests/fixtures/store/records/*/*/*.jsonl

@@ -240,6 +240,42 @@ def _reduce_cell(match_rows, compile_rows):
     return c
 
 
+def select_latest(valid, args):
+    """The standard reporter's record dedup (newest MEASURED record per
+    (sub-bench@version, testee, machine); `--all-records` keeps all) --
+    shared with the stream view ([B148] rep). -> (kept, superseded,
+    newer_not_measured, eff) with eff = record path -> effective testee id."""
+    all_records = bool(getattr(args, "all_records", False))
+    groups = defaultdict(list)
+    for r in valid:
+        s = r.setup
+        key = (s["subbench"]["id"] + "@" + str(s["subbench"]["version"]),
+               s["testee"]["testee_id"], s["environment"]["machine_id"])
+        groups[key].append((s["run"]["timestamp"], r))
+    kept, superseded, newer_nm, eff = [], [], [], {}
+    for (_sb, tid, _m), entries in groups.items():
+        entries.sort(key=lambda te: _rp.ts_key(te[0]))
+        if all_records:
+            for ts, r in entries:
+                kept.append(r)
+                eff[r.path] = tid + "@" + _rp._date_suffix(ts) if len(entries) > 1 else tid
+            continue
+        meas = [(ts, r) for ts, r in entries
+                if r.setup.get("status", "measured") == "measured"]
+        kts, kr = meas[-1] if meas else entries[-1]
+        kept.append(kr)
+        eff[kr.path] = tid
+        older = [r for ts, r in entries if _rp.ts_key(ts) < _rp.ts_key(kts)]
+        if older:
+            superseded.append((kr.setup["record_id"],
+                               [r.setup["record_id"] for r in older]))
+        for ts, r in entries:
+            if _rp.ts_key(ts) > _rp.ts_key(kts):
+                newer_nm.append((kr.setup["record_id"], r.setup["record_id"],
+                                 r.setup.get("status", "measured")))
+    return kept, superseded, newer_nm, eff
+
+
 def build_subst_report(loaded, args, known_testee_ids=None):
     """-> (SubstData | None, error). Same refusals as the standard builder
     that apply (unknown --testee, mixed major, two machines)."""
@@ -269,35 +305,7 @@ def build_subst_report(loaded, args, known_testee_ids=None):
         else:
             valid.append(r)
 
-    all_records = bool(getattr(args, "all_records", False))
-    groups = defaultdict(list)
-    for r in valid:
-        s = r.setup
-        key = (s["subbench"]["id"] + "@" + str(s["subbench"]["version"]),
-               s["testee"]["testee_id"], s["environment"]["machine_id"])
-        groups[key].append((s["run"]["timestamp"], r))
-    kept, superseded, newer_nm, eff = [], [], [], {}
-    for (_sb, tid, _m), entries in groups.items():
-        entries.sort(key=lambda te: _rp.ts_key(te[0]))
-        if all_records:
-            for ts, r in entries:
-                kept.append(r)
-                eff[r.path] = tid + "@" + _rp._date_suffix(ts) if len(entries) > 1 else tid
-            continue
-        meas = [(ts, r) for ts, r in entries
-                if r.setup.get("status", "measured") == "measured"]
-        kts, kr = meas[-1] if meas else entries[-1]
-        kept.append(kr)
-        eff[kr.path] = tid
-        older = [r for ts, r in entries if _rp.ts_key(ts) < _rp.ts_key(kts)]
-        if older:
-            superseded.append((kr.setup["record_id"],
-                               [r.setup["record_id"] for r in older]))
-        for ts, r in entries:
-            if _rp.ts_key(ts) > _rp.ts_key(kts):
-                newer_nm.append((kr.setup["record_id"], r.setup["record_id"],
-                                 r.setup.get("status", "measured")))
-    valid = kept
+    valid, superseded, newer_nm, eff = select_latest(valid, args)
     hosts = sorted({r.setup["environment"]["machine_id"] for r in valid})
     if len(hosts) > 1:
         return None, ("the selected records span %d machines (%s); a report "
