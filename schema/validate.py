@@ -1257,9 +1257,15 @@ class RecordValidator:
                 continue
             counts = [stream.get(f) for f in STREAM_COUNTS]
             calls = stream.get("calls")
-            # X48 every call is exactly one of the four results
+            # X48 every call is exactly one of the four results -- on a
+            # stream that FINISHED. [B148] L4: a `timed-out` / `crashed`
+            # stream row never reported its per-call array (the driver
+            # spells it after the clock), so it carries no partition; its
+            # counts may sum below `calls`, never above.
+            unfinished = row.get("match_outcome") in ("timed-out", "crashed")
             if all(isinstance(c, int) for c in counts + [calls]) \
-                    and sum(counts) != calls:
+                    and (sum(counts) > calls if unfinished
+                         else sum(counts) != calls):
                 add(Problem(path, n, "stream.calls",
                             f"is {calls} but matched + nomatch + refused + "
                             f"gave_up = {' + '.join(str(c) for c in counts)} = "

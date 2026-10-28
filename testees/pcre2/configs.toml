@@ -84,3 +84,24 @@ captures = "on"
 subst_sizing = "first"
 subst_only = true
 description = "pcre2-jit's substitution tier, SIZE-FIRST call shape (OVERFLOW_LENGTH, then the real call) -- substitution sets only ([B140])"
+
+# [B148] L4 (docs/design/unusual_set_v1.md 6.1-6.2, Frank's Q1 ruling): the
+# `deep` limits arm -- a 1 GiB CAP on matcher working storage, every counter
+# unbounded (P10). Unusual set only (`unusual_only`, refused by name
+# elsewhere). For the interpreter the deep arm is TIGHTER than its default
+# (heap 1,048,576 KiB vs the library's 20,000,000 KiB): said so in the readout.
+[testees.pcre2-interp-deep]
+engine_mode = "interp"
+jit = false
+captures = "on"
+limits = "ceil1g"
+unusual_only = true
+description = "pcre2-interp's deep limits arm (lim-ceil1g): pcre2_set_heap_limit(1 GiB), match/depth limits UINT32_MAX -- bench/unusual only ([B148] L4)"
+
+[testees.pcre2-jit-deep]
+engine_mode = "jit"
+jit = true
+captures = "on"
+limits = "ceil1g"
+unusual_only = true
+description = "pcre2-jit's deep limits arm (lim-ceil1g): a pcre2_jit_stack_create(32 KiB, 1 GiB) stack assigned, match limit UINT32_MAX -- bench/unusual only ([B148] L4)"

@@ -41,6 +41,7 @@ class DriverOutput:
         self.info = {}
         self.rows = []
         self.outs = {}                    # [B140] subject id -> (path, bytes)
+        self.streams = {}                 # [B148] L4 subject id -> {k: v}
         self.compile_lines = []
         self.errors = []
         self.returncode = 0
@@ -103,10 +104,44 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
             out.errors.append(payload)
         elif kind == "out":
             out.outs[payload[0]] = (payload[1], payload[2])
+        elif kind == "stream":
+            out.streams[payload[0]] = payload[1]
     # [B140] pair each `out` line to its subject row (--mode subst only)
     for row in out.rows:
         if row.subject_id in out.outs:
             row.out_path, row.out_bytes = out.outs[row.subject_id]
+        # [B148] L4 pair each `stream` line to its subject row (--mode calls)
+        if row.subject_id in out.streams:
+            row.stream = stream_fields(out.streams[row.subject_id])
+    return out
+
+
+def _int_or_none(v):
+    return None if v in (None, "", "-") else int(v)
+
+
+def stream_fields(d):
+    """[B148] L4: a driver `stream` line's key=value pairs -> the harness's
+    dict. The results hash is computed HERE from the token file (the driver
+    prints `results_sha256=-`; SHA-256 stays out of every driver), and the
+    token file is read once and removed."""
+    out = {"calls": _int_or_none(d.get("calls")),
+           "matched": _int_or_none(d.get("matched")),
+           "nomatch": _int_or_none(d.get("nomatch")),
+           "refused": _int_or_none(d.get("refused")),
+           "gave_up": _int_or_none(d.get("gave_up")),
+           "first_code": _int_or_none(d.get("first_code")),
+           "first_limit": None if d.get("first_limit") in (None, "", "-")
+           else d["first_limit"],
+           "results_sha256": None, "tokens": None}
+    path = d.get("tokens")
+    if path and path != "-" and os.path.exists(path):
+        import hashlib
+        with open(path, "rb") as f:
+            data = f.read()
+        out["results_sha256"] = hashlib.sha256(data).hexdigest()
+        out["tokens"] = data.count(b"\n")
+        os.remove(path)
     return out
 
 
@@ -143,6 +178,12 @@ def build_driver(source, output, extra=None, cflags=None, extra_sources=None):
     more = [os.path.join(here, f) for f in (extra_sources or [])]
     deps = deps + more + [os.path.splitext(m)[0] + ".h" for m in more
                           if os.path.exists(os.path.splitext(m)[0] + ".h")]
+    # [B148] L4: the header every driver's `--mode calls` shares
+    # (testees/common/calls_io.h) joins the staleness check of every driver.
+    common = os.path.join(os.path.dirname(here), "common")
+    if os.path.isdir(common):
+        deps += [os.path.join(common, f) for f in sorted(os.listdir(common))
+                 if f.endswith(".h")]
     argv = ([cc] + flags + ["-o", output, source] + timed + more
             + list(extra or []))
     # Registered even on the cached path: the record must state how the
@@ -176,10 +217,17 @@ def driver_build_provenance():
 
 
 def write_list(subjects, path):
-    """The driver's `--list` file: `id<TAB>abspath` per line, no header."""
+    """The driver's `--list` file: `id<TAB>abspath` per line, no header.
+    [B148] L4: a CALL-STREAM subject (one with `calls_path`) adds its call
+    list as a third column (`--mode calls`, adapters.py)."""
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         for s in subjects:
-            f.write("%s\t%s\n" % (s.subject_id, os.path.abspath(s.path)))
+            cp = getattr(s, "calls_path", None)
+            if cp:
+                f.write("%s\t%s\t%s\n" % (s.subject_id, os.path.abspath(s.path),
+                                          os.path.abspath(cp)))
+            else:
+                f.write("%s\t%s\n" % (s.subject_id, os.path.abspath(s.path)))
     return path
 
 
@@ -194,6 +242,10 @@ def _run_list_with_resume(argv, subjects, timeout, cwd, pin, subject_timeout):
         skip = 0
         for attempt in range(MAX_RESTARTS + 1):
             full = list(argv) + ["--list", listfile]
+            if any(getattr(s, "calls_path", None) for s in subjects):
+                # [B148] L4: the per-call result tokens land here, after the
+                # clock; stream_fields() hashes and removes each file.
+                full += ["--tokens-dir", tmpdir]
             if subject_timeout:
                 full += ["--subject-timeout", str(int(subject_timeout))]
             if skip:

@@ -76,7 +76,11 @@ TARGET_LOOP_SECONDS = 0.050
 # ... and no trial's whole sweep may be predicted to exceed this, so one
 # pathological subject cannot turn a cell into an overnight run.
 TRIAL_BUDGET_SECONDS = 20.0
-PROBE_ITERS = {"throughput": 1, "search_short": 200, "match": 200}
+PROBE_ITERS = {"throughput": 1, "search_short": 200, "match": 200,
+               # [B148] L4: one iteration of a call stream is one full REPLAY
+               # of the declared call list (unusual_set_v1.md 7.2) -- already
+               # hundreds of engine calls, so the probe is one replay.
+               "call-stream": 1}
 
 
 class HarnessError(Exception):
@@ -304,6 +308,103 @@ def classify_giveup(answer, handle):
     if lo is None:
         return False
     return lo <= code <= hi
+
+
+EMPTY_SHA256 = ("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852"
+                "b855")
+
+
+def stream_metadata(handle):
+    """The match-scope `engine_metadata` a stream row carries ([B148] L4):
+    `stream_anchor` = `native` | `explicit` (unusual_set_v1.md 7.1's
+    O(segment) pre-flight outcome), present iff the adapter declares it."""
+    anchor = (handle or {}).get("stream_anchor")
+    return {"stream_anchor": anchor} if anchor else None
+
+
+def name_limit(code, handle, adapter):
+    """The engine's own NAME for a give-up code: the handle's table, else the
+    adapter's `giveup_names`, else `code<N>` (6.5: a give-up NAMES its
+    limit; an unnamed code is still spelled so a reader can look it up)."""
+    names = dict(getattr(adapter, "giveup_names", {}) or {})
+    names.update((handle or {}).get("giveup_names") or {})
+    if code in names:
+        return names[code]
+    return "code%d" % code if code >= 0 else "code-neg%d" % -code
+
+
+def stream_outcome(row, sexp, subject, handle, adapter):
+    """(match_outcome, observed, diagnostic, stream_block) for one stream row
+    ([B148] L4, unusual_set_v1.md 7.1/7.4; X47-X53).
+
+      * the driver did not survive / timed out -> `crashed` / `timed-out`,
+        with the stream block's counts what WAS answered (none: the per-call
+        array is only reported after the clock) -- X48 exempts these two
+        outcomes (the record_schema.md 9 amendment L4 made: a stream that
+        never finished has no honest per-call partition)
+      * a call gave up -> `gave-up`, `first_limit` the engine's own name for
+        the first give-up's code (X49: the diagnostic names it)
+      * counts and results hash equal the expectation -> matched-as-expected
+      * counts equal, hash differs -> wrong-span-or-captures (some call
+        answered at a different span or group 1)
+      * counts differ -> did-not-match-as-expected
+    `observed.matched` is "did any call match"; a stream has no single span."""
+    calls = subject.calls or (sexp.calls if sexp else 1)
+    st = row.stream or {}
+    base = {"calls": calls, "segment_bytes": subject.segment_bytes or 0,
+            "matched": 0, "nomatch": 0, "refused": 0, "gave_up": 0,
+            "results_sha256": EMPTY_SHA256}
+    if row.answer in ("timedout", "crashed") or not st:
+        why = row.detail or ("the per-subject alarm fired"
+                             if row.answer == "timedout"
+                             else "the driver reported no stream line")
+        outcome = "timed-out" if row.answer == "timedout" else "crashed"
+        return (outcome, None,
+                "%s; no per-call results (the array is reported after the "
+                "clock, which never stopped)" % why, base)
+    blk = {"calls": st.get("calls") or calls,
+           "segment_bytes": subject.segment_bytes or 0,
+           "matched": st.get("matched") or 0,
+           "nomatch": st.get("nomatch") or 0,
+           "refused": st.get("refused") or 0,
+           "gave_up": st.get("gave_up") or 0,
+           "results_sha256": st.get("results_sha256") or EMPTY_SHA256}
+    observed = {"matched": blk["matched"] > 0, "span": None, "captures": None}
+    if blk["calls"] != calls:
+        return ("crashed", observed,
+                "the driver answered %d call(s); the stream declares %d"
+                % (blk["calls"], calls), dict(base, results_sha256=blk["results_sha256"]))
+    if st.get("tokens") is not None and st["tokens"] != calls:
+        return ("crashed", observed,
+                "the token file holds %d line(s) for %d call(s)"
+                % (st["tokens"], calls), dict(base, results_sha256=blk["results_sha256"]))
+    if blk["gave_up"] > 0:
+        code = st.get("first_code")
+        limit = st.get("first_limit") or (name_limit(code, handle, adapter)
+                                          if code is not None else "unnamed")
+        blk["first_limit"] = limit
+        kind = ("a resource limit" if code is not None and classify_giveup(
+            "giveup:%d" % code, handle) else "NOT a declared resource-limit "
+            "code (an engine error, recorded under its own name)")
+        return ("gave-up", observed,
+                "%d of %d call(s) gave up; the first on %s (code %s, %s)"
+                % (blk["gave_up"], calls, limit, code, kind), blk)
+    if sexp is None:
+        return ("did-not-match-as-expected", observed,
+                "no stream expectation exists for this (pattern, stream)", blk)
+    counts = (blk["matched"], blk["nomatch"], blk["refused"])
+    want = (sexp.matched, sexp.nomatch, sexp.refused)
+    if counts != want:
+        return ("did-not-match-as-expected", observed,
+                "expected matched/nomatch/refused %d/%d/%d; observed %d/%d/%d"
+                % (want + counts), blk)
+    if blk["results_sha256"] != sexp.results_sha256:
+        return ("wrong-span-or-captures", observed,
+                "the counts agree but the per-call tokens do not: results_"
+                "sha256 %s, expected %s (some call answered at a different "
+                "span or group 1)" % (blk["results_sha256"][:16],
+                                       sexp.results_sha256[:16]), blk)
+    return "matched-as-expected", None, None, blk
 
 
 def truncation_for(regime, row, subject):
@@ -641,11 +742,21 @@ PRIME_PINNED_REFUSAL = "--prime is scratch-tier only until the schema records it
 PRIME_NOTE = "primed: one untimed call per subject before each timed loop"
 
 
-# [B148] L1: the `call-stream` regime is in the schema and the sidecar
-# vocabulary, but no adapter speaks `--mode calls` yet (unusual_set_v1.md
-# 7.3, lane L4). Until L4 sets this False, a cell asking for the regime is
-# refused BY NAME before anything is built or measured.
-CALL_STREAM_PENDING = True
+# [B148] L1 put the `call-stream` regime in the schema and the sidecar
+# vocabulary and refused it here BY NAME until the driver plumbing existed.
+# L4 (lane b148l4) landed `--mode calls` (adapters.py's protocol) and flipped
+# this; the switch stays so the refusal is one line away if a regression
+# needs it. An adapter whose driver does not speak the mode is refused by
+# name instead (`Adapter.calls_mode`, CALLS_MODE_REFUSAL).
+CALL_STREAM_PENDING = False
+CALLS_MODE_REFUSAL = ("%s's driver does not speak `--mode calls` "
+                      "(Adapter.calls_mode is False), so it cannot run the "
+                      "`call-stream` regime of %s; name the set's other "
+                      "regimes with --regimes")
+UNUSUAL_ONLY_REFUSAL = ("%s is an unusual-set-only testee (config "
+                        "unusual_only: a `deep` limits arm or an assisted "
+                        "testee, docs/design/unusual_set_v1.md 6.2/7.3) and %s "
+                        "is not an unusual set (no `unusual_set = true`)")
 
 
 def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
@@ -689,6 +800,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             "unusual_set_v1.md 7.3); name the set's other regimes with "
             "--regimes" % sb.id)
     adapter, cfg = _ad.resolve(testee_id)
+    unusual_set = bool(sb.cfg.get("unusual_set"))
+    if cfg.get("unusual_only") and not unusual_set:
+        # [B148] L4 (unusual_set_v1.md 7.3): the `subst_only` analogue.
+        raise HarnessError(UNUSUAL_ONLY_REFUSAL % (testee_id, sb.id))
+    if "call-stream" in regimes and not getattr(adapter, "calls_mode", False):
+        raise HarnessError(CALLS_MODE_REFUSAL % (testee_id, sb.id))
 
     # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
     # that has a substitution call, and a substitution-only arm (a testee
@@ -832,6 +949,15 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # before this lane -- and every testee that declares nothing --
     # is provably unchanged.
     testee_grain = testee_block.get("grain", "full")
+    if unusual_set:
+        # [B148] L4: the pairs only the unusual set's rows carry (the limits
+        # read-back, `stream_anchor`, the 6.4 high-water pair) are declared
+        # HERE, so every other set's testee block is byte-for-byte unchanged.
+        extra_decl = adapter.unusual_metadata_decl(testee_id)
+        if extra_decl:
+            testee_block["engine_metadata_declaration"] = dict(
+                testee_block.get("engine_metadata_declaration") or {},
+                **extra_decl)
     if sb.substitution:
         # v1.9 S2: the tier is part of the record. Every adapter that runs the
         # substitution set through `measure_subst` calls the engine's API
@@ -870,6 +996,12 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         # transform (rust-regex: unicode(false), plain form only) is told so at
         # COMPILE time, so the compile row prices the artifact that is timed.
         options = dict(options, substitution=True)
+    if unusual_set:
+        # [B148] L4 (unusual_set_v1.md 6.2): every engine's EFFECTIVE limits
+        # are recorded on this set's compile rows, both arms -- the adapter
+        # passes its driver `--limits` only when asked, so every other set's
+        # compile rows are byte-for-byte what they were.
+        options = dict(options, limits=True)
 
     for p in cell_patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
@@ -954,7 +1086,11 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         if cp is None:
             continue
         for regime in regimes:
-            subjects = sb.subjects_for(regime)
+            # [B148] L4: the set's applicability table (a 5 MB comment is
+            # cscan's subject, not the JSON validator's); every subject
+            # applies on a set with none, so no other set's cells move.
+            subjects = [s for s in sb.subjects_for(regime)
+                        if sb.applies(p.name, regime, s.subject_id)]
             if subject_limit is not None:
                 subjects = subjects[:int(subject_limit)]
             if not subjects:
@@ -1051,6 +1187,39 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                     timeline.append(quiet.timeline_item(
                         t_before, t_after, (time.monotonic() - t_start) * 1000.0,
                         pinning["cpu"], p.name, enum, form, siblings=siblings))
+
+            if regime == "call-stream":
+                # [B148] L4: a STREAM row (unusual_set_v1.md 7.1-7.4).
+                for trial, trial_rows in enumerate(rows_by_trial, start=1):
+                    for r in trial_rows:
+                        subj = sb.subject(r.subject_id)
+                        subject_ids[r.subject_id] = subj
+                        sexp = sb.stream_expectation(p.name, r.subject_id)
+                        outcome, observed, diag, stream = stream_outcome(
+                            r, sexp, subj, handle, adapter)
+                        timing = None
+                        if outcome == "matched-as-expected":
+                            # 7.1: the throughput DENOMINATOR is the sum of
+                            # the calls' declared segment lengths, never the
+                            # subject size (L1 finding 3: X24 holds since
+                            # segment_bytes <= the subject's length).
+                            timing = {
+                                "elapsed_ns": int(round(r.seconds * 1e9)),
+                                "iterations": max(int(r.iters), 1),
+                                "bytes_processed": (subj.segment_bytes
+                                                    * max(int(r.iters), 1)),
+                            }
+                        rows.append(record.match_row(
+                            p.name, r.subject_id, enum, trial, outcome,
+                            timing=timing, consumed=r.consumed,
+                            truncation=truncation_for(regime, r, subj),
+                            observed=observed, diagnostic=diag,
+                            seq=next(seq), form=form,
+                            calibration=(cal if timing and
+                                         timing["iterations"] > 1 else None),
+                            stream=stream,
+                            engine_metadata=stream_metadata(handle)))
+                continue
 
             for trial, trial_rows in enumerate(rows_by_trial, start=1):
                 for r in trial_rows:

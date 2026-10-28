@@ -346,7 +346,8 @@ def compile_row(pattern_id, trial, outcome, cost_class, phases=None,
 def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
               timing=None, consumed=None, truncation=None, observed=None,
               diagnostic=None, seq=None, calibration=None,
-              form=None, subst=None, process=None):
+              form=None, subst=None, process=None, stream=None,
+              engine_metadata=None):
     row = {
         "kind": "match",
         "pattern_id": pattern_id,
@@ -374,6 +375,13 @@ def match_row(pattern_id, subject_id, regime_enum, trial, outcome,
     if process is not None:
         # v1.9 ([B140] step 4): a `process` testee's timed launch (X38-X40)
         row["process"] = dict(process)
+    if stream is not None:
+        # v1.11 ([B148] L4): the call-stream regime's answer (X47-X53)
+        row["stream"] = dict(stream)
+    if engine_metadata:
+        # match-scope pairs (record_schema.md 7 rule 2): [B148] L4's
+        # `stream_anchor` and the 6.4 high-water pair
+        row["engine_metadata"] = dict(engine_metadata)
     _stamp_form(row, form)
     return row
 

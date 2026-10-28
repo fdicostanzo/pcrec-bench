@@ -29,8 +29,9 @@ REGIME_TO_ENUM = {
     # v1.11 ([B148] L1, unusual_set_v1.md 7.1): the CALL-STREAM regime -- a
     # declared call list over one subject, one timed iteration = one full
     # replay. The schema and the sidecar spelling exist from L1; the driver
-    # plumbing (`--mode calls`, 7.3) is lane L4's, and until it lands
-    # `harness.run_cell` refuses the regime BY NAME (CALL_STREAM_PENDING).
+    # plumbing (`--mode calls`, 7.3) is lane L4's: the subjects are the set's
+    # `[subjects] stream_manifest` rows (`Subject.calls_path` set), the
+    # expectations its `[expectations] stream_file` rows (StreamExpectation).
     "call-stream": "call-stream",
 }
 ENUM_TO_REGIME = {v: k for k, v in REGIME_TO_ENUM.items()}
@@ -48,7 +49,13 @@ REGIME_MODE = {
 # Files under bench/<name>/ that are GENERATED, and so are excluded from the
 # content hash: hashing them would make the hash depend on whether a
 # regenerable tree happened to be present.
-GENERATED_DIRS = ("subjects", "throughput", "__pycache__")
+#
+# [B148] L4: `streams/` and `calls/` (bench/unusual's F1 call-stream subjects
+# and their call lists, gen_streams.py) are generated too and hashed through
+# manifest_streams.tsv (subject sha256 + calls_sha256), exactly as
+# `subjects/` is through manifest.tsv. No other set has a directory by either
+# name, so no other set's content hash moves.
+GENERATED_DIRS = ("subjects", "throughput", "streams", "calls", "__pycache__")
 
 
 class SubbenchError(Exception):
@@ -239,7 +246,8 @@ def _pattern_dict_from_rxt(p, rxt):
 
 class Subject:
     __slots__ = ("subject_id", "length", "sha256", "description", "periodic",
-                 "path", "kind")
+                 "path", "kind", "calls_path", "calls", "segment_bytes",
+                 "calls_sha256")
 
     def __init__(self, subject_id, length, sha, desc, periodic, path, kind):
         self.subject_id, self.length, self.sha256 = subject_id, int(length), sha
@@ -248,6 +256,23 @@ class Subject:
         # periodic.py), as a decimal STRING, `"no"`, or None if this
         # manifest predates the column -- a 4-column manifest still loads.
         self.periodic = periodic
+        # [B148] L4: a CALL-STREAM subject (kind "stream") also names its
+        # call list and the manifest's two denominators; None on every other.
+        self.calls_path = self.calls = self.segment_bytes = None
+        self.calls_sha256 = None
+
+
+class StreamExpectation:
+    """One `expectations_stream.tsv` row (bench/unusual/gen_expectations.py):
+    the per-stream counts and the hash of the per-call result tokens."""
+    __slots__ = ("subject", "pattern", "calls", "matched", "nomatch",
+                 "refused", "results_sha256", "method")
+
+    def __init__(self, cols):
+        (self.subject, self.pattern, calls, matched, nomatch, refused,
+         self.results_sha256, self.method) = cols
+        self.calls, self.matched = int(calls), int(matched)
+        self.nomatch, self.refused = int(nomatch), int(refused)
 
 
 class Expectation:
@@ -366,11 +391,21 @@ class Subbench:
         tman = subj.get("throughput_manifest")
         self._throughput = (self._load_manifest(tman, "throughput", "throughput")
                             if tman else [])
-        for s in self._short + self._throughput:
+        # [B148] L4: the CALL-STREAM subjects (unusual_set_v1.md 4.1, 7.1).
+        sman = subj.get("stream_manifest")
+        self._streams = self._load_stream_manifest(sman) if sman else []
+        for s in self._short + self._throughput + self._streams:
             check_id("subject", s.subject_id, self.id)
+        # [B148] L4: APPLICABILITY (bench/unusual/applies.tsv): which large
+        # subjects a pattern is measured on, per regime. Absent (every other
+        # set), every subject of a regime applies to every pattern.
+        app = subj.get("applies")
+        self._applies = self._load_applies(app) if app else None
 
         exp = self.cfg.get("expectations", {})
         self.expectation_file = exp.get("file", "expectations.tsv")
+        self.stream_expectation_file = exp.get("stream_file")   # [B148] L4
+        self._stream_expectations = None
         self.default_method = exp.get("default_method", "")
         # [B125]: the OPTIONAL second verification method, used only for a
         # triple the backtracker gave up on (expectations.py). Absent -> ""
@@ -433,6 +468,89 @@ class Subbench:
                                                 sid + ext),
                                    kind))
         return out
+
+    def _load_stream_manifest(self, name):
+        """[B148] L4: `id len sha256 description periodic calls segment_bytes
+        calls_sha256 local_refusals` (bench/unusual/gen_streams.py); the
+        subject is streams/<id>.bin and its call list calls/<id>.tsv."""
+        path = os.path.join(self.root, name)
+        if not os.path.exists(path):
+            raise SubbenchError("stream manifest %s is missing" % path)
+        out = []
+        with open(path, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f):
+                line = line.rstrip("\n")
+                if not line or (i == 0 and line.startswith("id\t")):
+                    continue
+                cols = line.split("\t")
+                if len(cols) != 9:
+                    raise SubbenchError("%s:%d: expected 9 columns, got %d"
+                                        % (path, i + 1, len(cols)))
+                s = Subject(cols[0], cols[1], cols[2], cols[3], cols[4],
+                            os.path.join(self.root, "streams", cols[0] + ".bin"),
+                            "stream")
+                s.calls, s.segment_bytes = int(cols[5]), int(cols[6])
+                s.calls_sha256 = cols[7]
+                s.calls_path = os.path.join(self.root, "calls", cols[0] + ".tsv")
+                out.append(s)
+        return out
+
+    def _load_applies(self, name):
+        """[B148] L4: `pattern regime subject_glob` -> {(pattern, regime):
+        [glob, ...]} (a glob cell is space-separated fnmatch patterns)."""
+        path = os.path.join(self.root, name)
+        if not os.path.exists(path):
+            raise SubbenchError("applies table %s is missing" % path)
+        out = {}
+        with open(path, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f):
+                line = line.rstrip("\n")
+                if not line or (i == 0 and line.startswith("pattern\t")):
+                    continue
+                cols = line.split("\t")
+                if len(cols) != 3:
+                    raise SubbenchError("%s:%d: expected 3 columns, got %d"
+                                        % (path, i + 1, len(cols)))
+                out.setdefault((cols[0], cols[1]), []).extend(cols[2].split())
+        return out
+
+    def applies(self, pattern, regime, subject_id):
+        """Does (pattern, regime, subject) belong to the set's cross product?
+        True everywhere on a set with no applies table. A call-stream subject
+        applies iff the set states a stream expectation for the pair (the
+        stream expectations ARE that set's applicability for the regime)."""
+        if regime == "call-stream":
+            return self.stream_expectation(pattern, subject_id) is not None
+        if self._applies is None:
+            return True
+        import fnmatch
+        globs = self._applies.get((pattern, regime))
+        if globs is None:
+            return False
+        return any(fnmatch.fnmatchcase(subject_id, g) for g in globs)
+
+    def stream_expectation(self, pattern, subject_id):
+        """[B148] L4: the StreamExpectation for (pattern, stream) or None."""
+        if self._stream_expectations is None:
+            self._stream_expectations = {}
+            if self.stream_expectation_file:
+                path = os.path.join(self.root, self.stream_expectation_file)
+                if not os.path.exists(path):
+                    raise SubbenchError("stream expectations %s are missing"
+                                        % path)
+                with open(path, "r", encoding="utf-8") as f:
+                    for i, line in enumerate(f):
+                        line = line.rstrip("\n")
+                        if not line or (i == 0 and line.startswith("subject\t")):
+                            continue
+                        cols = line.split("\t")
+                        if len(cols) != 8:
+                            raise SubbenchError(
+                                "%s:%d: expected 8 columns, got %d"
+                                % (path, i + 1, len(cols)))
+                        e = StreamExpectation(cols)
+                        self._stream_expectations[(e.pattern, e.subject)] = e
+        return self._stream_expectations.get((pattern, subject_id))
 
     def _load_expectations(self):
         path = os.path.join(self.root, self.expectation_file)
@@ -571,7 +689,7 @@ class Subbench:
             return f.read()
 
     def subject(self, subject_id):
-        for s in self._short + self._throughput:
+        for s in self._short + self._throughput + self._streams:
             if s.subject_id == subject_id:
                 return s
         raise SubbenchError("no subject %r in %s" % (subject_id, self.id))
@@ -588,6 +706,8 @@ class Subbench:
             return [s for s in self._short if s.length <= self.short_search_max]
         if regime == "match":
             return list(self._short)
+        if regime == "call-stream":
+            return list(self._streams)                     # [B148] L4
         raise SubbenchError("unknown regime %r" % regime)
 
     def expectation(self, pattern, subject_id, regime):
@@ -609,7 +729,8 @@ class Subbench:
         for r in (regimes or self.regimes):
             subs = self.subjects_for(r)
             want.extend(subs[:int(limit)] if limit is not None else subs)
-        return [s.path for s in want if not os.path.exists(s.path)]
+        return [p for s in want for p in (s.path, s.calls_path)
+                if p is not None and not os.path.exists(p)]
 
     # ---------------------------------------------------------- the hash
 
