@@ -35,6 +35,13 @@ It checks two things a record must satisfy:
     members only on a >= 1.9 record, and trial-to-trial agreement of a
     cell's output, and (X44/X45) an unsupported case is a compile row
     `unsupported-by-declaration` with no match rows.
+    (v1.11, [B148], docs/design/unusual_set_v1.md 7.4) the CALL-STREAM
+    regime and the ASSISTED testee: X47-X53 -- `stream` iff the regime,
+    its counts summing to `calls`, `gave-up` iff a call gave up (naming
+    the limit), `testee.assist` iff the `assist-v<NN>` identity token,
+    rule `v1.11-group` only from 1.11 (a call-stream trial timed at one
+    iteration), the working-storage high-water pair, and host-refused
+    calls only on a `vars` pattern.
 
 Every message names the FILE, the 1-based LINE and the field path.
 
@@ -89,6 +96,16 @@ LOCAL_VERSION_PREFIX = "local:"  # the local-binary engine_version shape (6.2)
 RELEASE_TAG_RE = re.compile(r"^\d+\.\d+(\.\d+)?[a-z]?\d*$")
 # v1.7 ([B88]): the `sha256` engine_metadata declaration type's value shape.
 _SHA256_HEX = re.compile(r"[0-9a-f]{64}")
+# v1.11 ([B148], unusual_set_v1.md 5.5, 6.4, 7.4): the call-stream regime's
+# result counts, the ASSISTED config's identity token inside `config_extra`
+# (a `-`-joined slug, so the token is matched whole between separators),
+# the one REQUIRES tag that licenses a host-refused call, and the closed set
+# of working-storage high-water methods.
+STREAM_MINOR = 11
+STREAM_COUNTS = ("matched", "nomatch", "refused", "gave_up")
+ASSIST_TOKEN_RE = re.compile(r"(?:^|-)assist-(v[0-9]{2,})(?:-|$)")
+VARS_REQUIRES_TAG = "requires-vars"
+DEEP_MEM_METHODS = frozenset({"canary", "counting-alloc", "mincore", "rss-delta"})
 
 
 class Problem:
@@ -223,19 +240,29 @@ TIMED_OUT = "timed-out"
 
 # The rule text a record is judged by follows its own schema_version
 # (record_schema.md 4's rule-revision clause): `v1.4-group` for 1.4..1.9,
-# `v1.10-group` from 1.10 (gate_shape_v14.md 3.7: a `substitution` trial
-# is timed at iterations >= 1; every other regime keeps > 1).
+# `v1.10-group` on 1.10 (gate_shape_v14.md 3.7: a `substitution` trial
+# is timed at iterations >= 1; every other regime keeps > 1),
+# `v1.11-group` from 1.11 (3.8: a `call-stream` trial likewise).
 RULE_V14 = "v1.4-group"
 RULE_V110 = "v1.10-group"
+RULE_V111 = "v1.11-group"
 TA_V110_MINOR = 10
+TA_V111_MINOR = 11
+# The regimes each rule text times at ONE iteration (a whole pass/replay
+# is the unit there); every other regime needs iterations > 1.
+ONE_ITERATION_REGIMES = {RULE_V14: frozenset(),
+                         RULE_V110: frozenset({"substitution"}),
+                         RULE_V111: frozenset({"substitution", "call-stream"})}
 
 
 def ta_rule_for(minor):
     """The rule id a record stamped 1.<minor> must carry (>= 1.4)."""
+    if minor >= TA_V111_MINOR:
+        return RULE_V111
     return RULE_V110 if minor >= TA_V110_MINOR else RULE_V14
 
 
-def judge_trial_agreement(rows, k, d_min, share_c, rule=RULE_V110):
+def judge_trial_agreement(rows, k, d_min, share_c, rule=RULE_V111):
     """The 3.5 arithmetic over a record's MATCH rows (dicts as written),
     under rule text `rule`.
     -> the `trial_agreement` block minus `rule`/`k`/`d_min`/`share_c`."""
@@ -265,8 +292,8 @@ def judge_trial_agreement(rows, k, d_min, share_c, rule=RULE_V110):
                 n_timed_out += 1
             t = r.get("timing") or {}
             it = t.get("iterations")
-            need = 1 if (rule == RULE_V110
-                         and r.get("regime") == "substitution") else 2
+            need = 1 if r.get("regime") in ONE_ITERATION_REGIMES.get(
+                rule, frozenset()) else 2
             if (r.get("match_outcome") == MATCHED_AS_EXPECTED
                     and isinstance(it, int) and it >= need
                     and isinstance(t.get("elapsed_ns"), int)):
@@ -945,6 +972,10 @@ class RecordValidator:
         # tier and the TOOLS tier's `| wc -c` sink
         self._subst_rules(add, path, setup, testee, rows, f_minor, sv)
 
+        # X47..X53 (v1.11, [B148]) the call-stream regime, the assisted
+        # testee, the working-storage high-water pair
+        self._stream_rules(add, path, setup, testee, rows, f_minor, sv)
+
         # X35 (v1.8, [B137]) `environment.cpu_isa` is present only on a
         # record stamped >= 1.8, and its tokens are sorted
         isa = (setup.get("environment") or {}).get("cpu_isa")
@@ -975,6 +1006,17 @@ class RecordValidator:
                     and isinstance(share_c, int) and k > 1 and d_min >= 1 \
                     and share_c >= 1:
                 want_rule = ta_rule_for(f_minor) if f_minor is not None else RULE_V14
+                # X51 (v1.11): `v1.11-group` names a text that did not exist
+                # before 1.11 -- a record stamped earlier that carries it is
+                # mis-stamped, whatever its rows say
+                if ta.get("rule") == RULE_V111 and (f_minor is None
+                                                    or f_minor < TA_V111_MINOR):
+                    add(Problem(path, 1, "trial_agreement.rule",
+                                f"is {RULE_V111!r} on a record stamped {sv}, "
+                                f"before the version that defined it (1.11): "
+                                f"under it a call-stream trial is timed at one "
+                                f"iteration, a text no earlier record was "
+                                f"judged by (X51)", "X51"))
                 if ta.get("rule") != want_rule:
                     add(Problem(path, 1, "trial_agreement.rule",
                                 f"is {ta.get('rule')!r} but a record stamped "
@@ -1171,6 +1213,156 @@ class RecordValidator:
                                     f"validated output (X43)", "X43"))
 
     @staticmethod
+    def _stream_rules(add, path, setup, testee, rows, f_minor, sv):
+        """X47-X53, record_schema.md 9 (v1.11, [B148], unusual_set_v1.md
+        7.4). Row-local rules of the call-stream regime, the assisted
+        testee's identity, and the high-water pair. None reads an
+        expectation: `results_sha256`'s expected value lives in the set's
+        expectations_stream.tsv and the HARNESS compares it (X37's
+        situation)."""
+        pre111 = f_minor is not None and f_minor < STREAM_MINOR
+        regimes = setup.get("subbench", {}).get("regimes") or []
+
+        # X47 (version half) the call-stream regime exists only from 1.11
+        if pre111 and "call-stream" in regimes:
+            add(Problem(path, 1, "subbench.regimes",
+                        f"declares the `call-stream` regime on a record "
+                        f"stamped {sv}, before the version that defined it "
+                        f"(1.11) (X47)", "X47"))
+
+        vars_patterns = {e.get("pattern_id") for e in setup.get("patterns", [])
+                         if VARS_REQUIRES_TAG in (e.get("tags") or [])}
+        for n, row in rows:
+            if row["kind"] != "match":
+                continue
+            stream = row.get("stream")
+            is_stream = row.get("regime") == "call-stream"
+            # X47 `stream` is present iff the row's regime is `call-stream`
+            if pre111 and stream is not None:
+                add(Problem(path, n, "stream",
+                            f"is present on a record stamped {sv}, before "
+                            f"the version that defined it (1.11) (X47)",
+                            "X47"))
+            if is_stream and not isinstance(stream, dict):
+                add(Problem(path, n, "stream",
+                            "is absent on a `call-stream`-regime row: the "
+                            "stream's counts and results hash ARE the answer "
+                            "and its denominators (X47)", "X47"))
+            if not is_stream and stream is not None:
+                add(Problem(path, n, "stream",
+                            f"is present on a {row.get('regime')!r} row; only "
+                            f"the `call-stream` regime carries it (X47)",
+                            "X47"))
+            if not isinstance(stream, dict):
+                continue
+            counts = [stream.get(f) for f in STREAM_COUNTS]
+            calls = stream.get("calls")
+            # X48 every call is exactly one of the four results
+            if all(isinstance(c, int) for c in counts + [calls]) \
+                    and sum(counts) != calls:
+                add(Problem(path, n, "stream.calls",
+                            f"is {calls} but matched + nomatch + refused + "
+                            f"gave_up = {' + '.join(str(c) for c in counts)} = "
+                            f"{sum(counts)}: every call of the stream is "
+                            f"exactly one of the four (X48)", "X48"))
+            # X49 `gave-up` iff a call gave up, and then the limit is named
+            gave_up = stream.get("gave_up")
+            outcome = row.get("match_outcome")
+            if isinstance(gave_up, int):
+                if (outcome == "gave-up") != (gave_up > 0):
+                    add(Problem(path, n, "match_outcome",
+                                f"is {outcome!r} but stream.gave_up is "
+                                f"{gave_up}: a stream row is `gave-up` "
+                                f"exactly when at least one call gave up "
+                                f"(X49)", "X49"))
+                fl = stream.get("first_limit")
+                if (fl is not None) != (gave_up > 0):
+                    add(Problem(path, n, "stream.first_limit",
+                                f"is {'present' if fl is not None else 'absent'} "
+                                f"but stream.gave_up is {gave_up}: the first "
+                                f"give-up's limit is named iff a call gave up "
+                                f"(X49)", "X49"))
+                elif fl is not None and fl not in str(row.get("diagnostic") or ""):
+                    add(Problem(path, n, "diagnostic",
+                                f"is {row.get('diagnostic')!r}, which does not "
+                                f"name stream.first_limit {fl!r}: a give-up is "
+                                f"a finding only when it names its limit (X49)",
+                                "X49"))
+            # X53 the denominator is real, and only the host refuses
+            sb = stream.get("segment_bytes")
+            if isinstance(sb, int) and sb <= 0:
+                add(Problem(path, n, "stream.segment_bytes",
+                            f"is {sb}: the stream's throughput denominator is "
+                            f"the sum of its calls' declared segment lengths "
+                            f"and must be > 0 (X53)", "X53"))
+            refused = stream.get("refused")
+            if isinstance(refused, int) and refused > 0 \
+                    and row.get("pattern_id") not in vars_patterns:
+                add(Problem(path, n, "stream.refused",
+                            f"is {refused} but pattern {row.get('pattern_id')!r} "
+                            f"does not carry `{VARS_REQUIRES_TAG}`: a refused "
+                            f"call is HOST code declining an unset/empty "
+                            f"binding, which only a variables pattern has "
+                            f"(X53)", "X53"))
+
+        # X50 `testee.assist` iff the `assist-v<NN>` identity token
+        assist = testee.get("assist")
+        m = ASSIST_TOKEN_RE.search(str(testee.get("config_extra") or ""))
+        if pre111 and assist is not None:
+            add(Problem(path, 1, "testee.assist",
+                        f"is present on a record stamped {sv}, before the "
+                        f"version that defined it (1.11) (X50)", "X50"))
+        if m and not isinstance(assist, dict):
+            add(Problem(path, 1, "testee.assist",
+                        f"is absent but config_extra carries the identity "
+                        f"token `assist-{m.group(1)}`: an ASSISTED config "
+                        f"must carry its per-member token ledger (X50)",
+                        "X50"))
+        if assist is not None and not m:
+            add(Problem(path, 1, "testee.assist",
+                        f"is present but config_extra "
+                        f"{testee.get('config_extra')!r} carries no "
+                        f"`assist-v<NN>` token: an assisted config is a "
+                        f"different testee and its id must say so (X50)",
+                        "X50"))
+        if isinstance(assist, dict):
+            if m and assist.get("assist_version") != m.group(1):
+                add(Problem(path, 1, "testee.assist.assist_version",
+                            f"is {assist.get('assist_version')!r} but the "
+                            f"identity token is `assist-{m.group(1)}` (X50)",
+                            "X50"))
+            seen = {}
+            for i, mem in enumerate(assist.get("members") or []):
+                name = mem.get("member") if isinstance(mem, dict) else None
+                if name in seen:
+                    add(Problem(path, 1, f"testee.assist.members[{i}].member",
+                                f"{name!r} is listed twice (also members"
+                                f"[{seen[name]}]): one ledger entry per "
+                                f"assisted member (X50)", "X50"))
+                else:
+                    seen[name] = i
+
+        # X52 the working-storage high-water pair travels together
+        if not pre111:
+            for n, row in rows:
+                em = row.get("engine_metadata") or {}
+                has_b, has_m = "deep_mem_bytes" in em, "deep_mem_method" in em
+                if has_b != has_m:
+                    add(Problem(path, n, "engine_metadata.deep_mem_method",
+                                f"deep_mem_bytes is "
+                                f"{'present' if has_b else 'absent'} and "
+                                f"deep_mem_method "
+                                f"{'present' if has_m else 'absent'}: a "
+                                f"high-water value is never read without the "
+                                f"method that took it (X52)", "X52"))
+                if has_m and em.get("deep_mem_method") not in DEEP_MEM_METHODS:
+                    add(Problem(path, n, "engine_metadata.deep_mem_method",
+                                f"is {em.get('deep_mem_method')!r}, not one of "
+                                f"{sorted(DEEP_MEM_METHODS)}; values are never "
+                                f"ranked across methods, so the method must be "
+                                f"a known one (X52)", "X52"))
+
+    @staticmethod
     def _check_trials(add, path, trials, what):
         for t, lines in sorted(trials.items()):
             if len(lines) > 1:
@@ -1236,7 +1428,7 @@ def main(argv=None):
     ap.add_argument("--expect-reject", action="store_true",
                     help="exit 0 only if EVERY file is rejected (positive controls)")
     ap.add_argument("--expect-rule", metavar="RULE",
-                    help="with --expect-reject: require RULE (X1..X35 or SCHEMA) "
+                    help="with --expect-reject: require RULE (X1..X53 or SCHEMA) "
                          "among the rules that fired. A positive control that "
                          "rejects for the WRONG reason proves nothing about the "
                          "rule it was written for")

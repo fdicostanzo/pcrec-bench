@@ -210,6 +210,7 @@ migration exists. Concretely, and enforced by `validate.py`:
 | 1.8 | 2026-10-12 | [B137] (O-90, pcrec I-138/I-139, multi-host; lane `b137import`): optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, §6.11) and rule X35 (present only on a record stamped >= 1.8; sorted) -- an optional-field ADDITION, MINOR by the rule above. Older records stay valid without it; `pcrecbench import` (store.py) is the other half of the multi-host design |
 | 1.9 | 2026-10-24 | [B140] (`subst_bench_v1.md` §5 S1-S8 as amended by §8a item 7; lane `b140schema`): the `substitution` regime (enum growth), optional `testee.invocation` (`library`/`process`, absent = `library`), `match_row.subst` / `.process` (§6.12), rules X36-X45, and compile rows become optional for a `process` testee (X11 and X14 relaxed, X41) except the `unsupported-by-declaration` row that carries an unsupported case (X44, X45). Additive, MINOR by the rule above: a 1.8 record carries none of it and keeps its verdict |
 | 1.10 | 2026-10-25 | [B145] (BD13 amendment, Frank's ruling; lane `b145ident`, riding the same 1.10): the second program hash `program_sha256_v3` (type `sha256`, §7) on every pcrec compile row, rule X46 (it travels with `program_sha256`; none before 1.10); `program_sha256` keeps meaning v2 forever. Additive, MINOR. [B144] (Frank's ruling on `docs/dev/lanes/b140drv_report.md` F1; `gate_shape_v14.md` §3.7; lane `b144spread`): the trial-agreement rule is REVISED under §4's rule-revision clause — `trial_agreement.rule` gains `v1.10-group`, which counts a `substitution` row's `matched-as-expected` trial with `iterations >= 1` as timed (every other regime keeps `> 1`), so a 1 iteration × 5 trials substitution record can be judged and can be `inconclusive-spread`. X32 is VERSIONED: a record below 1.10 is judged by `v1.4-group` forever. Enum growth + a versioned rule, MINOR (see the paragraph below) |
+| 1.11 | 2026-10-27 | [B148] L1 (`unusual_set_v1.md` v0.2 §7.4, §5.5, §6.4; r9 C2/C3/C10, S-2..S-5, S-10, S-11, S-14; lane `b148l1`): the `call-stream` regime (enum growth), `match_row.stream` (§6.13), optional `testee.assist` (`assist_version` + `members[]`, §6.13), the trial-agreement rule REVISED again under §4's rule-revision clause — `trial_agreement.rule` gains `v1.11-group`, which is `v1.10-group` plus a `call-stream` row's `matched-as-expected` trial timed at `iterations >= 1` (`gate_shape_v14.md` §3.8) — and rules X47-X53. Additive + a versioned rule, MINOR: a 1.10 record carries none of it, keeps `v1.10-group` and its verdict |
 
 **1.0 → 1.1 is a MINOR bump under a stated, one-time exception, and by
 the rule above it should be a MAJOR one.** 1.1 adds REQUIRED fields
@@ -362,6 +363,27 @@ the store keeps the verdict of its day; `make check-schema` witnesses it
 with a good 1.10 substitution example, a sabotage rejected for X32, and
 the 1.9 substitution example (left stamped `1.9`, `v1.4-group`).
 
+**1.10 → 1.11 is a MINOR bump under the rule-revision clause above —
+NO REWRITE, no record re-stamped** ([B148] L1, 2026-10-27;
+`unusual_set_v1.md` v0.2 §7.2, §7.4; r9 C3/S-3). A `call-stream` row
+times ONE FULL REPLAY of a declared call list per iteration, calibrated
+to the least replay count whose summed clock clears 50 ms — often 1 —
+so under `v1.10-group` such a row would be `few_timed_trials` exactly as
+substitution rows were before 1.10. `v1.11-group` changes exactly that:
+a `call-stream` row's `matched-as-expected` trial with `iterations >= 1`
+is timed (per-trial value `elapsed_ns / iterations`, as before);
+`substitution` keeps its 1.10 treatment and every other regime keeps
+`> 1`; the constants are unchanged. `validate.py` keys X32 on the
+record's own `schema_version` (`ta_rule_for`: `v1.11-group` from 1.11,
+`v1.10-group` on 1.10, `v1.4-group` for 1.4..1.9), and X51 refuses
+`v1.11-group` on a record stamped below 1.11. The additive half: the
+`call-stream` regime, `match.stream` and `testee.assist` (§6.13), each
+present only on a record stamped >= 1.11 (folded into X47 and X50, the
+X42 argument), and the high-water pair rule X52. `make check-schema`
+witnesses it with a generated 1.11 call-stream example
+(`schema/examples/gen_example_111.py`), one sabotage per new rule, and
+the 1.10 examples left stamped `1.10`, `v1.10-group`.
+
 ## 5. The fixed enums (OD-B4 (a))
 
 **Token spelling rule.** Every enum token is lowercase, ASCII, words
@@ -394,7 +416,7 @@ The enums, in full:
 | `conventions[]` | `perl-leftmost-first` `posix-leftmost-longest` `all-ends` | §4.3 |
 | `captures` | `on` `off` | §4.3 |
 | `simd` | `on` `off` `n-a` | §4.3 |
-| `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` `substitution` | §3; `substitution` v1.9 ([B140], §6.12) |
+| `regime` | `large-subject-throughput` `short-subject-search` `match-compliance` `substitution` `call-stream` | §3; `substitution` v1.9 ([B140], §6.12); `call-stream` v1.11 ([B148], §6.13) |
 | `status` | `measured` `harness-failure` `inconclusive-load` `inconclusive-spread` | §6; `inconclusive-spread` v1.4 ([B20], gate_shape_v14.md §3.4) |
 | `invocation` | `library` `process` | v1.9 ([B140], §6.12); `testee.invocation`, absent = `library` |
 | `subst.gate` | `agrees` `wrong` `divergent-declared` | v1.9 ([B140], §6.12) |
@@ -912,6 +934,54 @@ valid.
   already legal and a 320 MB `subjects[]` entry is how throughput subjects
   are carried.
 
+### 6.13 The call-stream regime and the ASSISTED testee (v1.11)
+
+[B148] L1 (`docs/design/unusual_set_v1.md` v0.2 §5.5, §6.4, §7; the r9
+panel's C2/C3/C10). Nothing existing was changed to carry it; 1.10 records
+stay valid.
+
+- **The regime.** `call-stream` joins the regime enum. A STREAM is a
+  declared call list over one subject, each call (offset, length, binding
+  id); one timed iteration is one FULL REPLAY. Regimes are not comparable
+  to each other (§3); the set-grain reporter REFUSES a `call-stream` input
+  by name, and the viewer / trend / front page skip the regime by name
+  (`unusual_set_v1.md` §7.5).
+- **The answer.** `match.stream` is REQUIRED on a `call-stream` row and
+  forbidden elsewhere (X47): `calls` (the denominator of calls/s),
+  `segment_bytes` (the SUM of the calls' declared segment lengths — the
+  throughput denominator, never the subject size; > 0, X53), the four
+  result counts `matched`/`nomatch`/`refused`/`gave_up` (summing to
+  `calls`, X48), `first_limit` (the first give-up's limit, present iff
+  `gave_up` > 0; the row is `gave-up` exactly then and its `diagnostic`
+  names it, X49) and `results_sha256` (the per-call result tokens `n`,
+  `m:<s>,<e>[;<g1s>,<g1e>]`, `r`, hashed after the clock stopped). The
+  HARNESS compares `results_sha256` to the set's
+  `expectations_stream.tsv` and sets `match_outcome`; the validator cannot
+  hold that expectation (X37's situation). A REFUSED call is engine-
+  neutral: host code returns it without calling the engine (an unset or
+  empty binding, pcrec `vars.md` §5), so only a pattern carrying the tag
+  `requires-vars` may count one (X53).
+- **The assisted testee.** An ASSIST (host code supplying a feature the
+  engine lacks, inside a declared token budget) is an engine option and
+  part of the identity: ONE `config_extra` token `assist-v<NN>` (the SET
+  version, e.g. `assist-v01` for unusual@0.1 — never which members passed,
+  so a re-authored member does not split history). `testee.assist` is
+  present iff that token is (X50) and carries `assist_version` (the
+  token's `v<NN>`) and `members[]` — one `{member, tokens, lines, sha256}`
+  per member the config runs ASSISTED, `member` unique (X50). A
+  NOT-CAPABLE member (budget exceeded) is not listed: it is a compile row
+  `unsupported-by-declaration` (§4.4) whose `declaration_ref` carries
+  `tokens=<N> budget=<X>`, excluded and never wrong, and distinct from
+  `did-not-compile`.
+- **Working-storage high-water** (`unusual_set_v1.md` §6.4). Declared
+  match-scope `engine_metadata` integer `deep_mem_bytes` beside the string
+  `deep_mem_method`: the two travel together and the method is one of
+  `canary` `counting-alloc` `mincore` `rss-delta` (X52). Values are never
+  ranked across methods. The record's metadata model fits them: an
+  `integer` pair has no upper bound in the schema and JSON carries it
+  exactly (checked at 2^40, beyond the 1 GiB cap, by
+  `check_unusual_record_fit`).
+
 ### 6.7 `kernel` and `compiler`
 
 `kernel` = `uname -s` and `uname -r`, lowercased, joined by `-`:
@@ -1142,6 +1212,13 @@ enumerated or normalized.
 | `testee.conventions` | array of enum | R | the conventions this testee CAN produce | §4.3; §7 "testees are scored against their own" |
 | `testee.grain` | enum `full`/`boolean` | o | ABSENT means `full`; FILTERABLE. X34: a `boolean` testee's match rows never carry a non-null `observed.span` | v1.6 ADDITION (§5 ADDITIONS 8, §6.10): a testee structurally incapable of reporting a span is judged and reported at a WEAKER, honestly-declared grain rather than scored against a comparison it cannot answer |
 | `testee.invocation` | enum `library`/`process` | o | ABSENT means `library`; FILTERABLE. `process` => `execution_model` `interpretive` (X41), compile rows optional, `match.process` required on timed rows (X38) | v1.9 ADDITION ([B140] S2, §6.12): the TIER. A command-line tool launched per trial and an in-process API call are different things to time and never share one ordering |
+| `testee.assist` | object | c | present iff `config_extra` carries the identity token `assist-v<NN>` (X50); only on a record stamped >= 1.11 (X50) | v1.11 ADDITION ([B148], §6.13): an ASSISTED config's per-member token ledger — the assist is part of the identity, its cost of authorship part of the result |
+| `testee.assist.assist_version` | string `v<NN>` | R | equals the `assist-v<NN>` token's `v<NN>` (X50) | the SET version, so a re-authored member does not split history |
+| `testee.assist.members` | array of object | R | one entry per member the config runs ASSISTED; `member` unique (X50); a NOT-CAPABLE member is absent (it is `unsupported-by-declaration`) | per-member verdicts under one identity token (r9 C2) |
+| `testee.assist.members[].member` | slug | R | the member's pattern id | which pattern the assist serves |
+| `testee.assist.members[].tokens` | integer ≥0 | R | the counter's count (`tools/tokcount.py`), boilerplate excluded | the budget's evidence |
+| `testee.assist.members[].lines` | integer ≥0 | R | the assist's line count | a second size, for the reader |
+| `testee.assist.members[].sha256` | sha256 | R | the assist file's hash | which assist was timed |
 | `testee.captures` | enum `on`/`off` | R | FILTERABLE | §4.3 headline axis; A4 |
 | `testee.engine_mode` | slug | R | §6.3 registry; FILTERABLE | §4.3 headline axis; A4 |
 | `testee.simd` | enum `on`/`off`/`n-a` | R | FILTERABLE | §4.3 headline axis; A4 |
@@ -1226,7 +1303,7 @@ from the counts (X31).
 | field | type | req | rule / enum | why |
 |---|---|---|---|---|
 | `trial_agreement` | object | c | REQUIRED at ≥ 1.4 on EVERY record (pinned or scratch, any trial count, even a record with no match rows: then `n/a-trials` with `trials: 0`); FORBIDDEN on a record stamped < 1.4 (X33) | the status depends on it, so the record must carry what decided the status — the same argument as `load.limit` beside `load.verdict` (X20) and `limit_busy_pct` beside the occupancy verdicts (X26) |
-| `trial_agreement.rule` | enum `"v1.4-group"`/`"v1.10-group"` | R | names THIS definition (gate_shape_v14.md §3.5; §3.7 for `v1.10-group`); a changed definition is a new enum value and a schema bump. X32: `v1.4-group` on a record stamped 1.4..1.9, `v1.10-group` from 1.10 — the record's own `schema_version` selects the text (§4's rule-revision clause) | a verdict without the rule that produced it is re-judgeable by nobody |
+| `trial_agreement.rule` | enum `"v1.4-group"`/`"v1.10-group"`/`"v1.11-group"` | R | names THIS definition (gate_shape_v14.md §3.5; §3.7 for `v1.10-group`, §3.8 for `v1.11-group`); a changed definition is a new enum value and a schema bump. X32: `v1.4-group` on a record stamped 1.4..1.9, `v1.10-group` on 1.10, `v1.11-group` from 1.11 — the record's own `schema_version` selects the text (§4's rule-revision clause); X51: `v1.11-group` never below 1.11 | a verdict without the rule that produced it is re-judgeable by nobody |
 | `trial_agreement.k` | number > 1 | R | the outlier ratio the run used (1.5) | data, not a schema constant (quiet_baseline.md's own argument for `load.limit`) |
 | `trial_agreement.d_min` | integer ≥ 1 | R | the least disagreeing rows a group needs (2) | as above |
 | `trial_agreement.share_c` | integer ≥ 1 | R | the share denominator: a group disagrees at `share_c · d ≥ n` (3) | as above |
@@ -1332,6 +1409,15 @@ One row per (pattern × subject-or-subject-set × regime × trial)
 | `process.sys_s` | number ≥0 | R | `wait4` rusage | PROVENANCE, not ranked |
 | `process.maxrss_kb` | integer ≥0 | R | `wait4` rusage | memory is reported, not ranked |
 | `process.page_cache_resident` | number 0..1 | R | the `fincore` fraction of the input resident just before the launch | the cache state of a warm-cache protocol, recorded rather than assumed |
+| `stream` | object | c | REQUIRED iff `regime` = `call-stream`, forbidden otherwise; only on a record stamped >= 1.11 (X47) | v1.11 ADDITION ([B148], §6.13): a stream's answer is per-call, and `match_outcome` alone carries neither its counts nor its denominators |
+| `stream.calls` | integer ≥1 | R | = `matched + nomatch + refused + gave_up` (X48) | the denominator of calls/s |
+| `stream.segment_bytes` | integer ≥0 | R | > 0 (X53); the SUM of the calls' declared segment lengths | the throughput denominator — never the subject size (filler is never scanned) |
+| `stream.matched` | integer ≥0 | R | X48 | calls answered with a match |
+| `stream.nomatch` | integer ≥0 | R | X48 | calls answered with no match |
+| `stream.refused` | integer ≥0 | R | X48; > 0 only on a pattern tagged `requires-vars` (X53) | calls the HOST returned without calling the engine (an unset/empty binding) |
+| `stream.gave_up` | integer ≥0 | R | X48; > 0 iff `match_outcome` = `gave-up` (X49) | calls on which the engine gave up |
+| `stream.first_limit` | string | c | present iff `gave_up` > 0, and `diagnostic` contains it (X49) | a give-up names its limit (§6.5 of the set's note) |
+| `stream.results_sha256` | sha256 | R | the harness compares it to the set's `expectations_stream.tsv` (the validator cannot) | the per-call answers in one comparable value |
 | `engine_metadata` | map | o | every name declared with `scope` = `match` | §4.2, §7 rule 2 |
 | `diagnostic` | string/null | c | REQUIRED and non-empty when `match_outcome` = `gave-up` — it must name the engine's own limit code; DIAGNOSTIC, UNINDEXED otherwise | §4.2: pcrec's prose `RX_ENGINE_WHY` is "kept only as an unindexed diagnostic string". The condition is §5 ADDITIONS 2: a give-up that does not say WHICH budget was exhausted is indistinguishable from a wrong answer, which is the confusion the outcome exists to end |
 
@@ -1432,6 +1518,13 @@ both ways before being believed.
 | X44 | A `substitution` match row's (pattern, form) has no compile row `unsupported-by-declaration` in the record | v1.9: an unsupported (testee, case) is a first-class result carried by the compile row and its `declaration_ref`, never a match row -- every reader would otherwise read it as a wrong answer |
 | X45 | On a `measured` record of a `process` testee in the `substitution` regime, every pattern has a match row or a compile row `unsupported-by-declaration` | v1.9: a process testee has no compile rows by default (X41), so without this an unsupported case would be indistinguishable from a case nobody ran |
 | X46 | On a record stamped >= 1.10, every compile row whose `engine_metadata` carries `program_sha256` also carries `program_sha256_v3`; a record stamped < 1.10 carries no `program_sha256_v3` | v1.10 ([B145], BD13 amendment): the two program hashes travel together so the one chooser (`pcrecbench/identity.py`) can always use v3 when both rows have it, and a pre-1.10 record cannot claim a field its version did not define. A compile row with no `program_sha256` (a refusal, a non-pcrec engine) is unaffected |
+| X47 | `match.stream` is present iff the row's `regime` is `call-stream`; the `call-stream` regime and `match.stream` exist only on a record stamped >= 1.11 | v1.11 ([B148], §6.13): the stream's counts and hash are the answer of that regime and of no other (X36's argument); a mis-stamped field is X42's |
+| X48 | `stream.calls` = `matched` + `nomatch` + `refused` + `gave_up` | v1.11: every call is exactly one of the four, so a count that does not sum is a stream whose denominator and answer disagree |
+| X49 | `match_outcome` = `gave-up` iff `stream.gave_up` > 0; `stream.first_limit` is present iff `gave_up` > 0, and then `diagnostic` contains it | v1.11 (`unusual_set_v1.md` §6.5): a give-up NAMES its limit, and a stream that gave up on a call is not `matched-as-expected` |
+| X50 | `testee.assist` is present iff `config_extra` carries the token `assist-v<NN>`; `assist_version` equals the token's `v<NN>`; `members[].member` is unique; `testee.assist` exists only on a record stamped >= 1.11 | v1.11 (`unusual_set_v1.md` §5.5, r9 C2): an assist is part of the identity, so the id and the ledger must be one fact; one ledger entry per assisted member |
+| X51 | `trial_agreement.rule` = `v1.11-group` only on a record stamped >= 1.11 (under it a `call-stream` trial is timed at `iterations >= 1`, the recomputation being X32's) | v1.11 (gate_shape_v14.md §3.8): a rule text named on a record stamped before it existed is a mis-stamped record, whatever its rows say |
+| X52 | On a record stamped >= 1.11, a row's `engine_metadata` carries `deep_mem_bytes` iff it carries `deep_mem_method`, and the method is one of `canary` `counting-alloc` `mincore` `rss-delta` | v1.11 (`unusual_set_v1.md` §6.4): a high-water value is never read without the method that took it, and values are never ranked across methods |
+| X53 | `stream.segment_bytes` > 0, and `stream.refused` = 0 unless the row's pattern carries the tag `requires-vars` | v1.11 (§6.13): the denominator is the declared segments, never empty; a refused call is HOST code declining an unset/empty binding, which only a variables pattern has |
 
 Messages name the line number (1-based, as an editor counts), the field
 path, and the RULE ID in brackets. The rule id is not decoration: each

@@ -66,7 +66,7 @@ def build(with_v3):
     for r in rows:
         if r["kind"] == "compile" and with_v3:
             r["engine_metadata"]["program_sha256_v3"] = V3
-    setup["trial_agreement"] = judge_trial_agreement(rows)
+    setup["trial_agreement"] = judge_trial_agreement(rows, rule="v1.10-group")
     return setup, rows
 
 
