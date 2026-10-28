@@ -18,7 +18,9 @@ not another engine's assist, not the held-out subjects or expectations.
    answer function, any state it needs, and the setup function that builds
    that state. Leave every `/* BOILERPLATE ... */` region exactly as it is:
    the self-test compares each region with the template and reports drift.
-   Fixed patterns are compiled in setup, which runs outside the clock. Nothing
+   Fixed patterns are compiled in setup, which runs outside the clock (setup's
+   `pattern` argument is the member's id text, for information: your patterns
+   are your own and fixed, so you may ignore it). Nothing
    that runs per call is free.
 
 3. **Self-test.**

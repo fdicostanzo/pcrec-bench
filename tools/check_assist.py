@@ -295,9 +295,13 @@ def _capability(ok, bad, A):
     real = (ad.tier(tid), sorted(ad.capability_grants(tid, sb)))
     with fixture_env():
         fx = (ad.tier(tid), sorted(ad.capability_grants(tid, sb)))
-    if real[1] == [] and real[0] == "pinned" and fx == ("scratch", ["unusual-cscan"]):
-        ok("the real (empty) ledger grants nothing at the pinned tier; a fixture dir "
-           "forces scratch and grants its ASSISTED rows", "fixture %r" % (fx,))
+    # the live ledger's ASSISTED rows for this engine, read independently of the adapter
+    with open(os.path.join(ROOT, "bench", "unusual", "assists", "assists.tsv")) as f:
+        _rows = [l.rstrip("\n").split("\t") for l in f.read().splitlines()[1:] if l.strip()]
+    want = sorted("unusual-" + r[0] for r in _rows if r[2] == "re2" and r[7] == "ASSISTED")
+    if real == ("pinned", want) and fx == ("scratch", ["unusual-cscan"]):
+        ok("the live ledger grants exactly its ASSISTED rows at the pinned tier; a fixture dir "
+           "forces scratch and grants its own", "live %r fixture %r" % (want, fx))
     else:
         bad("assisted config tier/grants", "real %r fixture %r" % (real, fx))
 

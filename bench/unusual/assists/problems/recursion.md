@@ -134,6 +134,13 @@ design is unbounded by construction (the report says so); a limit of the
 ENGINE you hit (program size, cache, memory) is reported by the shim under the
 limit's own name, not by you.
 
+Group 1: only `cscan` reports one. For the other two members leave the group-1
+fields as the template initialises them.
+
+An engine that can only answer yes/no and has no way to say "I gave up" (a
+memory or state budget exceeded) reports what it returns; say so in your
+report, the scoreboard records it as the engine's answer.
+
 ## 4. What the timing measures (you do not time anything)
 
 The clock covers, per call, your whole function: the host loop, every engine
