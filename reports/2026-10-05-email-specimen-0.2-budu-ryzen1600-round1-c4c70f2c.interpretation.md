@@ -2,7 +2,7 @@
 report:          reports/2026-10-05-email-specimen-0.2-budu-ryzen1600-round1-c4c70f2c.tsv
 report_sha256:   c602ff9196a058fe9668e4e6adaae3130cada2a3a222d898fa9f6e4e1e62bbb8
 index:           store/index.tsv
-index_sha256:    bd6d95b3b64d77f4fc998a9cb3f761f4ffcc6945979201efcdfeb1cbeecbd21e
+index_sha256:    4423360ea78505b60a608be206ca081884861a1852e789f104dce1a3a89f7752
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   (none)

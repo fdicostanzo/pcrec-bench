@@ -2,7 +2,7 @@
 report:          reports/2026-09-26-capability-0.1-budu-ryzen1600-twin-noreqbyte-02902356.tsv
 report_sha256:   365dcedfb8c267904707dc014e26c8a7e1526aba18302e3095c689cdab925b29
 index:           store/index.tsv
-index_sha256:    bd6d95b3b64d77f4fc998a9cb3f761f4ffcc6945979201efcdfeb1cbeecbd21e
+index_sha256:    4423360ea78505b60a608be206ca081884861a1852e789f104dce1a3a89f7752
 predictions:     docs/dev/predictions/capability-0.1-noreqbyte-twin-02902356.tsv
 predictions_sha256:a72103f19565a07b5ad916187fef94770adf932c6daf0de1a0969dae5d8d4e42
 subject_grain:   reports/2026-09-26-capability-0.1-budu-ryzen1600-twin-noreqbyte-02902356.subject-grain.tsv

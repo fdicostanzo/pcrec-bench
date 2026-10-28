@@ -2,7 +2,7 @@
 report:          reports/2026-10-26-email-specimen-0.2-ryzen7700x-first-9ae59f5d4.tsv
 report_sha256:   02c696f836ca76b987719aabff7dc648a35319cfbcfa2a5029a2165c66d2abf5
 index:           store/index.tsv
-index_sha256:    bd6d95b3b64d77f4fc998a9cb3f761f4ffcc6945979201efcdfeb1cbeecbd21e
+index_sha256:    4423360ea78505b60a608be206ca081884861a1852e789f104dce1a3a89f7752
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-10-26-email-specimen-0.2-ryzen7700x-first-9ae59f5d4.subject-grain.tsv

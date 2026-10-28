@@ -2,7 +2,7 @@
 report:          reports/2026-10-26-capability-0.2-ryzen7700x-rebaseline-6b2dbd3e.tsv
 report_sha256:   830aadfcde3d40d6548b16f46bcd423864fc87894ec4d16c5e64d5129a8d0283
 index:           store/index.tsv
-index_sha256:    bd6d95b3b64d77f4fc998a9cb3f761f4ffcc6945979201efcdfeb1cbeecbd21e
+index_sha256:    4423360ea78505b60a608be206ca081884861a1852e789f104dce1a3a89f7752
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-10-26-capability-0.2-ryzen7700x-rebaseline-6b2dbd3e.subject-grain.tsv
