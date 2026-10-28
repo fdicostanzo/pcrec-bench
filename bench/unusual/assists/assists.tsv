@@ -8,3 +8,6 @@ wild-json-validate	recursion	rust	Rust	307	25	300	NOT-CAPABLE	4b1fe4f9078b961a67
 cscan	recursion	vectorscan	C	755	48	300	NOT-CAPABLE	204613eea2189a0345f9fce71e9225bcf6c98ab95c05c115936a2ca535154d5e	none	none (stateless; host splice-skipping lexer, no engine call)	tokcount-1	b148a-rec-vs		pending
 wild-sexp-balanced	recursion	vectorscan	C	261	22	300	ASSISTED	b1a191d295c2f0a46a7adf76d9e9b18b7303b6e569e5b9de2756418cd634f29b	none	paren stack (size_t array grown to subject length); hs db + scratch	tokcount-1	b148a-rec-vs		pending
 wild-json-validate	recursion	vectorscan	C	469	53	300	NOT-CAPABLE	37d0459af17cfc963497095bc4b66cb8875c2e6464c5e389311738be602c4b11	none	container stack (char array grown to subject length); hs db + scratch	tokcount-1	b148a-rec-vs		pending
+co-luhn	callouts	rust	Rust	166	12	300	ASSISTED	78b90ea04da926104bde8ceade05da7ddf449331f64c8288391a0a105262e3a9	none	compiled regex::bytes::Regex	tokcount-1	b148a-co-rust		pending
+co-isbn	callouts	rust	Rust	166	12	300	ASSISTED	ac6ff3d86c2717830806052b213d6d59451176887f69473727ddc9dfb790454f	none	compiled regex::bytes::Regex	tokcount-1	b148a-co-rust		pending
+co-member	callouts	rust	Rust	166	12	300	ASSISTED	68e148a193246b1f8751c3f3a9f96b347d631122b07b94eed12be0a377a8920f	none	compiled regex::bytes::Regex	tokcount-1	b148a-co-rust		pending
