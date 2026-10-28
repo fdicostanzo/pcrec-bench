@@ -1,5 +1,5 @@
 member	feature	engine	language	tokens	lines	budget	verdict	assist_sha256	keying	container	counter_version	author_lane	reviewer_lane	reviewer_verdict
-cscan	recursion	re2	C++	369	29	300	NOT-CAPABLE	1a1817a20e0bace4118bc21c3c1bf152be186739a1be88ba86041714068d96a4	none (stateless per call)	compiled RE2 token and tail patterns	tokcount-1	b148a-rec-re2	b148rev1	accepted
+cscan	recursion	re2	C++	262	28	300	ASSISTED	701f9780d965ef78365a3391b46f8c73bfddf66b7e850964cc61acf93833fcbc	none (stateless per call)	compiled RE2 unanchored token pattern	tokcount-1	b148a-rec-re2-v2	pending	pending
 wild-sexp-balanced	recursion	re2	C++	180	17	300	ASSISTED	436af38febf83699bda499db39e662ac6fd67334d87f387fc8963904faf12752	none (stateless per call)	compiled RE2 paren pattern	tokcount-1	b148a-rec-re2	b148rev1	accepted
 wild-json-validate	recursion	re2	C++	388	36	300	NOT-CAPABLE	9968dee4ce5a13b0aa922b01fc32bd693a1e41d134d779d9af115002d0ef58a6	none (stateless per call)	compiled RE2 token pattern	tokcount-1	b148a-rec-re2	b148rev1	accepted
 cscan	recursion	rust	Rust	226	22	300	ASSISTED	f186b61b4d352a2714037036fe12a0224f93f72ea903934797f99a5bd738e094	none (compiled token regex only)	regex lazy-DFA caches inside the compiled Regex	tokcount-1	b148a-rec-rust	b148rev1	accepted
