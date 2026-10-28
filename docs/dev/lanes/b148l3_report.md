@@ -49,7 +49,7 @@ measured sizes are kept and stated (NOTES.md section 2).
 `expectations.tsv`: 2,999 rows = 2,898 search_short + 101 throughput; methods libpcre2-differential 2,835, host-reference 162 (co-netstr
 native spelling), reference-scanner 2 (the two declared oracle declines). 1,510 triples answered by BOTH methods and agreed (the
 derivation aborts on any disagreement); 1,325 have no independent second method (plain twins, pass arms, floor). `expectations_stream.tsv`: 4 rows;
-seg-s 251 matched / 5 nomatch, seg-l 4,049 / 47, `cscan` and `cscan-onig` token hashes IDENTICAL, oracle == reference scanner on all 4,352 calls,
+seg-s 251 matched / 5 nomatch, seg-l 4,049 / 47, `cscan` and `cscan-onig` token hashes IDENTICAL, oracle == reference scanner on all 4,352 calls x 2 patterns,
 no-match count == generated local refusals (generator validity control). pass == twin on every row (asserted). Reference scanner: 73 pcrec
 start-0 cases + 3 start-offset cases == hand rule == libpcre2 == Onig-variant text.
 
