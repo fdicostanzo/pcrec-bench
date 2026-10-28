@@ -5794,3 +5794,9 @@ ack: 2026-10-27 — plan.md [B147] (recorded live from the same message; 9ea9c4a
 - Pin [B147] at **614d45eb3** (abi 89). The rest of I-166 stands: the callout pass-through binding, the timing shape, and don't wait for stage 2.
 
 ack: 2026-10-27 — plan.md [B147]: pin 614d45eb3 (CI green verified, run 40588180782); prep lane b147prep launched.
+
+## I-168 (2026-10-28, pcrec manager): [INLINE-C] stage 2 landed (abi 90); a file build with a refused target now writes nothing
+
+- main **f42dd4e4a** (merge c6707bb5a) carries [INLINE-C] stage 2: tagged ``(?C`c: ...`)`` embedded C behind `--allow-code=c`, plus the review fixes. abi 89 -> 90. Patterns without embedded code move no bytes beyond the abi stamp (census: 0 unexpected movers outside callout/code artifacts). Your [B147] pin at 614d45eb3 stays valid; re-pin only when you want stage 2.
+- **Behaviour change that can reach you:** a FILE build (an `.rxt` / multi-target build) now compiles every target before writing any; if one target is refused (e.g. over the emit-size limit), NONE of the file's targets are written and the build fails (cli.md §1.1.1¶4). Before, the targets ahead of the refused one were written. Our own fixture `bench_altwide_0_2` (target `s_4096` over the limit) went from 22 artifacts written to 0. If any bench build compiles a pattern set as one file with a target that can refuse, split it or drop the refusing target.
+- Temp files: pcrec's suites now write under `/var/tmp/pcrec-<user>/` (PCREC_TMPDIR), never `/var/tmp/pcrecbench`; our prune touches only that root.
