@@ -94,7 +94,8 @@
  *   `--mem-pass` -- 6.4's `rss-delta`: an UNTIMED single pass; prints
  *     `mem<TAB>ID<TAB>BYTES<TAB>rss-delta<TAB>MAXRSS_KB` with BYTES the
  *     ru_maxrss growth across the subject's call(s) (a coarse upper bound:
- *     oniguruma.h has no high-water getter).
+ *     oniguruma.h has no high-water getter), then the subject's usual
+ *     line(s) from that one untimed call.
  */
 
 #include <oniguruma.h>
@@ -279,8 +280,6 @@ static int run_calls(const char *list_path, regex_t *reg, long iters,
             long rss1 = maxrss_kb();
             printf("mem\t%s\t%ld\trss-delta\t%ld\n", s->id,
                    (rss1 - rss0) * 1024L, rss1);
-            free(res);
-            continue;
         }
         size_t matched = 0;
         int first_g = 0;
@@ -499,7 +498,6 @@ int main(int argc, char **argv) {
             long rss1 = maxrss_kb();
             printf("mem\t%s\t%ld\trss-delta\t%ld\n", s->id,
                    (rss1 - rss0) * 1024L, rss1);
-            continue;
         }
 
         char answerbuf[256];

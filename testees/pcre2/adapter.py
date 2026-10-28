@@ -199,6 +199,13 @@ class Adapter(_ad.Adapter):
     calls_mode = True                                  # [B148] L4
     giveup_names = dict(GAVE_UP_CODES)
 
+    def mem_method(self, handle):
+        """[B148] L4, 6.4: the interpreter's counting general context, the
+        JIT stack's resident pages; the DFA matcher has none."""
+        if handle.get("dfa"):
+            return None
+        return "mincore" if handle.get("jit") else "counting-alloc"
+
     def unusual_metadata_decl(self, testee_id):
         """[B148] L4: the limits read-back + `stream_anchor` + the 6.4 pair."""
         cfg = self.config(testee_id)

@@ -145,7 +145,8 @@
  * bytes of every allocation libpcre2 makes through it: heap frames, `deep`
  * or not), the JIT's stack measured by mincore(2) over its mapping (found by
  * diffing /proc/self/maps around pcre2_jit_stack_create). Prints `mem<TAB>ID
- * <TAB>BYTES<TAB>METHOD<TAB>MAXRSS_KB` per subject.
+ * <TAB>BYTES<TAB>METHOD<TAB>MAXRSS_KB` per subject, then the subject's usual
+ * line(s) from that one untimed call (the harness pairs them, driverrun.py).
  *
  * `--utf-always-check` is a DRIVER-ONLY flag (never part of the driver
  * PROTOCOL in pcrecbench/adapters.py, never passed by testees/pcre2/
@@ -697,8 +698,6 @@ static int run_calls(void *code, const char *list_path, const struct calls_args 
             size_t bytes = a->jit ? jit_resident_bytes() : mem_peak;
             printf("mem\t%s\t%zu\t%s\t%ld\n", s->id, bytes,
                    a->jit ? "mincore" : "counting-alloc", maxrss_kb());
-            free(res);
-            continue;
         }
         size_t matched = 0;
         for (size_t k = 0; k < s->ncalls; k++) matched += res[k].kind == CALL_M;
@@ -1064,7 +1063,6 @@ int main(int argc, char **argv) {
             printf("mem\t%s\t%zu\t%s\t%ld\n", s->id,
                    jit ? jit_resident_bytes() : mem_peak,
                    jit ? "mincore" : "counting-alloc", maxrss_kb());
-            continue;
         }
 
         char answerbuf[256];

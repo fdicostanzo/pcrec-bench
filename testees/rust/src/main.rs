@@ -112,6 +112,8 @@ use std::time::{Duration, Instant};
 use rust_timed::{run_subject, SubjectResult};
 // [B140] the substitution mode's timed call, a crate of its own (timed-subst/).
 use rust_timed_subst::timed_subst;
+// [B148] L4 the call-stream replay, a crate of its own (timed-calls/).
+use rust_timed_calls::{timed_calls, CallRes};
 use std::sync::Arc;
 
 // RegexBuilder's own documented defaults, as of the `regex` crate version
@@ -242,6 +244,9 @@ struct Args {
     template_path: Option<PathBuf>,
     out_dir: Option<PathBuf>,
     no_unicode: bool,
+    // [B148] L4 --mode calls
+    tokens_dir: Option<PathBuf>,
+    anchor_explicit: bool,
 }
 
 fn parse_args() -> Args {
@@ -263,6 +268,8 @@ fn parse_args() -> Args {
         template_path: None,
         out_dir: None,
         no_unicode: false,
+        tokens_dir: None,
+        anchor_explicit: false,
     };
     let mut i = 1;
     while i < argv.len() {
@@ -311,6 +318,10 @@ fn parse_args() -> Args {
             // are byte-level (subst_bench_v1.md 3.1). Passed at COMPILE and at
             // measure time by the adapter for a substitution set.
             "--no-unicode" => a.no_unicode = true,
+            // [B148] L4 --mode calls (docs/design/unusual_set_v1.md 7.1-7.3)
+            "--tokens-dir" => a.tokens_dir = Some(PathBuf::from(next!())),
+            "--anchor-explicit" => a.anchor_explicit = true,
+            "--limits" => {}   // size_limit / dfa_size_limit are printed on every run
             other => die(&format!("unknown argument {}", other)),
         }
         i += 1;
@@ -398,6 +409,110 @@ fn run_subst(args: &Args, re: &Regex, subs: Vec<Subject>, lock: &mut io::StdoutL
             }
         }
         emit!("out\t{}\t{}\t{}", id, path, out.len());
+    }
+}
+
+/// [B148] L4 `--mode calls` (docs/design/unusual_set_v1.md 7.1-7.3; the
+/// protocol is pcrecbench/adapters.py's): the list is `id<TAB>subject<TAB>
+/// calls`; the call list's rows are `call_id offset length segment_bytes
+/// binding_id` after a header (testees/common/calls_io.h is the C twin of
+/// this reader). Everything here but `timed_calls` is outside the clock.
+/// `--anchor-explicit` is REFUSED by name: the `regex` crate's
+/// `regex::bytes::Regex` has no anchored-at-offset search (that is
+/// regex-automata's `Input::anchored`, a dependency this driver does not
+/// take); rust stays `native`. `--subject-timeout` is NOT applied in this
+/// mode (the replay holds a `&mut` result array a worker thread would have
+/// to own; `regex` is linear-time by construction): the harness's
+/// driver-process timeout is the backstop, stated in testees/rust/CLAUDE.md.
+fn run_calls(args: &Args, re: &Regex, list_path: &PathBuf, iters: i64,
+             lock: &mut io::StdoutLock) {
+    if args.find_all || args.prime || args.utf8_adv {
+        die("--mode calls refuses --find-all, --prime and --utf8");
+    }
+    if args.anchor_explicit {
+        die("--anchor-explicit: regex::bytes::Regex has no anchored-at-offset \
+             search (regex-automata's Input::anchored is not a dependency \
+             of this driver)");
+    }
+    let text = match fs::read_to_string(list_path) {
+        Ok(t) => t,
+        Err(e) => die(&format!("cannot read subject list {}: {}", list_path.display(), e)),
+    };
+    let has_g1 = re.captures_len() >= 2;
+    let mut locs = re.capture_locations();
+    for line in text.lines().skip(args.skip) {
+        if line.is_empty() {
+            continue;
+        }
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() != 3 {
+            die("--mode calls needs `id<TAB>subject<TAB>calls` per line");
+        }
+        let id = cols[0];
+        let buf = match slurp(&PathBuf::from(cols[1])) {
+            Ok(b) => b,
+            Err(e) => die(&format!("cannot read {}: {}", cols[1], e)),
+        };
+        let decl = match fs::read_to_string(cols[2]) {
+            Ok(t) => t,
+            Err(e) => die(&format!("cannot read {}: {}", cols[2], e)),
+        };
+        let mut offsets: Vec<usize> = Vec::new();
+        for (k, row) in decl.lines().enumerate() {
+            if row.is_empty() || (k == 0 && row.starts_with("call_id\t")) {
+                continue;
+            }
+            let f: Vec<&str> = row.split('\t').collect();
+            if f.len() != 5 {
+                die(&format!("{}: malformed call row: {}", cols[2], row));
+            }
+            if f[4] != "-" {
+                die(&format!("{}: call {} names binding {} -- a vars stream \
+                              (--bindings) is lane L7's, not implemented by \
+                              this driver", cols[2], f[0], f[4]));
+            }
+            let off: usize = f[1].parse().unwrap_or(usize::MAX);
+            let len: usize = f[2].parse().unwrap_or(usize::MAX);
+            if off > buf.len() || len > buf.len() - off {
+                die(&format!("{}: call {} lies outside the {}-byte subject",
+                             cols[2], f[0], buf.len()));
+            }
+            offsets.push(off);
+        }
+        if offsets.is_empty() {
+            die(&format!("{} declares no calls", cols[2]));
+        }
+        let mut res = vec![CallRes::default(); offsets.len()];
+        let elapsed = timed_calls(re, &mut locs, &buf, &offsets, iters, has_g1, &mut res);
+        let matched = res.iter().filter(|r| r.kind == 1).count();
+        let mut tok = String::with_capacity(res.len() * 16);
+        for r in &res {
+            if r.kind == 1 {
+                if has_g1 {
+                    tok.push_str(&format!("m:{},{};{},{}\n", r.s, r.e, r.g1s, r.g1e));
+                } else {
+                    tok.push_str(&format!("m:{},{}\n", r.s, r.e));
+                }
+            } else {
+                tok.push_str("n\n");
+            }
+        }
+        let tpath = match &args.tokens_dir {
+            Some(d) => {
+                let p = d.join(format!("{}.tok", id));
+                if let Err(e) = fs::write(&p, tok.as_bytes()) {
+                    die(&format!("cannot write {}: {}", p.display(), e));
+                }
+                p.display().to_string()
+            }
+            None => "-".to_string(),
+        };
+        writeln!(lock, "subject\t{}\tstream\t-\t-\t0\t{}\t{}\t{:.9}\t{}\t-",
+                 id, buf.len(), iters, elapsed, matched).ok();
+        writeln!(lock, "stream\t{}\tcalls={}\tmatched={}\tnomatch={}\trefused=0\t\
+                        gave_up=0\tfirst_code=-\tfirst_limit=-\tresults_sha256=-\ttokens={}",
+                 id, res.len(), matched, res.len() - matched, tpath).ok();
+        lock.flush().ok();
     }
 }
 
@@ -521,6 +636,12 @@ fn main() {
 
     if args.mode == "subst" {
         run_subst(&args, &re, subs, &mut lock);
+        io::stdout().flush().ok();
+        return;
+    }
+    if args.mode == "calls" {
+        drop(subs);
+        run_calls(&args, &re, &list_path, iters, &mut lock);
         io::stdout().flush().ok();
         return;
     }

@@ -42,6 +42,7 @@ class DriverOutput:
         self.rows = []
         self.outs = {}                    # [B140] subject id -> (path, bytes)
         self.streams = {}                 # [B148] L4 subject id -> {k: v}
+        self.mems = {}                    # [B148] L4 subject id -> (bytes, method, maxrss_kb)
         self.compile_lines = []
         self.errors = []
         self.returncode = 0
@@ -106,6 +107,8 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
             out.outs[payload[0]] = (payload[1], payload[2])
         elif kind == "stream":
             out.streams[payload[0]] = payload[1]
+        elif kind == "mem":
+            out.mems[payload[0]] = payload[1:]
     # [B140] pair each `out` line to its subject row (--mode subst only)
     for row in out.rows:
         if row.subject_id in out.outs:
@@ -113,6 +116,8 @@ def run_driver(argv, timeout=None, cwd=None, pin=None):
         # [B148] L4 pair each `stream` line to its subject row (--mode calls)
         if row.subject_id in out.streams:
             row.stream = stream_fields(out.streams[row.subject_id])
+        if row.subject_id in out.mems:                  # [B148] L4 --mem-pass
+            row.mem = out.mems[row.subject_id]
     return out
 
 

@@ -162,6 +162,10 @@ class Adapter(_ad.Adapter):
     calls_mode = True                                  # [B148] L4
     giveup_names = dict(GAVE_UP_CODES)
 
+    def mem_method(self, handle):
+        """[B148] L4, 6.4: ru_maxrss growth in a fresh process (no getter)."""
+        return "rss-delta"
+
     def unusual_metadata_decl(self, testee_id):
         decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
         decl.update(LIMITS_DECL)

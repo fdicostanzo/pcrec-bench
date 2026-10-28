@@ -200,7 +200,8 @@
  * a measurement -- the caller buffer is filled with an 8-byte canary, each
  * subject (each call, in calls mode) is run ONCE, and the highest byte
  * written in each region is the high-water. Prints `mem<TAB>ID<TAB>BYTES
- * <TAB>canary<TAB>MAXRSS_KB`. Needs a caller buffer (the stack-resident
+ * <TAB>canary<TAB>MAXRSS_KB`, then the subject's usual line(s) from that one
+ * untimed call. Needs a caller buffer (the stack-resident
  * default storage has no region to scan; 6.4's frame-count fallback is not
  * exposed by the shim -- stated in the lane report).
  */
@@ -644,8 +645,6 @@ static int run_calls(const char *list_path, const struct calls_args *a) {
             printf("mem\t%s\t%zu\tcanary\t%ld\n", s->id,
                    canary_high(buf_frames, fbytes) + canary_high(buf_trail, tbytes),
                    maxrss_kb());
-            free(res);
-            continue;
         }
         size_t matched = 0;
         int first_g = 0;
@@ -1311,7 +1310,6 @@ int main(int argc, char **argv) {
                    ? canary_high(buf_frames, buf_nframes * (size_t)pb_resume_frame_size())
                      + canary_high(buf_trail, buf_ntrail * (size_t)pb_trail_frame_size())
                    : 0, maxrss_kb());
-            continue;
         }
 
         char answerbuf[64], sbuf[32], ebuf[32], nbuf[32];

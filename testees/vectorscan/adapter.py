@@ -132,6 +132,12 @@ GAVE_UP_CODES = frozenset()
 
 class Adapter(_ad.Adapter):
     name = "vectorscan"
+    calls_mode = True                                  # [B148] L4
+
+    def supports_calls(self, testee_id):
+        """[B148] L4: only the `-som` siblings (unusual_set_v1.md 7.3): the
+        nosom configs are boolean grain and have no span token to give."""
+        return self.config(testee_id)["engine_mode"] == "block-som"
 
     # ------------------------------------------------------------- describe
 
@@ -284,7 +290,8 @@ class Adapter(_ad.Adapter):
     def prepare_driver(self, workdir):
         return build_driver(os.path.join(HERE, "driver.c"),
                             os.path.join(workdir, "vectorscan_driver"),
-                            extra=["-I/usr/include/hs", "-lhs"])
+                            extra=["-I/usr/include/hs", "-lhs"],
+                            extra_sources=["timed_calls.c"])   # [B148] L4
 
     def prepare(self, testee_id, workdir):
         self.config(testee_id)

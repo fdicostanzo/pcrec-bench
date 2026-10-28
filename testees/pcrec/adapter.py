@@ -4334,6 +4334,12 @@ class Adapter(_ad.Adapter):
 
     calls_mode = True                                    # [B148] L4
 
+    def mem_method(self, handle):
+        """[B148] L4, 6.4 `canary`: needs a caller buffer to fill; the
+        stack-resident default arm has none (its frame-count fallback is not
+        on the shim's surface)."""
+        return "canary" if handle.get("buffer_args") else None
+
     def unusual_metadata_decl(self, testee_id):
         """[B148] L4: `lim_storage_bytes` + `stream_anchor` + the 6.4 pair.
         Every other pcrec limit (step_budget, work_budget, frame_capacity,

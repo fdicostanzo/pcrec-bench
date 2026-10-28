@@ -322,6 +322,37 @@ def stream_metadata(handle):
     return {"stream_anchor": anchor} if anchor else None
 
 
+def mem_pass(adapter, handle, regime, subjects, driver_timeout,
+             subject_timeout):
+    """[B148] L4 (unusual_set_v1.md 6.4, C8): the UNTIMED working-storage
+    high-water pass -- ONE FRESH DRIVER PROCESS PER SUBJECT, iters 1, the
+    driver's `--mem-pass` (each engine's own method: pcrec `canary`,
+    pcre2-interp `counting-alloc`, pcre2-jit `mincore`, onig `rss-delta`),
+    after the cell's timed trials and with no instrument in them. ->
+    {subject_id: {deep_mem_bytes, deep_mem_method, deep_maxrss_kb}}; empty
+    when the adapter has no method for this handle (`Adapter.mem_method`).
+    `deep_maxrss_kb` is the LIBRARY testee's high-water integer (X38 scopes
+    `match.process` to process testees: the 6.4 amendment L4 made)."""
+    if not adapter.mem_method(handle):
+        return {}
+    h = dict(handle, mem_pass=True)
+    h.pop("prime", None)
+    out = {}
+    for subj in subjects:
+        try:
+            by_trial, _info, _notes = adapter.measure(
+                h, regime, [subj], 1, 1, timeout=driver_timeout)
+        except Exception:                          # noqa: BLE001 - untimed, best effort
+            continue
+        for r in (by_trial[0] if by_trial else []):
+            if r.mem:
+                b, method, rss = r.mem
+                out[r.subject_id] = {"deep_mem_bytes": int(b),
+                                     "deep_mem_method": method,
+                                     "deep_maxrss_kb": int(rss)}
+    return out
+
+
 def name_limit(code, handle, adapter):
     """The engine's own NAME for a give-up code: the handle's table, else the
     adapter's `giveup_names`, else `code<N>` (6.5: a give-up NAMES its
@@ -750,9 +781,12 @@ PRIME_NOTE = "primed: one untimed call per subject before each timed loop"
 # name instead (`Adapter.calls_mode`, CALLS_MODE_REFUSAL).
 CALL_STREAM_PENDING = False
 CALLS_MODE_REFUSAL = ("%s's driver does not speak `--mode calls` "
-                      "(Adapter.calls_mode is False), so it cannot run the "
+                      "(Adapter.supports_calls is False), so it cannot run the "
                       "`call-stream` regime of %s; name the set's other "
                       "regimes with --regimes")
+CALLS_DROPPED_NOTE = ("the `call-stream` regime was not run: this testee's "
+                      "driver does not speak `--mode calls` "
+                      "(Adapter.supports_calls)")
 UNUSUAL_ONLY_REFUSAL = ("%s is an unusual-set-only testee (config "
                         "unusual_only: a `deep` limits arm or an assisted "
                         "testee, docs/design/unusual_set_v1.md 6.2/7.3) and %s "
@@ -764,7 +798,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
              pin_cpu=None, subject_timeout=60, driver_timeout=900,
              command_line=None, note=None, synthetic=False, workdir=None,
              progress=None, tier=store.TIER_PINNED, patterns=None,
-             subject_limit=None, budget=None, prime=False):
+             subject_limit=None, budget=None, prime=False, mem=None):
     """The whole of contract 4. Returns a `RunResult`.
 
     It carries BOTH the record as written and the FULL pre-projection one, so
@@ -778,6 +812,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
       patterns       a subset of the sub-bench's pattern ids (default all)
       subject_limit  the FIRST k subjects of each regime's set (default all)
       budget         the per-trial calibration cap in seconds (default 20)
+      mem            [B148] L4 run the untimed 6.4 high-water pass
+                     (`mem_pass`); None = on for an `unusual_set`, off
+                     elsewhere
       store_root     None = the tier's default store: canonical for
                      `pinned`, `$PCRECBENCH_SCRATCH_STORE` or
                      build/scratch-store/ for `scratch`"""
@@ -787,6 +824,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
 
     # (1) the sub-bench -----------------------------------------------------
     sb = find_subbench(subbench_name)
+    regimes_named = bool(regimes)
     regimes = list(regimes or sb.regimes)
     unknown = [r for r in regimes if r not in sb.regimes]
     if unknown:
@@ -804,8 +842,16 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if cfg.get("unusual_only") and not unusual_set:
         # [B148] L4 (unusual_set_v1.md 7.3): the `subst_only` analogue.
         raise HarnessError(UNUSUAL_ONLY_REFUSAL % (testee_id, sb.id))
-    if "call-stream" in regimes and not getattr(adapter, "calls_mode", False):
-        raise HarnessError(CALLS_MODE_REFUSAL % (testee_id, sb.id))
+    calls_dropped = False
+    if "call-stream" in regimes and not adapter.supports_calls(testee_id):
+        # Named explicitly: refused by name. Defaulted (the set's whole
+        # regime list): the regime is dropped and the record's note says so,
+        # so `run --subbench unusual --testee tre-default` still measures the
+        # set's other regimes.
+        if regimes_named:
+            raise HarnessError(CALLS_MODE_REFUSAL % (testee_id, sb.id))
+        regimes = [r for r in regimes if r != "call-stream"]
+        calls_dropped = True
 
     # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
     # that has a substitution call, and a substitution-only arm (a testee
@@ -970,6 +1016,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     # NOT among them -- they are status-deciding and go first, via
     # `derive_status` (v1.4).
     notes = []
+    if calls_dropped:
+        notes.append(CALLS_DROPPED_NOTE)
     if prime:
         notes.append(PRIME_NOTE)
     if scratch:
@@ -1188,6 +1236,18 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                         t_before, t_after, (time.monotonic() - t_start) * 1000.0,
                         pinning["cpu"], p.name, enum, form, siblings=siblings))
 
+            mems = {}
+            if (mem if mem is not None else unusual_set):
+                say("high-water pass %s / %s [%s] / %s (untimed, one process "
+                    "per subject) ..." % (testee_id, p.name, form, regime))
+                mems = mem_pass(adapter, handle, regime, subjects,
+                                driver_timeout, subject_timeout)
+
+            def row_meta(sid, base=None):
+                m = dict(base or {})
+                m.update(mems.get(sid) or {})
+                return m or None
+
             if regime == "call-stream":
                 # [B148] L4: a STREAM row (unusual_set_v1.md 7.1-7.4).
                 for trial, trial_rows in enumerate(rows_by_trial, start=1):
@@ -1218,7 +1278,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                             calibration=(cal if timing and
                                          timing["iterations"] > 1 else None),
                             stream=stream,
-                            engine_metadata=stream_metadata(handle)))
+                            engine_metadata=row_meta(r.subject_id,
+                                                     stream_metadata(handle))))
                 continue
 
             for trial, trial_rows in enumerate(rows_by_trial, start=1):
@@ -1247,7 +1308,8 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                         # more than once. A one-iteration loop was never
                         # calibrated and does not claim to have been.
                         calibration=(cal if timing and
-                                     timing["iterations"] > 1 else None)))
+                                     timing["iterations"] > 1 else None),
+                        engine_metadata=row_meta(r.subject_id)))
 
     # (4) load AND OCCUPANCY after ------------------------------------------
     # Both instruments, at both ends, by the same call that took the before

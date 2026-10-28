@@ -53,6 +53,8 @@ rust-timed = { path = "timed" }
 # [B140]: the substitution mode's own timed call, a third crate (BD16: the
 # existing instrument crate above is not edited).
 rust-timed-subst = { path = "timed-subst" }
+# [B148] L4: the call-stream replay, a fourth crate (BD16 again).
+rust-timed-calls = { path = "timed-calls" }
 
 [profile.release]
 # opt-level 3 is cargo's own release default; stated explicitly so a

@@ -1,0 +1,12 @@
+# testees/rust/timed-calls/Cargo.toml -- [B148] L4 the rust driver's
+# CALL-STREAM timed replay, a crate of its own (see src/lib.rs's header). Same
+# `regex` requirement as the driver; the resolved version is the one
+# Cargo.lock pins for every crate.
+[package]
+name = "rust-timed-calls"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+regex = "1"

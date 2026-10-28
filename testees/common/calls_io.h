@@ -27,9 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* static, and silent where a translation unit (timed_calls.c) includes the
+/* static, noinline (kept out of a caller's sigsetjmp frame), and silent where a
+ * translation unit (timed_calls.c) includes the
  * header for its types only */
-#define CALLS_FN static __attribute__((unused))
+#define CALLS_FN static __attribute__((unused, noinline))
 
 /* One call's RESULT, written by the timed loop into a preallocated array. */
 enum { CALL_N = 0, CALL_M = 1, CALL_R = 2, CALL_G = 3 };

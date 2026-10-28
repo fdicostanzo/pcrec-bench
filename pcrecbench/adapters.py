@@ -412,7 +412,7 @@ class MatchRow:
 
     __slots__ = ("subject_id", "answer", "start", "end", "ncaps", "consumed",
                  "iters", "seconds", "nmatches", "caps", "detail",
-                 "out_path", "out_bytes", "process", "stream")
+                 "out_path", "out_bytes", "process", "stream", "mem")
 
     def __init__(self, subject_id, answer, start=None, end=None, ncaps=0,
                  consumed=None, iters=0, seconds=0.0, nmatches=None,
@@ -430,6 +430,9 @@ class MatchRow:
         # [B148] L4 --mode calls: the `stream` line paired to this row (a
         # dict of its fields; None everywhere else).
         self.stream = None
+        # [B148] L4 --mem-pass: the `mem` line paired to this row,
+        # (bytes, method, maxrss_kb); None everywhere else.
+        self.mem = None
 
     @property
     def matched(self):
@@ -448,7 +451,8 @@ def parse_driver_line(line):
     """-> ('subject', MatchRow) | ('compile', (trial, phase, seconds))
          | ('info', (name, value)) | ('error', text)
          | ('out', (id, path_or_None, bytes))   ([B140])
-         | ('stream', (id, {field: value}))     ([B148] L4) | (None, line)"""
+         | ('stream', (id, {field: value}))     ([B148] L4)
+         | ('mem', (id, bytes, method, maxrss_kb)) ([B148] L4) | (None, line)"""
     cols = line.rstrip("\n").split("\t")
     if not cols:
         return None, line
@@ -481,6 +485,9 @@ def parse_driver_line(line):
             k, _, v = c.partition("=")
             d[k] = v
         return "stream", (cols[1], d)
+    if kind == "mem" and len(cols) >= 5:
+        # [B148] L4: mem<TAB>ID<TAB>BYTES<TAB>METHOD<TAB>MAXRSS_KB (--mem-pass)
+        return "mem", (cols[1], int(cols[2]), cols[3], int(cols[4]))
     if kind == "out" and len(cols) >= 4:
         # [B140]: out<TAB>ID<TAB>PATH<TAB>BYTES (PATH `-` = no file written)
         return "out", (cols[1], None if cols[2] == "-" else cols[2],
@@ -619,6 +626,18 @@ class Adapter:
     #: from it when the driver did not (unusual_set_v1.md 6.5). Empty here.
     giveup_names = {}
 
+    def supports_calls(self, testee_id):
+        """[B148] L4: whether THIS testee runs `--mode calls`. `calls_mode`
+        by default; an adapter whose configs differ (vectorscan: only the
+        `-som` siblings carry a span) overrides it."""
+        return bool(self.calls_mode)
+
+    def mem_method(self, handle):
+        """[B148] L4 (unusual_set_v1.md 6.4): the `deep_mem_method` this
+        handle's driver reports under `--mem-pass`, or None (no method: the
+        harness skips the high-water pass). None by default."""
+        return None
+
     def unusual_metadata_decl(self, testee_id):
         """[B148] L4: the `engine_metadata_declaration` entries only an
         `unusual_set` record carries -- the `lim_*` limits read-back
@@ -626,7 +645,7 @@ class Adapter:
         The harness merges them into the testee block on that set only. The
         default declares `stream_anchor` for an adapter that speaks
         `--mode calls`, nothing otherwise."""
-        if not self.calls_mode:
+        if not self.supports_calls(testee_id):
             return {}
         return {"stream_anchor": STREAM_ANCHOR_DECL}
 
