@@ -12,6 +12,9 @@ directories, no system config. Session-temporary files go in the session
 scratchpad named in your environment, never committed. LARGE scratch (builds,
 clones, census trees, scratch stores, logs a report cites) goes ONLY under
 `/var/tmp/pcrecbench/<your-lane>/` -- never loose in /var/tmp, never /tmp root
+(Small temp files: the harness puts its own mkdtemp/mkstemp files under
+`/var/tmp/pcrecbench/tmp` -- pcrecbench/__init__.py TMP_ROOT, and `make` exports
+`TMPDIR` to it; point your own `mktemp` there too. Frank, 2026-10-28.)
 -- so `scripts/wtprune` removes it with your worktree at merge. ONE heavy suite on
 the box at a time; measurement windows are the manager's to grant (BD3).
 Subagents you spawn inherit this mandate. Disclosure: you inherit the

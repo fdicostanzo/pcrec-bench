@@ -1442,3 +1442,5 @@ reports differ only in the version line. `interpret.py` `HEADER_KEYS` /
 `report.py`'s header block). Test `test_kb36_dropped_triples_header_key`.
 Regeneration owed: the five `2026-10-*-capability-0.2-*` report groups
 (docs/dev/lanes/kb36rep_report.md).
+
+`__init__.py` also sets `TMP_ROOT` (`/var/tmp/pcrecbench/tmp`, Frank 2026-10-28): the harness's own Python temp files go there (`tempfile.tempdir`) unless `$TMPDIR` is set; `os.environ` is NOT changed, so a measured run's compilers and drivers see their usual environment. `make` exports `TMPDIR` to the same root for its recipes.

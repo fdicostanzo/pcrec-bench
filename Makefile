@@ -6,6 +6,12 @@
 # check-schema is the first target, so a bare `make` runs it.
 
 PYTHON ?= python3
+
+# Temp files of every recipe under one disk root (Frank, 2026-10-28; see
+# pcrecbench/__init__.py TMP_ROOT). `make check` is a smoke suite, never a
+# measurement, so its compilers may follow it too.
+export TMPDIR ?= /var/tmp/pcrecbench/tmp
+$(shell mkdir -p $(TMPDIR))
 VALIDATE = $(PYTHON) schema/validate.py
 EXAMPLES = schema/examples
 BAD      = $(EXAMPLES)/bad
