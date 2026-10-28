@@ -234,6 +234,10 @@ def run(ok, bad):
     # 3. the real streams through run_cell -----------------------------------
     store_root = os.path.join(WORK, "scratch-store")
     recs = {}
+    # one match row per stream subject: counted from the manifest, never a literal
+    # (b148f2 added the two sqlite streams to F1's two)
+    with open(os.path.join(ROOT, "bench", "unusual", "manifest_streams.tsv")) as f:
+        n_streams = sum(1 for l in f) - 1
     for t, pat in (("pcre2-jit", "cscan"), ("onig-default-deep", "cscan-onig"),
                    ("pcrec-vm-deep", "cscan-onig"), ("pcrec-auto", "cscan-onig")):
         try:
@@ -252,8 +256,8 @@ def run(ok, bad):
                        "the default arm's stack-resident frames; X49")
                 else:
                     bad("streams: pcrec-auto give-up naming", repr((outs, lim)))
-            elif outs == ["matched-as-expected"] and len(mrows) == 2:
-                ok("streams: %s x %s x {seg-s, seg-l} matched-as-expected" % (t, pat),
+            elif outs == ["matched-as-expected"] and len(mrows) == n_streams:
+                ok("streams: %s x %s x %d streams matched-as-expected" % (t, pat, n_streams),
                    "validator-accepted scratch record")
             else:
                 bad("streams: %s x %s" % (t, pat), repr(outs))
