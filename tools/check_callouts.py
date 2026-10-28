@@ -263,13 +263,14 @@ def run(ok, bad):
     # 6. pcrec's binding shape ------------------------------------------------------
     try:
         pa, _cfg = _ad.resolve("pcrec-vm")
-        mod = sys.modules[type(pa).__module__]
-        src = mod.callee_binding_source("rx_callout_1,rx_callout_netstr", "artifact.h",
+        # the adapter module is loaded by path, never put in sys.modules
+        binding_source = type(pa).compile.__globals__["callee_binding_source"]
+        src = binding_source("rx_callout_1,rx_callout_netstr", "artifact.h",
                                         "1=luhn,netstr=netstr")
         good = ("const rx_callout_ref rx_callout_1 = { pb_callee, (void *)&ub_slots[1] };" in src
                 and "const rx_callout_ref rx_callout_netstr = { pb_callee, (void *)&ub_named[0].slot };" in src)
         try:
-            mod.callee_binding_source("rx_callout_7", "artifact.h", "1=luhn")
+            binding_source("rx_callout_7", "artifact.h", "1=luhn")
             refused = False
         except _ad.AdapterError as e:
             refused = "callout site 7 is not bound" in str(e)

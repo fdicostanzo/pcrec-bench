@@ -3,7 +3,7 @@
 Realistic patterns whose feature is outside the common regex subset: recursion,
 callouts, caller variables. Design: `docs/design/unusual_set_v1.md` v0.2. THIS
 directory is the L3 skeleton: patterns, subjects, oracle, expectations. Nothing is
-timed here; the drivers' `--mode calls` and the `deep` arms are L4's (landed, below), callees (L5), vars value streams (L7) and gates (L8) are other
+timed here; the drivers' `--mode calls` and the `deep` arms are L4's (landed, below), callees (L5, landed, below), vars value streams (L7) and gates (L8) are other
 lanes. Read `NOTES.md` first (members, subjects, expectation methods, the declarations
 made before any run, dependencies).
 
@@ -40,7 +40,14 @@ made before any run, dependencies).
   co-member callee's runtime set.
 - `provenance.tsv` -- the capability-set provenance columns for every pattern.
 
-Not here yet (other lanes): `assists/` (L2/L6), `callees/` (L5), `expectations` for the
+- `callees/` (L5) -- `callees.h`/`callees.c`: one shared C body per callee (luhn, isbn13,
+  member, netstr (pcrec consume), netstr-end (the assisted check-at-end), stub), pure
+  functions of an engine-neutral view; `-DUB_COUNT` builds the counting twin (fire log to
+  `$UB_FIRE_LOG`). Built ONCE by `pcrecbench/callees.py`. `replay.c` -- the callee-cost
+  microbench `tools/callout_calib.py` runs. The `[callouts]` table in the sidecar binds
+  sites to callees per arm (real / pass); `-nofn` arms bind none.
+
+Not here yet (other lanes): `assists/` (L2/L6), `expectations` for the
 vars members (L7).
 
 L4 (lane b148l4): `--mode calls` in the pcre2/pcrec/onig/re2/rust/vectorscan-som drivers,
@@ -49,3 +56,7 @@ the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-defaul
 every match row (`deep_mem_bytes`/`_method`/`deep_maxrss_kb`), give-ups named by limit, the
 O(segment) pre-flight (every engine `native`), and the dry run whose durations set
 `CELL_CAP_unusual` -- docs/dev/lanes/b148l4_report.md.
+
+L5 (lane b148l5): the callout arms -- `callees/`, the `-nofn` arms, the native wrappers
+(pcre2, onig, pcrec), the fire pass, `tools/check_callouts.py`, the calibration
+(`tools/callout_calib.py`) -- NOTES.md 6a, docs/dev/lanes/b148l5_report.md.

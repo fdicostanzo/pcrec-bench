@@ -18933,6 +18933,16 @@ def check_calls_set():
     check_calls.run(ok, bad)
 
 
+def check_callouts_set():
+    """[B148] L5 the callout arms -- callees.o once, the return-code mapping
+    with the first-candidate-fails control on every native config, the
+    pass == twin gate, the counting build, the Onig witnesses, pcrec's
+    binding shape, run_cell. Implemented in tools/check_callouts.py; see its
+    docstring."""
+    import check_callouts
+    check_callouts.run(ok, bad)
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -19045,6 +19055,7 @@ def main():
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
     check_calls_set()
+    check_callouts_set()
     check_subst_gate_skips()
     check_unusual_gate_skips()
     check_pcre2_dfa()

@@ -1,0 +1,31 @@
+# callout_calib: callees.o 508db3eb0f39, regime throughput, cpu 7, 11 launches/arm
+# load before: 8.63 9.56 9.73
+testee	member	subject	fires	ns_per_fire	callee_ns	real_ns	pass_ns	twin_ns	share	pass_fires	real_minus_pass_per_fire	flag
+pcre2-interp	co-luhn	co-luhn-1m	11308	20.45	231294	6934141	2724796	2873737	0.0334	11308	372.24	
+pcre2-interp	co-isbn	co-isbn-1m	8429	9.27	78154	1500259	1357630	1299480	0.0521	8429	16.92	
+pcre2-interp	co-member	co-member-1m	13158	6.19	81474	2403731	2216568	1299690	0.0339	13158	14.22	
+pcre2-interp	co-netstr-assist	co-netstr-1m	10971980	4.84	53148271	240934567	-	-	0.2206	-	-	
+pcre2-jit	co-luhn	co-luhn-1m	11308	16.36	184965	1739369	1057874	905246	0.1063	11308	60.27	
+pcre2-jit	co-isbn	co-isbn-1m	8429	6.41	54064	431423	406998	370699	0.1253	8429	2.90	
+pcre2-jit	co-member	co-member-1m	13158	5.30	69711	543214	526433	445420	0.1283	13158	1.28	
+pcre2-jit	co-netstr-assist	co-netstr-1m	7152	3.57	25540	62107	-	-	-	-	-	giveup:-46:JIT stack limit reached
+pcre2-jit-deep	co-luhn	co-luhn-1m	11308	15.41	174245	1090256	804848	732821	0.1598	11308	25.24	
+pcre2-jit-deep	co-isbn	co-isbn-1m	8429	6.39	53828	391548	358015	325213	0.1375	8429	3.98	
+pcre2-jit-deep	co-member	co-member-1m	13158	5.20	68461	505663	452703	391217	0.1354	13158	4.02	
+pcre2-jit-deep	co-netstr-assist	co-netstr-1m	10971980	6.32	69364858	94255541	-	-	0.7359	-	-	FLAG>40%
+pcrec-auto	co-luhn	co-luhn-1m	11308	16.36	184965	961342	638885	1366747	0.1924	11308	28.52	
+pcrec-auto	co-isbn	co-isbn-1m	8429	6.76	56972	579563	602666	526503	0.0983	8429	-2.74	
+pcrec-auto	co-member	co-member-1m	13158	8.58	112882	1140550	648333	496967	0.0990	13158	37.41	
+pcrec-auto	co-netstr-assist	co-netstr-1m	10971980	6.71	73611014	89155607	-	-	0.8256	-	-	FLAG>40%
+pcrec-auto	co-netstr	co-netstr-1m	24764	5.09	126123	1454211	-	3334626	0.0867	-	-	
+pcrec-vm	co-luhn	co-luhn-1m	11308	19.57	221343	1299891	1121144	617935	0.1703	11308	15.81	
+pcrec-vm	co-isbn	co-isbn-1m	8429	7.23	60950	724045	508298	462973	0.0842	8429	25.60	
+pcrec-vm	co-member	co-member-1m	13158	5.86	77053	817751	988854	743232	0.0942	13158	-13.00	
+pcrec-vm	co-netstr-assist	co-netstr-1m	10971980	4.37	47903665	128664657	-	-	0.3723	-	-	
+pcrec-vm	co-netstr	co-netstr-1m	24764	2.90	71915	981821	-	3388447	0.0732	-	-	
+onig-default	co-luhn	co-luhn-1m	11308	15.70	177570	5880575	4302551	3838817	0.0302	11308	139.55	
+onig-default	co-isbn	co-isbn-1m	8429	6.44	54274	1968751	2098005	1882990	0.0276	8429	-15.33	
+onig-default	co-member	co-member-1m	13158	5.55	73053	1816274	2253459	1849156	0.0402	13158	-33.23	
+onig-default	co-netstr-assist	co-netstr-1m	10971980	4.47	49088639	247928681	-	-	0.1980	-	-	
+# load after: 10.70 10.38 10.02
+# target cpu 7 busy over the run: 82.8 % (133 s); /proc/stat
