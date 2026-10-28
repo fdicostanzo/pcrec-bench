@@ -611,3 +611,20 @@ substitution count + 1`, 3.1.1, an engine-neutral number), `--out-dir DIR`
   assigns a tracked 32 KiB stack in the pass only). Printed as a `mem` line.
 
 All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).
+
+## The callout arms ([B148] L5, docs/design/unusual_set_v1.md 3.2)
+
+`callout_wrap.c` is the libpcre2 callout WRAPPER, linked only into the SEPARATE callout
+drivers `pcre2_driver_co` (timed) and `pcre2_driver_co_count` (the untimed fire pass,
+linked against `callees_count.o`), both `driver.c` built with `-DPB_CALLOUTS` beside the
+binding parser (`testees/common/ub_bind.c`) and the ONE `callees.o`. The regular driver
+compiles every `#ifdef PB_CALLOUTS` block out: its `timed_run` and `main` are
+instruction-identical at the same address mod 64
+(docs/dev/measurements/2026-10-28-b148l5-instrument-additivity.txt). The callout driver
+takes `--callees SPEC` (bind and install `pcre2_set_callout` on the match context, created
+if the arm has none -- the deep arm's is reused) or `--no-callout-fn` (the `pass-nofn` arm:
+a match context with NO function); exactly one is required, `--dfa` refused. RETURN-CODE
+MAPPING: UB_CONTINUE -> 0, UB_FAIL -> +1 (backtrack); a negative return would ABANDON the
+match (the oracle's negative control in `tools/check_callouts.py`). Compile rows carry
+`callout_arm`, `callout_spec`, `callees_sha256`; real/pass match rows `callout_fires`,
+`callout_views_sha256`. `pcre2-dfa` has no callout arm (no wrapper).

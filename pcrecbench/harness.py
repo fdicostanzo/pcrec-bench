@@ -63,6 +63,7 @@ import sys
 import time
 
 from . import adapters as _ad
+from . import callees as _callees
 from . import capability as _cap
 from . import driverrun, env, quiet, record, store, substrun
 from . import expectations as _expect
@@ -350,6 +351,39 @@ def mem_pass(adapter, handle, regime, subjects, driver_timeout,
                 out[r.subject_id] = {"deep_mem_bytes": int(b),
                                      "deep_mem_method": method,
                                      "deep_maxrss_kb": int(rss)}
+    return out
+
+
+def fire_pass(adapter, handle, regime, subjects, driver_timeout, logdir):
+    """[B148] L5 (unusual_set_v1.md 3.2 calibration items 1-2): the UNTIMED
+    callout FIRE pass -- the adapter's COUNTING build (`fire_handle`: the
+    same artifact linked against callees.o's -DUB_COUNT twin), ONE FRESH
+    PROCESS PER SUBJECT, iters 1, after the cell's trials. Each fire appends
+    the view the callee read and its verdict to $UB_FIRE_LOG. -> {subject_id:
+    {callout_fires, callout_views_sha256}}; empty when the handle has no
+    callout arm. Fires of ONE iteration of the row's operation."""
+    fh = getattr(adapter, "fire_handle", None)
+    fh = fh(handle) if fh else None
+    if not fh:
+        return {}
+    fh = dict(fh)
+    fh.pop("prime", None)
+    fh.pop("mem_pass", None)
+    os.makedirs(logdir, exist_ok=True)
+    out = {}
+    for subj in subjects:
+        log = os.path.join(logdir, "%s.fires" % subj.subject_id)
+        if os.path.exists(log):
+            os.unlink(log)
+        try:
+            with _callees.fire_log_env(log):
+                by_trial, _info, _notes = adapter.measure(
+                    fh, regime, [subj], 1, 1, timeout=driver_timeout)
+        except Exception:                          # noqa: BLE001 - untimed, best effort
+            continue
+        if any(r.subject_id == subj.subject_id for r in (by_trial[0] if by_trial else [])):
+            n, h = _callees.fire_log_digest(log)
+            out[subj.subject_id] = {"callout_fires": n, "callout_views_sha256": h}
     return out
 
 
@@ -1104,8 +1138,14 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             # bench/capability today), same no-op-elsewhere shape as
             # `missing_capabilities` above.
             requires_free_spacing = "free-spacing" in _cap.pattern_requires(p)
+            p_options = options
+            co = _callees.options_for(sb, p) if unusual_set else None
+            if co and getattr(adapter, "native_callouts", False):
+                # [B148] L5: a callout arm (real / pass / twin / pass-nofn)
+                # of the unusual set: the adapter binds the shared callees.
+                p_options = dict(options, callouts=co)
             cp = adapter.compile(testee_id, p.name, sb.pattern_bytes(p.name),
-                                 options, trials, workdir,
+                                 p_options, trials, workdir,
                                  requires_free_spacing=requires_free_spacing)
         compiled[p.name] = cp
         phases = testee_block["compile_phases"]
@@ -1248,9 +1288,21 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                 mems = mem_pass(adapter, handle, regime, subjects,
                                 driver_timeout, subject_timeout)
 
+            fires = {}
+            if unusual_set:
+                fires = fire_pass(adapter, handle, regime, subjects,
+                                  driver_timeout,
+                                  os.path.join(workdir, "fires", p.name,
+                                               form, regime))
+                if fires:
+                    say("fire pass %s / %s [%s] / %s (untimed, counting build, "
+                        "one process per subject)" % (testee_id, p.name, form,
+                                                      regime))
+
             def row_meta(sid, base=None):
                 m = dict(base or {})
                 m.update(mems.get(sid) or {})
+                m.update(fires.get(sid) or {})
                 return m or None
 
             if regime == "call-stream":

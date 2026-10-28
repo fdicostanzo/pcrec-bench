@@ -1,0 +1,16 @@
+BASE 05560ed9; NEW = the working tree at 770d5539
+pcre2      timed source diff EMPTY; timed_run OLD mod64=0 323 insns 0fa7c4ef42d8cbfb | NEW mod64=0 323 insns 0fa7c4ef42d8cbfb -> IDENTICAL; CONTROL main IDENTICAL
+    mode --mode search --iters 3                          IDENTICAL (8 lines, secs masked)
+    mode --mode match --iters 2                           IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --find-all               IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --jit                    IDENTICAL (10 lines, secs masked)
+    mode --mode search --iters 2 --find-all --dfa         IDENTICAL (8 lines, secs masked)
+pcrec      timed source diff EMPTY; timed_run OLD mod64=0 261 insns 4a2e2d849cf44ae9 | NEW mod64=0 261 insns 4a2e2d849cf44ae9 -> IDENTICAL; CONTROL main IDENTICAL
+    mode --mode search --iters 3                          IDENTICAL (64 lines, secs masked)
+    mode --mode match --iters 2                           IDENTICAL (64 lines, secs masked)
+    mode --mode search --iters 2 --find-all               IDENTICAL (64 lines, secs masked)
+onig       timed source diff EMPTY; timed_run OLD mod64=0 237 insns 53824060fcd8ce1b | NEW mod64=0 237 insns 53824060fcd8ce1b -> IDENTICAL; CONTROL main IDENTICAL
+    mode --mode search --iters 3 --form plain             IDENTICAL (9 lines, secs masked)
+    mode --mode match --iters 2 --form whole-subject      IDENTICAL (9 lines, secs masked)
+    mode --mode search --iters 2 --find-all --form plain  IDENTICAL (9 lines, secs masked)
+pcre2, pcrec, onig: the timed function unchanged; 11 existing-mode invocations identical

@@ -189,6 +189,12 @@ def build_driver(source, output, extra=None, cflags=None, extra_sources=None):
     if os.path.isdir(common):
         deps += [os.path.join(common, f) for f in sorted(os.listdir(common))
                  if f.endswith(".h")]
+    # [B148] L5: an `extra` entry that is a FILE (a callout driver's wrapper
+    # TU, the binding parser, the ONE callees.o) joins the staleness check;
+    # a flag (`-ldl`) is not a file and changes nothing.
+    deps += [e for e in (extra or []) if os.path.isfile(e)]
+    if any(os.path.basename(e) == "ub_bind.c" for e in (extra or [])):
+        deps += [os.path.join(common, "ub_bind.h")]
     argv = ([cc] + flags + ["-o", output, source] + timed + more
             + list(extra or []))
     # Registered even on the cached path: the record must state how the

@@ -190,6 +190,7 @@ class Deriver:
                 kind = m.route.split(":", 1)[1]
             elif m.route.startswith("pass:"):
                 kind = "pass"
+            # "nofn:" ([B148] L5): no callout function at all -> kind None
             self.rx[m.id] = Rx(m.text, callout=U.callee_for(kind) if kind else None)
         return self.rx[m.id]
 
@@ -414,7 +415,7 @@ def build(report_only=False):
     # pass arms equal their twins
     for (pid, sid, regime), a in answers.items():
         m = by[pid]
-        if m.route.startswith("pass:"):
+        if m.route.startswith(("pass:", "nofn:")):
             tw = answers.get((m.route.split(":", 1)[1], sid, regime))
             if tw is None or a is None or a.key(regime) != tw.key(regime):
                 raise SystemExit("pass arm %s differs from its twin on %s" % (pid, sid))

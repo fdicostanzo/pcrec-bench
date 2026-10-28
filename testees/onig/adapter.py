@@ -20,6 +20,7 @@ supplies the START anchor.
 
 import ctypes
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(
@@ -27,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(
 
 from pcrecbench import adapters as _ad          # noqa: E402
 from pcrecbench import record as _rec           # noqa: E402
+from pcrecbench import callees as _co           # noqa: E402  [B148] L5
 from pcrecbench.driverrun import build_driver, run_driver, per_trial  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -160,6 +162,7 @@ DEEP_BUILD_NOTE = ("; LIMITS ARM deep (lim-ceil1g, [B148] L4, unusual_set_v1.md 
 class Adapter(_ad.Adapter):
     name = "onig"
     calls_mode = True                                  # [B148] L4
+    native_callouts = True                             # [B148] L5
     giveup_names = dict(GAVE_UP_CODES)
 
     def mem_method(self, handle):
@@ -170,7 +173,24 @@ class Adapter(_ad.Adapter):
         decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
         decl.update(LIMITS_DECL)
         decl.update(_ad.DEEP_MEM_DECL)
+        decl.update(_co.CALLOUT_DECL)                  # [B148] L5
         return decl
+
+    def prepare_co_driver(self, workdir, count=False):
+        """[B148] L5: the callout driver (driver.c -DPB_CALLOUTS +
+        callout_wrap.c + the binding parser + callees.o; `count` links the
+        counting object). -> (path, the callee object's sha256)."""
+        return _co.co_driver(
+            build_driver, os.path.join(HERE, "driver.c"),
+            os.path.join(workdir, "onig_driver_co" + ("_count" if count else "")),
+            ["-lonig"], ["timed_calls.c"],
+            os.path.join(HERE, "callout_wrap.c"), count=count)
+
+    def fire_handle(self, handle):
+        """[B148] L5: the counting driver's handle, or None."""
+        if not handle.get("count_driver"):
+            return None
+        return dict(handle, driver=handle["count_driver"])
 
     # ------------------------------------------------------------- describe
 
@@ -302,17 +322,34 @@ class Adapter(_ad.Adapter):
         `record.whole_subject_text`'s own docstring), timed and recorded
         separately (rule X27)."""
         forms = {}
+        co = (options or {}).get("callouts")             # [B148] L5
+        if co:
+            # The set spells a numbered callout `(?CN)` (PCRE); Oniguruma's
+            # spelling is the contents callout `(?{N})` (callout_wrap.c reads
+            # N back from the contents). Declared, recorded `callout_respell`.
+            pattern = re.sub(rb"\(\?C(\d+)\)", rb"(?{\1})", pattern)
         for form, text in ((_ad.FORM_PLAIN, pattern),
                            (_ad.FORM_WHOLE_SUBJECT,
                             _rec.whole_subject_text(pattern, requires_free_spacing))):
             forms[form] = self._compile_one(testee_id, pattern_id, form,
                                             text, trials, workdir,
-                                            limits=bool(options and options.get("limits")))
+                                            limits=bool(options and options.get("limits")),
+                                            co=co)
         return _ad.CompiledPattern(forms)
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir, limits=False):
+                     workdir, limits=False, co=None):
         drv = self.prepare_driver(workdir)
+        co_args, co_meta, count_drv = [], {}, None
+        if co:                                           # [B148] L5
+            if not co["spec"]:
+                raise _ad.AdapterError("Oniguruma has no pass-nofn arm: a "
+                                       "global callout function is all or nothing")
+            drv, sha = self.prepare_co_driver(workdir)
+            count_drv, _ = self.prepare_co_driver(workdir, count=True)
+            co_args = ["--callees", co["spec"]]
+            co_meta = _co.compile_metadata(co, sha)
+            co_meta["callout_respell"] = "(?CN)->(?{N})"
         # per-PATTERN, per-FORM scratch: see Adapter.compile's docstring
         # (the last-pattern's-artifact-under-the-first-pattern's-handle bug)
         # and testees/pcrec/adapter.py's own note for why the FORM must not
@@ -324,7 +361,7 @@ class Adapter(_ad.Adapter):
         with open(patfile, "wb") as f:
             f.write(pattern)
         argv = [drv, "--pattern", patfile, "--form", form,
-                "--compile-trials", str(trials)]
+                "--compile-trials", str(trials)] + co_args
         utf = _ad.config_encoding(testee_id, self.config(testee_id))[0] == "utf8"
         if utf:
             argv += ["--encoding", "utf8"]      # [B77] U2
@@ -352,6 +389,7 @@ class Adapter(_ad.Adapter):
         for name in list(METADATA_DECL) + (list(LIMITS_DECL) if limits else []):
             if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
+        meta.update(co_meta)                             # [B148] L5
         # The MEASURED set of Oniguruma resource-limit refusals travels
         # with the handle (this file's own GAVE_UP_CODES comment), so
         # `harness.classify_giveup` needs no engine knowledge -- the same
@@ -359,6 +397,7 @@ class Adapter(_ad.Adapter):
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
                   "giveup_codes": set(GAVE_UP_CODES), "utf": utf,
                   "deep": deep, "giveup_names": dict(GAVE_UP_CODES),
+                  "callout_args": co_args, "count_driver": count_drv,
                   "stream_anchor": self.config(testee_id).get("stream_anchor", "native")}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
@@ -379,6 +418,7 @@ class Adapter(_ad.Adapter):
             argv.append("--find-all")
         if handle.get("deep"):
             argv.append("--deep")                       # [B148] L4
+        argv += handle.get("callout_args") or []        # [B148] L5
         if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
             argv.append("--anchor-explicit")
         if handle.get("mem_pass"):

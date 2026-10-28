@@ -4025,3 +4025,18 @@ expands to nothing there):
   is not on the shim's surface -- OWED).
 
 All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).
+
+## The callout arms ([B148] L5, bench/unusual only)
+
+When `harness.run_cell` passes the `callouts` compile option (a bench/unusual callout arm),
+`_compile_one` writes the REAL binding instead of [B147]'s pass-through:
+`callee_binding_source()` binds every `<PREFIX>_CALLOUT_BINDINGS` symbol (`rx_callout_<N>`
+-> `&ub_slots[N]`, `rx_callout_<name>` -> `&ub_named[k].slot`; an unbound site refused BY
+NAME) to ONE `noinline, aligned(64)` wrapper that builds the engine-neutral view from
+`rx_ctx` and calls the slot's callee; a constructor parses the baked spec. That unit, the
+binding parser and the ONE `callees.o` link into the artifact `.so` (separate TUs:
+match_api.md 11.2-11.4); `artifact-count.so` links `callees_count.o` for the fire pass.
+`callout_binding` = `separate-tu-callee` (new enum value); RETURN-CODE MAPPING is the
+identity (RX_FAIL -1 fails the candidate, >0 consumes -- the netstr callee FAILs an
+overlong length). A callout pattern compiled WITHOUT the option (every other set) keeps
+`separate-tu-pass`, byte for byte. The driver and shim are untouched (BD16).

@@ -3,10 +3,11 @@ description |
   `ext bench` capability matrix (the pattern source is subbench.toml's
   [[patterns]] array + patterns/*.rx); every block below is a verbatim copy of
   bench/capability/patterns.rxt's, so an engine fact is declared in one place
-  (gen_patterns.py --check). The `callouts` token is declared for libpcre2 only:
-  pcrec's callout binding and Oniguruma's `(?{N})` spelling are L5's to declare;
-  the `vars` + `unusual-va-*` tokens are declared for pcrec's native-vars configs only (L7);
-  the callout `unusual-*` tokens are L5's (patterns carry them as requires-*).
+  (gen_patterns.py --check), then this set's own callout facts (L5,
+  gen_patterns.py UNUSUAL_DELTA): `callouts` for pcrec (link-time binding) and
+  Oniguruma (`(?CN)` respelled `(?{N})`), `unusual-co-netstr` for pcrec only,
+  `unusual-co-*-nofn` for libpcre2 only; the `vars` + `unusual-va-*` tokens are
+  declared for pcrec's native-vars configs only (L7, VARS_NATIVE).
 
 oracle pcre2
 tag set=unusual, version=0.1
@@ -30,6 +31,9 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    unusual-co-luhn-nofn
+    unusual-co-isbn-nofn
+    unusual-co-member-nofn
   capabilities pcre2-jit
     backrefs
     lookaround
@@ -48,6 +52,9 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    unusual-co-luhn-nofn
+    unusual-co-isbn-nofn
+    unusual-co-member-nofn
   capabilities pcrec-auto
     backrefs
     lookaround
@@ -62,6 +69,8 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts
+    unusual-co-netstr
     vars
     unusual-va-tenant
     unusual-va-route
@@ -99,6 +108,8 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts
+    unusual-co-netstr
     vars
     unusual-va-tenant
     unusual-va-route
@@ -144,6 +155,7 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts
   capabilities vectorscan-block-som
     unicode-properties
     named-groups
@@ -177,6 +189,9 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    unusual-co-luhn-nofn
+    unusual-co-isbn-nofn
+    unusual-co-member-nofn
   capabilities pcre2-jit-deep
     backrefs
     lookaround
@@ -195,6 +210,9 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    unusual-co-luhn-nofn
+    unusual-co-isbn-nofn
+    unusual-co-member-nofn
   capabilities pcrec-auto-deep
     backrefs
     lookaround
@@ -209,6 +227,8 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts
+    unusual-co-netstr
     vars
     unusual-va-tenant
     unusual-va-route
@@ -228,6 +248,8 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts
+    unusual-co-netstr
     vars
     unusual-va-tenant
     unusual-va-route
@@ -247,3 +269,4 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    callouts

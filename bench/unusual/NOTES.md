@@ -7,7 +7,7 @@ libpcre2 10.46 (as the ORACLE) has been run; the declarations in sections 4 and
 5 were written before any engine measured anything, and a later edit to them
 is a dated amendment, never a rewrite.
 
-## 1. The members (22 patterns)
+## 1. The members (25 patterns; 22 until L5 added the three `-nofn` arms, 2026-10-28)
 
 | id | arm / role | route | provenance |
 |---|---|---|---|
@@ -19,6 +19,7 @@ is a dated amendment, never a rewrite.
 | `co-luhn` `co-isbn` `co-member` | callouts, REAL arm (site + real callee) | libpcre2 + Python callee, host reference | authored |
 | `co-luhn-pass` `co-isbn-pass` `co-member-pass` | PASS arm (site + stub callee) | stub callee; MUST equal the twin | authored |
 | `co-luhn-twin` `co-isbn-twin` `co-member-twin` | TWIN arm (site removed, common subset) | libpcre2 | authored |
+| `co-luhn-nofn` `co-isbn-nofn` `co-member-nofn` | PASS-NOFN arm (L5): the site present, NO callout function at all (libpcre2 only) | MUST equal the twin | authored |
 | `co-netstr` | pcrec's native `(?C"netstr,consume")` spelling | host reference (not libpcre2 syntax); must equal `-assist` | authored |
 | `co-netstr-assist` | the check-at-end spelling for libpcre2 / Onig `(?{4})` (P3) | libpcre2 + the check-at-end callee | authored |
 | `co-netstr-twin` | `(\d{1,9}):` -- a DIFFERENT language, a scan-cost floor only | libpcre2 | authored |
@@ -145,6 +146,33 @@ declares `callouts` today). L7 (LANDED): the vars members' value streams (`gen_v
 their per-call expectations (there are NO vars rows in `expectations.tsv`). L8: `UNUSUAL_GATE_SKIPS` (the generic
 floor / manifest / expectations gates do not know `manifest_streams.tsv`, `applies.tsv` or a
 set whose expectation file is not the full cross product) and `make check-unusual`.
+
+## 6a. L5 (lane b148l5, 2026-10-28): the callout arms -- a dated amendment
+
+Landed: `callees/` (callees.h/.c, one shared C body per callee; `replay.c`, the
+callee-cost microbench), `callees.o` built ONCE with fixed flags
+(`pcrecbench/callees.py`, sha256 on every callout row as `callees_sha256`), the
+`[callouts]` table in `subbench.toml` (real / pass bindings), the `-nofn` arms
+(+3 patterns, +486 expectation rows: 3,485 data rows), the native wrappers
+(`testees/pcre2/callout_wrap.c`, `testees/onig/callout_wrap.c`, pcrec's
+separate-TU real binding), the untimed fire pass (`callout_fires` /
+`callout_views_sha256` on every real/pass arm match row). Rosters: libpcre2
+interp/jit declare `unusual-<member>-nofn`; pcrec-auto/-vm and onig-default
+declare `callouts` (pcrec also `unusual-co-netstr`); deep arms inherit.
+
+D-3 AMENDED: `pass == twin` (and `pass-nofn == twin` on libpcre2) is a
+`check-harness` gate NOW (tools/check_callouts.py, L5), not L8's.
+
+What L5 measured (docs/dev/lanes/b148l5_report.md; calibration with box load in
+docs/dev/measurements/2026-10-28-b148l5-callout-calibration.txt): every native
+engine shows the SAME fire COUNT on every real arm's throughput subject
+except one; `co-netstr-assist` fires 10,971,980 times on co-netstr-1m (an
+overlong-length candidate drives the lazy `(?s:.)*?` to the subject's end, the
+callee FAILing at every step -- O(n) per such candidate), its callee share
+0.21-0.56 (R2 FLAG on pcrec-vm); pcre2-jit GIVES UP on that row at the default
+32 KiB JIT stack (`-46` JIT_STACKLIMIT) where pcre2-jit-deep answers. The three
+real filter members sit at 2.6-19 % share on every engine (pcre2-jit 12-16 %,
+inside R2's 20 %).
 
 ## 7. Checks
 

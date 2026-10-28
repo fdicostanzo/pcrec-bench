@@ -115,6 +115,17 @@
 #include "timed.h"
 #include "timed_calls.h"
 
+#ifdef PB_CALLOUTS
+/* [B148] L5 the callout driver (`onig_driver_co`, built -DPB_CALLOUTS with
+ * callout_wrap.c, ../common/ub_bind.c and the ONE callees.o; the plain driver
+ * has none of this). `--callees SPEC` binds each `(?{N})` site to a shared
+ * callee (ub_bind.h) and sets callout_wrap.c's wrapper as Oniguruma's GLOBAL
+ * progress callout, once, before onig_new and every timed call. */
+#include "../common/ub_bind.h"
+extern int pb_co_ncap;
+int pb_onig_callout(OnigCalloutArgs *, void *);
+#endif
+
 /* [B148] L4 Q-E, MEASURED (docs/dev/lanes/b148l4_report.md "Q-E"): the match
  * stack limit counts STACK ELEMENTS; the 1 GiB equivalent is 1 GiB divided
  * by the measured bytes per element. */
@@ -313,6 +324,9 @@ int main(int argc, char **argv) {
     const char *tokens_dir = NULL;
     OnigEncoding enc = ONIG_DRIVER_ENCODING;   /* [B77] U2: --encoding */
     const char *enc_name = "ASCII";
+#ifdef PB_CALLOUTS
+    const char *callee_spec = NULL;                /* [B148] L5 */
+#endif
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -332,6 +346,9 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--mem-pass"))                   mem_pass = 1;
         else if (!strcmp(a, "--anchor-explicit"))            anchor_explicit = 1;
         else if (!strcmp(a, "--tokens-dir") && i + 1 < argc) tokens_dir = argv[++i];
+#ifdef PB_CALLOUTS
+        else if (!strcmp(a, "--callees") && i + 1 < argc)    callee_spec = argv[++i];
+#endif
         else if (!strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
             if (!strcmp(e, "utf8"))       { enc = ONIG_ENCODING_UTF8;  enc_name = "UTF8"; }
@@ -403,6 +420,21 @@ int main(int argc, char **argv) {
         snprintf(verbuf, sizeof verbuf, "%s", onig_version());
         printf("info\tversion\t%s\n", verbuf);
     }
+#ifdef PB_CALLOUTS
+    if (!callee_spec) die("the callout driver needs --callees");
+    {
+        char err[256];
+        if (ub_bind_parse(callee_spec, err, sizeof err)) {
+            printf("error\t--callees: %s\n", err);
+            return 2;
+        }
+        if (onig_set_progress_callout(pb_onig_callout) != ONIG_NORMAL) {
+            printf("error\tonig_set_progress_callout refused\n");
+            return 2;
+        }
+    }
+    printf("info\tcallout_fn\ton\n");
+#endif
     printf("info\tsyntax\tPERL_NG\n");
     printf("info\tencoding\t%s\n", enc_name);
     printf("info\tform\t%s\n", form);
@@ -438,6 +470,9 @@ int main(int argc, char **argv) {
      * validator error, so the two lists move together. */
     printf("info\tcapturecount\t%d\n", onig_number_of_captures(reg));
     printf("info\tnames\t%d\n", onig_number_of_names(reg));
+#ifdef PB_CALLOUTS
+    pb_co_ncap = onig_number_of_captures(reg) + 1;
+#endif
 
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
 

@@ -412,3 +412,18 @@ byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
   high-water getter in the API) -- a coarse upper bound, labelled so.
 
 All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).
+
+## The callout arms ([B148] L5, bench/unusual only)
+
+bench/unusual's `(?CN)` sites are RESPELLED `(?{N})` (Oniguruma's contents callout) by the
+adapter before `onig_new` -- recorded as `callout_respell` = `(?CN)->(?{N})` -- and one
+global `onig_set_progress_callout(pb_onig_callout)` is installed before `onig_new`
+(`callout_wrap.c`, the per-engine wrapper: the slot from the callout's contents number,
+capture ranges via `onig_get_capture_range_in_callout`, UB_FAIL -> ONIG_CALLOUT_FAIL (1),
+UB_CONTINUE -> ONIG_CALLOUT_SUCCESS). Separate binaries `onig_driver_co` /
+`onig_driver_co_count` (`-DPB_CALLOUTS`; the regular driver is unchanged, BD16). No
+`pass-nofn` arm (a contents callout with no function is not a defined state). The four
+witnesses `callout_witness.c` (the `(?{N})` spelling first-candidate-fails, `(*name)`
+registration BEFORE `onig_new` (-229 without), `[\x80-\xff]` under ASCII, `\G`) are a
+`check-harness` gate (tools/check_callouts.py). bench/capability's withholding of
+`callouts` above is unchanged: that set spells PCRE `(?Cn)` and is not respelled.

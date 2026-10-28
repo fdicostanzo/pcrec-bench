@@ -7,12 +7,15 @@ wild-json-validate-onig	recursion	stackoverflow-3845829	https://stackoverflow.co
 co-luhn	callouts	authored			n-a		2026-10-27	synthesized			co-luhn-twin	callout C1 with the real callee
 co-luhn-pass	callouts	authored			n-a		2026-10-27	synthesized			co-luhn-twin	the site present, the full wrapper, a stub callee (answers equal the twin's)
 co-luhn-twin	callouts	authored			n-a		2026-10-27	synthesized				the site removed, common subset
+co-luhn-nofn	callouts	authored			n-a		2026-10-27	synthesized			co-luhn-twin	the site present, NO callout function (answers equal the twin's)
 co-isbn	callouts	authored			n-a		2026-10-27	synthesized			co-isbn-twin	callout C2 with the real callee
 co-isbn-pass	callouts	authored			n-a		2026-10-27	synthesized			co-isbn-twin	the site present, the full wrapper, a stub callee (answers equal the twin's)
 co-isbn-twin	callouts	authored			n-a		2026-10-27	synthesized				the site removed, common subset
+co-isbn-nofn	callouts	authored			n-a		2026-10-27	synthesized			co-isbn-twin	the site present, NO callout function (answers equal the twin's)
 co-member	callouts	authored			n-a		2026-10-27	synthesized			co-member-twin	callout C3 with the real callee
 co-member-pass	callouts	authored			n-a		2026-10-27	synthesized			co-member-twin	the site present, the full wrapper, a stub callee (answers equal the twin's)
 co-member-twin	callouts	authored			n-a		2026-10-27	synthesized				the site removed, common subset
+co-member-nofn	callouts	authored			n-a		2026-10-27	synthesized			co-member-twin	the site present, NO callout function (answers equal the twin's)
 co-netstr	callouts	authored			n-a		2026-10-27	synthesized			co-netstr-twin	netstrings by pcrec's consume callout (match_api 11.7); expectations by the host reference
 co-netstr-assist	callouts	authored			n-a		2026-10-27	synthesized			co-netstr-twin	netstrings by the check-at-end callee on libpcre2/Onig (design 3.2, P3); (?{4}) on Onig
 co-netstr-twin	callouts	authored			n-a		2026-10-27	synthesized				a scan-cost floor only: a DIFFERENT language from the netstring (no cross-arm subtraction)
