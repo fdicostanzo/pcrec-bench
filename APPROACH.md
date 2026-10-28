@@ -140,7 +140,9 @@ The harness comes first; the roster grows over time and includes
 regex-to-code compilers as well as libraries. Committed for the first
 cut: libpcre2 (interp and JIT as separate testees) and pcrec (several
 configurations). Design population: RE2 and Rust `regex` (linear-time;
-also the terminating-oracle tier for hazard bands), Oniguruma, TRE
+also the terminating-oracle tier for hazard bands), Oniguruma (UNMAINTAINED:
+upstream kkos/oniguruma archived 2025-04-24; kept as a frozen, widely deployed
+baseline, its findings never sent upstream), TRE
 (POSIX, tagged), Vectorscan (all-ends semantics, tagged), python `re`,
 perl. A hand-written-C ceiling arm (pcrec's [BENCH-CEIL]) is a natural
 later testee; not in the first cut.

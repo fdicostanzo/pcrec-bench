@@ -1,5 +1,14 @@
 # testees/onig/ — the Oniguruma adapter
 
+**UNMAINTAINED UPSTREAM.** kkos/oniguruma was archived on GitHub on
+2025-04-24 (read-only; found 2026-10-27 when filing U15). 6.9.10 is the last
+release and nothing it does wrong will be fixed. Frank's ruling 2026-10-27:
+KEEP it as a frozen, widely deployed baseline (PHP mbstring, jq, TextMate-
+grammar highlighters ship it); label its results unmaintained; route its
+findings to `docs/dev/upstream_findings.md` only, never to an upstream
+tracker. Onigmo (Ruby's maintained fork) is a possible successor testee,
+not started (needs Frank's approval).
+
 Provides one testee: `onig-default`. `onig-lowretry` (a small
 `onig_set_retry_limit_in_match`, exercising `ONIGERR_RETRY_LIMIT_IN_MATCH_
 OVER` as a first-class `gave-up` — capability_set_v1.md §8's roster row)
