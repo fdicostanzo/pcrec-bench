@@ -42,9 +42,9 @@ and one spelling twin. Short subjects \
 are typed cases for every member; the throughput subjects are the F3 \
 pathologicals (a depth ladder to 100k, a 5 MB comment, splice and identifier \
 floods) and one large text per other family; the F1 segment streams \
-(call-stream) are declared in manifest_streams.tsv. F2 (sqlite3.c, kernel \
-bodies) is SKIPPED BY NAME in 0.1 (skipped_subjects.tsv): the fetches are not \
-approved. See NOTES.md."""
+(call-stream) are declared in manifest_streams.tsv, incl. the F2 SQLite \
+function-body streams. The F2 kernel bodies are SKIPPED BY NAME in 0.1 \
+(skipped_subjects.tsv): the fetches are not approved. See NOTES.md."""
 
 regimes = ["search_short", "throughput", "call-stream"]
 unusual_set = true

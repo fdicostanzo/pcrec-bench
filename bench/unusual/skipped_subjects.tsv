@@ -1,6 +1,4 @@
 id	reason
-sqlite-bodies	F2: sqlite3.c not fetched -- fetch_sqlite.py table empty (needs Frank approval of the exact URL + sha256)
-sqlite-bodies-s	F2: the 1-in-16 sample of sqlite-bodies; same reason
 kernel-bodies-sched-core	F2: kernel/sched/core.c not fetched -- fetch_kernel.py row empty (per-file approval)
 kernel-bodies-mm-memory	F2: mm/memory.c not fetched; same reason
 kernel-bodies-fs-namei	F2: fs/namei.c not fetched; same reason

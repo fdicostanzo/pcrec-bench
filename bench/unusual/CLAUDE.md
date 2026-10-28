@@ -24,7 +24,7 @@ made before any run, dependencies).
   S-expression / JSON / callout / netstring corpora). `subjgen.py` -- the shared
   write/--check routine.
 - `gen_subjects.py` (161 short subjects, `manifest.tsv`), `gen_throughput_subjects.py`
-  (30 large subjects, `manifest_throughput.tsv`), `gen_streams.py` (the F1 call streams,
+  (30 large subjects, `manifest_throughput.tsv`), `gen_streams.py` (the F1 call streams + the F2 sqlite ones,
   `manifest_streams.tsv`, `calls/`). Subject trees (`subjects/`, `throughput/`,
   `streams/`, `calls/`) are GENERATED and gitignored.
 - `gen_expectations.py` -- `expectations.tsv`, `expectations_stream.tsv`, `applies.tsv`
@@ -34,8 +34,8 @@ made before any run, dependencies).
 - `fetch_sqlite.py`, `fetch_kernel.py` -- the F2 fetchers. `fetch_sqlite.py` is PINNED and RUN
   (SQLite 3.54.1, approved by Frank 2026-10-27): `vendor/sqlite3.c.xz` + `.sha256` + `SQLITE.md`.
   `fetch_kernel.py`: empty pin table, refuses by name until Frank approves each URL + sha256.
-  The F2 subjects themselves (locator + expectations) are still OWED to a lane.
-  `skipped_subjects.tsv` names the F2 subjects skipped. `vendor/pcrec/` -- cscan.rxt +
+  The F2 SQLITE streams (`sqlite-bodies`, `-s`: locator in `gen_streams.py`, expectations in
+  `expectations_stream.tsv`) are built (b148f2); `skipped_subjects.tsv` names the F2 KERNEL subjects skipped. `vendor/pcrec/` -- cscan.rxt +
   gen_cscan.py, byte-verbatim, MIT (PROVENANCE.md). `values/users.tsv` -- the
   co-member callee's runtime set.
 - `provenance.tsv` -- the capability-set provenance columns for every pattern.

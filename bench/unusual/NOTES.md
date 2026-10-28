@@ -49,7 +49,7 @@ variants mechanically, and `gen_patterns.py --check` re-derives every file below
   cscan is the no-recursion control at the same size; the floor runs everything).
   `periodic` reads `no` for all by the whole-subject definition; the run-structured
   bodies (period 10 / 4 / 3 / 1) are stated in each description.
-- 2 STREAMS (`manifest_streams.tsv`, regime call-stream, L1/L4 consume): `seg-s` 256
+- 4 STREAMS (`manifest_streams.tsv`, regime call-stream, L1/L4 consume): `seg-s` 256
   calls / 248,613 B / 225,602 segment bytes / 5 local refusals; `seg-l` 4,096 calls /
   3,932,601 B / 3,582,729 segment bytes / 47 local refusals. Design 4.1's "approx
   180 KB / 3 MB" is smaller than its own stated 20 B - 5 KB log-uniform mix allows
@@ -57,9 +57,20 @@ variants mechanically, and `gen_patterns.py --check` re-derives every file below
   ones. Call lists in `calls/<id>.tsv` (header + `call_id offset length segment_bytes
   binding_id`, `-` for no binding); the throughput denominator is the sum of
   `segment_bytes`.
-- F2 (sqlite3.c, kernel bodies) is SKIPPED BY NAME (`skipped_subjects.tsv`); `fetch_sqlite.py`
-  / `fetch_kernel.py` are written, unrun, and refuse by name until Frank approves each
-  exact URL + sha256.
+- F2 SQLITE (b148f2, 4.2): `sqlite-bodies` and `sqlite-bodies-s`, call streams of the same
+  shape over the REAL function bodies of SQLite **3.54.1** (public domain;
+  `vendor/sqlite3.c.xz`, decompressed IN MEMORY by `gen_streams.py` after checking the
+  pinned sha256, never committed decompressed). A body = a column-0 signature line ending in
+  `{` (or a lone `{` line; not struct/union/enum/typedef/extern) to the next line that is
+  exactly `}`; the segment `(?{ <body with its braces> })` is KEPT iff the set's regex-free
+  `ref_scan` accepts it whole. COUNTS (measured): **4,971 bodies** (design 4.2 expected
+  ~10^4 and ~7 MB: the amalgamation has 5,103 column-0 `}` lines, so ~10^4 was an
+  overestimate), 9 candidates refused by the scanner (excluded, not calls), 106 column-0
+  brace blocks closed by `};` / `} name;` (initializers/types, not functions); segment
+  bytes 5,023,466, stream 5,451,204 B, 0 local refusals. `sqlite-bodies-s` = every body
+  whose 0-based index is 0 mod 16 (P14): 311 calls, 377,590 B; its filler has its own seed.
+  Filler is the F1 filler unchanged. Kernel bodies stay SKIPPED BY NAME
+  (`skipped_subjects.tsv`); `fetch_kernel.py` refuses by name until Frank approves each URL.
 
 ## 3. Expectations (section 8)
 
