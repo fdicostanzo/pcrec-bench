@@ -65,6 +65,20 @@ CSCAN_THROUGHPUT = ["comment-5m", "literal-100k", "nest-brace-*", "nest-paren-*"
                     "idents-1m", "splice-1m", "define-witness", "unterminated-5m"]
 
 
+# ORACLE DECLINES (declared, deterministic, listed in NOTES.md): cells where the
+# libpcre2 INTERPRETER's own cost is prohibitive for a derivation that
+# `--check` must repeat. Measured on this box (10.46, library defaults),
+# cscan's recursion per brace level: depth 8000 1.6 s, 16000 7 s, 32768 74 s
+# -- super-quadratic, ~50 min extrapolated at 100000 for EACH of cscan and
+# cscan-onig. Those two cells are answered by the reference scanner alone
+# (method `reference-scanner`); the libpcre2 answer is shown on every rung
+# up to 32768, where the scanner and libpcre2 agree.
+ORACLE_DECLINED = {
+    ("cscan", "nest-brace-100k"): "libpcre2 interpreter ~50 min extrapolated (74 s at depth 32768, super-quadratic)",
+    ("cscan-onig", "nest-brace-100k"): "same subject, same cost",
+}
+
+
 def applies_table(ms):
     """-> [(pattern, regime, [subject globs])]. Short: every non-vars pattern
     over every short subject. Throughput: the table below."""
@@ -159,6 +173,9 @@ class Deriver:
         self.ms = {m.id: m for m in ms}
         self.rx = {}
         self.gaveup = []
+        self.declined = []
+        self.fallbacks = []
+        self.current_sid = None
         self.notes = {"agree": 0, "unjudged": 0, "fallback": 0}
 
     def _rx(self, m):
@@ -223,8 +240,12 @@ class Deriver:
     def derive(self, m, s, regime):
         """-> Answer | None (None = dropped)."""
         try:
-            a = self.primary(m, s, regime)
-            gave_up = False
+            if (m.id, self.current_sid) in ORACLE_DECLINED:
+                self.declined.append((m.id, self.current_sid, ORACLE_DECLINED[(m.id, self.current_sid)]))
+                a, gave_up = None, "declined: " + ORACLE_DECLINED[(m.id, self.current_sid)]
+            else:
+                a = self.primary(m, s, regime)
+                gave_up = False
         except O.Pcre2Error as e:
             a, gave_up = None, str(e)
         b = self.second(m, s, regime)
@@ -235,6 +256,7 @@ class Deriver:
             if m.route == "netstr-native" or gave_up is False:
                 pass
             self.notes["fallback"] += 1 if gave_up else 0
+            self.fallbacks.append((m.id, regime, self.current_sid, gave_up))
             return b
         if b is None:
             self.notes["unjudged"] += 1
@@ -296,6 +318,7 @@ def build(report_only=False):
                 continue
             s = short_b[sid] if regime == "search_short" else subject_bytes("throughput", sid)
             t0 = time.time()
+            d.current_sid = sid
             a = d.derive(m, s, regime)
             dt = time.time() - t0
             if dt > 20:
@@ -370,6 +393,10 @@ def main(argv):
     exp, sexp, app, d, n = build()
     print("expectations.tsv: %d rows; stream rows: %d; agreement-checked triples: %d; second-method-only (oracle gave up): %d; unjudged by a second method: %d"
           % (n, sexp.count(b"\n") - 1, d.notes["agree"], d.notes["fallback"], d.notes["unjudged"]))
+    for g in d.fallbacks:
+        print("FALLBACK (libpcre2 did not answer):", g)
+    for g in d.declined:
+        print("ORACLE DECLINED (answered by the reference scanner):", g)
     for g in d.gaveup:
         print("DROPPED (gave up, no second method):", g)
     outs = {"expectations.tsv": exp, "expectations_stream.tsv": sexp, "applies.tsv": app}
