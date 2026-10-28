@@ -25,8 +25,22 @@ character literal): the call answers `n` and its damage is confined to its own
 segment, because every call is \\G-anchored at its own start.
 
 seg-s 256 calls, seg-l 4096 calls. Seeds are constants below.
+
+F2 (4.2): `sqlite-bodies` is the same shape over the REAL function bodies of the
+vendored SQLite amalgamation (vendor/sqlite3.c.xz, decompressed IN MEMORY, its
+sha256 checked against vendor/sqlite3.c.xz.sha256 -- nothing decompressed is ever
+written outside the gitignored streams/ tree). A body is located by the set's own
+regex-free reference scanner (unusual_lib.ref_scan): a function opens at a
+column-0 line ending in `{` (not struct/union/enum/typedef/extern) or at a lone
+`{` line, and closes at the next line that is exactly `}`; the candidate segment
+`(?{ <body incl. its braces> })` is KEPT iff ref_scan accepts it whole (a body
+the scanner refuses is excluded and counted, never a call). Filler between
+segments is the F1 filler (unusual_text.filler). `sqlite-bodies-s` is the
+deterministic 1-in-16 sample (every body whose 0-based index is 0 mod 16, P14)
+with its own filler seed. Every call is answered by the scanner: no local refusals.
 """
 import hashlib
+import lzma
 import os
 import sys
 
@@ -35,13 +49,80 @@ sys.path.insert(0, HERE)
 import subjgen  # noqa: E402
 import unusual_text as T  # noqa: E402
 
-STREAMS = [("seg-s", 20261027, 256), ("seg-l", 20261028, 4096)]
+STREAMS = [("seg-s", 20261027, 256), ("seg-l", 20261028, 4096), ("sqlite-bodies", "sqlite-bodies", 0), ("sqlite-bodies-s", "sqlite-bodies-s", 0)]
 HEAD = "id\tlen\tsha256\tdescription\tperiodic\tcalls\tsegment_bytes\tcalls_sha256\tlocal_refusals\n"
 CALLS_HEAD = "call_id\toffset\tlength\tsegment_bytes\tbinding_id\n"
 
 
+SQLITE_SEEDS = {"sqlite-bodies": 20261029, "sqlite-bodies-s": 20261030}
+SAMPLE_EVERY = 16
+_BODIES = []
+
+
+def sqlite_bodies():
+    """-> [segment bytes] in source order, memoised; also sets sqlite_bodies.stats."""
+    if _BODIES:
+        return _BODIES[0]
+    import unusual_lib as U
+    vend = os.path.join(HERE, "vendor")
+    src = lzma.open(os.path.join(vend, "sqlite3.c.xz")).read()
+    want = dict(l.rstrip("\n").split("\t") for l in open(os.path.join(vend, "sqlite3.c.xz.sha256")))
+    if hashlib.sha256(src).hexdigest() != want["sqlite3_c_sha256"]:
+        raise SystemExit("vendor/sqlite3.c.xz does not decompress to the pinned sqlite3.c sha256")
+    lines = src.split(b"\n")
+    starts, off = [], 0
+    for ln in lines:
+        starts.append(off)
+        off += len(ln) + 1
+    segs, refused, notfunc = [], 0, 0
+    kw = (b"struct", b"union", b"enum", b"typedef", b"extern")
+    i = 0
+    while i < len(lines):
+        l = lines[i]
+        if l == b"{" or (l.endswith(b"{") and l[:1] and l[:1] not in b" \t#/}*{" and not l.startswith(kw)):
+            j = i + 1
+            while j < len(lines) and not lines[j].startswith(b"}"):
+                j += 1
+            if j >= len(lines):
+                break
+            if lines[j] != b"}":            # `};` / `} name;`: an initializer or a type, not a function
+                notfunc += 1
+            else:
+                seg = b"(?{ " + src[starts[i] + len(l) - 1:starts[j] + 1] + b" })"
+                r = U.ref_scan(seg, 0)
+                if r and r[1] == len(seg):
+                    segs.append(seg)
+                else:
+                    refused += 1
+            i = j + 1
+        else:
+            i += 1
+    sqlite_bodies.version = want["version"]
+    sqlite_bodies.stats = (len(segs), refused, notfunc)
+    _BODIES.append(segs)
+    return segs
+
+
+def build_sqlite(sid):
+    rng = T.Rng(SQLITE_SEEDS[sid])
+    segs = sqlite_bodies()
+    if sid.endswith("-s"):
+        segs = segs[::SAMPLE_EVERY]
+    out = bytearray()
+    calls = []
+    for seg in segs:
+        out += T.filler(rng)
+        calls.append((len(out), len(seg), False))
+        out += seg
+    out += T.filler(rng)
+    return bytes(out), calls
+
+
 def build(seed, n):
-    data, calls = T.segment_stream(seed, n)
+    if isinstance(seed, str):
+        data, calls = build_sqlite(seed)
+    else:
+        data, calls = T.segment_stream(seed, n)
     text = CALLS_HEAD + "".join("%d\t%d\t%d\t%d\t-\n" % (i, off, ln, ln) for i, (off, ln, _r) in enumerate(calls))
     return data, calls, text.encode("ascii")
 
@@ -56,9 +137,16 @@ def main(argv):
         data, calls, ctext = build(seed, n)
         segb = sum(ln for _o, ln, _r in calls)
         refused = sum(1 for _o, _l, r in calls if r)
-        out.append("%s\t%d\t%s\tF1 segment stream: %d calls, filler between C (?{ }) segments of 20 B-5 KB, %d local refusals\t%s\t%d\t%d\t%s\t%d\n"
-                   % (sid, len(data), subjgen.sha(data), n, refused, subjgen.sha(data) and __import__("pcrecbench.periodic", fromlist=["x"]).periodic_field(data),
-                      n, segb, subjgen.sha(ctext), refused))
+        if isinstance(seed, str):
+            nb, nref, nfn = sqlite_bodies.stats
+            desc = ("F2 SQLite %s function bodies: %d calls, one (?{ body }) per body located by the reference scanner "
+                    "(%d refused by it and excluded, %d non-function brace blocks)%s, %d local refusals"
+                    % (sqlite_bodies.version, len(calls), nref, nfn, ", 1-in-16 sample of %d" % nb if sid.endswith("-s") else "", refused))
+        else:
+            desc = "F1 segment stream: %d calls, filler between C (?{ }) segments of 20 B-5 KB, %d local refusals" % (n, refused)
+        out.append("%s\t%d\t%s\t%s\t%s\t%d\t%d\t%s\t%d\n"
+                   % (sid, len(data), subjgen.sha(data), desc, __import__("pcrecbench.periodic", fromlist=["x"]).periodic_field(data),
+                      len(calls), segb, subjgen.sha(ctext), refused))
         for path, blob in ((os.path.join(HERE, "streams", sid + ".bin"), data), (os.path.join(HERE, "calls", sid + ".tsv"), ctext)):
             # --check MATERIALIZES a missing stream (the files are generated and
             # gitignored; the harness's generic gates run this --check before

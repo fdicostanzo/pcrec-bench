@@ -102,15 +102,25 @@ def main(argv):
         rows = [l.rstrip("\n").split("\t") for l in open(exp_path)][1:]
         keys = {(r[0], r[1], r[2]) for r in rows}
         check("expectations.tsv has no duplicate (pattern, subject, regime)", len(keys) == len(rows))
-        check("expectations_stream.tsv has 4 rows (2 streams x cscan, cscan-onig)",
-              len(open(os.path.join(HERE, "expectations_stream.tsv")).read().splitlines()) == 5)
+        check("expectations_stream.tsv has 8 rows (4 streams x cscan, cscan-onig)",
+              len(open(os.path.join(HERE, "expectations_stream.tsv")).read().splitlines()) == 9)
         check("no vars pattern has an expectation row (L7 owns them)", not any(r[0].startswith("va-") for r in rows))
-    # 6. the F2 fetch scripts refuse by name while their tables are empty
-    for script in ("fetch_sqlite.py", "fetch_kernel.py"):
-        rc, out = run(script)
-        check(script + " refuses by name (table empty, nothing fetched)", rc == 2 and "REFUSED" in out)
-    check("F2 subjects are skipped BY NAME (skipped_subjects.tsv has the 7 ids)",
-          len(open(os.path.join(HERE, "skipped_subjects.tsv")).read().splitlines()) == 8)
+    # 6. F2: sqlite is VENDORED (fetch_sqlite.py is NOT run here: it would download); the kernel
+    # fetcher refuses by name while its table is empty and the kernel subjects are skipped by name
+    pins = dict(l.rstrip("\n").split("\t") for l in open(os.path.join(HERE, "vendor", "sqlite3.c.xz.sha256")))
+    import hashlib
+    check("vendor/sqlite3.c.xz matches its pinned xz sha256",
+          hashlib.sha256(open(os.path.join(HERE, "vendor", "sqlite3.c.xz"), "rb").read()).hexdigest() == pins["xz_sha256"])
+    rc, out = run("fetch_kernel.py")
+    check("fetch_kernel.py refuses by name (table empty, nothing fetched)", rc == 2 and "REFUSED" in out)
+    skipped = [l.split("\t")[0] for l in open(os.path.join(HERE, "skipped_subjects.tsv")).read().splitlines()[1:]]
+    check("F2 kernel subjects are skipped BY NAME (skipped_subjects.tsv has the 5 kernel ids, no sqlite id)",
+          len(skipped) == 5 and all(s.startswith("kernel-bodies-") for s in skipped))
+    ms_ = [l.split("\t") for l in open(os.path.join(HERE, "manifest_streams.tsv")).read().splitlines()[1:]]
+    sq = {r[0]: r for r in ms_ if r[0].startswith("sqlite-bodies")}
+    check("sqlite-bodies / -s are call streams with 0 local refusals and the 1-in-16 sample (ceil(n/16) calls)",
+          set(sq) == {"sqlite-bodies", "sqlite-bodies-s"} and sq["sqlite-bodies"][8] == sq["sqlite-bodies-s"][8] == "0"
+          and int(sq["sqlite-bodies-s"][5]) == -(-int(sq["sqlite-bodies"][5]) // 16))
 
     if full:
         rc, out = run("gen_expectations.py", "--check")
