@@ -30,3 +30,5 @@ assist is authored.
 
 The counter is `tools/tokcount.py` (shared with [B141]); the item registry
 lives in its `ITEMS` and RULES.md must name every item (the self-test checks).
+
+2026-10-28: the `cscan`/`re2` row was re-authored UNBLINDED against the Rust design (lane b148a-rec-re2-v2, Frank's ruling; R10A-9): unanchored `RE2::Match` loop, closer token absorbing `)`; 369 NOT-CAPABLE -> 262 ASSISTED, review pending.

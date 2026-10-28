@@ -174,7 +174,8 @@ def section_assist_tree():
     # one author lane per (family, engine) (the L6 ruling) and authors != reviewers
     lanes = {}
     for r in rows:
-        lanes.setdefault((r["feature"], r["engine"]), set()).add(r["author_lane"])
+        # a declared re-authoring lane `<lane>-vN` (Frank 2026-10-28, cscan x re2) counts as its base lane
+        lanes.setdefault((r["feature"], r["engine"]), set()).add(re.sub(r"-v\d+$", "", r["author_lane"]))
     multi = {k: sorted(v) for k, v in lanes.items() if len(v) != 1}
     if not multi:
         ok("ledger: one author lane per (family, engine)", "%d groups" % len(lanes))

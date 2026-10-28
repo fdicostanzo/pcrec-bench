@@ -22,7 +22,7 @@
 #include "ub_assist.h"
 /* END BOILERPLATE */
 
-static std::unique_ptr<RE2> tok, tail;
+static std::unique_ptr<RE2> tok;
 
 
 /* BOILERPLATE shim */
@@ -31,17 +31,11 @@ static int setup(std::string_view pattern) {
     RE2::Options o;
     o.set_encoding(RE2::Options::EncodingLatin1);
     o.set_dot_nl(true);
-    // '~' stands for any run of line splices (backslash, LF) between two bytes
-    auto spliced = [](std::string p) {
-        for (size_t i; (i = p.find('~')) != p.npos;) p.replace(i, 1, R"((?:\\\n)*)");
-        return p;
-    };
-    // groups: 1 opener, 2 closer, 3 a token that does not end (a refusal)
-    tok = std::make_unique<RE2>(spliced(R"(~(?:(\{|<~%)|(\}|%~>)|[A-Za-z_$\x80-\xff](?:~[A-Za-z0-9_$\x80-\xff])*)"
-        R"(|(?:[0-9]|\.~[0-9])(?:~(?:[eEpP]~[+-]|[A-Za-z0-9_.$\x80-\xff]|'~[A-Za-z0-9_]))*)"
-        R"(|"(?:~(?:[^"\\\n]|\\~.))*~"|'(?:~(?:[^'\\\n]|\\~.))*~'|/~\*.*?\*~/|/~/(?:~[^\n])*~\n)"
-        R"(|(/~[/*]|["'])|.))"), o);
-    tail = std::make_unique<RE2>(spliced("~\\)"), o);
+    // '~' stands for any run of line splices (backslash, LF) between two bytes;
+    // GlobalReplace's rewrite turns each pair of backslashes into one
+    std::string p = R"re([A-Za-z_$\x80-\xff]~(?:[A-Za-z0-9_$\x80-\xff]~)*|(?:[0-9]|\.~[0-9])~(?:(?:[eEpP]~[+-]|'~[A-Za-z0-9_]|[A-Za-z0-9_.$\x80-\xff])~)*|"~(?:[^"\\\n]~|\\~[^\n]~)*"|'~(?:[^'\\\n]~|\\~[^\n]~)*'|/~\*~.*?\*~/|/~/(?:[^\\\n]|\\+\n|\\+[^\\\n])*\n|\{|<~%|(?:\}|%~>)~\)?|["']|/~\*~.*|/~/.*)re";
+    RE2::GlobalReplace(&p, "~", "(?:\\\\\\\\\n)*");
+    tok = std::make_unique<RE2>(p, o);
     return 0;
 /* BOILERPLATE shim */
 }
@@ -54,17 +48,23 @@ static int setup(std::string_view pattern) {
 static int find(std::string_view s, size_t start, ub_span *m) {
 /* END BOILERPLATE */
     if (s.substr(start, 3) != "(?{") return UB_N;
-    auto off = [&](std::string_view v) { return long(v.data() - s.data()); };
-    std::string_view g[4], t;
+    size_t base = start + 3, pos = base;
     int depth = 1;
-    for (size_t p = start + 3; tok->Match(s, p, s.size(), RE2::ANCHOR_START, g, 4); p = off(g[0]) + g[0].size()) {
-        if (g[3].data()) return UB_N;
-        if (g[1].data()) ++depth;
-        if (g[2].data() && --depth == 0) {
-            if (!tail->Match(s, off(g[2]) + 1, s.size(), RE2::ANCHOR_START, &t, 1)) return UB_N;
-            m->s = start, m->e = off(t) + t.size();
-            m->g1s = start + 3, m->g1e = off(g[2]);
+    std::string_view t;
+    // unanchored: the engine skips the bytes that are not tokens
+    while (tok->Match(s, pos, s.size(), RE2::UNANCHORED, &t, 1)) {
+        size_t b = t.data() - s.data(), e = b + t.size();
+        pos = e;
+        switch (s[b]) {
+        case '{': case '<': ++depth; break;
+        case '}': case '%':
+            if (depth > 1) { --depth; break; }
+            if (s[e - 1] != ')') return UB_N;
+            m->s = start, m->e = e;
+            m->g1s = base, m->g1e = b;
             return UB_M;
+        case '"': case '\'':
+            if (e == b + 1) return UB_N;  // a quote that starts no literal
         }
     }
     return UB_N;
