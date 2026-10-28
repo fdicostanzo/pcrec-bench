@@ -371,3 +371,16 @@ is exactly one copy per timed call). The substitution count is
 holds on the unambiguous cases); `re2-longest` and `re2-utf8` are refused by
 name on the substitution set. Cases 1-5b run and gate `agrees` on acc-small; 6
 and 7 are `unsupported-by-declaration`.
+
+## The call-stream regime ([B148] L4, docs/design/unusual_set_v1.md 7.1-7.3)
+
+`--mode calls` (`timed_calls.cc`/`.h`): `RE2::Match` from the call's offset, 1 or 2
+submatches (group 0 + group 1 when the pattern has one), `--anchor-explicit` =
+`RE2::ANCHOR_START`. The calls branch reads its 3-column list BEFORE the ordinary list
+reader (which would split the third column into the path). `--limits` prints
+`lim_max_mem` (read back off `re->options().max_mem()`; RE2 never gives up, it falls back
+DFA -> NFA). No stream pattern of bench/unusual@0.1 compiles under RE2 (no `\G`, no
+recursion), so the mode is exercised on tools/check_calls.py's synthetic stream only; no
+`deep` arm (no counter limits; `mem_method` None).
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

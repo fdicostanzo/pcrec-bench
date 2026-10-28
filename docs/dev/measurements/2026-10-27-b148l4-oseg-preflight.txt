@@ -1,0 +1,22 @@
+# 2026-10-27-b148l4-oseg-preflight.txt -- [B148] L4 the O(segment) pre-flight (unusual_set_v1.md 7.1, r9 C4)
+# script: docs/dev/measurements/2026-10-27-b148l4-oseg-preflight.py (beside this file)
+# bench: lane/b148l4 at 13efaeb5 + the script; pcrec pin 614d45eb3 ; libpcre2 10.46 2025-08-27; Oniguruma 6.9.10
+# box: ryzen7700x (machine id), AMD Ryzen 7 7700X 8-Core Processor, gcc 15.2.0; taskset -c 11; NOT GATED: load1 ~10 (other sessions' work on the box), so per-call ns are noisy -- the verdict is a 10x-tail RATIO, and the control reads 8-14x
+# command: PYTHONPATH=. taskset -c 11 python3 docs/dev/measurements/2026-10-27-b148l4-oseg-preflight.py WORKDIR
+#
+# O(segment) pre-flight, per-call median ns, 2000 replays x 5 trials; load ['10.74', '10.01', '9.77']
+engine	pattern	call	seg_B	t64k_ns	t640k_ns	ratio	verdict
+pcre2-interp	cscan	54	60	1646	1759	1.07	O(segment)
+pcre2-interp	cscan	14	333	3691	3540	0.96	O(segment)
+pcre2-jit	cscan	54	60	169	130	0.77	O(segment)
+pcre2-jit	cscan	14	333	386	368	0.95	O(segment)
+pcrec-auto	cscan-onig	54	60	931	845	0.91	O(segment)
+pcrec-auto	cscan-onig	14	333	1612	1307	0.81	O(segment)
+pcrec-vm	cscan-onig	54	60	741	761	1.03	O(segment)
+pcrec-vm	cscan-onig	14	333	1184	1232	1.04	O(segment)
+onig-default	cscan-onig	54	60	825	806	0.98	O(segment)
+onig-default	cscan-onig	14	333	1408	1410	1.00	O(segment)
+pcre2-interp	cscan-noG	54	60	183209	2571495	14.04	CONTROL-SEES-O(tail)
+pcre2-interp	cscan-noG	14	333	227183	1861829	8.20	CONTROL-SEES-O(tail)
+#
+# SUMMARY: 10/10 engine rows O(segment) (ratio 0.77-1.07 for a 10x tail); control (cscan without \G, pcre2-interp) 8.20 / 14.04 -- the probe sees an O(tail) scan. Every engine keeps stream_anchor = native; no explicit anchoring is switched on.

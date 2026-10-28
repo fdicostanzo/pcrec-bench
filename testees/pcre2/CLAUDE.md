@@ -14,6 +14,7 @@ Provides three testees:
 | `driver.c` | the batched in-process timing driver (the protocol is in `pcrecbench/adapters.py`) |
 | `timed.c` + `timed.h` | ([B133], BD16) THE TIMED LOOP, ISOLATED: everything between a subject's two clock reads (find-all / single call, interpreter / JIT / DFA, the BD15 validate-once rule) in `timed_run()`, a translation unit of its own, `noinline` + `aligned(64)`, linked beside `driver.c` by `build_driver()` (a sibling `timed.c` is picked up automatically and joins the staleness check). Unrelated driver edits (stamp getters, protocol lines) cannot move it: proven by `docs/dev/measurements/2026-10-09-b133-isolation-proof.py`. An INSTRUMENT: editing it needs a plan row and a re-pin-control run (decisions.md BD16) |
 | `timed_subst.c` + `timed_subst.h` | ([B140], BD16) THE SUBSTITUTION TIMED CALL, ISOLATED: `timed_subst()`, the one `pcre2_substitute` call (or, for the `-sizefirst` arms, the OVERFLOW_LENGTH size call then the real one) between a `--mode subst` subject's two clock reads, in a translation unit of its own, `noinline` + `aligned(64)`. A SECOND FILE rather than a second function in `timed.c` on purpose: `timed.c` is the instrument every pcre2 matching cell was measured with and BD16 (2) makes any edit to it an instrument change needing a re-pin-control run; it is byte-identical (`docs/dev/measurements/2026-10-25-b140drv-instrument-additivity.{py,txt}`: `timed_run`'s normalized disassembly and its address mod 64 are the same in the old and new driver, the old and new drivers' stdout is identical on every column but SECONDS across 8 existing-mode invocations). `build_driver(extra_sources=["timed_subst.c"])` links it |
+| `timed_calls.c` + `timed_calls.h`, `timed_ctx.c` | ([B148] L4, BD16) the call-stream replay's timed loop in its own TU, and the forwarder that gives `timed.c`'s NULL-context call the `deep` arm's match context (`timed.c` untouched); see "The call-stream regime" below |
 | `configs.toml` | the config ids (`pcre2-interp`, `pcre2-jit`, `pcre2-dfa`, the three `-utf` siblings, and ([B140]) `pcre2-interp-sizefirst` / `pcre2-jit-sizefirst`); **no version is written here** |
 
 ## Why dlopen and hand-declared prototypes
@@ -580,3 +581,33 @@ substitution count + 1`, 3.1.1, an engine-neutral number), `--out-dir DIR`
 - **JIT stack probe** (charter 8a item 11): none of the eight cases raised
   `-46` on acc-small under `pcre2-jit` (case 7's lookahead + backreference
   included). acc-main is a later lane's first window.
+
+## The call-stream regime and the `deep` arm ([B148] L4, docs/design/unusual_set_v1.md 6.2-6.5, 7.1-7.3)
+
+- **`--mode calls`** (`timed_calls.c`/`.h`, a third instrument TU): one replay = every
+  call of the stream, `pcre2_match` at the call's OFFSET over the rest of the subject,
+  results into a preallocated array, tokens + `stream` line after the clock
+  (`testees/common/calls_io.h`). `--anchor-explicit` adds PCRE2_ANCHORED per call (the
+  O(segment) pre-flight found it unneeded: `\G` bounds the scan,
+  docs/dev/measurements/2026-10-27-b148l4-oseg-preflight.txt). `--find-all`/`--prime`/
+  `--utf8`/`--dfa` refused in this mode.
+- **`pcre2-interp-deep` / `pcre2-jit-deep`** (`limits = "ceil1g"`, `config_extra`
+  `lim-ceil1g`, `unusual_only = true`): `--deep` builds ONE match context before any
+  timed call -- interp `pcre2_set_heap_limit(1048576)` KiB + match/depth UINT32_MAX (TIGHTER
+  than the default's 20,000,000 KiB heap, 6.1); JIT a `pcre2_jit_stack_create(32 KiB, 1 GiB)`
+  stack + match limit UINT32_MAX. `timed_ctx.c` is the forwarder that hands `timed.c`'s
+  NULL-context call the deep context, so `timed.c` is untouched.
+- **`--limits`** prints the effective limits READ BACK (`pcre2_config` for the library
+  defaults: `lim_config_match`/`_depth`/`_heap_kib`; the context's own values:
+  `lim_match`/`lim_depth`/`lim_heap_kib`; `lim_jit_stack_bytes` (32,768 default, 1 GiB
+  deep)), recorded as compile-row `engine_metadata` on every unusual-set cell, both arms.
+- **give-ups** are named by limit: `GAVE_UP_CODES` -> `giveup_names` (`-46`
+  JIT_STACKLIMIT, `-47` MATCHLIMIT, `-53` DEPTHLIMIT, `-63` HEAPLIMIT).
+- **`--mem-pass`** (6.4, untimed, one fresh process per subject, run by the harness after
+  the trials): interp `counting-alloc` -- a counting `pcre2_general_context` on the match
+  context AND the match data (the frames are the match data's allocation; the context alone
+  read 136 B on a 2,048-deep nest); JIT `mincore` -- resident pages of the JIT stack's own
+  mapping (found by diffing /proc/self/maps around `pcre2_jit_stack_create`; the default arm
+  assigns a tracked 32 KiB stack in the pass only). Printed as a `mem` line.
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

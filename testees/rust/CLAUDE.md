@@ -627,3 +627,17 @@ EXTENDED switch). Refused by name: `--find-all`, `--prime`, `--utf8`,
   and 7 (`pattern-syntax`) are `unsupported-by-declaration`. Case 7's template
   also has a conditional the `rust` renderer refuses (`no-conditional`);
   `substrun.plan_case` lets the table's PATTERN-level token govern.
+
+## The call-stream regime ([B148] L4, docs/design/unusual_set_v1.md 7.1-7.3)
+
+`--mode calls`: a new crate `timed-calls/` (`rust_timed_calls::timed_calls`, its own
+codegen unit, `#[inline(never)]`; the `timed/` crate untouched) -- `captures_read_at` from
+each call's offset into preallocated `CallRes`. Built `cargo build --offline`; `Cargo.lock`
+gained only the path entry (regex 1.13.1 unchanged). `--anchor-explicit` is REFUSED by name
+(`regex::bytes::Regex` has no anchored-at-offset search; regex-automata's `Input::anchored`
+is not a dependency) -- moot at v0.1, where no stream pattern compiles under rust-regex. A
+vars binding row is refused by name (lane L7). `--subject-timeout` is not applied in this
+mode (stated in `run_calls`). `--limits` maps to the always-printed `size_limit` /
+`dfa_size_limit` (`lim_size_limit`/`lim_dfa_size_limit`). No `deep` arm.
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

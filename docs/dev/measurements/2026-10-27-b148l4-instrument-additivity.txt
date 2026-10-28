@@ -1,0 +1,32 @@
+# 2026-10-27-b148l4-instrument-additivity.txt -- [B148] L4 BD16 additivity, six drivers
+# script: 2026-10-27-b148l4-instrument-additivity.py (beside this file); command: python3 docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.py 36faad9e WORKDIR
+# box: ryzen7700x, gcc 15.2.0, rustc 1.98.1 (48a229cea 2026-09-01); compile + short smoke runs only, no timing judged
+#
+BASE 36faad9ecd67a5708ecd19284e70d5b2af35ae27; NEW = the working tree at 13efaeb5
+pcre2      timed source diff EMPTY; timed_run OLD mod64=0 323 insns 0fa7c4ef42d8cbfb | NEW mod64=0 323 insns 0fa7c4ef42d8cbfb -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3                          IDENTICAL (8 lines, secs masked)
+    mode --mode match --iters 2                           IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --find-all               IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --jit                    IDENTICAL (10 lines, secs masked)
+    mode --mode search --iters 2 --find-all --dfa         IDENTICAL (8 lines, secs masked)
+pcrec      timed source diff EMPTY; timed_run OLD mod64=0 261 insns 4a2e2d849cf44ae9 | NEW mod64=0 261 insns 4a2e2d849cf44ae9 -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3                          IDENTICAL (64 lines, secs masked)
+    mode --mode match --iters 2                           IDENTICAL (64 lines, secs masked)
+    mode --mode search --iters 2 --find-all               IDENTICAL (64 lines, secs masked)
+onig       timed source diff EMPTY; timed_run OLD mod64=0 237 insns 53824060fcd8ce1b | NEW mod64=0 237 insns 53824060fcd8ce1b -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3 --form plain             IDENTICAL (9 lines, secs masked)
+    mode --mode match --iters 2 --form whole-subject      IDENTICAL (9 lines, secs masked)
+    mode --mode search --iters 2 --find-all --form plain  IDENTICAL (9 lines, secs masked)
+re2        timed source diff EMPTY; timed_run OLD mod64=0 227 insns d442b4a1f49a6268 | NEW mod64=0 227 insns d442b4a1f49a6268 -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3                          IDENTICAL (8 lines, secs masked)
+    mode --mode match --iters 2                           IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --find-all               IDENTICAL (8 lines, secs masked)
+rust       timed source diff EMPTY; rust_timed::run_subject OLD mod64=0 341 insns cee097a619eb342e | NEW mod64=0 341 insns cee097a619eb342e -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3 --form plain             IDENTICAL (8 lines, secs masked)
+    mode --mode match --iters 2 --form whole-subject      IDENTICAL (8 lines, secs masked)
+    mode --mode search --iters 2 --find-all --form plain  IDENTICAL (8 lines, secs masked)
+vectorscan timed source diff EMPTY; timed_run OLD mod64=0 177 insns 4a27d8a6ea7a502c | NEW mod64=0 177 insns 4a27d8a6ea7a502c -> IDENTICAL; CONTROL main differs
+    mode --mode search --iters 3 --form plain --som       IDENTICAL (11 lines, secs masked)
+    mode --mode match --iters 2 --form whole-subject --som IDENTICAL (11 lines, secs masked)
+    mode --mode search --iters 2 --find-all --form plain --som IDENTICAL (11 lines, secs masked)
+ALL six drivers: the timed function unchanged; 20 existing-mode invocations identical
