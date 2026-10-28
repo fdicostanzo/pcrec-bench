@@ -1,1 +1,4 @@
 member	feature	engine	language	tokens	lines	budget	verdict	assist_sha256	keying	container	counter_version	author_lane	reviewer_lane	reviewer_verdict
+cscan	recursion	re2	C++	369	29	300	NOT-CAPABLE	1a1817a20e0bace4118bc21c3c1bf152be186739a1be88ba86041714068d96a4	none (stateless per call)	compiled RE2 token and tail patterns	tokcount-1	b148a-rec-re2		pending
+wild-sexp-balanced	recursion	re2	C++	180	17	300	ASSISTED	436af38febf83699bda499db39e662ac6fd67334d87f387fc8963904faf12752	none (stateless per call)	compiled RE2 paren pattern	tokcount-1	b148a-rec-re2		pending
+wild-json-validate	recursion	re2	C++	388	36	300	NOT-CAPABLE	9968dee4ce5a13b0aa922b01fc32bd693a1e41d134d779d9af115002d0ef58a6	none (stateless per call)	compiled RE2 token pattern	tokcount-1	b148a-rec-re2		pending
