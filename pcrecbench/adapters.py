@@ -119,8 +119,23 @@ INVOCATION
                                        same fact for a list of streams, and
                                        the resume rule (`--skip`) keeps
                                        working unchanged. A binding other
-                                       than `-` (a VARS stream, `--bindings`,
-                                       lane L7) is REFUSED by name today.
+                                       than `-` (a VARS stream) is REFUSED by
+                                       name by every driver but the pcrec
+                                       driver ([B148] L7): a VARS stream's
+                                       list line has a FOURTH column, the
+                                       bindings table `binding_id<TAB>name<TAB>
+                                       value` (value = lowercase hex of the
+                                       bytes, `UNSET` or `EMPTY`; one row per
+                                       (binding, name), a binding's rows
+                                       consecutive), and each call of its
+                                       calls file is one LINE of the subject
+                                       ([offset, offset + length)) matched
+                                       ALONE -- `^` is the line's start,
+                                       result offsets line-relative -- with
+                                       its binding; the result token `r` is a
+                                       call REFUSED by the variables rule
+                                       (vars.md 5), `stream refused=` its
+                                       count (testees/common/vars_io.h).
                --tokens-dir DIR        after the clock stopped, write the
                                        per-call result tokens to
                                        DIR/<ID>.tok, one per line: `n`,

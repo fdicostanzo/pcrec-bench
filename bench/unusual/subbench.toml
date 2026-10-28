@@ -3,8 +3,9 @@
 # Design: docs/design/unusual_set_v1.md v0.2 (lane b148l3 = L3 of its build order).
 #
 # REGIMES. `search_short`, `throughput` and (lane b148l4, L4) `call-stream`: the
-# F1 segment streams are `[subjects] stream_manifest` (manifest_streams.tsv +
-# streams/ + calls/, gen_streams.py), judged against `[expectations]
+# F1 segment streams and (lane b148l7, L7) the five caller-VARIABLES streams are
+# `[subjects] stream_manifest` (manifest_streams.tsv + streams/ + calls/ +
+# values/, gen_streams.py), judged against `[expectations]
 # stream_file` (expectations_stream.tsv) by the harness; a pattern with no
 # stream expectation has no call-stream cell (Subbench.applies).
 #

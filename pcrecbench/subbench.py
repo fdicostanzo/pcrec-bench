@@ -247,7 +247,7 @@ def _pattern_dict_from_rxt(p, rxt):
 class Subject:
     __slots__ = ("subject_id", "length", "sha256", "description", "periodic",
                  "path", "kind", "calls_path", "calls", "segment_bytes",
-                 "calls_sha256")
+                 "calls_sha256", "bindings_path")
 
     def __init__(self, subject_id, length, sha, desc, periodic, path, kind):
         self.subject_id, self.length, self.sha256 = subject_id, int(length), sha
@@ -260,6 +260,7 @@ class Subject:
         # call list and the manifest's two denominators; None on every other.
         self.calls_path = self.calls = self.segment_bytes = None
         self.calls_sha256 = None
+        self.bindings_path = None       # [B148] L7: a VARS stream's bindings table
 
 
 class StreamExpectation:
@@ -492,6 +493,12 @@ class Subbench:
                 s.calls, s.segment_bytes = int(cols[5]), int(cols[6])
                 s.calls_sha256 = cols[7]
                 s.calls_path = os.path.join(self.root, "calls", cols[0] + ".tsv")
+                # [B148] L7: a VARS stream carries a bindings table
+                # (values/<id>.tsv: `binding_id name value`, value = hex |
+                # UNSET | EMPTY); a stream without one (the F1 cscan streams)
+                # has bindings_path None.
+                bp = os.path.join(self.root, "values", cols[0] + ".tsv")
+                s.bindings_path = bp if os.path.exists(bp) else None
                 out.append(s)
         return out
 
@@ -729,7 +736,7 @@ class Subbench:
         for r in (regimes or self.regimes):
             subs = self.subjects_for(r)
             want.extend(subs[:int(limit)] if limit is not None else subs)
-        return [p for s in want for p in (s.path, s.calls_path)
+        return [p for s in want for p in (s.path, s.calls_path, s.bindings_path)
                 if p is not None and not os.path.exists(p)]
 
     # ---------------------------------------------------------- the hash

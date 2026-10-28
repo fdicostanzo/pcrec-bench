@@ -7,3 +7,9 @@ sqlite-bodies	cscan	4971	4971	0	0	1aeb0af8721772ee0baf717b10672ef3c6b6ee22ebab0c
 sqlite-bodies	cscan-onig	4971	4971	0	0	1aeb0af8721772ee0baf717b10672ef3c6b6ee22ebab0c0decf16fac320a78d1	libpcre2-differential
 sqlite-bodies-s	cscan	311	311	0	0	14e92ca9fcec1f03071d3a8ce7b8c865718ea9e1fbf44393a64d5c2f89d48826	libpcre2-differential
 sqlite-bodies-s	cscan-onig	311	311	0	0	14e92ca9fcec1f03071d3a8ce7b8c865718ea9e1fbf44393a64d5c2f89d48826	libpcre2-differential
+tenant-d4	va-tenant	16384	11818	4566	0	1c046d838b117bbc354cd1c3aa60300b0f69f1566a1ea1fc63a4dd5e6da11686	libpcre2-differential
+tenant-d64	va-tenant	16384	11790	4594	0	62c0ae39648e62a919acd2f5f1eb72128dea438e959601d8efbbcdf4a8a5d0d8	libpcre2-differential
+tenant-d4096	va-tenant	16384	11706	4678	0	3c31a4bddab6f358a39b0883998591a27ef68e7487070c7a714d8fb5d11c067b	libpcre2-differential
+route-zipf	va-route	4096	1064	2049	983	14d2259f102455903297230f045213aa882383242cb64f84a4702427f610e40a	libpcre2-differential
+term-zipf	va-term	4096	2137	1758	201	23580d1e73fcac0eff3630bb5fe9bf21fbc1d398cfbd39f592b2f51d0d0fb70b	libpcre2-differential
+term-zipf	va-term-bang	4096	2137	1758	201	23580d1e73fcac0eff3630bb5fe9bf21fbc1d398cfbd39f592b2f51d0d0fb70b	libpcre2-differential

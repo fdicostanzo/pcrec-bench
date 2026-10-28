@@ -4740,7 +4740,8 @@ class Adapter(_ad.Adapter):
         build_driver(os.path.join(HERE, "driver.c"),
                      os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
                      extra_sources=["timed_subst.c",   # [B140]
-                                    "timed_calls.c"])  # [B148] L4
+                                    "timed_calls.c",    # [B148] L4
+                                    "timed_calls_vars.c"])  # [B148] L7
 
     # -------------------------------------------------------------- compile
 
@@ -4813,7 +4814,8 @@ class Adapter(_ad.Adapter):
         drv = build_driver(os.path.join(HERE, "driver.c"),
                            os.path.join(workdir, "pcrec_driver"), extra=["-ldl"],
                            extra_sources=["timed_subst.c",   # [B140]
-                                    "timed_calls.c"])  # [B148] L4
+                                    "timed_calls.c",    # [B148] L4
+                                    "timed_calls_vars.c"])  # [B148] L7
         # [B24]: the config decides the COMPILEE toolchain, falling back to
         # `$CC` and then gcc for a config that declares none (`config()`
         # resolves it; `effective_cc` is the one rule). The shim is compiled

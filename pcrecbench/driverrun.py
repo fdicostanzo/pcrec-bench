@@ -224,11 +224,18 @@ def driver_build_provenance():
 def write_list(subjects, path):
     """The driver's `--list` file: `id<TAB>abspath` per line, no header.
     [B148] L4: a CALL-STREAM subject (one with `calls_path`) adds its call
-    list as a third column (`--mode calls`, adapters.py)."""
+    list as a third column (`--mode calls`, adapters.py); a VARS stream
+    ([B148] L7) adds its bindings table as a fourth."""
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         for s in subjects:
             cp = getattr(s, "calls_path", None)
-            if cp:
+            bp = getattr(s, "bindings_path", None)
+            if cp and bp:
+                # [B148] L7: a VARS stream adds its bindings table as a 4th
+                # column (adapters.py, "--mode calls")
+                f.write("%s\t%s\t%s\t%s\n" % (s.subject_id, os.path.abspath(s.path),
+                                               os.path.abspath(cp), os.path.abspath(bp)))
+            elif cp:
                 f.write("%s\t%s\t%s\n" % (s.subject_id, os.path.abspath(s.path),
                                           os.path.abspath(cp)))
             else:

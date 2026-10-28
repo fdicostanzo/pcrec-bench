@@ -39,9 +39,19 @@ made before any run, dependencies).
   gen_cscan.py, byte-verbatim, MIT (PROVENANCE.md). `values/users.tsv` -- the
   co-member callee's runtime set.
 - `provenance.tsv` -- the capability-set provenance columns for every pattern.
+- `gen_vars.py` ([B148] L7) -- the caller-VARIABLES half: the Python resolver for vars.md 2/5
+  (`parse`, `resolve`, `esc_pcre2`/`esc_py`), the five deterministic value streams (`STREAMS`:
+  `tenant-d4/-d64/-d4096`, `route-zipf`, `term-zipf`), `Built` (subject, calls, bindings table,
+  `facts()` = refused + distinct resolved). Imported by `gen_streams.py` (which writes the subjects,
+  `calls/`, `values/<id>.tsv`, `values/streams.tsv` and the manifest rows) and `gen_expectations.py`
+  (per-call expectations, libpcre2 vs Python `re`; `--streams-only` regenerates just
+  `expectations_stream.tsv`). `values/<id>.tsv` is the bindings table (COMMITTED, hashed);
+  `values/streams.tsv` the per-(stream, member) summary (calls, bindings, distinct values, distinct
+  resolved = the miss count, refused, reuse). `gen_vars_samples.py` -- the PUBLIC 80-case sample
+  (`assists/problems/vars-samples.tsv`) next to `assists/problems/vars.md`, the engine-neutral problem
+  statement the L6 author lanes receive. NOTES.md section 8 states the call, the streams and D-5.
 
-Not here yet (other lanes): `assists/` (L2/L6), `callees/` (L5), `expectations` for the
-vars members (L7).
+Not here yet (other lanes): the authored `assists/<member>/<engine>/` (L6), `callees/` (L5).
 
 L4 (lane b148l4): `--mode calls` in the pcre2/pcrec/onig/re2/rust/vectorscan-som drivers,
 the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-default-deep`,
@@ -49,3 +59,9 @@ the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-defaul
 every match row (`deep_mem_bytes`/`_method`/`deep_maxrss_kb`), give-ups named by limit, the
 O(segment) pre-flight (every engine `native`), and the dry run whose durations set
 `CELL_CAP_unusual` -- docs/dev/lanes/b148l4_report.md.
+
+L7 (lane b148l7): the vars members' five value streams and per-call expectations, pcrec's NATIVE vars path
+(`testees/pcrec`: the shim's `pb_vars_*` entries, `timed_calls_vars.c`, the driver's `run_calls_vars`;
+`testees/common/vars_io.h`), the `vars` + `unusual-va-*` capability on the six native pcrec configs, the
+public sample and problem statement for L6, `tools/check_vars.py` (in `check-harness`) --
+docs/dev/lanes/b148l7_report.md.
