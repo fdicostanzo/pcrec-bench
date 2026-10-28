@@ -1,0 +1,16 @@
+# members of the co-member callee's runtime set (unusual_set_v1.md 3.2): one user name per line.
+# Authored for the set. L3 owns the file because the oracle needs it; L5 passes it as `user`.
+alice
+bob
+carol
+dave
+erin
+frank
+grace
+heidi
+ivan
+judy
+root
+admin
+www-data
+deploy

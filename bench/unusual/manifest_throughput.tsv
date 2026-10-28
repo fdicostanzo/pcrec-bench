@@ -1,0 +1,31 @@
+id	len	sha256	description	periodic
+comment-5m	5000011	08f225d5e4a46294245612ba09f7297e4f3f7670f7c366404e217925d668b0ed	F3: (?{ /* then 5 MB of comment body (body period 10), closed */ })	no
+literal-100k	100014	bf2a75b51f055c149805084cb534f5a60558d6810b684e68ba26b415101dea14	F3: a 100,000-character string literal full of braces (body period 4)	no
+nest-brace-128	267	868cc52c3d2b0e0ca79d5f42ee416fa750943c69a8b10f6eca5d0f7ef3a0d44b	F3: brace nesting depth 128 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-512	1035	040d122acb82108095707ee439ad59a1f53ea7c08512d1a66219598f2dbf94bf	F3: brace nesting depth 512 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-1k	2059	c0f6e985ad8152c9898392ef748ca818293323811272179135afd272b77fb9b3	F3: brace nesting depth 1024 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-2k	4107	f4c7405634e570a97f489fd42fb3c390e34c10dccbbc30e43f09fb060d27fbe4	F3: brace nesting depth 2048 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-8k	16395	83767b9593e5e19a4626b045d356e288c2a45a92d32d9de669dd68faae13f7a0	F3: brace nesting depth 8192 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-10k	20011	bccf29b27198d36e22af14ce14169e458d42abbacfd863961b6188556864d772	F3: brace nesting depth 10000 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-32k	65547	185cfa276e14291e1c44e690684e7f31d32393a2c185d7ffec3117062d40a101	F3: brace nesting depth 32768 (cscan recurses per level; the opener run is period 1)	no
+nest-brace-100k	200011	b31ddae14c498058c117ce4922e0158a06f820a7f9efbed0b72508c139050823	F3: brace nesting depth 100000 (cscan recurses per level; the opener run is period 1)	no
+nest-paren-128	267	f4b48be197d8886572e8602f1a54a6e6de1d7a1afdae08c37833f03c05fa7be1	F3: parenthesis nesting depth 128 (cscan: plain bytes; wild-sexp-balanced: recursion depth 129)	no
+nest-paren-512	1035	2685943279431a39ca13cc027add1015c8da40dbe208d3633d989f1be37e32ec	F3: parenthesis nesting depth 512 (cscan: plain bytes; wild-sexp-balanced: recursion depth 513)	no
+nest-paren-1k	2059	3c64414f0fb3ffa4ad899c11b9335c6e1ebb5ea4b50cc31c2d97af16dcfc89e1	F3: parenthesis nesting depth 1024 (cscan: plain bytes; wild-sexp-balanced: recursion depth 1025)	no
+nest-paren-2k	4107	ace9a48c982cce303ea3c10a7cfd2c899e2c325728d40b9ba6e74716b80cbb8b	F3: parenthesis nesting depth 2048 (cscan: plain bytes; wild-sexp-balanced: recursion depth 2049)	no
+nest-paren-8k	16395	6cd8b17568b185de8637c00e2bdfddd0e899972153eb3b19548b6479647b4138	F3: parenthesis nesting depth 8192 (cscan: plain bytes; wild-sexp-balanced: recursion depth 8193)	no
+nest-paren-10k	20011	a1e0ddabefd96d2ea125d9716c1f19d5b1124c5abeeef5b508f3a158c5a83077	F3: parenthesis nesting depth 10000 (cscan: plain bytes; wild-sexp-balanced: recursion depth 10001)	no
+nest-paren-32k	65547	118d9356369a968dd6e45c18d3488b4682004a8907413d17d97d5ab7277f2049	F3: parenthesis nesting depth 32768 (cscan: plain bytes; wild-sexp-balanced: recursion depth 32769)	no
+nest-paren-100k	200011	a4fda7ba30da42f4c8a490712138bdf15e81027edeff83dc82e109811d7b0100	F3: parenthesis nesting depth 100000 (cscan: plain bytes; wild-sexp-balanced: recursion depth 100001)	no
+nest-digraph-10k	40011	232cd2d7ac0fb681abced9e80c70255580aac7bb9423dfa34cbe63531d7d1808	F3: digraph nesting depth 10000 (<% %>)	no
+idents-1m	1000007	1abf1c5750cfd7687b2393ee878e2adf98f242b24e2d08846f3eac73d3db9b84	F3: 1 MB of identifiers and spaces inside one segment	no
+splice-1m	1000009	604ab7861ef57a666fbd1c96755d58f56e995e66cc1447b09f29bfceb5bad6cc	F3: an identifier spliced (backslash-newline) after every byte, 1 MB (body period 3)	no
+define-witness	12	af289ecd569fe3dc9a0b9ab16c79004b65528a7310afb03fbfeec402a77556c0	F3: the (?(DEFINE) witness (design 3.1)	no
+unterminated-5m	5000006	e43d7cd82f0b2c5bbb11e71a22780e6251b27283997d66514f99be637df06b73	F3: (?{ /* then 5 MB (body period 10), never closed (NO match)	no
+sx-1m	1002042	cf5f2d8edf16370e265c669f04a4fcd3d26e534998ce86c9d32850807d5256c2	S-expression text: nested forms, comments, stray and unclosed parentheses between forms	no
+js-1m	1000648	bb8cdb76b802d09c6c34b433d107576ac462429c75ce5f92e5727b55a662351f	one valid JSON document, an array of nested objects	no
+js-near-1m	1000648	1754b46ff5439c7bff455e0548812f1472d1e0b77acd950c32102d1f5df6ef4b	the same document with the final ] replaced by } (fails at the last byte)	no
+co-luhn-1m	1000017	71fb0cb7a19d37ca7f158b85f44b64ce703afa84a4f0d7a2984557bb94d0f383	log-like lines with 13-24 digit numbers: 30% Luhn-valid, 30% invalid, rest noise	no
+co-isbn-1m	1000051	eb0af5c96e528fb09b961dad814fb0958d7fbb8bfb824bfa401c45bde6c24d4f	log-like lines with ISBN-13 candidates: valid, bad check digit, 10 digits, 15 digits	no
+co-member-1m	1000066	87aad1558cb2e44ed39747ff9302fd82109ab0c4a8f597828be3e13d8049e465	access-log lines with user=<name>: 40% members, 40% unknown, 20% upper-case	no
+co-netstr-1m	1000025	c706cd5a99af67002886374bc23e3478853b5111a5dfb84220458517acbe8c94	netstrings (70%), wrong-length netstrings (20%) and junk (10%)	no

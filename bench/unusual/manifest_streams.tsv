@@ -1,0 +1,3 @@
+id	len	sha256	description	periodic	calls	segment_bytes	calls_sha256	local_refusals
+seg-s	248613	9fe35a14603649b02c1c429db03238687972adbdfd40f2de8303c81621b8b1d4	F1 segment stream: 256 calls, filler between C (?{ }) segments of 20 B-5 KB, 5 local refusals	no	256	225602	3759815e50b465a239900aea18537a66046e05e3325607a030591e8c3f888ffe	5
+seg-l	3932601	5196342c5ebba373dbd46460e05d18c3ed5c35d63b940d2dcbb75b5f942408d4	F1 segment stream: 4096 calls, filler between C (?{ }) segments of 20 B-5 KB, 47 local refusals	no	4096	3582729	6ee7187dc34a3a59d6ee922140da4ade8495cab343cdb78ef3f4710e52ef452e	47

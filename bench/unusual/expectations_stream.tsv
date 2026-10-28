@@ -1,0 +1,5 @@
+subject	pattern	calls	matched	nomatch	refused	results_sha256	method
+seg-s	cscan	256	251	5	0	25ea9605daf18a9eb8a1decf629cbaf7afd085229570e0963482dadbaa9ec4a7	libpcre2-differential
+seg-s	cscan-onig	256	251	5	0	25ea9605daf18a9eb8a1decf629cbaf7afd085229570e0963482dadbaa9ec4a7	libpcre2-differential
+seg-l	cscan	4096	4049	47	0	f40b0138712d5126ad06e45e2a9c85414ce90ad34f2f9ab55b894c96e27b8b7e	libpcre2-differential
+seg-l	cscan-onig	4096	4049	47	0	f40b0138712d5126ad06e45e2a9c85414ce90ad34f2f9ab55b894c96e27b8b7e	libpcre2-differential
