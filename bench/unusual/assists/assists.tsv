@@ -21,3 +21,4 @@ co-netstr	netstr	pcre2	C	232	21	300	ASSISTED	a7a3c4c47022538d6bbb4d354a6ed5cbc69
 co-netstr	netstr	onig	C	252	22	300	ASSISTED	57b49e3cf2058c12fb67e265894a262af5faad2ed47c5a7be0e0e5f3f197d065	none	none (stateless; compiled regex + region, search from start)	tokcount-1	b148a-ns-onig		pending
 co-netstr	netstr	re2	C++	185	13	300	ASSISTED	cdcfeb3e7d070cf85195bbac2d54397462136e036b21e0981ccf2f4b68777079	none	none (stateless; static RE2 for the digit prefix)	tokcount-1	b148a-ns-re2		pending
 co-netstr	netstr	rust	Rust	201	13	300	ASSISTED	757e32a9baaca2cfeb74d3f23497f86f3d06d0c517b1c31d6e57468d306da2b0	none (stateless; start offset)	regex::bytes::Regex in State	tokcount-1	b148a-ns-rust		pending
+co-netstr	netstr	vectorscan	C	290	24	300	ASSISTED	6f9cb2b2e920a72cf00de6383e01445aefc94b6f7a2db0da4cc6180e2df5c104	none (stateless; start offset)	none	tokcount-1	b148a-ns-vs		pending
