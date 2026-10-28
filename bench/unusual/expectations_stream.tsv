@@ -7,5 +7,5 @@ tenant-d4	va-tenant	16384	11818	4566	0	1c046d838b117bbc354cd1c3aa60300b0f69f1566
 tenant-d64	va-tenant	16384	11790	4594	0	62c0ae39648e62a919acd2f5f1eb72128dea438e959601d8efbbcdf4a8a5d0d8	libpcre2-differential
 tenant-d4096	va-tenant	16384	11706	4678	0	3c31a4bddab6f358a39b0883998591a27ef68e7487070c7a714d8fb5d11c067b	libpcre2-differential
 route-zipf	va-route	4096	1064	2049	983	14d2259f102455903297230f045213aa882383242cb64f84a4702427f610e40a	libpcre2-differential
-term-zipf	va-term	4096	1443	2445	208	68cf7deadb397c32dc0c63be9c80a058b9ebd9593e01b5141578a990eb10f941	libpcre2-differential
-term-zipf	va-term-bang	4096	1443	2445	208	68cf7deadb397c32dc0c63be9c80a058b9ebd9593e01b5141578a990eb10f941	libpcre2-differential
+term-zipf	va-term	4096	2137	1758	201	23580d1e73fcac0eff3630bb5fe9bf21fbc1d398cfbd39f592b2f51d0d0fb70b	libpcre2-differential
+term-zipf	va-term-bang	4096	2137	1758	201	23580d1e73fcac0eff3630bb5fe9bf21fbc1d398cfbd39f592b2f51d0d0fb70b	libpcre2-differential

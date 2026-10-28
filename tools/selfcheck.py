@@ -18933,6 +18933,16 @@ def check_calls_set():
     check_calls.run(ok, bad)
 
 
+def check_vars_set():
+    """[B148] L7 the caller-variables members -- the resolver against a hand
+    table, the value streams (fixed length on the ladder, miss counts), the
+    escaping control, the public sample, pcrec's native vars path through
+    run_cell with its controls, the fail-closed capability declaration.
+    Implemented in tools/check_vars.py; see its docstring."""
+    import check_vars
+    check_vars.run(ok, bad)
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -19045,6 +19055,7 @@ def main():
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
     check_calls_set()
+    check_vars_set()
     check_subst_gate_skips()
     check_unusual_gate_skips()
     check_pcre2_dfa()

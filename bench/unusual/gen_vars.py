@@ -39,9 +39,12 @@ THE STREAMS (stream length FIXED across the d4/d64/d4096 ladder, P13):
                               resolve to the SAME pattern: the memo key is the
                               resolved pattern, not the binding)
   term-zipf                   va-term AND va-term-bang (one stream, two
-                              spellings), 4,096 calls over 48 bindings, zipf-
+                              spellings), 4,096 calls over 49 bindings, zipf-
                               s1.1: metacharacters, 0x00, a high byte, EMPTY
-                              and UNSET values (REFUSED by `:?`)
+                              and UNSET values (REFUSED by `:?`); lines put a
+                              word byte beside a non-word-ended term so `\\b`
+                              can hold, and the opposite beside a word-ended one
+                              for the boundary-fails near-misses
 """
 import os
 import re
@@ -294,21 +297,38 @@ def _case(rng, t):
     return rng.choice([t, t, t.upper(), t.lower(), t.swapcase()])
 
 
+def _isword(c):
+    return (48 <= c <= 57) or (65 <= c <= 90) or (97 <= c <= 122) or c == 95
+
+
+def _fit(t):
+    """(pre, post) NEIGHBOUR bytes that make `\\bTERM\\b` hold: \\b needs a
+    word/non-word change, so a term whose first (last) byte is not a word byte
+    needs a word byte before (after) it, and a word-ended one a non-word byte
+    (the separating space). `bad` is the opposite pair (the boundary fails)."""
+    pre = b"x" if t and not _isword(t[0]) else b""
+    post = b"x" if t and not _isword(t[-1]) else b""
+    bad_pre = b"" if t and not _isword(t[0]) else b"x"
+    bad_post = b"" if t and not _isword(t[-1]) else b"x"
+    return pre, post, bad_pre, bad_post
+
+
 def _term_line(rng, v):
     t = v if (v is not UNSET and v != EMPTY) else b"error"
     words = [rng.choice(NOISE) for _ in range(rng.between(3, 8))]
     kind = rng.below(100)
+    pre, post, bad_pre, bad_post = _fit(t)
     if kind < 10:
         pass                                   # no term at all
     else:
         if kind < 25:
-            tt = rng.choice([b"x", b"pre", b"un"]) + _case(rng, t)       # embedded in a word
+            tt = bad_pre + _case(rng, t)                                # boundary fails before
         elif kind < 35:
-            tt = twin_of(t)
+            tt = pre + twin_of(t) + post                                # an unescaped reading would match
         elif kind < 45:
-            tt = _case(rng, t) + rng.choice([b"s", b"ed", b"_"])        # a word-char suffix
+            tt = pre + _case(rng, t) + bad_post                         # boundary fails after
         else:
-            tt = _case(rng, t)
+            tt = pre + _case(rng, t) + post
         words.insert(rng.below(len(words) + 1), tt)
     return b" ".join(words)
 
