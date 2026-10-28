@@ -18,3 +18,4 @@ co-luhn	callouts	vectorscan	C	242	17	300	ASSISTED	548ab52b01f700f48941fbc5f5ca65
 co-isbn	callouts	vectorscan	C	242	17	300	ASSISTED	762179a463411b441e33fdb163bd2a8149a9bddf6b2ddf3e5ccaa4ddccb20c7c	none	none (stateless; hs db + scratch, scan from start-1)	tokcount-1	b148a-co-vs		pending
 co-member	callouts	vectorscan	C	242	17	300	ASSISTED	c5434d8cc0ef8112b84d1e8e799b7260048ff58e866eb53b10b3f5d5f8a27928	none	none (stateless; hs db + scratch, scan from start-1)	tokcount-1	b148a-co-vs		pending
 co-netstr	netstr	pcre2	C	232	21	300	ASSISTED	a7a3c4c47022538d6bbb4d354a6ed5cbc692871e801892d7d631ffa2d2630ed5	none	none (stateless; compiled callout pattern + match data)	tokcount-1	b148a-ns-pcre2		pending
+co-netstr	netstr	onig	C	252	22	300	ASSISTED	57b49e3cf2058c12fb67e265894a262af5faad2ed47c5a7be0e0e5f3f197d065	none	none (stateless; compiled regex + region, search from start)	tokcount-1	b148a-ns-onig		pending
