@@ -21,6 +21,9 @@ testees/rust/target/
 # derivation of a two-line script.
 bench/*/subjects/
 bench/*/throughput/
+# [B148] L3: bench/unusual's F1 call-stream subjects and their call lists (generated, hashed by manifest_streams.tsv)
+bench/*/streams/
+bench/*/calls/
 build-*/
 vendor/*/build/
 __pycache__/

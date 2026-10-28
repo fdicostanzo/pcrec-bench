@@ -97,24 +97,35 @@ def _is_idcont(c):
     return _is_w(c) or c == 36 or c >= 0x80
 
 
-def _logical(subject, start):
-    """-> (chars, pos): the subject from `start` with every backslash-newline
-    pair removed; pos[i] is chars[i]'s original offset, pos[len] = len(subject).
-    Removal scans left to right (a `\\\\\\n` leaves one backslash)."""
-    chars = bytearray()
-    pos = []
-    i = start
-    n = len(subject)
-    while i < n:
-        c = subject[i]
-        if c == 92 and i + 1 < n and subject[i + 1] == NL:
-            i += 2
-            continue
-        chars.append(c)
-        pos.append(i)
-        i += 1
-    pos.append(n)
-    return chars, pos
+class _Logical:
+    """The subject from `start` with every backslash-newline pair removed,
+    plus the map back to original offsets. With no splice in the tail the
+    map is the identity (offset base) and costs nothing."""
+    __slots__ = ("chars", "_pos", "base", "n")
+
+    def __init__(self, subject, start):
+        tail = subject[start:]
+        if b"\\\n" not in tail:
+            self.chars, self._pos, self.base = tail, None, start
+        else:
+            import array
+            chars = bytearray()
+            pos = array.array("Q")
+            i, n = start, len(subject)
+            while i < n:
+                c = subject[i]
+                if c == 92 and i + 1 < n and subject[i + 1] == NL:
+                    i += 2
+                    continue
+                chars.append(c)
+                pos.append(i)
+                i += 1
+            pos.append(n)
+            self.chars, self._pos, self.base = bytes(chars), pos, 0
+        self.n = len(self.chars)
+
+    def orig(self, i):
+        return self.base + i if self._pos is None else self._pos[i]
 
 
 def ref_scan(subject, start=0):
@@ -125,8 +136,8 @@ def ref_scan(subject, start=0):
         return None
     # the opener is three literal bytes (no splice inside); the logical stream
     # begins right after it.
-    chars, pos = _logical(subject, start + 3)
-    m = len(chars)
+    lg = _Logical(subject, start + 3)
+    chars, m = lg.chars, lg.n
     i = 0
     depth = 1
     while True:
@@ -173,19 +184,14 @@ def ref_scan(subject, start=0):
                     i += 1
             continue
         if c == 47 and nx == 42:             # block comment
-            i += 2
-            while True:
-                if i >= m:
-                    return None
-                if chars[i] == 42 and i + 1 < m and chars[i + 1] == 47:
-                    i += 2
-                    break
-                i += 1
+            j = chars.find(b"*/", i + 2)
+            if j < 0:
+                return None                  # unterminated comment
+            i = j + 2
             continue
         if c == 47 and nx == 47:             # line comment (to the newline)
-            i += 2
-            while i < m and chars[i] != NL:
-                i += 1
+            j = chars.find(b"\n", i + 2)
+            i = m if j < 0 else j            # the newline itself is an ordinary byte
             continue
         if c == 123 or (c == 60 and nx == 37):   # { or <%
             depth += 1
@@ -199,7 +205,7 @@ def ref_scan(subject, start=0):
                 i = j
                 continue
             if j < m and chars[j] == 41:     # depth 0: must be followed by `)`
-                return (start, pos[j] + 1, start + 3, pos[i])
+                return (start, lg.orig(j) + 1, start + 3, lg.orig(i))
             return None
         i += 1                               # everything else, one byte
 
