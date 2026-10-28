@@ -505,3 +505,5 @@ Frank approved filing 2026-10-27 and asked for a brief report.
 
 Repro: `docs/dev/upstream/repro/U15/` (PRESENT on 6.9.10). Note:
 `docs/dev/upstream/notes/onig-2026-10-27.md`.
+
+- **Not sent 2026-10-27**: `gh issue create` on kkos/oniguruma refused, "Repository was archived so is read-only". No other channel tried; status stays APPROVED until Frank names one.
