@@ -102,9 +102,9 @@ def main(argv):
         rows = [l.rstrip("\n").split("\t") for l in open(exp_path)][1:]
         keys = {(r[0], r[1], r[2]) for r in rows}
         check("expectations.tsv has no duplicate (pattern, subject, regime)", len(keys) == len(rows))
-        check("expectations_stream.tsv has 4 rows (2 streams x cscan, cscan-onig)",
-              len(open(os.path.join(HERE, "expectations_stream.tsv")).read().splitlines()) == 5)
-        check("no vars pattern has an expectation row (L7 owns them)", not any(r[0].startswith("va-") for r in rows))
+        check("expectations_stream.tsv has 10 rows (2 F1 streams x cscan, cscan-onig; the 5 L7 vars streams x their members)",
+              len(open(os.path.join(HERE, "expectations_stream.tsv")).read().splitlines()) == 11)
+        check("no vars pattern has a SHORT/throughput expectation row (their expectations are per-call, in expectations_stream.tsv)", not any(r[0].startswith("va-") for r in rows))
     # 6. the F2 fetch scripts refuse by name while their tables are empty
     for script in ("fetch_sqlite.py", "fetch_kernel.py"):
         rc, out = run(script)
