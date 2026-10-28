@@ -541,8 +541,8 @@ instrument OFF in the timed arm. Each value carries its method; values are
 
 | engine | `deep_mem_method` | what it measures |
 |---|---|---|
-| pcrec | `canary` | a random 8-byte canary filling the `_in` buffer, scanned after the call: exact high-water of bytes written (the fill touches 1 GiB, hence untimed only). The `default` arm (stack-resident) reports the FRAME COUNT reached instead |
-| pcre2-interp | `counting-alloc` | peak live bytes through a counting `pcre2_general_context` used by the match context; reported beside libpcre2's own heap-limit accounting |
+| pcrec | `canary` | a random 8-byte canary filling the `_in` buffer, scanned after the call: exact high-water of bytes written (the fill touches 1 GiB, hence untimed only). The `default` arm (stack-resident) has no buffer to fill and no frame-count read-out on the shim's surface: L4 SKIPS its pass and says so (the frame count is OWED, a shim/pcrec ask) |
+| pcre2-interp | `counting-alloc` | peak live bytes through a counting `pcre2_general_context` used by the match context AND the match data (L4, measured: the backtracking frames are the MATCH DATA's heap vector, allocated through its own memctl -- the match context alone counted 136 B on a 2,048-deep nest); reported beside libpcre2's own heap-limit accounting |
 | pcre2-jit | `mincore` | resident pages of the JIT stack mapping (mmap'd, pcre2jit(3)); page grain, floor 32 KiB; whether sljit grows by touch or `mremap` is settled by the known-depth control |
 | onig-default | `rss-delta` | `ru_maxrss` delta in a fresh process (no high-water getter in oniguruma.h:927-951): a coarse upper bound, labelled so |
 
@@ -550,8 +550,18 @@ Reported: the absolute and BYTES PER NESTING LEVEL (slope over two rungs). Two
 controls per method: a known-depth control (a subject whose depth and frame
 size predict the value) and a no-recursion floor (`literal-100k`). Recorded as
 match-scope `engine_metadata` `deep_mem_bytes` + `deep_mem_method` (string)
-beside the process `maxrss_kb`. Whether subject-grain integers of this size fit
-the record's metadata model is checked in L1 (S-14).
+beside the process high-water. **Amended (L4):** X38 scopes `match.process` to
+PROCESS testees (`invocation = "process"`), so a LIBRARY testee -- every engine
+here -- records its process high-water as a third match-scope `engine_metadata`
+integer, `deep_maxrss_kb` (`ru_maxrss` of the fresh pass process), never as
+`process.maxrss_kb`. The three are declared by `pcrecbench.adapters.DEEP_MEM_DECL`
+and ride every match row of an `unusual_set` cell whose adapter has a method
+(`Adapter.mem_method`); re2, rust and vectorscan have none and omit all three.
+Whether subject-grain integers of this size fit the record's metadata model is
+checked in L1 (S-14). L4's known-depth controls (`tools/check_calls.py` 5,
+cscan over nest-brace-512 vs -2k): pcrec `canary` ~1,120 B per nesting level,
+pcre2-interp `counting-alloc` ~1,920 B per level, each with the floor pattern on
+`literal-100k` far below.
 
 ### 6.5 Give-ups, durations, cap
 
@@ -739,3 +749,8 @@ briefs and run no engine but their own.
   answer, after checking its documentation (deferred, r9).
 - **Q-E (L4, measured) -- Oniguruma's match-stack limit unit** for the 1 GiB
   equivalent (6.2), and `CELL_CAP_unusual` (6.5): measured, not ruled.
+  ANSWERED (lane b148l4): the limit counts STACK ELEMENTS, 32 B each (a limit of
+  100,000 gives up at depth 24,999 on `(?<p>\((?:[^()]|(?&p))*\))`, 4 elements
+  per level, and ru_maxrss at the give-up is ~3.2 MB = 32.8 B/element); the deep
+  arm sets 2^30 / 32 = 33,554,432 and reads it back with
+  `lim_stack_elem_bytes` = 32. `CELL_CAP_unusual`: docs/dev/lanes/b148l4_report.md.

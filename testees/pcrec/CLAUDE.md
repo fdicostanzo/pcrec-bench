@@ -3980,3 +3980,25 @@ sha256 on all four arms; case 6 (`\U$1\E`, `subst-extended`) and case 7
 COMPILES (a backslash is an ordinary byte) and is a wrong answer the gate
 catches. Under `pcrec-auto` the engine is dfa on cases 1, 3, 5b and vm on
 2, 4, 5, 6, 7.
+
+## The call-stream regime and the `deep` arm ([B148] L4, docs/design/unusual_set_v1.md 6.2-6.5, 7.1-7.3)
+
+- **`--mode calls`** (`timed_calls.c`/`.h`): `pb_search` (or `pb_search_in` with a caller
+  buffer) at each call's OFFSET; `--anchor-explicit` uses the anchored entry
+  (`match_caps`, which returns a LENGTH: `e = off + rc`). Tokens/`stream` line via
+  `testees/common/calls_io.h`. `pcrec` does not declare `conditionals`, so it runs
+  `cscan-onig` (the syntax-only variant), never `cscan`.
+- **`pcrec-auto-deep` / `pcrec-vm-deep`** (`engine_mode` `auto-in`/`vm-in`, `unusual_only`,
+  `lim-ceil1g`): `buffer_bytes = 1073741824` -- the driver splits it into resume frames and
+  trail entries (`F = B / (frame_size + 4 * trail_size)`, trail `4F`) left UNTOUCHED before
+  the clock (6.2: first-use faults are inside iteration 1); step/work budgets
+  9223372036854775807. `--limits` reads `lim_storage_bytes` (the buffer actually provided;
+  1,073,741,760 B on cscan-onig) beside the existing `step_budget`/`work_budget`.
+  MEASURED: `pcrec-auto` (stack-resident frames, 131,072 B) gives up `PCREC_ERR_FRAMES` on
+  100/256 (seg-s) and 1,723/4,096 (seg-l) calls; `pcrec-vm-deep` matches both stream hashes.
+- **`--mem-pass`** `canary`: the `_in` buffer is canary-filled before the call and scanned
+  after it (exact bytes written). Needs a buffer, so the stack-resident default arm has NO
+  method (`mem_method` None, the pass is skipped and the readout says so; its frame count
+  is not on the shim's surface -- OWED).
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

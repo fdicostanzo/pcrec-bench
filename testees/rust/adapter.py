@@ -248,6 +248,23 @@ def _probe_rustc_version():
 
 class Adapter(_ad.Adapter):
     name = "rust"
+    calls_mode = True                                  # [B148] L4
+
+    def unusual_metadata_decl(self, testee_id):
+        """[B148] L4: the two RegexBuilder storage limits. The `regex` crate
+        has no getter on a built Regex, so the values recorded are the ones
+        the driver PASSED to the builder (printed by the driver on every
+        run); it has no counter limits and never gives up, so no `deep` arm
+        (unusual_set_v1.md 6.2 lists none)."""
+        decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
+        for k, what in (("size_limit", "RegexBuilder::size_limit"),
+                        ("dfa_size_limit", "RegexBuilder::dfa_size_limit")):
+            decl["lim_" + k] = {
+                "type": "integer", "scope": "pattern",
+                "source": "%s as passed (driver `info %s`; no getter)" % (what, k),
+                "description": "bytes; a compile-time refusal above it "
+                               "(size_limit) / the lazy DFA's cache budget"}
+        return decl
 
     # ------------------------------------------------------------- describe
 
@@ -347,7 +364,10 @@ class Adapter(_ad.Adapter):
             os.path.getmtime(os.path.join(HERE, "timed", "Cargo.toml")),
             # [B140]: the substitution mode's own timed crate.
             os.path.getmtime(os.path.join(HERE, "timed-subst", "src", "lib.rs")),
-            os.path.getmtime(os.path.join(HERE, "timed-subst", "Cargo.toml")))
+            os.path.getmtime(os.path.join(HERE, "timed-subst", "Cargo.toml")),
+            # [B148] L4: the call-stream replay's own timed crate.
+            os.path.getmtime(os.path.join(HERE, "timed-calls", "src", "lib.rs")),
+            os.path.getmtime(os.path.join(HERE, "timed-calls", "Cargo.toml")))
         if os.path.exists(drv) and os.path.getmtime(drv) >= src_mtime:
             return drv
         os.makedirs(out_dir, exist_ok=True)
@@ -399,11 +419,12 @@ class Adapter(_ad.Adapter):
                 continue
             forms[form] = self._compile_one(testee_id, pattern_id, form,
                                             text, trials, workdir,
-                                            no_unicode=subst)
+                                            no_unicode=subst,
+                                            options=options)
         return _ad.CompiledPattern(forms)
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir, no_unicode=False):
+                     workdir, no_unicode=False, options=None):
         cfg = self.config(testee_id)
         drv = self.prepare_driver(workdir)
         # per-PATTERN, per-FORM scratch: testees/onig/adapter.py's own
@@ -461,6 +482,10 @@ class Adapter(_ad.Adapter):
         for name in METADATA_DECL:
             if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
+        if options and options.get("limits"):              # [B148] L4
+            for k in ("size_limit", "dfa_size_limit"):
+                if k in out.info:
+                    meta["lim_" + k] = int(out.info[k])
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
                  "no_unicode": no_unicode,
                  "size_limit": size_limit,

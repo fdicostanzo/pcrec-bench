@@ -112,6 +112,42 @@
  * by name (they have no meaning for a transform). The existing modes are not
  * touched: nothing in main() runs differently unless --mode is `subst`.
  *
+ * `--mode calls` ([B148] L4, docs/design/unusual_set_v1.md 7.1-7.3): a CALL
+ * STREAM -- one pcre2_match_8 per declared call at the call's offset over the
+ * WHOLE subject (`\G` anchors there), replayed `--iters` times, each replay
+ * clocked separately and summed. The replay is timed_calls() in
+ * timed_calls.c (its own translation unit, BD16); run_calls() below loads
+ * the streams, spells the result tokens after the clock and prints the
+ * `stream` line (testees/common/calls_io.h). `--anchor-explicit` passes
+ * PCRE2_ANCHORED on every call (7.1's O(segment) fallback).
+ *
+ * `--deep` ([B148] L4, 6.1-6.2, the `lim-ceil1g` arm): ONE match context,
+ * created before any timed call: pcre2_set_heap_limit(1048576 KiB = 1 GiB),
+ * pcre2_set_match_limit / pcre2_set_depth_limit(UINT32_MAX) (P10: counters
+ * unbounded, storage capped), and under --jit a JIT stack of 32 KiB growing
+ * to 1 GiB (pcre2_jit_stack_create + pcre2_jit_stack_assign). The calls mode
+ * hands it to timed_calls directly; the search/throughput modes hand
+ * timed.c (BD16, untouched) timed_ctx.c's forwarder as `match`, which
+ * substitutes the context for the NULL timed.c passes. Absent, every mode's
+ * code path is exactly what it was (a NULL context = the library defaults =
+ * the `default` arm).
+ *
+ * `--limits` ([B148] L4, 6.2): print the effective limits as `info lim_*`.
+ * libpcre2 has NO getter on a match context, so the READ-BACK is
+ * pcre2_config_8 (the library defaults the `default` arm runs under) and
+ * pcre2_pattern_info_8 (a pattern's own (*LIMIT_...) settings, printed only
+ * when set); the `deep` arm's values are the ones this driver SET (the
+ * adapter declares which is which).
+ *
+ * `--mem-pass` ([B148] L4, 6.4): an UNTIMED high-water pass instead of a
+ * measurement -- one call per subject (calls mode: every call once), the
+ * interpreter's match context built on a COUNTING general context (peak live
+ * bytes of every allocation libpcre2 makes through it: heap frames, `deep`
+ * or not), the JIT's stack measured by mincore(2) over its mapping (found by
+ * diffing /proc/self/maps around pcre2_jit_stack_create). Prints `mem<TAB>ID
+ * <TAB>BYTES<TAB>METHOD<TAB>MAXRSS_KB` per subject, then the subject's usual
+ * line(s) from that one untimed call (the harness pairs them, driverrun.py).
+ *
  * `--utf-always-check` is a DRIVER-ONLY flag (never part of the driver
  * PROTOCOL in pcrecbench/adapters.py, never passed by testees/pcre2/
  * adapter.py) that disables validate-once and restores the always-check
@@ -131,8 +167,19 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <sys/mman.h>
+#include <sys/resource.h>
+
 #include "timed.h"
 #include "timed_subst.h"
+#include "timed_calls.h"
+
+/* [B148] L4 timed_ctx.c: the deep arm's forwarder for timed.c's `match`. */
+extern void *timed_ctx_mctx;
+extern int (*timed_ctx_match)(void *, const unsigned char *, size_t, size_t,
+                              uint32_t, void *, void *);
+int timed_ctx_forward(void *, const unsigned char *, size_t, size_t, uint32_t,
+                      void *, void *);
 
 /* ---- the hand-declared 8-bit ABI slice (pcrec tests/fuzz/pcre2_abi.h) ---- */
 
@@ -154,6 +201,16 @@ static void     (*p_match_data_free)(void *);
 static void     (*p_code_free)(void *);
 static int      (*p_get_error_message)(int, unsigned char *, size_t);
 static int      (*p_pattern_info)(const void *, uint32_t, void *);
+/* [B148] L4: the match context, its limits, the JIT stack, and a general
+ * context for the counting allocator (--mem-pass). */
+static void    *(*p_general_context_create)(void *(*)(size_t, void *),
+                                            void (*)(void *, void *), void *);
+static void    *(*p_match_context_create)(void *);
+static int      (*p_set_match_limit)(void *, uint32_t);
+static int      (*p_set_depth_limit)(void *, uint32_t);
+static int      (*p_set_heap_limit)(void *, uint32_t);
+static void    *(*p_jit_stack_create)(size_t, size_t, void *);
+static void     (*p_jit_stack_assign)(void *, void *(*)(void *), void *);
 static int      (*p_substitute)(void *, const unsigned char *, size_t, size_t,
                                 uint32_t, void *, void *,
                                 const unsigned char *, size_t,
@@ -161,6 +218,24 @@ static int      (*p_substitute)(void *, const unsigned char *, size_t, size_t,
 
 #define PCRE2_ERROR_NOMATCH   (-1)
 #define PCRE2_UNSET           ((size_t)-1)
+/* [B148] L4: read straight off /usr/include/pcre2.h (10.46) like the DFA
+ * codes below: the three limit getters and PCRE2_ERROR_UNSET (no
+ * pattern-embedded limit). */
+#define PCRE2_ERROR_UNSET          (-55)
+#define PCRE2_CONFIG_MATCHLIMIT    4u
+#define PCRE2_CONFIG_DEPTHLIMIT    7u
+#define PCRE2_CONFIG_HEAPLIMIT     12u
+#define PCRE2_INFO_MATCHLIMIT      14u
+#define PCRE2_INFO_DEPTHLIMIT      21u
+#define PCRE2_INFO_HEAPLIMIT       25u
+/* 6.2's deep arm: 1 GiB of matcher working storage (heap limit in KiB; the
+ * JIT stack in bytes), every counter at its type maximum. */
+#define DEEP_HEAP_KIB         1048576u
+#define DEEP_JIT_STACK_MAX    ((size_t)1 << 30)
+#define DEEP_JIT_STACK_START  ((size_t)32 * 1024)
+/* pcre2jit(3) "CONTROLLING THE JIT STACK": with no assigned stack the JIT
+ * uses 32 KiB on the machine stack -- documented, not readable. */
+#define DEFAULT_JIT_STACK     ((size_t)32 * 1024)
 /* [measured] the two anchoring bits and PCRE2_CONFIG_VERSION were established
  * by probing this box's libpcre2 10.46 (pcrecbench/oracle_pcre2.py's
  * self-check asserts the anchoring behaviour rather than the numbers). */
@@ -451,6 +526,195 @@ static int run_subst(void *code, const char *list_path, const struct subst_args 
 
 /* ------------------------------------------------------------------- main */
 
+/* ------------------------------------- [B148] L4 the deep arm + mem pass */
+
+/* The counting allocator (--mem-pass, interpreter): peak live bytes through
+ * the general context. A size header in front of each block, so free() knows
+ * what it releases. Untimed by construction (the pass prints no SECONDS). */
+static size_t mem_live, mem_peak;
+/* The counting general context, also handed to pcre2_match_data_create: the
+ * interpreter's backtracking FRAMES live in the match data's heap vector and
+ * are allocated through ITS memctl (pcre2_match.c), not the match context's
+ * -- a match context alone counted 136 B on a 2,048-deep nest. */
+static void *mem_gctx;
+static void *count_malloc(size_t n, void *u) {
+    (void)u;
+    size_t *p = malloc(n + sizeof(size_t) * 2);
+    if (!p) return NULL;
+    p[0] = n;
+    mem_live += n;
+    if (mem_live > mem_peak) mem_peak = mem_live;
+    return p + 2;
+}
+static void count_free(void *q, void *u) {
+    (void)u;
+    if (!q) return;
+    size_t *p = (size_t *)q - 2;
+    mem_live -= p[0];
+    free(p);
+}
+
+/* The JIT stack's MAPPING (--mem-pass, JIT): every /proc/self/maps range
+ * present after pcre2_jit_stack_create and absent before it. sljit mmaps
+ * the stack's whole MAXIMUM reservation and commits by touch, so resident
+ * pages of the new range(s) = the stack's high-water at page grain. */
+#define MAXMAPS 4096
+static int read_maps(unsigned long (*v)[2], int cap) {
+    FILE *f = fopen("/proc/self/maps", "r");
+    if (!f) return 0;
+    int n = 0;
+    char line[512];
+    while (n < cap && fgets(line, sizeof line, f)) {
+        unsigned long a, b;
+        if (sscanf(line, "%lx-%lx", &a, &b) == 2) { v[n][0] = a; v[n][1] = b; n++; }
+    }
+    fclose(f);
+    return n;
+}
+static unsigned long jit_maps[16][2];
+static int njit_maps;
+static void *jit_stack_tracked(void *gctx) {
+    static unsigned long before[MAXMAPS][2], after[MAXMAPS][2];
+    int nb = read_maps(before, MAXMAPS);
+    void *st = p_jit_stack_create(DEEP_JIT_STACK_START, DEEP_JIT_STACK_MAX, gctx);
+    int na = read_maps(after, MAXMAPS);
+    njit_maps = 0;
+    for (int i = 0; i < na && njit_maps < 16; i++) {
+        int seen = 0;
+        for (int j = 0; j < nb; j++)
+            if (before[j][0] == after[i][0] && before[j][1] == after[i][1]) { seen = 1; break; }
+        if (!seen) { jit_maps[njit_maps][0] = after[i][0]; jit_maps[njit_maps][1] = after[i][1]; njit_maps++; }
+    }
+    return st;
+}
+static size_t jit_resident_bytes(void) {
+    long pg = sysconf(_SC_PAGESIZE);
+    size_t total = 0;
+    for (int i = 0; i < njit_maps; i++) {
+        size_t len = jit_maps[i][1] - jit_maps[i][0];
+        size_t np = (len + (size_t)pg - 1) / (size_t)pg;
+        unsigned char *vec = malloc(np);
+        if (!vec) continue;
+        if (mincore((void *)jit_maps[i][0], len, vec) == 0)
+            for (size_t k = 0; k < np; k++) if (vec[k] & 1) total += (size_t)pg;
+        free(vec);
+    }
+    return total;
+}
+static void *jit_stack_cb(void *data) { return data; }
+
+/* The deep arm's match context (6.2). -> NULL on failure (an `error` line). */
+static void *deep_context(int jit, void *gctx, void **stack_out, int track) {
+    if (!p_match_context_create || !p_set_match_limit || !p_set_depth_limit ||
+        !p_set_heap_limit || (jit && (!p_jit_stack_create || !p_jit_stack_assign))) {
+        printf("error\tdlsym: a match-context symbol the deep arm needs is missing\n");
+        return NULL;
+    }
+    void *mc = p_match_context_create(gctx);
+    if (!mc) { printf("error\tpcre2_match_context_create failed\n"); return NULL; }
+    p_set_match_limit(mc, UINT32_MAX);
+    p_set_depth_limit(mc, UINT32_MAX);
+    p_set_heap_limit(mc, DEEP_HEAP_KIB);
+    if (jit) {
+        void *st = track ? jit_stack_tracked(gctx)
+                         : p_jit_stack_create(DEEP_JIT_STACK_START, DEEP_JIT_STACK_MAX, gctx);
+        if (!st) { printf("error\tpcre2_jit_stack_create(32 KiB, 1 GiB) failed\n"); return NULL; }
+        p_jit_stack_assign(mc, jit_stack_cb, st);
+        if (stack_out) *stack_out = st;
+    }
+    return mc;
+}
+
+/* --limits: the effective limits (6.2), READ BACK where libpcre2 has a
+ * getter (pcre2_config_8, pcre2_pattern_info_8); the deep arm's values are
+ * the ones deep_context() SET -- there is no match-context getter. */
+static void print_limits(void *code, int jit, int deep) {
+    uint32_t cm = 0, cd = 0, ch = 0, v = 0;
+    if (p_config(PCRE2_CONFIG_MATCHLIMIT, &cm) >= 0) printf("info\tlim_config_match\t%u\n", cm);
+    if (p_config(PCRE2_CONFIG_DEPTHLIMIT, &cd) >= 0) printf("info\tlim_config_depth\t%u\n", cd);
+    if (p_config(PCRE2_CONFIG_HEAPLIMIT, &ch) >= 0) printf("info\tlim_config_heap_kib\t%u\n", ch);
+    if (p_pattern_info) {
+        if (p_pattern_info(code, PCRE2_INFO_MATCHLIMIT, &v) == 0) printf("info\tlim_pattern_match\t%u\n", v);
+        if (p_pattern_info(code, PCRE2_INFO_DEPTHLIMIT, &v) == 0) printf("info\tlim_pattern_depth\t%u\n", v);
+        if (p_pattern_info(code, PCRE2_INFO_HEAPLIMIT, &v) == 0) printf("info\tlim_pattern_heap_kib\t%u\n", v);
+    }
+    printf("info\tlim_match\t%u\n", deep ? UINT32_MAX : cm);
+    printf("info\tlim_depth\t%u\n", deep ? UINT32_MAX : cd);
+    printf("info\tlim_heap_kib\t%u\n", deep ? DEEP_HEAP_KIB : ch);
+    if (jit) printf("info\tlim_jit_stack_bytes\t%zu\n",
+                    deep ? DEEP_JIT_STACK_MAX : DEFAULT_JIT_STACK);
+}
+
+static long maxrss_kb(void) {
+    struct rusage ru;
+    if (getrusage(RUSAGE_SELF, &ru) != 0) return -1;
+    return ru.ru_maxrss;
+}
+
+/* ---------------------------------------- run_calls: --mode calls ([B148]) */
+
+struct calls_args {
+    const char *tokens_dir;
+    int anchor_explicit, has_g1, mem_pass, jit;
+    long iters, subject_timeout, skip;
+    void *mctx;
+};
+
+/* noinline for the same reason as load_list: sigsetjmp lives here. */
+__attribute__((noinline))
+static int run_calls(void *code, const char *list_path, const struct calls_args *a) {
+    size_t nsub = 0;
+    struct calls_subject *subs = calls_load_list(list_path, &nsub);
+    if (!subs) return 2;
+    void *md = p_match_data_create_from_pattern(code, mem_gctx);
+    if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+    for (size_t i = (size_t)a->skip; i < nsub; i++) {
+        struct calls_subject *s = &subs[i];
+        /* preallocated, NOT pre-touched beyond calloc's own zeroing */
+        struct call_res *res = calloc(s->ncalls, sizeof *res);
+        if (!res) { printf("error\tcannot allocate %zu call results\n", s->ncalls); return 2; }
+        volatile double elapsed = 0.0;
+        struct tcalls_in tin = {
+            .buf = s->buf, .len = s->len, .calls = s->calls, .ncalls = s->ncalls,
+            .iters = a->mem_pass ? 1 : a->iters,
+            .opts = a->anchor_explicit ? PCRE2_ANCHORED : 0,
+            .code = code, .md = md, .mctx = a->mctx,
+            .ov = p_get_ovector_pointer(md), .match = p_match, .res = res,
+        };
+        struct tcalls_out tout = { 0, 0 };
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (a->subject_timeout > 0) alarm((unsigned)a->subject_timeout);
+            mem_peak = mem_live;
+            elapsed = timed_calls(&tin, &tout);
+            if (a->subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                   s->id, (long)tin.iters, (double)elapsed);
+            free(res);
+            continue;
+        }
+        if (a->mem_pass) {
+            size_t bytes = a->jit ? jit_resident_bytes() : mem_peak;
+            printf("mem\t%s\t%zu\t%s\t%ld\n", s->id, bytes,
+                   a->jit ? "mincore" : "counting-alloc", maxrss_kb());
+        }
+        size_t matched = 0;
+        for (size_t k = 0; k < s->ncalls; k++) matched += res[k].kind == CALL_M;
+        printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+               s->id, s->len, (long)tin.iters, (double)elapsed, matched);
+        calls_report(s->id, res, s->ncalls, a->has_g1, a->tokens_dir, NULL);
+        free(res);
+    }
+    p_match_data_free(md);
+    return 0;
+}
+
 static void emit_caps(size_t *ov, uint32_t npairs, char *out, size_t outcap) {
     size_t off = 0;
     out[0] = 0;
@@ -488,6 +752,9 @@ int main(int argc, char **argv) {
     uint32_t copts = 0;
     struct subst_args sargs;                       /* [B140] --mode subst */
     memset(&sargs, 0, sizeof sargs);
+    struct calls_args cargs;                       /* [B148] L4 --mode calls */
+    memset(&cargs, 0, sizeof cargs);
+    int deep = 0, limits = 0, mem_pass = 0;
 
     for (int i = 1; i < argc; i++) {
         const char *a = argv[i];
@@ -510,6 +777,12 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--utf"))                       copts |= PCRE2_UTF;
         else if (!strcmp(a, "--ucp"))                       copts |= PCRE2_UCP;
         else if (!strcmp(a, "--utf-always-check"))          utf_always_check = 1;
+        /* [B148] L4 (header comment) */
+        else if (!strcmp(a, "--tokens-dir") && i + 1 < argc) cargs.tokens_dir = argv[++i];
+        else if (!strcmp(a, "--anchor-explicit"))           cargs.anchor_explicit = 1;
+        else if (!strcmp(a, "--deep"))                      deep = 1;
+        else if (!strcmp(a, "--limits"))                    limits = 1;
+        else if (!strcmp(a, "--mem-pass"))                  mem_pass = 1;
         /* [B140] the --mode subst arguments (header comment) */
         else if (!strcmp(a, "--template") && i + 1 < argc)  sargs.template_path = argv[++i];
         else if (!strcmp(a, "--out-dir") && i + 1 < argc)   sargs.out_dir = argv[++i];
@@ -547,6 +820,20 @@ int main(int argc, char **argv) {
         if (utf8_adv) die("--utf8 has no meaning in --mode subst");
         if (!sargs.template_path) die("--mode subst needs --template");
     }
+    if (!strcmp(mode, "calls")) {
+        /* [B148] L4: a call stream has no find-all loop, no prime pass, no
+         * DFA form and no find-all advance -- refused by name. */
+        if (find_all) die("--find-all has no meaning in --mode calls");
+        if (prime) die("--prime has no meaning in --mode calls");
+        if (dfa) die("--dfa has no meaning in --mode calls");
+        if (utf8_adv) die("--utf8 has no meaning in --mode calls");
+    } else if (cargs.anchor_explicit) {
+        die("--anchor-explicit is a --mode calls flag");
+    }
+    if (dfa && deep) die("--deep has no meaning with --dfa (6.2 names "
+                         "pcre2-interp and pcre2-jit)");
+    if (mem_pass && strcmp(mode, "calls") && strcmp(mode, "search"))
+        die("--mem-pass takes --mode calls or --mode search");
     if (iters < 1) iters = 1;
 
     setvbuf(stdout, NULL, _IOLBF, 0);
@@ -567,6 +854,13 @@ int main(int argc, char **argv) {
     p_get_error_message = dlsym(lib, "pcre2_get_error_message_8");
     p_pattern_info = dlsym(lib, "pcre2_pattern_info_8");
     p_substitute = dlsym(lib, "pcre2_substitute_8");          /* [B140] */
+    p_general_context_create = dlsym(lib, "pcre2_general_context_create_8");
+    p_match_context_create = dlsym(lib, "pcre2_match_context_create_8");
+    p_set_match_limit = dlsym(lib, "pcre2_set_match_limit_8");
+    p_set_depth_limit = dlsym(lib, "pcre2_set_depth_limit_8");
+    p_set_heap_limit = dlsym(lib, "pcre2_set_heap_limit_8");
+    p_jit_stack_create = dlsym(lib, "pcre2_jit_stack_create_8");
+    p_jit_stack_assign = dlsym(lib, "pcre2_jit_stack_assign_8");
     if (!p_compile || !p_match || !p_get_ovector_pointer ||
         !p_match_data_create_from_pattern || !p_match_data_free ||
         !p_code_free || !p_get_error_message || !p_config ||
@@ -639,8 +933,59 @@ int main(int argc, char **argv) {
             printf("info\tcompiled_size_bytes\t%zu\n", csize);
         if (jit && p_pattern_info(code, PCRE2_INFO_JITSIZE, &jsize) == 0)
             printf("info\tjit_size_bytes\t%zu\n", jsize);
+        cargs.has_g1 = ncap >= 1;
     }
+    if (limits && code) print_limits(code, jit, deep);   /* [B148] L4 */
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
+
+    /* [B148] L4: the deep arm's context and the mem pass's general context,
+     * built ONCE, before any timed call. */
+    void *mctx = NULL;
+    if (deep || mem_pass) {
+        void *gctx = NULL;
+        if (mem_pass && !jit) {
+            if (!p_general_context_create) die("dlsym pcre2_general_context_create_8");
+            gctx = p_general_context_create(count_malloc, count_free, NULL);
+            mem_gctx = gctx;
+        }
+        if (deep) {
+            mctx = deep_context(jit, gctx, NULL, mem_pass);
+            if (!mctx) return 2;
+        } else if (gctx) {
+            mctx = p_match_context_create(gctx);   /* default limits, counted */
+        } else if (jit) {
+            /* the default arm's JIT stack is 32 KiB of MACHINE stack, which
+             * has no mapping of its own to measure: assign a tracked 32 KiB
+             * stack with no room to grow -- the same capacity, measurable. */
+            mctx = p_match_context_create(NULL);
+            void *st = NULL;
+            static unsigned long b2[MAXMAPS][2], a2[MAXMAPS][2];
+            int nb = read_maps(b2, MAXMAPS);
+            st = p_jit_stack_create(DEFAULT_JIT_STACK, DEFAULT_JIT_STACK, NULL);
+            int na = read_maps(a2, MAXMAPS);
+            njit_maps = 0;
+            for (int x = 0; x < na && njit_maps < 16; x++) {
+                int seen = 0;
+                for (int y = 0; y < nb; y++)
+                    if (b2[y][0] == a2[x][0] && b2[y][1] == a2[x][1]) { seen = 1; break; }
+                if (!seen) { jit_maps[njit_maps][0] = a2[x][0]; jit_maps[njit_maps][1] = a2[x][1]; njit_maps++; }
+            }
+            if (st) p_jit_stack_assign(mctx, jit_stack_cb, st);
+        }
+    }
+
+    if (!strcmp(mode, "calls")) {                    /* [B148] L4 */
+        cargs.iters = iters;
+        cargs.subject_timeout = subject_timeout;
+        cargs.skip = skip;
+        cargs.mem_pass = mem_pass;
+        cargs.jit = jit;
+        cargs.mctx = mctx;
+        int rc = run_calls(code, list_path, &cargs);
+        p_code_free(code);
+        fflush(stdout);
+        return rc;
+    }
 
     if (!strcmp(mode, "subst")) {                    /* [B140] */
         int rc = run_subst(code, list_path, &sargs);
@@ -659,7 +1004,7 @@ int main(int argc, char **argv) {
      * capture count "is therefore not advisable" for DFA -- a small fixed
      * oveccount instead (this driver only ever reads the first pair). */
     void *md = dfa ? p_match_data_create(16, NULL)
-                   : p_match_data_create_from_pattern(code, NULL);
+                   : p_match_data_create_from_pattern(code, mem_gctx);
     if (!md) { printf("error\tmatch_data_create failed\n"); return 2; }
     size_t *ov = p_get_ovector_pointer(md);
     uint32_t ovn = p_get_ovector_count(md);
@@ -699,8 +1044,14 @@ int main(int argc, char **argv) {
                 .dfa = dfa, .opts = opts, .copts = copts, .ovn = ovn,
                 .code = code, .md = md, .ov = ov, .firstov = firstov,
                 .dfa_ws = dfa_ws, .dfa_ws_n = dfa_ws_n,
-                .match = p_match, .dfa_match = p_dfa_match, .die = die,
+                /* [B148] L4: the deep arm (and the mem pass) runs through
+                 * timed_ctx.c's forwarder, which supplies the context timed.c
+                 * passes as NULL; otherwise pcre2_match_8 itself, as always. */
+                .match = mctx ? timed_ctx_forward : p_match,
+                .dfa_match = p_dfa_match, .die = die,
             };
+            if (mctx) { timed_ctx_mctx = mctx; timed_ctx_match = p_match; }
+            if (mem_pass) { mem_peak = mem_live; tin.iters = 1; }
             struct timed_out tout = { -1, -1, -1, PCRE2_ERROR_NOMATCH, 0 };
             elapsed = timed_run(&tin, &tout);
             first_s = tout.first_s; first_e = tout.first_e;
@@ -713,6 +1064,11 @@ int main(int argc, char **argv) {
             printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
                    s->id, (long)iters, (double)elapsed);
             continue;
+        }
+        if (mem_pass) {                              /* [B148] L4, 6.4 */
+            printf("mem\t%s\t%zu\t%s\t%ld\n", s->id,
+                   jit ? jit_resident_bytes() : mem_peak,
+                   jit ? "mincore" : "counting-alloc", maxrss_kb());
         }
 
         char answerbuf[256];

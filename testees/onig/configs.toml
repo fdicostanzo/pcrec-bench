@@ -37,3 +37,15 @@ engine_mode = "default"
 captures = "on"
 encoding = "utf8"
 description = "Oniguruma (system libonig, direct-linked): ONIG_SYNTAX_PERL_NG / ONIG_ENCODING_UTF8 -- onig-default's character-mode sibling ([B77] U2, utf8_set_v1.md 7.1), same two artifacts per pattern (plain + the (?:pattern)\\z whole-subject wrap). See testees/onig/CLAUDE.md's UTF-8 section for its re-censused capability declaration."
+
+# [B148] L4 (docs/design/unusual_set_v1.md 6.1-6.3, Frank's Q1 ruling): the
+# `deep` limits arm -- Oniguruma's global setters: the match stack capped at
+# the 1 GiB equivalent (33,554,432 elements x 32 B, Q-E measured), every retry
+# / call COUNTER unlimited (P10), the subexp-call nest level 1,000,000 (P11;
+# the default 20 answers silently wrong past it, 6.3). Unusual set only.
+[testees.onig-default-deep]
+engine_mode = "default"
+captures = "on"
+limits = "ceil1g"
+unusual_only = true
+description = "onig-default's deep limits arm (lim-ceil1g): match stack 1 GiB equivalent, retry/call limits unlimited, nest level 1,000,000 -- bench/unusual only ([B148] L4)"

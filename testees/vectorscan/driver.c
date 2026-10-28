@@ -210,6 +210,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "timed_calls.h"   /* [B148] L4 --mode calls, its own instrument */
 #include "timed.h"
 
 /* The DEFAULT hs_compile flags word. [B77] U2 (utf8_set_v1.md 7.1/7.6):
@@ -350,6 +351,52 @@ static subject *load_list(const char *path, size_t *n_out) {
     return v;
 }
 
+/* [B148] L4: --mode calls (timed_calls.c's header); noinline, its own
+ * sigsetjmp frame. */
+__attribute__((noinline))
+static int run_calls(const char *list_path, hs_database_t *db,
+                     hs_scratch_t *scratch, long iters, long subject_timeout,
+                     long skip, const char *tokens_dir) {
+    size_t ncs = 0;
+    struct calls_subject *cs = calls_load_list(list_path, &ncs);
+    if (!cs) return 2;
+    struct sigaction csa;
+    memset(&csa, 0, sizeof csa);
+    csa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &csa, NULL);
+    for (size_t i = (size_t)skip; i < ncs; i++) {
+        struct calls_subject *c = &cs[i];
+        struct call_res *res = calloc(c->ncalls, sizeof *res);
+        if (!res) { printf("error\tout of memory\n"); return 2; }
+        volatile double elapsed = 0.0;
+        struct tcalls_in tin = {
+            .buf = c->buf, .len = c->len, .calls = c->calls,
+            .ncalls = c->ncalls, .iters = iters, .db = db,
+            .scratch = scratch, .res = res,
+        };
+        struct tcalls_out tout = { 0, 0 };
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (subject_timeout > 0) alarm((unsigned)subject_timeout);
+            elapsed = timed_calls(&tin, &tout);
+            if (subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                   c->id, (long)iters, (double)elapsed);
+            free(res);
+            continue;
+        }
+        size_t matched = 0;
+        for (size_t k = 0; k < c->ncalls; k++) matched += res[k].kind == CALL_M;
+        printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+               c->id, c->len, (long)iters, (double)elapsed, matched);
+        calls_report(c->id, res, c->ncalls, 0, tokens_dir, NULL);
+        free(res);
+    }
+    return 0;
+}
+
 /* ------------------------------------------------------------------- main */
 
 int main(int argc, char **argv) {
@@ -379,6 +426,8 @@ int main(int argc, char **argv) {
      * argv never carries this flag (testees/vectorscan/adapter.py), so its
      * own byte-for-byte behaviour is provably unreached by anything below. */
     volatile int som_mode = 0;
+    const char *tokens_dir = NULL;   /* [B148] L4 */
+    int anchor_explicit = 0;
     unsigned int hs_flags = VS_DRIVER_FLAGS;   /* [B77] U2: --encoding */
 
     for (int i = 1; i < argc; i++) {
@@ -396,6 +445,10 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
         else if (!strcmp(a, "--prime"))                      prime = 1;
         else if (!strcmp(a, "--som"))                       som_mode = 1;
+        /* [B148] L4 --mode calls (timed_calls.c's header) */
+        else if (!strcmp(a, "--tokens-dir") && i + 1 < argc) tokens_dir = argv[++i];
+        else if (!strcmp(a, "--anchor-explicit"))           anchor_explicit = 1;
+        else if (!strcmp(a, "--limits"))                    { /* no limits to read: hs_scan has none */ }
         else if (!strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
             if (!strcmp(e, "utf8"))       hs_flags = VS_DRIVER_FLAGS | HS_FLAG_UTF8;
@@ -536,6 +589,29 @@ int main(int argc, char **argv) {
         die("hs_alloc_scratch failed");
 
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
+
+    if (!strcmp(mode, "calls")) {                     /* [B148] L4 */
+        if (!som_mode) {
+            printf("error\t--mode calls needs --som: a boolean-grain "
+                   "(nosom) config has no span token to give\n");
+            return 2;
+        }
+        if (anchor_explicit) {
+            printf("error\t--anchor-explicit: hs_scan has no runtime anchor "
+                   "(block mode anchors only in the pattern text)\n");
+            return 2;
+        }
+        if (find_all || prime || utf8_adv) {
+            printf("error\t--mode calls refuses --find-all, --prime and --utf8\n");
+            return 2;
+        }
+        int rc = run_calls(list_path, db, scratch, iters, subject_timeout,
+                           skip, tokens_dir);
+        hs_free_scratch(scratch);
+        hs_free_database(db);
+        fflush(stdout);
+        return rc;
+    }
 
     size_t nsub = 0;
     subject *subs = load_list(list_path, &nsub);

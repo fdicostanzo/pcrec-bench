@@ -122,6 +122,46 @@ GAVE_UP_CODES = {
 #   -66 PCRE2_ERROR_DFA_UINVALID_UTF only from PCRE2_MATCH_INVALID_UTF, never compiled with it
 GAVE_UP_CODES_DFA = (set(GAVE_UP_CODES) - {-46}) | {-43, -39, -42, -40}
 
+# [B148] L4 (docs/design/unusual_set_v1.md 6.2): the limits read-back the
+# driver prints under `--limits` (the unusual set only). libpcre2 has no
+# getter on a match context, so `lim_config_*` / `lim_pattern_*` are READ
+# BACK (pcre2_config_8 / pcre2_pattern_info_8) and `lim_match` / `lim_depth`
+# / `lim_heap_kib` / `lim_jit_stack_bytes` are the EFFECTIVE values: the
+# config's on the default arm (no match context = the library defaults), the
+# values driver.c SET on the deep arm.
+def _lim(src, desc):
+    return {"type": "integer", "scope": "pattern", "source": src,
+            "description": desc}
+
+
+LIMITS_DECL = {
+    "lim_config_match": _lim("pcre2_config_8(PCRE2_CONFIG_MATCHLIMIT)",
+                             "the library's default match limit (read back)"),
+    "lim_config_depth": _lim("pcre2_config_8(PCRE2_CONFIG_DEPTHLIMIT)",
+                             "the library's default depth limit (read back)"),
+    "lim_config_heap_kib": _lim("pcre2_config_8(PCRE2_CONFIG_HEAPLIMIT)",
+                                "the library's default heap limit, KiB (read back)"),
+    "lim_pattern_match": _lim("pcre2_pattern_info_8(PCRE2_INFO_MATCHLIMIT)",
+                              "a (*LIMIT_MATCH=) in the pattern; absent when unset"),
+    "lim_pattern_depth": _lim("pcre2_pattern_info_8(PCRE2_INFO_DEPTHLIMIT)",
+                              "a (*LIMIT_DEPTH=) in the pattern; absent when unset"),
+    "lim_pattern_heap_kib": _lim("pcre2_pattern_info_8(PCRE2_INFO_HEAPLIMIT)",
+                                 "a (*LIMIT_HEAP=) in the pattern, KiB; absent when unset"),
+    "lim_match": _lim("default arm: = lim_config_match; deep: "
+                      "pcre2_set_match_limit(UINT32_MAX) as set",
+                      "the effective match limit (applies to JIT too, E-4)"),
+    "lim_depth": _lim("default arm: = lim_config_depth; deep: "
+                      "pcre2_set_depth_limit(UINT32_MAX) as set",
+                      "the effective depth limit (interpreter only)"),
+    "lim_heap_kib": _lim("default arm: = lim_config_heap_kib; deep: "
+                         "pcre2_set_heap_limit(1048576) as set",
+                         "the effective heap limit, KiB (interpreter only)"),
+    "lim_jit_stack_bytes": _lim("default arm: pcre2jit(3)'s documented 32 KiB "
+                                "machine stack (no getter); deep: "
+                                "pcre2_jit_stack_create(32 KiB, 1 GiB) as set",
+                                "the JIT stack's maximum size, bytes"),
+}
+
 
 # [B77] U2 (docs/design/utf8_set_v1.md 7.1): the build_flags clause a
 # `encoding = "utf8"` config appends -- and ONLY such a config, so every byte
@@ -144,8 +184,36 @@ UTF_BUILD_NOTE = ("; ENGINE ENCODING utf8 ([B77] U2): pcre2_compile_8 "
                   "VALIDATE-ONCE)")
 
 
+DEEP_BUILD_NOTE = ("; LIMITS ARM deep (lim-ceil1g, [B148] L4, "
+                   "unusual_set_v1.md 6.2): one match context built before "
+                   "any timed call -- pcre2_set_heap_limit(1048576 KiB), "
+                   "match and depth limits UINT32_MAX, and under JIT a "
+                   "pcre2_jit_stack_create(32 KiB, 1 GiB) stack assigned; "
+                   "the matching instrument timed.c is reached through "
+                   "timed_ctx.c's forwarder (one extra direct call per "
+                   "match), the call stream through timed_calls.c")
+
+
 class Adapter(_ad.Adapter):
     name = "pcre2"
+    calls_mode = True                                  # [B148] L4
+    giveup_names = dict(GAVE_UP_CODES)
+
+    def mem_method(self, handle):
+        """[B148] L4, 6.4: the interpreter's counting general context, the
+        JIT stack's resident pages; the DFA matcher has none."""
+        if handle.get("dfa"):
+            return None
+        return "mincore" if handle.get("jit") else "counting-alloc"
+
+    def unusual_metadata_decl(self, testee_id):
+        """[B148] L4: the limits read-back + `stream_anchor` + the 6.4 pair."""
+        cfg = self.config(testee_id)
+        decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
+        decl.update({k: v for k, v in LIMITS_DECL.items()
+                     if cfg.get("jit") or k != "lim_jit_stack_bytes"})
+        decl.update(_ad.DEEP_MEM_DECL)
+        return decl
 
     # ------------------------------------------------------------- describe
 
@@ -203,9 +271,12 @@ class Adapter(_ad.Adapter):
             "simd": "n-a",
             "build_flags": "distribution libpcre2-8.so.0 (%s), loaded with "
                            "dlopen; driver built with $CC -O2 -std=gnu11" % raw
-                           + (UTF_BUILD_NOTE if enc == "utf8" else ""),
+                           + (UTF_BUILD_NOTE if enc == "utf8" else "")
+                           + (DEEP_BUILD_NOTE if cfg.get("limits") else ""),
             "runtime_options": ([{"name": "encoding", "value": "utf8"}]
-                                if enc == "utf8" else []),
+                                if enc == "utf8" else [])
+                               + ([{"name": "limits", "value": cfg["limits"]}]
+                                  if cfg.get("limits") else []),
             "compile_cost_definition": (
                 "eager JIT (requirements 3): the explicit compile calls, timed "
                 "in-driver -- pcre2_compile_8 (`compile`) then "
@@ -233,8 +304,12 @@ class Adapter(_ad.Adapter):
         # [B140]: the `-sizefirst` arm is a DIFFERENT CALL SHAPE (two
         # pcre2_substitute calls, the first with OVERFLOW_LENGTH) and so a
         # different testee, whose id must never collide with its sibling's.
+        # [B148] L4: the `deep` limits arm (unusual_set_v1.md 6.1) is a
+        # different configuration of the same engine -- `lim-ceil1g`, LAST.
         extra = [e for e in (enc_extra,
                              "sizefirst" if cfg.get("subst_sizing") == "first"
+                             else None,
+                             "lim-" + cfg["limits"] if cfg.get("limits")
                              else None) if e]
         if extra:
             block["config_extra"] = "-".join(extra)
@@ -277,10 +352,13 @@ class Adapter(_ad.Adapter):
         # [B140]: timed_subst.c is the substitution mode's own INSTRUMENT
         # (its own translation unit, BD16's discipline); timed.c, the
         # matching instrument, is not touched by it.
+        # [B148] L4: timed_calls.c (the call-stream replay) and timed_ctx.c
+        # (the deep arm's match-context forwarder for timed.c) likewise.
         return build_driver(os.path.join(HERE, "driver.c"),
                             os.path.join(workdir, "pcre2_driver"),
                             extra=["-ldl"],
-                            extra_sources=["timed_subst.c"])
+                            extra_sources=["timed_subst.c", "timed_calls.c",
+                                           "timed_ctx.c"])
 
     def prepare(self, testee_id, workdir):
         self.config(testee_id)
@@ -312,6 +390,10 @@ class Adapter(_ad.Adapter):
             argv.append("--jit")
         if cfg.get("dfa"):
             argv.append("--dfa")
+        if cfg.get("limits"):
+            argv.append("--deep")                      # [B148] L4
+        if options.get("limits"):
+            argv.append("--limits")                    # [B148] L4
         utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
         if utf:
             # [B77] U2: PCRE2_UTF in pcre2_compile_8's options word (the
@@ -345,7 +427,8 @@ class Adapter(_ad.Adapter):
                                          or "driver exit %s" % out.returncode))
 
         meta = {}
-        for name in METADATA_DECL:
+        for name in list(METADATA_DECL) + (list(LIMITS_DECL)
+                                           if options.get("limits") else []):
             if name in out.info:
                 meta[name] = int(out.info[name])
         # The MEASURED set of libpcre2 resource-limit refusals travels with
@@ -359,6 +442,9 @@ class Adapter(_ad.Adapter):
                   "jit": bool(cfg.get("jit")),
                   "dfa": bool(cfg.get("dfa")),
                   "utf": utf,
+                  "deep": bool(cfg.get("limits")),         # [B148] L4
+                  "stream_anchor": cfg.get("stream_anchor", "native"),
+                  "giveup_names": dict(GAVE_UP_CODES),
                   "giveup_codes": set(GAVE_UP_CODES_DFA if cfg.get("dfa")
                                       else GAVE_UP_CODES)}
         return one(_ad.CompileResult(
@@ -412,6 +498,12 @@ class Adapter(_ad.Adapter):
             argv.append("--jit")
         if handle.get("dfa"):
             argv.append("--dfa")
+        if handle.get("deep"):
+            argv.append("--deep")                      # [B148] L4
+        if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
+            argv.append("--anchor-explicit")
+        if handle.get("mem_pass"):
+            argv.append("--mem-pass")
         if handle.get("utf"):
             # [B77] U2: the measure-time driver recompiles the pattern, so
             # the ENGINE encoding rides here too -- the same artifact the

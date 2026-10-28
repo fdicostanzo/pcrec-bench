@@ -1060,3 +1060,27 @@ flags = ["--features", "all", "--engine=vm"]
 subst_sizing = "first"
 subst_only = true
 description = "pcrec-vm's substitution tier, SIZE-FIRST call shape (replace-all sizing pass, then the real call) -- substitution sets only ([B140])"
+
+# [B148] L4 (docs/design/unusual_set_v1.md 6.1-6.2, Frank's Q1 ruling): the
+# `deep` limits arm -- the `_in` entries with a 1 GiB caller buffer
+# (`buffer_bytes`, split frames : trail = 1 : 4 from the artifact's stamped
+# sizes, never pre-touched) and the step/work budgets at INT64_MAX (P10:
+# counters unbounded, storage capped). Unusual set only (`unusual_only`). The
+# default arm is `pcrec-auto` / `pcrec-vm` themselves (stack-resident frames).
+[testees.pcrec-auto-deep]
+engine_mode = "auto-in"
+captures = "on"
+flags = ["--features", "all", "--step-budget=9223372036854775807", "--work-budget=9223372036854775807"]
+buffer_bytes = 1073741824
+limits = "ceil1g"
+unusual_only = true
+description = "pcrec-auto's deep limits arm (lim-ceil1g): a 1 GiB caller frame buffer + step/work budgets at INT64_MAX -- bench/unusual only ([B148] L4)"
+
+[testees.pcrec-vm-deep]
+engine_mode = "vm-in"
+captures = "on"
+flags = ["--features", "all", "--engine=vm", "--step-budget=9223372036854775807", "--work-budget=9223372036854775807"]
+buffer_bytes = 1073741824
+limits = "ceil1g"
+unusual_only = true
+description = "pcrec-vm's deep limits arm (lim-ceil1g): the VM forced, a 1 GiB caller frame buffer + step/work budgets at INT64_MAX -- bench/unusual only ([B148] L4)"

@@ -100,6 +100,62 @@ INVOCATION
                ITERS is always 1 (3.1.2: a 320 MB transform is 0.3-30 s; the
                trials are the repetition). Engine-specific sizing arms
                (libpcre2 `--sizing bound|first`) are that driver's own.
+           --mode calls            ([B148] L4, docs/design/unusual_set_v1.md
+                                   7.1-7.3) a CALL STREAM: every call of a
+                                   declared call list, in order, over one
+                                   subject -- the engine is given the REST
+                                   of the subject from the call's offset
+                                   (start offset = the call's offset, end =
+                                   the subject's end; a `\\G` pattern
+                                   anchors there). Additive -- every other
+                                   mode is byte-for-byte what it was. Here:
+               --list FILE             THREE columns per line,
+                                       `id<TAB>subject<TAB>calls`, the calls
+                                       file TSV `call_id offset length
+                                       segment_bytes binding_id` with a
+                                       header (bench/unusual/gen_streams.py).
+                                       7.3 wrote this as one `--calls FILE`
+                                       flag; a per-subject column is the
+                                       same fact for a list of streams, and
+                                       the resume rule (`--skip`) keeps
+                                       working unchanged. A binding other
+                                       than `-` (a VARS stream, `--bindings`,
+                                       lane L7) is REFUSED by name today.
+               --tokens-dir DIR        after the clock stopped, write the
+                                       per-call result tokens to
+                                       DIR/<ID>.tok, one per line: `n`,
+                                       `m:<s>,<e>` (+ `;<g1s>,<g1e>` iff the
+                                       pattern HAS a group 1; unset `-1,-1`),
+                                       `r` (host refusal, vars only), `g`
+                                       (an engine give-up -- 7.1's set plus
+                                       the one token a limit needs). The
+                                       harness hashes the file; SHA-256
+                                       stays out of every driver (the [B140]
+                                       `out` precedent).
+               [--anchor-explicit]     anchor each call at its offset with
+                                       the engine's own runtime option
+                                       (PCRE2_ANCHORED, onig_match, RE2
+                                       ANCHOR_START, an anchored rust Input;
+                                       7.1's O(segment) fallback) -- the
+                                       `stream_anchor = explicit` arm
+               ITERS = REPLAYS of the whole list; each replay is CLOCKED
+               SEPARATELY and the clocks SUMMED (7.2 P6). The per-call results
+               go to a PREALLOCATED array inside the loop (integers only);
+               the tokens are spelled after the clock. --find-all, --utf8 and
+               --prime are refused by name in this mode.
+           [--deep]                ([B148] L4, 6.2) the `deep` limits arm:
+                                   every matcher working-storage cap at
+                                   1 GiB, every COUNTER at its type maximum
+                                   (or 0 = unlimited), set OUTSIDE the
+                                   timed loop. Per-engine meaning in each
+                                   driver's header; inert absent.
+           [--limits]              ([B148] L4, 6.2) print the engine's
+                                   EFFECTIVE limits as `info lim_<name>
+                                   <integer>` lines (both arms), READ BACK
+                                   from the engine wherever it has a getter
+                                   (each adapter declares which are read
+                                   and which are the values it set).
+                                   Passed iff the set says `unusual_set`.
 
     The driver reads EVERY subject into memory first, compiles once (timed,
     per phase), then for each subject takes one monotonic clock reading,
@@ -139,6 +195,18 @@ crash-attribution channel, so a buffered driver would lose the attribution):
         protocol.)
 
     error<TAB>TEXT     a fatal the driver could not attribute to a subject
+
+    stream<TAB>ID<TAB>calls=N<TAB>matched=N<TAB>nomatch=N<TAB>refused=N<TAB>gave_up=N<TAB>first_code=C<TAB>first_limit=NAME<TAB>results_sha256=-<TAB>tokens=PATH
+        ([B148] L4, --mode calls only) emitted AFTER the stream's `subject`
+        line and OUTSIDE the clock: the LAST replay's per-call counts (every
+        replay asks the same questions; the harness checks the counts and the
+        hash), `first_code` the first give-up's engine code (`-` when none),
+        `first_limit` the engine's own NAME for it where the driver has one
+        (pcrec's shim does; else `-` and the adapter names the code), and the
+        token file. In calls mode the `subject` line is the 11-column shape
+        reused: ANSWER `stream`, START/END `-`, NCAPS 0, CONSUMED the
+        subject's bytes, ITERS the replays, SECONDS the SUM of the per-replay
+        clocks, NMATCHES the matched count, CAPS `-`.
 
     out<TAB>ID<TAB>PATH<TAB>BYTES
         ([B140], --mode subst only) emitted AFTER the subject's `subject`
@@ -197,6 +265,39 @@ FORM_WHOLE_SUBJECT = "whole-subject"
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TESTEES_ROOT = os.path.join(REPO_ROOT, "testees")
+
+
+#: [B148] L4: the match-scope pair every `--mode calls` row carries
+#: (unusual_set_v1.md 7.1, the O(segment) pre-flight's outcome).
+STREAM_ANCHOR_DECL = {
+    "type": "string", "scope": "match",
+    "source": "the adapter: `--anchor-explicit` passed to the driver or not",
+    "description": "how each call of a call stream is bounded to its segment: "
+                   "`native` = the pattern's own \\G at the start offset (the "
+                   "O(segment) pre-flight found no tail dependence), "
+                   "`explicit` = the engine's runtime anchoring option",
+}
+
+#: [B148] L4: the 6.4 working-storage high-water pair + a library testee's
+#: process maxrss (the amended 6.4 text: X38 scopes `match.process` to
+#: process testees, so a LIBRARY testee records its maxrss here).
+DEEP_MEM_DECL = {
+    "deep_mem_bytes": {
+        "type": "integer", "scope": "match",
+        "source": "the untimed high-water pass (unusual_set_v1.md 6.4)",
+        "description": "matcher working-storage high-water in bytes, by "
+                       "`deep_mem_method`; never ranked across methods"},
+    "deep_mem_method": {
+        "type": "string", "scope": "match",
+        "source": "the untimed high-water pass (unusual_set_v1.md 6.4)",
+        "description": "canary | counting-alloc | mincore | rss-delta"},
+    "deep_maxrss_kb": {
+        "type": "integer", "scope": "match",
+        "source": "getrusage(RUSAGE_SELF).ru_maxrss of the fresh untimed process",
+        "description": "the high-water pass process's peak RSS (KiB): a "
+                       "LIBRARY testee's maxrss (X38 keeps match.process for "
+                       "process testees)"},
+}
 
 
 class AdapterError(Exception):
@@ -311,7 +412,7 @@ class MatchRow:
 
     __slots__ = ("subject_id", "answer", "start", "end", "ncaps", "consumed",
                  "iters", "seconds", "nmatches", "caps", "detail",
-                 "out_path", "out_bytes", "process")
+                 "out_path", "out_bytes", "process", "stream", "mem")
 
     def __init__(self, subject_id, answer, start=None, end=None, ncaps=0,
                  consumed=None, iters=0, seconds=0.0, nmatches=None,
@@ -326,6 +427,12 @@ class MatchRow:
         # [B140] step 4 (TOOLS tier): the `match.process` object of a timed
         # `tool | wc -c` launch (None for every library testee).
         self.process = None
+        # [B148] L4 --mode calls: the `stream` line paired to this row (a
+        # dict of its fields; None everywhere else).
+        self.stream = None
+        # [B148] L4 --mem-pass: the `mem` line paired to this row,
+        # (bytes, method, maxrss_kb); None everywhere else.
+        self.mem = None
 
     @property
     def matched(self):
@@ -343,7 +450,9 @@ def _opt(v):
 def parse_driver_line(line):
     """-> ('subject', MatchRow) | ('compile', (trial, phase, seconds))
          | ('info', (name, value)) | ('error', text)
-         | ('out', (id, path_or_None, bytes))   ([B140]) | (None, line)"""
+         | ('out', (id, path_or_None, bytes))   ([B140])
+         | ('stream', (id, {field: value}))     ([B148] L4)
+         | ('mem', (id, bytes, method, maxrss_kb)) ([B148] L4) | (None, line)"""
     cols = line.rstrip("\n").split("\t")
     if not cols:
         return None, line
@@ -369,6 +478,16 @@ def parse_driver_line(line):
         return "info", (cols[1], "\t".join(cols[2:]))
     if kind == "error":
         return "error", "\t".join(cols[1:])
+    if kind == "stream" and len(cols) >= 3:
+        # [B148] L4: stream<TAB>ID<TAB>key=value...
+        d = {}
+        for c in cols[2:]:
+            k, _, v = c.partition("=")
+            d[k] = v
+        return "stream", (cols[1], d)
+    if kind == "mem" and len(cols) >= 5:
+        # [B148] L4: mem<TAB>ID<TAB>BYTES<TAB>METHOD<TAB>MAXRSS_KB (--mem-pass)
+        return "mem", (cols[1], int(cols[2]), cols[3], int(cols[4]))
     if kind == "out" and len(cols) >= 4:
         # [B140]: out<TAB>ID<TAB>PATH<TAB>BYTES (PATH `-` = no file written)
         return "out", (cols[1], None if cols[2] == "-" else cols[2],
@@ -495,6 +614,40 @@ class Adapter:
         None on trials 2..N (the driver writes no file then, still reports the
         length). The harness, not the adapter, hashes and judges."""
         raise NotImplementedError
+
+    #: [B148] L4: does this adapter's driver speak `--mode calls` (the
+    #: `call-stream` regime)? False by default, so a set declaring the regime
+    #: refuses every other adapter BY NAME rather than handing it a mode its
+    #: driver would reject.
+    calls_mode = False
+
+    #: [B148] L4: {engine return code: the engine's own NAME for it} for the
+    #: codes a give-up can carry; the harness names a stream's first give-up
+    #: from it when the driver did not (unusual_set_v1.md 6.5). Empty here.
+    giveup_names = {}
+
+    def supports_calls(self, testee_id):
+        """[B148] L4: whether THIS testee runs `--mode calls`. `calls_mode`
+        by default; an adapter whose configs differ (vectorscan: only the
+        `-som` siblings carry a span) overrides it."""
+        return bool(self.calls_mode)
+
+    def mem_method(self, handle):
+        """[B148] L4 (unusual_set_v1.md 6.4): the `deep_mem_method` this
+        handle's driver reports under `--mem-pass`, or None (no method: the
+        harness skips the high-water pass). None by default."""
+        return None
+
+    def unusual_metadata_decl(self, testee_id):
+        """[B148] L4: the `engine_metadata_declaration` entries only an
+        `unusual_set` record carries -- the `lim_*` limits read-back
+        (unusual_set_v1.md 6.2), `stream_anchor` (7.1) and the 6.4 pair.
+        The harness merges them into the testee block on that set only. The
+        default declares `stream_anchor` for an adapter that speaks
+        `--mode calls`, nothing otherwise."""
+        if not self.supports_calls(testee_id):
+            return {}
+        return {"stream_anchor": STREAM_ANCHOR_DECL}
 
     def measure(self, handle, regime, subjects, iters, trials, timeout=None):
         """-> (rows_by_trial, info, notes).

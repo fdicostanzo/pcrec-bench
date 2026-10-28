@@ -52,11 +52,19 @@ version = "0.1.0"
 dependencies = [
  "regex",
  "rust-timed",
+ "rust-timed-calls",
  "rust-timed-subst",
 ]
 
 [[package]]
 name = "rust-timed"
+version = "0.1.0"
+dependencies = [
+ "regex",
+]
+
+[[package]]
+name = "rust-timed-calls"
 version = "0.1.0"
 dependencies = [
  "regex",

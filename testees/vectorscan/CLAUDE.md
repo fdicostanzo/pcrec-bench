@@ -749,3 +749,14 @@ the union of both parents' own changes, nothing else moved.
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The call-stream regime ([B148] L4, docs/design/unusual_set_v1.md 7.1-7.3)
+
+`--mode calls` on `vectorscan-block-som` ONLY (`supports_calls` is `engine_mode ==
+"block-som"`; r9 C4: boolean grain cannot produce a span) -- `timed_calls.c`: `hs_scan` over
+the slice `[offset, len)`, the leftmost-then-longest SOM match (offsets shifted back), group 0
+only (no groups). Refused by name without `--som`, and `--anchor-explicit` is refused (no
+runtime anchor in `hs_scan`). No stream pattern of bench/unusual@0.1 compiles here; exercised
+on tools/check_calls.py's synthetic stream. No `deep` arm, no `mem_method`.
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

@@ -10,7 +10,7 @@ description |
 oracle pcre2
 tag set=unusual, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in re2-default onig-default vectorscan-block-som rust-default
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in re2-default onig-default vectorscan-block-som rust-default pcre2-interp-deep pcre2-jit-deep pcrec-auto-deep pcrec-vm-deep onig-default-deep
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -132,6 +132,84 @@ ext bench
     true-end-anchor
   capabilities rust-default
     unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcre2-interp-deep
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcre2-jit-deep
+    backrefs
+    lookaround
+    lookbehind-variable
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
+    control-verbs
+    unicode-properties
+    named-groups
+    free-spacing
+    callouts
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-auto-deep
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities pcrec-vm-deep
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+  capabilities onig-default-deep
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    conditionals
+    k-reset
     named-groups
     free-spacing
     span-reporting

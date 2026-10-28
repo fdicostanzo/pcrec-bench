@@ -1200,6 +1200,20 @@ for _tool_id in ("sed-ere", "perl-p", "python-resub", "sd-stdin",
 del _tool_id
 
 
+# [B148] L4 (lane b148l4, docs/design/unusual_set_v1.md 6.1-6.2): the `deep`
+# limits arms. `unusual_only` testees -- the harness refuses them BY NAME on any
+# set that is not an unusual set, so they can never run this one; their
+# capabilities are their default sibling's (bench/unusual/gen_patterns.py's
+# DEEP_ARMS copies the sibling's block).
+for _deep_id in ("pcre2-interp-deep", "pcre2-jit-deep", "pcrec-auto-deep",
+                 "pcrec-vm-deep", "onig-default-deep"):
+    EXCLUDED_TESTEES[_deep_id] = (
+        "unusual-set-only `deep` limits arm ([B148] L4, `unusual_only`): the "
+        "harness refuses it on any set without `unusual_set = true`; its "
+        "engine capabilities are its default sibling's")
+del _deep_id
+
+
 def render_ext_bench():
     lines = ["ext bench"]
     lines.append("  roster " + " ".join(t for t, _ in EXT_BENCH_ROSTER))

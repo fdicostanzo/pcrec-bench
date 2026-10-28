@@ -393,3 +393,22 @@ input as undefined).
 pcrecbench/adapters.py): one untimed execution of the timed loop's own
 operation per subject, immediately before the first clock reading; absent,
 byte-for-byte unchanged. Scratch tier only; `check_prime_flag`.
+
+## The call-stream regime and the `deep` arm ([B148] L4, docs/design/unusual_set_v1.md 6.2-6.5, 7.1-7.3)
+
+- **`--mode calls`** (`timed_calls.c`/`.h`): `onig_search` from the call's offset to the
+  subject's end; `--anchor-explicit` uses `onig_match` at the offset.
+- **`onig-default-deep`** (`unusual_only`, `lim-ceil1g`): `--deep` calls the GLOBAL setters
+  before `onig_new`, outside every timed loop -- `onig_set_match_stack_limit_size(33554432)`
+  (Q-E MEASURED: the limit counts 32-byte stack ELEMENTS, 4 per nesting level on
+  `(?<p>\((?:[^()]|(?&p))*\))`; 2^30 / 32), both retry limits 0 (unlimited),
+  `onig_set_subexp_call_max_nest_level(1000000)`. `--limits` reads all six back
+  (`lim_match_stack_elems`, `lim_retry_in_match`, `lim_retry_in_search`,
+  `lim_subexp_call_in_search`, `lim_subexp_call_nest`, `lim_parse_depth`) plus
+  `lim_stack_elem_bytes` = 32. Defaults read: 0 / 10,000,000 / 0 / 0 / 20 / 4,096.
+- **E-1 reproduced**: `onig-default` on cscan-onig answers `cs-nest-19/20/21/30/100`
+  did-not-match (silently wrong at the nest level 20 default); the deep arm answers them.
+- **`--mem-pass`** `rss-delta`: `ru_maxrss` growth over the call in a fresh process (no
+  high-water getter in the API) -- a coarse upper bound, labelled so.
+
+All of it is additive (BD16): the timed source is untouched and the linked timed function is instruction-identical at the same address mod 64 (docs/dev/measurements/2026-10-27-b148l4-instrument-additivity.txt). Checked by `make check-harness`'s `check_calls_set` (tools/check_calls.py).

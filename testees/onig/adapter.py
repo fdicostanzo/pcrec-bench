@@ -122,8 +122,55 @@ GAVE_UP_CODES = {
 #   -1  ONIG_MISMATCH -- an answer, not a refusal.
 
 
+# [B148] L4 (docs/design/unusual_set_v1.md 6.2): the six global limits
+# READ BACK by driver.c `--limits` after the deep arm's setters (every arm),
+# plus the measured Q-E element size the 1 GiB equivalent was divided by.
+def _lim(src, desc):
+    return {"type": "integer", "scope": "pattern", "source": src,
+            "description": desc}
+
+
+LIMITS_DECL = {
+    "lim_match_stack_elems": _lim("onig_get_match_stack_limit_size()",
+                                  "match stack cap in STACK ELEMENTS; 0 = unlimited"),
+    "lim_retry_in_match": _lim("onig_get_retry_limit_in_match()",
+                               "retry budget per onig_match; 0 = unlimited"),
+    "lim_retry_in_search": _lim("onig_get_retry_limit_in_search()",
+                                "retry budget per onig_search; 0 = unlimited"),
+    "lim_subexp_call_in_search": _lim("onig_get_subexp_call_limit_in_search()",
+                                      "subexp-call budget per search; 0 = unlimited"),
+    "lim_subexp_call_nest": _lim("onig_get_subexp_call_max_nest_level()",
+                                 "subexp-call NEST LEVEL; past it Oniguruma "
+                                 "answers silently wrong, never an error (6.3)"),
+    "lim_parse_depth": _lim("onig_get_parse_depth_limit()",
+                            "compile-time parse nesting budget"),
+    "lim_stack_elem_bytes": _lim("driver.c ONIG_STACK_ELEM_BYTES (Q-E, measured)",
+                                 "bytes per match-stack element the deep "
+                                 "arm's 1 GiB cap was divided by"),
+}
+
+DEEP_BUILD_NOTE = ("; LIMITS ARM deep (lim-ceil1g, [B148] L4, unusual_set_v1.md "
+                   "6.2): Oniguruma's GLOBAL setters before onig_new, outside "
+                   "every timed call -- match stack 33,554,432 elements (1 GiB "
+                   "/ 32 B, Q-E), retry-in-match / retry-in-search / "
+                   "subexp-call-in-search 0 (unlimited), subexp-call nest "
+                   "level 1,000,000")
+
+
 class Adapter(_ad.Adapter):
     name = "onig"
+    calls_mode = True                                  # [B148] L4
+    giveup_names = dict(GAVE_UP_CODES)
+
+    def mem_method(self, handle):
+        """[B148] L4, 6.4: ru_maxrss growth in a fresh process (no getter)."""
+        return "rss-delta"
+
+    def unusual_metadata_decl(self, testee_id):
+        decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
+        decl.update(LIMITS_DECL)
+        decl.update(_ad.DEEP_MEM_DECL)
+        return decl
 
     # ------------------------------------------------------------- describe
 
@@ -172,9 +219,12 @@ class Adapter(_ad.Adapter):
                               "utf8_set_v1.md 7.1): ONIG_ENCODING_UTF8 "
                               "selected at runtime (driver --encoding utf8) "
                               "in place of the ASCII default above"
-                              if enc == "utf8" else ""),
+                              if enc == "utf8" else "")
+                           + (DEEP_BUILD_NOTE if cfg.get("limits") else ""),
             "runtime_options": ([{"name": "encoding", "value": "utf8"}]
-                                if enc == "utf8" else []),
+                                if enc == "utf8" else [])
+                               + ([{"name": "limits", "value": cfg["limits"]}]
+                                  if cfg.get("limits") else []),
             "compile_cost_definition": (
                 "interpreter (requirements 3): the one call, timed "
                 "in-driver -- onig_new. No separate JIT step exists "
@@ -186,8 +236,11 @@ class Adapter(_ad.Adapter):
         }
         # [B77] U2: the ENGINE encoding is an identity -- `onig-utf8`
         # derives `onig-default`'s id plus `_utf8`; absent on onig-default.
-        if enc_extra:
-            block["config_extra"] = enc_extra
+        extra = "-".join(e for e in (enc_extra,
+                                     "lim-" + cfg["limits"] if cfg.get("limits")
+                                     else None) if e)   # [B148] L4, LAST
+        if extra:
+            block["config_extra"] = extra
         return block
 
     def binary_identity(self, testee_id, workdir=None):
@@ -225,7 +278,8 @@ class Adapter(_ad.Adapter):
     def prepare_driver(self, workdir):
         return build_driver(os.path.join(HERE, "driver.c"),
                             os.path.join(workdir, "onig_driver"),
-                            extra=["-lonig"])
+                            extra=["-lonig"],
+                            extra_sources=["timed_calls.c"])   # [B148] L4
 
     def prepare(self, testee_id, workdir):
         self.config(testee_id)
@@ -252,11 +306,12 @@ class Adapter(_ad.Adapter):
                            (_ad.FORM_WHOLE_SUBJECT,
                             _rec.whole_subject_text(pattern, requires_free_spacing))):
             forms[form] = self._compile_one(testee_id, pattern_id, form,
-                                            text, trials, workdir)
+                                            text, trials, workdir,
+                                            limits=bool(options and options.get("limits")))
         return _ad.CompiledPattern(forms)
 
     def _compile_one(self, testee_id, pattern_id, form, pattern, trials,
-                     workdir):
+                     workdir, limits=False):
         drv = self.prepare_driver(workdir)
         # per-PATTERN, per-FORM scratch: see Adapter.compile's docstring
         # (the last-pattern's-artifact-under-the-first-pattern's-handle bug)
@@ -273,6 +328,11 @@ class Adapter(_ad.Adapter):
         utf = _ad.config_encoding(testee_id, self.config(testee_id))[0] == "utf8"
         if utf:
             argv += ["--encoding", "utf8"]      # [B77] U2
+        deep = bool(self.config(testee_id).get("limits"))
+        if deep:
+            argv.append("--deep")               # [B148] L4
+        if limits:
+            argv.append("--limits")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         if out.timed_out:
@@ -289,15 +349,17 @@ class Adapter(_ad.Adapter):
                 diagnostic=out.diagnostic() or "driver exit %s" % out.returncode)
 
         meta = {}
-        for name in METADATA_DECL:
-            if name in out.info:
+        for name in list(METADATA_DECL) + (list(LIMITS_DECL) if limits else []):
+            if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
         # The MEASURED set of Oniguruma resource-limit refusals travels
         # with the handle (this file's own GAVE_UP_CODES comment), so
         # `harness.classify_giveup` needs no engine knowledge -- the same
         # contract testees/pcre2/adapter.py's `giveup_codes` uses.
         handle = {"driver": drv, "pattern_file": patfile, "form": form,
-                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf}
+                  "giveup_codes": set(GAVE_UP_CODES), "utf": utf,
+                  "deep": deep, "giveup_names": dict(GAVE_UP_CODES),
+                  "stream_anchor": self.config(testee_id).get("stream_anchor", "native")}
         return _ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle)
@@ -315,6 +377,12 @@ class Adapter(_ad.Adapter):
             argv += ["--encoding", "utf8"]
         if regime == "throughput":
             argv.append("--find-all")
+        if handle.get("deep"):
+            argv.append("--deep")                       # [B148] L4
+        if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
+            argv.append("--anchor-explicit")
+        if handle.get("mem_pass"):
+            argv.append("--mem-pass")
         if handle.get("utf8_advance"):
             # [B77] U1: the character-boundary find-all advance (the
             # driver protocol, pcrecbench/adapters.py), set by the harness

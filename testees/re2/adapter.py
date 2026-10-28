@@ -173,6 +173,19 @@ def _probe_version():
 
 class Adapter(_ad.Adapter):
     name = "re2"
+    calls_mode = True                                  # [B148] L4
+
+    def unusual_metadata_decl(self, testee_id):
+        """[B148] L4: RE2's one storage limit, read back; RE2 has no counter
+        limits and never gives up (it falls back DFA -> NFA), so it has no
+        `deep` arm (unusual_set_v1.md 6.2 lists none)."""
+        decl = dict(_ad.Adapter.unusual_metadata_decl(self, testee_id))
+        decl["lim_max_mem"] = {
+            "type": "integer", "scope": "pattern",
+            "source": "re->options().max_mem() (driver.cc --limits)",
+            "description": "RE2's memory budget for the compiled program and "
+                           "its DFA caches, bytes (read back)"}
+        return decl
 
     # ------------------------------------------------------------- describe
 
@@ -284,14 +297,18 @@ class Adapter(_ad.Adapter):
         # [B140]: the substitution mode's own timed unit (BD16: timed.cc is
         # not edited; a second INSTRUMENT, a second translation unit).
         subst_src = os.path.join(HERE, "timed_subst.cc")
+        # [B148] L4: the call-stream replay, a third instrument TU.
+        calls_src = os.path.join(HERE, "timed_calls.cc")
         deps = [src, timed_src, os.path.join(HERE, "timed.h"), subst_src,
-                os.path.join(HERE, "timed_subst.h")]
+                os.path.join(HERE, "timed_subst.h"), calls_src,
+                os.path.join(HERE, "timed_calls.h"),
+                os.path.join(HERE, "..", "common", "calls_io.h")]
         out = os.path.join(workdir, "re2_driver")
         cxx = os.environ.get("CXX", "g++")
         cflags = _pkg_config("--cflags", "re2")
         libs = _pkg_config("--libs", "re2")
         argv = ([cxx, "-O2", "-std=c++17"] + cflags
-               + ["-o", out, src, timed_src, subst_src] + libs)
+               + ["-o", out, src, timed_src, subst_src, calls_src] + libs)
         # Registered even on the cached path (pcrecbench.driverrun.
         # build_driver's own discipline, quoted): the record must state
         # how the driver that produced its numbers was built, not only
@@ -349,6 +366,9 @@ class Adapter(_ad.Adapter):
         utf = _ad.config_encoding(testee_id, cfg)[0] == "utf8"
         if utf:
             argv += ["--encoding", "utf8"]      # [B77] U2
+        limits = bool(options and options.get("limits"))   # [B148] L4
+        if limits:
+            argv.append("--limits")
         out = run_driver(argv, timeout=max(60, 30 * trials), cwd=workdir)
 
         def one(res):
@@ -385,9 +405,12 @@ class Adapter(_ad.Adapter):
         for name in METADATA_DECL:
             if name in out.info and name != "refusal_class":
                 meta[name] = int(out.info[name])
+        if limits and "lim_max_mem" in out.info:          # [B148] L4
+            meta["lim_max_mem"] = int(out.info["lim_max_mem"])
         handle = {"driver": drv, "pattern_file": patfile,
                   "longest": bool(cfg.get("longest")),
-                  "max_mem": max_mem, "utf": utf}
+                  "max_mem": max_mem, "utf": utf,
+                  "stream_anchor": cfg.get("stream_anchor", "native")}  # [B148] L4
         return one(_ad.CompileResult(
             "compiled", phase_seconds=out.phase_seconds,
             engine_metadata=meta, handle=handle,
@@ -408,6 +431,8 @@ class Adapter(_ad.Adapter):
             argv += ["--encoding", "utf8"]
         if regime == "throughput":
             argv.append("--find-all")
+        if regime == "call-stream" and handle.get("stream_anchor") == "explicit":
+            argv.append("--anchor-explicit")          # [B148] L4
         if handle.get("utf8_advance"):
             # [B77] U1: the character-boundary find-all advance (the
             # driver protocol, pcrecbench/adapters.py), set by the harness
