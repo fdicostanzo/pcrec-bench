@@ -1,0 +1,7 @@
+stream	member	calls	bindings	distinct_values	distinct_resolved	refused	reuse	bindings_sha256
+tenant-d4	va-tenant	16384	4	4	4	0	round-robin	53f79b3eda6a2a7b20a9bbec49ad9eed2ca575748c3555a82cf888d9d8e8cf8e
+tenant-d64	va-tenant	16384	64	64	64	0	round-robin	24cf76993605919b620a0dbf52ca6225a461646d09da9eb92a797e607342e0d2
+tenant-d4096	va-tenant	16384	4096	4096	4096	0	round-robin	4f8130509ff4ca8199af03d2ff2fbeea445e770eee3fdbafc5fc20e1e2382cfb
+route-zipf	va-route	4096	108	108	40	983	zipf-s1.1	825ce38604ae39e76a5e779153275b008e170cb281e193c56e11e7434269762f
+term-zipf	va-term	4096	49	49	47	208	zipf-s1.1	00b86ae7c232121124c69d2a636a2ef4108797c5014e769be9169e30a4a4475f
+term-zipf	va-term-bang	4096	49	49	47	208	zipf-s1.1	00b86ae7c232121124c69d2a636a2ef4108797c5014e769be9169e30a4a4475f

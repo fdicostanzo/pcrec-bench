@@ -5,6 +5,7 @@ applies.tsv for bench/unusual (docs/design/unusual_set_v1.md section 8).
     python3 -I bench/unusual/gen_expectations.py            # write all three
     python3 -I bench/unusual/gen_expectations.py --check    # re-derive + diff
     python3 -I bench/unusual/gen_expectations.py --report   # counts only, writes nothing
+    python3 -I bench/unusual/gen_expectations.py --streams-only [--check]   # expectations_stream.tsv alone (fast)
 
 METHODS (the `method` column). Primary, for every pattern libpcre2 can run:
 `libpcre2-differential` -- the installed libpcre2 10.46 INTERPRETER at its
@@ -32,7 +33,7 @@ return codes per the design's 3.2 table). Second method, per family:
 Every triple both methods answer must AGREE (span, group 1 where the pattern
 has one, find-all count); a disagreement aborts the derivation. The vars
 members (route `vars`) have NO rows: their expectations are per-call over
-declared value streams, L7's. pcrec is never asked.
+declared value streams (L7, below). pcrec is never asked.
 
 REGIMES. search_short: every non-vars pattern x every short subject, the first
 match's span. throughput: only the (pattern, subject) cells applies.tsv names
@@ -42,7 +43,10 @@ non-overlapping find-all count (the advance rule of oracle_pcre2._find_all_impl)
 expectations_stream.tsv: one row per (stream, pattern) for the call-stream
 regime (design 7.1/8): the per-call result tokens `n` | `m:<s>,<e>;<g1s>,<g1e>`
 (absolute offsets, group 0 and group 1 only), `results_sha256` = sha256 of the
-tokens each followed by "\\n".
+tokens each followed by "\\n". A VARS stream (L7, gen_vars.py) is judged per call
+too: the token `r` is a call REFUSED by the variables rule, offsets are
+LINE-relative, and the primary method (libpcre2 over the resolved + escaped
+pattern) is checked against a second (Python `re` over re.escape'd values).
 """
 import fnmatch
 import os
@@ -52,6 +56,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import members as MB  # noqa: E402
 import unusual_lib as U  # noqa: E402
+import gen_vars as GV  # noqa: E402
 from unusual_lib import Rx  # noqa: E402
 from pcrecbench import oracle_pcre2 as O  # noqa: E402
 
@@ -297,6 +302,81 @@ def match_glob(globs, sid):
 
 
 # --------------------------------------------------------------------------
+def stream_rows(by):
+    """-> the expectations_stream.tsv rows (the F1 cscan streams, then the L7 vars streams)."""
+    # ---- the call-stream expectations
+    srows = []
+    with open(os.path.join(HERE, "manifest_streams.tsv")) as f:
+        next(f)
+        streams = [l.split("\t")[0] for l in f]
+    for sid in streams:
+        if sid in {st[0] for st in GV.STREAMS}:
+            continue                                   # the vars streams: below
+        data = open(os.path.join(HERE, "streams", sid + ".bin"), "rb").read()
+        calls = [l.rstrip("\n").split("\t") for l in open(os.path.join(HERE, "calls", sid + ".tsv"))][1:]
+        refus = int([l.split("\t") for l in open(os.path.join(HERE, "manifest_streams.tsv"))][1 + streams.index(sid)][8])
+        for pid in ("cscan", "cscan-onig"):
+            rx = Rx(by[pid].text)
+            toks = []
+            for _cid, off, _ln, _sb, _b in calls:
+                off = int(off)
+                got = rx.search(data, off)
+                ref = U.ref_scan(data, off)
+                if got is None:
+                    tok = "n"
+                    if ref is not None:
+                        raise SystemExit("stream %s %s: oracle no match, reference matches at %d" % (sid, pid, off))
+                else:
+                    (a, b), grp = got
+                    tok = "m:%d,%d;%d,%d" % (a, b, grp[0][0], grp[0][1])
+                    if ref is None or (ref[0], ref[1], ref[2], ref[3]) != (a, b, grp[0][0], grp[0][1]):
+                        raise SystemExit("stream %s %s: oracle %s vs reference %r at %d" % (sid, pid, tok, ref, off))
+                toks.append(tok)
+            nm = sum(1 for t in toks if t == "n")
+            if nm != refus:
+                raise SystemExit("stream %s %s: %d no-match calls, %d local refusals generated" % (sid, pid, nm, refus))
+            h = U.sha256(("".join(t + "\n" for t in toks)).encode())
+            srows.append("%s\t%s\t%d\t%d\t%d\t0\t%s\t%s\n" % (sid, pid, len(toks), len(toks) - nm, nm, h, PRIMARY))
+    # ---- the caller-variables streams (L7): per call, libpcre2 over the
+    # RESOLVED, ESCAPED pattern (gen_vars.resolve -- vars.md 2/5 in Python),
+    # judged against Python `re` over re.escape'd values (a second method
+    # sharing no code with the first beyond the template parse); a call the
+    # variables rule refuses is `r`. Tokens are LINE-RELATIVE (the engine is
+    # given the line alone).
+    import re as _re
+    texts = GV.member_texts()
+    for st in GV.build_all():
+        for pid in st.members:
+            tmpl = texts[pid]
+            rx_cache, py_cache, toks = {}, {}, []
+            for (off, ln, _bid, k) in st.calls:
+                line = st.data[off:off + ln]
+                b = st.bindings[k][1]
+                if k not in rx_cache:
+                    pat = GV.resolve(tmpl, b)
+                    pyp = GV.resolve(tmpl, b, esc=GV.esc_py)
+                    if (pat is None) != (pyp is None):
+                        raise SystemExit("stream %s %s binding %s: the two resolutions disagree on REFUSAL" % (st.sid, pid, st.bindings[k][0]))
+                    rx_cache[k] = None if pat is None else Rx(pat)
+                    py_cache[k] = None if pyp is None else _re.compile(pyp)
+                if rx_cache[k] is None:
+                    toks.append("r")
+                    continue
+                got = rx_cache[k].search(line, 0)
+                pm = py_cache[k].search(line)
+                if (got is None) != (pm is None) or (got is not None and (got[0][0], got[0][1]) != pm.span()):
+                    raise SystemExit("stream %s %s binding %s line %r: libpcre2 %r vs python re %r"
+                                     % (st.sid, pid, st.bindings[k][0], line[:60], got and got[0], pm and pm.span()))
+                toks.append("n" if got is None else "m:%d,%d" % (got[0][0], got[0][1]))
+            nr = sum(1 for t in toks if t == "r")
+            nn = sum(1 for t in toks if t == "n")
+            if nr != st.facts(pid)["refused"]:
+                raise SystemExit("stream %s %s: %d refused tokens, %d predicted" % (st.sid, pid, nr, st.facts(pid)["refused"]))
+            h = U.sha256(("".join(t + "\n" for t in toks)).encode())
+            srows.append("%s\t%s\t%d\t%d\t%d\t%d\t%s\t%s\n" % (st.sid, pid, len(toks), len(toks) - nn - nr, nn, nr, h, PRIMARY))
+    return srows
+
+
 def build(report_only=False):
     MB.check_cscan_source()
     ms = MB.members()
@@ -353,42 +433,30 @@ def build(report_only=False):
     # the twin-vs-real sanity: a callout row's span is its twin's span or a later/absent one
     expectations = (HEADER + "".join(rows)).encode()
 
-    # ---- the call-stream expectations
-    srows = []
-    with open(os.path.join(HERE, "manifest_streams.tsv")) as f:
-        next(f)
-        streams = [l.split("\t")[0] for l in f]
-    for sid in streams:
-        data = open(os.path.join(HERE, "streams", sid + ".bin"), "rb").read()
-        calls = [l.rstrip("\n").split("\t") for l in open(os.path.join(HERE, "calls", sid + ".tsv"))][1:]
-        refus = int([l.split("\t") for l in open(os.path.join(HERE, "manifest_streams.tsv"))][1 + streams.index(sid)][8])
-        for pid in ("cscan", "cscan-onig"):
-            rx = Rx(by[pid].text)
-            toks = []
-            for _cid, off, _ln, _sb, _b in calls:
-                off = int(off)
-                got = rx.search(data, off)
-                ref = U.ref_scan(data, off)
-                if got is None:
-                    tok = "n"
-                    if ref is not None:
-                        raise SystemExit("stream %s %s: oracle no match, reference matches at %d" % (sid, pid, off))
-                else:
-                    (a, b), grp = got
-                    tok = "m:%d,%d;%d,%d" % (a, b, grp[0][0], grp[0][1])
-                    if ref is None or (ref[0], ref[1], ref[2], ref[3]) != (a, b, grp[0][0], grp[0][1]):
-                        raise SystemExit("stream %s %s: oracle %s vs reference %r at %d" % (sid, pid, tok, ref, off))
-                toks.append(tok)
-            nm = sum(1 for t in toks if t == "n")
-            if nm != refus:
-                raise SystemExit("stream %s %s: %d no-match calls, %d local refusals generated" % (sid, pid, nm, refus))
-            h = U.sha256(("".join(t + "\n" for t in toks)).encode())
-            srows.append("%s\t%s\t%d\t%d\t%d\t0\t%s\t%s\n" % (sid, pid, len(toks), len(toks) - nm, nm, h, PRIMARY))
+    srows = stream_rows(by)
     stream_exp = (STREAM_HEADER + "".join(srows)).encode()
     return expectations, stream_exp, render_applies(ms), d, len(rows)
 
 
+def main_streams_only(argv):
+    """expectations_stream.tsv alone (seconds, not the minutes build() takes for
+    the deep-nesting cells): --check diffs it, else it is rewritten."""
+    ms = MB.members()
+    data = (STREAM_HEADER + "".join(stream_rows({m.id: m for m in ms}))).encode()
+    path = os.path.join(HERE, "expectations_stream.tsv")
+    if "--check" in argv:
+        have = open(path, "rb").read() if os.path.exists(path) else None
+        print("gen_expectations --streams-only --check: %s" % ("0 difference(s)" if have == data else "1 difference(s)"))
+        return 0 if have == data else 1
+    with open(path, "wb") as f:
+        f.write(data)
+    print("expectations_stream.tsv: %d rows" % (data.count(b"\n") - 1))
+    return 0
+
+
 def main(argv):
+    if "--streams-only" in argv:
+        return main_streams_only(argv)
     check = "--check" in argv
     report = "--report" in argv
     exp, sexp, app, d, n = build()
