@@ -28,8 +28,10 @@ made before any run, dependencies).
   (which large subjects belong to which patterns). The full derivation takes MINUTES
   (libpcre2's interpreter is super-quadratic on deep brace nesting; NOTES.md section 3).
 - `check_set.py` -- the set's own checks (`--full` re-derives all expectations).
-- `fetch_sqlite.py`, `fetch_kernel.py` -- the F2 fetchers: WRITTEN, UNRUN, EMPTY pin
-  tables, refuse by name until Frank approves each exact URL + sha256.
+- `fetch_sqlite.py`, `fetch_kernel.py` -- the F2 fetchers. `fetch_sqlite.py` is PINNED and RUN
+  (SQLite 3.54.1, approved by Frank 2026-10-27): `vendor/sqlite3.c.xz` + `.sha256` + `SQLITE.md`.
+  `fetch_kernel.py`: empty pin table, refuses by name until Frank approves each URL + sha256.
+  The F2 subjects themselves (locator + expectations) are still OWED to a lane.
   `skipped_subjects.tsv` names the F2 subjects skipped. `vendor/pcrec/` -- cscan.rxt +
   gen_cscan.py, byte-verbatim, MIT (PROVENANCE.md). `values/users.tsv` -- the
   co-member callee's runtime set.

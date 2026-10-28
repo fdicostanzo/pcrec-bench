@@ -44,10 +44,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 # ---- THE TABLE (empty until approved) ------------------------------------
-SQLITE_VERSION = ""
-ARCHIVE_URL = ""
-ARCHIVE_SHA256 = ""
-SQLITE3C_SHA256 = ""
+# Approved by Frank 2026-10-27 after the manager showed the URL and sqlite.org's
+# published SHA3-256 (92281c86e2957f9b9305890f9ac04204caa7b677cc868dc326d942689df28e30,
+# verified on a first download into scratch; the two sha256 below were computed
+# from that verified archive).
+SQLITE_VERSION = "3.54.1"
+ARCHIVE_URL = "https://www.sqlite.org/2026/sqlite-amalgamation-3540100.zip"
+ARCHIVE_SHA256 = "0a9c8e34352dad46006aa82836d5383bff9dc6bc9ce5a60553c05aa30e6ad1f9"
+SQLITE3C_SHA256 = "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52"
 # ---------------------------------------------------------------------------
 
 WORK = os.path.join(ROOT, "build", "unusual", "sqlite")
