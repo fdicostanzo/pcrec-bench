@@ -75,6 +75,26 @@
  * `onig_error_code_to_str` supplies the message text for every code this
  * driver did not expect, so a code the header adds later still prints a
  * real diagnostic instead of a blank one.
+ *
+ * [B148] L4 (docs/design/unusual_set_v1.md 6.2, 7.1-7.3):
+ *   `--mode calls` -- a CALL STREAM over the whole subject, one onig_search
+ *     per declared call starting at the call's offset (`--anchor-explicit`:
+ *     onig_match there), replayed `--iters` times; the replay is
+ *     timed_calls() in timed_calls.c (BD16), the tokens and the `stream`
+ *     line are testees/common/calls_io.h's, after the clock.
+ *   `--deep` -- the `deep` limits arm (lim-ceil1g): Oniguruma's GLOBAL
+ *     setters, applied once after onig_initialize and before onig_new,
+ *     outside every timed call: the match stack capped at the 1 GiB
+ *     equivalent in STACK ELEMENTS (ONIG_DEEP_STACK_ELEMS below, Q-E), both
+ *     retry limits and the subexp-call limit 0 (= unlimited, P10), and the
+ *     subexp-call nest level 1,000,000 (P11; the default 20 answers
+ *     SILENTLY WRONG past it, 6.3).
+ *   `--limits` -- the six global getters READ BACK after the setters, as
+ *     `info lim_*` lines (every arm).
+ *   `--mem-pass` -- 6.4's `rss-delta`: an UNTIMED single pass; prints
+ *     `mem<TAB>ID<TAB>BYTES<TAB>rss-delta<TAB>MAXRSS_KB` with BYTES the
+ *     ru_maxrss growth across the subject's call(s) (a coarse upper bound:
+ *     oniguruma.h has no high-water getter).
  */
 
 #include <oniguruma.h>
@@ -89,7 +109,17 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <sys/resource.h>
+
 #include "timed.h"
+#include "timed_calls.h"
+
+/* [B148] L4 Q-E, MEASURED (docs/dev/lanes/b148l4_report.md "Q-E"): the match
+ * stack limit counts STACK ELEMENTS; the 1 GiB equivalent is 1 GiB divided
+ * by the measured bytes per element. */
+#define ONIG_STACK_ELEM_BYTES   32   /* rss 3,200 KiB at a 100,000-element give-up = 32.8 B/elem incl. overhead; StackType = 2 ints + a 3-pointer union */
+#define ONIG_DEEP_STACK_ELEMS   ((unsigned int)((1ULL << 30) / ONIG_STACK_ELEM_BYTES))
+#define ONIG_DEEP_NEST_LEVEL    1000000
 
 #define ONIG_DRIVER_SYNTAX  ONIG_SYNTAX_PERL_NG
 /* [B77] U2 (utf8_set_v1.md 7.1): the DEFAULT encoding. `--encoding utf8`
@@ -190,6 +220,84 @@ static void emit_caps(OnigRegion *region, char *out, size_t outcap) {
     if (!out[0]) { out[0] = '-'; out[1] = 0; }
 }
 
+static long maxrss_kb(void) {
+    struct rusage ru;
+    if (getrusage(RUSAGE_SELF, &ru) != 0) return -1;
+    return ru.ru_maxrss;
+}
+
+static const char *onig_code_name(int rc) {
+    switch (rc) {
+    case ONIGERR_MATCH_STACK_LIMIT_OVER:           return "ONIGERR_MATCH_STACK_LIMIT_OVER";
+    case ONIGERR_RETRY_LIMIT_IN_MATCH_OVER:        return "ONIGERR_RETRY_LIMIT_IN_MATCH_OVER";
+    case ONIGERR_RETRY_LIMIT_IN_SEARCH_OVER:       return "ONIGERR_RETRY_LIMIT_IN_SEARCH_OVER";
+    case ONIGERR_SUBEXP_CALL_LIMIT_IN_SEARCH_OVER: return "ONIGERR_SUBEXP_CALL_LIMIT_IN_SEARCH_OVER";
+    case ONIGERR_MEMORY:                           return "ONIGERR_MEMORY";
+    default:                                       return NULL;
+    }
+}
+
+/* [B148] L4: --mode calls (header comment). */
+static int run_calls(const char *list_path, regex_t *reg, long iters,
+                     long subject_timeout, long skip, int anchor_explicit,
+                     int mem_pass, const char *tokens_dir) {
+    size_t nsub = 0;
+    struct calls_subject *subs = calls_load_list(list_path, &nsub);
+    if (!subs) return 2;
+    OnigRegion *region = onig_region_new();
+    if (!region) { printf("error\tonig_region_new failed\n"); return 2; }
+    struct sigaction sa;
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = on_alarm;
+    sigaction(SIGALRM, &sa, NULL);
+    const int has_g1 = onig_number_of_captures(reg) >= 1;
+    for (size_t i = (size_t)skip; i < nsub; i++) {
+        struct calls_subject *s = &subs[i];
+        struct call_res *res = calloc(s->ncalls, sizeof *res);
+        if (!res) { printf("error\tcannot allocate %zu call results\n", s->ncalls); return 2; }
+        volatile double elapsed = 0.0;
+        struct tcalls_in tin = {
+            .buf = s->buf, .len = s->len, .calls = s->calls, .ncalls = s->ncalls,
+            .iters = mem_pass ? 1 : iters, .anchored = anchor_explicit,
+            .has_g1 = has_g1, .reg = reg, .region = region, .res = res,
+        };
+        struct tcalls_out tout = { 0, 0 };
+        long rss0 = maxrss_kb();
+        timed_out = 0;
+        if (sigsetjmp(timeout_jmp, 1) == 0) {
+            if (subject_timeout > 0) alarm((unsigned)subject_timeout);
+            elapsed = timed_calls(&tin, &tout);
+            if (subject_timeout > 0) alarm(0);
+        }
+        if (timed_out) {
+            printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
+                   s->id, (long)tin.iters, (double)elapsed);
+            free(res);
+            continue;
+        }
+        if (mem_pass) {
+            long rss1 = maxrss_kb();
+            printf("mem\t%s\t%ld\trss-delta\t%ld\n", s->id,
+                   (rss1 - rss0) * 1024L, rss1);
+            free(res);
+            continue;
+        }
+        size_t matched = 0;
+        int first_g = 0;
+        for (size_t k = 0; k < s->ncalls; k++) {
+            matched += res[k].kind == CALL_M;
+            if (res[k].kind == CALL_G && !first_g) first_g = res[k].code;
+        }
+        printf("subject\t%s\tstream\t-\t-\t0\t%zu\t%ld\t%.9f\t%zu\t-\n",
+               s->id, s->len, (long)tin.iters, (double)elapsed, matched);
+        calls_report(s->id, res, s->ncalls, has_g1, tokens_dir,
+                     first_g ? onig_code_name(first_g) : NULL);
+        free(res);
+    }
+    onig_region_free(region, 1);
+    return 0;
+}
+
 int main(int argc, char **argv) {
     const char *pattern_path = NULL, *list_path = NULL, *mode = "search";
     const char *form = "plain";
@@ -201,6 +309,9 @@ int main(int argc, char **argv) {
     volatile int find_all = 0;
     volatile int utf8_adv = 0;   /* [B77] U1: --utf8, the protocol flag */
     volatile long prime = 0;   /* [B129] --prime: one untimed call per subject before the timed loop */
+    int deep = 0, limits = 0, anchor_explicit = 0;   /* [B148] L4 */
+    volatile int mem_pass = 0;
+    const char *tokens_dir = NULL;
     OnigEncoding enc = ONIG_DRIVER_ENCODING;   /* [B77] U2: --encoding */
     const char *enc_name = "ASCII";
 
@@ -217,6 +328,11 @@ int main(int argc, char **argv) {
         else if (!strcmp(a, "--find-all"))                  find_all = 1;
         else if (!strcmp(a, "--utf8"))                      utf8_adv = 1;
         else if (!strcmp(a, "--prime"))                      prime = 1;
+        else if (!strcmp(a, "--deep"))                       deep = 1;       /* [B148] L4 */
+        else if (!strcmp(a, "--limits"))                     limits = 1;
+        else if (!strcmp(a, "--mem-pass"))                   mem_pass = 1;
+        else if (!strcmp(a, "--anchor-explicit"))            anchor_explicit = 1;
+        else if (!strcmp(a, "--tokens-dir") && i + 1 < argc) tokens_dir = argv[++i];
         else if (!strcmp(a, "--encoding") && i + 1 < argc) {
             const char *e = argv[++i];
             if (!strcmp(e, "utf8"))       { enc = ONIG_ENCODING_UTF8;  enc_name = "UTF8"; }
@@ -237,7 +353,17 @@ int main(int argc, char **argv) {
      * Accepted (protocol compliance) and cross-checked here rather than
      * silently ignored, so a future adapter bug that decouples the two
      * flags fails LOUDLY instead of quietly measuring the wrong form. */
-    if (list_path) {
+    const int calls_mode = !strcmp(mode, "calls");    /* [B148] L4 */
+    if (calls_mode && (find_all || prime || utf8_adv || whole_subject)) {
+        printf("error\t--mode calls takes none of --find-all, --prime, --utf8, "
+               "--form whole-subject\n");
+        return 2;
+    }
+    if (anchor_explicit && !calls_mode) {
+        printf("error\t--anchor-explicit is a --mode calls flag\n");
+        return 2;
+    }
+    if (list_path && !calls_mode) {
         int mode_wants_whole = !strcmp(mode, "match");
         if (mode_wants_whole != whole_subject)
             die("--mode and --form disagree (this driver has no anchoring "
@@ -249,6 +375,29 @@ int main(int argc, char **argv) {
     OnigEncoding use_encs[1];
     use_encs[0] = enc;
     onig_initialize(use_encs, 1);
+
+    /* [B148] L4: the deep arm's GLOBAL setters, before onig_new and outside
+     * every timed call (header comment). A setter's failure is a refusal BY
+     * NAME, never a silently default arm. */
+    if (deep) {
+        if (onig_set_match_stack_limit_size(ONIG_DEEP_STACK_ELEMS) != 0
+            || onig_set_retry_limit_in_match(0) != 0
+            || onig_set_retry_limit_in_search(0) != 0
+            || onig_set_subexp_call_limit_in_search(0) != 0
+            || onig_set_subexp_call_max_nest_level(ONIG_DEEP_NEST_LEVEL) != 0) {
+            printf("error\t--deep: an Oniguruma global limit setter refused\n");
+            return 2;
+        }
+    }
+    if (limits) {
+        printf("info\tlim_match_stack_elems\t%u\n", onig_get_match_stack_limit_size());
+        printf("info\tlim_retry_in_match\t%lu\n", onig_get_retry_limit_in_match());
+        printf("info\tlim_retry_in_search\t%lu\n", onig_get_retry_limit_in_search());
+        printf("info\tlim_subexp_call_in_search\t%lu\n", onig_get_subexp_call_limit_in_search());
+        printf("info\tlim_subexp_call_nest\t%d\n", onig_get_subexp_call_max_nest_level());
+        printf("info\tlim_parse_depth\t%u\n", onig_get_parse_depth_limit());
+        printf("info\tlim_stack_elem_bytes\t%d\n", ONIG_STACK_ELEM_BYTES);
+    }
 
     {
         char verbuf[64];
@@ -293,6 +442,15 @@ int main(int argc, char **argv) {
 
     if (!list_path) { fflush(stdout); return 0; }   /* compile-only run */
 
+    if (calls_mode) {                                 /* [B148] L4 */
+        int rc = run_calls(list_path, reg, iters, subject_timeout, skip,
+                           anchor_explicit, mem_pass, tokens_dir);
+        onig_free(reg);
+        onig_end();
+        fflush(stdout);
+        return rc;
+    }
+
     size_t nsub = 0;
     subject *subs = load_list(list_path, &nsub);
     if (!subs) { printf("error\tcannot read subject list %s\n", list_path); return 2; }
@@ -312,6 +470,7 @@ int main(int argc, char **argv) {
         volatile long   first_s = -1, first_e = -1, nmatch = -1;
         volatile int    rc_final = ONIG_MISMATCH;
         volatile double elapsed = 0.0;
+        long rss0 = maxrss_kb();                     /* [B148] L4 --mem-pass */
 
         timed_out = 0;
         if (sigsetjmp(timeout_jmp, 1) == 0) {
@@ -319,7 +478,7 @@ int main(int argc, char **argv) {
             /* [B133] the timed loop is timed_run() in timed.c (its own
              * translation unit; see that file's header). */
             struct timed_in tin = {
-                .buf = s->buf, .len = s->len, .iters = iters,
+                .buf = s->buf, .len = s->len, .iters = mem_pass ? 1 : iters,
                 .prime = (int)prime, .find_all = find_all,
                 .utf8_adv = utf8_adv, .whole_subject = whole_subject,
                 .reg = reg, .region = region,
@@ -334,6 +493,12 @@ int main(int argc, char **argv) {
         if (timed_out) {
             printf("subject\t%s\ttimedout\t-\t-\t0\t-\t%ld\t%.9f\t-\t-\n",
                    s->id, (long)iters, (double)elapsed);
+            continue;
+        }
+        if (mem_pass) {
+            long rss1 = maxrss_kb();
+            printf("mem\t%s\t%ld\trss-delta\t%ld\n", s->id,
+                   (rss1 - rss0) * 1024L, rss1);
             continue;
         }
 
