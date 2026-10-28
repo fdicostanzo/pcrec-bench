@@ -1,0 +1,42 @@
+# testees/assist/configs.toml -- the ASSISTED configs ([B148] lane b148aw;
+# docs/design/unusual_set_v1.md 5.5).
+#
+# One per assist engine: the SAME library and version as its `base` config,
+# plus host code for the members that engine lacks (bench/unusual/assists/
+# <member>/<engine>/assist.<ext>, the ledger assists.tsv). The id is the
+# base's with the identity token `assist-v01` (P5, the SET version: it does not
+# vary with which members passed) appended LAST to `config_extra`, and the
+# record carries `testee.assist` (X50). `unusual_only`: refused BY NAME on any
+# other set. A cell runs only the members assisted on this engine, their
+# `-twin` arms and the floor (adapter.pattern_scope); everything else is the
+# base config's own cell.
+
+[testees.pcre2-jit-assist-v01]
+base = "pcre2-jit"
+engine = "pcre2"
+unusual_only = true
+description = "pcre2-jit + assists for the members libpcre2 lacks (vars, netstr) -- bench/unusual only ([B148] b148aw)"
+
+[testees.onig-default-assist-v01]
+base = "onig-default"
+engine = "onig"
+unusual_only = true
+description = "onig-default + assists for the members Oniguruma lacks (vars, netstr) -- bench/unusual only ([B148] b148aw)"
+
+[testees.re2-default-assist-v01]
+base = "re2-default"
+engine = "re2"
+unusual_only = true
+description = "re2-default + C++ assists (recursion, callouts, netstr, vars) -- bench/unusual only ([B148] b148aw)"
+
+[testees.rust-default-assist-v01]
+base = "rust-default"
+engine = "rust"
+unusual_only = true
+description = "rust-default + Rust assists (recursion, callouts, netstr, vars) -- bench/unusual only ([B148] b148aw)"
+
+[testees.vectorscan-block-som-assist-v01]
+base = "vectorscan-block-som"
+engine = "vectorscan"
+unusual_only = true
+description = "vectorscan-block-som + C assists (recursion, callouts, netstr, vars) -- bench/unusual only ([B148] b148aw)"

@@ -52,6 +52,10 @@ FAMILIES = {
     "netstr": ("co-netstr",),
     "vars": ("va-tenant", "va-route", "va-term", "va-term-bang"),
 }
+#: family -> the ledger's `feature` column (unusual_set_v1.md 3: netstrings
+#: are a callouts member with its own problem statement)
+FEATURE = {"recursion": "recursion", "callouts": "callouts",
+           "netstr": "callouts", "vars": "vars"}
 #: members whose answer token carries group 1 (calls_io.h `has_g1`)
 HAS_G1 = {"cscan", "co-luhn", "co-isbn", "co-member", "co-netstr"}
 
@@ -229,7 +233,9 @@ def ledger(root=None):
             continue
         d = dict(zip(head, ln.split("\t")))
         d["line"] = n
-        d["ref"] = "%s:%d" % (os.path.relpath(tsv, REPO), n)
+        inside = os.path.realpath(tsv).startswith(os.path.realpath(REPO) + os.sep)
+        d["ref"] = "%s:%d" % (os.path.relpath(tsv, REPO) if inside
+                              else os.path.abspath(tsv), n)
         out[(d.get("member"), d.get("engine"))] = d
     return out
 
@@ -342,10 +348,12 @@ def _build_rust_lib(src, d):
     return os.path.join(d, "target", "release", "libub_assist.a"), native, argv
 
 
-def build(member, engine, src=None, out_dir=None):
+def build(member, engine, src=None, out_dir=None, count=False):
     """Build the assist driver for (member, engine) from `src` (default: the
     ledger's file). -> (binary path, provenance dict {command_line,
-    compiler}). Cached on the digest of the assist + the runner."""
+    compiler, callees_sha256 (callouts only)}). Cached on the digest of the
+    assist + the runner. `count=True` (callouts only) links callees.o's
+    counting twin instead: the harness's untimed fire pass."""
     fam = check_pair(member, engine)
     spec = engine_spec(engine)
     src = os.path.abspath(src or assist_path(member, engine))
@@ -356,15 +364,18 @@ def build(member, engine, src=None, out_dir=None):
     h = hashlib.sha256(_sha(src).encode())
     for r in runner:
         h.update(_sha(r).encode())
+    if count:
+        h.update(b"count")
     key = h.hexdigest()[:16]
     d = out_dir or os.path.join(BUILD_ROOT, "%s-%s-%s" % (member, engine, key))
     os.makedirs(d, exist_ok=True)
     out = os.path.join(d, "assist_driver")
     inc = ["-I", RUNNER_DIR, "-I", ASSISTS_DIR]
     extra_objs = []
+    callees_sha = None
     if callouts:
         from . import callees as _callees
-        obj, _sha_callees = _callees.ensure()
+        obj, callees_sha = _callees.ensure(count=count)
         extra_objs.append(obj)
     if spec["lang"] in ("c", "cpp"):
         cflags = list(spec.get("cflags", []))
@@ -395,7 +406,10 @@ def build(member, engine, src=None, out_dir=None):
         with open(os.path.join(d, "link.cmd")) as f:
             cmd = f.read().split()
         compiler = "rustc"
-    return out, {"command_line": cmd, "compiler": compiler}
+    prov = {"command_line": cmd, "compiler": compiler}
+    if callees_sha:
+        prov["callees_sha256"] = callees_sha
+    return out, prov
 
 
 # ----------------------------------------------------------------- selftest

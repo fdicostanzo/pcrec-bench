@@ -82,7 +82,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-atomic-group", "requires-lookaround"]
+tags = ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-atomic-group", "requires-lookaround", "requires-unusual-cscan"]
 role = "member"
 
 [[patterns]]
@@ -102,7 +102,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-recursion", "hazard-none", "provenance-pcre2-doc", "fidelity-adapted", "requires-recursion", "requires-free-spacing", "requires-possessive-quantifier", "requires-captures"]
+tags = ["family-recursion", "hazard-none", "provenance-pcre2-doc", "fidelity-adapted", "requires-recursion", "requires-free-spacing", "requires-possessive-quantifier", "requires-captures", "requires-unusual-wild-sexp-balanced"]
 role = "member"
 
 [[patterns]]
@@ -112,7 +112,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "medium"
 convention = "perl-leftmost-first"
-tags = ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-free-spacing", "requires-possessive-quantifier"]
+tags = ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-free-spacing", "requires-possessive-quantifier", "requires-unusual-wild-json-validate"]
 role = "member"
 
 [[patterns]]
@@ -132,7 +132,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-luhn", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-luhn", "requires-callouts", "requires-captures", "requires-unusual-co-luhn"]
 role = "member"
 
 [[patterns]]
@@ -172,7 +172,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-isbn", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-isbn", "requires-callouts", "requires-captures", "requires-unusual-co-isbn"]
 role = "member"
 
 [[patterns]]
@@ -212,7 +212,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-member", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-member", "requires-callouts", "requires-captures", "requires-unusual-co-member"]
 role = "member"
 
 [[patterns]]

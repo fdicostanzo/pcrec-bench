@@ -926,6 +926,15 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         cell_patterns = [p for p in sb.patterns if p.name in set(patterns)]
     else:
         cell_patterns = list(sb.patterns)
+        # [B148] lane b148aw: an adapter may SCOPE a whole cell to the
+        # patterns its config exists for (an assisted config: its assisted
+        # members, their twins and the floor -- the rest is its base
+        # config's cell, measured there). An explicit `patterns=` is honoured
+        # as asked. Absent on every other adapter: no change.
+        scope = getattr(adapter, "pattern_scope", None)
+        scope = scope(testee_id, sb) if scope else None
+        if scope is not None:
+            cell_patterns = [p for p in cell_patterns if p.name in scope]
     if subject_limit is not None and int(subject_limit) < 1:
         raise HarnessError("subject_limit must be >= 1, got %r" % subject_limit)
 
@@ -1090,6 +1099,13 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
         # compile rows are byte-for-byte what they were.
         options = dict(options, limits=True)
 
+    # [B148] lane b148aw: run-time capability GRANTS (an assisted config's
+    # `unusual-<member>` per ASSISTED ledger row) and the adapter's own
+    # `declaration_ref` for a refusal it can cite better (a NOT-CAPABLE
+    # ledger row: capability.not_capable_declaration_ref). Absent elsewhere.
+    grants = (adapter.capability_grants(testee_id, sb)
+              if hasattr(adapter, "capability_grants") else frozenset())
+    decl_ref_for = getattr(adapter, "declaration_ref_for", None)
     for p in cell_patterns:
         say("compiling %s / %s (%d trial(s)) ..." % (testee_id, p.name, trials))
         # THE PRE-COMPILE CAPABILITY POLICY (capability_set_v1.md 5.3,
@@ -1115,7 +1131,7 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
             substrun.write_template(
                 splan, os.path.join(workdir, "p-" + p.name))
             subst_plans[p.name] = splan
-        missing = _cap.missing_capabilities(sb, testee_id, p)
+        missing = _cap.missing_capabilities(sb, testee_id, p, grants=grants)
         if splan is not None and splan.unsupported:
             cp = _ad.CompiledPattern({_ad.FORM_PLAIN: _ad.CompileResult(
                 outcome="unsupported-by-declaration",
@@ -1126,7 +1142,9 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
                 outcome="unsupported-by-declaration",
                 diagnostic=("REQUIRES %s; %s declares none of it"
                             % (", ".join(sorted(missing)), testee_id)),
-                declaration_ref=_cap.declaration_ref(sb, testee_id, p, missing))})
+                declaration_ref=(
+                    decl_ref_for(testee_id, sb, p, missing) if decl_ref_for
+                    else None) or _cap.declaration_ref(sb, testee_id, p, missing))})
         else:
             # [B70] the wrap-spelling fix (capability_set_v1.md 14): the
             # ONE place a pattern's own declared tags are visible to a

@@ -142,7 +142,8 @@ def members():
         attr="pcrec lane scandog, [SCANNER-DOGFOOD]")
     M.append(Member("cscan", "recursion", ct, "cscan",
                     ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim"],
-                    ["recursion", "named-groups", "conditionals", "atomic-group", "lookaround"],
+                    ["recursion", "named-groups", "conditionals", "atomic-group", "lookaround",
+                     "unusual-cscan"],
                     pcrec_prov, isolates="the C (?{ ... }) end scanner: DEFINE'd subroutines, \\G, possessive loops"))
     onig_prov = dict(pcrec_prov, fid="adapted",
                      adapt="declared syntax-only variant (design 3.1): (?(DEFINE)...) respelled (?<name>...){0}, nothing else changed",
@@ -154,7 +155,8 @@ def members():
                     isolates="cscan with no (?(DEFINE) -- the spelling Oniguruma reads as the author meant"))
     M.append(Member("wild-sexp-balanced", "recursion", SEXP_TEXT, "plain",
                     ["family-recursion", "hazard-none", "provenance-pcre2-doc", "fidelity-adapted"],
-                    ["recursion", "free-spacing", "possessive-quantifier", "captures"],
+                    ["recursion", "free-spacing", "possessive-quantifier", "captures",
+                     "unusual-wild-sexp-balanced"],
                     dict(src="pcre2-doc", url="man pcre2pattern(3) 10.46, section RECURSIVE PATTERNS",
                          ref="( \\( ( [^()]++ | (?1) )* \\) )", lic="BSD-3-Clause",
                          lic_note="libpcre2 /usr/share/doc/libpcre2-8-0/copyright (BSD-3-clause-Cambridge)",
@@ -163,7 +165,8 @@ def members():
                     isolates="balanced () by numeric-group recursion with a possessive inner run"))
     M.append(Member("wild-json-validate", "recursion", JSON_TEXT, "plain",
                     ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted"],
-                    ["recursion", "named-groups", "conditionals", "free-spacing", "possessive-quantifier"],
+                    ["recursion", "named-groups", "conditionals", "free-spacing", "possessive-quantifier",
+                     "unusual-wild-json-validate"],
                     dict(src="stackoverflow-3845829", url="https://stackoverflow.com/a/3845829",
                          ref="answer 3845829 by mario to question 2583472 \"Regex to validate JSON\", edited 2023-11-24",
                          lic="CC-BY-SA-4.0", lic_note="Stack Overflow content licence; attribution required",
@@ -183,7 +186,11 @@ def members():
     def co(pid, site_text, twin_text, kind, num, extra_req):
         base_tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized"]
         req = ["callouts", "captures"] + extra_req
-        M.append(Member(pid, "callouts", site_text, "callout:" + kind, base_tags + ["arm-real", "twin_of-" + pid], req, AUTH,
+        # [B148] lane b148aw: the REAL arm alone carries `unusual-<member>` --
+        # the member an assisted config runs (unusual_set_v1.md 5.5);
+        # gen_patterns.py declares it for every config that runs it natively.
+        M.append(Member(pid, "callouts", site_text, "callout:" + kind, base_tags + ["arm-real", "twin_of-" + pid],
+                        req + ["unusual-" + pid], AUTH,
                         twin_of=pid + "-twin", isolates="callout C%d with the real callee" % num))
         M.append(Member(pid + "-pass", "callouts", site_text, "pass:" + pid + "-twin", base_tags + ["arm-pass", "twin_of-" + pid], req, AUTH,
                         twin_of=pid + "-twin", isolates="the site present, the full wrapper, a stub callee (answers equal the twin's)"))

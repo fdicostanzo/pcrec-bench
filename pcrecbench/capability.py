@@ -269,13 +269,26 @@ def capabilities_for(sb, testee_id):
     return matrix.get(testee_id, frozenset())
 
 
-def missing_capabilities(sb, testee_id, pattern):
+def missing_capabilities(sb, testee_id, pattern, grants=frozenset()):
     """REQUIRES(pattern) - capabilities(testee_id). Empty iff the config
-    may attempt this pattern; non-empty names every token it lacks."""
+    may attempt this pattern; non-empty names every token it lacks.
+
+    [B148] lane b148aw (unusual_set_v1.md 5.5): `grants` are tokens the
+    ADAPTER adds at run time (an assisted config's `unusual-<member>` for
+    each ASSISTED ledger row, testees/assist/adapter.py
+    `capability_grants`), unioned with the matrix's. An `unusual-<member>`
+    token the pattern requires AND the config holds SUBSUMES the rest: the
+    config supplies that member's whole feature (natively, where the matrix
+    declares it only beside the member's other requires -- bench/unusual/
+    gen_patterns.py FEATURE_MEMBERS -- or by its assist), so nothing is
+    missing."""
     requires = pattern_requires(pattern)
     if not requires:
         return frozenset()
-    return requires - capabilities_for(sb, testee_id)
+    have = capabilities_for(sb, testee_id) | frozenset(grants)
+    if any(t.startswith(UNUSUAL_PREFIX) for t in requires & have):
+        return frozenset()
+    return requires - have
 
 
 def declaration_ref(sb, testee_id, pattern, missing):

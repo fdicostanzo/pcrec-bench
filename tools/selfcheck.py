@@ -18953,6 +18953,17 @@ def check_callouts_set():
     check_callouts.run(ok, bad)
 
 
+def check_assist_set():
+    """[B148] b148aw the ASSIST pipeline -- the templates (fences valid, the
+    empty assist near zero), dummy assists per language built and
+    self-tested over the public samples, the echo controls, the fixture
+    ledger with a NOT-CAPABLE row, run_cell on an assisted config (X50 and
+    its control), the subsume rule. Implemented in tools/check_assist.py;
+    see its docstring."""
+    import check_assist
+    check_assist.run(ok, bad)
+
+
 def check_subst_set():
     """[B140] bench/subst's slice -- the neutral template's renderer against
     real engines (hostile-template test + controls), the oracle's
@@ -19067,6 +19078,7 @@ def main():
     check_calls_set()
     check_vars_set()
     check_callouts_set()
+    check_assist_set()
     check_subst_gate_skips()
     check_unusual_gate_skips()
     check_pcre2_dfa()

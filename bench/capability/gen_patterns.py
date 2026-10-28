@@ -1213,6 +1213,17 @@ for _deep_id in ("pcre2-interp-deep", "pcre2-jit-deep", "pcrec-auto-deep",
         "engine capabilities are its default sibling's")
 del _deep_id
 
+# [B148] lane b148aw (unusual_set_v1.md 5.5): the ASSISTED configs
+# (testees/assist/), `unusual_only` like the deep arms; bench/unusual's
+# gen_patterns.py ASSIST_ARMS copies each base's block.
+for _assist_id in ("pcre2-jit-assist-v01", "onig-default-assist-v01",
+                   "re2-default-assist-v01", "rust-default-assist-v01",
+                   "vectorscan-block-som-assist-v01"):
+    EXCLUDED_TESTEES[_assist_id] = (
+        "unusual-set-only ASSISTED config ([B148] b148aw, `unusual_only`): its "
+        "base config plus host-code assists for the members its engine lacks")
+del _assist_id
+
 
 def render_ext_bench():
     lines = ["ext bench"]
