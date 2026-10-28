@@ -47,9 +47,15 @@ r9 review C2/C3/C10 and the -schema S-2..S-5, S-10, S-11, S-14 findings.
 - `pcrecbench/tests/test_report.py`: 111 passed, 0 failed (+1:
   `test_call_stream_skipped_by_set_grain_b148`).
 - `tools/tests/test_frontpage.py`: 44 PASS. `test_trend.py`: ALL PASS.
-- Whole-store validation with the new validator: see the handback (it was
-  still running at commit time).
-- Full `make check`: see the handback.
+- **OWED (manager launches, BOILERPLATE "long runs"):**
+  1. Full `make check`, cwd `/home/pcrec/projects/pcrec-bench/worktrees/b148l1`:
+     `setsid gnutimeout 5400 make check > /var/tmp/pcrecbench/b148l1/make_check.log 2>&1; echo "DONE rc=$?" >> /var/tmp/pcrecbench/b148l1/make_check.log`
+     (the marker is the `DONE rc=` line). The email quick-cell check is load-sensitive.
+  2. Whole-store validation (631 records, 3.8 GB, about 10+ min, detached):
+     `setsid nice gnutimeout 3000 python3 -u /var/tmp/pcrecbench/b148l1/val_store.py /home/pcrec/projects/pcrec-bench/worktrees/b148l1 > /var/tmp/pcrecbench/b148l1/val_store.log 2>&1; echo "DONE rc=$?" >> /var/tmp/pcrecbench/b148l1/val_store.log`
+     The last line should read `files 631 invalid 0 ...`. The lane's own run was
+     stopped unfinished (rc=143) so that it could be handed off. Its output was
+     buffered, so it yields no verdict.
 
 ## Findings and proposals
 
