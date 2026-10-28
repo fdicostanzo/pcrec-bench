@@ -26,6 +26,12 @@ REGIME_TO_ENUM = {
     # v1.9 ([B140]): the TRANSFORM regime -- a pattern + template applied to
     # a subject, the OUTPUT being the answer (subst_bench_v1.md 5 S1).
     "substitution": "substitution",
+    # v1.11 ([B148] L1, unusual_set_v1.md 7.1): the CALL-STREAM regime -- a
+    # declared call list over one subject, one timed iteration = one full
+    # replay. The schema and the sidecar spelling exist from L1; the driver
+    # plumbing (`--mode calls`, 7.3) is lane L4's, and until it lands
+    # `harness.run_cell` refuses the regime BY NAME (CALL_STREAM_PENDING).
+    "call-stream": "call-stream",
 }
 ENUM_TO_REGIME = {v: k for k, v in REGIME_TO_ENUM.items()}
 
@@ -36,6 +42,7 @@ REGIME_MODE = {
     "search_short": "search",
     "throughput": "search",
     "substitution": "subst",
+    "call-stream": "calls",
 }
 
 # Files under bench/<name>/ that are GENERATED, and so are excluded from the
@@ -121,6 +128,54 @@ class Pattern:
             raise SubbenchError(
                 "pattern entry %r has neither `file` nor inline `text` -- "
                 "one pattern-bytes source is required" % d.get("name"))
+
+
+# [B148] L1 (unusual_set_v1.md 2, 3.2): THE `twin_of` PATTERN TAG. A callout
+# member is three patterns -- `<id>-twin` (the site removed), `<id>-pass`
+# (the site present, a stub callee) and `<id>` (the real callee) -- linked by
+# `tag twin_of=<id>` (an `.rxt` `key=value` tag, flattened like every other
+# to `twin_of-<id>`; a sidecar writes the flat spelling directly). The tag's
+# VALUE is a pattern id, so no `vocabulary` line can close it: its rule is
+# checked here instead, at load -- at most one per pattern, it names a
+# pattern of the same set, and the pattern it names is the group's ROOT (it
+# carries no `twin_of`, or `twin_of` itself). Readers: `twin_groups` below
+# (the set-sidecar cost split and `tools/check_unusual.py`'s pass == twin
+# gate, unusual_set_v1.md 3.2 / S-12).
+TWIN_OF_TAG = "twin_of"
+_TWIN_OF_PREFIX = TWIN_OF_TAG + "-"
+
+
+def twin_of(pattern):
+    """-> the `twin_of` value of `pattern` (a pattern id), or None."""
+    vals = [t[len(_TWIN_OF_PREFIX):] for t in pattern.tags or ()
+            if t.startswith(_TWIN_OF_PREFIX)]
+    if len(vals) > 1:
+        raise SubbenchError("pattern %r carries %d twin_of tags %r; at most one"
+                            % (pattern.name, len(vals), vals))
+    return vals[0] if vals else None
+
+
+def twin_groups(patterns, set_id):
+    """-> `{root_id: [member ids, in set order]}` over every pattern that
+    carries `twin_of` (the root included when it names itself). Raises
+    SubbenchError naming the pattern when a value names no pattern of the
+    set, or names a pattern that is itself linked to a third."""
+    by_id = {p.name: p for p in patterns}
+    groups = {}
+    for p in patterns:
+        root = twin_of(p)
+        if root is None:
+            continue
+        if root not in by_id:
+            raise SubbenchError("%s: pattern %r: twin_of=%s names no pattern "
+                                "of the set" % (set_id, p.name, root))
+        rr = twin_of(by_id[root])
+        if rr not in (None, root):
+            raise SubbenchError("%s: pattern %r: twin_of=%s, but %r is itself "
+                                "twin_of=%s -- a twin group has ONE root"
+                                % (set_id, p.name, root, root, rr))
+        groups.setdefault(root, []).append(p.name)
+    return groups
 
 
 # [B42] L4: DEFAULT size_class FOR AN `.rxt`-SOURCED PATTERN. Required by
@@ -295,6 +350,7 @@ class Subbench:
             raise SubbenchError("%s declares no patterns" % sidecar)
         for p in self.patterns:
             check_id("pattern", p.name, self.id)
+        self.twin_groups = twin_groups(self.patterns, self.id)
         self.testee_notes = self.cfg.get("testees", {})
 
         subj = self.cfg.get("subjects", {})

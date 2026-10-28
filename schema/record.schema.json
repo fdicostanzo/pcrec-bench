@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fdicostanzo/pcrec-bench/schema/record.schema.json",
   "title": "pcrec-bench record line",
-  "x-record-schema-version": "1.10",
-  "$comment": "History: 1.0 draft 1; 1.1 the post-merge panel (evidence fields, seq, calibration, both samples); 1.2 the record TIERS; 1.3 the FLOOR pattern role; 1.4 ([B20], 2026-08-30, docs/design/gate_shape_v14.md) the gate's shape after BD7 -- `inconclusive-spread`, the tri-state `occupancy_sample.target_busy_pct`, the `trial_agreement` setup block (X31-X33), the per-group occupancy `timeline` (provenance), and KB-4's relaxation (`cost` may sit beside a non-compiled outcome). X13 is VERSIONED at 1.4 under record_schema.md 4's rule-revision clause. 1.5 ([B30], 2026-09-02, KB-7, Frank's ruling) raises `$defs.free_text.maxLength` from 8192 to 1048576 (1 MiB) -- a hygiene bound against a stray blob, not a content limit; no rule changes meaning by version (record_schema.md 4.1). 1.6 (lane b44boolgrain, 2026-09-17, Frank's Q3 boolean-grain ruling, docs/design/capability_set_v1.md 5.6 option B) adds optional `testee.grain` (`full`/`boolean`, absent = `full`) and rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`). 1.7 ([B88], 2026-09-25, BD13, Frank's ruling; lane b90repin) adds the `engine_metadata` declaration TYPE `sha256` (a value is 64 lowercase hex digits, checked under X15) -- the type of pcrec's `program_sha256`, the normalized program-identity hash the null-control band reads (tools/program_identity.py v2); an ENUM growth, MINOR by record_schema.md 4. 1.8 ([B137], 2026-10-12, O-90 / pcrec I-138+I-139, multi-host) adds optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, from /proc/cpuinfo flags; rule X35: present only on a record stamped >= 1.8, sorted) -- an optional-field ADDITION, MINOR by record_schema.md 4. 1.9 ([B140], 2026-10-24, docs/design/subst_bench_v1.md 5 + 8a item 7) adds the `substitution` regime, optional `testee.invocation` (`library`/`process`), `match_row.subst` (the transform's answer: case id, substitution count, output size and sha256, gate, declaration_ref), and `match_row.process` (the TOOLS tier's provenance, incl. the `wc -c` sink's counted bytes and cores); rules X36-X45; compile rows become optional for a `process` testee (X11/X14 relaxed) except the `unsupported-by-declaration` row that carries an unsupported case (X44/X45). Additive: every 1.8 record stays valid. 1.10 ([B144], 2026-10-25, Frank's ruling on b140drv finding F1, docs/design/gate_shape_v14.md 3.7) REVISES the trial-agreement rule under record_schema.md 4's rule-revision clause: `trial_agreement.rule` gains `v1.10-group`, which counts a `substitution` row's `matched-as-expected` trial with `iterations >= 1` as timed (whole-file passes are 1 iteration x N trials); every other regime keeps `iterations > 1`. X32 keys the rule text on the record's own schema_version, so every record below 1.10 keeps `v1.4-group` forever.",
+  "x-record-schema-version": "1.11",
+  "$comment": "History: 1.0 draft 1; 1.1 the post-merge panel (evidence fields, seq, calibration, both samples); 1.2 the record TIERS; 1.3 the FLOOR pattern role; 1.4 ([B20], 2026-08-30, docs/design/gate_shape_v14.md) the gate's shape after BD7 -- `inconclusive-spread`, the tri-state `occupancy_sample.target_busy_pct`, the `trial_agreement` setup block (X31-X33), the per-group occupancy `timeline` (provenance), and KB-4's relaxation (`cost` may sit beside a non-compiled outcome). X13 is VERSIONED at 1.4 under record_schema.md 4's rule-revision clause. 1.5 ([B30], 2026-09-02, KB-7, Frank's ruling) raises `$defs.free_text.maxLength` from 8192 to 1048576 (1 MiB) -- a hygiene bound against a stray blob, not a content limit; no rule changes meaning by version (record_schema.md 4.1). 1.6 (lane b44boolgrain, 2026-09-17, Frank's Q3 boolean-grain ruling, docs/design/capability_set_v1.md 5.6 option B) adds optional `testee.grain` (`full`/`boolean`, absent = `full`) and rule X34 (a `grain: boolean` testee's match rows never carry a non-null `observed.span`). 1.7 ([B88], 2026-09-25, BD13, Frank's ruling; lane b90repin) adds the `engine_metadata` declaration TYPE `sha256` (a value is 64 lowercase hex digits, checked under X15) -- the type of pcrec's `program_sha256`, the normalized program-identity hash the null-control band reads (tools/program_identity.py v2); an ENUM growth, MINOR by record_schema.md 4. 1.8 ([B137], 2026-10-12, O-90 / pcrec I-138+I-139, multi-host) adds optional `environment.cpu_isa` (a sorted array of the ISA feature tokens the box reports, from /proc/cpuinfo flags; rule X35: present only on a record stamped >= 1.8, sorted) -- an optional-field ADDITION, MINOR by record_schema.md 4. 1.9 ([B140], 2026-10-24, docs/design/subst_bench_v1.md 5 + 8a item 7) adds the `substitution` regime, optional `testee.invocation` (`library`/`process`), `match_row.subst` (the transform's answer: case id, substitution count, output size and sha256, gate, declaration_ref), and `match_row.process` (the TOOLS tier's provenance, incl. the `wc -c` sink's counted bytes and cores); rules X36-X45; compile rows become optional for a `process` testee (X11/X14 relaxed) except the `unsupported-by-declaration` row that carries an unsupported case (X44/X45). Additive: every 1.8 record stays valid. 1.10 ([B144], 2026-10-25, Frank's ruling on b140drv finding F1, docs/design/gate_shape_v14.md 3.7) REVISES the trial-agreement rule under record_schema.md 4's rule-revision clause: `trial_agreement.rule` gains `v1.10-group`, which counts a `substitution` row's `matched-as-expected` trial with `iterations >= 1` as timed (whole-file passes are 1 iteration x N trials); every other regime keeps `iterations > 1`. X32 keys the rule text on the record's own schema_version, so every record below 1.10 keeps `v1.4-group` forever. 1.11 ([B148] L1, 2026-10-27, docs/design/unusual_set_v1.md 7.4, lane b148l1) adds the `call-stream` regime (one timed iteration = one full replay of a declared call list over one subject), `match_row.stream` (the stream's counts, its segment-byte denominator, the first give-up's limit and the per-call results hash), optional `testee.assist` (an ASSISTED config's per-member token ledger: `assist_version` + `members[]`), and REVISES the trial-agreement rule once more under record_schema.md 4's rule-revision clause: `v1.11-group` is `v1.10-group` plus `call-stream` rows judged at `iterations >= 1` (gate_shape_v14.md 3.8). Rules X47-X53. Additive: every 1.10 record stays valid and keeps `v1.10-group`.",
   "description": "One JSONL line of a pcrec-bench record. Line 1 is the setup layer; every later line is a result row, discriminated by `kind`. Design note: docs/design/record_schema.md. Requirements: docs/design/requirements.md (ADOPTED v3).",
   "oneOf": [
     { "$ref": "#/$defs/setup" },
@@ -122,8 +122,8 @@
     "on_off": { "enum": ["on", "off"] },
     "on_off_na": { "enum": ["on", "off", "n-a"] },
     "regime": {
-      "description": "requirements.md 3, the three subject regimes, plus (v1.9, [B140], subst_bench_v1.md 5 S1) `substitution`: the transform regime -- a pattern + template applied to a subject, the OUTPUT being the answer. Not comparable to the other regimes, like they are not to each other.",
-      "enum": ["large-subject-throughput", "short-subject-search", "match-compliance", "substitution"]
+      "description": "requirements.md 3, the three subject regimes, plus (v1.9, [B140], subst_bench_v1.md 5 S1) `substitution`: the transform regime -- a pattern + template applied to a subject, the OUTPUT being the answer -- and (v1.11, [B148], unusual_set_v1.md 7.1) `call-stream`: a declared list of calls (offset, length, binding) over one subject, one timed iteration = one full replay, the per-call answers hashed (`match.stream`, X47). Not comparable to the other regimes, like they are not to each other.",
+      "enum": ["large-subject-throughput", "short-subject-search", "match-compliance", "substitution", "call-stream"]
     },
     "record_status": {
       "description": "requirements.md 6, verbatim, plus (v1.4, [B20], docs/design/gate_shape_v14.md 3.4) `inconclusive-spread`: the pre-flight passed but the trials do not agree to within the trial-agreement rule (or a pinned record lacks the five odd trials the rule needs). The enum's ORDER is not the stamping precedence, which is `harness-failure` > `inconclusive-load` > `inconclusive-spread` > `measured` (3.4); `harness-failure` is a documented value no harness code path produces.",
@@ -179,7 +179,7 @@
                    "groups_disagreeing", "rows_judged", "rows_disagreeing",
                    "rows_unjudged", "rows_unjudged_reasons", "worst_group", "verdict"],
       "properties": {
-        "rule": { "enum": ["v1.4-group", "v1.10-group"], "description": "The rule text that produced the verdict. `v1.4-group` on a record stamped 1.4..1.9, `v1.10-group` from 1.10 (X32 requires the pairing; record_schema.md 4.1, gate_shape_v14.md 3.7)." },
+        "rule": { "enum": ["v1.4-group", "v1.10-group", "v1.11-group"], "description": "The rule text that produced the verdict. `v1.4-group` on a record stamped 1.4..1.9, `v1.10-group` on 1.10, `v1.11-group` from 1.11 (X32 requires the pairing, X51 refuses `v1.11-group` below 1.11; record_schema.md 4.1, gate_shape_v14.md 3.7-3.8)." },
         "k": { "type": "number", "exclusiveMinimum": 1 },
         "d_min": { "type": "integer", "minimum": 1 },
         "share_c": { "type": "integer", "minimum": 1 },
@@ -450,6 +450,29 @@
             },
             "grain": { "$ref": "#/$defs/grain" },
             "invocation": { "$ref": "#/$defs/invocation" },
+            "assist": {
+              "description": "v1.11 ([B148], unusual_set_v1.md 5.5): an ASSISTED config's ledger -- host code supplies a feature the engine lacks, inside a declared token budget. Present iff `config_extra` carries the identity token `assist-v<NN>` (X50); `assist_version` is that token's `v<NN>` (the SET version, never the set of members that passed, so a re-authored member does not split history). One `members[]` entry per member this config runs ASSISTED, `member` unique (X50): the counter's `tokens`, the assist's `lines` and the assist file's `sha256` (the ledger row is the set's assists.tsv). A NOT-CAPABLE member is not listed: it is `unsupported-by-declaration`, its count in `declaration_ref`.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["assist_version", "members"],
+              "properties": {
+                "assist_version": { "type": "string", "pattern": "^v[0-9]{2,}$", "maxLength": 16 },
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["member", "tokens", "lines", "sha256"],
+                    "properties": {
+                      "member": { "$ref": "#/$defs/slug" },
+                      "tokens": { "$ref": "#/$defs/nonneg_int" },
+                      "lines": { "$ref": "#/$defs/nonneg_int" },
+                      "sha256": { "$ref": "#/$defs/sha256" }
+                    }
+                  }
+                }
+              }
+            },
             "captures": { "$ref": "#/$defs/on_off" },
             "engine_mode": { "$ref": "#/$defs/slug" },
             "simd": { "$ref": "#/$defs/on_off_na" },
@@ -635,6 +658,22 @@
             "sys_s": { "type": "number", "minimum": 0 },
             "maxrss_kb": { "$ref": "#/$defs/nonneg_int" },
             "page_cache_resident": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "stream": {
+          "description": "v1.11 ([B148], unusual_set_v1.md 7.1, 7.4): the call stream's answer. REQUIRED iff `regime` = `call-stream`, forbidden otherwise (X47). `calls` is the denominator of calls/s and equals `matched + nomatch + refused + gave_up` (X48); `segment_bytes` is the SUM of the calls' declared segment lengths, the throughput denominator (never the subject size; > 0, X53). `refused` counts calls the HOST returned without calling the engine (an unset/empty binding, vars.md 5): 0 unless the pattern requires `vars` (X53). `first_limit` names the first give-up's limit, present iff `gave_up` > 0 (X49). `results_sha256` hashes the per-call result tokens (`n`, `m:<s>,<e>[;<g1s>,<g1e>]`, `r`) written after the clock stopped; the HARNESS compares it to the set's expectations_stream.tsv and sets `match_outcome` -- the validator cannot hold that expectation (as for X37).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["calls", "segment_bytes", "matched", "nomatch", "refused", "gave_up", "results_sha256"],
+          "properties": {
+            "calls": { "type": "integer", "minimum": 1 },
+            "segment_bytes": { "$ref": "#/$defs/nonneg_int" },
+            "matched": { "$ref": "#/$defs/nonneg_int" },
+            "nomatch": { "$ref": "#/$defs/nonneg_int" },
+            "refused": { "$ref": "#/$defs/nonneg_int" },
+            "gave_up": { "$ref": "#/$defs/nonneg_int" },
+            "first_limit": { "type": "string", "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]*$", "maxLength": 64 },
+            "results_sha256": { "$ref": "#/$defs/sha256" }
           }
         },
         "engine_metadata": { "$ref": "#/$defs/engine_metadata" },

@@ -33,7 +33,9 @@ BAD      = $(EXAMPLES)/bad
 #      schema/examples/gen_example_14.py -- every v1.4 sabotage in bad/ is a
 #      one-field mutation of that output, so the output must be pinned;
 #      (v1.10, [B144]) likewise the GENERATED 1.10 substitution example and
-#      its X32 sabotage (schema/examples/gen_example_110.py --check).
+#      its X32 sabotage (schema/examples/gen_example_110.py --check);
+#      (v1.11, [B148] L1) the GENERATED 1.11 call-stream example and its
+#      X47-X53 sabotages (schema/examples/gen_example_111.py --check).
 check-schema:
 	@echo "== check-schema =="
 	@$(PYTHON) schema/check_fields.py
@@ -41,6 +43,7 @@ check-schema:
 	@$(PYTHON) schema/examples/gen_example_14.py --check
 	@$(PYTHON) schema/examples/gen_example_110.py --check
 	@$(PYTHON) schema/examples/gen_example_ident110.py --check
+	@$(PYTHON) schema/examples/gen_example_111.py --check
 	@echo
 	@echo "-- good examples (must be ACCEPTED) --"
 	@$(VALIDATE) --check-filename $(EXAMPLES)/*.jsonl

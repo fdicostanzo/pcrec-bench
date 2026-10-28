@@ -253,6 +253,23 @@ def reduce_set_cell(rows_by_subject):
 
 # ---------------------------------------------------------- from a record
 
+# [B148] L1 (docs/design/unusual_set_v1.md 7.5, PROPOSED P12): THE
+# SET-GRAIN SKIP TABLE. A regime named here is never reduced to a set cell
+# by the readers that read set cells from the store -- the viewer exporter,
+# the trend report, the front page -- because its row's time is not per
+# subject: a `call-stream` row times one replay of a whole call list and its
+# denominators are `stream.calls` / `stream.segment_bytes`. Each reader
+# skips BY NAME through `set_grain_rows` (the reporter refuses or drops the
+# same rows itself, report.py). `cells_from_record` does NOT filter: `quick`
+# and the trial-agreement rule still see every row.
+SET_GRAIN_SKIP_REGIMES = frozenset({"call-stream"})
+
+
+def set_grain_rows(rows):
+    """`rows` minus every row whose regime is in SET_GRAIN_SKIP_REGIMES."""
+    return [r for r in rows if r.get("regime") not in SET_GRAIN_SKIP_REGIMES]
+
+
 def cells_from_record(rows):
     """Group a record's match rows into set cells:
     {(pattern_id, regime, form): {subject_id: [rows]}}. `form` absent reads
@@ -299,10 +316,24 @@ def read_record(path):
 # Every other regime keeps `iterations > 1`. `rule=` selects the text;
 # the default is the current one, a record stamped < 1.10 is judged by
 # `v1.4-group` (record_schema.md 4's rule-revision clause).
+#
+# v1.11 ([B148], docs/design/unusual_set_v1.md 7.2, gate_shape_v14.md
+# 3.8): `v1.11-group` is `v1.10-group` plus ONE regime -- a `call-stream`
+# row is timed at `iterations >= 1` too (one iteration = one full replay
+# of the stream). A record stamped 1.10 keeps `v1.10-group`.
 
-TRIAL_AGREEMENT_RULE = "v1.10-group"
+TRIAL_AGREEMENT_RULE = "v1.11-group"
+TRIAL_AGREEMENT_RULE_V110 = "v1.10-group"
 TRIAL_AGREEMENT_RULE_V14 = "v1.4-group"
 SUBSTITUTION = "substitution"
+CALL_STREAM = "call-stream"
+# The regimes each rule text times at ONE iteration; every other regime
+# needs `iterations > 1` (3.5).
+ONE_ITERATION_REGIMES = {
+    TRIAL_AGREEMENT_RULE_V14: frozenset(),
+    TRIAL_AGREEMENT_RULE_V110: frozenset({SUBSTITUTION}),
+    TRIAL_AGREEMENT_RULE: frozenset({SUBSTITUTION, CALL_STREAM}),
+}
 TRIAL_AGREEMENT_K = 1.5
 TRIAL_AGREEMENT_D_MIN = 2
 TRIAL_AGREEMENT_SHARE_C = 3
@@ -320,11 +351,12 @@ def _ns_per_iter_judged(r, rule=TRIAL_AGREEMENT_RULE):
     """A TRIAL is timed for the rule iff `matched-as-expected` AND
     `timing.iterations > 1` (3.5) -- stricter than `ns_per_call`, which
     accepts a one-iteration loop the ranking may still use. Under
-    `v1.10-group` a `substitution` row needs only `iterations >= 1`."""
+    `v1.10-group` a `substitution` row needs only `iterations >= 1`;
+    under `v1.11-group` a `call-stream` row too."""
     t = r.get("timing") or {}
     it = t.get("iterations")
-    floor = 1 if (rule != TRIAL_AGREEMENT_RULE_V14
-                  and r.get("regime") == SUBSTITUTION) else 2
+    floor = 1 if r.get("regime") in ONE_ITERATION_REGIMES.get(
+        rule, frozenset()) else 2
     if r.get("match_outcome") != MATCHED or not isinstance(it, int) or it < floor:
         return None
     return t["elapsed_ns"] / it
@@ -335,8 +367,8 @@ def judge_trial_agreement(rows, k=TRIAL_AGREEMENT_K, d_min=TRIAL_AGREEMENT_D_MIN
     """-> the `trial_agreement` block (record_schema.md 8, v1.4) for a
     record's rows (compile rows are ignored). Every number in it is
     recomputable from the rows by X32's independent implementation.
-    `rule` names the text applied (`v1.10-group` by default; `v1.4-group`
-    for a record stamped below 1.10)."""
+    `rule` names the text applied (`v1.11-group` by default; `v1.10-group`
+    for a record stamped 1.10, `v1.4-group` below it)."""
     match = [r for r in rows if r.get("kind") == "match"]
     by_key = {}
     for r in match:

@@ -4295,6 +4295,49 @@ def test_subst_compile_separate_and_tiers_gates_b143():
     _check(rd is None and "--grain subst" in err, f"standard grain: {err}")
 
 
+def test_call_stream_skipped_by_set_grain_b148():
+    """[B148] L1 (unusual_set_v1.md 7.5): the set/subject grains never read a
+    `call-stream` row. A selection of call-stream-ONLY records is refused BY
+    NAME; a record that also carries a search regime keeps its search cells,
+    its stream rows are dropped and the header counts them. CONTROL: a
+    record with no stream rows renders no such header line."""
+    def stream_row(trial, seq):
+        return {"kind": "match", "pattern_id": "cscan", "subject_id": "s-c",
+                "regime": "call-stream", "trial": trial, "seq": seq,
+                "match_outcome": "matched-as-expected",
+                "stream": {"calls": 4, "segment_bytes": 100, "matched": 4,
+                           "nomatch": 0, "refused": 0, "gave_up": 0,
+                           "results_sha256": "0" * 64},
+                "timing": {"elapsed_ns": 5000, "iterations": 1,
+                           "bytes_processed": 100}}
+    only = _mini_setup("t-stream", sb_id="unusual", sb_version="0.1")
+    only["subbench"]["regimes"] = ["call-stream"]
+    recs = [_mk_loaded("/x/only.jsonl", only, [stream_row(t, t) for t in (1, 2, 3)])]
+    rd, err = report.build_report(recs, _args(store="/x/store"))
+    _check(rd is None and "`call-stream`" in (err or "") and "--grain stream" in err,
+           f"stream-only selection refused by name: {err}")
+    mixed = _mini_setup("t-mixed", sb_id="unusual", sb_version="0.1")
+    mixed["subbench"]["regimes"] = ["short-subject-search", "call-stream"]
+    rows = [_mini_row("wild-sexp", "s1", "short-subject-search", t, t, 100)
+            for t in (1, 2, 3)]
+    rows += [stream_row(t, 3 + t) for t in (1, 2, 3)]
+    rd, err = report.build_report([_mk_loaded("/x/mixed.jsonl", mixed, rows)],
+                                  _args(store="/x/store"))
+    _check(err is None and rd.stream_rows_skipped == 3,
+           f"mixed record: 3 stream rows dropped ({err}, "
+           f"{getattr(rd, 'stream_rows_skipped', None)})")
+    md = report.render_markdown(rd)
+    _check("- call-stream rows skipped: 3 " in md and "wild-sexp" in md
+           and "cscan" not in md, "header counts the skip; the search cell stays")
+    plain = _mini_setup("t-plain", sb_id="unusual", sb_version="0.1")
+    rd, err = report.build_report(
+        [_mk_loaded("/x/plain.jsonl", plain,
+                    [_mini_row("p", "s1", "short-subject-search", t, t, 100)
+                     for t in (1, 2, 3)])], _args(store="/x/store"))
+    _check(err is None and "call-stream rows skipped" not in report.render_markdown(rd),
+           "CONTROL: no stream rows, no header line")
+
+
 def test_vm_cls_folds_legend_b39():
     """[B39] (pin d34c9131, abi 23, [FORM-CHAR] STEP 1; PREPARED before the
     build): `clsfolds=<N>` from `vm_cls_folds`, rendered after `shape=` on
@@ -6109,6 +6152,8 @@ TESTS = [
     test_subst_tiers_ratios_and_summary_b143,
     test_subst_unsupported_and_wrong_first_class_b143,
     test_subst_compile_separate_and_tiers_gates_b143,
+    # [B148] L1
+    test_call_stream_skipped_by_set_grain_b148,
 ]
 
 

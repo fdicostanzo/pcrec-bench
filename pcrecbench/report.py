@@ -1634,6 +1634,9 @@ REPO_ROOT = os.path.dirname(HERE)
 SCHEMA_DIR = os.path.join(REPO_ROOT, "schema")
 
 REPORTER_VERSION = "v28 (2026-10-25)"
+# [B148] L1 (unusual_set_v1.md 7.5): the regime the set/subject grains skip
+# by name (a stream row's time is per stream; `--grain stream` reads it).
+CALL_STREAM_REGIME = "call-stream"
 
 # The schema minor from which X13 is the v1.4 text (record_schema.md 4's
 # rule-revision clause). A record below it was judged by the v1.1 text.
@@ -4146,6 +4149,8 @@ class ReportData:
     include_scratch: bool = False
     all_records: bool = False
     subbench_alias_note: str | None = None
+    # [B148] L1: call-stream rows the set/subject grains dropped (7.5)
+    stream_rows_skipped: int = 0
     # [B14] R9: sb -> the pattern_id of that sb's `role: floor` pattern, if
     # any record in the selection declares one (schema v1.3, not yet
     # schema-legal -- see the module docstring's R9 note).
@@ -4356,6 +4361,29 @@ def build_report(loaded, args, known_testee_ids=None):
         selected = [r for r in selected
                     if not (r.setup and "substitution" in
                             (r.setup.get("subbench", {}).get("regimes") or []))]
+
+    # [B148] L1 (unusual_set_v1.md 7.5): a `call-stream` row times a whole
+    # STREAM (its denominators are `stream.calls` / `stream.segment_bytes`,
+    # never the subject), so the set and subject grains never read one --
+    # its view is `--grain stream` (a later lane). A selection whose records
+    # carry NOTHING but `call-stream` rows is refused BY NAME; a record that
+    # also carries other regimes keeps them, its call-stream rows are
+    # dropped, and the header counts them (`stream_rows_skipped`).
+    _stream_only = [r for r in selected if r.setup and
+                    (r.setup.get("subbench", {}).get("regimes") or [])
+                    == [CALL_STREAM_REGIME]]
+    if selected and len(_stream_only) == len(selected):
+        return None, ("every selected record is of the `call-stream` regime "
+                      "only; the set/subject grains read search and match "
+                      "rows -- a stream's view is `--grain stream` "
+                      "(docs/design/unusual_set_v1.md 7.5)")
+    stream_rows_skipped = 0
+    for r in selected:
+        if any(row.get("regime") == CALL_STREAM_REGIME for row in r.rows):
+            kept = [row for row in r.rows
+                    if row.get("regime") != CALL_STREAM_REGIME]
+            stream_rows_skipped += len(r.rows) - len(kept)
+            r.rows = kept
 
     # Mixed-schema-version refusal (requirements 6; record_schema.md 4).
     # Evaluated on the DECLARED major, independent of whether the shared
@@ -4679,6 +4707,7 @@ def build_report(loaded, args, known_testee_ids=None):
         include_scratch=bool(getattr(args, "include_scratch", False)),
         all_records=all_records,
         subbench_alias_note=getattr(args, "_subbench_alias_note", None),
+        stream_rows_skipped=stream_rows_skipped,
         floor_pattern_by_sb=floor_pattern_by_sb,
         dropped_triples=dict(dropped_triples),
         variant_by_cell=variant_by_cell,
@@ -5178,6 +5207,10 @@ def render_markdown(rd: ReportData):
     out.append(f"- schema version(s): {', '.join(sorted(rd.schema_versions)) or '(none)'}")
     if rd.subbench_alias_note:
         out.append(f"- {rd.subbench_alias_note}")
+    if rd.stream_rows_skipped:
+        out.append(f"- call-stream rows skipped: {rd.stream_rows_skipped} "
+                   "(a stream's time is per stream, never per subject; "
+                   "unusual_set_v1.md 7.5)")
     out.append(f"- grain: {rd.grain} "
                 + ("(sum of per-subject ns/call over the whole subject set, "
                    "reduced over trials; a set cell is excluded if ANY "

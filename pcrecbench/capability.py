@@ -72,6 +72,7 @@ whole REQUIRES set in that case, never an empty set by omission.
 """
 
 import os
+import re
 
 from . import rxt_source as _rxt
 
@@ -98,9 +99,58 @@ REQUIRES_VOCAB = frozenset({
     #                        under UTF-8 (PCRE2's default absent PCRE2_UCP)
     #   unicode-class-scope  \w \d \s must be Unicode-widened (PCRE2_UCP)
     "utf8-encoding", "ascii-class-scope", "unicode-class-scope",
+    # [B148] L1, unusual_set_v1.md 5.5 (r9 C2): caller VARIABLES (`${name}`,
+    # pcrec vars.md) -- the third unusual feature beside `recursion` and
+    # `callouts`.
+    "vars",
 })
 
+# [B148] L1, unusual_set_v1.md 5.5 (PROPOSED P4): the ONE open family in
+# the vocabulary -- `unusual-<member>`, a per-MEMBER capability token. An
+# ASSISTED config declares `unusual-<member>` for every member whose
+# verdict is ASSISTED; a NOT-CAPABLE member is then `unsupported-by-
+# declaration` through the same per-token path as any other. The family is
+# closed in SHAPE (a slug after the prefix), not in membership: the members
+# are the set's own pattern ids, which this module does not enumerate.
+UNUSUAL_PREFIX = "unusual-"
+_UNUSUAL_RE = re.compile(r"^unusual-[a-z0-9]([a-z0-9-]*[a-z0-9])?$")
+
 _REQUIRES_PREFIX = "requires-"
+
+
+def is_requires_token(token):
+    """True iff `token` is in the closed REQUIRES vocabulary: one of
+    `REQUIRES_VOCAB`, or an `unusual-<member>` token (`<member>` a slug)."""
+    return token in REQUIRES_VOCAB or bool(_UNUSUAL_RE.match(token))
+
+
+def _vocab_text():
+    return ", ".join(sorted(REQUIRES_VOCAB)) + ", unusual-<member>"
+
+
+def not_capable_declaration_ref(ledger_ref, tokens, budget):
+    """The `declaration_ref` spelling of a NOT-CAPABLE assist verdict
+    (unusual_set_v1.md 5.5, r9 S-11): `<ledger_ref> tokens=<N>
+    budget=<X>`, so the count and the budget travel in the store, not only
+    in the set's assists.tsv. `ledger_ref` names the ledger row (e.g.
+    `bench/unusual/assists/assists.tsv:7`)."""
+    if not (isinstance(tokens, int) and isinstance(budget, int)
+            and tokens > budget >= 0):
+        raise CapabilityError(
+            "a NOT-CAPABLE verdict needs tokens > budget (got tokens=%r "
+            "budget=%r)" % (tokens, budget))
+    return "%s tokens=%d budget=%d" % (ledger_ref, tokens, budget)
+
+
+_NOT_CAPABLE_RE = re.compile(r"(?:^|\s)tokens=(\d+) budget=(\d+)(?:\s|$)")
+
+
+def parse_not_capable(declaration_ref):
+    """-> `(tokens, budget)` from a `declaration_ref` written by
+    `not_capable_declaration_ref`, or None when the reference carries no
+    count (every other `unsupported-by-declaration` row)."""
+    m = _NOT_CAPABLE_RE.search(declaration_ref or "")
+    return (int(m.group(1)), int(m.group(2))) if m else None
 
 
 class CapabilityError(Exception):
@@ -119,11 +169,11 @@ def pattern_requires(pattern):
         if not tag.startswith(_REQUIRES_PREFIX):
             continue
         token = tag[len(_REQUIRES_PREFIX):]
-        if token not in REQUIRES_VOCAB:
+        if not is_requires_token(token):
             raise CapabilityError(
                 "pattern %r declares requires-%s, which is not in the "
                 "closed REQUIRES vocabulary (%s)"
-                % (pattern.name, token, ", ".join(sorted(REQUIRES_VOCAB))))
+                % (pattern.name, token, _vocab_text()))
         out.add(token)
     return frozenset(out)
 
@@ -175,11 +225,11 @@ def _parse_ext_bench_matrix(aux_rows):
         if testee is None:
             continue
         token = r["key"]
-        if token not in REQUIRES_VOCAB:
+        if not is_requires_token(token):
             raise CapabilityError(
                 "ext bench: capabilities %s declares %r, which is not "
                 "in the closed REQUIRES vocabulary (%s)"
-                % (testee, token, ", ".join(sorted(REQUIRES_VOCAB))))
+                % (testee, token, _vocab_text()))
         matrix[testee].add(token)
     return {testee: frozenset(tokens) for testee, tokens in matrix.items()}
 

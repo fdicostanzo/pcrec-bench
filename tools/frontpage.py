@@ -160,7 +160,11 @@ class Summary:
         # whole-subject form (the anchored artifact the harness builds for
         # it), the search regimes on the plain form. The same rule applies to
         # every testee, so a case is always like-for-like in form.
-        for (pid, regime, form), by_subj in R.cells_from_record(rows).items():
+        # [B148] L1: the set-grain skip table (R.SET_GRAIN_SKIP_REGIMES) --
+        # a `call-stream` row is never a front-page case (unusual_set_v1.md 7.5).
+        self.regimes = [g for g in self.regimes if g not in R.SET_GRAIN_SKIP_REGIMES]
+        for (pid, regime, form), by_subj in R.cells_from_record(
+                R.set_grain_rows(rows)).items():
             if form != FORM_FOR_REGIME.get(regime, "plain"):
                 continue
             c = R.reduce_set_cell(by_subj)

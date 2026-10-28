@@ -113,6 +113,7 @@ sys.path.insert(0, ROOT)
 
 from pcrecbench.report import _get_record_validator, load_record  # noqa: E402
 from pcrecbench.reduce import (  # noqa: E402
+    set_grain_rows,
     cells_from_record,
     reduce_set_cell,
 )
@@ -624,7 +625,10 @@ def export_rows_for_record(path, rv):
             compile_diag[key] = (status, row.get("diagnostic"))
 
     matched_pattern_forms = set()
-    for (pattern_id, regime, form), by_subject in cells_from_record(rec.rows).items():
+    # [B148] L1: the set-grain skip table (reduce.SET_GRAIN_SKIP_REGIMES):
+    # a `call-stream` row is never a viewer cell (unusual_set_v1.md 7.5).
+    for (pattern_id, regime, form), by_subject in cells_from_record(
+            set_grain_rows(rec.rows)).items():
         matched_pattern_forms.add((pattern_id, form or "plain"))
         row = base_row(pattern_id, regime, form)
         if record_status != "measured":

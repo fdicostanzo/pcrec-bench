@@ -111,7 +111,7 @@ def main(argv):
     check = "--check" in argv
     # GOOD: clean trials, the block by the harness's derivation
     setup, rows = build(slow=())
-    setup["trial_agreement"] = judge_trial_agreement(rows)
+    setup["trial_agreement"] = judge_trial_agreement(rows, rule="v1.10-group")
     assert setup["trial_agreement"]["verdict"] == "agree", setup["trial_agreement"]
     assert setup["trial_agreement"]["rule"] == "v1.10-group"
     assert setup["trial_agreement"]["rows_judged"] == 2, setup["trial_agreement"]
@@ -120,7 +120,7 @@ def main(argv):
     good_path = os.path.join(HERE, setup["record_id"] + ".jsonl")
     # BAD: the rows disagree (the judge says so), the block still says agree
     bsetup, brows = build(slow=(2, 4))
-    judged = judge_trial_agreement(brows)
+    judged = judge_trial_agreement(brows, rule="v1.10-group")
     assert judged["verdict"] == "disagree" and judged["groups_disagreeing"] == 1, judged
     bsetup["trial_agreement"] = good_block
     bad_text = finish(bsetup, brows)
