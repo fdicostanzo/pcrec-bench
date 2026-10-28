@@ -16,7 +16,7 @@
 #
 # CAPABILITY. patterns.rxt carries the `ext bench` matrix; the `requires-*` tags
 # below are read against it (fail-closed). The vars / unusual-<member> tokens are
-# spelled `needs-*` until L1 grows REQUIRES_VOCAB; L1 renames them.
+# L1's REQUIRES_VOCAB family (b148land switched the interim `needs-*` spelling).
 
 id = "unusual"
 version = "0.1"
@@ -112,7 +112,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-luhn", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -122,7 +122,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "twin_of-co-luhn", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -132,7 +132,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "twin_of-co-luhn", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -142,7 +142,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-isbn", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -152,7 +152,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "twin_of-co-isbn", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -162,7 +162,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "twin_of-co-isbn", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -172,7 +172,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "twin_of-co-member", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -182,7 +182,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-pass", "twin_of-co-member", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -192,7 +192,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "twin_of-co-member", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -202,7 +202,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-pcrec-consume", "requires-callouts", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-pcrec-consume", "twin_of-co-netstr", "requires-callouts", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -212,7 +212,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-assisted", "requires-callouts", "requires-captures", "requires-atomic-group"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-real", "spelling-assisted", "twin_of-co-netstr", "requires-callouts", "requires-captures", "requires-atomic-group"]
 role = "member"
 
 [[patterns]]
@@ -222,7 +222,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "requires-captures"]
+tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized", "arm-twin", "twin_of-co-netstr", "requires-captures"]
 role = "member"
 
 [[patterns]]
@@ -232,7 +232,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "needs-vars", "needs-unusual-va-tenant"]
+tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-vars", "requires-unusual-va-tenant"]
 role = "member"
 
 [[patterns]]
@@ -242,7 +242,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "needs-vars", "needs-unusual-va-route"]
+tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-vars", "requires-unusual-va-route"]
 role = "member"
 
 [[patterns]]
@@ -252,7 +252,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "needs-vars", "needs-unusual-va-term"]
+tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-vars", "requires-unusual-va-term"]
 role = "member"
 
 [[patterns]]
@@ -262,7 +262,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "needs-vars", "needs-unusual-va-term-bang"]
+tags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "requires-vars", "requires-unusual-va-term-bang"]
 role = "member"
 
 [[patterns]]

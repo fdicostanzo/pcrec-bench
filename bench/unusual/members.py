@@ -183,37 +183,37 @@ def members():
     def co(pid, site_text, twin_text, kind, num, extra_req):
         base_tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized"]
         req = ["callouts", "captures"] + extra_req
-        M.append(Member(pid, "callouts", site_text, "callout:" + kind, base_tags + ["arm-real"], req, AUTH,
+        M.append(Member(pid, "callouts", site_text, "callout:" + kind, base_tags + ["arm-real", "twin_of-" + pid], req, AUTH,
                         twin_of=pid + "-twin", isolates="callout C%d with the real callee" % num))
-        M.append(Member(pid + "-pass", "callouts", site_text, "pass:" + pid + "-twin", base_tags + ["arm-pass"], req, AUTH,
+        M.append(Member(pid + "-pass", "callouts", site_text, "pass:" + pid + "-twin", base_tags + ["arm-pass", "twin_of-" + pid], req, AUTH,
                         twin_of=pid + "-twin", isolates="the site present, the full wrapper, a stub callee (answers equal the twin's)"))
-        M.append(Member(pid + "-twin", "callouts", twin_text, "plain", base_tags + ["arm-twin"], ["captures"] + extra_req, AUTH,
+        M.append(Member(pid + "-twin", "callouts", twin_text, "plain", base_tags + ["arm-twin", "twin_of-" + pid], ["captures"] + extra_req, AUTH,
                         isolates="the site removed, common subset"))
     co("co-luhn", rb"\b(\d{13,19})\b(?C1)", rb"\b(\d{13,19})\b", "luhn", 1, [])
     co("co-isbn", rb"\b(97[89]\d{10})\b(?C2)", rb"\b(97[89]\d{10})\b", "isbn", 2, [])
     co("co-member", rb"\buser=(\w++)(?C3)", rb"\buser=(\w+)", "member", 3, [])
     base_tags = ["family-callouts", "hazard-none", "provenance-authored", "fidelity-synthesized"]
     M.append(Member("co-netstr", "callouts", rb'(\d{1,9}):(?C"netstr,consume"),', "netstr-native",
-                    base_tags + ["arm-real", "spelling-pcrec-consume"], ["callouts", "captures"], AUTH,
+                    base_tags + ["arm-real", "spelling-pcrec-consume", "twin_of-co-netstr"], ["callouts", "captures"], AUTH,
                     twin_of="co-netstr-twin",
                     isolates="netstrings by pcrec's consume callout (match_api 11.7); expectations by the host reference"))
     M.append(Member("co-netstr-assist", "callouts", rb"(\d{1,9}):(?>(?s:.)*?(?C4))," , "callout:netstr",
-                    base_tags + ["arm-real", "spelling-assisted"], ["callouts", "captures", "atomic-group"], AUTH,
+                    base_tags + ["arm-real", "spelling-assisted", "twin_of-co-netstr"], ["callouts", "captures", "atomic-group"], AUTH,
                     twin_of="co-netstr-twin",
                     isolates="netstrings by the check-at-end callee on libpcre2/Onig (design 3.2, P3); (?{4}) on Onig"))
     M.append(Member("co-netstr-twin", "callouts", rb"(\d{1,9}):", "plain",
-                    base_tags + ["arm-twin"], ["captures"], AUTH,
+                    base_tags + ["arm-twin", "twin_of-co-netstr"], ["captures"], AUTH,
                     isolates="a scan-cost floor only: a DIFFERENT language from the netstring (no cross-arm subtraction)"))
 
     # ---- vars: pattern text only (value streams and their expectations are L7's)
-    vtags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized", "needs-vars"]
-    M.append(Member("va-tenant", "vars", rb"^${tenant}-[0-9]{4} (?:ERROR|WARN) ", "vars", vtags + ["needs-unusual-va-tenant"], [], AUTH,
+    vtags = ["family-vars", "hazard-none", "provenance-authored", "fidelity-synthesized"]
+    M.append(Member("va-tenant", "vars", rb"^${tenant}-[0-9]{4} (?:ERROR|WARN) ", "vars", vtags, ["vars", "unusual-va-tenant"], AUTH,
                     isolates="one caller variable, per-line binding, a distinct-count ladder (3.3)"))
-    M.append(Member("va-route", "vars", rb"^/${prefix:-api}/v[0-9]+/${res}${fmt+\.json}(?:\?|$)", "vars", vtags + ["needs-unusual-va-route"], [], AUTH,
+    M.append(Member("va-route", "vars", rb"^/${prefix:-api}/v[0-9]+/${res}${fmt+\.json}(?:\?|$)", "vars", vtags, ["vars", "unusual-va-route"], AUTH,
                     isolates="the :- and + forms with an UNSET/EMPTY distinction"))
-    M.append(Member("va-term", "vars", rb"(?i)\b${term:?}\b", "vars", vtags + ["needs-unusual-va-term"], [], AUTH,
+    M.append(Member("va-term", "vars", rb"(?i)\b${term:?}\b", "vars", vtags, ["vars", "unusual-va-term"], AUTH,
                     isolates=":? refusal and as-itself values incl. metacharacters and 0x00"))
-    M.append(Member("va-term-bang", "vars", rb"(?i)\b${!term:?}\b", "vars", vtags + ["needs-unusual-va-term-bang"], [], AUTH,
+    M.append(Member("va-term-bang", "vars", rb"(?i)\b${!term:?}\b", "vars", vtags, ["vars", "unusual-va-term-bang"], AUTH,
                     isolates="va-term spelled ${!name:?} (= ${name:?}, vars.md 2)"))
     M.append(Member("floor", "floor", rb"\(\?\{", "plain",
                     ["family-floor", "hazard-none", "provenance-authored", "fidelity-synthesized"], [], AUTH,

@@ -10,7 +10,7 @@ made before any run, dependencies).
 ## Files
 
 - `subbench.toml` -- GENERATED sidecar (`gen_patterns.py`); regimes `search_short` +
-  `throughput` only (the `call-stream` regime waits for L1).
+  `throughput` only (the `call-stream` regime is declarable since L1 but not yet declared: L4). Tags (b148land): vars members carry `requires-vars` + `requires-unusual-<member>`; callout arms carry `twin_of-<root>`; the generic gates `rxt-export`, `capability-policy-noop`, `vars-surface` skip this set via `UNUSUAL_GATE_SKIPS` (tools/selfcheck.py).
 - `members.py` -- THE member table (pattern bytes, family, provenance, oracle route);
   `gen_patterns.py` writes `patterns/*.rx`, `provenance.tsv`, `patterns.rxt` (the
   `ext bench` capability matrix ONLY, copied from bench/capability), `subbench.toml`.

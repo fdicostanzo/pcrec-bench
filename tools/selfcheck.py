@@ -207,6 +207,26 @@ SUBST_GATE_SKIPS = {
 }
 
 
+#: [B148] L8 (part, b148land): THE UNUSUAL SET and the generic gates it does
+#: NOT take part in, by name (the SUBST_GATE_SKIPS shape, keyed by set id
+#: instead of regime). Exactly the three gates the L3 report named; every
+#: other generic gate applies to `bench/unusual` and a failure there is a
+#: finding, not a skip.
+UNUSUAL_SET = "unusual"
+UNUSUAL_GATE_SKIPS = {
+    "rxt-export": "cscan is a multi-line pattern and an .rxt `pattern` line "
+                  "cannot carry a newline byte (it needs `pattern-esc`); the "
+                  "set's own patterns.rxt carries only the `ext bench` matrix",
+    "capability-policy-noop": "the set DECLARES requires-* tags by design "
+                              "(callouts, vars, unusual-<member>: per-pattern "
+                              "gating, unusual_set_v1.md 5.5), which is what "
+                              "this gate asserts no non-capability set does",
+    "vars-surface": "the four va-* members contain `${` by design (they ARE "
+                    "the caller-variable members); check_vars_surface still "
+                    "asserts that only va-* in this set do",
+}
+
+
 def is_substitution_only(path):
     """True iff the sidecar at `path` declares regimes exactly
     ["substitution"] ([B143])."""
@@ -233,6 +253,10 @@ def subbench_dirs(gate=None):
     for name in sorted(os.listdir(root)):
         path = os.path.join(root, name)
         if os.path.exists(os.path.join(path, "subbench.toml")):
+            if gate in UNUSUAL_GATE_SKIPS and name == UNUSUAL_SET:
+                ok("%s: gate %r SKIPPED (unusual set)" % (name, gate),
+                   UNUSUAL_GATE_SKIPS[gate])
+                continue
             if gate in SUBST_GATE_SKIPS and is_substitution_only(path):
                 ok("%s: gate %r SKIPPED (substitution-only set)" % (name, gate),
                    SUBST_GATE_SKIPS[gate])
@@ -5670,7 +5694,7 @@ def check_vars_surface():
     print("-- [B90] the abi-32 caller-variable surface ([VAR]) --")
     hits = []
     n = 0
-    for set_name, bench in subbench_dirs():
+    for set_name, bench in subbench_dirs("vars-surface"):
         sb = Subbench(bench)
         for p in sb.patterns:
             n += 1
@@ -5682,6 +5706,20 @@ def check_vars_surface():
            % (n, len(subbench_dirs())))
     else:
         bad("vars: no bench pattern contains the byte pair `${`", ", ".join(hits))
+    # [B148] the unusual set is skipped above; what it still owes: `${` only
+    # in its va-* members, and every va-* member is gated requires-vars
+    _un = os.path.join(ROOT, "bench", UNUSUAL_SET)
+    if os.path.exists(os.path.join(_un, "subbench.toml")):
+        _sb = Subbench(_un)
+        _dollar = sorted(p.name for p in _sb.patterns if b"${" in _sb.pattern_bytes(p.name))
+        _va = sorted(p.name for p in _sb.patterns if p.name.startswith("va-"))
+        _gated = sorted(p.name for p in _sb.patterns if "requires-vars" in (p.tags or ()))
+        if _dollar == _va == _gated and _va:
+            ok("vars: unusual's `${` patterns are exactly its va-* members, all requires-vars",
+               ", ".join(_va))
+        else:
+            bad("vars: unusual's `${` patterns are exactly its va-* members, all requires-vars",
+                "dollar=%r va=%r gated=%r" % (_dollar, _va, _gated))
     try:
         adapter = _ad.discover()["pcrec"]
     except KeyError:
@@ -16817,7 +16855,7 @@ def check_capability_policy_noop_elsewhere():
     from pcrecbench import capability as _cap
     from pcrecbench.subbench import find as _find_sb
 
-    for name, _path in subbench_dirs():
+    for name, _path in subbench_dirs("capability-policy-noop"):
         if name in ("capability", "utf8"):
             continue
         sb = _find_sb(name)
@@ -18802,7 +18840,8 @@ def check_subst_gate_skips():
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             kept = [n for n, _p in subbench_dirs(gate)]
-        if kept == [n for n in all_names if n != "subst"]:
+        if kept == [n for n in all_names if n != "subst" and not
+                    (n == UNUSUAL_SET and gate in UNUSUAL_GATE_SKIPS)]:
             ok("gate %r skips exactly subst" % gate, SUBST_GATE_SKIPS[gate][:60])
         else:
             bad("gate %r skips exactly subst" % gate, repr(kept))
@@ -18827,6 +18866,48 @@ def check_subst_gate_skips():
         ok("is_substitution_only: subst yes, email no")
     else:
         bad("is_substitution_only: subst yes, email no")
+
+
+def check_unusual_gate_skips():
+    """[B148] L8 (part): UNUSUAL_GATE_SKIPS drops exactly `bench/unusual`
+    from the named gates and nothing else; an unnamed gate keeps it; every
+    name is passed by a call site; the table names only the three gates the
+    L3 report found failing."""
+    print("-- [B148] the unusual set under the generic gates --")
+    import io, contextlib
+    all_names = [n for n, _p in subbench_dirs()]
+    if UNUSUAL_SET not in all_names:
+        bad("unusual: enumerated by subbench_dirs()", repr(all_names))
+        return
+    ok("unusual: enumerated by subbench_dirs()", "%d sets" % len(all_names))
+    with open(os.path.join(ROOT, "tools", "selfcheck.py"), encoding="utf-8") as fh:
+        src = fh.read()
+    for gate in sorted(UNUSUAL_GATE_SKIPS):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            kept = [n for n, _p in subbench_dirs(gate)]
+        want = [n for n in all_names if n != UNUSUAL_SET]
+        # rxt-export is also a SUBST gate: compare only the unusual part
+        if UNUSUAL_SET not in kept and [n for n in kept if n != "subst"] == \
+                [n for n in want if n != "subst"]:
+            ok("gate %r skips unusual" % gate, UNUSUAL_GATE_SKIPS[gate][:60])
+        else:
+            bad("gate %r skips unusual" % gate, repr(kept))
+        if src.count('subbench_dirs("%s")' % gate) >= 1:
+            ok("gate %r is passed by a call site" % gate)
+        else:
+            bad("gate %r is passed by a call site" % gate, "dead entry")
+    if sorted(UNUSUAL_GATE_SKIPS) == ["capability-policy-noop", "rxt-export", "vars-surface"]:
+        ok("UNUSUAL_GATE_SKIPS names exactly the three reported gates")
+    else:
+        bad("UNUSUAL_GATE_SKIPS names exactly the three reported gates", repr(sorted(UNUSUAL_GATE_SKIPS)))
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        kept = [n for n, _p in subbench_dirs("expectations")]
+    if kept == all_names:
+        ok("an unnamed gate ('expectations') keeps unusual", "applies")
+    else:
+        bad("an unnamed gate keeps unusual", repr(kept))
 
 
 def check_subst_set():
@@ -18941,6 +19022,7 @@ def main():
     check_kb29_find_all_giveup_propagation()
     check_subst_set()
     check_subst_gate_skips()
+    check_unusual_gate_skips()
     check_pcre2_dfa()
     check_wrap_spelling_fix()
     check_b105_tre_bracket_backslash_declaration()

@@ -127,8 +127,7 @@ per call (calls/s) and per segment MB/s, never per subject byte.
 ## 6. Dependencies on the other lanes (what this set needs and does not have)
 
 L1: regime `call-stream` in `subbench.py` / the schema; `REQUIRES_VOCAB` growing `vars` and
-`unusual-<member>` (the vars members' tags are spelled `needs-*` until then); `twin_of` in the
-tag vocabulary; the reader skip tables. L4: the `--mode calls` protocol over `calls/*.tsv`, the
+`unusual-<member>` (LANDED by L1; the vars members carry `requires-vars` + `requires-unusual-<member>`); `twin_of` (LANDED; the callout arms carry `twin_of-<root>`); the reader skip tables. L4: the `--mode calls` protocol over `calls/*.tsv`, the
 O(segment) pre-flight, `CELL_CAP_unusual`. L5: `callees.c`/`callees.o`, the wrappers,
 `pass-nofn`, pcrec's and Onig's callout declarations in the `ext bench` block (only libpcre2
 declares `callouts` today). L7: the vars members' value streams and their expectations
