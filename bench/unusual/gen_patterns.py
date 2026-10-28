@@ -42,6 +42,29 @@ VOCAB_REQUIRES = {"backrefs", "lookaround", "lookbehind-variable", "possessive-q
                   "span-reporting", "non-utf8-subject", "captures", "true-end-anchor"}
 
 
+# [B148] L5: the set's OWN capability facts, appended to the copied blocks (by
+# the testee whose block is copied, so a deep arm inherits its sibling's). Not
+# bench/capability's to declare: they are this set's callout bindings.
+#   callouts            pcrec binds `(?CN)` / `(?C"name")` at link time to the
+#                       bench's wrapper (match_api.md 11.2-11.4; adapter
+#                       callee_binding_source); Oniguruma runs the set's
+#                       `(?CN)` respelled `(?{N})` through its global progress
+#                       callout (testees/onig/callout_wrap.c). Witnessed by
+#                       tools/check_callouts.py.
+#   unusual-co-netstr   the consume callout `(?C"netstr,consume")` is pcrec's
+#                       alone (match_api.md 11.7).
+#   unusual-co-*-nofn   a site with NO callout function: libpcre2 only (pcrec
+#                       binds every site at link time; Oniguruma's callout
+#                       function is global, all or nothing).
+NOFN = ["unusual-co-luhn-nofn", "unusual-co-isbn-nofn", "unusual-co-member-nofn"]
+UNUSUAL_DELTA = {
+    "pcre2-interp": NOFN, "pcre2-jit": NOFN,
+    "pcrec-auto": ["callouts", "unusual-co-netstr"],
+    "pcrec-vm": ["callouts", "unusual-co-netstr"],
+    "onig-default": ["callouts"],
+}
+
+
 def capability_blocks():
     """-> {testee_id: [token lines]} read from bench/capability/patterns.rxt."""
     out, cur = {}, None
@@ -70,9 +93,10 @@ def render_rxt():
         "  `ext bench` capability matrix (the pattern source is subbench.toml's",
         "  [[patterns]] array + patterns/*.rx); every block below is a verbatim copy of",
         "  bench/capability/patterns.rxt's, so an engine fact is declared in one place",
-        "  (gen_patterns.py --check). The `callouts` token is declared for libpcre2 only:",
-        "  pcrec's callout binding and Oniguruma's `(?{N})` spelling are L5's to declare;",
-        "  the vars / unusual-<member> tokens are declared by L5/L7 (patterns carry them as requires-*).",
+        "  (gen_patterns.py --check), then this set's own callout facts (L5,",
+        "  gen_patterns.py UNUSUAL_DELTA): `callouts` for pcrec (link-time binding) and",
+        "  Oniguruma (`(?CN)` respelled `(?{N})`), `unusual-co-netstr` for pcrec only,",
+        "  `unusual-co-*-nofn` for libpcre2 only; the vars tokens are L7's.",
         "",
         "oracle pcre2",
         "tag set=unusual, version=0.1",
@@ -84,6 +108,10 @@ def render_rxt():
         for tok in blocks[src]:
             assert tok in VOCAB_REQUIRES, tok
             lines.append("    " + tok)
+        for tok in UNUSUAL_DELTA.get(src, []):
+            assert tok in VOCAB_REQUIRES or tok.startswith("unusual-"), tok
+            if tok not in blocks[src]:
+                lines.append("    " + tok)
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 
@@ -145,7 +173,8 @@ pcrec's `cscan` (the C `(?{ ... })` end scanner, one pcrec pattern, MIT) with \\
 its declared Oniguruma syntax-only variant, and two WILD members -- \\
 pcre2pattern(3)'s balanced-parenthesis pattern (BSD-3) and a `(?(DEFINE)` \\
 JSON validator (Stack Overflow 3845829, CC BY-SA 4.0) with its Onig variant. \\
-CALLOUTS: Luhn, ISBN-13 and set membership as twin / pass / real arms, and \\
+CALLOUTS: Luhn, ISBN-13 and set membership as twin / pass / real arms (and \\
+pass-nofn on libpcre2), and \\
 netstrings as pcrec-consume / assisted / twin. VARS: three `${...}` members \\
 and one spelling twin. Short subjects \\
 are typed cases for every member; the throughput subjects are the F3 \\
@@ -167,6 +196,15 @@ stream_generator = "gen_streams.py"
 stream_manifest = "manifest_streams.tsv"
 applies = "applies.tsv"
 short_search_max_bytes = 1024
+
+# CALLOUTS (L5, unusual_set_v1.md 3.2): the binding spec each callout arm's
+# driver binds -- site number (or pcrec's callout name) = callee. `real` serves
+# the real and twin arms (a twin has no site, so nothing fires: pass - twin is
+# symmetric), `pass` the stub arm; pass-nofn binds nothing. Member paths are
+# relative to this directory. The callees are bench/unusual/callees/.
+[callouts]
+real = "1=luhn,2=isbn13,3=member:values/users.tsv,4=netstr-end,netstr=netstr"
+pass = "1=stub,2=stub,3=stub,4=stub,netstr=stub"
 
 [expectations]
 file = "expectations.tsv"

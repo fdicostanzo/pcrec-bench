@@ -38,17 +38,17 @@ BUILD_ROOT = os.path.join(REPO, "build", "callees")
 #: the bound spec; the match-scope fire pair from the counting pass.
 CALLOUT_DECL = {
     "callees_sha256": {
-        "type": "sha256", "scope": "compile",
+        "type": "sha256", "scope": "pattern",
         "source": "pcrecbench/callees.py: sha256 of the ONE callees.o every "
                   "native-callout driver links (fixed flags, built once)",
         "description": "identity of the shared callee object (unusual_set_v1.md 3.2); "
                        "ABSENT on a unity build, which recompiles callees.c"},
     "callout_arm": {
-        "type": "string", "scope": "compile",
+        "type": "string", "scope": "pattern",
         "source": "the pattern's `arm-*` tag (bench/unusual/members.py)",
         "description": "real | pass | twin | pass-nofn: which callout arm this row is"},
     "callout_spec": {
-        "type": "string", "scope": "compile",
+        "type": "string", "scope": "pattern",
         "source": "the set's [callouts] table, member paths relative to the set",
         "description": "the binding spec the driver bound (site=callee,...); `none` "
                        "for pass-nofn (no callout function at all)"},
@@ -58,6 +58,12 @@ CALLOUT_DECL = {
                   "subject, iters 1 (unusual_set_v1.md 3.2 calibration item 1)",
         "description": "callee calls for ONE iteration of this row's operation; "
                        "absent where the engine has no counting build"},
+    "callout_respell": {
+        "type": "string", "scope": "pattern",
+        "source": "the adapter's site respelling, Oniguruma only",
+        "description": "`(?CN)->(?{N})`: the set's PCRE spelling of a numbered "
+                       "callout respelled to Oniguruma's contents callout before "
+                       "onig_new (unusual_set_v1.md 3.2)"},
     "callout_views_sha256": {
         "type": "sha256", "scope": "match",
         "source": "the counting build's fire log, its lines SORTED then hashed",
@@ -145,7 +151,59 @@ def options_for(sb, pattern):
                 callee = "member:" + os.path.join(sb.root, callee[len("member:"):])
             parts.append("%s=%s" % (k, callee))
         spec = ",".join(parts)
-    return {"arm": arm, "spec": spec}
+    # `spec` is what the driver binds (member paths absolute); `spec_decl` is
+    # what the record says (the set's own table text, paths set-relative).
+    return {"arm": arm, "spec": spec,
+            "spec_decl": table[key] if key else "none"}
+
+
+def spec_pairs(spec):
+    """-> [(key, callee)] of a binding spec, in its order."""
+    return [tuple(item.partition("=")[::2]) for item in (spec or "").split(",")
+            if item]
+
+
+def compile_metadata(co, sha=None):
+    """The compile-scope callout pairs for a row compiled under `co`
+    (options_for's dict); `sha` the callee object linked, None when none
+    is (a pcrec twin has no site and links no callee)."""
+    meta = {"callout_arm": co["arm"], "callout_spec": co["spec_decl"]}
+    if sha:
+        meta["callees_sha256"] = sha
+    return meta
+
+
+def co_driver(build_driver, source, output, base_extra, extra_sources,
+              wrapper, count=False):
+    """Build a callout driver: `source` compiled with -DPB_CALLOUTS beside
+    the engine's own instrument TUs, its `wrapper` TU, the binding parser
+    and the ONE callee object (the counting one when `count`). -> (path,
+    the callee object's sha256)."""
+    inputs, _obj, sha = link_inputs(count)
+    path = build_driver(source, output,
+                        extra=["-DPB_CALLOUTS", wrapper] + inputs + list(base_extra),
+                        extra_sources=extra_sources)
+    return path, sha
+
+
+class fire_log_env:
+    """`with fire_log_env(path):` -- every driver process started inside
+    gets UB_FIRE_LOG=path (the counting callees append to it). Mutates
+    driverrun.C_ENV for the block only; the untimed fire pass is its only
+    user."""
+
+    def __init__(self, path):
+        self.path = path
+
+    def __enter__(self):
+        from . import driverrun
+        driverrun.C_ENV["UB_FIRE_LOG"] = self.path
+        return self
+
+    def __exit__(self, *exc):
+        from . import driverrun
+        driverrun.C_ENV.pop("UB_FIRE_LOG", None)
+        return False
 
 
 def fire_log_digest(path):
