@@ -1,0 +1,61 @@
+# R10a review: L6 assists, recursion (RE2 / rust / Vectorscan) and netstr (all five)
+
+Read-only reviewer, 2026-10-28, for [B148] L6 (docs/design/unusual_set_v1.md 5.1-5.4).
+I read bench/unusual/assists/{RULES.md,AUTHORS.md,assists.tsv}, problems/{recursion,netstr}.md
+and both sample TSVs, the eight author reports docs/dev/lanes/b148a-{rec,ns}-*_report.md, all 14
+assist files, and (to judge semantics against the set's own truth) bench/unusual/unusual_lib.py's
+`ref_scan`, `sexp_first`, `netstr_first` and `json_ok`. Every file's sha256 matches its ledger row
+(checked with sha256sum). I compiled nothing, ran no assist and no tokcount. The inputs under
+"semantic risks" were built by reading the code against the reference. None was executed.
+
+## Verdicts
+
+| member | engine | tokens | ledger verdict | review verdict | reason |
+|---|---|---|---|---|---|
+| cscan | re2 | 369 | NOT-CAPABLE | accepted (honest, not padded; design-sensitive, R10A-9) | One anchored Latin-1 token regex with a catch-all `.`, a second `tail` regex, and a 45-token `~` expansion lambda. Ordinary RE2 lexer code. The author's ~325 without the lambda is plausible. Has a `%>` bug (R10A-1). |
+| wild-sexp-balanced | re2 | 180 | ASSISTED | accepted | `[()]` UNANCHORED Match loop, explicit stack, keeps the minimum popped start, stops when the stack empties. Equivalent to `sexp_first`. Default UTF-8 options rather than Latin-1 (R10A-8, harmless). Relies on `<vector>` arriving through re2.h. |
+| wild-json-validate | re2 | 388 | NOT-CAPABLE | accepted (honest) | Anchored token regex plus a char-coded pushdown. The conditions are dense but normal C++. Nothing in it is padding. |
+| cscan | rust | 226 | ASSISTED | accepted | One `(?-u)` token regex. `find_iter` lets the engine skip ordinary bytes, and the closer token carries `~\)?`. The match arms with guards are idiomatic Rust. The 600-character single-line regex is not golfing: a string literal is one token however it is laid out. I checked it against `ref_scan` on R10A-1/2/3 and on the splice and digraph rules. All agree, and I found no failing input. |
+| wild-sexp-balanced | rust | 212 | ASSISTED | accepted | Same design as RE2 and VS. `let ... else` and `map_or` are idiomatic. |
+| wild-json-validate | rust | 307 | NOT-CAPABLE | accepted (honest; 7 over, not golfed off) | The `start > 0` check is folded into the loop guard, a mild compression. It is also WRONG on a top-level comma (R10A-5). A correct version costs more tokens, so NOT-CAPABLE is firmer than "7 over" suggests. |
+| cscan | vectorscan | 755 | NOT-CAPABLE | **not-idiomatic** | The host lexer calls no engine (setup returns 0, and the ledger container says "no engine call"). Its author says so and calls the file a lower bound. The terse helpers (`sk`/`ch`/`nx`, a comma expression in a `for` guard) look golfed, but at 755 there is no budget to dodge. The NOT-CAPABLE outcome is credible, but 755 is not the count of a conforming assist (R10A-10). It also has two semantic bugs (R10A-3, R10A-4). |
+| wild-sexp-balanced | vectorscan | 261 | ASSISTED | accepted | Native Hyperscan shape: one `[()]` block scan, the callback is the stack, and it returns nonzero to stop when the stack empties. End-ordered single-byte events are safe here. `realloc` is unchecked (minor). |
+| wild-json-validate | vectorscan | 469 | NOT-CAPABLE | accepted (honest) | Four `^` patterns in a multi-db, one `hs_scan` per token. The `stack[--d] != c - 2` bracket-pair trick is terse but correct. `flags`/`ids` arrays are needed for `hs_compile_multi` classification (`flags` could be NULL, ~10 tokens: not material). |
+| co-netstr | pcre2 | 232 | ASSISTED | accepted | Shape A verbatim. The callout returns 1 (backtrack) / 0 (pass), which is the right convention. Group 1 comes from `offset_vector`. Does not check `pcre2_compile`'s result (would crash, not answer silently: minor). |
+| co-netstr | onig | 252 | ASSISTED | accepted | Shape A with `(?m:.)` (Oniguruma's dot-all) and `(?{4})`. Uses ONIG_CALLOUT_FAIL/SUCCESS by name, capture range and current position are read through the documented accessors, and a negative search code is returned as a give-up. |
+| co-netstr | re2 | 185 | ASSISTED | accepted | Shape B: UNANCHORED Match, jump, resume at the candidate's start+1. Equivalent to `netstr_first`. The RE2 is a static global with default UTF-8 options, compiled at static init rather than in setup (still outside the clock, R10A-8). `stoul(std::string)` allocates once per candidate, which is ordinary. |
+| co-netstr | rust | 201 | ASSISTED | accepted | Shape B with `captures_at`. `[0-9]` is rightly preferred to Unicode `\d`. `s.get(end)` does the bounds check. Textbook. |
+| co-netstr | vectorscan | 290 | ASSISTED | accepted | Shape B with SOM_LEFTMOST. The callback tries every start in the digit run and stops on the first hit. `return x->hit = 1` and a nested ternary are mildly terse, but this is ordinary callback C and the closest to budget for structural reasons (callback plus derived group 1). End order is safe here (R10A-11). |
+
+**Counts: 13 accepted, 1 not-idiomatic (cscan × vectorscan), 0 golfed, 0 padded.**
+
+**Cross-engine style.** No golfing bias. netstr's three Shape B assists use one design at 185/201/290: the Vectorscan premium is its callback and derived group 1. The two Shape A assists sit at 232/252. wild-sexp-balanced uses one design on all three engines (180/212/261). The only large spread is cscan (re2 369 / rust 226), and it comes from design, not style (R10A-9).
+
+**NOT-CAPABLE honesty.** re2 cscan 369, re2 json 388, rust json 307 and vs json 469 are honest attempts that were neither padded nor golfed. vs cscan 755 is an honest disclosure, but it is not an engine attempt (R10A-10).
+
+## Semantic risks
+
+Inputs are written as byte strings; `<LF>` is 0x0A and `\` is one backslash byte. "Moot for scoring" means the row is NOT-CAPABLE and never runs, but the risk is still recorded because the count rests on that file.
+
+- **R10A-1** (re2 cscan; moot for scoring). When `%>` is THE depth-1 closer, the `)` check starts at `off(g[2]) + 1`, which is the `>`, not the byte after the closer. Input `(?{ x; %>)` at 0: expected `m:0,10;3,7`, RE2 answers `n`. **Sample gap**: no public row has `%>` as the depth-1 closer.
+- **R10A-2** (re2 cscan; moot). The line-comment alternative `/~/(?:~[^\n])*~\n` can backtrack and end the comment at a splice's LF. Input `(?{ // c \<LF> })` with no LF after it: expected `n` (the comment reaches EOF), RE2 answers `m:0,14;3,12`. Rust's `\\+\n` / `\\+[^\\\n]` spelling has no such path and answers `n`. **Sample gap.**
+- **R10A-3** (re2 + vs cscan; moot). An escape followed by a logical LF. Input `(?{ "\\<LF><LF>"; })`: the bytes are `"`, `\`, `\`, LF, LF, `"`, so after splice removal the string holds `\` then a raw LF. `ref_scan` refuses (`n`). RE2's `\\~.` with dot_nl and VS's escape-skips-any-byte both accept: `m:0,14;3,12`. Rust's `[^\n]` refuses correctly. **Sample gap.**
+- **R10A-4** (vs cscan; moot). The digit separator accepts `'` before `$` or a byte >= 0x80, but the rule allows only `[A-Za-z0-9_]`. Input `(?{ n = 1'$'; })`: expected `m:0,16;3,14`, VS answers `n` (the char literal starts one quote late and runs to EOF).
+- **R10A-5** (rust json; moot, but it bears on the count). A `,` at top level goes to state `K` instead of failing. Input `1,"a":2`: expected `n`, rust answers `m:0,7`. The public sample has `1 2` but no top-level comma. **Sample gap.** The fix adds tokens, so the 307 is a lower bound.
+- **R10A-6** (vs json; moot). One `hs_scan` per token over `[pos, n)` stays linear only if Vectorscan halts once every `^`-anchored pattern is dead. Otherwise a 1 MB document is quadratic. The author flags this as untested. If the member is ever re-attempted, this must be measured first.
+- **R10A-7** (pcre2 + onig netstr; inherent to Shape A, informational). A declared LEN past EOF drives the lazy run to the end with one backtrack point per byte. On libpcre2 10.30+ that is one heap frame per byte, so on the order of 100 MB+ transient heap per such start at ~1 MB of rest, and up to 9 such starts per 9-digit run. Junk made of many too-long candidates, e.g. `999999999:` repeated through 1 MB, is O(n²) fires. A giant fire count with no give-up is a `timed-out`, not wrong. That outcome is honest, but the held-out junk generator's worst case should be checked against the cell cap. Whether `match_limit` and the Oniguruma retry limit count per start position or per call decides whether this ever surfaces as a give-up instead. I did not verify that (no source read).
+- **R10A-8** (re2 sexp + re2 netstr). They use default UTF-8 options, not the Latin-1 that both problem statements' §5 ask for. This has no effect for these ASCII-only patterns: RE2's unanchored prefix is a byte loop and `\d` is ASCII, and the public rows with 0x00/0xff pass. It is a consistency note only. A related give-up blind spot: no RE2 assist checks `ok()`, and netstr's static `head` cannot. A pattern that failed to compile would answer `n` on every call. The passing selftests prove these fixed patterns compile on this box.
+- **R10A-9** (re2 vs rust cscan, a verdict-validity question for the manager). The mechanism is the same: one token regex plus a depth counter. Yet the result is rust 226 ASSISTED against re2 369 NOT-CAPABLE. The difference is the author's design. Rust iterates unanchored, so the engine skips ordinary bytes and needs no `.` alternative, and its closer token absorbs the `)` check. RE2 can express both ideas (an UNANCHORED Match loop from the last end). My uncounted hand estimate puts a port near the 300 line. So the scoreboard's "RE2 cannot, rust-regex can" on cscan measures authors as much as engines. Blinding forbids showing the rust file to the RE2 author. Options: (a) record the verdict with this caveat in `declaration_ref`/report text, or (b) a second blinded RE2 attempt briefed only with "consider unanchored iteration". Recommend (a) unless Frank wants (b).
+- **R10A-10** (vs cscan). Its 755 counts a host-only lexer, so `declaration_ref ... tokens=755` would cite a count for a file the rules reject. Recommend that the ledger row carry the review verdict `not-idiomatic` and that the report wording say "no engine design found; host-only lower bound 755". The author's argument (every overlapping end reported, no leftmost-first lexing, a splice gap after every unit) is plausible but unproven. An engine-as-event-finder design like the sexp one (a byte-class pattern, host lexing between events) was not tried.
+- **R10A-11** (checked safe, recorded so a later reader need not redo it). These are the end-order and start-offset hazards the brief named, and none fires here:
+  - vs netstr: Vectorscan reports in end order, but here that is also start order. A digit run ending at a later `:` cannot start before an earlier `:`. A 10+ digit run straddling `start` (`1234567890:` at start=1) yields the same candidate as `netstr_first`.
+  - vs sexp: single-byte events, and nothing in the member needs context before `start`.
+  - rust `&s[start..]` slicing and vs `subj+start` scanning: no member here uses lookbehind or `\b`, so dropping the context before `start` is harmless.
+  - json: re2 and rust both answer `n` for start > 0.
+  - Leftmost-first: RE2 and rust alternations rely on it. That is correct for both engines' default semantics.
+  - Unbounded per-call cost on sexp (`( (a) ( (b) ( (c) ...` makes each find-all call scan to EOF, so O(n²) in all) is inherent to leftmost-start semantics. PCRE2's own pattern has the same cost. It is not an assist defect.
+  - No member here has the `\w+` for `\w++` hazard.
+
+**Sample gaps to consider for the held-out corpus** (not the public sample, which the authors have already used): R10A-1, -2, -3 and -5. The one ASSISTED file they could catch (rust cscan) answers all three cscan ones correctly by reading. The rest guard future re-authoring and the native engines.
+
+**By-id completeness:** 14/14 (member, engine) rows have a verdict. R10A-1..R10A-11 are all listed above (11 ids, none dropped).
