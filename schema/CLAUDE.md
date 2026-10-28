@@ -21,7 +21,7 @@ they and the note disagree.
   per line kind (`setup`, `match_row`, `compile_row`); the root is their
   `oneOf`, so a generic tool can validate a line without knowing which
   it is. `x-record-schema-version` at the root is the version this
-  schema IMPLEMENTS (1.10), which is what `validate.py` compares a file's
+  schema IMPLEMENTS (1.11), which is what `validate.py` compares a file's
   `schema_version` against. v1.2 added the two optional TIER fields
   (`tier`, `testee.binary`) and the `local:` shape of `engine_version`
   ([B10]); v1.3 added optional `patterns[].role` (`member`/`floor`,
@@ -58,7 +58,15 @@ they and the note disagree.
   `v1.4-group` (1.4..1.9) or `v1.10-group` (from 1.10; a `substitution`
   trial is timed at `iterations >= 1`, gate_shape_v14.md 3.7); X32 keys
   the rule on the record's own `schema_version` (`validate.py`
-  `ta_rule_for`) and requires the block's `rule` to match.
+  `ta_rule_for`) and requires the block's `rule` to match. v1.11
+  ([B148] L1, lane `b148l1`, 2026-10-27, unusual_set_v1.md 7.4) adds the
+  `call-stream` regime, `match_row.stream`, `testee.assist`, rule
+  `v1.11-group` (also `call-stream` timed at `iterations >= 1`,
+  gate_shape_v14.md 3.8; `validate.py` `ONE_ITERATION_REGIMES`) and rules
+  X47-X53 (`validate.py` `_stream_rules`: stream iff call-stream, the
+  count sum, gave-up/first_limit, assist iff `assist-v<NN>`, X51
+  `v1.11-group` below 1.11, the `deep_mem_*` pair, segment bytes and
+  `refused` only on a `requires-vars` pattern).
   Every 1.1 through 1.8 record still validates, and the older examples
   are left stamped at their own versions to prove it.
 - `validate.py` — the validator the harness and the reporter share
@@ -94,7 +102,7 @@ they and the note disagree.
   v1.1 because five rules had reached that version with no control at
   all while the note claimed in prose that none could.
 - `examples/` — records that MUST validate, and `examples/gen_example_14.py`
-  / `gen_example_110.py` / `gen_example_ident110.py` ([B145]: the 1.10 two-hash example + its X46 sabotage), the committed deterministic generators of the
+  / `gen_example_110.py` / `gen_example_ident110.py` / `gen_example_111.py` ([B148]: the 1.11 call-stream example + its 13 X47-X53 sabotages) ([B145]: the 1.10 two-hash example + its X46 sabotage), the committed deterministic generators of the
   1.4 example and of the 1.10 substitution example + its X32 sabotage
   (`--check` is part of `make check-schema`). See its CLAUDE.md.
 - `examples/bad/` — records that MUST NOT. See its CLAUDE.md.

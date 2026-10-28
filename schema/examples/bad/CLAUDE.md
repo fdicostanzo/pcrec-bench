@@ -148,4 +148,15 @@ X32):
   restamped, so its edit and its hash disagree by construction.
 
 
+[B148] L1 (`../gen_example_111.py`, one-field mutations of the 1.11
+call-stream example unless noted): `x47-stream-absent-on-call-stream-row`,
+`x47-stream-on-other-regime`, `x47-call-stream-on-110-record` (the regime
+re-stamped 1.10), `x48-stream-counts-off-by-one`,
+`x49-gave-up-count-but-matched`, `x49-diagnostic-does-not-name-limit`,
+`x50-assist-token-without-object`, `x50-assist-duplicate-member`,
+`x51-v111-group-on-110-record` (the 1.10 substitution example's block
+relabelled `v1.11-group`), `x52-deep-mem-bytes-without-method`,
+`x52-deep-mem-method-unknown`, `x53-refused-on-a-non-vars-pattern`,
+`x53-segment-bytes-zero`.
+
 Maintenance: update this file when files are added/removed or change role.

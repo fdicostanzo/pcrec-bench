@@ -155,7 +155,9 @@ def build_digest(path):
     t = setup.get("testee", {})
     run = setup.get("run", {})
     cells, rawt = {}, {}
-    for r in rows:
+    # [B148] L1: the set-grain skip table (R.SET_GRAIN_SKIP_REGIMES) -- a
+    # `call-stream` row is never a trend cell (unusual_set_v1.md 7.5).
+    for r in R.set_grain_rows(rows):
         if r.get("kind") != "match":
             continue
         key = "\t".join((r.get("pattern_id"), r.get("regime"),

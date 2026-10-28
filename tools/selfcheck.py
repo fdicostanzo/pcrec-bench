@@ -14701,8 +14701,8 @@ def check_trial_agreement_subst_fixture():
     setup["status_detail"] = "fixture"
     try:
         _write_scratch(setup, all_rows, "tasub")
-        ok("subst fixture: written as a %s record VALIDATES (X31/X32 on the v1.10-group stamp)"
-           % setup["schema_version"])
+        ok("subst fixture: written as a %s record VALIDATES (X31/X32 on the %s stamp)"
+           % (setup["schema_version"], setup["trial_agreement"]["rule"]))
     except _store.StoreError as e:
         bad("subst fixture: record rejected", str(e)[-400:])
     lie = dict(setup["trial_agreement"], groups_disagreeing=0, rows_disagreeing=0,
@@ -14726,6 +14726,296 @@ def check_trial_agreement_subst_fixture():
             ok("subst fixture: the rule text is keyed on the version (v1.4-group on 1.10 -> X32)")
         else:
             bad("subst fixture: rule pairing rejected for the wrong reason", str(e)[-200:])
+
+
+def check_trial_agreement_stream_fixture():
+    """gate_shape_v14.md 3.8 ([B148] L1, rule `v1.11-group`): the [B144]
+    substitution fixture's values on CALL-STREAM rows -- 5 trials, ONE
+    iteration (one replay) each, one group of 4 rows. Under `v1.11-group`
+    the rows are judged (4 judged, 2 disagreeing, the group disagrees);
+    under `v1.10-group` (a 1.10 record's text) they are `few_timed_trials`;
+    substitution rows keep their 1.10 treatment under 1.11. CONTROL:
+    validate.py's own implementation gives the same integers; the fixture
+    written as a 1.11 record VALIDATES, the block re-labelled `v1.10-group`
+    is REJECTED by X32 and the same block on a 1.10 record by X51."""
+    print("-- the v1.11 call-stream fixture: two implementations, one answer --")
+    import importlib.util
+    from pcrecbench import reduce as _rd, store as _store
+    STREAM, SUB = "call-stream", "substitution"
+    vals = {"s1": [100, 101, 99, 100, 102], "s2": [100, 160, 100, 160, 100],
+            "s3": [100, 100, 60, 100, 100], "s4": [100, 100, 100, 100, 101]}
+
+    def build(regime):
+        rows, seq = [], 0
+        for sid in ("s1", "s2", "s3", "s4"):
+            for t in range(1, 6):
+                seq += 1
+                r = _ta_row("pa", sid, regime, t, seq, vals[sid][t - 1],
+                            iterations=1)
+                if regime == STREAM:      # X47: the stream's answer
+                    r["stream"] = {"calls": 8, "segment_bytes": 64, "matched": 6,
+                                   "nomatch": 2, "refused": 0, "gave_up": 0,
+                                   "results_sha256": "0" * 64}
+                    r["timing"]["bytes_processed"] = 64
+                if regime == SUB:         # X36/X43
+                    r["subst"] = {"case": "1", "gate": "agrees", "nsubst": 3,
+                                  "out_bytes": 30, "out_sha256": "0" * 64}
+                rows.append(r)
+        return rows
+    judged = {"trials": 5, "groups_judged": 1, "groups_disagreeing": 1,
+              "rows_judged": 4, "rows_disagreeing": 2, "rows_unjudged": 0}
+    unjudged = {"trials": 5, "groups_judged": 0, "groups_disagreeing": 0,
+                "rows_judged": 0, "rows_disagreeing": 0, "rows_unjudged": 4}
+    spec = importlib.util.spec_from_file_location(
+        "pb_validate_b148", os.path.join(ROOT, "schema", "validate.py"))
+    V = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(V)
+    cases = [("call-stream rows under v1.11-group", build(STREAM), "v1.11-group",
+              judged, "disagree"),
+             ("call-stream rows under v1.10-group", build(STREAM), "v1.10-group",
+              unjudged, "agree"),
+             ("substitution rows under v1.11-group", build(SUB), "v1.11-group",
+              judged, "disagree")]
+    for label, rows, rule, want, verdict in cases:
+        got = _rd.judge_trial_agreement(rows, rule=rule)
+        v = V.judge_trial_agreement(rows, 1.5, 2, 3, rule)
+        if all(got[k] == w for k, w in want.items()) and got["verdict"] == verdict:
+            ok("stream fixture: %s -> %s" % (label, verdict),
+               "%d judged, %d disagreeing" % (got["rows_judged"], got["rows_disagreeing"]))
+        else:
+            bad("stream fixture: %s" % label, repr({k: got.get(k) for k in want}))
+        if all(v[k] == w for k, w in want.items()):
+            ok("stream fixture: CONTROL -- validate.py's own implementation agrees (%s)" % label)
+        else:
+            bad("stream fixture: validate.py disagrees (%s)" % label, repr(v))
+    rows = build(STREAM)
+    setup, all_rows = _assemble(rows)
+    setup["subbench"]["regimes"] = [STREAM]
+    setup["trial_agreement"] = _rd.judge_trial_agreement(all_rows)
+    setup["status"] = "inconclusive-spread"
+    setup["status_detail"] = "fixture"
+    try:
+        _write_scratch(setup, all_rows, "tastream")
+        ok("stream fixture: written as a %s record VALIDATES (rule %s)"
+           % (setup["schema_version"], setup["trial_agreement"]["rule"]))
+    except _store.StoreError as e:
+        bad("stream fixture: record rejected", str(e)[-400:])
+    old = dict(setup, trial_agreement=_rd.judge_trial_agreement(all_rows,
+                                                                rule="v1.10-group"))
+    try:
+        _write_scratch(old, all_rows, "tastream2")
+        bad("stream fixture: v1.10-group on a 1.11 record must be REJECTED")
+    except _store.StoreError as e:
+        if "[X32]" in str(e):
+            ok("stream fixture: v1.10-group stamped on a 1.11 record is rejected by X32")
+        else:
+            bad("stream fixture: rejected for the wrong reason", str(e)[-200:])
+
+
+def check_unusual_record_fit():
+    """unusual_set_v1.md 6.4 / r9 S-14 ([B148] L1): do the set's NEW
+    engine_metadata values fit the record's metadata model? One 1.11
+    call-stream record carrying every declared pair the note names --
+    match-scope integer `deep_mem_bytes` at 2^40 (beyond the 1 GiB cap) and
+    2^53 - 1 (the largest integer a JavaScript reader -- the viewer -- holds
+    exactly) with string `deep_mem_method`, match-scope integer
+    `callout_fires` (2^40), string `stream_anchor`, compile-scope sha256
+    `callees_sha256` and integer `assist_deferred_compile` -- is written
+    through store.write (VALIDATING) and read back value for value.
+    CONTROL: the same record with `deep_mem_method = "guess"` is rejected by
+    X52, and with the method removed by X52."""
+    print("-- the unusual set's metadata values fit the record (6.4) --")
+    import copy as _copy
+    from pcrecbench import reduce as _rd, store as _store
+    big = [1 << 40, (1 << 53) - 1]
+    rows, seq = [], 0
+    for sid, mem in zip(("s1", "s2"), big):
+        for t in range(1, 6):
+            seq += 1
+            r = _ta_row("cscan", sid, "call-stream", t, seq, 100, iterations=1)
+            r["stream"] = {"calls": 1, "segment_bytes": 64, "matched": 1,
+                           "nomatch": 0, "refused": 0, "gave_up": 0,
+                           "results_sha256": "1" * 64}
+            r["timing"]["bytes_processed"] = 64
+            r["engine_metadata"] = {"deep_mem_bytes": mem,
+                                    "deep_mem_method": "canary",
+                                    "callout_fires": 1 << 40,
+                                    "stream_anchor": "explicit"}
+            rows.append(r)
+    setup, all_rows = _assemble(rows)
+    setup["subbench"]["regimes"] = ["call-stream"]
+    for r in all_rows:
+        if r["kind"] == "compile":
+            r["engine_metadata"] = {"callees_sha256": "a" * 64,
+                                    "assist_deferred_compile": 1}
+    decl = setup["testee"].setdefault("engine_metadata_declaration", {})
+    for name, typ, scope in (("deep_mem_bytes", "integer", "match"),
+                             ("deep_mem_method", "string", "match"),
+                             ("callout_fires", "integer", "match"),
+                             ("stream_anchor", "string", "match"),
+                             ("callees_sha256", "sha256", "pattern"),
+                             ("assist_deferred_compile", "integer", "pattern")):
+        decl[name] = {"type": typ, "scope": scope, "source": "fixture ([B148] L1)"}
+    setup["trial_agreement"] = _rd.judge_trial_agreement(all_rows)
+    try:
+        path, _w = _write_scratch(setup, all_rows, "unusualfit")
+        _s, back = _rd.read_record(path)
+        got = sorted({r["engine_metadata"]["deep_mem_bytes"] for r in back
+                      if r["kind"] == "match"})
+        fires = {r["engine_metadata"]["callout_fires"] for r in back if r["kind"] == "match"}
+        if got == big and fires == {1 << 40}:
+            ok("record fit: deep_mem_bytes 2^40 and 2^53-1, callout_fires 2^40, "
+               "callees_sha256, assist_deferred_compile validate and read back exactly")
+        else:
+            bad("record fit: values did not round-trip", repr((got, fires)))
+    except _store.StoreError as e:
+        bad("record fit: the record is rejected", str(e)[-400:])
+    for label, mutate in (
+            ("deep_mem_method `guess`",
+             lambda rs: rs[-1]["engine_metadata"].__setitem__("deep_mem_method", "guess")),
+            ("deep_mem_method removed",
+             lambda rs: rs[-1]["engine_metadata"].pop("deep_mem_method"))):
+        rs2 = _copy.deepcopy(all_rows)
+        mutate(rs2)
+        try:
+            _write_scratch(setup, rs2, "unusualfit2")
+            bad("record fit: CONTROL -- %s must be REJECTED" % label)
+        except _store.StoreError as e:
+            if "[X52]" in str(e):
+                ok("record fit: CONTROL -- %s is rejected by X52" % label)
+            else:
+                bad("record fit: %s rejected for the wrong reason" % label, str(e)[-200:])
+
+
+def check_unusual_vocab_and_twin_of():
+    """unusual_set_v1.md 5.5 / 3.2 ([B148] L1): `REQUIRES_VOCAB` grows `vars`
+    and the prefix family `unusual-<member>` (a slug after the prefix); the
+    NOT-CAPABLE `declaration_ref` spelling round-trips; the `twin_of` pattern
+    tag groups a callout member's arms. CONTROLS: an unknown token, a bare
+    `unusual-` and an upper-case member are refused BY NAME; tokens <= budget
+    is no NOT-CAPABLE verdict; a twin_of naming no pattern, a second twin_of
+    on one pattern and a chained group are each refused BY NAME."""
+    print("-- the unusual set's capability tokens and the twin_of tag --")
+    from pcrecbench import capability as _cap, subbench as _sb
+    good = ["vars", "recursion", "callouts", "unusual-co-luhn", "unusual-va-term"]
+    badt = ["unusual-", "unusual-Co-luhn", "unusual--x", "varz", "unusual"]
+    if all(_cap.is_requires_token(t) for t in good) \
+            and not any(_cap.is_requires_token(t) for t in badt):
+        ok("vocab: vars + unusual-<member> accepted; %d malformed tokens refused" % len(badt))
+    else:
+        bad("vocab", repr([(t, _cap.is_requires_token(t)) for t in good + badt]))
+
+    class _P:
+        def __init__(self, name, tags):
+            self.name, self.tags = name, tags
+    p = _P("co-luhn", ["requires-callouts", "requires-unusual-co-luhn", "requires-vars"])
+    try:
+        req = _cap.pattern_requires(p)
+        if req == frozenset({"callouts", "unusual-co-luhn", "vars"}):
+            ok("vocab: pattern_requires reads requires-unusual-<member> and requires-vars")
+        else:
+            bad("vocab: pattern_requires", repr(req))
+    except _cap.CapabilityError as e:
+        bad("vocab: pattern_requires refused a legal token", str(e))
+    try:
+        _cap.pattern_requires(_P("x", ["requires-unusual-Bad"]))
+        bad("vocab: requires-unusual-Bad must be refused")
+    except _cap.CapabilityError as e:
+        if "unusual-<member>" in str(e) and "'x'" in str(e):
+            ok("vocab: CONTROL -- requires-unusual-Bad refused by name, the family named")
+        else:
+            bad("vocab: refusal text", str(e))
+    ref = _cap.not_capable_declaration_ref("bench/unusual/assists/assists.tsv:7", 412, 300)
+    if ref == "bench/unusual/assists/assists.tsv:7 tokens=412 budget=300" \
+            and _cap.parse_not_capable(ref) == (412, 300) \
+            and _cap.parse_not_capable("bench/x/ENGINE_NOTES.md: no backrefs") is None:
+        ok("vocab: NOT-CAPABLE declaration_ref spelled and parsed (tokens=412 budget=300)")
+    else:
+        bad("vocab: declaration_ref", ref)
+    try:
+        _cap.not_capable_declaration_ref("x", 300, 300)
+        bad("vocab: tokens == budget is ASSISTED, never NOT-CAPABLE -- must be refused")
+    except _cap.CapabilityError:
+        ok("vocab: CONTROL -- tokens == budget is no NOT-CAPABLE verdict")
+
+    arms = [_P("co-luhn-twin", ["twin_of-co-luhn"]), _P("co-luhn-pass", ["twin_of-co-luhn"]),
+            _P("co-luhn", ["twin_of-co-luhn"]), _P("floor", [])]
+    if _sb.twin_groups(arms, "t") == {"co-luhn": ["co-luhn-twin", "co-luhn-pass", "co-luhn"]}:
+        ok("twin_of: one group, root co-luhn, three arms in set order (the root names itself)")
+    else:
+        bad("twin_of: groups", repr(_sb.twin_groups(arms, "t")))
+    for label, pats, needle in (
+            ("names no pattern", [_P("a-twin", ["twin_of-a"])], "names no pattern"),
+            ("two twin_of tags", [_P("a", []), _P("a-twin", ["twin_of-a", "twin_of-b"])],
+             "at most one"),
+            ("chained", [_P("a", ["twin_of-b"]), _P("b", []), _P("a-twin", ["twin_of-a"])],
+             "ONE root")):
+        try:
+            _sb.twin_groups(pats, "t")
+            bad("twin_of: CONTROL -- %s must be refused" % label)
+        except _sb.SubbenchError as e:
+            if needle in str(e):
+                ok("twin_of: CONTROL -- %s refused by name" % label)
+            else:
+                bad("twin_of: %s refusal text" % label, str(e))
+
+
+def check_call_stream_readers():
+    """unusual_set_v1.md 7.5 ([B148] L1, PROPOSED P12): the set-grain readers
+    skip `call-stream` BY NAME. `reduce.SET_GRAIN_SKIP_REGIMES` names it and
+    `set_grain_rows` drops exactly those rows; the viewer exporter, the
+    trend digest and the front page each read their cells through it (the
+    source is checked, since none of the three is run here); and the harness
+    refuses a `call-stream` cell BY NAME until lane L4's driver plumbing
+    lands (`harness.CALL_STREAM_PENDING`). CONTROL: a search row passes the
+    filter unchanged; `cells_from_record` itself still sees the stream row."""
+    print("-- the call-stream regime's skip table and the harness refusal --")
+    from pcrecbench import reduce as _rd, harness as _h, subbench as _sbm
+    rows = [{"kind": "match", "regime": "call-stream", "pattern_id": "a"},
+            {"kind": "match", "regime": "short-subject-search", "pattern_id": "b"},
+            {"kind": "compile", "pattern_id": "a"}]
+    kept = _rd.set_grain_rows(rows)
+    if _rd.SET_GRAIN_SKIP_REGIMES == frozenset({"call-stream"}) \
+            and [r["pattern_id"] for r in kept] == ["b", "a"] \
+            and ("a", "call-stream", "plain") in _rd.cells_from_record(rows):
+        ok("readers: set_grain_rows drops the call-stream row only; cells_from_record unfiltered")
+    else:
+        bad("readers: skip table", repr(kept))
+    missing = [f for f in ("tools/viewer_export.py", "tools/trend.py", "tools/frontpage.py")
+               if "set_grain_rows" not in open(os.path.join(ROOT, f), encoding="utf-8").read()]
+    if not missing:
+        ok("readers: viewer_export / trend / frontpage read cells through set_grain_rows")
+    else:
+        bad("readers: no skip-table read in", ", ".join(missing))
+    if _sbm.REGIME_TO_ENUM.get("call-stream") == "call-stream" \
+            and _sbm.REGIME_MODE.get("call-stream") == "calls":
+        ok("readers: the sidecar spelling `call-stream` maps to the schema enum, mode `calls`")
+    else:
+        bad("readers: REGIME_TO_ENUM/REGIME_MODE lack call-stream")
+    # a set that DECLARES the regime (email with `call-stream` appended in
+    # memory -- no real set declares it before lane L3): the guard, not the
+    # "does not declare" check, must be what refuses
+    real_find = _sbm.find
+
+    def _find(name):
+        sb = real_find(name)
+        sb.regimes = list(sb.regimes) + ["call-stream"]
+        return sb
+    _sbm.find = _find
+    try:
+        _h.run_cell("email", "pcre2-jit", regimes=["call-stream"], trials=1,
+                    iters=1, force_unquiet=True, tier="scratch",
+                    store_root=os.path.join(ROOT, "build", "selfcheck-stream-refusal"))
+        bad("readers: a call-stream cell must be refused before measuring")
+    except _h.HarnessError as e:
+        msg = str(e)
+        if "`call-stream` regime" in msg and "L4" in msg:
+            ok("readers: a call-stream cell is refused BY NAME before anything is built",
+               "harness.CALL_STREAM_PENDING")
+        else:
+            bad("readers: refusal text", msg[:300])
+    finally:
+        _sbm.find = real_find
 
 
 def check_trial_agreement_fixture():
@@ -14864,7 +15154,7 @@ def check_spread_status_stamped():
         sd = written.get("status_detail", "")
         if written["status"] == want_status and (
                 want_status == "measured" or (
-                    sd.startswith("trial agreement (v1.10-group, k=1.5, d_min=2, share_c=3, "
+                    sd.startswith("trial agreement (v1.11-group, k=1.5, d_min=2, share_c=3, "
                                   "trials=5): 1 of 1 groups disagree; 2 of 2 rows disagree, "
                                   "0 unjudged; worst group pa / short-subject-search / plain: "
                                   "d=2 of n=2")
@@ -14955,7 +15245,7 @@ def check_smoke_block_na_trials():
     st, _s = _h.derive_status([], ta, "scratch")
     st_p, sent = _h.derive_status([], ta, "pinned")
     if st == "measured" and st_p == "inconclusive-spread" and sent \
-            and sent[0].startswith("trial agreement (v1.10-group): n/a-trials (1 trials"):
+            and sent[0].startswith("trial agreement (v1.11-group): n/a-trials (1 trials"):
         ok("smoke block: CONTROL -- scratch keeps the pre-flight's status; pinned "
            "is inconclusive-spread", "derive_status rows 5 and 4")
     else:
@@ -18624,6 +18914,10 @@ def main():
     check_after_sample_is_provenance()
     check_trial_agreement_fixture()
     check_trial_agreement_subst_fixture()
+    check_trial_agreement_stream_fixture()
+    check_unusual_record_fit()
+    check_unusual_vocab_and_twin_of()
+    check_call_stream_readers()
     check_spread_status_stamped()
     check_status_sentence_never_elided()
     check_smoke_block_na_trials()

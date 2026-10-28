@@ -253,6 +253,23 @@ def reduce_set_cell(rows_by_subject):
 
 # ---------------------------------------------------------- from a record
 
+# [B148] L1 (docs/design/unusual_set_v1.md 7.5, PROPOSED P12): THE
+# SET-GRAIN SKIP TABLE. A regime named here is never reduced to a set cell
+# by the readers that read set cells from the store -- the viewer exporter,
+# the trend report, the front page -- because its row's time is not per
+# subject: a `call-stream` row times one replay of a whole call list and its
+# denominators are `stream.calls` / `stream.segment_bytes`. Each reader
+# skips BY NAME through `set_grain_rows` (the reporter refuses or drops the
+# same rows itself, report.py). `cells_from_record` does NOT filter: `quick`
+# and the trial-agreement rule still see every row.
+SET_GRAIN_SKIP_REGIMES = frozenset({"call-stream"})
+
+
+def set_grain_rows(rows):
+    """`rows` minus every row whose regime is in SET_GRAIN_SKIP_REGIMES."""
+    return [r for r in rows if r.get("regime") not in SET_GRAIN_SKIP_REGIMES]
+
+
 def cells_from_record(rows):
     """Group a record's match rows into set cells:
     {(pattern_id, regime, form): {subject_id: [rows]}}. `form` absent reads

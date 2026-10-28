@@ -773,6 +773,39 @@ their check, and a result that disagrees with them (a regime whose
 honest spread is wider than k = 1.5, or a gate that never fires) is a
 ruling for Frank, not a silent recalibration.
 
+### 3.8 `v1.11-group` — call-stream trials are timed at one iteration (record schema v1.11, [B148])
+
+**The need (`unusual_set_v1.md` v0.2 §7.2; r9 C3 / S-3).** A
+`call-stream` row times ONE FULL REPLAY of a declared call list per
+iteration, the replay count calibrated to the least one whose summed clock
+clears 50 ms — often 1. Under `v1.10-group` such a row would be
+`few_timed_trials`, exactly the [B144] finding for substitution rows.
+
+**The revision.** A RULE REVISION under `record_schema.md` §4's
+rule-revision clause, at schema **1.11**, rule id **`v1.11-group`**. The
+ONLY change to §3.7's arithmetic is the regime set timed at one iteration:
+
+    timed = { trial: elapsed_ns / iterations (float64)
+              for the key's rows with match_outcome == "matched-as-expected"
+              and timing.iterations >= (1 if row.regime in
+                  {"substitution", "call-stream"} else 2) }
+
+Everything else — the per-trial value, slow/fast/MIXED/group/record
+arithmetic, the `n/a-trials` guard, the block's shape, the constants — is
+untouched; `substitution` keeps its 1.10 treatment.
+
+**Versioning.** X32 stays VERSIONED by the record's own `schema_version`:
+`v1.4-group` for 1.4..1.9, `v1.10-group` on 1.10, `v1.11-group` from 1.11
+(`validate.ta_rule_for`), and the block's `rule` must be the one its
+version names; X51 refuses `v1.11-group` on a record stamped below 1.11.
+New records are stamped `v1.11-group` (`reduce.TRIAL_AGREEMENT_RULE`).
+Both implementations read one table each, `ONE_ITERATION_REGIMES` (rule ->
+regimes), and still share no source (§4 V6).
+
+**The constants are NOT re-measured**, as at 3.7: the first call-stream
+window's blocks are their check, and a disagreement with them is a ruling
+for Frank, not a silent recalibration.
+
 ## 4. THE VALIDATOR AND SCHEMA CHANGES, enumerated
 
 `schema_version` 1.3 → **1.4, a MINOR bump under record_schema.md §4 AS
@@ -964,6 +997,7 @@ passes `validate=False` and loses it.
 | check-harness | `check_after_sample_is_provenance` | a synthetic after sample at 40 % on a run whose pre-flight passed and whose rows agree (5 trials): `status = measured`, `note` carries the §2 sentence SECOND (after the prefix), `occupancy.after.verdict = fail` (X26 still holds), the record validates at 1.4 | the same record re-stamped 1.3 is REJECTED by X13 (and by X33, honestly — both fire) |
 | check-harness | `check_trial_agreement_fixture` | `reduce.judge_trial_agreement` on a hand-computed fixture — 5 trials; group A of 4 rows: one clean, one with a single 3× trial (tolerated), one with two 1.6× trials (disagreeing), one with a 0.6× trial (disagreeing) ⇒ d = 2, n = 4, DISAGREES at (2, 3); group B of 5 rows, one disagreeing ⇒ d = 1, does not; group C of 3 rows all `iterations = 1` ⇒ unjudged (`few_timed_trials`); group D of 2 rows: one with EVERY trial `timed-out` ⇒ unjudged (`all_timed_out`), one MIXED (two `timed-out`, three timed) ⇒ judged and disagreeing, so D has d = 1, n = 1 and does NOT disagree (d < D_MIN): `trials 5`, `groups_judged 3`, `groups_disagreeing 1`, `rows_judged 10`, `rows_disagreeing 4`, `rows_unjudged 4`, `rows_unjudged_reasons {few_timed_trials: 3, all_timed_out: 1, na_trials: 0}`, `worst_group` = A (d = 2, n = 4), verdict `disagree`; with `share_c = 1` ⇒ `agree`; truncated to 3 trials ⇒ `n/a-trials` with every count 0 and `rows_unjudged 14` under `na_trials` | `validate.py`'s X32 recomputation on the same fixture written as a record gives the same integers and the same `worst_group` — two implementations, one fixture, no shared source (V6); PLUS the boundary rows: a trial at exactly `k · m` (not slow) and a minimum at exactly `m / k` (not fast) give the same counts in both |
 | check-harness | `check_trial_agreement_subst_fixture` ([B144], §3.7) | a hand-computed substitution fixture, 5 trials, ONE iteration each, one group (pa, `substitution`, plain) of 4 rows: s1 and s4 clean, s2 with two 1.6× trials (disagreeing), s3 with one 0.6× trial (disagreeing) ⇒ `rows_judged 4`, `rows_disagreeing 2`, `rows_unjudged 0`, `groups_judged 1`, `groups_disagreeing 1` (d = 2, n = 4, 3·2 ≥ 4), `worst_group` (pa, substitution, plain, 2, 4), verdict `disagree`; the first two rows alone (s1 clean + s2 disagreeing) ⇒ d = 1, n = 2, the group does NOT disagree (d < D_MIN), verdict `agree`; the SAME 4 rows with regime `short-subject-search` ⇒ every row `few_timed_trials` (`rows_unjudged 4`, `groups_judged 0`, verdict `agree`, `worst_group` null); the substitution rows judged under `rule = v1.4-group` ⇒ also unjudged | `validate.py`'s own implementation gives the same integers on all four calls (no shared source, V6); a record carrying the substitution fixture written through `store.write` validates, and the same record with the block sabotaged to claim `agree` is rejected by X32; `bad/x32-v110-subst-claims-agree.jsonl` is the on-disk control |
+| check-harness | `check_trial_agreement_stream_fixture` ([B148], §3.8) | the [B144] fixture's values on `call-stream` rows (5 trials, one iteration each, one group of 4 rows): under `v1.11-group` 4 judged, 2 disagreeing, the group disagrees; the same rows under `v1.10-group` are 4 × `few_timed_trials`; substitution rows under `v1.11-group` are judged as under `v1.10-group` | `validate.py`'s own implementation gives the same integers on all three calls; the fixture written as a 1.11 record validates, the block re-stamped `v1.10-group` is rejected by X32; `bad/x51-v111-group-on-110-record.jsonl` is the on-disk X51 control |
 | check-harness | `check_spread_status_stamped` (ruling R-10) | `harness.derive_status` on all five rows of the §5 decision table returns the stated status and the stated sentence order; then a hand-assembled record whose rows make one group disagree, stamped through the same function and written through `store.write` into a scratch store, comes back `inconclusive-spread` with the block's numbers and the §3.4 line at offset 0 of `status_detail` | the same rows with ONE slow trial per row instead of two ⇒ `measured` — the rule tolerates one, and the check shows it does |
 | check-harness | `check_status_sentence_never_elided` (ruling R-4) | a record whose calibration sentences exceed the free_text cap (bench/bounded's shape) still has its status-deciding sentence at offset 0 and the elision marker names the class dropped | the same sentences joined WITHOUT `first=` show the status sentence elided |
 | check-harness | `check_smoke_block_na_trials` | the existing `--trials 1` smoke record carries the block with `verdict: n/a-trials`, `trials: 1`, every count 0, `rows_unjudged` = its row keys, and validates; its status is `measured` on the scratch tier (§5 row 5) | X33's `x33-trial-agreement-missing` control; and the same record re-tiered `pinned` through `derive_status` ⇒ `inconclusive-spread` (§5 row 4) |

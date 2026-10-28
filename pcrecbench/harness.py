@@ -641,6 +641,13 @@ PRIME_PINNED_REFUSAL = "--prime is scratch-tier only until the schema records it
 PRIME_NOTE = "primed: one untimed call per subject before each timed loop"
 
 
+# [B148] L1: the `call-stream` regime is in the schema and the sidecar
+# vocabulary, but no adapter speaks `--mode calls` yet (unusual_set_v1.md
+# 7.3, lane L4). Until L4 sets this False, a cell asking for the regime is
+# refused BY NAME before anything is built or measured.
+CALL_STREAM_PENDING = True
+
+
 def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
              force_unquiet=False, store_root=None, machine_id=None,
              pin_cpu=None, subject_timeout=60, driver_timeout=900,
@@ -674,6 +681,13 @@ def run_cell(subbench_name, testee_id, regimes=None, trials=5, iters=None,
     if unknown:
         raise HarnessError("%s does not declare regime(s) %s (it declares %s)"
                            % (sb.id, ", ".join(unknown), ", ".join(sb.regimes)))
+    if CALL_STREAM_PENDING and "call-stream" in regimes:
+        raise HarnessError(
+            "%s: the `call-stream` regime has a record shape (schema 1.11) but "
+            "no driver plumbing yet -- `--mode calls`, the call/binding files "
+            "and the per-replay clock are lane L4's (docs/design/"
+            "unusual_set_v1.md 7.3); name the set's other regimes with "
+            "--regimes" % sb.id)
     adapter, cfg = _ad.resolve(testee_id)
 
     # (1a) the SUBSTITUTION tier ([B140]): a transform set needs an adapter
