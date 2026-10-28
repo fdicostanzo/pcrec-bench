@@ -188,6 +188,19 @@ below.
 7. **Selftest exits 1 if a member has no public sample.** No such member
    exists today (the four families' samples cover all 43 pairs).
 
-## make check
+## make check -- HANDED OFF (longer than 4 min)
 
-See the final section appended at completion.
+Launched detached at 2075ee8b+ (the AUTHORS/CLAUDE.md commit), still running at hand-off:
+
+- command: `setsid nohup bash -c "gnutimeout 7200 make check > LOG 2>&1; echo \"DONE rc=\$?\" >> LOG; touch LOG.done"`
+- cwd: `/home/pcrec/projects/pcrec-bench/worktrees/b148aw`
+- log: `/var/tmp/pcrecbench/b148aw/make_check.log`; marker `/var/tmp/pcrecbench/b148aw/make_check.log.done`
+- PID of `gnutimeout 7200 make check`: 1560865
+- done so far: check-schema 12 accepted / 104 rejected / 0 WRONG.
+- OWED: check-harness count (expect the previous total + 17 from `check_assist_set`), check-report, check-interpret, check-upstream, and the final `DONE rc=`.
+
+Run before hand-off, standalone, all green: `tools/check_assist.py` 17/17; `bench/unusual/check_set.py`
+17/17; `check_capability_roster_coverage` + `check_unusual_vocab_and_twin_of` 13/13 PASS;
+`check_unusual_gate_skips` all PASS; `gen_patterns.py --check` on unusual and capability. NOT run
+standalone: check_calls / check_vars / check_callouts (the members.py tag change could touch them);
+the full make check covers them.
