@@ -82,8 +82,7 @@ New `tools/check_w1fix.py`, section `w1fix` of `make check-unusual` (20 checks, 
 pcrec and admitted on pcre2-jit; pcrec still lacks `conditionals`; matrix delta is EXACTLY the declared
 12 + 12; six `deep_prime_argv` negative cases; five real adapters' `measure` argv carry `--prime` at
 throughput and not at search; `limits` marker present on exactly the five deep arms. Full
-`make check-unusual` run in background: log `/var/tmp/pcrecbench/b148w1fix/full.log`, completion line
-`DONE rc=` (see the handback for the result).
+`tools/check_unusual.py` (all sections): 151 passed, 0 failed, 279 s, rc=0 (log `/var/tmp/pcrecbench/b148w1fix/full.log`, `DONE rc=0`).
 
 ## 4. Charter-vs-committed checklist
 
@@ -100,4 +99,4 @@ throughput and not at search; `limits` marker present on exactly the five deep a
 | self-checks with controls in check-unusual | `tools/check_w1fix.py`, section `w1fix` |
 | CLAUDE.md updates | bench/unusual, pcrecbench, tools, docs/dev/measurements |
 | no store/, no merge, no timing | honoured |
-| OWED | (a) full `make check-unusual` result (marker above); (b) the js-1m timing effect, W1; (c) whether the 6.2 amendment needs Frank's confirmation; (d) throughput-only vs all non-stream regimes is a judgment call, one-line change in `deep_prime_argv` |
+| OWED | (a) `make check-harness` / `make check` were not run (manager's launch); (b) the js-1m timing effect, W1; (c) whether the 6.2 amendment needs Frank's confirmation; (d) throughput-only vs all non-stream regimes is a judgment call, one-line change in `deep_prime_argv` |
