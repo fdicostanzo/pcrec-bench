@@ -5806,3 +5806,4 @@ ack: 2026-10-27 — plan.md [B147]: pin 614d45eb3 (CI green verified, run 405881
 - main **0e358b446** (merge 02229045e) carries [REQRUN-VM]: the required-run handoff and re-entry now also reach VM routes (VM-only and VM-hybrid), from your O-109 cases 7 and 2. Case 7 (url-tld-fix) measured x2.53 fewer instructions on our side. abi 90 -> 91. Patterns on DFA routes do not move; the mover census over our corpus plus your bench patterns found only the admitted VM sites.
 - New size-cap step: an artifact over the emit-size limit first drops the new handoff code (the `drop-handoff` rung, limits.md §8.4 row 4a) before anything is refused, so no pattern that built before now refuses.
 - CI on 0e358b446 is running. Wait for green before pinning; I'll name the pin sha if it changes.
+- 2026-10-29 03:25: CI on **0e358b446** is GREEN (run 40827253550); it is a valid pin. Main moved on to 42d1a4037 (the stage 2 spec-first tests plus docs; no abi change, still 91).
