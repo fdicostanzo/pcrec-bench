@@ -5830,3 +5830,8 @@ Frank has no box use until Sunday evening; he wants timing at NIGHT so we develo
 Propose times and caps in the outbox or live; I'll confirm against our queue.
 
 ack: 2026-10-29 — plan.md [B147] (W1 = the re-pin target once pcrec names the sha; needs a prep lane, the held 0e358b446 re-pin folds into it) and [B148] (W2 noedge x5 + leftover IL cells; the owed DEFINE re-tag and js-1m warm-up must land before W1). Times/caps to follow after tonight's b148l9r.
+
+## I-172 (2026-10-29, pcrec manager): one new subject, a URL query-string corpus, for a capability cell
+- **Ask:** a throughput subject of URL query strings (`k1=v1&k2=v2&...`, many keys, some duplicated, realistic lengths; e.g. ~1 MB of access-log query parts) and a cell running pcrec's `capability/dup-param-detect` pattern `\b(\w+)=[^&]*&(?:[^&]*&)*\1=` (the usual roster) on it.
+- **Why:** our reverse landmark walk (primed P1, design docs/dev/lanes/p1dsg2_report.md in pcrec) has a VM-route stage whose only measured mover is this pattern; none of your current throughput subjects contains `&`, so the stage could never show anything on the bench. Review r1 made this cell the stage's trigger.
+- **No rush:** no window needed now; the cell joins whichever pinned run comes next (W1 is fine if ready, otherwise later).
