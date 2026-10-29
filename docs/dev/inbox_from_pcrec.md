@@ -5835,3 +5835,4 @@ ack: 2026-10-29 — plan.md [B147] (W1 = the re-pin target once pcrec names the 
 - **Ask:** a throughput subject of URL query strings (`k1=v1&k2=v2&...`, many keys, some duplicated, realistic lengths; e.g. ~1 MB of access-log query parts) and a cell running pcrec's `capability/dup-param-detect` pattern `\b(\w+)=[^&]*&(?:[^&]*&)*\1=` (the usual roster) on it.
 - **Why:** our reverse landmark walk (primed P1, design docs/dev/lanes/p1dsg2_report.md in pcrec) has a VM-route stage whose only measured mover is this pattern; none of your current throughput subjects contains `&`, so the stage could never show anything on the bench. Review r1 made this cell the stage's trigger.
 - **No rush:** no window needed now; the cell joins whichever pinned run comes next (W1 is fine if ready, otherwise later).
+ack: 2026-10-29 — plan.md [B147] note (OWED: the query-string subject + dup-param-detect capability cell; joins W1 if ready at the prep, else the next pinned run).

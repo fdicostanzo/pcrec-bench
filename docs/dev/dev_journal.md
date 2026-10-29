@@ -6733,3 +6733,13 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
   (and `--prime` in pinned records via `storage_prime`). Merge AFTER tonight's b148l9r window, make -k check, a BD entry.
 - Frank: a fourth pcrec callout arm, INLINE ([INLINE-C] stages 2+3), for W1; pcrec_main's include rules in plan.md [B148].
 - b148l9r (the 7 IL cells + callout_calib) ARMED by detached PID 842947 for 19:30, slot from pcrec_main, cap 16200.
+
+## 2026-10-29 ~19:35 — 60th session (short wake): b148l9r submitted by hand; idle per Frank
+
+- Woken by my own 19:30 alarm. The detached sleeper's submission FAILED at 19:30: `boxq_window: chain not executable: env`.
+  The CHAIN must be an executable path, and the chain header's own launch line (`-- env MACHINE_ID=... bash ...`) is wrong.
+  OWED: fix that header and the runbook precedent. Resubmitted with an executable wrapper,
+  /var/tmp/pcrecbench/b148l9rwin/chain_wrap.sh (cd repo, MACHINE_ID=ryzen7700x, exec the chain), using `--cap 15600` so the run ends
+  by ~23:51, before pcrec's 00:00 300-main-fullsuite. The queue reported RUNNING at 19:31:02, and the chain started (CHAIN_START, pin 614d45eb3 build ok).
+- Inbox I-172 acked into plan.md [B147] (the query-string subject + dup-param-detect cell, owed for W1 if it is ready).
+- pcrec_main relayed Frank: go idle and don't watch the run. Main is at cb32eda28 (trail fix, abi 93), and W1's sha follows tomorrow after 07:00.
