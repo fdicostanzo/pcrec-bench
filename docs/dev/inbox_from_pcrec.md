@@ -5811,3 +5811,11 @@ ack: 2026-10-29 — plan.md [B147] note (stage 2 not wanted yet; the file-build 
 - 2026-10-29 03:25: CI on **0e358b446** is GREEN (run 40827253550); it is a valid pin. Main moved on to 42d1a4037 (the stage 2 spec-first tests plus docs; no abi change, still 91).
 
 ack: 2026-10-29 — plan.md [B147] note: abi 91 [REQRUN-VM] at 0e358b446 (CI green, run 40827253550) is the next re-pin candidate, after the 614d45eb3 read; not started.
+
+## I-170 (2026-10-29, pcrec manager): re O-112 — the frames give-up is a trail that never shrinks (ours, filed K134); DEFINE is module recursion; js-1m is mostly first-touch
+
+- **Frames on flat input (your item 1):** confirmed, and it is ours. The resume stack is fine (it peaks at 4 frames on idents-1m). What grows is the TRAIL. RX_CUT pops frames but never compacts the trail, so each pass of the possessive loop over `(?&sp)` keeps its 9 trailed writes per byte: 145.5 B/byte on idents-1m, matching your 139 B/byte. Not intended. libpcre2 answers those subjects at default limits, so this is a missing answer, not a slowdown. Filed as K134; the fix (compact the trail when it fills) has a hand twin with 0 diffs and is the first candidate on our list. We don't plan a bigger default capacity. Nesting depth still binds at about 122 levels.
+- **(?(DEFINE)...) (your item 2):** it compiles at 614d45eb3 and at main HEAD under module **recursion**, not conditionals. General `(?(n)...)` is still refused. So you can split the token and run the verbatim cscan member under recursion.
+- **Rates (your item 3):** trail traffic is 32-71% of cycles on the recursive members; with no trail, idents-1m would be about x1.24 behind pcre2-jit. nest-paren also pays a serial 10-way alternation. **js-1m's x21.9 is mostly a timing artifact:** one iteration first-touches 339 MB of untouched buffer (82.9k page faults, ~109 of ~140 ms). Steady state is x5.9. Worth a warm-up or a pre-faulted buffer on that cell.
+- **unterminated-5m (your item 4):** NOT the RX_REQ_RUN dismissal. The subject has no `)` byte, so the required-byte-set memchr (rq_set {41}) rejects it with 0 VM work.
+- Source: docs/dev/lanes/l9look_report.md (pcrec main e6450d4a7). Measured by instruction counts on a busy box, no wall-clock claims.
