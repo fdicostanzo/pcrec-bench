@@ -6596,3 +6596,53 @@ As asked, we state no expected direction.
   3. On our corpus abi 87 moves 38 rows (13 patterns), not 170; the 170 is your corpus.
   4. bench/syntax's prediction P1 ("grp-callout does not compile on pcrec") is now false, as expected.
 - **Not yet measured at 614d45eb3.** The trim/end-anchored re-measure I-163 suggested goes in the next window.
+
+## O-111 (2026-10-29, bench manager) -- the first window at 614d45eb3 (abi 89): [SCANEDGE-SET] has two signs; the callout row measured; I-163's `\s+$` reproduced
+
+Window 2026-10-28 12:10 -> 19:09 EDT on `ryzen7700x` (core 7): capability@0.3 x {auto, nocaps} at 614d45eb3 and at 9ae59f5d4 (same-window BEFORE), syntax@0.2 x {auto, nocaps} at 614d45eb3, opening and closing sentinels; 14 cells measured, 3 of them after one pre-flight refusal. The box is Frank's desktop in daytime: usable, not quiet (6 of 14 records carry a failed AFTER occupancy sample; sentinel medians flat to 0.7%). Ledger `docs/dev/ledgers/2026-10-29-first-window-614d45eb3.md`; reports `reports/2026-10-29-{capability-0.3,syntax-0.2,sentinel-0.1}-ryzen7700x-first-614d45eb3.*` (reporter v28).
+
+**Your census holds on our corpus, row for row.** 442 compiled-both rows (capability caps/nocaps, syntax caps) agree with the b147prep census on program identity and on `emit_bytes` / `emit_code_bytes` deltas (0 mismatches); answers are unchanged at every cell (the same non-expected outcomes at both pins in each config).
+
+**I-163 `\s+$` reproduced.** capability `tail-space-eol` large: 72,999.9 -> 11,990.9 ns caps (x0.164), 72,996.1 -> 12,008.5 nocaps (x0.165); on the 61,440 B `t-trim-match-60k` **1.186 ns/B at 9ae59f5d4 -> 0.194 ns/B at 614d45eb3** (your 1.17 -> 0.19). The 6b2dbd3e records read 0.192-0.194 ns/B on the same cell, so abi 87 restores the 6b2dbd3e speed; the x6.1 slowdown at 9ae59f5d4 was the rev-end scan edge-less path. `.*\.txt$` large x0.929 / x0.908 (a 64-ns three-subject cell), `[a-z]+\.txt$` flat (x1.004 / x1.000).
+
+**The same mechanism is slower on four other cells.** With a scan edge gained or widened (`range` -> `mixed`, edges 1 -> 2): capability `wild-logparse-base10num-noatomic` large x1.200 (3.629 -> 4.354 ms caps, x1.199 nocaps), short x1.176 / x1.168; `wild-logparse-base10num-grok` (VM) large x1.102 / x1.104, short x1.071 / x1.078; syntax `cls-s-uc` (`\S+@\S+`, edge gained) large x1.116 (trial ranges 1.499-1.506 ms vs 1.662-1.698 ms, disjoint) and short x1.119 (cross-window, caps; nocaps agrees at 1.672 ms). `wild-secrets-username-password-pair` (range -> mixed) is flat; `cls-range` large is x0.816 faster. We have no `-fno-scan-edge` arm in this window, so this is the 9ae59f5d4 -> 614d45eb3 pair, not an A/B on the one mechanism. Ask (a): is a `mixed` edge on a short class run a mis-selection, and what is the break-even run length? We can run `pcrec-auto-noedge` on these five cells if you want it.
+
+**grp-callout measured.** `ca(?C1)t` compiles under auto (VM, selected, no prefilter, 24,921 B emit plain / 25,145 whole, 145 ms compile), binding `separate-tu-pass` with `callout_bindings = rx_callout_1` recorded on every compile row (one indirect call per fire). 445 of 445 match rows per config agree with the libpcre2 oracle (no callout function set = the pass-through). Set cells: large 1,159,917 ns (x2.78 the literal `cat` in the same window), short 240.8 ns (x1.18), whole 180.0 ns. We cannot give ns/fire: fires per call are not in the record. Ask (b): a fires-per-call count (stamp or `--emit-ir`) so the cell can be split.
+
+**Two things on our side you will otherwise trip on.** (1) Cross-window comparison of short cells against the 10-25/26 records carries a +4.0-4.4% pcrec-side offset at the SAME pin (large cells 0.999-1.000; the sentinel pcrec +5.4%, the jit row +-1%): our driver between the windows gained the callout/vars call modes and every artifact grew a median 160 B (shim). Cause not isolated; every number above is same-window except the syntax rows, which carry it. (2) The capability D119 null band is +-19.92% on large cells and +-16.78% on short: one bimodal cell family (`evil-alt-nested` trials 41.8k-55.7k in a single record) sets it, so nothing under 20% on a large capability cell is resolved by the report; syntax `esc-octal-0` (program-identical) alternates 126k / 160k across pins and windows. We read short cells against the sentinel null (30 identical patterns, median 0.9991) instead.
+
+**Asks (c).** `RX_VM_PROGRAM_BYTES` moves on EMIT-BIDI respells with no program change (b147prep finding 2, 330 -> 326 on `key\tvalue`); please state the intended definition. The syntax P1 prediction ("grp-callout did-not-compile on every pcrec testee", dated 334fd10e) is now false and is not scored.
+
+## O-112 (2026-10-29, bench manager) -- unusual@0.1's first (scratch) readout at 614d45eb3: frames run out on flat input; `(?(DEFINE)` asked; the recursive members' rates
+
+Scratch tier, ryzen7700x, 19 cells, 12 measured / 7
+inconclusive-load (pcrec-auto is one of the 7; pcrec-vm, auto-in, vm-in are measured and agree with it to 1.5 %). All pcrec rows are
+correct answers (0 wrong on 4 pcrec testees); the findings are limits and rates. Ledger
+docs/dev/ledgers/2026-10-29-unusual-0.1-l9-scratch.md.
+
+1. **Default-arm frame exhaustion on NON-nesting input.** On `cscan-onig` the stack-resident arm (131,072 B, 2,048 resume / 3,072
+   trail frames) returns `PCREC_ERR_FRAMES` at `nest-brace-128` and on `comment-5m`, `idents-1m`, `splice-1m`, `nest-paren-512...100k`
+   (cscan reads parens as plain bytes), 19 of 23 throughput subjects and `cs-nest-100`; on the compiler's own call stream it gives
+   up on 100/256, 1,723/4,096, 163/311 and 2,620/4,971 calls (39-53 %). Working storage on the 1 GiB `_in` arm scales with the SUBJECT
+   LENGTH on flat input (idents-1m 138.8 MiB, ~139 B/byte; comment-5m 7.6 MiB; wild-json js-1m 323.6 MiB), so frames accumulate per loop
+   iteration of `(?:...)*+` containing `(?&sp)` calls rather than per nesting level. Our D-2 prediction ("frames from the 512 rung",
+   from limits.md 4's ~342 levels) is refuted. Ask: is the retention across a possessive loop's iterations intended, and is
+   releasing at iteration end (or a larger default for recursive patterns) on the table? The stream is the pattern's real customer.
+2. **`conditionals` / verbatim cscan.** `cscan` is your own tests/recursion/cscan.rxt and spells its subroutines with `(?(DEFINE)...)`.
+   No pcrec testee declares `conditionals`, because general `(?(n)...)` is refused ("module 'conditionals' is enabled but (?(...) is
+   not implemented yet"; bench/capability/gen_patterns.py:418). So the bench measures pcrec on the `(?<n>...){0}` spelling only.
+   Ask: is `(?(DEFINE)...)` supported at 614d45eb3 and later, as cscan.rxt suggests? If yes, we split the token
+   (`conditionals-define` vs general) and run the verbatim member.
+3. **Rates behind the JIT on the recursive members (R1, > 3x):** cscan-onig short search x3.6 (296 vs 81 ns/call), nest-paren-32k
+   (no recursion) x5.4 (35 vs 190 MB/s), idents-1m x3.0, nest-brace-100k x4.8 (11.6 vs 2.43 ms), wild-json-validate short x4.8 and
+   **js-1m x21.9 (7.7 vs 168 MB/s; Onig 13.4)**. comment-5m (x2.4) and splice-1m (x2.5) inside the band. Stamps: engine `vm`
+   `selected`, prefilter `none`, `RX_REQ_RUN` `(?{`@1, compile 395 ms. We have not isolated a mechanism.
+4. **Wins, for the record:** native `consume` co-netstr 1.51 ms per 1 MB (x5.4 faster than the check-at-end spelling on pcre2-jit, x12.9
+   than the pcre2 host-loop assist); co-luhn 1,073 vs 888 MB/s (x1.21 over pcre2-jit; co-isbn / co-member x0.68); caller-variable
+   streams flat in distinct values (194 -> 219 us over 4 -> 4,096 bindings) vs RE2 x14.8 / Rust x19.9, break-even 97k calls at d4096;
+   `unterminated-5m` 145 GB/s (consistent with the `RX_REQ_RUN` dismissal -- please confirm this is the intended mechanism for a
+   subject without the run). 100k-deep nesting answered at 11.6 ms where libpcre2's interpreter needs > 60 s.
+5. Context only (not an ask): pcre2-jit gives up `-46` from nest-brace-512 with its default 32 KiB JIT stack; Onig's default nest
+   level 20 is silent (wrong, not a give-up).
+
+Other engines, for context: no upstream report filed; libpcre2 interp quadratic recursion, the JIT -46 stack limit and Onig's silent nest-20 cutoff are documented limits. Lane report docs/dev/lanes/b148l9read_report.md.

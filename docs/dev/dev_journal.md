@@ -6710,3 +6710,14 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
   (3)+(4) windows, coordinated with pcrec_main (who moved its own jobs aside).
 - **[B147] first window at 614d45eb3** (b147win_chain.sh, queue 710): 12:10-19:09 EDT, capability x {auto, nocaps} at 614d45eb3 + @9ae59f5d4, syntax x {auto, nocaps}, sentinel pair. **14/14 measured**, two rc=3 quiet retries. Committed e5ea76f8 with the regenerated sidecars. Capability ran ~68 min/cell (273 min for the set), more than the 5 h estimate. NOT YET READ.
 - **[B148] L9 scratch readout** (b148l9_chain.sh, queue 720, build/scratch-store): 19:10-01:24, 19/19 rc=0 at attempt 1: 12 measured, 7 inconclusive-load (onig-assist, rust-assist, pcre2-interp, pcrec-auto, rust-default, pcre2-interp-deep, onig-default-deep), and 2 all-timed-out groups each on pcre2-interp, pcre2-interp-deep and onig-default-deep. Walls: worst cell 50.1 min (pcre2-interp); the deep arms run ~2x their natives on pcrec/onig. The window overran its 6 h queue cap. pcrec_main okayed running long, and the manager SIGKILLed our own boxq_window wrapper (by PID) so its exit trap would not kill the chain. Lesson: boxq_window needs a sanctioned-overrun/detach mode. NOT YET READ.
+
+## 2026-10-29 (59th session) -- the two owed reads
+
+- Acked I-168 (stage 2, abi 90: not re-pinning for it) and I-169 (abi 91 at 0e358b446, CI green: the next re-pin candidate).
+- Frank: "put together the reports for the recent bench runs". Two Sonnet read lanes in parallel, pcrec_main told of the store loads.
+- b147read (merged 753c09fb): capability@0.3 / syntax@0.2 / sentinel report groups at 614d45eb3 + sidecars + ledger; O-111 written.
+  The window was usable, not quiet. The census holds row for row. `\s+$` x0.164. Three scan-edge cells are slower (x1.10-1.20).
+  A +4-5% same-pin offset on short cells across windows traces to our own harness change; not isolated.
+- b148l9read (merged 18204153): the unusual@0.1 scratch readout; O-112 written. Two index conflicts in lanes/ and measurements/
+  CLAUDE.md, both sides kept. Ask 2 reframed by the manager: pcrec refuses general `(?(n)`; the question is `(?(DEFINE)` only.
+- make check-interpret 291/0 after both merges. No timing.
