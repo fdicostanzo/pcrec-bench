@@ -3520,6 +3520,18 @@ in capability-0.2 every pcrec auto-caps/auto-nocaps cell is
 `inconclusive-spread` (not ranked); the vm-caps record is measured. Counts:
 docs/dev/lanes/b138rep_report.md.
 
+## `2026-10-29-*-ryzen7700x-first-614d45eb3.*` ([B147], lane b147read)
+
+The first window at pcrec 614d45eb3 (abi 89), machine `ryzen7700x`, `--since 2026-10-28T12:00:00Z --until 2026-10-29T03:00:00Z`, explicit `--testee`
+ids, reporter v28. Three groups: capability-0.3 (the cross-pin pair 9ae59f5d4 -> 614d45eb3, both caps arms; `.tsv .md .matrix.tsv .subject-grain.md
+.subject-grain.tsv .interpretation.md`), syntax-0.2 (single pin, same six files: syntax@0.2 has NO pcrec record at 9ae59f5d4 and the reporter never joins
+versions), sentinel-0.1 (`--all-records` so the opening and closing passes both show; `.tsv .md .matrix.tsv .interpretation.md`). The capability null band
+reads each record's `program_sha256_v3` (275 cells, criterion v3, no census fallback), so no `reports/identity/` file exists for this pair. Rendered with a
+scratch driver reusing `scripts/regen_reports.py`'s `build()` (copy: `docs/dev/measurements/2026-10-29-b147read/gen.py`); each group loads only its 2-4 records
+(seconds, not the whole-store 750 s). Ledger `docs/dev/ledgers/2026-10-29-first-window-614d45eb3.md`, lane report `docs/dev/lanes/b147read_report.md`. Reader's
+caveats: the capability D119 band is +-19.92% (large >=1us) because of one bimodal family (`evil-alt-nested`), and a cross-WINDOW comparison of short-subject cells
+against the 10-25/26 records carries a ~+4-5% pcrec-side harness offset (ledger section 2); the sidecars are stamped against the index at commit e5ea76f8.
+
 ## `--grain stream` ([B148] rep, 2026-10-28)
 
 A third non-default grain beside `subst`: `python3 -m pcrecbench report --grain stream [--callee-calib FILE]` (md / tsv) reads the `call-stream` records of the unusual set (`pcrecbench/report_stream.py`, unusual_set_v1.md 7.5). No committed report uses it yet (the sample is the first scratch read), `REPORTER_VERSION` is unchanged and no existing report moves. The set and subject grains still refuse a call-stream-only selection BY NAME and drop stream rows from a mixed record.

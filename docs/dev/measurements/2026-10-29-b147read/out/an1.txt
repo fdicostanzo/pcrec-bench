@@ -1,0 +1,16 @@
+275 d119 rows; sample: ['d119', 'balanced-parens-rec', '(set)', 'large-subject-throughput', 'plain', 'same program', 'pcrec_614d45eb3_auto-caps-simdna', 'measured', 'pinned', '', 'verdict', 'null-control']
+Counter({('identical', 'null-control'): 241, ('changed', 'within'): 25, ('changed', 'regress'): 5, ('changed', 'improve'): 4})
+identical cells top |delta|:
+evil-alt-nested large-subject-throughput plain auto-caps-simdna -19.919838 55686.315530 44593.691637 0.039884 large-subject-throughput/>=1us
+evil-alt-nested short-subject-search plain auto-nocaps-simdna -16.779964 554.998866 461.870255 1.591362 short-subject-search/100ns-1us
+numeric-id-nested-plus large-subject-throughput plain auto-caps-simdna -15.142069 2673.416042 2268.605538 22.249167 large-subject-throughput/>=1us
+phone-list-nested-plus large-subject-throughput plain auto-caps-simdna -10.840613 4309.560685 3842.377869 24.440384 large-subject-throughput/>=1us
+evil-alt-nested short-subject-search plain auto-caps-simdna -9.764166 745.564998 672.766793 12.821067 short-subject-search/100ns-1us
+wild-datetime-moment-iso8601 short-subject-search plain auto-caps-simdna -4.493317 554.046569 529.151499 7.423979 short-subject-search/100ns-1us
+floor-byte large-subject-throughput plain auto-nocaps-simdna 4.314409 33662.419485 35114.753974 0.686969 large-subject-throughput/>=1us
+mojibake-curly-quote short-subject-search plain auto-nocaps-simdna 4.287242 306.443360 319.581327 1.125488 short-subject-search/100ns-1us
+logparse-atomic-removed short-subject-search plain auto-nocaps-simdna 3.872171 331.091643 343.912079 1.399970 short-subject-search/100ns-1us
+doubled-word short-subject-search plain auto-caps-simdna 3.770178 2573.889534 2670.929756 0.560480 short-subject-search/>=1us
+mojibake-curly-quote short-subject-search plain auto-caps-simdna -3.685914 318.326617 306.593373 2.693841 short-subject-search/100ns-1us
+winpath-near-miss large-subject-throughput plain auto-nocaps-simdna -3.638676 61.478689 59.241679 1.528658 large-subject-throughput/<100ns
+identical n=241 median 0.124 p5 -1.879 p95 2.401

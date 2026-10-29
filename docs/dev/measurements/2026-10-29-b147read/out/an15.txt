@@ -1,0 +1,69 @@
+tail-space-eol
+     engine dfa (same)
+     dfa_scan rev-end (same)
+     dfa_scan_edge none -> bitmap
+     scan_edges 0 -> 2
+     scan_edges_match 0 -> 1
+     dfa_prefilter none (same)
+     emit_bytes 19116 -> 25461
+     emit_code_bytes 15571 -> 17499
+     artifact_bytes 33128 -> 33256
+tail-dotstar-txt
+     engine dfa (same)
+     dfa_scan rev-end (same)
+     dfa_scan_edge none -> bitmap
+     scan_edges 0 -> 1
+     dfa_prefilter none (same)
+     emit_bytes 22669 -> 23192
+     emit_code_bytes 15828 -> 16351
+tail-ext-lower-txt
+     engine dfa (same)
+     dfa_scan rev-end (same)
+     dfa_scan_edge none -> range
+     scan_edges 0 -> 1
+     dfa_prefilter none (same)
+     emit_bytes 19445 -> 20255
+     emit_code_bytes 15359 -> 16169
+wild-logparse-base10num-noatomic
+     engine dfa (same)
+     dfa_scan unanchored (same)
+     dfa_scan_edge range -> mixed
+     scan_edges 1 -> 2
+     dfa_prefilter byte-class-bounded (same)
+     emit_bytes 24900 -> 26859
+     emit_code_bytes 17774 -> 18254
+     artifact_bytes 33432 -> 33472
+wild-logparse-base10num-grok
+     engine vm (same)
+     dfa_scan unanchored (same)
+     dfa_scan_edge range -> mixed
+     scan_edges 1 -> 2
+     dfa_prefilter byte-class-bounded (same)
+     emit_bytes 35165 -> 37124
+     emit_code_bytes 29379 -> 29859
+     artifact_bytes 33424 -> 33472
+wild-logparse-winpath-grok
+     engine vm (same)
+     dfa_scan unanchored (same)
+     dfa_scan_edge none -> bitmap
+     scan_edges 0 -> 1
+     dfa_prefilter byte-class (same)
+     emit_bytes 38881 -> 39372
+     emit_code_bytes 30397 -> 30888
+wild-secrets-username-password-pair
+     engine vm (same)
+     dfa_scan unanchored (same)
+     dfa_scan_edge range -> mixed
+     scan_edges 2 -> 3
+     dfa_prefilter byte-class (same)
+     emit_bytes 553814 -> 553919
+     emit_code_bytes 44547 -> 44652
+wild-codegrammar-json-number-extended
+     engine dfa (same)
+     dfa_scan unanchored (same)
+     dfa_scan_edge none -> range
+     scan_edges 0 -> 1
+     scan_edges_match 0 -> 1
+     dfa_prefilter byte-class (same)
+     emit_bytes 24441 -> 25946
+     emit_code_bytes 16119 -> 17624

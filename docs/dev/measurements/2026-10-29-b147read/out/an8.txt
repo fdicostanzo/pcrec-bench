@@ -1,0 +1,27 @@
+9ae syntax@0.1 file: 20261026T030726Z.jsonl
+== auto-caps: 614 syntax@0.2 / 9ae syntax@0.1 (10-26), set-cells over common clean subjects: n=245
+  non-mover ('large-subject-throughput', 'plain') n=74 median 1.0018 p5 0.975 p95 1.028 max 1.270 min 0.967
+  non-mover ('match-compliance', 'whole-subject') n=76 median 1.0407 p5 0.999 p95 1.101 max 1.112 min 0.986
+  non-mover ('short-subject-search', 'plain') n=77 median 1.0433 p5 0.999 p95 1.125 max 1.136 min 0.976
+  movers:
+    ('asr-k-uc', 'large-subject-throughput', 'plain') x0.949 35212.0 -> 33398.8
+    ('asr-k-uc', 'match-compliance', 'whole-subject') x1.070 129.0 -> 138.1
+    ('asr-k-uc', 'short-subject-search', 'plain') x0.997 256.3 -> 255.5
+    ('cls-range', 'large-subject-throughput', 'plain') x0.816 106016.0 -> 86463.1
+    ('cls-range', 'match-compliance', 'whole-subject') x1.010 185.3 -> 187.1
+    ('cls-range', 'short-subject-search', 'plain') x0.983 180.5 -> 177.5
+    ('cls-s-uc', 'large-subject-throughput', 'plain') x1.116 1501956.3 -> 1676805.8
+    ('cls-s-uc', 'match-compliance', 'whole-subject') x0.946 302.3 -> 285.9
+    ('cls-s-uc', 'short-subject-search', 'plain') x1.119 169.1 -> 189.2
+    ('esc-cr', 'large-subject-throughput', 'plain') x0.986 9619.8 -> 9484.6
+    ('esc-cr', 'match-compliance', 'whole-subject') x1.019 202.1 -> 205.9
+    ('esc-cr', 'short-subject-search', 'plain') x1.054 141.0 -> 148.5
+    ('esc-nl', 'large-subject-throughput', 'plain') x1.006 111459.7 -> 112116.1
+    ('esc-nl', 'match-compliance', 'whole-subject') x1.058 194.6 -> 205.9
+    ('esc-nl', 'short-subject-search', 'plain') x1.081 142.7 -> 154.2
+    ('esc-tab', 'large-subject-throughput', 'plain') x1.018 24101.0 -> 24538.6
+    ('esc-tab', 'match-compliance', 'whole-subject') x1.055 187.6 -> 197.9
+    ('esc-tab', 'short-subject-search', 'plain') x1.067 138.5 -> 147.8
+  largest non-mover deviations: [(('esc-octal-0', 'large-subject-throughput', 'plain'), 1.27), (('mod-n', 'short-subject-search', 'plain'), 1.136), (('mod-x', 'short-subject-search', 'plain'), 1.126), (('anc-m-dollar', 'large-subject-throughput', 'plain'), 1.125), (('esc-hex', 'short-subject-search', 'plain'), 1.125), (('lit-cat', 'short-subject-search', 'plain'), 1.125), (('grp-cap', 'match-compliance', 'whole-subject'), 1.112), (('asr-wb', 'short-subject-search', 'plain'), 1.112)]
+  cells only in 0.2: [(('t-lka-dense-256k', 'large-subject-throughput'), 84), (('t-lka-sparse-256k', 'large-subject-throughput'), 84), (('f-cat', 'match-compliance'), 1), (('f-cat-uc', 'match-compliance'), 1)]
+  614 outcomes other than matched-as-expected: {'wrong-span-or-captures': 5, 'did-not-match-as-expected': 5, 'gave-up': 45}

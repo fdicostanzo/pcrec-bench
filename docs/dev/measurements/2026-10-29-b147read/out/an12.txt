@@ -1,0 +1,42 @@
+== tail-space-eol
+ pcrec_6b2dbd3e_auto-caps 20261019T154701Z total     11877 ns; biggest t-trim-match-60k 11801 ns over 61440 B = 0.192 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261019T163525Z total     11875 ns; biggest t-trim-match-60k 11800 ns over 61440 B = 0.192 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261025T213918Z total     11976 ns; biggest t-trim-match-60k 11900 ns over 61440 B = 0.194 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T172514Z total     11880 ns; biggest t-trim-match-60k 11804 ns over 61440 B = 0.192 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T181558Z total     11877 ns; biggest t-trim-match-60k 11802 ns over 61440 B = 0.192 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T222525Z total     11976 ns; biggest t-trim-match-60k 11900 ns over 61440 B = 0.194 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T231222Z total     11912 ns; biggest t-trim-match-60k 11836 ns over 61440 B = 0.193 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261025T200649Z total     72940 ns; biggest t-trim-match-60k 72891 ns over 61440 B = 1.186 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261025T205256Z total     72945 ns; biggest t-trim-match-60k 72896 ns over 61440 B = 1.186 ns/B
+ pcrec_614d45eb3_auto-caps 20261028T163921Z total     11991 ns; biggest t-trim-match-60k 11923 ns over 61440 B = 0.194 ns/B
+ pcrec_614d45eb3_auto-nocaps 20261028T174700Z total     12008 ns; biggest t-trim-match-60k 11940 ns over 61440 B = 0.194 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261028T185514Z total     73000 ns; biggest t-trim-match-60k 72934 ns over 61440 B = 1.187 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261028T200129Z total     72996 ns; biggest t-trim-match-60k 72930 ns over 61440 B = 1.187 ns/B
+== tail-dotstar-txt
+ pcrec_6b2dbd3e_auto-caps 20261019T154701Z total        65 ns; biggest t-tail-txt-1m 17 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261019T163525Z total        66 ns; biggest t-tail-txt-1m 18 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261025T213918Z total        64 ns; biggest t-tail-txt-1m 16 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T172514Z total        65 ns; biggest t-tail-txt-1m 17 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T181558Z total        65 ns; biggest t-tail-txt-1m 17 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T222525Z total        64 ns; biggest t-tail-txt-1m 16 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T231222Z total        64 ns; biggest t-tail-txt-1m 16 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261025T200649Z total        49 ns; biggest t-tail-txt-1m 14 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261025T205256Z total        49 ns; biggest t-tail-txt-1m 14 ns over 1048527 B = 0.000 ns/B
+ pcrec_614d45eb3_auto-caps 20261028T163921Z total        64 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_614d45eb3_auto-nocaps 20261028T174700Z total        64 ns; biggest t-tail-txt-1m 14 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261028T185514Z total        69 ns; biggest t-tail-txt-1m 14 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261028T200129Z total        70 ns; biggest t-tail-txt-1m 14 ns over 1048527 B = 0.000 ns/B
+== tail-ext-lower-txt
+ pcrec_6b2dbd3e_auto-caps 20261019T154701Z total        60 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261019T163525Z total        60 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-caps 20261025T213918Z total        60 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T172514Z total        61 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261019T181558Z total        61 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T222525Z total        61 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_6b2dbd3e_auto-nocaps 20261025T231222Z total        60 ns; biggest t-tail-txt-1m 15 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261025T200649Z total        42 ns; biggest t-tail-txt-1m 11 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261025T205256Z total        42 ns; biggest t-tail-txt-1m 11 ns over 1048527 B = 0.000 ns/B
+ pcrec_614d45eb3_auto-caps 20261028T163921Z total        61 ns; biggest t-tail-txt-1m 12 ns over 1048527 B = 0.000 ns/B
+ pcrec_614d45eb3_auto-nocaps 20261028T174700Z total        61 ns; biggest t-tail-txt-1m 12 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-caps 20261028T185514Z total        61 ns; biggest t-tail-txt-1m 11 ns over 1048527 B = 0.000 ns/B
+ pcrec_9ae59f5d4_auto-nocaps 20261028T200129Z total        61 ns; biggest t-tail-txt-1m 11 ns over 1048527 B = 0.000 ns/B

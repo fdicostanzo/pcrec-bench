@@ -1,0 +1,29 @@
+== cross-window control auto-caps: 9ae59f5d4 @0.3 (10-28) / @0.2 (10-25); common clean subject-cells n=5932 of a=5934 b=6348
+ subject-cell ratio median 1.0297 p5 0.9826 p95 1.1481 min 0.704 max 1.767; |dev|>5%: 2350, >10%: 1050
+ set-cell (pattern,regime; common subjects) ratio n=138 median 1.0083 p5 0.9732 p95 1.0953; >+-5%: 31, >+-10%: 6
+    ('wild-semdiv-altorder-foo-foobar-rustregex', 'large-subject-throughput') x0.768 472927.1 -> 363099.5
+    ('file-ext-order', 'large-subject-throughput') x0.844 336117.9 -> 283780.0
+    ('evil-alt-nested', 'short-subject-search') x1.155 659.3 -> 761.3
+    ('date-nested-plus', 'short-subject-search') x1.128 488.6 -> 550.9
+    ('router-prefix-order', 'large-subject-throughput') x0.878 195672.1 -> 171727.7
+    ('wild-validator-uuid-grok', 'short-subject-search') x1.108 286.6 -> 317.6
+    ('wild-codegrammar-json-stringcontent-escape', 'short-subject-search') x1.099 312.3 -> 343.3
+    ('wild-datetime-moment-iso8601', 'short-subject-search') x1.098 496.6 -> 545.1
+ subjects only in @0.3: ['t-hyb-datepath-16k', 't-hyb-digits-4k', 't-hyb-embed-1k', 't-hyb-embed-64k', 't-hyb-embed-8k', 't-hyb-logline-16k']
+== cross-window control auto-nocaps: 9ae59f5d4 @0.3 (10-28) / @0.2 (10-25); common clean subject-cells n=6018 of a=6020 b=6440
+ subject-cell ratio median 1.0438 p5 0.9888 p95 1.1530 min 0.485 max 2.057; |dev|>5%: 2723, >10%: 1162
+ set-cell (pattern,regime; common subjects) ratio n=140 median 1.0117 p5 0.9896 p95 1.0893; >+-5%: 34, >+-10%: 4
+    ('evil-alt-nested', 'short-subject-search') x1.251 441.2 -> 552.1
+    ('base10num-near-miss', 'short-subject-search') x1.213 285.3 -> 346.0
+    ('wild-datetime-moment-iso8601', 'short-subject-search') x1.165 316.5 -> 368.7
+    ('wild-validator-uuid-grok', 'short-subject-search') x1.106 285.4 -> 315.5
+    ('wild-codegrammar-json-array-begin', 'short-subject-search') x1.094 301.1 -> 329.4
+    ('wild-secrets-username-password-pair', 'short-subject-search') x1.091 382.4 -> 417.3
+    ('wild-codegrammar-json-stringcontent-escape', 'short-subject-search') x1.089 312.6 -> 340.5
+    ('keyword-prefix-order', 'short-subject-search') x1.086 331.2 -> 359.7
+ subjects only in @0.3: ['t-hyb-datepath-16k', 't-hyb-digits-4k', 't-hyb-embed-1k', 't-hyb-embed-64k', 't-hyb-embed-8k', 't-hyb-logline-16k']
+---- by regime (set-cells) ----
+auto-caps short-subject-search n=69 median 1.0401 p5 0.999 p95 1.099
+auto-caps large-subject-throughput n=69 median 0.9989 p5 0.941 p95 1.035
+auto-nocaps short-subject-search n=70 median 1.0444 p5 0.999 p95 1.106
+auto-nocaps large-subject-throughput n=70 median 0.9997 p5 0.987 p95 1.046

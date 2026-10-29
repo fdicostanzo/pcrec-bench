@@ -1,0 +1,15 @@
+pcrec_614d45eb3_auto-caps-simdna 15 non-expected rows over 3 cells
+    ('date-nested-plus', 't-hyb-datepath-16k') {'gave-up': 5}
+    ('email-nested-plus', 't-evil-match-60k') {'did-not-match-as-expected': 5}
+    ('email-nested-plus', 't-evil-nearmiss-16k') {'did-not-match-as-expected': 5}
+pcrec_614d45eb3_auto-nocaps-simdna 10 non-expected rows over 2 cells
+    ('email-nested-plus', 't-evil-match-60k') {'did-not-match-as-expected': 5}
+    ('email-nested-plus', 't-evil-nearmiss-16k') {'did-not-match-as-expected': 5}
+pcrec_9ae59f5d4_auto-caps-simdna 15 non-expected rows over 3 cells
+    ('date-nested-plus', 't-hyb-datepath-16k') {'gave-up': 5}
+    ('email-nested-plus', 't-evil-match-60k') {'did-not-match-as-expected': 5}
+    ('email-nested-plus', 't-evil-nearmiss-16k') {'did-not-match-as-expected': 5}
+pcrec_9ae59f5d4_auto-nocaps-simdna 10 non-expected rows over 2 cells
+    ('email-nested-plus', 't-evil-match-60k') {'did-not-match-as-expected': 5}
+    ('email-nested-plus', 't-evil-nearmiss-16k') {'did-not-match-as-expected': 5}
+identical key sets: 2

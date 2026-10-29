@@ -1,0 +1,31 @@
+30 Counter({'artifact_bytes': 30})
+('run', 'harness_commit') 
+  A: ef83d130c713ad1a39217b3404d7f785406e6a70 
+  B: e0e68c3ec292e70574a88e62cbdf3ebeecf7b8a9
+('run', 'driver_build_flags') 
+  A: gcc -O2 -std=gnu11 -o /home/pcrec/projects/pcrec-bench/build/work/pcrec-auto/pcrec_driver /home/pcrec/projects/pcrec-bench/testees/pcrec/driver.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_subst.c -ldl 
+  B: gcc -O2 -std=gnu11 -o /home/pcrec/projects/pcrec-bench/build/work/pcrec-auto/pcrec_driver /home/pcrec/projects/pcrec-bench/testees/pcrec/driver.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_subst.c /home/pcrec/projects/pcrec-bench/teste
+('testee', 'build_flags') 
+  A: pin 9ae59f5d4 (9ae59f5d4); pcrec flags --features all; artifact built with $CC -O2 -fPIC -shared 
+  B: pin 9ae59f5d4 (9ae59f5d4); pcrec flags --features all; artifact built with $CC -O2 -fPIC -shared
+('testee', 'engine_commit') 
+  A: 9ae59f5d432ca3664cff67958c1c68b0626d9380 
+  B: 9ae59f5d432ca3664cff67958c1c68b0626d9380
+('environment', 'compiler') 
+  A: gcc-15.2.0 
+  B: gcc-15.2.0
+('environment', 'kernel') 
+  A: linux-7.0.0-38-generic 
+  B: linux-7.0.0-38-generic
+('environment', 'cpu_mhz') 
+  A: 4388.713 
+  B: 4390.706
+('environment', 'turbo') 
+  A: enabled 
+  B: enabled
+('environment', 'governor') 
+  A: performance 
+  B: performance
+me/pcrec/projects/pcrec-bench/testees/pcrec/driver.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_subst.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+[('winpath-near-miss', 32904, 37152), ('winpath-near-miss', 32864, 37112), ('trim-nested-star', 37216, 37376), ('trim-nested-star', 37176, 37336), ('numeric-id-nested-plus', 33024, 33184)]
+artifact_bytes delta median 160.0

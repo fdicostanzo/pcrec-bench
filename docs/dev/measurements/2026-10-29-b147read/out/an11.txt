@@ -1,0 +1,7 @@
+pcrec_6b2dbd3e_auto-caps 20261020T005624Z cls-range 105403 | cls-s-uc 1481154 | esc-octal-0 148748 | lit-cat 321090
+pcrec_6b2dbd3e_auto-caps 20261026T034757Z cls-range 105624 | cls-s-uc 1501476 | esc-octal-0 129223 | lit-cat 319775
+pcrec_6b2dbd3e_auto-nocaps 20261020T013916Z cls-range 105346 | cls-s-uc 1482859 | esc-octal-0 160489 | lit-cat 321364
+pcrec_6b2dbd3e_vm-caps 20261020T022155Z cls-range 416460 | cls-s-uc 10401754 | esc-octal-0 888534 | lit-cat 835277
+pcrec_9ae59f5d4_auto-caps 20261026T030726Z cls-range 106015 | cls-s-uc 1501618 | esc-octal-0 126222 | lit-cat 326188
+pcrec_614d45eb3_auto-caps 20261028T211259Z cls-range 86440 | cls-s-uc 1674938 | esc-octal-0 160306 | lit-cat 326277
+pcrec_614d45eb3_auto-nocaps 20261028T215628Z cls-range 86272 | cls-s-uc 1672158 | esc-octal-0 159752 | lit-cat 326296
