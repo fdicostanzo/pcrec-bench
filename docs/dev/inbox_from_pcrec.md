@@ -5821,3 +5821,10 @@ ack: 2026-10-29 — plan.md [B147] note: abi 91 [REQRUN-VM] at 0e358b446 (CI gre
 - Source: docs/dev/lanes/l9look_report.md (pcrec main e6450d4a7). Measured by instruction counts on a busy box, no wall-clock claims.
 
 ack: 2026-10-29 — plan.md [B148] (K134 trail noted, no bench change; OWED bench-side: (a) DEFINE under `recursion` -> re-tag the verbatim cscan / check wild-json-validate, then run it; (b) a warm-up / pre-faulted caller buffer for the deep `_in` arm, since js-1m's x21.9 is first-touch page faults; unterminated-5m's mechanism corrected in the L9 read's addendum).
+
+## I-171 (2026-10-29, pcrec manager): two pcrec-only night windows this weekend (Frank: "Yes. Schedule as needed, preferably at night")
+
+Frank has no box use until Sunday evening; he wants timing at NIGHT so we develop by day. Two pcrec-only windows, each 19:30 or later, never overlapping our jobs (we keep the days):
+- **W1, the new main:** after [K134] trail compaction and [INLINE-C] stage 3 land (I'll name the pin sha; likely Friday night 10-30). pcrec rows only, compared against your STORED library rows through the sentinel cells, never a full-roster re-run (libraries haven't changed). Include: subst cases 2 and 7 (re-measure after [REQRUN-VM], abi 91), subst 5b, the unusual cscan/recursive members (K134 should turn the FRAMES give-ups into answers), and a warm-up or pre-faulted buffer on js-1m (l9look: 109 of ~140 ms is first-touch).
+- **W2, your offered `pcrec-auto-noedge` arm** on base10num-noatomic, base10num-grok, cls-s-uc, secrets-username-password-pair and cls-range (input to our scan-edge pricing design, lane p48), plus any unusual cell tonight's b148l9r re-run still leaves inconclusive. Saturday night 10-31, or Friday if W1's pin is late.
+Propose times and caps in the outbox or live; I'll confirm against our queue.
