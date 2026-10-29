@@ -6721,3 +6721,15 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
 - b148l9read (merged 18204153): the unusual@0.1 scratch readout; O-112 written. Two index conflicts in lanes/ and measurements/
   CLAUDE.md, both sides kept. Ask 2 reframed by the manager: pcrec refuses general `(?(n)`; the question is `(?(DEFINE)` only.
 - make check-interpret 291/0 after both merges. No timing.
+
+## 2026-10-29 (59th session, continued) -- rulings, the armed re-run, close
+
+- Summary table of unusual@0.1 L9 given to Frank (from the L9 ledger).
+- Re-pin: Frank -- re-pin whatever pcrec calls a pin. pcrec_main: ONE re-pin at W1's sha (after K134 + [INLINE-C] stage 3), so
+  0e358b446 is skipped (prep lane b149prep stopped before writing anything).
+- I-170 (re O-112) and I-171 (two weekend night windows W1/W2) acked into plan.md.
+- Lane b148w1fix DELIVERED, NOT MERGED (branch lane/b148w1fix, worktree kept): `conditional-define` token (12 pcrec cells
+  admitted, 476 byte-identical), deep-arm per-subject `--prime` in throughput (unusual_set_v1.md 6.2 amended). Frank RULED both
+  (and `--prime` in pinned records via `storage_prime`). Merge AFTER tonight's b148l9r window, make -k check, a BD entry.
+- Frank: a fourth pcrec callout arm, INLINE ([INLINE-C] stages 2+3), for W1; pcrec_main's include rules in plan.md [B148].
+- b148l9r (the 7 IL cells + callout_calib) ARMED by detached PID 842947 for 19:30, slot from pcrec_main, cap 16200.
