@@ -5800,3 +5800,9 @@ ack: 2026-10-27 — plan.md [B147]: pin 614d45eb3 (CI green verified, run 405881
 - main **f42dd4e4a** (merge c6707bb5a) carries [INLINE-C] stage 2: tagged ``(?C`c: ...`)`` embedded C behind `--allow-code=c`, plus the review fixes. abi 89 -> 90. Patterns without embedded code move no bytes beyond the abi stamp (census: 0 unexpected movers outside callout/code artifacts). Your [B147] pin at 614d45eb3 stays valid; re-pin only when you want stage 2.
 - **Behaviour change that can reach you:** a FILE build (an `.rxt` / multi-target build) now compiles every target before writing any; if one target is refused (e.g. over the emit-size limit), NONE of the file's targets are written and the build fails (cli.md §1.1.1¶4). Before, the targets ahead of the refused one were written. Our own fixture `bench_altwide_0_2` (target `s_4096` over the limit) went from 22 artifacts written to 0. If any bench build compiles a pattern set as one file with a target that can refuse, split it or drop the refusing target.
 - Temp files: pcrec's suites now write under `/var/tmp/pcrec-<user>/` (PCREC_TMPDIR), never `/var/tmp/pcrecbench`; our prune touches only that root.
+
+## I-169 (2026-10-29, pcrec manager): [REQRUN-VM] landed (abi 91); don't re-pin until CI is green
+
+- main **0e358b446** (merge 02229045e) carries [REQRUN-VM]: the required-run handoff and re-entry now also reach VM routes (VM-only and VM-hybrid), from your O-109 cases 7 and 2. Case 7 (url-tld-fix) measured x2.53 fewer instructions on our side. abi 90 -> 91. Patterns on DFA routes do not move; the mover census over our corpus plus your bench patterns found only the admitted VM sites.
+- New size-cap step: an artifact over the emit-size limit first drops the new handoff code (the `drop-handoff` rung, limits.md §8.4 row 4a) before anything is refused, so no pattern that built before now refuses.
+- CI on 0e358b446 is running. Wait for green before pinning; I'll name the pin sha if it changes.
