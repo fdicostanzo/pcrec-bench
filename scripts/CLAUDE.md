@@ -70,6 +70,19 @@ worst cell measured, which is what the default was set for on the same
 night — after the 3,000 s cap it replaced killed two of bounded's clang
 cells outright.
 
+**`bench/unusual@0.1`** ([B148] L9, scratch window 2026-10-28 19:11 -> 2026-10-29 01:25 EDT at 614d45eb3, five trials,
+`CELL_CAP=5400`; walls are start-of-cell to the `attempt 1 rc=0` line of
+`/var/tmp/pcrecbench/b148l9win/window_unusual.log`, the 15 s sleep outside; ledger
+`docs/dev/ledgers/2026-10-29-unusual-0.1-l9-scratch.md` section 1(d)): 19 cells, 6.15 h in all.
+
+| arm | assisted (5 cells) | native pcre2 interp / jit | native pcrec auto / vm | onig | re2 / rust / vectorscan / tre | `deep` arms (1 GiB ceiling) |
+|---|---|---|---|---|---|---|
+| wall | 4.0-12.0 min | **50.1 min** (interp) / 20.7 (jit) | 18.2 / 18.1 | 23.7 | 4.3 / 3.8 / 1.7 / 2.4 | jit 20.2, **interp 49.4**, pcrec 35.4 / 36.5 (x1.95), onig 46.6 (x1.97) |
+
+The worst cell (pcre2-interp, 3,009 s) is 0.56 of the default; the interp and onig-deep walls carry 600 s of `nest-brace-100k`
+subject timeouts (60 s x 5 trials x 2 patterns). PROPOSED, NOT APPLIED: `CELL_CAP_unusual=7200` (x2.4 the worst; ~9000, x3.0, is
+also safe). No script was changed.
+
 **Where the default does NOT hold: `bench/altwide@0.2`'s raised-cap
 pass.** MEASURED and projected in
 `docs/dev/measurements/2026-09-02-altwide-raised-cap-sizes.txt` §2, over
