@@ -1,0 +1,4 @@
+sentinel 614/9ae caps opening pass: subject-cells 1125 median 0.9991 p5 0.892 p95 1.113 ; patterns v3-identical 30 of 30
+closing pass: median 1.0000
+large-subject-throughput n=119 median 0.13% p5 -2.36 p95 2.09; |d|>5%: 3; >10%: 3
+short-subject-search n=122 median 0.09% p5 -1.88 p95 2.91; |d|>5%: 2; >10%: 1

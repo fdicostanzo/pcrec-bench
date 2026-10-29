@@ -1,0 +1,28 @@
+capability@0.3__pcrec_614d45eb3_auto-caps-simdna__20261028T163921Z
+   status measured | load b/a 1.24/1.54 (quiet) | occ before pass max 1.2 tgt 0.4 | after fail max 18.2 tgt 12.0 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+capability@0.3__pcrec_614d45eb3_auto-nocaps-simdna__20261028T174700Z
+   status measured | load b/a 1.38/2.16 (loaded) | occ before pass max 1.6 tgt 0.0 | after pass max 5.2 tgt 3.2 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+capability@0.3__pcrec_9ae59f5d4_auto-caps-simdna__20261028T185514Z
+   status measured | load b/a 1.84/2.35 (loaded) | occ before pass max 6.2 tgt 1.4 | after fail max 12.1 tgt 5.4 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+capability@0.3__pcrec_9ae59f5d4_auto-nocaps-simdna__20261028T200129Z
+   status measured | load b/a 1.69/1.72 (quiet) | occ before pass max 2.4 tgt 0.4 | after fail max 13.0 tgt 8.4 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+syntax@0.2__pcrec_614d45eb3_auto-caps-simdna__20261028T211259Z
+   status measured | load b/a 1.32/1.66 (quiet) | occ before pass max 2.2 tgt 0.4 | after fail max 11.9 tgt 4.4 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+syntax@0.2__pcrec_614d45eb3_auto-nocaps-simdna__20261028T215628Z
+   status measured | load b/a 1.64/1.49 (quiet) | occ before pass max 1.8 tgt 0.2 | after pass max 1.0 tgt 0.0 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__libpcre2_10.46_jit-caps-simdna__20261028T162849Z
+   status measured | load b/a 1.44/1.92 (quiet) | occ before pass max 2.6 tgt 1.0 | after pass max 9.1 tgt 3.6 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__libpcre2_10.46_jit-caps-simdna__20261028T225930Z
+   status measured | load b/a 1.15/1.64 (quiet) | occ before pass max 4.0 tgt 2.8 | after fail max 12.7 tgt 4.2 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_614d45eb3_auto-caps-simdna__20261028T161100Z
+   status measured | load b/a 1.94/1.90 (quiet) | occ before pass max 5.8 tgt 2.8 | after pass max 6.7 tgt 2.4 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_614d45eb3_auto-caps-simdna__20261028T224116Z
+   status measured | load b/a 1.33/1.75 (quiet) | occ before pass max 2.4 tgt 0.0 | after pass max 1.2 tgt 0.0 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_614d45eb3_auto-nocaps-simdna__20261028T162307Z
+   status measured | load b/a 1.61/1.59 (quiet) | occ before pass max 5.4 tgt 2.4 | after fail max 13.8 tgt 7.0 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_614d45eb3_auto-nocaps-simdna__20261028T225251Z
+   status measured | load b/a 1.16/1.91 (quiet) | occ before pass max 9.3 tgt 6.4 | after pass max 6.4 tgt 1.2 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_9ae59f5d4_auto-caps-simdna__20261028T161655Z
+   status measured | load b/a 1.57/2.28 (loaded) | occ before pass max 9.0 tgt 1.2 | after pass max 6.8 tgt 2.6 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}
+sentinel@0.1__pcrec_9ae59f5d4_auto-caps-simdna__20261028T224715Z
+   status measured | load b/a 1.29/1.45 (quiet) | occ before pass max 1.4 tgt 0.2 | after pass max 1.0 tgt 0.0 | trials ? | agreement: {'verdict': 'agree', 'rule': 'v1.11-group'}

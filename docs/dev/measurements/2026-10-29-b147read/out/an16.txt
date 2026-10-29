@@ -1,0 +1,3 @@
+capability@0.3 auto-caps-simdna: compiled-both rows 138; v3 identical 127, changed 11; agree with census (identity+emit/code deltas) 138; mismatches 0; refusal movers []
+capability@0.3 auto-nocaps-simdna: compiled-both rows 139; v3 identical 126, changed 13; agree with census (identity+emit/code deltas) 139; mismatches 0; refusal movers []
+syntax@0.2 auto-caps-simdna: compiled-both rows 165; v3 identical 157, changed 8; agree with census (identity+emit/code deltas) 165; mismatches 0; refusal movers [(('grp-callout', 'plain'), 'did-not-compile', 'compiled'), (('grp-callout', 'whole-subject'), 'did-not-compile', 'compiled')]

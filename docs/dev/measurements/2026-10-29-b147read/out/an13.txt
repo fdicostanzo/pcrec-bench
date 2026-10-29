@@ -1,0 +1,2 @@
+pcrec n=1125  median delta 0.19 ns (p25 0.14 p75 0.39); median old 3.9 ns
+libpcre2 n=1125  median delta 0.02 ns (p25 -0.51 p75 0.50); median old 21.2 ns

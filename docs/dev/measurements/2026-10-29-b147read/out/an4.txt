@@ -1,0 +1,8 @@
+pcrec_614d45eb3_auto-caps-simdna: closing/opening  subject-cells n=1125 median 0.9976 p5 0.965 p95 1.091 min 0.808 max 1.230; set-cells n=15 median 0.9974 p5 0.981 p95 1.075 min 0.981 max 1.075 |dev|>5%: 1; by regime: {'short-subject-search': 0.9974}
+   files ['20261028T161100Z.jsonl', '20261028T224116Z.jsonl']
+pcrec_614d45eb3_auto-nocaps-simdna: closing/opening  subject-cells n=1125 median 1.0004 p5 0.966 p95 1.150 min 0.844 max 1.258; set-cells n=15 median 1.0046 p5 0.972 p95 1.113 min 0.972 max 1.113 |dev|>5%: 1; by regime: {'short-subject-search': 1.0046}
+   files ['20261028T162307Z.jsonl', '20261028T225251Z.jsonl']
+pcrec_9ae59f5d4_auto-caps-simdna: closing/opening  subject-cells n=1125 median 0.9964 p5 0.912 p95 1.113 min 0.740 max 1.240; set-cells n=15 median 0.9928 p5 0.940 p95 1.058 min 0.940 max 1.058 |dev|>5%: 2; by regime: {'short-subject-search': 0.9928}
+   files ['20261028T161655Z.jsonl', '20261028T224715Z.jsonl']
+libpcre2_10.46_jit-caps-simdna: closing/opening  subject-cells n=1125 median 1.0002 p5 0.937 p95 1.248 min 0.824 max 1.357; set-cells n=15 median 0.9994 p5 0.956 p95 1.218 min 0.956 max 1.218 |dev|>5%: 3; by regime: {'short-subject-search': 0.9994}
+   files ['20261028T162849Z.jsonl', '20261028T225930Z.jsonl']
