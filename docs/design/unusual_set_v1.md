@@ -521,6 +521,22 @@ ONCE before the timed loop; NOT pre-touched in the timed arm (pre-touching
 inside iteration 1 and stated; heap-frame growth during a deep match is inside
 the timing for every engine.
 
+**AMENDED 2026-10-29 (b148w1fix, inbox I-170/I-171).** L9's readout found the
+"stated" first-use faults were not small: js-1m on pcrec-deep first-touched
+~339 MB (82.9k faults, ~109 of ~140 ms of one iteration; x5.9 behind
+pcre2-jit in steady state, x21.9 as measured). Storage is STILL not pre-touched
+(the maxrss of the 6.4 pass and the cap's meaning stay as ruled). Instead every
+`deep` arm, in the `throughput` regime only, runs the driver's own `--prime`
+(ONE untimed execution of the timed loop's operation per subject, answer
+discarded), declared on the testee as runtime option `storage_prime =
+throughput-per-subject`. Call-stream cells (one process, many calls: the faults
+amortise) and the untimed `--mem-pass` are unprimed. Honest asymmetry: priming
+persists a caller buffer / a JIT stack; libpcre2-interp's heap and Oniguruma's
+stack are malloc'd per call, so for them the growth is still re-paid inside the
+timed call (the "heap-frame growth is inside the timing" sentence above stands
+for them). Unmeasured here (no timing in this lane): the W1 window's js-1m
+cell is the first read.
+
 ### 6.3 Oniguruma's nest level 20 answers SILENTLY WRONG (E-1)
 
 `onig_get_subexp_call_max_nest_level()` = 20 is a match-time cap that does NOT

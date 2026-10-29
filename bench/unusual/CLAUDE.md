@@ -67,6 +67,14 @@ every member an assist can cover now declares `requires-unusual-<member>`; `ASSI
 the five assisted ids to the roster. The census shows 0 admission changes over the 15
 existing configs -- docs/dev/lanes/b148aw_report.md.
 
+b148w1fix (2026-10-29, inbox I-170/I-171): cscan and wild-json-validate require the new engine-neutral
+token `conditional-define` (`(?(DEFINE)...)` only; both use no other conditional) instead of `conditionals`.
+`gen_patterns.py` derives it: every block declaring `conditionals` gets it, plus `DEFINE_ONLY` (the four
+native pcrec configs; the deep arms inherit), so the verbatim members now RUN on pcrec (12 admission flips;
+the other 476 of 500 cells byte-identical, 12 more differ only by the refusal token's name). The five deep
+arms run the driver's `--prime` at throughput (unusual_set_v1.md 6.2 amended; testee runtime option
+`storage_prime`). `tools/check_w1fix.py`; docs/dev/lanes/b148w1fix_report.md.
+
 L4 (lane b148l4): `--mode calls` in the pcre2/pcrec/onig/re2/rust/vectorscan-som drivers,
 the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-default-deep`,
 `unusual_only`), limits read back on every compile row, the untimed 6.4 high-water pass on
