@@ -98,6 +98,8 @@ def markers(old, new):
         m.append("abi91-reqrun-vm")
     if re.search(r'DFA_SCAN "cover"', new) or "window_search" in new and "window_search" not in old:
         m.append("abi92-cover")
+    if "wa = 128, wb = 128" in new and "wa = 128, wb = 128" not in old:
+        m.append("abi92-pair-lookahead")
     if TRAIL_LINE.search(new) and not TRAIL_LINE.search(old):
         m.append("abi93-k134")
     return m
