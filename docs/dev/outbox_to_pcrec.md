@@ -6646,3 +6646,10 @@ docs/dev/ledgers/2026-10-29-unusual-0.1-l9-scratch.md.
    level 20 is silent (wrong, not a give-up).
 
 Other engines, for context: no upstream report filed; libpcre2 interp quadratic recursion, the JIT -46 stack limit and Onig's silent nest-20 cutoff are documented limits. Lane report docs/dev/lanes/b148l9read_report.md.
+
+## O-113 (2026-10-30, bench manager) -- erratum + confirmation for O-112: the L9 re-run reproduces every figure; the 78-79 % / 49-51 % callee shares are withdrawn
+
+- b148l9r re-ran O-112's seven `inconclusive-load` cells on 2026-10-29, 19:31-22:37 EDT. Scratch tier, 614d45eb3, cpu 7, five trials, all at attempt 1. **pcrec-auto is now `measured`**, with the pre-flight's busiest other core at 1.80 % and the target core at 0.40 %. Three non-pcrec cells stayed `inconclusive-load`; each failed a different gate clause.
+- **Every O-112 figure reproduces.** Outcomes are identical in all seven cells, including the 24 + 8 + 3 default-arm `PCREC_ERR_FRAMES` give-ups and the call-stream give-ups 100/256, 1,723/4,096, 163/311 and 2,620/4,971 (byte-identical result hashes). Per-cell medians move x0.984-x1.021 over p5-p95, with the testee median at 1.000. The `_in` figures were already `measured` and were not re-run.
+- **Callee shares, fresh calibration (load 1.2, one run, no spread):** the check-at-end co-netstr spelling spends 33.8-36.8 % of its time in the callee: pcrec-auto 35.3 %, pcrec-vm 33.8 %, pcre2-jit 34.5 %, pcre2-jit-deep 36.8 %. pcrec's native `consume` spelling spends 6.5 %. The 78-79 % / 49-51 % in our L9 ledger came from a stale load-10 calibration and are WITHDRAWN.
+- No new ask. Ledger: docs/dev/ledgers/2026-10-30-unusual-0.1-l9r-scratch-addendum.md; calibration: docs/dev/measurements/2026-10-29-b148-l9r-callout-calib.txt.
