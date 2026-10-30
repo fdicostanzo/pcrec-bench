@@ -60,7 +60,8 @@ FEATURE_MEMBERS = ["cscan", "wild-sexp-balanced", "wild-json-validate",
 VOCAB_REQUIRES = {"backrefs", "lookaround", "lookbehind-variable", "possessive-quantifier",
                   "atomic-group", "recursion", "conditionals", "k-reset", "control-verbs",
                   "unicode-properties", "named-groups", "free-spacing", "callouts",
-                  "span-reporting", "non-utf8-subject", "captures", "true-end-anchor"}
+                  "span-reporting", "non-utf8-subject", "captures", "true-end-anchor",
+                  "conditional-define"}
 
 
 # [B148] L7: the caller-VARIABLES capability (unusual_set_v1.md 3.3 / 5.5). pcrec
@@ -96,6 +97,17 @@ UNUSUAL_DELTA = {
     "onig-default": ["callouts"],
 }
 
+# [B148] b148w1fix (inbox I-170): the DEFINE-ONLY conditional. cscan and
+# wild-json-validate use `(?(DEFINE)...)` and no other conditional, so they
+# require `conditional-define`, not the general `conditionals`. DERIVED, never
+# typed per engine: every block that declares `conditionals` also declares
+# `conditional-define` (it is a subset of the general form), so every
+# pre-existing admission is unchanged; DEFINE_ONLY adds the engines that ship
+# the definitions-only form WITHOUT the general one (pcrec: `(?(DEFINE)`
+# compiles under module recursion, `(?(n)...)` stays refused). The deep and
+# assist arms inherit through their `src` sibling.
+DEFINE_ONLY = {"pcrec-auto", "pcrec-nocaps", "pcrec-vm", "pcrec-vm-in"}
+
 
 def capability_blocks():
     """-> {testee_id: [token lines]} read from bench/capability/patterns.rxt."""
@@ -128,7 +140,8 @@ def render_rxt():
         "  (gen_patterns.py --check), then this set's own callout facts (L5,",
         "  gen_patterns.py UNUSUAL_DELTA): `callouts` for pcrec (link-time binding) and",
         "  Oniguruma (`(?CN)` respelled `(?{N})`), `unusual-co-netstr` for pcrec only,",
-        "  `unusual-co-*-nofn` for libpcre2 only; the `vars` + `unusual-va-*` tokens are",
+        "  `unusual-co-*-nofn` for libpcre2 only; `conditional-define` (DEFINE_ONLY) beside",
+        "  every `conditionals` and for pcrec; the `vars` + `unusual-va-*` tokens are",
         "  declared for pcrec's native-vars configs only (L7, VARS_NATIVE). The",
         "  `*-assist-v01` configs copy their base's block (b148aw, ASSIST_ARMS); their",
         "  ASSISTED members' `unusual-<member>` grants are read from assists.tsv at run",
@@ -151,6 +164,9 @@ def render_rxt():
             assert tok in VOCAB_REQUIRES or tok.startswith("unusual-"), tok
             if tok not in blocks[src]:
                 have.append(tok)
+        if ("conditionals" in have or src in DEFINE_ONLY) \
+                and "conditional-define" not in have:         # [B148] b148w1fix
+            have.append("conditional-define")
         if t in VARS_NATIVE:                                  # [B148] L7
             have.extend(VARS_TOKENS)
         for mid in FEATURE_MEMBERS:                           # [B148] b148aw

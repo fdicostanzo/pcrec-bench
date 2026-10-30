@@ -82,7 +82,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "small"
 convention = "perl-leftmost-first"
-tags = ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-atomic-group", "requires-lookaround", "requires-unusual-cscan"]
+tags = ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim", "requires-recursion", "requires-named-groups", "requires-conditional-define", "requires-atomic-group", "requires-lookaround", "requires-unusual-cscan"]
 role = "member"
 
 [[patterns]]
@@ -112,7 +112,7 @@ feature_tier = "base"
 hazard_class = "none"
 size_class = "medium"
 convention = "perl-leftmost-first"
-tags = ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted", "requires-recursion", "requires-named-groups", "requires-conditionals", "requires-free-spacing", "requires-possessive-quantifier", "requires-unusual-wild-json-validate"]
+tags = ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted", "requires-recursion", "requires-named-groups", "requires-conditional-define", "requires-free-spacing", "requires-possessive-quantifier", "requires-unusual-wild-json-validate"]
 role = "member"
 
 [[patterns]]

@@ -103,6 +103,13 @@ REQUIRES_VOCAB = frozenset({
     # pcrec vars.md) -- the third unusual feature beside `recursion` and
     # `callouts`.
     "vars",
+    # [B148] b148w1fix: the DEFINE-ONLY conditional -- `(?(DEFINE)...)` as a
+    # group of definitions that is never matched, no condition ever
+    # evaluated. Engine-neutral: every engine that declares the general
+    # `conditionals` satisfies it (the set's matrix derives that), and an
+    # engine may declare it ALONE (pcrec ships `(?(DEFINE)` under module
+    # recursion while refusing `(?(n)...)`, inbox I-170).
+    "conditional-define",
 })
 
 # [B148] L1, unusual_set_v1.md 5.5 (PROPOSED P4): the ONE open family in

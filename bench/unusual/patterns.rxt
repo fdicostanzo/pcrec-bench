@@ -6,7 +6,8 @@ description |
   (gen_patterns.py --check), then this set's own callout facts (L5,
   gen_patterns.py UNUSUAL_DELTA): `callouts` for pcrec (link-time binding) and
   Oniguruma (`(?CN)` respelled `(?{N})`), `unusual-co-netstr` for pcrec only,
-  `unusual-co-*-nofn` for libpcre2 only; the `vars` + `unusual-va-*` tokens are
+  `unusual-co-*-nofn` for libpcre2 only; `conditional-define` (DEFINE_ONLY) beside
+  every `conditionals` and for pcrec; the `vars` + `unusual-va-*` tokens are
   declared for pcrec's native-vars configs only (L7, VARS_NATIVE). The
   `*-assist-v01` configs copy their base's block (b148aw, ASSIST_ARMS); their
   ASSISTED members' `unusual-<member>` grants are read from assists.tsv at run
@@ -38,6 +39,7 @@ ext bench
     unusual-co-luhn-nofn
     unusual-co-isbn-nofn
     unusual-co-member-nofn
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -65,6 +67,7 @@ ext bench
     unusual-co-luhn-nofn
     unusual-co-isbn-nofn
     unusual-co-member-nofn
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -87,12 +90,15 @@ ext bench
     true-end-anchor
     callouts
     unusual-co-netstr
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
     unusual-wild-sexp-balanced
+    unusual-wild-json-validate
     unusual-co-luhn
     unusual-co-isbn
     unusual-co-member
@@ -109,11 +115,14 @@ ext bench
     span-reporting
     non-utf8-subject
     true-end-anchor
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
+    unusual-wild-json-validate
   capabilities pcrec-vm
     backrefs
     lookaround
@@ -130,12 +139,15 @@ ext bench
     true-end-anchor
     callouts
     unusual-co-netstr
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
     unusual-wild-sexp-balanced
+    unusual-wild-json-validate
     unusual-co-luhn
     unusual-co-isbn
     unusual-co-member
@@ -153,12 +165,15 @@ ext bench
     non-utf8-subject
     captures
     true-end-anchor
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
     unusual-wild-sexp-balanced
+    unusual-wild-json-validate
   capabilities re2-default
     unicode-properties
     named-groups
@@ -181,6 +196,7 @@ ext bench
     captures
     true-end-anchor
     callouts
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -223,6 +239,7 @@ ext bench
     unusual-co-luhn-nofn
     unusual-co-isbn-nofn
     unusual-co-member-nofn
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -250,6 +267,7 @@ ext bench
     unusual-co-luhn-nofn
     unusual-co-isbn-nofn
     unusual-co-member-nofn
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -272,12 +290,15 @@ ext bench
     true-end-anchor
     callouts
     unusual-co-netstr
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
     unusual-wild-sexp-balanced
+    unusual-wild-json-validate
     unusual-co-luhn
     unusual-co-isbn
     unusual-co-member
@@ -297,12 +318,15 @@ ext bench
     true-end-anchor
     callouts
     unusual-co-netstr
+    conditional-define
     vars
     unusual-va-tenant
     unusual-va-route
     unusual-va-term
     unusual-va-term-bang
+    unusual-cscan
     unusual-wild-sexp-balanced
+    unusual-wild-json-validate
     unusual-co-luhn
     unusual-co-isbn
     unusual-co-member
@@ -321,6 +345,7 @@ ext bench
     captures
     true-end-anchor
     callouts
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -348,6 +373,7 @@ ext bench
     unusual-co-luhn-nofn
     unusual-co-isbn-nofn
     unusual-co-member-nofn
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate
@@ -369,6 +395,7 @@ ext bench
     captures
     true-end-anchor
     callouts
+    conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced
     unusual-wild-json-validate

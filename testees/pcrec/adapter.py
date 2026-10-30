@@ -4718,7 +4718,8 @@ class Adapter(_ad.Adapter):
             runtime += [{"name": "buffer_bytes",
                          "value": int(cfg["buffer_bytes"])}]
         if cfg.get("limits"):
-            runtime += [{"name": "limits", "value": cfg["limits"]}]
+            runtime += [{"name": "limits", "value": cfg["limits"]},
+                        dict(_ad.STORAGE_PRIME_OPTION)]      # [B148] b148w1fix
         # record_schema.md 6.2: where a testee is pinned to a VCS revision
         # rather than a release -- "which is pcrec ALWAYS" -- engine_commit
         # carries the 40-hex and engine_version a git-describe-shaped string,
@@ -5143,6 +5144,7 @@ class Adapter(_ad.Adapter):
                   "artifact_c": first_art_c,
                   "giveup_range": getattr(self, "_giveup_bounds", (-5, -2)),
                   "buffer_args": bufargs,
+                  "deep": bool(cfg.get("limits")),                 # [B148] b148w1fix
                   "stream_anchor": cfg.get("stream_anchor", "native")}  # [B148] L4
         if subst:
             # [B140] which sizing arm measure_subst drives; the compile
@@ -5902,6 +5904,7 @@ class Adapter(_ad.Adapter):
             # [B129] --prime: one untimed call per subject before each timed
             # loop (driver protocol, pcrecbench/adapters.py); scratch tier only.
             argv.append("--prime")
+        argv += _ad.deep_prime_argv(handle, regime)   # [B148] b148w1fix
         argv += list(handle.get("buffer_args") or [])
         return per_trial(argv, subjects, trials, timeout=timeout,
                          pin=handle.get("pin"),
