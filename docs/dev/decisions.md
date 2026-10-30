@@ -485,3 +485,22 @@ previous and current driver (testees/pcrec/CLAUDE.md, "Re-pin control").
 docs/dev/measurements/2026-10-09-b133-isolation-proof.py (+ .txt): 40 dummy
 getters appended to each driver and to the shim leave the timed function's
 normalised instruction stream identical and its address 0 mod 64.
+
+## BD17 — 2026-10-29 — the DEEP arms are PRIMED per subject in the throughput regime, and `--prime` may appear in a pinned record where `storage_prime` declares it (Frank's rulings (1)+(2), [B148])
+
+Decision: (1) the five `deep` arms (pcre2-interp-deep, pcre2-jit-deep,
+pcrec-auto-deep, pcrec-vm-deep, onig-default-deep) pass the drivers' existing
+`--prime` in the THROUGHPUT regime only: one untimed run per subject before the
+timed trials. Call-stream, `--mem-pass` and non-deep arms stay unprimed. This
+amends docs/design/unusual_set_v1.md §6.2 / M-9, which had kept the deep
+buffer deliberately untouched. (2) A primed row may enter a PINNED record,
+provided `testee.runtime_options` carries a `storage_prime` entry saying so.
+Why: L9 read js-1m's ×21.9 deep-arm cost as mostly first-touch page faults
+(pcrec I-170). That figure measured the kernel, not the engine. Caveat, stated
+in lane b148w1fix's report: the prime persists pcrec's caller buffer and
+pcre2-jit's JIT stack, but pcre2-interp's heap and Onig's stack are allocated
+per call, so those engines still pay most of their growth inside the timed
+call. A primed-vs-unprimed ratio across those engines is not a like-for-like
+comparison.
+Revisit when: W1 measures whether js-1m drops toward ×5.9 (owed), or when a
+deep arm's driver changes how it allocates.
