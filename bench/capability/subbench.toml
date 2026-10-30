@@ -8,7 +8,7 @@
 # prints it, `--check` compares it entry for entry).
 
 id = "capability"
-version = "0.3"
+version = "0.4"
 objective_kind = "feature"
 objective = """\
 A CAPABILITY CONTRAST across the [B7] engine roster: what each engine can \
@@ -29,7 +29,7 @@ Seventy-one patterns (70 members + the floor) across twelve provenance/ \
 capability families (@0.2, [B125]: seven end-anchored / bounded / boundary \
 additions in wild-logparse, eight throughput subjects added after the three \
 0.1 texts, and a second expectation method; @0.3, [B123]: six `t-hyb-*` MATCH \
-subjects, 1-64 KiB, for the capture-forced hybrid patterns): six WILD families built from imported, \
+subjects, 1-64 KiB, for the capture-forced hybrid patterns; @0.4, [B172]: two `t-qs-*` URL query-string subjects, 1 MiB and 256 KiB, for dup-param-detect): six WILD families built from imported, \
 provenance-tracked patterns (wild-validator, wild-logparse, wild-waf, \
 wild-secrets, wild-datetime, wild-codegrammar) and six \
 CAPABILITY/HAZARD families of designed members probing one closed \

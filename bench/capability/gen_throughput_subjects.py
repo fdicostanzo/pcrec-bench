@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """gen_throughput_subjects.py -- the capability set's three throughput
 texts ([B125] 0.2 appends eight, [B123] 0.3 appends six `t-hyb-*` MATCH
-subjects, 1-64 KiB): `throughput/` (gitignored) + `manifest_throughput.tsv`
+subjects, 1-64 KiB, [B172] 0.4 appends two `t-qs-*` query-string subjects): `throughput/` (gitignored) + `manifest_throughput.tsv`
 (committed), in `bench/syntax/gen_throughput_subjects.py`'s shape:
 `captext.text()` at three sizes and three seeds, a SIZE SWEEP at fixed
 "grammar", not a density cross (capability_set_v1.md 3.5).
@@ -160,6 +160,54 @@ _0_2_SHA256 = {
 }
 
 
+# [B172] capability@0.4: the URL query-string subjects (pcrec I-172), APPENDED
+# after the seventeen 0.1-0.3 rows (asserted by main()). Throughput only. The
+# MATCHING subject (3.5-3.8 % of lines carry a duplicate key) is ~1 MiB; the
+# NEAR-MISS (no duplicate key anywhere, keys sharing prefixes) is 256 KiB
+# because a failing `dup-param-detect` start scans to the end of the subject, so
+# its cost is quadratic in size (NOTES.md, 0.4).
+_QS = (
+    ("t-qs-1m", 1024 * 1024, 0xC0FFEE41, 35000, False),
+    ("t-qs-nearmiss-256k", 256 * 1024, 0xC0FFEE42, 0, True),
+)
+
+
+def qs_subjects():
+    """-> [(id, bytes, description, stats)] in manifest order."""
+    out = []
+    for sid, n, seed, ppm, twist in _QS:
+        body, st = ct.qs_text(n, seed, ppm, twist)
+        if ppm:
+            desc = (
+                "throughput/[B172] %d B target (%d lines), seed 0x%X: URL "
+                "query-string parts, one `k=v&k=v...` per line, every key text "
+                "unique in the subject except %d planted duplicate keys (%.1f %% "
+                "of lines carry the second occurrence; same line, next line, "
+                "2-40 lines on, and 300-3000 lines on), a few lines of up to "
+                "~%d params: the matching subject of dup-param-detect"
+                % (n, st["lines"], seed, st["dup_keys"],
+                   100.0 * st["dup_lines"] / st["lines"], st["max_params"]))
+        else:
+            desc = (
+                "throughput/[B172] %d B target (%d lines), seed 0x%X: the "
+                "same query-string grammar with NO duplicate key anywhere and "
+                "keys sharing prefixes (`id`, `idx`, `ids`, `id_2`, `id_k3f`): "
+                "the NEAR-MISS of dup-param-detect, every start scans to the "
+                "end of the subject and fails" % (n, st["lines"], seed))
+        out.append((sid, body, desc, st))
+    return out
+
+
+_0_3_SHA256 = {
+    "t-hyb-embed-1k": "cac80cd7907525851d555bee0b87a9d71d84450df6870588d8bfed3a751a9d93",
+    "t-hyb-embed-8k": "ffda00a030093eed090bdc2e7d16a164b4c9d96f0058d6727745f6ef40216477",
+    "t-hyb-embed-64k": "dbebe4c6a0ae5d10d0453b7afd828306fcebf900f1bef23f07d8e5ab93115fe8",
+    "t-hyb-logline-16k": "4bc9fc30a5db511207ecfd20e438dc8419046074e5e89df15b11a01a814074f7",
+    "t-hyb-datepath-16k": "2177ff71a237fb05ed6a9fade5013f361cefcd4258be4909efbdb782a878dfeb",
+    "t-hyb-digits-4k": "100d062ce158832630a2084cb999e5f8be002a947aaff04158739c34e9382452",
+}
+
+
 _REDOS_PATTERNS = (
     r"^([a-zA-Z0-9._%+-]+)+@",
     r"^(\s+)*$",
@@ -226,12 +274,23 @@ def main():
             ct.periodic_field(body)))
     for sid, body, desc in hyb_subjects():
         assert 1024 <= len(body) <= 65536, sid     # I-125 Q10's band
+        assert hashlib.sha256(body).hexdigest() == _0_3_SHA256[sid], (
+            "capability@0.4 moved a 0.3 throughput text: %s" % sid)
         texts.append((sid, body))
         with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
             f.write(body)
         rows.append("%s\t%d\t%s\t%s\t%s" % (
             sid, len(body), hashlib.sha256(body).hexdigest(), desc,
             ct.periodic_field(body)))
+    for sid, body, desc, st in qs_subjects():
+        assert len(body) > 512, sid
+        texts.append((sid, body))
+        with open(os.path.join(OUT, sid + ".bin"), "wb") as f:
+            f.write(body)
+        rows.append("%s\t%d\t%s\t%s\t%s" % (
+            sid, len(body), hashlib.sha256(body).hexdigest(), desc,
+            ct.periodic_field(body)))
+        print("  %s: %s" % (sid, st))
     _redos_safety_check(texts)
     with open(MANIFEST, "w", encoding="utf-8", newline="\n") as mf:
         mf.write("\n".join(rows) + "\n")
