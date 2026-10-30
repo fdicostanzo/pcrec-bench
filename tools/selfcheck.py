@@ -12621,8 +12621,8 @@ def check_b135s3_stamps():
 
 
 def check_b135_two_pin_window():
-    """[B135] the TWO-PIN WINDOW mechanism ([B147]: canonical 614d45eb3, the
-    one also_pin 9ae59f5d4; 6b2dbd3e, 00c97769 and b8337c33 left the
+    """[B135] the TWO-PIN WINDOW mechanism ([B149]: canonical cb32eda28, the
+    one also_pin 614d45eb3; 9ae59f5d4, 6b2dbd3e, 00c97769 and b8337c33 left the
     allowlist and are refused BY NAME): one process selects a15fb77b
     (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
     keeps the canonical pin; the override is refused BY NAME when it names
@@ -12646,18 +12646,18 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "9ae59f5d4"
+        os.environ[env] = "614d45eb3"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("614d45eb3", "9ae59f5d4", "614d45eb3"):
+        if (canon, before, same) == ("cb32eda28", "614d45eb3", "cb32eda28"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
             bad("b135 two-pin: the override selects an also_pin",
                 "canonical %r, override %r, override==canonical %r"
                 % (canon, before, same))
-        for retired in ("b8337c33", "00c97769", "6b2dbd3e"):
+        for retired in ("b8337c33", "00c97769", "6b2dbd3e", "9ae59f5d4"):
             os.environ[env] = retired
             try:
                 adapter.pin()
@@ -12685,7 +12685,7 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "9ae59f5d4"), ("after", "614d45eb3")):
+        for tag, pin in (("before", "614d45eb3"), ("after", "cb32eda28")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
@@ -12694,9 +12694,9 @@ def check_b135_two_pin_window():
             if not blk.get("engine_commit", "").startswith(pin):
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "9ae59f5d4" in ids["before"] \
-                and "614d45eb3" in ids["after"] \
-                and ids["before"].replace("9ae59f5d4", "614d45eb3") == ids["after"]:
+        if ids["before"] != ids["after"] and "614d45eb3" in ids["before"] \
+                and "cb32eda28" in ids["after"] \
+                and ids["before"].replace("614d45eb3", "cb32eda28") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
@@ -13256,9 +13256,10 @@ def check_b147_stamps():
     mod = _pcrec_adapter_module()
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import program_identity as _pi
-    new, old = adapter.pin_binary(), _b136_bin("9ae59f5d4")
-    if not old:
-        bad("b147 stamps", "no build for 9ae59f5d4 (pin.sh 9ae59f5d4 first)")
+    # [B149]: 614d45eb3 is no longer the canonical pin; this check names its own builds
+    new, old = _b136_bin("614d45eb3"), _b136_bin("9ae59f5d4")
+    if not (old and new):
+        bad("b147 stamps", "no build for 614d45eb3 / 9ae59f5d4 (pin.sh <pin> first)")
         return
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b147-")
     n = [0]
@@ -13470,6 +13471,189 @@ def check_b147_stamps():
                 continue
             (ok if got == (True, 2, 5) else bad)(
                 "b147 abi 89: %s answers `ca(?C1)t` with NO callout function set: [2,5)" % tid, str(got))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def check_b149_stamps():
+    """[B149] (pin cb32eda28, abi 93; four abi steps 90-93; pcrec_main's W1
+    sha). BY VALUE through the pin's own binary, against 614d45eb3 (the
+    BEFORE, also_pins):
+      90 [INLINE-C] 2   a callout artifact gains the span-helper block
+                        (`PCREC_RX_SPAN_H`); a callout-free one does not;
+                        `RX_CODE_LANGS` is NEVER stamped (we grant no code);
+      91 [REQRUN-VM]    `RX_REQ_HANDOFF` moves on a callout/VM artifact;
+                        `-fno-req-handoff` restores 614d45eb3's value there;
+      92 [MEMFN] S3     `\\d{2}`: `RX_DFA_SCAN` unanchored -> `cover`, and
+                        `--memfn=no-window-search,no-window-skip` restores
+                        614d45eb3's PROGRAM (v3 identity); a non-window
+                        control is v3-identical;
+      93 [K134]         a trail-writing VM loop gains `RX_TRAIL_CHECK()`
+                        sites (forced VM), a DFA artifact has none, and
+                        stripping the trail-gc text restores 614d45eb3's
+                        program; counted size +1.6..+2.0 KB measured;
+      the shim floor STAYS 16 (`struct rx_info` byte-identical); NO bench
+      config or adapter call passes `--code-header` / `--allow-code`."""
+    print("-- [B149]: abi 90-93 stamps, cover, reqrun handoff, trail compaction, the shim floor --")
+    import hashlib
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b149 stamps", "no pcrec adapter")
+        return
+    mod = _pcrec_adapter_module()
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import program_identity as _pi
+    from pcrecbench import subbench as _sbm
+    new, old = adapter.pin_binary(), _b136_bin("614d45eb3")
+    if not old:
+        bad("b149 stamps", "no build for 614d45eb3 (pin.sh 614d45eb3 first)")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b149-")
+    n = [0]
+
+    def emit(binary, flags, pat, probe=False):
+        n[0] += 1
+        out = os.path.join(tmp, "e%d.c" % n[0])
+        argv = [binary, "-p", "rx", "--features", "all", "-fcomments"] + list(flags) \
+            + (["--warn-emit-bytes=1"] if probe else []) + ["-o", out, "--pattern", pat]
+        r = subprocess.run(argv, capture_output=True, env=C_ENV, timeout=300)
+        if r.returncode != 0:
+            return None, r.stderr.decode("utf-8", "replace")
+        with open(out, "rb") as fh:
+            c = fh.read()
+        with open(out[:-2] + ".h", "rb") as fh:
+            h = fh.read()
+        return (c.decode("utf-8", "surrogateescape"), h.decode("utf-8", "surrogateescape"), out,
+                c + h), r.stderr.decode("utf-8", "replace")
+
+    def txt(a):
+        return a[0] + _pi.SEP + a[1]
+
+    def stamp(a, name):
+        m = re.search(r'^#define RX_%s (.*)$' % name, a[0] + "\n" + a[1], re.M)
+        return m.group(1).strip('"') if m else None
+
+    def v3(a):
+        return _pi.normalize_v3(txt(a))
+
+    def sizes(stderr):
+        wl = mod.parse_warn_line(stderr, last=True)
+        return (wl[0], wl[1]) if wl else None
+
+    def patt(sid, pid):
+        return _sbm.find(sid).pattern_bytes(pid)
+    trail = re.compile(r"TRAIL_CHECK|trail_gc|trail_compact")
+    trail_func = re.compile(r"^static .*\b\w*trail_(gc_floor|gc_start|compact)\(")
+
+    def restores(new_t, old_t):
+        """[K134]: remove abi 93's additions from the v3-folded NEW text (function bodies by brace
+        depth, the macro, the checkpoint sites, the trail_gc lines) and compare SORTED lines (the
+        fold orders chunks) with the OLD text."""
+        lines, out, i = _pi.normalize_v3(new_t).rstrip("\n").split("\n"), [], 0
+        while i < len(lines):
+            l = lines[i]
+            if trail_func.search(l):
+                d, started = 0, False
+                while i < len(lines):
+                    d += lines[i].count("{") - lines[i].count("}")
+                    started = started or "{" in lines[i]
+                    i += 1
+                    if started and d == 0:
+                        break
+                continue
+            if re.match(r"#define \w*TRAIL_CHECK\(\)", l):
+                while lines[i].endswith("\\"):
+                    i += 1
+                i += 1
+                continue
+            l = re.sub(r"\{ \w*TRAIL_CHECK\(\); (goto \w+;) \}", r"\1", l)
+            if trail.search(l):
+                i += 1
+                continue
+            out.append(l)
+            i += 1
+        return sorted(out) == sorted(_pi.normalize_v3(old_t).rstrip("\n").split("\n"))
+    try:
+        an, _e = emit(new, [], "abc")
+        ao, _e = emit(old, [], "abc")
+        abis = (mod.artifact_abi([an[2]]), mod.artifact_abi([ao[2]]))
+        (ok if abis == (93, 89) else bad)("b149 abi stamps 93 (cb32eda28) / 89 (614d45eb3)", str(abis))
+
+        def struct_of(a):
+            i = a[1].index("struct rx_info {")
+            j = a[1].index("};", i)
+            t = re.sub(r"/\*.*?\*/", "", a[1][i:j + 2], flags=re.S)
+            return " ".join(t.split())
+        (ok if struct_of(an) == struct_of(ao) else bad)(
+            "b149 struct rx_info is BYTE-IDENTICAL to 614d45eb3's (abi 90-93 add no field)",
+            "%d chars" % len(struct_of(an)))
+        shim = open(os.path.join(ROOT, "testees", "pcrec", "shim.c"), encoding="utf-8").read()
+        floor = re.search(r"#define PB_SHIM_MIN_ABI (\d+)", shim)
+        (ok if floor and floor.group(1) == "16" else bad)(
+            "b149 the shim floor STAYS 16", "PB_SHIM_MIN_ABI %s" % (floor and floor.group(1)))
+        # -- 90 [INLINE-C] 2 ------------------------------------------------------
+        co, _e = emit(new, [], patt("syntax", "grp-callout"))
+        (ok if co and "PCREC_RX_SPAN_H" in txt(co) and "PCREC_RX_SPAN_H" not in txt(
+            emit(old, [], patt("syntax", "grp-callout"))[0]) else bad)(
+            "b149 abi 90: a callout artifact gains the span-helper block (PCREC_RX_SPAN_H)", "")
+        (ok if "PCREC_RX_SPAN_H" not in txt(an) else bad)(
+            "b149 abi 90: a callout-free artifact has NO span-helper block", "")
+        (ok if all(stamp(a, "CODE_LANGS") is None for a in (an, co)) else bad)(
+            "b149 abi 90: RX_CODE_LANGS is never stamped (no code grant)", "")
+        # -- 91 [REQRUN-VM] -------------------------------------------------------
+        up = patt("subst", "7-url-tld-fix")
+        h_new, _e = emit(new, [], up)
+        h_old, _e = emit(old, [], up)
+        h_den, _e = emit(new, ["-fno-req-handoff"], up)
+        (ok if h_new and h_old and stamp(h_new, "REQ_HANDOFF") != stamp(h_old, "REQ_HANDOFF")
+         and stamp(h_den, "REQ_HANDOFF") == stamp(h_old, "REQ_HANDOFF") else bad)(
+            "b149 abi 91: 7-url-tld-fix RX_REQ_HANDOFF moves; -fno-req-handoff restores 614d45eb3's value",
+            "new %s old %s denied %s" % (h_new and stamp(h_new, "REQ_HANDOFF"),
+                                         h_old and stamp(h_old, "REQ_HANDOFF"),
+                                         h_den and stamp(h_den, "REQ_HANDOFF")))
+        # -- 92 [MEMFN] S3: cover --------------------------------------------------
+        d2 = patt("bounded", "dig-exact-2")
+        cn, _e = emit(new, [], d2)
+        co_, _e = emit(old, [], d2)
+        cd, _e = emit(new, ["--memfn=no-window-search,no-window-skip"], d2)
+        (ok if cn and co_ and stamp(cn, "DFA_SCAN") == "cover" and stamp(co_, "DFA_SCAN") == "unanchored" else bad)(
+            "b149 abi 92: \\d{2} RX_DFA_SCAN unanchored -> cover",
+            "new %s old %s" % (cn and stamp(cn, "DFA_SCAN"), co_ and stamp(co_, "DFA_SCAN")))
+        (ok if cd and co_ and v3(cd) == v3(co_) else bad)(
+            "b149 abi 92: --memfn=no-window-search,no-window-skip restores 614d45eb3's PROGRAM on \\d{2}", "")
+        ctl_n, _e = emit(new, [], b"a+b")
+        ctl_o, _e = emit(old, [], b"a+b")
+        (ok if ctl_n and ctl_o and v3(ctl_n) == v3(ctl_o) else bad)(
+            "b149 abi 92/93: `a+b` (no window row, no trail) is v3-IDENTICAL across the pins", "")
+        # -- 93 [K134] ------------------------------------------------------------
+        bp = patt("capability", "balanced-parens-rec")
+        tn, ne = emit(new, ["--engine=vm"], bp, probe=True)
+        to, oe = emit(old, ["--engine=vm"], bp, probe=True)
+        cnt = len(re.findall(r"TRAIL_CHECK\(\);", txt(tn))) if tn else 0
+        (ok if tn and cnt >= 1 and "TRAIL_CHECK" not in txt(to) else bad)(
+            "b149 abi 93: balanced-parens-rec forced-VM gains RX_TRAIL_CHECK() sites (none at 614d45eb3)",
+            "%d sites" % cnt)
+        (ok if tn and to and restores(txt(tn), txt(to)) else bad)(
+            "b149 abi 93: stripping the trail-gc text restores 614d45eb3's program", "")
+        sz_n, sz_o = sizes(ne), sizes(oe)
+        d = (int(sz_n[0]) - int(sz_o[0])) if sz_n and sz_o else None
+        (ok if d is not None and 1000 <= d <= 2600 else bad)(
+            "b149 abi 93: the counted size grows by the checkpoint text only (+1.0..+2.6 KB)",
+            "emit delta %s" % d)
+        dfa, _e = emit(new, ["--engine=dfa"], b"abc")
+        (ok if dfa and "TRAIL_CHECK" not in txt(dfa) else bad)(
+            "b149 abi 93: a DFA artifact carries no trail checkpoint", "")
+        # -- the --code-header exposure -------------------------------------------
+        hits = []
+        for rel in ("testees/pcrec/adapter.py", "testees/pcrec/driver.c", "testees/pcrec/shim.c",
+                    "pcrecbench/adapters.py", "pcrecbench/harness.py"):
+            t = open(os.path.join(ROOT, rel), encoding="utf-8", errors="replace").read()
+            for needle in ('"--code-header', '"--allow-code', "'--code-header", "'--allow-code"):
+                if needle in t:
+                    hits.append((rel, needle))
+        (ok if not hits else bad)(
+            "b149 --code-header / --allow-code are never passed to pcrec by the adapter or harness", str(hits))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -19035,6 +19219,7 @@ def main():
     check_b136_stamps()
     check_b142_stamps()
     check_b147_stamps()
+    check_b149_stamps()
     check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()

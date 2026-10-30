@@ -705,11 +705,13 @@ METADATA_DECL = {
     # two macros, not recorded a second time.
     "dfa_scan": {
         "type": "enum", "scope": "pattern",
-        "values": ["unanchored", "attempt", "empty", "rev-end"],
+        "values": ["unanchored", "attempt", "empty", "rev-end", "cover"],
         "source": "<PREFIX>_DFA_SCAN, read through pb_dfa_scan(); CHECKED "
                   "against rx_info.scan (pb_info_scan(), abi 6+); `rev-end` "
                   "joined at abi 73 ([OPT-REVEND] L2, [B135]) and is the "
-                  "`locate` axis's order-1 row (`-fno-rev-end`, bit 52)",
+                  "`locate` axis's order-1 row (`-fno-rev-end`, bit 52); `cover` "
+                  "joined at abi 92 ([MEMFN] D172 S3, [B149]) and is the "
+                  "`locate` axis's order-2 row (`--memfn=no-window-search`)",
         "description": "WHICH DFA scan this artifact contains: the O(n) "
                        "forward+reverse table pair (`unanchored`), the "
                        "per-start computed-goto loop an anchored pattern "
@@ -719,7 +721,10 @@ METADATA_DECL = {
                        "(`rev-end`: every match ends at the subject's end or "
                        "just before a final newline, so the search reads the "
                        "tail from the end until the reverse machine dies and "
-                       "carries no forward machine). Different loops with "
+                       "carries no forward machine), or -- abi 92, [MEMFN] D172 S3 -- "
+                       "the memfn kit's WINDOW SEARCH (`cover`: every match is "
+                       "one fixed-width window, reported [c, c + k) with no "
+                       "automaton run). Different loops with "
                        "different cost curves, and nothing else a consumer "
                        "can read distinguishes them",
     },

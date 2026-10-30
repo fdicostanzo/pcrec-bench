@@ -73,19 +73,33 @@ def signature(old, new):
     return ";".join(sorted(set(names)))[:200], len(ch)
 
 
-TRAIL_LINE = re.compile(r"TRAIL_CHECK|trail_gc|trail_compact")
-
-
-def strip_trail(text):
-    """Drop what abi 93 [K134] adds: lines naming the checkpoint macro / floor /
-    compaction, whole chunks whose head names them, then fold."""
-    body = PI.normalize_v3(text).rstrip("\n")
-    keep = []
-    for c in PI._v3_chunks(body.split("\n")):
-        if TRAIL_LINE.search(c[0]):
+TR=re.compile(r"TRAIL_CHECK|trail_gc|trail_compact")
+FUNC=re.compile(r"^static .*\b\w*trail_(gc_floor|gc_start|compact)\(")
+def strip_lines(body):
+    """v3-folded text -> the text with abi 93's [K134] additions removed (function bodies by brace depth,
+    the macro, the checkpoint sites, the trail_gc lines); compared as SORTED lines (the fold orders chunks)."""
+    lines=body.split("\n"); out=[]; i=0
+    while i<len(lines):
+        l=lines[i]
+        if FUNC.search(l):
+            d=0; started=False
+            while i<len(lines):
+                d+=lines[i].count("{")-lines[i].count("}")
+                started=started or "{" in lines[i]
+                i+=1
+                if started and d==0: break
             continue
-        keep.extend(l for l in c if not TRAIL_LINE.search(l))
-    return "\n".join(keep)
+        if re.match(r"#define \w*TRAIL_CHECK\(\)",l):
+            while lines[i].endswith("\\"): i+=1
+            i+=1; continue
+        l=re.sub(r"\{ \w*TRAIL_CHECK\(\); (goto \w+;) \}",r"\1",l)
+        if TR.search(l):
+            i+=1; continue
+        out.append(l); i+=1
+    return "\n".join(out)
+def restores(new_text, old_text, norm):
+    a=sorted(strip_lines(norm(new_text).rstrip("\n")).split("\n")); b=sorted(norm(old_text).rstrip("\n").split("\n"))
+    return a==b
 
 
 def markers(old, new):
@@ -100,7 +114,7 @@ def markers(old, new):
         m.append("abi92-cover")
     if "wa = 128, wb = 128" in new and "wa = 128, wb = 128" not in old:
         m.append("abi92-pair-lookahead")
-    if TRAIL_LINE.search(new) and not TRAIL_LINE.search(old):
+    if TR.search(new) and not TR.search(old):
         m.append("abi93-k134")
     return m
 
@@ -117,9 +131,9 @@ def attribute(v3, arm_win, arm_rh, old, new, sig):
     if v3 != "changed":
         return "-"
     ms = markers(old, new)
-    base_new = strip_trail(new)
-    if "abi93-k134" in ms and base_new == PI.normalize_v3(old):
-        return "abi93-k134"
+    if ms == ["abi93-k134"]:
+        # the pure case: only the trail text differs, VERIFIED (sorted folded lines)
+        return "abi93-k134" if restores(new, old, PI.normalize_v3) else "UNATTRIBUTED(k134 marker, strip does not restore)"
     if arm_win == "to-old" and "abi92-cover" not in ms:
         ms.append("abi92-cover")
     if arm_rh == "to-old" and "abi91-reqrun-vm" not in ms:
