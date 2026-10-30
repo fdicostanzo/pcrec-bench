@@ -1,5 +1,6 @@
-# bench/capability@0.3 — the capability survey set: objective, families, predictions
+# bench/capability@0.4 — the capability survey set: objective, families, predictions
 
+(@0.4, [B172], 2026-10-30: the LAST section is the 0.4 text; 0.4 changes no pattern, no short subject, no 0.1-0.3 throughput text, and appends two query-string subjects.)
 (@0.3, [B123], 2026-10-25: the LAST section is the 0.3 text; 0.3 changes no pattern, no short subject, no 0.1/0.2 throughput text.)
 (@0.2, [B125], 2026-10-08: read the section "capability@0.2" at the END of this file first for what
 changed; everything above it is the @0.1 text, still true of the first 64 patterns, 75 short subjects
@@ -630,3 +631,102 @@ is not a ranking.
 ~0.15 s per KiB; the six subjects (109 KiB) are ~42 s + ~16 s = **~1 minute of
 timed work, ~2-3 minutes of wall per testee** on a ~47-49 minute cell (+5%).
 No cell cap moves.
+
+## capability@0.4 ([B172], 2026-10-30) -- the URL query-string subjects (pcrec I-172)
+
+Stated BEFORE anything is measured (no engine timing was run for this section;
+the only runs are the generator and the libpcre2 oracle).
+
+**Why.** pcrec's reverse-landmark VM stage has `dup-param-detect`,
+`\b(\w+)=[^&]*&(?:[^&]*&)*\1=`, as its only measured mover, and none of the
+0.1-0.3 throughput texts contains an `&`, so the pattern only ever ran on one
+short subject (`br-dup-param`, 11 B). 0.4 appends two throughput subjects
+(`gen_throughput_subjects.qs_subjects`, `captext.qs_text`); no pattern, short
+subject, 0.1-0.3 text or expectation row moves (the six `t-hyb-*` and eleven
+earlier sha256s are asserted by the generator).
+
+**The semantics the generator is built around.** `[^&]` matches the newline, so
+`dup-param-detect` is LINE-BLIND: a key repeated on a later line is a duplicate
+to it, and `(?:[^&]*&)*` is greedy, so a match runs from the first occurrence
+of a key to the LAST `key=` in the subject. With a realistic vocabulary
+(`id`, `page`, `utm_source` on most lines) the very first key would "duplicate"
+the last line's and one match would swallow the file. So each key TEXT is
+used at most once per subject: a stem's first use is the bare stem (`id`),
+later uses carry a short base-36 tag (`id_k3f`, `utm_source_9qz`), the way
+services mint custom parameters. The only repeated keys are the declared,
+planted duplicates. This is a deliberate departure from "keys repeat across
+lines", and it is the reason the duplicate share below is a property of the
+subject and not of the vocabulary.
+
+**The generator (seeded xorshift64*, fresh Rng per subject).**
+
+- Lines: whole lines only, `k=v&k=v...`, no `?`, no trailing `&`; 2-10 params
+  per line, one line in 300 a LONG line of 150-400 params.
+- Key vocabulary: 30 stems, weighted (`id` 6; `page`, `q`, `filter` 4;
+  `utm_source`/`utm_medium`/`utm_campaign`/`sort`/`ref`/`cat`/`tag`/`item` 3;
+  `utm_term`, `utm_content`, `cb`, `fbclid`, `gclid`, `lat`, `lng` 1; the
+  rest 2), then the tag rule above.
+- Values: empty 8 %; decimal integer < 10^6 30 %; 8-32 hex chars 17 %; a plain
+  word 25 %; two words joined by a percent-encoded byte (`%20 %2F %3A %2C %40
+  %C3%A9 %E2%9C%93 %2B %3F %23`) 12 %; a percent-encoded e-mail (`name%40word.com`)
+  8 %. No raw `&`, `=` or `?` in a value.
+- Duplicates: a line plants one with probability 35,000 ppm (3.5 %). The
+  planted key recurs exactly once, with a fresh value: on the SAME line 2-31
+  params later (40 %), on the NEXT line (25 %), 2-40 lines later (30 %), or
+  300-3,000 lines later (5 %, the FAR duplicates, tens to hundreds of KB
+  apart). A duplicate scheduled past the end of the subject is dropped, so the
+  realised share is a measured number, not the ppm.
+
+**The two subjects.**
+
+| subject | bytes | seed | what it is |
+|---|---|---|---|
+| `t-qs-1m` | 1,048,501 | 0xC0FFEE41 | the MATCHING subject: 7,799 lines, 52,936 params, 302 duplicate keys, 298 lines (3.8 %) carry a second occurrence, longest line 386 params |
+| `t-qs-nearmiss-256k` | 262,092 | 0xC0FFEE42 | the NEAR-MISS: 1,628 lines, 13,206 params, ZERO duplicate keys; unique keys share prefixes/suffixes with earlier ones (`id`, `idx`, `ids`, `id_2`, `id_k3f`) |
+
+**Why a near-miss pair, and why it is 256 KiB.** The set's convention is a
+match/near-miss pair per hazard (`t-evil-match-60k`/`-nearmiss-16k`,
+`t-trim-*`; twin patterns `winpath-near-miss`, `ipv4-near-miss`), and a
+pattern's failing path is the cost the reverse stage targets: every start
+(each `k=` is a candidate) scans `(?:[^&]*&)*` to the END of the subject and
+backtracks through every `&` looking for `\1=`, so a failing subject costs
+O(params x remaining params), QUADRATIC in size. At the oracle (one core),
+256 KiB costs about 2.6 s, the matching 1 MiB subject about 14 s (the matches
+swallow spans, which bounds the failing starts), so a 1 MiB near-miss would be
+about 16x the 256 KiB one, ~40 s per find_all per trial per engine. The
+near-miss is therefore a quarter-size and its cost is a finding to read, not a
+cell cap to hit. R0 applies as ever: a testee that gives up or times out on it
+is a finding.
+
+**Predictions P21-P23 (stated before any run).**
+
+- P21 (answers). Every new (pattern, subject) triple has a libpcre2-differential
+  expectation (no fallback method needed unless a ReDoS-family pattern gives
+  up; the `^`-anchored family attempts offset 0 only); every testee that
+  answers agrees; R0 empty for the new subjects. `dup-param-detect` on
+  `t-qs-nearmiss-256k`: `nomatch`, count 0, by construction (no key text occurs
+  twice, and `\1=` needs the whole key).
+- P22 (the stage's trigger). On `t-qs-1m` the `dup-param-detect` match count is
+  in the low hundreds (the oracle's, recorded in b172qs_report.md), far below
+  the 302 planted pairs because far and long-range spans swallow nearer ones;
+  pcre2-interp/jit pay the most on the near-miss (quadratic failing starts),
+  and any engine with a reverse landmark walk is expected to flatten that
+  quadratic. This is the cell pcrec's I-172 asked for; the prediction
+  about pcrec's own number is pcrec's to state.
+- P23 (nothing else cares). The other 70 patterns on these two subjects are
+  ordinary: the texts contain no `@`, no long uniform run in any ReDoS
+  family's alphabet at offset 0 (the first bytes are a stem name and a value),
+  so the `_redos_safety_check` over all 19 texts passes under its 2 s guard.
+
+**Outlier-rule addition.** R13: a cell at a 0.4 subject is compared across
+engines at 0.4 only; the 0.1-0.3 cells are untouched and a cross-version delta
+is not a ranking.
+
+**Cell time (estimate, not a measurement).** The oracle's one-core find_all
+time for `dup-param-detect` is ~14 s (matching) and ~2.6 s (near-miss); an
+engine that backtracks like libpcre2's interpreter pays that per trial, so the
+two subjects add ~17 s of timed work per trial for the interpreter-class
+testees (five trials: ~1.5 min) and well under that for JIT/DFA-class ones.
+Other patterns on 1.3 MiB of text are ~0.15 s per KiB-class costs from the 0.2
+records (~1-3 min of timed work per testee in total). The manager sets any
+`CELL_CAP` change.

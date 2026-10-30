@@ -25,6 +25,12 @@ Sections (each timed; one summary line at the end; exit 1 on any failure):
   vars          tools/check_vars.py    (L7)
   callouts      tools/check_callouts.py (L5)
   assist        tools/check_assist.py  (b148aw)
+  w1fix         tools/check_w1fix.py   (b148w1fix: conditional-define + deep-arm storage prime)
+  inline        tools/check_inline.py  (b148inline): the INLINE pcrec callout arm's
+                sources -- bench/unusual/gen_inline.py re-derives, every inlined
+                callee body byte-identical to callees/callees.c, every include
+                sha256-pinned and recomputed, the segment == the callee on random
+                views under gcc and clang; each with a control. NO pcrec build.
 
 The four tools/check_*.py modules were moved here from `make check-harness`
 (tools/selfcheck.py main()): no check runs twice in `make check`.
@@ -274,6 +280,8 @@ SECTIONS = [
     ("vars", _module("check_vars")),
     ("callouts", _module("check_callouts")),
     ("assist", _module("check_assist")),
+    ("w1fix", _module("check_w1fix")),
+    ("inline", _module("check_inline")),
 ]
 
 

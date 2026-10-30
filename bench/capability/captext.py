@@ -129,6 +129,7 @@ def text(nbytes, seed):
 # ---------------------------------------------------------------------------
 
 _HEX = "0123456789abcdef"
+_B36 = "0123456789abcdefghijklmnopqrstuvwxyz"
 _SEPS = " -_.:/,;="
 _FILE_EXT = ("txt", "log", "json", "csv")
 
@@ -367,3 +368,157 @@ def hyb_digits(nbytes, seed):
     rng = Rng(seed)
     return (str(1 + rng.randrange(9)) + _pick(rng, "0123456789", nbytes - 1)
             ).encode("ascii")
+
+
+# ---------------------------------------------------------------------------
+# [B172] capability@0.4 -- the URL query-string subjects (pcrec I-172): access-
+# log query parts, one per line, `k1=v1&k2=v2&...`, on which `dup-param-detect`
+# (`\b(\w+)=[^&]*&(?:[^&]*&)*\1=`) does real work. NEW code only; every function
+# seeds a fresh Rng, no 0.1-0.3 subject can move.
+#
+# THE SEMANTICS THE GENERATOR IS BUILT AROUND (NOTES.md, 0.4): `[^&]` matches
+# the newline, so the pattern is LINE-BLIND -- a key repeated on a LATER LINE
+# is a duplicate to it. A realistic vocabulary (`id`, `page`, `utm_source`
+# on every line) would therefore make the very first key a "duplicate" of the
+# last line's and one greedy match would swallow the subject. So the allocator
+# below hands out each key text AT MOST ONCE per subject (a stem's first use is
+# the bare stem, later uses `stem_k3f` with a short base-36 tag), and the ONLY repeated keys are the declared,
+# planted duplicates.
+# ---------------------------------------------------------------------------
+
+_QS_STEMS = (
+    ("utm_source", 3), ("utm_medium", 3), ("utm_campaign", 3),
+    ("utm_term", 1), ("utm_content", 1), ("id", 6), ("page", 4), ("q", 4),
+    ("sort", 3), ("order", 2), ("lang", 2), ("ref", 3), ("sid", 2),
+    ("session", 2), ("token", 2), ("filter", 4), ("cat", 3), ("tag", 3),
+    ("limit", 2), ("offset", 2), ("ts", 2), ("v", 2), ("cb", 1), ("fbclid", 1),
+    ("gclid", 1), ("user", 2), ("item", 3), ("lat", 1), ("lng", 1), ("sku", 2),
+)
+_QS_STEM_BAG = tuple(s for s, w in _QS_STEMS for _ in range(w))
+_QS_STEM_MAP = dict(_QS_STEMS)
+# near-miss twists: keys that share a prefix/suffix with an existing key.
+_QS_TWIST = ("x", "s", "_id", "_2", "id")
+_QS_WORDS = ("summer", "sale", "email", "newsletter", "cpc", "organic",
+             "search", "home", "shoes", "red", "blue", "mobile", "desktop",
+             "en", "de", "fr", "asc", "desc", "price", "date", "name")
+_QS_PCT = ("%20", "%2F", "%3A", "%2C", "%40", "%C3%A9", "%E2%9C%93", "%2B",
+           "%3F", "%23")
+_HEX = "0123456789abcdef"
+_B36 = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+
+class _QsKeys:
+    """Hands out each key text at most once per subject (see the banner)."""
+
+    def __init__(self, rng, twist=False):
+        self.rng = rng
+        self.twist = twist
+        self.used = set()
+
+    def fresh(self):
+        rng = self.rng
+        stem = _QS_STEM_BAG[rng.randrange(len(_QS_STEM_BAG))]
+        if self.twist and rng.randrange(3) == 0 and stem in self.used:
+            # a prefix/suffix relative of a key already used: `id` -> `idx`,
+            # `ids`, `id_id`, `id_2`, `idid`; never the same text.
+            key = stem + _QS_TWIST[rng.randrange(len(_QS_TWIST))]
+            if key not in self.used:
+                self.used.add(key)
+                return key
+        if stem not in self.used:
+            self.used.add(stem)
+            return stem
+        # a stem's later uses carry a short base-36 tag (`id_k3f`, the way
+        # services mint `utm_x9q` / `ref_a1b2` custom parameters); 3 chars,
+        # then 4 if the 3-char space is crowded
+        width = 3
+        while True:
+            key = "%s_%s" % (stem, _pick(rng, _B36, width))
+            if key not in self.used:
+                self.used.add(key)
+                return key
+            width = 4
+
+
+def _qs_value(rng):
+    r = rng.randrange(100)
+    if r < 8:
+        return ""
+    if r < 38:
+        return str(rng.randrange(1000000))
+    if r < 55:
+        return _pick(rng, _HEX, 8 + rng.randrange(25))
+    if r < 80:
+        return rng.choice(_QS_WORDS)
+    if r < 92:
+        return "%s%s%s" % (rng.choice(_QS_WORDS), rng.choice(_QS_PCT),
+                           rng.choice(_QS_WORDS))
+    return "%s%%40%s.com" % (rng.choice(_NAMES), rng.choice(_QS_WORDS))
+
+
+def qs_text(nbytes, seed, dup_ppm=35000, twist=False):
+    """-> (bytes, stats). Whole lines only, total length <= `nbytes` and
+    within one line of it. Each line is `k=v&k=v...` (no `?`, no trailing
+    `&`): 2-10 params, one line in 300 a LONG line of 150-400 params. With
+    probability `dup_ppm`/1e6 per line (`dup_ppm=0`: none) the line PLANTS a
+    duplicate: one key of the line is scheduled to recur (as a second `k=v`
+    with a fresh value) -- on the same line 1-30 params later (40%), on the
+    next line (25%), 2-40 lines later (30%), or 300-3000 lines later (5%, the
+    FAR duplicates). A planted key recurs exactly once, so every other key is
+    unique in the subject. `twist=True` makes unique keys share prefixes and
+    suffixes with earlier ones (`id`, `idx`, `ids`, `id_2`)."""
+    rng = Rng(seed)
+    keys = _QsKeys(rng, twist)
+    pending = {}                     # line index -> [key to repeat there]
+    lines = []
+    total = 0
+    dup_lines = 0
+    li = 0
+    while True:
+        long_line = rng.randrange(300) == 0
+        n = 150 + rng.randrange(251) if long_line else 2 + rng.randrange(9)
+        ks = [keys.fresh() for _ in range(n)]
+        # the first occurrences of this line's planted dups sit on this line
+        # (or, for a cross-line dup, are scheduled at a later line)
+        plant = dup_ppm and rng.randrange(1000000) < dup_ppm
+        if plant:
+            r = rng.randrange(100)
+            key = ks[rng.randrange(len(ks))]
+            if r < 40 and len(ks) >= 3:
+                i = rng.randrange(len(ks) - 1)
+                key = ks[i]
+                ks.insert(min(len(ks), i + 2 + rng.randrange(30)), key)
+            else:
+                if r < 65:
+                    d = 1
+                elif r < 95:
+                    d = 2 + rng.randrange(39)
+                else:
+                    d = 300 + rng.randrange(2701)
+                pending.setdefault(li + d, []).append(key)
+        for key in pending.pop(li, ()):
+            ks.insert(rng.randrange(len(ks) + 1), key)
+        line = "&".join("%s=%s" % (k, _qs_value(rng)) for k in ks)
+        if total + len(line) + 1 > nbytes:
+            break
+        lines.append(line)
+        total += len(line) + 1
+        li += 1
+    body = ("\n".join(lines) + "\n").encode("ascii")
+    # stats from the text itself, not from the schedule
+    seen = {}
+    dup_lines = 0
+    for line in lines:
+        has = False
+        for p in line.split("&"):
+            k = p.split("=", 1)[0]
+            if k in seen:
+                has = True
+            seen[k] = seen.get(k, 0) + 1
+        dup_lines += has
+    stats = {"lines": len(lines), "bytes": len(body),
+             "params": sum(seen.values()),
+             "dup_keys": sum(1 for v in seen.values() if v > 1),
+             "dup_lines": dup_lines,
+             "max_params": max(l.count("&") + 1 for l in lines)}
+    return body, stats

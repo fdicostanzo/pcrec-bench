@@ -282,6 +282,30 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TESTEES_ROOT = os.path.join(REPO_ROOT, "testees")
 
 
+#: [B148] b148w1fix (inbox I-170, unusual_set_v1.md 6.2 amended): a `deep`
+#: arm's big working storage (pcrec's 1 GiB caller buffer, libpcre2's 1 GiB
+#: JIT stack / heap, Oniguruma's match stack) is created once and never
+#: pre-touched, so a large subject's FIRST iteration paid the first-use page
+#: faults of everything the match grew into (js-1m on pcrec-deep: ~109 of
+#: ~140 ms). Pre-touching the storage itself stays ruled out (it is a
+#: measurement of its own and would pin maxrss at the cap); instead a deep
+#: arm runs the driver's own `--prime` (ONE untimed execution of the timed
+#: loop body per subject) in the `throughput` regime, where subjects are
+#: large. Declared on the testee as the runtime option below, so a record
+#: says what was done; the call-stream regime (one process, many calls: the
+#: faults amortise) and the untimed `--mem-pass` are unprimed.
+STORAGE_PRIME_OPTION = {"name": "storage_prime", "value": "throughput-per-subject"}
+
+
+def deep_prime_argv(handle, regime):
+    """-> `["--prime"]` iff this is a deep arm's throughput measurement the
+    harness has not already primed (a scratch `quick --prime` run), else []."""
+    if (handle.get("deep") and regime == "throughput"
+            and not handle.get("mem_pass") and not handle.get("prime")):
+        return ["--prime"]
+    return []
+
+
 #: [B148] L4: the match-scope pair every `--mode calls` row carries
 #: (unusual_set_v1.md 7.1, the O(segment) pre-flight's outcome).
 STREAM_ANCHOR_DECL = {

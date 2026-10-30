@@ -243,7 +243,8 @@ class Adapter(_ad.Adapter):
                            + (DEEP_BUILD_NOTE if cfg.get("limits") else ""),
             "runtime_options": ([{"name": "encoding", "value": "utf8"}]
                                 if enc == "utf8" else [])
-                               + ([{"name": "limits", "value": cfg["limits"]}]
+                               + ([{"name": "limits", "value": cfg["limits"]},
+                                   dict(_ad.STORAGE_PRIME_OPTION)]    # [B148] b148w1fix
                                   if cfg.get("limits") else []),
             "compile_cost_definition": (
                 "interpreter (requirements 3): the one call, timed "
@@ -432,6 +433,7 @@ class Adapter(_ad.Adapter):
             # [B129] --prime: one untimed call per subject before each timed
             # loop (driver protocol, pcrecbench/adapters.py); scratch tier only.
             argv.append("--prime")
+        argv += _ad.deep_prime_argv(handle, regime)    # [B148] b148w1fix
         return per_trial(argv, subjects, trials, timeout=timeout,
                          pin=handle.get("pin"),
                          subject_timeout=handle.get("subject_timeout"))

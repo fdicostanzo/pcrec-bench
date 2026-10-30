@@ -58,6 +58,13 @@ made before any run, dependencies).
   microbench `tools/callout_calib.py` runs. The `[callouts]` table in the sidecar binds
   sites to callees per arm (real / pass); `-nofn` arms bind none.
 
+- `gen_inline.py`, `callees/ub_<callee>.rxt`, `inline/` ([B148] lane b148inline, part 1) -- the INLINE
+  pcrec callout arm's SOURCES: fragments (the patterns of the pcrec-spelled callout arms with each callee's
+  C body from `callees/callees.c`, byte for byte, inside ``(?C`c: ...`)``), sha256-pinned entry files
+  and `inline/blocks.tsv` (`inline/CLAUDE.md`). `gen_inline.py --check` re-derives; `tools/check_inline.py`
+  (a `check-unusual` section) proves byte identity, the pins and segment == callee on random views, with
+  controls, needing no pcrec build. Part 2 (adapter + testee) is not here yet.
+
 Not here yet (other lanes): the authored `assists/<member>/<engine>/` (L6).
 
 b148aw (lane b148aw): the assist pipeline -- `assists/templates/`, `assists/AUTHORS.md`, the
@@ -66,6 +73,14 @@ runner and the five `-assist-v01` configs (testees/assist/), `pcrecbench/assists
 every member an assist can cover now declares `requires-unusual-<member>`; `ASSIST_ARMS` adds
 the five assisted ids to the roster. The census shows 0 admission changes over the 15
 existing configs -- docs/dev/lanes/b148aw_report.md.
+
+b148w1fix (2026-10-29, inbox I-170/I-171): cscan and wild-json-validate require the new engine-neutral
+token `conditional-define` (`(?(DEFINE)...)` only; both use no other conditional) instead of `conditionals`.
+`gen_patterns.py` derives it: every block declaring `conditionals` gets it, plus `DEFINE_ONLY` (the four
+native pcrec configs; the deep arms inherit), so the verbatim members now RUN on pcrec (12 admission flips;
+the other 476 of 500 cells byte-identical, 12 more differ only by the refusal token's name). The five deep
+arms run the driver's `--prime` at throughput (unusual_set_v1.md 6.2 amended; testee runtime option
+`storage_prime`). `tools/check_w1fix.py`; docs/dev/lanes/b148w1fix_report.md.
 
 L4 (lane b148l4): `--mode calls` in the pcre2/pcrec/onig/re2/rust/vectorscan-som drivers,
 the `deep` arms (`pcre2-{interp,jit}-deep`, `pcrec-{auto,vm}-deep`, `onig-default-deep`,

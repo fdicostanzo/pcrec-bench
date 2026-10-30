@@ -142,7 +142,7 @@ def members():
         attr="pcrec lane scandog, [SCANNER-DOGFOOD]")
     M.append(Member("cscan", "recursion", ct, "cscan",
                     ["family-recursion", "hazard-none", "provenance-pcrec-scandog", "fidelity-verbatim"],
-                    ["recursion", "named-groups", "conditionals", "atomic-group", "lookaround",
+                    ["recursion", "named-groups", "conditional-define", "atomic-group", "lookaround",
                      "unusual-cscan"],
                     pcrec_prov, isolates="the C (?{ ... }) end scanner: DEFINE'd subroutines, \\G, possessive loops"))
     onig_prov = dict(pcrec_prov, fid="adapted",
@@ -165,7 +165,7 @@ def members():
                     isolates="balanced () by numeric-group recursion with a possessive inner run"))
     M.append(Member("wild-json-validate", "recursion", JSON_TEXT, "plain",
                     ["family-recursion", "hazard-none", "provenance-stackoverflow-3845829", "fidelity-adapted"],
-                    ["recursion", "named-groups", "conditionals", "free-spacing", "possessive-quantifier",
+                    ["recursion", "named-groups", "conditional-define", "free-spacing", "possessive-quantifier",
                      "unusual-wild-json-validate"],
                     dict(src="stackoverflow-3845829", url="https://stackoverflow.com/a/3845829",
                          ref="answer 3845829 by mario to question 2583472 \"Regex to validate JSON\", edited 2023-11-24",

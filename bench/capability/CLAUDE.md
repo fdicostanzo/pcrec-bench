@@ -1,4 +1,17 @@
-# bench/capability/ — the capability survey set (`capability@0.3`)
+# bench/capability/ — the capability survey set (`capability@0.4`)
+
+**@0.4 ([B172], 2026-10-30, lane b172qs; pcrec I-172).** 0.3 plus TWO throughput
+subjects, `t-qs-1m` (1,048,501 B, 7,799 lines of URL query strings, 302 planted
+duplicate keys, 3.8 % of lines carry one) and `t-qs-nearmiss-256k` (262,092 B,
+no duplicate key, prefix-sharing keys): `captext.qs_text`,
+`gen_throughput_subjects.qs_subjects`, seeds 0xC0FFEE41/42. They give
+`dup-param-detect` (`\b(\w+)=[^&]*&(?:[^&]*&)*\1=`, line-blind: `[^&]` crosses
+the newline) a subject where it works: oracle find-all 119 matches on the 1 MiB
+text, none on the near-miss. Every key text is unique per subject except the
+planted duplicates (NOTES.md, 0.4, says why). 71 patterns and 75 short
+subjects unchanged; expectations 6,531 -> 6,672 rows (+141: 71 patterns x 2
+subjects, none dropped); the 17 earlier throughput sha256s are asserted. NOTES.md's last
+section is the 0.4 text with P21-P23 and R13.
 
 **@0.3 ([B123], 2026-10-25, lane b123subj; pcrec I-125 Q10 / I-127).** 0.2 plus SIX
 throughput subjects, `t-hyb-*` (`captext.hyb_embed/_logline/_datepath/_digits`,
@@ -60,7 +73,7 @@ capability policy, `variant.kind` rendering — all future lanes' scope).
 | `subbench.toml` | the SIDECAR: `id="capability"`, `version="0.1"`, `regimes = ["search_short", "throughput"]` (no `match` — capability_set_v1.md 3.5's set-wide exclusion), `short_search_max_bytes = 512`, and since the [B42] switch `rxt_source = "patterns.rxt"` (the loaded source). Its `[[patterns]]` array is `gen_patterns.py --sidecar`'s own output |
 | `captext.py` | the shared randomness primitive (xorshift64*, in `bench/syntax/censustext.py`'s shape) + the throughput grammar: mixed log-line/HTTP/source-code/prose text (capability_set_v1.md 3.4's own words), re-exports `pcrecbench.periodic.periodic_field` |
 | `gen_subjects.py` | writes `subjects/` (gitignored) + `manifest.tsv`: 75 typed short subjects, grouped and typed BY FAMILY (not one shared vocabulary — `bench/syntax`'s R3/R4 outlier rules do not transfer to a wild-provenance set). Three subjects carry genuine raw non-UTF-8 bytes for family 12 |
-| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`/`t-256k`/`t-1m` from `captext.text()` (+ 0.2's eight and 0.3's six `t-hyb-*` rows, 17 texts, the earlier 11 sha256-asserted). Carries an empirical REDOS SAFETY CHECK (`_redos_safety_check`): every `redos-nested` pattern's `find_all` over all three texts is timed and asserted under a 2 s guard, the belt-and-braces control beyond the structural `^`-anchor argument NOTES.md states |
+| `gen_throughput_subjects.py` | writes `throughput/` (gitignored) + `manifest_throughput.tsv`: `t-64k`/`t-256k`/`t-1m` from `captext.text()` (+ 0.2's eight, 0.3's six `t-hyb-*` rows and 0.4's two `t-qs-*` rows, 19 texts, the earlier 17 sha256-asserted). Carries an empirical REDOS SAFETY CHECK (`_redos_safety_check`): every `redos-nested` pattern's `find_all` over all three texts is timed and asserted under a 2 s guard, the belt-and-braces control beyond the structural `^`-anchor argument NOTES.md states |
 | `manifest.tsv`, `manifest_throughput.tsv` | committed: id, len, sha256, description, periodic |
 | `gen_expectations.py` | the entry point; the derivation is shared (`pcrecbench/expectations.py`). `--check` re-derives and diffs against the committed `expectations.tsv` |
 | `expectations.tsv` | oracle-verified (`method = libpcre2-differential`) match/no-match/find-all expectations for every (pattern, subject, declared regime) triple |
