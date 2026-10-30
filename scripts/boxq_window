@@ -10,6 +10,10 @@
 #   scripts/boxq_window --no-queue [--name NAME] -- CHAIN [ARGS...]
 #   scripts/boxq_window --cancel NAME
 #
+# CHAIN must be an EXECUTABLE PATH (checked with -x): `-- env VAR=x bash chain.sh`
+# is refused ("chain not executable: env"). For env or a non-executable script, use a small
+# executable wrapper (the b148l9r submission failed this way, 2026-10-29).
+#
 # Flow: write <inbox>/NAME.window; poll the state file; on RUNNING start CHAIN
 # in its own process group (setsid); keep polling; if the state leaves RUNNING
 # (cap, cancel, anything) kill the chain's group BY PID. Our run log (the

@@ -10,8 +10,13 @@
 # a cut-off loses the least. Launched through the box queue, submitted at 19:30
 # (the .window format has no not-before key, so the submission itself waits):
 #
-#     setsid scripts/boxq_window --name b148l9r --prio 720 --cap 16200 -- \
-#         env MACHINE_ID=ryzen7700x bash docs/dev/lanes/b148l9r_chain.sh
+#     setsid scripts/boxq_window --name b148l9r --prio 720 --cap 15600 -- \
+#         /var/tmp/pcrecbench/b148l9rwin/chain_wrap.sh
+#
+# (CORRECTED 2026-10-30: the line first written here, `-- env MACHINE_ID=... bash
+# <chain>`, FAILS -- boxq_window requires CHAIN to be an executable path ("chain not
+# executable: env"). The run used a wrapper that cd's to the repo, exports
+# MACHINE_ID=ryzen7700x and execs this file.)
 #
 # Completion: /var/tmp/pcrecbench/b148l9rwin/chain.log ends `CHAIN_DONE`.
 cd "$(dirname "${BASH_SOURCE[0]}")/../../.." || exit 9
