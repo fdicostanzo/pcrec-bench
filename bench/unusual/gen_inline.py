@@ -8,7 +8,10 @@ sources ([B148] lane b148inline; Frank 2026-10-29, plan.md [B148] "INLINE"):
                               [INLINE-C] stage 2's  (?C`c: ... `)  segment
     inline/<arm>.rxt          the ENTRY file of one arm: `include "<fragment>"
                               sha256 <hex64>` and nothing else (stage 3's pin)
-    inline/blocks.tsv         which fragment line is which arm's pattern
+    inline/blocks.tsv         which fragment line is which arm's pattern, per form
+                              (plain; whole = the whole-subject form, `(?:...)\\z`,
+                              because --include-block compiles a block verbatim and
+                              the adapter builds both forms of every pattern)
 
     python3 -I bench/unusual/gen_inline.py            # write
     python3 -I bench/unusual/gen_inline.py --check    # re-derive + byte-diff
@@ -218,6 +221,12 @@ def inline_pattern(text, callee, attrs):
     return SITE.sub(lambda m: "(?C%s%s%s)" % (DELIM, seg, DELIM), text, count=1)
 
 
+def whole_subject(p):
+    """pcrecbench.record.whole_subject_text(p) for a pattern without the
+    free-spacing tag (check_inline compares against the real function)."""
+    return "(?:" + p + ")\\z"
+
+
 def sha256_text(s):
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
@@ -237,10 +246,12 @@ def build():
                "# A fragment: pattern blocks only. An entry file (inline/<arm>.rxt) includes it",
                "# with a sha256 pin and the harness compiles a block with --include-block."]
         for name, kind, arg, attrs, text in by_callee[callee]:
-            out.append("# %s: the %s arm of %s; pattern text from patterns/%s.rx"
-                       % ("block", kind, name, name))
-            out.append('pattern-esc "%s"' % esc(inline_pattern(text, callee, attrs)))
-            manifest.append((name, kind, callee, arg, rel, len(out)))
+            plain = inline_pattern(text, callee, attrs)
+            for form, ptext in (("plain", plain), ("whole", whole_subject(plain))):
+                out.append("# block: the %s arm of %s, %s form; pattern text from patterns/%s.rx"
+                           % (kind, name, form, name))
+                out.append('pattern-esc "%s"' % esc(ptext))
+                manifest.append((name, kind, form, callee, arg, rel, len(out)))
         frag_text = "\n".join(out) + "\n"
         files[rel] = frag_text
         frag_sha = sha256_text(frag_text)
@@ -254,10 +265,10 @@ def build():
             "# The include is sha256-pinned (rxt_format 1.1.1): reached code compiles only\n"
             "# when every include line on the chain carries a pin.\n"
             'include "../%s" sha256 %s\n' % (name, name, TOOL, os.path.basename(rel), name, rel, frag_sha))
-    rows = ["\t".join(("arm", "kind", "callee", "member_arg", "fragment", "line",
+    rows = ["\t".join(("arm", "kind", "form", "callee", "member_arg", "fragment", "line",
                        "entry", "fragment_sha256"))]
-    for name, kind, callee, arg, rel, line in sorted(manifest):
-        rows.append("\t".join((name, kind, callee, arg or "-", rel, str(line),
+    for name, kind, form, callee, arg, rel, line in sorted(manifest):
+        rows.append("\t".join((name, kind, form, callee, arg or "-", rel, str(line),
                                "inline/%s.rxt" % name, entries[name][1])))
     files["inline/blocks.tsv"] = "\n".join(rows) + "\n"
     return files

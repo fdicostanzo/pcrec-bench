@@ -311,12 +311,15 @@ def section_fidelity(ok, bad):
         want_attr = (site.group(2) or "").partition(",")[2]
         want_tag = "c" + ("," + want_attr if want_attr else "")
         m = SEG_RE.search(pat)
+        if r["form"] == "whole":
+            from pcrecbench.record import whole_subject_text
+            rx = whole_subject_text(rx.encode()).decode()
         folded = pat[:m.start()] + site.group(0) + pat[m.end():]
         if folded != rx or tag != want_tag or pat.count("(?C`") != 1:
-            bad_arms.append(r["arm"])
+            bad_arms.append((r["arm"], r["form"]))
     if not bad_arms:
-        ok("fidelity: each block == patterns/<arm>.rx with the segment folded back",
-           "tags c / c,consume as the sites say")
+        ok("fidelity: each block == patterns/<arm>.rx (plain, and wrapped by record.whole_subject_text) "
+           "with the segment folded back", "tags c / c,consume as the sites say")
     else:
         bad("fidelity: block vs patterns/<arm>.rx", repr(bad_arms))
     hdr = [(r["arm"], seg[:40]) for r, pat, tag, seg in _segments() if "#include" in seg]
@@ -336,9 +339,14 @@ def section_fidelity(ok, bad):
                 or ("sha256 " + digest) not in ent:
             wrong.append(r["arm"])
     if not wrong:
-        ok("blocks.tsv: line, fragment digest and entry pin agree", "%d arms" % len(_arms()))
+        ok("blocks.tsv: line, fragment digest and entry pin agree", "%d blocks" % len(_arms()))
     else:
         bad("blocks.tsv agrees with the files", repr(wrong))
+    forms = sorted({(r["arm"], r["form"]) for r in _arms()})
+    if len(forms) == 2 * len({r["arm"] for r in _arms()}):
+        ok("blocks.tsv: every arm has a plain and a whole-subject block", "%d blocks" % len(forms))
+    else:
+        bad("blocks.tsv: every arm has a plain and a whole-subject block", repr(forms))
     longest = max(len(pat.encode()) for _r, pat, _t, _s in _segments())
     ok("size: longest decoded pattern", "%d bytes" % longest)
     # the sidecar's real/pass specs still bind the callees this set inlines
@@ -427,7 +435,7 @@ def _build_c(cc, work, segs, extra=()):
     order = ["luhn", "isbn13", "member", "netstr", "stub"]
     seg_by_callee = {}
     for r, pat, tag, seg in segs:
-        seg_by_callee.setdefault(r["callee"], seg)
+        seg_by_callee.setdefault(r["callee"], seg)       # plain and whole share one segment
     with open(os.path.join(work, "seg.c"), "w") as f:
         f.write(STUB_H)
         for c in order:

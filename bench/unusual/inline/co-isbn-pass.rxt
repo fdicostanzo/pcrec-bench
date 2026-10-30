@@ -3,4 +3,4 @@
 #   pcrec --allow-code=c --include-block ub_stub.rxt:<line> inline/co-isbn-pass.rxt ...
 # The include is sha256-pinned (rxt_format 1.1.1): reached code compiles only
 # when every include line on the chain carries a pin.
-include "../callees/ub_stub.rxt" sha256 b9bfcab5e1760d203ac5cc43384c66c8770a9a90d4329b4b722784f9b4d48a0f
+include "../callees/ub_stub.rxt" sha256 04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67

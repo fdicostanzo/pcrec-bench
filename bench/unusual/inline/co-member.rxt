@@ -3,4 +3,4 @@
 #   pcrec --allow-code=c --include-block ub_member.rxt:<line> inline/co-member.rxt ...
 # The include is sha256-pinned (rxt_format 1.1.1): reached code compiles only
 # when every include line on the chain carries a pin.
-include "../callees/ub_member.rxt" sha256 98c1f3637daec60e9c158b114a79ddf7150e254240e4cdad6d675785458549cc
+include "../callees/ub_member.rxt" sha256 4580098803ec41e29ac0c90acf640abd2738b1829da81d4e0d128a5cbed2bed5
