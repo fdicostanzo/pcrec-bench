@@ -3696,6 +3696,39 @@ def _b142_moved(expected, label, form, em):
     return out
 
 
+#: [B149] (pin cb32eda28, abi 90-93): per-witness (emit, code, program) moves ON TOP of
+#: the older layers, MEASURED at the build through the adapter (the failing want/got pairs
+#: of the first run). Forced-VM artifacts: +794 B = abi 91 [REQRUN-VM] (the handoff block,
+#: `RX_REQ_HANDOFF "none"` -> "0") and abi 92's two-stream look-ahead in the required-run
+#: pre-check; +426 B on the class witnesses without that pre-check's second stream.
+#: +1,815 B (+22 program) = abi 93 [K134] trail checkpoints (pcrec: +0.6-1.2 KB per
+#: checkpointed artifact; the census's pure k134 rows span +1,608..+2,015 B).
+B149_RESID = {
+    ('ASCII-fold class test: (?i)abc under --engine=vm, folds 3', 'plain'): (794, 0, 0),
+    ('ASCII-fold declined: [ac] under --engine=vm (not a 0x20 pair), folds 0', 'plain'): (426, 0, 0),
+    ('ASCII-fold declined: [@`] under --engine=vm (a 0x20 pair of non-letters), folds 0', 'plain'): (794, 0, 0),
+    ('entry shape PLAIN: a framed program below the term', 'plain'): (0, 0, 22),
+    ('altwide pfx3-256 under --engine=vm: the island behind a factored prefix', 'plain'): (426, 0, 0),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'plain'): (1815, 0, 22),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (1815, 0, 22),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (1815, 0, 22),
+    ('capability email-nested-plus under auto: fix A\'s EXACT-HYBRID arm keeps one-attempt', 'plain'): (1815, 0, 22),
+    ('capability dup-param-detect under auto: K65 alone', 'plain'): (1815, 0, 0),
+    ('capability nested-comment-rec under auto: S1 step 6 alone', 'plain'): (1882, 0, 0),
+}
+
+
+def _b149_moved(expected, label, form, em):
+    """`expected` with the size keys moved by B149_RESID's row."""
+    out = dict(expected)
+    r = B149_RESID.get((label, form), (0, 0, 0))
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + r[i]
+    return out
+
+
 def _b135s3_moved(expected, label, form, em):
     """`expected` with the size keys moved by B135S3_RESID's row."""
     out = dict(expected)
@@ -3965,9 +3998,14 @@ STAMP_CASES = (
     # set). MEASURED: exactly one `memchr(…, 91, …)` in the emitted C,
     # not two -- the pre-check is declined as strictly redundant with the
     # scan already running ahead of it.
-    ("dominated DFA (G1 identity)", "pcrec-auto", b"\\[",
+    # [B149] (abi 92): `\\[` ALONE is now a fixed-width window the memfn kit's window
+    # search takes (`RX_DFA_SCAN "cover"`, prefilter none), which takes G1 out of scope.
+    # The identity case is kept on `\\[[a-z]+` (variable width, so no cover): the same one
+    # `memchr(..., 91, ...)`, req_byte 91, dominated; its class run takes a `range` scan
+    # edge, so dfa_scan_edge reads "range" here (MEASURED at cb32eda28).
+    ("dominated DFA (G1 identity)", "pcrec-auto", b"\\[[a-z]+",
      {"engine": "dfa", "dfa_scan": "unanchored", "dfa_prefilter": "memchr",
-      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "none",
+      "dfa_prefilter_offsets": "none", "dfa_scan_edge": "range",
       "engine_sel": "selected", "altcls_merges": 0, "altcls_factored": 0,
       "req_byte": "91", "req_run": "none", "end_window": "none",
       "req_why": "dominated",
@@ -5211,17 +5249,22 @@ LEDGER_STAMP_CASES = (
       # [B118] MEASURED fc719ca4: +381, the flat DFA term.
       "emit_bytes": 47701 - 131 + B108_FINDINGS_STAMP_LINE
                     + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM + B124_STAMP_LINES + B124_LIBC_ONE_CALL}),  # [B108] DFA route, flat +385
-    ("capability router-prefix-order under auto: S1 run-pinned, scan at offset 0",
+    # [B149] (abi 92 [MEMFN] D172 S3): router-prefix-order (`/user|/users`) is now taken by
+    # the memfn kit's WINDOW SEARCH -- `RX_DFA_SCAN "cover"`, no prefilter, emit 20,935 -> 16,138
+    # B -- so S1's run-pinned/`0*` stamps are gone from THIS pattern (a real pcrec change, not a
+    # drift). Its row asserts the new truth (sizes: the census, docs/dev/measurements/
+    # 2026-10-30-b149prep-census.txt); S1's run-pinned-at-offset-0 witness moves to litrun
+    # alt-foo-tails (next row), run-pinned `0*,1,2` MEASURED at cb32eda28.
+    ("capability router-prefix-order under auto: abi 92 cover (S1's run-pinned superseded)",
      "pcrec-auto", "capability", "router-prefix-order",
-     {"engine": "dfa", "engine_sel": "selected", "dfa_prefilter": "run-pinned",
-      "dfa_prefilter_offsets": "0*,1,2,3,4", "req_why": "dominated",
-      "req_byte": "47", "req_run": "2f75736572@0",
-      # [B118] MEASURED fc719ca4: +381, the flat DFA term.
-      "emit_bytes": 20935 - 184 + B108_FINDINGS_STAMP_LINE
-                    + B118_UTF_VALID_DFA_TERM + B122_FLAT_TERM  # [B108] DFA route, flat +385
-                    # [B122] MEASURED c4c70f2c: +138 beyond the flat term --
-                    # S4 C1's overlap row on the 5-byte run-pinned "/user".
-                    + 138 + B124_STAMP_LINES + B124_LIBC_ONE_CALL}),
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "cover",
+      "dfa_prefilter": "none", "dfa_prefilter_offsets": "none",
+      "req_why": "dominated", "req_byte": "47", "req_run": "2f75736572@0"}),
+    ("litrun alt-foo-tails under auto: S1 run-pinned, scan at offset 0",
+     "pcrec-auto", "litrun", "alt-foo-tails",
+     {"engine": "dfa", "engine_sel": "selected", "dfa_scan": "unanchored",
+      "dfa_prefilter": "run-pinned", "dfa_prefilter_offsets": "0*,1,2",
+      "req_why": "dominated", "req_byte": "102", "req_run": "666f6f@0"}),
     # K65 (abi 34) on the VM route with no DFA scan (a backreference
     # declines the hybrid): the rest of the necessary set gets its rq_set[]
     # block, +244 (one two-digit member); S1 step 6 (abi 37) extracts the
@@ -5952,10 +5995,10 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b142_moved(_b136_moved(_b135s3_moved(
+            expected = _b149_moved(_b142_moved(_b136_moved(_b135s3_moved(
                 _b135_moved(_b126_moved(expected, label, form, em),
                             label, form, em), label, form, em),
-                label, form, em), label, form, em)
+                label, form, em), label, form, em), label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -7474,7 +7517,7 @@ DENY_CONTROLS = (
      {"run_words": (2, 0), "vm_program_bytes": (316, 258),
       "vm_lit_runs": (1, 1)}, "deny"),
     ("req_run's /mask: the caseless necessary run denied",
-     "req-run-fold", ("literal", b"(?i)abc"), "",
+     "req-run-fold", ("literal", b"(?i)abc"), "--memfn=no-window-search",
      {"req_run": ("414243@1/dfdfdf", "none"), "req_why": ("emitted", "none"),
       "run_words": (1, 0)}, "deny"),
     ("dfa_scan_edge on the END view: the view-tolerant edge denied",
@@ -7506,13 +7549,13 @@ DENY_CONTROLS = (
     # the flag's side. Neither bit reaches rx_info.flags (masked out, as
     # match_api.md's abi-36 entry says; `.flags = 0ULL` on all three).
     ("dfa_prefilter: -fno-run-prefilter denies the run-pinned candidate",
-     "prefilter", ("literal", b"abc"), "",
+     "prefilter", ("literal", b"abc"), "--memfn=no-window-search",
      {"dfa_prefilter": ("run-pinned", "offset-set"),
       "dfa_prefilter_offsets": ("0,1*,2", "0,1*"),
       "req_why": ("dominated", "emitted")}, "deny", "default",
      "-fno-run-prefilter"),
     ("dfa_prefilter: -fno-offset-skip removes the run-pinned candidate too",
-     "prefilter", ("literal", b"abc"), "",
+     "prefilter", ("literal", b"abc"), "--memfn=no-window-search",
      {"dfa_prefilter": ("run-pinned", "handoff"),
       "dfa_prefilter_offsets": ("0,1*,2", "none"),
       "req_why": ("dominated", "emitted")}, "deny", "default",
@@ -7645,7 +7688,7 @@ DENY_CONTROLS = (
      {"vm_poss_arms": (["POSS_ARM_B"], []),
       "vm_frameless": (1, 0)}, "deny", "skip"),
     ("req_handoff: the [K82] (B) handoff denied",
-     "req-use", ("literal", b"\\bfoo"), "",
+     "req-use", ("literal", b"\\bfoo"), "--memfn=no-window-search",
      {"req_handoff": ("0", "none"),
       "req_why": ("emitted", "emitted")}, "deny"),
     # [B136] (pin 00c97769, abi 75, [REQ-HANDOFF-L1]): the SAME flag, read
@@ -7675,7 +7718,7 @@ DENY_CONTROLS = (
     # asserted in check_b135s3_stamps); `\d+` is unbounded, so only
     # `landing` applies and denying it reaches the reverse pass.
     ("dfa_start: the [START-LANDING] end-minus-width row denied (falls to landing)",
-     "search-start", ("literal", b"x"), "",
+     "search-start", ("literal", b"x"), "--memfn=no-window-search",
      {"dfa_start": ("end-minus-width", "landing")}, "deny", "default",
      "-fno-start-width"),
     ("dfa_start: the [START-LANDING] landing row denied (reaches reverse-pass)",
@@ -11044,12 +11087,29 @@ def check_b108_acceptance_mover():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+#: [B149] (pin cb32eda28, abi 92 [MEMFN] D172 S3): a fixed-width-window pattern (every
+#: literal, `\bfoo`, `x`, `(?i)abc`, ...) is now ROUTED to the memfn kit's window search
+#: (`RX_DFA_SCAN` `cover`), which takes the candidate-start / handoff / start-recovery
+#: mechanisms the older [B1xx] witnesses exist to exercise OUT OF SCOPE. Every compile the
+#: older checks make with the PINNED binary therefore also carries this flag (the kit's own
+#: deny, `--memfn=no-window-search`); the older binaries do not know it and never get it.
+#: Both arms of every control carry it, so a deny control still isolates its own flag.
+B149_COVER_OFF = "--memfn=no-window-search"
+# The DENY_CONTROLS rows whose witness is a literal (`abc`, `\bfoo`, `x`, `(?i)abc`) carry the SAME
+# flag in their shared-flags slot (both arms), for the reason above; measured: with it each row's
+# old by-value pair reproduces exactly.
+
+
 def _b118_compile(adapter, tmp, label, extra, pattern):
     """Shared helper for the [B118] checks below: `pcrec-local` at the
     pin's own binary, `extra` as `$PCREC_LOCAL_FLAGS` (space-split, the
     same convention every check_b1xx_* function above uses), form
     FORM_PLAIN. Returns the CompileResult; the caller reads
     `.outcome`/`.diagnostic`/`.engine_metadata`."""
+    # only the PINNED binary knows the flag (the older also-pin builds the b135/b136
+    # checks drive through PCREC_BIN refuse it as an unknown option)
+    if "--memfn" not in extra and os.environ.get("PCREC_BIN") == adapter.pin_binary():
+        extra = (extra + " " + B149_COVER_OFF).strip()
     os.environ["PCREC_LOCAL_FLAGS"] = extra
     adapter.prepare("pcrec-local", tmp)
     pid = re.sub(r"[^A-Za-z0-9]+", "-", "b118-%s" % label).strip("-")[:48]
@@ -11414,7 +11474,12 @@ def check_b118_findtie_k69_noop_on_bench():
 #: whose start it can recover (abi 74), and only the PRODUCT of the two
 #: reaches the reverse pass again (I-145). Inert where neither applies.
 B135_START_DENIES = ["-fno-start-width", "-fno-start-landing"]
-B124_LATER_DENIES = ["-fno-start-set", "-fno-rev-end"] + B135_START_DENIES
+#: [B149] (pin cb32eda28): abi 91 [REQRUN-VM] puts the required-run handoff on forced-VM
+#: artifacts (`abc`, `abcde`), so their `.text` no longer equals the older pins' until
+#: `-fno-req-handoff` (which the abi-91 entry says restores the abi-90 program) is added to
+#: the identity arm; abi 92's window search is the separate B149_COVER_OFF.
+B149_LATER_DENIES = ["-fno-req-handoff"]
+B124_LATER_DENIES = ["-fno-start-set", "-fno-rev-end"] + B135_START_DENIES + B149_LATER_DENIES
 
 #: [B122] (pcrec c4c70f2c, abi 50 -> 59): the round-1 witnesses, each a
 #: (label, extra flags, pattern, {pair: value} at the pin, the deny flag,
@@ -11468,7 +11533,14 @@ def _b126_text_eq(tmp, tag, specs):
     [B122]/[B124] checks therefore fall back to the compiled `.text` when
     the v2 hash differs. `specs` is [(binary, flags, pattern)]; -> the list
     of `.text` hashes (None on a refusal)."""
-    return [_b126_text_hash(b, ["--features", "all"] + list(f), p, tmp,
+    pinned = _ad.discover()["pcrec"].pin_binary()
+
+    def fl(b, f):
+        f = list(f)
+        if b == pinned and not any(x.startswith("--memfn") for x in f):
+            f.append(B149_COVER_OFF)        # [B149]: see B149_COVER_OFF
+        return f
+    return [_b126_text_hash(b, ["--features", "all"] + fl(b, f), p, tmp,
                             "%s%d" % (tag, i))
             for i, (b, f, p) in enumerate(specs)]
 
@@ -11508,6 +11580,9 @@ def check_b122_round1_stamps():
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
 
     def ident(binary, flags, pat, tag):
+        flags = list(flags)
+        if binary == new_bin and not any(x.startswith("--memfn") for x in flags):
+            flags.append(B149_COVER_OFF)    # [B149]: see B149_COVER_OFF
         t = _pi.emit(binary, "--pattern", ["--features", "all"] + flags,
                      pat, os.path.join(tmp, tag))
         return (_pi.program_sha256_of_text(t) if t else None), t
@@ -11693,6 +11768,9 @@ def check_b124_stamps():
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
 
     def ident(binary, flags, pat, tag):
+        flags = list(flags)
+        if binary == new_bin and not any(x.startswith("--memfn") for x in flags):
+            flags.append(B149_COVER_OFF)    # [B149]: see B149_COVER_OFF
         t = _pi.emit(binary, "--pattern", ["--features", "all"] + flags,
                      pat, os.path.join(tmp, tag))
         return (_pi.program_sha256_of_text(t) if t else None), t
@@ -11726,15 +11804,16 @@ def check_b124_stamps():
                 # artifacts [START-LANDING] can recover a start for, so the
                 # denied arm adds its two denials (inert where neither row
                 # applies) to still reproduce c4c70f2c's program.
-                h_deny, _t = ident(new_bin, flags + dflags + B135_START_DENIES,
-                                   pat, "d%d" % i)
+                h_deny, _t = ident(new_bin, flags + dflags + B135_START_DENIES
+                                   + B149_LATER_DENIES, pat, "d%d" % i)
                 h_old, _t = ident(old_bin, flags, pat, "o%d" % i)
                 id_ok = h_deny is not None and h_deny == h_old and h_new != h_old
                 id_why = "denied == c4c70f2c, default != c4c70f2c"
                 if not id_ok:       # [B126] R4h moved the spelling, not the code
                     tn, to, td = _b126_text_eq(tmp, "b124e%d" % i, [
                         (new_bin, flags, pat), (old_bin, flags, pat),
-                        (new_bin, flags + dflags + B135_START_DENIES, pat)])
+                        (new_bin, flags + dflags + B135_START_DENIES
+                         + B149_LATER_DENIES, pat)])
                     id_ok = td is not None and td == to and tn != to
                     id_why += " (compiled .text; v2 spelling moved at abi 67)"
                 if not id_ok:
@@ -11745,7 +11824,7 @@ def check_b124_stamps():
                     # c4c70f2c's executed code only with the edge denied too.
                     td2 = _b126_text_eq(tmp, "b124x%d" % i, [
                         (new_bin, flags + dflags + B135_START_DENIES
-                         + ["-fno-scan-edge"], pat)])[0]
+                         + B149_LATER_DENIES + ["-fno-scan-edge"], pat)])[0]
                     id_ok = td2 is not None and td2 == to and tn != to
                     id_why += "; or + -fno-scan-edge (abi 87 edges the denied arm)"
             if not id_ok:
@@ -11995,10 +12074,15 @@ def check_b126_stamps():
                 # machine from the DFA artifacts (`abc` included), so the
                 # identity arms compare with its two denials added to BOTH
                 # new-pin sides (inert where neither row applies).
-                h_new = _b126_text_hash(new_bin, base + B135_START_DENIES,
+                # [B149]: the window search (B149_COVER_OFF) and the abi-91 handoff
+                # (B149_LATER_DENIES) are denied on BOTH new-pin sides, as the two
+                # abi-74 start denials are.
+                h_new = _b126_text_hash(new_bin, base + B135_START_DENIES
+                                        + B149_LATER_DENIES + [B149_COVER_OFF],
                                         pat, tmp, "n%d" % i)
                 h_deny = _b126_text_hash(new_bin,
-                                         base + dflags + B135_START_DENIES,
+                                         base + dflags + B135_START_DENIES
+                                         + B149_LATER_DENIES + [B149_COVER_OFF],
                                          pat, tmp, "d%d" % i)
                 if mode == "old-text":
                     id_ok = (h_deny is not None and h_deny == h_old
@@ -12316,12 +12400,16 @@ def check_b135_stamps():
                 bad(name, "got %r, want %r" % (m.group(1) if m else None, wantsel))
         # the registry's `locate` axis
         rows = [r for r in mod.registry_rows() if r["axis"] == "locate"]
+        # [B149] abi 92 [MEMFN] S3: the memfn kit's window search is order 2 `cover`
+        # (no pcrec flag of its own on this axis: its deny is `--memfn=no-window-search`,
+        # in the `#section memfn` block); `unanchored` is order 3.
         want = [("1", "rev-end", "RX_DFA_SCAN", "rev-end", "-fno-rev-end", "52"),
-                ("2", "unanchored", "RX_DFA_SCAN", "unanchored", "", "")]
+                ("2", "cover", "RX_DFA_SCAN", "cover", "", ""),
+                ("3", "unanchored", "RX_DFA_SCAN", "unanchored", "", "")]
         have = [(r["order"], r["candidate"], r["stamp_macro"], r["stamp_value"],
                  r.get("cli_flag", ""), r.get("deny_bit", "")) for r in rows]
         if have == want:
-            ok("b135 registry: the `locate` axis (rev-end bit 52, unanchored)",
+            ok("b135 registry: the `locate` axis (rev-end bit 52, cover, unanchored)",
                "%s" % have)
         else:
             bad("b135 registry: the `locate` axis (rev-end bit 52, unanchored)",
@@ -12924,8 +13012,12 @@ def check_b136_stamps():
         rows = [r for r in mod.registry_rows()
                 if r.get("cli_flag") == "-fno-req-handoff"]
         axes = sorted((r["axis"], r["candidate"], r.get("deny_bit", "")) for r in rows)
-        if axes == [("prefilter", "handoff", "46"), ("req-use", "handoff", "46")]:
-            ok("b136 registry: -fno-req-handoff is listed on `prefilter` AND `req-use`, bit 46",
+        # [B149] abi 91 [REQRUN-VM]: the `req-use` axis gains `handoff-attempts` and
+        # `handoff-attempts-entry` (the VM consumers), both under the same flag and bit.
+        if axes == [("prefilter", "handoff", "46"), ("req-use", "handoff", "46"),
+                    ("req-use", "handoff-attempts", "46"),
+                    ("req-use", "handoff-attempts-entry", "46")]:
+            ok("b136 registry: -fno-req-handoff is listed on `prefilter` AND `req-use` (three rows at abi 91), bit 46",
                str(axes))
         else:
             bad("b136 registry: -fno-req-handoff on two axes", str(axes))
