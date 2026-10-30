@@ -1,0 +1,8 @@
+arm	kind	callee	member_arg	fragment	line	entry	fragment_sha256
+co-isbn	real	isbn13	-	callees/ub_isbn13.rxt	6	inline/co-isbn.rxt	5ac9620ebd984611216d66f9683bb72ba238c073f3a1965b78f39a8638178a25
+co-isbn-pass	pass	stub	-	callees/ub_stub.rxt	6	inline/co-isbn-pass.rxt	b9bfcab5e1760d203ac5cc43384c66c8770a9a90d4329b4b722784f9b4d48a0f
+co-luhn	real	luhn	-	callees/ub_luhn.rxt	6	inline/co-luhn.rxt	ac607a59428f3e74b97b520d2d7656c894cfe2883519498f8b16446b83e87357
+co-luhn-pass	pass	stub	-	callees/ub_stub.rxt	8	inline/co-luhn-pass.rxt	b9bfcab5e1760d203ac5cc43384c66c8770a9a90d4329b4b722784f9b4d48a0f
+co-member	real	member	values/users.tsv	callees/ub_member.rxt	6	inline/co-member.rxt	98c1f3637daec60e9c158b114a79ddf7150e254240e4cdad6d675785458549cc
+co-member-pass	pass	stub	-	callees/ub_stub.rxt	10	inline/co-member-pass.rxt	b9bfcab5e1760d203ac5cc43384c66c8770a9a90d4329b4b722784f9b4d48a0f
+co-netstr	real	netstr	-	callees/ub_netstr.rxt	6	inline/co-netstr.rxt	b67d8756e41347d36f95f7fd97f28fddd9429913f1892525c0315f646c69d1eb
