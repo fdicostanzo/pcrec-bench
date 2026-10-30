@@ -1,0 +1,15 @@
+arm	kind	form	callee	member_arg	fragment	line	entry	fragment_sha256
+co-isbn	real	plain	isbn13	-	callees/ub_isbn13.rxt	6	inline/co-isbn.rxt	61186b73cf3e33b501add7ccb28392b5be2f35cbcc8543882c80edb493cfeee2
+co-isbn	real	whole	isbn13	-	callees/ub_isbn13.rxt	8	inline/co-isbn.rxt	61186b73cf3e33b501add7ccb28392b5be2f35cbcc8543882c80edb493cfeee2
+co-isbn-pass	pass	plain	stub	-	callees/ub_stub.rxt	6	inline/co-isbn-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-isbn-pass	pass	whole	stub	-	callees/ub_stub.rxt	8	inline/co-isbn-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-luhn	real	plain	luhn	-	callees/ub_luhn.rxt	6	inline/co-luhn.rxt	80675f51ba11c5095a7f8ee22dffba5cca4662c4b49ed435384231313f275fda
+co-luhn	real	whole	luhn	-	callees/ub_luhn.rxt	8	inline/co-luhn.rxt	80675f51ba11c5095a7f8ee22dffba5cca4662c4b49ed435384231313f275fda
+co-luhn-pass	pass	plain	stub	-	callees/ub_stub.rxt	10	inline/co-luhn-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-luhn-pass	pass	whole	stub	-	callees/ub_stub.rxt	12	inline/co-luhn-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-member	real	plain	member	values/users.tsv	callees/ub_member.rxt	6	inline/co-member.rxt	4580098803ec41e29ac0c90acf640abd2738b1829da81d4e0d128a5cbed2bed5
+co-member	real	whole	member	values/users.tsv	callees/ub_member.rxt	8	inline/co-member.rxt	4580098803ec41e29ac0c90acf640abd2738b1829da81d4e0d128a5cbed2bed5
+co-member-pass	pass	plain	stub	-	callees/ub_stub.rxt	14	inline/co-member-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-member-pass	pass	whole	stub	-	callees/ub_stub.rxt	16	inline/co-member-pass.rxt	04c49f362763d4acce0c0d43b30915c0acb6e851e7a3f2a6e3c91c9e27c05d67
+co-netstr	real	plain	netstr	-	callees/ub_netstr.rxt	6	inline/co-netstr.rxt	93936a86446a130b4c63802c73e86ee630b8f055279b513922d40f18f0899fee
+co-netstr	real	whole	netstr	-	callees/ub_netstr.rxt	8	inline/co-netstr.rxt	93936a86446a130b4c63802c73e86ee630b8f055279b513922d40f18f0899fee

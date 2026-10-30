@@ -58,6 +58,13 @@ made before any run, dependencies).
   microbench `tools/callout_calib.py` runs. The `[callouts]` table in the sidecar binds
   sites to callees per arm (real / pass); `-nofn` arms bind none.
 
+- `gen_inline.py`, `callees/ub_<callee>.rxt`, `inline/` ([B148] lane b148inline, part 1) -- the INLINE
+  pcrec callout arm's SOURCES: fragments (the patterns of the pcrec-spelled callout arms with each callee's
+  C body from `callees/callees.c`, byte for byte, inside ``(?C`c: ...`)``), sha256-pinned entry files
+  and `inline/blocks.tsv` (`inline/CLAUDE.md`). `gen_inline.py --check` re-derives; `tools/check_inline.py`
+  (a `check-unusual` section) proves byte identity, the pins and segment == callee on random views, with
+  controls, needing no pcrec build. Part 2 (adapter + testee) is not here yet.
+
 Not here yet (other lanes): the authored `assists/<member>/<engine>/` (L6).
 
 b148aw (lane b148aw): the assist pipeline -- `assists/templates/`, `assists/AUTHORS.md`, the
