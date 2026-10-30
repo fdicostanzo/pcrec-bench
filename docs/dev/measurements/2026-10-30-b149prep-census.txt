@@ -1,0 +1,371 @@
+# [B149] compile-only census, 614d45eb3 (abi 89) -> cb32eda28 (abi 93), 1600 rows
+# every bench pattern x {plain, whole} x {auto-caps, auto-nocaps}; emitted WITH -fcomments,
+# --features all (-e utf8 on bench/utf8); arms = cb32eda28 with --memfn=no-window-search,no-window-skip and -fno-req-handoff. Identity: v2/v3
+# (tools/program_identity.py); abi 93 is attributed when stripping the trail-gc text restores v3 equality.
+
+== verdicts (v3, per form) ==
+  plain  changed                250
+  plain  identical              505
+  plain  refused-both           45
+  whole  changed                75
+  whole  identical              681
+  whole  refused-both           44
+  v2 identical (all forms): 1186 of 1511 compiled-both
+
+== attribution of every non-identical, non-refused-both row ==
+  abi90-span-helpers         20
+  abi90-span-helpers+abi91-reqrun-vm 28
+  abi91-reqrun-vm            9
+  abi91-reqrun-vm+abi92-pair-lookahead+abi93-k134 1
+  abi92-cover                159
+  abi92-cover+abi92-pair-lookahead 10
+  abi92-pair-lookahead       5
+  abi93-k134                 93
+  UNATTRIBUTED               0
+
+== movers (set, pattern, config, form, attribution, signature, stamp moves, old->new bytes:code) ==
+  altwide	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  altwide	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  bounded	year4	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16560:14992
+  bounded	year4	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16560:14992
+  bounded	dig-exact-2	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16424:14856
+  bounded	dig-exact-2	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16424:14856
+  bounded	dig-exact-8	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16832:15264
+  bounded	dig-exact-8	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21258:16550 -> 16832:15264
+  bounded	dig-exact-16	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21264:16556 -> 17393:15825
+  bounded	dig-exact-16	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21264:16556 -> 17393:15825
+  bounded	nest2-64	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	45333:43560 -> 47149:45376
+  bounded	nest2-64	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	45333:43560 -> 47149:45376
+  bounded	nest3-16	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	36500:34727 -> 38426:36653
+  bounded	nest3-16	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	36500:34727 -> 38426:36653
+  bounded	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  bounded	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  capability	wild-validator-us-zip-owasp	caps	plain	abi93-k134	#define RX_CHARGE_WORK(n_) do ;#define RX_TRAIL_CHECK() do { ;rx_match	RX_VM_PROGRAM_BYTES	29558:27014 -> 31166:28622
+  capability	wild-validator-us-zip-owasp	caps	whole	abi93-k134	#define RX_CHARGE_WORK(n_) do ;#define RX_TRAIL_CHECK() do { ;rx_match	RX_VM_PROGRAM_BYTES	29298:26754 -> 30906:28362
+  capability	hex8-bounded	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21513:15738 -> 18894:15881
+  capability	hex8-bounded	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21513:15738 -> 18894:15881
+  capability	wild-logparse-quotedstring-grok	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	64228:43567 -> 66088:45427
+  capability	wild-logparse-quotedstring-grok	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	50716:42410 -> 52576:44270
+  capability	wild-logparse-quotedstring-grok	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	64228:43567 -> 66088:45427
+  capability	wild-logparse-quotedstring-grok	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	50716:42410 -> 52576:44270
+  capability	wild-logparse-syslogbase-expanded	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PREFILTER_LANG_WHY,RX_VM_PROGRAM_BYTES	514546:298246 -> 516363:300063
+  capability	wild-logparse-syslogbase-expanded	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	559918:297310 -> 561735:299127
+  capability	wild-logparse-syslogbase-expanded	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PREFILTER_LANG_WHY,RX_VM_PROGRAM_BYTES	470817:254513 -> 472633:256329
+  capability	wild-logparse-syslogbase-expanded	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	516189:253577 -> 518005:255393
+  capability	wild-waf-crs-942270-union-select	caps	plain	abi92-pair-lookahead	rx_reqrun__body		39286:18119 -> 39654:18487
+  capability	wild-waf-crs-942270-union-select	nocaps	plain	abi92-pair-lookahead	rx_reqrun__body		39286:18119 -> 39654:18487
+  capability	wild-secrets-username-password-pair	caps	plain	abi91-reqrun-vm+abi92-pair-lookahead+abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_DFA_PREFILTER,RX_VM_PROGRAM_BYTES	553912:44645 -> 555012:47219
+  capability	wild-secrets-username-password-pair	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	97977:41466 -> 99792:43281
+  capability	wild-secrets-username-password-pair	nocaps	plain	abi92-pair-lookahead	rx_reqrun__body		563369:21144 -> 563746:21521
+  capability	wild-codegrammar-json-array-begin	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  capability	wild-codegrammar-json-array-begin	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  capability	wild-codegrammar-json-object-begin	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17991:14660 -> 15587:13918
+  capability	wild-codegrammar-json-object-begin	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17991:14660 -> 15587:13918
+  capability	dup-param-detect	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30501:28517 -> 32316:30332
+  capability	dup-param-detect	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30614:28630 -> 32429:30445
+  capability	dup-param-detect	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30483:28499 -> 32298:30314
+  capability	dup-param-detect	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30596:28612 -> 32411:30427
+  capability	quoted-delim-match	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29165:27004 -> 30980:28819
+  capability	quoted-delim-match	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29278:27117 -> 31093:28932
+  capability	quoted-delim-match	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29155:26994 -> 30970:28809
+  capability	quoted-delim-match	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29270:27109 -> 31085:28924
+  capability	balanced-parens-rec	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28882:27129 -> 30697:28944
+  capability	balanced-parens-rec	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29100:27347 -> 30915:29162
+  capability	balanced-parens-rec	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28882:27129 -> 30697:28944
+  capability	balanced-parens-rec	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29100:27347 -> 30915:29162
+  capability	bracket-array-define	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	27455:27140 -> 29315:29000
+  capability	bracket-array-define	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	27570:27255 -> 29430:29115
+  capability	bracket-array-define	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	27456:27140 -> 29316:29000
+  capability	bracket-array-define	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	27571:27255 -> 29431:29115
+  capability	nested-comment-rec	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32819:31120 -> 34701:33002
+  capability	nested-comment-rec	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32932:31233 -> 34814:33115
+  capability	nested-comment-rec	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32805:31106 -> 34687:32988
+  capability	nested-comment-rec	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32918:31219 -> 34800:33101
+  capability	tag-depth3-bound	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	36887:34903 -> 38725:36741
+  capability	tag-depth3-bound	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	37000:35016 -> 38838:36854
+  capability	tag-depth3-bound	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	36869:34885 -> 38707:36723
+  capability	tag-depth3-bound	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	36982:34998 -> 38820:36836
+  capability	date-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	34924:32898 -> 36784:34758
+  capability	date-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	34852:32826 -> 36712:34686
+  capability	email-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30267:28321 -> 32082:30136
+  capability	email-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30698:28668 -> 32513:30483
+  capability	evil-alt-nested	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30931:29320 -> 32791:31180
+  capability	evil-alt-nested	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30859:29248 -> 32719:31108
+  capability	numeric-id-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29929:28247 -> 31744:30062
+  capability	numeric-id-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29858:28176 -> 31673:29991
+  capability	phone-list-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31201:29259 -> 33016:31074
+  capability	phone-list-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31129:29187 -> 32944:31002
+  capability	trim-nested-star	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28915:27073 -> 30730:28888
+  capability	trim-nested-star	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28844:27002 -> 30659:28817
+  capability	file-ext-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22307:16184 -> 15991:13987
+  capability	file-ext-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22307:16184 -> 15991:13987
+  capability	keyword-prefix-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	22778:16164 -> 15941:13996
+  capability	keyword-prefix-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	22778:16164 -> 15941:13996
+  capability	router-prefix-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22294:16314 -> 16131:14120
+  capability	router-prefix-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22294:16314 -> 16131:14120
+  capability	wild-semdiv-altorder-foo-foobar-rustregex	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22896:17189 -> 16827:14999
+  capability	wild-semdiv-altorder-foo-foobar-rustregex	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22896:17189 -> 16827:14999
+  capability	wild-semdiv-empty-alt-repeat-pcre2	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	33417:28583 -> 35232:30398
+  capability	wild-semdiv-empty-alt-repeat-pcre2	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30143:28340 -> 31958:30155
+  capability	utf8-lead-no-cont	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	20445:15399 -> 16159:14365
+  capability	utf8-lead-no-cont	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	20445:15399 -> 16159:14365
+  capability	floor-byte	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  capability	floor-byte	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  email-specimen	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  email-specimen	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  litrun	lit-l2	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	18543:15132 -> 15697:13982
+  litrun	lit-l2	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	18543:15132 -> 15697:13982
+  litrun	lit-l3	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18816:15287 -> 15904:14120
+  litrun	lit-l3	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18816:15287 -> 15904:14120
+  litrun	lit-l4	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18873:15164 -> 15878:13990
+  litrun	lit-l4	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18873:15164 -> 15878:13990
+  litrun	lit-l7	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	19714:15311 -> 16437:14136
+  litrun	lit-l7	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	19714:15311 -> 16437:14136
+  litrun	lit-l8	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	19929:15188 -> 16506:14006
+  litrun	lit-l8	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	19929:15188 -> 16506:14006
+  litrun	lit-l10	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20701:15235 -> 17083:14153
+  litrun	lit-l10	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20701:15235 -> 17083:14153
+  litrun	lit-l16	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	23790:15246 -> 18806:14028
+  litrun	lit-l16	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	23790:15246 -> 18806:14028
+  litrun	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  litrun	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  loglines	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  loglines	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  sentinel	trim-nested-star	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28915:27073 -> 30730:28888
+  sentinel	trim-nested-star	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28844:27002 -> 30659:28817
+  sentinel	numeric-id-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29929:28247 -> 31744:30062
+  sentinel	numeric-id-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29858:28176 -> 31673:29991
+  sentinel	phone-list-nested-plus	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31201:29259 -> 33016:31074
+  sentinel	phone-list-nested-plus	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31129:29187 -> 32944:31002
+  sentinel	wild-validator-us-zip-owasp	caps	plain	abi93-k134	#define RX_CHARGE_WORK(n_) do ;#define RX_TRAIL_CHECK() do { ;rx_match	RX_VM_PROGRAM_BYTES	29558:27014 -> 31166:28622
+  sentinel	wild-validator-us-zip-owasp	caps	whole	abi93-k134	#define RX_CHARGE_WORK(n_) do ;#define RX_TRAIL_CHECK() do { ;rx_match	RX_VM_PROGRAM_BYTES	29298:26754 -> 30906:28362
+  sentinel	router-prefix-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22294:16314 -> 16131:14120
+  sentinel	router-prefix-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22294:16314 -> 16131:14120
+  sentinel	keyword-prefix-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	22778:16164 -> 15941:13996
+  sentinel	keyword-prefix-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	22778:16164 -> 15941:13996
+  sentinel	file-ext-order	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22307:16184 -> 15991:13987
+  sentinel	file-ext-order	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	22307:16184 -> 15991:13987
+  sentinel	floor-byte	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  sentinel	floor-byte	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17989:14658 -> 15585:13916
+  subst	1-literal	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	20339:16021 -> 17064:14839
+  subst	1-literal	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	20339:16021 -> 17064:14839
+  subst	2-rare	caps	plain	abi91-reqrun-vm	rx_prefilter	RX_DFA_PREFILTER	37865:28088 -> 37998:28221
+  subst	4-reorder	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	23678:18161 -> 18668:16661
+  subst	5-mask-ipv4	caps	plain	abi91-reqrun-vm	rx_prefilter;rx_search_run	RX_DFA_PREFILTER	39451:32468 -> 38372:32859
+  subst	7-url-tld-fix	caps	plain	abi91-reqrun-vm	rx_search_run	RX_REQ_HANDOFF	39554:37393 -> 40084:37923
+  subst	7-url-tld-fix	caps	whole	abi91-reqrun-vm	rx_search_run	RX_REQ_HANDOFF	39668:37507 -> 40198:38037
+  subst	7-url-tld-fix	nocaps	plain	abi91-reqrun-vm	rx_search_run	RX_REQ_HANDOFF	38727:36566 -> 39257:37096
+  subst	7-url-tld-fix	nocaps	whole	abi91-reqrun-vm	rx_search_run	RX_REQ_HANDOFF	38841:36680 -> 39371:37210
+  syntax	lit-cat	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18804:15275 -> 15886:14102
+  syntax	lit-cat	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18804:15275 -> 15886:14102
+  syntax	anc-m-dollar	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	22697:18122 -> 17463:15123
+  syntax	anc-m-dollar	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	22697:18122 -> 17463:15123
+  syntax	asr-wb	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21603:17382 -> 17283:15128
+  syntax	asr-wb	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21603:17382 -> 17283:15128
+  syntax	asr-nwb	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_DFA_UNIFORM_FOLDS,RX_REQ_HANDOFF,RX_REQ_WHY	21175:17263 -> 17049:15056
+  syntax	asr-nwb	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_DFA_UNIFORM_FOLDS,RX_REQ_HANDOFF,RX_REQ_WHY	21175:17263 -> 17049:15056
+  syntax	cls-n-uc	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19710:15975 -> 15932:14053
+  syntax	cls-n-uc	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19710:15975 -> 15932:14053
+  syntax	cls-negset	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18230:14666 -> 16072:14296
+  syntax	cls-negset	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18230:14666 -> 16072:14296
+  syntax	cls-dot	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18222:14658 -> 15791:14015
+  syntax	cls-dot	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18222:14658 -> 15791:14015
+  syntax	cls-fold-pair	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19210:15681 -> 15940:14156
+  syntax	cls-fold-pair	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19210:15681 -> 15940:14156
+  syntax	cls-pair-ctl	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19249:15681 -> 15936:14156
+  syntax	cls-pair-ctl	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19249:15681 -> 15936:14156
+  syntax	cls-mixed-case	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18230:14666 -> 15869:14093
+  syntax	cls-mixed-case	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	18230:14666 -> 15869:14093
+  syntax	cls-i-class	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	19590:14587 -> 17032:15248
+  syntax	cls-i-class	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	19590:14587 -> 17032:15248
+  syntax	grp-cap	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18806:15277 -> 15888:14104
+  syntax	grp-named	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18899:15292 -> 15981:14119
+  syntax	grp-named-quote	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18899:15292 -> 15981:14119
+  syntax	grp-atomic-alt	caps	plain	abi91-reqrun-vm	rx_prefilter;rx_search_run	RX_DFA_PREFILTER,RX_VM_RESEED	29491:25968 -> 29824:26301
+  syntax	grp-atomic-alt	nocaps	plain	abi91-reqrun-vm	rx_prefilter;rx_search_run	RX_DFA_PREFILTER,RX_VM_RESEED	29491:25968 -> 29824:26301
+  syntax	grp-callout	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	24914:23391 -> 27576:26053
+  syntax	grp-callout	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	25138:23615 -> 27800:26277
+  syntax	grp-callout	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	24914:23391 -> 27576:26053
+  syntax	grp-callout	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	25138:23615 -> 27800:26277
+  syntax	rec-r-uc	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28882:27129 -> 30697:28944
+  syntax	rec-r-uc	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29100:27347 -> 30915:29162
+  syntax	rec-r-uc	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	28882:27129 -> 30697:28944
+  syntax	rec-r-uc	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	29100:27347 -> 30915:29162
+  syntax	rec-1	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30330:28577 -> 32212:30459
+  syntax	rec-1	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30444:28691 -> 32326:30573
+  syntax	rec-1	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30316:28563 -> 32198:30445
+  syntax	rec-1	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30430:28677 -> 32312:30559
+  syntax	rec-name	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30423:28593 -> 32305:30475
+  syntax	rec-name	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30537:28707 -> 32419:30589
+  syntax	rec-name	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30418:28587 -> 32300:30469
+  syntax	rec-name	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	30532:28701 -> 32414:30583
+  syntax	rec-define	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	23516:18499 -> 17788:15960
+  syntax	rec-define	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	23330:18312 -> 17602:15773
+  syntax	rec-g-angle	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21267:16559 -> 16569:15001
+  syntax	rec-py	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21362:16576 -> 16664:15018
+  syntax	rec-fwd	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21267:16559 -> 16569:15001
+  syntax	rec-back	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	21267:16559 -> 16569:15001
+  syntax	mod-i	caps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19555:16026 -> 16935:15151
+  syntax	mod-i	nocaps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19555:16026 -> 16935:15151
+  syntax	mod-s	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	20857:16118 -> 16640:14190
+  syntax	mod-s	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	20857:16118 -> 16640:14190
+  syntax	mod-x	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18823:15294 -> 15905:14121
+  syntax	mod-x	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18823:15294 -> 15905:14121
+  syntax	mod-n	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18811:15282 -> 15893:14109
+  syntax	mod-n	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18811:15282 -> 15893:14109
+  syntax	mod-r	caps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19556:16027 -> 16936:15152
+  syntax	mod-r	nocaps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19556:16027 -> 16936:15152
+  syntax	mod-reset	caps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20299:15305 -> 16917:15133
+  syntax	mod-reset	nocaps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20299:15305 -> 16917:15133
+  syntax	mod-unset	caps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20300:15306 -> 16918:15134
+  syntax	mod-unset	nocaps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20300:15306 -> 16918:15134
+  syntax	esc-tab	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20074:15191 -> 16738:14151
+  syntax	esc-tab	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20074:15191 -> 16738:14151
+  syntax	esc-nl	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20076:15193 -> 16740:14153
+  syntax	esc-nl	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20076:15193 -> 16740:14153
+  syntax	esc-cr	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20494:15240 -> 16963:14159
+  syntax	esc-cr	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20494:15240 -> 16963:14159
+  syntax	esc-hex	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18808:15279 -> 15890:14106
+  syntax	esc-hex	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18808:15279 -> 15890:14106
+  syntax	esc-hex-braced	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18884:15175 -> 15889:14001
+  syntax	esc-hex-braced	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	18884:15175 -> 15889:14001
+  syntax	esc-octal-0	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20079:15196 -> 16742:14155
+  syntax	esc-octal-0	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_RUN_WORDS	20079:15196 -> 16742:14155
+  syntax	esc-quote	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19571:15862 -> 15886:13998
+  syntax	esc-quote	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19571:15862 -> 15886:13998
+  syntax	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  syntax	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	17987:14656 -> 15583:13914
+  unusual	cscan	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82404:81265 -> 84375:83236
+  unusual	cscan	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82519:81380 -> 84490:83351
+  unusual	cscan	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82177:81035 -> 84148:83006
+  unusual	cscan	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82292:81150 -> 84263:83121
+  unusual	cscan-onig	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82448:81309 -> 84419:83280
+  unusual	cscan-onig	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82563:81424 -> 84534:83395
+  unusual	cscan-onig	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82221:81079 -> 84192:83050
+  unusual	cscan-onig	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match_anchored;rx_trail_compact;rx_t	RX_VM_PROGRAM_BYTES	82336:81194 -> 84307:83165
+  unusual	wild-sexp-balanced	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32104:30351 -> 33986:32233
+  unusual	wild-sexp-balanced	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	32219:30466 -> 34101:32348
+  unusual	wild-sexp-balanced	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31129:29376 -> 33011:31258
+  unusual	wild-sexp-balanced	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	31245:29492 -> 33127:31374
+  unusual	wild-json-validate	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92112:90671 -> 94127:92686
+  unusual	wild-json-validate	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92230:90789 -> 94245:92804
+  unusual	wild-json-validate	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92120:90671 -> 94135:92686
+  unusual	wild-json-validate	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92238:90789 -> 94253:92804
+  unusual	wild-json-validate-onig	caps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92441:91000 -> 94456:93015
+  unusual	wild-json-validate-onig	caps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92560:91119 -> 94575:93134
+  unusual	wild-json-validate-onig	nocaps	plain	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92449:91000 -> 94464:93015
+  unusual	wild-json-validate-onig	nocaps	whole	abi93-k134	#define RX_TRAIL_CHECK() do { ;rx_match;rx_match_anchored;rx_match_cap	RX_VM_PROGRAM_BYTES	92568:91119 -> 94583:93134
+  unusual	co-luhn	caps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25666:23967 -> 28278:26579
+  unusual	co-luhn	caps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25893:24194 -> 28505:26806
+  unusual	co-luhn	nocaps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25654:23955 -> 28266:26567
+  unusual	co-luhn	nocaps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25881:24182 -> 28493:26794
+  unusual	co-luhn-pass	caps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25666:23967 -> 28278:26579
+  unusual	co-luhn-pass	caps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25893:24194 -> 28505:26806
+  unusual	co-luhn-pass	nocaps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25654:23955 -> 28266:26567
+  unusual	co-luhn-pass	nocaps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25881:24182 -> 28493:26794
+  unusual	co-luhn-nofn	caps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25666:23967 -> 28278:26579
+  unusual	co-luhn-nofn	caps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25893:24194 -> 28505:26806
+  unusual	co-luhn-nofn	nocaps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25654:23955 -> 28266:26567
+  unusual	co-luhn-nofn	nocaps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		25881:24182 -> 28493:26794
+  unusual	co-isbn	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27008:25309 -> 30046:28347
+  unusual	co-isbn	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27237:25538 -> 30275:28576
+  unusual	co-isbn	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26996:25297 -> 30034:28335
+  unusual	co-isbn	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27225:25526 -> 30263:28564
+  unusual	co-isbn-pass	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27008:25309 -> 30046:28347
+  unusual	co-isbn-pass	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27237:25538 -> 30275:28576
+  unusual	co-isbn-pass	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26996:25297 -> 30034:28335
+  unusual	co-isbn-pass	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27225:25526 -> 30263:28564
+  unusual	co-isbn-twin	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	23224:17457 -> 18753:15777
+  unusual	co-isbn-nofn	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27008:25309 -> 30046:28347
+  unusual	co-isbn-nofn	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27237:25538 -> 30275:28576
+  unusual	co-isbn-nofn	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26996:25297 -> 30034:28335
+  unusual	co-isbn-nofn	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	27225:25526 -> 30263:28564
+  unusual	co-member	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26392:24693 -> 29430:27731
+  unusual	co-member	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26505:24806 -> 29543:27844
+  unusual	co-member	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26410:24711 -> 29448:27749
+  unusual	co-member	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26521:24822 -> 29559:27860
+  unusual	co-member-pass	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26392:24693 -> 29430:27731
+  unusual	co-member-pass	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26505:24806 -> 29543:27844
+  unusual	co-member-pass	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26410:24711 -> 29448:27749
+  unusual	co-member-pass	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26521:24822 -> 29559:27860
+  unusual	co-member-nofn	caps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26392:24693 -> 29430:27731
+  unusual	co-member-nofn	caps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26505:24806 -> 29543:27844
+  unusual	co-member-nofn	nocaps	plain	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26410:24711 -> 29448:27749
+  unusual	co-member-nofn	nocaps	whole	abi90-span-helpers+abi91-reqrun-vm	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r	RX_REQ_HANDOFF	26521:24822 -> 29559:27860
+  unusual	co-netstr	caps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26040:24518 -> 28652:27130
+  unusual	co-netstr	caps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26151:24629 -> 28763:27241
+  unusual	co-netstr	nocaps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26028:24506 -> 28640:27118
+  unusual	co-netstr	nocaps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26139:24617 -> 28751:27229
+  unusual	co-netstr-assist	caps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26913:25391 -> 29525:28003
+  unusual	co-netstr-assist	caps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		27026:25504 -> 29638:28116
+  unusual	co-netstr-assist	nocaps	plain	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		26905:25383 -> 29517:27995
+  unusual	co-netstr-assist	nocaps	whole	abi90-span-helpers	#define PCREC_RX_SPAN_H;#ifndef PCREC_RX_SPAN_H;rx_eq;rx_eqi;rx_find;r		27018:25496 -> 29630:28108
+  unusual	co-netstr-twin	caps	plain	abi91-reqrun-vm	rx_prefilter;rx_search_run	RX_DFA_PREFILTER	32120:27206 -> 31049:27609
+  unusual	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_step;rx_reqrun__body;	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19177:15648 -> 15913:14129
+  unusual	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_step;rx_reqrun__body;	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	19177:15648 -> 15913:14129
+  utf8	cls-d-ascii	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	22625:17917 -> 17927:16359
+  utf8	cls-d-ascii	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_is_stop;rx_forward_st	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	22625:17917 -> 17927:16359
+  utf8	cls-s-nbsp	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	20029:16500 -> 17215:15431
+  utf8	cls-s-nbsp	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START	20029:16500 -> 17215:15431
+  utf8	lit-1ch-2b	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	19919:16508 -> 17078:15363
+  utf8	lit-1ch-2b	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	19919:16508 -> 17078:15363
+  utf8	lit-1ch-3b	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21116:17587 -> 17294:15510
+  utf8	lit-1ch-3b	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21116:17587 -> 17294:15510
+  utf8	lit-1ch-4b	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21174:17465 -> 17271:15383
+  utf8	lit-1ch-4b	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21174:17465 -> 17271:15383
+  utf8	lit-run-3	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22424:17540 -> 18179:15592
+  utf8	lit-run-3	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22424:17540 -> 18179:15592
+  utf8	lit-cyr-run	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22937:17554 -> 18494:15611
+  utf8	lit-cyr-run	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22937:17554 -> 18494:15611
+  utf8	lit-offset-at-tail	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21108:17579 -> 17286:15502
+  utf8	lit-offset-at-tail	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21108:17579 -> 17286:15502
+  utf8	lit-offset-at-head	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21109:17580 -> 17288:15504
+  utf8	lit-offset-at-head	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21109:17580 -> 17288:15504
+  utf8	lit-nearmiss-run	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22424:17540 -> 18179:15592
+  utf8	lit-nearmiss-run	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	22424:17540 -> 18179:15592
+  utf8	lit-nfc-pair	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21508:17589 -> 17525:15514
+  utf8	lit-nfc-pair	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21508:17589 -> 17525:15514
+  utf8	lit-sharp-s	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21996:17593 -> 17818:15517
+  utf8	lit-sharp-s	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21996:17593 -> 17818:15517
+  utf8	ci-e-acute	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_RUN_WORDS	19500:16037 -> 17199:15456
+  utf8	ci-e-acute	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_RUN_WORDS	19500:16037 -> 17199:15456
+  utf8	ci-strasse	caps	plain	abi92-pair-lookahead	rx_reqrun__body		28207:18835 -> 28575:19203
+  utf8	ci-strasse	nocaps	plain	abi92-pair-lookahead	rx_reqrun__body		28207:18835 -> 28575:19203
+  utf8	ci-turkish-i	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	20750:15945 -> 17885:16216
+  utf8	ci-turkish-i	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	20750:15945 -> 17885:16216
+  utf8	ci-ascii-control	caps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21301:17772 -> 18337:16553
+  utf8	ci-ascii-control	nocaps	plain	abi92-cover+abi92-pair-lookahead	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	21301:17772 -> 18337:16553
+  utf8	ci-ucp-invariance	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_RUN_WORDS	19507:16044 -> 17206:15463
+  utf8	ci-ucp-invariance	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START,RX_RUN_WORDS	19507:16044 -> 17206:15463
+  utf8	alt-shared-lead	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	19461:16050 -> 17092:15377
+  utf8	alt-shared-lead	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	19461:16050 -> 17092:15377
+  utf8	qnt-lazy-2b	caps	plain	abi92-cover	rx_decode;rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_fo	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	21063:17652 -> 17081:15366
+  utf8	qnt-lazy-2b	nocaps	plain	abi92-cover	rx_decode;rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_fo	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_MEMFN_LIBC	21063:17652 -> 17081:15366
+  utf8	asr-b-ascii	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	23201:18980 -> 18670:16515
+  utf8	asr-b-ascii	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	23201:18980 -> 18670:16515
+  utf8	asr-b-cyr	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_DFA_UNIFORM_FOLDS,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	24854:18851 -> 19823:16572
+  utf8	asr-b-cyr	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_DFA_UNIFORM_FOLDS,RX_MEMFN_LIBC,RX_REQ_HANDOFF,RX_REQ_WHY,RX_RUN_WORDS	24854:18851 -> 19823:16572
+  utf8	asr-dollar-ml	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	24133:19864 -> 18828:16659
+  utf8	asr-dollar-ml	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_accepts_class;rx_forward_is_dead;rx_forw	RX_DFA_PREFILTER,RX_DFA_PREFILTER_OFFSETS,RX_DFA_SCAN,RX_DFA_START,RX_REQ_HANDOFF,RX_REQ_WHY	24133:19864 -> 18828:16659
+  utf8	floor	caps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	19356:16025 -> 16952:15283
+  utf8	floor	nocaps	plain	abi92-cover	rx_forward_accepts;rx_forward_is_dead;rx_forward_state;rx_forward_step	RX_DFA_PREFILTER,RX_DFA_SCAN,RX_DFA_START	19356:16025 -> 16952:15283
+
+== size books (pcrec's OWN bytes, --warn-emit-bytes=1 probe) ==
+  v3-identical rows: emit_bytes delta histogram [(0, 1186)]
+  v3-identical rows: emit_code_bytes delta histogram [(0, 1186)]
+  abi90-span-helpers: n=20, emit delta min 2612 max 2612, code delta min 2612 max 2612
+  abi90-span-helpers+abi91-reqrun-vm: n=28, emit delta min 2662 max 3038, code delta min 2662 max 3038
+  abi91-reqrun-vm: n=9, emit delta min -1079 max 530, code delta min 133 max 530
+  abi91-reqrun-vm+abi92-pair-lookahead+abi93-k134: n=1, emit delta min 1100 max 1100, code delta min 2574 max 2574
+  abi92-cover: n=159, emit delta min -6837 max -2158, code delta min -3205 max 661
+  abi92-cover+abi92-pair-lookahead: n=10, emit delta min -3382 max -2620, code delta min -1219 max -172
+  abi92-pair-lookahead: n=5, emit delta min 368 max 377, code delta min 368 max 377
+  abi93-k134: n=93, emit delta min 1608 max 2015, code delta min 1608 max 2015
+
+== abi 86 [EMIT-BIDI]: every artifact byte ASCII (the emits carry -fcomments) ==
+  old        files 1511, files with a byte > 127: 0
+  new        files 1511, files with a byte > 127: 0
+  arm_noedge files 0, files with a byte > 127: 0
+
+== abi 87 [SCANEDGE-SET]: scan-edge blocks (`SCAN EDGE:` markers) ==
+  compiled-both caps rows: 801 edge blocks old, 794 new; 0 rows GAIN edge blocks, 6 LOSE any
