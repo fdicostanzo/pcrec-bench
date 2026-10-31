@@ -82,3 +82,159 @@ catalogue/ for `code-header`, `code_header`, `allow-code`, `allow_code`: 0 hits 
 adapter's pcrec flags are `--features all`, `--engine=`, `--pattern`, `-o`, `--warn-emit-bytes=`, `--no-captures`, `--utf8`,
 `--encoding=`, `--tune`, `--max-emit-*`, `--vm-entry-shape`, `--mode`, `--list-*` (read from `adapter.py`). **The crash does not
 reach this bench; nothing stops.** (Re-verified after the adapter change, section 3.)
+
+## 1. Census verdict (predicted vs measured)
+
+`docs/dev/measurements/2026-10-30-b149prep-census.{txt,tsv}` (probes `probe_b149prep_{emit,census,summary}.py`): 1,600 rows
+(every pattern x form x config of the program-identity population), 614d45eb3 vs cb32eda28, program identity **v3**.
+
+| result | rows |
+|---|---|
+| v3-identical (0 B) | 1,186 |
+| changed | 325 |
+| refused both | 89 |
+| refusal movers (either direction) | **0** |
+| UNATTRIBUTED | **0** |
+
+Every changed row is attributed by a marker that is verified, not assumed (a pure-k134 row is verified by stripping the trail
+functions/macro/checkpoint sites/trail lines and comparing SORTED lines; cover rows by the `--memfn=no-window-search` arm
+restoring the old program; handoff rows by `-fno-req-handoff`):
+
+| attribution | rows | emit-byte delta |
+|---|---|---|
+| abi90-span-helpers (callout surface) | 20 | +2,612 |
+| abi90 + abi91 | 28 | +2,662..+3,038 |
+| abi91-reqrun-vm (handoff) | 9 | -1,079..+530 |
+| abi91 + abi92-pair + abi93 | 1 | |
+| abi92-cover | 159 | -6,837..-2,158 |
+| cover + pair look-ahead | 10 | |
+| abi92-pair-lookahead (reqrun `wa=128, wb=128`) | 5 | +368..+377 |
+| abi93-k134 (trail compaction) | 93 | +1,608..+2,015 |
+
+K134 rows by set: bounded 4, capability 49+1, sentinel 8, syntax 12, unusual 20 (cscan, cscan-onig, wild-sexp-balanced,
+wild-json-validate, wild-json-validate-onig; both forms x caps/nocaps).
+
+Prediction accuracy:
+
+| predicted (section 0) | measured | verdict |
+|---|---|---|
+| abi 90: only the 4 syntax `grp-callout` rows gain the span block | 20 + 28 rows (more than the 4 predicted; the 28 overlap abi 91) | UNDER-called: the callout-surface population is larger than the 4 grp-callout rows |
+| abi 91: VM rows with a required run; 0 refusal movers | 9 + 28 + overlaps; 0 refusal movers | held |
+| abi 92: "a few dozen" cover rows | 159 + 10 = 169 | WRONG by ~4x: cover takes most literal/small-class windows (router-prefix-order emit 20,935 -> 16,138) |
+| abi 92: the shim's closed set learns `cover` (the ONE adapter change) | exactly that, nothing else | held |
+| abi 93: VM artifacts with a capture/counter write in a loop; +0.6-1.2 KB | 93 rows, +1.6..2.0 KB each | rows right, size UNDER-called (the stamp-free emitted block is ~2 KB with the three functions) |
+| no new stamp / rx_info field / axis for K134 | held | held |
+| not predicted | abi 92 also adds a bounded two-stream look-ahead to the reqrun pre-check (5 rows, +368..377 B) that pcrec's abi 92 entry does not name | finding F2 |
+| refusal movers 0 | 0 | held |
+
+## 2. Registries (archived verbatim with chained headers; bodies equal live output)
+
+| surface | 614d45eb3 | cb32eda28 | predicted |
+|---|---|---|---|
+| `list_axes.tsv` | 172 rows | 176 rows (+4: `cover`, `unanchored` renumbered, memfn-section rows, one description) | held (+4) |
+| `list_definitions.tsv` | 75 | 75 BYTE-IDENTICAL (ninth pin running) | held |
+| `list_limits.tsv` | 78 | 78 BYTE-IDENTICAL | WRONG-ish: predicted possible `PCREC_MAX_CODE_*` rows; none |
+| `list_schema.tsv` | 81 | 82 (+1 `file code-header`) | predicted +3..5, measured +1 |
+| `--list-callouts` | n/a | exists, needs an argument; not archived (no check reads it) | as predicted |
+
+## 3. Adapter change and the shim
+
+`testees/pcrec/adapter.py`: the closed `dfa_scan` set gains `cover` (source and description text updated). `struct rx_info` is
+unchanged, so `PB_SHIM_MIN_ABI` STAYS 16 (both abi-sabotage arms pass unchanged). `configs.toml`: `pin = "cb32eda28"`,
+`also_pins = ["614d45eb3"]`, 9ae59f5d4 retired from the allowlist. `catalogue/rules.toml` 3.22, `pin_order` appended.
+`testees/pcrec/CLAUDE.md` "Re-pin at cb32eda28" (7 points); root CLAUDE.md status paragraph.
+
+`--code-header` (task item 4): NOT passed anywhere. Now asserted by a check (`check_b149_stamps` greps the adapter and the harness
+files for `--code-header` / `--allow-code`) -- nothing stops.
+
+## 4. Re-aims (each red: stale aim vs real change; nothing loosened)
+
+Chain 2 gave 28 FAIL in the selfcheck slice; all are the SAME three real abi 90-93 changes meeting aims written for an older pin.
+Chain 3: 489 pass / 0 fail on the slice. Every re-aim is a new EXPECTED VALUE with its reason, never a relaxed predicate:
+
+| red | class | reason / new aim |
+|---|---|---|
+| `check_b147_stamps`, `check_b135_two_pin_window` | stale aim | they named builds / pins by "the also_pin" or "the canonical pin"; now name `614d45eb3` / `9ae59f5d4` explicitly (the b135 check expects canonical cb32eda28, also_pin 614d45eb3, retired list + 9ae59f5d4) |
+| b122 / b124 / b126 deny-identity arms (restore-the-old-program) | REAL abi 92 + 91 | the denial no longer restores the old program unless cover and the handoff are denied too. `B149_COVER_OFF = --memfn=no-window-search` is applied on the pinned binary only (the older pins do not know the flag: "unknown option"); `-fno-req-handoff` is appended (`B149_LATER_DENIES`) |
+| `DENY_CONTROLS` rows `(?i)abc` req-run-fold, both `abc` prefilter rows, `\bfoo` req-use, `x` search-start | REAL abi 92 | these literals route to `cover`; the shared-flags slot now carries `--memfn=no-window-search` so the control still reaches the mechanism it controls |
+| G1 witness `\[` | REAL abi 92 | now cover; witness changed to `\[[a-z]+` (dfa_scan_edge `range`, req_why dominated) |
+| router-prefix-order ledger row | REAL abi 92 | now asserts cover: dfa_scan cover, prefilter none, offsets none, dominated, req_byte 47, req_run `2f75736572@0` |
+| litrun `alt-foo-tails` under auto | REAL abi 92 | new row asserts S1 `run-pinned` `0*,1,2`, req_run `666f6f@0`, req_byte 102, scan at offset 0 |
+| b135 `locate` registry expectation | REAL abi 92 | rev-end / cover / unanchored |
+| b136 `-fno-req-handoff` registry expectation | REAL abi 91 | four rows (prefilter handoff; req-use handoff, handoff-attempts, handoff-attempts-entry; all bit 46) |
+| size books (`check_mechanism_stamps`) | REAL abi 90-93 | new layer `_b149_moved` / `B149_RESID`, measured per witness: `(?i)abc` VM +794; `[ac]` +426; `` [@`] `` +794; entry-shape PLAIN program +22; altwide pfx3-256 +426; email-nested-plus / wild-validator-email-owasp / winpath-near-miss +1,815 emit, +22 program; dup-param-detect +1,815; nested-comment-rec +1,882 |
+| check-unusual `calls: streams: pcrec-auto give-up naming` (chain 3, the one red) | REAL abi 93 (K134), as predicted | see section 5 |
+
+New: `check_b149_stamps` (15/15): abi 93/89; struct identical; floor 16; the span helpers and no `RX_CODE_LANGS`; abi 91 on
+`7-url-tld-fix` (new "0", old "none", denied "none"); abi 92 `\d{2}` unanchored -> cover, the `nowindow` arm restoring the old
+program, `a+b` as the v3-identical control; abi 93 balanced-parens-rec forced-VM with >= 1 `TRAIL_CHECK` site and the strip
+restoring the old program; emit delta +1,815 in [1000, 2600]; the DFA artifact without checkpoints; no `--code-header`.
+
+## 5. K134 and the bench/unusual give-ups: predicted vs MEASURED
+
+Predicted (section 0.5): the five flat cscan subjects and a substantial fraction of the stream give-ups flip to answers; deep
+`nest-brace` rungs (>= 512) stay.
+
+Measured here (check-unusual `calls`, compile + one smoke stream, not a window):
+
+| cell | 614d45eb3 | cb32eda28 |
+|---|---|---|
+| `pcrec-auto` x cscan-onig x seg-s (256 calls) | 151 matched / 5 nomatch / **100 gave up PCREC_ERR_FRAMES** | 251 matched / 5 nomatch / **0 gave up**; results_sha256 == expectations_stream.tsv |
+| `pcrec-auto` x cscan-onig, all four streams of the check | gave up, named FRAMES | `matched-as-expected` on all |
+| `pcrec-vm-in`, caller buffer 4 frames / 4 trail, same stream | n/a | 256 of 256 gave up, `first_limit PCREC_ERR_FRAMES` (still gives up; the naming check moved here) |
+| `pcrec-vm-in`, configured buffer | n/a | 0 gave up, sha == expectation (the control) |
+
+So the predicted stream flip is CONFIRMED in full for seg-s (100/256 -> 0, predicted "fall substantially"; it fell to zero) and the
+check's other three streams matched-as-expected. The deep `nest-brace` and wild-json/sexp subject-cell flips (24 + 8 + 3 cells) are
+NOT measured here and remain OWED to a window.
+
+Repair (no loosening): the old assertion "pcrec-auto gives up and names FRAMES" is replaced by (a) a give-up-naming check on a shape
+that still gives up (tiny caller buffer) with its control, and (b) a by-value flip row: the default pcrec-auto answers seg-s at the
+canonical pin and, run as a child under `PCRECBENCH_PCREC_PIN=614d45eb3`, gave up on 100 of 256 calls.
+
+## 6. Findings for pcrec
+
+- F1 (abi 92): `cover` takes 169 of 325 changed rows out of the candidate-start / handoff / start mechanisms (router-prefix-order
+  emit 20,935 -> 16,138); every cross-window mechanism comparison on literal windows now needs the `--memfn=no-window-search`
+  arm. The prediction "a few dozen rows" was 4x low.
+- F2 (abi 92): a bounded two-stream look-ahead (`wa = 128, wb = 128`) landed in the required-run pre-check (`rx_reqrun__body`), +368..377 B on
+  5 rows; it is not in the abi 92 stamp list or entry.
+- F3 (abi 91): the handoff moves forced-VM `abc`'s `.text`; any earlier "the deny flag restores the old program" claim needs
+  `-fno-req-handoff` as well. No `--list-axes` row says so.
+- F4: `\[[a-z]+` reads req_why `dominated` with `dfa_scan_edge range`; `\[` alone is now `cover` (the old G1 witness lost its meaning).
+- F5 (abi 93, K134): the sorted-line strip identity holds on all 93 pure rows; the +1.6..2.0 KB cost is above pcrec's stated
+  +0.6..1.2 KB. The default arm answers the seg-s cscan-onig stream completely (100/256 gave up before).
+- F6: `--list-axes` has no deny row for K134 (by design); a window's K134 cost needs a differently-pinned BEFORE (614d45eb3), which is
+  why `also_pins` keeps it.
+
+## 7. Check counts
+
+- targeted selfcheck slice (chain 3): `b149prep_checks.py` 489 passed, 0 FAILED (34 functions incl. `check_b149_stamps` 15/15,
+  `check_mechanism_stamps` 142/0, b122/b124/b126 42/0).
+- `make check-unusual` chain 3: 130 passed, 1 FAILED (the K134 flip, section 5). Chain 4 (calls section alone, after the repair): 45 passed, 0 FAILED (CALLS rc=0), incl. the tiny-buffer give-up naming and the K134 flip row. Whole check-unusual is thus 130 + the repaired section, 0 red; it was not re-run whole (manager's full check at merge).
+- chain 2 (before repairs): slice 460 / 28 FAIL; check-unusual 109 / 21 (missing generated subject trees in a fresh worktree --
+  fixed by generating them in the chain); REGEN_SIDECARS rc 0; CHECK_INTERPRET rc 0.
+- NOT run here: the full `make -k check` (the manager runs it at merge).
+
+## 8. Charter vs committed
+
+| charter item | committed |
+|---|---|
+| PREDICTION section committed before the build | yes (8b702800) |
+| re-pin pin / also_pins, 9ae59f5d4 retired | yes |
+| registries archived and diffed | yes (section 2) |
+| census, every mover attributed | yes, 0 unattributed, 0 refusal movers |
+| stamp rows / checks for abi 90-93 | `check_b149_stamps` 15/15 + the re-aims |
+| catalogue `pin_order` | 3.22 |
+| `testees/pcrec/CLAUDE.md` "Re-pin at cb32eda28" | yes |
+| `--code-header` check | NO, asserted |
+| K134 give-up effect predicted | yes; stream flip measured, subject-cell flips OWED |
+| heavy steps through the box queue | chains 1-4 via `boxq_window`, prio 7NN |
+| store/ untouched, no timing, ~/pcrec read-only | yes |
+
+## 9. OWED
+
+- The full `make -k check` (manager, at merge).
+- The K134 give-up flips on the unusual SUBJECT cells (24 cscan + 8 + 3), and the depth boundary (~342 -> ~763), in a window.
+- `docs/dev/lanes/b147win_chain.sh` names `@9ae59f5d4`; it needs re-aiming to `@614d45eb3` before reuse.
+- plan.md / dev_journal.md rows (the manager's).
