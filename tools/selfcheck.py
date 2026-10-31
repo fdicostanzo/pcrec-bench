@@ -5583,7 +5583,13 @@ def check_identity_chooser():
     try:
         shape, pshape = PI._cli_shape(binary, tmp), PI._cli_shape(prev, tmp)
         flags = list(adapter.config("pcrec-auto").get("flags", []))
-        new = PI.emit(binary, shape, flags, b"abc", os.path.join(tmp, "n"))
+        # [B149] (cb32eda28): abi 92's window search moves `abc` itself (the
+        # `cover` route), so the new side denies it to keep this a test of the
+        # v2-vs-v3 normalisation (MEASURED 2026-10-30: with the denial, v3
+        # identical vs 6b2dbd3e; without it, changed; -fno-req-handoff alone
+        # does not restore it).
+        new = PI.emit(binary, shape, flags + ["--memfn=no-window-search"], b"abc",
+                      os.path.join(tmp, "n"))
         old = PI.emit(prev, pshape, flags, b"abc", os.path.join(tmp, "o"))
         v2 = lambda t: {"program_sha256": PI.program_sha256_of_text(t)}
         both = lambda t: dict(v2(t), program_sha256_v3=PI.program_sha256_v3_of_text(t))
