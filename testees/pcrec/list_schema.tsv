@@ -5,8 +5,12 @@
 # identical; this one: BYTE-IDENTICAL again).
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-614d45eb3/build/pcrec --list-schema
+#     build/pcrec-cb32eda28/build/pcrec --list-schema
 #
+# pcrec commit cb32eda28 (rx_info.abi 93, read off a plain `abc` witness at this build),
+# archived 2026-10-30 by lane b149prep ([B149], pcrec_main W1 sha): the pin ADVANCED 614d45eb3 (abi 89) -> cb32eda28 (abi 93,
+# FOUR abi steps 90-93; 614d45eb3 stays runnable as an also_pin). +1 data row: `file code-header` ([INLINE-C] stage 2 `.rxt` directive).
+# PREVIOUS archiving (614d45eb3), from the header it carried:
 # pcrec commit 614d45eb3eca3dc5d055a5e3e1ab16c28191b026 (rx_info.abi 89, read off a plain `abc` witness at this build),
 # archived 2026-10-27 by lane b147prep ([B147], inbox I-162/I-163/I-166/I-167): the pin
 # ADVANCED 9ae59f5d4 (abi 84) -> 614d45eb3 (abi 89). 77 -> 78 data rows: ONE row added, `block callout`
@@ -92,6 +96,7 @@ file	tag	list	false	none	repeat	closed per-key	format	pcrec	23
 file	use	list	false	none	repeat		format	pcrec	23
 file	ext	token	false	tree	repeat		format	pcrec	23
 file	analysis	token	false	bundle	repeat	unique-by value	format	pcrec	23
+file	code-header	line	false	none	repeat		format	pcrec	1
 file	version	token	false	none	at-most-one		format	pcrec	999
 config	pcrec	raw	false	none	accumulate		format	pcrec	1
 config	flags	token	false	none	at-most-one		format	pcrec	1
@@ -173,6 +178,6 @@ subject-content	block	m/n/ms/ns/mc	an expectation line is recognised and never r
 pattern-text	block	pattern/pattern-esc	the dump is parse-only; pattern text is the compiler's
 config-resolution			`--list-source` reports the file AS WRITTEN; which settings a block ends up under is `--source`'s own resolution and is not a (scope, line-kind) fact
 ext-tree-contents			the contents of an `ext` tree are never schema-checked and never interpreted; reason: semantically uninterpreted by design (the graduation rule, format_design §2.27.3). The `ext` OPENER's own row is ordinary — the structure is checked, the content by nobody
-# schema-rows: 78
+# schema-rows: 79
 # wave-built: 23
 # wave-reserved: 999

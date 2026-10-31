@@ -677,6 +677,35 @@ steps, and records both in its report:
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
 
+## Re-pin at cb32eda28 (abi 89 -> 93) — 2026-10-30, lane b149prep, pcrec_main's W1 sha
+
+The WHOLE ROSTER re-pins. Canonical pin **cb32eda28** (abi 93, pcrec main, "trail fix"); `configs.toml`
+`also_pins = ["614d45eb3"]` (the BEFORE of abi steps 90-93); **9ae59f5d4 LEAVES the allowlist** (refused by
+name; chains naming `@9ae59f5d4`, e.g. `b147win_chain.sh`, need re-aiming). Report
+docs/dev/lanes/b149prep_report.md (prediction written BEFORE the build); census
+docs/dev/measurements/2026-10-30-b149prep-census.txt (+ `.tsv`, 1,600 rows).
+
+1. **Shim floor STAYS 16; `struct rx_info` BYTE-IDENTICAL** to 614d45eb3's (`check_b149_stamps`). Abi 90-93 add no field.
+2. **The ONE adapter change**: `RX_DFA_SCAN` gains the value `cover` (abi 92, the memfn kit's window search; the
+   `locate` axis's order-2 row, deny `--memfn=no-window-search[,no-window-skip]`). `dfa_scan` declaration widened.
+3. **abi 90 [INLINE-C] 2**: a callout artifact gains the span helpers (`PCREC_RX_SPAN_H`, +2,612 B); `RX_CODE_LANGS`
+   never stamped (no code grant). **abi 91 [REQRUN-VM]**: `RX_REQ_HANDOFF` none -> K on VM artifacts, `-fno-req-handoff`
+   restores it; new `fallback` row `drop-handoff`. **abi 92 S3**: `\d{2}` etc. `unanchored` -> `cover` (159+10 rows, emit
+   -6.8..-2.2 KB), plus the bounded two-stream look-ahead in the required-run pre-check (`wa/wb = 128`, +368..377 B,
+   5 rows). **abi 93 [K134]**: VM artifacts with a trail-writing cycle gain `RX_TRAIL_CHECK()` sites + three
+   file-scope functions (+1,608..2,015 B, 93 pure rows, every one VERIFIED by stripping the trail text; on `bench/unusual`
+   exactly cscan, cscan-onig, wild-sexp-balanced, wild-json-validate(-onig), both forms x caps/nocaps).
+4. **Census**: 1,511 compiled-both rows: 1,186 v3-identical at 0 B (emit and code), 325 changed, 0 UNATTRIBUTED,
+   0 refusal movers. v2 and v3 agree (1,186).
+5. **Registries re-archived** (headers chained): axes MAIN 172 -> 176 (cover, handoff-attempts, handoff-attempts-entry,
+   drop-handoff; `unanchored`/`scan-from-startpos`/`drop-prefilter`/`refuse` renumbered; memfn section +`window-search`/
+   `window-skip`; four descriptions reworded; no new axis), definitions BYTE-IDENTICAL (ninth pin), limits BYTE-IDENTICAL,
+   schema +1 (`file code-header`). `--list-callouts` exists now and needs an argument; not archived.
+6. **`--code-header` / `--allow-code`**: never passed by any config, adapter, harness or `.rxt` set (asserted by
+   `check_b149_stamps`); pcrec's known `--code-header` CLI crash cannot reach this bench.
+7. Catalogue 3.22. New check `check_b149_stamps`; `check_b147_stamps` now names its own builds (614d45eb3 vs
+   9ae59f5d4); the two-pin check re-aimed (canonical cb32eda28, also_pin 614d45eb3, four retired pins refused).
+
 ## Re-pin at 614d45eb3 (abi 84 -> 89) — 2026-10-27, lane b147prep, inbox I-162 / I-163 / I-166 / I-167
 
 The WHOLE ROSTER re-pins. Canonical pin **614d45eb3** (abi 89, pcrec main; CI green

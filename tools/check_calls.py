@@ -129,6 +129,83 @@ def _tokens_of(row):
     return (row.stream or {}).get("results_sha256")
 
 
+_FLIP_PROBE = r'''
+import json, os, sys
+sys.path.insert(0, %(root)r)
+os.chdir(%(root)r)
+from pcrecbench import adapters as _ad, subbench as sbm
+sb = sbm.Subbench("bench/unusual")
+ad, _ = _ad.resolve("pcrec-auto")
+work = %(work)r
+ad.prepare("pcrec-auto", work)
+cp = ad.compile("pcrec-auto", "cscan-onig", sb.pattern_bytes("cscan-onig"), {}, 1, work)
+by, _i, _n = ad.measure(dict(cp.forms["plain"].handle), "call-stream", [sb.subject("seg-s")], 1, 1, timeout=300)
+print("STREAM " + json.dumps(by[0][0].stream))
+'''
+
+
+def _seg_s_stream(ad_mod, testee, work, tiny=False):
+    """The seg-s call stream of cscan-onig through `testee`'s real adapter
+    path; `tiny` swaps the handle's caller buffer for 4 frames / 4 trail (the
+    check_frame_buffer technique: the buffer matters, so a small one gives up)."""
+    from pcrecbench import subbench as _sbm
+    sb = _sbm.Subbench(os.path.join(ROOT, "bench", "unusual"))
+    ad, _cfg = ad_mod.resolve(testee)
+    ad.prepare(testee, work)
+    cp = ad.compile(testee, "cscan-onig", sb.pattern_bytes("cscan-onig"), {}, 1, work)
+    h = dict(cp.forms["plain"].handle)
+    if tiny:
+        h["buffer_args"] = ["--buffer-frames", "4", "--buffer-trail", "4"]
+    by, _i, _n = ad.measure(h, "call-stream", [sb.subject("seg-s")], 1, 1, timeout=300)
+    return by[0][0].stream
+
+
+def _frames_giveup_and_flip(ok, bad, ad_mod):
+    """[B149]: (a) a give-up-NAMING check on a shape that still gives up at
+    cb32eda28 -- pcrec-vm-in with a deliberately tiny caller buffer gives up every
+    call BY NAME (PCREC_ERR_FRAMES), the configured buffer completing it (the
+    control); (b) the K134 FLIP as evidence -- the default pcrec-auto answers
+    all 256 calls at the canonical pin and gave up PCREC_ERR_FRAMES on 100 of
+    them at the also_pin 614d45eb3 (run in a child with the pin override)."""
+    exp_sha = None
+    with open(os.path.join(ROOT, "bench", "unusual", "expectations_stream.tsv")) as f:
+        for ln in f.read().splitlines()[1:]:
+            c = ln.split("\t")
+            if c[0] == "seg-s" and c[1] == "cscan-onig":
+                exp_sha = c[6]
+    try:
+        tiny = _seg_s_stream(ad_mod, "pcrec-vm-in", os.path.join(WORK, "tiny-vm-in"), tiny=True)
+        conf = _seg_s_stream(ad_mod, "pcrec-vm-in", os.path.join(WORK, "conf-vm-in"))
+        if tiny["gave_up"] == tiny["calls"] == 256 and tiny["first_limit"] == "PCREC_ERR_FRAMES" \
+                and conf["gave_up"] == 0 and conf["results_sha256"] == exp_sha:
+            ok("streams: a tiny caller buffer gives up every call and NAMES PCREC_ERR_FRAMES",
+               "pcrec-vm-in 4 frames / 4 trail; CONTROL the configured buffer completes = expectation")
+        else:
+            bad("streams: tiny-buffer give-up naming", repr((tiny, conf)))
+    except Exception as e:                          # noqa: BLE001
+        bad("streams: tiny-buffer give-up naming", str(e)[:400])
+    try:
+        new = _seg_s_stream(ad_mod, "pcrec-auto", os.path.join(WORK, "flip-new"))
+        probe = _FLIP_PROBE % {"root": ROOT, "work": os.path.join(WORK, "flip-old")}
+        env = dict(os.environ, PCRECBENCH_PCREC_PIN="614d45eb3")
+        p = subprocess.run([sys.executable, "-c", probe], env=env, capture_output=True,
+                           text=True, timeout=600)
+        line = [l for l in p.stdout.splitlines() if l.startswith("STREAM ")]
+        if not line:
+            bad("streams: K134 flip (old pin run)", (p.stderr or p.stdout)[-300:])
+            return
+        old = json.loads(line[0][7:])
+        if new["gave_up"] == 0 and new["results_sha256"] == exp_sha \
+                and old["gave_up"] > 0 and old["first_limit"] == "PCREC_ERR_FRAMES":
+            ok("streams: K134 flip -- pcrec-auto answers seg-s x cscan-onig at the canonical pin "
+               "and gave up at 614d45eb3",
+               "%d of %d calls gave up PCREC_ERR_FRAMES at 614d45eb3, 0 now" % (old["gave_up"], old["calls"]))
+        else:
+            bad("streams: K134 flip", repr((new, old)))
+    except Exception as e:                          # noqa: BLE001
+        bad("streams: K134 flip", str(e)[:400])
+
+
 def run(ok, bad):
     print("-- [B148] L4 the call-stream regime and the deep limits arms --")
     from pcrecbench import adapters as _ad, harness as _h
@@ -253,13 +330,14 @@ def run(ok, bad):
             mrows = [r for r in res.rows if r["kind"] == "match" and r["pattern_id"] == pat]
             outs = sorted({r["match_outcome"] for r in mrows})
             if t == "pcrec-auto":
-                lim = {(r.get("stream") or {}).get("first_limit") for r in mrows}
-                if outs == ["gave-up"] and lim == {"PCREC_ERR_FRAMES"} and all(
-                        "PCREC_ERR_FRAMES" in (r.get("diagnostic") or "") for r in mrows):
-                    ok("streams: pcrec-auto gives up on cscan-onig and NAMES PCREC_ERR_FRAMES",
-                       "the default arm's stack-resident frames; X49")
+                # [B149] K134 (abi 93, trail compaction): the default arm's stack-resident
+                # frames now COMPLETE this stream -- it gave up PCREC_ERR_FRAMES at 614d45eb3
+                # (the flip row below). The give-up naming moved to a still-giving-up shape.
+                if outs == ["matched-as-expected"] and len(mrows) == len(streams_for.get(pat, ())):
+                    ok("streams: pcrec-auto x %s x %d streams matched-as-expected (K134 flip)"
+                       % (pat, len(streams_for[pat])), "gave up PCREC_ERR_FRAMES at 614d45eb3")
                 else:
-                    bad("streams: pcrec-auto give-up naming", repr((outs, lim)))
+                    bad("streams: pcrec-auto x %s (K134: answers at cb32eda28)" % pat, repr(outs))
             elif outs == ["matched-as-expected"] and len(mrows) == len(streams_for.get(pat, ())):
                 ok("streams: %s x %s x %d streams matched-as-expected" % (t, pat, len(streams_for[pat])),
                    "validator-accepted scratch record")
@@ -267,6 +345,8 @@ def run(ok, bad):
                 bad("streams: %s x %s" % (t, pat), repr(outs))
         except Exception as e:                      # noqa: BLE001
             bad("streams: %s x %s" % (t, pat), str(e)[:400])
+
+    _frames_giveup_and_flip(ok, bad, _ad)
 
     # 4. limits read back by value --------------------------------------
     def crow(t, pat):

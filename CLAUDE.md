@@ -374,6 +374,12 @@ binding in a SEPARATE translation unit per match_api.md 11.2-11.4, recorded as e
 (`prefilter-admit` `callout`) · schema +1 (`block callout`) · limits/definitions byte-identical; census
 (docs/dev/measurements/2026-10-27-b147prep-census.txt): 1,363 identical / 44 changed / 0 unattributed, 4 refusal movers (the
 callout rows); catalogue 3.21; docs/dev/lanes/b147prep_report.md. NOT YET MEASURED at 614d45eb3.
+2026-10-30: [B149] (lane b149prep) RE-PINNED the WHOLE roster to **cb32eda28 (abi 93)**, `also_pins` = `614d45eb3`
+(9ae59f5d4 retired): FOUR abi steps 90-93 ([INLINE-C] stage 2, [REQRUN-VM], [MEMFN] S3 `RX_DFA_SCAN` `cover`, [K134] trail
+compaction); `struct rx_info` UNCHANGED, shim floor STAYS 16; the one adapter change is `cover` in the `dfa_scan` set;
+census (docs/dev/measurements/2026-10-30-b149prep-census.txt): 1,186 identical / 325 changed / 0 unattributed / 0 refusal
+movers; registries axes 176 (+4 rows) · definitions/limits byte-identical · schema +1; catalogue 3.22;
+docs/dev/lanes/b149prep_report.md. NOT YET MEASURED at cb32eda28.
 Manager sessions start with the
 `pcrec-bench-manager` skill (.claude/skills/).
 
