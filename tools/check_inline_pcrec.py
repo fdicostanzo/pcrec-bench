@@ -227,6 +227,17 @@ def run(ok, bad):
     # ---- 4. answers through the adapter -------------------------------------
     sb = _sbm.load(UNUSUAL)
     shorts = sb.subjects_for("search_short")
+    # the short subject tree is GENERATED and gitignored; --only inline-pcrec does not run
+    # check_set.py (which generates it). A driver handed a missing path answers `crashed` for
+    # every subject on BOTH arms -- equal, so "agreement" over zero real rows. Generate, then
+    # require every file to exist (idempotent, short subjects only).
+    if not all(os.path.isfile(x.path) for x in shorts):
+        subprocess.run([sys.executable, "-I", os.path.join(UNUSUAL, "gen_subjects.py")],
+                       capture_output=True, text=True)
+    missing = [x.subject_id for x in shorts if not os.path.isfile(x.path)]
+    if missing:
+        bad("answers: short subject files exist", "%d missing, e.g. %s" % (len(missing), missing[:3]))
+        return
     d = os.path.join(WORK, "subj")
     os.makedirs(d)
     import hashlib
@@ -251,11 +262,16 @@ def run(ok, bad):
 
     def answers(a, res, subs):
         by, _i, _n = a.measure(res.handle, "search_short", subs, 1, 1, timeout=300)
+        # a row that is not a real answer is a failure of the instrument, never agreement
+        dead = [r.subject_id for r in by[0] if r.answer not in ("match", "nomatch")]
+        if dead or len(by[0]) != len(subs):
+            raise RuntimeError("%d/%d rows without a match/nomatch answer (e.g. %s)"
+                               % (len(dead) or len(subs) - len(by[0]), len(subs), dead[:3]))
         return {r.subject_id: (r.answer, r.start, r.end, r.caps) for r in by[0]}
 
     census = []
     for inl, sep in (("pcrec-auto-inline", "pcrec-auto"), ("pcrec-vm-inline", "pcrec-vm")):
-        bad_arms, real_vs_twin = [], 0
+        bad_arms, real_vs_twin, rows_compared = [], 0, 0
         try:
             for fam in ("co-luhn", "co-isbn", "co-member", "co-netstr"):
                 arms = ["", "-pass"] if fam != "co-netstr" else [""]
@@ -267,6 +283,7 @@ def run(ok, bad):
                     a_i, r_i = comp(inl, pid, os.path.join(WORK, inl))
                     a_s, r_s = comp(sep, pid, os.path.join(WORK, sep))
                     ai, as_ = answers(a_i, r_i, shorts), answers(a_s, r_s, shorts)
+                    rows_compared += len(ai)
                     if ai != as_:
                         bad_arms.append(pid)
                     meta = r_i.engine_metadata
@@ -282,7 +299,9 @@ def run(ok, bad):
                                        m.get("program_sha256_v3"), m.get("callout_binding")))
             if not bad_arms and real_vs_twin > 0:
                 ok("answers: %s == %s on %d short subjects x 4 members (real + pass arms)"
-                   % (inl, sep, len(shorts)), "control: real != twin on %d subject(s)" % real_vs_twin)
+                   % (inl, sep, len(shorts)),
+                   "%d rows compared; control: real != twin on %d subject(s)"
+                   % (rows_compared, real_vs_twin))
             else:
                 bad("answers: %s == %s" % (inl, sep), "differ: %s; real-vs-twin %d" % (bad_arms, real_vs_twin))
             a_i, r_real = comp(inl, "co-luhn", os.path.join(WORK, inl))

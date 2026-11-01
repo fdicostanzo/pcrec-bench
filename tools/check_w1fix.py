@@ -85,6 +85,10 @@ def run(ok, bad):
 
     # (b)/(c) the admission matrix
     live, before, after = _live(sb), _read("before"), _read("after")
+    # the matrix is a frozen BEFORE/AFTER over b148w1fix's own roster: testees added later
+    # (pcrec-*-inline, b148inline2) are outside it, so the live side is cut to that roster
+    roster = {t for (_p, t) in after}
+    live = {k: v for k, v in live.items() if k[1] in roster}
     if live == after:
         ok("w1fix: live admission matrix == committed AFTER (%d cells)" % len(live))
     else:

@@ -104,3 +104,30 @@ from the real `describe()` and prints the full id; if the pin length differs, on
   `callout_binding = inline` (not touched: reporter has no clause for it).
 * Not built: the single-callees.c form (parked, O-114); a counting twin segment (needs the
   `--code-header` fix).
+
+## 6. Fix (lane b148inline2fix, 2026-11-01): the three reds of the check chain
+
+Chain logs: `/var/tmp/pcrecbench/b148inline2win/{inline,check}.log`. Re-run green afterwards:
+`check_unusual.py --only inline-pcrec w1fix` = 36 passed, 0 failed.
+
+1. **`answers: pcrec-{auto,vm}-inline == pcrec-{auto,vm}` ("differ: []; real-vs-twin 0")**.
+   Cause: the short-subject tree (`bench/unusual/subjects/`, generated and gitignored) did not exist when the
+   section ran: `--only inline-pcrec` does not run `check_set.py`, which is what generates it. The driver
+   answers a missing subject path `crashed` (measured: five `/nonexistent` subjects -> five `crashed`), on
+   BOTH arms, so the comparison saw two identical all-`crashed` maps: no differences, and real-vs-twin 0
+   (the control correctly refused to pass). Not a wrong subject list, form, row key or arm filter. Fix
+   (`tools/check_inline_pcrec.py`): the section runs `gen_subjects.py` when any short file is absent and
+   then fails BY NAME if one is still missing; `answers()` raises on any row that is not `match`/`nomatch`
+   (or a short row count), so a crashed pair can never compare equal again; the pass line now prints the
+   rows compared. **Rows compared: 1,127 per testee pair** (161 short subjects x 7 arms: luhn, isbn,
+   member real + pass, netstr real; the inline side; the separate-TU side is the same count); real != twin
+   on 26 subjects (8 luhn + 2 isbn + 3 member + 13 netstr). No check was loosened.
+2. **w1fix "live matrix drifted from AFTER"**. Cause: `_live()` enumerates every testee in the capability
+   matrix, which now includes `pcrec-{auto,vm}-inline`, five rows (cscan, cscan-onig, wild-sexp-balanced,
+   wild-json-validate, wild-json-validate-onig) x `pcrec-auto-inline` among the 5 differing cells reported.
+   The matrix is a frozen BEFORE/AFTER over b148w1fix's own roster (the 500 cells = 20 patterns x 25
+   testees in the committed TSVs), not meant to cover every testee. Fix (`tools/check_w1fix.py`): the live
+   side is cut to the testees the committed AFTER names; the AFTER file is unchanged. Still 500 cells, 12
+   flips, 12 renames, 476 identical.
+3. (The chain's third red was the make-check consequence of 2 and not separately observed here; `make
+   check*` was not run in this lane. OWED: the manager's `make check` re-run.)
