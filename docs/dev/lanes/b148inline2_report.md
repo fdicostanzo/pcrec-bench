@@ -129,5 +129,4 @@ Chain logs: `/var/tmp/pcrecbench/b148inline2win/{inline,check}.log`. Re-run gree
    testees in the committed TSVs), not meant to cover every testee. Fix (`tools/check_w1fix.py`): the live
    side is cut to the testees the committed AFTER names; the AFTER file is unchanged. Still 500 cells, 12
    flips, 12 renames, 476 identical.
-3. (The chain's third red was the make-check consequence of 2 and not separately observed here; `make
-   check*` was not run in this lane. OWED: the manager's `make check` re-run.)
+The brief's "three reds" are 1 (auto and vm, two rows) and 2. `make check*` was not run in this lane; OWED: the manager's `make check` re-run.
