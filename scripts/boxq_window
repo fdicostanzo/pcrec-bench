@@ -6,9 +6,14 @@
 # pcrec script (BD2); pcrec's side runs none of our code.
 #
 #   scripts/boxq_window --name NAME --prio 7NN --cap S [--patience S]
-#       [--idle-ok S] [--start-s S] -- CHAIN [ARGS...]
+#       [--idle-ok S] [--start-s S] [--not-before YYYY-MM-DDTHH:MM[:SS]] -- CHAIN [ARGS...]
 #   scripts/boxq_window --no-queue [--name NAME] -- CHAIN [ARGS...]
 #   scripts/boxq_window --cancel NAME
+#
+# --not-before T (inbox I-173, our O-115): the .window carries `not_before=T` (LOCAL time, no zone, no
+# space); pcrec imports and queues it NOW (state QUEUED, `not-ready: not before T`) and starts it once T has
+# passed. cap/start_s count from the START. A declared window that never starts raises WINDOW-MISSED on
+# pcrec's side, so DECLARE planned windows this way rather than with a delayed submission.
 #
 # CHAIN must be an EXECUTABLE PATH (checked with -x): `-- env VAR=x bash chain.sh`
 # is refused ("chain not executable: env"). For env or a non-executable script, use a small
@@ -39,7 +44,7 @@ IMPORT_WAIT=${BQ_IMPORT_WAIT:-900}; KILL_GRACE=${BQ_KILL_GRACE:-10}
 
 die() { echo "boxq_window: $*" >&2; exit 2; }
 
-NAME= PRIO= CAP= PATIENCE=86400 IDLE_OK= START_S=300 NOQ=0 CANCEL=
+NAME= PRIO= CAP= PATIENCE=86400 IDLE_OK= START_S=300 NOQ=0 CANCEL= NOT_BEFORE=
 while [ $# -gt 0 ]; do
   case $1 in
     --name) NAME=${2:-}; shift 2 ;;
@@ -48,6 +53,7 @@ while [ $# -gt 0 ]; do
     --patience) PATIENCE=${2:-}; shift 2 ;;
     --idle-ok) IDLE_OK=${2:-}; shift 2 ;;
     --start-s) START_S=${2:-}; shift 2 ;;
+    --not-before) NOT_BEFORE=${2:-}; shift 2 ;;
     --no-queue) NOQ=1; shift ;;
     --cancel) CANCEL=${2:-}; shift 2 ;;
     --) shift; break ;;
@@ -81,6 +87,13 @@ okname "$NAME" || die "--name required, [A-Za-z0-9_.-]: '$NAME'"
 [[ $PRIO =~ ^[0-9]{3}$ ]] && [ "$PRIO" -ge 700 ] && [ "$PRIO" -le 899 ] || die "--prio must be 700..899: '$PRIO'"
 [[ $CAP =~ ^[0-9]+$ ]] && [ "$CAP" -gt 0 ] || die "--cap seconds required: '$CAP'"
 for v in "$PATIENCE" "$START_S" "$IDLE_OK"; do [ -z "$v" ] || [[ $v =~ ^[0-9]+$ ]] || die "numeric option expected: '$v'"; done
+if [ -n "$NOT_BEFORE" ]; then
+  # the queue's own strict parse: a real local date, no zone, no space
+  [[ $NOT_BEFORE =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?$ ]] \
+    && date -d "$NOT_BEFORE" +%s > /dev/null 2>&1 \
+    && [ "$(date -d "$NOT_BEFORE" +%Y-%m-%dT%H:%M)" = "${NOT_BEFORE:0:16}" ] \
+    || die "--not-before wants a local YYYY-MM-DDTHH:MM[:SS]: '$NOT_BEFORE'"
+fi
 STATE="$STATE_DIR/$PRIO-bench-$NAME.state"
 
 # import is once per name: refuse a name with a .window (or any .cancel) in the
@@ -140,6 +153,7 @@ W=$INBOX/.$NAME.window.tmp
   echo "cap=$CAP"
   echo "patience=$PATIENCE"
   [ -z "$IDLE_OK" ] || echo "idle_ok=$IDLE_OK"
+  [ -z "$NOT_BEFORE" ] || echo "not_before=$NOT_BEFORE"
   echo "log=$LOG"
   echo "start_s=$START_S"
   echo "done_ere=^BENCH_WINDOW_COMPLETE rc="
@@ -147,7 +161,7 @@ W=$INBOX/.$NAME.window.tmp
   echo "witness=BENCH_WINDOW_COMPLETE rc=0"
   echo "fail_ere=^BENCH_WINDOW_FAILED "
 } > "$W" && mv "$W" "$INBOX/$NAME.window" || { fail_exit "cannot write the .window"; exit 2; }
-say "reservation written: $INBOX/$NAME.window (job $PRIO-bench-$NAME, cap=$CAP patience=$PATIENCE)"
+say "reservation written: $INBOX/$NAME.window (job $PRIO-bench-$NAME, cap=$CAP patience=$PATIENCE${NOT_BEFORE:+ not_before=$NOT_BEFORE})"
 say "watching $STATE"
 
 state_word() { local l=; [ -r "$STATE" ] && IFS= read -r l < "$STATE"; echo "$l"; }

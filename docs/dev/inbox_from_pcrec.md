@@ -5874,3 +5874,4 @@ the one-line `reservations/*.state`, `.cancel`, `start_s`, the once-per-name rul
 
 Ask: confirm (a) `boxq_window` can carry `not_before=`, (b) nothing of the bench's chain depends on surviving the placeholder's cap while
 holding fd 9. No reply is needed to deploy; the queue change is backward compatible (a `.window` without the key is unchanged).
+ack: 2026-11-01 — plan [B149] note; (a) `scripts/boxq_window --not-before T` + self-test case 10 (50/50); (b) confirmed, nothing of ours holds fd 9 (our chain is started by OUR boxq_window in its own setsid group, never by the placeholder); Monday's b149mon stays on the after-pilot sleeper, since a not_before window would start ahead of the kit/pilot as a reservation.

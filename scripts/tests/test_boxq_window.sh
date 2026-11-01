@@ -114,5 +114,18 @@ waitw sig
 ck "9 chain gone after SIGTERM" "! kill -0 $CP 2>/dev/null && ! kill -0 $CC 2>/dev/null"
 ck "9 fail line on signal" "grep -qx 'BENCH_WINDOW_FAILED signal' $(L sig)"
 
+# 10 --not-before: the key is written verbatim; malformed values are refused before any file is written
+start nb --name nb --prio 780 --cap 60 --not-before 2026-11-02T05:30 -- "$T/ok.sh"
+sleep 1.5
+ck "10 not_before key written" "grep -qx 'not_before=2026-11-02T05:30' $BQ_INBOX/nb.window"
+st 780-bench-nb "RUNNING 2026-11-02T05:30:00 1"
+waitw nb
+ck "10 completes as usual" "grep -qx 'BENCH_WINDOW_COMPLETE rc=0' $(L nb)"
+ck "10 no not_before without the flag" "! grep -q '^not_before=' $BQ_INBOX/green.window"
+for bad in "2026-11-02 05:30" "tomorrow" "2026-11-02T05:30+02:00" "2026-02-30T05:30" "2026-11-02T25:00"; do
+  BQ_LOGDIR=$T/log/nbbad "$WRAP" --name nbbad --prio 781 --cap 60 --not-before "$bad" -- "$T/ok.sh" > /dev/null 2>&1; r=$?
+  ck "10 refused: '$bad'" "[ $r = 2 ] && [ ! -e $BQ_INBOX/nbbad.window ]"
+done
+
 echo "boxq_window self-test: $PASS passed, $FAIL failed"
 [ "$FAIL" = 0 ]
