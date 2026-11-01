@@ -1,13 +1,11 @@
 #!/bin/bash
 # [B149] MONDAY 11-02 window: the tiers deferred from W1/W2 -- the manager, 2026-11-01. Runs after pcrec's pilot
 # (790-797, ~01:00-05:30) and must be off the box before Frank's 20:00 hold. PINNED tier into store/.
-#   0. the inline lane's CHECK CHAIN (b148inline2, make -k check + the inline checks) if its worktree carries one:
-#      correctness only, before any timed cell; its rc is logged and never stops the window. (The inline arm
-#      itself is NOT timed here: it is unmerged until that check is read.)
+#   0. (dropped: the inline lane's check ran green on 11-01 and the arm is merged, f310b37a)
 #   1. opening sentinel
 #   2. unusual@0.1 -- the FIRST PINNED unusual records: pcrec-auto/vm at cb32eda28 and @614d45eb3 (the K134
 #      give-up flips: 24 cscan + 8 + 3 FRAMES predicted to answer), then the five deep arms (BD17 --prime in
-#      throughput) incl. pcre2-jit-deep on js-1m. CELL_CAP_unusual=7200 (L9: worst cell 3,009 s).
+#      throughput) incl. pcre2-jit-deep on js-1m; the INLINE arm pcrec-{auto,vm}-inline beside them. CELL_CAP_unusual=7200 (L9: worst cell 3,009 s).
 #   3. capability@0.4 x pcrec-auto-noedge (the noedge rows: base10num-noatomic/-grok, secrets-username-
 #      password-pair) and syntax x {pcrec-auto, pcrec-nocaps, pcrec-auto-noedge} (cls-s-uc, cls-range).
 #   4. closing sentinel
@@ -31,19 +29,11 @@ abort() { echo "CHAIN_ABORT $*" >> "$L"; exit 9; }
 [ -n "${MACHINE_ID:-}" ] || abort "MACHINE_ID is not set; nothing measured"
 left() { local s=$(( $(date -d "$HARD_END" +%s) - $(date +%s) )); [ "$s" -gt 0 ] && echo "$s" || echo 0; }
 
-# 0. the inline lane's check chain (correctness; never fatal)
-IC=worktrees/b148inline2/docs/dev/lanes/b148inline2_check.sh
-if [ -x "$IC" ]; then
-  echo "INLINE_CHECK_START $(date -Is)" >> "$L"
-  gnutimeout -k 30 7200 "$IC" >> "$W/inline_check.out" 2>&1
-  echo "INLINE_CHECK_DONE rc=$? $(date -Is) (the real rc is in /var/tmp/pcrecbench/b148inline2win/)" >> "$L"
-else
-  echo "INLINE_CHECK_SKIPPED: no executable $IC" >> "$L"
-fi
+# 0. (the inline lane's check ran GREEN 2026-11-01 14:59 and the arm is merged, f310b37a: no step 0)
 
 B=614d45eb3
 R_SENT="pcrec-auto pcrec-auto@$B pcrec-nocaps pcre2-jit"
-R_UNU="pcrec-auto pcrec-vm pcrec-auto@$B pcrec-vm@$B pcre2-jit-deep pcrec-auto-deep pcrec-vm-deep pcre2-interp-deep onig-default-deep"
+R_UNU="pcrec-auto pcrec-vm pcrec-auto@$B pcrec-vm@$B pcrec-auto-inline pcrec-vm-inline pcre2-jit-deep pcrec-auto-deep pcrec-vm-deep pcre2-interp-deep onig-default-deep"
 R_CAP="pcrec-auto-noedge"
 R_SYN="pcrec-auto pcrec-nocaps pcrec-auto-noedge"
 
