@@ -10342,6 +10342,17 @@ def check_encoding_axis():
                     offenders.append("%s: encoding_extra %r, config_extra %r "
                                      "(want %r)" % (tid, cfg.get("encoding_extra"),
                                                     live, want))
+            elif cfg.get("callout_spelling") == "inline":
+                # [B148] inline arm part 2: the `inline` token composes LAST
+                # onto the frozen parts (append-only; no encoding). Every
+                # config WITHOUT the key falls to the final arm below and is
+                # held to the frozen four-part renderer -- that is the proof
+                # that no pre-existing testee_id moved.
+                want = mod.compose_config_extra(frozen, "inline")
+                if cfg.get("encoding_extra") is not None or live != want:
+                    offenders.append("%s: encoding_extra %r, config_extra %r "
+                                     "(want %r)" % (tid, cfg.get("encoding_extra"),
+                                                    live, want))
             elif cfg.get("limits"):
                 # [B148] L4: the `deep` limits arms compose `lim-<limits>`
                 # LAST onto the frozen parts (append-only; no encoding).
@@ -13747,11 +13758,24 @@ def check_b149_stamps():
         for rel in ("testees/pcrec/adapter.py", "testees/pcrec/driver.c", "testees/pcrec/shim.c",
                     "pcrecbench/adapters.py", "pcrecbench/harness.py"):
             t = open(os.path.join(ROOT, rel), encoding="utf-8", errors="replace").read()
+            # [B148] inline arm part 2: the ONE sanctioned mention is the
+            # adapter's check that an inline config carries the grant in its
+            # own flags (a line marked INLINE_GRANT_OK); it passes nothing.
+            t = "\n".join(l for l in t.split("\n") if "INLINE_GRANT_OK" not in l)
             for needle in ('"--code-header', '"--allow-code', "'--code-header", "'--allow-code"):
                 if needle in t:
                     hits.append((rel, needle))
         (ok if not hits else bad)(
             "b149 --code-header / --allow-code are never passed to pcrec by the adapter or harness", str(hits))
+        # [B148] inline arm part 2: the grant is a CONFIG fact -- exactly the
+        # configs with callout_spelling = "inline" carry --allow-code=c.
+        gr = sorted(t for t in adapter.testees()
+                    if any(f.startswith("--allow-code") for f in adapter.config(t).get("flags", []))) # INLINE_GRANT_OK
+        sp = sorted(t for t in adapter.testees()
+                    if adapter.config(t).get("callout_spelling") == "inline")
+        (ok if gr == sp else bad)(
+            "b148 inline: --allow-code=c is carried by exactly the callout_spelling=inline configs",
+            "grant %s, inline %s" % (gr, sp))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

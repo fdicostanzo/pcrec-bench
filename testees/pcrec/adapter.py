@@ -1444,7 +1444,7 @@ METADATA_DECL = {
     },
     "callout_binding": {
         "type": "enum", "scope": "pattern",
-        "values": ["separate-tu-pass", "separate-tu-callee"],
+        "values": ["separate-tu-pass", "separate-tu-callee", "inline"],
         "source": "adapter.callout_binding_source(): the binding unit this "
                   "adapter generates and compiles beside shim.c; PRESENT "
                   "only where callout_bindings is",
@@ -1463,7 +1463,29 @@ METADATA_DECL = {
                        "the bench's WRAPPER in its own unit, which builds "
                        "the shared view and calls the set's callee (the "
                        "`pass` arm's stub or the `real` arm's) from the ONE "
-                       "callees.o (callee_binding_source)",
+                       "callees.o (callee_binding_source). `inline` ([B148] "
+                       "inline arm part 2, the `pcrec-*-inline` testees): the "
+                       "callee body is C source INSIDE the pattern (an `.rxt` "
+                       "fragment block compiled with `--allow-code=c "
+                       "--include-block`), so the artifact has NO binding "
+                       "symbol at all and NO binding unit is linked; "
+                       "`callout_bindings` is absent/empty on such a row and "
+                       "`code_langs` is `c`. The inline row carries NO "
+                       "`callout_fires` (the fire pass has no counting "
+                       "analogue: a counting segment would need a header)",
+    },
+    "code_langs": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_CODE_LANGS (pcrec abi 90+, rxt_format 1.1/"
+                  "match_api.md 11.2), read from the emitted .c/.h text by "
+                  "TEXT_STAMP_RES; stamped ONLY on an artifact that reached "
+                  "code, which this bench grants (`--allow-code=c`) only on "
+                  "the inline testees",
+        "description": "the languages of the C-family code the artifact "
+                       "embeds (`c`); ABSENT on every artifact compiled "
+                       "without a code grant. [B148] part 2 reads it as the "
+                       "witness that the inline route really compiled code "
+                       "(callout_binding `inline` is set from it)",
     },
     # -- [B32] THE SCAN-EDGE COUNT: the covariate the full-suite regression
     # family needs. `dfa_scan_edge` is one token per artifact and cannot
@@ -2930,7 +2952,10 @@ def findings_stamp(emit_files):
 TEXT_STAMPS = {"compound": "COMPOUND", "iter_retry": "ITER_RETRY",
                "measures": "MEASURES",
                # [B147] abi 89: in the .h, callout-bearing artifacts only
-               "callout_bindings": "CALLOUT_BINDINGS"}
+               "callout_bindings": "CALLOUT_BINDINGS",
+               # [B148] inline arm part 2: abi 90+, only on an artifact that
+               # reached code (the inline testees' --allow-code=c grant)
+               "code_langs": "CODE_LANGS"}
 TEXT_STAMP_RES = {
     k: re.compile(r'^#define\s+%s_%s\s+"([^"]*)"'
                   % (re.escape(ARTIFACT_PREFIX.upper()), v))
@@ -2988,6 +3013,8 @@ def callout_binding_source(symbols, header_name):
 
 #: [B148] L5 the unusual set's binding shape (callee_binding_source).
 CALLEE_BINDING_SHAPE = "separate-tu-callee"
+#: [B148] inline arm part 2: the callee is C source inside the pattern.
+INLINE_BINDING_SHAPE = "inline"
 
 
 def callee_binding_source(symbols, header_name, spec):
@@ -3043,6 +3070,90 @@ def callee_binding_source(symbols, header_name, spec):
             slot = "&ub_named[%d].slot" % named.index(key)
         out.append('const rx_callout_ref %s = { pb_callee, (void *)%s };' % (sym, slot))
     return "\n".join(out) + "\n"
+
+
+#: [B148] inline arm part 2 (docs/dev/lanes/b148inline_report.md 3-4): the
+#: inline route's table -- one row per (arm, form) -- written by
+#: bench/unusual/gen_inline.py; fragment/entry paths are relative to
+#: bench/unusual.
+INLINE_DIR = os.path.join(_co.REPO, "bench", "unusual", "inline")
+INLINE_BLOCKS = os.path.join(INLINE_DIR, "blocks.tsv")
+#: blocks.tsv spells the whole-subject form `whole`, the harness `whole-subject`
+INLINE_FORM = {_ad.FORM_PLAIN: "plain", _ad.FORM_WHOLE_SUBJECT: "whole"}
+
+
+def inline_rows():
+    """-> {(arm, form): row dict} from blocks.tsv ({} when the file is absent,
+    which is every checkout without the inline arm's sources)."""
+    out = {}
+    try:
+        with open(INLINE_BLOCKS, "r", encoding="utf-8") as f:
+            head = f.readline().rstrip("\n").split("\t")
+            for line in f:
+                if line.strip():
+                    r = dict(zip(head, line.rstrip("\n").split("\t")))
+                    out[(r["arm"], r["form"])] = r
+    except FileNotFoundError:
+        pass
+    return out
+
+
+def inline_route(cfg, pattern_id, form, co):
+    """-> the blocks.tsv row an INLINE compile of (pattern, form) uses, or None
+    for the ordinary `--pattern` route. Inline only for a config spelled
+    `callout_spelling = "inline"`, on a callout member of the unusual set
+    (`co` set) that has a block: twin arms (no site) and non-callout patterns
+    keep `--pattern`."""
+    if cfg.get("callout_spelling") != "inline" or not co:
+        return None
+    return inline_rows().get((pattern_id, INLINE_FORM[form]))
+
+
+def _sha_file(path):
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def inline_argv_tail(row):
+    """-> (argv tail, facts) for the inline compile: `--include-block
+    FRAGMENT:LINE ENTRY` (cli.md 1.23), the paths absolute. `--pattern` is
+    NOT passed (the block is the run's pattern). The fragment's digest is
+    recomputed here and must equal blocks.tsv's: a stale table is an
+    AdapterError, never a silently different block. `--allow-code=c` is the
+    config's own flag (the grant is visible in build_flags/runtime_options)."""
+    base = os.path.dirname(INLINE_DIR)
+    frag = os.path.join(base, row["fragment"])
+    entry = os.path.join(base, row["entry"])
+    fsha, esha = _sha_file(frag), _sha_file(entry)
+    if fsha != row["fragment_sha256"]:
+        raise _ad.AdapterError(
+            "inline block %s/%s: %s digests to %s but blocks.tsv says %s "
+            "(re-run bench/unusual/gen_inline.py)"
+            % (row["arm"], row["form"], row["fragment"], fsha,
+               row["fragment_sha256"]))
+    return (["--include-block", "%s:%s" % (frag, row["line"]), entry],
+            {"inline_entry_sha256": esha, "inline_fragment_sha256": fsha})
+
+
+def inline_user_source(member_arg):
+    """-> C text of `inline_user.c`: the data symbol `ub_inline_user` the
+    member segment reads (ctx->user is NULL at a code site, match_api.md
+    11.9), set before any match by a constructor from the set's own member
+    file. A TU of the same .so, beside callees.o (which holds
+    ub_member_new)."""
+    path = os.path.join(os.path.dirname(INLINE_DIR), member_arg)
+    lit = path.replace("\\", "\\\\").replace('"', '\\"')
+    return "\n".join([
+        "/* generated by testees/pcrec/adapter.py inline_user_source() */",
+        "#include <stdio.h>",
+        "#include <stdlib.h>",
+        '#include "%s"' % os.path.join(_co.SRC_DIR, "callees.h"),
+        "void *ub_inline_user;",
+        "__attribute__((constructor)) static void pb_inline_user(void) {",
+        '    ub_inline_user = ub_member_new("%s");' % lit,
+        '    if (!ub_inline_user) { fprintf(stderr, "inline member set: cannot load %s\\n", "' + lit + '"); abort(); }',
+        "}", ""])
 
 
 _ABI_INIT_RE = re.compile(r"^\s*\.abi\s*=\s*(\d+)\s*,", re.M)
@@ -4426,6 +4537,26 @@ class Adapter(_ad.Adapter):
         decl.update(_ad.DEEP_MEM_DECL)
         decl.update({k: v for k, v in _co.CALLOUT_DECL.items()
                      if k != "callout_respell"})       # [B148] L5
+        # [B148] inline arm part 2: the identity of what an inline row
+        # compiled. callees_sha256 is NOT set on an inline row (the callee
+        # object is linked only for the member set's loader), so these two
+        # are the callee identity there.
+        decl["inline_entry_sha256"] = {
+            "type": "sha256", "scope": "pattern",
+            "source": "adapter.inline_argv_tail(): sha256 of the .rxt ENTRY "
+                      "file passed to pcrec (bench/unusual/inline/<arm>.rxt)",
+            "description": "identity of the inline arm's entry file (its one "
+                           "`include ... sha256 <fragment>` line is the pin "
+                           "pcrec verified); ABSENT on every non-inline row"}
+        decl["inline_fragment_sha256"] = {
+            "type": "sha256", "scope": "pattern",
+            "source": "adapter.inline_argv_tail(): sha256 of the fragment "
+                      "file whose block was compiled (callees/ub_<callee>.rxt), "
+                      "recomputed at compile time and equal to blocks.tsv's",
+            "description": "identity of the callee source INSIDE the pattern "
+                           "(the fragment holds the callee body byte for byte); "
+                           "ABSENT on every non-inline row. An inline row has "
+                           "no callees_sha256 and no callout_fires"}
         return decl
 
     native_callouts = True                             # [B148] L5
@@ -4803,7 +4934,13 @@ class Adapter(_ad.Adapter):
                                      # [B148] L4 the `deep` limits arm
                                      # (unusual_set_v1.md 6.1), LAST.
                                      "lim-" + cfg["limits"] if cfg.get("limits")
-                                     else None)
+                                     else None,
+                                     # [B148] inline arm part 2: the callout
+                                     # SPELLING is part of the identity (an
+                                     # inline record can never be taken for
+                                     # the separate-TU arm), chartered LAST.
+                                     "inline" if cfg.get("callout_spelling")
+                                     == "inline" else None)
         if extra:
             block["config_extra"] = extra
         if local:
@@ -4932,9 +5069,25 @@ class Adapter(_ad.Adapter):
             # 0x93). pcrec then correctly matched the corrupted pattern,
             # which read as a wrong answer on the bench's raw-high-byte
             # witnesses (the capability first sample's F4, O-31).
-            argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG, WARN_PROBE_FLAG]
-                    + list(cfg.get("flags", []))
-                    + ["-o", art_c, "--pattern"] + [bytes(pattern)])
+            # [B148] inline arm part 2: an inline testee's callout member
+            # compiles the fragment's block (`--include-block FRAG:LINE
+            # ENTRY`, the grant `--allow-code=c` riding in the config's own
+            # flags) instead of `--pattern`; twins and non-callout patterns
+            # keep `--pattern`.
+            inl = inline_route(cfg, pattern_id, form, co)
+            inl_facts = None
+            if inl:
+                tail, inl_facts = inline_argv_tail(inl)
+                if not any(f.startswith("--allow-code") for f in cfg["flags"]):  # INLINE_GRANT_OK
+                    raise _ad.AdapterError(
+                        "%s: callout_spelling = \"inline\" needs the code "
+                        "grant in the config's flags" % testee_id)
+                argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG, WARN_PROBE_FLAG]
+                        + list(cfg.get("flags", [])) + ["-o", art_c] + tail)
+            else:
+                argv = ([pcrec, "-p", "rx", EMIT_COMMENTS_FLAG, WARN_PROBE_FLAG]
+                        + list(cfg.get("flags", []))
+                        + ["-o", art_c, "--pattern"] + [bytes(pattern)])
             t0 = time.monotonic()
             proc = subprocess.run(argv, capture_output=True, env=C_ENV,
                                   timeout=600)
@@ -5032,7 +5185,24 @@ class Adapter(_ad.Adapter):
                 [art_c] + ([art_h] if os.path.exists(art_h) else [])
             ).get("callout_bindings")
             count_gargv = None
-            if bind_syms and co:
+            if inl:
+                # [B148] inline arm part 2: the callee is SOURCE in the
+                # artifact, so no `extern` binding symbol may remain and NO
+                # binding unit is linked. Only the member arm needs one TU:
+                # the data symbol its segment reads, plus callees.o for
+                # ub_member_new (callees_sha256 is deliberately not recorded).
+                if bind_syms:
+                    raise _ad.AdapterError(
+                        "%s: the inline artifact for %s/%s still declares "
+                        "binding symbols (%s): the callee did not inline"
+                        % (testee_id, pattern_id, form, bind_syms))
+                if inl["member_arg"] != "-":
+                    user_c = os.path.join(cdir, "inline_user.c")
+                    with open(user_c, "w") as uf:
+                        uf.write(inline_user_source(inl["member_arg"]))
+                    obj, _sha = _co.ensure()
+                    gargv[gargv.index("-I"):gargv.index("-I")] = [user_c, obj]
+            elif bind_syms and co:
                 # [B148] L5: the unusual set's callout arms bind REAL
                 # callees (the pass arm's stub, the real arm's) through the
                 # bench's wrapper, with the binding parser and the ONE
@@ -5114,7 +5284,21 @@ class Adapter(_ad.Adapter):
                     meta["lim_storage_bytes"] = int(out.info["lim_storage_bytes"])
                 pairs, warn_line = emit_meta
                 meta.update(pairs)
-                if meta.get("callout_bindings"):
+                if inl:
+                    # [B148] inline arm part 2: RX_CODE_LANGS is the witness
+                    # that pcrec compiled the block's C (never stamped
+                    # without a grant); no binding stamp, no binding unit.
+                    if meta.get("code_langs") != "c" or meta.get("callout_bindings"):
+                        raise _ad.AdapterError(
+                            "%s: inline artifact for %s/%s: expected "
+                            "RX_CODE_LANGS \"c\" and no callout bindings, got "
+                            "code_langs=%r callout_bindings=%r"
+                            % (testee_id, pattern_id, form,
+                               meta.get("code_langs"),
+                               meta.get("callout_bindings")))
+                    meta["callout_binding"] = INLINE_BINDING_SHAPE
+                    meta.update(inl_facts)
+                elif meta.get("callout_bindings"):
                     meta["callout_binding"] = (CALLEE_BINDING_SHAPE if co
                                                else CALLOUT_BINDING_SHAPE)   # [B147]
                 if co:                                     # [B148] L5
