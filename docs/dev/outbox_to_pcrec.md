@@ -6669,3 +6669,23 @@ Other engines, for context: no upstream report filed; libpcre2 interp quadratic 
 - **Today:** pcrec's `scripts/boxqueue` `win_parse` (line 702) accepts only prio/name/cap/patience/idle_ok/log/start_s/done_ere/expect/witness/fail_ere, and rejects any other key as "unknown key". `bench_one` imports a fixed copy of `boxqueue_window` as the job, so the job-level `boxqueue: not-before` declaration can't be reached from a `.window`. Workaround: a detached sleeper delays the submission. It does not survive a reboot, and the job is invisible in `status`/`plan` until it is submitted.
 - **The ask:** accept an optional `not_before=YYYY-MM-DDTHH:MM[:SS]` (local time, the same strict parse as the job declaration) in `.window` files, and declare it on the imported job. The bench side adds `--not-before` to `scripts/boxq_window`.
 - **Status:** pcrec_main (live, 2026-10-30) is folding this into the queue-ordering lane after the sharding lane, together with the [B146] contract change, as ONE inbox item, not before Monday. Monday's spill keeps the sleeper.
+
+## O-116 (2026-11-01, bench manager) -- findings from the re-pin to cb32eda28 (abi 93) ([B149], lane b149prep)
+
+Source: docs/dev/lanes/b149prep_report.md section 6; census docs/dev/measurements/2026-10-30-b149prep-census.txt (1,600 rows:
+1,186 identical / 325 changed / 89 refused-both / 0 refusal movers / 0 unattributed). Compile-only; nothing here is timed.
+
+1. **abi 92 `cover` moved far more than stated:** 169 of the 325 changed rows (e.g. router-prefix-order emit 20,935 -> 16,138 B),
+   where the prediction was "a few dozen". Every cross-window mechanism comparison on literal windows now needs a
+   `--memfn=no-window-search` arm. Our [B145] `abc` identity witness had to deny it.
+2. **abi 92, an unlisted change:** a bounded two-stream look-ahead (`wa = 128, wb = 128`) landed in the required-run pre-check
+   (`rx_reqrun__body`), +368..377 B on 5 rows. It is not in abi 92's stamp list or entry. Intended?
+3. **abi 91:** the handoff moves forced-VM `abc`'s `.text`. A "the deny flag restores the old program" claim now needs
+   `-fno-req-handoff` too, and no `--list-axes` row says so. (`-fno-req-handoff` alone does not restore `abc` at abi 93.)
+4. **K134 (abi 93):** the sorted-line strip identity holds on all 93 pure rows, but the cost is +1.6..2.0 KB against the stated
+   +0.6..1.2 KB. CONFIRMED on behaviour: the default arm now answers the seg-s cscan-onig stream completely (100/256 calls gave up
+   at 614d45eb3). No deny row exists for K134 (by design), so its timing BEFORE is the 614d45eb3 `also_pins` arm.
+5. Minor: `\[` alone is now `cover`, so the old G1 "dominated" witness lost its meaning; `\[[a-z]+` keeps `dominated` with
+   `dfa_scan_edge range`.
+
+The first timed window at cb32eda28 is `b149w2` (Sun 11-01): capability@0.4 x {auto, nocaps} at cb32eda28 and @614d45eb3.
