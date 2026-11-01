@@ -63,7 +63,9 @@ made before any run, dependencies).
   C body from `callees/callees.c`, byte for byte, inside ``(?C`c: ...`)``), sha256-pinned entry files
   and `inline/blocks.tsv` (`inline/CLAUDE.md`). `gen_inline.py --check` re-derives; `tools/check_inline.py`
   (a `check-unusual` section) proves byte identity, the pins and segment == callee on random views, with
-  controls, needing no pcrec build. Part 2 (adapter + testee) is not here yet.
+  controls, needing no pcrec build. Part 2 (lane b148inline2): the adapter route + `pcrec-{auto,vm}-inline` testees
+  (testees/pcrec/CLAUDE.md), `gen_patterns.py` `INLINE_ARMS` (the inline testees copy their sibling's capability block;
+  patterns.rxt regenerated), and `tools/check_inline_pcrec.py` (the `inline-pcrec` section, needs the pinned build).
 
 Not here yet (other lanes): the authored `assists/<member>/<engine>/` (L6).
 
