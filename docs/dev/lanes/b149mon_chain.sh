@@ -14,7 +14,7 @@
 # Order = what a cut-off loses least of. DEADLINES: no main-suite SET or cell starts at or after STOP_MAIN
 # (18:30), no closing-sentinel cell after STOP_END (19:15), every suite under a gnutimeout ending by
 # HARD_END (19:40).
-# Launch: a DELAYED SUBMISSION (no not_before route yet, O-115) of
+# Launch: submitted AFTER pcrec's pilot (797-rulepilot-time) by /var/tmp/pcrecbench/b149monwin/sleeper2.sh (no `after`/not_before route for a .window yet, O-115):
 #     scripts/boxq_window --name b149mon --prio 700 --cap S -- /var/tmp/pcrecbench/b149monwin/wrap.sh
 # Completion: /var/tmp/pcrecbench/b149mon/chain.log ends `CHAIN_DONE`; `CHAIN_ABORT` = nothing measured.
 cd "$(dirname "${BASH_SOURCE[0]}")/../../.." || exit 9
