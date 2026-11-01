@@ -1213,6 +1213,17 @@ for _deep_id in ("pcre2-interp-deep", "pcre2-jit-deep", "pcrec-auto-deep",
         "engine capabilities are its default sibling's")
 del _deep_id
 
+# [B148] inline arm part 2: the INLINE callout testees (`unusual_only`, the
+# callee bodies inside the pattern); bench/unusual's gen_patterns.py INLINE_ARMS
+# copies the sibling's block.
+for _inline_id in ("pcrec-auto-inline", "pcrec-vm-inline"):
+    EXCLUDED_TESTEES[_inline_id] = (
+        "unusual-set-only INLINE callout arm ([B148] inline arm part 2, "
+        "`unusual_only`): pcrec compiled with the callee C bodies inside the "
+        "pattern (--allow-code=c --include-block); its engine capabilities are "
+        "its default sibling's")
+del _inline_id
+
 # [B148] lane b148aw (unusual_set_v1.md 5.5): the ASSISTED configs
 # (testees/assist/), `unusual_only` like the deep arms; bench/unusual's
 # gen_patterns.py ASSIST_ARMS copies each base's block.

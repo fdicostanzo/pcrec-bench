@@ -9,6 +9,7 @@ description |
   `unusual-co-*-nofn` for libpcre2 only; `conditional-define` (DEFINE_ONLY) beside
   every `conditionals` and for pcrec; the `vars` + `unusual-va-*` tokens are
   declared for pcrec's native-vars configs only (L7, VARS_NATIVE). The
+  `pcrec-*-inline` configs copy their sibling's block (b148 inline arm, INLINE_ARMS);
   `*-assist-v01` configs copy their base's block (b148aw, ASSIST_ARMS); their
   ASSISTED members' `unusual-<member>` grants are read from assists.tsv at run
   time. `unusual-<member>` of a recursion/callout member is declared wherever
@@ -17,7 +18,7 @@ description |
 oracle pcre2
 tag set=unusual, version=0.1
 ext bench
-  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in re2-default onig-default vectorscan-block-som rust-default pcre2-interp-deep pcre2-jit-deep pcrec-auto-deep pcrec-vm-deep onig-default-deep pcre2-jit-assist-v01 onig-default-assist-v01 re2-default-assist-v01 rust-default-assist-v01 vectorscan-block-som-assist-v01
+  roster pcre2-interp pcre2-jit pcrec-auto pcrec-nocaps pcrec-vm pcrec-vm-in re2-default onig-default vectorscan-block-som rust-default pcre2-interp-deep pcre2-jit-deep pcrec-auto-deep pcrec-vm-deep onig-default-deep pcrec-auto-inline pcrec-vm-inline pcre2-jit-assist-v01 onig-default-assist-v01 re2-default-assist-v01 rust-default-assist-v01 vectorscan-block-som-assist-v01
   capabilities pcre2-interp
     backrefs
     lookaround
@@ -345,6 +346,52 @@ ext bench
     captures
     true-end-anchor
     callouts
+    conditional-define
+    unusual-cscan
+    unusual-wild-sexp-balanced
+    unusual-wild-json-validate
+    unusual-co-luhn
+    unusual-co-isbn
+    unusual-co-member
+  capabilities pcrec-auto-inline
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+    callouts
+    unusual-co-netstr
+    conditional-define
+    unusual-cscan
+    unusual-wild-sexp-balanced
+    unusual-wild-json-validate
+    unusual-co-luhn
+    unusual-co-isbn
+    unusual-co-member
+  capabilities pcrec-vm-inline
+    backrefs
+    lookaround
+    possessive-quantifier
+    atomic-group
+    recursion
+    k-reset
+    unicode-properties
+    named-groups
+    free-spacing
+    span-reporting
+    non-utf8-subject
+    captures
+    true-end-anchor
+    callouts
+    unusual-co-netstr
     conditional-define
     unusual-cscan
     unusual-wild-sexp-balanced

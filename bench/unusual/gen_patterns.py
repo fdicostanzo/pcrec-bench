@@ -36,6 +36,12 @@ DEEP_ARMS = [("pcre2-interp-deep", "pcre2-interp"), ("pcre2-jit-deep", "pcre2-ji
              ("pcrec-auto-deep", "pcrec-auto"), ("pcrec-vm-deep", "pcrec-vm"),
              ("onig-default-deep", "onig-default")]
 
+# [B148] inline arm part 2: the INLINE callout testees (callout_spelling =
+# "inline", `unusual_only`) are pcrec-auto / pcrec-vm with the callee bodies
+# compiled INTO the pattern (an `.rxt` fragment block), so like a deep arm they
+# declare their sibling's block verbatim (callouts, unusual-co-netstr included).
+INLINE_ARMS = [("pcrec-auto-inline", "pcrec-auto"), ("pcrec-vm-inline", "pcrec-vm")]
+
 # [B148] lane b148aw: the ASSISTED configs (unusual_set_v1.md 5.5,
 # testees/assist/): the SAME engine as their base config with an assist for
 # the members it lacks, so -- like a deep arm -- each declares its base's
@@ -143,6 +149,7 @@ def render_rxt():
         "  `unusual-co-*-nofn` for libpcre2 only; `conditional-define` (DEFINE_ONLY) beside",
         "  every `conditionals` and for pcrec; the `vars` + `unusual-va-*` tokens are",
         "  declared for pcrec's native-vars configs only (L7, VARS_NATIVE). The",
+        "  `pcrec-*-inline` configs copy their sibling's block (b148 inline arm, INLINE_ARMS);",
         "  `*-assist-v01` configs copy their base's block (b148aw, ASSIST_ARMS); their",
         "  ASSISTED members' `unusual-<member>` grants are read from assists.tsv at run",
         "  time. `unusual-<member>` of a recursion/callout member is declared wherever",
@@ -151,10 +158,10 @@ def render_rxt():
         "oracle pcre2",
         "tag set=unusual, version=0.1",
         "ext bench",
-        "  roster " + " ".join(ROSTER + [d for d, _ in DEEP_ARMS + ASSIST_ARMS]),
+        "  roster " + " ".join(ROSTER + [d for d, _ in DEEP_ARMS + INLINE_ARMS + ASSIST_ARMS]),
     ]
     reqs = {m.id: set(m.req) for m in MB.members()}
-    for t, src in [(t, t) for t in ROSTER] + DEEP_ARMS + ASSIST_ARMS:
+    for t, src in [(t, t) for t in ROSTER] + DEEP_ARMS + INLINE_ARMS + ASSIST_ARMS:
         lines.append("  capabilities " + t)
         have = []
         for tok in blocks[src]:

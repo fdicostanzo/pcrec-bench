@@ -31,6 +31,12 @@ Sections (each timed; one summary line at the end; exit 1 on any failure):
                 callee body byte-identical to callees/callees.c, every include
                 sha256-pinned and recomputed, the segment == the callee on random
                 views under gcc and clang; each with a control. NO pcrec build.
+  inline-pcrec  tools/check_inline_pcrec.py (b148inline2): the build-dependent half --
+                the two inline testee ids, the 14 blocks compiled by the pinned pcrec
+                (`--allow-code=c --include-block`) with the three stamps, the three
+                refusal controls through pcrec, gcc and clang on every artifact, the
+                inline answers == the separate-TU arm's through the adapter, and the
+                size/program census. SKIPPED BY NAME without the pinned binary.
 
 The four tools/check_*.py modules were moved here from `make check-harness`
 (tools/selfcheck.py main()): no check runs twice in `make check`.
@@ -282,6 +288,10 @@ SECTIONS = [
     ("assist", _module("check_assist")),
     ("w1fix", _module("check_w1fix")),
     ("inline", _module("check_inline")),
+    # [B148] inline arm part 2: the build-dependent half (needs the pinned
+    # pcrec binary; SKIPPED BY NAME without it). Runs pcrec, gcc, clang and
+    # the pcrec driver -- not light.
+    ("inline-pcrec", _module("check_inline_pcrec")),
 ]
 
 
