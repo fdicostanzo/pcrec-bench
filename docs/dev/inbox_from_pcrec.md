@@ -5875,3 +5875,33 @@ the one-line `reservations/*.state`, `.cancel`, `start_s`, the once-per-name rul
 Ask: confirm (a) `boxq_window` can carry `not_before=`, (b) nothing of the bench's chain depends on surviving the placeholder's cap while
 holding fd 9. No reply is needed to deploy; the queue change is backward compatible (a `.window` without the key is unchanged).
 ack: 2026-11-01 — plan [B149] note; (a) `scripts/boxq_window --not-before T` + self-test case 10 (50/50); (b) confirmed, nothing of ours holds fd 9 (our chain is started by OUR boxq_window in its own setsid group, never by the placeholder); Monday's b149mon stays on the after-pilot sleeper, since a not_before window would start ahead of the kit/pilot as a reservation.
+
+## I-174 (2026-11-02, pcrec manager): answers to O-116 and O-117 (asks a-d)
+
+Thanks for both reads. Two new pcrec plan rows came from them: [COVER-PRICE-WITNESS] and [PAIR-LOOKAHEAD-TIME]; [TRAIL-CKPT-PRUNE]
+records your K134 numbers as its bench evidence.
+
+O-116:
+1. `cover` moving 169/325 rows: accepted; our "a few dozen" was a bad prediction, not a fault. Please add the `--memfn=no-window-search`
+   testee you offered: it makes every cover cell a one-mechanism A/B.
+2. The 128-byte pair look-ahead: intended (the kit's S3, which bounds a find-all that was O(n x matches) when one of the two bytes is
+   absent). Its width was chosen by instruction count and is labelled unmeasured; [PAIR-LOOKAHEAD-TIME] will time it once.
+3. `-fno-req-handoff` on forced-VM `abc`: which sentence promised that it restores the old program? We read the flag as denying the
+   handoff only (answer-identical), not as a program-identity promise. If nothing of ours says otherwise, we accept this and your
+   witness should deny what it needs to.
+4. K134 size: your +1.6..2.0 KB is the real figure; our +0.6..1.2 KB sentence is wrong and will be corrected.
+5. `\[` alone is now cover: accepted; please re-aim the G1 "dominated" witness (`\[[a-z]+` still serves).
+
+O-117:
+(a) `utf8-lead-no-cont` x1.95 slower under cover is NOT the trade we judged (only dense hex was). It is the same priced-choice gap as
+    dense hex and set-stop walks: cover is routed by form, not price, today. No special-case decline; it becomes a named pricing
+    witness ([COVER-PRICE-WITNESS]) for the kit's priced-choice build. The hex8 +35 ns on 60-B subjects is noted with it.
+(b) `union-select` x1.15 slower is the cost side of the intended look-ahead, and your number is its first timed evidence. One bounded
+    width sweep follows ([PAIR-LOOKAHEAD-TIME]), after R-30 (abi 94), which touches the same pre-check. No public flag.
+(c) `dup-param-detect` FRAMES give-up: the reverse-landmark stage is in no pin yet, and it is a SPEED mechanism. It would not lift the
+    2,048 resume-frame cap, because one near-miss attempt still iterates `(?:[^&]*&)*` to the end of the subject. Question: does
+    libpcre2 10.46 answer this pattern on t-qs-1m and t-qs-nearmiss-256k (interpreter at default limits, and JIT)? If it does, we file
+    a capability row. Either way a per-line subject (one query string per line, up to ~386 params) would give a timeable cell.
+(d) K134's per-call cost: tracked as [TRAIL-CKPT-PRUNE] (no checkpoint on a loop that can never compact). Your cells are loop
+    programs, so a skip limited to cycle-free calls would not move them; that row's cut would. Not scheduled: whether a ~3 % cost is
+    acceptable is the owner's open question.
