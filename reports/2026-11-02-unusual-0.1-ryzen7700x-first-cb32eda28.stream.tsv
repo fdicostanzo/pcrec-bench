@@ -11,6 +11,154 @@ record			pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured																
 record			pcrec_cb32eda28_vm-caps-simdna	measured																		tier pinned; agreement agree (0 of 40 groups; 0 of 2979 rows; 34 unjudged; k=1.5, 2/3; 5 trials); load loaded; occupancy before pass / after pass
 record			pcrec_cb32eda28_vm-caps-simdna_inline	measured																		tier pinned; agreement agree (0 of 36 groups; 0 of 2973 rows; 34 unjudged; k=1.5, 2/3; 5 trials); load loaded; occupancy before pass / after fail
 record			pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured																		tier pinned; agreement agree (0 of 40 groups; 0 of 3009 rows; 4 unjudged; k=1.5, 2/3; 5 trials); load loaded; occupancy before pass / after fail
+cell	seg-l	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	1.93946e+08	1.93365e+08	1.9885e+08	4096	3582729	21119.3	18.4728	4049	47	0	0				12303		
+cell	seg-l	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	1.94662e+08	1.93893e+08	1.97404e+08	4096	3582729	21041.6	18.4049	4049	47	0	0				9738		
+cell	seg-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	1.24548e+07	1.23444e+07	1.2669e+07	256	225602	20554.3	18.1136	251	5	0	0				12303		
+cell	seg-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	1.2488e+07	1.23861e+07	1.26009e+07	256	225602	20499.6	18.0654	251	5	0	0				9738		
+cell	sqlite-bodies	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	3.00732e+08	3.0042e+08	3.05927e+08	4971	5023466	16529.7	16.7041	4971	0	0	0				12303		
+cell	sqlite-bodies	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	3.0269e+08	3.00405e+08	3.0843e+08	4971	5023466	16422.8	16.5961	4971	0	0	0				9738		
+cell	sqlite-bodies-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	2.01465e+07	2.01041e+07	2.05779e+07	311	349791	15437	17.3624	311	0	0	0				12303		
+cell	sqlite-bodies-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	measured	5	2.03596e+07	2.01347e+07	2.06334e+07	311	349791	15275.3	17.1806	311	0	0	0				9738		
+cell	seg-l	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	1.42872e+07	1.42476e+07	1.43021e+07	4096	3582729	286691	250.765	4049	47	0	0				41449		
+cell	seg-l	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	1.44418e+07	1.4437e+07	1.44561e+07	4096	3582729	283622	248.081	4049	47	0	0				33944		
+cell	seg-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	916294	902676	936440	256	225602	279386	246.211	251	5	0	0				41449		
+cell	seg-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	921532	914280	932290	256	225602	277798	244.812	251	5	0	0				33944		
+cell	sqlite-bodies	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	2.00177e+07	1.99532e+07	2.00346e+07	4971	5023466	248330	250.951	4971	0	0	0				41449		
+cell	sqlite-bodies	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	2.01831e+07	2.01634e+07	2.02264e+07	4971	5023466	246296	248.895	4971	0	0	0				33944		
+cell	sqlite-bodies-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	1.35898e+06	1.34916e+06	1.37172e+06	311	349791	228849	257.393	311	0	0	0				41449		
+cell	sqlite-bodies-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	measured	5	1.36764e+06	1.36043e+06	1.40108e+06	311	349791	227399	255.763	311	0	0	0				33944		
+cell	seg-l	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	1.43966e+08	1.43422e+08	1.44918e+08	4096	3582729	28451.1	24.8859	4049	47	0	0				37921		
+cell	seg-l	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	1.45774e+08	1.44487e+08	1.46278e+08	4096	3582729	28098.4	24.5774	4049	47	0	0				45440.5		
+cell	seg-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	9.57341e+06	9.37424e+06	9.69095e+06	256	225602	26740.7	23.5655	251	5	0	0				37921		
+cell	seg-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	9.75857e+06	9.68924e+06	9.86789e+06	256	225602	26233.4	23.1183	251	5	0	0				45440.5		
+cell	sqlite-bodies	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	2.0256e+08	2.00033e+08	2.06386e+08	4971	5023466	24540.9	24.7999	4971	0	0	0				37921		
+cell	sqlite-bodies	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	2.04242e+08	2.03399e+08	2.10519e+08	4971	5023466	24338.8	24.5957	4971	0	0	0				45440.5		
+cell	sqlite-bodies-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	1.33015e+07	1.31916e+07	1.38872e+07	311	349791	23380.7	26.297	311	0	0	0				37921		
+cell	sqlite-bodies-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	measured	5	1.35516e+07	1.34522e+07	1.39086e+07	311	349791	22949.3	25.8117	311	0	0	0				45440.5		
+cell	route-zipf	va-route	pcrec_614d45eb3_auto-caps-simdna	measured	5	155960	155759	156964	4096	81847	2.62631e+07	524.793	1064	2049	983	0				1.23479e+08		
+cell	seg-l	cscan	pcrec_614d45eb3_auto-caps-simdna	gave-up					4096	3582729			2333	40	0	1723	PCREC_ERR_FRAMES			4.03339e+08		1723 of 4096 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-l	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	gave-up					4096	3582729			2333	40	0	1723	PCREC_ERR_FRAMES			4.16045e+08		1723 of 4096 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-s	cscan	pcrec_614d45eb3_auto-caps-simdna	gave-up					256	225602			151	5	0	100	PCREC_ERR_FRAMES			4.03339e+08		100 of 256 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-s	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	gave-up					256	225602			151	5	0	100	PCREC_ERR_FRAMES			4.16045e+08		100 of 256 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies	cscan	pcrec_614d45eb3_auto-caps-simdna	gave-up					4971	5023466			2351	0	0	2620	PCREC_ERR_FRAMES			4.03339e+08		2620 of 4971 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	gave-up					4971	5023466			2351	0	0	2620	PCREC_ERR_FRAMES			4.16045e+08		2620 of 4971 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies-s	cscan	pcrec_614d45eb3_auto-caps-simdna	gave-up					311	349791			148	0	0	163	PCREC_ERR_FRAMES			4.03339e+08		163 of 311 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies-s	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	gave-up					311	349791			148	0	0	163	PCREC_ERR_FRAMES			4.16045e+08		163 of 311 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	tenant-d4	va-tenant	pcrec_614d45eb3_auto-caps-simdna	measured	5	196283	195837	197156	16384	516826	8.34712e+07	2633.06	11818	4566	0	0				1.54411e+08		
+cell	tenant-d4096	va-tenant	pcrec_614d45eb3_auto-caps-simdna	measured	5	221406	220045	224552	16384	533320	7.39997e+07	2408.78	11706	4678	0	0				1.54411e+08		
+cell	tenant-d64	va-tenant	pcrec_614d45eb3_auto-caps-simdna	measured	5	205962	205073	209557	16384	517577	7.95487e+07	2512.97	11790	4594	0	0				1.54411e+08		
+cell	term-zipf	va-term	pcrec_614d45eb3_auto-caps-simdna	measured	5	247592	246342	258278	4096	137183	1.65434e+07	554.07	2137	1758	201	0				1.67255e+08		
+cell	term-zipf	va-term-bang	pcrec_614d45eb3_auto-caps-simdna	measured	5	247031	245639	258266	4096	137183	1.65809e+07	555.327	2137	1758	201	0				1.68503e+08		
+cell	route-zipf	va-route	pcrec_614d45eb3_vm-caps-simdna	measured	5	150389	150243	151137	4096	81847	2.72361e+07	544.236	1064	2049	983	0				1.23709e+08		
+cell	seg-l	cscan	pcrec_614d45eb3_vm-caps-simdna	gave-up					4096	3582729			2333	40	0	1723	PCREC_ERR_FRAMES			4.15637e+08		1723 of 4096 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-l	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	gave-up					4096	3582729			2333	40	0	1723	PCREC_ERR_FRAMES			3.97065e+08		1723 of 4096 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-s	cscan	pcrec_614d45eb3_vm-caps-simdna	gave-up					256	225602			151	5	0	100	PCREC_ERR_FRAMES			4.15637e+08		100 of 256 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	seg-s	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	gave-up					256	225602			151	5	0	100	PCREC_ERR_FRAMES			3.97065e+08		100 of 256 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies	cscan	pcrec_614d45eb3_vm-caps-simdna	gave-up					4971	5023466			2351	0	0	2620	PCREC_ERR_FRAMES			4.15637e+08		2620 of 4971 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	gave-up					4971	5023466			2351	0	0	2620	PCREC_ERR_FRAMES			3.97065e+08		2620 of 4971 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies-s	cscan	pcrec_614d45eb3_vm-caps-simdna	gave-up					311	349791			148	0	0	163	PCREC_ERR_FRAMES			4.15637e+08		163 of 311 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	sqlite-bodies-s	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	gave-up					311	349791			148	0	0	163	PCREC_ERR_FRAMES			3.97065e+08		163 of 311 call(s) gave up; the first on PCREC_ERR_FRAMES (code -3, a resource limit)
+cell	tenant-d4	va-tenant	pcrec_614d45eb3_vm-caps-simdna	measured	5	197142	196705	208252	16384	516826	8.31075e+07	2621.59	11818	4566	0	0				1.54121e+08		
+cell	tenant-d4096	va-tenant	pcrec_614d45eb3_vm-caps-simdna	measured	5	223787	220943	235684	16384	533320	7.32123e+07	2383.15	11706	4678	0	0				1.54121e+08		
+cell	tenant-d64	va-tenant	pcrec_614d45eb3_vm-caps-simdna	measured	5	205577	203373	219687	16384	517577	7.96975e+07	2517.68	11790	4594	0	0				1.54121e+08		
+cell	term-zipf	va-term	pcrec_614d45eb3_vm-caps-simdna	measured	5	247598	247137	248784	4096	137183	1.65429e+07	554.054	2137	1758	201	0				1.73161e+08		
+cell	term-zipf	va-term-bang	pcrec_614d45eb3_vm-caps-simdna	measured	5	247715	247190	249950	4096	137183	1.65351e+07	553.793	2137	1758	201	0				1.72857e+08		
+cell	route-zipf	va-route	pcrec_cb32eda28_auto-caps-simdna	measured	5	153997	153646	155708	4096	81847	2.65979e+07	531.484	1064	2049	983	0				1.2369e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_auto-caps-simdna	measured	5	6.02658e+07	5.99132e+07	6.05382e+07	4096	3582729	67965.6	59.4488	4049	47	0	0				4.31208e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	measured	5	6.08527e+07	6.05731e+07	6.12894e+07	4096	3582729	67310.1	58.8754	4049	47	0	0				4.32881e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_auto-caps-simdna	measured	5	3.88567e+06	3.82515e+06	3.94731e+06	256	225602	65883.1	58.06	251	5	0	0				4.31208e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	measured	5	3.93308e+06	3.90622e+06	3.94151e+06	256	225602	65088.9	57.3601	251	5	0	0				4.32881e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_auto-caps-simdna	measured	5	9.10902e+07	9.05533e+07	9.15891e+07	4971	5023466	54572.3	55.1483	4971	0	0	0				4.31208e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	measured	5	9.2189e+07	9.19588e+07	9.22879e+07	4971	5023466	53921.8	54.491	4971	0	0	0				4.32881e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-caps-simdna	measured	5	6.11054e+06	6.0848e+06	6.17557e+06	311	349791	50895.6	57.2438	311	0	0	0				4.31208e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	measured	5	6.20054e+06	6.18042e+06	6.25071e+06	311	349791	50156.9	56.413	311	0	0	0				4.32881e+08		
+cell	tenant-d4	va-tenant	pcrec_cb32eda28_auto-caps-simdna	measured	5	196506	193311	198971	16384	516826	8.33766e+07	2630.08	11818	4566	0	0				1.54608e+08		
+cell	tenant-d4096	va-tenant	pcrec_cb32eda28_auto-caps-simdna	measured	5	217153	215322	221643	16384	533320	7.54491e+07	2455.96	11706	4678	0	0				1.54608e+08		
+cell	tenant-d64	va-tenant	pcrec_cb32eda28_auto-caps-simdna	measured	5	204364	201700	205944	16384	517577	8.01707e+07	2532.62	11790	4594	0	0				1.54608e+08		
+cell	term-zipf	va-term	pcrec_cb32eda28_auto-caps-simdna	measured	5	244206	243765	245522	4096	137183	1.67727e+07	561.75	2137	1758	201	0				1.72142e+08		
+cell	term-zipf	va-term-bang	pcrec_cb32eda28_auto-caps-simdna	measured	5	246182	245800	257595	4096	137183	1.66381e+07	557.243	2137	1758	201	0				1.72693e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	6.06867e+07	6.06503e+07	6.08638e+07	4096	3582729	67494.2	59.0365	4049	47	0	0				4.3123e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	6.0842e+07	6.0615e+07	6.67032e+07	4096	3582729	67321.9	58.8858	4049	47	0	0				4.17126e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	3.94351e+06	3.91198e+06	3.96007e+06	256	225602	64916.8	57.2084	251	5	0	0				4.3123e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	3.95064e+06	3.893e+06	4.30937e+06	256	225602	64799.5	57.1051	251	5	0	0				4.17126e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	9.23995e+07	9.19272e+07	9.24174e+07	4971	5023466	53799	54.3668	4971	0	0	0				4.3123e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	9.25796e+07	9.21736e+07	9.32704e+07	4971	5023466	53694.3	54.261	4971	0	0	0				4.17126e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	6.20225e+06	6.16506e+06	6.23909e+06	311	349791	50143.1	56.3975	311	0	0	0				4.3123e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	measured	5	6.22389e+06	6.18942e+06	6.24826e+06	311	349791	49968.8	56.2014	311	0	0	0				4.17126e+08		
+cell	route-zipf	va-route	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	158432	158220	161574	4096	81847	2.58533e+07	516.606	1064	2049	983	0				1.24738e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	4.6156e+07	4.60452e+07	4.66736e+07	4096	3582729	88742.6	77.6222	4049	47	0	0				4.15598e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	4.61858e+07	4.61461e+07	4.63378e+07	4096	3582729	88685.3	77.5721	4049	47	0	0				4.44059e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	3.04399e+06	3.03161e+06	3.05859e+06	256	225602	84100.1	74.1139	251	5	0	0				4.15598e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	3.02911e+06	3.01436e+06	3.05299e+06	256	225602	84513.2	74.4779	251	5	0	0				4.44059e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	7.22094e+07	7.1521e+07	7.2655e+07	4971	5023466	68841.5	69.5681	4971	0	0	0				4.15598e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	7.24464e+07	7.22917e+07	7.26091e+07	4971	5023466	68616.3	69.3405	4971	0	0	0				4.44059e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	4.75637e+06	4.73554e+06	4.81031e+06	311	349791	65386	73.5415	311	0	0	0				4.15598e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	4.7906e+06	4.7619e+06	4.80198e+06	311	349791	64918.8	73.0161	311	0	0	0				4.44059e+08		
+cell	tenant-d4	va-tenant	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	203445	202970	208385	16384	516826	8.0533e+07	2540.38	11818	4566	0	0				1.52708e+08		
+cell	tenant-d4096	va-tenant	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	225963	223412	228331	16384	533320	7.25076e+07	2360.21	11706	4678	0	0				1.52708e+08		
+cell	tenant-d64	va-tenant	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	212260	210703	213484	16384	517577	7.71885e+07	2438.42	11790	4594	0	0				1.52708e+08		
+cell	term-zipf	va-term	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	249310	248707	253981	4096	137183	1.64293e+07	550.251	2137	1758	201	0				1.66148e+08		
+cell	term-zipf	va-term-bang	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	measured	5	248948	248351	254379	4096	137183	1.64532e+07	551.051	2137	1758	201	0				1.66931e+08		
+cell	route-zipf	va-route	pcrec_cb32eda28_vm-caps-simdna	measured	5	148293	147382	150031	4096	81847	2.76211e+07	551.929	1064	2049	983	0				1.28176e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_vm-caps-simdna	measured	5	6.0176e+07	6.00842e+07	6.03811e+07	4096	3582729	68067	59.5375	4049	47	0	0				4.33517e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	measured	5	6.01797e+07	6.00215e+07	6.01988e+07	4096	3582729	68062.8	59.5338	4049	47	0	0				4.24898e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_vm-caps-simdna	measured	5	3.88258e+06	3.84871e+06	3.90313e+06	256	225602	65935.6	58.1063	251	5	0	0				4.33517e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	measured	5	3.8876e+06	3.85941e+06	3.93018e+06	256	225602	65850.5	58.0313	251	5	0	0				4.24898e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_vm-caps-simdna	measured	5	9.12863e+07	9.10242e+07	9.18011e+07	4971	5023466	54455.1	55.0298	4971	0	0	0				4.33517e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	measured	5	9.11347e+07	9.07911e+07	9.13829e+07	4971	5023466	54545.6	55.1213	4971	0	0	0				4.24898e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-caps-simdna	measured	5	6.13923e+06	6.10191e+06	6.19294e+06	311	349791	50657.8	56.9764	311	0	0	0				4.33517e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	measured	5	6.11046e+06	6.08329e+06	6.16434e+06	311	349791	50896.3	57.2446	311	0	0	0				4.24898e+08		
+cell	tenant-d4	va-tenant	pcrec_cb32eda28_vm-caps-simdna	measured	5	195485	194224	199689	16384	516826	8.38119e+07	2643.81	11818	4566	0	0				1.54732e+08		
+cell	tenant-d4096	va-tenant	pcrec_cb32eda28_vm-caps-simdna	measured	5	219363	217988	225057	16384	533320	7.46888e+07	2431.22	11706	4678	0	0				1.54732e+08		
+cell	tenant-d64	va-tenant	pcrec_cb32eda28_vm-caps-simdna	measured	5	201310	200053	203975	16384	517577	8.13868e+07	2571.04	11790	4594	0	0				1.54732e+08		
+cell	term-zipf	va-term	pcrec_cb32eda28_vm-caps-simdna	measured	5	244310	243960	247804	4096	137183	1.67656e+07	561.512	2137	1758	201	0				1.72959e+08		
+cell	term-zipf	va-term-bang	pcrec_cb32eda28_vm-caps-simdna	measured	5	244114	243847	254641	4096	137183	1.6779e+07	561.963	2137	1758	201	0				1.7336e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	6.04695e+07	6.03589e+07	6.08053e+07	4096	3582729	67736.6	59.2485	4049	47	0	0				4.31432e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	6.08004e+07	6.07104e+07	6.08771e+07	4096	3582729	67368	58.9261	4049	47	0	0				4.1848e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	3.90645e+06	3.87262e+06	3.9939e+06	256	225602	65532.6	57.7511	251	5	0	0				4.31432e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	3.94823e+06	3.92161e+06	3.98664e+06	256	225602	64839.2	57.14	251	5	0	0				4.1848e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	9.14355e+07	9.11489e+07	9.19647e+07	4971	5023466	54366.2	54.94	4971	0	0	0				4.31432e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	9.23672e+07	9.20867e+07	9.25882e+07	4971	5023466	53817.8	54.3858	4971	0	0	0				4.1848e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	6.1582e+06	6.11937e+06	6.16936e+06	311	349791	50501.7	56.8008	311	0	0	0				4.31432e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	measured	5	6.18923e+06	6.18396e+06	6.21991e+06	311	349791	50248.6	56.516	311	0	0	0				4.1848e+08		
+cell	route-zipf	va-route	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	158975	158415	160227	4096	81847	2.57651e+07	514.842	1064	2049	983	0				1.31112e+08		
+cell	seg-l	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	4.6369e+07	4.60453e+07	4.64709e+07	4096	3582729	88334.9	77.2656	4049	47	0	0				4.53027e+08		
+cell	seg-l	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	4.71438e+07	4.67325e+07	5.09568e+07	4096	3582729	86883.1	75.9957	4049	47	0	0				4.21979e+08		
+cell	seg-s	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	3.038e+06	3.01263e+06	3.06099e+06	256	225602	84266.1	74.2602	251	5	0	0				4.53027e+08		
+cell	seg-s	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	3.12575e+06	3.08508e+06	3.38706e+06	256	225602	81900.5	72.1754	251	5	0	0				4.21979e+08		
+cell	sqlite-bodies	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	7.24711e+07	7.21729e+07	7.27169e+07	4971	5023466	68592.9	69.3168	4971	0	0	0				4.53027e+08		
+cell	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	7.53251e+07	7.30557e+07	7.92796e+07	4971	5023466	65993.9	66.6905	4971	0	0	0				4.21979e+08		
+cell	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	4.7935e+06	4.78181e+06	4.80764e+06	311	349791	64879.6	72.972	311	0	0	0				4.53027e+08		
+cell	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	4.89252e+06	4.83511e+06	5.2123e+06	311	349791	63566.4	71.4951	311	0	0	0				4.21979e+08		
+cell	tenant-d4	va-tenant	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	206134	204621	207517	16384	516826	7.94822e+07	2507.23	11818	4566	0	0				1.52167e+08		
+cell	tenant-d4096	va-tenant	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	228139	226179	235331	16384	533320	7.18158e+07	2337.69	11706	4678	0	0				1.52167e+08		
+cell	tenant-d64	va-tenant	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	213709	212549	217664	16384	517577	7.66652e+07	2421.88	11790	4594	0	0				1.52167e+08		
+cell	term-zipf	va-term	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	249043	248548	251276	4096	137183	1.64469e+07	550.84	2137	1758	201	0				1.75826e+08		
+cell	term-zipf	va-term-bang	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	measured	5	249555	248998	250174	4096	137183	1.64132e+07	549.712	2137	1758	201	0				1.74871e+08		
+break_even	seg-l	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		13212.3	13,212 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 47350 - pcrec 14713 ns/call)
+break_even	seg-l	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (3488 vs 14713 ns/call)
+break_even	seg-l	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		21101.8	21,102 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 35148 - pcrec 14713 ns/call)
+break_even	seg-l	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		13250.8	13,251 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 47525 - pcrec 14857 ns/call)
+break_even	seg-l	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (3526 vs 14857 ns/call)
+break_even	seg-l	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		20879.2	20,879 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 35589 - pcrec 14857 ns/call)
+break_even	seg-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		12882.1	12,882 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 48652 - pcrec 15178 ns/call)
+break_even	seg-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (3579 vs 15178 ns/call)
+break_even	seg-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		19408.3	19,408 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 37396 - pcrec 15178 ns/call)
+break_even	seg-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		12953.6	12,954 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 48781 - pcrec 15364 ns/call)
+break_even	seg-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (3600 vs 15364 ns/call)
+break_even	seg-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		19022.9	19,023 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 38119 - pcrec 15364 ns/call)
+break_even	sqlite-bodies	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		10224.7	10,225 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 60497 - pcrec 18324 ns/call)
+break_even	sqlite-bodies	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (4027 vs 18324 ns/call)
+break_even	sqlite-bodies	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		19229.7	19,230 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 40748 - pcrec 18324 ns/call)
+break_even	sqlite-bodies	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		10222.5	10,223 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 60891 - pcrec 18545 ns/call)
+break_even	sqlite-bodies	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (4060 vs 18545 ns/call)
+break_even	sqlite-bodies	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		19203.9	19,204 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 41087 - pcrec 18545 ns/call)
+break_even	sqlite-bodies-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		9554.45	9,554 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 64780 - pcrec 19648 ns/call)
+break_even	sqlite-bodies-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (4370 vs 19648 ns/call)
+break_even	sqlite-bodies-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		18649.1	18,649 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 431.208 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 42770 - pcrec 19648 ns/call)
+break_even	sqlite-bodies-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																		9508.12	9,508 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `libpcre2_10.46_interp-caps-simdna_lim-ceil1g` 65465 - pcrec 19937 ns/call)
+break_even	sqlite-bodies-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g																			none: `libpcre2_10.46_jit-caps-simdna_lim-ceil1g` is not slower per call than `pcrec_cb32eda28_auto-caps-simdna` (4398 vs 19937 ns/call)
+break_even	sqlite-bodies-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g																		18313.8	18,314 calls: `pcrec_cb32eda28_auto-caps-simdna` compile 432.881 ms / (assisted `oniguruma_6.9.10_default-caps-simdna_lim-ceil1g` 43574 - pcrec 19937 ns/call)
 callout	co-isbn-1m	co-isbn	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																			member=co-isbn regime=large-subject-throughput twin=771007 pass=816063 pass-nofn=793079 real=926005 wrapper=45056.1 callee=109943 per_fire=6.52169 fires_pass=16858 fires_real=16858 share=
 callout	cs-00	co-isbn	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																			member=co-isbn regime=short-subject-search twin=14.9538 pass=14.9459 pass-nofn=15.1368 real=14.9656 wrapper=-0.00784562 callee=0.0197043 per_fire= fires_pass=0 fires_real=0 share=
 callout	cs-01	co-isbn	libpcre2_10.46_interp-caps-simdna_lim-ceil1g																			member=co-isbn regime=short-subject-search twin=14.8609 pass=14.9004 pass-nofn=15.0623 real=14.9025 wrapper=0.0395283 callee=0.00208956 per_fire= fires_pass=0 fires_real=0 share=
@@ -8622,6 +8770,50 @@ depth	nest-paren-100k	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match
 depth	nest-paren-100k	cscan	pcrec_cb32eda28_vm-caps-simdna	match																		
 depth	nest-paren-100k	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
 depth	nest-paren-100k	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-l	cscan	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-l	cscan	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	seg-l	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	seg-l	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	seg-l	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	seg-l	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-s	cscan	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-s	cscan	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	seg-s	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	seg-s	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	seg-s	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	seg-s	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies	cscan	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	sqlite-bodies	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies-s	cscan	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	sqlite-bodies-s	cscan	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
@@ -8809,6 +9001,50 @@ depth	nest-paren-100k	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	
 depth	nest-paren-100k	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	match																		
 depth	nest-paren-100k	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
 depth	nest-paren-100k	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-l	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	seg-l	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-s	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	seg-s	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	sqlite-bodies	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan-onig	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan-onig	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan-onig	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_614d45eb3_auto-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_614d45eb3_vm-caps-simdna	PCREC_ERR_FRAMES																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-caps-simdna_inline	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_auto-in-caps-simdna_lim-ceil1g	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-caps-simdna_inline	match																		
+depth	sqlite-bodies-s	cscan-onig	pcrec_cb32eda28_vm-in-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	floor	libpcre2_10.46_interp-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	floor	libpcre2_10.46_jit-caps-simdna_lim-ceil1g	match																		
 depth	nest-brace-128	floor	oniguruma_6.9.10_default-caps-simdna_lim-ceil1g	match																		

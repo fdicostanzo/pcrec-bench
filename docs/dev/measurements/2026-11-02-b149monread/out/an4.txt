@@ -1,0 +1,122 @@
+== all large cells with cb32/614 ratio < 0.8 or > 1.1 (auto)
+  x0.589 co-isbn                co-isbn-1m       614=5.6709e+05 cb=3.3376e+05   vm: 0.569
+  x0.481 co-isbn-pass           co-isbn-1m       614=4.7252e+05 cb=2.2725e+05   vm: 0.477
+  x0.487 co-member              co-member-1m     614=7.5305e+05 cb=3.6659e+05   vm: 0.487
+  x0.384 co-member-pass         co-member-1m     614=6.4288e+05 cb=2.4713e+05   vm: 0.384
+  x1.148 co-netstr-twin         co-netstr-1m     614=1.0558e+06 cb=1.212e+06   vm: 1.011
+  x1.100 cscan                  unterminated-5m  614=34544 cb=38008   vm: 1.088
+  x0.705 floor                  nest-brace-128   614=13.69 cb=9.6505   vm: 0.999
+  x0.708 floor                  nest-brace-1k    614=21.501 cb=15.233   vm: 0.975
+  x0.788 floor                  nest-brace-2k    614=31.311 cb=24.673   vm: 1.039
+  x0.658 floor                  nest-brace-512   614=17.53 cb=11.536   vm: 0.997
+  x0.706 floor                  nest-paren-128   614=13.784 cb=9.7371   vm: 1.015
+  x0.726 floor                  nest-paren-1k    614=21.442 cb=15.576   vm: 0.991
+  x0.776 floor                  nest-paren-2k    614=30.933 cb=24.018   vm: 1.028
+  x0.645 floor                  nest-paren-512   614=17.479 cb=11.273   vm: 1.007
+
+== pass-twin and real-pass (1 MB subjects, ns per call) at 614d45eb3 vs cb32eda28, separate-TU, vm route
+  co-luhn    vm614  real=934986 pass=642996 twin=543279 pass-twin=99717 real-pass=291990
+  co-luhn    vm     real=937922 pass=642428 twin=547107 pass-twin=95322 real-pass=295493
+  co-isbn    vm614  real=576797 pass=480871 twin=434005 pass-twin=46866 real-pass=95926
+  co-isbn    vm     real=328472 pass=229211 twin=199223 pass-twin=29988 real-pass=99261
+  co-member  vm614  real=755777 pass=644135 twin=588236 pass-twin=55899 real-pass=111642
+  co-member  vm     real=368195 pass=247231 twin=195537 pass-twin=51694 real-pass=120964
+
+== _in / default (short cells) by pattern, auto: median ratio, plus the cells with ratio <0.5 or >1.4
+  co-isbn                  n=161 median=1.309 min=1.014 max=1.634
+  co-isbn-pass             n=161 median=1.312 min=0.978 max=1.652
+  co-isbn-twin             n=161 median=1.203 min=1.029 max=1.366
+  co-luhn                  n=161 median=1.095 min=0.925 max=1.472
+  co-luhn-pass             n=161 median=1.102 min=0.914 max=1.479
+  co-luhn-twin             n=161 median=1.131 min=0.991 max=1.242
+  co-member                n=161 median=1.163 min=1.043 max=1.541
+  co-member-pass           n=161 median=1.196 min=1.005 max=1.542
+  co-member-twin           n=161 median=1.080 min=1.031 max=1.246
+  co-netstr                n=161 median=1.397 min=0.966 max=1.433
+  co-netstr-assist         n=161 median=1.178 min=0.992 max=1.227
+  co-netstr-twin           n=161 median=1.213 min=1.020 max=1.250
+  cscan                    n=160 median=1.071 min=0.215 max=1.239
+  cscan-onig               n=160 median=1.070 min=0.229 max=1.249
+  floor                    n=161 median=0.994 min=0.887 max=1.015
+  wild-json-validate       n=160 median=0.317 min=0.209 max=0.734
+  wild-json-validate-onig  n=160 median=0.328 min=0.222 max=0.745
+  wild-sexp-balanced       n=161 median=1.043 min=0.290 max=1.218
+   odd x0.209 wild-json-validate js-ws-num default=370.4 in=77.54
+   odd x0.215 cscan cs-02 default=411.2 in=88.52
+   odd x0.222 wild-json-validate-onig js-ws-num default=349.4 in=77.4
+   odd x0.229 cscan-onig cs-02 default=393 in=89.83
+   odd x0.243 cscan cs-define default=435.3 in=105.8
+   odd x0.247 cscan cs-67 default=437.5 in=107.8
+   odd x0.253 wild-json-validate js-str-esc default=418.1 in=105.7
+   odd x0.256 cscan-onig cs-define default=424.7 in=108.9
+   odd x0.257 cscan-onig cs-67 default=424.7 in=109
+   odd x0.264 wild-json-validate-onig js-str-esc default=399.6 in=105.4
+   odd x1.643 co-isbn-pass js-bad-leading0 default=2.686 in=4.412
+   odd x1.643 co-isbn-pass js-arr-empty default=2.684 in=4.411
+   odd x1.643 co-isbn-pass js-bad-dot default=2.681 in=4.406
+   odd x1.645 co-isbn-pass sx-lone-open default=2.683 in=4.413
+   odd x1.645 co-isbn-pass js-obj-empty default=2.683 in=4.415
+   odd x1.652 co-isbn-pass sx-empty default=2.683 in=4.434
+
+== timed-out rows (deep arms): elapsed per row
+  interp_deep cscan                  nest-brace-100k  trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  interp_deep cscan                  nest-brace-32k   trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  interp_deep cscan-onig             nest-brace-100k  trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  interp_deep cscan-onig             nest-brace-32k   trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  onig_deep   cscan                  nest-brace-100k  trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  onig_deep   cscan-onig             nest-brace-100k  trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+  onig_deep   wild-sexp-balanced     nest-paren-100k  trials=5 diag=the per-subject alarm fired ns=[None, None] it=None
+
+== deep-arm sexp ladder (wild-sexp-balanced nest-paren-*): onig_deep / interp_deep / jit_deep / auto_in medians
+  nest-paren-128  jit_deep=matched:893.3  interp_deep=matched:8937  onig_deep=matched:5.826e+04  auto_in=matched:3048
+  nest-paren-512  jit_deep=matched:3607  interp_deep=matched:3.435e+04  onig_deep=matched:9.609e+05  auto_in=matched:1.293e+04
+  nest-paren-2k   jit_deep=matched:1.402e+04  interp_deep=matched:1.354e+05  onig_deep=matched:1.469e+07  auto_in=matched:5.037e+04
+  nest-paren-8k   jit_deep=matched:5.661e+04  interp_deep=matched:5.454e+05  onig_deep=matched:2.419e+08  auto_in=matched:2.044e+05
+  nest-paren-32k  jit_deep=matched:2.365e+05  interp_deep=matched:2.198e+06  onig_deep=matched:3.845e+09  auto_in=matched:8.233e+05
+  nest-paren-100k jit_deep=matched:7.872e+05  interp_deep=matched:7.416e+06  onig_deep=timed-o:0  auto_in=matched:2.64e+06
+  sx-1m           jit_deep=matched:1.63e+06  interp_deep=matched:1.042e+07  onig_deep=matched:1.834e+07  auto_in=matched:3.89e+06
+
+== wrong rows (onig_deep) observed vs expected
+   ('cscan', 'large-subject-throughput', 'define-witness', 'plain') {'captures': None, 'matched': True, 'span': [0, 12]} expected span [0,6]; observed [0,12]
+   ('cscan', 'short-subject-search', 'cs-define', 'plain') {'captures': None, 'matched': True, 'span': [0, 12]} expected span [0,6]; observed [0,12]
+
+== callout compile rows: binding / spec per testee (first co-luhn row)
+  auto      binding=separate-tu-callee bindings='rx_callout_1' code_langs=None emit=28285 code=26586 art=51368 prog=2719 shape=inline
+  auto_inl  binding=inline bindings='' code_langs=c emit=35736 code=34037 art=41104 prog=2722 shape=inline
+  vm_inl    binding=inline bindings='' code_langs=c emit=35734 code=34035 art=41104 prog=2722 shape=inline
+  auto614   binding=separate-tu-callee bindings='rx_callout_1' code_langs=None emit=25673 code=23974 art=51368 prog=2719 shape=inline
+
+== inline vs sep emit/artifact bytes per callout compile row (plain/whole), auto
+  co-luhn          plain         sep emit=28285 code=26586 art=51368 | inl emit=35736 code=34037 art=41104  gcc_ms sep=[332620782] inl=[258510745]
+  co-luhn          whole-subject sep emit=28512 code=26813 art=51368 | inl emit=35963 code=34264 art=41104  gcc_ms sep=[340527139] inl=[266909610]
+  co-luhn-pass     plain         sep emit=28285 code=26586 art=51368 | inl emit=33787 code=32088 art=36960  gcc_ms sep=[331095899] inl=[225157666]
+  co-luhn-pass     whole-subject sep emit=28512 code=26813 art=51368 | inl emit=34014 code=32315 art=36960  gcc_ms sep=[342219470] inl=[230296120]
+  co-isbn          plain         sep emit=30053 code=28354 art=55464 | inl emit=37531 code=35832 art=45248  gcc_ms sep=[392909329] inl=[309919378]
+  co-isbn          whole-subject sep emit=30282 code=28583 art=55464 | inl emit=37760 code=36061 art=45248  gcc_ms sep=[384426165] inl=[315858619]
+  co-isbn-pass     plain         sep emit=30053 code=28354 art=55464 | inl emit=35534 code=33835 art=41104  gcc_ms sep=[379678820] inl=[286559320]
+  co-isbn-pass     whole-subject sep emit=30282 code=28583 art=55464 | inl emit=35763 code=34064 art=41104  gcc_ms sep=[390600959] inl=[290335405]
+  co-member        plain         sep emit=29437 code=27738 art=55464 | inl emit=38546 code=36847 art=50432  gcc_ms sep=[345814592] inl=[294820768]
+  co-member        whole-subject sep emit=29550 code=27851 art=55464 | inl emit=38659 code=36960 art=50432  gcc_ms sep=[352995542] inl=[288643797]
+  co-member-pass   plain         sep emit=29437 code=27738 art=55464 | inl emit=34939 code=33240 art=41104  gcc_ms sep=[352472937] inl=[240524122]
+  co-member-pass   whole-subject sep emit=29550 code=27851 art=55464 | inl emit=35052 code=33353 art=41104  gcc_ms sep=[354731353] inl=[245064979]
+  co-netstr        plain         sep emit=28659 code=27137 art=51336 | inl emit=35950 code=34428 art=41440  gcc_ms sep=[305355107] inl=[243017281]
+  co-netstr        whole-subject sep emit=28770 code=27248 art=51336 | inl emit=36061 code=34539 art=41440  gcc_ms sep=[300353863] inl=[246502388]
+
+== inline arm: the 4 vars members' compile row (outcome/diag)
+  auto      va-route      plain         (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 2')
+  auto_inl  va-route      plain         (1, 'unsupported-by-declaration', 'REQUIRES unusual-va-route, vars; pcrec-auto-inline declares none of it')
+  auto      va-route      whole-subject (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 5')
+  auto_inl  va-route      whole-subject None
+  auto      va-tenant     plain         (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 1')
+  auto_inl  va-tenant     plain         (1, 'unsupported-by-declaration', 'REQUIRES unusual-va-tenant, vars; pcrec-auto-inline declares none of it')
+  auto      va-tenant     whole-subject (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 4')
+  auto_inl  va-tenant     whole-subject None
+  auto      va-term       plain         (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 6')
+  auto_inl  va-term       plain         (1, 'unsupported-by-declaration', 'REQUIRES unusual-va-term, vars; pcrec-auto-inline declares none of it')
+  auto      va-term       whole-subject (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 9')
+  auto_inl  va-term       whole-subject None
+  auto      va-term-bang  plain         (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 6')
+  auto_inl  va-term-bang  plain         (1, 'unsupported-by-declaration', 'REQUIRES unusual-va-term-bang, vars; pcrec-auto-inline declares none of it')
+  auto      va-term-bang  whole-subject (5, 'compiled', 'RX_ENGINE_WHY: ${name} at pattern offset 9')
+  auto_inl  va-term-bang  whole-subject None
+DONE rc=0

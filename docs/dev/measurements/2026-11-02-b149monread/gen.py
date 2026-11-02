@@ -40,6 +40,13 @@ paths = [r["path"] for r in rows if report.index_row_could_match(r, args)]
 log(f"{len(paths)} record paths")
 loaded = report.load_all(paths, check_filename=True)
 log("loaded")
+if key == "unusual":  # BEFORE the set grain: build_report drops the call-stream rows from the loaded records in place (found b149monread)
+    from pcrecbench import report_stream
+    stargs, _ = rr.build(argv, "stream")
+    sd, e = report_stream.build_stream_report(loaded, stargs, known_testee_ids=known)
+    if e: raise SystemExit(f"ERR stream {e}")
+    open(base + ".stream.md", "w", encoding="utf-8").write(report_stream.render_stream_markdown(sd)); log("OK stream.md")
+    open(base + ".stream.tsv", "w", encoding="utf-8").write(report_stream.render_stream_tsv(sd)); log("OK stream.tsv")
 rd, err = report.build_report(loaded, args, known_testee_ids=known)
 if err: raise SystemExit(f"ERR {err}")
 for suf, fn in ((".tsv", report.render_tsv), (".md", report.render_markdown), (".matrix.tsv", report.render_matrix_tsv)):
@@ -52,11 +59,4 @@ if key != "sentinel":
     open(base + ".subject-grain.md", "w", encoding="utf-8").write(report.render_markdown(srd)); log("OK sg.md")
     open(base + ".subject-grain.tsv", "w", encoding="utf-8").write(report.render_tsv_subject_grain_slice(srd)); log("OK sg.tsv")
     del srd; gc.collect()
-if key == "unusual":
-    from pcrecbench import report_stream
-    stargs, _ = rr.build(argv, "stream")
-    sd, e = report_stream.build_stream_report(loaded, stargs, known_testee_ids=known)
-    if e: raise SystemExit(f"ERR stream {e}")
-    open(base + ".stream.md", "w", encoding="utf-8").write(report_stream.render_stream_markdown(sd)); log("OK stream.md")
-    open(base + ".stream.tsv", "w", encoding="utf-8").write(report_stream.render_stream_tsv(sd)); log("OK stream.tsv")
 print("GEN DONE", key)

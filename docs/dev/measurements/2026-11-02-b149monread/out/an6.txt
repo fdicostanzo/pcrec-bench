@@ -1,0 +1,6 @@
+co-luhn {'abi': (89, 93), 'emit_bytes': (25671, 28283), 'emit_code_bytes': (23972, 26584)}
+co-isbn {'abi': (89, 93), 'emit_bytes': (27013, 30051), 'emit_code_bytes': (25314, 28352), 'req_handoff': ('none', '0')}
+co-isbn-twin {'abi': (89, 93), 'emit_bytes': (25417, 25843), 'emit_code_bytes': (23718, 24144), 'req_handoff': ('none', '0')}
+co-member {'abi': (89, 93), 'emit_bytes': (26397, 29435), 'emit_code_bytes': (24698, 27736), 'req_handoff': ('none', '0')}
+co-member-twin {'abi': (89, 93), 'emit_bytes': (24800, 25226), 'emit_code_bytes': (23101, 23527), 'req_handoff': ('none', '0')}
+co-netstr {'abi': (89, 93), 'emit_bytes': (26045, 28657), 'emit_code_bytes': (24523, 27135)}

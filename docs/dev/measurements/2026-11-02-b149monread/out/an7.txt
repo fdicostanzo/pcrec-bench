@@ -1,0 +1,9 @@
+  cscan                define-witness   auto x0.991 (429.65-462.22 -> 409.69-458.49)  vm x1.031
+  cscan                literal-100k     auto x1.022 (30625-30811 -> 31173-31853)  vm x1.025
+  cscan                nest-paren-128   auto x0.979 (7726.6-7816.7 -> 7428.4-7718.8)  vm x0.987
+  cscan                unterminated-5m  auto x1.100 (34531-34660 -> 36583-38190)  vm x1.088
+  cscan-onig           define-witness   auto x0.982 (429.47-464.15 -> 422.57-442.39)  vm x1.000
+  cscan-onig           literal-100k     auto x1.000 (31171-31244 -> 31160-31645)  vm x1.008
+  cscan-onig           nest-paren-128   auto x0.964 (7793.5-7923.7 -> 7459.6-7660.5)  vm x0.968
+  cscan-onig           unterminated-5m  auto x1.072 (34891-36098 -> 36652-37628)  vm x1.059
+  wild-sexp-balanced   nest-paren-128   auto x0.993 (3319.1-3657 -> 3436.7-3588.2)  vm x1.041
