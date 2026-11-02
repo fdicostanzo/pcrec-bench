@@ -1,0 +1,6 @@
+caps large-subject-throughput: 614d45eb3 W2 / 10-28; subject-cells n=1170 median 1.0002 p5 0.974 p95 1.033; set-cells n=69 median 1.0009 p5 0.986 p95 1.040 min 0.977 max 1.254 |dev|>5%: 2
+caps short-subject-search: 614d45eb3 W2 / 10-28; subject-cells n=5175 median 0.9998 p5 0.959 p95 1.037; set-cells n=69 median 0.9994 p5 0.980 p95 1.019 min 0.963 max 1.034 |dev|>5%: 0
+   caps: v3-identical compile rows 138 of 138; artifact_bytes delta median 0.0 min 0 max 0; harness e0e68c3e -> e516461f
+nocaps large-subject-throughput: 614d45eb3 W2 / 10-28; subject-cells n=1188 median 0.9998 p5 0.974 p95 1.038; set-cells n=70 median 1.0000 p5 0.977 p95 1.031 min 0.938 max 1.738 |dev|>5%: 3
+nocaps short-subject-search: 614d45eb3 W2 / 10-28; subject-cells n=5250 median 0.9989 p5 0.960 p95 1.036; set-cells n=70 median 0.9983 p5 0.976 p95 1.017 min 0.950 max 1.211 |dev|>5%: 1
+   nocaps: v3-identical compile rows 139 of 139; artifact_bytes delta median 0 min 0 max 0; harness e0e68c3e -> e516461f

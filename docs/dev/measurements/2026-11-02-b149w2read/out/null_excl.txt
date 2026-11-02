@@ -1,0 +1,4 @@
+caps large-subject-throughput: program-identical cells excluding the bimodal family ['evil-alt-nested', 'numeric-id-nested-plus', 'phone-list-nested-plus']: n=42 median +0.46% p5 -0.95 p95 +1.93 min -5.51 max +2.79
+caps short-subject-search: program-identical cells excluding the bimodal family ['evil-alt-nested', 'numeric-id-nested-plus', 'phone-list-nested-plus']: n=42 median +0.14% p5 -1.65 p95 +1.83 min -7.06 max +3.44
+nocaps large-subject-throughput: program-identical cells excluding the bimodal family ['evil-alt-nested', 'numeric-id-nested-plus', 'phone-list-nested-plus']: n=48 median -0.10% p5 -1.69 p95 +1.11 min -13.54 max +2.52
+nocaps short-subject-search: program-identical cells excluding the bimodal family ['evil-alt-nested', 'numeric-id-nested-plus', 'phone-list-nested-plus']: n=48 median -0.16% p5 -2.03 p95 +1.64 min -3.99 max +6.34

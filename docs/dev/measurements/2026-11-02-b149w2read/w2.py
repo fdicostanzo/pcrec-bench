@@ -424,5 +424,27 @@ def mode_k134call():
                 print(f"   {p:40s} {d:+.3f} ns/call over {v['n']} subjects (old {statistics.median(v['old'])/v['n']:.2f} -> cb {statistics.median(v['cb'])/v['n']:.2f} ns/call mean)")
 
 
+def mode_xwin():
+    """cross-window control: the SAME pin 614d45eb3, W2 (capability@0.4, 2026-11-01) against capability@0.3 (2026-10-28), common clean subject-cells"""
+    for cfg in ("caps", "nocaps"):
+        old = Rec(path("capability@0.3", tid("old", cfg), "20261028T"))
+        new = load_cap("old", cfg)
+        keys = [k for k in old.cells if k in new.cells and old.clean(k) and new.clean(k) and old.med(k) and new.med(k)]
+        for rg in (LARGE, SHORT):
+            r = [new.med(k) / old.med(k) for k in keys if k[2] == rg]
+            ss = collections.defaultdict(lambda: [0.0, 0.0])
+            for k in keys:
+                if k[2] == rg:
+                    ss[k[0]][0] += old.med(k)
+                    ss[k[0]][1] += new.med(k)
+            sr = [v[1] / v[0] for v in ss.values()]
+            print(f"{cfg} {rg}: 614d45eb3 W2 / 10-28; subject-cells n={len(r)} median {statistics.median(r):.4f} p5 {pct(r, .05):.3f} p95 {pct(r, .95):.3f}; set-cells n={len(sr)} median {statistics.median(sr):.4f} p5 {pct(sr, .05):.3f} p95 {pct(sr, .95):.3f} min {min(sr):.3f} max {max(sr):.3f} |dev|>5%: {sum(abs(x - 1) > .05 for x in sr)}")
+        # program identity and harness fields
+        same = sum(old.comp[k]["engine_metadata"]["program_sha256_v3"] == new.comp[k]["engine_metadata"]["program_sha256_v3"] for k in old.comp if k in new.comp and old.comp[k]["compile_outcome"] == "compiled" and new.comp[k]["compile_outcome"] == "compiled")
+        tot = sum(1 for k in old.comp if k in new.comp and old.comp[k]["compile_outcome"] == "compiled" and new.comp[k]["compile_outcome"] == "compiled")
+        d = [new.comp[k]["artifact_bytes"] - old.comp[k]["artifact_bytes"] for k in old.comp if k in new.comp and old.comp[k]["compile_outcome"] == "compiled"]
+        print(f"   {cfg}: v3-identical compile rows {same} of {tot}; artifact_bytes delta median {statistics.median(d)} min {min(d)} max {max(d)}; harness {old.setup['run']['harness_commit'][:8]} -> {new.setup['run']['harness_commit'][:8]}")
+
+
 if __name__ == "__main__":
     globals()["mode_" + sys.argv[1]]()

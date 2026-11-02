@@ -3532,6 +3532,18 @@ scratch driver reusing `scripts/regen_reports.py`'s `build()` (copy: `docs/dev/m
 caveats: the capability D119 band is +-19.92% (large >=1us) because of one bimodal family (`evil-alt-nested`), and a cross-WINDOW comparison of short-subject cells
 against the 10-25/26 records carries a ~+4-5% pcrec-side harness offset (ledger section 2); the sidecars are stamped against the index at commit e5ea76f8.
 
+## `2026-11-02-*-ryzen7700x-first-cb32eda28.*` ([B149], lane b149w2read)
+
+The first window at pcrec cb32eda28 (abi 93), W2 `b149w2`, machine `ryzen7700x`, `--since 2026-11-01T12:00:00Z --until 2026-11-01T19:00:00Z`, explicit `--testee` ids,
+reporter v28. Two groups: capability-0.4 (the cross-pin pair 614d45eb3 -> cb32eda28, both caps arms; `.tsv .md .matrix.tsv .subject-grain.md .subject-grain.tsv
+.interpretation.md`) and sentinel-0.1 (`--all-records` so the opening and closing passes and the jit `inconclusive-spread` record all show; `.tsv .md .matrix.tsv
+.interpretation.md`). The capability null band reads each record's `program_sha256_v3` (273 cells, 185 null, criterion v3, no census fallback), so no `reports/identity/` file
+exists. Rendered with `docs/dev/measurements/2026-11-02-b149w2read/gen.py` (reuses `scripts/regen_reports.py`'s `build()`); each group loads only its 4 / 9 records (seconds).
+Ledger `docs/dev/ledgers/2026-11-02-first-window-cb32eda28.md`, lane report `docs/dev/lanes/b149w2read_report.md`. Reader's caveats: the capability D119 band is +-36.64% (large >=1us)
+because ONE nocaps cell (`phone-list-nested-plus`, IQR 44%) sets it, so `wild-waf-crs-942270-union-select` (+15.9%) and the K134 short tail read `within` here -- read them against the
+program-identical caps cells (ledger section 4); `dup-param-detect` x the two `t-qs-*` subjects is EXCLUDED (`gave-up`, FRAMES) at both pins; the sidecars are stamped against the
+index as of master 8f7e2197 (the b149mon records are already in it).
+
 ## `--grain stream` ([B148] rep, 2026-10-28)
 
 A third non-default grain beside `subst`: `python3 -m pcrecbench report --grain stream [--callee-calib FILE]` (md / tsv) reads the `call-stream` records of the unusual set (`pcrecbench/report_stream.py`, unusual_set_v1.md 7.5). No committed report uses it yet (the sample is the first scratch read), `REPORTER_VERSION` is unchanged and no existing report moves. The set and subject grains still refuse a call-stream-only selection BY NAME and drop stream rows from a mixed record.

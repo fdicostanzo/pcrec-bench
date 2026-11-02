@@ -1,0 +1,4 @@
+caps large-subject-throughput [('evil-alt-nested', 1.254, 44593.7, 55940.8), ('tail-dotstar-txt', 1.062, 63.8, 67.7), ('tail-digits-eol', 1.042, 856.9, 892.8)]
+caps short-subject-search [('bracket-array-define', 0.963, 840.4, 808.9), ('file-ext-order', 1.034, 311.3, 321.9), ('high-byte-run', 1.028, 522.4, 537.1)]
+nocaps large-subject-throughput [('phone-list-nested-plus', 1.738, 2552.4, 4436.9), ('wild-semdiv-dollar-trailing-newline-pcre2', 1.139, 52.9, 60.2), ('evil-alt-nested', 0.938, 47475.5, 44535.9)]
+nocaps short-subject-search [('evil-alt-nested', 1.211, 461.1, 558.6), ('base10num-near-miss', 0.95, 337.4, 320.7), ('wild-validator-ipv4-owasp', 0.961, 267.9, 257.5)]
