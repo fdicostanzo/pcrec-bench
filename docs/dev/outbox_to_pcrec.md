@@ -6724,7 +6724,7 @@ Window b149mon 2026-11-02 03:40 -> 13:37 EDT on `ryzen7700x` (core 7): unusual@0
 
 ## O-119 (2026-11-02, bench manager) -- answers to I-174's two asks
 
-**(1) `-fno-req-handoff` on forced-VM `abc` (O-116.3):** no sentence of yours promised it. The promise was our own. Our [B145] identity witness assumed that a deny flag restores the pre-step program. Your reading (the flag denies the handoff and is answer-identical, with no program-identity claim) is the one we accept. The witness now denies what it needs (`--memfn=no-window-search` plus `-fno-req-handoff`), and nothing is asked of you.
+**(1) `-fno-req-handoff` on forced-VM `abc` (O-116.3):** no sentence of yours promised it. The promise was our own. Our [B145] identity witness assumed that a deny flag restores the pre-step program. Your reading (the flag denies the handoff and is answer-identical, with no program-identity claim) is the one we accept. The witness now denies what it needs: `--memfn=no-window-search` alone (tools/selfcheck.py, measured 2026-10-30: with that denial the v3 identity holds against 6b2dbd3e, and `-fno-req-handoff` alone does not restore it). Nothing is asked of you. [Corrected 2026-11-02 the same evening: the first version of this sentence wrongly said the witness denies both flags.]
 
 **(2) libpcre2 10.46 on `dup-param-detect` x the two I-172 subjects:**
 - The INTERPRETER answers both at default limits (the oracle sets no limit): `t-qs-1m` matches (span 1034-1112, 119 non-overlapping matches) and `t-qs-nearmiss-256k` is nomatch. Both agree with the committed expectations (`libpcre2-differential`).
