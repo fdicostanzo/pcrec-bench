@@ -1,0 +1,23 @@
+plain patterns compiled at both: 84 program-identical (v3): 52 changed: 32
+  large-subject-throughput   identical patterns=52 set-sum cb/614 median=1.0028 p5=0.9811 p95=1.0235 min=0.963
+  large-subject-throughput   changed   patterns=32 set-sum cb/614 median=0.8273 p5=0.1372 p95=1.0029 min=0.133
+  short-subject-search       identical patterns=52 set-sum cb/614 median=0.9752 p5=0.9074 p95=1.0110 min=0.904
+  short-subject-search       changed   patterns=32 set-sum cb/614 median=0.8419 p5=0.6577 p95=0.9856 min=0.640
+
+big movers' differing stamps:
+  mod-i          identical=False engine=dfa diffs={'dfa_prefilter': ('handoff', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  mod-r          identical=False engine=dfa diffs={'dfa_prefilter': ('handoff', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  cls-n-uc       identical=False engine=dfa diffs={'dfa_prefilter': ('offset-set', 'none'), 'dfa_prefilter_offsets': ('0,3*', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  grp-callout    identical=False engine=vm diffs={'req_handoff': ('none', '0')}
+  mod-s          identical=False engine=dfa diffs={'dfa_prefilter': ('offset-set', 'none'), 'dfa_prefilter_offsets': ('0,3*', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('5', 'none'), 'req_why': ('emitted', 'dominated'), 'run_words': (0, 1)}
+  esc-octal-0    identical=False engine=dfa diffs={'dfa_prefilter': ('run-pinned', 'none'), 'dfa_prefilter_offsets': ('0,1,2,3*,4,5,6,7', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'memfn_libc': ('memchr,memcmp', 'memchr'), 'run_words': (0, 1)}
+  asr-nwb        identical=False engine=dfa diffs={'dfa_prefilter': ('offset-set-bounded', 'none'), 'dfa_prefilter_offsets': ('0,1*', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'dfa_uniform_folds': (2, 1), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  cls-i-class    identical=False engine=dfa diffs={'dfa_prefilter': ('byte-class', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'memfn_libc': ('none', 'memchr')}
+  asr-wb         identical=False engine=dfa diffs={'dfa_prefilter': ('offset-set-bounded', 'none'), 'dfa_prefilter_offsets': ('0,1*', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  cls-dot        identical=False engine=dfa diffs={'dfa_prefilter': ('memchr', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start')}
+  mod-reset      identical=False engine=dfa diffs={'dfa_prefilter': ('run-pinned', 'none'), 'dfa_prefilter_offsets': ('0,1*,2', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'memfn_libc': ('memchr,memcmp', 'memchr'), 'run_words': (0, 1)}
+  anc-m-dollar   identical=False engine=dfa diffs={'dfa_prefilter': ('offset-set-bounded', 'none'), 'dfa_prefilter_offsets': ('0,2*', 'none'), 'dfa_scan': ('unanchored', 'cover'), 'dfa_start': ('end-minus-width', 'attempt-start'), 'req_handoff': ('0', 'none'), 'req_why': ('emitted', 'dominated')}
+  cls-s-uc       identical=True engine=dfa diffs={}
+  cls-range      identical=True engine=dfa diffs={}
+
+stamp keys that differ across all changed plain patterns: {'dfa_prefilter': 28, 'dfa_prefilter_offsets': 18, 'dfa_scan': 27, 'dfa_start': 27, 'req_handoff': 11, 'req_why': 10, 'dfa_uniform_folds': 1, 'memfn_libc': 7, 'vm_reseed': 1, 'vm_program_bytes': 3, 'scan_edges': 1, 'run_words': 7}

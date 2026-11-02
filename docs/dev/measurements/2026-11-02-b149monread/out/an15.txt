@@ -1,0 +1,10 @@
+  auto      vs auto_inl  shared cells=3007 outcome-differing (any of 5 trials)=0 []
+  vm        vs vm_inl    shared cells=3007 outcome-differing (any of 5 trials)=0 []
+  auto      vs vm        shared cells=3013 outcome-differing (any of 5 trials)=0 []
+  auto614   vs vm614     shared cells=3013 outcome-differing (any of 5 trials)=0 []
+  auto_in   vs vm_in     shared cells=3013 outcome-differing (any of 5 trials)=0 []
+  auto      vs auto_in   shared cells=3013 outcome-differing (any of 5 trials)=34 [('cscan', 'large-subject-throughput', 'nest-brace-100k', 'plain'), ('cscan', 'large-subject-throughput', 'nest-brace-10k', 'plain'), ('cscan', 'large-subject-throughput', 'nest-brace-128', 'plain')]
+  jit_deep  vs auto_in   shared cells=2845 outcome-differing (any of 5 trials)=0 []
+  interp_deep vs jit_deep  shared cells=3331 outcome-differing (any of 5 trials)=4 [('cscan', 'large-subject-throughput', 'nest-brace-100k', 'plain'), ('cscan', 'large-subject-throughput', 'nest-brace-32k', 'plain'), ('cscan-onig', 'large-subject-throughput', 'nest-brace-100k', 'plain')]
+  onig_deep vs jit_deep  shared cells=2845 outcome-differing (any of 5 trials)=5 [('cscan', 'large-subject-throughput', 'define-witness', 'plain'), ('cscan', 'large-subject-throughput', 'nest-brace-100k', 'plain'), ('cscan', 'short-subject-search', 'cs-define', 'plain')]
+{'auto': Counter({5: 3013}), 'interp_deep': Counter({5: 3331}), 'onig_deep': Counter({5: 2845})}

@@ -1,0 +1,8 @@
+testees: ['libpcre2_10.46_jit-caps-simdna', 'pcrec_614d45eb3_auto-caps-simdna', 'pcrec_cb32eda28_auto-caps-simdna', 'pcrec_cb32eda28_auto-nocaps-simdna']
+timestamps per testee: {'libpcre2_10.46_jit-caps-simdna': ['20261102T085956Z', '20261102T182703Z'], 'pcrec_614d45eb3_auto-caps-simdna': ['20261102T084744Z', '20261102T181600Z'], 'pcrec_cb32eda28_auto-caps-simdna': ['20261102T084210Z', '20261102T181044Z'], 'pcrec_cb32eda28_auto-nocaps-simdna': ['20261102T085344Z', '20261102T182124Z']}
+  libpcre2_10.46_jit-caps-simdna               short-subject-search       cells= 15 close/open median=0.9996 p5=0.8440 p95=1.0138 min=0.844 max=1.035
+  pcrec_614d45eb3_auto-caps-simdna             short-subject-search       cells= 15 close/open median=1.0038 p5=0.9671 p95=1.0113 min=0.967 max=1.011
+  pcrec_cb32eda28_auto-caps-simdna             short-subject-search       cells= 15 close/open median=1.0010 p5=0.9552 p95=1.0220 min=0.955 max=1.071
+  pcrec_cb32eda28_auto-nocaps-simdna           short-subject-search       cells= 15 close/open median=0.9980 p5=0.9101 p95=1.0156 min=0.910 max=1.050
+  cb32/614 auto @open  short-subject-search       cells=15 median=0.9922 p5=0.8482 p95=1.0676
+  cb32/614 auto @close short-subject-search       cells=15 median=0.9959 p5=0.8505 p95=1.0305
