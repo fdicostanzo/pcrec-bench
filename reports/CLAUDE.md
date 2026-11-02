@@ -3544,6 +3544,16 @@ because ONE nocaps cell (`phone-list-nested-plus`, IQR 44%) sets it, so `wild-wa
 program-identical caps cells (ledger section 4); `dup-param-detect` x the two `t-qs-*` subjects is EXCLUDED (`gave-up`, FRAMES) at both pins; the sidecars are stamped against the
 index as of master 8f7e2197 (the b149mon records are already in it).
 
+## `2026-11-02-*-ryzen7700x-*-cb32eda28.*` ([B149], lane b149monread)
+
+The Monday window b149mon (2026-11-02 03:40-13:37 EDT) at pcrec cb32eda28 (abi 93), machine `ryzen7700x`, reporter v28, explicit `--testee` ids. Four groups, each `.tsv .md .matrix.tsv .interpretation.md` (the first three also `.subject-grain.md .subject-grain.tsv`):
+`unusual-0.1-ryzen7700x-first-cb32eda28` (bench/unusual@0.1's first PINNED records: cb32eda28 and 614d45eb3 auto/vm, the inline pair, the five deep arms; plus `.stream.md .stream.tsv`, the `--grain stream` view -- the first committed stream report),
+`capability-0.4-ryzen7700x-noedge-cb32eda28` (W2's same-pin `pcrec-auto` record of 11-01 beside this window's `pcrec-auto-noedge`: a CROSS-WINDOW pair, named in the ledger), `syntax-0.2-ryzen7700x-cb32eda28` (cb32eda28 auto/nocaps/noedge beside the 10-28 614d45eb3 auto/nocaps records: cross-window, five days apart),
+`sentinel-0.1-ryzen7700x-cb32eda28` (`--all-records`, eight records). Rendered by `docs/dev/measurements/2026-11-02-b149monread/gen.py` (reuses `scripts/regen_reports.py` `build()`; each group loads only its own 2-11 records, 14-40 s; the stream view is built BEFORE the set grain
+because `build_report` drops call-stream rows from the loaded records in place). Ledger `docs/dev/ledgers/2026-11-02-unusual-first-pinned-cb32eda28.md`, lane report `docs/dev/lanes/b149monread_report.md`. Reader's caveats: pcrec's sentinel short cells read ~5-6 % faster on 11-02 than on 11-01 and 10-28
+(jit flat), so a cross-window SHORT cell carries ~-5 %, a large cell none; the deep arms are primed (BD17) and their `callout_fires` are doubled, so a per-fire figure or callee share on a deep arm is half of true; the stream report's `callout` section lists every short-subject zero row
+(8,424 of ~9,300 TSV rows); the sidecars are stamped against the index at commit bbc5fb7a.
+
 ## `--grain stream` ([B148] rep, 2026-10-28)
 
 A third non-default grain beside `subst`: `python3 -m pcrecbench report --grain stream [--callee-calib FILE]` (md / tsv) reads the `call-stream` records of the unusual set (`pcrecbench/report_stream.py`, unusual_set_v1.md 7.5). No committed report uses it yet (the sample is the first scratch read), `REPORTER_VERSION` is unchanged and no existing report moves. The set and subject grains still refuse a call-stream-only selection BY NAME and drop stream rows from a mixed record.

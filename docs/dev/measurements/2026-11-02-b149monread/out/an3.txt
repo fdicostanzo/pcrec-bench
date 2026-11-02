@@ -1,0 +1,128 @@
+== large-subject cells answered at both pins: ratio cb32/614 (auto), with min-max per side
+  x0.384 co-member-pass           co-member-1m     614=6.429e+05 (6.38e+05-6.504e+05) cb=2.471e+05 (2.451e+05-2.51e+05)
+  x0.481 co-isbn-pass             co-isbn-1m       614=4.725e+05 (4.72e+05-4.751e+05) cb=2.273e+05 (2.267e+05-2.371e+05)
+  x0.487 co-member                co-member-1m     614=7.531e+05 (7.461e+05-7.569e+05) cb=3.666e+05 (3.658e+05-3.708e+05)
+  x0.589 co-isbn                  co-isbn-1m       614=5.671e+05 (5.592e+05-5.804e+05) cb=3.338e+05 (3.319e+05-3.351e+05)
+  x0.645 floor                    nest-paren-512   614=17.48 (17.15-20.57) cb=11.27 (11.21-11.65)
+  x0.658 floor                    nest-brace-512   614=17.53 (17.19-17.69) cb=11.54 (11.46-12.07)
+  x0.705 floor                    nest-brace-128   614=13.69 (13.59-14.13) cb=9.651 (9.501-9.856)
+  x0.706 floor                    nest-paren-128   614=13.78 (13.65-14.1) cb=9.737 (9.643-9.784)
+  x1.031 co-luhn-twin             co-luhn-1m       614=9.87e+05 (9.781e+05-1.003e+06) cb=1.017e+06 (1.004e+06-1.019e+06)
+  x1.032 floor                    co-member-1m     614=7148 (7075-7213) cb=7378 (7122-7410)
+  x1.045 co-member-twin           co-member-1m     614=4.793e+05 (4.779e+05-4.797e+05) cb=5.009e+05 (4.891e+05-5.141e+05)
+  x1.072 cscan-onig               unterminated-5m  614=3.492e+04 (3.489e+04-3.61e+04) cb=3.745e+04 (3.665e+04-3.763e+04)
+  x1.100 cscan                    unterminated-5m  614=3.454e+04 (3.453e+04-3.466e+04) cb=3.801e+04 (3.658e+04-3.819e+04)
+  x1.148 co-netstr-twin           co-netstr-1m     614=1.056e+06 (1.055e+06-1.062e+06) cb=1.212e+06 (1.211e+06-1.215e+06)
+   (count of large cells with ratio<0.8: 12 >1.1: 2 of 51 )
+
+== inline vs separate-TU (same pin cb32eda28, other window slot): per-pattern set-sum of short-subject ns/call (matched cells)
+  auto co-luhn            n=161 sep=2042.5 inl=1962.0 inl/sep=0.9606
+  auto co-luhn-pass       n=161 sep=1737.9 inl=1564.9 inl/sep=0.9004
+  auto co-luhn-twin       n=161 sep=2124.6 inl=2125.1 inl/sep=1.0003
+  auto co-isbn            n=161 sep=723.9 inl=761.8 inl/sep=1.0523
+  auto co-isbn-pass       n=161 sep=683.8 inl=686.8 inl/sep=1.0044
+  auto co-isbn-twin       n=161 sep=810.0 inl=801.4 inl/sep=0.9894
+  auto co-member          n=161 sep=818.4 inl=797.4 inl/sep=0.9744
+  auto co-member-pass     n=161 sep=781.5 inl=734.8 inl/sep=0.9403
+  auto co-member-twin     n=161 sep=1286.9 inl=1291.7 inl/sep=1.0037
+  auto co-netstr          n=161 sep=1127.8 inl=1094.1 inl/sep=0.9701
+  auto co-netstr-assist   n=161 sep=1775.7 inl=1792.0 inl/sep=1.0092
+  auto co-netstr-twin     n=161 sep=906.3 inl=904.6 inl/sep=0.9981
+  auto floor              n=161 sep=740.5 inl=740.5 inl/sep=1.0000
+  auto cscan              n=160 sep=62997.6 inl=62226.5 inl/sep=0.9878
+  vm   co-luhn            n=161 sep=2048.4 inl=1961.3 inl/sep=0.9575
+  vm   co-luhn-pass       n=161 sep=1744.4 inl=1544.1 inl/sep=0.8852
+  vm   co-luhn-twin       n=161 sep=1495.2 inl=1494.0 inl/sep=0.9992
+  vm   co-isbn            n=161 sep=722.7 inl=762.9 inl/sep=1.0557
+  vm   co-isbn-pass       n=161 sep=680.1 inl=685.4 inl/sep=1.0079
+  vm   co-isbn-twin       n=161 sep=626.8 inl=628.8 inl/sep=1.0032
+  vm   co-member          n=161 sep=821.4 inl=798.1 inl/sep=0.9716
+  vm   co-member-pass     n=161 sep=778.8 inl=738.9 inl/sep=0.9488
+  vm   co-member-twin     n=161 sep=733.6 inl=735.4 inl/sep=1.0024
+  vm   co-netstr          n=161 sep=1130.0 inl=1095.3 inl/sep=0.9693
+  vm   co-netstr-assist   n=161 sep=1793.6 inl=1787.0 inl/sep=0.9963
+  vm   co-netstr-twin     n=161 sep=856.0 inl=853.7 inl/sep=0.9974
+  vm   floor              n=161 sep=809.6 inl=809.3 inl/sep=0.9996
+  vm   cscan              n=160 sep=62535.4 inl=62789.0 inl/sep=1.0041
+
+   throughput 1 MB subjects (callout members):
+  auto co-luhn            co-luhn-1m    sep=927612 (9.2012e+05-9.4323e+05) inl=871731 (8.6587e+05-8.7591e+05) inl/sep=0.9398 outcomes matched-/matched-
+  auto co-luhn-pass       co-luhn-1m    sep=641954 (6.3773e+05-7.6842e+05) inl=563620 (5.6213e+05-5.7691e+05) inl/sep=0.8780 outcomes matched-/matched-
+  auto co-luhn-twin       co-luhn-1m    sep=1.01741e+06 (1.0039e+06-1.0189e+06) inl=991311 (9.8735e+05-9.95e+05) inl/sep=0.9743 outcomes matched-/matched-
+  auto co-isbn            co-isbn-1m    sep=333763 (3.3191e+05-3.3512e+05) inl=314994 (3.146e+05-3.1594e+05) inl/sep=0.9438 outcomes matched-/matched-
+  auto co-isbn-pass       co-isbn-1m    sep=227253 (2.2667e+05-2.3714e+05) inl=202117 (2.0035e+05-2.0409e+05) inl/sep=0.8894 outcomes matched-/matched-
+  auto co-isbn-twin       co-isbn-1m    sep=402621 (4.0095e+05-4.0462e+05) inl=419306 (4.1783e+05-4.2064e+05) inl/sep=1.0414 outcomes matched-/matched-
+  auto co-member          co-member-1m  sep=366589 (3.6585e+05-3.7083e+05) inl=346967 (3.4662e+05-3.5042e+05) inl/sep=0.9465 outcomes matched-/matched-
+  auto co-member-pass     co-member-1m  sep=247129 (2.4505e+05-2.5101e+05) inl=204729 (2.0276e+05-2.0697e+05) inl/sep=0.8284 outcomes matched-/matched-
+  auto co-member-twin     co-member-1m  sep=500887 (4.8912e+05-5.1406e+05) inl=480858 (4.8016e+05-4.8174e+05) inl/sep=0.9600 outcomes matched-/matched-
+  auto co-netstr          co-netstr-1m  sep=1.49402e+06 (1.4903e+06-1.4976e+06) inl=1.3449e+06 (1.3406e+06-1.3704e+06) inl/sep=0.9002 outcomes matched-/matched-
+  auto co-netstr-assist   co-netstr-1m  sep=7.97647e+06 (7.9486e+06-8.2008e+06) inl=7.99358e+06 (7.8932e+06-8.0344e+06) inl/sep=1.0021 outcomes matched-/matched-
+  vm   co-luhn            co-luhn-1m    sep=937922 (9.3237e+05-9.4637e+05) inl=881902 (8.6948e+05-8.8825e+05) inl/sep=0.9403 outcomes matched-/matched-
+  vm   co-luhn-pass       co-luhn-1m    sep=642428 (6.4203e+05-6.4615e+05) inl=554179 (5.5351e+05-5.551e+05) inl/sep=0.8626 outcomes matched-/matched-
+  vm   co-luhn-twin       co-luhn-1m    sep=547107 (5.4259e+05-5.4972e+05) inl=542653 (5.3937e+05-5.4386e+05) inl/sep=0.9919 outcomes matched-/matched-
+  vm   co-isbn            co-isbn-1m    sep=328472 (3.255e+05-3.3108e+05) inl=317510 (3.1565e+05-3.1768e+05) inl/sep=0.9666 outcomes matched-/matched-
+  vm   co-isbn-pass       co-isbn-1m    sep=229211 (2.2703e+05-2.3169e+05) inl=202840 (2.0233e+05-2.057e+05) inl/sep=0.8850 outcomes matched-/matched-
+  vm   co-isbn-twin       co-isbn-1m    sep=199223 (1.9683e+05-2.0109e+05) inl=197863 (1.9581e+05-1.9843e+05) inl/sep=0.9932 outcomes matched-/matched-
+  vm   co-member          co-member-1m  sep=368195 (3.6645e+05-3.8152e+05) inl=345569 (3.4132e+05-3.463e+05) inl/sep=0.9386 outcomes matched-/matched-
+  vm   co-member-pass     co-member-1m  sep=247231 (2.4666e+05-2.4828e+05) inl=202311 (2.0027e+05-2.0424e+05) inl/sep=0.8183 outcomes matched-/matched-
+  vm   co-member-twin     co-member-1m  sep=195537 (1.9369e+05-1.9867e+05) inl=195316 (1.9447e+05-1.9722e+05) inl/sep=0.9989 outcomes matched-/matched-
+  vm   co-netstr          co-netstr-1m  sep=1.49715e+06 (1.4939e+06-1.8733e+06) inl=1.35648e+06 (1.3551e+06-1.3594e+06) inl/sep=0.9060 outcomes matched-/matched-
+  vm   co-netstr-assist   co-netstr-1m  sep=7.97012e+06 (7.852e+06-8.1377e+06) inl=7.89177e+06 (7.8623e+06-7.925e+06) inl/sep=0.9902 outcomes matched-/matched-
+
+== callout-site overhead per 1 MB (pass - twin), ns; sep vs inline (vm)
+  co-luhn    vm        real=937922 pass=642428 twin=547107 pass-twin=95322 real-pass=295493
+  co-luhn    vm_inl    real=881902 pass=554179 twin=542653 pass-twin=11527 real-pass=327722
+  co-luhn    auto      real=927612 pass=641954 twin=1017408 pass-twin=-375454 real-pass=285658
+  co-luhn    auto_inl  real=871731 pass=563620 twin=991311 pass-twin=-427690 real-pass=308111
+  co-isbn    vm        real=328472 pass=229211 twin=199223 pass-twin=29988 real-pass=99261
+  co-isbn    vm_inl    real=317510 pass=202840 twin=197863 pass-twin=4977 real-pass=114669
+  co-isbn    auto      real=333763 pass=227253 twin=402621 pass-twin=-175369 real-pass=106510
+  co-isbn    auto_inl  real=314994 pass=202117 twin=419306 pass-twin=-217190 real-pass=112878
+  co-member  vm        real=368195 pass=247231 twin=195537 pass-twin=51694 real-pass=120964
+  co-member  vm_inl    real=345569 pass=202311 twin=195316 pass-twin=6995 real-pass=143258
+  co-member  auto      real=366589 pass=247129 twin=500887 pass-twin=-253757 real-pass=119460
+  co-member  auto_inl  real=346967 pass=204729 twin=480858 pass-twin=-276129 real-pass=142237
+
+== the _in arm vs the default arm on cells the default arm answers (cb32eda28): set ratios
+  auto_in/auto  short-subject-search       n=2894 median=1.1258 p5=0.3224 p95=1.3933
+  auto_in/auto  large-subject-throughput   n=71 median=0.9941 p5=0.5869 p95=1.0341
+  vm_in  /vm    short-subject-search       n=2894 median=1.1201 p5=0.3266 p95=1.4052
+  vm_in  /vm    large-subject-throughput   n=71 median=1.0007 p5=0.6215 p95=1.0998
+
+== deep-arm nest-brace ladder (cscan-onig), medians, vs the L9 scratch numbers (scratch at 614d45eb3, load ~1.5)
+-- interp_deep
+   nest-brace-128   matched-as median=1.247e+05 L9=226000.0 ratio=0.552 
+   nest-brace-512   matched-as median=2.7012e+06 L9=3000000.0 ratio=0.900 
+   nest-brace-2k    matched-as median=4.3679e+07 L9=44600000.0 ratio=0.979 
+   nest-brace-8k    matched-as median=1.6653e+09 L9=1640000000.0 ratio=1.015 
+   nest-brace-32k   timed-out  median=None L9=31000000000.0 ratio= the per-subject alarm fired
+   nest-brace-100k  timed-out  median=None L9=None ratio= the per-subject alarm fired
+-- onig_deep
+   nest-brace-128   matched-as median=1.4265e+05 L9=144000.0 ratio=0.991 
+   nest-brace-512   matched-as median=2.185e+06 L9=2200000.0 ratio=0.993 
+   nest-brace-2k    matched-as median=3.5047e+07 L9=34700000.0 ratio=1.010 
+   nest-brace-8k    matched-as median=5.7162e+08 L9=560000000.0 ratio=1.021 
+   nest-brace-32k   matched-as median=9.2456e+09 L9=9200000000.0 ratio=1.005 
+   nest-brace-100k  timed-out  median=None L9=None ratio= the per-subject alarm fired
+-- jit_deep
+   nest-brace-128   matched-as median=2800.6 L9=2700.0 ratio=1.037 
+   nest-brace-512   matched-as median=11040 L9=11000.0 ratio=1.004 
+   nest-brace-2k    matched-as median=43557 L9=46000.0 ratio=0.947 
+   nest-brace-8k    matched-as median=1.7933e+05 L9=186000.0 ratio=0.964 
+   nest-brace-32k   matched-as median=7.568e+05 L9=772000.0 ratio=0.980 
+   nest-brace-100k  matched-as median=2.4252e+06 L9=2430000.0 ratio=0.998 
+-- auto_in
+   nest-brace-128   matched-as median=11676 L9=11500.0 ratio=1.015 
+   nest-brace-512   matched-as median=46393 L9=45000.0 ratio=1.031 
+   nest-brace-2k    matched-as median=1.8678e+05 L9=184000.0 ratio=1.015 
+   nest-brace-8k    matched-as median=7.5212e+05 L9=742000.0 ratio=1.014 
+   nest-brace-32k   matched-as median=3.1841e+06 L9=3180000.0 ratio=1.001 
+   nest-brace-100k  matched-as median=1.0223e+07 L9=11600000.0 ratio=0.881 
+-- vm_in
+   nest-brace-128   matched-as median=11621 L9=11500.0 ratio=1.011 
+   nest-brace-512   matched-as median=46163 L9=45000.0 ratio=1.026 
+   nest-brace-2k    matched-as median=1.8642e+05 L9=184000.0 ratio=1.013 
+   nest-brace-8k    matched-as median=7.4981e+05 L9=742000.0 ratio=1.011 
+   nest-brace-32k   matched-as median=3.0866e+06 L9=3180000.0 ratio=0.971 
+   nest-brace-100k  matched-as median=9.9912e+06 L9=11600000.0 ratio=0.861 
+DONE rc=0

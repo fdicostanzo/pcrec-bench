@@ -1,0 +1,94 @@
+== capability@0.4: noedge / auto (same pin cb32eda28; auto record 2026-11-01 13:39Z = W2, noedge 2026-11-02 15:02Z = this window: CROSS-WINDOW)
+cells with both: 135
+  wild-logparse-base10num-noatomic         large-subject-throughput plain        auto=7.5182e+06 noedge=6.18649e+06 noedge/auto=0.8229
+  wild-logparse-base10num-noatomic         short-subject-search     plain        auto=850.264 noedge=668.592 noedge/auto=0.7863
+  wild-logparse-base10num-grok             large-subject-throughput plain        auto=9.81028e+06 noedge=8.58973e+06 noedge/auto=0.8756
+  wild-logparse-base10num-grok             short-subject-search     plain        auto=1196.83 noedge=1001.14 noedge/auto=0.8365
+  wild-secrets-username-password-pair      large-subject-throughput plain        auto=316817 noedge=331321 noedge/auto=1.0458
+  wild-secrets-username-password-pair      short-subject-search     plain        auto=527.498 noedge=507.714 noedge/auto=0.9625
+  all cells short-subject-search       n=69 median=0.9598 p5=0.8809 p95=1.0068
+  all cells large-subject-throughput   n=66 median=0.9980 p5=0.9581 p95=1.0954
+  largest noedge/auto movers (large + short):
+    x6.049 tail-space-eol                           large-subject-throughp plain  auto=12101 noedge=73203
+    x5.691 tail-word-eoz                            large-subject-throughp plain  auto=12949 noedge=73685
+    x5.375 tail-digits-eol                          large-subject-throughp plain  auto=868.8 noedge=4670.1
+    x2.814 letters-bounded-tail-z                   large-subject-throughp plain  auto=462.16 noedge=1300.3
+    x1.436 tail-word-eoz                            short-subject-search   plain  auto=483.52 noedge=694.26
+    x0.786 wild-logparse-base10num-noatomic         short-subject-search   plain  auto=850.26 noedge=668.59
+    x1.196 letters-bounded-tail-z                   short-subject-search   plain  auto=486.28 noedge=581.67
+    x0.823 wild-logparse-base10num-noatomic         large-subject-throughp plain  auto=7.5182e+06 noedge=6.1865e+06
+    x0.836 wild-logparse-base10num-grok             short-subject-search   plain  auto=1196.8 noedge=1001.1
+    x0.845 phone-list-nested-plus                   short-subject-search   plain  auto=576.13 noedge=486.57
+    x0.876 wild-logparse-base10num-grok             large-subject-throughp plain  auto=9.8103e+06 noedge=8.5897e+06
+    x0.881 high-byte-run                            short-subject-search   plain  auto=538.89 noedge=474.71
+    x0.881 wild-codegrammar-json-array-begin        short-subject-search   plain  auto=290.31 noedge=255.88
+    x1.110 tail-dotstar-txt                         short-subject-search   plain  auto=244.68 noedge=271.57
+
+== syntax@0.2: the named rows (614d45eb3 auto@10-28 | cb32eda28 auto | cb32eda28 noedge | cb32eda28 nocaps)
+  cls-s-uc   large-subject-throughp plain  614=1.67806e+06 cb=1.67959e+06 noedge=1.50763e+06 nocaps cb=1.71244e+06 | cb/614=1.001 noedge/cb=0.898 614n->cbn=1.022
+  cls-s-uc   match-compliance       whole-subject 614=285.887 cb=282.524 noedge=305.63 nocaps cb=287.125 | cb/614=0.988 noedge/cb=1.082 614n->cbn=1.018
+  cls-s-uc   short-subject-search   plain  614=190.301 cb=187.704 noedge=172.619 nocaps cb=187.799 | cb/614=0.986 noedge/cb=0.920 614n->cbn=0.971
+  cls-range  large-subject-throughp plain  614=89581.3 cb=90821.5 noedge=109118 nocaps cb=91374.7 | cb/614=1.014 noedge/cb=1.201 614n->cbn=1.022
+  cls-range  match-compliance       whole-subject 614=187.601 cb=186.188 noedge=186.598 nocaps cb=187.189 | cb/614=0.992 noedge/cb=1.002 614n->cbn=0.983
+  cls-range  short-subject-search   plain  614=179.282 cb=178.178 noedge=181.693 nocaps cb=176.951 | cb/614=0.994 noedge/cb=1.020 614n->cbn=0.997
+
+== syntax: noedge/auto (same window, adjacent cells) over all rows; cb/614 over all rows
+  noedge/auto short-subject-search       n=84 median=1.0003 p5=0.9411 p95=1.1228
+  noedge/auto large-subject-throughput   n=81 median=1.0003 p5=0.9723 p95=1.2015
+  noedge/auto match-compliance           n=81 median=1.0024 p5=0.9610 p95=1.0818
+  cb/614 auto short-subject-search       n=84 median=0.9586 p5=0.7060 p95=1.0080
+  cb/614 auto large-subject-throughput   n=81 median=0.9978 p5=0.4592 p95=1.0217
+  cb/614 auto match-compliance           n=81 median=0.9670 p5=0.9190 p95=1.0060
+  noedge/auto movers beyond 1.1 or below 0.9 (large):
+    x1.356 unp-p-lc             auto=3.0023e+06 noedge=4.0711e+06
+    x1.335 cls-w                auto=3.1162e+06 noedge=4.159e+06
+    x1.330 cls-posix            auto=3.0325e+06 noedge=4.0338e+06
+    x1.325 mod-a                auto=3.1509e+06 noedge=4.1759e+06
+    x1.201 cls-range            auto=90821 noedge=1.0912e+05
+    x1.160 rec-back             auto=5.3877e+05 noedge=6.2505e+05
+    x1.154 rec-g-angle          auto=5.4039e+05 noedge=6.2336e+05
+    x1.130 cls-d                auto=6.1133e+05 noedge=6.906e+05
+    x1.106 rec-py               auto=5.4918e+05 noedge=6.0752e+05
+    x0.898 cls-s-uc             auto=1.6796e+06 noedge=1.5076e+06
+
+== syntax cb/614 auto movers (large <0.9 or >1.1; short <0.85 or >1.15)
+  x0.133 mod-i              large-subject-throughp 614=3.9647e+06 cb=5.2771e+05
+  x0.137 mod-r              large-subject-throughp 614=3.9389e+06 cb=5.3909e+05
+  x0.438 cls-n-uc           large-subject-throughp 614=5.1749e+05 cb=2.2678e+05
+  x0.446 grp-callout        large-subject-throughp 614=1.1599e+06 cb=5.1729e+05
+  x0.459 mod-s              large-subject-throughp 614=4.6777e+05 cb=2.1478e+05
+  x0.535 esc-octal-0        large-subject-throughp 614=3.9693e+05 cb=2.1219e+05
+  x0.603 asr-nwb            large-subject-throughp 614=6.0483e+05 cb=3.648e+05
+  x0.623 cls-i-class        large-subject-throughp 614=9.6087e+05 cb=5.9883e+05
+  x0.642 asr-nwb            short-subject-search   614=251.99 cb=161.71
+  x0.655 mod-s              short-subject-search   614=249.37 cb=163.38
+  x0.693 mod-reset          short-subject-search   614=387.64 cb=268.47
+  x0.693 asr-wb             large-subject-throughp 614=6.0793e+05 cb=4.2157e+05
+  x0.703 mod-unset          short-subject-search   614=385.88 cb=271.19
+  x0.706 cls-dot            short-subject-search   614=227 cb=160.26
+  x0.707 cls-n-uc           short-subject-search   614=238.22 cb=168.38
+  x0.716 cls-mixed-case     short-subject-search   614=226.61 cb=162.35
+  x0.723 anc-m-dollar       short-subject-search   614=254.06 cb=183.56
+  x0.725 cls-negset         short-subject-search   614=224.06 cb=162.35
+  x0.727 cls-mixed-case     large-subject-throughp 614=4.6112e+05 cb=3.3539e+05
+  x0.736 cls-dot            large-subject-throughp 614=4.5677e+05 cb=3.3611e+05
+  x0.746 rec-define         large-subject-throughp 614=40829 cb=30438
+  x0.802 mod-x              short-subject-search   614=205.02 cb=164.47
+  x0.805 mod-n              short-subject-search   614=204.18 cb=164.39
+  x0.810 asr-wb             short-subject-search   614=208.01 cb=168.46
+  x0.810 lit-cat            short-subject-search   614=203.62 cb=164.92
+  x0.810 esc-hex            short-subject-search   614=204.84 cb=165.93
+  x0.818 grp-atomic-alt     large-subject-throughp 614=7.2626e+05 cb=5.9373e+05
+  x0.818 mod-unset          large-subject-throughp 614=6.5492e+05 cb=5.3578e+05
+  x0.822 mod-reset          large-subject-throughp 614=6.5567e+05 cb=5.3904e+05
+  x0.827 cls-pair-ctl       large-subject-throughp 614=4.2079e+05 cb=3.4784e+05
+  x0.829 grp-atomic-alt     short-subject-search   614=413.98 cb=343.1
+  x0.830 cls-fold-pair      large-subject-throughp 614=4.2348e+05 cb=3.5169e+05
+  x0.832 lit-cat            large-subject-throughp 614=4.1764e+05 cb=3.4735e+05
+  x0.833 floor              short-subject-search   614=174.19 cb=145.16
+  x0.850 cls-pair-ctl       short-subject-search   614=193.3 cb=164.24
+  x0.853 esc-hex            large-subject-throughp 614=4.13e+05 cb=3.5225e+05
+  x0.859 mod-n              large-subject-throughp 614=4.1304e+05 cb=3.5464e+05
+  x0.862 mod-x              large-subject-throughp 614=4.1845e+05 cb=3.6059e+05
+  x0.895 cls-negset         large-subject-throughp 614=4.2957e+05 cb=3.8433e+05
+  x0.898 esc-hex-braced     large-subject-throughp 614=18558 cb=16667

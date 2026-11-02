@@ -1,0 +1,75 @@
+== R1, large-subject-throughput, pcrec auto_in vs best of {jit,interp,onig}-deep: cells > 3x (and the median MB/s)
+  cells with a comparator: 100; pcrec _in > 3x best: 46
+   x5.6 wild-json-validate-onig js-1m            best=jit_deep 3.251e+06 ns  pcrec_in=1.8191e+07 ns
+   x5.5 wild-json-validate     js-1m            best=jit_deep 3.26e+06 ns  pcrec_in=1.7924e+07 ns
+   x5.4 wild-json-validate     js-near-1m       best=jit_deep 1.0314e+07 ns  pcrec_in=5.5342e+07 ns
+   x5.3 wild-json-validate-onig js-near-1m       best=jit_deep 1.0342e+07 ns  pcrec_in=5.4505e+07 ns
+   x5.3 cscan                  nest-paren-100k  best=jit_deep 1.0501e+06 ns  pcrec_in=5.5252e+06 ns
+   x5.3 cscan-onig             nest-paren-10k   best=jit_deep 1.0536e+05 ns  pcrec_in=5.5345e+05 ns
+   x5.2 cscan-onig             nest-paren-100k  best=jit_deep 1.0515e+06 ns  pcrec_in=5.5132e+06 ns
+   x5.2 cscan-onig             nest-paren-8k    best=jit_deep 86880 ns  pcrec_in=4.5249e+05 ns
+   x5.2 cscan                  nest-paren-32k   best=jit_deep 3.4553e+05 ns  pcrec_in=1.797e+06 ns
+   x5.2 cscan-onig             nest-paren-32k   best=jit_deep 3.4813e+05 ns  pcrec_in=1.807e+06 ns
+   x5.1 cscan                  nest-paren-512   best=jit_deep 5478.1 ns  pcrec_in=28071 ns
+   x5.1 cscan-onig             nest-paren-2k    best=jit_deep 22145 ns  pcrec_in=1.1293e+05 ns
+   x5.1 cscan                  nest-paren-10k   best=jit_deep 1.078e+05 ns  pcrec_in=5.4813e+05 ns
+   x5.1 cscan-onig             nest-paren-1k    best=jit_deep 11176 ns  pcrec_in=56668 ns
+   x5.1 cscan                  nest-paren-8k    best=jit_deep 88305 ns  pcrec_in=4.4744e+05 ns
+   x5.0 cscan                  nest-paren-1k    best=jit_deep 11134 ns  pcrec_in=56213 ns
+   x5.0 cscan                  nest-paren-128   best=jit_deep 1432.8 ns  pcrec_in=7190.1 ns
+   x5.0 cscan-onig             nest-paren-128   best=jit_deep 1448.5 ns  pcrec_in=7261.3 ns
+   x5.0 cscan-onig             nest-paren-512   best=jit_deep 5657.4 ns  pcrec_in=28354 ns
+   x5.0 cscan                  nest-paren-2k    best=jit_deep 22431 ns  pcrec_in=1.1241e+05 ns
+   x4.3 cscan-onig             nest-brace-2k    best=jit_deep 43557 ns  pcrec_in=1.8678e+05 ns
+   x4.3 cscan                  nest-brace-128   best=jit_deep 2748 ns  pcrec_in=11705 ns
+   x4.2 cscan-onig             nest-brace-1k    best=jit_deep 21930 ns  pcrec_in=92858 ns
+   x4.2 cscan                  nest-brace-512   best=jit_deep 11005 ns  pcrec_in=46559 ns
+   x4.2 cscan-onig             nest-brace-100k  best=jit_deep 2.4252e+06 ns  pcrec_in=1.0223e+07 ns
+   x4.2 cscan-onig             nest-brace-32k   best=jit_deep 7.568e+05 ns  pcrec_in=3.1841e+06 ns
+   x4.2 cscan-onig             nest-brace-512   best=jit_deep 11040 ns  pcrec_in=46393 ns
+   x4.2 cscan-onig             nest-brace-10k   best=jit_deep 2.2061e+05 ns  pcrec_in=9.2553e+05 ns
+   x4.2 cscan-onig             nest-brace-8k    best=jit_deep 1.7933e+05 ns  pcrec_in=7.5212e+05 ns
+   x4.2 cscan                  nest-brace-1k    best=jit_deep 22161 ns  pcrec_in=92941 ns
+   x4.2 cscan                  nest-brace-100k  best=jit_deep 2.4368e+06 ns  pcrec_in=1.0169e+07 ns
+   x4.2 cscan                  nest-brace-2k    best=jit_deep 44850 ns  pcrec_in=1.8713e+05 ns
+   x4.2 cscan-onig             nest-brace-128   best=jit_deep 2800.6 ns  pcrec_in=11676 ns
+   x4.1 cscan                  nest-brace-8k    best=jit_deep 1.8138e+05 ns  pcrec_in=7.5146e+05 ns
+   x4.1 cscan                  nest-brace-10k   best=jit_deep 2.2213e+05 ns  pcrec_in=9.1954e+05 ns
+   x4.1 cscan                  nest-brace-32k   best=jit_deep 7.5733e+05 ns  pcrec_in=3.103e+06 ns
+   x4.0 cscan-onig             nest-digraph-10k best=jit_deep 3.0019e+05 ns  pcrec_in=1.2106e+06 ns
+   x4.0 cscan                  nest-digraph-10k best=jit_deep 2.9974e+05 ns  pcrec_in=1.2087e+06 ns
+   x3.7 wild-sexp-balanced     nest-paren-1k    best=jit_deep 7116.9 ns  pcrec_in=26021 ns
+   x3.6 wild-sexp-balanced     nest-paren-8k    best=jit_deep 56609 ns  pcrec_in=2.0443e+05 ns
+   x3.6 wild-sexp-balanced     nest-paren-2k    best=jit_deep 14021 ns  pcrec_in=50370 ns
+   x3.6 wild-sexp-balanced     nest-paren-512   best=jit_deep 3607.4 ns  pcrec_in=12933 ns
+   x3.6 wild-sexp-balanced     nest-paren-10k   best=jit_deep 69599 ns  pcrec_in=2.4883e+05 ns
+   x3.5 wild-sexp-balanced     nest-paren-32k   best=jit_deep 2.3654e+05 ns  pcrec_in=8.2329e+05 ns
+   x3.4 wild-sexp-balanced     nest-paren-128   best=jit_deep 893.27 ns  pcrec_in=3048.3 ns
+   x3.4 wild-sexp-balanced     nest-paren-100k  best=jit_deep 7.8716e+05 ns  pcrec_in=2.6402e+06 ns
+   cells where pcrec _in is the best: 36
+
+== R1 short-subject mean ns/call per pattern (set-sum / 161): pcrec auto_in vs best of others
+  co-isbn                  pcrec_in=5.6 (161) best=jit_deep:13.2  ratio=0.43 
+  co-isbn-pass             pcrec_in=5.4 (161) best=jit_deep:13.0  ratio=0.42 
+  co-isbn-twin             pcrec_in=5.8 (161) best=jit_deep:12.8  ratio=0.46 
+  co-luhn                  pcrec_in=13.3 (161) best=jit_deep:18.8  ratio=0.71 
+  co-luhn-pass             pcrec_in=11.4 (161) best=jit_deep:17.0  ratio=0.67 
+  co-luhn-twin             pcrec_in=14.3 (161) best=jit_deep:16.5  ratio=0.86 
+  co-member                pcrec_in=5.9 (161) best=jit_deep:13.5  ratio=0.44 
+  co-member-pass           pcrec_in=5.7 (161) best=jit_deep:13.1  ratio=0.43 
+  co-member-twin           pcrec_in=8.7 (161) best=jit_deep:13.0  ratio=0.67 
+  co-netstr                no comparator
+  co-netstr-assist         pcrec_in=11.9 (161) best=jit_deep:20.0  ratio=0.60 
+  co-netstr-twin           pcrec_in=6.5 (161) best=jit_deep:16.3  ratio=0.40 
+  cscan                    pcrec_in=297.7 (161) best=jit_deep:80.6  ratio=3.69 R1
+  cscan-onig               pcrec_in=297.6 (161) best=jit_deep:80.5  ratio=3.70 R1
+  floor                    pcrec_in=4.6 (161) best=jit_deep:14.1  ratio=0.32 
+  wild-json-validate       pcrec_in=197.6 (161) best=jit_deep:41.6  ratio=4.74 R1
+  wild-json-validate-onig  pcrec_in=197.0 (161) best=jit_deep:41.7  ratio=4.72 R1
+  wild-sexp-balanced       pcrec_in=26.6 (161) best=jit_deep:23.3  ratio=1.14 
+
+== callout_fires evidence (engine_metadata on a match row): default vs _in arm, co-luhn-1m
+   auto [11308, 11308, 11308, 11308, 11308] {'callout_fires': 11308}
+   auto_in [22616, 22616, 22616, 22616, 22616] {'callout_fires': 22616, 'deep_maxrss_kb': 1051636, 'deep_mem_bytes': 48, 'deep_mem_method': 'canary'}
+   jit_deep [22616, 22616, 22616, 22616, 22616] {'callout_fires': 22616, 'deep_maxrss_kb': 3780, 'deep_mem_bytes': 4096, 'deep_mem_method': 'mincore'}
+   onig_deep [22616, 22616, 22616, 22616, 22616] {'callout_fires': 22616, 'deep_maxrss_kb': 3344, 'deep_mem_bytes': 0, 'deep_mem_method': 'rss-delta'}

@@ -1,0 +1,143 @@
+== auto: 614d45eb3 -> cb32eda28, cells with a gave-up on either side
+  cscan                    call-stream  seg-l              gave-up    -> matched-as-expected  
+  cscan                    call-stream  seg-s              gave-up    -> matched-as-expected  
+  cscan                    call-stream  sqlite-bodies      gave-up    -> matched-as-expected  
+  cscan                    call-stream  sqlite-bodies-s    gave-up    -> matched-as-expected  
+  cscan                    large-subjec comment-5m         gave-up    -> matched-as-expected  
+  cscan                    large-subjec idents-1m          gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-brace-100k    gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-10k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-128     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-1k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-2k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-32k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-512     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-brace-8k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-digraph-10k   gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan                    large-subjec nest-paren-100k    gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-10k     gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-1k      gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-2k      gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-32k     gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-512     gave-up    -> matched-as-expected  
+  cscan                    large-subjec nest-paren-8k      gave-up    -> matched-as-expected  
+  cscan                    large-subjec splice-1m          gave-up    -> matched-as-expected  
+  cscan                    short-subjec cs-nest-100        gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               call-stream  seg-l              gave-up    -> matched-as-expected  
+  cscan-onig               call-stream  seg-s              gave-up    -> matched-as-expected  
+  cscan-onig               call-stream  sqlite-bodies      gave-up    -> matched-as-expected  
+  cscan-onig               call-stream  sqlite-bodies-s    gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec comment-5m         gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec idents-1m          gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-brace-100k    gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-10k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-128     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-1k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-2k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-32k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-512     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-brace-8k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-digraph-10k   gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  cscan-onig               large-subjec nest-paren-100k    gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-10k     gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-1k      gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-2k      gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-32k     gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-512     gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec nest-paren-8k      gave-up    -> matched-as-expected  
+  cscan-onig               large-subjec splice-1m          gave-up    -> matched-as-expected  
+  cscan-onig               short-subjec cs-nest-100        gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate       large-subjec js-1m              gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate       large-subjec js-near-1m         gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate       short-subjec js-deep-arr        gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate-onig  large-subjec js-1m              gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate-onig  large-subjec js-near-1m         gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-json-validate-onig  short-subjec js-deep-arr        gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-100k    gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-10k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-1k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-2k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-32k     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-512     gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec nest-paren-8k      gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+  wild-sexp-balanced       large-subjec sx-1m              gave-up    -> gave-up     veup:-3:PCREC_ERR_FRAMES
+
+== per-pattern gave-up counts at each pin (auto)
+auto614 {'cscan': 24, 'cscan-onig': 24, 'wild-sexp-balanced': 8, 'wild-json-validate': 3, 'wild-json-validate-onig': 3} total 62
+auto {'cscan': 10, 'cscan-onig': 10, 'wild-sexp-balanced': 8, 'wild-json-validate': 3, 'wild-json-validate-onig': 3} total 34
+
+== call-stream counts (auto): matched / nomatch / refused / gave_up per stream at both pins
+  auto614     cscan       seg-l           calls=4096 m=2333 n=40 r=0 gu=1723 gave-up
+  auto614     cscan       seg-s           calls=256 m=151 n=5 r=0 gu=100 gave-up
+  auto614     cscan       sqlite-bodies   calls=4971 m=2351 n=0 r=0 gu=2620 gave-up
+  auto614     cscan       sqlite-bodies-s calls=311 m=148 n=0 r=0 gu=163 gave-up
+  auto614     cscan-onig  seg-l           calls=4096 m=2333 n=40 r=0 gu=1723 gave-up
+  auto614     cscan-onig  seg-s           calls=256 m=151 n=5 r=0 gu=100 gave-up
+  auto614     cscan-onig  sqlite-bodies   calls=4971 m=2351 n=0 r=0 gu=2620 gave-up
+  auto614     cscan-onig  sqlite-bodies-s calls=311 m=148 n=0 r=0 gu=163 gave-up
+  auto        cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto        cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto        cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto        cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  auto        cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto        cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto        cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto        cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  auto_in     cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto_in     cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto_in     cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto_in     cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  auto_in     cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto_in     cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto_in     cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto_in     cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  auto_inl    cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto_inl    cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto_inl    cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto_inl    cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  auto_inl    cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  auto_inl    cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  auto_inl    cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  auto_inl    cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  jit_deep    cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  jit_deep    cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  jit_deep    cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  jit_deep    cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  jit_deep    cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  jit_deep    cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  jit_deep    cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  jit_deep    cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  interp_deep cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  interp_deep cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  interp_deep cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  interp_deep cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  interp_deep cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  interp_deep cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  interp_deep cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  interp_deep cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  onig_deep   cscan       seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  onig_deep   cscan       seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  onig_deep   cscan       sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  onig_deep   cscan       sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+  onig_deep   cscan-onig  seg-l           calls=4096 m=4049 n=47 r=0 gu=0 matched-as-expected
+  onig_deep   cscan-onig  seg-s           calls=256 m=251 n=5 r=0 gu=0 matched-as-expected
+  onig_deep   cscan-onig  sqlite-bodies   calls=4971 m=4971 n=0 r=0 gu=0 matched-as-expected
+  onig_deep   cscan-onig  sqlite-bodies-s calls=311 m=311 n=0 r=0 gu=0 matched-as-expected
+
+== deep arms: cells not matched-as-expected
+  interp_deep cscan                    large-subjec nest-brace-100k    ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  interp_deep cscan                    large-subjec nest-brace-32k     ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  interp_deep cscan-onig               large-subjec nest-brace-100k    ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  interp_deep cscan-onig               large-subjec nest-brace-32k     ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  onig_deep   cscan                    large-subjec define-witness     ['wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures'] obs={'captures': None, 'matched': True, 'span': [0, 12]}
+  onig_deep   cscan                    large-subjec nest-brace-100k    ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  onig_deep   cscan                    short-subjec cs-define          ['wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures', 'wrong-span-or-captures'] obs={'captures': None, 'matched': True, 'span': [0, 12]}
+  onig_deep   cscan-onig               large-subjec nest-brace-100k    ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+  onig_deep   wild-sexp-balanced       large-subjec nest-paren-100k    ['timed-out', 'timed-out', 'timed-out', 'timed-out', 'timed-out'] obs=None
+
+== cross-pin timing (cb32eda28 / 614d45eb3 medians) on cells answered at both pins, by regime
+  auto  short-subject-search       n=2894 median=0.9922 p5=0.8835 p95=1.0517 sum-ratio=1.0036
+  auto  large-subject-throughput   n=51 median=0.9827 p5=0.4868 p95=1.0450 sum-ratio=0.9341
+  vm    short-subject-search       n=2894 median=0.9988 p5=0.8924 p95=1.0642 sum-ratio=0.9760
+  vm    large-subject-throughput   n=51 median=1.0031 p5=0.4590 p95=1.0388 sum-ratio=0.9053
+DONE rc=0

@@ -1,0 +1,40 @@
+== compile stamps 614d45eb3 -> cb32eda28 (vm route, plain)
+  co-luhn         vm614  {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'afc15502b36936', 'vm_program_bytes': '2719', 'emit_bytes': '25671'}
+  co-luhn         vm     {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '45b4ddf9ede83c', 'vm_program_bytes': '2719', 'emit_bytes': '28283'}
+  co-luhn-pass    vm614  {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'afc15502b36936', 'vm_program_bytes': '2719', 'emit_bytes': '25671'}
+  co-luhn-pass    vm     {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '45b4ddf9ede83c', 'vm_program_bytes': '2719', 'emit_bytes': '28283'}
+  co-luhn-twin    vm614  {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '8092c87dc6979c', 'vm_program_bytes': '1570', 'emit_bytes': '24075'}
+  co-luhn-twin    vm     {'engine': 'vm', 'req_why': 'none', 'req_byte': 'none', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '8092c87dc6979c', 'vm_program_bytes': '1570', 'emit_bytes': '24075'}
+  co-isbn         vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '369f99e4425313', 'vm_program_bytes': '3207', 'emit_bytes': '27013'}
+  co-isbn         vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '4c031efaf85ea2', 'vm_program_bytes': '3207', 'emit_bytes': '30051'}
+  co-isbn-pass    vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '369f99e4425313', 'vm_program_bytes': '3207', 'emit_bytes': '27013'}
+  co-isbn-pass    vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '4c031efaf85ea2', 'vm_program_bytes': '3207', 'emit_bytes': '30051'}
+  co-isbn-twin    vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'de89cde3323924', 'vm_program_bytes': '2058', 'emit_bytes': '25417'}
+  co-isbn-twin    vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '55', 'req_run': '393738@1/fffffe', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'da0d8e65e97cd8', 'vm_program_bytes': '2058', 'emit_bytes': '25843'}
+  co-member       vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'fa5d7aacc0ba20', 'vm_program_bytes': '2615', 'emit_bytes': '26397'}
+  co-member       vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '5cbddddfcbf16c', 'vm_program_bytes': '2615', 'emit_bytes': '29435'}
+  co-member-pass  vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'fa5d7aacc0ba20', 'vm_program_bytes': '2615', 'emit_bytes': '26397'}
+  co-member-pass  vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '5cbddddfcbf16c', 'vm_program_bytes': '2615', 'emit_bytes': '29435'}
+  co-member-twin  vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '048b48610ea092', 'vm_program_bytes': '1466', 'emit_bytes': '24800'}
+  co-member-twin  vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '61', 'req_run': '757365723d@4', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'c99ebb1222a937', 'vm_program_bytes': '1466', 'emit_bytes': '25226'}
+  co-netstr       vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '44', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': 'f29405cb5fe9a1', 'vm_program_bytes': '2537', 'emit_bytes': '26045'}
+  co-netstr       vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '44', 'req_run': 'none', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '1b0ac11aa97ea8', 'vm_program_bytes': '2537', 'emit_bytes': '28657'}
+  floor           vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '63', 'req_run': '283f7b@1', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '12436f62ec4a1f', 'vm_program_bytes': '314', 'emit_bytes': '23074'}
+  floor           vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '63', 'req_run': '283f7b@1', 'vm_start_scan': 'first-class', 'prefilter': 'none', 'program_sha256_v3': '6437eab227dad5', 'vm_program_bytes': '314', 'emit_bytes': '23500'}
+  cscan-onig      vm614  {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '63', 'req_run': '283f7b@1', 'vm_start_scan': 'none', 'prefilter': 'none', 'program_sha256_v3': '7fa04bb08a81cd', 'vm_program_bytes': '60091', 'emit_bytes': '82453'}
+  cscan-onig      vm     {'engine': 'vm', 'req_why': 'emitted', 'req_byte': '63', 'req_run': '283f7b@1', 'vm_start_scan': 'none', 'prefilter': 'none', 'program_sha256_v3': 'f79d4fed15cc5f', 'vm_program_bytes': '60267', 'emit_bytes': '84424'}
+
+== _in vs default (auto): short cells where _in is >= 2x faster, by pattern
+{'cscan': 43, 'cscan-onig': 41, 'wild-sexp-balanced': 3, 'wild-json-validate': 148, 'wild-json-validate-onig': 146}
+   cscan ['cs-01', 'cs-02', 'cs-03', 'cs-06', 'cs-07', 'cs-08', 'cs-09', 'cs-11', 'cs-12', 'cs-13', 'cs-15', 'cs-16']
+   cscan-onig ['cs-01', 'cs-02', 'cs-03', 'cs-06', 'cs-07', 'cs-08', 'cs-09', 'cs-11', 'cs-12', 'cs-13', 'cs-15', 'cs-16']
+   wild-sexp-balanced ['cs-70', 'cs-72', 'sx-deep-12']
+   wild-json-validate ['cs-00', 'cs-01', 'cs-02', 'cs-03', 'cs-04', 'cs-05', 'cs-06', 'cs-07', 'cs-08', 'cs-09', 'cs-10', 'cs-11']
+   wild-json-validate-onig ['cs-00', 'cs-01', 'cs-02', 'cs-03', 'cs-04', 'cs-05', 'cs-06', 'cs-07', 'cs-08', 'cs-09', 'cs-10', 'cs-11']
+  cscan stamps fast_frames/fast_trail/frame_capacity/trail: 37 56 2048 2048 3072
+  auto_in cscan: 37 56 2048 2048 3072 10324440 41297760
+
+== cscan compile stamps at both pins (engine, trail/frames)
+   auto614 {'engine': 'vm', 'engine_sel': 'selected', 'fast_frames': 37, 'fast_trail': 56, 'frame_capacity': 2048, 'resume_frames': 2048, 'trail_frames': 3072, 'resume_frame_size': 40, 'trail_frame_size': 16, 'emit_bytes': 82411, 'vm_program_bytes': 60007, 'abi': 89}
+   auto {'engine': 'vm', 'engine_sel': 'selected', 'fast_frames': 37, 'fast_trail': 56, 'frame_capacity': 2048, 'resume_frames': 2048, 'trail_frames': 3072, 'resume_frame_size': 40, 'trail_frame_size': 16, 'emit_bytes': 84382, 'vm_program_bytes': 60183, 'abi': 93}
+DONE rc=0

@@ -1,0 +1,158 @@
+== records: rows (compile rows / match rows) and trial-1 outcome census
+auto         compile_rows=223 match_rows=15065 cells=3013
+     call-stream                matched-as-expected      14
+     large-subject-throughput   gave-up                  30
+     large-subject-throughput   matched-as-expected      71
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+vm           compile_rows=223 match_rows=15065 cells=3013
+     call-stream                matched-as-expected      14
+     large-subject-throughput   gave-up                  30
+     large-subject-throughput   matched-as-expected      71
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+auto614      compile_rows=223 match_rows=15065 cells=3013
+     call-stream                gave-up                  8
+     call-stream                matched-as-expected      6
+     large-subject-throughput   gave-up                  50
+     large-subject-throughput   matched-as-expected      51
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+vm614        compile_rows=223 match_rows=15065 cells=3013
+     call-stream                gave-up                  8
+     call-stream                matched-as-expected      6
+     large-subject-throughput   gave-up                  50
+     large-subject-throughput   matched-as-expected      51
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+auto_inl     compile_rows=187 match_rows=15035 cells=3007
+     call-stream                matched-as-expected      8
+     large-subject-throughput   gave-up                  30
+     large-subject-throughput   matched-as-expected      71
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+vm_inl       compile_rows=187 match_rows=15035 cells=3007
+     call-stream                matched-as-expected      8
+     large-subject-throughput   gave-up                  30
+     large-subject-throughput   matched-as-expected      71
+     short-subject-search       gave-up                  4
+     short-subject-search       matched-as-expected      2894
+jit_deep     compile_rows=105 match_rows=16655 cells=3331
+     call-stream                matched-as-expected      8
+     large-subject-throughput   matched-as-expected      103
+     short-subject-search       matched-as-expected      3220
+interp_deep  compile_rows=105 match_rows=16655 cells=3331
+     call-stream                matched-as-expected      8
+     large-subject-throughput   matched-as-expected      99
+     large-subject-throughput   timed-out                4
+     short-subject-search       matched-as-expected      3220
+onig_deep    compile_rows=178 match_rows=14225 cells=2845
+     call-stream                matched-as-expected      8
+     large-subject-throughput   matched-as-expected      96
+     large-subject-throughput   timed-out                3
+     large-subject-throughput   wrong-span-or-captures   1
+     short-subject-search       matched-as-expected      2736
+     short-subject-search       wrong-span-or-captures   1
+auto_in      compile_rows=223 match_rows=15065 cells=3013
+     call-stream                matched-as-expected      14
+     large-subject-throughput   matched-as-expected      101
+     short-subject-search       matched-as-expected      2898
+vm_in        compile_rows=223 match_rows=15065 cells=3013
+     call-stream                matched-as-expected      14
+     large-subject-throughput   matched-as-expected      101
+     short-subject-search       matched-as-expected      2898
+
+== K134 flips: cell outcome at 614d45eb3 vs cb32eda28 (default arms)
+-- auto: cells 3013 vs 3013
+    ('gave-up', 'matched-as-expected') 28
+         ('cscan', 'call-stream') 4
+         ('cscan', 'large-subject-throughput') 10
+         ('cscan-onig', 'call-stream') 4
+         ('cscan-onig', 'large-subject-throughput') 10
+   still gave-up at cb32eda28: {('cscan', 'short-subject-search'): 1, ('cscan', 'large-subject-throughput'): 9, ('cscan-onig', 'short-subject-search'): 1, ('cscan-onig', 'large-subject-throughput'): 9, ('wild-sexp-balanced', 'large-subject-throughput'): 8, ('wild-json-validate', 'short-subject-search'): 1, ('wild-json-validate', 'large-subject-throughput'): 2, ('wild-json-validate-onig', 'short-subject-search'): 1, ('wild-json-validate-onig', 'large-subject-throughput'): 2}
+-- vm: cells 3013 vs 3013
+    ('gave-up', 'matched-as-expected') 28
+         ('cscan', 'call-stream') 4
+         ('cscan', 'large-subject-throughput') 10
+         ('cscan-onig', 'call-stream') 4
+         ('cscan-onig', 'large-subject-throughput') 10
+   still gave-up at cb32eda28: {('cscan', 'short-subject-search'): 1, ('cscan', 'large-subject-throughput'): 9, ('cscan-onig', 'short-subject-search'): 1, ('cscan-onig', 'large-subject-throughput'): 9, ('wild-sexp-balanced', 'large-subject-throughput'): 8, ('wild-json-validate', 'short-subject-search'): 1, ('wild-json-validate', 'large-subject-throughput'): 2, ('wild-json-validate-onig', 'short-subject-search'): 1, ('wild-json-validate-onig', 'large-subject-throughput'): 2}
+
+== give-up diagnostics at cb32eda28 default arms (first row per cell)
+-- auto
+    ('cscan', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('cscan-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-sexp-balanced', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 8
+-- vm
+    ('cscan', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('cscan-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-sexp-balanced', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 8
+-- auto_in
+-- vm_in
+-- auto_inl
+    ('cscan', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('cscan-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-sexp-balanced', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 8
+-- vm_inl
+    ('cscan', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('cscan-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 9
+    ('cscan-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-json-validate-onig', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 2
+    ('wild-json-validate-onig', 'short-subject-search', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 1
+    ('wild-sexp-balanced', 'large-subject-throughput', 'gave-up', 'the engine gave up rather than answering: giveup:-3:PCREC_ERR_FRAMES') 8
+
+== inline vs separate-TU row accounting
+-- auto match: sep=15065 rows/3013 keys inline=15035 rows/3007 keys; only-sep=6 only-inline=0
+    only-sep ('va-route', 'call-stream', 'route-zipf', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d4', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d4096', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d64', 'plain') 5
+    only-sep ('va-term', 'call-stream', 'term-zipf', 'plain') 5
+    only-sep ('va-term-bang', 'call-stream', 'term-zipf', 'plain') 5
+-- auto compile: sep=223 rows/47 keys inline=187 rows/43 keys; only-sep=4 only-inline=0
+    only-sep ('va-route', 'whole-subject') 5
+    only-sep ('va-tenant', 'whole-subject') 5
+    only-sep ('va-term', 'whole-subject') 5
+    only-sep ('va-term-bang', 'whole-subject') 5
+    count-diff ('va-route', 'plain') 5 1
+    count-diff ('va-tenant', 'plain') 5 1
+    count-diff ('va-term', 'plain') 5 1
+    count-diff ('va-term-bang', 'plain') 5 1
+-- vm match: sep=15065 rows/3013 keys inline=15035 rows/3007 keys; only-sep=6 only-inline=0
+    only-sep ('va-route', 'call-stream', 'route-zipf', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d4', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d4096', 'plain') 5
+    only-sep ('va-tenant', 'call-stream', 'tenant-d64', 'plain') 5
+    only-sep ('va-term', 'call-stream', 'term-zipf', 'plain') 5
+    only-sep ('va-term-bang', 'call-stream', 'term-zipf', 'plain') 5
+-- vm compile: sep=223 rows/47 keys inline=187 rows/43 keys; only-sep=4 only-inline=0
+    only-sep ('va-route', 'whole-subject') 5
+    only-sep ('va-tenant', 'whole-subject') 5
+    only-sep ('va-term', 'whole-subject') 5
+    only-sep ('va-term-bang', 'whole-subject') 5
+    count-diff ('va-route', 'plain') 5 1
+    count-diff ('va-tenant', 'plain') 5 1
+    count-diff ('va-term', 'plain') 5 1
+    count-diff ('va-term-bang', 'plain') 5 1
+DONE rc=0
