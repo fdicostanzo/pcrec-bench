@@ -1,0 +1,28 @@
+== caps: abi93-k134 rows, short-subject-search: (cb - 614) set-sum / n_subjects = ns per call; identical-control spread of the same quantity
+   identical control n=42: median +0.007 ns/call, p5 -0.237, p95 +0.147, min -0.493, max +0.193
+   balanced-parens-rec                      +0.234 ns/call over 75 subjects (old 6.00 -> cb 6.23 ns/call mean)
+   bracket-array-define                     +1.223 ns/call over 75 subjects (old 10.76 -> cb 11.98 ns/call mean)
+   date-nested-plus                         -1.327 ns/call over 75 subjects (old 7.25 -> cb 5.92 ns/call mean)
+   dup-param-detect                         +0.327 ns/call over 75 subjects (old 7.14 -> cb 7.47 ns/call mean)
+   email-nested-plus                        -0.292 ns/call over 75 subjects (old 9.83 -> cb 9.53 ns/call mean)
+   evil-alt-nested                          -0.205 ns/call over 75 subjects (old 8.87 -> cb 8.67 ns/call mean)
+   nested-comment-rec                       +0.340 ns/call over 75 subjects (old 10.55 -> cb 10.89 ns/call mean)
+   numeric-id-nested-plus                   +0.642 ns/call over 75 subjects (old 6.55 -> cb 7.20 ns/call mean)
+   phone-list-nested-plus                   +0.659 ns/call over 75 subjects (old 7.02 -> cb 7.68 ns/call mean)
+   quoted-delim-match                       +0.288 ns/call over 75 subjects (old 12.30 -> cb 12.59 ns/call mean)
+   tag-depth3-bound                         +0.685 ns/call over 75 subjects (old 6.65 -> cb 7.34 ns/call mean)
+   trim-nested-star                         -0.306 ns/call over 75 subjects (old 5.73 -> cb 5.43 ns/call mean)
+   wild-logparse-quotedstring-grok          -0.149 ns/call over 75 subjects (old 12.91 -> cb 12.76 ns/call mean)
+   wild-logparse-syslogbase-expanded        +0.144 ns/call over 75 subjects (old 9.70 -> cb 9.85 ns/call mean)
+   wild-semdiv-empty-alt-repeat-pcre2       +0.027 ns/call over 75 subjects (old 18.59 -> cb 18.62 ns/call mean)
+   wild-validator-us-zip-owasp              +0.036 ns/call over 75 subjects (old 5.98 -> cb 6.02 ns/call mean)
+== nocaps: abi93-k134 rows, short-subject-search: (cb - 614) set-sum / n_subjects = ns per call; identical-control spread of the same quantity
+   identical control n=51: median -0.008 ns/call, p5 -0.107, p95 +0.368, min -1.021, max +2.302
+   balanced-parens-rec                      +0.410 ns/call over 75 subjects (old 5.81 -> cb 6.23 ns/call mean)
+   bracket-array-define                     +0.650 ns/call over 75 subjects (old 10.98 -> cb 11.63 ns/call mean)
+   dup-param-detect                         +0.541 ns/call over 75 subjects (old 7.01 -> cb 7.55 ns/call mean)
+   nested-comment-rec                       +0.170 ns/call over 75 subjects (old 10.40 -> cb 10.57 ns/call mean)
+   quoted-delim-match                       +0.146 ns/call over 75 subjects (old 12.21 -> cb 12.36 ns/call mean)
+   tag-depth3-bound                         +0.491 ns/call over 75 subjects (old 6.67 -> cb 7.16 ns/call mean)
+   wild-logparse-quotedstring-grok          -0.122 ns/call over 75 subjects (old 12.87 -> cb 12.75 ns/call mean)
+   wild-logparse-syslogbase-expanded        -0.023 ns/call over 75 subjects (old 9.21 -> cb 9.18 ns/call mean)

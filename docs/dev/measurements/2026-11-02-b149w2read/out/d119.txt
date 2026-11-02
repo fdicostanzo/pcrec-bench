@@ -1,0 +1,48 @@
+273 d119 rows
+(identity, verdict, regime, capture_class) counts:
+   ('changed', 'improve', 'large-subject-throughput', 'no') 2
+   ('changed', 'improve', 'large-subject-throughput', 'yes') 3
+   ('changed', 'improve', 'short-subject-search', 'no') 1
+   ('changed', 'improve', 'short-subject-search', 'yes') 2
+   ('changed', 'regress', 'large-subject-throughput', 'no') 1
+   ('changed', 'regress', 'large-subject-throughput', 'yes') 1
+   ('changed', 'regress', 'short-subject-search', 'no') 1
+   ('changed', 'regress', 'short-subject-search', 'yes') 1
+   ('changed', 'within', 'large-subject-throughput', 'no') 15
+   ('changed', 'within', 'large-subject-throughput', 'yes') 20
+   ('changed', 'within', 'short-subject-search', 'no') 17
+   ('changed', 'within', 'short-subject-search', 'yes') 24
+   ('identical', 'null-control', 'large-subject-throughput', 'no') 50
+   ('identical', 'null-control', 'large-subject-throughput', 'yes') 42
+   ('identical', 'null-control', 'short-subject-search', 'no') 51
+   ('identical', 'null-control', 'short-subject-search', 'yes') 42
+
+changed cells, non-'within' verdicts (pattern regime config delta% bar% src verdict before->after):
+  bracket-array-define                       large    auto-caps   -0.99% bar 0.8461 IQR-only improve 223.496198 -> 221.276485
+  date-nested-plus                           short    auto-caps  -18.30% bar 13.765 band improve 543.757215 -> 444.258286
+  hex8-bounded                               large    auto-caps  -57.74% bar 36.637 band improve 10855729.2 -> 4588136.47
+  hex8-bounded                               short    auto-caps  -43.03% bar 6.3371 band improve 1073.82632 -> 611.805521
+  utf8-lead-no-cont                          large    auto-caps  +95.44% bar 36.637 band regress 1180540.92 -> 2307278.13
+  utf8-lead-no-cont                          short    auto-caps  +20.25% bar 13.765 band regress 538.256963 -> 647.227617
+  wild-secrets-username-password-pair        large    auto-caps  -42.44% bar 36.637 band improve 550444.494 -> 316816.891
+  hex8-bounded                               large    auto-nocaps  -57.73% bar 36.637 band improve 10814714.7 -> 4571869.61
+  hex8-bounded                               short    auto-nocaps  -43.33% bar 6.3371 band improve 1080.44157 -> 612.339969
+  utf8-lead-no-cont                          large    auto-nocaps  +94.11% bar 36.637 band regress 1182589.22 -> 2295568.71
+  utf8-lead-no-cont                          short    auto-nocaps  +18.86% bar 13.765 band regress 538.135047 -> 639.645958
+  wild-secrets-username-password-pair        large    auto-nocaps  -94.33% bar 36.637 band improve 5641010.22 -> 319669.735
+
+identical cells with |delta| > 5%:
+  base10num-near-miss                        short    auto-caps   -7.06% iqr 6.9544 stratum short-subject-search/100ns-1us
+  tail-dotstar-txt                           large    auto-caps   -5.51% iqr 0.2634 stratum large-subject-throughput/<100ns
+  evil-alt-nested                            large    auto-nocaps   +6.75% iqr 6.5093 stratum large-subject-throughput/>=1us
+  evil-alt-nested                            short    auto-nocaps  -13.77% iqr 2.3607 stratum short-subject-search/100ns-1us
+  phone-list-nested-plus                     large    auto-nocaps  -36.64% iqr 44.178 stratum large-subject-throughput/>=1us
+  wild-semdiv-dollar-trailing-newline-pcre2  large    auto-nocaps  -13.54% iqr 3.0030 stratum large-subject-throughput/<100ns
+  wild-waf-crs-942360-concat-sqli            short    auto-nocaps   +6.34% iqr 2.5660 stratum short-subject-search/>=1us
+null_band   ['identity_field', 'program_sha256', '185']  field_cells=273; criterion v3 (`program_sha256_v3`) on 273 cell(s), v2 (`program_sha256`) on 0; census_fallback_cells=0; disagreements=0; cells=273
+null_band >=1us large-subject-throughput ['band_pct', '36.637992', '73']  status=ok; min_pct=-36.637992; median_pct=0.085625; max_pct=6.752172; n_min=10
+null_band 100ns-1us large-subject-throughput ['band_pct', '', '5']  status=insufficient; min_pct=-3.313418; median_pct=-0.954850; max_pct=0.783948; n_min=10
+null_band <100ns large-subject-throughput ['band_pct', '13.537735', '14']  status=ok; min_pct=-13.537735; median_pct=0.177495; max_pct=2.524787; n_min=10
+null_band >=1us short-subject-search ['band_pct', '6.337184', '10']  status=ok; min_pct=-1.403678; median_pct=0.186509; max_pct=6.337184; n_min=10
+null_band 100ns-1us short-subject-search ['band_pct', '13.765350', '83']  status=ok; min_pct=-13.765350; median_pct=-0.025875; max_pct=3.811587; n_min=10
+null_band <100ns short-subject-search ['band_pct', '', '0']  status=empty; min_pct=; median_pct=; max_pct=; n_min=10

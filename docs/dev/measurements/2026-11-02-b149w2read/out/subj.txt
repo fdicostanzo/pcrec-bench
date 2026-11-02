@@ -1,0 +1,240 @@
+[caps] utf8-lead-no-cont                      614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class-bounded dfa_start=end-minus-width req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=20452 vm_program_bytes=None
+[caps] utf8-lead-no-cont                      cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=16166 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 1.954 min 1.936 max 2.035
+      t-tail-digits-1m               1048522 B  614     204265.8 ns -> cb     395415.1 ns  x1.936  (0.377 ns/B vs 0.195)
+      t-tail-space-1m                1048522 B  614     202587.4 ns -> cb     393574.5 ns  x1.943  (0.375 ns/B vs 0.193)
+      t-1m                           1048576 B  614     201858.9 ns -> cb     393018.8 ns  x1.947  (0.375 ns/B vs 0.193)
+      t-qs-1m                        1048501 B  614     201730.9 ns -> cb     393398.1 ns  x1.950  (0.375 ns/B vs 0.192)
+      t-tail-txt-1m                  1048527 B  614     201712.9 ns -> cb     394682.0 ns  x1.957  (0.376 ns/B vs 0.192)
+      t-256k                          262144 B  614      50230.4 ns -> cb      98162.7 ns  x1.954  (0.374 ns/B vs 0.192)
+   short-subject-search: subjects 75; per-subject ratio median 1.062 min 0.550 max 1.727
+      sec-github-pat                      93 B  614         21.4 ns -> cb         37.0 ns  x1.727  (0.397 ns/B vs 0.230)
+      sec-slack-webhook                   81 B  614         19.1 ns -> cb         32.5 ns  x1.702  (0.401 ns/B vs 0.236)
+      sd-empty-alt-hit                    61 B  614         15.4 ns -> cb         24.4 ns  x1.586  (0.400 ns/B vs 0.252)
+      sd-empty-alt-miss                   60 B  614         15.2 ns -> cb         24.1 ns  x1.582  (0.401 ns/B vs 0.254)
+      lp-syslog                           56 B  614         14.4 ns -> cb         23.3 ns  x1.613  (0.416 ns/B vs 0.258)
+[caps] hex8-bounded                           614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=first-class-bounded dfa_start=end-minus-width req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=21520 vm_program_bytes=None
+[caps] hex8-bounded                           cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=18901 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.547 min 0.230 max 1.699
+      t-tail-space-1m                1048522 B  614    2055539.8 ns -> cb     672876.4 ns  x0.327  (0.642 ns/B vs 1.960)
+      t-tail-txt-1m                  1048527 B  614    2027905.6 ns -> cb     679146.2 ns  x0.335  (0.648 ns/B vs 1.934)
+      t-tail-digits-1m               1048522 B  614    2020012.0 ns -> cb     677558.0 ns  x0.335  (0.646 ns/B vs 1.927)
+      t-qs-1m                        1048501 B  614    2001628.7 ns -> cb    1402691.2 ns  x0.701  (1.338 ns/B vs 1.909)
+      t-1m                           1048576 B  614    1608610.3 ns -> cb     617412.0 ns  x0.384  (0.589 ns/B vs 1.534)
+      t-qs-nearmiss-256k              262092 B  614     486349.1 ns -> cb     333656.1 ns  x0.686  (1.273 ns/B vs 1.856)
+   short-subject-search: subjects 75; per-subject ratio median 0.361 min 0.193 max 1.567
+      sd-empty-alt-miss                   60 B  614         63.5 ns -> cb         99.4 ns  x1.567  (1.657 ns/B vs 1.058)
+      sd-empty-alt-hit                    61 B  614         64.6 ns -> cb         99.2 ns  x1.534  (1.625 ns/B vs 1.060)
+      sec-slack-webhook                   81 B  614         54.7 ns -> cb         24.2 ns  x0.443  (0.299 ns/B vs 0.675)
+      lp-syslog                           56 B  614         34.0 ns -> cb         12.9 ns  x0.379  (0.230 ns/B vs 0.607)
+      waf-dbnames                         39 B  614         24.4 ns -> cb          6.0 ns  x0.248  (0.155 ns/B vs 0.625)
+[caps] wild-codegrammar-json-array-begin      614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=91 emit_bytes=17996 vm_program_bytes=None
+[caps] wild-codegrammar-json-array-begin      cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=91 emit_bytes=15592 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.997 min 0.585 max 1.037
+      t-1m                           1048576 B  614      54584.9 ns -> cb      33888.2 ns  x0.621  (0.032 ns/B vs 0.052)
+      t-256k                          262144 B  614      13134.0 ns -> cb       7822.0 ns  x0.596  (0.030 ns/B vs 0.050)
+      t-qs-1m                        1048501 B  614       7710.0 ns -> cb       7545.0 ns  x0.979  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7611.6 ns -> cb       7644.8 ns  x1.004  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7608.4 ns -> cb       7892.6 ns  x1.037  (0.008 ns/B vs 0.007)
+      t-tail-digits-1m               1048522 B  614       7589.6 ns -> cb       7823.2 ns  x1.031  (0.007 ns/B vs 0.007)
+   short-subject-search: subjects 75; per-subject ratio median 0.899 min 0.851 max 0.945
+      lp-syslog                           56 B  614          6.7 ns -> cb          5.7 ns  x0.851  (0.102 ns/B vs 0.120)
+      rec-array-define                    11 B  614          6.7 ns -> cb          5.7 ns  x0.856  (0.520 ns/B vs 0.607)
+      cg-array-begin                       1 B  614          6.5 ns -> cb          5.7 ns  x0.877  (5.736 ns/B vs 6.541)
+      sd-empty-alt-miss                   60 B  614          4.8 ns -> cb          4.2 ns  x0.874  (0.070 ns/B vs 0.080)
+      sd-empty-alt-hit                    61 B  614          4.6 ns -> cb          4.0 ns  x0.872  (0.066 ns/B vs 0.075)
+[caps] wild-codegrammar-json-object-begin     614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=123 emit_bytes=17998 vm_program_bytes=None
+[caps] wild-codegrammar-json-object-begin     cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=123 emit_bytes=15594 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.993 min 0.700 max 1.018
+      t-tail-digits-1m               1048522 B  614       7723.3 ns -> cb       7587.7 ns  x0.982  (0.007 ns/B vs 0.007)
+      t-qs-1m                        1048501 B  614       7660.1 ns -> cb       7607.2 ns  x0.993  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7607.9 ns -> cb       7745.1 ns  x1.018  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7555.1 ns -> cb       7629.6 ns  x1.010  (0.007 ns/B vs 0.007)
+      t-1m                           1048576 B  614       7539.3 ns -> cb       7610.6 ns  x1.009  (0.007 ns/B vs 0.007)
+      t-qs-nearmiss-256k              262092 B  614       1583.9 ns -> cb       1578.0 ns  x0.996  (0.006 ns/B vs 0.006)
+   short-subject-search: subjects 75; per-subject ratio median 0.876 min 0.865 max 0.991
+      cg-object-begin                      1 B  614          6.6 ns -> cb          5.7 ns  x0.872  (5.731 ns/B vs 6.574)
+      rd-numeric-id-near-miss             20 B  614          4.6 ns -> cb          4.0 ns  x0.870  (0.200 ns/B vs 0.230)
+      rd-evil-alt-hit                      4 B  614          4.4 ns -> cb          3.8 ns  x0.865  (0.948 ns/B vs 1.096)
+      rd-trim-hit                          4 B  614          4.4 ns -> cb          3.8 ns  x0.866  (0.950 ns/B vs 1.098)
+      rd-trim-near-miss                   20 B  614          4.4 ns -> cb          3.8 ns  x0.866  (0.190 ns/B vs 0.219)
+[caps] keyword-prefix-order                   614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=offset-set dfa_start=reverse-pass req_handoff=none req_why=dominated req_run=696e@1 req_byte=110 emit_bytes=22785 vm_program_bytes=None
+[caps] keyword-prefix-order                   cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=696e@1 req_byte=110 emit_bytes=15948 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.888 min 0.797 max 1.052
+      t-1m                           1048576 B  614     279348.0 ns -> cb     241659.6 ns  x0.865  (0.230 ns/B vs 0.266)
+      t-tail-space-1m                1048522 B  614     277632.1 ns -> cb     246564.0 ns  x0.888  (0.235 ns/B vs 0.265)
+      t-tail-txt-1m                  1048527 B  614     277483.1 ns -> cb     245893.7 ns  x0.886  (0.235 ns/B vs 0.265)
+      t-tail-digits-1m               1048522 B  614     273457.2 ns -> cb     248955.6 ns  x0.910  (0.237 ns/B vs 0.261)
+      t-qs-1m                        1048501 B  614     105675.3 ns -> cb      84219.3 ns  x0.797  (0.080 ns/B vs 0.101)
+      t-256k                          262144 B  614      40440.2 ns -> cb      33606.6 ns  x0.831  (0.128 ns/B vs 0.154)
+   short-subject-search: subjects 75; per-subject ratio median 0.951 min 0.692 max 1.001
+      rec-comment-nested                  34 B  614          8.5 ns -> cb          5.9 ns  x0.692  (0.173 ns/B vs 0.250)
+      br-quoted-delim                     15 B  614          8.4 ns -> cb          5.9 ns  x0.700  (0.392 ns/B vs 0.560)
+      waf-dbnames                         39 B  614          8.3 ns -> cb          5.9 ns  x0.707  (0.151 ns/B vs 0.214)
+      sd-keyword-short                    10 B  614          7.9 ns -> cb          5.9 ns  x0.751  (0.590 ns/B vs 0.785)
+      rd-evil-alt-hit                      4 B  614          4.2 ns -> cb          4.0 ns  x0.940  (0.997 ns/B vs 1.060)
+[caps] wild-secrets-username-password-pair    614 engine=vm dfa_scan=unanchored dfa_scan_edge=mixed dfa_prefilter=byte-class dfa_start=reverse-pass req_handoff=0 req_why=emitted req_run=55534552@0/dfdfdfdf req_byte=61 emit_bytes=553919 vm_program_bytes=16953
+[caps] wild-secrets-username-password-pair    cb  engine=vm dfa_scan=unanchored dfa_scan_edge=mixed dfa_prefilter=handoff dfa_start=reverse-pass req_handoff=0 req_why=emitted req_run=55534552@0/dfdfdfdf req_byte=61 emit_bytes=555019 vm_program_bytes=16975
+   large-subject-throughput: subjects 19; per-subject ratio median 1.006 min 0.360 max 1.048
+      t-qs-1m                        1048501 B  614     396272.7 ns -> cb     228450.2 ns  x0.576  (0.218 ns/B vs 0.378)
+      t-qs-nearmiss-256k              262092 B  614      89076.7 ns -> cb      32032.4 ns  x0.360  (0.122 ns/B vs 0.340)
+      t-hyb-embed-64k                  65536 B  614      24092.9 ns -> cb      20259.3 ns  x0.841  (0.309 ns/B vs 0.368)
+      t-tail-digits-1m               1048522 B  614       7649.5 ns -> cb       7579.1 ns  x0.991  (0.007 ns/B vs 0.007)
+      t-1m                           1048576 B  614       7556.3 ns -> cb       7612.1 ns  x1.007  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7551.6 ns -> cb       7595.3 ns  x1.006  (0.007 ns/B vs 0.007)
+   short-subject-search: subjects 75; per-subject ratio median 1.010 min 0.972 max 1.118
+      waf-benign                          39 B  614          9.8 ns -> cb         11.0 ns  x1.118  (0.281 ns/B vs 0.251)
+      la-float-bound                      13 B  614          9.5 ns -> cb         10.4 ns  x1.085  (0.797 ns/B vs 0.734)
+      sec-userpass                        33 B  614        130.2 ns -> cb        130.8 ns  x1.005  (3.965 ns/B vs 3.945)
+      br-dup-param                        11 B  614          8.0 ns -> cb          8.5 ns  x1.063  (0.775 ns/B vs 0.729)
+      rec-comment-nested                  34 B  614          5.2 ns -> cb          5.4 ns  x1.036  (0.158 ns/B vs 0.152)
+[caps] wild-waf-crs-942270-union-select       614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class dfa_start=reverse-pass req_handoff=none req_why=emitted req_run=53454c454354@4/dfdfdfdfdfdf req_byte=none emit_bytes=39293 vm_program_bytes=None
+[caps] wild-waf-crs-942270-union-select       cb  engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class dfa_start=reverse-pass req_handoff=none req_why=emitted req_run=53454c454354@4/dfdfdfdfdfdf req_byte=none emit_bytes=39661 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 1.095 min 0.892 max 1.622
+      t-qs-1m                        1048501 B  614     290197.4 ns -> cb     319176.3 ns  x1.100  (0.304 ns/B vs 0.277)
+      t-tail-digits-1m               1048522 B  614     246668.9 ns -> cb     276801.3 ns  x1.122  (0.264 ns/B vs 0.235)
+      t-tail-txt-1m                  1048527 B  614     243073.9 ns -> cb     275016.8 ns  x1.131  (0.262 ns/B vs 0.232)
+      t-tail-space-1m                1048522 B  614     241282.2 ns -> cb     277012.7 ns  x1.148  (0.264 ns/B vs 0.230)
+      t-1m                           1048576 B  614     115563.3 ns -> cb     181619.3 ns  x1.572  (0.173 ns/B vs 0.110)
+      t-qs-nearmiss-256k              262092 B  614      50263.4 ns -> cb      53600.3 ns  x1.066  (0.205 ns/B vs 0.192)
+   short-subject-search: subjects 75; per-subject ratio median 1.124 min 0.892 max 1.721
+      sec-slack-webhook                   81 B  614         15.5 ns -> cb         21.4 ns  x1.381  (0.264 ns/B vs 0.191)
+      lp-winpath                          22 B  614          5.3 ns -> cb          9.2 ns  x1.721  (0.417 ns/B vs 0.242)
+      rec-tag-depth3                      22 B  614          9.0 ns -> cb         12.4 ns  x1.389  (0.566 ns/B vs 0.407)
+      waf-union                           43 B  614         45.6 ns -> cb         47.9 ns  x1.053  (1.115 ns/B vs 1.059)
+      waf-benign                          39 B  614          9.9 ns -> cb         12.0 ns  x1.216  (0.307 ns/B vs 0.253)
+[caps] floor-byte                             614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=126 emit_bytes=17996 vm_program_bytes=None
+[caps] floor-byte                             cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=126 emit_bytes=15592 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 1.004 min 0.902 max 1.043
+      t-tail-digits-1m               1048522 B  614       7524.2 ns -> cb       7610.3 ns  x1.011  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7515.3 ns -> cb       7766.5 ns  x1.033  (0.007 ns/B vs 0.007)
+      t-qs-1m                        1048501 B  614       7504.6 ns -> cb       7800.3 ns  x1.039  (0.007 ns/B vs 0.007)
+      t-1m                           1048576 B  614       7480.3 ns -> cb       7653.8 ns  x1.023  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7437.6 ns -> cb       7755.5 ns  x1.043  (0.007 ns/B vs 0.007)
+      t-qs-nearmiss-256k              262092 B  614       1576.5 ns -> cb       1583.1 ns  x1.004  (0.006 ns/B vs 0.006)
+   short-subject-search: subjects 75; per-subject ratio median 0.916 min 0.887 max 0.966
+      floor-hit                            1 B  614          6.5 ns -> cb          5.8 ns  x0.887  (5.769 ns/B vs 6.501)
+      nu-lead-with-cont                    2 B  614          4.1 ns -> cb          3.7 ns  x0.900  (1.833 ns/B vs 2.036)
+      sd-dollar-nl                         7 B  614          4.1 ns -> cb          3.7 ns  x0.901  (0.523 ns/B vs 0.581)
+      waf-union                           43 B  614          4.3 ns -> cb          3.9 ns  x0.906  (0.090 ns/B vs 0.099)
+      v-uuid-badnibble                    36 B  614          4.2 ns -> cb          3.9 ns  x0.912  (0.107 ns/B vs 0.118)
+[nocaps] utf8-lead-no-cont                      614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class-bounded dfa_start=end-minus-width req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=20452 vm_program_bytes=None
+[nocaps] utf8-lead-no-cont                      cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=16166 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 1.953 min 1.918 max 1.999
+      t-1m                           1048576 B  614     205342.4 ns -> cb     397598.6 ns  x1.936  (0.379 ns/B vs 0.196)
+      t-qs-1m                        1048501 B  614     205258.9 ns -> cb     393662.6 ns  x1.918  (0.375 ns/B vs 0.196)
+      t-tail-space-1m                1048522 B  614     203931.9 ns -> cb     392806.4 ns  x1.926  (0.375 ns/B vs 0.194)
+      t-tail-digits-1m               1048522 B  614     201879.6 ns -> cb     394176.4 ns  x1.953  (0.376 ns/B vs 0.193)
+      t-tail-txt-1m                  1048527 B  614     201593.4 ns -> cb     393066.4 ns  x1.950  (0.375 ns/B vs 0.192)
+      t-256k                          262144 B  614      50958.2 ns -> cb     100269.9 ns  x1.968  (0.382 ns/B vs 0.194)
+   short-subject-search: subjects 75; per-subject ratio median 1.053 min 0.548 max 1.729
+      sec-github-pat                      93 B  614         21.3 ns -> cb         36.8 ns  x1.729  (0.396 ns/B vs 0.229)
+      sec-slack-webhook                   81 B  614         19.1 ns -> cb         32.3 ns  x1.689  (0.399 ns/B vs 0.236)
+      sd-empty-alt-hit                    61 B  614         15.3 ns -> cb         24.5 ns  x1.598  (0.402 ns/B vs 0.252)
+      sd-empty-alt-miss                   60 B  614         15.2 ns -> cb         24.2 ns  x1.585  (0.403 ns/B vs 0.254)
+      lp-syslog                           56 B  614         14.3 ns -> cb         23.0 ns  x1.607  (0.411 ns/B vs 0.256)
+[nocaps] hex8-bounded                           614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=first-class-bounded dfa_start=end-minus-width req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=21520 vm_program_bytes=None
+[nocaps] hex8-bounded                           cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=none req_run=none req_byte=none emit_bytes=18901 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.544 min 0.228 max 1.706
+      t-tail-space-1m                1048522 B  614    2034016.8 ns -> cb     673971.1 ns  x0.331  (0.643 ns/B vs 1.940)
+      t-tail-txt-1m                  1048527 B  614    2021470.3 ns -> cb     675744.0 ns  x0.334  (0.644 ns/B vs 1.928)
+      t-tail-digits-1m               1048522 B  614    2021227.5 ns -> cb     675367.1 ns  x0.334  (0.644 ns/B vs 1.928)
+      t-qs-1m                        1048501 B  614    1995908.8 ns -> cb    1403364.6 ns  x0.703  (1.338 ns/B vs 1.904)
+      t-1m                           1048576 B  614    1614053.9 ns -> cb     622149.9 ns  x0.385  (0.593 ns/B vs 1.539)
+      t-qs-nearmiss-256k              262092 B  614     483918.2 ns -> cb     334141.3 ns  x0.690  (1.275 ns/B vs 1.846)
+   short-subject-search: subjects 75; per-subject ratio median 0.351 min 0.188 max 1.563
+      sd-empty-alt-miss                   60 B  614         63.6 ns -> cb         99.4 ns  x1.563  (1.656 ns/B vs 1.059)
+      sd-empty-alt-hit                    61 B  614         64.6 ns -> cb         99.8 ns  x1.544  (1.635 ns/B vs 1.059)
+      sec-slack-webhook                   81 B  614         55.0 ns -> cb         24.1 ns  x0.438  (0.297 ns/B vs 0.679)
+      lp-syslog                           56 B  614         33.5 ns -> cb         13.0 ns  x0.388  (0.232 ns/B vs 0.599)
+      waf-dbnames                         39 B  614         24.4 ns -> cb          5.9 ns  x0.243  (0.152 ns/B vs 0.626)
+[nocaps] wild-codegrammar-json-array-begin      614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=91 emit_bytes=17996 vm_program_bytes=None
+[nocaps] wild-codegrammar-json-array-begin      cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=91 emit_bytes=15592 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.988 min 0.585 max 1.010
+      t-1m                           1048576 B  614      54005.4 ns -> cb      34363.0 ns  x0.636  (0.033 ns/B vs 0.052)
+      t-256k                          262144 B  614      13024.8 ns -> cb       7738.6 ns  x0.594  (0.030 ns/B vs 0.050)
+      t-qs-1m                        1048501 B  614       7639.4 ns -> cb       7546.2 ns  x0.988  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7552.8 ns -> cb       7605.8 ns  x1.007  (0.007 ns/B vs 0.007)
+      t-tail-digits-1m               1048522 B  614       7533.1 ns -> cb       7581.7 ns  x1.006  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7497.4 ns -> cb       7568.9 ns  x1.010  (0.007 ns/B vs 0.007)
+   short-subject-search: subjects 75; per-subject ratio median 0.865 min 0.845 max 0.935
+      rec-array-define                    11 B  614          6.7 ns -> cb          5.7 ns  x0.845  (0.517 ns/B vs 0.612)
+      lp-syslog                           56 B  614          6.7 ns -> cb          5.7 ns  x0.855  (0.102 ns/B vs 0.119)
+      cg-array-begin                       1 B  614          6.5 ns -> cb          5.7 ns  x0.876  (5.693 ns/B vs 6.496)
+      la-negation-hit                     19 B  614          4.4 ns -> cb          3.8 ns  x0.849  (0.199 ns/B vs 0.234)
+      rd-date-hit                          5 B  614          4.4 ns -> cb          3.8 ns  x0.851  (0.756 ns/B vs 0.889)
+[nocaps] wild-codegrammar-json-object-begin     614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=123 emit_bytes=17998 vm_program_bytes=None
+[nocaps] wild-codegrammar-json-object-begin     cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=123 emit_bytes=15594 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.996 min 0.694 max 1.014
+      t-1m                           1048576 B  614       7705.6 ns -> cb       7665.0 ns  x0.995  (0.007 ns/B vs 0.007)
+      t-tail-digits-1m               1048522 B  614       7660.3 ns -> cb       7630.4 ns  x0.996  (0.007 ns/B vs 0.007)
+      t-qs-1m                        1048501 B  614       7607.1 ns -> cb       7619.4 ns  x1.002  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7595.7 ns -> cb       7559.4 ns  x0.995  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7471.5 ns -> cb       7578.1 ns  x1.014  (0.007 ns/B vs 0.007)
+      t-qs-nearmiss-256k              262092 B  614       1589.3 ns -> cb       1583.6 ns  x0.996  (0.006 ns/B vs 0.006)
+   short-subject-search: subjects 75; per-subject ratio median 0.862 min 0.844 max 0.932
+      cg-object-begin                      1 B  614          6.5 ns -> cb          5.7 ns  x0.872  (5.689 ns/B vs 6.525)
+      sd-empty-alt-hit                    61 B  614          4.7 ns -> cb          4.0 ns  x0.844  (0.065 ns/B vs 0.077)
+      rec-comment-nested                  34 B  614          4.7 ns -> cb          4.0 ns  x0.850  (0.117 ns/B vs 0.138)
+      nu-high-byte                         2 B  614          4.4 ns -> cb          3.8 ns  x0.852  (1.888 ns/B vs 2.216)
+      la-pwd-weak                         10 B  614          4.4 ns -> cb          3.8 ns  x0.856  (0.377 ns/B vs 0.441)
+[nocaps] keyword-prefix-order                   614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=offset-set dfa_start=reverse-pass req_handoff=none req_why=dominated req_run=696e@1 req_byte=110 emit_bytes=22785 vm_program_bytes=None
+[nocaps] keyword-prefix-order                   cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=696e@1 req_byte=110 emit_bytes=15948 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.909 min 0.829 max 1.057
+      t-1m                           1048576 B  614     279468.5 ns -> cb     242731.2 ns  x0.869  (0.231 ns/B vs 0.267)
+      t-tail-digits-1m               1048522 B  614     273947.1 ns -> cb     250978.6 ns  x0.916  (0.239 ns/B vs 0.261)
+      t-tail-txt-1m                  1048527 B  614     271888.5 ns -> cb     244631.7 ns  x0.900  (0.233 ns/B vs 0.259)
+      t-tail-space-1m                1048522 B  614     271537.7 ns -> cb     242882.4 ns  x0.894  (0.232 ns/B vs 0.259)
+      t-qs-1m                        1048501 B  614      93917.7 ns -> cb      85405.7 ns  x0.909  (0.081 ns/B vs 0.090)
+      t-256k                          262144 B  614      40578.5 ns -> cb      33653.0 ns  x0.829  (0.128 ns/B vs 0.155)
+   short-subject-search: subjects 75; per-subject ratio median 0.952 min 0.685 max 0.985
+      waf-dbnames                         39 B  614          8.7 ns -> cb          6.0 ns  x0.685  (0.153 ns/B vs 0.223)
+      br-quoted-delim                     15 B  614          8.4 ns -> cb          5.9 ns  x0.704  (0.394 ns/B vs 0.560)
+      rec-comment-nested                  34 B  614          8.4 ns -> cb          5.9 ns  x0.704  (0.173 ns/B vs 0.246)
+      sd-keyword-short                    10 B  614          7.9 ns -> cb          5.9 ns  x0.746  (0.588 ns/B vs 0.788)
+      v-ipv4-oor                           9 B  614          4.2 ns -> cb          3.8 ns  x0.904  (0.421 ns/B vs 0.466)
+[nocaps] wild-secrets-username-password-pair    614 engine=dfa dfa_scan=unanchored dfa_scan_edge=mixed dfa_prefilter=handoff dfa_start=reverse-pass req_handoff=0 req_why=emitted req_run=55534552@0/dfdfdfdf req_byte=61 emit_bytes=563376 vm_program_bytes=None
+[nocaps] wild-secrets-username-password-pair    cb  engine=dfa dfa_scan=unanchored dfa_scan_edge=mixed dfa_prefilter=handoff dfa_start=reverse-pass req_handoff=0 req_why=emitted req_run=55534552@0/dfdfdfdf req_byte=61 emit_bytes=563753 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.997 min 0.045 max 1.048
+      t-qs-1m                        1048501 B  614    5273101.1 ns -> cb     234717.4 ns  x0.045  (0.224 ns/B vs 5.029)
+      t-qs-nearmiss-256k              262092 B  614     311958.3 ns -> cb      31454.8 ns  x0.101  (0.120 ns/B vs 1.190)
+      t-hyb-embed-64k                  65536 B  614      17555.0 ns -> cb      17555.0 ns  x1.000  (0.268 ns/B vs 0.268)
+      t-tail-digits-1m               1048522 B  614       7707.5 ns -> cb       7590.4 ns  x0.985  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7599.9 ns -> cb       7499.0 ns  x0.987  (0.007 ns/B vs 0.007)
+      t-tail-txt-1m                  1048527 B  614       7580.9 ns -> cb       7613.9 ns  x1.004  (0.007 ns/B vs 0.007)
+   short-subject-search: subjects 75; per-subject ratio median 0.921 min 0.890 max 1.110
+      sec-userpass                        33 B  614         94.2 ns -> cb         91.5 ns  x0.971  (2.771 ns/B vs 2.855)
+      waf-benign                          39 B  614          8.9 ns -> cb          9.9 ns  x1.110  (0.253 ns/B vs 0.228)
+      la-float-bound                      13 B  614          8.7 ns -> cb          9.3 ns  x1.065  (0.716 ns/B vs 0.672)
+      sd-empty-alt-hit                    61 B  614          4.5 ns -> cb          4.0 ns  x0.890  (0.066 ns/B vs 0.075)
+      sec-aws-key                         20 B  614          4.0 ns -> cb          3.6 ns  x0.897  (0.181 ns/B vs 0.202)
+[nocaps] wild-waf-crs-942270-union-select       614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class dfa_start=reverse-pass req_handoff=none req_why=emitted req_run=53454c454354@4/dfdfdfdfdfdf req_byte=none emit_bytes=39293 vm_program_bytes=None
+[nocaps] wild-waf-crs-942270-union-select       cb  engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=byte-class dfa_start=reverse-pass req_handoff=none req_why=emitted req_run=53454c454354@4/dfdfdfdfdfdf req_byte=none emit_bytes=39661 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 1.085 min 0.889 max 1.608
+      t-qs-1m                        1048501 B  614     291103.9 ns -> cb     317606.0 ns  x1.091  (0.303 ns/B vs 0.278)
+      t-tail-digits-1m               1048522 B  614     247118.1 ns -> cb     273928.4 ns  x1.108  (0.261 ns/B vs 0.236)
+      t-tail-txt-1m                  1048527 B  614     243979.6 ns -> cb     273498.8 ns  x1.121  (0.261 ns/B vs 0.233)
+      t-tail-space-1m                1048522 B  614     241733.7 ns -> cb     274265.9 ns  x1.135  (0.262 ns/B vs 0.231)
+      t-1m                           1048576 B  614     116162.1 ns -> cb     180701.0 ns  x1.556  (0.172 ns/B vs 0.111)
+      t-qs-nearmiss-256k              262092 B  614      49699.1 ns -> cb      53229.8 ns  x1.071  (0.203 ns/B vs 0.190)
+   short-subject-search: subjects 75; per-subject ratio median 1.105 min 0.873 max 1.356
+      sec-slack-webhook                   81 B  614         15.5 ns -> cb         21.0 ns  x1.356  (0.259 ns/B vs 0.191)
+      rec-tag-depth3                      22 B  614          9.0 ns -> cb         11.8 ns  x1.313  (0.534 ns/B vs 0.407)
+      waf-benign                          39 B  614          9.8 ns -> cb         11.9 ns  x1.208  (0.304 ns/B vs 0.252)
+      waf-union                           43 B  614         45.3 ns -> cb         47.2 ns  x1.042  (1.097 ns/B vs 1.053)
+      waf-concat                          48 B  614         19.5 ns -> cb         17.9 ns  x0.914  (0.372 ns/B vs 0.407)
+[nocaps] floor-byte                             614 engine=dfa dfa_scan=unanchored dfa_scan_edge=none dfa_prefilter=memchr dfa_start=end-minus-width req_handoff=none req_why=dominated req_run=none req_byte=126 emit_bytes=17996 vm_program_bytes=None
+[nocaps] floor-byte                             cb  engine=dfa dfa_scan=cover dfa_scan_edge=none dfa_prefilter=none dfa_start=attempt-start req_handoff=none req_why=dominated req_run=none req_byte=126 emit_bytes=15592 vm_program_bytes=None
+   large-subject-throughput: subjects 19; per-subject ratio median 0.987 min 0.881 max 1.011
+      t-tail-txt-1m                  1048527 B  614       7646.7 ns -> cb       7563.8 ns  x0.989  (0.007 ns/B vs 0.007)
+      t-1m                           1048576 B  614       7643.1 ns -> cb       7515.8 ns  x0.983  (0.007 ns/B vs 0.007)
+      t-qs-1m                        1048501 B  614       7638.1 ns -> cb       7419.8 ns  x0.971  (0.007 ns/B vs 0.007)
+      t-tail-space-1m                1048522 B  614       7619.5 ns -> cb       7559.2 ns  x0.992  (0.007 ns/B vs 0.007)
+      t-tail-digits-1m               1048522 B  614       7576.6 ns -> cb       7599.8 ns  x1.003  (0.007 ns/B vs 0.007)
+      t-qs-nearmiss-256k              262092 B  614       1579.8 ns -> cb       1568.1 ns  x0.993  (0.006 ns/B vs 0.006)
+   short-subject-search: subjects 75; per-subject ratio median 0.949 min 0.876 max 0.978
+      floor-hit                            1 B  614          6.5 ns -> cb          5.7 ns  x0.876  (5.699 ns/B vs 6.506)
+      v-uuid-badnibble                    36 B  614          4.3 ns -> cb          3.9 ns  x0.904  (0.107 ns/B vs 0.119)
+      waf-benign                          39 B  614          4.2 ns -> cb          3.8 ns  x0.905  (0.098 ns/B vs 0.108)
+      sec-slack-webhook                   81 B  614          4.6 ns -> cb          4.2 ns  x0.914  (0.052 ns/B vs 0.056)
+      sec-userpass                        33 B  614          4.2 ns -> cb          3.9 ns  x0.912  (0.117 ns/B vs 0.129)

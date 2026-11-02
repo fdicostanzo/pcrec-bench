@@ -1,0 +1,56 @@
+
+===== caps: K134 (abi93-k134) rows: set-cell ratios and the identical-control ratio in the same regime
+ large-subject-throughput: K134 n=16 median x1.0025 min x0.654 max x1.309 | identical control n=42 median x1.0046
+     date-nested-plus                         x0.654  old 1653.6 cb 1081.7
+     phone-list-nested-plus                   x0.836  old 3976.1 cb 3322.3
+     evil-alt-nested                          x0.888  old 55934.0 cb 49674.8
+     wild-semdiv-empty-alt-repeat-pcre2       x0.990  old 15122785.6 cb 14970475.9
+     bracket-array-define                     x0.990  old 223.5 cb 221.3
+     quoted-delim-match                       x0.995  old 1430304.4 cb 1423227.2
+     dup-param-detect                         x1.002  old 34158.4 cb 34232.6
+     nested-comment-rec                       x1.002  old 42742.9 cb 42836.5
+     wild-logparse-quotedstring-grok          x1.003  old 1414861.6 cb 1418766.7
+     wild-logparse-syslogbase-expanded        x1.003  old 2189263.9 cb 2195937.5
+     wild-validator-us-zip-owasp              x1.010  old 94.9 cb 95.8
+     email-nested-plus                        x1.011  old 1758.3 cb 1778.5
+     balanced-parens-rec                      x1.012  old 599498.3 cb 606924.5
+     tag-depth3-bound                         x1.022  old 43101.1 cb 44041.2
+     numeric-id-nested-plus                   x1.036  old 2372.4 cb 2457.6
+     trim-nested-star                         x1.309  old 54790.4 cb 71713.7
+ short-subject-search: K134 n=16 median x1.0191 min x0.817 max x1.114 | identical control n=42 median x1.0014
+     date-nested-plus                         x0.817  old 543.8 cb 444.3
+     trim-nested-star                         x0.947  old 430.0 cb 407.0
+     email-nested-plus                        x0.970  old 737.0 cb 715.1
+     evil-alt-nested                          x0.977  old 665.5 cb 650.1
+     wild-logparse-quotedstring-grok          x0.988  old 968.4 cb 957.1
+     wild-semdiv-empty-alt-repeat-pcre2       x1.001  old 1394.6 cb 1396.6
+     wild-validator-us-zip-owasp              x1.006  old 448.5 cb 451.1
+     wild-logparse-syslogbase-expanded        x1.015  old 727.9 cb 738.7
+     quoted-delim-match                       x1.023  old 922.6 cb 944.2
+     nested-comment-rec                       x1.032  old 791.3 cb 816.9
+     balanced-parens-rec                      x1.039  old 450.0 cb 467.6
+     dup-param-detect                         x1.046  old 535.9 cb 560.4
+     phone-list-nested-plus                   x1.094  old 526.7 cb 576.1
+     numeric-id-nested-plus                   x1.098  old 491.5 cb 539.7
+     tag-depth3-bound                         x1.103  old 499.0 cb 550.4
+     bracket-array-define                     x1.114  old 807.1 cb 898.8
+
+===== nocaps: K134 (abi93-k134) rows: set-cell ratios and the identical-control ratio in the same regime
+ large-subject-throughput: K134 n=8 median x0.9991 min x0.977 max x1.018 | identical control n=51 median x0.9992
+     dup-param-detect                         x0.977  old 34733.9 cb 33927.9
+     tag-depth3-bound                         x0.977  old 44276.7 cb 43274.2
+     nested-comment-rec                       x0.994  old 43676.3 cb 43429.6
+     wild-logparse-syslogbase-expanded        x0.998  old 2196391.9 cb 2192924.3
+     quoted-delim-match                       x1.000  old 1422835.9 cb 1422605.2
+     bracket-array-define                     x1.000  old 228.7 cb 228.8
+     wild-logparse-quotedstring-grok          x1.015  old 1393330.7 cb 1414404.1
+     balanced-parens-rec                      x1.018  old 599159.6 cb 609842.4
+ short-subject-search: K134 n=8 median x1.0378 min x0.991 max x1.077 | identical control n=51 median x0.9987
+     wild-logparse-quotedstring-grok          x0.991  old 965.2 cb 956.0
+     wild-logparse-syslogbase-expanded        x0.997  old 690.5 cb 688.8
+     quoted-delim-match                       x1.012  old 915.8 cb 926.8
+     nested-comment-rec                       x1.016  old 780.3 cb 793.0
+     bracket-array-define                     x1.059  old 823.2 cb 871.9
+     balanced-parens-rec                      x1.071  old 436.1 cb 466.9
+     tag-depth3-bound                         x1.074  old 500.0 cb 536.8
+     dup-param-detect                         x1.077  old 525.8 cb 566.4
