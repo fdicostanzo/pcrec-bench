@@ -1,0 +1,22 @@
+== caps: match cells old 6486 cb 6486; cells whose outcome multiset differs between pins: 0
+   non-expected outcomes (pin, outcome, pattern, subject: rows):
+     ('614d45eb3', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-match-60k') 5
+     ('614d45eb3', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-nearmiss-16k') 5
+     ('614d45eb3', 'gave-up', 'date-nested-plus', 't-hyb-datepath-16k') 5
+     ('614d45eb3', 'gave-up', 'dup-param-detect', 't-qs-1m') 5
+     ('614d45eb3', 'gave-up', 'dup-param-detect', 't-qs-nearmiss-256k') 5
+     ('cb32eda28', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-match-60k') 5
+     ('cb32eda28', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-nearmiss-16k') 5
+     ('cb32eda28', 'gave-up', 'date-nested-plus', 't-hyb-datepath-16k') 5
+     ('cb32eda28', 'gave-up', 'dup-param-detect', 't-qs-1m') 5
+     ('cb32eda28', 'gave-up', 'dup-param-detect', 't-qs-nearmiss-256k') 5
+== nocaps: match cells old 6580 cb 6580; cells whose outcome multiset differs between pins: 0
+   non-expected outcomes (pin, outcome, pattern, subject: rows):
+     ('614d45eb3', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-match-60k') 5
+     ('614d45eb3', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-nearmiss-16k') 5
+     ('614d45eb3', 'gave-up', 'dup-param-detect', 't-qs-1m') 5
+     ('614d45eb3', 'gave-up', 'dup-param-detect', 't-qs-nearmiss-256k') 5
+     ('cb32eda28', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-match-60k') 5
+     ('cb32eda28', 'did-not-match-as-expected', 'email-nested-plus', 't-evil-nearmiss-16k') 5
+     ('cb32eda28', 'gave-up', 'dup-param-detect', 't-qs-1m') 5
+     ('cb32eda28', 'gave-up', 'dup-param-detect', 't-qs-nearmiss-256k') 5

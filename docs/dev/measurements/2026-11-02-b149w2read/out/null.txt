@@ -1,0 +1,46 @@
+
+===== caps: program-identical set cells (v3), cb/614 ratio
+ large-subject-throughput: n=42 median +0.46% p5 -0.95 p95 +1.93 min -5.51 max +2.79; |d|>5%: 1; >10%: 0; >20%: 0
+     tail-dotstar-txt                         large x0.945 old [73-76] cb [70-72]
+     tail-digits-eol                          large x0.967 old [870-921] cb [849-879]
+     codegrammar-flat                         large x1.028 old [366780-377985] cb [369381-397833]
+     mojibake-curly-quote                     large x1.025 old [42909-43914] cb [43696-44895]
+     wild-codegrammar-json-stringcontent-escape large x1.019 old [42670-43289] cb [42895-43918]
+     wild-logparse-winpath-grok               large x1.019 old [42393-43870] cb [43056-44183]
+ short-subject-search: n=42 median +0.14% p5 -1.65 p95 +1.83 min -7.06 max +3.44; |d|>5%: 1; >10%: 0; >20%: 0
+     base10num-near-miss                      short x0.929 old [310-351] cb [292-343]
+     uuid-near-miss                           short x1.034 old [317-327] cb [330-338]
+     wild-validator-email-owasp               short x0.968 old [519-564] cb [520-563]
+     logparse-atomic                          short x1.025 old [498-518] cb [510-520]
+     email-local-nodup                        short x1.018 old [782-813] cb [783-813]
+     mojibake-curly-quote                     short x0.983 old [306-324] cb [307-324]
+ both: n=84 median +0.25% p5 -1.65 p95 +1.93 min -7.06 max +3.44; |d|>5%: 2; >10%: 0; >20%: 0
+     base10num-near-miss                      short x0.929 old [310-351] cb [292-343]
+     tail-dotstar-txt                         large x0.945 old [73-76] cb [70-72]
+     uuid-near-miss                           short x1.034 old [317-327] cb [330-338]
+     tail-digits-eol                          large x0.967 old [870-921] cb [849-879]
+     wild-validator-email-owasp               short x0.968 old [519-564] cb [520-563]
+     codegrammar-flat                         large x1.028 old [366780-377985] cb [369381-397833]
+
+===== nocaps: program-identical set cells (v3), cb/614 ratio
+ large-subject-throughput: n=51 median -0.08% p5 -2.61 p95 +1.52 min -36.64 max +6.75; |d|>5%: 3; >10%: 2; >20%: 1
+     phone-list-nested-plus                   large x0.634 old [2402-4614] cb [2359-3931]
+     wild-semdiv-dollar-trailing-newline-pcre2 large x0.865 old [62-68] cb [59-59]
+     evil-alt-nested                          large x1.068 old [44367-47573] cb [46624-101611]
+     wild-validator-uuid-grok                 large x0.974 old [63407-65642] cb [62970-63274]
+     tail-ext-lower-txt                       large x1.025 old [68-68] cb [68-70]
+     letters-bounded-tail-z                   large x0.983 old [469-512] cb [475-510]
+ short-subject-search: n=51 median -0.13% p5 -2.35 p95 +1.69 min -13.77 max +6.34; |d|>5%: 2; >10%: 1; >20%: 0
+     evil-alt-nested                          short x0.862 old [525-580] cb [461-562]
+     wild-waf-crs-942360-concat-sqli          short x1.063 old [2665-2969] cb [2762-3145]
+     tail-ext-lower-txt                       short x0.960 old [237-255] cb [228-252]
+     wild-validator-ipv4-owasp                short x1.038 old [247-266] cb [263-268]
+     tail-space-eol                           short x0.976 old [223-238] cb [223-237]
+     wild-codegrammar-json-stringcontent-escape short x0.980 old [341-355] cb [343-350]
+ both: n=102 median -0.10% p5 -2.35 p95 +1.64 min -36.64 max +6.75; |d|>5%: 5; >10%: 3; >20%: 1
+     phone-list-nested-plus                   large x0.634 old [2402-4614] cb [2359-3931]
+     evil-alt-nested                          short x0.862 old [525-580] cb [461-562]
+     wild-semdiv-dollar-trailing-newline-pcre2 large x0.865 old [62-68] cb [59-59]
+     evil-alt-nested                          large x1.068 old [44367-47573] cb [46624-101611]
+     wild-waf-crs-942360-concat-sqli          short x1.063 old [2665-2969] cb [2762-3145]
+     tail-ext-lower-txt                       short x0.960 old [237-255] cb [228-252]

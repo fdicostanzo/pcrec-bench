@@ -1,0 +1,52 @@
+capability@0.4__pcrec_614d45eb3_auto-caps-simdna__20261101T154236Z
+   status measured | load b/a 1.75/2.09 (loaded) | occ before pass max 7.8 tgt 2.4 | after pass max 2.4 tgt 0.2 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 3, 'form': 'plain', 'n': 19, 'pattern_id': 'pwd-strength-chain', 'regime': 'large-subject-throughput'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+capability@0.4__pcrec_614d45eb3_auto-nocaps-simdna__20261101T164505Z
+   status measured | load b/a 1.40/2.17 (loaded) | occ before pass max 7.8 tgt 4.8 | after pass max 1.6 tgt 0.2 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 4, 'form': 'plain', 'n': 19, 'pattern_id': 'wild-codegrammar-json-constant', 'regime': 'large-subject-throughput'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+capability@0.4__pcrec_cb32eda28_auto-caps-simdna__20261101T133920Z
+   status measured | load b/a 1.72/1.99 (quiet) | occ before pass max 1.8 tgt 0.2 | after fail max 10.1 tgt 3.4 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 3, 'form': 'plain', 'n': 75, 'pattern_id': 'wild-waf-crs-942270-union-select', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+capability@0.4__pcrec_cb32eda28_auto-nocaps-simdna__20261101T144104Z
+   status measured | load b/a 1.52/1.94 (quiet) | occ before pass max 2.4 tgt 0.4 | after fail max 25.4 tgt 14.7 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 2, 'form': 'plain', 'n': 19, 'pattern_id': 'pwd-strength-chain', 'regime': 'large-subject-throughput'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__libpcre2_10.46_jit-caps-simdna__20261101T131818Z
+   status inconclusive-spread | load b/a 1.08/2.06 (loaded) | occ before pass max 1.8 tgt 2.2 | after fail max 10.5 tgt 3.8 | trials ?
+   agreement: {'verdict': 'disagree', 'rule': 'v1.11-group', 'worst_group': {'d': 43, 'form': 'plain', 'n': 75, 'pattern_id': 'wild-semdiv-dollar-trailing-newline-pcre2', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: estees/pcre2/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcre2/timed_ctx.c -ldl
+sentinel@0.1__libpcre2_10.46_jit-caps-simdna__20261101T132823Z
+   status measured | load b/a 1.44/2.50 (loaded) | occ before pass max 8.5 tgt 5.8 | after fail max 16.3 tgt 6.4 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 6, 'form': 'plain', 'n': 75, 'pattern_id': 'router-prefix-order', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: estees/pcre2/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcre2/timed_ctx.c -ldl
+sentinel@0.1__libpcre2_10.46_jit-caps-simdna__20261101T180753Z
+   status measured | load b/a 1.61/2.15 (loaded) | occ before pass max 3.2 tgt 1.2 | after pass max 3.0 tgt 1.0 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 0, 'form': 'plain', 'n': 75, 'pattern_id': 'winpath-near-miss', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: estees/pcre2/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcre2/timed_ctx.c -ldl
+sentinel@0.1__pcrec_614d45eb3_auto-caps-simdna__20261101T130521Z
+   status measured | load b/a 1.72/2.00 (quiet) | occ before pass max 7.3 tgt 2.8 | after pass max 4.4 tgt 0.6 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 0, 'form': 'plain', 'n': 75, 'pattern_id': 'winpath-near-miss', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__pcrec_614d45eb3_auto-caps-simdna__20261101T175549Z
+   status measured | load b/a 1.63/2.19 (loaded) | occ before pass max 9.9 tgt 2.8 | after pass max 2.4 tgt 0.4 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 0, 'form': 'plain', 'n': 75, 'pattern_id': 'winpath-near-miss', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__pcrec_cb32eda28_auto-caps-simdna__20261101T125936Z
+   status measured | load b/a 1.51/1.97 (quiet) | occ before pass max 3.2 tgt 3.6 | after fail max 14.8 tgt 5.2 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 0, 'form': 'plain', 'n': 75, 'pattern_id': 'winpath-near-miss', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__pcrec_cb32eda28_auto-caps-simdna__20261101T174951Z
+   status measured | load b/a 1.53/1.90 (quiet) | occ before pass max 8.7 tgt 3.4 | after pass max 5.4 tgt 1.2 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 1, 'form': 'plain', 'n': 75, 'pattern_id': 'wild-validator-email-owasp', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__pcrec_cb32eda28_auto-nocaps-simdna__20261101T131109Z
+   status measured | load b/a 1.93/2.01 (loaded) | occ before pass max 3.0 tgt 2.4 | after fail max 12.5 tgt 7.8 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 1, 'form': 'plain', 'n': 75, 'pattern_id': 'wild-waf-crs-942360-concat-sqli', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+sentinel@0.1__pcrec_cb32eda28_auto-nocaps-simdna__20261101T180128Z
+   status measured | load b/a 1.72/1.95 (quiet) | occ before pass max 2.0 tgt 0.4 | after fail max 24.3 tgt 15.3 | trials ?
+   agreement: {'verdict': 'agree', 'rule': 'v1.11-group', 'worst_group': {'d': 0, 'form': 'plain', 'n': 75, 'pattern_id': 'winpath-near-miss', 'regime': 'short-subject-search'}} | harness e516461fac6153d55e8e83bfff353d0d7f5f2e66 | schema 1.11
+   driver flags tail: pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl

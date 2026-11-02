@@ -1,0 +1,9 @@
+capability@0.4 caps: compiled-both rows 138; v3 identical 94, changed 44; agree with census (identity + emit/code deltas) 138; mismatches 0; refusal movers []
+   agreeing rows by census attribution: {'abi93-k134': 33, '-': 94, 'abi92-cover': 9, 'abi91-reqrun-vm+abi92-pair-lookahead+abi93-k134': 1, 'abi92-pair-lookahead': 1}
+capability@0.4 nocaps: compiled-both rows 139; v3 identical 112, changed 27; agree with census (identity + emit/code deltas) 139; mismatches 0; refusal movers []
+   agreeing rows by census attribution: {'abi93-k134': 16, '-': 112, 'abi92-cover': 9, 'abi92-pair-lookahead': 2}
+emit_bytes record minus census (cb32eda28, caps): {7: 138}
+   caps emit_bytes delta [abi93-k134] n=33 min 1608 median 1815 max 1882
+   caps emit_bytes delta [abi92-cover] n=9 min -6837 median -4286 max -2404
+   caps emit_bytes delta [abi92-pair-lookahead] n=1 min 368 median 368 max 368
+   caps emit_bytes delta [abi91-reqrun-vm+abi92-pair-lookahead+abi93-k134] n=1 min 1100 median 1100 max 1100

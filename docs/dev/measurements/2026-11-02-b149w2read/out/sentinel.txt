@@ -1,0 +1,30 @@
+== sentinel closing/opening, same window (W2), per testee
+cb-caps: subject-cells n=1125 median 0.9965 p5 0.957 p95 1.061 min 0.772 max 1.237; set-cells n=15 median 0.9945 min 0.972 max 1.044 |dev|>5%: 0
+cb-nocaps: subject-cells n=1125 median 0.9947 p5 0.933 p95 1.012 min 0.796 max 1.160; set-cells n=15 median 0.9935 min 0.926 max 1.001 |dev|>5%: 1
+old-caps: subject-cells n=1125 median 1.0013 p5 0.978 p95 1.089 min 0.823 max 1.344; set-cells n=15 median 1.0091 min 0.976 max 1.036 |dev|>5%: 0
+jit: subject-cells n=1125 median 0.9981 p5 0.741 p95 1.155 min 0.709 max 1.238; set-cells n=15 median 0.9979 min 0.735 max 1.152 |dev|>5%: 2
+
+== in-window cb / 614 (caps), opening and closing; patterns program-identical (v3) only
+open: identical patterns 7 of 15; changed ['file-ext-order', 'floor-byte', 'keyword-prefix-order', 'numeric-id-nested-plus', 'phone-list-nested-plus', 'router-prefix-order', 'trim-nested-star', 'wild-validator-us-zip-owasp']; subject-cells n=525 cb/614 median 1.0007 p5 0.975 p95 1.215
+close: identical patterns 7 of 15; changed ['file-ext-order', 'floor-byte', 'keyword-prefix-order', 'numeric-id-nested-plus', 'phone-list-nested-plus', 'router-prefix-order', 'trim-nested-star', 'wild-validator-us-zip-owasp']; subject-cells n=525 cb/614 median 0.9993 p5 0.955 p95 1.231
+
+== cross-window control: the SAME pin 614d45eb3 / libpcre2 jit, W2 vs 2026-10-28 (sentinel@0.1)
+   10-28 614 caps files: ['20261028T161100Z', '20261028T224116Z'] jit: ['20261028T162849Z', '20261028T225930Z']
+614 auto-caps open: W2/10-28 subject-cells n=1125 median 1.0004 p5 0.910 p95 1.040; set-cells median 0.9997 min 0.947 max 1.026
+614 auto-caps close: W2/10-28 subject-cells n=1125 median 1.0038 p5 0.913 p95 1.050; set-cells median 1.0103 min 0.923 max 1.036
+jit open: W2/10-28 subject-cells n=1125 median 1.0068 p5 0.946 p95 1.328; set-cells median 1.0013 min 0.963 max 1.341
+jit close: W2/10-28 subject-cells n=1125 median 0.9968 p5 0.826 p95 1.181; set-cells median 0.9956 min 0.863 max 1.178
+('run', 'harness_commit') 
+   10-28: e0e68c3ec292e70574a88e62cbdf3ebeecf7b8a9 
+   W2   : e516461fac6153d55e8e83bfff353d0d7f5f2e66
+('run', 'driver_build_flags') 
+   10-28: /testees/pcrec/timed_subst.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl 
+   W2   : /testees/pcrec/timed_subst.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls.c /home/pcrec/projects/pcrec-bench/testees/pcrec/timed_calls_vars.c -ldl
+('environment', 'kernel') 
+   10-28: linux-7.0.0-38-generic 
+   W2   : linux-7.0.0-38-generic
+('environment', 'compiler') 
+   10-28: gcc-15.2.0 
+   W2   : gcc-15.2.0
+614 sentinel artifact_bytes W2 - 10-28: median 0.0 min 0 max 0
+614 sentinel program_sha256_v3 identical across windows: 30 of 30
