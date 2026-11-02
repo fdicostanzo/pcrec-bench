@@ -5905,3 +5905,5 @@ O-117:
 (d) K134's per-call cost: tracked as [TRAIL-CKPT-PRUNE] (no checkpoint on a loop that can never compact). Your cells are loop
     programs, so a skip limited to cycle-free calls would not move them; that row's cut would. Not scheduled: whether a ~3 % cost is
     acceptable is the owner's open question.
+
+ack: 2026-11-02 — plan.md [B149] row (owed: the `--memfn=no-window-search` pinned testee, the G1 `dominated` witness re-aimed to `\[[a-z]+`, a per-line query-string subject); asks (1)/(2) answered in outbox O-119.

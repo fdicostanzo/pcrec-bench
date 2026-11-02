@@ -6721,3 +6721,16 @@ Window b149mon 2026-11-02 03:40 -> 13:37 EDT on `ryzen7700x` (core 7): unusual@0
 **Unpredicted, ours, for the record.** (1) The deep arms run `--prime` (BD17); on them `callout_fires` is DOUBLED (22,616 vs 11,308 on co-luhn-1m, on pcrec `_in` and all three libpcre2/Onig deep arms), so per-fire figures there are half; fix on our side. (2) wild-json js-1m on `_in` is 18.2 ms (was 129.5 ms unprimed in the scratch window), so your R1 ratio against jit-deep is x5.6, not x21.9; interp-deep falls 455 -> 37.9 ms and Onig does not. (3) pcrec's sentinel short cells read 5-6 % FASTER on 11-02 than on 11-01 and 10-28 on both pins and both captures, jit flat, no driver change between: we cannot isolate it; every cross-window short cell above carries it. (4) our stream view printed empty when built after the set grain over the same records (fixed in the render script).
 
 **Asks.** (a)-(b) above. (c) The R1 census (pcrec `_in` vs best deep arm, 100 large cells): 46 over x3, all against jit-deep -- the cscan nest-paren family x5.0-5.3, nest-brace x4.1-4.3, nest-digraph x4.0, wild-json x5.4-5.6, wild-sexp x3.4-3.7; short-subject means cscan x3.7, wild-json x4.7; pcrec is the best engine on 36 cells and on every callout member and the floor. The cscan stream at the compiler's access pattern (seg-l, 4,096 calls) is 60.9 ms default / 46.2 ms `_in` against pcre2-jit-deep 14.4 ms.
+
+## O-119 (2026-11-02, bench manager) -- answers to I-174's two asks
+
+**(1) `-fno-req-handoff` on forced-VM `abc` (O-116.3):** no sentence of yours promised it. The promise was our own. Our [B145] identity witness assumed that a deny flag restores the pre-step program. Your reading (the flag denies the handoff and is answer-identical, with no program-identity claim) is the one we accept. The witness now denies what it needs (`--memfn=no-window-search` plus `-fno-req-handoff`), and nothing is asked of you.
+
+**(2) libpcre2 10.46 on `dup-param-detect` x the two I-172 subjects:**
+- The INTERPRETER answers both at default limits (the oracle sets no limit): `t-qs-1m` matches (span 1034-1112, 119 non-overlapping matches) and `t-qs-nearmiss-256k` is nomatch. Both agree with the committed expectations (`libpcre2-differential`).
+- Both are slow in a scratch pass (2026-11-02 19:08, one trial, iters 1, `nice -n 19 taskset -c 0-5` beside your pilot, so the times are indicative only): **11.42 s** for the 1 MiB find-all and **2.12 s** for the 256 KiB near-miss.
+- The JIT GIVES UP on both, `-46 JIT stack limit reached`, with our default `pcre2-jit` testee (no JIT stack assigned, i.e. libpcre2's 32 KiB default). We did not run the 1 GiB-stack `-deep` arm on capability.
+- So pcrec's FRAMES give-up stands beside a JIT give-up and an interpreter that answers in seconds. A capability row for the interpreter's answer is yours to decide.
+- We'll take the per-line subject (one query string per line, up to ~386 params) into capability's next version, so the cell becomes timeable on every engine.
+
+**Also from I-174, now owed here:** the `--memfn=no-window-search` pinned testee (O-116.1) and the G1 `dominated` witness re-aimed to `\[[a-z]+` (O-116.5). Both go into the next prep lane.
