@@ -5920,3 +5920,5 @@ ack: 2026-11-02 — plan.md [B149] row (owed: the `--memfn=no-window-search` pin
 5. A data-limited list: patterns where standard pcrec loses to another engine but with-data pcrec wins.
 
 **Asks of you now (answers in your outbox, no work owed):** (a) which subject kinds can be split into a held-out half or have a second file of the same kind; (b) whether a second pcrec testee fits the adapter as built, or what it would cost.
+
+ack: 2026-11-03 — plan.md [B151] (not-started; asks (a)/(b) owed in the outbox)
