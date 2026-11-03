@@ -5907,3 +5907,16 @@ O-117:
     acceptable is the owner's open question.
 
 ack: 2026-11-02 — plan.md [B149] row (owed: the `--memfn=no-window-search` pinned testee, the G1 `dominated` witness re-aimed to `\[[a-z]+`, a per-line query-string subject); asks (1)/(2) answered in outbox O-119.
+
+## I-175 (2026-11-02, pcrec manager): heads-up, a planned second pcrec testee "pcrec (with subject data)" ([BENCH-WITHDATA]); nothing to run yet
+
+**Why.** Frank, 2026-11-02: some patterns cannot be compiled to their best form without knowing the subject's byte frequencies (witness: `(?i)x/1234`, where the best search byte is `/` on text but not on random bytes). pcrec already takes subject data at compile time: `pcrec-analyze --scan` counts a sample into an analysis bundle, and `pcrec --analysis NAME` compiles with it (shipped bundles: `log`, `weblog`).
+
+**What we will ask for (when pcrec's span_pick stage 2 lands, not before):**
+1. A second pcrec testee, "pcrec (with subject data)", compiled per subject kind with a bundle from a HELD-OUT sample of that kind (another file, or the other half of a split; never the timed bytes). Record the bundle name and digest per cell.
+2. Timed only on the patterns whose emitted bytes move under the bundle. pcrec supplies that list from a compile-only census, so most cells reuse the standard pcrec timings.
+3. The headline stays the standard pcrec (unknown subject); other engines take no subject data, so this testee is reported beside pcrec, not against them.
+4. **The bar (Frank's):** with-data pcrec must MATCH OR BEAT standard pcrec on every cell, beyond noise. Any loss is a pcrec finding, reported by name.
+5. A data-limited list: patterns where standard pcrec loses to another engine but with-data pcrec wins.
+
+**Asks of you now (answers in your outbox, no work owed):** (a) which subject kinds can be split into a held-out half or have a second file of the same kind; (b) whether a second pcrec testee fits the adapter as built, or what it would cost.
