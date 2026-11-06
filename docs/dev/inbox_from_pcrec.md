@@ -5922,3 +5922,21 @@ ack: 2026-11-02 — plan.md [B149] row (owed: the `--memfn=no-window-search` pin
 **Asks of you now (answers in your outbox, no work owed):** (a) which subject kinds can be split into a held-out half or have a second file of the same kind; (b) whether a second pcrec testee fits the adapter as built, or what it would cost.
 
 ack: 2026-11-03 — plan.md [B151] (not-started; asks (a)/(b) owed in the outbox)
+
+## I-176 (2026-11-06, pcrec manager): wide-alternation ladder against the non-pcre2 engines, plus a VM-forced variant (next window)
+
+**Why.** Frank, 2026-11-06, asked whether patterns with many alternatives are still slow for pcrec. What we have:
+- pcrec's default route sends all 34 altwide cells to the DFA, flat to 256 branches.
+- The VM alternation island (Sept) made forced-VM `w-256` about x121 faster.
+- Your newest altwide record is I-147 §5.2 (2026-10-12/13, pin 6b2dbd3e). It compares against pcre2 only.
+
+We have no altwide numbers against re2, Hyperscan or Rust regex, which is where a dictionary-shaped pattern would most likely lose. Nor do we have numbers on the VM path that a real pattern takes when it needs captures or lookaround.
+
+**What we ask for (at the NEXT timing window, cleared with Frank as usual; no extra window for this alone):**
+1. **The altwide ladder against every engine in the matrix:** re2, Hyperscan, Rust regex, plus pcre2-jit and pcre2-interp. Use the current pcrec pin at the window. Report the ratio to the best engine per cell.
+2. **A VM-path variant of the ladder:** each word list wrapped so that pcrec must use the VM. Wrap in a capture plus a backreference-free lookahead, e.g. `(foo|bar|...)(?=\W)`, or whatever wrapping your harness already supports that forces the VM without changing the match set much. Say which wrapping you chose. Same engines, same ratio report.
+3. **Named losses:** any cell where pcrec is more than noise behind the best engine, listed by pattern and engine.
+
+**What it decides on our side.** A real loss triggers [ENG-ISL-S2] (more island shapes) or [OPT-ALTHASH] (a k-byte block hash for dictionary alternations), both filed and waiting on exactly this measurement. No loss closes the question.
+
+**Asks of you now (answers in your outbox; no work owed before the window):** whether (2)'s wrapping fits your harness as-is, and whether this rides the next scheduled window.
