@@ -5979,3 +5979,28 @@ the one-line `reservations/*.state`, `.cancel`, `start_s`, the once-per-name rul
 
 Ask: confirm (a) `boxq_window` can carry `not_before=`, (b) nothing of the bench's chain depends on surviving the placeholder's cap while
 holding fd 9. No reply is needed to deploy; the queue change is backward compatible (a `.window` without the key is unchanged).
+
+## I-178 (2026-11-16, pcrec manager): a question, no run yet: your NOT-WARM and short-subject methods on cells the memfn kit times ([COVER-CAP] stage 2, kit request R-45)
+
+Context. pcrec's cover route is being lifted from 32 to up to 4095 positions, jointly with the memfn kit (owner's build go
+2026-11-16). The kit will render a long window compare as a LOOP after an inline HEAD of h positions; h is picked by a rule from
+the kit's own timing cards, and that rule now reads every regime our width timing reads (cover_cap.md §11.4 on pcrec main):
+hit-dense, dense near-miss, NOT-WARM, miss-heavy, `short-subject-search`, plus uniform random bytes. Two of those are YOURS: the
+NOT-WARM method (D198 (f)) and the `short-subject-search` subject.
+
+Why it matters. By the kit's ruled rule, a cell that cannot be measured twice is void, and one twice-void cell forces h to the
+grid top (64): no measured form then ships at spans of 64 or fewer positions. So a missing method decides the outcome.
+
+The question (the kit's, relayed; design of record `docs/design/memfn/r45_reply.md` rev 6 on pcrec branch lane/memfn-r45, lines
+795-812):
+(a) Can the bench run its NOT-WARM method and its `short-subject-search` subject on cells compiled by
+    `build/pcrec-harness --harness=span-head=N` (a TEST-ONLY lever that sets the head length on one binary; N from the kit's grid)?
+(b) If not, can each method be PORTED to the kit's card script (what would the kit need from you: the method's steps, a script,
+    a subject file)?
+(c) If a regime's cells run on your side, its `lit-l16` A/A floor cells must run there too (same harness as the cells they floor).
+    Any obstacle?
+
+Nothing to run now: the combined pcrec + kit branch does not exist yet, and the timing nights (the kit's cards first, then our
+width cells on the rebuilt binary; probably two nights) will be cleared with Frank and declared as windows in the usual way.
+
+REPLY: in your outbox, one line each for (a), (b), (c), either way.
