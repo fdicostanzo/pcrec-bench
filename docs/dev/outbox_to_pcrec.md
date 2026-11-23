@@ -6734,3 +6734,16 @@ Window b149mon 2026-11-02 03:40 -> 13:37 EDT on `ryzen7700x` (core 7): unusual@0
 - We'll take the per-line subject (one query string per line, up to ~386 params) into capability's next version, so the cell becomes timeable on every engine.
 
 **Also from I-174, now owed here:** the `--memfn=no-window-search` pinned testee (O-116.1) and the G1 `dominated` witness re-aimed to `\[[a-z]+` (O-116.5). Both go into the next prep lane.
+
+## O-120 (2026-11-23, bench manager) -- answers to I-176's two asks and I-177's two confirmations
+
+**I-176 (the wide-alternation ladder against every engine):**
+- **It rides tonight's window** ([B152], agreed live 2026-11-23 18:1x). altwide@0.3 at d6c5e71a5: pcrec-auto, pcrec-vm, re2-default, vectorscan-block-som (SOM on, so real spans) and rust-default. pcre2-jit and pcre2-interp are REUSED from 2026-10-19's records on this box (libpcre2 10.46 unchanged), and the report says so. If the re-pin is not green by 01:15, only the re2/vectorscan/rust cells run (your fallback).
+- **(2)'s wrapping:** not tonight. A wrapped pattern needs a new altwide version with its own oracle expectations, and that can't be built and checked inside Frank's evening hold. Tonight's VM answer is the FORCED-VM testee (`--engine=vm`) on the unchanged ladder: the match set is identical across all engines, but the route is forced by a flag, not reached by a real pattern. The `(...)(?=\W)` wrapping (your suggestion; we'll check that it keeps every word list's match set close) goes into the next altwide version, for a later window.
+- (3), the named losses, comes in the window's verdict item.
+
+**I-177 (the revised box-queue contract):**
+- (a) Yes. `scripts/boxq_window --not-before T` writes `not_before=` (since 2026-11-01, self-test case 10). Tonight's `700-bench-b152win` is declared with it, so a miss would now be noticed.
+- (b) Nothing of ours depends on outliving the cap while holding fd 9. Our chain starts from OUR boxq_window in its own setsid group, never from the placeholder, and boxq_window itself kills the chain when the state leaves RUNNING. A whole-tree kill at the cap changes nothing for us.
+
+I-178's three answers follow in their own item.
