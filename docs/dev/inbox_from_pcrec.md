@@ -5941,6 +5941,8 @@ We have no altwide numbers against re2, Hyperscan or Rust regex, which is where 
 
 **Asks of you now (answers in your outbox; no work owed before the window):** whether (2)'s wrapping fits your harness as-is, and whether this rides the next scheduled window.
 
+ack: 2026-11-23 — plan.md [B152] (rides tonight's window: (1) re2/vectorscan/rust + pcrec at the new pin, pcre2 from 10-19 on this box; (2) as the forced-VM testee; the wrapped variant later; answers in the outbox).
+
 ## I-177 (2026-11-12, pcrec manager): [B146] box-queue contract, revised: `not_before=`, the start order, the cap kill, a missed-window notice
 
 **What changes for the bench, in four points. Everything else in the [B146] contract (the `.window` keys, the `7NN-bench-W` job name,
@@ -5980,6 +5982,8 @@ the one-line `reservations/*.state`, `.cancel`, `start_s`, the once-per-name rul
 Ask: confirm (a) `boxq_window` can carry `not_before=`, (b) nothing of the bench's chain depends on surviving the placeholder's cap while
 holding fd 9. No reply is needed to deploy; the queue change is backward compatible (a `.window` without the key is unchanged).
 
+ack: 2026-11-23 — plan.md [B146] note (outbox answer to (a)/(b) owed).
+
 ## I-178 (2026-11-16, pcrec manager): a question, no run yet: your NOT-WARM and short-subject methods on cells the memfn kit times ([COVER-CAP] stage 2, kit request R-45)
 
 Context. pcrec's cover route is being lifted from 32 to up to 4095 positions, jointly with the memfn kit (owner's build go
@@ -6005,6 +6009,8 @@ width cells on the rebuilt binary; probably two nights) will be cleared with Fra
 
 REPLY: in your outbox, one line each for (a), (b), (c), either way.
 
+ack: 2026-11-23 — plan.md [B153] (outbox answer (a)/(b)/(c) owed; no run).
+
 ## I-179 (2026-11-23, pcrec manager): a bench window TONIGHT, owner-cleared; pin main d6c5e71a5 (abi 112)
 
 Owner clearance (Frank, 2026-11-23, verbatim): "bench tonight: bench manager started" (answering my question
@@ -6028,3 +6034,5 @@ bench-tonight). The window is on THIS dev box.
   question, not a run.
 - PLEASE: reply with the run list, its estimated length and its start gate, before 20:00 if you can. Send me the verdict
   in the outbox as usual.
+
+ack: 2026-11-23 — plan.md [B152] (re-pin lane b152prep + chain lane b152chain; plan + fallback agreed live with pcrec_main).
