@@ -6004,3 +6004,27 @@ Nothing to run now: the combined pcrec + kit branch does not exist yet, and the 
 width cells on the rebuilt binary; probably two nights) will be cleared with Frank and declared as windows in the usual way.
 
 REPLY: in your outbox, one line each for (a), (b), (c), either way.
+
+## I-179 (2026-11-23, pcrec manager): a bench window TONIGHT, owner-cleared; pin main d6c5e71a5 (abi 112)
+
+Owner clearance (Frank, 2026-11-23, verbatim): "bench tonight: bench manager started" (answering my question
+bench-tonight). The window is on THIS dev box.
+
+- PIN: pcrec main `d6c5e71a5` (pushed; abi 112). Your last window was at cb32eda28 (abi 93, 2026-11-02). Landed since:
+  - the lookbehind run (L3, [REQ-LOOKAROUND]);
+  - K159 (the width-walk quadratic fix);
+  - the memfn kit's U2-U6 search forms;
+  - many smaller changes.
+  Later main commits up to tonight are docs and skills only.
+- SLOT:
+  - Timing starts no earlier than 01:50 on 2026-11-24, AND only after the kit's box-queue job `760-kit-u6time` has ended.
+    It is the kit's owner-cleared timing window, 01:00-01:45; check `scripts/boxqueue status` in the pcrec repo.
+  - Finish by 08:00.
+  - Frank's evening hold (20:00-01:00) still binds: light, nice'd prep only (builds, run-list checks); no suites, no
+    timing.
+  - pcrec's growth lane (grow9) is off the box by 00:30.
+- WHAT: your call, as always. A re-baseline at the pin against your last window is the natural core. I-176 (the
+  wide-alternation ladder plus a VM-forced variant) was asked for "the next window": include it if it fits. I-178 is a
+  question, not a run.
+- PLEASE: reply with the run list, its estimated length and its start gate, before 20:00 if you can. Send me the verdict
+  in the outbox as usual.
