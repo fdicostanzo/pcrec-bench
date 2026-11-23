@@ -74,7 +74,7 @@
 # still an environment dimension"): on a `-clang` testee it still reads gcc,
 # and the artifact's compiler is read off `testee.build_flags` /
 # `testee_id`. Flagged for the schema panel, not worked around here.
-pin = "cb32eda28"
+pin = "d6c5e71a5"
 
 # [B135] A SECOND pin measurable in the same window. `pin` is the canonical
 # one; a process selects one of these with $PCRECBENCH_PCREC_PIN (adapter.py
@@ -110,7 +110,15 @@ pin = "cb32eda28"
 # BEFORE of nothing here; its build stays on disk, `testee@9ae59f5d4` is
 # refused by name). NOTE for the manager: chains naming `@9ae59f5d4` (the
 # b147win chain) need re-aiming.
-also_pins = ["614d45eb3"]
+# [B152] (2026-11-23): the canonical pin ADVANCED cb32eda28 -> d6c5e71a5 (abi
+# 112, the whole roster, inbox I-179; NINETEEN abi steps 94-112) and the list
+# became [cb32eda28]: the BEFORE of every one of the nineteen steps and the
+# last window's pin (2026-11-02). 614d45eb3 LEAVES the allowlist (the BEFORE
+# of nothing here; its build stays on disk, `testee@614d45eb3` is refused by
+# name). NOTE for the manager: tools/check_calls.py's K134 flip row runs a
+# child under PCRECBENCH_PCREC_PIN=614d45eb3 and needs re-aiming (lane
+# b152prep report, OWED to the post-window `make check`).
+also_pins = ["cb32eda28"]
 
 [testees.pcrec-auto]
 engine_mode = "auto"
