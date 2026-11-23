@@ -7749,6 +7749,17 @@ DENY_CONTROLS = (
      "rev-end-form", ("literal", b"\\s+$"), "",
      {"emit_bytes": (25461, 22589)}, "deny", "default",
      "-fno-rev-end-onewalk"),
+    # [B152] (pin d6c5e71a5, abi 95, [LANDWALK]): `-fno-landmark-walk` (the
+    # `locate` axis's order-3 row, bit 57, RX_DFA_SCAN `landmark-walk`) -- the
+    # search steps the forward machine over every byte again. MEASURED on
+    # `foo[0-9]+bar`: dfa_scan landmark-walk -> unanchored, and req_why
+    # dominated -> emitted (req-admit row 3: a LOCATE row that answers
+    # presence itself dominates the pre-check; without the walk it ships).
+    ("dfa_scan: the [LANDWALK] landmark walk denied",
+     "locate", ("literal", b"foo[0-9]+bar"), "",
+     {"dfa_scan": ("landmark-walk", "unanchored"),
+      "req_why": ("dominated", "emitted")}, "deny", "default",
+     "-fno-landmark-walk"),
 )
 
 
