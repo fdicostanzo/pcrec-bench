@@ -1,0 +1,38 @@
+records tonight:
+  libpcre2_10.46_jit-caps-simdna@20261124T071602Z
+  libpcre2_10.46_jit-caps-simdna@20261124T124035Z
+  pcrec_cb32eda28_auto-caps-simdna@20261124T065255Z
+  pcrec_cb32eda28_auto-caps-simdna@20261124T122244Z
+  pcrec_d6c5e71a5_auto-caps-simdna@20261124T070459Z
+  pcrec_d6c5e71a5_auto-caps-simdna@20261124T123242Z
+
+-- in-window drift, close / open
+cb32eda28 close/open               short-subject-search       n=15 geomean x1.0160 min x0.953 max x1.132
+d6c5e71a5 close/open               short-subject-search       n=15 geomean x1.0064 min x0.989 max x1.050
+pcre2-jit close/open               short-subject-search       n=15 geomean x0.9928 min x0.816 max x1.300
+
+-- in-window pin delta d6c5e71a5 / cb32eda28
+open                               short-subject-search       n=15 geomean x0.9914 min x0.948 max x1.040
+close                              short-subject-search       n=15 geomean x0.9820 min x0.887 max x1.031
+
+-- sentinel patterns beyond 1.10 either way, pin delta at open / close
+  close	wild-waf-crs-942360-concat-sqli	short-subject-search	x0.887
+
+-- cross-window offset: tonight / 11-01..02 W2+monday records (same pin cb32eda28; jit as control)
+  old records:
+    libpcre2_10.46_jit-caps-simdna@20261101T132823Z
+    libpcre2_10.46_jit-caps-simdna@20261101T180753Z
+    pcrec_614d45eb3_auto-caps-simdna@20261101T130521Z
+    pcrec_614d45eb3_auto-caps-simdna@20261101T175549Z
+    pcrec_cb32eda28_auto-caps-simdna@20261101T125936Z
+    pcrec_cb32eda28_auto-caps-simdna@20261101T174951Z
+    pcrec_cb32eda28_auto-nocaps-simdna@20261101T131109Z
+    pcrec_cb32eda28_auto-nocaps-simdna@20261101T180128Z
+  20261124T065255 / 20261101T125936 (pcrec_) short-subject-search       n=15 geomean x1.0037 range x0.965-x1.037
+  20261124T122244 / 20261101T125936 (pcrec_) short-subject-search       n=15 geomean x1.0197 range x0.950-x1.131
+  20261124T065255 / 20261101T174951 (pcrec_) short-subject-search       n=15 geomean x1.0014 range x0.966-x1.035
+  20261124T122244 / 20261101T174951 (pcrec_) short-subject-search       n=15 geomean x1.0174 range x0.968-x1.114
+  20261124T071602 / 20261101T132823 (libpcr) short-subject-search       n=15 geomean x1.0247 range x0.744-x1.200
+  20261124T124035 / 20261101T132823 (libpcr) short-subject-search       n=15 geomean x1.0173 range x0.929-x1.198
+  20261124T071602 / 20261101T180753 (libpcr) short-subject-search       n=15 geomean x1.0300 range x0.885-x1.203
+  20261124T124035 / 20261101T180753 (libpcr) short-subject-search       n=15 geomean x1.0225 range x0.832-x1.323

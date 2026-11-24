@@ -1,0 +1,127 @@
+
+=== capability-0.4  (previous pin cb32eda28: census b152prep only)
+regress	bracket-array-define	large-subject-throughput	plain	delta=+0.8%	bar=0.330164	identity=changed	after_ns=223.059088	TINY	attr=b152:abi103-minw
+improve	doubled-word	short-subject-search	plain	delta=-3.1%	bar=0.798769	identity=changed	after_ns=2516.325727		attr=b152:abi103-minw
+improve	float-literal-bound	large-subject-throughput	plain	delta=-85.7%	bar=12.762826	identity=changed	after_ns=575459.261166		attr=b152:abi95-landmark+abi104-112-reqrun
+improve	logparse-atomic	short-subject-search	plain	delta=-14.6%	bar=8.809763	identity=changed	after_ns=441.938754		attr=b152:abi103-minw+abi104-112-reqrun
+improve	logparse-atomic-removed	short-subject-search	plain	delta=-15.6%	bar=8.809763	identity=changed	after_ns=436.091242		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	phone-palindrome-6	short-subject-search	plain	delta=-6.7%	bar=0.495029	identity=changed	after_ns=1498.427595		attr=b152:abi103-minw
+improve	tag-depth3-bound	short-subject-search	plain	delta=-9.1%	bar=8.809763	identity=changed	after_ns=500.481403		attr=b152:abi103-minw
+improve	wild-codegrammar-json-constant	short-subject-search	plain	delta=-10.8%	bar=8.809763	identity=changed	after_ns=716.435512		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-datetime-moment-iso8601	large-subject-throughput	plain	delta=-52.5%	bar=12.762826	identity=changed	after_ns=41310.104840		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-datetime-moment-iso8601	short-subject-search	plain	delta=-17.8%	bar=8.809763	identity=changed	after_ns=444.261025		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-logparse-quotedstring-noatomic	short-subject-search	plain	delta=-11.0%	bar=8.809763	identity=changed	after_ns=621.298869		attr=b152:abi103-minw+abi97-altnf
+improve	wild-logparse-syslogbase-expanded	large-subject-throughput	plain	delta=-93.1%	bar=12.762826	identity=changed	after_ns=152036.190978		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-logparse-syslogbase-expanded	short-subject-search	plain	delta=-23.0%	bar=8.809763	identity=changed	after_ns=568.667902		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-secrets-aws-access-key-id	large-subject-throughput	plain	delta=-14.7%	bar=12.762826	identity=changed	after_ns=74141.054137		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-secrets-aws-access-key-id	short-subject-search	plain	delta=-18.3%	bar=8.809763	identity=changed	after_ns=514.095838		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-secrets-github-pat	short-subject-search	plain	delta=-17.9%	bar=8.809763	identity=changed	after_ns=367.279519		attr=b152:abi103-minw+abi104-112-reqrun
+regress	wild-secrets-slack-webhook-url	large-subject-throughput	plain	delta=+15.3%	bar=12.762826	identity=changed	after_ns=253566.852484		attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-secrets-slack-webhook-url	short-subject-search	plain	delta=-14.6%	bar=8.809763	identity=changed	after_ns=521.216488		attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-secrets-username-password-pair	large-subject-throughput	plain	delta=-45.8%	bar=12.762826	identity=changed	after_ns=171731.636317		attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-secrets-username-password-pair	short-subject-search	plain	delta=-9.7%	bar=8.809763	identity=changed	after_ns=476.276838		attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-validator-ipv4-owasp	large-subject-throughput	plain	delta=-8.1%	bar=1.491426	identity=changed	after_ns=95.607649		attr=b152:abi103-minw
+improve	wild-validator-ipv4-owasp	short-subject-search	plain	delta=-10.2%	bar=8.809763	identity=changed	after_ns=416.004301		attr=b152:abi103-minw
+regress	wild-validator-us-zip-owasp	large-subject-throughput	plain	delta=+0.5%	bar=0.058752	identity=changed	after_ns=96.226552	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-validator-uuid-grok	short-subject-search	plain	delta=-18.1%	bar=8.809763	identity=changed	after_ns=259.288481		attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-waf-crs-942270-union-select	short-subject-search	plain	delta=-18.1%	bar=15.691345	identity=changed	after_ns=432.297220		attr=b152:abi103-minw
+# verdict x identity: {('within', 'changed'): 44, ('null-control', 'identical'): 66, ('regress', 'changed'): 3, ('improve', 'changed'): 22}
+
+=== syntax-0.2  (previous pin cb32eda28: census b152prep only)
+improve	bak-2	short-subject-search	plain	delta=-4.5%	bar=0.575755	identity=changed	after_ns=2403.902406		attr=b152:abi103-minw
+improve	bak-g-rel	short-subject-search	plain	delta=-0.2%	bar=0.037478	identity=changed	after_ns=2115.415914	TINY	attr=b152:abi103-minw
+regress	bak-py	short-subject-search	plain	delta=+0.8%	bar=0.035044	identity=changed	after_ns=2137.590969	TINY	attr=b152:abi103-minw
+improve	cls-h	large-subject-throughput	plain	delta=-34.3%	bar=9.895104	identity=changed	after_ns=43026.709996		attr=b152:abi95-landmark+abi104-112-reqrun
+regress	cls-range	large-subject-throughput	plain	delta=+18.6%	bar=9.895104	identity=changed	after_ns=107723.588378		attr=b152:abi103-minw+abi104-112-reqrun
+improve	cls-s-lc	large-subject-throughput	plain	delta=-16.3%	bar=9.895104	identity=changed	after_ns=361820.100313		attr=b152:abi103-minw+abi104-112-reqrun
+improve	cls-v	short-subject-search	plain	delta=-23.8%	bar=12.966799	identity=changed	after_ns=208.906439		attr=b152:abi103-minw+abi104-112-reqrun
+improve	grp-atomic-rep	large-subject-throughput	plain	delta=-83.3%	bar=9.895104	identity=changed	after_ns=103543.088065		attr=b152:abi95-landmark+abi104-112-reqrun
+improve	grp-atomic-rep	short-subject-search	plain	delta=-13.2%	bar=12.966799	identity=changed	after_ns=283.365880		attr=b152:abi95-landmark+abi104-112-reqrun
+improve	grp-callout	large-subject-throughput	plain	delta=-26.0%	bar=9.895104	identity=changed	after_ns=382826.525862		attr=b152:abi103-minw+abi104-112-reqrun
+regress	grp-cap	match-compliance	whole-subject	delta=+16.9%	bar=9.888198	identity=changed	after_ns=147.340736		attr=b152:abi103-minw+abi104-112-reqrun
+regress	grp-named	match-compliance	whole-subject	delta=+16.4%	bar=9.888198	identity=changed	after_ns=146.240502		attr=b152:abi103-minw+abi104-112-reqrun
+regress	grp-named-quote	match-compliance	whole-subject	delta=+16.8%	bar=9.888198	identity=changed	after_ns=147.439555		attr=b152:abi103-minw+abi104-112-reqrun
+improve	mod-j-uc	short-subject-search	plain	delta=-1.5%	bar=0.322432	identity=changed	after_ns=3817.386590	TINY	attr=b152:abi103-minw
+improve	qnt-plus	large-subject-throughput	plain	delta=-83.2%	bar=9.895104	identity=changed	after_ns=103028.132426		attr=b152:abi95-landmark+abi104-112-reqrun
+improve	qnt-plus	short-subject-search	plain	delta=-13.7%	bar=12.966799	identity=changed	after_ns=282.031911		attr=b152:abi95-landmark+abi104-112-reqrun
+improve	qnt-plus-ctl	large-subject-throughput	plain	delta=-87.4%	bar=9.895104	identity=changed	after_ns=66971.095715		attr=b152:abi103-minw+abi104-112-reqrun
+improve	qnt-poss-brace	large-subject-throughput	plain	delta=-10.0%	bar=9.895104	identity=changed	after_ns=94737.497382		attr=b152:abi103-minw+abi104-112-reqrun
+improve	qnt-poss-plus	large-subject-throughput	plain	delta=-87.3%	bar=9.895104	identity=changed	after_ns=67277.137000		attr=b152:abi103-minw+abi104-112-reqrun
+regress	qnt-poss-plus	match-compliance	whole-subject	delta=+13.3%	bar=9.888198	identity=changed	after_ns=168.537267		attr=b152:abi103-minw+abi104-112-reqrun
+regress	rec-fwd	match-compliance	whole-subject	delta=+13.0%	bar=9.888198	identity=changed	after_ns=161.892565		attr=b152:abi103-minw
+# verdict x identity: {('within', 'changed'): 84, ('null-control', 'identical'): 141, ('improve', 'changed'): 14, ('regress', 'changed'): 7}
+
+=== bounded-0.3  (previous pin 9ae59f5d4: censuses b147prep + b149prep + b152prep chained)
+improve	cls-atleast-4096	short-subject-search	plain	delta=-92.4%	bar=0.588420	identity=changed	after_ns=96.139415		attr=b152:abi103-minw+abi104-112-reqrun
+regress	csv5	large-subject-throughput	plain	delta=+0.3%	bar=0.187157	identity=changed	after_ns=592.740953	TINY	attr=b152:abi103-minw
+regress	ctx-greedy-256	short-subject-search	plain	delta=+1.0%	bar=0.072299	identity=changed	after_ns=2893.053442	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+regress	ctx-lazy-1024	short-subject-search	plain	delta=+0.7%	bar=0.260071	identity=changed	after_ns=3565.620259	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+regress	ctx-lazy-256	short-subject-search	plain	delta=+1.0%	bar=0.174753	identity=changed	after_ns=3568.914843	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+regress	ctx-lazy-64	short-subject-search	plain	delta=+0.8%	bar=0.011545	identity=changed	after_ns=3301.583073	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+improve	dig-exact-16	large-subject-throughput	plain	delta=-22.1%	bar=17.170848	identity=changed	after_ns=20985.392666		attr=b149:abi92-cover
+improve	dig-exact-32	large-subject-throughput	plain	delta=-17.8%	bar=17.170848	identity=changed	after_ns=19854.100957		attr=b152:abi104-112-reqrun+abi108-cover+abi110-spanvector
+regress	dig-exact-8	large-subject-throughput	plain	delta=+34.1%	bar=17.170848	identity=changed	after_ns=40973.411765		attr=b149:abi92-cover
+regress	dig-exact-8	short-subject-search	plain	delta=+75.4%	bar=9.878228	identity=changed	after_ns=1434.243043		attr=b149:abi92-cover
+improve	floor	large-subject-throughput	plain	delta=-0.8%	bar=0.396718	identity=changed	after_ns=594.322955	TINY	attr=b149:abi92-cover
+improve	hex32	large-subject-throughput	plain	delta=-76.2%	bar=17.170848	identity=changed	after_ns=12081.611502		attr=b152:abi104-112-reqrun+abi108-cover+abi110-spanvector
+improve	hex32	short-subject-search	plain	delta=-76.6%	bar=0.202586	identity=changed	after_ns=284.092859		attr=b152:abi104-112-reqrun+abi108-cover+abi110-spanvector
+improve	line-80	short-subject-search	plain	delta=-18.9%	bar=0.384417	identity=changed	after_ns=1333.936941		attr=b152:abi103-minw
+regress	pw-8-64	short-subject-search	plain	delta=+0.8%	bar=0.471835	identity=changed	after_ns=1382.164673	TINY	attr=b152:abi103-minw
+improve	year4	large-subject-throughput	plain	delta=-18.6%	bar=17.170848	identity=changed	after_ns=30733.690312		attr=b149:abi92-cover
+# verdict x identity: {('within', 'changed'): 22, ('null-control', 'identical'): 88, ('improve', 'changed'): 8, ('regress', 'changed'): 8}
+
+=== loglines-0.1  (previous pin 9ae59f5d4: censuses b147prep + b149prep + b152prep chained)
+improve	bignum	large-subject-throughput	plain	delta=-1.7%	bar=0.992911	identity=changed	after_ns=2893879.472973	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+improve	floor	large-subject-throughput	plain	delta=-41.3%	bar=0.546327	identity=changed	after_ns=792951.020386		attr=b149:abi92-cover
+improve	floor	short-subject-search	plain	delta=-14.1%	bar=0.384809	identity=changed	after_ns=644.452028		attr=b149:abi92-cover
+improve	hex32-id	large-subject-throughput	plain	delta=-79.5%	bar=0.067607	identity=changed	after_ns=826113.955864		attr=b152:abi104-112-reqrun+abi108-cover+abi110-spanvector
+improve	hex32-id	short-subject-search	plain	delta=-81.3%	bar=0.906329	identity=changed	after_ns=17410.669550		attr=b152:abi104-112-reqrun+abi108-cover+abi110-spanvector
+improve	http-5xx	large-subject-throughput	plain	delta=-2.2%	bar=0.754291	identity=changed	after_ns=107969.731343	TINY	attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+regress	ipv4	large-subject-throughput	plain	delta=+8.4%	bar=1.968197	identity=changed	after_ns=653451.654935		attr=b152:abi103-minw+abi97-altnf
+regress	ipv4	short-subject-search	plain	delta=+7.3%	bar=0.682392	identity=changed	after_ns=24295.625374		attr=b152:abi103-minw+abi97-altnf
+regress	ipv6	large-subject-throughput	plain	delta=+3.2%	bar=1.522178	identity=changed	after_ns=1220250.544000		attr=b152:abi103-minw
+regress	ipv6	short-subject-search	plain	delta=+4.1%	bar=0.817653	identity=changed	after_ns=38937.311969		attr=b152:abi103-minw
+improve	iso-ts	large-subject-throughput	plain	delta=-4.3%	bar=0.914757	identity=changed	after_ns=318336.428443		attr=b152:abi103-minw+abi104-112-reqrun
+improve	iso-ts	short-subject-search	plain	delta=-3.9%	bar=0.799182	identity=changed	after_ns=11633.202395		attr=b152:abi103-minw+abi104-112-reqrun
+regress	kv-quoted	short-subject-search	plain	delta=+1.5%	bar=0.442460	identity=changed	after_ns=2938.307328	TINY	attr=b152:abi103-minw
+regress	level-context	large-subject-throughput	plain	delta=+2.7%	bar=1.267978	identity=changed	after_ns=1207926.412929	TINY	attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+regress	stack-frame	large-subject-throughput	plain	delta=+1.6%	bar=0.820509	identity=changed	after_ns=619092.268224	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+regress	stack-frame	short-subject-search	plain	delta=+0.6%	bar=0.469546	identity=changed	after_ns=18968.549285	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+regress	uuid	large-subject-throughput	plain	delta=+0.5%	bar=0.410648	identity=changed	after_ns=322704.467717	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+# verdict x identity: {('improve', 'changed'): 8, ('within', 'changed'): 5, ('regress', 'changed'): 9}
+
+=== email-specimen-0.2  (previous pin 9ae59f5d4: censuses b147prep + b149prep + b152prep chained)
+regress	factored	large-subject-throughput	plain	delta=+2.0%	bar=0.369036	identity=changed	after_ns=4287950.209385	TINY	attr=b152:abi103-minw
+regress	factored	short-subject-search	plain	delta=+2.8%	bar=0.936693	identity=changed	after_ns=2099.315130	TINY	attr=b152:abi103-minw
+improve	floor	large-subject-throughput	plain	delta=-44.0%	bar=0.054285	identity=changed	after_ns=191312.751223		attr=b149:abi92-cover
+improve	floor	short-subject-search	plain	delta=-14.4%	bar=0.568419	identity=changed	after_ns=429.402160		attr=b149:abi92-cover
+regress	orig	short-subject-search	plain	delta=+1.2%	bar=1.026059	identity=changed	after_ns=2050.242387	TINY	attr=b152:abi103-minw
+# verdict x identity: {('regress', 'changed'): 3, ('null-control', 'identical'): 3, ('improve', 'changed'): 2, ('within', 'changed'): 1}
+
+=== litrun-0.1  (previous pin 9ae59f5d4: censuses b147prep + b149prep + b152prep chained)
+regress	alt-foo-tails	short-subject-search	plain	delta=+2.8%	bar=1.072816	identity=changed	after_ns=167.050695	TINY	attr=b152:abi103-minw
+improve	floor	large-subject-throughput	plain	delta=-48.7%	bar=1.004259	identity=changed	after_ns=808891.317958		attr=b149:abi92-cover
+improve	floor	short-subject-search	plain	delta=-5.2%	bar=0.070792	identity=changed	after_ns=100.179602		attr=b149:abi92-cover
+improve	lit-l10	large-subject-throughput	plain	delta=-67.3%	bar=0.150185	identity=changed	after_ns=149241.319354		attr=b149:abi92-cover
+improve	lit-l10	short-subject-search	plain	delta=-37.3%	bar=1.613086	identity=changed	after_ns=94.244789		attr=b149:abi92-cover
+improve	lit-l16	large-subject-throughput	plain	delta=-65.7%	bar=0.113550	identity=changed	after_ns=145315.250544		attr=b149:abi92-cover
+improve	lit-l16	short-subject-search	plain	delta=-48.0%	bar=0.551807	identity=changed	after_ns=98.113906		attr=b149:abi92-cover
+improve	lit-l2	large-subject-throughput	plain	delta=-34.2%	bar=0.116249	identity=changed	after_ns=1143531.522479		attr=b149:abi92-cover
+improve	lit-l2	short-subject-search	plain	delta=-7.5%	bar=0.884421	identity=changed	after_ns=147.463185		attr=b149:abi92-cover
+improve	lit-l3	large-subject-throughput	plain	delta=-43.0%	bar=0.037052	identity=changed	after_ns=1038123.236353		attr=b149:abi92-cover
+improve	lit-l3	short-subject-search	plain	delta=-18.8%	bar=0.168881	identity=changed	after_ns=140.455170		attr=b149:abi92-cover
+improve	lit-l31	large-subject-throughput	plain	delta=-81.1%	bar=0.174247	identity=changed	after_ns=52591.132360		attr=b152:abi104-112-reqrun+abi108-cover
+improve	lit-l31	short-subject-search	plain	delta=-67.6%	bar=0.701364	identity=changed	after_ns=83.635055		attr=b152:abi104-112-reqrun+abi108-cover
+improve	lit-l4	large-subject-throughput	plain	delta=-34.2%	bar=0.334418	identity=changed	after_ns=1064065.456731		attr=b149:abi92-cover
+improve	lit-l4	short-subject-search	plain	delta=-11.9%	bar=1.036685	identity=changed	after_ns=141.396972		attr=b149:abi92-cover
+improve	lit-l40	large-subject-throughput	plain	delta=-3.1%	bar=0.393889	identity=changed	after_ns=178061.753838		attr=b152:abi103-minw+abi104-112-reqrun
+improve	lit-l40	short-subject-search	plain	delta=-18.6%	bar=0.716608	identity=changed	after_ns=250.735495		attr=b152:abi103-minw+abi104-112-reqrun
+improve	lit-l7	large-subject-throughput	plain	delta=-35.8%	bar=0.154248	identity=changed	after_ns=1047116.116766		attr=b149:abi92-cover
+improve	lit-l7	short-subject-search	plain	delta=-28.2%	bar=0.708629	identity=changed	after_ns=119.466885		attr=b149:abi92-cover
+improve	lit-l8	large-subject-throughput	plain	delta=-30.6%	bar=0.198231	identity=changed	after_ns=986618.219293		attr=b149:abi92-cover
+improve	lit-l8	short-subject-search	plain	delta=-26.8%	bar=0.498805	identity=changed	after_ns=123.768091		attr=b149:abi92-cover
+improve	wild-secrets-aws-access-key-id	large-subject-throughput	plain	delta=-78.4%	bar=0.413707	identity=changed	after_ns=49934.764687		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+improve	wild-secrets-aws-access-key-id	short-subject-search	plain	delta=-52.2%	bar=0.564334	identity=changed	after_ns=229.156918		attr=b152:abi103-minw+abi104-112-reqrun+abi97-altnf
+regress	wild-secrets-github-pat	large-subject-throughput	plain	delta=+0.3%	bar=0.108588	identity=changed	after_ns=10774.087266	TINY	attr=b152:abi103-minw+abi104-112-reqrun
+improve	wild-secrets-github-pat	short-subject-search	plain	delta=-22.4%	bar=0.391237	identity=changed	after_ns=406.447668		attr=b152:abi103-minw+abi104-112-reqrun
+# verdict x identity: {('within', 'changed'): 3, ('null-control', 'identical'): 14, ('regress', 'changed'): 2, ('improve', 'changed'): 23}

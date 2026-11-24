@@ -1,0 +1,705 @@
+## per-cell ratio to best (pooled roster), auto and vm; * = beyond noise (|diff|>2*max stddev, reporter R8 rule)
+ci-256	large-subject-throughput	plain	auto	10.026	vectorscan	*	1.000	pcrec-auto
+ci-256	large-subject-throughput	plain	vm	4832.313	vectorscan	*	481.990	pcrec-auto
+ci-256	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+ci-256	match-compliance	whole-subject	vm	114.976	pcrec-auto	*	114.976	pcrec-auto
+ci-256	short-subject-search	plain	auto	1.773	vectorscan	*	1.000	pcrec-auto
+ci-256	short-subject-search	plain	vm	1155.412	vectorscan	*	651.558	pcrec-auto
+ci-512	large-subject-throughput	plain	auto	9.508	vectorscan	*	1.000	pcrec-auto
+ci-512	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+ci-512	short-subject-search	plain	auto	2.476	vectorscan	*	1.000	pcrec-auto
+clsa-1024	large-subject-throughput	plain	vm	35.148	vectorscan	*	1.000	pcrec-vm
+clsa-1024	match-compliance	whole-subject	auto	1.233	pcrec-vm	*	1.233	pcrec-vm
+clsa-1024	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+clsa-1024	short-subject-search	plain	vm	4.877	vectorscan	*	1.636	re2
+clsa-256	large-subject-throughput	plain	auto	6.910	vectorscan	*	1.000	pcrec-auto
+clsa-256	large-subject-throughput	plain	vm	35.894	vectorscan	*	5.195	pcrec-auto
+clsa-256	match-compliance	whole-subject	auto	1.011	pcrec-vm		1.011	pcrec-vm
+clsa-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+clsa-256	short-subject-search	plain	auto	1.856	vectorscan	*	1.000	pcrec-auto
+clsa-256	short-subject-search	plain	vm	5.223	vectorscan	*	2.814	pcrec-auto
+clsa-64	large-subject-throughput	plain	auto	14.059	vectorscan	*	1.932	re2
+clsa-64	large-subject-throughput	plain	vm	50.312	vectorscan	*	6.912	re2
+clsa-64	match-compliance	whole-subject	auto	1.012	pcrec-vm		1.012	pcrec-vm
+clsa-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+clsa-64	short-subject-search	plain	auto	2.307	vectorscan	*	1.000	pcrec-auto
+clsa-64	short-subject-search	plain	vm	5.259	vectorscan	*	2.280	pcrec-auto
+clsd-1024	large-subject-throughput	plain	vm	43.909	vectorscan	*	1.000	pcrec-vm
+clsd-1024	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+clsd-1024	match-compliance	whole-subject	vm	1.057	pcrec-auto	*	1.057	pcrec-auto
+clsd-1024	short-subject-search	plain	vm	6.286	vectorscan	*	1.727	re2
+clsd-256	large-subject-throughput	plain	auto	11.325	vectorscan	*	1.000	pcrec-auto
+clsd-256	large-subject-throughput	plain	vm	58.415	vectorscan	*	5.158	pcrec-auto
+clsd-256	match-compliance	whole-subject	auto	1.072	pcrec-vm	*	1.072	pcrec-vm
+clsd-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+clsd-256	short-subject-search	plain	auto	2.826	vectorscan	*	1.000	pcrec-auto
+clsd-256	short-subject-search	plain	vm	7.710	vectorscan	*	2.728	pcrec-auto
+clsd-64	large-subject-throughput	plain	auto	15.172	vectorscan	*	1.963	re2
+clsd-64	large-subject-throughput	plain	vm	54.480	vectorscan	*	7.047	re2
+clsd-64	match-compliance	whole-subject	auto	1.021	pcrec-vm	*	1.021	pcrec-vm
+clsd-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+clsd-64	short-subject-search	plain	auto	2.734	vectorscan	*	1.000	pcrec-auto
+clsd-64	short-subject-search	plain	vm	6.487	vectorscan	*	2.372	pcrec-auto
+cnt-64	large-subject-throughput	plain	auto	2.134	rust	*	2.037	re2
+cnt-64	large-subject-throughput	plain	vm	7.781	rust	*	7.429	re2
+cnt-64	match-compliance	whole-subject	auto	1.152	pcrec-vm	*	1.152	pcrec-vm
+cnt-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+cnt-64	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+cnt-64	short-subject-search	plain	vm	3.225	pcrec-auto	*	3.225	pcrec-auto
+floor	large-subject-throughput	plain	auto	1.024	pcrec-vm		1.024	pcrec-vm
+floor	large-subject-throughput	plain	vm	1.000	pcrec-vm		1.000	pcrec-vm
+floor	match-compliance	whole-subject	auto	1.312	pcrec-vm	*	1.312	pcrec-vm
+floor	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+floor	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+floor	short-subject-search	plain	vm	1.053	pcrec-auto	*	1.053	pcrec-auto
+nar4-256	large-subject-throughput	plain	auto	7.239	vectorscan	*	1.000	pcrec-auto
+nar4-256	large-subject-throughput	plain	vm	14.851	vectorscan	*	2.051	pcrec-auto
+nar4-256	match-compliance	whole-subject	auto	1.068	pcrec-vm	*	1.068	pcrec-vm
+nar4-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+nar4-256	short-subject-search	plain	auto	1.091	vectorscan	*	1.000	pcrec-auto
+nar4-256	short-subject-search	plain	vm	1.626	vectorscan	*	1.491	pcrec-auto
+nar4-512	large-subject-throughput	plain	auto	7.253	vectorscan	*	1.000	pcrec-auto
+nar4-512	large-subject-throughput	plain	vm	13.678	vectorscan	*	1.886	pcrec-auto
+nar4-512	match-compliance	whole-subject	auto	1.235	pcrec-vm	*	1.235	pcrec-vm
+nar4-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+nar4-512	short-subject-search	plain	auto	1.281	vectorscan	*	1.000	pcrec-auto
+nar4-512	short-subject-search	plain	vm	1.479	vectorscan	*	1.154	pcrec-auto
+nar4-64	large-subject-throughput	plain	auto	8.471	vectorscan	*	1.000	pcrec-auto
+nar4-64	large-subject-throughput	plain	vm	15.503	vectorscan	*	1.830	pcrec-auto
+nar4-64	match-compliance	whole-subject	auto	1.050	pcrec-vm	*	1.050	pcrec-vm
+nar4-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+nar4-64	short-subject-search	plain	auto	1.123	vectorscan	*	1.000	pcrec-auto
+nar4-64	short-subject-search	plain	vm	1.704	vectorscan	*	1.518	pcrec-auto
+pfx3-256	large-subject-throughput	plain	auto	1.087	pcre2-jit	*	1.087	pcre2-jit
+pfx3-256	large-subject-throughput	plain	vm	1.051	pcre2-jit	*	1.051	pcre2-jit
+pfx3-256	match-compliance	whole-subject	auto	1.040	pcrec-vm	*	1.040	pcrec-vm
+pfx3-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+pfx3-256	short-subject-search	plain	auto	1.011	pcrec-vm		1.011	pcrec-vm
+pfx3-256	short-subject-search	plain	vm	1.000	pcrec-vm		1.000	pcrec-vm
+pfx3-512	large-subject-throughput	plain	auto	1.038	re2	*	1.038	re2
+pfx3-512	large-subject-throughput	plain	vm	1.029	re2	*	1.029	re2
+pfx3-512	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+pfx3-512	match-compliance	whole-subject	vm	1.004	pcrec-auto		1.004	pcrec-auto
+pfx3-512	short-subject-search	plain	auto	1.005	pcrec-vm		1.005	pcrec-vm
+pfx3-512	short-subject-search	plain	vm	1.000	pcrec-vm		1.000	pcrec-vm
+s-2048	large-subject-throughput	plain	auto	2.370	vectorscan	*	1.000	pcrec-auto
+s-2048	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+s-2048	short-subject-search	plain	auto	1.644	vectorscan	*	1.000	pcrec-auto
+s-256	large-subject-throughput	plain	auto	9.798	vectorscan	*	1.000	pcrec-auto
+s-256	large-subject-throughput	plain	vm	49.512	vectorscan	*	5.053	pcrec-auto
+s-256	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+s-256	match-compliance	whole-subject	vm	1.053	pcrec-auto	*	1.053	pcrec-auto
+s-256	short-subject-search	plain	auto	2.521	vectorscan	*	1.000	pcrec-auto
+s-256	short-subject-search	plain	vm	6.948	vectorscan	*	2.755	pcrec-auto
+s-4096	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+s-512	large-subject-throughput	plain	auto	8.355	vectorscan	*	1.000	pcrec-auto
+s-512	large-subject-throughput	plain	vm	40.326	vectorscan	*	4.827	pcrec-auto
+s-512	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+s-512	match-compliance	whole-subject	vm	1.057	pcrec-auto	*	1.057	pcrec-auto
+s-512	short-subject-search	plain	auto	2.275	vectorscan	*	1.000	pcrec-auto
+s-512	short-subject-search	plain	vm	6.173	vectorscan	*	2.714	pcrec-auto
+sfx-256	large-subject-throughput	plain	auto	1.033	vectorscan	*	1.011	pcrec-vm
+sfx-256	large-subject-throughput	plain	vm	1.022	vectorscan	*	1.000	pcrec-vm
+sfx-256	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sfx-256	match-compliance	whole-subject	vm	1.010	pcrec-auto		1.010	pcrec-auto
+sfx-256	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sfx-256	short-subject-search	plain	vm	1.015	pcrec-auto	*	1.015	pcrec-auto
+sfx-512	large-subject-throughput	plain	auto	1.025	pcrec-vm	*	1.025	pcrec-vm
+sfx-512	large-subject-throughput	plain	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sfx-512	match-compliance	whole-subject	auto	1.037	pcrec-vm		1.037	pcrec-vm
+sfx-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sfx-512	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sfx-512	short-subject-search	plain	vm	1.013	pcrec-auto	*	1.013	pcrec-auto
+sfx-64	large-subject-throughput	plain	auto	1.868	vectorscan	*	1.019	pcrec-vm
+sfx-64	large-subject-throughput	plain	vm	1.832	vectorscan	*	1.000	pcrec-vm
+sfx-64	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sfx-64	match-compliance	whole-subject	vm	1.041	pcrec-auto	*	1.041	pcrec-auto
+sfx-64	short-subject-search	plain	auto	1.023	pcrec-vm	*	1.023	pcrec-vm
+sfx-64	short-subject-search	plain	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sh1-256	large-subject-throughput	plain	auto	1.414	vectorscan	*	1.000	pcrec-auto
+sh1-256	large-subject-throughput	plain	vm	4.585	vectorscan	*	3.242	pcrec-auto
+sh1-256	match-compliance	whole-subject	auto	1.065	pcrec-vm	*	1.065	pcrec-vm
+sh1-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sh1-256	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sh1-256	short-subject-search	plain	vm	2.399	pcrec-auto	*	2.399	pcrec-auto
+sh1-512	large-subject-throughput	plain	auto	1.421	vectorscan	*	1.000	pcrec-auto
+sh1-512	large-subject-throughput	plain	vm	4.686	vectorscan	*	3.299	pcrec-auto
+sh1-512	match-compliance	whole-subject	auto	1.363	pcrec-vm	*	1.363	pcrec-vm
+sh1-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sh1-512	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sh1-512	short-subject-search	plain	vm	2.379	pcrec-auto	*	2.379	pcrec-auto
+sh1-64	large-subject-throughput	plain	auto	1.577	vectorscan	*	1.000	pcrec-auto
+sh1-64	large-subject-throughput	plain	vm	5.174	vectorscan	*	3.280	pcrec-auto
+sh1-64	match-compliance	whole-subject	auto	1.076	pcrec-vm	*	1.076	pcrec-vm
+sh1-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+sh1-64	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+sh1-64	short-subject-search	plain	vm	2.315	pcrec-auto	*	2.315	pcrec-auto
+srt-256	large-subject-throughput	plain	auto	10.024	vectorscan	*	1.247	re2
+srt-256	large-subject-throughput	plain	vm	51.015	vectorscan	*	6.345	re2
+srt-256	match-compliance	whole-subject	auto	1.108	pcrec-vm		1.108	pcrec-vm
+srt-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+srt-256	short-subject-search	plain	auto	2.032	vectorscan	*	1.000	pcrec-auto
+srt-256	short-subject-search	plain	vm	5.491	vectorscan	*	2.703	pcrec-auto
+srt-512	large-subject-throughput	plain	auto	9.737	vectorscan	*	1.132	re2
+srt-512	large-subject-throughput	plain	vm	39.445	vectorscan	*	4.584	re2
+srt-512	match-compliance	whole-subject	auto	1.182	pcrec-vm	*	1.182	pcrec-vm
+srt-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+srt-512	short-subject-search	plain	auto	2.657	vectorscan	*	1.000	pcrec-auto
+srt-512	short-subject-search	plain	vm	4.663	vectorscan	*	1.755	pcrec-auto
+w-1024	large-subject-throughput	plain	vm	16.080	vectorscan	*	1.000	pcrec-vm
+w-1024	match-compliance	whole-subject	auto	1.293	pcrec-vm	*	1.293	pcrec-vm
+w-1024	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-1024	short-subject-search	plain	vm	3.553	vectorscan	*	1.561	re2
+w-128	large-subject-throughput	plain	auto	12.691	vectorscan	*	1.536	re2
+w-128	large-subject-throughput	plain	vm	53.505	vectorscan	*	6.476	re2
+w-128	match-compliance	whole-subject	auto	1.018	pcrec-vm		1.018	pcrec-vm
+w-128	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-128	short-subject-search	plain	auto	2.191	vectorscan	*	1.000	pcrec-auto
+w-128	short-subject-search	plain	vm	5.508	vectorscan	*	2.514	pcrec-auto
+w-192	large-subject-throughput	plain	auto	12.310	vectorscan	*	1.170	re2
+w-192	large-subject-throughput	plain	vm	57.462	vectorscan	*	5.461	re2
+w-192	match-compliance	whole-subject	auto	1.036	pcrec-vm	*	1.036	pcrec-vm
+w-192	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-192	short-subject-search	plain	auto	2.128	vectorscan	*	1.000	pcrec-auto
+w-192	short-subject-search	plain	vm	5.729	vectorscan	*	2.692	pcrec-auto
+w-2048	match-compliance	whole-subject	auto	1.000	pcrec-auto		1.000	pcrec-auto
+w-256	large-subject-throughput	plain	auto	10.092	vectorscan	*	1.000	pcrec-auto
+w-256	large-subject-throughput	plain	vm	51.494	vectorscan	*	5.103	pcrec-auto
+w-256	match-compliance	whole-subject	auto	1.058	pcrec-vm	*	1.058	pcrec-vm
+w-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-256	short-subject-search	plain	auto	1.987	vectorscan	*	1.000	pcrec-auto
+w-256	short-subject-search	plain	vm	5.500	vectorscan	*	2.767	pcrec-auto
+w-384	large-subject-throughput	plain	auto	9.105	vectorscan	*	1.000	pcrec-auto
+w-384	large-subject-throughput	plain	vm	45.083	vectorscan	*	4.951	pcrec-auto
+w-384	match-compliance	whole-subject	auto	1.064	pcrec-vm	*	1.064	pcrec-vm
+w-384	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-384	short-subject-search	plain	auto	1.981	vectorscan	*	1.000	pcrec-auto
+w-384	short-subject-search	plain	vm	5.222	vectorscan	*	2.636	pcrec-auto
+w-512	large-subject-throughput	plain	auto	9.859	vectorscan	*	1.000	pcrec-auto
+w-512	large-subject-throughput	plain	vm	40.186	vectorscan	*	4.076	pcrec-auto
+w-512	match-compliance	whole-subject	auto	1.165	pcrec-vm	*	1.165	pcrec-vm
+w-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-512	short-subject-search	plain	auto	2.665	vectorscan	*	1.000	pcrec-auto
+w-512	short-subject-search	plain	vm	4.758	vectorscan	*	1.785	pcrec-auto
+w-64	large-subject-throughput	plain	auto	18.014	vectorscan	*	1.961	re2
+w-64	large-subject-throughput	plain	vm	59.459	vectorscan	*	6.474	re2
+w-64	match-compliance	whole-subject	auto	1.028	pcrec-vm	*	1.028	pcrec-vm
+w-64	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-64	short-subject-search	plain	auto	2.428	vectorscan	*	1.000	pcrec-auto
+w-64	short-subject-search	plain	vm	5.112	vectorscan	*	2.105	pcrec-auto
+w-8	large-subject-throughput	plain	auto	29.269	vectorscan	*	1.249	re2
+w-8	large-subject-throughput	plain	vm	65.053	vectorscan	*	2.776	re2
+w-8	match-compliance	whole-subject	auto	1.080	pcrec-vm	*	1.080	pcrec-vm
+w-8	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-8	short-subject-search	plain	auto	1.914	rust	*	1.000	pcrec-auto
+w-8	short-subject-search	plain	vm	2.753	rust	*	1.438	pcrec-auto
+w-96	large-subject-throughput	plain	auto	12.587	vectorscan	*	1.687	re2
+w-96	large-subject-throughput	plain	vm	50.047	vectorscan	*	6.709	re2
+w-96	match-compliance	whole-subject	auto	1.016	pcrec-vm	*	1.016	pcrec-vm
+w-96	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+w-96	short-subject-search	plain	auto	2.069	vectorscan	*	1.000	pcrec-auto
+w-96	short-subject-search	plain	vm	5.137	vectorscan	*	2.483	pcrec-auto
+wb-256	large-subject-throughput	plain	auto	1.680	re2	*	1.680	re2
+wb-256	large-subject-throughput	plain	vm	3.204	re2	*	3.204	re2
+wb-256	match-compliance	whole-subject	auto	1.005	pcrec-vm		1.005	pcrec-vm
+wb-256	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+wb-256	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+wb-256	short-subject-search	plain	vm	3.275	pcrec-auto	*	3.275	pcrec-auto
+wb-512	large-subject-throughput	plain	auto	2.020	re2	*	2.020	re2
+wb-512	large-subject-throughput	plain	vm	3.123	re2	*	3.123	re2
+wb-512	match-compliance	whole-subject	auto	1.175	pcrec-vm	*	1.175	pcrec-vm
+wb-512	match-compliance	whole-subject	vm	1.000	pcrec-vm		1.000	pcrec-vm
+wb-512	short-subject-search	plain	auto	1.000	pcrec-auto		1.000	pcrec-auto
+wb-512	short-subject-search	plain	vm	2.507	pcrec-auto	*	2.507	pcrec-auto
+
+## NAMED LOSSES (ratio>1 beyond noise, pooled best)
+# auto: 78 of 107 cells
+auto	w-8	large-subject-throughput	plain	x29.27	best=vectorscan
+auto	w-64	large-subject-throughput	plain	x18.01	best=vectorscan
+auto	clsd-64	large-subject-throughput	plain	x15.17	best=vectorscan
+auto	clsa-64	large-subject-throughput	plain	x14.06	best=vectorscan
+auto	w-128	large-subject-throughput	plain	x12.69	best=vectorscan
+auto	w-96	large-subject-throughput	plain	x12.59	best=vectorscan
+auto	w-192	large-subject-throughput	plain	x12.31	best=vectorscan
+auto	clsd-256	large-subject-throughput	plain	x11.32	best=vectorscan
+auto	w-256	large-subject-throughput	plain	x10.09	best=vectorscan
+auto	ci-256	large-subject-throughput	plain	x10.03	best=vectorscan
+auto	srt-256	large-subject-throughput	plain	x10.02	best=vectorscan
+auto	w-512	large-subject-throughput	plain	x9.86	best=vectorscan
+auto	s-256	large-subject-throughput	plain	x9.80	best=vectorscan
+auto	srt-512	large-subject-throughput	plain	x9.74	best=vectorscan
+auto	ci-512	large-subject-throughput	plain	x9.51	best=vectorscan
+auto	w-384	large-subject-throughput	plain	x9.10	best=vectorscan
+auto	nar4-64	large-subject-throughput	plain	x8.47	best=vectorscan
+auto	s-512	large-subject-throughput	plain	x8.35	best=vectorscan
+auto	nar4-512	large-subject-throughput	plain	x7.25	best=vectorscan
+auto	nar4-256	large-subject-throughput	plain	x7.24	best=vectorscan
+auto	clsa-256	large-subject-throughput	plain	x6.91	best=vectorscan
+auto	clsd-256	short-subject-search	plain	x2.83	best=vectorscan
+auto	clsd-64	short-subject-search	plain	x2.73	best=vectorscan
+auto	w-512	short-subject-search	plain	x2.67	best=vectorscan
+auto	srt-512	short-subject-search	plain	x2.66	best=vectorscan
+auto	s-256	short-subject-search	plain	x2.52	best=vectorscan
+auto	ci-512	short-subject-search	plain	x2.48	best=vectorscan
+auto	w-64	short-subject-search	plain	x2.43	best=vectorscan
+auto	s-2048	large-subject-throughput	plain	x2.37	best=vectorscan
+auto	clsa-64	short-subject-search	plain	x2.31	best=vectorscan
+auto	s-512	short-subject-search	plain	x2.27	best=vectorscan
+auto	w-128	short-subject-search	plain	x2.19	best=vectorscan
+auto	cnt-64	large-subject-throughput	plain	x2.13	best=rust
+auto	w-192	short-subject-search	plain	x2.13	best=vectorscan
+auto	w-96	short-subject-search	plain	x2.07	best=vectorscan
+auto	srt-256	short-subject-search	plain	x2.03	best=vectorscan
+auto	wb-512	large-subject-throughput	plain	x2.02	best=re2
+auto	w-256	short-subject-search	plain	x1.99	best=vectorscan
+auto	w-384	short-subject-search	plain	x1.98	best=vectorscan
+auto	w-8	short-subject-search	plain	x1.91	best=rust
+auto	sfx-64	large-subject-throughput	plain	x1.87	best=vectorscan
+auto	clsa-256	short-subject-search	plain	x1.86	best=vectorscan
+auto	ci-256	short-subject-search	plain	x1.77	best=vectorscan
+auto	wb-256	large-subject-throughput	plain	x1.68	best=re2
+auto	s-2048	short-subject-search	plain	x1.64	best=vectorscan
+auto	sh1-64	large-subject-throughput	plain	x1.58	best=vectorscan
+auto	sh1-512	large-subject-throughput	plain	x1.42	best=vectorscan
+auto	sh1-256	large-subject-throughput	plain	x1.41	best=vectorscan
+auto	sh1-512	match-compliance	whole-subject	x1.36	best=pcrec-vm
+auto	floor	match-compliance	whole-subject	x1.31	best=pcrec-vm
+auto	w-1024	match-compliance	whole-subject	x1.29	best=pcrec-vm
+auto	nar4-512	short-subject-search	plain	x1.28	best=vectorscan
+auto	nar4-512	match-compliance	whole-subject	x1.24	best=pcrec-vm
+auto	clsa-1024	match-compliance	whole-subject	x1.23	best=pcrec-vm
+auto	srt-512	match-compliance	whole-subject	x1.18	best=pcrec-vm
+auto	wb-512	match-compliance	whole-subject	x1.18	best=pcrec-vm
+auto	w-512	match-compliance	whole-subject	x1.17	best=pcrec-vm
+auto	cnt-64	match-compliance	whole-subject	x1.15	best=pcrec-vm
+auto	nar4-64	short-subject-search	plain	x1.12	best=vectorscan
+auto	nar4-256	short-subject-search	plain	x1.09	best=vectorscan
+auto	pfx3-256	large-subject-throughput	plain	x1.09	best=pcre2-jit
+auto	w-8	match-compliance	whole-subject	x1.08	best=pcrec-vm
+auto	sh1-64	match-compliance	whole-subject	x1.08	best=pcrec-vm
+auto	clsd-256	match-compliance	whole-subject	x1.07	best=pcrec-vm
+auto	nar4-256	match-compliance	whole-subject	x1.07	best=pcrec-vm
+auto	sh1-256	match-compliance	whole-subject	x1.07	best=pcrec-vm
+auto	w-384	match-compliance	whole-subject	x1.06	best=pcrec-vm
+auto	w-256	match-compliance	whole-subject	x1.06	best=pcrec-vm
+auto	nar4-64	match-compliance	whole-subject	x1.05	best=pcrec-vm
+auto	pfx3-256	match-compliance	whole-subject	x1.04	best=pcrec-vm
+auto	pfx3-512	large-subject-throughput	plain	x1.04	best=re2
+auto	w-192	match-compliance	whole-subject	x1.04	best=pcrec-vm
+auto	sfx-256	large-subject-throughput	plain	x1.03	best=vectorscan
+auto	w-64	match-compliance	whole-subject	x1.03	best=pcrec-vm
+auto	sfx-512	large-subject-throughput	plain	x1.02	best=pcrec-vm
+auto	sfx-64	short-subject-search	plain	x1.02	best=pcrec-vm
+auto	clsd-64	match-compliance	whole-subject	x1.02	best=pcrec-vm
+auto	w-96	match-compliance	whole-subject	x1.02	best=pcrec-vm
+# vm: 70 of 105 cells
+vm	ci-256	large-subject-throughput	plain	x4832.31	best=vectorscan
+vm	ci-256	short-subject-search	plain	x1155.41	best=vectorscan
+vm	ci-256	match-compliance	whole-subject	x114.98	best=pcrec-auto
+vm	w-8	large-subject-throughput	plain	x65.05	best=vectorscan
+vm	w-64	large-subject-throughput	plain	x59.46	best=vectorscan
+vm	clsd-256	large-subject-throughput	plain	x58.41	best=vectorscan
+vm	w-192	large-subject-throughput	plain	x57.46	best=vectorscan
+vm	clsd-64	large-subject-throughput	plain	x54.48	best=vectorscan
+vm	w-128	large-subject-throughput	plain	x53.50	best=vectorscan
+vm	w-256	large-subject-throughput	plain	x51.49	best=vectorscan
+vm	srt-256	large-subject-throughput	plain	x51.01	best=vectorscan
+vm	clsa-64	large-subject-throughput	plain	x50.31	best=vectorscan
+vm	w-96	large-subject-throughput	plain	x50.05	best=vectorscan
+vm	s-256	large-subject-throughput	plain	x49.51	best=vectorscan
+vm	w-384	large-subject-throughput	plain	x45.08	best=vectorscan
+vm	clsd-1024	large-subject-throughput	plain	x43.91	best=vectorscan
+vm	s-512	large-subject-throughput	plain	x40.33	best=vectorscan
+vm	w-512	large-subject-throughput	plain	x40.19	best=vectorscan
+vm	srt-512	large-subject-throughput	plain	x39.44	best=vectorscan
+vm	clsa-256	large-subject-throughput	plain	x35.89	best=vectorscan
+vm	clsa-1024	large-subject-throughput	plain	x35.15	best=vectorscan
+vm	w-1024	large-subject-throughput	plain	x16.08	best=vectorscan
+vm	nar4-64	large-subject-throughput	plain	x15.50	best=vectorscan
+vm	nar4-256	large-subject-throughput	plain	x14.85	best=vectorscan
+vm	nar4-512	large-subject-throughput	plain	x13.68	best=vectorscan
+vm	cnt-64	large-subject-throughput	plain	x7.78	best=rust
+vm	clsd-256	short-subject-search	plain	x7.71	best=vectorscan
+vm	s-256	short-subject-search	plain	x6.95	best=vectorscan
+vm	clsd-64	short-subject-search	plain	x6.49	best=vectorscan
+vm	clsd-1024	short-subject-search	plain	x6.29	best=vectorscan
+vm	s-512	short-subject-search	plain	x6.17	best=vectorscan
+vm	w-192	short-subject-search	plain	x5.73	best=vectorscan
+vm	w-128	short-subject-search	plain	x5.51	best=vectorscan
+vm	w-256	short-subject-search	plain	x5.50	best=vectorscan
+vm	srt-256	short-subject-search	plain	x5.49	best=vectorscan
+vm	clsa-64	short-subject-search	plain	x5.26	best=vectorscan
+vm	clsa-256	short-subject-search	plain	x5.22	best=vectorscan
+vm	w-384	short-subject-search	plain	x5.22	best=vectorscan
+vm	sh1-64	large-subject-throughput	plain	x5.17	best=vectorscan
+vm	w-96	short-subject-search	plain	x5.14	best=vectorscan
+vm	w-64	short-subject-search	plain	x5.11	best=vectorscan
+vm	clsa-1024	short-subject-search	plain	x4.88	best=vectorscan
+vm	w-512	short-subject-search	plain	x4.76	best=vectorscan
+vm	sh1-512	large-subject-throughput	plain	x4.69	best=vectorscan
+vm	srt-512	short-subject-search	plain	x4.66	best=vectorscan
+vm	sh1-256	large-subject-throughput	plain	x4.59	best=vectorscan
+vm	w-1024	short-subject-search	plain	x3.55	best=vectorscan
+vm	wb-256	short-subject-search	plain	x3.28	best=pcrec-auto
+vm	cnt-64	short-subject-search	plain	x3.22	best=pcrec-auto
+vm	wb-256	large-subject-throughput	plain	x3.20	best=re2
+vm	wb-512	large-subject-throughput	plain	x3.12	best=re2
+vm	w-8	short-subject-search	plain	x2.75	best=rust
+vm	wb-512	short-subject-search	plain	x2.51	best=pcrec-auto
+vm	sh1-256	short-subject-search	plain	x2.40	best=pcrec-auto
+vm	sh1-512	short-subject-search	plain	x2.38	best=pcrec-auto
+vm	sh1-64	short-subject-search	plain	x2.31	best=pcrec-auto
+vm	sfx-64	large-subject-throughput	plain	x1.83	best=vectorscan
+vm	nar4-64	short-subject-search	plain	x1.70	best=vectorscan
+vm	nar4-256	short-subject-search	plain	x1.63	best=vectorscan
+vm	nar4-512	short-subject-search	plain	x1.48	best=vectorscan
+vm	clsd-1024	match-compliance	whole-subject	x1.06	best=pcrec-auto
+vm	s-512	match-compliance	whole-subject	x1.06	best=pcrec-auto
+vm	s-256	match-compliance	whole-subject	x1.05	best=pcrec-auto
+vm	floor	short-subject-search	plain	x1.05	best=pcrec-auto
+vm	pfx3-256	large-subject-throughput	plain	x1.05	best=pcre2-jit
+vm	sfx-64	match-compliance	whole-subject	x1.04	best=pcrec-auto
+vm	pfx3-512	large-subject-throughput	plain	x1.03	best=re2
+vm	sfx-256	large-subject-throughput	plain	x1.02	best=vectorscan
+vm	sfx-256	short-subject-search	plain	x1.02	best=pcrec-auto
+vm	sfx-512	short-subject-search	plain	x1.01	best=pcrec-auto
+
+## NAMED LOSSES vs best CAPTURING engine (class-pure headline; ratio>1 AND beyond noise by the same 2*max(stddev) rule)
+# auto: 40 of 107
+auto	cnt-64	large-subject-throughput	plain	x2.04	best_caps=re2
+auto	wb-512	large-subject-throughput	plain	x2.02	best_caps=re2
+auto	clsd-64	large-subject-throughput	plain	x1.96	best_caps=re2
+auto	w-64	large-subject-throughput	plain	x1.96	best_caps=re2
+auto	clsa-64	large-subject-throughput	plain	x1.93	best_caps=re2
+auto	w-96	large-subject-throughput	plain	x1.69	best_caps=re2
+auto	wb-256	large-subject-throughput	plain	x1.68	best_caps=re2
+auto	w-128	large-subject-throughput	plain	x1.54	best_caps=re2
+auto	sh1-512	match-compliance	whole-subject	x1.36	best_caps=pcrec-vm
+auto	floor	match-compliance	whole-subject	x1.31	best_caps=pcrec-vm
+auto	w-1024	match-compliance	whole-subject	x1.29	best_caps=pcrec-vm
+auto	w-8	large-subject-throughput	plain	x1.25	best_caps=re2
+auto	srt-256	large-subject-throughput	plain	x1.25	best_caps=re2
+auto	nar4-512	match-compliance	whole-subject	x1.24	best_caps=pcrec-vm
+auto	clsa-1024	match-compliance	whole-subject	x1.23	best_caps=pcrec-vm
+auto	srt-512	match-compliance	whole-subject	x1.18	best_caps=pcrec-vm
+auto	wb-512	match-compliance	whole-subject	x1.18	best_caps=pcrec-vm
+auto	w-192	large-subject-throughput	plain	x1.17	best_caps=re2
+auto	w-512	match-compliance	whole-subject	x1.17	best_caps=pcrec-vm
+auto	cnt-64	match-compliance	whole-subject	x1.15	best_caps=pcrec-vm
+auto	srt-512	large-subject-throughput	plain	x1.13	best_caps=re2
+auto	pfx3-256	large-subject-throughput	plain	x1.09	best_caps=pcre2-jit
+auto	w-8	match-compliance	whole-subject	x1.08	best_caps=pcrec-vm
+auto	sh1-64	match-compliance	whole-subject	x1.08	best_caps=pcrec-vm
+auto	clsd-256	match-compliance	whole-subject	x1.07	best_caps=pcrec-vm
+auto	nar4-256	match-compliance	whole-subject	x1.07	best_caps=pcrec-vm
+auto	sh1-256	match-compliance	whole-subject	x1.07	best_caps=pcrec-vm
+auto	w-384	match-compliance	whole-subject	x1.06	best_caps=pcrec-vm
+auto	w-256	match-compliance	whole-subject	x1.06	best_caps=pcrec-vm
+auto	nar4-64	match-compliance	whole-subject	x1.05	best_caps=pcrec-vm
+auto	pfx3-256	match-compliance	whole-subject	x1.04	best_caps=pcrec-vm
+auto	pfx3-512	large-subject-throughput	plain	x1.04	best_caps=re2
+auto	w-192	match-compliance	whole-subject	x1.04	best_caps=pcrec-vm
+auto	w-64	match-compliance	whole-subject	x1.03	best_caps=pcrec-vm
+auto	sfx-512	large-subject-throughput	plain	x1.02	best_caps=pcrec-vm
+auto	sfx-64	short-subject-search	plain	x1.02	best_caps=pcrec-vm
+auto	clsd-64	match-compliance	whole-subject	x1.02	best_caps=pcrec-vm
+auto	sfx-64	large-subject-throughput	plain	x1.02	best_caps=pcrec-vm
+auto	w-96	match-compliance	whole-subject	x1.02	best_caps=pcrec-vm
+auto	sfx-256	large-subject-throughput	plain	x1.01	best_caps=pcrec-vm
+# vm: 65 of 105
+vm	ci-256	short-subject-search	plain	x651.56	best_caps=pcrec-auto
+vm	ci-256	large-subject-throughput	plain	x481.99	best_caps=pcrec-auto
+vm	ci-256	match-compliance	whole-subject	x114.98	best_caps=pcrec-auto
+vm	cnt-64	large-subject-throughput	plain	x7.43	best_caps=re2
+vm	clsd-64	large-subject-throughput	plain	x7.05	best_caps=re2
+vm	clsa-64	large-subject-throughput	plain	x6.91	best_caps=re2
+vm	w-96	large-subject-throughput	plain	x6.71	best_caps=re2
+vm	w-128	large-subject-throughput	plain	x6.48	best_caps=re2
+vm	w-64	large-subject-throughput	plain	x6.47	best_caps=re2
+vm	srt-256	large-subject-throughput	plain	x6.35	best_caps=re2
+vm	w-192	large-subject-throughput	plain	x5.46	best_caps=re2
+vm	clsa-256	large-subject-throughput	plain	x5.19	best_caps=pcrec-auto
+vm	clsd-256	large-subject-throughput	plain	x5.16	best_caps=pcrec-auto
+vm	w-256	large-subject-throughput	plain	x5.10	best_caps=pcrec-auto
+vm	s-256	large-subject-throughput	plain	x5.05	best_caps=pcrec-auto
+vm	w-384	large-subject-throughput	plain	x4.95	best_caps=pcrec-auto
+vm	s-512	large-subject-throughput	plain	x4.83	best_caps=pcrec-auto
+vm	srt-512	large-subject-throughput	plain	x4.58	best_caps=re2
+vm	w-512	large-subject-throughput	plain	x4.08	best_caps=pcrec-auto
+vm	sh1-512	large-subject-throughput	plain	x3.30	best_caps=pcrec-auto
+vm	sh1-64	large-subject-throughput	plain	x3.28	best_caps=pcrec-auto
+vm	wb-256	short-subject-search	plain	x3.28	best_caps=pcrec-auto
+vm	sh1-256	large-subject-throughput	plain	x3.24	best_caps=pcrec-auto
+vm	cnt-64	short-subject-search	plain	x3.22	best_caps=pcrec-auto
+vm	wb-256	large-subject-throughput	plain	x3.20	best_caps=re2
+vm	wb-512	large-subject-throughput	plain	x3.12	best_caps=re2
+vm	clsa-256	short-subject-search	plain	x2.81	best_caps=pcrec-auto
+vm	w-8	large-subject-throughput	plain	x2.78	best_caps=re2
+vm	w-256	short-subject-search	plain	x2.77	best_caps=pcrec-auto
+vm	s-256	short-subject-search	plain	x2.76	best_caps=pcrec-auto
+vm	clsd-256	short-subject-search	plain	x2.73	best_caps=pcrec-auto
+vm	s-512	short-subject-search	plain	x2.71	best_caps=pcrec-auto
+vm	srt-256	short-subject-search	plain	x2.70	best_caps=pcrec-auto
+vm	w-192	short-subject-search	plain	x2.69	best_caps=pcrec-auto
+vm	w-384	short-subject-search	plain	x2.64	best_caps=pcrec-auto
+vm	w-128	short-subject-search	plain	x2.51	best_caps=pcrec-auto
+vm	wb-512	short-subject-search	plain	x2.51	best_caps=pcrec-auto
+vm	w-96	short-subject-search	plain	x2.48	best_caps=pcrec-auto
+vm	sh1-256	short-subject-search	plain	x2.40	best_caps=pcrec-auto
+vm	sh1-512	short-subject-search	plain	x2.38	best_caps=pcrec-auto
+vm	clsd-64	short-subject-search	plain	x2.37	best_caps=pcrec-auto
+vm	sh1-64	short-subject-search	plain	x2.31	best_caps=pcrec-auto
+vm	clsa-64	short-subject-search	plain	x2.28	best_caps=pcrec-auto
+vm	w-64	short-subject-search	plain	x2.10	best_caps=pcrec-auto
+vm	nar4-256	large-subject-throughput	plain	x2.05	best_caps=pcrec-auto
+vm	nar4-512	large-subject-throughput	plain	x1.89	best_caps=pcrec-auto
+vm	nar4-64	large-subject-throughput	plain	x1.83	best_caps=pcrec-auto
+vm	w-512	short-subject-search	plain	x1.79	best_caps=pcrec-auto
+vm	srt-512	short-subject-search	plain	x1.76	best_caps=pcrec-auto
+vm	clsd-1024	short-subject-search	plain	x1.73	best_caps=re2
+vm	clsa-1024	short-subject-search	plain	x1.64	best_caps=re2
+vm	w-1024	short-subject-search	plain	x1.56	best_caps=re2
+vm	nar4-64	short-subject-search	plain	x1.52	best_caps=pcrec-auto
+vm	nar4-256	short-subject-search	plain	x1.49	best_caps=pcrec-auto
+vm	w-8	short-subject-search	plain	x1.44	best_caps=pcrec-auto
+vm	nar4-512	short-subject-search	plain	x1.15	best_caps=pcrec-auto
+vm	clsd-1024	match-compliance	whole-subject	x1.06	best_caps=pcrec-auto
+vm	s-512	match-compliance	whole-subject	x1.06	best_caps=pcrec-auto
+vm	s-256	match-compliance	whole-subject	x1.05	best_caps=pcrec-auto
+vm	floor	short-subject-search	plain	x1.05	best_caps=pcrec-auto
+vm	pfx3-256	large-subject-throughput	plain	x1.05	best_caps=pcre2-jit
+vm	sfx-64	match-compliance	whole-subject	x1.04	best_caps=pcrec-auto
+vm	pfx3-512	large-subject-throughput	plain	x1.03	best_caps=re2
+vm	sfx-256	short-subject-search	plain	x1.02	best_caps=pcrec-auto
+vm	sfx-512	short-subject-search	plain	x1.01	best_caps=pcrec-auto
+
+## NAMED LOSSES vs best NON-PCREC CAPTURING-CLASS engine (re2, pcre2-jit, pcre2-interp; rust and vectorscan are capture_class=no in this roster), beyond noise; the honest 'other engine' reading
+# auto: 14 of 68 cells
+auto	cnt-64	large-subject-throughput	plain	x2.04	best_other=re2
+auto	wb-512	large-subject-throughput	plain	x2.02	best_other=re2
+auto	clsd-64	large-subject-throughput	plain	x1.96	best_other=re2
+auto	w-64	large-subject-throughput	plain	x1.96	best_other=re2
+auto	clsa-64	large-subject-throughput	plain	x1.93	best_other=re2
+auto	w-96	large-subject-throughput	plain	x1.69	best_other=re2
+auto	wb-256	large-subject-throughput	plain	x1.68	best_other=re2
+auto	w-128	large-subject-throughput	plain	x1.54	best_other=re2
+auto	w-8	large-subject-throughput	plain	x1.25	best_other=re2
+auto	srt-256	large-subject-throughput	plain	x1.25	best_other=re2
+auto	w-192	large-subject-throughput	plain	x1.17	best_other=re2
+auto	srt-512	large-subject-throughput	plain	x1.13	best_other=re2
+auto	pfx3-256	large-subject-throughput	plain	x1.09	best_other=pcre2-jit
+auto	pfx3-512	large-subject-throughput	plain	x1.04	best_other=re2
+# vm: 47 of 70 cells
+vm	ci-256	short-subject-search	plain	x437.36	best_other=re2
+vm	ci-256	large-subject-throughput	plain	x376.14	best_other=re2
+vm	cnt-64	large-subject-throughput	plain	x7.43	best_other=re2
+vm	clsd-64	large-subject-throughput	plain	x7.05	best_other=re2
+vm	clsa-64	large-subject-throughput	plain	x6.91	best_other=re2
+vm	w-96	large-subject-throughput	plain	x6.71	best_other=re2
+vm	w-128	large-subject-throughput	plain	x6.48	best_other=re2
+vm	w-64	large-subject-throughput	plain	x6.47	best_other=re2
+vm	srt-256	large-subject-throughput	plain	x6.35	best_other=re2
+vm	w-192	large-subject-throughput	plain	x5.46	best_other=re2
+vm	srt-512	large-subject-throughput	plain	x4.58	best_other=re2
+vm	clsa-256	large-subject-throughput	plain	x4.05	best_other=re2
+vm	w-256	large-subject-throughput	plain	x3.93	best_other=re2
+vm	clsd-256	large-subject-throughput	plain	x3.87	best_other=re2
+vm	s-256	large-subject-throughput	plain	x3.87	best_other=re2
+vm	wb-256	large-subject-throughput	plain	x3.20	best_other=re2
+vm	wb-512	large-subject-throughput	plain	x3.12	best_other=re2
+vm	w-8	large-subject-throughput	plain	x2.78	best_other=re2
+vm	sh1-64	large-subject-throughput	plain	x2.55	best_other=re2
+vm	sh1-256	large-subject-throughput	plain	x2.54	best_other=re2
+vm	sh1-512	large-subject-throughput	plain	x2.29	best_other=re2
+vm	clsa-256	short-subject-search	plain	x2.01	best_other=re2
+vm	clsd-256	short-subject-search	plain	x2.01	best_other=re2
+vm	s-256	short-subject-search	plain	x1.95	best_other=re2
+vm	cnt-64	short-subject-search	plain	x1.91	best_other=re2
+vm	s-512	short-subject-search	plain	x1.89	best_other=re2
+vm	w-256	short-subject-search	plain	x1.87	best_other=re2
+vm	srt-256	short-subject-search	plain	x1.85	best_other=re2
+vm	w-192	short-subject-search	plain	x1.84	best_other=re2
+vm	w-384	large-subject-throughput	plain	x1.83	best_other=re2
+vm	nar4-64	large-subject-throughput	plain	x1.78	best_other=re2
+vm	w-384	short-subject-search	plain	x1.77	best_other=re2
+vm	srt-512	short-subject-search	plain	x1.74	best_other=re2
+vm	w-128	short-subject-search	plain	x1.74	best_other=re2
+vm	clsd-1024	short-subject-search	plain	x1.73	best_other=re2
+vm	wb-512	short-subject-search	plain	x1.72	best_other=re2
+vm	clsd-64	short-subject-search	plain	x1.70	best_other=re2
+vm	w-96	short-subject-search	plain	x1.68	best_other=re2
+vm	w-512	short-subject-search	plain	x1.67	best_other=re2
+vm	clsa-1024	short-subject-search	plain	x1.64	best_other=re2
+vm	wb-256	short-subject-search	plain	x1.61	best_other=re2
+vm	clsa-64	short-subject-search	plain	x1.59	best_other=re2
+vm	w-1024	short-subject-search	plain	x1.56	best_other=re2
+vm	w-64	short-subject-search	plain	x1.45	best_other=re2
+vm	nar4-256	large-subject-throughput	plain	x1.30	best_other=re2
+vm	pfx3-256	large-subject-throughput	plain	x1.05	best_other=pcre2-jit
+vm	pfx3-512	large-subject-throughput	plain	x1.03	best_other=re2
+
+## geomean ratio-to-best by regime x form (cells where it compiled)
+auto ('large-subject-throughput', 'plain') 34 geomean x5.02 max x29.27 wins 0
+auto ('match-compliance', 'whole-subject') 39 geomean x1.07 max x1.36 wins 11
+auto ('short-subject-search', 'plain') 34 geomean x1.58 max x2.83 wins 9
+vm ('large-subject-throughput', 'plain') 35 geomean x16.85 max x4832.31 wins 2
+vm ('match-compliance', 'whole-subject') 35 geomean x1.15 max x114.98 wins 28
+vm ('short-subject-search', 'plain') 35 geomean x3.72 max x1155.41 wins 3
+
+## ladder by branch count: w-N plain, ratio to best (auto / vm), per regime
+# large-subject-throughput plain
+  w-8      auto x29.27     vm x65.05     best=vectorscan   | caps-only: auto x1.25     vm x2.78     best_caps=re2
+  w-64     auto x18.01     vm x59.46     best=vectorscan   | caps-only: auto x1.96     vm x6.47     best_caps=re2
+  w-96     auto x12.59     vm x50.05     best=vectorscan   | caps-only: auto x1.69     vm x6.71     best_caps=re2
+  w-128    auto x12.69     vm x53.50     best=vectorscan   | caps-only: auto x1.54     vm x6.48     best_caps=re2
+  w-192    auto x12.31     vm x57.46     best=vectorscan   | caps-only: auto x1.17     vm x5.46     best_caps=re2
+  w-256    auto x10.09     vm x51.49     best=vectorscan   | caps-only: auto x1.00     vm x5.10     best_caps=pcrec-auto
+  w-384    auto x9.10      vm x45.08     best=vectorscan   | caps-only: auto x1.00     vm x4.95     best_caps=pcrec-auto
+  w-512    auto x9.86      vm x40.19     best=vectorscan   | caps-only: auto x1.00     vm x4.08     best_caps=pcrec-auto
+  w-1024   auto -          vm x16.08     best=vectorscan   | caps-only: auto -         vm x1.00     best_caps=pcrec-vm
+  w-2048   auto -          vm refused/-  best=rust         | caps-only: auto -         vm -         best_caps=-
+# large-subject-throughput whole-subject
+# short-subject-search plain
+  w-8      auto x1.91      vm x2.75      best=rust         | caps-only: auto x1.00     vm x1.44     best_caps=pcrec-auto
+  w-64     auto x2.43      vm x5.11      best=vectorscan   | caps-only: auto x1.00     vm x2.10     best_caps=pcrec-auto
+  w-96     auto x2.07      vm x5.14      best=vectorscan   | caps-only: auto x1.00     vm x2.48     best_caps=pcrec-auto
+  w-128    auto x2.19      vm x5.51      best=vectorscan   | caps-only: auto x1.00     vm x2.51     best_caps=pcrec-auto
+  w-192    auto x2.13      vm x5.73      best=vectorscan   | caps-only: auto x1.00     vm x2.69     best_caps=pcrec-auto
+  w-256    auto x1.99      vm x5.50      best=vectorscan   | caps-only: auto x1.00     vm x2.77     best_caps=pcrec-auto
+  w-384    auto x1.98      vm x5.22      best=vectorscan   | caps-only: auto x1.00     vm x2.64     best_caps=pcrec-auto
+  w-512    auto x2.67      vm x4.76      best=vectorscan   | caps-only: auto x1.00     vm x1.79     best_caps=pcrec-auto
+  w-1024   auto -          vm x3.55      best=vectorscan   | caps-only: auto -         vm x1.56     best_caps=re2
+  w-2048   auto -          vm refused/-  best=rust         | caps-only: auto -         vm -         best_caps=-
+# short-subject-search whole-subject
+# match-compliance plain
+  w-8      auto -          vm refused/-  best=pcre2-interp | caps-only: auto -         vm -         best_caps=-
+  w-64     auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-96     auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-128    auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-192    auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-256    auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-384    auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-512    auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-1024   auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+  w-2048   auto -          vm refused/-  best=re2          | caps-only: auto -         vm -         best_caps=-
+# match-compliance whole-subject
+  w-8      auto x1.08      vm x1.00      best=pcrec-vm     | caps-only: auto x1.08     vm x1.00     best_caps=pcrec-vm
+  w-64     auto x1.03      vm x1.00      best=pcrec-vm     | caps-only: auto x1.03     vm x1.00     best_caps=pcrec-vm
+  w-96     auto x1.02      vm x1.00      best=pcrec-vm     | caps-only: auto x1.02     vm x1.00     best_caps=pcrec-vm
+  w-128    auto x1.02      vm x1.00      best=pcrec-vm     | caps-only: auto x1.02     vm x1.00     best_caps=pcrec-vm
+  w-192    auto x1.04      vm x1.00      best=pcrec-vm     | caps-only: auto x1.04     vm x1.00     best_caps=pcrec-vm
+  w-256    auto x1.06      vm x1.00      best=pcrec-vm     | caps-only: auto x1.06     vm x1.00     best_caps=pcrec-vm
+  w-384    auto x1.06      vm x1.00      best=pcrec-vm     | caps-only: auto x1.06     vm x1.00     best_caps=pcrec-vm
+  w-512    auto x1.17      vm x1.00      best=pcrec-vm     | caps-only: auto x1.17     vm x1.00     best_caps=pcrec-vm
+  w-1024   auto x1.29      vm x1.00      best=pcrec-vm     | caps-only: auto x1.29     vm x1.00     best_caps=pcrec-vm
+  w-2048   auto x1.00      vm refused/-  best=pcrec-auto   | caps-only: auto x1.00     vm -         best_caps=pcrec-auto
+
+## class-pure (caps-only roster) geomean/wins by regime x form
+auto ('large-subject-throughput', 'plain') 34 geomean x1.19 max x2.04 wins 16 >1.25: 8
+auto ('match-compliance', 'whole-subject') 39 geomean x1.07 max x1.36 wins 11 >1.25: 3
+auto ('short-subject-search', 'plain') 34 geomean x1.00 max x1.02 wins 31 >1.25: 0
+vm ('large-subject-throughput', 'plain') 35 geomean x3.40 max x481.99 wins 7 >1.25: 26
+vm ('match-compliance', 'whole-subject') 35 geomean x1.15 max x114.98 wins 28 >1.25: 1
+vm ('short-subject-search', 'plain') 35 geomean x2.27 max x651.56 wins 3 >1.25: 28
+
+## cells with no auto or vm timing:
+auto ci-256 match-compliance plain
+vm ci-256 match-compliance plain
+vm ci-512 large-subject-throughput plain
+auto ci-512 match-compliance plain
+vm ci-512 match-compliance plain
+vm ci-512 match-compliance whole-subject
+vm ci-512 short-subject-search plain
+auto clsa-1024 large-subject-throughput plain
+auto clsa-1024 match-compliance plain
+vm clsa-1024 match-compliance plain
+auto clsa-1024 short-subject-search plain
+auto clsa-256 match-compliance plain
+vm clsa-256 match-compliance plain
+auto clsa-64 match-compliance plain
+vm clsa-64 match-compliance plain
+auto clsd-1024 large-subject-throughput plain
+auto clsd-1024 match-compliance plain
+vm clsd-1024 match-compliance plain
+auto clsd-1024 short-subject-search plain
+auto clsd-256 match-compliance plain
+vm clsd-256 match-compliance plain
+auto clsd-64 match-compliance plain
+vm clsd-64 match-compliance plain
+auto cnt-64 match-compliance plain
+vm cnt-64 match-compliance plain
+auto floor match-compliance plain
+vm floor match-compliance plain
+auto nar4-256 match-compliance plain
+vm nar4-256 match-compliance plain
+auto nar4-512 match-compliance plain
+vm nar4-512 match-compliance plain
+auto nar4-64 match-compliance plain
+vm nar4-64 match-compliance plain
+auto pfx3-256 match-compliance plain
+vm pfx3-256 match-compliance plain
+auto pfx3-512 match-compliance plain
+vm pfx3-512 match-compliance plain
+vm s-2048 large-subject-throughput plain
+auto s-2048 match-compliance plain
+vm s-2048 match-compliance plain
+vm s-2048 match-compliance whole-subject
+vm s-2048 short-subject-search plain
+auto s-256 match-compliance plain
+vm s-256 match-compliance plain
+auto s-4096 large-subject-throughput plain
+vm s-4096 large-subject-throughput plain
+auto s-4096 match-compliance plain
+vm s-4096 match-compliance plain
+vm s-4096 match-compliance whole-subject
+auto s-4096 short-subject-search plain
+vm s-4096 short-subject-search plain
+auto s-512 match-compliance plain
+vm s-512 match-compliance plain
+auto sfx-256 match-compliance plain
+vm sfx-256 match-compliance plain
+auto sfx-512 match-compliance plain
+vm sfx-512 match-compliance plain
+auto sfx-64 match-compliance plain
+vm sfx-64 match-compliance plain
+auto sh1-256 match-compliance plain
+vm sh1-256 match-compliance plain
+auto sh1-512 match-compliance plain
+vm sh1-512 match-compliance plain
+auto sh1-64 match-compliance plain
+vm sh1-64 match-compliance plain
+auto srt-256 match-compliance plain
+vm srt-256 match-compliance plain
+auto srt-512 match-compliance plain
+vm srt-512 match-compliance plain
+auto w-1024 large-subject-throughput plain
+auto w-1024 match-compliance plain
+vm w-1024 match-compliance plain
+auto w-1024 short-subject-search plain
+auto w-128 match-compliance plain
+vm w-128 match-compliance plain
+auto w-192 match-compliance plain
+vm w-192 match-compliance plain
+auto w-2048 large-subject-throughput plain
+vm w-2048 large-subject-throughput plain
+auto w-2048 match-compliance plain
+vm w-2048 match-compliance plain
+vm w-2048 match-compliance whole-subject
+auto w-2048 short-subject-search plain
+vm w-2048 short-subject-search plain
+auto w-256 match-compliance plain
+vm w-256 match-compliance plain
+auto w-384 match-compliance plain
+vm w-384 match-compliance plain
+auto w-512 match-compliance plain
+vm w-512 match-compliance plain
+auto w-64 match-compliance plain
+vm w-64 match-compliance plain
+auto w-8 match-compliance plain
+vm w-8 match-compliance plain
+auto w-96 match-compliance plain
+vm w-96 match-compliance plain
+auto wb-256 match-compliance plain
+vm wb-256 match-compliance plain
+auto wb-512 match-compliance plain
+vm wb-512 match-compliance plain

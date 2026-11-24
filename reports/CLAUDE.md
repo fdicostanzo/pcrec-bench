@@ -3557,3 +3557,10 @@ because `build_report` drops call-stream rows from the loaded records in place).
 ## `--grain stream` ([B148] rep, 2026-10-28)
 
 A third non-default grain beside `subst`: `python3 -m pcrecbench report --grain stream [--callee-calib FILE]` (md / tsv) reads the `call-stream` records of the unusual set (`pcrecbench/report_stream.py`, unusual_set_v1.md 7.5). No committed report uses it yet (the sample is the first scratch read), `REPORTER_VERSION` is unchanged and no existing report moves. The set and subject grains still refuse a call-stream-only selection BY NAME and drop stream rows from a mixed record.
+
+## `2026-11-24-*-ryzen7700x-*d6c5e71a5.*` ([B152], lane b152read)
+
+The [B152] window at pcrec d6c5e71a5 (abi 112), `ryzen7700x`, reporter v28, explicit `--testee` ids. Eight groups, each `.tsv .md .matrix.tsv .interpretation.md` (the first six also `.subject-grain.md .subject-grain.tsv`):
+`altwide-0.3-...-fullroster-d6c5e71a5` (I-176: tonight's pcrec-auto/vm, re2, vectorscan-som, rust + pcre2-jit/interp REUSED from 2026-10-19 on this machine, libpcre2 10.46 unchanged -- the reuse is NOT in the report header, only in the ledger), `capability-0.4` and `syntax-0.2` (vs cb32eda28), `bounded-0.3`, `loglines-0.1`, `email-specimen-0.2`, `litrun-0.1`
+(vs **9ae59f5d4**, the newest pcrec-auto there; all cross-window), `sentinel-0.1` (`--all-records`, 6 records). Rendered by `docs/dev/measurements/2026-11-24-b152read/gen.py`; sidecars by `interp.sh` (no predictions file passed).
+Reader's caveats: a cross-pin cell is a CROSS-WINDOW pair (23-29 days); program-identical cells show a +4..+7 % median offset on some strata (syntax short, bounded large); loglines has no null band; the altwide matrix's pooled best is a non-capturing engine (vectorscan/rust are capture_class=no); altwide `auto` vs forced-VM whole-subject "losses" are sibling comparisons. Ledger `docs/dev/ledgers/2026-11-24-b152-d6c5e71a5.md`, report `docs/dev/lanes/b152read_report.md`.
