@@ -6781,3 +6781,9 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
 - Lanes: b152prep (opus) re-pinned through 19 abi steps (merged c6b703ad; see [B152]); b152chain (sonnet) wrote docs/dev/lanes/b152win_chain.sh + _wrap.sh (merged abd29512); b153facts (sonnet, read-only) drafted the I-178 answer -> O-121 (this bench has NO NOT-WARM method). O-120 answered I-176/I-177.
 - Lesson again: both writer lanes sat idle ~1.5 h "waiting for notifications" from jobs that had finished (one disowned, one rehearsal). A ps/mtime check from the heartbeat caught it; the nudge got both moving.
 - `700-bench-b152win` QUEUED 20:28 in FULL mode. One-shot wakes at 02:07 (did it start) and 08:09 (close). Upstream: vectorscan#416's maintainer defers the fix to a 5.5 major; recorded, nothing posted.
+
+## 2026-11-24 — 62nd session (morning): b152win ran complete
+
+- `700-bench-b152win` RUNNING 01:50, BENCH_WINDOW_COMPLETE rc=0 at 07:49:59. 17/17 cells measured, 1 skipped by the deadline rule (utf8 x pcrec-auto-utf8: need 4074 s, left 3859 s). Store 104f2e65.
+- Cell times ran a little over the estimates (capability 66, syntax 46, bounded 50 min; the opening sentinel 34 min, because pcrec-auto's pre-flight refused 11 times 01:58-02:04 at load1 ~2.1, not ours). The altwide non-pcrec cells were short: re2 13, vectorscan-som 25, rust 23 min.
+- Read lane b152read (sonnet) launched: the I-176 full-roster altwide group (pcre2 reused from 10-19), the cross-pin re-baseline groups, the ledger and a draft outbox verdict. The full `make check` at d6c5e71a5 is still owed; slot asked of pcrec_main.
