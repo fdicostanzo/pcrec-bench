@@ -1,0 +1,76 @@
+# [B152] compile-only census, cb32eda28 (abi 93) -> d6c5e71a5 (abi 112), 1600 rows
+# every bench pattern (11 sets, by enumeration) x {plain, whole} x {auto-caps, auto-nocaps}; emitted WITH -fcomments,
+# --features all (-e utf8 on bench/utf8); arm = d6c5e71a5 with -fno-landmark-walk. Identity v2/v3 (tools/program_identity.py).
+# source: docs/dev/measurements/probe_b152prep_emit.py (emit, niced, 1 job, 2026-11-23 18:03-18:13) and
+#         probe_b152prep_census.py EMITDIR OUT.tsv (classifier; rows in 2026-11-23-b152prep-census.tsv).
+# No timing of any kind.
+
+== verdicts (v2 and v3 agree on every row) ==
+    575 changed
+    936 identical
+     11 refusal-mover:old-refused
+     78 refused-both
+
+== per set ==
+    156 altwide
+    172 bounded
+    284 capability
+     12 email-specimen
+     56 litrun
+     44 loglines
+     60 sentinel
+     32 subst
+    380 syntax
+    100 unusual
+    304 utf8
+
+== attribution of the 575 changed rows (0 UNATTRIBUTED) ==
+    188 abi103-minw
+    175 abi103-minw+abi104-112-reqrun
+     62 abi97-utf8-tables
+     56 abi103-minw+abi97-altnf
+     46 abi103-minw+abi104-112-reqrun+abi97-altnf
+     11 abi95-landmark+abi104-112-reqrun
+     10 abi103-minw+abi97-utf8-tables
+      8 abi104-112-reqrun+abi97-utf8-tables
+      8 abi103-minw+abi104-112-reqrun+abi97-utf8-tables
+      6 abi104-112-reqrun+abi108-cover+abi110-spanvector
+      2 abi104-112-reqrun+abi97-altnf
+      2 abi104-112-reqrun+abi108-cover
+      1 abi97-altnf
+
+== refusal movers (all old-refused -> new-compiled; bytes old:new emit, engine_sel) ==
+  capability wild-datetime-datefinder-alternation caps plain 278082:275679 "size-cap-retry"
+  capability wild-datetime-datefinder-alternation caps whole 786816:279934 "selected"
+  capability wild-datetime-datefinder-alternation nocaps whole 992758:25886 "selected"
+  capability negation-scope-lookbehind-var caps plain 40928:37722 "selected"
+  capability negation-scope-lookbehind-var caps whole 41755:37971 "selected"
+  capability negation-scope-lookbehind-var nocaps plain 40928:37722 "selected"
+  capability negation-scope-lookbehind-var nocaps whole 41755:37971 "selected"
+  utf8 cls-w-ucp caps plain 615166:17124 "selected"
+  utf8 cls-w-ucp nocaps plain 615166:17124 "selected"
+  utf8 asr-b-cyr-ucp caps plain 39779:17555 "selected"
+  utf8 asr-b-cyr-ucp nocaps plain 39779:17555 "selected"
+
+== -fno-landmark-walk arm: differs from the canonical d6c5e71a5 emit exactly on the abi95-landmark rows ==
+     78 -
+     11 differs
+   1511 same
+  capability wild-secrets-username-password-pair nocaps plain  old 563746:21521 new 609262:24515 arm 564961:21262 (landmark walk +44301 emit B)
+  capability float-literal-bound caps plain  old 24879:17703 new 32958:22074 arm 25736:18560 (landmark walk +7222 emit B)
+  capability float-literal-bound nocaps plain  old 24879:17703 new 32958:22074 arm 25736:18560 (landmark walk +7222 emit B)
+  subst 5b-mask-email caps plain  old 27753:17241 new 36836:21133 arm 27929:17417 (landmark walk +8907 emit B)
+  subst 5b-mask-email nocaps plain  old 27753:17241 new 36836:21133 arm 27929:17417 (landmark walk +8907 emit B)
+  syntax cls-h caps plain  old 24405:16619 new 31288:18868 arm 24581:16795 (landmark walk +6707 emit B)
+  syntax cls-h nocaps plain  old 24405:16619 new 31288:18868 arm 24581:16795 (landmark walk +6707 emit B)
+  syntax qnt-plus caps plain  old 21695:16580 new 28983:20446 arm 22405:17290 (landmark walk +6578 emit B)
+  syntax qnt-plus nocaps plain  old 21695:16580 new 28983:20446 arm 22405:17290 (landmark walk +6578 emit B)
+  syntax grp-atomic-rep caps plain  old 21700:16585 new 28988:20451 arm 22410:17295 (landmark walk +6578 emit B)
+  syntax grp-atomic-rep nocaps plain  old 21700:16585 new 28988:20451 arm 22410:17295 (landmark walk +6578 emit B)
+
+== size direction over changed rows (emit bytes new-old) ==
+  shrink 101, grow 474
+  extremes: utf8 prp-l plain -77,030 (abi 97 sibling merge, smaller DFA tables); capability wild-secrets-username-password-pair nocaps plain +45,516 (the landmark walk; the deny arm restores 564,961 vs 563,746 at cb32eda28)
+
+== closed-set values stamped at d6c5e71a5 across every .new and arm emit: all declared after [B152]'s adapter change ==
+  new values: dfa_scan landmark-walk (11 rows), char-step (utf8 asr-b-cyr-ucp, 2 rows + arm); req_why untestable (36); targets none:generic (every artifact)
