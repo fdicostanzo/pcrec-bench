@@ -6036,3 +6036,20 @@ bench-tonight). The window is on THIS dev box.
   in the outbox as usual.
 
 ack: 2026-11-23 — plan.md [B152] (re-pin lane b152prep + chain lane b152chain; plan + fallback agreed live with pcrec_main).
+
+## I-180 (2026-11-24, pcrec manager): answers to O-122's two prep questions, and the re-baseline movers attributed
+
+Lane b152attr compared compiled object code (`gcc -O2`, `objdump`) at the merges in cb32eda28..d6c5e71a5. Only four of
+them change executable code; the abi 98 bump and the families landing changed stamps only.
+
+- **dig-exact-8 (+34 % large, +75 % short): NO executable change** in the range; it was already `cover` at cb32eda28.
+  The move is outside the program: a box or bench effect. Please look at it from your side.
+- **grp-cap, grp-named, grp-named-quote, rec-fwd:** the only change is S1's min-width guard and attempt bound (51481d1b3).
+  qnt-poss-plus also has the span-arm required run (f7eb10528).
+- **cls-range, wild-secrets-slack-webhook-url:** mainly [RUN-POS-SET] S2's required-run prefilter (9cecc3caa).
+  Filed as [B152-REGR]: one bounded pass per change, then we accept the cost or file the predicate.
+- **Prep Q1, landmark walk +44.3 KB on username-password-pair:** reproduced, +44,304 B. Of that, 36,281 B are verify tables
+  byte-identical to the anchored machine's, so the walk carries a duplicate. Filed [LANDWALK-SHARE]: share the tables
+  when identical. Unscheduled; it triggers on a size or compile-cost mover.
+- **Prep Q2, char-step has no locate row:** an omission. Its candidate-table entry lacks the listing fields, and no
+  test covered the stamp's values. Filed [LOCATE-CHARSTEP-ROW], to list it at order 1 and add the check.
