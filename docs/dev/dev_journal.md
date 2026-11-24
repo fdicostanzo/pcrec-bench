@@ -6787,3 +6787,9 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
 - `700-bench-b152win` RUNNING 01:50, BENCH_WINDOW_COMPLETE rc=0 at 07:49:59. 17/17 cells measured, 1 skipped by the deadline rule (utf8 x pcrec-auto-utf8: need 4074 s, left 3859 s). Store 104f2e65.
 - Cell times ran a little over the estimates (capability 66, syntax 46, bounded 50 min; the opening sentinel 34 min, because pcrec-auto's pre-flight refused 11 times 01:58-02:04 at load1 ~2.1, not ours). The altwide non-pcrec cells were short: re2 13, vectorscan-som 25, rust 23 min.
 - Read lane b152read (sonnet) launched: the I-176 full-roster altwide group (pcre2 reused from 10-19), the cross-pin re-baseline groups, the ledger and a draft outbox verdict. The full `make check` at d6c5e71a5 is still owed; slot asked of pcrec_main.
+
+## 2026-11-24 — 62nd session (day): window read, verdict sent, make check green
+
+- b152read merged (b94d09dc): 8 report groups + sidecars, ledger docs/dev/ledgers/2026-11-24-b152-d6c5e71a5.md. Outbox O-122 (758bf212): I-176 = 13 named large-cell losses of pcrec-auto (x1.09-2.04, 12 to RE2, pfx3-256 to the JIT, all at 8-512 branches); from w-256 up auto is the best capturing engine; forced VM loses 47/70; no wrong answers. pcrec_main: lane b152attr answers the two re-pin questions and bisects the regressions; the losses feed [ENG-ISL-S2]/[OPT-ALTHASH].
+- The owed full `make -k check` (queued, no taskset): RED first (08:11-08:40): 123 sidecars stale against the live index, five old-pin values the prep slice missed, the s-hang witness dismissed by abi 104-112's run pre-check, and a kb16 test choosing a set with no records on its machine. Lane b152fix fixed each at its cause, measured, nothing loosened (604eda42). Re-run GREEN 08:52-09:22.
+- Lesson: a re-pin's targeted selfcheck slice is not the whole check. b152prep's 34 functions missed check_noreqbyte_testee and the timeout control, so the full run after the window is still the gate.
