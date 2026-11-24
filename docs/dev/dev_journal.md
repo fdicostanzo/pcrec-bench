@@ -6793,3 +6793,13 @@ OWED: L9 (a quiet window via pcrec-main + Frank; it also sizes CELL_CAP_unusual)
 - b152read merged (b94d09dc): 8 report groups + sidecars, ledger docs/dev/ledgers/2026-11-24-b152-d6c5e71a5.md. Outbox O-122 (758bf212): I-176 = 13 named large-cell losses of pcrec-auto (x1.09-2.04, 12 to RE2, pfx3-256 to the JIT, all at 8-512 branches); from w-256 up auto is the best capturing engine; forced VM loses 47/70; no wrong answers. pcrec_main: lane b152attr answers the two re-pin questions and bisects the regressions; the losses feed [ENG-ISL-S2]/[OPT-ALTHASH].
 - The owed full `make -k check` (queued, no taskset): RED first (08:11-08:40): 123 sidecars stale against the live index, five old-pin values the prep slice missed, the s-hang witness dismissed by abi 104-112's run pre-check, and a kb16 test choosing a set with no records on its machine. Lane b152fix fixed each at its cause, measured, nothing loosened (604eda42). Re-run GREEN 08:52-09:22.
 - Lesson: a re-pin's targeted selfcheck slice is not the whole check. b152prep's 34 functions missed check_noreqbyte_testee and the timeout control, so the full run after the window is still the gate.
+
+## 2026-11-24 13:00 — session close (62nd session)
+
+Frank asked whether the window ran (yes, 17/17) and whether the report page and pcrec's performance moved. Neither the trend
+report (last regenerated 10-13 at 6b2dbd3e) nor the viewer data (10-09) has been regenerated for cb32eda28 or d6c5e71a5:
+the trend report is owed (wake item). Performance per the b152read ledger §7: across six sets, 77 cells faster / 32 slower,
+every mover on a program-changed row. Re-reading it corrected an earlier hand-off claim: dig-exact-8's comparison record is
+at 9ae59f5d4 (bounded has no cb32eda28 record), so abi 92 `cover` lies INSIDE the compared span; I-180 only cleared
+cb32..d6c5. The slowdown is therefore likely pcrec's abi 92 change, not a bench effect -- to confirm with pcrec_main before
+any investigation (plan [B152] note). Pruned b152read/b152fix. No lanes, no cron, nothing of ours on the box.
