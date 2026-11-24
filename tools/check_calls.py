@@ -166,7 +166,11 @@ def _frames_giveup_and_flip(ok, bad, ad_mod):
     call BY NAME (PCREC_ERR_FRAMES), the configured buffer completing it (the
     control); (b) the K134 FLIP as evidence -- the default pcrec-auto answers
     all 256 calls at the canonical pin and gave up PCREC_ERR_FRAMES on 100 of
-    them at the also_pin 614d45eb3 (run in a child with the pin override)."""
+    them at 614d45eb3. [B152] (canonical d6c5e71a5): 614d45eb3 LEFT the
+    allowlist, so the flip itself is history (b149's census and the b149mon
+    records); the arm is re-aimed to K134 HOLDING across the re-pin -- the
+    canonical pin AND the also_pin cb32eda28 (the first K134 pin, run in a child
+    with the pin override) both answer all 256 calls."""
     exp_sha = None
     with open(os.path.join(ROOT, "bench", "unusual", "expectations_stream.tsv")) as f:
         for ln in f.read().splitlines()[1:]:
@@ -187,7 +191,7 @@ def _frames_giveup_and_flip(ok, bad, ad_mod):
     try:
         new = _seg_s_stream(ad_mod, "pcrec-auto", os.path.join(WORK, "flip-new"))
         probe = _FLIP_PROBE % {"root": ROOT, "work": os.path.join(WORK, "flip-old")}
-        env = dict(os.environ, PCRECBENCH_PCREC_PIN="614d45eb3")
+        env = dict(os.environ, PCRECBENCH_PCREC_PIN="cb32eda28")
         p = subprocess.run([sys.executable, "-c", probe], env=env, capture_output=True,
                            text=True, timeout=600)
         line = [l for l in p.stdout.splitlines() if l.startswith("STREAM ")]
@@ -196,10 +200,10 @@ def _frames_giveup_and_flip(ok, bad, ad_mod):
             return
         old = json.loads(line[0][7:])
         if new["gave_up"] == 0 and new["results_sha256"] == exp_sha \
-                and old["gave_up"] > 0 and old["first_limit"] == "PCREC_ERR_FRAMES":
-            ok("streams: K134 flip -- pcrec-auto answers seg-s x cscan-onig at the canonical pin "
-               "and gave up at 614d45eb3",
-               "%d of %d calls gave up PCREC_ERR_FRAMES at 614d45eb3, 0 now" % (old["gave_up"], old["calls"]))
+                and old["gave_up"] == 0 and old["results_sha256"] == exp_sha:
+            ok("streams: K134 holds -- pcrec-auto answers seg-s x cscan-onig at the canonical pin "
+               "and at the also_pin cb32eda28",
+               "0 of %d calls gave up at either pin (614d45eb3 gave up on 100, [B149])" % old["calls"])
         else:
             bad("streams: K134 flip", repr((new, old)))
     except Exception as e:                          # noqa: BLE001
@@ -337,7 +341,7 @@ def run(ok, bad):
                     ok("streams: pcrec-auto x %s x %d streams matched-as-expected (K134 flip)"
                        % (pat, len(streams_for[pat])), "gave up PCREC_ERR_FRAMES at 614d45eb3")
                 else:
-                    bad("streams: pcrec-auto x %s (K134: answers at cb32eda28)" % pat, repr(outs))
+                    bad("streams: pcrec-auto x %s (K134: answers since cb32eda28)" % pat, repr(outs))
             elif outs == ["matched-as-expected"] and len(mrows) == len(streams_for.get(pat, ())):
                 ok("streams: %s x %s x %d streams matched-as-expected" % (t, pat, len(streams_for[pat])),
                    "validator-accepted scratch record")

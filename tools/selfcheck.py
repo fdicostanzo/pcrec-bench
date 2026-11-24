@@ -12737,9 +12737,9 @@ def check_b135s3_stamps():
 
 
 def check_b135_two_pin_window():
-    """[B135] the TWO-PIN WINDOW mechanism ([B149]: canonical cb32eda28, the
-    one also_pin 614d45eb3; 9ae59f5d4, 6b2dbd3e, 00c97769 and b8337c33 left the
-    allowlist and are refused BY NAME): one process selects a15fb77b
+    """[B135] the TWO-PIN WINDOW mechanism ([B152]: canonical d6c5e71a5, the
+    one also_pin cb32eda28; 614d45eb3, 9ae59f5d4, 6b2dbd3e, 00c97769 and b8337c33
+    left the allowlist and are refused BY NAME): one process selects a15fb77b
     (configs.toml `also_pins`) through $PCRECBENCH_PCREC_PIN, the other
     keeps the canonical pin; the override is refused BY NAME when it names
     an undeclared pin; the two pins derive DISTINCT testee_ids (so their
@@ -12762,18 +12762,18 @@ def check_b135_two_pin_window():
         os.environ.pop(env, None)
         os.environ.pop("CC", None)
         canon = adapter.pin()
-        os.environ[env] = "614d45eb3"
+        os.environ[env] = "cb32eda28"
         before = adapter.pin()
         os.environ[env] = canon
         same = adapter.pin()
-        if (canon, before, same) == ("cb32eda28", "614d45eb3", "cb32eda28"):
+        if (canon, before, same) == ("d6c5e71a5", "cb32eda28", "d6c5e71a5"):
             ok("b135 two-pin: the override selects an also_pin, the canonical "
                "value is a no-op", "%s / %s / %s" % (canon, before, same))
         else:
             bad("b135 two-pin: the override selects an also_pin",
                 "canonical %r, override %r, override==canonical %r"
                 % (canon, before, same))
-        for retired in ("b8337c33", "00c97769", "6b2dbd3e", "9ae59f5d4"):
+        for retired in ("b8337c33", "00c97769", "6b2dbd3e", "9ae59f5d4", "614d45eb3"):
             os.environ[env] = retired
             try:
                 adapter.pin()
@@ -12801,7 +12801,7 @@ def check_b135_two_pin_window():
         # distinct ids, one config
         ids, shas = {}, {}
         drv = os.path.join(tmp, "pcrec_driver")
-        for tag, pin in (("before", "614d45eb3"), ("after", "cb32eda28")):
+        for tag, pin in (("before", "cb32eda28"), ("after", "d6c5e71a5")):
             os.environ[env] = pin
             adapter.prepare("pcrec-auto", tmp)
             blk = adapter.describe("pcrec-auto", tmp)
@@ -12810,9 +12810,9 @@ def check_b135_two_pin_window():
             if not blk.get("engine_commit", "").startswith(pin):
                 bad("b135 two-pin: describe() names the selected pin",
                     "engine_commit %r for pin %s" % (blk.get("engine_commit"), pin))
-        if ids["before"] != ids["after"] and "614d45eb3" in ids["before"] \
-                and "cb32eda28" in ids["after"] \
-                and ids["before"].replace("614d45eb3", "cb32eda28") == ids["after"]:
+        if ids["before"] != ids["after"] and "cb32eda28" in ids["before"] \
+                and "d6c5e71a5" in ids["after"] \
+                and ids["before"].replace("cb32eda28", "d6c5e71a5") == ids["after"]:
             ok("b135 two-pin: the two pins derive DISTINCT testee_ids that "
                "differ in the pin alone", "%s / %s" % (ids["before"], ids["after"]))
         else:
@@ -13625,7 +13625,7 @@ def check_b149_stamps():
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import program_identity as _pi
     from pcrecbench import subbench as _sbm
-    new, old = adapter.pin_binary(), _b136_bin("614d45eb3")
+    new, old = _b136_bin("cb32eda28"), _b136_bin("614d45eb3")  # [B152]: its own builds, not the canonical pin
     if not old:
         bad("b149 stamps", "no build for 614d45eb3 (pin.sh 614d45eb3 first)")
         return
@@ -13790,6 +13790,64 @@ def check_b149_stamps():
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
+
+
+def check_b152_stamps():
+    """[B152] (pin d6c5e71a5, abi 112; abi steps 94-112 over cb32eda28).
+    BY VALUE through the adapter at the canonical pin, one witness per NEW
+    closed-set value the re-pin admitted (each MEASURED in lane b152prep's
+    census, docs/dev/measurements/2026-11-23-b152prep-census.txt):
+      95  [LANDWALK]   `foo[0-9]+bar` reads `dfa_scan` `landmark-walk` (the
+                       deny control `-fno-landmark-walk` is a DENY_CONTROLS
+                       row; this is its positive witness);
+      98  [XARCH]      `targets` `none:generic` on EVERY artifact (DFA, VM,
+                       utf8) -- no bench config passes `--target`;
+      106              altwide `w-8` reads `req_why` `untestable`;
+      utf8             bench/utf8 `asr-b-cyr-ucp` (`(*UCP)\\bМосква\\b`) under
+                       pcrec-auto-utf8 reads `dfa_scan` `char-step` (the
+                       CHARACTER-STEPPED DFA, cli.md 1.9p7), `dfa_start`
+                       `reverse-pass`, `dfa_match` `search-filter`,
+                       `dfa_prefilter` `none` (match_api.md 6.3.2's row) --
+                       a value the registry's `locate` axis does not carry
+                       (REGISTRY_OUTCOME_VALUES). That pattern is
+                       unsupported-by-declaration on the bench's utf8
+                       roster today; the adapter reads it anyway, so a
+                       later declaration cannot reject it.
+    The shim floor STAYS 16 (`struct rx_info` unchanged, check_abi_floor_refusal)."""
+    print("-- [B152]: abi 94-112 closed-set values (landmark-walk, char-step, untestable, targets) --")
+    try:
+        adapter = _ad.discover()["pcrec"]
+    except KeyError:
+        bad("b152 stamps", "no pcrec adapter")
+        return
+    tmp = tempfile.mkdtemp(prefix="pcrecbench-b152-")
+    cases = (
+        ("landmark walk", "pcrec-auto", b"foo[0-9]+bar",
+         {"engine": "dfa", "dfa_scan": "landmark-walk", "targets": "none:generic"}),
+        ("req_why untestable (altwide w-8)", "pcrec-auto", _bench_pattern("altwide", "w-8"),
+         {"req_why": "untestable", "targets": "none:generic"}),
+        ("forced VM targets", "pcrec-vm", b"(a+)+b",
+         {"engine": "vm", "targets": "none:generic"}),
+        ("char-step (utf8 asr-b-cyr-ucp)", "pcrec-auto-utf8", _bench_pattern("utf8", "asr-b-cyr-ucp"),
+         {"engine": "dfa", "dfa_scan": "char-step", "dfa_start": "reverse-pass",
+          "dfa_match": "search-filter", "dfa_prefilter": "none", "targets": "none:generic"}),
+    )
+    try:
+        for label, tid, pattern, want in cases:
+            adapter.prepare(tid, tmp)
+            pid = re.sub(r"[^A-Za-z0-9]+", "-", label).strip("-")[:40]
+            cr = adapter.compile(tid, pid, pattern, {}, 1, tmp).get(_ad.FORM_PLAIN)
+            if cr.outcome != "compiled":
+                bad("b152: %s" % label, "%s: %s" % (cr.outcome, cr.diagnostic))
+                continue
+            em = cr.engine_metadata or {}
+            wrong = {k: (em.get(k), v) for k, v in want.items() if em.get(k) != v}
+            if wrong:
+                bad("b152: %s" % label, "got/want %r" % (wrong,))
+            else:
+                ok("b152: %s" % label, ", ".join("%s=%s" % kv for kv in sorted(want.items())))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def check_list_axes_registry():
@@ -19353,6 +19411,7 @@ def main():
     check_b142_stamps()
     check_b147_stamps()
     check_b149_stamps()
+    check_b152_stamps()
     check_b135_two_pin_window()
     check_list_axes_registry()
     check_list_definitions_registry()

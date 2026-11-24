@@ -19,8 +19,12 @@ row (NINETEEN steps, so the attribution is by family, never by guess):
   abi108-cover        RX_DFA_SCAN moved to "cover" (the COVER-CAP stretch)
   abi110-spanvector   a `_vs<j>` selector appears
   abi96-vlookbehind   `lb_count` / `fwd_step` appear (a refusal mover too)
-  abi97-altnf         an RX_ALTCLS_* / RX_VM_ALT_ISLANDS / RX_VM_PROGRAM_BYTES
-                      value moved
+  abi97-altnf         an RX_ALTCLS_* / RX_VM_ALT_ISLANDS value moved
+  abi97-utf8-tables   (bench/utf8 rows) a DFA byte-class / transition table
+                      changed: [RUN-POS-SET] stage 1's sibling merge of a wide
+                      class's UTF-8 boxes (abi_changelog abi 97: "smaller DFA
+                      tables"), read on utf8 cls-dot / cls-s-ucp /
+                      qnt-dot-bounded diffs
   other-stamp         some other RX_* value moved and no family above fired
 A v3-changed row with no marker is UNATTRIBUTED (its changed chunk names are
 printed so it can be read).
@@ -67,7 +71,7 @@ def chunk_names(old, new):
     return sorted(set(names))
 
 
-def markers(old, new, so, sn, arm):
+def markers(old, new, so, sn, arm, sid="", names=()):
     m = []
     if sn.get("RX_DFA_SCAN") == '"landmark-walk"' and so.get("RX_DFA_SCAN") != '"landmark-walk"':
         m.append("abi95-landmark")
@@ -86,7 +90,23 @@ def markers(old, new, so, sn, arm):
     if any(so.get(k) != sn.get(k) for k in ("RX_ALTCLS_MERGES", "RX_ALTCLS_FACTORED",
                                              "RX_VM_ALT_ISLANDS")):
         m.append("abi97-altnf")
+    if sid == "utf8" and _table_changed(old, new):
+        m.append("abi97-utf8-tables")
     return m
+
+
+TABLE = re.compile(r"^\s*static const unsigned \w+ (rx_\w*(byte_class|next_state|is_accepting)\w*)\[", re.M)
+
+
+def _table_changed(old, new):
+    def tabs(t):
+        out = {}
+        for mm in TABLE.finditer(t):
+            j = t.find("};", mm.end())
+            out[mm.group(1)] = t[mm.end():j]
+        return out
+    a, b = tabs(old), tabs(new)
+    return a != b
 
 
 def main():
@@ -116,7 +136,7 @@ def main():
         mv = moved(so, sn) if old is not None and new is not None else []
         attr, names = "-", "-"
         if v3 == "changed":
-            ms = markers(old, new, so, sn, arm)
+            ms = markers(old, new, so, sn, arm, sid)
             if not ms and mv:
                 ms = ["other-stamp"]
             attr = "+".join(ms) if ms else "UNATTRIBUTED"

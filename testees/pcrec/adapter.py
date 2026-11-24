@@ -706,7 +706,7 @@ METADATA_DECL = {
     "dfa_scan": {
         "type": "enum", "scope": "pattern",
         "values": ["unanchored", "attempt", "empty", "rev-end", "cover",
-                   "landmark-walk"],
+                   "landmark-walk", "char-step"],
         "source": "<PREFIX>_DFA_SCAN, read through pb_dfa_scan(); CHECKED "
                   "against rx_info.scan (pb_info_scan(), abi 6+); `rev-end` "
                   "joined at abi 73 ([OPT-REVEND] L2, [B135]) and is the "
@@ -715,7 +715,11 @@ METADATA_DECL = {
                   "`locate` axis's order-2 row (`--memfn=no-window-search`); "
                   "`landmark-walk` joined at abi 95 ([LANDWALK] stage 1, "
                   "[B152]) and is the `locate` axis's order-3 row "
-                  "(`-fno-landmark-walk`, bit 57; `unanchored` 3 -> 4)",
+                  "(`-fno-landmark-walk`, bit 57; `unanchored` 3 -> 4); "
+                  "`char-step` (the CHARACTER-STEPPED DFA a UCP \\b/\\B "
+                  "takes under -e utf8, cli.md 1.9p7, match_api.md 6.3.2) "
+                  "is in the set since [B152]: measured on utf8 asr-b-cyr-ucp "
+                  "(abi 112), not an axis row",
         "description": "WHICH DFA scan this artifact contains: the O(n) "
                        "forward+reverse table pair (`unanchored`), the "
                        "per-start computed-goto loop an anchored pattern "
@@ -2635,7 +2639,10 @@ REGISTRY_OUTCOME_VALUES = {
     # [B135] (pcrec abi 73): the `locate` axis enumerates the two candidate
     # scans an ordinary body can take; an `attempt` loop (anchored pattern)
     # and the provably-empty body are not candidates the selector walks.
-    "dfa_scan": {"attempt", "empty"},
+    # [B152] (pcrec abi 112): `char-step`, the character-stepped DFA a UCP
+    # \b/\B takes under -e utf8 (cli.md 1.9p7), is forced by the pattern's
+    # set, not chosen by the `locate` selector -- no axis row carries it.
+    "dfa_scan": {"attempt", "empty", "char-step"},
 }
 # [B142] follow-up: `compound` is an outcome no candidate list carries.
 for _k in COMPOUND_MACHINE_ENUMS:
