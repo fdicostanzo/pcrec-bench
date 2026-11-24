@@ -2,9 +2,11 @@
 # [B152] TONIGHT'S WINDOW, 2026-11-24 01:50 -> HARD END 07:55 (lane b152chain; modelled on b149w2_chain.sh /
 # b149mon_chain.sh). PINNED tier into store/. First window at the new main pin d6c5e71a5.
 #
-# THE PIN IS ONE VARIABLE (MAIN_PIN below). To fall back to the previous pin: set MAIN_PIN=cb32eda28 (one
-# edit, or `MAIN_PIN=cb32eda28` in the wrapper's env). In fallback the "@cb32eda28" sentinel arm is DROPPED
-# (it would be the same artifact twice).
+# THE ONE SWITCH is MAIN_PIN below. MAIN_PIN=d6c5e71a5 -> MODE=full (the plan below). MAIN_PIN=cb32eda28 (the
+# FALLBACK pin) -> MODE=fallback, derived (override with MODE=full|fallback in the env only for rehearsals):
+#   FALLBACK = ONLY: sentinel open (pcrec-auto@cb32eda28 + pcre2-jit), altwide x {re2-default,
+#   vectorscan-block-som, rust-default} (the non-pcrec cells, same skip rule), sentinel close (same two).
+#   No pcrec altwide, no tier 3/4. The "@cb32eda28" arm is NOT run twice (one pcrec sentinel arm only).
 #
 # CELL ORDER (priority; the measured minutes on this box in brackets drive the skip rule):
 #   1. sentinel@0.1 open:  pcrec-auto [6]  pcrec-auto@cb32eda28 [6]  pcre2-jit [7]            (never skipped)
@@ -12,6 +14,7 @@
 #   3. capability@0.4 pcrec-auto [62]; syntax@0.2 pcrec-auto [42]; bounded@0.3 pcrec-auto [47]
 #   4. tail: utf8@0.1 pcrec-auto-utf8 [33]; loglines@0.1 pcrec-auto [10]; email-specimen@0.2 pcrec-auto [8]; litrun@0.1 pcrec-auto [14]
 #   5. sentinel@0.1 close: the same three as 1 [~19]                                           (ALWAYS run, reserved last)
+# (MODE=fallback: see above; the lists in sections 1, 2-4, 5 are cut down accordingly.)
 # SKIP RULE (2-4): before each cell, now + est*60*1.3 s + CLOSE_RESERVE (25 min) must be <= HARD_END, else the cell
 # is logged `SKIPPED <set> <testee> (deadline)` and the chain continues -- a shorter later cell may still fit. The
 # per-cell cap (CELL_CAP) = 2x the estimate (floor 25 min), clamped so a cell never runs into the closing reserve.
@@ -47,13 +50,18 @@ abort() { echo "CHAIN_ABORT $*" >> "$L"; exit 9; }
 end_epoch=$(date -d "$HARD_END" +%s) || abort "unparseable HARD_END '$HARD_END'"
 left() { local s=$(( end_epoch - $(date +%s) )); [ "$s" -gt 0 ] && echo "$s" || echo 0; }
 
-# The sentinel arms. In fallback (MAIN_PIN == OTHER_PIN) the @OTHER arm is the same artifact twice: dropped.
-if [ "$MAIN_PIN" = "$OTHER_PIN" ]; then
-  R_SENT="pcrec-auto pcre2-jit"; ALSO=""
-  echo "FALLBACK mode: MAIN_PIN=$MAIN_PIN; the @$OTHER_PIN sentinel arm is dropped" >> "$L"
+# MODE: derived from the pin unless set. In fallback MAIN_PIN == OTHER_PIN: one pcrec sentinel arm, spelled
+# @cb32eda28 (the pin it measures), never the same artifact twice.
+if [ -z "${MODE:-}" ]; then
+  if [ "$MAIN_PIN" = "$OTHER_PIN" ]; then MODE=fallback; else MODE=full; fi
+fi
+case "$MODE" in full|fallback) ;; *) abort "MODE '$MODE' is neither full nor fallback";; esac
+if [ "$MODE" = fallback ]; then
+  R_SENT="pcrec-auto@$OTHER_PIN pcre2-jit"; ALSO=""
 else
   R_SENT="pcrec-auto@$OTHER_PIN pcrec-auto pcre2-jit"; ALSO=$OTHER_PIN
 fi
+echo "MODE=$MODE R_SENT='$R_SENT'" >> "$L"
 
 # testee resolution (every testee named by the plan, incl. the non-pcrec engines)
 python3 -m pcrecbench testees 2>>"$L" | awk '{print $1}' > "$W/testees.names"
@@ -125,7 +133,7 @@ cap_for() { local c=$(( $1 * 120 )); [ "$c" -lt 1500 ] && c=1500; echo "$c"; }
 run_cell sentinel "$R_SENT" 20 3600 noskip
 
 # 2.-4. the priority list: set testee est_min
-CELLS="
+CELLS_FULL="
 altwide pcrec-auto 17
 altwide pcrec-vm 15
 altwide re2-default 25
@@ -139,6 +147,12 @@ loglines pcrec-auto 10
 email pcrec-auto 8
 litrun pcrec-auto 14
 "
+CELLS_FALLBACK="
+altwide re2-default 25
+altwide vectorscan-block-som 25
+altwide rust-default 23
+"
+if [ "$MODE" = fallback ]; then CELLS=$CELLS_FALLBACK; else CELLS=$CELLS_FULL; fi
 while read -r set testee est; do
   [ -n "$set" ] || continue
   run_cell "$set" "$testee" "$est" "$(cap_for "$est")"
