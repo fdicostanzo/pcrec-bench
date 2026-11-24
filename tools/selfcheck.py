@@ -576,7 +576,7 @@ def check_subject_timeout():
         art = os.path.join(tmp, "artifact.c")
         proc = run([pcrec, "-p", "rx", "--engine=vm", "--fno-step-budget",
                     "--backtrack-frames=100000", "-o", art,
-                    "--pattern", "(a+)+b"],
+                    "--pattern", "(a+)+$"],
                    timeout=300)
         if proc.returncode != 0:
             bad("subject-timeout control", "pcrec: %s" % proc.stderr.strip()[:200])
@@ -591,29 +591,23 @@ def check_subject_timeout():
             return
 
         hang = os.path.join(tmp, "hang.bin")
-        # [B74] (abi 29, [OPT-REQBYTE]): `(a+)+b` now stamps `RX_REQ_BYTE
-        # "98"` ('b') -- every match must contain a 'b' on every path, so
-        # the emitted entry does one memchr over the WHOLE search window
-        # before running the VM at all, and a plain 40-`a` subject (no
-        # 'b' anywhere) is dismissed in that memchr, `nomatch`, without
-        # ever reaching the catastrophic-backtracking VM this control
-        # exists to exercise -- MEASURED directly (`hangwit.c`'s own
-        # guard: "if (... || !memchr(subject + search_from, 98, ...))
-        # return 0;"). A leading 'b' the match can never actually use
-        # satisfies the memchr (it only asks whether the byte appears
-        # ANYWHERE in the window, never where) while leaving the
-        # TRAILING run of 40 `a`s with no 'b' to complete it -- an
-        # unanchored search still finds no completion at position 0 (the
-        # 'b' itself, `(a+)` needs an 'a' first) and explores the SAME
-        # exponential split of the a-run starting at position 1 that
-        # hung before this pin, restoring the control without sharing
-        # any source with [OPT-REQBYTE] itself (a subject byte, not a
-        # flag or a stamp read).
+        # [B152] (pin d6c5e71a5, abi 112): the witness is `(a+)+$` over 40 `a`
+        # then a `b`. History: `(a+)+b` over 40 `a` hung until [B74] (abi 29,
+        # [OPT-REQBYTE]) stamped `RX_REQ_BYTE "98"` and dismissed a no-'b'
+        # subject in one memchr; `b`+40 `a` restored it by satisfying the
+        # memchr. At d6c5e71a5 that fails too: the necessary-RUN pre-check
+        # (abi 104-112, `RX_REQ_RUN "6162@1"`, the run "ab") dismisses `b`+40
+        # `a` -- no "ab" substring -- `nomatch` fast. A subject that holds
+        # "ab" cannot FAIL `(a+)+b`, so the pattern changed instead: `(a+)+$`
+        # stamps only RX_REQ_BYTE "97" ('a', present), RX_REQ_RUN "none",
+        # RX_END_WINDOW "none"; the trailing `b` is the only reason no `$`
+        # completes, so every split of the a-run is tried. No source is
+        # shared with the pre-checks: the pattern has none to deny.
         with open(hang, "wb") as f:
-            f.write(b"b" + b"a" * 40)
+            f.write(b"a" * 40 + b"b")
         fine = os.path.join(tmp, "fine.bin")
         with open(fine, "wb") as f:
-            f.write(b"ab")
+            f.write(b"aa")   # [B152] `(a+)+$` matches it at once
 
         class S:
             def __init__(self, sid, path, length):
