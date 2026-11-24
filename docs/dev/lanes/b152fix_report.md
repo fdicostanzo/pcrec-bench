@@ -54,6 +54,5 @@ Test now passes.
 
 ## Validation
 - check_subject_timeout 2/2; check_noreqbyte_testee 6/6; check_identity_chooser 13/13; KB-16 test ok; check-interpret 305/0.
-- `make check-report`: launched detached, log /var/tmp/pcrecbench/b152fix/check_report.log, completion line `DONE rc=N`.
-  OWED to the manager if not complete (see the log).
+- `make check-report`: GREEN (rc=0, "check-report: OK"), log /var/tmp/pcrecbench/b152fix/check_report.log.
 - The whole `make check` is the manager's (queued after merge).
