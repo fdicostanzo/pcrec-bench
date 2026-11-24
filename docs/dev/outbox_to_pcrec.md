@@ -6754,3 +6754,48 @@ I-178's three answers follow in their own item.
 - **(b) Port: for `short-subject-search`, there's little to port.** It's the subject files (`bench/<set>/manifest.tsv` plus the generators) and the loop described above. For NOT-WARM there's nothing to hand over. The kit has to DEFINE the method, and we'd adopt it from there if you want it on our side as well.
 - **(c) `lit-l16`: no obstacle.** It's a bench/litrun pattern and runs through the same `pcrec-local` route and tier as the cells it floors. The NOT-WARM floor cells inherit (a)'s missing method.
 - **Tier caveat for "measured twice":** a provided-binary record is SCRATCH by construction. It never goes into `store/` or a ranking, and it has no quiet gate (its status is still honest, so a loaded box reads `inconclusive-*`, not void). A scratch cell can be run twice. Whether a scratch record counts as a measurement under the kit's rule is the kit's call. Pinned-tier cells would need the lever to be a CLI flag at a pinned pcrec commit.
+
+## O-122 (2026-11-24, bench manager) -- the window at d6c5e71a5 (abi 112): altwide full roster, the named losses, the re-baseline
+
+Window b152win, 2026-11-24 01:50-07:50 EST, `ryzen7700x`. 17 of 17 cells measured, all `agree`; utf8 skipped by deadline.
+The box was never quiet (load1 1.1-2.8); the target core passed the pre-flight at every cell. Ledger `docs/dev/ledgers/2026-11-24-b152-d6c5e71a5.md` (lands on master after today's `make check`).
+
+**Verdict.** No wrong answer in altwide. The re-baseline movers are all on rows whose program changed,
+each one a row our re-pin census shows changed (1,600 rows: 936 identical, 575 changed, 0 unattributed).
+`wild-datetime-datefinder-alternation` now compiles (it was 591,151 B code at cb32eda28).
+
+**I-176, one: ratio to the best engine.** Against capturing engines, pcrec-auto is best on 31 of 34 short cells
+and ties or wins 16 of 34 large cells. No loss to another engine on short or whole-subject cells.
+Against the non-capturing class (vectorscan-som; rust-default, whose timed loop assigns no captures, I-99), the large gap is x6.9 to x29.3.
+The worst is `w-8` at x29.3. We list it pooled, not as a ranking.
+
+**I-176, two: forced VM.** This is `--engine=vm` on the same patterns. It is not the wrapped variant, which comes in the next altwide version.
+Forced VM is x2.1 to x5.2 slower than auto on the `w-N` large ladder. It reaches `w-1024` where auto refuses.
+There it is x39 faster than the JIT. `ci-256` forced VM is x482 slower than auto (860 ns/B).
+That cell was the same at 6b2dbd3e (+4.6 %, within spread).
+
+**I-176, three: named losses of pcrec-auto** (behind another capturing engine, beyond noise, large throughput):
+`cnt-64` x2.04, `wb-512` x2.02, `clsd-64` x1.96, `w-64` x1.96, `clsa-64` x1.93, `w-96` x1.69, `wb-256` x1.68,
+`w-128` x1.54, `w-8` x1.25, `srt-256` x1.25, `w-192` x1.17, `srt-512` x1.13 (all to RE2), `pfx3-256` x1.09 (to pcre2-jit).
+On these shapes RE2 beats pcrec's flat 1.8 ns/B scan. They are the ladder's middle (64-512 branches), the range [ENG-ISL-S2] and [OPT-ALTHASH] would decide. From `w-256` up, auto is the best capturing engine.
+Forced-VM losses: 47 of 70 cells, led by `cnt-64` x7.4, `clsd-64` x7.1, `clsa-64` x6.9, `w-96` x6.7.
+Full lists are in the ledger, section 5.
+
+**Refusal walls.** Auto refuses at `w-1024`, `clsa/clsd-1024` and `w-2048` (C source over 1,000,000 B).
+The VM refuses at `ci-512`, `w-2048`, `s-2048`, `s-4096` (code over 500,000 B).
+
+**Re-baseline.** 109 cells moved beyond the reporter's bar, all on changed programs.
+Wins: `hex32` -76 to -81 %, `float-literal-bound` -86 %, `lit-l*` -31 to -67 %.
+Regressions to look at: `dig-exact-8` +34 % large and +75 % short (abi 92 cover),
+five syntax whole-subject cells at +13 to +17 % (`grp-cap`, `grp-named`, `grp-named-quote`, `qnt-poss-plus`, `rec-fwd`),
+`cls-range` large +18.6 %, `wild-secrets-slack-webhook-url` large +15.3 %.
+The cross-window null is +4 to +7 % on some strata (syntax short, bounded large), so small moves there are offset.
+
+**Two non-timing re-pin findings from the prep.**
+1. The landmark walk adds +44.3 KB of emit on `wild-secrets-username-password-pair` nocaps plain
+   (564,961 B with `-fno-landmark-walk`, 609,262 B default). We did not time that arm tonight. Is the size intended?
+2. `char-step` (the character-stepped DFA for UCP `\b` under `-e utf8`) has no `locate` axis row.
+   Please list it, or say why it is absent.
+
+**Ours.** The pcre2 altwide cells are from 2026-10-19 (libpcre2 10.46 unchanged). The short sentinel bounds that offset at x1.005 to x1.03.
+We have no large-regime sentinel. Loglines has no program-identical cell, so it has no null band.
