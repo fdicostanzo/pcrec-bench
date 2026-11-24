@@ -3729,6 +3729,122 @@ def _b149_moved(expected, label, form, em):
     return out
 
 
+#: [B152] (pin d6c5e71a5, abi 94-112 over cb32eda28): every artifact +56 B (emit and code)
+#: -- the `RX_TARGETS "none:generic"` stamp line (abi 98 [XARCH]) and `match-start-reset,`
+#: in PCREC_FEATURE_MODULES (abi 99), MEASURED as the mode over the census's 596 v3-identical
+#: rows (522 DFA + 74 VM read +56/+56; docs/dev/measurements/2026-11-23-b152prep-census.txt).
+B152_FLAT = 56
+
+#: [B152] per-witness (emit, code, program) moves ON TOP of B152_FLAT, MEASURED at the build
+#: through the adapter (each the failing want/got pair of the first run, lane b152prep). The
+#: +106 B rows are abi 103 [FIND-MINW]'s min-width early-out on a VM entry (`subject_length -
+#: search_from < N` + `attempt_max`); the larger rows add an abi 104-106 required-run pre-check
+#: the respelled/position-set run now ships (`foo|bar` forced VM gains `[6266][616f][6f72]@0`
+#: and its two-stream rx_reqrun block, +2,063 B); ci-256 and ipv4-near-miss SHRINK (abi 97
+#: [RUN-POS-SET] stage 1's sibling merge, a smaller VM program).
+B152_RESID = {
+    ('alternation ISLAND, prefix-free: the FORWARD entry shape', 'plain'): (2063, 0, 0),
+    ('ASCII-fold class test: (?i)abc under --engine=vm, folds 3', 'plain'): (106, 0, 0),
+    ('ASCII-fold declined: [ac] under --engine=vm (not a 0x20 pair), folds 0', 'plain'): (106, 0, 0),
+    ('ASCII-fold declined: [@`] under --engine=vm (a 0x20 pair of non-letters), folds 0', 'plain'): (106, 0, 0),
+    ('altwide w-256: the ORIGINAL branch order', 'plain'): (120, 0, 0),
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'plain'): (120, 0, 0),
+    ('altwide w-256 under --engine=vm: the island, ORIGINAL order', 'plain'): (106, 0, 0),
+    ('altwide ci-256 under --engine=vm: THE FOLD WITNESS, 26 letters -> folds 26', 'plain'): (-3262, 0, -3047),
+    ('altwide srt-256 under --engine=vm: the island, SORTED order', 'plain'): (106, 0, 0),
+    ('altwide pfx3-256 under --engine=vm: the island behind a factored prefix', 'plain'): (262, 0, 0),
+    ('altwide s-256 under --engine=vm: the island before a shared suffix', 'plain'): (107, 0, 0),
+    ('altwide w-384 under --engine=vm: COMPILES as an island (refused at 288d505)', 'plain'): (106, 0, 0),
+    ('capability email-nested-plus under --engine=vm: K64 fix A, the pre-check back', 'plain'): (55, 0, 0),
+    ('capability ipv4-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (-448, 0, -367),
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'plain'): (73, 0, -1080),
+    ('capability wild-validator-email-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (55, 0, 0),
+    ('capability wild-validator-ipv4-owasp under --engine=vm: K64 fix A, the pre-check back', 'plain'): (55, 0, 0),
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): (182, 0, 0),
+    ("capability email-nested-plus under auto: fix A's EXACT-HYBRID arm keeps one-attempt", 'plain'): (55, 0, 0),
+    ("capability uuid-near-miss under --engine=vm: fix A's FRAMELESS arm keeps one-attempt", 'plain'): (523, 0, 0),
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): (395, 0, 0),
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): (2501, 0, 0),
+    ('capability tag-pair-match under auto: K65 + S1 step 6', 'plain'): (106, 0, 0),
+    ('capability dup-param-detect under auto: K65 alone', 'plain'): (106, 0, 0),
+    ('capability nested-comment-rec under auto: S1 step 6 alone', 'plain'): (544, 0, 0),
+}
+
+#: [B152] per-witness VALUE moves (non-size keys), MEASURED the same way, by abi step:
+#:   dfa_scan unanchored -> landmark-walk, req_why emitted -> dominated: abi 95 [LANDWALK] (the
+#:     walk answers presence itself; `-fno-landmark-walk` restores both -- a DENY_CONTROLS row);
+#:   req_run respelled: abi 104 K38-2 (no `@0` when the run starts the pattern; bracketed hex
+#:     position classes) and abi 106 (position sets up to PCREC_MAX_REQ_RUN_POS_SET 128 -- runs
+#:     widen across class positions, e.g. github-pat's 11-byte literal + 21 class positions);
+#:   req_handoff 3 -> 0 on github-pat: abi 105/112 (the handoff K re-derived on the wider run);
+#:   req_why dominated -> emitted on uuid-grok: abi 106 (a stated run the offset-set no longer
+#:     verifies);
+#:   altcls_merges 0 -> 1 / altcls_factored moved: abi 97 [RUN-POS-SET] stage 2b, merge and
+#:     factoring moved INTO the alternation owner (both callers; the counts are the owner's);
+#:   vm_prefilter_lang_why nfa 462 -> 458 on level-context: abi 97 (the owner's merge shrinks
+#:     the exact NFA by four states).
+B152_VALUES = {
+    ('pure DFA', 'plain'): {'dfa_scan': 'landmark-walk', 'req_why': 'dominated'},
+    ('anchored attempt DFA', 'plain'): {'req_run': '[30-39]626172'},
+    ('VM route, anchored start ([OPT-ANCHOR-VM])', 'plain'): {'req_run': '666f6f'},
+    ('VM route, \\G-anchored start ([OPT-ANCHOR-VM] gstart)', 'plain'): {'req_run': '666f6f'},
+    ('alternation ISLAND on a VM hybrid under auto', 'plain'): {'altcls_factored': 0, 'altcls_merges': 1},
+    ('level-context under auto: the [SEL-1] VM fallback', 'plain'): {'vm_prefilter_lang_why': 'dfa overflow retry, exact nfa 458'},
+    ('altwide w-256: the ORIGINAL branch order', 'plain'): {'altcls_factored': 21, 'altcls_merges': 1},
+    ("altwide srt-256: the SORTED branch order (the ledger's x8.87 pair)", 'plain'): {'altcls_factored': 70, 'altcls_merges': 1},
+    ('altwide w-256 under --engine=vm: the island, ORIGINAL order', 'plain'): {'altcls_factored': 21, 'altcls_merges': 1},
+    ('altwide srt-256 under --engine=vm: the island, SORTED order', 'plain'): {'altcls_factored': 70, 'altcls_merges': 1},
+    ('altwide pfx3-256 under --engine=vm: the island behind a factored prefix', 'plain'): {'req_run': '717578[61-7a][61-7a]@0'},
+    ('altwide w-384 under --engine=vm: COMPILES as an island (refused at 288d505)', 'plain'): {'altcls_factored': 29, 'altcls_merges': 1},
+    ("altwide sh1-64: every branch shares byte 0 ('k')", 'plain'): {'altcls_factored': 6, 'altcls_merges': 1},
+    ('capability wild-datetime-moment-iso8601 under --engine=vm: K64 fix A, the pre-check back', 'plain'): {'req_run': '[30-39][30-39][30-39][30-39]2d@4'},
+    ('capability winpath-near-miss under --engine=vm: K64 fix A, the pre-check back', 'plain'): {'req_run': '[41-5a61-7a]3a5c@2'},
+    ('capability wild-secrets-github-pat under auto: S1 run-pinned-bounded, dominated', 'plain'): {'req_handoff': '0', 'req_run': '6769746875625f7061745f[30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a][30-3941-5a5f61-7a]@10'},
+    ('capability wild-validator-uuid-grok under auto: S1 G1 elision on offset-set', 'plain'): {'req_run': '[30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66]2d[30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66]2d[30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66]2d[30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66]2d[30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66][30-3941-4661-66]@23', 'req_why': 'emitted'},
+    ('capability nested-comment-rec under auto: S1 step 6 alone', 'plain'): {'req_run': '2f2a@1'},
+}
+
+
+#: [B152] DENY_CONTROLS rows moved by abi 94-112, MEASURED at d6c5e71a5 (lane b152prep): an int
+#: is a size DELTA on the row's cb32eda28 want, anything else a replacement VALUE.
+#:   +56 B both arms = B152_FLAT (RX_TARGETS + the match-start-reset module name);
+#:   the alt-island pair's +2,119 / +2,114 B = B152_FLAT + the abi 106 position-set run
+#:     pre-check `foo|bar` now ships on both the island and the chain arm (`[6266][616f][6f72]@0`);
+#:   `626172@0` -> `[30-39]626172`: abi 104 K38-2's respelling (+ abi 106's class position);
+#:   `exact nfa 462` -> `458`: abi 97's alternation-owner merge (level-context).
+B152_DENY = {
+    "dfa_scan_edge + the warning returns: the edge denied":
+        {"default": {"emit_bytes": B152_FLAT},
+         "denied": {"emit_bytes": B152_FLAT, "warned_emit_bytes": B152_FLAT}},
+    "dfa_start + the reverse machine's bytes: the start-pinned search denied":
+        {"default": {"emit_bytes": B152_FLAT}, "denied": {"emit_bytes": B152_FLAT}},
+    "vm_alt_islands + frameless + entry shape: the alternation island denied":
+        {"default": {"emit_bytes": 2119}, "denied": {"emit_bytes": 2114}},
+    "engine_sel + vm_prefilter_lang: the [SEL-1] rung denied -> prefilter dropped":
+        {"default": {"vm_prefilter_lang_why": "dfa overflow retry, exact nfa 458"}},
+    "req_byte: -fno-req-byte denies the required-byte memchr (and the run with it)":
+        {"default": {"req_run": "[30-39]626172"}},
+    "req_run: -fno-req-run denies the necessary-run memcmp, keeping req_byte":
+        {"default": {"req_run": "[30-39]626172"}},
+    "emit_bytes: the [OPT-REVEND] B3 one-walk end mark denied":
+        {"default": {"emit_bytes": B152_FLAT}, "denied": {"emit_bytes": B152_FLAT}},
+}
+
+
+def _b152_moved(expected, label, form, em):
+    """`expected` with B152_FLAT + B152_RESID on the size keys and B152_VALUES' values."""
+    out = dict(expected)
+    r = B152_RESID.get((label, form), (0, 0, 0))
+    flat = (B152_FLAT, B152_FLAT, 0)
+    for i, k in enumerate(("emit_bytes", "emit_code_bytes", "vm_program_bytes")):
+        v = out.get(k)
+        if isinstance(v, int) and not isinstance(v, bool):
+            out[k] = v + flat[i] + r[i]
+    for k, v in B152_VALUES.get((label, form), {}).items():
+        out[k] = v
+    return out
+
+
 def _b135s3_moved(expected, label, form, em):
     """`expected` with the size keys moved by B135S3_RESID's row."""
     out = dict(expected)
@@ -6001,10 +6117,11 @@ def check_mechanism_stamps():
             handles[label] = cr.handle
             diags[label] = cr.diagnostic or ""
             results[label] = cr
-            expected = _b149_moved(_b142_moved(_b136_moved(_b135s3_moved(
+            expected = _b152_moved(_b149_moved(_b142_moved(_b136_moved(_b135s3_moved(
                 _b135_moved(_b126_moved(expected, label, form, em),
                             label, form, em), label, form, em),
-                label, form, em), label, form, em), label, form, em)
+                label, form, em), label, form, em), label, form, em),
+                label, form, em)
             wrong = {k: (em.get(k), v) for k, v in expected.items()
                      if not _stamp_ok(em.get(k), v)}
             if wrong:
@@ -6505,8 +6622,39 @@ def check_mechanism_stamps():
                    "%d witnesses, all 0: %s"
                    % (len(altwide_labels), ", ".join(sorted(altwide_labels))))
             else:
-                bad("FINDING: bench/altwide/NOTES.md's P1 HOLDS -- altcls_merges is 0 on every altwide witness",
-                    "P1 REFUTED: nonzero on %s" % ", ".join(sorted(nonzero)))
+                # [B152] (abi 97, [RUN-POS-SET] stage 2b): RX_ALTCLS_MERGES now counts the
+                # ALTERNATION OWNER's sibling merge at both callers (the registry's reworded
+                # `altcls-merge` row), no longer stage 1's single-character-branch merge that
+                # P1 is a statement about. So P1 is asserted where that stamp still means it:
+                # the SAME witnesses emitted by the also_pin cb32eda28 (abi 93) must read 0,
+                # and the canonical pin's nonzero values are reported as the redefinition.
+                old_bin = _b136_bin("cb32eda28")
+                lcase = {c[0]: c for c in LEDGER_STAMP_CASES}
+                old_nonzero, unread = [], []
+                for l in nonzero:
+                    c = lcase.get(l)
+                    if not c or not old_bin:
+                        unread.append(l)
+                        continue
+                    flags = ["--engine=vm"] if "vm" in c[1] else []
+                    o = os.path.join(tmp, "p1-%d.c" % len(unread + old_nonzero + [l]))
+                    r = run([old_bin, "-p", "rx", "--features", "all"] + flags
+                            + ["-o", o, "--pattern", _bench_pattern(c[2], c[3]).decode("latin-1")],
+                            timeout=300)
+                    m = re.search(r"^#define RX_ALTCLS_MERGES (\d+)", open(o).read(), re.M) \
+                        if r.returncode == 0 and os.path.exists(o) else None
+                    if m is None:
+                        unread.append(l)
+                    elif int(m.group(1)) != 0:
+                        old_nonzero.append(l)
+                if not old_nonzero and not unread:
+                    ok("FINDING: bench/altwide/NOTES.md's P1 HOLDS -- altcls_merges is 0 on every altwide witness",
+                       "at cb32eda28 (abi 93), all %d witnesses read 0; at this pin %d read nonzero "
+                       "(abi 97: the stamp counts the alternation owner's merge): %s"
+                       % (len(altwide_labels), len(nonzero), ", ".join(sorted(nonzero))))
+                else:
+                    bad("FINDING: bench/altwide/NOTES.md's P1 HOLDS -- altcls_merges is 0 on every altwide witness",
+                        "P1 REFUTED at cb32eda28 on %s; unread %s" % (old_nonzero, unread))
 
         # -- [B19] the abi-12 route token: on EVERY artifact, both engines,
         # and its value set is the registry's `engine-route` axis --
@@ -6840,7 +6988,11 @@ def check_mechanism_stamps():
         # the island (w-256 code bytes at c4c70f2c: island 132537 / chain
         # 107366), so the ratio falls back toward 1 -- the island is
         # still the LARGER arm, re-measured live below, never assumed.
-        ratios_want = (("w-256", 1.2344), ("pfx3-256", 1.2375), ("s-256", 1.2649))
+        # [B152] (d6c5e71a5) RE-MEASURED: island 133352/chain 110503, 135324/111148, 129870/105547
+        # (pcrec's own size line). Both arms gain the abi 106 position-set run pre-check
+        # (`foo|bar`: +2,119 island / +2,114 chain, B152_DENY), a near-constant on both, so the
+        # ratio falls further toward 1; the island is still the LARGER arm.
+        ratios_want = (("w-256", 1.2068), ("pfx3-256", 1.2175), ("s-256", 1.2304))
         ratio_dir = os.path.join(tmp, "ratio")
         os.makedirs(ratio_dir, exist_ok=True)
         got_ratios, ratio_problems = {}, []
@@ -8099,6 +8251,12 @@ def check_deny_flag_controls():
                 pattern = _bench_pattern(src[0], src[1])
             want = {"default": {k: v[0] for k, v in pairs.items()},
                     flagged: {k: v[1] for k, v in pairs.items()}}
+            # [B152] (pin d6c5e71a5): the rows abi 94-112 moved, MEASURED (lane b152prep).
+            for _arm, _mv in B152_DENY.get(label, {}).items():
+                for _k, _v in _mv.items():
+                    _w = want[_arm][_k]
+                    want[_arm][_k] = (_w + _v if isinstance(_v, int) and isinstance(_w, int)
+                                      and not isinstance(_v, bool) else _v)
             expect_refusal = any(v is DID_NOT_COMPILE for v in want[flagged].values())
             got = {}
             failed = False
@@ -10757,6 +10915,26 @@ _B104_UTF8_LITRUN_CASES = (
 )
 
 
+#: [B152] (d6c5e71a5; the census attributes these rows to abi 104-112's req-run changes, the
+#: single step not isolated): three runs WIDEN leftward to the whole literal, MEASURED by
+#: lane b152prep. req_byte -- the RIGHTMOST-member claim this check exists for --
+#: is UNMOVED on all seven; only the run's extent and its scan index move.
+_B152_UTF8_LITRUN_MOVED = {
+    "lit-mixed-ascii (user@\u4f8b\u3048.jp)": "7573657240e4be8be38188@10",
+    "lit-cyr-run (\u041c\u043e\u0441\u043a\u0432\u0430)": "d09cd0bed181d0bad0b2d0b0@11",
+    "lit-nearmiss-run (\u65e5\u672c\u8a9e)": "e697a5e69cace8aa9e@8",
+}
+
+
+def _b152_hist_bin(adapter):
+    """[B152] a HISTORICAL by-value check (written at an earlier pin, last green at cb32eda28)
+    runs at cb32eda28's OWN build, not the canonical pin: its claim is about an abi step
+    <= 93, and d6c5e71a5's moves over it are the census's and check_b152_stamps' to state
+    (lane b152prep; b149prep re-aimed check_b147_stamps the same way). Falls back to the
+    canonical pin only if that build is missing -- which then fails loudly by value."""
+    return _b136_bin("cb32eda28") or adapter.pin_binary()
+
+
 def check_b104_reqrunenc_rightmost():
     """[B104] (pin 751b9c6d, abi 39, [OPT-REQRUN-ENC] stage 2; inbox I-112).
 
@@ -10786,6 +10964,7 @@ def check_b104_reqrunenc_rightmost():
     try:
         adapter.prepare("pcrec-auto-utf8", tmp)
         for label, pattern_bytes, want_byte, want_run in _B104_UTF8_LITRUN_CASES:
+            want_run = _B152_UTF8_LITRUN_MOVED.get(label, want_run)
             pid = re.sub(r"[^A-Za-z0-9]+", "-", label).strip("-")[:40]
             cr = adapter.compile("pcrec-auto-utf8", pid, pattern_bytes, {}, 1,
                                  tmp).get(_ad.FORM_PLAIN)
@@ -11059,7 +11238,7 @@ def check_b108_acceptance_mover():
         adapter.prepare("pcrec-local", tmp)
         cr_mid = adapter.compile("pcrec-local", "b108-accept-mid", pat, {}, 1,
                                  tmp).get(_ad.FORM_PLAIN)
-        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        os.environ["PCREC_BIN"] = _b152_hist_bin(adapter)
         adapter.prepare("pcrec-local", tmp)
         cr_new = adapter.compile("pcrec-local", "b108-accept-new", pat, {}, 1,
                                  tmp).get(_ad.FORM_PLAIN)
@@ -11136,7 +11315,10 @@ def _b118_compile(adapter, tmp, label, extra, pattern):
     `.outcome`/`.diagnostic`/`.engine_metadata`."""
     # only the PINNED binary knows the flag (the older also-pin builds the b135/b136
     # checks drive through PCREC_BIN refuse it as an unknown option)
-    if "--memfn" not in extra and os.environ.get("PCREC_BIN") == adapter.pin_binary():
+    # [B152]: the historical checks now run at cb32eda28's build (_b152_hist_bin), which
+    # carries the abi 92 window search too -- the same denial applies there.
+    if "--memfn" not in extra and os.environ.get("PCREC_BIN") in (
+            adapter.pin_binary(), _b136_bin("cb32eda28")):
         extra = (extra + " " + B149_COVER_OFF).strip()
     os.environ["PCREC_LOCAL_FLAGS"] = extra
     adapter.prepare("pcrec-local", tmp)
@@ -11290,7 +11472,7 @@ def check_b118_clstree_stamps():
     atoms_pat = (b"[aoy][bpz][cq0][dr1][es2][ft3][gu4][hv5]"
                 b"[iw6][jx7][k08][l19]")
     try:
-        os.environ["PCREC_BIN"] = adapter.pin_binary()
+        os.environ["PCREC_BIN"] = _b152_hist_bin(adapter)
         # -- cls-kit: wide class, the value AND the refusal flip --
         kit_default = _b118_compile(adapter, tmp, "kit-default",
                                     "-e utf8 --engine=vm", wide_pat)
@@ -11460,7 +11642,7 @@ def check_b118_findtie_k69_noop_on_bench():
     }
     try:
         results = {}
-        for pin, binpath in (("old", old_bin), ("new", adapter.pin_binary())):
+        for pin, binpath in (("old", old_bin), ("new", _b152_hist_bin(adapter))):
             os.environ["PCREC_BIN"] = binpath
             for label, pat in patterns.items():
                 cr = _b118_compile(adapter, tmp, "findtie-%s-%s" % (pin, label),
@@ -11565,7 +11747,8 @@ def _b126_text_eq(tmp, tag, specs):
 
     def fl(b, f):
         f = list(f)
-        if b == pinned and not any(x.startswith("--memfn") for x in f):
+        # [B152]: cb32eda28's build (the historical checks' new arm) has the window search too
+        if b in (pinned, _b136_bin("cb32eda28")) and not any(x.startswith("--memfn") for x in f):
             f.append(B149_COVER_OFF)        # [B149]: see B149_COVER_OFF
         return f
     return [_b126_text_hash(b, ["--features", "all"] + fl(b, f), p, tmp,
@@ -11603,7 +11786,7 @@ def check_b122_round1_stamps():
         return
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import program_identity as _pi
-    new_bin = adapter.pin_binary()
+    new_bin = _b152_hist_bin(adapter)
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b122r1-")
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
 
@@ -11791,7 +11974,7 @@ def check_b124_stamps():
         return
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import program_identity as _pi
-    new_bin = adapter.pin_binary()
+    new_bin = _b152_hist_bin(adapter)
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b124-")
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
 
@@ -12069,7 +12252,7 @@ def check_b126_stamps():
         bad("b126 stamps", "no build for 60366d747 "
             "(pin.sh 60366d747 first; --path printed %r)" % old_bin)
         return
-    new_bin = adapter.pin_binary()
+    new_bin = _b152_hist_bin(adapter)
     tmp = tempfile.mkdtemp(prefix="pcrecbench-b126-")
     saved = {k: os.environ.get(k) for k in ("PCREC_BIN", "PCREC_LOCAL_FLAGS")}
     try:
@@ -12434,10 +12617,13 @@ def check_b135_stamps():
         want = [("1", "rev-end", "RX_DFA_SCAN", "rev-end", "-fno-rev-end", "52"),
                 ("2", "cover", "RX_DFA_SCAN", "cover", "", ""),
                 ("3", "unanchored", "RX_DFA_SCAN", "unanchored", "", "")]
+        # [B152] abi 95 [LANDWALK]: `landmark-walk` is order 3 (bit 57), `unanchored` 3 -> 4.
+        want[2:] = [("3", "landmark-walk", "RX_DFA_SCAN", "landmark-walk", "-fno-landmark-walk", "57"),
+                    ("4", "unanchored", "RX_DFA_SCAN", "unanchored", "", "")]
         have = [(r["order"], r["candidate"], r["stamp_macro"], r["stamp_value"],
                  r.get("cli_flag", ""), r.get("deny_bit", "")) for r in rows]
         if have == want:
-            ok("b135 registry: the `locate` axis (rev-end bit 52, cover, unanchored)",
+            ok("b135 registry: the `locate` axis (rev-end bit 52, cover, landmark-walk bit 57, unanchored)",
                "%s" % have)
         else:
             bad("b135 registry: the `locate` axis (rev-end bit 52, unanchored)",
@@ -13044,7 +13230,9 @@ def check_b136_stamps():
         # `handoff-attempts-entry` (the VM consumers), both under the same flag and bit.
         if axes == [("prefilter", "handoff", "46"), ("req-use", "handoff", "46"),
                     ("req-use", "handoff-attempts", "46"),
-                    ("req-use", "handoff-attempts-entry", "46")]:
+                    ("req-use", "handoff-attempts-entry", "46"),
+                    # [B152] abi 105 [REQ-PAST-LAST]: `handoff-attempts-unbounded`, same flag/bit.
+                    ("req-use", "handoff-attempts-unbounded", "46")]:
             ok("b136 registry: -fno-req-handoff is listed on `prefilter` AND `req-use` (three rows at abi 91), bit 46",
                str(axes))
         else:
