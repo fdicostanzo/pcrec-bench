@@ -714,6 +714,11 @@ docs/dev/lanes/b152prep_report.md; census docs/dev/measurements/2026-11-23-b152p
    landmark-walk, `req-admit` untestable, `req-use` handoff-attempts-unbounded, and `fallback` drop-landmark-walk and
    drop-islands; the memfn section changes ±. Limits 78 -> 82; definitions and schema are BYTE-IDENTICAL.
 5. Catalogue 3.23. New check `check_b152_stamps` (landmark-walk, untestable, targets on DFA/VM, char-step, by value).
+6. **Selfcheck at the new pin** (tools/selfcheck.py): `B152_FLAT` = +56 B per artifact (RX_TARGETS + the
+   `match-start-reset` module name), `B152_RESID` / `B152_VALUES` / `B152_DENY` per witness (measured, attributed by
+   abi step); the historical by-value checks (b108/b118/b122/b124/b126) run at cb32eda28's own build
+   (`_b152_hist_bin`); altwide P1 asserted at cb32eda28 (abi 97 redefined `RX_ALTCLS_MERGES` as the alternation
+   owner's merge: 1 on every altwide witness here). The targeted slice reads 496/0.
 
 ## Re-pin at cb32eda28 (abi 89 -> 93) — 2026-10-30, lane b149prep, pcrec_main's W1 sha
 
