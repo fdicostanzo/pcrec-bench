@@ -1,0 +1,6 @@
+# b152chain report (2026-11-23)
+Files: b152win_chain.sh, b152win_wrap.sh (executable). Pin: MAIN_PIN at the top (d6c5e71a5); MODE derives from it (full | fallback when MAIN_PIN=cb32eda28).
+Dry-runs (DRYRUN=1, scratch store, nice 19 taskset 0-5, no store/ write): fallback 18:08-18:31 = 5 cells rc=0, skips=0, CHAIN_DONE; full mode with a 6-min END = clamp of the opening sentinel cap + 13 `SKIPPED ... (deadline)` lines with correct need= figures, CHAIN_DONE. A full-mode run through every cell was NOT rehearsed (d6c5e71a5 not built/pinned at rehearsal time; configs.toml pin check only warns in dry-run, aborts live).
+No testee/set refusal: pcrec-auto, pcrec-vm, pcre2-jit, re2-default, vectorscan-block-som, rust-default, pcrec-auto-utf8 all resolve; re2/vectorscan/rust ran on altwide@0.3 in the fallback rehearsal.
+Notes: STORE=./store (run_window skips its per-call sidecar regen; chain regens once at the end if >420 s remain, else manager runs scripts/regen_sidecars.py). Live chain aborts if configs.toml pin != MAIN_PIN or also_pins lacks cb32eda28 (full mode).
+Submit: setsid scripts/boxq_window --name b152win --prio 700 --cap 21900 --not-before 2026-11-24T01:50 -- /home/pcrec/projects/pcrec-bench/docs/dev/lanes/b152win_wrap.sh
