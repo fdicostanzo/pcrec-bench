@@ -4471,9 +4471,19 @@ def test_kb16_query_never_opens_other_subbench_files():
         with open(by_subbench[sb][0], encoding="utf-8") as fh:
             head = _json.loads(fh.readline())
         return "substitution" in (head["subbench"].get("regimes") or [])
-    target = min((sb for sb in by_subbench if not _is_subst(sb)),
-                 key=lambda k: len(by_subbench[k]))
-    target_paths = set(by_subbench[target])
+    # [B152] The query below passes `--machine REAL_MACHINE`, so a target
+    # with NO record on that machine matches nothing and opens nothing --
+    # unusual@0.1's 11 records (2026-11-02) are all on ryzen7700x, the
+    # store's fewest, and `opened` came back empty. Count only the records
+    # ON the query's machine; `other_paths` stays every other subbench's
+    # file on ANY machine (the stricter side of the control).
+    on_machine = {}
+    for r in rows:
+        if r["machine_id"] == REAL_MACHINE:
+            on_machine.setdefault(r["subbench"], []).append(r["path"])
+    target = min((sb for sb in on_machine if not _is_subst(sb)),
+                 key=lambda k: len(on_machine[k]))
+    target_paths = set(on_machine[target])
     other_paths = set(p for sb, ps in by_subbench.items() if sb != target
                       for p in ps)
 
