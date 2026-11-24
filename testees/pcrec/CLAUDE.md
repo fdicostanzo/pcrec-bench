@@ -678,6 +678,48 @@ steps, and records both in its report:
    sentinel set, `bench/sentinel`, then reads it in the window itself).
 
 
+## Re-pin at d6c5e71a5 (abi 93 -> 112) — 2026-11-23, lane b152prep, inbox I-179
+
+The WHOLE ROSTER re-pins. Canonical pin **d6c5e71a5** (abi 112, pcrec main); `configs.toml`
+`also_pins = ["cb32eda28"]` (the BEFORE of abi steps 94-112); **614d45eb3 LEAVES the allowlist** (refused by name;
+`check_b135_two_pin_window`, `check_b149_stamps` and `tools/check_calls.py`'s K134 arm re-aimed). Report
+docs/dev/lanes/b152prep_report.md; census docs/dev/measurements/2026-11-23-b152prep-census.txt (+ `.tsv`, 1,600 rows).
+
+1. **Shim floor STAYS 16; `struct rx_info` unchanged** across abi 94-112 (`check_abi_floor_refusal`).
+2. **The adapter changes** (all closed-set reads; no new shim getter):
+   - `dfa_scan` gains `landmark-walk` (abi 95 [LANDWALK], the `locate` axis's order-3 row, deny
+     `-fno-landmark-walk` bit 57: a DENY_FLAGS + DENY_CONTROLS row, no pinned testee) and `char-step`
+     (pcrec's character-stepped DFA for a UCP `\b`/`\B` under `-e utf8`, cli.md 1.9p7, match_api.md 6.3.2; NOT
+     an axis row, so it is a `REGISTRY_OUTCOME_VALUES` entry). Witness: bench/utf8 `asr-b-cyr-ucp` under
+     `pcrec-auto-utf8` reads char-step / reverse-pass / search-filter / prefilter none. That pattern is
+     unsupported-by-declaration on the roster today; the value is admitted so a later declaration cannot reject it.
+   - `req_why` gains `untestable` (abi 106, [RUN-POS-SET] stage 3; altwide `w-8` is the witness, 36 census rows).
+   - NEW text-read stamp `targets` (`RX_TARGETS`, abi 98 [XARCH]): `none:generic` on every artifact, since no config
+     passes `--target`.
+   - `RX_REQ_RUN` respelled (abi 104 K38-2: no `@`, bracketed hex classes) and `RX_REQ_HANDOFF` gaining `unbounded`
+     (abi 105) and negative K (abi 112) are free-text stamps. They are recorded verbatim and no closed set moves.
+3. **The census** (cb32eda28 -> d6c5e71a5, 11 sets x {plain, whole} x {caps, nocaps}) has 1,600 rows: 936 identical,
+   575 changed (0 UNATTRIBUTED), 78 refused-both and 11 refusal movers. All 11 movers were refused at cb32eda28 and
+   compile now: capability `wild-datetime-datefinder-alternation` x3, `negation-scope-lookbehind-var` x4 (abi 96, the
+   variable lookbehind), utf8 `cls-w-ucp` x2 and `asr-b-cyr-ucp` x2. v2 and v3 identity agree on every row. The changes
+   by step:
+   - abi 103 [FIND-MINW], the min-width early-out: 483 rows.
+   - abi 104-112, the req-run respelling and the handoff K: 258 rows.
+   - abi 97 [RUN-POS-SET] stage 1: 105 altnf rows, plus 88 bench/utf8 table rows from the sibling merge (smaller DFA
+     tables, utf8 `prp-l` -77,030 B).
+   - abi 95, the landmark walk: 11 rows. `-fno-landmark-walk` restores the cb32eda28-sized program on exactly these 11
+     rows. The walk costs +6.6..+8.9 KB of emit, and +44.3 KB on `wild-secrets-username-password-pair` nocaps.
+   - abi 108 cover: 8 rows; abi 110 span-vector: 6 of those 8.
+4. **Registries re-archived**: axes MAIN 176 -> 181 rows / 50 axes, with no new axis. The new rows are `locate`
+   landmark-walk, `req-admit` untestable, `req-use` handoff-attempts-unbounded, and `fallback` drop-landmark-walk and
+   drop-islands; the memfn section changes ±. Limits 78 -> 82; definitions and schema are BYTE-IDENTICAL.
+5. Catalogue 3.23. New check `check_b152_stamps` (landmark-walk, untestable, targets on DFA/VM, char-step, by value).
+6. **Selfcheck at the new pin** (tools/selfcheck.py): `B152_FLAT` = +56 B per artifact (RX_TARGETS + the
+   `match-start-reset` module name), `B152_RESID` / `B152_VALUES` / `B152_DENY` per witness (measured, attributed by
+   abi step); the historical by-value checks (b108/b118/b122/b124/b126) run at cb32eda28's own build
+   (`_b152_hist_bin`); altwide P1 asserted at cb32eda28 (abi 97 redefined `RX_ALTCLS_MERGES` as the alternation
+   owner's merge: 1 on every altwide witness here). The targeted slice reads 496/0.
+
 ## Re-pin at cb32eda28 (abi 89 -> 93) — 2026-10-30, lane b149prep, pcrec_main's W1 sha
 
 The WHOLE ROSTER re-pins. Canonical pin **cb32eda28** (abi 93, pcrec main, "trail fix"); `configs.toml`

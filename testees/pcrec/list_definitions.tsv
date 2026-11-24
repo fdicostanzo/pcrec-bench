@@ -3,8 +3,12 @@
 # 9), archived VERBATIM under a source header.
 # Everything below this header is the unmodified output of:
 #
-#     build/pcrec-cb32eda28/build/pcrec --list-definitions | grep -v '^#'
+#     build/pcrec-d6c5e71a5/build/pcrec --list-definitions | grep -v '^#'
 #
+# pcrec commit d6c5e71a5 (rx_info.abi 112, read off a plain `abc` witness at this build),
+# archived 2026-11-23 by lane b152prep ([B152], inbox I-179): the pin ADVANCED cb32eda28 (abi 93) -> d6c5e71a5 (abi 112,
+# NINETEEN abi steps 94-112; cb32eda28 stays runnable as an also_pin). BYTE-IDENTICAL to cb32eda28's body (the tenth pin running).
+# PREVIOUS archiving (cb32eda28), from the header it carried:
 # pcrec commit cb32eda28 (rx_info.abi 93, read off a plain `abc` witness at this build),
 # archived 2026-10-30 by lane b149prep ([B149], pcrec_main W1 sha): the pin ADVANCED 614d45eb3 (abi 89) -> cb32eda28 (abi 93,
 # FOUR abi steps 90-93; 614d45eb3 stays runnable as an also_pin). BYTE-IDENTICAL to 614d45eb3's body (ninth pin running).

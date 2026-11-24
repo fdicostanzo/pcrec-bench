@@ -705,13 +705,21 @@ METADATA_DECL = {
     # two macros, not recorded a second time.
     "dfa_scan": {
         "type": "enum", "scope": "pattern",
-        "values": ["unanchored", "attempt", "empty", "rev-end", "cover"],
+        "values": ["unanchored", "attempt", "empty", "rev-end", "cover",
+                   "landmark-walk", "char-step"],
         "source": "<PREFIX>_DFA_SCAN, read through pb_dfa_scan(); CHECKED "
                   "against rx_info.scan (pb_info_scan(), abi 6+); `rev-end` "
                   "joined at abi 73 ([OPT-REVEND] L2, [B135]) and is the "
                   "`locate` axis's order-1 row (`-fno-rev-end`, bit 52); `cover` "
                   "joined at abi 92 ([MEMFN] D172 S3, [B149]) and is the "
-                  "`locate` axis's order-2 row (`--memfn=no-window-search`)",
+                  "`locate` axis's order-2 row (`--memfn=no-window-search`); "
+                  "`landmark-walk` joined at abi 95 ([LANDWALK] stage 1, "
+                  "[B152]) and is the `locate` axis's order-3 row "
+                  "(`-fno-landmark-walk`, bit 57; `unanchored` 3 -> 4); "
+                  "`char-step` (the CHARACTER-STEPPED DFA a UCP \\b/\\B "
+                  "takes under -e utf8, cli.md 1.9p7, match_api.md 6.3.2) "
+                  "is in the set since [B152]: measured on utf8 asr-b-cyr-ucp "
+                  "(abi 112), not an axis row",
         "description": "WHICH DFA scan this artifact contains: the O(n) "
                        "forward+reverse table pair (`unanchored`), the "
                        "per-start computed-goto loop an anchored pattern "
@@ -724,7 +732,12 @@ METADATA_DECL = {
                        "carries no forward machine), or -- abi 92, [MEMFN] D172 S3 -- "
                        "the memfn kit's WINDOW SEARCH (`cover`: every match is "
                        "one fixed-width window, reported [c, c + k) with no "
-                       "automaton run). Different loops with "
+                       "automaton run), or -- abi 95, [LANDWALK] -- the "
+                       "LANDMARK WALK (`landmark-walk`: each occurrence of a "
+                       "rare byte-class landmark L is found, the reverse "
+                       "machine of the prefix P then L walks back from it to "
+                       "the leftmost start, and one anchored run decides the "
+                       "match there). Different loops with "
                        "different cost curves, and nothing else a consumer "
                        "can read distinguishes them",
     },
@@ -979,8 +992,11 @@ METADATA_DECL = {
     # confirmed byte-identical against the pin at re-pin time.
     "req_why": {
         "type": "enum", "scope": "pattern",
-        "values": ["none", "emitted", "one-attempt", "dominated"],
-        "source": "<PREFIX>_REQ_WHY ([OPT-PRECHECK-ADMIT], pcrec abi 31+), "
+        "values": ["none", "emitted", "one-attempt", "dominated",
+                   "untestable"],
+        "source": "<PREFIX>_REQ_WHY ([OPT-PRECHECK-ADMIT], pcrec abi 31+; "
+                  "`untestable` joined at abi 106, [RUN-POS-SET] stage 3, "
+                  "[B152]: the `req-admit` table's order-4 row), "
                   "read through pb_req_why(); scope \"every\" (every "
                   "artifact, both engines, same as req_byte/end_window/"
                   "req_run); no rx_info mirror; not an axis -- no "
@@ -1006,7 +1022,11 @@ METADATA_DECL = {
                        "under plain-byte encoding): the ONE-BYTE form "
                        "only -- a necessary RUN is never dominated by a "
                        "plain byte scan, since the run dismisses "
-                       "strictly more than the byte alone",
+                       "strictly more than the byte alone. \"untestable\" "
+                       "-- (abi 106) a run is stated but the memfn kit's run "
+                       "decision declines it on the pre-check (no findable "
+                       "position) and no necessary-set member leads: the "
+                       "pre-check would test nothing",
     },
     # [B37] (pin 334fd10e, abi 17, [CC-DIFF] STEP 1): a COUNT on
     # RX_DFA_TABLE's own scope -- the scan family's iff a fourth time. A
@@ -1427,6 +1447,22 @@ METADATA_DECL = {
                        "was read (measures.md 4). `\"\"` on every artifact "
                        "at this pin: no memfn-kit row reads a set key "
                        "before the kit's B4",
+    },
+    # -- [B152] (pin d6c5e71a5, abi 98, [XARCH-DEV] units U2 + U3): a FOURTH
+    # unconditional text-read stamp, the same shape as the three above (NO
+    # shim getter, NO driver line -- the shared driver binary is unchanged).
+    "targets": {
+        "type": "string", "scope": "pattern",
+        "source": "<PREFIX>_TARGETS ([XARCH-DEV] U2+U3, pcrec abi 98+), "
+                  "read from the emitted text by TEXT_STAMP_RES; no "
+                  "rx_info mirror; on EVERY artifact of both engines",
+        "description": "the compile's ONE CPU target as stated to the memfn "
+                       "kit, `family:members` -- `none:generic` at the "
+                       "default (no -fmemfn-simd), which is every testee "
+                       "this bench pins; a SIMD target (-fmemfn-simd[=LIST]) "
+                       "names its family and level and the artifact then "
+                       "carries the kit's family guard and target region "
+                       "(match_api.md 6.3.10)",
     },
     # -- [B147] (pin 614d45eb3, abi 89, [INLINE-C] stage 1b, match_api.md
     # 11.2-11.4): CALLOUTS COMPILE, and a callout artifact does not LINK on
@@ -2603,7 +2639,10 @@ REGISTRY_OUTCOME_VALUES = {
     # [B135] (pcrec abi 73): the `locate` axis enumerates the two candidate
     # scans an ordinary body can take; an `attempt` loop (anchored pattern)
     # and the provably-empty body are not candidates the selector walks.
-    "dfa_scan": {"attempt", "empty"},
+    # [B152] (pcrec abi 112): `char-step`, the character-stepped DFA a UCP
+    # \b/\B takes under -e utf8 (cli.md 1.9p7), is forced by the pattern's
+    # set, not chosen by the `locate` selector -- no axis row carries it.
+    "dfa_scan": {"attempt", "empty", "char-step"},
 }
 # [B142] follow-up: `compound` is an outcome no candidate list carries.
 for _k in COMPOUND_MACHINE_ENUMS:
@@ -2955,7 +2994,10 @@ TEXT_STAMPS = {"compound": "COMPOUND", "iter_retry": "ITER_RETRY",
                "callout_bindings": "CALLOUT_BINDINGS",
                # [B148] inline arm part 2: abi 90+, only on an artifact that
                # reached code (the inline testees' --allow-code=c grant)
-               "code_langs": "CODE_LANGS"}
+               "code_langs": "CODE_LANGS",
+               # [B152] abi 98 ([XARCH-DEV] U2+U3): every artifact, both
+               # engines -- the compile's CPU target, `family:members`
+               "targets": "TARGETS"}
 TEXT_STAMP_RES = {
     k: re.compile(r'^#define\s+%s_%s\s+"([^"]*)"'
                   % (re.escape(ARTIFACT_PREFIX.upper()), v))
@@ -3832,6 +3874,16 @@ DENY_FLAGS = (
      "(n, and n-1 before a final newline) with the tie code instead of the "
      "one-seed / tagged lowering -- the abi-77 search path at the SAME pin; "
      "answer-identical"),
+    # [B152] (pin d6c5e71a5, abi 95, [LANDWALK] stage 1): the `locate` axis's
+    # order-3 row's deny, bit 57. Denied, the artifact keeps NEXT's
+    # forward-then-reverse search (`dfa_scan` reads `unanchored`) instead of
+    # walking the reverse machine of P.L back from each landmark hit. NO
+    # pinned testee (I-179 asks for none); a DENY_CONTROLS row in selfcheck.
+    ("-fno-landmark-walk", "nolandmarkwalk",
+     "the [LANDWALK] LANDMARK WALK denied (--list-axes `locate`, bit 57): "
+     "the search steps the forward machine over every byte (`unanchored`) "
+     "instead of finding each rare landmark L and walking the reverse "
+     "machine of P.L back from it -- answer-identical"),
 )
 
 
