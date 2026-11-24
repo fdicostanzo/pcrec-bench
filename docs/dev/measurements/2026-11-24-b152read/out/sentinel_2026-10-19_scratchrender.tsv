@@ -1,0 +1,1276 @@
+# reporter: v28 (2026-10-25); filters: subbench=sentinel, version=0.1, machine=ryzen7700x, since=2026-10-19T00:00:00Z, until=2026-10-20T00:00:00Z, testee=libpcre2_10.46_jit-caps-simdna, testee=pcrec_6b2dbd3e_auto-caps-simdna; source: store/index.tsv (7 record(s) matching this query); records: 7; excluded_invalid: 0; superseded: 0; newer_not_measured: 0; subbench_versions: sentinel@0.1; machines: ryzen7700x; schema_versions: 1.8; grain: set; single_subject_regimes: ; include_unmeasured: False; include_scratch: False; all_records: True; x13_rules: v1.4 X13 (pre-flight + trial agreement) on 7; mixed_x13: False; include_provenance: False; worst_other_core_busy: 5.46% (libpcre2_10.46_jit-caps-simdna@20261019T153624Z / base10num-near-miss / short-subject-search); floor_pattern: floor-byte
+section	pattern	subject_or_na	regime_or_na	form	fact	testee	status	tier	rank_or_na	metric	value	n	pass_rate	n_gave_up	n_wrong	gave_up_summary	delta_verdict
+record						sentinel@0.1__libpcre2_10.46_jit-caps-simdna__ryzen7700x__20261019T040639Z				agreement	agree (0 of 15 groups; 39 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__libpcre2_10.46_jit-caps-simdna__ryzen7700x__20261019T150421Z				agreement	disagree (1 of 15 groups; worst file-ext-order / short-subject-search / plain d=37 of n=75; 0 unjudged)						
+record						sentinel@0.1__libpcre2_10.46_jit-caps-simdna__ryzen7700x__20261019T151345Z				agreement	agree (0 of 15 groups; 10 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__libpcre2_10.46_jit-caps-simdna__ryzen7700x__20261019T153624Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__pcrec_6b2dbd3e_auto-caps-simdna__ryzen7700x__20261019T035509Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__pcrec_6b2dbd3e_auto-caps-simdna__ryzen7700x__20261019T145237Z				agreement	agree (0 of 15 groups; 0 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+record						sentinel@0.1__pcrec_6b2dbd3e_auto-caps-simdna__ryzen7700x__20261019T152426Z				agreement	agree (0 of 15 groups; 3 of 1125 rows; 0 unjudged; k=1.5, 2/3; 5 trials)						
+baseline	base10num-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z (row-best fallback -- interp absent from this group)	
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	median_ns	342.485619	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	min_ns	327.957801	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	max_ns	346.874501	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	stddev_ns	8.540842	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	median_ns	343.725285	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	min_ns	330.367118	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	max_ns	347.276580	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	stddev_ns	6.095090	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_baseline	1.003620	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_best	1.003620	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	median_ns	346.168391	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	min_ns	307.798141	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	max_ns	350.548084	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	stddev_ns	17.439810	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	ratio_vs_baseline	1.010753	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	3	ratio_vs_best	1.010753	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1606.850805	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1572.581071	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1678.113429	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	44.662588	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	4.691732	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	4.691732	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1636.245849	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1542.386260	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	1703.805677	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	60.957837	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	4.777561	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	4.777561	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1661.284853	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1533.428097	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	1736.011931	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	75.125786	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	4.850670	75	1.0000	0	0		
+rank	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	4.850670	75	1.0000	0	0		
+not_ranked	base10num-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	file-ext-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	310.049080	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	309.680245	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	311.551354	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	0.675871	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	median_ns	310.100562	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	min_ns	309.686578	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	max_ns	323.114700	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	stddev_ns	5.132166	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_baseline	1.000166	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_best	1.000166	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	310.607327	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	309.068394	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	322.177250	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	4.776921	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.001801	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.001801	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	median_ns	1515.955601	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	min_ns	1506.847572	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	max_ns	1747.980473	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	stddev_ns	91.778240	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_baseline	4.889405	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_best	4.889405	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1522.218925	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1479.006475	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	1761.970180	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	101.503312	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	4.909606	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	4.909606	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	median_ns	2004.021523	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	min_ns	1566.111144	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	max_ns	2331.770007	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	stddev_ns	280.953331	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_baseline	6.463562	75	1.0000	0	0		
+rank	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_best	6.463562	75	1.0000	0	0		
+not_ranked	file-ext-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	floor-byte	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	293.987741	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	293.808125	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	305.077756	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	5.456837	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	median_ns	295.134932	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	min_ns	294.229107	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	max_ns	304.980248	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	stddev_ns	4.397586	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_baseline	1.003902	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_best	1.003902	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	305.098927	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	294.206607	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	306.589352	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	5.569236	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.037795	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.037795	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	median_ns	1551.038884	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	min_ns	1504.259631	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	max_ns	1638.602573	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	stddev_ns	51.560096	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_baseline	5.275862	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_best	5.275862	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	median_ns	1759.885722	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	min_ns	1556.829623	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	max_ns	1850.184851	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	stddev_ns	106.241282	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_baseline	5.986255	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_best	5.986255	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	2015.553811	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1506.993012	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	2887.253755	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	524.653330	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	6.855911	75	1.0000	0	0		
+rank	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	6.855911	75	1.0000	0	0		
+not_ranked	floor-byte	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	ipv4-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z (row-best fallback -- interp absent from this group)	
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	median_ns	249.004804	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	min_ns	248.843744	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	max_ns	250.800568	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	stddev_ns	0.719987	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	median_ns	249.443117	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	min_ns	248.691048	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	max_ns	250.638091	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	stddev_ns	0.831716	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_baseline	1.001760	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_best	1.001760	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	249.878134	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	248.481829	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	251.389198	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	0.923180	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.003507	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.003507	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	median_ns	1695.531638	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	min_ns	1574.762493	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	max_ns	2513.689909	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	stddev_ns	393.029991	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_baseline	6.809233	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_best	6.809233	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	median_ns	1705.105556	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	min_ns	1543.941133	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	max_ns	2052.730512	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	stddev_ns	196.496384	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_baseline	6.847681	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_best	6.847681	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	median_ns	1827.286097	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	min_ns	1591.882517	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	max_ns	2084.821326	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	stddev_ns	180.601701	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_baseline	7.338357	75	1.0000	0	0		
+rank	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_best	7.338357	75	1.0000	0	0		
+not_ranked	ipv4-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	keyword-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	360.947831	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	360.830831	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	363.853655	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	1.302513	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	median_ns	361.329216	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	min_ns	360.524751	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	max_ns	364.307162	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	stddev_ns	1.675154	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_baseline	1.001057	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_best	1.001057	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	363.655329	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	360.912230	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	365.552465	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	1.501492	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.007501	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.007501	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1615.077771	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1502.676456	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1724.988825	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	75.759757	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	4.474546	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	4.474546	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	median_ns	1826.387738	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	min_ns	1779.372403	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	max_ns	2084.037452	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	stddev_ns	113.067747	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	ratio_vs_baseline	5.059977	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	ratio_vs_best	5.059977	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	median_ns	1935.111279	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	min_ns	1511.711590	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	max_ns	2381.089897	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	stddev_ns	355.682453	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_baseline	5.361194	75	1.0000	0	0		
+rank	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_best	5.361194	75	1.0000	0	0		
+not_ranked	keyword-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	numeric-id-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z (row-best fallback -- interp absent from this group)	
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	median_ns	498.922161	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	min_ns	457.968038	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	max_ns	509.639616	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	stddev_ns	22.060478	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	median_ns	504.446207	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	min_ns	466.430752	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	max_ns	509.729227	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	stddev_ns	18.238202	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_baseline	1.011072	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_best	1.011072	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	508.508540	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	503.082330	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	524.864921	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	7.359833	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.019214	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.019214	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1201342.493421	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1199770.266324	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1205655.590356	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	2089.052856	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	2407.875593	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	2407.875593	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1202071.969638	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1200577.947398	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	1252683.584432	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	22452.632496	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	2409.337697	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	2409.337697	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1204985.375117	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1201499.577199	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	1245703.301876	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	16925.573342	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	2415.177096	75	1.0000	0	0		
+rank	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	2415.177096	75	1.0000	0	0		
+not_ranked	numeric-id-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	phone-list-nested-plus	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	535.576011	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	492.867207	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	539.224956	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	17.447589	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	median_ns	535.653844	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	min_ns	488.847854	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	max_ns	538.970575	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	stddev_ns	23.468572	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_baseline	1.000145	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_best	1.000145	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	537.396546	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	490.670776	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	540.408919	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	19.000682	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.003399	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.003399	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1659379.644127	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1658184.311514	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1659704.597275	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	532.887313	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	3098.308382	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	3098.308382	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1659473.972955	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1659129.334578	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	1660844.197611	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	626.458947	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	3098.484508	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	3098.484508	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1661740.566975	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1660733.747354	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	1682711.594315	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	8461.449619	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	3102.716576	75	1.0000	0	0		
+rank	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	3102.716576	75	1.0000	0	0		
+not_ranked	phone-list-nested-plus	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	router-prefix-order	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	305.062692	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	301.462051	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	315.835420	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	4.865741	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	median_ns	305.732990	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	min_ns	305.299118	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	max_ns	311.972872	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	stddev_ns	2.536357	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_baseline	1.002197	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_best	1.002197	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	316.112566	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	305.547807	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	317.214747	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	4.514241	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.036222	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.036222	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1594.701283	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1510.789280	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1804.273821	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	104.518830	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	5.227454	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	5.227454	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1640.585064	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1490.462046	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	2063.417866	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	193.316101	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	5.377862	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	5.377862	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1831.528728	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1580.286899	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	2540.590739	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	350.692946	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	6.003778	75	1.0000	0	0		
+rank	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	6.003778	75	1.0000	0	0		
+not_ranked	router-prefix-order	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	trim-nested-star	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	426.419874	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	418.510710	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	439.509073	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	8.202973	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	median_ns	429.742500	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	min_ns	423.710783	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	max_ns	442.264315	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	stddev_ns	6.506137	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_baseline	1.007792	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_best	1.007792	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	434.906459	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	428.022887	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	439.620516	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	4.688919	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.019902	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.019902	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1295787.798961	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1256931.377525	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1296351.630789	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	15535.523065	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	3038.760338	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	3038.760338	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1296180.435117	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1289832.513177	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	1296384.271862	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	2514.728215	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	3039.681111	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	3039.681111	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1303119.031632	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1302865.238439	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	1303381.248961	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	219.020497	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	3055.952859	75	1.0000	0	0		
+rank	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	3055.952859	75	1.0000	0	0		
+not_ranked	trim-nested-star	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	uuid-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z (row-best fallback -- interp absent from this group)	
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	median_ns	335.374562	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	min_ns	328.103417	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	max_ns	337.735847	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	stddev_ns	3.577920	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	median_ns	335.501662	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	min_ns	326.652473	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	max_ns	339.010853	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	stddev_ns	4.282401	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_baseline	1.000379	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_best	1.000379	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	336.469249	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	333.229035	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	337.838495	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	1.683335	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.003264	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.003264	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	median_ns	1498.941013	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	min_ns	1452.485496	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	max_ns	1656.607447	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	stddev_ns	69.781759	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_baseline	4.469454	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_best	4.469454	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	median_ns	1515.785920	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	min_ns	1493.872350	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	max_ns	1725.789282	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	stddev_ns	98.671575	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_baseline	4.519681	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_best	4.519681	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1540.050191	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1529.461878	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	2180.173567	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	254.828793	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	4.592030	75	1.0000	0	0		
+rank	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	4.592030	75	1.0000	0	0		
+not_ranked	uuid-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	301.312067	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	301.156171	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	301.412944	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	0.085293	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	median_ns	301.558539	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	min_ns	301.263659	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	max_ns	302.773462	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	stddev_ns	0.551416	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_baseline	1.000818	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_best	1.000818	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	301.717013	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	301.601781	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	302.192802	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	0.207601	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.001344	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.001344	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	median_ns	1580.060626	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	min_ns	1499.497387	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	max_ns	1714.399907	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	stddev_ns	85.839380	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_baseline	5.243934	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_best	5.243934	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	median_ns	1727.299915	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	min_ns	1628.932261	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	max_ns	2509.923286	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	stddev_ns	330.141442	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_baseline	5.732595	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	5	ratio_vs_best	5.732595	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	median_ns	1789.112625	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	min_ns	1582.276966	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	max_ns	1991.099915	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	stddev_ns	150.972065	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_baseline	5.937740	75	1.0000	0	0		
+rank	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	6	ratio_vs_best	5.937740	75	1.0000	0	0		
+not_ranked	wild-semdiv-dollar-trailing-newline-pcre2	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	wild-validator-email-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	535.064569	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	509.983673	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	551.570976	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	15.159286	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	median_ns	544.217198	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	min_ns	524.091549	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	max_ns	557.871911	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	stddev_ns	13.719980	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_baseline	1.017106	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	2	ratio_vs_best	1.017106	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	545.098043	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	539.803749	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	560.221633	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	7.732332	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.018752	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.018752	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	median_ns	1618.141604	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	min_ns	1596.118395	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	max_ns	2138.875479	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	stddev_ns	242.453846	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_baseline	3.024199	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_best	3.024199	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1626.532137	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1610.285222	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	2088.523654	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	182.697069	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	3.039880	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	3.039880	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	median_ns	1630.049859	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	min_ns	1603.239195	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	max_ns	1915.936097	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	stddev_ns	118.362101	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_baseline	3.046454	75	1.0000	0	0		
+rank	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_best	3.046454	75	1.0000	0	0		
+not_ranked	wild-validator-email-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	wild-validator-us-zip-owasp	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z (row-best fallback -- interp absent from this group)	
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	median_ns	432.909750	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	min_ns	432.056004	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	max_ns	438.166963	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	stddev_ns	2.487542	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	median_ns	433.829657	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	min_ns	414.980494	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	max_ns	436.202179	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	stddev_ns	8.093962	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_baseline	1.002125	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_best	1.002125	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	median_ns	435.763772	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	min_ns	428.198071	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	max_ns	440.114545	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	stddev_ns	3.852873	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_baseline	1.006593	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	3	ratio_vs_best	1.006593	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	median_ns	1538.379152	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	min_ns	1517.931624	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	max_ns	1588.853365	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	stddev_ns	26.336005	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_baseline	3.553579	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	4	ratio_vs_best	3.553579	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1544.489265	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1498.440351	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	2110.814277	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	234.741008	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	3.567693	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	3.567693	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	median_ns	1561.792261	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	min_ns	1496.202547	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	max_ns	2218.053515	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	stddev_ns	272.889230	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_baseline	3.607662	75	1.0000	0	0		
+rank	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	6	ratio_vs_best	3.607662	75	1.0000	0	0		
+not_ranked	wild-validator-us-zip-owasp	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z (row-best fallback -- interp absent from this group)	
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	median_ns	2727.845707	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	min_ns	2691.691981	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	max_ns	3452.413003	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	stddev_ns	339.620049	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	median_ns	2729.720705	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	min_ns	2710.521950	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	max_ns	2748.200658	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	stddev_ns	12.413852	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_baseline	1.000687	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	2	ratio_vs_best	1.000687	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	2758.028612	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	2738.282772	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	3389.998845	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	248.402471	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.011065	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.011065	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	median_ns	6686.115812	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	min_ns	6635.969386	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	max_ns	7055.626911	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	stddev_ns	188.658335	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_baseline	2.451061	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	4	ratio_vs_best	2.451061	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	median_ns	6709.701617	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	min_ns	6671.937171	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	max_ns	6932.483083	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	stddev_ns	93.961835	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	ratio_vs_baseline	2.459707	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	5	ratio_vs_best	2.459707	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	median_ns	6761.348342	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	min_ns	6708.452187	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	max_ns	6897.024582	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	stddev_ns	67.912220	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_baseline	2.478640	75	1.0000	0	0		
+rank	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_best	2.478640	75	1.0000	0	0		
+not_ranked	wild-waf-crs-942360-concat-sqli	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+baseline	winpath-near-miss	(set)	short-subject-search			pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				baseline_identity	row-best-fallback					pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z (row-best fallback -- interp absent from this group)	
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	median_ns	293.818471	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	min_ns	293.804199	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	max_ns	294.023435	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	stddev_ns	0.082489	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_baseline	1.000000	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z	measured	pinned	1	ratio_vs_best	1.000000	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	median_ns	294.020323	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	min_ns	280.732405	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	max_ns	294.461419	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	stddev_ns	5.383945	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_baseline	1.000687	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z	measured	pinned	2	ratio_vs_best	1.000687	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	median_ns	294.899142	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	min_ns	294.492143	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	max_ns	294.998222	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	stddev_ns	0.187768	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_baseline	1.003678	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z	measured	pinned	3	ratio_vs_best	1.003678	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	median_ns	1539.743723	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	min_ns	1503.627187	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	max_ns	2181.316265	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	stddev_ns	259.551949	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_baseline	5.240459	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z	measured	pinned	4	ratio_vs_best	5.240459	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	median_ns	1588.050133	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	min_ns	1509.782797	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	max_ns	2044.021864	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	stddev_ns	206.481981	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_baseline	5.404868	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z	measured	pinned	5	ratio_vs_best	5.404868	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	median_ns	1928.132106	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	min_ns	1499.758312	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	max_ns	2143.755110	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	stddev_ns	250.175810	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_baseline	6.562324	75	1.0000	0	0		
+rank	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z	measured	pinned	6	ratio_vs_best	6.562324	75	1.0000	0	0		
+not_ranked	winpath-near-miss	(set)	short-subject-search	plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z	inconclusive-spread	pinned		pass_rate	1.0000	75	1.0000	0	0	0	
+query_yes_beats_nocaps										hit_count	0						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4979.000000	5					
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	220						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T040639Z				frame	n/s						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4549.000000	5					
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	184						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	2745.000000	5					
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	161						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	11341.000000	5					
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	693						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4469.000000	5					
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	186						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	3567.000000	5					
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	171						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4077.000000	5					
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	173						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4569.000000	5					
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	184						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	3858.000000	5					
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	172						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	5932.000000	5					
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	425						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	3275.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	166						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	7173.000000	5					
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	320						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	3626.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	180						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	160012.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	0.251						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	3459						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				median_total_ns	4799.000000	5					
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				jitter	timer-floor						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T040639Z				artifact_bytes	275						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	5250.000000	5					
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	220						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T150421Z				frame	n/s						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	4428.000000	5					
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	184						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	2185.000000	5					
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	161						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	8847.000000	5					
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	693						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	3576.000000	5					
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	186						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	3567.000000	5					
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	171						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	4067.000000	5					
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	173						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	3627.000000	5					
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	184						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	4578.000000	5					
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	172						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	4969.000000	5					
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	425						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	3257.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	166						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	8916.000000	5					
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	320						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	3608.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	180						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	168317.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	0.215						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	3459						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				median_total_ns	4940.000000	5					
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				jitter	timer-floor						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T150421Z				artifact_bytes	275						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	4989.000000	5					
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	220						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T151345Z				frame	n/s						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3577.000000	5					
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	184						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	2224.000000	5					
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	161						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	8746.000000	5					
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	693						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3517.000000	5					
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	186						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3516.000000	5					
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	171						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	4047.000000	5					
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	173						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3617.000000	5					
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	184						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	4529.000000	5					
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	172						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	6092.000000	5					
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	425						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3357.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	166						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	7034.000000	5					
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	320						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	3608.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	180						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	153680.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	0.284						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	3459						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				median_total_ns	4860.000000	5					
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				jitter	timer-floor						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T151345Z				artifact_bytes	275						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	4729.000000	5					
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	base10num-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	220						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				engine	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				entry	plain entry						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				prefilter	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				vm_rungs	-						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				buffers	n/s						
+compile_stamp						libpcre2_10.46_jit-caps-simdna@20261019T153624Z				frame	n/s						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3517.000000	5					
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	file-ext-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	184						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	2194.000000	5					
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	floor-byte			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	161						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	18604.000000	5					
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	ipv4-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	693						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3687.000000	5					
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	keyword-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	186						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3496.000000	5					
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	numeric-id-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	171						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3908.000000	5					
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	phone-list-nested-plus			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	173						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3567.000000	5					
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	router-prefix-order			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	184						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3687.000000	5					
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	trim-nested-star			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	172						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	6021.000000	5					
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	uuid-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	425						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	3285.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	166						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	6894.000000	5					
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	wild-validator-email-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	320						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	4559.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	wild-validator-us-zip-owasp			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	180						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	169309.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	0.220						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	3459						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				median_total_ns	5991.000000	5					
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				jitter	timer-floor						
+compile	winpath-near-miss			plain	same program	libpcre2_10.46_jit-caps-simdna@20261019T153624Z				artifact_bytes	275						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	65295640.000000	5					
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.009						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28768						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	17485						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15100						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				dfa_match	search-filter						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				dfa_scan_edge	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				scan_edges_match	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				engine_sel	selected						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	63349900.000000	5					
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.013						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28696						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	16938						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	14553						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	69633370.000000	5					
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.013						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28912						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	22208						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	16085						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	66717802.000000	5					
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.005						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	20782						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15940						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	65012706.000000	5					
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.014						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28768						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	17890						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	14559						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	66279286.000000	5					
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.013						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	19475						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15917						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	74888912.000000	5					
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.008						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	37824						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	24450						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	19134						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	71734483.000000	5					
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.012						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	37616						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	23528						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	18212						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	69726717.000000	5					
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.005						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28912						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	22679						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	16065						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	66761295.000000	5					
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.008						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	22080						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15935						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	97737917.000000	5					
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.027						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	29830						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	28148						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	97277267.000000	5					
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.006						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	29759						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	28077						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	102358922.000000	5					
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.008						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32952						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	31102						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	29160						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	101975359.000000	5					
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.004						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32912						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	31030						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	29088						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	70037664.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.011						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28912						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	22195						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	16215						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	66095278.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.006						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	20438						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15936						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	93911250.000000	5					
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.007						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32912						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	28816						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	26974						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	91702676.000000	5					
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.009						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32872						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	28745						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	26903						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	76933608.000000	5					
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.011						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	38192						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	24767						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	19363						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	78562711.000000	5					
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.008						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	38152						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	24589						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	19185						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	70011583.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.006						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	20279						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	16389						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	66511644.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.005						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	19814						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	15924						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	64191166.000000	5					
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.009						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	16737						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	14380						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	63795970.000000	5					
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.005						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	16560						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	14203						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	93316999.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.009						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	33184						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	29459						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	26915						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	91650615.000000	5					
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.002						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	33104						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	29199						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	26655						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	571148885.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.005						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	685664						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	101313						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				warned_emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	552775542.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.004						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	665128						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	402999						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	103463						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				warned_emit_bytes	402999						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	63699250.000000	5					
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.035						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28696						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	16126						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	14043						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				median_total_ns	63052139.000000	5					
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				jitter	0.010						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				artifact_bytes	28656						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_bytes	15949						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T035509Z				emit_code_bytes	13866						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	65568088.000000	5					
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28768						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	17485						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15100						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				dfa_match	search-filter						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				dfa_scan_edge	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				scan_edges_match	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				engine_sel	selected						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	63161624.000000	5					
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.009						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28696						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	16938						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	14553						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	69084214.000000	5					
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.006						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28912						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	22208						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	16085						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	66963548.000000	5					
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.009						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	20782						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15940						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	64193698.000000	5					
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.009						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28768						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	17890						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	14559						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	65648229.000000	5					
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	19475						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15917						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	74299892.000000	5					
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.003						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	37824						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	24450						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	19134						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	71069105.000000	5					
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.010						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	37616						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	23528						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	18212						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	68631451.000000	5					
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.009						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28912						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	22679						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	16065						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	66388285.000000	5					
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	22080						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15935						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	98018048.000000	5					
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.005						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	29830						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	28148						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	96123107.000000	5					
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.003						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	29759						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	28077						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	102265822.000000	5					
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.005						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32952						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	31102						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	29160						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	102356043.000000	5					
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.006						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32912						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	31030						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	29088						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	69433654.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.007						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28912						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	22195						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	16215						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	65972420.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.005						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	20438						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15936						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	92808360.000000	5					
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32912						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	28816						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	26974						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	91599191.000000	5					
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.006						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32872						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	28745						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	26903						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	76466456.000000	5					
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	38192						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	24767						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	19363						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	77679322.000000	5					
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.010						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	38152						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	24589						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	19185						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	69673505.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.006						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	20279						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	16389						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	65525629.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.011						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	19814						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	15924						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	63922477.000000	5					
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.007						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	16737						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	14380						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	63756035.000000	5					
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.007						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	16560						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	14203						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	92777702.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.003						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	33184						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	29459						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	26915						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	91658274.000000	5					
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.009						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	33104						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	29199						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	26655						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	565594862.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.008						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	685664						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	101313						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				warned_emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	549336516.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.004						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	665128						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	402999						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	103463						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				warned_emit_bytes	402999						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	63270178.000000	5					
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.015						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28696						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	16126						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	14043						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				median_total_ns	62671700.000000	5					
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				jitter	0.014						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				artifact_bytes	28656						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_bytes	15949						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T145237Z				emit_code_bytes	13866						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	66767951.000000	5					
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28768						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	17485						
+compile	base10num-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15100						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				engine	dfa						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				entry	plain entry						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				prefilter	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				vm_rungs	-						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				buffers	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				frame	0 (DFA)						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				dfa_prefilter_offsets	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				dfa_match	search-filter						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				dfa_scan_edge	none						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				scan_edges	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				scan_edges_match	0						
+compile_stamp						pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				engine_sel	selected						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	63775862.000000	5					
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.005						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28696						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	16938						
+compile	base10num-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	14553						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	70176634.000000	5					
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.008						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28912						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	22208						
+compile	file-ext-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	16085						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	67783033.000000	5					
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.025						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	20782						
+compile	file-ext-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15940						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	65350880.000000	5					
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28768						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	17890						
+compile	floor-byte			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	14559						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	67828680.000000	5					
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.014						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	19475						
+compile	floor-byte			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15917						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	74272903.000000	5					
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	37824						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	24450						
+compile	ipv4-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	19134						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	72724786.000000	5					
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	37616						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	23528						
+compile	ipv4-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	18212						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	70558573.000000	5					
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.006						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28912						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	22679						
+compile	keyword-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	16065						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	67442213.000000	5					
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.011						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	22080						
+compile	keyword-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15935						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	98168343.000000	5					
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.005						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	29830						
+compile	numeric-id-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	28148						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	97742570.000000	5					
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.004						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32872						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	29759						
+compile	numeric-id-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	28077						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	103961931.000000	5					
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32952						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	31102						
+compile	phone-list-nested-plus			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	29160						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	102791514.000000	5					
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.006						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32912						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	31030						
+compile	phone-list-nested-plus			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	29088						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	70288776.000000	5					
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.008						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28912						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	22195						
+compile	router-prefix-order			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	16215						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	67256861.000000	5					
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.011						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	20438						
+compile	router-prefix-order			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15936						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	93813216.000000	5					
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.004						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32912						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	28816						
+compile	trim-nested-star			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	26974						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	92842175.000000	5					
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32872						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	28745						
+compile	trim-nested-star			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	26903						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	77500815.000000	5					
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.003						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	38192						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	24767						
+compile	uuid-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	19363						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	78322633.000000	5					
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.010						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	38152						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	24589						
+compile	uuid-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	19185						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	69976116.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.009						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	20279						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	16389						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	66492011.000000	5					
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28808						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	19814						
+compile	wild-semdiv-dollar-trailing-newline-pcre2			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	15924						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	65691451.000000	5					
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.018						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	16737						
+compile	wild-validator-email-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	14380						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	64620594.000000	5					
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.005						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	32832						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	16560						
+compile	wild-validator-email-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	14203						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	93662323.000000	5					
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.007						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	33184						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	29459						
+compile	wild-validator-us-zip-owasp			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	26915						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	92164610.000000	5					
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.006						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	33104						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	29199						
+compile	wild-validator-us-zip-owasp			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	26655						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	576560116.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.006						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	685664						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	101313						
+compile	wild-waf-crs-942360-concat-sqli			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				warned_emit_bytes	395793						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	566006850.000000	5					
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.004						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	665128						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	402999						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	103463						
+compile	wild-waf-crs-942360-concat-sqli			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				warned_emit_bytes	402999						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	63996969.000000	5					
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.009						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28696						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	16126						
+compile	winpath-near-miss			plain	same program	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	14043						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				median_total_ns	63094348.000000	5					
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				jitter	0.012						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				artifact_bytes	28656						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_bytes	15949						
+compile	winpath-near-miss			whole-subject	separate artifact	pcrec_6b2dbd3e_auto-caps-simdna@20261019T152426Z				emit_code_bytes	13866						
