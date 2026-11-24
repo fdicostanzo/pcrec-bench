@@ -576,7 +576,7 @@ def check_subject_timeout():
         art = os.path.join(tmp, "artifact.c")
         proc = run([pcrec, "-p", "rx", "--engine=vm", "--fno-step-budget",
                     "--backtrack-frames=100000", "-o", art,
-                    "--pattern", "(a+)+b"],
+                    "--pattern", "(a+)+$"],
                    timeout=300)
         if proc.returncode != 0:
             bad("subject-timeout control", "pcrec: %s" % proc.stderr.strip()[:200])
@@ -591,29 +591,23 @@ def check_subject_timeout():
             return
 
         hang = os.path.join(tmp, "hang.bin")
-        # [B74] (abi 29, [OPT-REQBYTE]): `(a+)+b` now stamps `RX_REQ_BYTE
-        # "98"` ('b') -- every match must contain a 'b' on every path, so
-        # the emitted entry does one memchr over the WHOLE search window
-        # before running the VM at all, and a plain 40-`a` subject (no
-        # 'b' anywhere) is dismissed in that memchr, `nomatch`, without
-        # ever reaching the catastrophic-backtracking VM this control
-        # exists to exercise -- MEASURED directly (`hangwit.c`'s own
-        # guard: "if (... || !memchr(subject + search_from, 98, ...))
-        # return 0;"). A leading 'b' the match can never actually use
-        # satisfies the memchr (it only asks whether the byte appears
-        # ANYWHERE in the window, never where) while leaving the
-        # TRAILING run of 40 `a`s with no 'b' to complete it -- an
-        # unanchored search still finds no completion at position 0 (the
-        # 'b' itself, `(a+)` needs an 'a' first) and explores the SAME
-        # exponential split of the a-run starting at position 1 that
-        # hung before this pin, restoring the control without sharing
-        # any source with [OPT-REQBYTE] itself (a subject byte, not a
-        # flag or a stamp read).
+        # [B152] (pin d6c5e71a5, abi 112): the witness is `(a+)+$` over 40 `a`
+        # then a `b`. History: `(a+)+b` over 40 `a` hung until [B74] (abi 29,
+        # [OPT-REQBYTE]) stamped `RX_REQ_BYTE "98"` and dismissed a no-'b'
+        # subject in one memchr; `b`+40 `a` restored it by satisfying the
+        # memchr. At d6c5e71a5 that fails too: the necessary-RUN pre-check
+        # (abi 104-112, `RX_REQ_RUN "6162@1"`, the run "ab") dismisses `b`+40
+        # `a` -- no "ab" substring -- `nomatch` fast. A subject that holds
+        # "ab" cannot FAIL `(a+)+b`, so the pattern changed instead: `(a+)+$`
+        # stamps only RX_REQ_BYTE "97" ('a', present), RX_REQ_RUN "none",
+        # RX_END_WINDOW "none"; the trailing `b` is the only reason no `$`
+        # completes, so every split of the a-run is tried. No source is
+        # shared with the pre-checks: the pattern has none to deny.
         with open(hang, "wb") as f:
-            f.write(b"b" + b"a" * 40)
+            f.write(b"a" * 40 + b"b")
         fine = os.path.join(tmp, "fine.bin")
         with open(fine, "wb") as f:
-            f.write(b"ab")
+            f.write(b"aa")   # [B152] `(a+)+$` matches it at once
 
         class S:
             def __init__(self, sid, path, length):
@@ -5704,7 +5698,16 @@ def check_identity_chooser():
         # v2-vs-v3 normalisation (MEASURED 2026-10-30: with the denial, v3
         # identical vs 6b2dbd3e; without it, changed; -fno-req-handoff alone
         # does not restore it).
-        new = PI.emit(binary, shape, flags + ["--memfn=no-window-search"], b"abc",
+        # [B152] the claim is about the v2-vs-v3 normalisation over abi <= 93;
+        # d6c5e71a5 (abi 112) moves `abc`'s program under BOTH hashes (v2 and
+        # v3 each read `changed`, MEASURED 2026-11-24), which is the census's
+        # to state. So the new side is cb32eda28's OWN build (the way
+        # check_b149_stamps / _b152_hist_bin bind the other historical
+        # checks), where the denial above still applies. The adapter-row arm
+        # below stays at the canonical pin.
+        nbin = _b152_hist_bin(adapter)
+        nshape = PI._cli_shape(nbin, tmp)
+        new = PI.emit(nbin, nshape, flags + ["--memfn=no-window-search"], b"abc",
                       os.path.join(tmp, "n"))
         old = PI.emit(prev, pshape, flags, b"abc", os.path.join(tmp, "o"))
         v2 = lambda t: {"program_sha256": PI.program_sha256_of_text(t)}
@@ -5712,10 +5715,10 @@ def check_identity_chooser():
         r2 = ID.same_program(v2(old), v2(new))
         r3 = ID.same_program(both(old), both(new))
         if r2 == ("changed", "v2") and r3 == ("identical", "v3"):
-            ok("identity chooser: abc at the pin vs 6b2dbd3e -- changed under v2, "
+            ok("identity chooser: abc at cb32eda28 vs 6b2dbd3e -- changed under v2, "
                "identical under v3, through the chooser", "%s / %s" % (r2, r3))
         else:
-            bad("identity chooser: abc at the pin vs 6b2dbd3e", "v2 %r v3 %r" % (r2, r3))
+            bad("identity chooser: abc at cb32eda28 vs 6b2dbd3e", "v2 %r v3 %r" % (r2, r3))
         # the adapter's row carries both, equal to the census's values
         adapter.prepare("pcrec-auto", tmp)
         cr = adapter.compile("pcrec-auto", "abc-b145", b"abc", {}, 1, tmp).get(_ad.FORM_PLAIN)
@@ -7980,30 +7983,44 @@ def check_noreqbyte_testee():
             if cr.outcome != "compiled":
                 return None
             return cr.engine_metadata
+        # [B152] (pin d6c5e71a5, abi 112): every row re-aimed to MEASURED
+        # values. Abi 104 respelled `RX_REQ_RUN` as the necessary run's
+        # per-position byte CLASSES (a one-byte class is its hex byte, a
+        # wider one `[lo-hi]...`; the `@index` stays), and abi 106 moved
+        # `RX_REQ_WHY` -- the run pre-check is now judged against the DFA's
+        # own prefilter. The `-fno-req-byte` arm denies byte and run either
+        # way, so its three values are untouched.
+        _D = "[30-3941-4661-66]"       # uuid-grok's hex-digit class
+        _G = "[30-3941-5a5f61-7a]"      # github-pat's token-char class
         cases = (
+            # abi 104: `626172@0` -> `[30-39]626172` (the digit class joins
+            # the run); abi 106: `emitted` -> `dominated` (the memchr
+            # prefilter already verifies the run).
             ("foo[0-9]+bar", b"foo[0-9]+bar",
-             {"req_byte": ("98", "none"), "req_run": ("626172@0", "none"),
-              "req_why": ("emitted", "none"),
+             {"req_byte": ("98", "none"),
+              "req_run": ("[30-39]626172", "none"),
+              "req_why": ("dominated", "none"),
               "dfa_prefilter": ("memchr", "memchr")}),
-            # [B118] (pcrec fc719ca4, abi 43-44, [FIND-TIE]): the same
-            # rightmost tie-break move documented on the LEDGER_STAMP_CASES
-            # row above moves this arm's values too -- the scan index
-            # 3 -> 7, `run-pinned-bounded` -> `offset-set-bounded` (now
-            # equal to the denied arm's own value, both reading the
-            # narrower offset-set rung), `req_why` `dominated` ->
-            # `emitted`. `-fno-req-byte` denies the byte/run pre-check
-            # either way, so the denied arm's own three values are
-            # untouched by FIND-TIE.
+            # [B118] (pcrec fc719ca4, abi 43-44, [FIND-TIE]): the rightmost
+            # tie-break move (scan index 3 -> 7, `offset-set-bounded`,
+            # `emitted`). [B152] abi 104: the run is now "github_pat_" + 21
+            # token-char classes, scan index 10.
             ("capability wild-secrets-github-pat",
              _bench_pattern("capability", "wild-secrets-github-pat"),
              {"req_byte": ("95", "none"),
-              "req_run": ("6875625f7061745f@7", "none"),
+              "req_run": ("6769746875625f7061745f" + _G * 21 + "@10", "none"),
               "req_why": ("emitted", "none"),
               "dfa_prefilter": ("offset-set-bounded", "offset-set-bounded")}),
+            # abi 104: the run went from `none` to 8 hex classes, `2d`, 4,
+            # `2d`, 4, `2d`, 4, `2d`, 8 (the whole UUID shape), scan index
+            # 23; abi 106: `dominated` -> `emitted`, so this row is no
+            # longer the byte-only NULL arm (`foo[0-9]+bar` is, above).
             ("capability wild-validator-uuid-grok",
              _bench_pattern("capability", "wild-validator-uuid-grok"),
-             {"req_byte": ("45", "none"), "req_run": ("none", "none"),
-              "req_why": ("dominated", "none"),
+             {"req_byte": ("45", "none"),
+              "req_run": (_D * 8 + "2d" + _D * 4 + "2d" + _D * 4 + "2d"
+                          + _D * 4 + "2d" + _D * 8 + "@23", "none"),
+              "req_why": ("emitted", "none"),
               "dfa_prefilter": ("offset-set", "offset-set")}),
         )
         shas = {}
@@ -8021,16 +8038,21 @@ def check_noreqbyte_testee():
                                     for k, (a, b) in got.items()))
             else:
                 bad(title, "got %r, want %r" % (got, want))
-        # 4. the null arm and its control
+        # 4. the null arm and its control. [B152]: at d6c5e71a5 the NULL arm
+        # (a pattern whose req_why is `dominated`, so the denial removes
+        # nothing from the program) is `foo[0-9]+bar`; uuid-grok moved to
+        # `emitted` at abi 106 and now DIFFERS, like github-pat.
+        nu = shas.get("foo[0-9]+bar")
         uu = shas.get("capability wild-validator-uuid-grok")
         gh = shas.get("capability wild-secrets-github-pat")
-        title = ("noreqbyte: uuid-grok's two programs are IDENTICAL "
-                 "(program_sha256), github-pat's are NOT")
-        if uu and gh and uu[0] and uu[0] == uu[1] and gh[0] != gh[1]:
-            ok(title, "uuid-grok %s.. both arms; github-pat %s.. vs %s.."
-               % (uu[0][:12], gh[0][:12], gh[1][:12]))
+        title = ("noreqbyte: foo[0-9]+bar's two programs are IDENTICAL "
+                 "(program_sha256), uuid-grok's and github-pat's are NOT")
+        if (nu and uu and gh and nu[0] and nu[0] == nu[1]
+                and uu[0] != uu[1] and gh[0] != gh[1]):
+            ok(title, "foo %s.. both arms; uuid-grok %s.. vs %s..; github-pat %s.. vs %s.."
+               % (nu[0][:12], uu[0][:12], uu[1][:12], gh[0][:12], gh[1][:12]))
         else:
-            bad(title, "uuid-grok %r, github-pat %r" % (uu, gh))
+            bad(title, "foo %r, uuid-grok %r, github-pat %r" % (nu, uu, gh))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

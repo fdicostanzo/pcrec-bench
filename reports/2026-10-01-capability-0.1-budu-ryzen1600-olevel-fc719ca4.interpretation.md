@@ -2,7 +2,7 @@
 report:          reports/2026-10-01-capability-0.1-budu-ryzen1600-olevel-fc719ca4.tsv
 report_sha256:   c4b0d73ca1fdc8dd6d1ec515ae3a5f9a3b9249821d883ba639de9de3855dabbc
 index:           store/index.tsv
-index_sha256:    a79d1040dfb269d7b9cf5db8bf04081991cd00de13ab843283073a5fe422f648
+index_sha256:    f8dd1096c500c7affac10eb0a5ce78adfe820441c9035ea85e281ddda8ea8b80
 predictions:     docs/dev/predictions/capability-0.1-b117-olevel-fc719ca4.tsv
 predictions_sha256:2261cf727297ec65ef7529b652b3e54b4e027539f78fe766061d1a3437dca094
 subject_grain:   reports/2026-10-01-capability-0.1-budu-ryzen1600-olevel-fc719ca4.subject-grain.tsv

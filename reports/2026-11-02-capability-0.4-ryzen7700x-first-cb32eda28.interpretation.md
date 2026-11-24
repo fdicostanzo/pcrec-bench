@@ -2,7 +2,7 @@
 report:          reports/2026-11-02-capability-0.4-ryzen7700x-first-cb32eda28.tsv
 report_sha256:   be0d93d9f63016ca9b2c6dee00d0f617e3c8c30928cae1f3ee88761164ea8318
 index:           store/index.tsv
-index_sha256:    a79d1040dfb269d7b9cf5db8bf04081991cd00de13ab843283073a5fe422f648
+index_sha256:    f8dd1096c500c7affac10eb0a5ce78adfe820441c9035ea85e281ddda8ea8b80
 predictions:     (none)
 predictions_sha256:(none)
 subject_grain:   reports/2026-11-02-capability-0.4-ryzen7700x-first-cb32eda28.subject-grain.tsv
