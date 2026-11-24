@@ -6053,3 +6053,5 @@ them change executable code; the abi 98 bump and the families landing changed st
   when identical. Unscheduled; it triggers on a size or compile-cost mover.
 - **Prep Q2, char-step has no locate row:** an omission. Its candidate-table entry lacks the listing fields, and no
   test covered the stamp's values. Filed [LOCATE-CHARSTEP-ROW], to list it at order 1 and add the check.
+
+ack: 2026-11-24 — plan.md [B152] note (dig-exact-8 is ours to investigate; the rest filed on pcrec's side).
